@@ -240,7 +240,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 	core::pose::Pose cur_pose = pose;
 
 
-	for ( unsigned long target_residue : target_residues ) {
+	for ( core::Size target_residue : target_residues ) {
 		TR<<"Considering target residue "<< cur_pose.residue( target_residue ).name3() << target_residue <<": "<<std::endl;
 		utility::vector1< core::Size > neighbors  = compute_designable_neighbors( target_residue, task, cur_pose );
 		utility::vector1< core::Size > cur_neighbors = neighbors;

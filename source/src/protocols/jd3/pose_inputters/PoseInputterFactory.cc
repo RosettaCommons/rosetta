@@ -27,7 +27,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -40,34 +39,6 @@ namespace pose_inputters {
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_inputters.PoseInputterFactory" );
-
-#ifdef MULTI_THREADED
-std::atomic< PoseInputterFactory * > PoseInputterFactory::instance_( 0 );
-#else
-PoseInputterFactory * PoseInputterFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex PoseInputterFactory::singleton_mutex_;
-
-std::mutex & PoseInputterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of (pointer to) this singleton class
-PoseInputterFactory * PoseInputterFactory::get_instance()
-{
-	boost::function< PoseInputterFactory * () > creator = boost::bind( &PoseInputterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PoseInputterFactory *
-PoseInputterFactory::create_singleton_instance()
-{
-	return new PoseInputterFactory;
-}
 
 PoseInputterFactory::PoseInputterFactory() :
 	throw_on_double_registration_( false )

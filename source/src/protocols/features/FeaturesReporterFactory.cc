@@ -28,7 +28,6 @@
 //Utility Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 #include <utility/tag/Tag.hh>
 
 // Boost headers
@@ -52,40 +51,8 @@ using utility::tag::TagCOP;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
 
-#if defined MULTI_THREADED
-std::atomic< FeaturesReporterFactory * > FeaturesReporterFactory::instance_( 0 );
-#else
-FeaturesReporterFactory * FeaturesReporterFactory::instance_( nullptr );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex FeaturesReporterFactory::singleton_mutex_;
-
-std::mutex & FeaturesReporterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-FeaturesReporterFactory * FeaturesReporterFactory::get_instance()
-{
-	boost::function< FeaturesReporterFactory * () > creator = boost::bind( &FeaturesReporterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-FeaturesReporterFactory *
-FeaturesReporterFactory::create_singleton_instance()
-{
-	return new FeaturesReporterFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 FeaturesReporterFactory::FeaturesReporterFactory() {}
-
-FeaturesReporterFactory::FeaturesReporterFactory(
-	const FeaturesReporterFactory &
-) {}
 
 FeaturesReporterFactory::~FeaturesReporterFactory() = default;
 

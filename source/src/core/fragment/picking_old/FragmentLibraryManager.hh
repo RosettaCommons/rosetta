@@ -40,10 +40,6 @@ private: // constructor
 	/// @brief default constructor
 	FragmentLibraryManager();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static FragmentLibraryManager * create_singleton_instance();
-
 public: // access
 
 	/// @brief return instance of standard Vall library

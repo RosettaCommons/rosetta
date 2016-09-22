@@ -26,21 +26,16 @@
 // C/C++ headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace protocols {
 namespace topology_broker {
 
 /// @brief A non-copyable factory for instantiating TopologyClaimers by name.
 /// Commonly used TopologyClaimers are registered in the constructor. Additional
 /// claimers can be registered after the fact using the add_type() method.
-class TopologyClaimerFactory : boost::noncopyable {
+/// APL Question: Should this be one-instance-per-program (singleton) or one-instance-per-job?
+class TopologyClaimerFactory : public utility::SingletonBase< TopologyClaimerFactory > {
 public:
-	/// @brief Returns an instance to the singleton
-	static TopologyClaimerFactory const& get_instance();
+	friend class utility::SingletonBase< TopologyClaimerFactory >;
 
 	/// @brief Returns a new instance of the TopologyClaimer identified by <name>
 	TopologyClaimerOP newTopologyClaimer(const std::string& name) const;
@@ -54,29 +49,16 @@ public:
 	/// newTopologyClaimer(<name>).
 	void add_type(TopologyClaimerOP claimer);
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
 private:
 	/// @brief Constructs a new instance and initializes the lookup table
 	/// <claimers_> with commonly used types
 	TopologyClaimerFactory();
 
+	TopologyClaimerFactory( TopologyClaimerFactory const & ) = delete;
+	TopologyClaimerFactory & operator=( TopologyClaimerFactory const & ) = delete;
+
 	/// @brief Frees resources associated with this object
 	~TopologyClaimerFactory();
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static TopologyClaimerFactory * create_singleton_instance();
 
 private:
 
@@ -84,14 +66,6 @@ private:
 	/// newTopologyClaimer() method to instantiate new claimers by name.
 	mutable std::map<std::string, TopologyClaimerOP> claimers_;
 
-	/// @brief A pointer to the singleton instance of the factory object.
-	/// Resources associated with the object are released on destruction.
-	/// APL Question: Should this be one-instance-per-program (singleton) or one-instance-per-job?
-#if defined MULTI_THREADED
-	static std::atomic< TopologyClaimerFactory * > instance_;
-#else
-	static TopologyClaimerFactory * instance_;
-#endif
 
 };
 

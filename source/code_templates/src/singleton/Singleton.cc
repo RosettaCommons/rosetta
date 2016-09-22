@@ -27,31 +27,6 @@
 // C++ headers
 #include <string>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 headers
-#include <atomic>
-#include <mutex>
-
-#endif
-#endif
-
-
-// Singleton set-up
-namespace utility {
-
-
-#if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< --class-- >::singleton_mutex_ {};
-template <> std::atomic< --class-- * > utility::SingletonBase< --class-- >::instance_( 0 );
-#else
-template <> --class-- * utility::SingletonBase< --class-- >::instance_( 0 );
-#endif
-
-}  // namespace utility
-
-
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -66,13 +41,6 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 --class--::--class--()
 {
 
-}
-
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
---class-- *
---class--::create_singleton_instance()
-{
-	return new --class--;
 }
 
 --end_namespace--

@@ -22,29 +22,23 @@
 
 // C++ header
 
-
-
 --namespace--
 
 /// @brief --brief--
 class --class-- : public utility::SingletonBase< --class-- > {
 	friend class utility::SingletonBase< --class-- >;
 
-
 private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	--class--();
-
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static --class-- * create_singleton_instance();
-
+	--class--(--class-- const & ) = delete;
+	--class-- operator=(--class-- const & ) = delete;
 
 private:  // Private data /////////////////////////////////////////////////////
 
 };
 
 --end_namespace--
-
 
 #endif //INCLUDED_--path--_--class--_fwd_hh
 

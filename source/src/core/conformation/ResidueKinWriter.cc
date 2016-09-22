@@ -169,7 +169,7 @@ ResidueKinWriter::write_rsd_coords(
 	if ( ! is_instance ) {
 		for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-			for ( unsigned long atom_j : nbrs ) {
+			for ( core::Size atom_j : nbrs ) {
 				if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 

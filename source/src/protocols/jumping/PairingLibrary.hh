@@ -179,11 +179,7 @@ public:
 	friend class utility::SingletonBase< StandardPairingLibrary >;
 
 private:
-	StandardPairingLibrary() {}
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static StandardPairingLibrary * create_singleton_instance();
+	StandardPairingLibrary();
 
 };
 

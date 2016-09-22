@@ -58,10 +58,6 @@ public:
 private:
 	FallbackConfigurationFactory(); // singleton, private constructor
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static FallbackConfigurationFactory * create_singleton_instance();
-
 public:
 
 	FallbackConfigurationOP

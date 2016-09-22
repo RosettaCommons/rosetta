@@ -48,10 +48,6 @@ private:
 	RotamerRecoveryFactory();
 	RotamerRecoveryFactory(const RotamerRecoveryFactory & src); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static RotamerRecoveryFactory * create_singleton_instance();
-
 	RotamerRecoveryFactory const &
 	operator=( RotamerRecoveryFactory const & ); // unimplemented
 

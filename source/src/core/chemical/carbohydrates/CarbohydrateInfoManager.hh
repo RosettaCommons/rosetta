@@ -99,10 +99,6 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	CarbohydrateInfoManager();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static CarbohydrateInfoManager * create_singleton_instance();
-
-
 	// Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
 	// creating it if necessary.
 	// Called by the public static method root_from_code().

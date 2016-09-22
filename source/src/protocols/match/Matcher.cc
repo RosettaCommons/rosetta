@@ -1869,7 +1869,7 @@ Matcher::select_hit_representatives(
 			for ( std::map< upstream_hit, std::set< Size> >::const_iterator map_it( us_hit_map.begin() ), map_end( us_hit_map.end() );
 					map_it != map_end; ++map_it ) {
 				Size counter(0);
-				for ( unsigned long set_it : map_it->second ) {
+				for ( core::Size set_it : map_it->second ) {
 					++counter;
 					++n_hits_per_geomcst[ ii ];
 					reps[ii].push_back( set_it );

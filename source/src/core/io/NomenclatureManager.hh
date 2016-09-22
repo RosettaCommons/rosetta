@@ -62,9 +62,6 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	NomenclatureManager();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static NomenclatureManager * create_singleton_instance();
-
 	// Get the map requested, creating it if necessary.
 	// Called by the public static method rosetta_names_from_pdb_code()
 	AltCodeMap const & get_alternate_3_letter_code_map() const;

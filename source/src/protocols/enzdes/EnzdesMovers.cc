@@ -271,7 +271,7 @@ PredesignPerturbMover::find_geometric_center_for_constrained_lig_atoms(
 	assert( constraint_reporter_.constrained_lig_atoms().size() != 0 );
 
 	core::Vector geometric_center( 0.0 );
-	for ( unsigned long it : constraint_reporter_.constrained_lig_atoms() ) {
+	for ( core::Size it : constraint_reporter_.constrained_lig_atoms() ) {
 		geometric_center+=pose.residue( constraint_reporter_.ligand_resno() ).xyz(it);
 	}
 

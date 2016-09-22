@@ -116,8 +116,8 @@ DistanceConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	ResidueVector const subset1 = selector1_->apply( pose );
 	ResidueVector const subset2 = selector2_->apply( pose );
 
-	for ( unsigned long r : subset1 ) {
-		for ( unsigned long r2 : subset2 ) {
+	for ( core::Size r : subset1 ) {
+		for ( core::Size r2 : subset2 ) {
 			// don't create dist cst to same residue
 			if ( r == r2 ) continue;
 			csts.push_back( create_constraint( pose, r, r2 ) );

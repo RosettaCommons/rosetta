@@ -64,7 +64,6 @@ private:
 	std::vector<bool>  generate_ss_subset_match(FragmentStoreOP fragStoreOP, std::string stub_ss);
 	bool valid_ss_stub_abego_match(std::string ss_stub,std::string abego_string);
 	std::set<std::string> get_ss_stubs_per_fragmentStoreOP(Size base5ABEGOindex, core::indexed_structure_store::FragmentStoreOP fragment_storeOP);
-	static ABEGOHashedFragmentStore * create_singleton_instance();
 };
 
 }

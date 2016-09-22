@@ -48,15 +48,9 @@
 
 #include <utility/vector1.hh>
 
-
 // Objexx headers
 
 // C++ headers
-
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
 
 namespace protocols {
 namespace scoring {
@@ -135,24 +129,19 @@ public:
 };
 
 
-class PCS_Energy_parameters_manager {
+class PCS_Energy_parameters_manager : public utility::SingletonBase< PCS_Energy_parameters_manager > {
 public:
-	static
-	PCS_Energy_parameters_manager *
-	get_instance();
+
+	friend utility::SingletonBase< PCS_Energy_parameters_manager >;
+
+	PCS_Energy_parameters_manager(PCS_Energy_parameters_manager const &) = delete;
+
+	PCS_Energy_parameters_manager &
+	operator=( PCS_Energy_parameters_manager const &) = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< PCS_Energy_parameters_manager * > instance_;
-#else
-	static PCS_Energy_parameters_manager * instance_;
-#endif
 
 	PCS_Energy_parameters_manager();
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PCS_Energy_parameters_manager * create_singleton_instance();
 
 	core::Real grid_edge_;
 	core::Real grid_step_;
@@ -172,18 +161,6 @@ private:
 	utility::vector1< bool > vec_exclude_residues_;
 	bool vec_exclude_residues_exists_;
 	bool vec_exclude_residues_changed_;
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
 
 public:
 

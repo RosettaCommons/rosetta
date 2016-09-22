@@ -1058,7 +1058,7 @@ EnzdesRemodelMover::process_length_change(
 		rcg->set_seqmap( smap );
 	}
 
-	for ( unsigned long & non_remodel_match_po : non_remodel_match_pos_ ) {
+	for ( core::Size & non_remodel_match_po : non_remodel_match_pos_ ) {
 		non_remodel_match_po = (*smap)[non_remodel_match_po];
 	}
 }

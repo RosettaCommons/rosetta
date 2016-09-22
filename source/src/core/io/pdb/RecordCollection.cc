@@ -123,13 +123,6 @@ RecordCollection::RecordCollection()
 		basic::database::full_name( "input_output/pdb_record_defs" ), string_to_record_type_map_ );
 }
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-RecordCollection *
-RecordCollection::create_singleton_instance()
-{
-	return new RecordCollection;
-}
-
 }  // namespace pdb
 }  // namespace io
 }  // namespace core

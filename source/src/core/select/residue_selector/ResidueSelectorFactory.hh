@@ -22,6 +22,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -29,19 +30,13 @@
 #include <map>
 #include <string>
 
-#ifdef MULTI_THREADED
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace core {
 namespace select {
 namespace residue_selector {
 
-class ResidueSelectorFactory {
+class ResidueSelectorFactory : public utility::SingletonBase< ResidueSelectorFactory > {
 public:
-	static ResidueSelectorFactory * get_instance();
+	friend class utility::SingletonBase< ResidueSelectorFactory >;
 
 	void factory_register( ResidueSelectorCreatorOP creator );
 	bool has_type( std::string const & ) const;
@@ -72,31 +67,8 @@ private:
 	ResidueSelectorFactory();
 
 	// Unimplemented -- uncopyable
-	ResidueSelectorFactory( ResidueSelectorFactory const & );
-	ResidueSelectorFactory const & operator = ( ResidueSelectorFactory const & );
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResidueSelectorFactory * create_singleton_instance();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-#ifdef MULTI_THREADED
-	static std::atomic< ResidueSelectorFactory * > instance_;
-#else
-	static ResidueSelectorFactory * instance_;
-#endif
+	ResidueSelectorFactory( ResidueSelectorFactory const & ) = delete;
+	ResidueSelectorFactory const & operator = ( ResidueSelectorFactory const & ) = delete;
 
 private:
 	std::map< std::string, ResidueSelectorCreatorOP > creator_map_;

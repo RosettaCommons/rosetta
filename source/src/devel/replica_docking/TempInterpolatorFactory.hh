@@ -51,10 +51,6 @@ public:
 
 private:
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static TempInterpolatorFactory * create_singleton_instance();
-
 	TempInterpolatorFactory();
 
 	// Unimplemented -- uncopyable

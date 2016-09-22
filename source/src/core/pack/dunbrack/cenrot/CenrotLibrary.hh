@@ -87,10 +87,6 @@ private:
 	CenrotLibrary( CenrotLibrary const & ); // unimplemented
 	CenrotLibrary const & operator = ( CenrotLibrary const & ); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static CenrotLibrary * create_singleton_instance();
-
 private:
 
 	utility::vector1< SingleResidueCenrotLibraryCOP > cenrot_libraries_;

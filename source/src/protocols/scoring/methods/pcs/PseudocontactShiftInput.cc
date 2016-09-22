@@ -306,12 +306,6 @@ PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & fil
 	return(pcs_d_i);
 }
 
-PCS_data_input_manager *
-PCS_data_input_manager::create_singleton_instance()
-{
-	return new PCS_data_input_manager;
-}
-
 }//namespace pcs
 }//namespace methods
 }//namespace scoring

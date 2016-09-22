@@ -128,14 +128,11 @@ public:
 };
 
 
-class PCS_Energy_parameters_manager_Ts2 {
+class PCS_Energy_parameters_manager_Ts2 : public utility::SingletonBase< PCS_Energy_parameters_manager_Ts2 > {
 public:
-	static
-	PCS_Energy_parameters_manager_Ts2 *
-	get_instance();
+	friend class utility::SingletonBase< PCS_Energy_parameters_manager_Ts2 >;
 
 private:
-	static PCS_Energy_parameters_manager_Ts2 * instance_;
 
 	PCS_Energy_parameters_manager_Ts2();
 

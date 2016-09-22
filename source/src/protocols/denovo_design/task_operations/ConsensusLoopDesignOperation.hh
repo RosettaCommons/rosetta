@@ -118,9 +118,6 @@ public:
 
 	virtual ~ConsensusLoopDatabase();
 
-	static ConsensusLoopDatabase *
-	create_singleton_instance();
-
 public:
 	void
 	set_frequency(

@@ -220,7 +220,7 @@ DesignSilentStruct::calculate_additional_info(
 
 	//then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
 	Size spec_res_counter(0);
-	for ( unsigned long special_re : special_res ) {
+	for ( core::Size special_re : special_res ) {
 
 		spec_res_counter++;
 		//for convenience, the sequence number of the residue will be written out

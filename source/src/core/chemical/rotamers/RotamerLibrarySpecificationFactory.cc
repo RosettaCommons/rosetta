@@ -31,12 +31,6 @@ namespace rotamers {
 
 static THREAD_LOCAL basic::Tracer TR("core.chemical.rotamers.RotamerLibrarySpecificationFactory");
 
-RotamerLibrarySpecificationFactory *
-RotamerLibrarySpecificationFactory::create_singleton_instance()
-{
-	return new RotamerLibrarySpecificationFactory;
-}
-
 void
 RotamerLibrarySpecificationFactory::factory_register( RotamerLibrarySpecificationCreatorOP creator )
 {

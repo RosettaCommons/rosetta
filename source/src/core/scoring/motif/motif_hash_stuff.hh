@@ -520,12 +520,12 @@ std::istream & operator >> (std::istream & in , MotifHash       & x);
 typedef std::map<std::string,MotifHashOP> MotifHashStringMap;
 
 
-class MotifHashManager {
+class MotifHashManager : public utility::SingletonBase< MotifHashManager > {
 public:
+	friend class utility::SingletonBase< MotifHashManager >;
+
 	typedef ResPairMotifMetaBinner::Key Key;
 	~MotifHashManager();
-
-	static MotifHashManager * get_instance();
 
 	bool have_motifs() const { return motif_set_names_.size(); }
 	MotifHashCOP get_motif_hash_BB_BB();
@@ -550,8 +550,10 @@ public:
 
 private:
 	MotifHashManager();
+	MotifHashManager( MotifHashManager const & ) = delete;
+	MotifHashManager & operator=( MotifHashManager const & ) = delete;
+
 	void init();
-	static MotifHashManager * instance_;
 	MotifHashOP motif_hash_SC_BB_;
 	MotifHashOP motif_hash_SC_SC_;
 	MotifHashOP motif_hash_BB_BB_;

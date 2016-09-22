@@ -1203,7 +1203,7 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 		if ( pose.residue_type( *vecit ).is_ligand() ) {
 			Size lig_chain = pose.chain( *vecit );
 			std::string lig_ch_string = utility::to_string( lig_chain );
-			for ( unsigned long prot_chain : protein_chains ) {
+			for ( core::Size prot_chain : protein_chains ) {
 				std::string prot_ch_string = utility::to_string( prot_chain );
 				if ( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 

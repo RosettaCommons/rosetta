@@ -54,6 +54,10 @@ namespace pcs2 {
 
 static THREAD_LOCAL basic::Tracer TR_PcsDataCenterManagerSingleton( "protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton" );
 
+PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton() :
+	PcsDataCenterManagerSingleton( *PcsEnergyParameterManager::get_instance() )
+{}
+
 PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterManager & pcs_e_p_m){
 
 	core::Size i_multi_data;
@@ -104,37 +108,6 @@ operator<<(std::ostream& out, const PcsDataCenterManagerSingleton & m){
 core::Size
 PcsDataCenterManagerSingleton::get_n_multi_data() const{
 	return (PCS_data_all_.size());
-}
-
-#if defined MULTI_THREADED
-std::atomic< PcsDataCenterManagerSingleton * > PcsDataCenterManagerSingleton::instance_( 0 );
-#else
-PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-
-std::mutex PcsDataCenterManagerSingleton::singleton_mutex_;
-
-std::mutex & PcsDataCenterManagerSingleton::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::get_instance(PcsEnergyParameterManager & pcs_e_p_m)
-{
-	boost::function< PcsDataCenterManagerSingleton * () > creator = boost::bind(
-		&PcsDataCenterManagerSingleton::create_singleton_instance,
-		boost::ref( pcs_e_p_m ) );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PcsDataCenterManagerSingleton *
-PcsDataCenterManagerSingleton::create_singleton_instance( PcsEnergyParameterManager & pcs_e_p_m )
-{
-	return new PcsDataCenterManagerSingleton( pcs_e_p_m );
 }
 
 }//namespcacs PCS

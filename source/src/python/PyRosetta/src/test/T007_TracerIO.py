@@ -32,6 +32,10 @@ print( T.buf() )
 class MyPyTracer(rosetta.basic.PyTracer):
     def __init__(self):
         rosetta.basic.PyTracer.__init__(self)
+        self.set_ios_hook = rosetta.basic.Tracer.set_ios_hook
+
+    def __del__(self):
+        self.set_ios_hook(None, '')
 
     def output_callback(self, s):
         print('MyPyTracer.output_callback with argument:')

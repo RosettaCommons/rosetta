@@ -251,7 +251,7 @@ FeaturesReporter::check_relevant_residues(
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive : {
-		for ( unsigned long residue : residues ) {
+		for ( core::Size residue : residues ) {
 			if ( !relevant_residues[residue] ) {
 				return false;
 			}
@@ -259,7 +259,7 @@ FeaturesReporter::check_relevant_residues(
 		return true;
 	}
 	case RelevantResiduesMode::Inclusive : {
-		for ( unsigned long residue : residues ) {
+		for ( core::Size residue : residues ) {
 			if ( relevant_residues[residue] ) {
 				return true;
 			}

@@ -23,7 +23,6 @@
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
@@ -36,37 +35,6 @@ namespace core {
 namespace pack {
 namespace task {
 namespace operation {
-
-// special singleton functions
-// initialize
-#if defined MULTI_THREADED
-std::atomic< ResFilterFactory * > ResFilterFactory::instance_( 0 );
-#else
-ResFilterFactory * ResFilterFactory::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-
-std::mutex ResFilterFactory::singleton_mutex_;
-
-std::mutex & ResFilterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResFilterFactory * ResFilterFactory::get_instance()
-{
-	boost::function< ResFilterFactory * () > creator = boost::bind( &ResFilterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-ResFilterFactory *
-ResFilterFactory::create_singleton_instance()
-{
-	return new ResFilterFactory;
-}
 
 ResFilterFactory::ResFilterFactory() {}
 

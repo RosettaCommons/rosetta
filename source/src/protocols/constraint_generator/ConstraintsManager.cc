@@ -39,12 +39,6 @@ ConstraintsManager::ConstraintsManager():
 
 ConstraintsManager::~ConstraintsManager()= default;
 
-ConstraintsManager *
-ConstraintsManager::create_singleton_instance()
-{
-	return new ConstraintsManager;
-}
-
 /// @brief Clears constraints stored under the given name
 /// @details  If constraints are not found under the given name, or there is no
 ///           cached data, this will do nothing.

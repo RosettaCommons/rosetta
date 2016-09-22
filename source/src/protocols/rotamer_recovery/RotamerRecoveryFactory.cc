@@ -50,12 +50,6 @@ using core::scoring::ScoreFunctionCOP;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
-RotamerRecoveryFactory *
-RotamerRecoveryFactory::create_singleton_instance()
-{
-	return new RotamerRecoveryFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 RotamerRecoveryFactory::RotamerRecoveryFactory() {}
 

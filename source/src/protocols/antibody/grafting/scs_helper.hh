@@ -35,29 +35,27 @@ class SCS_Helper : public utility::SingletonBase< SCS_Helper >
 {
 public:
 	friend class utility::SingletonBase< SCS_Helper >;
-	
+
 public: // Static constant data access
 	/// @brief Return a map of pdb to map of CDR to bool (true if bfactor cutoff is NOT met)
 	static std::map< std::string, std::map<std::string, bool> > get_ab_cdr_bfactors();
-  
+
   /// @brief Return a map of pdb to map of pdb to a float (OCD distance between the two pdbs)
   static std::map< std::string, std::map<std::string, core::Real> > get_ab_OCDs();
-  
+
   /// @brief Return a map of pdb to map of CDR to bool (true if region is outlier)
 	static std::map< std::string, std::map<std::string, bool> > get_ab_region_outliers();
-  
+
 private: // Private methods
 	// Empty constructor
 	SCS_Helper();
-	
-	static SCS_Helper * create_singleton_instance();
-	
+
 	// Function to load bfactor data into map
 	std::map< std::string, std::map<std::string, bool> > parse_bfactor_data();
 
   // Function to load OCD data into map
   std::map< std::string, std::map<std::string, core::Real> > parse_OCD_data();
-  
+
   // Function to load outlier data into map
   std::map< std::string, std::map<std::string, bool> > parse_outlier_data();
 

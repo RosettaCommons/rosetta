@@ -559,7 +559,7 @@ hbonded(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for ( unsigned long binder : binders ) {
+	for ( core::Size binder : binders ) {
 		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
@@ -654,7 +654,7 @@ hbonded_atom(
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
-	for ( unsigned long binder : binders ) {
+	for ( core::Size binder : binders ) {
 		core::conformation::Residue const resj( pose.residue(binder) );
 
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );

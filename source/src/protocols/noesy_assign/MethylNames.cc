@@ -37,12 +37,6 @@ namespace noesy_assign {
 
 using namespace core;
 
-MethylNameLibrary *
-MethylNameLibrary::create_singleton_instance()
-{
-	return new MethylNameLibrary;
-}
-
 MethylNameLibrary::MethylNameLibrary() {
 	load_database_table();
 }

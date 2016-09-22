@@ -20,6 +20,7 @@
 #include <utility/sql_database/types.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/file/FileName.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
@@ -141,23 +142,20 @@ public:
 
 };
 
-class DatabaseSessionManager {
+class DatabaseSessionManager : public utility::SingletonBase< DatabaseSessionManager > {
+	friend class utility::SingletonBase< DatabaseSessionManager >;
 
 protected:
 
 	// Private constructor to make it singleton managed
 	DatabaseSessionManager();
-	DatabaseSessionManager( const DatabaseSessionManager & src );
+	DatabaseSessionManager( const DatabaseSessionManager & src ) = delete;
+	DatabaseSessionManager & operator=( const DatabaseSessionManager & src ) = delete;
 
 public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~DatabaseSessionManager();
-
-	/// @brief return singleton instance of session manager
-	static
-	DatabaseSessionManager *
-	get_instance();
 
 	/// @brief Acquire a database session
 	sessionOP
@@ -216,10 +214,6 @@ private:
 		utility::vector1< std::string > const & schema_search_path
 	);
 
-
-#ifndef MULTI_THREADED
-	static boost::scoped_ptr< DatabaseSessionManager > instance_;
-#endif
 };
 
 

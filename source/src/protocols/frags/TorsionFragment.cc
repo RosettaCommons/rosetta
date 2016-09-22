@@ -388,7 +388,7 @@ void
 FragLib::copy_fragments( FragLib const & src )
 {
 	Sizes const fragsizes( src.frag_sizes() );
-	for ( unsigned long fragsize : fragsizes ) {
+	for ( core::Size fragsize : fragsizes ) {
 		library( fragsize ).copy_fragments( src.library( fragsize ) );
 	}
 }
@@ -561,7 +561,7 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for ( unsigned long frag_size : frag_sizes ) {
+	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
@@ -609,7 +609,7 @@ add_vall_fragments(
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
 
-	for ( unsigned long frag_size : frag_sizes ) {
+	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
@@ -677,7 +677,7 @@ add_vall_cheating_fragments(
 	Size const nres( pose.size() );
 	string const seq( pose.sequence() );
 
-	for ( unsigned long frag_size : frag_sizes ) {
+	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
 		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
@@ -765,7 +765,7 @@ fill_in_gaps(
 	}
 
 	Sizes const frag_sizes( frag_lib.frag_sizes() );
-	for ( unsigned long frag_size : frag_sizes ) {
+	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		for ( Size i = 1; i<= lib.size(); ++i ) {
 			if ( lib[i].size() > 0 ) continue; // skip windows with at least one fragment
@@ -972,7 +972,7 @@ operator << ( std::ostream & out, FragLib const & lib )
 {
 	Sizes const fragsizes( lib.frag_sizes() );
 	out << "FragLib " << fragsizes.size() << '\n';
-	for ( unsigned long fragsize : fragsizes ) {
+	for ( core::Size fragsize : fragsizes ) {
 		out << "frag_size " << fragsize << ' ' << lib.library( fragsize );
 	}
 	return out;

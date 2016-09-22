@@ -206,9 +206,7 @@ public:
 
 private:
 	QuaternionGridManager();
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static QuaternionGridManager * create_singleton_instance();
+
 	void fill_metadata();
 
 private:

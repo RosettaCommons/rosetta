@@ -234,7 +234,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 					}
 				}
 				TR << "RotamerLinks set for residue " << ir << ": sele chain " << get_component_of_residue(pose,ir) << " and resi ";
-				for ( unsigned long & i : list ) {
+				for ( core::Size const & i : list ) {
 					TR << i << "+";
 				} TR << std::endl;
 			} else if ( pose.residue(ir).is_protein()                 //residue is a protein

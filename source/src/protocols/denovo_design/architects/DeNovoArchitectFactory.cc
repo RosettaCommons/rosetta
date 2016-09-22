@@ -52,12 +52,6 @@ DeNovoArchitectFactory::DeNovoArchitectFactory():
 DeNovoArchitectFactory::~DeNovoArchitectFactory()
 {}
 
-DeNovoArchitectFactory *
-DeNovoArchitectFactory::create_singleton_instance()
-{
-	return new DeNovoArchitectFactory;
-}
-
 DeNovoArchitectOP
 DeNovoArchitectFactory::create_instance(
 	std::string const & architect_name,

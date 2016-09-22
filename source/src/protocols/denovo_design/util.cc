@@ -169,7 +169,7 @@ void construct_poly_ala_pose(
 	// remove jump atoms, which may cause problems in mutating residues
 	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
-	for ( unsigned long resid : res_set ) {
+	for ( core::Size resid : res_set ) {
 		if ( !pose.residue( resid ).is_protein() ) continue;
 
 		if ( !keep_chirality || !pose.residue( resid ).type().is_d_aa() ) positions.push_back( resid );

@@ -17,55 +17,32 @@
 
 #include <core/types.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
+#include <utility/SingletonBase.hh>
 
 namespace devel {
 namespace matdes {
 
-class SymmetrizerSampler
+class SymmetrizerSampler : public utility::SingletonBase< SymmetrizerSampler >
 {
 	typedef core::Real Real;
 
 public:
-	static SymmetrizerSampler& get_instance();
+	friend class utility::SingletonBase< SymmetrizerSampler >;
+
 	void set_angle_range(Real min_angle, Real max_angle, Real angle_step);
 	void set_radial_disp_range(Real min_radial_disp, Real max_radial_disp, Real radial_disp_step );
 	Real get_angle() { return current_angle_; }
 	Real get_radial_disp() { return current_radial_disp_; }
 	void step();
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-	// Don't implement the methods belowed, this class is a singleton.
 	SymmetrizerSampler();
-	SymmetrizerSampler(SymmetrizerSampler const&);
-	void operator=(SymmetrizerSampler const&);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SymmetrizerSampler * create_singleton_instance();
+	// Don't implement the methods belowed, this class is a singleton.
+	SymmetrizerSampler(SymmetrizerSampler const&) = delete;
+	void operator=(SymmetrizerSampler const&)  = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< SymmetrizerSampler * > instance_;
-#else
-	static SymmetrizerSampler * instance_;
-#endif
-
 
 	Real angle_min_;
 	Real angle_max_;

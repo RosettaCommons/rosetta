@@ -396,15 +396,10 @@ DisulfPairingLibrary::generate_jump_frags(
 } // method
 
 
-StandardDisulfPairingLibrary *
-StandardDisulfPairingLibrary::create_singleton_instance()
-{
-	auto * instance = new StandardDisulfPairingLibrary;
-	//instance = new StandardDisulfPairingLibrary();
+StandardDisulfPairingLibrary::StandardDisulfPairingLibrary() {
 	std::cout << "READING START" << std::endl;
-	instance->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
+	this->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
 	std::cout << "READING END" << std::endl;
-	return instance;
 }
 
 } // jumping

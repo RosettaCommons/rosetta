@@ -57,13 +57,6 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-PcsGridSearchParameterManager *
-PcsGridSearchParameterManager::create_singleton_instance()
-{
-	return new PcsGridSearchParameterManager;
-}
-
-
 PcsGridSearchParameterManager::PcsGridSearchParameterManager() {}
 
 /// @brief WARNING WARNING WARNING! THREAD UNSAFE!

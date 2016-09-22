@@ -31,12 +31,6 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceLoaderFactory *
-ResourceLoaderFactory::create_singleton_instance()
-{
-	return new ResourceLoaderFactory;
-}
-
 ResourceLoaderOP
 ResourceLoaderFactory::create_resource_loader(
 	std::string const & loader_type

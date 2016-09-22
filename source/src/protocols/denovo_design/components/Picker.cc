@@ -64,12 +64,6 @@ Picker::Picker() :
 
 Picker::~Picker() {}
 
-Picker *
-Picker::create_singleton_instance()
-{
-	return new Picker();
-}
-
 void
 Picker::set_nfrags( core::Size const nfrags )
 {

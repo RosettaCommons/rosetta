@@ -94,10 +94,6 @@ public:
 
 private:
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static InterchainPotential * create_singleton_instance();
-
 	InterchainPotential();
 	InterchainPotential( InterchainPotential const & src );
 	InterchainPotential & operator = ( InterchainPotential const & rhs );

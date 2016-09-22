@@ -126,7 +126,7 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		for ( Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num(pose, j ));
 		}
-		for ( unsigned long sym_aware_jump_id : sym_aware_jump_ids ) {
+		for ( core::Size sym_aware_jump_id : sym_aware_jump_ids ) {
 			sym_dof_names_.push_back(core::pose::symmetry::jump_num_sym_dof(pose,sym_aware_jump_id));
 		}
 	} else {

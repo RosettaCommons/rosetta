@@ -68,7 +68,6 @@ private:
 
 	StructureStoreManager();
 	GroupedFragmentMap grouped_fragment_map_;
-	static StructureStoreManager * create_singleton_instance();
 
 };
 

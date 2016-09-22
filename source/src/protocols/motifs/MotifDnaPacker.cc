@@ -621,7 +621,7 @@ MotifDnaPacker::motif_expansion_inner_loop(
 	ms_rsoop->set_new_rots( restricted_rotamers );
 	my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
 
-	for ( unsigned long current_po : current_pos ) {
+	for ( core::Size current_po : current_pos ) {
 		if ( rotamer_map[current_po].empty() ) continue;
 		pack::rotamer_set::Rotamers other_rotamers;
 		for ( core::Size it4(1); it4<=(rotamer_map[current_po]).size(); ++it4 ) {

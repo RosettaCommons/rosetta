@@ -66,6 +66,13 @@ namespace jd2 {
 //  JobDistributor* jd_;
 // };
 
+// Though a singleton, JobDistributor doesn't derive from SingletonBase.
+// The reason for this is that we initialize JobInputters and JobOutputters
+// during the constructor, which may access JobDistributor::get_instance()
+// The SingletonBase implementation would result in infinite recursion
+// (actually a deadlock in multithreaded systems).
+// init_jd() has special bootstrapping logic to avoid this.
+
 class JobDistributor {
 
 protected:

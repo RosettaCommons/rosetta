@@ -36,9 +36,6 @@ public: // constructors/destructors
 	ConstraintsManager();
 	virtual ~ConstraintsManager();
 
-	static ConstraintsManager *
-	create_singleton_instance();
-
 public:
 	/// @brief Stores the given constraints in the pose datacache, under the name given.
 	/// @param[in,out] pose  Pose where constraints will be cached

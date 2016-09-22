@@ -75,10 +75,6 @@ private:
 	ResLvlTaskOperationFactory();
 	virtual ~ResLvlTaskOperationFactory();
 
-	// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResLvlTaskOperationFactory * create_singleton_instance();
-
 	RLTOC_Map rltoc_map_;
 
 };

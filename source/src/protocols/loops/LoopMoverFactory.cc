@@ -49,12 +49,6 @@ using core::pose::Pose;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
-LoopMoverFactory *
-LoopMoverFactory::create_singleton_instance()
-{
-	return new LoopMoverFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 LoopMoverFactory::LoopMoverFactory() {}
 

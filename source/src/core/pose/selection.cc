@@ -230,7 +230,7 @@ get_resnum_list(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for ( unsigned long num : nums ) {
+		for ( core::Size num : nums ) {
 			runtime_assert_string_msg( num, "Error in core::pose::selection::get_resnum_list(): A residue index could not be parsed." );
 			resid.insert( num );
 		}
@@ -269,7 +269,7 @@ get_resnum_list_ordered(
 			}
 		}
 		utility::vector1<core::Size> const nums( parse_selection_block( res, pose ) );
-		for ( unsigned long num : nums ) {
+		for ( core::Size num : nums ) {
 			runtime_assert( num );
 			resid.push_back( num );
 		}

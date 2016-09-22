@@ -127,7 +127,7 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 			emap[ score_type ] = pose.energies().total_energies()[ score_type ];
 		}
 	} else {
-		for ( unsigned long position : positions_ ) {
+		for ( core::Size position : positions_ ) {
 
 			for ( auto score_type : score_types_ ) {
 				emap[ score_type ] += pose.energies().residue_total_energies( position )[ score_type ];

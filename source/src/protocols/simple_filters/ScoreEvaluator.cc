@@ -117,7 +117,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 	nres_ = 400; //no worries: if the pose turns out to be larger we repeat that inversion in apply().
 	evaluation::invert_include_residues( 400, selection_, exclude_list_ );
 	if ( tr.Trace.visible() ) {
-		for ( unsigned long it : selection ) {
+		for ( core::Size it : selection ) {
 			tr.Trace << it << " ";
 		}
 		tr.Trace << std::endl;

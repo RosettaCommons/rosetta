@@ -30,12 +30,6 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceManagerFactory *
-ResourceManagerFactory::create_singleton_instance()
-{
-	return new ResourceManagerFactory;
-}
-
 ResourceManagerFactory::ResourceManagerFactory() {}
 
 ResourceManager *

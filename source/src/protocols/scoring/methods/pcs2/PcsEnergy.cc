@@ -247,8 +247,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 PcsDataCenterManagerSingleton &
 PcsEnergy::PCS_multi_data_from_noone() const{
 
-	PcsEnergyParameterManager & pcs_e_m = *(PcsEnergyParameterManager::get_instance());
-	PcsDataCenterManagerSingleton & pcs_d_c_m_s = *(PcsDataCenterManagerSingleton::get_instance(pcs_e_m));
+	PcsDataCenterManagerSingleton & pcs_d_c_m_s = *PcsDataCenterManagerSingleton::get_instance();
 	return(pcs_d_c_m_s);
 }
 

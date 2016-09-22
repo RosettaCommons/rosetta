@@ -560,7 +560,7 @@ ddG::unbind( pose::Pose & pose ) const
 	} else if ( chain_ids_.size() > 0 ) {
 		//We want to translate each chain the same direction, though it doesnt matter much which one
 		Vector translation_axis(1,0,0);
-		for ( unsigned long current_chain_id : chain_ids_ ) {
+		for ( core::Size current_chain_id : chain_ids_ ) {
 			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
 			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.

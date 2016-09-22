@@ -1372,7 +1372,7 @@ bool
 EnzdesFlexibleRegion::contains_catalytic_res() const
 {
 
-	for ( unsigned long design_target : design_targets_ ) {
+	for ( core::Size design_target : design_targets_ ) {
 		if ( this->contains_seqpos( design_target ) ) return true;
 	}
 	return false;
@@ -1651,7 +1651,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 
 	//now delete the unnecessary edges from the graph
 	utility::vector1< core::Size > residue_groups( pose.size(), 0 );
-	for ( unsigned long design_target : design_targets_ ) {
+	for ( core::Size design_target : design_targets_ ) {
 		if ( (design_target >= *(positions_.begin() ) ) && (design_target <= *(positions_.rbegin() ) ) ) {
 			residue_groups[ design_target ] = 2;
 			//tr << "CATKEEPGRAPH: resi " << *cat_it << " is part of loop between " << *(positions_.begin() ) << " and " << *(positions_.rbegin() ) << std::endl;
@@ -1662,7 +1662,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	//and then precompute the energies of (hopefully) only the positions/ligand interactions
 	rotsets->precompute_two_body_energies(  pose, *scorefxn, packer_neighbor_graph, ig );
 
-	for ( unsigned long position : positions_ ) {
+	for ( core::Size position : positions_ ) {
 
 		core::Size moltenid = rotsets->resid_2_moltenres( position);
 
@@ -1726,7 +1726,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 
 	EnergyMap const cur_weights = pose.energies().weights();
 
-	for ( unsigned long design_target : design_targets_ ) {
+	for ( core::Size design_target : design_targets_ ) {
 
 		for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( design_target )->const_edge_list_begin();
 				egraph_it != pose.energies().energy_graph().get_node( design_target )->const_edge_list_end(); ++egraph_it ) {
@@ -2061,7 +2061,7 @@ EnzdesFlexibleRegion::minimize_region(
 
 	}
 
-	for ( unsigned long chi_it : chi_to_move ) {
+	for ( core::Size chi_it : chi_to_move ) {
 		movemap->set_chi( chi_it, true );
 	}
 

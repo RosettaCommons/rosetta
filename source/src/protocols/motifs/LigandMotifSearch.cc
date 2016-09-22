@@ -1205,7 +1205,7 @@ LigandMotifSearch::get_sphere_aa(
 		core::Real cut3_sq = cut3 * cut3;
 		core::Real cut4_sq = cut4 * cut4;
 
-		for ( unsigned long interface_target_re : interface_target_res ) {
+		for ( core::Size interface_target_re : interface_target_res ) {
 
 			// on protein side, have to do distance check
 			core::conformation::Residue const & targ_rsd = pose.residue( interface_target_re );

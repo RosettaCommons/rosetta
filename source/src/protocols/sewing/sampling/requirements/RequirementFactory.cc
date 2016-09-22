@@ -46,40 +46,8 @@ namespace requirements {
 
 static basic::Tracer tr("protocols.sewing.sampling.requirements.RequirementFactory");
 
-#if defined MULTI_THREADED
-std::atomic< RequirementFactory * > RequirementFactory::instance_( 0 );
-#else
-RequirementFactory * RequirementFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex RequirementFactory::singleton_mutex_;
-
-std::mutex & RequirementFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-RequirementFactory * RequirementFactory::get_instance()
-{
-	boost::function< RequirementFactory * () > creator = boost::bind( &RequirementFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-RequirementFactory *
-RequirementFactory::create_singleton_instance()
-{
-	return new RequirementFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 RequirementFactory::RequirementFactory() {}
-
-RequirementFactory::RequirementFactory(
-	const RequirementFactory &
-) {}
 
 RequirementFactory::~RequirementFactory() {}
 

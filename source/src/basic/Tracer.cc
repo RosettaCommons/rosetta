@@ -51,8 +51,6 @@ namespace basic {
 
 bool Tracer::initial_tracers_visibility_calculated_( false );
 
-TracerManager * TracerManager::instance_( 0 );
-
 #ifdef MULTI_THREADED
 
 /// @brief This mutex ensures that any time static data is read from or written to by
@@ -95,7 +93,12 @@ bool &Tracer::ios_hook_raw_() // uninitilized, we will set correct output during
 	return raw;
 }
 
-utility::vector1< std::string > Tracer::monitoring_list_;
+utility::vector1< std::string > &
+Tracer::monitoring_list_()
+{
+	static utility::vector1< std::string > monitoring_list;
+	return monitoring_list;
+}
 
 
 //std::string const Tracer::AllChannels("_Really_Unique_String_Object_To_Identify_All_Tracer_Channels__qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
@@ -240,6 +243,11 @@ void Tracer::init(std::string const & channel, std::string const & channel_color
 		calculate_visibility();
 	}
 
+	// EXTREMELY important: As the destructor for (static) Tracers attempt to
+	// access the TracerManager singleton, TracerManager::get_instance()
+	// *must* be called (nontrivially) before the end of *every* constructor,
+	// to make sure that the destructors are sequenced appropriately.
+	// (i.e. every tracer destructor gets called before the TracerManager one does.)
 	TracerManager::get_instance()->all_tracers().push_back( this );
 }
 
@@ -271,6 +279,12 @@ Tracer::~Tracer()
 #ifdef MULTI_THREADED
 	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
 #endif
+
+	// EXTREMELY important: As the destructor for (static) Tracers attempt to
+	// access the TracerManager singleton, TracerManager::get_instance()
+	// *must* be called (nontrivially) before the end of *every* constructor,
+	// to make sure that the destructors are sequenced appropriately.
+	// (i.e. every tracer destructor gets called before the TracerManager one does.)
 
 	//std::cout << "Erasing tracer: " << channel_ << std::endl;
 	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
@@ -541,7 +555,7 @@ void Tracer::t_flush(std::string const &str)
 {
 	assert( ! initial_tracers_visibility_calculated_ || visibility_calculated_ );
 	if ( ios_hook() && ios_hook().get()!=this &&
-			( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
+			( in(monitoring_list_(), channel_, false) || in(monitoring_list_(), get_all_channels_string(), true ) ) ) {
 		if ( ios_hook_raw_() || visible() ) {
 			prepend_channel_name<otstream>( *ios_hook(), str );
 			ios_hook()->flush();
@@ -558,12 +572,12 @@ void Tracer::t_flush(std::string const &str)
 Tracer &
 T(std::string const & channel, TracerPriority priority)
 {
-	static Tracer * t = new Tracer();
-	t->channel_ = channel;
-	t->priority_ = priority;
-	t->calculate_visibility();
-	t->begining_of_the_line_ = true;
-	return *t;
+	static Tracer t;
+	t.channel_ = channel;
+	t.priority_ = priority;
+	t.calculate_visibility();
+	t.begining_of_the_line_ = true;
+	return t;
 }
 
 
@@ -571,12 +585,7 @@ T(std::string const & channel, TracerPriority priority)
 /// listed in the monitoring_channels_list should be copied.  Note
 /// this copies the output of channels even if they are invisible or
 /// muted.
-// void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list)
-// {
-//  ios_hook_ = tr;
-//  monitoring_list_ = utility::split(monitoring_channels_list);
-//  ios_hook_raw_ = true;
-// }
+///
 /// When raw==false same as above above but gives the option get only the
 /// visible and unmuted tracers.  It can be useful to get the raw
 /// output for applications like the comparing tracers, where the
@@ -587,16 +596,8 @@ T(std::string const & channel, TracerPriority priority)
 void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
 {
 	ios_hook() = tr;
-	monitoring_list_ = utility::split(monitoring_channels_list);
+	monitoring_list_() = utility::split(monitoring_channels_list);
 	ios_hook_raw_() = raw;
-}
-
-TracerManager *
-TracerManager::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new TracerManager;
-	}
-	return instance_;
 }
 
 std::vector< Tracer * > &
@@ -605,6 +606,15 @@ TracerManager::all_tracers() {
 }
 
 TracerManager::TracerManager() {}
+
+TracerManager::~TracerManager() {
+	// ios_hook() contains a static OP to what may be a Tracer, which due to static initialization order fiasco-related issues can
+	// extend the lifetime of the contained tracer past the point in cleanup when TracerManger is deleted.
+	// This is a problem, because the Tracer destructor calls TracerManager::all_tracers();
+	// To correct for this, we zero out the ios_hook() here in the TracerManger destructor, making sure that
+	// the contained tracer is cleaned up prior to TracerManager going away completely.
+	Tracer::ios_hook() = nullptr;
+}
 
 void PyTracer::t_flush(std::string const &str)
 {

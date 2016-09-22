@@ -42,10 +42,6 @@ private:
 	ConstraintFactory(ConstraintFactory const &); // unimplemented
 	ConstraintFactory const & operator=( ConstraintFactory const & ); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ConstraintFactory * create_singleton_instance();
-
 public:
 
 	void factory_register( ConstraintCreatorCOP creator );

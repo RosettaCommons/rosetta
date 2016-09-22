@@ -77,14 +77,6 @@ SCS_Helper::SCS_Helper()
   outlier_data_ = parse_outlier_data();
 }
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-SCS_Helper *
-SCS_Helper::create_singleton_instance()
-{
-	return new SCS_Helper;
-}
-
-
 /// @details Parse bfactor data (true implies b-factor criterion is not met)
 ///          Expected input:
 //						# ab	 l1    l2    l3    h1    h2    h3    // NEEDS TO BE ADDED TO FILE

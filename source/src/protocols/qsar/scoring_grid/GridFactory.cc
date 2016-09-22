@@ -28,12 +28,6 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-GridFactory *
-GridFactory::create_singleton_instance()
-{
-	return new GridFactory;
-}
-
 GridFactory::GridFactory()
 {
 	//This isn't strictly necessary but I had an absolutely amazing bug involving

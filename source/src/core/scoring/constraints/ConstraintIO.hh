@@ -118,10 +118,6 @@ private:
 	func::FuncFactory func_factory_;
 	//static ConstraintFactory cst_factory_;
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ConstraintIO * create_singleton_instance();
-
 };
 
 } //constraints

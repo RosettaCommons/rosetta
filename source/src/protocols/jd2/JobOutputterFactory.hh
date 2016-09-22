@@ -75,10 +75,6 @@ private:
 	JobOutputterFactory( JobOutputterFactory const & );
 	JobOutputterFactory const & operator = ( JobOutputterFactory const & );
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static JobOutputterFactory * create_singleton_instance();
-
 private:
 
 	JobOutputterMap job_outputter_creator_map_;

@@ -26,7 +26,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -39,34 +38,6 @@ namespace pose_outputters {
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.pose_outputters.PoseOutputterFactory" );
-
-#if defined MULTI_THREADED
-std::atomic< PoseOutputterFactory * > PoseOutputterFactory::instance_( 0 );
-#else
-PoseOutputterFactory * PoseOutputterFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex PoseOutputterFactory::singleton_mutex_;
-
-std::mutex & PoseOutputterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of (pointer to) this singleton class
-PoseOutputterFactory * PoseOutputterFactory::get_instance()
-{
-	boost::function< PoseOutputterFactory * () > creator = boost::bind( &PoseOutputterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PoseOutputterFactory *
-PoseOutputterFactory::create_singleton_instance()
-{
-	return new PoseOutputterFactory;
-}
 
 PoseOutputterFactory::PoseOutputterFactory() :
 	throw_on_double_registration_( false )

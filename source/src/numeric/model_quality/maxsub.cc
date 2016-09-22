@@ -202,7 +202,7 @@ maxsub(
 
 	FArray1D_bool logical_w( nsup );
 
-	numeric::model_quality::RmsData* rmsdata = RmsData::instance(); // get a pointer to the singleton class
+	numeric::model_quality::RmsData* rmsdata = RmsData::get_instance(); // get a pointer to the singleton class
 
 	//------------------------------------------------------------------------------
 	//     First selects the residues allowed to be superimposed

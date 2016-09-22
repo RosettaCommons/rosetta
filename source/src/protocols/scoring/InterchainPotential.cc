@@ -58,12 +58,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.InterchainPotential" );
 namespace protocols {
 namespace scoring {
 
-InterchainPotential *
-InterchainPotential::create_singleton_instance()
-{
-	return new InterchainPotential;
-}
-
 InterchainPotential::InterchainPotential() :
 	atom_vdw_( core::scoring::ScoringManager::get_instance()->get_AtomVDW( core::chemical::CENTROID ) ) // need to make the table choice configurable
 {

@@ -29,12 +29,6 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-ConstraintFactory *
-ConstraintFactory::create_singleton_instance()
-{
-	return new ConstraintFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 ConstraintFactory::ConstraintFactory() {}
 

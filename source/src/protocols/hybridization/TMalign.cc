@@ -103,7 +103,7 @@ int  TMalign::read_pose(
 	std::string & seq, std::vector < int > & resno) {
 	int i=0;
 	seq.resize(residue_list.size());
-	for ( unsigned long ires : residue_list ) {
+	for ( core::Size ires : residue_list ) {
 		if ( !pose.residue_type(ires).is_protein() ) continue;
 
 		a[i] = pose.residue(ires).xyz("CA");

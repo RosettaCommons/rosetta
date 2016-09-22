@@ -44,10 +44,6 @@ public:
 private:
 	ResourceManagerFactory(); // singleton, private constructor
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResourceManagerFactory * create_singleton_instance();
-
 public:
 
 	/// Should only be called by the ResourceManager in its singleton construction!

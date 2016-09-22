@@ -21,13 +21,6 @@
 #include <utility/file/FileName.hh>
 #include <platform/types.hh>
 
-// Boost Headers
-#ifdef MULTI_THREADED
-#include <boost/thread/tss.hpp>
-#else
-#include <boost/scoped_ptr.hpp>
-#endif
-
 // C++ Headers
 #include <string>
 #include <sstream>
@@ -43,12 +36,6 @@ using cppdb::cppdb_error;
 using platform::Size;
 using platform::SSize;
 using cppdb::statement;
-
-#ifdef MULTI_THREADED
-static thread_local std::shared_ptr< DatabaseSessionManager > instance_;
-#else
-boost::scoped_ptr< DatabaseSessionManager > DatabaseSessionManager::instance_;
-#endif
 
 session::~session(){
 	force_commit_transaction();
@@ -126,20 +113,9 @@ session::force_commit_transaction(){
 	}
 }
 
-DatabaseSessionManager *
-DatabaseSessionManager::get_instance(){
-	if ( instance_.get() == nullptr ) {
-		instance_.reset( new DatabaseSessionManager() );
-	}
-	return instance_.get();
-}
-
 DatabaseSessionManager::DatabaseSessionManager() = default;
 
-DatabaseSessionManager::DatabaseSessionManager( const DatabaseSessionManager & ) = default;
-
 DatabaseSessionManager::~DatabaseSessionManager() = default;
-
 
 sessionOP
 DatabaseSessionManager::get_db_session(

@@ -24,35 +24,6 @@
 namespace protocols {
 namespace ligand_docking {
 
-#if defined MULTI_THREADED
-std::atomic< DistributionMap * > DistributionMap::instance_( 0 );
-#else
-DistributionMap * DistributionMap::instance_( nullptr );
-#endif
-
-
-#ifdef MULTI_THREADED
-
-std::mutex DistributionMap::singleton_mutex_;
-
-std::mutex & DistributionMap::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-DistributionMap * DistributionMap::get_instance()
-{
-	boost::function< DistributionMap * () > creator = boost::bind( &DistributionMap::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-DistributionMap *
-DistributionMap::create_singleton_instance()
-{
-	return new DistributionMap;
-}
-
 Distribution DistributionMap::operator[](std::string distribution){
 	return distribution_map_[distribution];
 }

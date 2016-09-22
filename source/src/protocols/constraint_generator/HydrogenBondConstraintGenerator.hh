@@ -87,8 +87,6 @@ public:
 
 	HydrogenBondingAtoms const & atoms( std::string const & rsd_name ) const;
 
-	static HydrogenBondInfo * create_singleton_instance();
-
 	HydrogenBondingAtoms &
 	create_residue( std::string const & rsd_name );
 

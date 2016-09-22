@@ -86,7 +86,7 @@ core::Size
 neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp, core::Size const sequence_separation ){
 
 	core::Size neighbor_count( 0 );
-	for ( unsigned long neighbor : neighbors ) {
+	for ( core::Size neighbor : neighbors ) {
 		if ( target_res == neighbor ) { // don't count self as neighbour
 			continue;
 		}

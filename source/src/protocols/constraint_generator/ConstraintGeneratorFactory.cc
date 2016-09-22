@@ -32,12 +32,6 @@ ConstraintGeneratorFactory::ConstraintGeneratorFactory():
 	creator_map_()
 {}
 
-ConstraintGeneratorFactory *
-ConstraintGeneratorFactory::create_singleton_instance()
-{
-	return new ConstraintGeneratorFactory;
-}
-
 void
 ConstraintGeneratorFactory::factory_register( ConstraintGeneratorCreatorOP creator )
 {

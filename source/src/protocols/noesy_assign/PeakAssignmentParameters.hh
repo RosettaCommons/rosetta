@@ -37,6 +37,7 @@
 namespace protocols {
 namespace noesy_assign {
 
+// THIS SHOULD NOT BE A SINGLETON! ACCESS TO THIS CLASS IS *HIGHLY* NON-THREADSAFE
 class PeakAssignmentParameters { //: public utility::pointer::ReferenceCount {
 
 private:
@@ -52,8 +53,11 @@ public:
 	static void set_cycle( core::Size );
 	void show( std::ostream& ) const;
 	void show_on_tracer() const;
+
+	// KILL THESE - KILL THEM WITH FIRE!
 	static PeakAssignmentParameters const* get_instance();
 	static PeakAssignmentParameters * get_nonconst_instance();
+
 	static void reset();
 private:
 	void set_options_from_cmdline( core::Size cycle = 0 );

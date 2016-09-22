@@ -491,7 +491,7 @@ Conformation::chain_endings( utility::vector1< Size > const & endings )
 {
 	// make sure that all positions in the new endings list < the size of
 	// the Conformation
-	for ( unsigned long ending : endings ) {
+	for ( core::Size ending : endings ) {
 		if ( ending >= size() ) {
 			utility_exit_with_message("new chain endings list contains positions >= Conformation::size()");
 		}

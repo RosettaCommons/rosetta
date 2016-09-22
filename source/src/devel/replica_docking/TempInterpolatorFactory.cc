@@ -40,13 +40,6 @@ TempInterpolatorFactory::TempInterpolatorFactory(){}
 
 TempInterpolatorFactory::~TempInterpolatorFactory() = default;
 
-TempInterpolatorFactory *
-TempInterpolatorFactory::create_singleton_instance()
-{
-	return new TempInterpolatorFactory;
-}
-
-
 /// @brief return new TempInterpolator by key lookup in mover_prototype_map_ (new TempInterpolator parses Tag if provided)
 TempInterpolatorBaseOP
 TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_levels )

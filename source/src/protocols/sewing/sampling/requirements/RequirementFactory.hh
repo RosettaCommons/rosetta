@@ -31,15 +31,12 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
+
 // C++ Headers
 #include <map>
 
-#include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
 
 namespace protocols {
 namespace sewing  {
@@ -47,26 +44,24 @@ namespace sampling {
 namespace requirements {
 
 /// Create Features Reporters
-class RequirementFactory {
+class RequirementFactory : public utility::SingletonBase< RequirementFactory >
+{
+public:
+	friend class utility::SingletonBase< RequirementFactory >;
 
 private:
+
 	// Private constructor to make it singleton managed
 	RequirementFactory();
-	RequirementFactory(const RequirementFactory & src); // unimplemented
+	RequirementFactory(const RequirementFactory & src) = delete;
 
 	RequirementFactory const &
-	operator=( RequirementFactory const & ); // unimplemented
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static RequirementFactory * create_singleton_instance();
+	operator=( RequirementFactory const &  ) = delete;
 
 public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~RequirementFactory();
-
-	static RequirementFactory * get_instance();
 
 	void factory_register(
 		GlobalRequirementCreatorCOP creator
@@ -84,27 +79,7 @@ public:
 		std::string const & type_name
 	);
 
-	//utility::vector1<std::string> get_all_features_names();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-
-#if defined MULTI_THREADED
-	static std::atomic< RequirementFactory * > instance_;
-#else
-	static RequirementFactory * instance_;
-#endif
 
 	typedef std::map< std::string, GlobalRequirementCreatorCOP > GlobalRequirementCreatorMap;
 	GlobalRequirementCreatorMap global_types_;

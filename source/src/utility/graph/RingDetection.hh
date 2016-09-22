@@ -101,7 +101,7 @@ public:
 		for ( auto it = rings_.begin(); it != rings_.end(); ++it ) {
 			utility::vector1<VD> vertices;
 			std::vector<size_t> list_ring = *it;
-			for ( unsigned long number : list_ring ) {
+			for ( platform::Size number : list_ring ) {
 				VD lwrg_vd = index_to_vd_.find(number)->second;
 				vertices.push_back( lwrg_vd );
 			}
@@ -164,7 +164,7 @@ private:
 			}
 
 
-			for ( unsigned long & source_vertex_number_neighbor : source_vertex_number_neighbors ) {
+			for ( platform::Size & source_vertex_number_neighbor : source_vertex_number_neighbors ) {
 				if ( shortest_cycles[ source_vertex_number_neighbor ] > graph_size ) { // the edge target vertex is not part of any cycle
 					continue;
 				}
@@ -433,7 +433,7 @@ private:
 					target_row.push_back(vd_to_index_[target]);
 				}
 
-				for ( unsigned long new_vertex : target_row ) {
+				for ( platform::Size new_vertex : target_row ) {
 					if ( !can_visit_ref[ new_vertex] ) {
 						// do nothing; can't visit the associated vertex
 					} else if ( distances[ new_vertex] == unseen_flag ) { // found a vertex in the target list of vertex seen_vertices_queue(vertex_queue_position)

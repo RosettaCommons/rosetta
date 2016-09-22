@@ -2088,32 +2088,6 @@ ostream & operator<<(ostream & out, XformScoreSringMap const & x){
 }
 
 /******************************************** MotifHashManager ******************************************/
-MotifHashManager * MotifHashManager::instance_( 0 );
-
-MotifHashManager * MotifHashManager::get_instance() {
-	if ( instance_ == 0 ) {
-		if ( option[basic::options::OptionKeys::mh::harvest::sep_aa1 ]() &&
-				option[basic::options::OptionKeys::mh::harvest::sep_aa2 ]() ) {
-			utility_exit_with_message("use -mh:harvest:sep_aa");
-		}
-#ifdef USE_OPENMP
-		// omp_set_lock(&mman_lock);
-		#pragma omp critical
-		if ( instance_ == 0 ) {
-			cout << "MotifHashManager initializing global instance..."; cout.flush();
-			instance_ = new MotifHashManager();
-			instance_->init();
-			cout << "DONE!" << endl;
-		}
-		// omp_unset_lock(&mman_lock);
-#else
-		instance_ = new MotifHashManager();
-		instance_->init();
-#endif
-
-	}
-	return instance_;
-}
 
 void fill_xform_score_from_file(XformScoreOP & xs,string const & datfile, Real const & wt=1.0){
 	// else utility_exit_with_message("already populated: "+ datfile);
@@ -2209,7 +2183,14 @@ MotifHashManager::MotifHashManager() :
 	xform_score_PH_PO_(NULL),
 	xform_score_frags_(NULL),
 	done_loading_(false)
-{}
+{
+	if ( option[basic::options::OptionKeys::mh::harvest::sep_aa1 ]() &&
+			option[basic::options::OptionKeys::mh::harvest::sep_aa2 ]() ) {
+		utility_exit_with_message("use -mh:harvest:sep_aa");
+	}
+	init();
+}
+
 void MotifHashManager::init(){
 	TR << "init MotifHashManager" << endl;
 	if ( option[mh::path::scores_BB_BB].user() ) {

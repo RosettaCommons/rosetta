@@ -56,10 +56,6 @@ private:
 	SymDofMoverSampler(SymDofMoverSampler const&);
 	void operator=(SymDofMoverSampler const&);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SymDofMoverSampler * create_singleton_instance();
-
 private:
 
 	utility::vector1<std::string> sym_dof_names_;

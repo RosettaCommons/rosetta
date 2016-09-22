@@ -328,7 +328,7 @@ find_neighbors_octree(
 									( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
 									<= neighbor_cutoff_sq ) {
 								// Max cutoff sphere intersects this cube so check each residue in it
-								for ( unsigned long j : ic->second ) {
+								for ( core::Size j : ic->second ) {
 									if ( i < j ) { // It is an upper neighbor
 										core::Real const d_sq( pp.distance_squared( points[ j ] ) );
 										if ( d_sq <= neighbor_cutoff_sq ) {
@@ -492,7 +492,7 @@ find_neighbors_3dgrid(
 					///std::cout << "Searching for neighbors of point " << i << " in cube [" << ix << "," << iy << "," << iz << ") index: " << cube_index << std::endl;
 
 					if ( cubes[ cube_index ].size() != 0 ) { // Cube exists
-						for ( unsigned long j : cubes[ cube_index ] ) {
+						for ( core::Size j : cubes[ cube_index ] ) {
 							///std::cout << "point " << j << " found " << std::endl;
 							if ( i < j ) { // It is an upper neighbor
 								core::Real const d_sq( pp.distance_squared( points[ j ] ) );
@@ -722,7 +722,7 @@ find_neighbors_octree_restricted(
 									( iz != icz ? square( cz - ( iz > icz ? side : D_ZERO ) ) : D_ZERO )
 									<= neighbor_cutoff_sq ) {
 								// Max cutoff sphere intersects this cube so check each residue in it
-								for ( unsigned long j : ic->second ) {
+								for ( core::Size j : ic->second ) {
 									if ( i < j || !residue_selection[ j ] ) { // It is an upper neighbor
 										core::Real const d_sq( pp.distance_squared( points[ j ] ) );
 										if ( d_sq <= neighbor_cutoff_sq ) {
@@ -884,7 +884,7 @@ find_neighbors_3dgrid_restricted(
 					///std::cout << "Searching for neighbors of point " << i << " in cube [" << ix << "," << iy << "," << iz << ") index: " << cube_index << std::endl;
 
 					if ( cubes[ cube_index ].size() != 0 ) { // Cube exists
-						for ( unsigned long j : cubes[ cube_index ] ) {
+						for ( core::Size j : cubes[ cube_index ] ) {
 							///std::cout << "point " << j << " found " << std::endl;
 							if ( i < j || !residue_selection[ j ] ) { // It is an upper neighbor
 								core::Real const d_sq( pp.distance_squared( points[ j ] ) );

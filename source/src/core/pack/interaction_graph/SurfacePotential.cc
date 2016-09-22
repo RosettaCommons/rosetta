@@ -83,12 +83,6 @@ const core::Size SurfacePotential::MAX_HPATCH_AREA = 1000;
 const core::Real SurfacePotential::MAX_HPATCH_SCORE = 100.0;
 const core::Size SurfacePotential::HPATCH_SCORE_BIN_SIZE = 50;
 
-SurfacePotential *
-SurfacePotential::create_singleton_instance()
-{
-	return new SurfacePotential;
-}
-
 /// @brief private constructor to guarantee the singleton
 SurfacePotential::SurfacePotential() {
 	read_average_res_hASA_database_file();

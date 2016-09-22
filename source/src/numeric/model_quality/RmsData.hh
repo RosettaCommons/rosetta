@@ -19,6 +19,8 @@
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 
+#include <utility/SingletonBase.hh>
+
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
@@ -28,16 +30,16 @@ namespace model_quality {
 
 /// @brief RmsData is a class intended to replace the global rms_obj namespace from rosetta++. Initial implementation
 /// is with a singleton design pattern to mimic a global namespace from rosetta++.
-class RmsData {
+class RmsData : public utility::SingletonBase< RmsData > {
 
-	// begin singleton stuff!
 public:
-	static RmsData* instance();
+	friend class utility::SingletonBase< RmsData >;
 
 protected:
 	RmsData();
-	RmsData(const RmsData&);
-	RmsData& operator= (const RmsData&);
+	RmsData(const RmsData&) = delete;
+	RmsData& operator= (const RmsData&) = delete;
+
 	// end singleton stuff!
 
 public:
@@ -109,8 +111,6 @@ private:
 	ObjexxFCL::FArray1D< double > xse_;
 	ObjexxFCL::FArray1D< double > xsp_;
 	int count_;
-
-	static RmsData* pinstance_;
 
 }; // class RmsData
 

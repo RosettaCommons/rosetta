@@ -28,12 +28,6 @@ namespace resource_manager {
 
 ResourceLocatorFactory::~ResourceLocatorFactory() = default;
 
-ResourceLocatorFactory *
-ResourceLocatorFactory::create_singleton_instance()
-{
-	return new ResourceLocatorFactory;
-}
-
 /// @details Create a resource locator from a tags object
 /// @input locator_type This is the type of the resource locator, e.g., DatabaseResourceLocator
 /// @input locator_tag This is the name of the instance of the the resource locator, e.g., coming from the 'tag' field in the ResourceLocator tag 'stage_1_resfiles'.

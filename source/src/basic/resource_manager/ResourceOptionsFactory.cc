@@ -34,12 +34,6 @@
 namespace basic {
 namespace resource_manager {
 
-ResourceOptionsFactory *
-ResourceOptionsFactory::create_singleton_instance()
-{
-	return new ResourceOptionsFactory;
-}
-
 ResourceOptionsFactory::~ResourceOptionsFactory() = default;
 
 ResourceOptionsOP

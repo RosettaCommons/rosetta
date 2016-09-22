@@ -328,7 +328,7 @@ vector<FragmentLookupResult> ABEGOHashedFragmentStore::get_N_fragments(std::stri
 				random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
 		chosen_fragments.push_back(random_frag);
 	}
-	for ( unsigned long chosen_fragment : chosen_fragments ) {
+	for ( core::Size chosen_fragment : chosen_fragments ) {
 		FragmentLookupResult tmpFragInfo;
 		tmpFragInfo.match_index = chosen_fragment;
 		lookupResults.push_back(tmpFragInfo);
@@ -439,12 +439,6 @@ Size ABEGOHashedFragmentStore::get_fragment_length(){
 	Size fragmentStore_fragment_length = ABEGOHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	return(fragmentStore_fragment_length);
 }
-
-ABEGOHashedFragmentStore *  ABEGOHashedFragmentStore::create_singleton_instance()
-{
-	return new ABEGOHashedFragmentStore;
-}
-
 
 }
 }

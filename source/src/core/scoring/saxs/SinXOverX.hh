@@ -41,10 +41,6 @@ private:
 	SinXOverX();
 	void fill_sin_x_over_x_table();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SinXOverX * create_singleton_instance();
-
 private:
 
 	utility::vector1<Real> sin_x_over_x_;

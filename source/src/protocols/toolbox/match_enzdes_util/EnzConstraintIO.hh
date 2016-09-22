@@ -40,7 +40,6 @@
 
 
 // Utility Headers
-#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>

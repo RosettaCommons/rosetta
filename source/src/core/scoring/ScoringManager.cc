@@ -113,12 +113,6 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.ScoringManager" );
 namespace core {
 namespace scoring {
 
-ScoringManager *
-ScoringManager::create_singleton_instance()
-{
-	return new ScoringManager;
-}
-
 ScoringManager::~ScoringManager() = default;
 
 ///////////////////////////////////////////////////////////////////////////////

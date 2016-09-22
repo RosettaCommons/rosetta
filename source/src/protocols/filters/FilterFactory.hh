@@ -30,6 +30,7 @@
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/SingletonBase.hh>
 
 // c++ headers
 #include <map>
@@ -59,9 +60,11 @@ public:
 };
 
 
-class FilterFactory // singletons need not derive from RefCount : public utility::pointer::ReferenceCount
+class FilterFactory : public utility::SingletonBase< FilterFactory >
 {
 public:
+	friend class utility::SingletonBase< FilterFactory >;
+
 	typedef std::map< std::string, FilterCreatorOP > FilterMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
@@ -69,9 +72,6 @@ public:
 
 public:
 	virtual ~FilterFactory();
-
-	static
-	FilterFactory * get_instance();
 
 	void factory_register( FilterCreatorOP creator );
 
@@ -88,35 +88,14 @@ public:
 		Pose const &
 	);
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
 private:
 	FilterFactory();
 
 	// Unimplemented -- uncopyable
-	FilterFactory( FilterFactory const & );
-	FilterFactory const & operator = ( FilterFactory const & );
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static FilterFactory * create_singleton_instance();
+	FilterFactory( FilterFactory const & ) = delete;
+	FilterFactory const & operator = ( FilterFactory const & ) = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< FilterFactory * > instance_;
-#else
-	static FilterFactory * instance_;
-#endif
 
 	FilterMap filter_creator_map_;
 

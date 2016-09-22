@@ -42,6 +42,7 @@ namespace rotamers {
 
 class SingleResidueRotamerLibraryFactory : public utility::SingletonBase< SingleResidueRotamerLibraryFactory > {
 public:
+	friend class utility::SingletonBase< SingleResidueRotamerLibraryFactory >;
 
 	void factory_register( SingleResidueRotamerLibraryCreatorOP creator );
 
@@ -60,9 +61,6 @@ public:
 
 private:
 	std::string get_cachetag( core::chemical::ResidueType const & restype ) const;
-
-public:
-	static SingleResidueRotamerLibraryFactory * create_singleton_instance();
 
 private:
 	SingleResidueRotamerLibraryFactory();

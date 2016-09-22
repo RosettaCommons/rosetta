@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -38,20 +39,17 @@
 
 #include <utility/vector0.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace core {
 namespace pack {
 namespace task {
 namespace operation {
 
 // singleton class
-class TaskOperationFactory
+class TaskOperationFactory: public utility::SingletonBase< TaskOperationFactory >
 {
 public:
+	friend class utility::SingletonBase< TaskOperationFactory >;
+
 	typedef utility::vector1< TaskOperationOP > TaskOperationOPs;
 	typedef std::map< std::string, TaskOperationCreatorOP > TaskOperationCreatorMap;
 	typedef utility::tag::Tag Tag;
@@ -59,7 +57,6 @@ public:
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
-	static TaskOperationFactory * get_instance();
 	void factory_register( TaskOperationCreatorOP );
 
 	/// @brief add a prototype, using its default type name as the map key
@@ -90,34 +87,18 @@ public:
 
 	static std::string task_operation_xml_schema_group_name();
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
 private:
 	// private constructor/destructor
 	TaskOperationFactory();
 	virtual ~TaskOperationFactory();
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static TaskOperationFactory * create_singleton_instance();
+
+	TaskOperationFactory( TaskOperationFactory const &) = delete;
+	TaskOperationFactory & operator=( TaskOperationFactory const &) = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< TaskOperationFactory * > instance_;
-#else
-	static TaskOperationFactory * instance_;
-#endif
 
 	TaskOperationCreatorMap task_operation_creator_map_;
+
 };
 
 } //namespace operation

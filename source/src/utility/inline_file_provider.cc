@@ -19,12 +19,6 @@
 
 namespace utility {
 
-Inline_File_Provider * Inline_File_Provider::create_singleton_instance()
-{
-	return new Inline_File_Provider;
-}
-
-
 void Inline_File_Provider::show_contents(){
 
 }

@@ -345,7 +345,7 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
 			tr.Trace << "found cycle: " << utility::to_string( cycle ) << std::endl;
 		}
 
-		for ( unsigned long & resid_it : cycle ) {
+		for ( core::Size & resid_it : cycle ) {
 			sum += bias[ resid_it ];
 		}
 		if ( sum == 0 ) {

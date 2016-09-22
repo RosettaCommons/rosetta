@@ -44,10 +44,6 @@ class Inline_File_Provider : public utility::SingletonBase< Inline_File_Provider
 public:
 	friend class utility::SingletonBase< Inline_File_Provider >;
 
-private:
-	Inline_File_Provider() {}
-	static Inline_File_Provider * create_singleton_instance();
-
 public:
 
 	void init_static_inputs();

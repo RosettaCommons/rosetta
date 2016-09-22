@@ -51,15 +51,13 @@ namespace components {
 int const
 	StructureDataFactory::REMARK_NUM = 994;
 
-StructureDataFactory *
-StructureDataFactory::create_singleton_instance()
-{
+StructureDataFactory::StructureDataFactory() {
 	if ( ! basic::options::option[ basic::options::OptionKeys::run::preserve_header ].user() ) {
 		TR.Warning << "-run:preserve_header is required for using \"Tomponents\" -- setting it to true."
 			<< " To avoid this message, include -run:preserve header true in your flags" << std::endl;
+		// OUCH! Messing with the option system at this level is bad mojo. Don't do it!
 		basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value( true );
 	}
-	return new StructureDataFactory;
 }
 
 /// @brief stores the data of this permutation into a pose for later retrieval

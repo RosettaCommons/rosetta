@@ -57,10 +57,6 @@ private:
 
 	PcsEnergyParameterManager(PcsEnergyParameterManager const & other);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PcsEnergyParameterManager * create_singleton_instance();
-
 	PcsEnergyParameterManager&
 	operator=( PcsEnergyParameterManager const & other );
 

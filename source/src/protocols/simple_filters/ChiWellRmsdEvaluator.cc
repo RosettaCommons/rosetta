@@ -90,7 +90,7 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 	sasa_calc.get( "residue_sasa", residue_sasa, pose );
 
 
-	for ( unsigned long seqpos : selection_ ) {
+	for ( core::Size seqpos : selection_ ) {
 		if (  residue_sasa.value()[ seqpos ] > sasa_threshold_ ) {
 			tr.Debug << "residue " << seqpos << " is solvent exposed (SASA: " << residue_sasa.value()[ seqpos ] << " ) ignored... " << std::endl;
 			continue;

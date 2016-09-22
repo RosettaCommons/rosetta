@@ -173,10 +173,6 @@ public:
 private:
 	PCS_data_input_manager();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PCS_data_input_manager * create_singleton_instance();
-
 private:
 
 	std::map<std::string, PCS_data_input> file_2_data_map_;

@@ -34,12 +34,6 @@ namespace core {
 namespace fragment {
 namespace picking_old {
 
-FragmentLibraryManager *
-FragmentLibraryManager::create_singleton_instance()
-{
-	return new FragmentLibraryManager;
-}
-
 /// @brief default constructor
 FragmentLibraryManager::FragmentLibraryManager() :
 	vall_( NULL )

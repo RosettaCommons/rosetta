@@ -22,6 +22,7 @@
 #include <utility/pointer/ReferenceCount.hh>      // for ReferenceCount
 #include <utility/vector1.hh>                     // for vector1
 
+#include <utility/SingletonBase.hh>
 #include <utility/thread/backwards_thread_local.hh> // for THREAD_LOCAL
 
 #ifdef WIN32
@@ -143,6 +144,7 @@ class Tracer :  public otstream
 	);
 
 public:
+	friend class TracerManager;
 
 	/// @brief Create Tracer object with given channel and priority
 	Tracer(
@@ -366,7 +368,7 @@ private: /// Data members
 	static bool & ios_hook_raw_();
 
 	/// @brief list of channels for which outout should be redirected.
-	static utility::vector1< std::string > monitoring_list_;
+	static utility::vector1< std::string > & monitoring_list_();
 
 	/// @brief global option collection for Tracer IO.
 	static TracerOptions tracer_options_;
@@ -386,16 +388,19 @@ private: /// Data members
 /// @brief Simple singleton class to hold the all_tracers_ array, which
 /// otherwise suffers from funky double-construction problems when declared
 /// as a static data member of Tracer.
-class TracerManager {
+class TracerManager : public utility::SingletonBase< TracerManager > {
 public:
-	static TracerManager * get_instance();
+	friend class utility::SingletonBase< TracerManager >;
+
 	std::vector< Tracer * > & all_tracers();
 
+	~TracerManager();
 private:
 	TracerManager();
+	TracerManager( TracerManager const & ) = delete;
+	TracerManager& operator=( TracerManager const & ) = delete;
 
 private:
-	static TracerManager * instance_;
 	std::vector< Tracer * > all_tracers_;
 };
 
@@ -443,15 +448,15 @@ namespace basic {
 template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
 Tracer & operator <<( Tracer & TR, T const & entry ) {
 	std::ostream &t(TR);
-    if( TR.visible() ) { t << entry; }
-    return TR;
+		if( TR.visible() ) { t << entry; }
+		return TR;
 }
 
 template <class T, typename std::enable_if< utility::has_insertion_operator_s<T>::value >::type * = nullptr>
 Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
 	std::ostream &t(TR);
-    if( TR.visible() ) { t << entry; }
-    return TR;
+		if( TR.visible() ) { t << entry; }
+		return TR;
 }
 
 } // namespace basic

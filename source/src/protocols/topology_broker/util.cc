@@ -146,7 +146,7 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 			is >> claim_type;
 			tr.Debug << "instantiate CLAIMER: " << claim_type << std::endl;
 			if ( claim_type == ConstraintClaimer::_static_type_name() ) cmdline_data.b_has_constraint_claimer = true;
-			TopologyClaimerOP claim = TopologyClaimerFactory::get_instance().newTopologyClaimer( claim_type );
+			TopologyClaimerOP claim = TopologyClaimerFactory::get_instance()->newTopologyClaimer( claim_type );
 			broker.add( claim ); //register first, so that messages work immediatly!
 			is >> *claim;
 		} else if ( tag == "ABINITIO_FRAGS" ) {

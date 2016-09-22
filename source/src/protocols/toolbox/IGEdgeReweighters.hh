@@ -85,8 +85,8 @@ public:
 		utility::vector1< core::Size> const & group2_in
 	) : weight_factor_(weight_factor)
 	{
-		for ( unsigned long g1it : group1_in ) group1_.insert( g1it );
-		for ( unsigned long g2it : group2_in ) group2_.insert( g2it );
+		for ( core::Size g1it : group1_in ) group1_.insert( g1it );
+		for ( core::Size g2it : group2_in ) group2_.insert( g2it );
 	}
 	// */
 

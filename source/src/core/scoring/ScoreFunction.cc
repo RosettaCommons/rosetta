@@ -1078,7 +1078,7 @@ ScoreFunction::get_sub_score_exclude_res(
 ) const {
 
 	utility::vector1< bool > residue_mask(pose.size(), true);
-	for ( unsigned long seqpos : exclude_res ) {
+	for ( core::Size seqpos : exclude_res ) {
 		residue_mask[ seqpos ] = false;
 	}
 	return get_sub_score(pose, residue_mask);
@@ -1095,7 +1095,7 @@ ScoreFunction::get_sub_score_exclude_res(
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.size(), true);
-	for ( unsigned long seqpos : exclude_res ) {
+	for ( core::Size seqpos : exclude_res ) {
 		residue_mask[ seqpos ] = false;
 	}
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
@@ -1110,7 +1110,7 @@ ScoreFunction::get_sub_score_exclude_res(
 	EnergyMap & emap
 ) const {
 	utility::vector1< bool > residue_mask(pose.size(), true);
-	for ( unsigned long seqpos : exclude_res ) {
+	for ( core::Size seqpos : exclude_res ) {
 		residue_mask[ seqpos ] = false;
 	}
 	get_sub_score(pose, residue_mask, emap);
@@ -1128,7 +1128,7 @@ ScoreFunction::get_sub_score_exclude_res(
 	if ( !pose.energies().energies_updated() ) ( *this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.size(), true);
-	for ( unsigned long seqpos : exclude_res ) {
+	for ( core::Size seqpos : exclude_res ) {
 		residue_mask[ seqpos ] = false;
 	}
 	get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);

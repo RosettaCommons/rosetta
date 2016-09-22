@@ -21,10 +21,9 @@ namespace utility {
 /// @brief SingletonBase is meant to serve as a base class for singleton classes in Rosetta
 /// handling the initialization of the singleton in a thread-safe way.
 ///
-/// @details The derived class must a) implement a private, static function:
-/// T * create_singleton_instance()
-/// so that the SingletonBase class can invoke this function, and b) declare the
-/// SingletonBase class to be a friend, so that it can invoke this function
+/// @details The derived class must a) implement a private default constructor
+/// that will completely initialize the singleton and b) declare the
+/// SingletonBase class to be a friend, so that it can invoke this function.
 template < class T >
 class SingletonBase
 {
@@ -39,16 +38,16 @@ public:
 	get_instance() {
 		// The C++11 memory model ensures function-scope static variables are initialized in a thread-safe manner
 		// http://stackoverflow.com/questions/11711920/how-to-implement-multithread-safe-singleton-in-c11-without-using-mutex
-		static T* instance_{ T::create_singleton_instance() };
-		return instance_; // Return pointer, to keep current interface
+		static T instance_{}; //default constructor
+		return &instance_; // Return pointer, to keep current interface
 	}
 
 private:
 	/// @brief Private, unimplemented copy constructor -- uncopyable.
-	SingletonBase( SingletonBase< T > const & );
+	SingletonBase( SingletonBase< T > const & ) = delete;
 
 	/// @brief Private, unimplemented assignment operator -- uncopyable.
-	SingletonBase< T > const & operator = ( SingletonBase< T > const & rhs );
+	SingletonBase< T > const & operator = ( SingletonBase< T > const & rhs ) = delete;
 
 private:
 

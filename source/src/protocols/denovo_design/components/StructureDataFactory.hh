@@ -41,11 +41,9 @@ namespace components {
 ///@brief Singleton for creating StructureData objects
 class StructureDataFactory : public utility::SingletonBase< StructureDataFactory > {
 public:
-	typedef std::map< std::string, std::set< basic::datacache::WriteableCacheableDataOP > > WriteableCacheableDataMap;
+	friend class utility::SingletonBase< StructureDataFactory >;
 
-public:
-	static StructureDataFactory *
-	create_singleton_instance();
+	typedef std::map< std::string, std::set< basic::datacache::WriteableCacheableDataOP > > WriteableCacheableDataMap;
 
 public:
 	/// @brief stores the data of this permutation into a pose for later retrieval
@@ -150,6 +148,9 @@ public:
 
 private:
 	// Creation methods
+
+	/// @brief Private constructor for singleton.
+	StructureDataFactory();
 
 	/// @brief sets data from a given pose's information, not taking into account PDB remarks
 	/// @param[in]  pose    The input pose

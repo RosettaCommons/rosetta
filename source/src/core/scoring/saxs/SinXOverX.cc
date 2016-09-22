@@ -28,12 +28,6 @@ namespace core {
 namespace scoring {
 namespace saxs {
 
-SinXOverX *
-SinXOverX::create_singleton_instance()
-{
-	return new SinXOverX;
-}
-
 SinXOverX::SinXOverX() {
 	fill_sin_x_over_x_table();
 }

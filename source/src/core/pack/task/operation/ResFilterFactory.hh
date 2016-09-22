@@ -22,6 +22,7 @@
 #include <core/pack/task/operation/ResFilterCreator.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -32,19 +33,16 @@
 
 #include <utility/vector0.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace core {
 namespace pack {
 namespace task {
 namespace operation {
 
-class ResFilterFactory // singleton; no need to derive from RefCount : public utility::pointer::ReferenceCount
+class ResFilterFactory : public utility::SingletonBase< ResFilterFactory >
 {
 public:
+	friend class utility::SingletonBase< ResFilterFactory >;
+
 	//typedef utility::pointer::ReferenceCount parent;
 	typedef std::map< std::string, ResFilterCreatorOP > ResFilterCreatorMap;
 	typedef utility::tag::Tag Tag;
@@ -52,7 +50,6 @@ public:
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
-	static ResFilterFactory * get_instance();
 	void factory_register( ResFilterCreatorOP );
 
 	/// @brief add a prototype, using its default type name as the map key
@@ -76,31 +73,14 @@ public:
 	/// @brief The name given to the XML schema group of all ResFilter s.
 	static std::string res_filter_xml_schema_group_name();
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
 private:
 	ResFilterFactory();
 	virtual ~ResFilterFactory();
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResFilterFactory * create_singleton_instance();
+
+	ResFilterFactory( ResFilterFactory const & ) = delete;
+	ResFilterFactory& operator=( ResFilterFactory const & ) = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< ResFilterFactory * > instance_;
-#else
-	static ResFilterFactory * instance_;
-#endif
 
 	ResFilterCreatorMap filter_creator_map_;
 

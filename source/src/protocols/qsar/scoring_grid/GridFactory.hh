@@ -69,10 +69,6 @@ private:
 	GridFactory(GridFactory const & );
 	GridFactory const & operator = (GridFactory const &);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static GridFactory * create_singleton_instance();
-
 private:
 
 	GridMap grid_creator_map_;

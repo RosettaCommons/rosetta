@@ -54,12 +54,6 @@ SymDofMoverSampler::SymDofMoverSampler() :
 	current_radial_disps_()
 {}
 
-SymDofMoverSampler *
-SymDofMoverSampler::create_singleton_instance()
-{
-	return new SymDofMoverSampler;
-}
-
 void
 SymDofMoverSampler::set_sym_dof_names( utility::vector1<std::string> sym_dof_names) {
 	sym_dof_names_ = sym_dof_names;

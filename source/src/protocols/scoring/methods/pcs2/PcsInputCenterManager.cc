@@ -121,34 +121,6 @@ PcsInputCenterManager::get_PcsInputCenter_for(utility::vector1<std::string> cons
 	return(pcs_i_c);
 }
 
-#if defined MULTI_THREADED
-std::atomic< PcsInputCenterManager * > PcsInputCenterManager::instance_( 0 );
-#else
-PcsInputCenterManager * PcsInputCenterManager::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex PcsInputCenterManager::singleton_mutex_;
-
-std::mutex & PcsInputCenterManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PcsInputCenterManager * PcsInputCenterManager::get_instance()
-{
-	boost::function< PcsInputCenterManager * () > creator = boost::bind( &PcsInputCenterManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PcsInputCenterManager *
-PcsInputCenterManager::create_singleton_instance()
-{
-	return new PcsInputCenterManager;
-}
-
 }//namespace pcs2
 }//namespace methods
 }//namespace scoring

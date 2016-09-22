@@ -30,6 +30,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
+#include <utility/SingletonBase.hh>
+
 // C++ Headers
 #include <map>
 
@@ -41,21 +43,21 @@ namespace ligand_docking {
 namespace rdf {
 
 /// Create RDFFunctions
-class RDFFunctionFactory {
+class RDFFunctionFactory : public utility::SingletonBase< RDFFunctionFactory > {
+public:
+	friend class utility::SingletonBase< RDFFunctionFactory >;
 
 	// Private constructor to make it singleton managed
 	RDFFunctionFactory();
-	RDFFunctionFactory(const RDFFunctionFactory & src); // unimplemented
+	RDFFunctionFactory(const RDFFunctionFactory & src) = delete;
 
-	RDFFunctionFactory const &
-	operator=( RDFFunctionFactory const & ); // unimplemented
+	RDFFunctionFactory &
+	operator=( RDFFunctionFactory const & ) = delete;
 
 public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~RDFFunctionFactory();
-
-	static RDFFunctionFactory * get_instance();
 
 	void factory_register( RDFFunctionCreatorCOP creator );
 	RDFBaseOP get_rdf_function( std::string const & type_name );
@@ -67,9 +69,10 @@ public:
 		basic::datacache::DataMap & data);
 
 	utility::vector1<std::string> get_all_function_names();
+
 private:
 
-	static RDFFunctionFactory * instance_;
+private:
 
 	typedef std::map< std::string, RDFFunctionCreatorCOP > RDFFunctionCreatorMap;
 	RDFFunctionCreatorMap types_;

@@ -21,11 +21,6 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace protocols {
 namespace ligand_docking {
 
@@ -35,39 +30,19 @@ enum Distribution{
 };
 
 /// A singleton class that returns a map of strings to enum types
-class DistributionMap{
+class DistributionMap : public utility::SingletonBase< DistributionMap >
+{
 public:
+	friend class utility::SingletonBase< DistributionMap >;
+
 	Distribution operator[](std::string distribution);
-	static DistributionMap* get_instance();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
 
 private:
 	DistributionMap(); // private constructor
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static DistributionMap * create_singleton_instance();
-
 private:
-#if defined MULTI_THREADED
-	static std::atomic< DistributionMap * > instance_;
-#else
-	static DistributionMap * instance_;
-#endif
 
 	std::map< std::string, Distribution > distribution_map_;
-
 
 };
 

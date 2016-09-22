@@ -37,12 +37,6 @@ namespace jd2 {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobInputterFactory" );
 
-JobInputterFactory *
-JobInputterFactory::create_singleton_instance()
-{
-	return new JobInputterFactory;
-}
-
 JobInputterFactory::JobInputterFactory()
 {}
 

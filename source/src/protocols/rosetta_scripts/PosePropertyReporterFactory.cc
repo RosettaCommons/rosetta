@@ -23,7 +23,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -33,34 +32,6 @@ namespace protocols {
 namespace rosetta_scripts {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporterFactory" );
-
-#if defined MULTI_THREADED
-std::atomic< PosePropertyReporterFactory * > PosePropertyReporterFactory::instance_( 0 );
-#else
-PosePropertyReporterFactory * PosePropertyReporterFactory::instance_( nullptr );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex PosePropertyReporterFactory::singleton_mutex_;
-
-std::mutex & PosePropertyReporterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PosePropertyReporterFactory * PosePropertyReporterFactory::get_instance()
-{
-	boost::function< PosePropertyReporterFactory * () > creator = boost::bind( &PosePropertyReporterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PosePropertyReporterFactory *
-PosePropertyReporterFactory::create_singleton_instance()
-{
-	return new PosePropertyReporterFactory;
-}
 
 PosePropertyReporterFactory::PosePropertyReporterFactory(){}
 

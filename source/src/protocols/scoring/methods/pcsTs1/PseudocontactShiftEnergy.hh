@@ -128,15 +128,11 @@ public:
 };
 
 
-class PCS_Energy_parameters_manager_Ts1 {
+class PCS_Energy_parameters_manager_Ts1 : public utility::SingletonBase< PCS_Energy_parameters_manager_Ts1 > {
 public:
-	static
-	PCS_Energy_parameters_manager_Ts1 *
-	get_instance();
+	friend class utility::SingletonBase< PCS_Energy_parameters_manager_Ts1 >;
 
 private:
-	static PCS_Energy_parameters_manager_Ts1 * instance_;
-
 	PCS_Energy_parameters_manager_Ts1();
 
 	core::Real grid_edge_;

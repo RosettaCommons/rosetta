@@ -304,7 +304,7 @@ HydrogenBondConstraintGenerator::compute_valid_atoms(
 	core::conformation::Residue const & rsd ) const
 {
 	core::chemical::AtomIndices const & sc_atoms = rsd.type().all_sc_atoms();
-	for ( unsigned long sc_atom : sc_atoms ) {
+	for ( core::Size sc_atom : sc_atoms ) {
 		if ( ! can_hydrogen_bond( rsd.type().atom_type( sc_atom ).element() ) ) {
 			continue;
 		}
@@ -532,13 +532,6 @@ operator<<( std::ostream & os, HydrogenBondingAtom const & atom )
 	os << atom.atom_ << ", " << atom.atom2_ << ", " << atom.atom3_ << ", "
 		<< atom.distance_ << ", " << atom.angle_ << ", " << atom.dihedrals_;
 	return os;
-}
-
-
-HydrogenBondInfo *
-HydrogenBondInfo::create_singleton_instance()
-{
-	return new HydrogenBondInfo;
 }
 
 HydrogenBondInfo::HydrogenBondInfo():

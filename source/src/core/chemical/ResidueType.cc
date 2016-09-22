@@ -451,7 +451,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 
 	for ( Size index=1; index<= natoms(); ++index ) {
 		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
-		for ( unsigned long orb : orbs ) {
+		for ( core::Size orb : orbs ) {
 			orbitals_[orb].new_icoor().vertex1( old_to_new[ orbitals_[orb].new_icoor().vertex1()  ] );
 			orbitals_[orb].new_icoor().vertex2(old_to_new[ orbitals_[orb].new_icoor().vertex2()  ] );
 			orbitals_[orb].new_icoor().vertex3( old_to_new[ orbitals_[orb].new_icoor().vertex3()  ] );
@@ -2957,7 +2957,7 @@ ResidueType::generate_atom_indices()
 
 	for ( Size index=1; index<= natoms(); ++index ) {
 		utility::vector1< core::Size > const orbs(graph_[ordered_atoms_[index]].bonded_orbitals());
-		for ( unsigned long orb : orbs ) {
+		for ( core::Size orb : orbs ) {
 			orbitals_[orb].new_icoor().replace_stub1( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub1()]] );
 			orbitals_[orb].new_icoor().replace_stub2( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub2()]] );
 			orbitals_[orb].new_icoor().replace_stub3( vd_to_index_[ordered_atoms_[orbitals_[orb].new_icoor().get_stub3()]] );
@@ -3197,8 +3197,8 @@ ResidueType::update_derived_data()
 				}
 
 				// for each pair of dihedral angle start or end atoms create a dihedral angle using central atom
-				for ( unsigned long & terminal_atom1 : ca1d1 ) {
-					for ( unsigned long & terminal_atom2 : ca2d1 ) {
+				for ( core::Size & terminal_atom1 : ca1d1 ) {
+					for ( core::Size & terminal_atom2 : ca2d1 ) {
 						dihedral_atom_set temp( terminal_atom1, central_atom1, central_atom2, terminal_atom2 );
 						dihedral_atom_sets_.push_back( temp );
 						Size const which_dihedral = dihedral_atom_sets_.size();

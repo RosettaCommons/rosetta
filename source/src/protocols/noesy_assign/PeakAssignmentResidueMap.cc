@@ -471,7 +471,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 			for ( Size i = ( resj > 1 ? resj -1 : resj ); i<= ( resj < atoms_.size() ? resj + 1 : resj ); ++i ) {
 				neighbor_residues.insert( i );
 			}
-			for ( unsigned long neighbor_residue : neighbor_residues ) {
+			for ( core::Size neighbor_residue : neighbor_residues ) {
 				try {
 					ResonanceList::Resonances const& retrieved( first_assignment.resonances().resonances_at_residue( neighbor_residue ) );
 					//     tr.Debug << resi << " " << resj << " resonance k @ " << *sit << std::endl;

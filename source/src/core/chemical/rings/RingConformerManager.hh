@@ -52,9 +52,6 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	RingConformerManager();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static RingConformerManager * create_singleton_instance();
-
 	// Get the conformers requested, creating them if necessary.
 	// Called by the public static method conformers_for_ring_size().
 	utility::vector1< RingConformer > const & get_conformers_for_ring_size( core::Size ring_size );

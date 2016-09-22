@@ -133,11 +133,8 @@ public:
 	friend class utility::SingletonBase< StandardDisulfPairingLibrary >;
 
 private:
-	StandardDisulfPairingLibrary() {};
+	StandardDisulfPairingLibrary();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static StandardDisulfPairingLibrary * create_singleton_instance();
 private:
 	/// @brief static data member holding pointer to the singleton class itself
 

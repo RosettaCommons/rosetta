@@ -44,12 +44,6 @@ namespace pack {
 namespace task {
 namespace operation {
 
-ResLvlTaskOperationFactory *
-ResLvlTaskOperationFactory::create_singleton_instance()
-{
-	return new ResLvlTaskOperationFactory;
-}
-
 void
 ResLvlTaskOperationFactory::factory_register( ResLvlTaskOperationCreatorOP creator )
 {

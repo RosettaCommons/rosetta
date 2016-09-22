@@ -96,12 +96,6 @@ EntityElementCreator::~EntityElementCreator() = default;
 
 //////////// Entity Element Factory ////////////
 
-EntityElementFactory *
-EntityElementFactory::create_singleton_instance()
-{
-	return new EntityElementFactory;
-}
-
 EntityElementOP
 EntityElementFactory::element_from_string( std::string const & entity_element_name )
 {

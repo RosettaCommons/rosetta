@@ -53,7 +53,7 @@ FloatingResonance::FloatingResonance( Resonance const& resin, FloatList const& p
 	res_list_( reslist )
 {
 	is_representative_resonance_ = true;
-	for ( unsigned long it : partner ) {
+	for ( core::Size it : partner ) {
 		is_representative_resonance_ = is_representative_resonance_ && !( it < resin.label() );
 	}
 }
@@ -78,7 +78,7 @@ void FloatingResonance::_write_partner_ids( std::ostream& os ) const {
 	if ( partner_ids_.size() > 1 ) {
 		os << " [";
 		long pos( os.tellp() );
-		for ( unsigned long partner_id : partner_ids_ ) {
+		for ( core::Size partner_id : partner_ids_ ) {
 			os << partner_id;
 			pos = os.tellp();
 			os << ",";
@@ -108,7 +108,7 @@ bool FloatingResonance::match2D(
 	if ( proton_error >= 99 && is_proton() ) return false;
 	if ( proton_error < 99 && !is_proton() ) return false;
 
-	for ( unsigned long partner_id : partner_ids_ ) {
+	for ( core::Size partner_id : partner_ids_ ) {
 		if ( is_proton() ) { // proton-matching
 			Resonance const& proton( (*res_list_)[ partner_id ] );
 			//   tr.Trace << "try proton float-match with reso: " <<  proton.atom() << std::endl;
@@ -142,7 +142,7 @@ bool FloatingResonance::match2D(
 core::Real FloatingResonance::pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const {
 	Real min_match = 100000;
 	if ( !is_representative_resonance_ ) return min_match;
-	for ( unsigned long partner_id : partner_ids_ ) {
+	for ( core::Size partner_id : partner_ids_ ) {
 		Real m = (*res_list_)[ partner_id ]._pmatch( peakfreq, error, folder );
 		if ( m < min_match ) min_match = m;
 	}

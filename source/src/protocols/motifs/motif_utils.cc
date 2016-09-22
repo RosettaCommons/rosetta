@@ -1033,7 +1033,7 @@ bools_from_sizes(
 )
 {
 	utility::vector1< bool > b( nres, false );
-	for ( unsigned long pos : v ) b[ pos ] = true;
+	for ( core::Size pos : v ) b[ pos ] = true;
 	return b;
 }
 

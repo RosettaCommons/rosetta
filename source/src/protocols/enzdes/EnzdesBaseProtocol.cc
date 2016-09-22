@@ -824,7 +824,7 @@ EnzdesBaseProtocol::design_targets_score(
 	core::Real return_val(0.0);
 	using namespace core::scoring;
 
-	for ( unsigned long design_target : design_targets_ ) {
+	for ( core::Size design_target : design_targets_ ) {
 
 		return_val += pose.energies().residue_total_energy( design_target );
 	}

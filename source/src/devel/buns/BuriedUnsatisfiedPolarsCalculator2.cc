@@ -409,7 +409,7 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 	Size num_hbonds = 0;
 
 	if ( bunsat_is_donor ) {
-		for ( unsigned long test_resi : neighbors.value() ) {
+		for ( core::Size test_resi : neighbors.value() ) {
 			//std::string test_res_debug = pose.pdb_info()->pose2pdb(test_resi);
 			//TR << "checking if donates to " << test_resi << std::endl;
 
@@ -417,7 +417,7 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 		}
 	}
 	if ( bunsat_is_acceptor ) {
-		for ( unsigned long test_resi : neighbors.value() ) {
+		for ( core::Size test_resi : neighbors.value() ) {
 			bunsat_acc_nbr_residue_check(pose, bunsat_candidate_atom_id, bunsat_rsd, bunsat_xyz, test_resi, num_hbonds);
 		}
 	}

@@ -128,7 +128,7 @@ MatchResidues::cart_product(
 	}
 
 	const VecSize& mevi = *me;
-	for ( unsigned long it : mevi ) {
+	for ( core::Size it : mevi ) {
 		rvi.push_back(it);
 		cart_product(rvvi, rvi, me+1, end);
 		rvi.pop_back();

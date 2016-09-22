@@ -46,9 +46,6 @@ public:
 	void unregister_id( T const & id );
 	T const & register_new_id();
 
-	static IdManager< T > *
-	create_singleton_instance();
-
 private:
 	std::set< T > used_ids_;
 };

@@ -54,19 +54,11 @@ namespace cenrot {
 
 static THREAD_LOCAL basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
 
-CenrotLibrary *
-CenrotLibrary::create_singleton_instance()
-{
-	CenrotLibrary * rotamer_library = new CenrotLibrary();
-
-	rotamer_library->create_centroid_rotamer_libraries_from_ASCII();
-
-	return rotamer_library;
-}
-
 CenrotLibrary::CenrotLibrary():
 	cenrot_libraries_( chemical::num_canonical_aas, 0 )
-{}
+{
+	this->create_centroid_rotamer_libraries_from_ASCII();
+}
 
 CenrotLibrary::~CenrotLibrary()
 {}

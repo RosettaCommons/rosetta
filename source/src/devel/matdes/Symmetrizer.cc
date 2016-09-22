@@ -97,7 +97,7 @@ Symmetrizer::fresh_instance() const {
 Real
 Symmetrizer::get_angle() {
 	if ( explore_grid_ || sampling_mode_ == "grid" ) {
-		return SymmetrizerSampler::get_instance().get_angle();
+		return SymmetrizerSampler::get_instance()->get_angle();
 	} else if ( sampling_mode_ == "uniform" ) {
 		return angle_min_ + ( angle_max_ - angle_min_) * numeric::random::rg().uniform();
 	} else if ( sampling_mode_ == "gaussian" ) {
@@ -111,7 +111,7 @@ Symmetrizer::get_angle() {
 Real
 Symmetrizer::get_radial_disp() {
 	if ( explore_grid_ || sampling_mode_ == "grid" ) {
-		return SymmetrizerSampler::get_instance().get_radial_disp();
+		return SymmetrizerSampler::get_instance()->get_radial_disp();
 	} else if ( sampling_mode_ == "uniform" ) {
 		return radial_disp_min_ + ( radial_disp_max_ - radial_disp_min_) * numeric::random::rg().uniform();
 	} else if ( sampling_mode_ == "gaussian" ) {
@@ -182,7 +182,7 @@ Symmetrizer::apply(Pose & pose) {
 	pose.set_jump(sym_jump,j);
 
 	if ( explore_grid_ ) {
-		SymmetrizerSampler::get_instance().step();
+		SymmetrizerSampler::get_instance()->step();
 	}
 }
 
@@ -213,8 +213,8 @@ Symmetrizer::parse_my_tag( TagCOP const tag,
 		Real angle_step = tag->getOption<Real>("angle_step");
 		Real radial_disp_step = tag->getOption<Real>("radial_disp_step");
 		TR << "Setting the exploration grid." << std::endl;
-		SymmetrizerSampler::get_instance().set_angle_range(angle_min_, angle_max_, angle_step);
-		SymmetrizerSampler::get_instance().set_radial_disp_range(radial_disp_min_, radial_disp_max_, radial_disp_step);
+		SymmetrizerSampler::get_instance()->set_angle_range(angle_min_, angle_max_, angle_step);
+		SymmetrizerSampler::get_instance()->set_radial_disp_range(radial_disp_min_, radial_disp_max_, radial_disp_step);
 	} else if ( sampling_mode_ == "gaussian" ) {
 		angle_delta_ = tag->getOption<Real>("angle_delta", 0.0);
 		radial_disp_delta_ = tag->getOption<Real>("radial_disp_delta", 0.0);

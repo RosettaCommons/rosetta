@@ -176,14 +176,6 @@ CarbohydrateInfoManager::branch_variant_type_from_position( core::uint const pos
 // Empty constructor
 CarbohydrateInfoManager::CarbohydrateInfoManager() {}
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-CarbohydrateInfoManager *
-CarbohydrateInfoManager::create_singleton_instance()
-{
-	return new CarbohydrateInfoManager;
-}
-
-
 // Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
 // creating them if necessary.
 // Called by the public static method root_from_code().

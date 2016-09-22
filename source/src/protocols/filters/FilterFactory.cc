@@ -35,35 +35,6 @@ namespace filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.filters.FilterFactory" );
 
-#if defined MULTI_THREADED
-std::atomic< FilterFactory * > FilterFactory::instance_( 0 );
-#else
-FilterFactory * FilterFactory::instance_( nullptr );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex FilterFactory::singleton_mutex_;
-
-std::mutex & FilterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-FilterFactory * FilterFactory::get_instance()
-{
-	boost::function< FilterFactory * () > creator = boost::bind( &FilterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-FilterFactory *
-FilterFactory::create_singleton_instance()
-{
-	return new FilterFactory;
-}
-
-
 FilterFactory::FilterFactory()
 {}
 

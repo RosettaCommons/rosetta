@@ -38,34 +38,25 @@
 
 #include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace protocols {
 namespace features {
 
 /// Create Features Reporters
-class FeaturesReporterFactory {
+class FeaturesReporterFactory : public utility::SingletonBase< FeaturesReporterFactory > {
+public:
+	friend class utility::SingletonBase< FeaturesReporterFactory >;
 private:
 	// Private constructor to make it singleton managed
 	FeaturesReporterFactory();
-	FeaturesReporterFactory(const FeaturesReporterFactory & src); // unimplemented
+	FeaturesReporterFactory(const FeaturesReporterFactory & src) = delete;
 
 	FeaturesReporterFactory const &
-	operator=( FeaturesReporterFactory const & ); // unimplemented
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static FeaturesReporterFactory * create_singleton_instance();
+	operator=( FeaturesReporterFactory const & ) = delete;
 
 public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~FeaturesReporterFactory();
-
-	static FeaturesReporterFactory * get_instance();
 
 	void factory_register( FeaturesReporterCreatorCOP creator );
 	FeaturesReporterOP get_features_reporter( std::string const & type_name );
@@ -87,25 +78,7 @@ public:
 
 	utility::vector1<std::string> get_all_features_names();
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-
-#if defined MULTI_THREADED
-	static std::atomic< FeaturesReporterFactory * > instance_;
-#else
-	static FeaturesReporterFactory * instance_;
-#endif
 
 	typedef std::map< std::string, protocols::features::FeaturesReporterCreatorCOP > FeaturesReporterCreatorMap;
 	FeaturesReporterCreatorMap types_;

@@ -73,7 +73,7 @@ DnaInterfaceFinder::determine_protein_interface(
 	vector1< Size > const & dna_positions
 )
 {
-	for ( unsigned long protein_position : protein_positions ) {
+	for ( core::Size protein_position : protein_positions ) {
 		runtime_assert( pose.residue_type( protein_position ).is_protein() );
 
 		Residue const & pres( pose.residue( protein_position ) );
@@ -108,7 +108,7 @@ DnaInterfaceFinder::determine_dna_interface(
 	vector1< Size > const & dna_positions
 )
 {
-	for ( unsigned long dna_position : dna_positions ) {
+	for ( core::Size dna_position : dna_positions ) {
 		runtime_assert( pose.residue_type( dna_position ).is_DNA() );
 
 		Residue const & dres( pose.residue( dna_position ) );

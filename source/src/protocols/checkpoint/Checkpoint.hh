@@ -31,7 +31,10 @@ void checkpoint_with_interval( const int interval_in );
 /// @brief: singleton checkpoint timer class
 ///
 /// @details: Keeps track of when to checkpoint using a time interval.
-///            Not thread safe.
+///         Not thread safe.
+///
+///	        This doesn't derive from SingletonBase because there's
+///         currently no non-static data.
 ///
 /// @author David K
 ///

@@ -919,7 +919,7 @@ void TopologyBroker::add_chainbreak_variants(
 	core::kinematics::ShortestPathInFoldTreeCOP sp
 ) const {
 	pose::Pose init_pose = pose;
-	for ( unsigned long to_be_closed_cut : to_be_closed_cuts_ ) {
+	for ( core::Size to_be_closed_cut : to_be_closed_cuts_ ) {
 		//tr.Debug << (*it) << " " << pose.residue((*it)).name3() << std::endl;
 		tr.Debug << "consider cut between res " << to_be_closed_cut << " and " << to_be_closed_cut+1;
 		if ( sp ) tr.Debug << " distance is " << sp->dist( to_be_closed_cut, to_be_closed_cut+1 ) << " of max " << sp->max_dist();
@@ -939,7 +939,7 @@ bool TopologyBroker::check_chainbreak_variants(
 	pose::Pose & pose
 ) const {
 	bool success ( true );
-	for ( unsigned long to_be_closed_cut : to_be_closed_cuts_ ) {
+	for ( core::Size to_be_closed_cut : to_be_closed_cuts_ ) {
 		tr.Debug << "consider cut between res " << to_be_closed_cut << " and " << to_be_closed_cut+1 << std::endl;
 		if ( !pose.fold_tree().is_cutpoint( to_be_closed_cut ) ) {
 			throw( kinematics::EXCN_InvalidFoldTree( "Foldtree missmatch", pose.fold_tree() ) );

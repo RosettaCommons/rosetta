@@ -1067,7 +1067,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
 		jump_mover->apply_at_all_positions( pose );
 		// insert strand pairing template chunks (to place template pairs)
-		for ( unsigned long strand_pairings_template_indice : strand_pairings_template_indices_ ) {
+		for ( core::Size strand_pairings_template_indice : strand_pairings_template_indices_ ) {
 			if ( floating_pairs_.count(strand_pairings_template_indice) ) continue;
 			initialize_chunk_mover.set_template(strand_pairings_template_indice);
 			initialize_chunk_mover.apply(pose);

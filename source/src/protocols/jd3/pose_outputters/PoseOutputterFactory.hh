@@ -22,6 +22,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
@@ -31,13 +32,6 @@
 // c++ headers
 #include <list>
 #include <map>
-
-#ifdef MULTI_THREADED
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-
 
 namespace protocols {
 namespace jd3 {
@@ -59,17 +53,17 @@ public:
 
 
 
-class PoseOutputterFactory {
+class PoseOutputterFactory : public utility::SingletonBase< PoseOutputterFactory >
+{
 public:
+	friend class utility::SingletonBase< PoseOutputterFactory >;
+
 	typedef std::map< std::string, PoseOutputterCreatorOP > PoseOutputterMap;
 	typedef std::list< PoseOutputterCreatorCOP > CreatorList;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
 
 	virtual ~PoseOutputterFactory();
-
-	static
-	PoseOutputterFactory * get_instance();
 
 	void factory_register( PoseOutputterCreatorOP creator );
 
@@ -104,31 +98,10 @@ private:
 	PoseOutputterFactory();
 
 	// Unimplemented -- uncopyable
-	PoseOutputterFactory( PoseOutputterFactory const & );
-	PoseOutputterFactory const & operator = ( PoseOutputterFactory const & );
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PoseOutputterFactory * create_singleton_instance();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	PoseOutputterFactory( PoseOutputterFactory const & ) = delete;
+	PoseOutputterFactory const & operator = ( PoseOutputterFactory const & ) = delete;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-#ifdef MULTI_THREADED
-	static std::atomic< PoseOutputterFactory * > instance_;
-#else
-	static PoseOutputterFactory * instance_;
-#endif
 
 	PoseOutputterMap pose_outputter_creator_map_;
 	CreatorList creator_list_;

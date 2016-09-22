@@ -30,6 +30,8 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 
+// RM: Actually, if you can avoid singletons if at all possible, that's the better call
+
 /// @brief Interface to this class is in AntibodyInfo.  Should be a singleton.
 class CDRClusterEnumManager : public utility::pointer::ReferenceCount {
 public:

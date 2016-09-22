@@ -14,22 +14,16 @@
 /// @author Andrew Leaver-Fay
 
 #include <core/svn_version.hh>
+#include <utility/SingletonBase.hh>
 #include <utility/exit.hh>
 #include <string>
 
 namespace core {
 
-class SVNVersion {
+class SVNVersion : public utility::SingletonBase< SVNVersion > {
 public:
-	// Singelton accessor pattern
-	static
-	SVNVersion *
-	get_instance() {
-		if ( ! instance_ ) {
-			instance_ = new SVNVersion;
-		}
-		return instance_;
-	}
+
+	friend class utility::SingletonBase< SVNVersion >;
 
 	/// Initialize singelton data.  Should be called at most once.
 	void set_svn_version_and_url(
@@ -55,8 +49,6 @@ public:
 
 private :
 
-	static SVNVersion * instance_;
-
 	std::string version_;
 	std::string url_;
 
@@ -65,10 +57,7 @@ private :
 		url_( "" )
 	{}
 
-
 };
-
-SVNVersion * SVNVersion::instance_( 0 );
 
 void
 set_svn_version_and_url(

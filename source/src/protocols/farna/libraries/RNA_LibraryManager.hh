@@ -51,10 +51,6 @@ private:
 	/// @brief private constructor
 	RNA_LibraryManager(){};
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static RNA_LibraryManager * create_singleton_instance();
-
 public:
 
 	RNA_Fragments const &

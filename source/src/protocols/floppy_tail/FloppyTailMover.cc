@@ -410,12 +410,12 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
 		core::Size guess(onestart);
-		for ( unsigned long iter : vector_of_pairs[i].first ) {
+		for ( core::Size iter : vector_of_pairs[i].first ) {
 			if ( guess++ != iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
 			//TR << *iter << std::endl;
 		}
 		guess = twostart;
-		for ( unsigned long iter : vector_of_pairs[i].second ) {
+		for ( core::Size iter : vector_of_pairs[i].second ) {
 			if ( guess++ != iter ) TR.Error << "non-contiguous set, debug me!" << std::endl;
 			//TR << *iter << std::endl;
 		}

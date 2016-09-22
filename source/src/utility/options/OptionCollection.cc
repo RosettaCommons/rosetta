@@ -1167,7 +1167,7 @@ OptionCollection::add_edits( std::set<std::string> & items ) {
 		// keep the unmodified item
 		new_edits.insert( instring );
 		//delete a single charachter
-		for ( unsigned long ii(0); ii < instring.size(); ++ii ) {
+		for ( platform::Size ii(0); ii < instring.size(); ++ii ) {
 			//delete a single charachter (ii)
 			new_edits.insert( instring.substr(0,ii) + instring.substr(ii+1) );
 			//transpose the charachter with the one before it

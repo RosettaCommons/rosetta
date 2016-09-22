@@ -25,12 +25,6 @@
 namespace basic {
 namespace resource_manager {
 
-FallbackConfigurationFactory *
-FallbackConfigurationFactory::create_singleton_instance()
-{
-	return new FallbackConfigurationFactory;
-}
-
 FallbackConfigurationFactory::FallbackConfigurationFactory() :
 	throw_on_double_registration_( false )
 {}

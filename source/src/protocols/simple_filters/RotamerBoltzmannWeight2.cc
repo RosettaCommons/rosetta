@@ -407,13 +407,6 @@ IdManager< T >::unregister_id( T const & id )
 	utility_exit_with_message( msg.str() );
 }
 
-template< class T >
-IdManager< T > *
-IdManager< T >::create_singleton_instance()
-{
-	return new IdManager< T >;
-}
-
 } //protocols
 } //simple_filters
 

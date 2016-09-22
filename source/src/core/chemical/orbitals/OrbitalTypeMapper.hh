@@ -14,65 +14,39 @@
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
 
 namespace core {
 namespace chemical {
 namespace orbitals {
 
-class OrbitalTypeMapper
+class OrbitalTypeMapper : public utility::SingletonBase< OrbitalTypeMapper >
 {
 public:
+	friend class utility::SingletonBase< OrbitalTypeMapper >;
 
 	virtual ~OrbitalTypeMapper();
 
-	static OrbitalTypeMapper * get_instance();
-
 	orbital_type_enum get_orbital_enum(std::string & orbital_type_name);
-
 
 	//orbital_type_enum get_orbital_type_enum(std::string const & orbital_type_name)
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-
-#endif
 
 private:
 	OrbitalTypeMapper();
-	//unimplemented -- uncopyable
-	OrbitalTypeMapper(OrbitalTypeMapper const & );
-	OrbitalTypeMapper const & operator = (OrbitalTypeMapper const &);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static OrbitalTypeMapper * create_singleton_instance();
+	//unimplemented -- uncopyable
+	OrbitalTypeMapper(OrbitalTypeMapper const & ) = delete;
+	OrbitalTypeMapper const & operator = (OrbitalTypeMapper const &) = delete;
 
 	void map_orbital_name_to_enum();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED
-	static std::atomic< OrbitalTypeMapper * > instance_;
-#else
-	static OrbitalTypeMapper * instance_;
-#endif
-
 
 	std::map<std::string, orbital_type_enum> orbital_type_2_enum_;
 

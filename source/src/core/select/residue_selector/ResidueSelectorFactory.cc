@@ -25,7 +25,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -33,34 +32,6 @@
 namespace core {
 namespace select {
 namespace residue_selector {
-
-#ifdef MULTI_THREADED
-std::atomic< ResidueSelectorFactory * > ResidueSelectorFactory::instance_( 0 );
-#else
-ResidueSelectorFactory * ResidueSelectorFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex ResidueSelectorFactory::singleton_mutex_;
-
-std::mutex & ResidueSelectorFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResidueSelectorFactory * ResidueSelectorFactory::get_instance()
-{
-	boost::function< ResidueSelectorFactory * () > creator = boost::bind( &ResidueSelectorFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-ResidueSelectorFactory *
-ResidueSelectorFactory::create_singleton_instance()
-{
-	return new ResidueSelectorFactory;
-}
 
 void
 ResidueSelectorFactory::factory_register( ResidueSelectorCreatorOP creator )

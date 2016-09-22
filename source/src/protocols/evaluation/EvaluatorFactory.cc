@@ -53,13 +53,6 @@ using utility::tag::TagCOP;
 static THREAD_LOCAL basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
 
 
-EvaluatorFactory *
-EvaluatorFactory::create_singleton_instance()
-{
-	return new EvaluatorFactory;
-}
-
-
 /// @details Private constructor insures correctness of singleton.
 EvaluatorFactory::EvaluatorFactory() {}
 

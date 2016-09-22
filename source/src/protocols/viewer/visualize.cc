@@ -117,7 +117,7 @@ void dump_residue_kinemage(
 	out << "@vectorlist {} color= " << color << " width= 1 master= {intra-res}\n";
 	for ( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i ) {
 		core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
-		for ( unsigned long atom_j : nbrs ) {
+		for ( core::Size atom_j : nbrs ) {
 			if ( atom_j <= atom_i ) continue; // so we draw each bond just once, not twice
 			print_node(out, rsd.seqpos(), atom_i, conf, "P");
 			print_node(out, rsd.seqpos(), atom_j, conf);

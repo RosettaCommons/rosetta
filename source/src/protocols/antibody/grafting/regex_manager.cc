@@ -50,13 +50,6 @@ std::string RegExManager::L3_pattern() const { return L3_pattern_; }
 // Empty constructor
 RegExManager::RegExManager() { load_regex_from_db(); }
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-RegExManager *
-RegExManager::create_singleton_instance()
-{
-	return new RegExManager;
-}
-
 /// @brief Loads regex from database, easier for user modification this way
 void RegExManager::load_regex_from_db() {
 

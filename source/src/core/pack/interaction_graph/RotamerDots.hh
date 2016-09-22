@@ -308,10 +308,6 @@ private:
 	/// @brief private constructor
 	RotamerDotsRadiusData();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static RotamerDotsRadiusData * create_singleton_instance();
-
 private:
 
 	core::Real polar_expansion_radius_;

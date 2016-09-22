@@ -71,12 +71,6 @@ void LoopRefineInnerCycleFactory::setup_known_types()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-LoopRefineInnerCycleFactory *
-LoopRefineInnerCycleFactory::create_singleton_instance()
-{
-	return new LoopRefineInnerCycleFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory()
 {

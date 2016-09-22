@@ -1326,7 +1326,7 @@ write_topology_file(
 	for ( Size i=1; i <= rsd.nchi(); ++i ) {
 		out << "CHI " << i ;
 		AtomIndices atoms_this_chi = rsd.chi_atoms( i );
-		for ( unsigned long & at_it : atoms_this_chi ) {
+		for ( core::Size & at_it : atoms_this_chi ) {
 			out << "   " << rsd.atom_name( at_it );
 		}
 		out << " \n";
@@ -1354,7 +1354,7 @@ write_topology_file(
 	for ( Size i = 1, n_nus = rsd.n_nus(); i <= n_nus; ++i ) {
 		out << "NU " << i;
 		AtomIndices atoms_for_this_nu = rsd.nu_atoms(i);
-		for ( unsigned long & at_it : atoms_for_this_nu ) {
+		for ( core::Size & at_it : atoms_for_this_nu ) {
 			out << "   " << rsd.atom_name(at_it);
 		}
 		out << std::endl;
@@ -1384,7 +1384,7 @@ write_topology_file(
 	if ( rsd.actcoord_atoms().size() > 0 ) {
 		out << "ACT_COORD_ATOMS ";
 		AtomIndices act_atoms = rsd.actcoord_atoms();
-		for ( unsigned long & act_atom : act_atoms ) {
+		for ( core::Size & act_atom : act_atoms ) {
 			out << rsd.atom_name( act_atom ) << " ";
 		}
 		out << "END \n";

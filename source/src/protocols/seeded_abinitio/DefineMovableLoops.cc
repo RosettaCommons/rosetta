@@ -214,7 +214,7 @@ DefineMovableLoops::find_loops(   pose::Pose & pose,
 bool
 DefineMovableLoops::is_cut( utility::vector1<Size> & cut_points, Size residue){
 	bool res_cut = false;
-	for ( unsigned long & cut_point : cut_points ) {
+	for ( core::Size & cut_point : cut_points ) {
 		if ( cut_point == residue ) {
 			res_cut = true;
 		}

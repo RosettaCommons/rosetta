@@ -429,7 +429,7 @@ void store_distance_snapshot(
 					Real cumdist( 0 );
 					for ( auto atom1 = group1[igrp1].second.begin(); atom1 != group1[igrp1].second.end(); ++atom1 ) {
 						PointPosition const & xyz_1 = short_pose.xyz( id::AtomID( *atom1, rsd1  ) );
-						for ( unsigned long atom2 : group2[igrp2].second ) {
+						for ( core::Size atom2 : group2[igrp2].second ) {
 							PointPosition const & xyz_2 = short_pose.xyz( id::AtomID( atom2, rsd2 ) );
 							Real const inv_dist2( 1.0/xyz_1.distance_squared( xyz_2 ) );
 							Real const inv_dist6( inv_dist2 * inv_dist2 * inv_dist2 );

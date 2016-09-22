@@ -85,29 +85,10 @@ private:
 	/// singleton has a private constructor
 	ResourceLoaderFactory();
 
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	ResourceLoaderFactory( ResourceLoaderFactory const & ) = delete;
+	ResourceLoaderFactory & operator=( ResourceLoaderFactory const & ) = delete;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResourceLoaderFactory * create_singleton_instance();
-
-private:
-#if defined MULTI_THREADED
-	static std::atomic< ResourceLoaderFactory * > instance_;
-#else
-	static ResourceLoaderFactory * instance_;
-#endif
-
 
 	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLoaderCreatorOP > creator_map_;

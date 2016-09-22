@@ -1481,12 +1481,6 @@ RotamerDots::initialize_dot_coords( utility::vector1< core::Vector > & dot_coord
 //------------------------- RotamerDotsRadiusData  ---------------------------//
 //----------------------------------------------------------------------------//
 
-RotamerDotsRadiusData *
-RotamerDotsRadiusData::create_singleton_instance()
-{
-	return new RotamerDotsRadiusData;
-}
-
 /// @brief private constructor to guarantee the singleton
 RotamerDotsRadiusData::RotamerDotsRadiusData()
 {

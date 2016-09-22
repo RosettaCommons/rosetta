@@ -40,49 +40,24 @@
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace protocols {
 namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-class PcsDataCenterManagerSingleton {
-
-#ifdef MULTI_THREADED
+class PcsDataCenterManagerSingleton : public utility::SingletonBase< PcsDataCenterManagerSingleton > {
 public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	friend class utility::SingletonBase< PcsDataCenterManagerSingleton >;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
+	PcsDataCenterManagerSingleton();
 
-private:
-
-	utility::vector1<PcsDataCenter> PCS_data_all_;
-#if defined MULTI_THREADED
-	static std::atomic< PcsDataCenterManagerSingleton * > instance_;
-#else
-	static PcsDataCenterManagerSingleton * instance_;
-#endif
-
-public:
-	static PcsDataCenterManagerSingleton *
-	get_instance(PcsEnergyParameterManager & pcs_e_p_m);
-
-private:
 	PcsDataCenterManagerSingleton(PcsEnergyParameterManager & pcs_e_p_m); //construct
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PcsDataCenterManagerSingleton * create_singleton_instance(PcsEnergyParameterManager & pcs_e_p_m);
+	PcsDataCenterManagerSingleton( PcsDataCenterManagerSingleton const & ) = delete;
+
+	PcsDataCenterManagerSingleton &
+	operator=( PcsDataCenterManagerSingleton const & ) = delete;
 
 public:
 	/// @brief Give me the number of lanthanide
@@ -96,6 +71,10 @@ public:
 	/// @brief print me
 	friend std::ostream &
 	operator<<(std::ostream& out, const PcsDataCenterManagerSingleton & me);
+
+private:
+
+	utility::vector1<PcsDataCenter> PCS_data_all_;
 
 };
 

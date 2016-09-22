@@ -52,10 +52,6 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	RecordCollection();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static RecordCollection * create_singleton_instance();
-
-
 private:  // Private data /////////////////////////////////////////////////////
 	std::map< std::string, RecordType > string_to_record_type_map_;
 	RecordDef record_definitions_;

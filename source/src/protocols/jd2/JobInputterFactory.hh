@@ -69,11 +69,6 @@ private:
 	JobInputterFactory( JobInputterFactory const & );
 	JobInputterFactory const & operator = ( JobInputterFactory const & );
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton; used by the base class
-	/// utility::SingletonBase
-	static JobInputterFactory * create_singleton_instance();
-
 private:
 
 	JobInputterMap job_inputter_creator_map_;

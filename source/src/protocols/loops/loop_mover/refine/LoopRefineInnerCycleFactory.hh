@@ -79,10 +79,6 @@ private: // methods
 	LoopRefineInnerCycleFactory const &
 	operator=( LoopRefineInnerCycleFactory const & ); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static LoopRefineInnerCycleFactory * create_singleton_instance();
-
 	LoopRefineInnerCycleOP make_inner_cycle_from_string_name( std::string const & name ) const;
 	void setup_known_types();
 

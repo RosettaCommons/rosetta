@@ -46,9 +46,6 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	AtomPropertiesManager();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static AtomPropertiesManager * create_singleton_instance();
-
 	// This private method is defined in AtomProperty_mappings.cc,
 	// which will eventually be auto-generated.
 	std::map< AtomProperty, std::string > const & property_to_string_map();

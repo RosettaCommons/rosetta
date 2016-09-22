@@ -88,10 +88,6 @@ private:
 	PoseSelectorFactory( PoseSelectorFactory const & );
 	PoseSelectorFactory const & operator = ( PoseSelectorFactory const & );
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PoseSelectorFactory * create_singleton_instance();
-
 private:
 
 	PoseSelectorMap poseselector_creator_map_;

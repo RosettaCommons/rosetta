@@ -70,7 +70,7 @@ CrossPeak::Spin::Spin() { }
 CrossPeak::Spin::~Spin() = default;
 core::Size CrossPeak::Spin::assignment_index( core::Size assignment ) const {
 	core::Size ct( 1 );
-	for ( unsigned long it : assignments_ ) {
+	for ( core::Size it : assignments_ ) {
 		if ( assignment == it ) return ct;
 		++ct;
 	}

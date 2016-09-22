@@ -40,10 +40,6 @@ private:
 	MessageListenerFactory(MessageListenerFactory const &);
 	MessageListenerFactory const & operator = (MessageListenerFactory const &);
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static MessageListenerFactory * create_singleton_instance();
-
 private:
 
 	std::map< listener_tags, MessageListenerOP > listeners_;

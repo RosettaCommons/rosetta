@@ -43,9 +43,6 @@ public:
 
 	virtual ~DeNovoArchitectFactory();
 
-	static DeNovoArchitectFactory *
-	create_singleton_instance();
-
 public:
 	DeNovoArchitectOP
 	create_instance(

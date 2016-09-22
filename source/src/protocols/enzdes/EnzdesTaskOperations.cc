@@ -404,7 +404,7 @@ void DetectProteinLigandInterface::apply(
 		}
 
 		tr.Info << "Choosing the following residues as targets for detecting interface: ";
-		for ( unsigned long interface_target_re : interface_target_res ) {
+		for ( core::Size interface_target_re : interface_target_res ) {
 			tr.Info << interface_target_re << "+";
 		}
 		tr.Info <<  std::endl;

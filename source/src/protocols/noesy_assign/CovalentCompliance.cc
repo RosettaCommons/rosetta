@@ -87,12 +87,6 @@ bool fall_back( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const
 	// should be pretty good and we will see those NOEs recommended from there.
 }
 
-CovalentCompliance *
-CovalentCompliance::create_singleton_instance()
-{
-	return new CovalentCompliance;
-}
-
 CovalentCompliance::CovalentCompliance() :
 	covalent_distances_( /* NULL */ )
 {}

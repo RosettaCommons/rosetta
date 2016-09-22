@@ -98,10 +98,6 @@ public:
 private:
 	EntityElementFactory();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static EntityElementFactory * create_singleton_instance();
-
 };
 
 template < class T >

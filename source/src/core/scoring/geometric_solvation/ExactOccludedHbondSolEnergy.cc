@@ -124,12 +124,6 @@ core::Real const geosol_kT = { 0.593 };
 core::Real const LK_MATCHING_SLOPE = { 0.4775 };
 core::Real const LK_MATCHING_INTERCEPT = { 0 }; // to be splitted among polar groups forming the same LK heavy atom
 
-GridInfo *
-GridInfo::create_singleton_instance()
-{
-	return new GridInfo;
-}
-
 // private constructor
 GridInfo::GridInfo() {
 
@@ -151,14 +145,6 @@ GridInfo::GridInfo() {
 	yorigin_ = -water_grid_width/2 - ystep_;
 	zorigin_ = 0.;
 }
-
-
-WaterWeightGridSet *
-WaterWeightGridSet::create_singleton_instance()
-{
-	return new WaterWeightGridSet;
-}
-
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :

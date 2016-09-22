@@ -37,34 +37,6 @@ namespace moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverFactory" );
 
-#if defined MULTI_THREADED
-std::atomic< MoverFactory * > MoverFactory::instance_( 0 );
-#else
-MoverFactory * MoverFactory::instance_( nullptr );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex MoverFactory::singleton_mutex_;
-
-std::mutex & MoverFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-MoverFactory * MoverFactory::get_instance()
-{
-	boost::function< MoverFactory * () > creator = boost::bind( &MoverFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-MoverFactory *
-MoverFactory::create_singleton_instance()
-{
-	return new MoverFactory;
-}
-
 MoverFactory::MoverFactory()
 {
 	forbidden_names_.clear();

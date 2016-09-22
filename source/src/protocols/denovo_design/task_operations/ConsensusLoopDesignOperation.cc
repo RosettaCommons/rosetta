@@ -510,12 +510,6 @@ ConsensusLoopDatabase::ConsensusLoopDatabase():
 ConsensusLoopDatabase::~ConsensusLoopDatabase()
 {}
 
-ConsensusLoopDatabase *
-ConsensusLoopDatabase::create_singleton_instance()
-{
-	return new ConsensusLoopDatabase();
-}
-
 bool
 ConsensusLoopDatabase::has_frequencies(
 	SurroundingSS const & surrounding,

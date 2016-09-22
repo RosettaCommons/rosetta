@@ -46,12 +46,6 @@ using utility::vector1;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
 
-LoopsDefinerFactory *
-LoopsDefinerFactory::create_singleton_instance()
-{
-	return new LoopsDefinerFactory;
-}
-
 /// @details Private constructor insures correctness of singleton.
 LoopsDefinerFactory::LoopsDefinerFactory() {}
 

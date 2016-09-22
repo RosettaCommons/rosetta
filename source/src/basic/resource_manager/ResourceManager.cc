@@ -46,12 +46,6 @@ ResourceManager::get_instance()
 	return instance_;
 }
 
-//ResourceManager *
-//ResourceManager::create_singleton_instance()
-//{
-// return ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
-//}
-
 ResourceManager::ResourceManager() {}
 
 ResourceManager::~ResourceManager() = default;

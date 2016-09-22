@@ -50,27 +50,10 @@ using utility::tag::TagCOP;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
 
-RDFFunctionFactory * RDFFunctionFactory::instance_( 0 );
-
 /// @details Private constructor insures correctness of singleton.
 RDFFunctionFactory::RDFFunctionFactory() {}
 
-RDFFunctionFactory::RDFFunctionFactory(
-	const RDFFunctionFactory &
-) {}
-
 RDFFunctionFactory::~RDFFunctionFactory() {}
-
-
-RDFFunctionFactory *
-RDFFunctionFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new RDFFunctionFactory;
-	}
-	return instance_;
-}
-
 
 void
 RDFFunctionFactory::factory_register(

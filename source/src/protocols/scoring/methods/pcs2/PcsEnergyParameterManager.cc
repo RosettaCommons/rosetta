@@ -62,12 +62,6 @@ namespace pcs2 {
 
 static THREAD_LOCAL basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
 
-PcsEnergyParameterManager *
-PcsEnergyParameterManager::create_singleton_instance()
-{
-	return new PcsEnergyParameterManager;
-}
-
 PcsEnergyParameterManager::PcsEnergyParameterManager(){
 
 }

@@ -147,7 +147,7 @@ count_linkers(
 	numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 
 	Size count0=0;
-	for ( unsigned long loopsize : loopsizes ) {
+	for ( core::Size loopsize : loopsizes ) {
 		if ( dist2 < (10.0*Real(loopsize)*Real(loopsize)) ) {
 			count0 += loop_hash_library->gethash(loopsize).radial_count(radius,rt_6);
 		} // else too far, don't bother lookup
@@ -174,7 +174,7 @@ dump_loophash_linkers(
 	protocols::loophash::BackboneDB const & bbdb_ = loop_hash_library->backbone_database();
 	protocols::loophash::BackboneSegment backbone_;
 	core::Size ndumped = 0;
-	for ( unsigned long loopsize : loopsizes ) {
+	for ( core::Size loopsize : loopsizes ) {
 		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
 
 		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);

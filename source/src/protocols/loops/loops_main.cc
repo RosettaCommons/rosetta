@@ -1418,7 +1418,7 @@ core::Real native_loop_core_CA_rmsd(
 	for ( core::Size ir = 1; ir <= pose.size(); ir ++ ) {
 		if ( !pose.residue_type(ir).is_protein() ) continue;
 		bool exclude = false;
-		for ( unsigned long p : residue_exclusion ) {
+		for ( core::Size p : residue_exclusion ) {
 			if ( ir == p ) {
 				exclude = true;
 				break;

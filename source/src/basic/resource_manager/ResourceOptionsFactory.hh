@@ -69,10 +69,6 @@ private:
 	/// @brief Singleton private constructor
 	ResourceOptionsFactory();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResourceOptionsFactory * create_singleton_instance();
-
 private:
 	bool throw_on_double_registration_;
 

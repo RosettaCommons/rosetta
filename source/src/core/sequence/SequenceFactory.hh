@@ -53,12 +53,6 @@ public:
 
 private:
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SequenceFactory * create_singleton_instance();
-
-private:
-
 	typedef std::map< std::string, SequenceCreatorCOP > SequenceCreatorMap;
 	SequenceCreatorMap seq_types_;
 

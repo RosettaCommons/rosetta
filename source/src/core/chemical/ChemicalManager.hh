@@ -150,10 +150,6 @@ private:
 	/// @brief private constructor
 	ChemicalManager();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ChemicalManager * create_singleton_instance();
-
 	/// @brief Go and create an atom type set.  Should be called only after it's been
 	/// determined safe (and neccessary) to construct it.
 	AtomTypeSetOP create_atom_type_set( std::string const & tag ) const;

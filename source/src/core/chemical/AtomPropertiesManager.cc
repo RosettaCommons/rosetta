@@ -37,12 +37,5 @@ AtomPropertiesManager::string_from_property( AtomProperty const property )
 // Empty constructor
 AtomPropertiesManager::AtomPropertiesManager() {}
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-AtomPropertiesManager *
-AtomPropertiesManager::create_singleton_instance()
-{
-	return new AtomPropertiesManager;
-}
-
 }  // namespace chemical
 }  // namespace core

@@ -20,7 +20,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -31,34 +30,6 @@ static THREAD_LOCAL basic::Tracer TR( "devel.matdes.SymmetrizerSampler" );
 
 namespace devel {
 namespace matdes {
-
-#if defined MULTI_THREADED
-std::atomic< SymmetrizerSampler * > SymmetrizerSampler::instance_( 0 );
-#else
-SymmetrizerSampler * SymmetrizerSampler::instance_( nullptr );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex SymmetrizerSampler::singleton_mutex_;
-
-std::mutex & SymmetrizerSampler::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-SymmetrizerSampler & SymmetrizerSampler::get_instance()
-{
-	boost::function< SymmetrizerSampler * () > creator = boost::bind( &SymmetrizerSampler::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return *instance_;
-}
-
-SymmetrizerSampler *
-SymmetrizerSampler::create_singleton_instance()
-{
-	return new SymmetrizerSampler;
-}
 
 SymmetrizerSampler::SymmetrizerSampler():
 	angle_min_(0),

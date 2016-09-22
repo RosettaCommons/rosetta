@@ -238,7 +238,7 @@ ModelFeatures::report_features(
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator(nb_calc);
 
 		std::set<Segment> ss_group;
-		for ( unsigned long neighbor : neighbors ) {
+		for ( core::Size neighbor : neighbors ) {
 			if ( residue_segments.find(neighbor) != residue_segments.end() ) {
 				ss_group.insert(residue_segments.find(neighbor)->second);
 			}
@@ -375,7 +375,7 @@ ModelFeatures::write_clique_to_db(
 	std::string model_segment_insert =
 		"INSERT INTO model_segments (model_id, segment_id)  VALUES (?,?);";
 	statement model_segment_insert_stmt(basic::database::safely_prepare_statement(model_segment_insert,db_session));
-	for ( unsigned long it : clique ) {
+	for ( core::Size it : clique ) {
 		model_segment_insert_stmt.bind(1, model_id);
 		model_segment_insert_stmt.bind(2, it);
 		basic::database::safely_write_to_database( model_segment_insert_stmt );

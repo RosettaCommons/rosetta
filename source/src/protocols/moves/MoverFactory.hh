@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -32,11 +33,6 @@
 // c++ headers
 #include <map>
 #include <set>
-
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
 
 namespace protocols {
 namespace moves {
@@ -56,9 +52,11 @@ public:
 };
 
 
-class MoverFactory // Singleton: should not derive from ReferenceCount
+class MoverFactory : public utility::SingletonBase< MoverFactory >
 {
 public:
+	friend class utility::SingletonBase< MoverFactory >;
+
 	typedef std::map< std::string, MoverCreatorOP > MoverMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
@@ -66,9 +64,6 @@ public:
 
 public:
 	virtual ~MoverFactory();
-
-	static
-	MoverFactory * get_instance();
 
 	void factory_register( MoverCreatorOP creator );
 
@@ -89,31 +84,10 @@ private:
 	MoverFactory();
 
 	// Unimplemented -- uncopyable
-	MoverFactory( MoverFactory const & );
-	MoverFactory const & operator = ( MoverFactory const & );
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static MoverFactory * create_singleton_instance();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	MoverFactory( MoverFactory const & ) = delete;
+	MoverFactory const & operator = ( MoverFactory const & ) = delete;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-#if defined MULTI_THREADED
-	static std::atomic< MoverFactory * > instance_;
-#else
-	static MoverFactory * instance_;
-#endif
 
 	MoverMap mover_creator_map_;
 

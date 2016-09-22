@@ -158,7 +158,7 @@ VallData::get_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( unsigned long it : homs_to_exclude ) {
+	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}
@@ -308,7 +308,7 @@ VallData::get_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( unsigned long it : homs_to_exclude ) {
+	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}
@@ -445,7 +445,7 @@ VallData::get_cheating_frags(
 
 	Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
-	for ( unsigned long it : homs_to_exclude ) {
+	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}

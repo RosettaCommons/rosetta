@@ -86,10 +86,6 @@ private:
 	//Singleton Class
 	MethylNameLibrary();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static MethylNameLibrary * create_singleton_instance();
-
 public:
 
 	MethylNames const& operator[]( core::chemical::AA ) const;

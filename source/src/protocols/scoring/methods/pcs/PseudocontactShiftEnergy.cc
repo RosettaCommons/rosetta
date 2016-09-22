@@ -869,36 +869,6 @@ PCS_Energy_parameters_manager::get_vector_weight() const{
 	return vec_individual_weight_;
 }
 
-#if defined MULTI_THREADED
-std::atomic< PCS_Energy_parameters_manager * > PCS_Energy_parameters_manager::instance_( 0 );
-#else
-PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-
-std::mutex PCS_Energy_parameters_manager::singleton_mutex_;
-
-std::mutex & PCS_Energy_parameters_manager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::get_instance()
-{
-	boost::function< PCS_Energy_parameters_manager * () > creator = boost::bind( &PCS_Energy_parameters_manager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-PCS_Energy_parameters_manager *
-PCS_Energy_parameters_manager::create_singleton_instance()
-{
-	return new PCS_Energy_parameters_manager;
-}
-
-
 } // pcs
 } // methods
 } // scoring

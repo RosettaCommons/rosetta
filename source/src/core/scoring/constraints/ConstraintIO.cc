@@ -57,12 +57,6 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-ConstraintIO *
-ConstraintIO::create_singleton_instance()
-{
-	return new ConstraintIO;
-}
-
 func::FuncFactory & ConstraintIO::get_func_factory() {
 	return get_instance()->func_factory_;
 }

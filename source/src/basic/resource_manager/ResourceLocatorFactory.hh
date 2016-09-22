@@ -71,10 +71,6 @@ private:
 
 private:
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ResourceLocatorFactory * create_singleton_instance();
-
 	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLocatorCreatorOP > creator_map_;
 

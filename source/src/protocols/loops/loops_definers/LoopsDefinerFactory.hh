@@ -56,10 +56,6 @@ private: // constructors
 	LoopsDefinerFactory const &
 	operator=( LoopsDefinerFactory const & ); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static LoopsDefinerFactory * create_singleton_instance();
-
 public:
 
 	// Warning this is not called because of the singleton pattern

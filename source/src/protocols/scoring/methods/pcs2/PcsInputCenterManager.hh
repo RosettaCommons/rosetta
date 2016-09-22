@@ -48,49 +48,27 @@
 // C++ headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#include <atomic>
-#include <mutex>
-#endif
-
 namespace protocols {
 namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-class PcsInputCenterManager {
+class PcsInputCenterManager : public utility::SingletonBase< PcsInputCenterManager > {
+public:
+	friend class utility::SingletonBase< PcsInputCenterManager >;
 
 private:
 	PcsInputCenterManager(); //Construct
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static PcsInputCenterManager * create_singleton_instance();
+	PcsInputCenterManager( PcsInputCenterManager const & ) = delete;
+	PcsInputCenterManager &
+	operator=( PcsInputCenterManager const & ) = delete;
 
 private:
-#if defined MULTI_THREADED
-	static std::atomic< PcsInputCenterManager * > instance_;
-#else
-	static PcsInputCenterManager * instance_;
-#endif
 
 	std::map<std::string, PcsInputCenter> PcsInputCenter_all_;
 
-#ifdef MULTI_THREADED
 public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-
-public:
-	static PcsInputCenterManager *
-	get_instance();
 
 	/// @ Re init the singleton to default value
 	void

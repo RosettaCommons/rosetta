@@ -36,6 +36,7 @@ namespace rotamers {
 
 class RotamerLibrarySpecificationFactory : public utility::SingletonBase< RotamerLibrarySpecificationFactory > {
 public:
+	friend class utility::SingletonBase< RotamerLibrarySpecificationFactory >;
 
 	void factory_register( RotamerLibrarySpecificationCreatorOP creator );
 
@@ -46,9 +47,6 @@ public:
 
 	core::chemical::rotamers::RotamerLibrarySpecificationOP
 	get( std::string const &, std::istream & ) const;
-
-public:
-	static RotamerLibrarySpecificationFactory * create_singleton_instance();
 
 private:
 

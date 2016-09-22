@@ -45,10 +45,6 @@ private:
 	/// @brief Private constructor for singleton class
 	CovalentCompliance();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static CovalentCompliance * create_singleton_instance();
-
 public:
 
 	/// @brief This is clearly thread-unsafe.

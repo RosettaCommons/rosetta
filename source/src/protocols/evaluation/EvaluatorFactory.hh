@@ -49,10 +49,6 @@ public:
 
 private:
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static EvaluatorFactory * create_singleton_instance();
-
 	/// @brief Private constructor to make it singleton managed
 	EvaluatorFactory();
 

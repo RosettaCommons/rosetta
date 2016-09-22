@@ -62,10 +62,6 @@ private:
 	//private constructor
 	GridInfo();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static GridInfo * create_singleton_instance();
-
 private:
 
 	// private member data
@@ -101,10 +97,6 @@ private:
 
 	core::Real fill_water_grid( Grid & water_weights,
 		hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static WaterWeightGridSet * create_singleton_instance();
 
 private:
 

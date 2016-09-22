@@ -42,7 +42,7 @@ public:  // Declare friends ///////////////////////////////////////////////////
 public:  // Static constant data access ///////////////////////////////////////
 	std::string H1_pattern() const;
 	std::string H3_pattern() const;
-	
+
 	std::string L1_pattern() const;
 	std::string L3_pattern() const;
 
@@ -50,18 +50,15 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	RegExManager();
 
-	// Singleton-creation function for use with utility::thread::threadsafe_singleton
-	static RegExManager * create_singleton_instance();
-	
 	void load_regex_from_db();
 
 private:  // Private data /////////////////////////////////////////////////////
 	std::string H1_pattern_;
 	std::string H3_pattern_;
-	
+
 	std::string L1_pattern_;
 	std::string L3_pattern_;
-	
+
 };
 
 } // namespace grafting

@@ -67,10 +67,6 @@ public:
 private:
 	WriteableCacheableDataFactory() {};
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static WriteableCacheableDataFactory* create_singleton_instance();
-
 private:
 	WriteableCacheableDataMap data_creator_map_;
 

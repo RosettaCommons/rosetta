@@ -92,10 +92,6 @@ private:
 	/// @brief private constructor
 	SurfacePotential();
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SurfacePotential * create_singleton_instance();
-
 	void read_average_res_hASA_database_file();
 	void read_hASA_score_database_file();
 	void read_hpatch_score_database_file();

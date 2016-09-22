@@ -44,12 +44,6 @@ static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
 /// @details Private constructor insures correctness of singleton.
 SilentStructFactory::SilentStructFactory() {}
 
-SilentStructFactory *
-SilentStructFactory::create_singleton_instance()
-{
-	return new SilentStructFactory;
-}
-
 void
 SilentStructFactory::factory_register( SilentStructCreatorCOP creator )
 {

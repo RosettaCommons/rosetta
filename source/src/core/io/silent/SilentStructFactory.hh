@@ -40,10 +40,6 @@ private:
 	SilentStructFactory(SilentStructFactory const &); // unimplemented
 	SilentStructFactory const & operator=( SilentStructFactory const & ); // unimplemented
 
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static SilentStructFactory * create_singleton_instance();
-
 public:
 
 	void factory_register( SilentStructCreatorCOP creator );

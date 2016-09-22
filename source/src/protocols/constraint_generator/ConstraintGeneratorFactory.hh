@@ -41,9 +41,6 @@ private:
 public:
 	ConstraintGeneratorFactory();
 
-	static ConstraintGeneratorFactory *
-	create_singleton_instance();
-
 	void factory_register( ConstraintGeneratorCreatorOP creator );
 
 	bool has_type( std::string const & constraint_generator_name ) const;

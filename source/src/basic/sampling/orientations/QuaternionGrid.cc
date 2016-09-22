@@ -39,12 +39,6 @@ namespace orientations {
 
 using namespace std;
 
-QuaternionGridManager *
-QuaternionGridManager::create_singleton_instance()
-{
-	return new QuaternionGridManager;
-}
-
 QuaternionGridManager::QuaternionGridManager(){
 	fill_metadata();
 }

@@ -31,12 +31,6 @@ namespace mpi {
 
 static THREAD_LOCAL basic::Tracer TR( "basic.mpi.MessageListenerFactory" );
 
-MessageListenerFactory *
-MessageListenerFactory::create_singleton_instance()
-{
-	return new MessageListenerFactory;
-}
-
 MessageListenerFactory::MessageListenerFactory()
 {
 	listeners_.clear();

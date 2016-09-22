@@ -30,35 +30,6 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
-#if defined MULTI_THREADED
-std::atomic< DataLoaderFactory * > DataLoaderFactory::instance_( 0 );
-#else
-DataLoaderFactory * DataLoaderFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex DataLoaderFactory::singleton_mutex_;
-
-std::mutex & DataLoaderFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-DataLoaderFactory * DataLoaderFactory::get_instance()
-{
-	boost::function< DataLoaderFactory * () > creator = boost::bind( &DataLoaderFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-DataLoaderFactory *
-DataLoaderFactory::create_singleton_instance()
-{
-	return new DataLoaderFactory;
-}
-
-
 DataLoaderFactory::~DataLoaderFactory() {}
 
 void

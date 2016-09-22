@@ -640,12 +640,9 @@ PairingLibrary::generate_jump_frags(
 } // method
 
 
-StandardPairingLibrary *
-StandardPairingLibrary::create_singleton_instance()
+StandardPairingLibrary::StandardPairingLibrary()
 {
-	auto * instance = new StandardPairingLibrary;
-	instance->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
-	return instance;
+	this->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
 }
 
 } // jumping

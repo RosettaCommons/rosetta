@@ -94,7 +94,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	//  }
 	if ( tr.Trace.visible() ) {
 		tr.Trace << " start region for StartStructClaimer "<< std::endl;
-		for ( unsigned long it : start_region ) {
+		for ( core::Size it : start_region ) {
 			tr.Trace << it << " ";
 		}
 		tr.Trace << std::endl;

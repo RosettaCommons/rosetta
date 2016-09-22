@@ -163,7 +163,7 @@ void steal_frag_set_from_pose (
 	FrameOP frame;
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
-	for ( unsigned long selected_residue : selected_residues ) {
+	for ( core::Size selected_residue : selected_residues ) {
 		frame = FrameOP( new Frame( selected_residue, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );

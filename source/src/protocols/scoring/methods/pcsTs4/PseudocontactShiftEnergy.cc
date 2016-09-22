@@ -637,14 +637,6 @@ PCS_Energy_Ts4::version() const
 	return 1; // Initial versioning
 }
 
-PCS_Energy_parameters_manager_Ts4 *
-PCS_Energy_parameters_manager_Ts4::get_instance(){
-	if ( instance_ == 0 ) {
-		instance_ = new PCS_Energy_parameters_manager_Ts4();
-	}
-	return instance_;
-}
-
 PCS_Energy_parameters_manager_Ts4::PCS_Energy_parameters_manager_Ts4(){
 	/*
 	//Do I need to initialize to some values?? In principle no.
@@ -873,8 +865,6 @@ utility::vector1<core::Real> const &
 PCS_Energy_parameters_manager_Ts4::get_vector_weight() const{
 	return vec_individual_weight_;
 }
-
-PCS_Energy_parameters_manager_Ts4 * PCS_Energy_parameters_manager_Ts4::instance_( 0 );
 
 } // pcs
 } // methods

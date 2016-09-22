@@ -33,7 +33,6 @@
 #include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -45,36 +44,6 @@ namespace task {
 namespace operation {
 
 static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.TaskOperationFactory" );
-
-// special singleton functions
-// initialize
-#if defined MULTI_THREADED
-std::atomic< TaskOperationFactory * > TaskOperationFactory::instance_( 0 );
-#else
-TaskOperationFactory * TaskOperationFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex TaskOperationFactory::singleton_mutex_;
-
-std::mutex & TaskOperationFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-TaskOperationFactory * TaskOperationFactory::get_instance()
-{
-	boost::function< TaskOperationFactory * () > creator = boost::bind( &TaskOperationFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-TaskOperationFactory *
-TaskOperationFactory::create_singleton_instance()
-{
-	return new TaskOperationFactory;
-}
 
 TaskOperationFactory::~TaskOperationFactory(){}
 

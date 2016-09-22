@@ -26,11 +26,6 @@
 // c++ headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#include <mutex>
-#include <atomic>
-#endif
-
 namespace protocols {
 namespace jd2 {
 namespace parser {
@@ -39,16 +34,15 @@ namespace parser {
 /// arbitrary data into the basic::datacache::DataMap used in the XML-based parser.
 /// This factory supports the load-time registration scheme allowing
 /// DataLoaders to be defined in libraries outside of protocols.lib
-class DataLoaderFactory
+class DataLoaderFactory : public utility::SingletonBase< DataLoaderFactory >
 {
 public:
+	friend class utility::SingletonBase< DataLoaderFactory >;
+
 	typedef std::map< std::string, DataLoaderCreatorOP > LoaderMap;
 
 public:
 	virtual ~DataLoaderFactory();
-
-	static
-	DataLoaderFactory * get_instance();
 
 	void factory_register( DataLoaderCreatorOP creator );
 
@@ -59,32 +53,10 @@ private:
 	DataLoaderFactory();
 
 	// Unimplemented -- uncopyable
-	DataLoaderFactory( DataLoaderFactory const & );
-	DataLoaderFactory const & operator = ( DataLoaderFactory const & );
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static DataLoaderFactory * create_singleton_instance();
-
-#ifdef MULTI_THREADED
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	DataLoaderFactory( DataLoaderFactory const & ) = delete;
+	DataLoaderFactory const & operator = ( DataLoaderFactory const & ) = delete;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-
-private:
-	/// Singleton instance pointer
-#if defined MULTI_THREADED
-	static std::atomic< DataLoaderFactory * > instance_;
-#else
-	static DataLoaderFactory * instance_;
-#endif
 
 	LoaderMap dataloader_creator_map_;
 

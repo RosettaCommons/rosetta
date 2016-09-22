@@ -366,18 +366,11 @@ void rotamer_from_chi_02(Real4 const & chi, chemical::AA const res, Size nchi,
 //
 // removed pser and rna
 
-
-RotamerLibrary *
-RotamerLibrary::create_singleton_instance() {
-	RotamerLibrary * rotamer_library = new RotamerLibrary();
-	rotamer_library->create_fa_dunbrack_libraries();
-
-	return rotamer_library;
-}
-
 RotamerLibrary::RotamerLibrary():
 	aa_libraries_( chemical::num_canonical_aas ) // Resize with default (empty OP) constructor
-{}
+{
+	this->create_fa_dunbrack_libraries();
+}
 
 RotamerLibrary::~RotamerLibrary() {
 }

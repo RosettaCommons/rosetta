@@ -148,8 +148,6 @@ public:
 	bool
 	validate_dunbrack_binary();
 
-private:
-
 public: // public such that people can see if we're reading from the binary or ASCII, for debugging purposes
 
 	bool decide_read_from_binary() const;
@@ -340,10 +338,6 @@ private:
 	RotamerLibrary();
 	RotamerLibrary( RotamerLibrary const & ); // unimplemented
 	RotamerLibrary const & operator = ( RotamerLibrary const & ); // unimplemented
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static RotamerLibrary * create_singleton_instance();
 
 private:
 

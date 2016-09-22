@@ -305,8 +305,6 @@ public:
 
 private:
 
-	static ScoringManager * create_singleton_instance();
-
 	//private constructor
 	ScoringManager();
 	~ScoringManager();

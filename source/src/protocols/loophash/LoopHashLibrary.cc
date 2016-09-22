@@ -726,7 +726,7 @@ LoopHashLibrary::get_all(
 	start_res = std::min( start_res, (core::Size)2 ); // dont start before 2 - WHY ?
 
 	for ( ir = 2; ir < nres; ir ++ ) {
-		for ( unsigned long loop_size : hash_sizes_ ) {
+		for ( core::Size loop_size : hash_sizes_ ) {
 			jr = ir + loop_size;
 			if ( ir > nres ) continue;
 			if ( jr > nres ) continue;

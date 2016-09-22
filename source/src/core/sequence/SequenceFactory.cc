@@ -32,13 +32,6 @@ namespace sequence {
 
 static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceFactory" );
 
-SequenceFactory *
-SequenceFactory::create_singleton_instance()
-{
-	return new SequenceFactory;
-}
-
-
 /// @details Private constructor insures correctness of singleton.
 SequenceFactory::SequenceFactory() {}
 

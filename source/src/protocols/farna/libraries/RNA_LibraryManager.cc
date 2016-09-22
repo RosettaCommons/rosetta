@@ -28,12 +28,6 @@ namespace protocols {
 namespace farna {
 namespace libraries {
 
-RNA_LibraryManager *
-RNA_LibraryManager::create_singleton_instance()
-{
-	return new RNA_LibraryManager;
-}
-
 RNA_Fragments const &
 RNA_LibraryManager::rna_fragment_library( std::string const & tag ) {
 	if ( rna_fragment_libraries_.find( tag ) == rna_fragment_libraries_.end() ) {

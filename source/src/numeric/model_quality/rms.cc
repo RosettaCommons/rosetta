@@ -818,7 +818,7 @@ rmsfitca3(
 
 
 	// compute center of mass
-	numeric::model_quality::RmsData* rmsdata = RmsData::instance(); // get a pointer to the singleton class
+	numeric::model_quality::RmsData* rmsdata = RmsData::get_instance(); // get a pointer to the singleton class
 
 	mass                   = rmsdata->count();
 	double xre             = rmsdata->xre();

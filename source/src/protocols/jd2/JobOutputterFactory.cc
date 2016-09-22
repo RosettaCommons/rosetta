@@ -37,12 +37,6 @@ namespace jd2 {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
-JobOutputterFactory *
-JobOutputterFactory::create_singleton_instance()
-{
-	return new JobOutputterFactory;
-}
-
 JobOutputterFactory::JobOutputterFactory()
 {}
 

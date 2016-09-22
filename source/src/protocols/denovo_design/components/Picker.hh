@@ -71,9 +71,6 @@ public:
 	Picker();
 	virtual ~Picker();
 
-	static Picker *
-	create_singleton_instance();
-
 	void
 	set_nfrags( core::Size const nfrags );
 

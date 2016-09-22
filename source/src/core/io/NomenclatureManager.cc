@@ -203,14 +203,6 @@ NomenclatureManager::NomenclatureManager()
 	}
 }
 
-// Singleton-creation function for use with utility::thread::threadsafe_singleton
-NomenclatureManager *
-NomenclatureManager::create_singleton_instance()
-{
-	return new NomenclatureManager;
-}
-
-
 // Get the map requested, creating it if necessary.
 // Called by the public static method rosetta_names_from_pdb_code()
 AltCodeMap const &

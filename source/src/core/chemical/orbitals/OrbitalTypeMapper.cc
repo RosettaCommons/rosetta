@@ -22,39 +22,6 @@ namespace core {
 namespace chemical {
 namespace orbitals {
 
-
-#if defined MULTI_THREADED
-std::atomic< OrbitalTypeMapper * > OrbitalTypeMapper::instance_( 0 );
-#else
-OrbitalTypeMapper * OrbitalTypeMapper::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-
-std::mutex & OrbitalTypeMapper::singleton_mutex()
-{
-	static std::mutex singleton_mutex_;
-	return singleton_mutex_;
-}
-
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-OrbitalTypeMapper * OrbitalTypeMapper::get_instance()
-{
-
-	boost::function< OrbitalTypeMapper * () > creator = boost::bind( &OrbitalTypeMapper::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-OrbitalTypeMapper *
-OrbitalTypeMapper::create_singleton_instance()
-{
-	return new OrbitalTypeMapper;
-}
-
-
 OrbitalTypeMapper::OrbitalTypeMapper()
 {
 	map_orbital_name_to_enum();

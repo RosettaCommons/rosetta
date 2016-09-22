@@ -41,11 +41,6 @@ static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLib
 std::mutex SingleResidueRotamerLibraryFactory::cache_mutex_{};
 #endif
 
-SingleResidueRotamerLibraryFactory * SingleResidueRotamerLibraryFactory::create_singleton_instance()
-{
-	return new SingleResidueRotamerLibraryFactory;
-}
-
 void
 SingleResidueRotamerLibraryFactory::factory_register( SingleResidueRotamerLibraryCreatorOP creator )
 {

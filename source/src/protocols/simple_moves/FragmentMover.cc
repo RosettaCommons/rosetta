@@ -103,7 +103,7 @@ FragmentMover::get_name() const {
 
 Size FragmentMover::apply_at_all_positions( core::pose::Pose& pose ) const {
 	Size ct( 0 );
-	for ( unsigned long it : insert_map() ) {
+	for ( core::Size it : insert_map() ) {
 		FrameList frames;
 		if ( !fragset_->frames( it, frames ) ) continue;
 		for ( FrameList::const_iterator fit = frames.begin(); fit != frames.end(); ++fit ) {

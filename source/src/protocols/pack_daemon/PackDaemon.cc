@@ -829,7 +829,7 @@ DaemonSet::retrieve_relevant_poses_for_entity(
 	std::list< std::pair< Size, PoseOP > > return_list;
 	for ( auto const & daemon : daemons_ ) {
 		bool generate_pose_for_daemon( false );
-		for ( unsigned long daemon_indice : daemon_indices ) {
+		for ( core::Size daemon_indice : daemon_indices ) {
 			if ( daemon.first == daemon_indice ) {
 				generate_pose_for_daemon = true;
 			}

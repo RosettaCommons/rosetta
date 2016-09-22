@@ -34,12 +34,6 @@ namespace rosetta_scripts {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
 
-PoseSelectorFactory *
-PoseSelectorFactory::create_singleton_instance()
-{
-	return new PoseSelectorFactory;
-}
-
 PoseSelectorFactory::PoseSelectorFactory(){}
 
 PoseSelectorFactory::~PoseSelectorFactory()= default;

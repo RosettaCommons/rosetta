@@ -422,7 +422,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 			//convert this set into the type needed by rmsd_with_super_subset
 			T_design << "interface for rmsd";
 			ObjexxFCL::FArray1D_bool is_interface( pose.size(), false );
-			for ( unsigned long it : sizeset ) {
+			for ( core::Size it : sizeset ) {
 				is_interface(it) = true;
 				T_design << " " << it;
 			}
