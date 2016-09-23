@@ -1429,7 +1429,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi(
 ) const
 {
 	parent::get_rotamer_from_chi( chi, rot );
-	Size const packed_rotno( grandparent::rotwell_2_packed_rotno( rot ) );
+	Size packed_rotno(0);
+	// Splitting the initialization of packed_rotno into two lines is needed to work around a compiler bug in GCC 4.7.* and 4.8.1
+	packed_rotno = grandparent::rotwell_2_packed_rotno( rot );
 	Real const nrchi = clip_to_nrchi_range( chi[ T + 1 ] );
 	/// find bracketting chi's as defined in the bbind rotamer definitions file.
 	for ( Size ii = 1; ii <= n_nrchi_sample_bins_; ++ii ) {
