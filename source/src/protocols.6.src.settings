@@ -214,6 +214,7 @@ sources = {
 		"SymDofMover",
 		"SymDofMoverSampler",
 		"SchemePlaceMotifsMover",
+		"MotifHitsRotamersOperation",
 		"SymUnsatHbondFilter",
 	],
 	"protocols/protein_interface_design": [

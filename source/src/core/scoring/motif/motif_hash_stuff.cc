@@ -587,10 +587,11 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	utility::vector1<Size> resnums(pose.size(),tag);
 	BOOST_FOREACH ( Xform const & x,xforms ) {
 		xform_pose(pose,x);
-		//core::io::pdb::dump_pdb(pose, out, mask, string_of(tag)); JAB (tag never used)
-		core::io::pdb::dump_pdb(pose, out, mask);
-
-		xform_pose(pose,~x);
+		//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
+	out<<"MODEL"<<endl ;
+	core::io::pdb::dump_pdb(pose, out, mask);
+	out<<"ENDMDL"<<endl;
+	xform_pose(pose,~x);
 	}
 	return motif_align_rms;
 }
@@ -1650,12 +1651,13 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 	}
 
 	for ( Size ir = res_begin1; ir <= res_end1; ++ir ) {
-
+		if ( !pose2.residue(ir).is_protein()) { continue; }
 		if ( !useres1[ir] ) { /*<<"not useres1"<<endl;*/ continue; }
 		if ( hits.num_hits1(ir)>0 && opt.overlap1()==NO_OVERLAP ) { /*<<"overlap1"<<endl;*/ continue; }
 		char aa1 = pose1.residue(ir).name1(), ss1=pose1.secstruct(ir);
 		// cout << ir << " " << aa1 << " " << ss1 << endl;
 		for ( Size jr = res_begin2; jr <= res_end2; ++jr ) {
+			if ( !pose2.residue(jr).is_protein()) { continue; }		
 			runtime_assert( !symmetry || sym_info->subunit_index(jr)==1 );
 			if ( !useres2[jr] ) { /*<<"not useres2"<<endl;*/ continue; };
 			if ( hits.num_hits2(jr)>0 && opt.overlap2()==NO_OVERLAP ) { /*<<"overlap2"<<endl;*/ continue; }

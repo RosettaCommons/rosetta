@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -23,6 +24,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
@@ -51,8 +53,10 @@ public:
 
 private:
 	utility::vector1<std::string> motif_sets_;
-	std::string tag_name_,dumpfile_;
+	std::string tag_name_,dumpfile_,mode_,allowed_aas_;
 	bool halt_on_error_;
+	core::scoring::ScoreFunctionCOP scorefxn_ ;
+	core::pack::task::TaskFactoryOP task_factory_ ;	
 };
 
 } // matdes
