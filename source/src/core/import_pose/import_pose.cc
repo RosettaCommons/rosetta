@@ -293,7 +293,7 @@ pose_from_file(
 		build_pose( sfr, pose, residue_set, options );
 
 		// set secondary structure for centroid PDBs
-		if ( residue_set.name() == core::chemical::CENTROID ) {
+		if ( residue_set.category() == core::chemical::CENTROID_t ) {
 			core::pose::set_ss_from_phipsi( pose );
 		}
 
@@ -701,7 +701,7 @@ void build_pose_as_is2(
 	}
 
 	// optimize H if using a full-atom residue type set, and no_optH is not specified
-	if ( residue_set.name() == FA_STANDARD ) {
+	if ( residue_set.category() == FULL_ATOM_t ) {
 		//if pack_missing_density specified, repack residues w/ missing density
 		if ( options.pack_missing_sidechains()  && ! options.membrane() ) {
 			pack::pack_missing_sidechains( pose, missing );

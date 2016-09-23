@@ -18,6 +18,9 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -33,8 +36,53 @@ namespace util {
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
+	core::chemical::ResidueTypeSet const & type_set,
+	bool allow_sloppy_match = false
+);
+
+/// @details the function allows a pose to use a different residue_type_set to
+/// represent all its residues, such as from fullatom residues to centroid
+/// residues, or vice versa. During the switch, corresponding atoms will be
+/// copied. Redundant atoms will be removed (in case from fullatom to centroid)
+/// and missing atoms will be built by ideal geometry (in the case from centroid
+/// to fullatom).
+void
+switch_to_residue_type_set(
+	core::pose::Pose & pose,
+	core::chemical::TypeSetCategory type_set_type,
+	bool allow_sloppy_match = false
+);
+
+/// @details the function allows a pose to use a different residue_type_set to
+/// represent all its residues, such as from fullatom residues to centroid
+/// residues, or vice versa. During the switch, corresponding atoms will be
+/// copied. Redundant atoms will be removed (in case from fullatom to centroid)
+/// and missing atoms will be built by ideal geometry (in the case from centroid
+/// to fullatom).
+void
+switch_to_residue_type_set(
+	core::pose::Pose & pose,
 	std::string const & type_set_name,
 	bool allow_sloppy_match = false
+);
+
+//////////////
+// Functions primarily for internal use
+// (Mainly to cut down on the giant if-then-else function)
+////////////
+
+void
+switch_to_centroid_rot_set(
+	core::pose::Pose & pose,
+	core::conformation::symmetry::SymmetryInfoCOP symm_info,
+	core::chemical::ResidueTypeSet const & rsd_set,
+	bool allow_sloppy_match = false
+);
+
+/// @brief Rebuild disulfides after a transition to a full atom ResidueTypeSet
+void
+rebuild_fa_disulfides(
+	core::pose::Pose & pose
 );
 
 } // util

@@ -972,7 +972,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	tr.Debug << "switch_to_fullatom... " << std::endl;
 
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 	tr.Debug << "switched to fullatom... " << std::endl;

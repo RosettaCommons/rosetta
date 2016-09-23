@@ -19,6 +19,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // Package headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AA.hh>
 //#include <core/chemical/ResidueTypeSelector.fwd.hh>
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
@@ -69,7 +70,7 @@ public:
 
 
 	/// @brief default c-tor
-	ResidueTypeSet();
+	ResidueTypeSet( TypeSetCategory category = INVALID_t );
 
 	/// @brief constructor from directory
 	ResidueTypeSet(
@@ -91,9 +92,24 @@ public:
 	//inline ResidueTypeSetAP  get_self_weak_ptr() { return ResidueTypeSetAP( shared_from_this() ); }
 
 	/// @brief name of the residue type set
+	/// @details The difference between a ResidueTypeSet *name* and a ResidueTypeSet *category* is that a
+	/// a ResidueTypeSet *name* should uniquely identify a ResidueTypeSet (at lease those within the ChemicalManger)
+	/// but more than one ResidueTypeSet may have the same *category*.
+	/// The type specifies what compatibility class (full atom, centroid) the ResidueTypeSet has.
+	/// Generally speaking, the *name* should only be used when interacting with the user.
 	std::string const &
 	name() const {
 		return name_;
+	}
+
+	/// @brief The type of the ResidueTypeSet
+	/// @details The difference between a ResidueTypeSet *name* and a ResidueTypeSet *category* is that a
+	/// a ResidueTypeSet *name* should uniquely identify a ResidueTypeSet (at lease those within the ChemicalManger)
+	/// but more than one ResidueTypeSet may have the same *category*.
+	/// The type specifies what compatibility class (full atom, centroid) the ResidueTypeSet has.
+	TypeSetCategory
+	category() const {
+		return category_;
 	}
 
 	AtomTypeSetCOP atom_type_set() const { return atom_types_; }
@@ -363,8 +379,11 @@ private:
 	// data
 private:
 
-	/// What does the ChemicalManager call this ResidueTypeSet?
+	/// @brief What does the ChemicalManager call this ResidueTypeSet?
 	std::string name_;
+
+	/// @brief What sort of TypeSet is this?
+	TypeSetCategory category_;
 
 	// The default subsidiary typesets, typically specified in the database summary file.
 	// You can add a residue type with a different subsidiary typeset, but you'll have to

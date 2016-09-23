@@ -219,14 +219,20 @@ public:  // General Properties
 		return residues_.empty();
 	}
 
-	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	bool is_residue_typeset( std::string tag ) const;
+	/// @brief What category of ResidueTypeSet is this Conformation made of?
+	/// If majority is true, it will be the category of the ResidueTypeSet for most residues in the pose.
+	/// If majority is false, core::chemical::MIXED_t will be returned for conformations with residues from multiple ResidueTypeSets
+	core::chemical::TypeSetCategory
+	residue_typeset_category( bool majority=true ) const;
 
-	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	/// @brief convenience test for residue_type_set category
 	bool is_fullatom() const;
 
-	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	/// @brief convenience test for residue_type_set category
 	bool is_centroid() const;
+
+	/// @brief convenience test for residue_type_set category
+	bool is_mixed_category() const;
 
 	/// @brief convenience test for if the conformation contains information for a membrane protein
 	bool is_membrane() const {

@@ -1411,8 +1411,8 @@ void InterfaceAnalyzerMover::calc_centroid_dG ( core::pose::Pose const & complex
 	}
 	core::pose::Pose copy_complex( complex_pose );
 	core::pose::Pose copy_separated( separated_pose );
-	core::util::switch_to_residue_type_set( copy_complex , core::chemical::CENTROID );
-	core::util::switch_to_residue_type_set( copy_separated , core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( copy_complex , core::chemical::CENTROID_t );
+	core::util::switch_to_residue_type_set( copy_separated , core::chemical::CENTROID_t );
 	// use score3 but turn of RG - JAB why score3?
 	core::scoring::ScoreFunctionOP scorefxn  = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 	scorefxn->set_weight( core::scoring::rg, 0.0 );

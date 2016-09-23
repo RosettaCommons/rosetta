@@ -145,9 +145,9 @@ WorkUnit_BatchRelax_and_PostRescore::set_defaults(){
 	if (  option[ OptionKeys::wum::extra_scorefxn_ref_structure ].user() ) {
 		core::import_pose::pose_from_file( ref_pose_, option[ OptionKeys::wum::extra_scorefxn_ref_structure ]() , core::import_pose::PDB_file);
 		// We do the following to save memory, since we dont actually need anything but the backbone coordiantes from this pose.
-		//core::util::switch_to_residue_type_set( ref_pose_, core::chemical::CENTROID);
+		//core::util::switch_to_residue_type_set( ref_pose_, core::chemical::CENTROID_t );
 		if ( !ref_pose_.is_fullatom() ) {
-			core::util::switch_to_residue_type_set( ref_pose_, core::chemical::FA_STANDARD);
+			core::util::switch_to_residue_type_set( ref_pose_, core::chemical::FULL_ATOM_t );
 		}
 	}
 }
@@ -210,7 +210,7 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 
 		if ( !pose.is_fullatom() ) {
 			TR.Debug << "Switching struct to fullatom" << std::endl;
-			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+			core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t);
 		}
 
 

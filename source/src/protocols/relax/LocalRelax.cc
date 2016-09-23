@@ -341,7 +341,7 @@ LocalRelax::parse_my_tag(
 void
 LocalRelax::apply( core::pose::Pose & pose) {
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 	core::Size nres = pose.size();

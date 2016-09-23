@@ -992,7 +992,7 @@ void RemodelMover::apply( Pose & pose ) {
 					pose::Pose archived_pose = pose;
 
 					// flip residue type set for centroid minimize
-					util::switch_to_residue_type_set( pose, chemical::CENTROID, true );
+					util::switch_to_residue_type_set( pose, chemical::CENTROID_t, true );
 
 					protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 
@@ -1068,7 +1068,7 @@ void RemodelMover::apply( Pose & pose ) {
 					// flip residue type set back, for repeat builds, currently don't do
 					// restore_sidechain, as they should all be redesigned.  MAY NEED TO
 					// CHANGE
-					util::switch_to_residue_type_set( pose, chemical::FA_STANDARD, true );
+					util::switch_to_residue_type_set( pose, chemical::FULL_ATOM_t, true );
 					//forge::methods::restore_residues( manager_.original2modified(), archived_pose , pose );
 					//pose.dump_pdb("test.pdb");
 
@@ -1201,7 +1201,7 @@ void RemodelMover::apply( Pose & pose ) {
 					} else {
 						SS << filecount << "_cen.pdb";
 					}
-					core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID, true);
+					core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID_t, true);
 					(*(*it)).dump_scored_pdb(SS.str(), *centroid_sfx_);
 				}
 
@@ -1455,13 +1455,9 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
-	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
-		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
-	}
-
-	if ( !mod_ap_is_full_atom ) {
-		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FA_STANDARD );
+	core::chemical::TypeSetCategory mod_ap_type = modified_archive_pose.conformation().residue_typeset_category(false);
+	if ( mod_ap_type != core::chemical::FULL_ATOM_t ) {
+		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FULL_ATOM_t );
 	}
 	/*
 	// flip to poly-ala-gly-pro-disulf pose, only in the rebuilt segment

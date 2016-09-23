@@ -609,7 +609,7 @@ void new_pose_generator(
 	core::pose::Pose centroid_target_loops;
 
 
-	core::util::switch_to_residue_type_set( target_loops , core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( target_loops , core::chemical::CENTROID_t );
 
 	core::chemical::ResidueTypeSetCOP rsd_set( target_loops.residue(1).residue_type_set() );
 

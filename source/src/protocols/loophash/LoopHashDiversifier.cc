@@ -185,7 +185,7 @@ LoopHashDiversifier::apply( Pose & pose )
 	runtime_assert( library_ != nullptr );
 	Pose const saved_pose( pose );
 
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 
 	core::pose::set_ss_from_phipsi( pose );
 
@@ -319,7 +319,7 @@ LoopHashDiversifier::apply( Pose & pose )
 	}
 
 	//Change to FA
-	core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+	core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 }
 
 //core::pose::PoseOP

@@ -95,6 +95,7 @@ ResidueTypeSet::ResidueTypeSet(
 	std::string const & directory
 ) :
 	name_( name ),
+	category_( INVALID_t ),
 	database_directory_(directory),
 	merge_behavior_manager_( new MergeBehaviorManager( directory ) ),
 	cache_( ResidueTypeSetCacheOP( new ResidueTypeSetCache( *this ) ) )
@@ -161,7 +162,10 @@ void ResidueTypeSet::init(
 			// Parse lines.
 			std::istringstream l( line );
 			l >> tag;
-			if ( tag == "ATOM_TYPE_SET" ) {
+			if ( tag == "TYPE_SET_CATEGORY" ) {
+				l >> tag;
+				category_ = type_set_category_from_string( tag );
+			} else if ( tag == "ATOM_TYPE_SET" ) {
 				l >> tag;
 				atom_types_ = ChemicalManager::get_instance()->atom_type_set( tag );
 			} else if ( tag == "ELEMENT_SET" ) {
@@ -329,7 +333,9 @@ void ResidueTypeSet::init(
 
 }
 
-ResidueTypeSet::ResidueTypeSet() {}
+ResidueTypeSet::ResidueTypeSet( TypeSetCategory category /*=INVALID_t*/ ) :
+	category_( category )
+{}
 
 ResidueTypeSet::~ResidueTypeSet() = default;
 

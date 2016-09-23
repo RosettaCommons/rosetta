@@ -138,8 +138,8 @@ HybridVDW_Energy::residue_pair_energy(
 			}
 		}
 	}
-	debug_assert( rsd1.residue_type_set()->name() == chemical::HYBRID_FA_STANDARD_CENTROID );
-	debug_assert( rsd2.residue_type_set()->name() == chemical::HYBRID_FA_STANDARD_CENTROID );
+	debug_assert( rsd1.residue_type_set()->category() == chemical::HYBRID_FA_STANDARD_CENTROID_t );
+	debug_assert( rsd2.residue_type_set()->category() == chemical::HYBRID_FA_STANDARD_CENTROID_t );
 	emap[ hybrid_vdw ] += score * vdw_scale_factor;
 
 }

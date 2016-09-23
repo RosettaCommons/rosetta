@@ -263,7 +263,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 		core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
 		if ( !relax_pose.is_fullatom() ) {
-			core::util::switch_to_residue_type_set( relax_pose, core::chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( relax_pose, core::chemical::FULL_ATOM_t );
 		}
 
 

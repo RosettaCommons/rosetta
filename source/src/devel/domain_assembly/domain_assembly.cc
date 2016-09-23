@@ -208,7 +208,7 @@ optimize_linkers_centroid_mode(
 
 
 	core::pose::Pose const saved_input_pose( full_pose ); //used to return sidechains later
-	core::util::switch_to_residue_type_set( full_pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( full_pose, core::chemical::CENTROID_t );
 	scoring::ScoreFunctionOP scorefxn_centroid( scoring::ScoreFunctionFactory::create_score_function( scoring::CENTROID_WTS ) );
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn_centroid, 0.8 /*temperature*/ ) );
 
@@ -345,7 +345,7 @@ optimize_linkers_fullatom_mode(
 	pose::Pose & full_pose
 )
 {
-	//core::util::switch_to_residue_type_set( full_pose, core::chemical::FA_STANDARD );
+	//core::util::switch_to_residue_type_set( full_pose, core::chemical::FULL_ATOM_t );
 	scoring::ScoreFunctionOP scorefxn( scoring::get_score_function() );
 
 	// for each residue - identify the nearest movable residue forward and backwards in sequence

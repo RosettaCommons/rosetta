@@ -61,7 +61,7 @@ void simple_fold_tree(core::pose::Pose & pose) {
 
 void to_centroid(core::pose::Pose & pose) {
 	if ( !pose.is_centroid() ) {
-		core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+		core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID_t);
 	}
 }
 

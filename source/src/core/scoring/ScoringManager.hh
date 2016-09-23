@@ -377,9 +377,6 @@ private:
 	// new map for etables using EtableOptions as key
 	mutable std::map< etable::EtableOptions, etable::EtableOP > etables_by_options_;
 
-	//XRW_B_T1
-	//mutable std::map< std::string, coarse::CoarseEtableOP > coarse_etables_;
-	//XRW_E_T1
 	mutable std::map< std::string, etable::MembEtableOP > memb_etables_; //pba
 
 	/// @brief Cached data used by FA_ElecEnergy with beta_nov15.

@@ -204,8 +204,8 @@ FragQualCalculator::recompute( Pose const & pose )
 	utility::vector1< bool > is_covered( pose.size(), false );
 
 	Pose input_pose( pose ), test_pose( pose );
-	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
-	core::util::switch_to_residue_type_set(  test_pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
+	core::util::switch_to_residue_type_set(  test_pose, core::chemical::CENTROID_t );
 
 	for ( ConstFrameIterator frame = frag_->begin(); frame != frag_->end(); ++frame ) {
 

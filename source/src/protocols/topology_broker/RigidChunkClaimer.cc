@@ -88,7 +88,7 @@ RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops
 	rigid_core_( rigid )
 {
 	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+		core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID_t );
 	}
 }
 
@@ -174,7 +174,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 void RigidChunkClaimer::init_after_reading() {
 	tr.Debug << type() << " initialized with input_pdb: " << input_pose_.sequence() << " and regions " << rigid_core_ << std::endl;
 	centroid_input_pose_=input_pose_;
-	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+	if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID_t );
 }
 
 void RigidChunkClaimer::select_parts() {
@@ -233,7 +233,7 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 	if ( bUseInputPose_ ) {
 		input_pose_ = pose;
 		centroid_input_pose_=input_pose_;
-		if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID );
+		if ( centroid_input_pose_.size() && centroid_input_pose_.is_fullatom() ) core::util::switch_to_residue_type_set( centroid_input_pose_, chemical::CENTROID_t );
 
 		// use loops from ThreadingJob ???
 		if ( bUseThreadingJobLoops_ ) {

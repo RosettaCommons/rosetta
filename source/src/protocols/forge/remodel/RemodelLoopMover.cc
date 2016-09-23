@@ -2419,12 +2419,12 @@ void RemodelLoopMover::fa_relax_stage(
 		//protocols::simple_moves::symmetry::SetupNCSMover setup_ncs = generate_ncs_csts(pose);
 		//setup_ncs.apply(fa_pose);
 	}
-	core::util::switch_to_residue_type_set( fa_pose, core::chemical::FA_STANDARD);
+	core::util::switch_to_residue_type_set( fa_pose, core::chemical::FULL_ATOM_t );
 	protocols::relax::FastRelax frelax(scorefxn,1);//only 1 stage
 	TR << "Relaxing pose" << std::endl;
 	frelax.apply(fa_pose);
 	TR << "Finished relaxing" << std::endl;
-	core::util::switch_to_residue_type_set( fa_pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set( fa_pose, core::chemical::CENTROID_t );
 	//copy fa_pose to original_pose
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		Size copy_size =0;

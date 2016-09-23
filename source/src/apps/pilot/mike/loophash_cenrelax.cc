@@ -186,7 +186,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 
     // convert pose to centroid pose:
-    core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+    core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
     core::pose::set_ss_from_phipsi( pose );
 
     core::Size starttime2 = time(NULL);
@@ -418,7 +418,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 //    std::cout << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
 //  }
 
-  core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID);
+  core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID_t );
 
 
   {

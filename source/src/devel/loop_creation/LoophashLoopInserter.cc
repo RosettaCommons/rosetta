@@ -245,7 +245,7 @@ LoophashLoopInserter::find_fragments(
 	clock_t start_time = clock();
 
 	core::pose::Pose centroid_pose = pose;
-	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID_t );
 
 	//Collect backbone segments from the specified number of residues before and after the loop
 	//to be built. Don't use the last residue before and after the jump because it will have an undefined

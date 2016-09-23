@@ -272,7 +272,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 
 			LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
 			core::pose::Pose newpose( pose );
-			core::util::switch_to_residue_type_set( newpose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( newpose, core::chemical::CENTROID_t );
 			transfer_phi_psi( pose, newpose );
 			core::Real final_rms = simple_inserter->make_local_bb_change( newpose, pose, new_bs, ir );
 
@@ -365,7 +365,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 
 			LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
 			core::pose::Pose newpose( pose );
-			core::util::switch_to_residue_type_set( newpose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( newpose, core::chemical::CENTROID_t );
 			transfer_phi_psi( pose, newpose );
 			core::Real final_rms = simple_inserter->make_local_bb_change( newpose, pose, new_bs, ir );
 
@@ -380,7 +380,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 
 			// Calculate the RT of the original fragment by inserting it raw and remeasuring.
 			core::pose::Pose fragpose( pose );
-			core::util::switch_to_residue_type_set( fragpose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( fragpose, core::chemical::CENTROID_t );
 			transfer_phi_psi( pose, fragpose );
 			new_bs.apply_to_pose( fragpose, ir );
 			Real6 loop_transform_frag;

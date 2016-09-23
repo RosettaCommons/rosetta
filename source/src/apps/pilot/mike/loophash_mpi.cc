@@ -55,7 +55,7 @@ class MPI_LoopHash_Launcher {
 			native_pose_ = new core::pose::Pose();
 			core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 			core::pose::set_ss_from_phipsi( *native_pose_ );
-			core::util::switch_to_residue_type_set( *native_pose_, core::chemical::CENTROID);
+			core::util::switch_to_residue_type_set( *native_pose_, core::chemical::CENTROID_t );
 		}
 
 		WorkUnitList wulist;

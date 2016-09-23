@@ -189,14 +189,14 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 				lrm.apply( pose );
 				return;
 			}
-			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 			if ( protocol_ == "kinematic" ) {
 				if ( perturb_ ) {
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
 					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
-				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
@@ -224,7 +224,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
-				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine(single_loop, hires_score_ );

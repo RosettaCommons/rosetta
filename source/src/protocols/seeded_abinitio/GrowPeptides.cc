@@ -201,7 +201,7 @@ GrowPeptides::grow_from_verteces(
 
 	core::pose::Pose saved_pose;
 	saved_pose = curr_pose;
-	core::util::switch_to_residue_type_set( curr_pose , core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( curr_pose , core::chemical::CENTROID_t );
 
 	core::kinematics::FoldTree grow_foldtree = curr_pose.fold_tree() ;
 	TR<<"foldtree before growing: " << grow_foldtree << std::endl;
@@ -383,7 +383,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	if ( !output_centroid ) {
 		TR<<"switching back to full_atom mode" <<std::endl;
 		pose.update_residue_neighbors();
-		core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( pose, chemical::FULL_ATOM_t );
 		( *scorefxn_ )( pose );
 	}//end output centroid
 

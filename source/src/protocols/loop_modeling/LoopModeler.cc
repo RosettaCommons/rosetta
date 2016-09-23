@@ -94,7 +94,6 @@ using core::pose::Pose;
 using core::import_pose::pose_from_file;
 using core::scoring::ScoreFunctionCOP;
 using core::scoring::ScoreFunctionOP;
-using core::util::switch_to_residue_type_set;
 using core::pack::task::TaskFactoryOP;
 using core::pack::task::TaskFactoryCOP;
 

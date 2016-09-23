@@ -97,7 +97,7 @@ FastGapMover::apply( pose::Pose & pose ) {
 
 	// convert pose to centroid pose:
 	if ( working_pose->is_fullatom() ) {
-		core::util::switch_to_residue_type_set( *working_pose, core::chemical::CENTROID);
+		core::util::switch_to_residue_type_set( *working_pose, core::chemical::CENTROID_t );
 	}
 	// Now go through each gap and try increasingly larger lh until something is returned
 	Size next_gap = 0;

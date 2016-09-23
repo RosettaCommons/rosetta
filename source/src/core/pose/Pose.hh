@@ -891,8 +891,7 @@ public:
 
 	/// @brief Returns true if pose is ResidueType fullatom
 	///
-	/// @note convenience test for residue_type_set ( based on two
-	/// middle residue -- to avoid hitting on ligands or pseudos )
+	/// @note convenience test for residue_type_set
 	///
 	/// example(s):
 	///     pose.is_fullatom()
@@ -901,13 +900,11 @@ public:
 	///     Pose.is_centroid
 	///     Residue
 	///     ResidueType
-	/// @brief this is nt a good test --Doug
 	bool is_fullatom() const;
 
 	/// @brief Returns true if pose is ResidueType centroid
 	///
-	/// @note convenience test for residue_type_set ( based on two
-	/// middle residue -- to avoid hitting on ligands or pseudos )
+	/// @note convenience test for residue_type_set
 	///
 	/// example(s):
 	///     pose.is_centroid()
@@ -916,7 +913,6 @@ public:
 	///     Pose.is_fullatom
 	///     Residue
 	///     ResidueType
-	/// @brief this is nt a good test --Doug
 	bool is_centroid() const;
 
 

@@ -444,36 +444,71 @@ Conformation::sequence_matches( Conformation const & other ) const
 
 // General Properties ////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// @note this is not a good test --Doug
-bool
-Conformation::is_fullatom() const {
-	return is_residue_typeset( core::chemical::FA_STANDARD );
-}
-
-/// @note this is not a good test --Doug
-bool
-Conformation::is_centroid() const {
-	return is_residue_typeset( core::chemical::CENTROID );
-}
-
-/// @note this is not a good test --Doug
-bool
-Conformation::is_residue_typeset( std::string tag ) const {
-	// Empty poses aren't any residue typeset (special case prevents segfault)
-	if ( size() == 0 ) {
+/// @brief What ResidueTypeSet is this Conformation made of?
+/// If majority is true, it will be they ResidueTypeSet for most residues in the pose.
+/// If majority is false, core::chemical::MIXED_t will be returned for conformations with residues from multiple ResidueTypeSets
+core::chemical::TypeSetCategory
+Conformation::residue_typeset_category( bool majority /*=true*/ ) const {
+	if ( empty() ) {
 		TR.Warning << "WARNING: Attempted to determine the residue type set of an empty pose." << std::endl;
-		return false;
+		return core::chemical::MIXED_t; // Because an empty pose is compatible with all of them.
 	}
 
-	Size const seqpos1( std::max( 1, (int) size() / 2 ) );
-	Size const seqpos2( std::min( (int) size(), (int) size() / 2 + 2 ) );
+	utility::vector1< core::Size > counts( core::chemical::TYPE_SET_CATEGORIES_LENGTH, 0 );
 
-	// if one of them is correct we are happy!
-	bool correct = residue_type( seqpos1 ).residue_type_set()->name() == tag;
-	correct = correct || residue_type( seqpos2 ).residue_type_set()->name() == tag;
-	return correct;
+	for ( core::Size ii(1); ii <= size(); ++ii ) {
+		core::chemical::TypeSetCategory category_for_residue( residue_type( ii ).residue_type_set()->category() );
+		// Skip "INVALID", as it's not something we want to recognize (we'd have to change the counts vector too).
+		runtime_assert( category_for_residue != core::chemical::INVALID_t );
+		// Individual ResidueTypes should not be of type MIXED
+		runtime_assert( category_for_residue != core::chemical::MIXED_t );
+		++counts[ category_for_residue ];
+	}
+
+	if ( majority ) {
+		core::chemical::TypeSetCategory best( core::chemical::MIXED_t );
+		core::Size best_counts( 0 );
+
+		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_CATEGORIES_LENGTH; ++ii ) {
+			if ( counts[ii] > best_counts ) {
+				best = core::chemical::TypeSetCategory( ii );
+				best_counts = counts[ii];
+			} else if ( counts[ii] == best_counts ) {
+				best = core::chemical::MIXED_t; // We have multiple types with the same count.
+			}
+		}
+		return best;
+	} else { // majority == false
+		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_CATEGORIES_LENGTH; ++ii ) {
+			if ( counts[ii] == size() ) {
+				// All residues with valid TypeSetCategorys are in this type
+				return core::chemical::TypeSetCategory( ii );
+			}
+		}
+		// There isn't a single best, so return a hybrid.
+		return core::chemical::MIXED_t;
+	}
+	return core::chemical::MIXED_t; // Should never get here.
 }
 
+bool
+Conformation::is_fullatom() const {
+	// The majority of ResidueTypes are fullatom
+	// "majority" more closely matches the previous behavior
+	return residue_typeset_category( true ) == core::chemical::FULL_ATOM_t;
+}
+
+bool
+Conformation::is_centroid() const {
+	// The majority of ResidueTypes are centroid
+	// "majority" more closely matches the previous behavior
+	return residue_typeset_category( true ) == core::chemical::CENTROID_t;
+}
+
+bool
+Conformation::is_mixed_category() const {
+	return residue_typeset_category( false ) == core::chemical::MIXED_t;
+}
 
 // Chains ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1922,8 +1957,8 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 	// If all the cys are fullatom, use stricter criteria
 	bool fullatom( true );
 	for ( Size ii = 1; ii <= num_cys; ++ii ) {
-		if ( residue_type( cysid_2_resid[ ii ] ).residue_type_set()->name()
-				!= core::chemical::FA_STANDARD ) {
+		if ( residue_type( cysid_2_resid[ ii ] ).residue_type_set()->category()
+				!= core::chemical::FULL_ATOM_t ) {
 			fullatom = false;
 			break;
 		}

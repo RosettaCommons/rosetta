@@ -104,7 +104,7 @@ void CenRotDunEnergy::residue_energy(
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-	debug_assert(rsd.residue_type_set()->name()==chemical::CENTROID_ROT);
+	debug_assert(rsd.residue_type_set()->category() == chemical::CENTROID_ROT_t);
 
 	/// accumulate total energies
 	Real dun_score( 0.0 );
@@ -142,7 +142,7 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 	scoring::EnergyMap const & weights
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	debug_assert(rsd.residue_type_set()->name()==chemical::CENTROID_ROT);
+	debug_assert(rsd.residue_type_set()->category() == chemical::CENTROID_ROT_t);
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
 		return 0.0;
 	}
@@ -183,7 +183,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 	scoring::EnergyMap const & weights
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	debug_assert(pose.residue( tor_id.rsd() ).residue_type_set()->name()==chemical::CENTROID_ROT);
+	debug_assert(pose.residue( tor_id.rsd() ).residue_type_set()->category() == chemical::CENTROID_ROT_t);
 	if ( pose.residue( tor_id.rsd() ).has_variant_type( core::chemical::REPLONLY ) ) {
 		return 0.0;
 	}
@@ -224,7 +224,7 @@ void CenRotDunEnergy::eval_residue_derivatives(
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-	debug_assert(rsd.residue_type_set()->name()==chemical::CENTROID_ROT);
+	debug_assert(rsd.residue_type_set()->category() == chemical::CENTROID_ROT_t);
 
 	Real weight = weights[ cen_rot_dun ];
 

@@ -945,7 +945,7 @@ Assembly::to_pose(
 	//finally, add the partner
 	if ( partner_pose_ ) {
 		core::pose::Pose partner_pose_copy = *partner_pose_->clone();
-		if ( !partner_pose_->conformation().is_residue_typeset(residue_type_set) ) {
+		if ( partner_pose_->conformation().residue_typeset_category(false) != res_type_set->category() ) {
 			core::util::switch_to_residue_type_set( partner_pose_copy, residue_type_set, true );
 		}
 		core::pose::append_pose_to_pose(model_pose, partner_pose_copy, true);

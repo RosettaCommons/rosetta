@@ -120,7 +120,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	runtime_assert( library_ != nullptr );
 	Pose const saved_pose( pose );
 
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 
 	// symmetric->asymmetric
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -190,7 +190,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 		bool passed_i = cenfilter_->apply( rpose );
 		if ( passed_i ) {
 			core::Real score_i = ranking_cenfilter()->report_sm( rpose );
-			core::util::switch_to_residue_type_set( rpose, core::chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( rpose, core::chemical::FULL_ATOM_t );
 
 			core::io::silent::SilentStructOP new_struct = ideal_?
 				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :

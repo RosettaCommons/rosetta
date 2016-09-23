@@ -580,7 +580,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// wont be properly packed at this stage but it doesnt really matter.
 	// They'll get repacked shortly.
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 	// Make a local copy of movemap, called local movemap. The reason is that
@@ -1207,7 +1207,7 @@ void FastRelax::batch_apply(
 		// 432mb
 		if ( !pose.is_fullatom() ) {
 			TR.Debug << "Switching struct to fullatom" << std::endl;
-			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+			core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 			//core::Real afterscore = (*local_scorefxn)(pose);
 		}
 		// 453mb

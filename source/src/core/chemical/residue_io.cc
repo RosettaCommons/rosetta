@@ -807,7 +807,7 @@ read_topology_file(
 			}
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling ]
 					&& (rsd->aa() == aa_ser || rsd->aa() == aa_thr )
-					&& rsd_type_set_ap.lock() && rsd_type_set_ap.lock()->name() == FA_STANDARD ) {
+					&& rsd_type_set_ap.lock() && rsd_type_set_ap.lock()->category() == FULL_ATOM_t ) {
 				// ugly, temporary hack. change the sampling for serine and threonine chi2 sampling
 				// so that proton chi rotamers are sampled ever 20 degrees
 				tr << "Expanding chi2 sampling for amino acid " << rsd->aa() << std::endl;

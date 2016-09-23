@@ -123,7 +123,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using namespace basic::options;
 	using namespace protocols;
 
-	//core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
+	//core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
 
 	// find rebuilding segments
 	Size model_length = data.sequence.size();

@@ -82,7 +82,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 
 	// we don't know how the pose coming in was created but it needs to be a full atom pose
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 		TR << "switching pose to be full atom" << std::endl;
 	}
 

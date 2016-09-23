@@ -867,7 +867,7 @@ StepWiseProteinBackboneSampler::convert_to_centroid( core::pose::Pose & pose ) {
 	core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, pose.size() );
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, pose.size() );
 
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 
 	// get DSSP, assign secondary structure
 	core::scoring::dssp::Dssp dssp_obj( pose );

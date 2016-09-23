@@ -335,7 +335,7 @@ void NoesyModule::generate_constraint_files(
 	using namespace OptionKeys;
 
 	core::pose::Pose centroid_pose = pose;
-	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID_t );
 
 	ConstraintSetOP cstset( new ConstraintSet );
 	ConstraintSetOP centroid_cstset( new ConstraintSet );

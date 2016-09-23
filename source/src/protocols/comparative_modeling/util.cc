@@ -439,8 +439,8 @@ void rebuild_loops_until_closed(
 		return;
 	}
 
-	std::string const orig_rsd_set_name( query_pose.residue_type(1).residue_type_set()->name() );
-	core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID );
+	core::chemical::TypeSetCategory const orig_rsd_set_category( query_pose.conformation().residue_typeset_category() );
+	core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID_t );
 
 	bool closed( false );
 	for ( core::Size iter = 1; !closed && iter <= max_rebuild; iter++ ) {
@@ -462,7 +462,7 @@ void rebuild_loops_until_closed(
 
 	tr.flush();
 
-	core::util::switch_to_residue_type_set( query_pose, orig_rsd_set_name );
+	core::util::switch_to_residue_type_set( query_pose, orig_rsd_set_category );
 } // rebuild_loops_until_closed
 
 void steal_ligands(

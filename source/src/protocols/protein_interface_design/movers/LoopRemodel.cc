@@ -270,7 +270,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 			//protocols::moves::MonteCarlo mc( pose, *scorefxn_repack_, mc_kt );
 			SaveAndRetrieveSidechains retrieve_sc( pose );
 			retrieve_sc.allsc( true );
-			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 			if ( protocol_ == "kinematic" ) {
 				if ( perturb_ ) {
 					for ( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
@@ -280,7 +280,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
-				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_score_ );
@@ -316,7 +316,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 					perturb.set_native_pose( core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose ( native_pose ) ) ) );
 					perturb.apply( pose );
 				}
-				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 				if ( refine_ ) {
 					protocols::loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, hires_score_ );
@@ -330,7 +330,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 				}
 			} else if ( protocol_ == "remodel" ) { // protocol == ccd
 				// remodel starts as fa
-				core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 				retrieve_sc.apply( pose ); // recover sidechains from pre-centroid pose
 
 				core::scoring::dssp::Dssp dssp( pose );

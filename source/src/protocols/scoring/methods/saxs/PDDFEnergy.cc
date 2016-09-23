@@ -139,7 +139,7 @@ PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( core::scoring::methods::EnergyM
 			core::import_pose::pose_from_file(reference_pose, *rsd_set,
 				basic::options::option[in::file::native]());
 
-			core::util::switch_to_residue_type_set( reference_pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( reference_pose, core::chemical::CENTROID_t );
 
 			create_pddf( reference_pose,min_d,bin_d,max_d );
 			min_bin_ = (core::Size)(min_d / bin_size_);  //These should be static casts not c style casts

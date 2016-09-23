@@ -182,7 +182,7 @@ WorkUnit_LoopHash::run()
 	// convert pose to centroid pose:
 	if ( global ) {
 		if ( pose.is_fullatom() ) {
-			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 		}
 		core::pose::set_ss_from_phipsi( pose );
 	}

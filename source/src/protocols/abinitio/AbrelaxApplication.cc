@@ -357,7 +357,7 @@ void AbrelaxApplication::setup() {
 
 		// allow sloppy matches here, because sometimes the Centroid residue set doesn't have all the residue variants
 		// that the fullatom set has.
-		core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID, true ); //so that in do_rerun the native pose is the same as the other poses
+		core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID_t, true ); //so that in do_rerun the native pose is the same as the other poses
 	}
 
 	// specify sequence -- from fasta file or native_pose
@@ -896,7 +896,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		if ( bRelax_ ) {
 			if ( !pose.is_fullatom() ) {
 				Pose const centroid_pose ( pose );
-				core::util::switch_to_residue_type_set( pose, chemical::FA_STANDARD );
+				core::util::switch_to_residue_type_set( pose, chemical::FULL_ATOM_t );
 				pose.constraint_set( pose.constraint_set()->remapped_clone( centroid_pose, pose ) );
 			}
 

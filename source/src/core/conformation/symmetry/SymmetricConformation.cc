@@ -1014,8 +1014,8 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 		// If all the cys are fullatom, use stricter criteria
 		bool fullatom(true);
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
-			if ( residue_type(cysid_2_resid[ii]).residue_type_set()->name()
-					!= core::chemical::FA_STANDARD ) {
+			if ( residue_type(cysid_2_resid[ii]).residue_type_set()->category()
+					!= core::chemical::FULL_ATOM_t ) {
 				fullatom = false;
 				break;
 			}

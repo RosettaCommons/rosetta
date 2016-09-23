@@ -372,11 +372,11 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 			&& ( (*scorefxn_)[fa_rep] == 0.0 )
 			&& ( (*scorefxn_)[fa_atr] == 0.0 ) ) {
 		if ( in_pose.is_fullatom() ) {
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID_t );
 		}
 	} else {
 		if ( in_pose.is_centroid() ) {
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::FULL_ATOM_t );
 		}
 	}
 
@@ -412,11 +412,11 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 			&& ( (*scorefxn_)[fa_rep] == 0.0 )
 			&& ( (*scorefxn_)[fa_atr] == 0.0 ) ) {
 		if ( in_pose.is_fullatom() ) {
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID_t );
 		}
 	} else {
 		if ( in_pose.is_centroid() ) {
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::FULL_ATOM_t );
 		}
 	}
 

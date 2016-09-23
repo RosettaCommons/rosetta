@@ -142,7 +142,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	if ( add_target_to_pose_ ) {
 		first_target_seqpos++;
 		//have to add something to switch target res to centroid here
-		core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set()->name()) );
+		core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.conformation().residue_typeset_category() ) );
 
 		pose.append_residue_by_jump( *ligres, pose.size() );
 		++target_it;
@@ -151,7 +151,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 		//below commented out for now. need to think about how to best approach a
 		//case where the ligand can have different rotameric states
 		//for( ; target_it != all_invrots[ picked_collector ]->invrots()[0].end(); ++target_it){
-		//  core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
+		//  core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it, pose.conformation().residue_typeset() ) );
 		//  pose.append_residue_by_jump( *ligres, first_target_seqpos );
 		//}
 	} else {
@@ -159,7 +159,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 		// position got fucked up during the above superimpose call,
 		// so we need to reset it to the position in the invrot tree
 		// current implemenation absolutely only works for one ligand case
-		pose.replace_residue( first_target_seqpos, *(this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set()->name())), false );
+		pose.replace_residue( first_target_seqpos, *(this->switch_residue_type_set( *target_it, pose.conformation().residue_typeset_category() )), false );
 	}
 
 	//2b. fold tree setup
@@ -236,13 +236,13 @@ AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
 core::conformation::ResidueCOP
 AlignPoseToInvrotTreeMover::switch_residue_type_set(
 	core::conformation::ResidueCOP residue,
-	std::string const & desired_restype_set_name
+	core::chemical::TypeSetCategory desired_restype_set
 ) const{
 
-	if ( desired_restype_set_name != residue->residue_type_set()->name() ) {
+	if ( desired_restype_set != residue->residue_type_set()->category() ) {
 		core::pose::PoseOP temp_pose( new core::pose::Pose() );
 		temp_pose->append_residue_by_jump( *residue, (Size) 0 );
-		core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set_name );
+		core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set );
 		residue = temp_pose->residue(1).get_self_ptr();
 	}
 	return residue;

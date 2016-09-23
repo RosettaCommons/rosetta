@@ -128,7 +128,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			std::vector< core::io::silent::SilentStructOP > lib_structs;
 
 			// convert pose to centroid pose and apply loophasher
-			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 			core::pose::set_ss_from_phipsi( pose );
 			core::Size starttime2 = time(nullptr);
 

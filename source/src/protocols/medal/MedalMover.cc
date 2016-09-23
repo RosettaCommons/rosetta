@@ -190,7 +190,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	closure.apply(pose);
 
 	// Configure the score functions used in the simulation
-	core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID_t);
 	core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
 
 	// Decompose the structure into chunks
@@ -237,7 +237,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	do_loop_closure(&pose);
 
 	// Return to centroid representation and rescore
-	core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID_t);
 	score->show(TR, pose);
 }
 

@@ -129,7 +129,7 @@ void StructureStore::add( std::string const& file_name ) {
 		core::import_pose::pose_from_file( *pose, file_name , core::import_pose::PDB_file);
 
 		// switch to centroid --- such that constraints get correct atom numbers assigned
-		core::util::switch_to_residue_type_set( *pose, chemical::CENTROID );
+		core::util::switch_to_residue_type_set( *pose, chemical::CENTROID_t );
 
 		// set ss structure -- good for fragpicking
 		pose::set_ss_from_phipsi( *pose );

@@ -324,12 +324,12 @@ void ThreadingMover::apply(
 
 		if ( query_loops->size() > 0 ) {
 			// switch to centroid ResidueTypeSet for loop remodeling
-			std::string const orig_rsd_set_name(
-				query_pose.residue_type(1).residue_type_set()->name()
+			core::chemical::TypeSetCategory const orig_rsd_set_type(
+				query_pose.conformation().residue_typeset_category()
 			);
 
 			using core::util::switch_to_residue_type_set;
-			core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID_t );
 
 			loops::loop_mover::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
 				option[ cm::loop_mover ](), query_loops
@@ -340,10 +340,10 @@ void ThreadingMover::apply(
 			loop_mover->apply( query_pose );
 
 			// switch back to original ResidueTypeSet after loop modeling
-			if ( orig_rsd_set_name != core::chemical::CENTROID ) {
+			if ( orig_rsd_set_type != core::chemical::CENTROID_t ) {
 				core::util::switch_to_residue_type_set(
 					query_pose,
-					orig_rsd_set_name
+					orig_rsd_set_type
 				);
 			}
 		} else {

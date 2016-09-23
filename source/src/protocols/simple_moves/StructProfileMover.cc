@@ -393,7 +393,7 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const pose){
 	using namespace core::chemical;
 	using namespace core::scoring;
 	core::pose::PoseOP centroidPose = pose.clone();
-	core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID_t );
 	ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 	sfcen->score(*centroidPose);
 	vector1 <Real> cenlist;

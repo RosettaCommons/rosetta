@@ -130,7 +130,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	scorefxn_emp->set_weight( core::scoring::backbone_stub_linear_constraint, hotspot_score_weight_ );
 
 	//switch to centroid
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	core::Size const rb_move_jump = 1;
 	protocols::docking::DockingLowResOP docking_lowres_mover( new protocols::docking::DockingLowRes( scorefxn, rb_move_jump ) );
 	docking_lowres_mover->apply(pose);
@@ -139,7 +139,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	core::Real CenScore=protocols::docking::calc_interaction_energy(pose,scorefxn_cen,movable_jumps_);
 
 	protocols::forge::methods::restore_residues( archive_pose, pose );
-	core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+	core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 
 	(*scorefxn_emp)(pose);
 	core::Real CstScore= pose.energies().total_energies().dot( scorefxn_emp->weights() );

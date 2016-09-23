@@ -285,11 +285,11 @@ bool BDR::centroid_build(
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
 	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
-		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
+		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->category() == core::chemical::FULL_ATOM_t );
 	}
 
 	if ( !mod_ap_is_full_atom ) {
-		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FULL_ATOM_t );
 	}
 
 	// flip to poly-ala-gly-pro-disulf pose

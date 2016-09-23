@@ -264,10 +264,17 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 }
 
 
+/// @brief query residue_type_set by a type
+ResidueTypeSetCOP
+ChemicalManager::residue_type_set( TypeSetCategory type_set_category ) {
+	std::string standard_name( string_from_type_set_category( type_set_category ) );
+	return residue_type_set( standard_name );
+}
+
 /// @ details if the tag is not in the map, input it from a database file and add it
 ///to the map for future look-up.
 ResidueTypeSetCOP
-ChemicalManager::residue_type_set( std::string tag )
+ChemicalManager::residue_type_set( std::string const & tag )
 {
 
 	using namespace basic;
@@ -300,7 +307,10 @@ ChemicalManager::residue_type_set( std::string tag )
 }
 
 bool
-ChemicalManager::has_residue_type_set( std::string const & tag ) const {
+ChemicalManager::has_residue_type_set( std::string const & tag ) {
+#if defined MULTI_THREADED && defined CXX11
+		utility::thread::ReadLockGuard lock( restype_mutex_ );
+#endif
 	return( residue_type_sets_.find( tag )  != residue_type_sets_.end() );
 }
 
@@ -583,12 +593,45 @@ std::string const FA_STANDARD( "fa_standard" );
 std::string const CENTROID( "centroid" );
 /// @brief tag name for querying centroid_rot chemical type set.
 std::string const CENTROID_ROT( "centroid_rot" );
-/// @brief tag name for querying coarse-grained chemical type set.
-std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 /// @brief tag name for querying hybrid fullatom+centroid chemical type set.
 std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 /// @brief tag name for querying COARSE_RNA chemical type set.
 std::string const COARSE_RNA( "coarse_rna" );
+
+TypeSetCategory
+type_set_category_from_string( std::string const & category ) {
+	if ( category == FA_STANDARD ) return FULL_ATOM_t;
+	if ( category == "full_atom" ) return FULL_ATOM_t;
+	if ( category == "default" ) return DEFAULT_t;
+	if ( category == CENTROID ) return CENTROID_t;
+	if ( category == CENTROID_ROT ) return CENTROID_ROT_t;
+	if ( category == HYBRID_FA_STANDARD_CENTROID ) return HYBRID_FA_STANDARD_CENTROID_t;
+	if ( category == COARSE_RNA ) return COARSE_RNA_t;
+	utility_exit_with_message("String '"+category+"' not recognized as a TypeSetCategory.");
+}
+
+std::string
+string_from_type_set_category( TypeSetCategory category ) {
+	switch ( category ) {
+	case FULL_ATOM_t:
+		return FA_STANDARD;
+	case DEFAULT_t:
+		return "default";
+	case CENTROID_t:
+		return CENTROID;
+	case CENTROID_ROT_t:
+		return CENTROID_ROT;
+	case HYBRID_FA_STANDARD_CENTROID_t:
+		return HYBRID_FA_STANDARD_CENTROID;
+	case COARSE_RNA_t:
+		return COARSE_RNA;
+	case INVALID_t:
+		return "INVALID_CATEGORY";
+	default:
+		TR.Error << "Value " << category << " is not a valid TypeSetCategory." << std::endl;
+		utility_exit_with_message("Can't convert TypeSetCategory to string.");
+	}
+}
 
 } // namespace core
 } // namespace chemical

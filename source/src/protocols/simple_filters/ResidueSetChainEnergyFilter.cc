@@ -135,11 +135,11 @@ ResidueSetChainEnergyFilter::compute(
 	if ( ( ( *scorefxn_ )[ fa_rep ] == 0.0 && ( *scorefxn_ )[ fa_atr ] == 0.0 ) // full atom terms are off
 			&& ( ( *scorefxn_ )[ interchain_vdw ] > 0.0 || ( *scorefxn_ )[ vdw ] > 0.0 )  ) { // a centroid term is on
 		if ( in_pose.is_fullatom() ) { // but pose is full atom
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::CENTROID_t );
 		}
 	} else { // full atom case
 		if ( in_pose.is_centroid() ) { // but pose is centroid
-			core::util::switch_to_residue_type_set( in_pose, core::chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( in_pose, core::chemical::FULL_ATOM_t );
 		}
 	}
 

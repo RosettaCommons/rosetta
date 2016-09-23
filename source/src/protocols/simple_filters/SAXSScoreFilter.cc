@@ -78,7 +78,7 @@ bool SAXSScoreFilter::apply( core::pose::Pose const & pose ) const {
 	core::pose::Pose fa_pose ( pose );
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( fa_pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( fa_pose, core::chemical::FULL_ATOM_t );
 	}
 	if ( option[ casp::repack ].user() ) {
 		core::pack::task::PackerTaskOP task(

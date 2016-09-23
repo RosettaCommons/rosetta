@@ -111,8 +111,8 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 
 	// also create centroid constraints
 	core::pose::Pose start_pose_copy = start_pose;
-	if ( start_pose_copy.residue(1).residue_type_set()->name() != core::chemical::CENTROID ) {
-		core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID );
+	if ( ! start_pose_copy.is_centroid() ) {
+		core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID_t );
 	}
 	com = numeric::xyzVector< core::Real >(0,0,0);
 
@@ -204,7 +204,7 @@ BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & 
 		bool aln_cent_i = false;
 
 		// is pose centroid?? then we need to remap atmids
-		if ( rsd_type.residue_type_set()->name() == core::chemical::CENTROID && atms_[i].atomno() > 5 ) {
+		if ( rsd_type.residue_type_set()->category() == core::chemical::CENTROID_t && atms_[i].atomno() > 5 ) {
 			//std::cerr << "ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << "  (" << pose.residue( atms_[i].rsd()  ).natoms() << ")" << std::endl;
 			//std::cerr << "Remapping ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << " to CENTROID" << std::endl;
 			atm_i = core::id::AtomID( xyz.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );

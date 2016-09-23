@@ -256,7 +256,7 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 	runtime_assert( start_struct != nullptr );
 	core::pose::Pose start_pose;
 	start_struct->fill_pose( start_pose );
-	core::util::switch_to_residue_type_set( start_pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set( start_pose, core::chemical::CENTROID_t );
 	core::pose::set_ss_from_phipsi( start_pose );
 
 	//refresh the sampling weight comment, as it may have changed

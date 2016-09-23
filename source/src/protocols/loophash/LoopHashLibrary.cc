@@ -479,7 +479,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn, option[ OptionKeys::relax::sequence_file ]() ) );
 
 		// convert pose to centroid pose:
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 		core::pose::set_ss_from_phipsi( pose );
 
 		core::Size starttime2 = time(nullptr);

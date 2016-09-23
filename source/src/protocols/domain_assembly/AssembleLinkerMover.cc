@@ -81,7 +81,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	Size const loop_stop ( breakpoint + min_loop_size_ );
 
 	core::util::switch_to_residue_type_set(
-		pose, core::chemical::CENTROID
+		pose, core::chemical::CENTROID_t
 	);
 
 	Loop loop( loop_start, loop_stop, 0, 0, false );
@@ -106,7 +106,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	}
 
 	core::util::switch_to_residue_type_set(
-		pose, core::chemical::FA_STANDARD
+		pose, core::chemical::FULL_ATOM_t
 	);
 } // apply
 

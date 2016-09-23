@@ -138,7 +138,7 @@ void as_set(protocols::loops::LoopsCOP loops, boost::unordered_set<core::Size>* 
 void to_centroid(core::pose::Pose* pose) {
 	assert(pose);
 	if ( !pose->is_centroid() ) {
-		core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+		core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID_t);
 	}
 }
 

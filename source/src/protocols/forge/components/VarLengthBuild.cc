@@ -304,7 +304,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	// Cache name of the residue type set the BuildInstructions are
 	// using -- currently assume they are all equivalent, as this is
 	// enforced in the BuildInstruction compatibility check.
-	String bi_rts_name = ( **manager_.begin() ).residue_type_set().name();
+	TypeSetCategory bi_rts_type = ( **manager_.begin() ).residue_type_set().category();
 
 	// make backup copy for e.g. side-chain transferal later
 	// REPEAT: also used for monomeric repeat
@@ -316,8 +316,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	Original2Modified original2modified; // keep track of old -> new mapping
 	if ( get_last_move_status() == MS_SUCCESS ) {
 		// alter residue type set if necessary
-		if ( pose.residue( 1 ).residue_type_set()->name() != bi_rts_name ) {
-			core::util::switch_to_residue_type_set( pose, bi_rts_name );
+		if ( pose.conformation().residue_typeset_category() != bi_rts_type ) {
+			core::util::switch_to_residue_type_set( pose, bi_rts_type );
 		}
 
 		// modify
@@ -461,8 +461,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// centroid level protocol
 	if ( get_last_move_status() == MS_SUCCESS ) {
-		if ( pose.residue( 1 ).residue_type_set()->name() != core::chemical::CENTROID ) {
-			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+		if ( ! pose.is_centroid() ) {
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 		}
 		//pose.dump_pdb("vlb_bef_centroid_build.pdb");
 		if ( centroid_build( pose ) ) {
@@ -477,8 +477,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	//archive_pose.dump_pdb("arc_pose_vlb_aft_centroid_build.pdb");
 
 	// flip back to prior residue type set if necessary
-	if ( pose.residue( 1 ).residue_type_set()->name() != archive_pose.residue( 1 ).residue_type_set()->name() ) {
-		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set()->name() );
+	if ( pose.conformation().residue_typeset_category() != archive_pose.conformation().residue_typeset_category() ) {
+		core::util::switch_to_residue_type_set( pose, archive_pose.conformation().residue_typeset_category() );
 	}
 
 	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {

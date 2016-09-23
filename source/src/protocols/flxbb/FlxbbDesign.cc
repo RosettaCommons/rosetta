@@ -507,7 +507,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 	// set pose to fullatom
 	if ( ! pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 	// set movemap from blueprint for relax

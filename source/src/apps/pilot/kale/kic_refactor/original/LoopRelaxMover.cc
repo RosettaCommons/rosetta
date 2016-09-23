@@ -406,7 +406,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	);
 
 	if (fullatom_input) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	}
 
 
@@ -699,7 +699,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "Annotated sequence before fa switch: " << pose.annotated_sequence(true) << std::endl;
 
 		//puts full-atom sidechains on loop regions
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 		pose.conformation().detect_bonds(); //apl fix this !
 
 		utility::vector1< bool > needToRepack( pose.size() , !fullatom_input );

@@ -203,7 +203,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	basic::Tracer TR( "DomainAssemblyMover::run_centroid_stage" );
 
 	core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	core::scoring::ScoreFunctionOP scorefxn_centroid( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
 	scorefxn_centroid->set_weight( core::scoring::rama, 0.2 );
 	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *scorefxn_centroid, 0.8 /*temperature*/ ) );
@@ -300,7 +300,7 @@ void DomainAssemblyMover::run_abinitio_centroid_stage( core::pose::Pose & pose )
 		throw utility::excn::EXCN_Msg_Exception( "No FragmentSet specified - exiting!\n" );
 	}
 
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	core::scoring::ScoreFunctionOP scorefxn_wts3 = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 	protocols::abinitio::AbrelaxApplication abrelax_app;
 	do {

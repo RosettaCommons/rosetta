@@ -932,20 +932,6 @@ ScoringManager::make_partially_soft_etable( std::string const & table_id, etable
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////
-
-//XRW_B_T1
-/*
-///////////////////////////////////////////////////////////////////////////////
-void
-ScoringManager::add_coarse_etable( std::string const &name, coarse::CoarseEtableOP etable )
-{
-debug_assert( coarse_etables_.count(name) == 0);
-coarse_etables_ [name] = etable;
-}
-*/
-//XRW_E_T1
-
 ///////////////////////////////////////////////////p////////////////////////////
 void
 ScoringManager::add_memb_etable( std::string const & name, etable::MembEtableOP etable ) //pba
@@ -1132,32 +1118,6 @@ ScoringManager::get_cloned_aa_comp_setup_helpers(
 // }
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-//XRW_B_T1
-/*
-coarse::CoarseEtableCAP
-ScoringManager::coarse_etable( std::string const & table_id ) const
-{
-using namespace etable;
-if ( coarse_etables_.find( table_id ) == coarse_etables_.end() ) {
-// try to build if possible
-if ( table_id == chemical::COARSE_TWO_BEAD ) {
-coarse::CoarseEtableOP etable_ptr
-( new coarse::CoarseEtable(
-chemical::ChemicalManager::get_instance()->
-atom_type_set( chemical::COARSE_TWO_BEAD ), chemical::COARSE_TWO_BEAD )
-);
-coarse_etables_[ table_id ] = etable_ptr;
-} else {
-std::string msg = "unrecognized etable: "+table_id;
-utility_exit_with_message( msg );
-}
-}
-return (coarse_etables_.find( table_id )->second)();
-}
-*/
-//XRW_E_T1
-
 /// @details Test if there is an EnergyMethod class defined for a
 /// given score type.
 bool

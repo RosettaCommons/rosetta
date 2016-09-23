@@ -110,9 +110,13 @@ public:
 	orbitals::OrbitalTypeSetCOP
 	orbital_type_set(std::string const & tag);
 
+	/// @brief query residue_type_set by a type
+	ResidueTypeSetCOP
+	residue_type_set( TypeSetCategory type_set_type );
+
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSetCOP
-	residue_type_set( std::string tag );
+	residue_type_set( std::string const & tag );
 
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSet &
@@ -122,7 +126,7 @@ public:
 	nonconst_residue_type_set_op( std::string const & tag );
 
 	/// @brief Check if residue_type_set is instantiated...
-	bool has_residue_type_set( std::string const & tag ) const;
+	bool has_residue_type_set( std::string const & tag ); //can't be const due to mutex changing
 
 private:
 	typedef std::map< std::string, AtomTypeSetOP > AtomTypeSets;
@@ -194,8 +198,13 @@ private: // data
 	IdealBondLengthSets ideal_bond_length_sets_;
 };
 
+TypeSetCategory
+type_set_category_from_string( std::string const & type );
+
+std::string
+string_from_type_set_category( TypeSetCategory type );
+
 } // namespace core
 } // namespace chemical
-
 
 #endif

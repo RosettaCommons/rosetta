@@ -163,7 +163,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 	// convert pose to centroid pose:
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 	// pre relax!
@@ -200,7 +200,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() ) );
 
 		// convert pose to centroid pose:
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 		core::pose::set_ss_from_phipsi( pose );
 
 
@@ -474,7 +474,7 @@ void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 	//    TR.Info << pss.mem_footprint() << "  " << ss.str().length() << std::endl;
 	//  }
 
-	core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set( tgtpose, core::chemical::CENTROID_t );
 
 
 	{

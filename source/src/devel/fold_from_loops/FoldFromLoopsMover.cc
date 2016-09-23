@@ -118,7 +118,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 	std::vector<Size> cut_points;
 
-	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
+	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
 
 
 	core::kinematics::MoveMapOP  movemap( new core::kinematics::MoveMap() );
@@ -229,7 +229,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 		} else if ( get_last_move_status() == MS_SUCCESS  && !option [OptionKeys::fold_from_loops::output_centroid].user() ) {
 
-			core::util::switch_to_residue_type_set( input_pose, chemical::FA_STANDARD );
+			core::util::switch_to_residue_type_set( input_pose, chemical::FULL_ATOM_t );
 
 
 			core::scoring::ScoreFunctionOP scorefxn_fa( get_score_function() );

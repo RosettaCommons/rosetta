@@ -108,7 +108,7 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 	abrelax->apply( pose2 );
 	//switch to fa output, relax is set in commond line
 	//if ( !pose.is_fullatom() ) {
-	//  core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+	//  core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	//}
 	srsc->apply(pose2);
 

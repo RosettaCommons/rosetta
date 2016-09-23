@@ -118,7 +118,7 @@ bool PrepareForFullatom::do_apply(Pose & pose) { // {{{1
 
 	// Convert the pose to fullatom mode.
 
-	switch_to_residue_type_set(pose, FA_STANDARD);
+	switch_to_residue_type_set(pose, core::chemical::FULL_ATOM_t );
 
 	// Copy sidechains from the original pose.
 

@@ -86,7 +86,7 @@ RBSegmentRelaxImpl::RBSegmentRelaxImpl(){
 		boinc::Boinc::set_graphics_native_pose( native_pose );
 #endif
 
-		core::util::switch_to_residue_type_set( native_pose, core::chemical::CENTROID );
+		core::util::switch_to_residue_type_set( native_pose, core::chemical::CENTROID_t );
 	}
 
 }
@@ -199,7 +199,7 @@ RBSegmentRelax_main() {
 
 	// pose = start_pose;
 	//  if ( option[ in::file::fullatom ]() )
-	//   core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	//   core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 
 	//#ifdef BOINC_GRAPHICS
 	//  attach boinc graphics pose observer

@@ -276,7 +276,7 @@ void ZincHeterodimerMover::copy_to_centroid(
 	centroid = pose;
 	centroid.fold_tree(centroid_tree); //"boring" fold tree is centroid safe (no jumps on nonexistent atoms)
 	//centroid.conformation().delete_residue_slow(metal_res);
-	core::util::switch_to_residue_type_set(centroid, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set(centroid, core::chemical::CENTROID_t );
 }
 
 

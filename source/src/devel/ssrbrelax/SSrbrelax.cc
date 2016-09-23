@@ -96,7 +96,7 @@ namespace ssrbrelax {
 	using namespace core;
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
-	
+
 
 	typedef numeric::xyzVector < Real > Vector;
 // sets up the default mc object
@@ -141,7 +141,7 @@ namespace ssrbrelax {
 		RbSegments rbsegments;
 
 		//converting to centroid atom types
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 		//std::string rb_file;
 		rbsegments.read_segments_from_file();
 		rbsegments.read_param_file();

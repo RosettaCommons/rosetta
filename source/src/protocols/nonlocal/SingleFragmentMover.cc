@@ -260,7 +260,7 @@ bool SingleFragmentMover::to_centroid(core::pose::Pose* pose) const {
 	if ( pose->is_fullatom() ) {
 		TR.Warning << "Input pose is full atom (centroid required)" << std::endl;
 		TR.Warning << "Performing implicit conversion..." << std::endl;
-		core::util::switch_to_residue_type_set(*pose, "centroid");
+		core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID_t );
 		return true;
 	}
 	return false;

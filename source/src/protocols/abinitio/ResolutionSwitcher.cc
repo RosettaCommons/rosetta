@@ -126,7 +126,7 @@ core::pose::Pose ResolutionSwitcher::start_pose() const {
 	if ( start_centroid_ ) {
 		if ( init_fa_ ) {
 			pose::Pose pose( init_pose_ );
-			core::util::switch_to_residue_type_set( pose, chemical::CENTROID );
+			core::util::switch_to_residue_type_set( pose, chemical::CENTROID_t );
 			return pose;
 		} else return init_pose_;
 	} else if ( init_fa_ ) {
@@ -147,7 +147,7 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 	if ( apply_to_centroid_ ) {
 		//puts full-atom sidechains on loop regions
 		tr.Debug <<" change to full-atom pose " << std::endl;
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 		pose.conformation().detect_bonds();//apl fix this !
 	}
 

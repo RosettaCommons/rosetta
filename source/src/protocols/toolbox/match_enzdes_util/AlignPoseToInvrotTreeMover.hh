@@ -25,6 +25,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 // Project headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -92,7 +93,7 @@ public:
 	core::conformation::ResidueCOP
 	switch_residue_type_set(
 		core::conformation::ResidueCOP residue,
-		std::string const & desired_restype_set_name
+		core::chemical::TypeSetCategory desired_restype_set
 	) const;
 
 private:

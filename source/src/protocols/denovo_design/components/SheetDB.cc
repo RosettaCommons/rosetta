@@ -213,7 +213,7 @@ SheetDB::add_sheet(
 		pose = reverse_chains( *in_pose );
 	}
 
-	core::util::switch_to_residue_type_set( *pose, "centroid" );
+	core::util::switch_to_residue_type_set( *pose, core::chemical::CENTROID_t );
 
 	MapByStrands::iterator m1 = sheet_db_.find( nstrands );
 	if ( m1 == sheet_db_.end() ) {

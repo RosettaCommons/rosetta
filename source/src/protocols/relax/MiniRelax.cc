@@ -74,7 +74,7 @@ MiniRelax::clone() const {
 void MiniRelax::apply( core::pose::Pose & pose ) {
 	if ( !pose.is_fullatom() ) {
 		core::util::switch_to_residue_type_set(
-			pose, core::chemical::FA_STANDARD
+			pose, core::chemical::FULL_ATOM_t
 		);
 		std::cerr << "Fullatom mode .... " << std::endl;
 	}

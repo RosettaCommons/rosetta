@@ -125,7 +125,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	// convert pose to centroid pose:
 	if ( !pose.is_fullatom() ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
 
@@ -153,7 +153,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 	protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 
 	// convert pose to centroid pose:
-	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
+	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	core::pose::set_ss_from_phipsi( pose );
 
 	// Generate alternate structures

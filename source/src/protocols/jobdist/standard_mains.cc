@@ -382,7 +382,7 @@ int universal_main(
 						(option[ OptionKeys::score::weights ]() == "score_membrane"))
 						&& ( input_pose.is_fullatom() ) ) {
 					std::cout << "switching to centroid" << std::endl;
-					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
+					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
 				}
 
 				// Work out the tag. If we are processing more than one silent file, add the file name too!

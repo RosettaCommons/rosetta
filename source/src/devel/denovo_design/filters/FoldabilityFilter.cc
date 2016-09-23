@@ -396,7 +396,7 @@ FoldabilityFilter::prepare_pose(
 
 	// switch to centroid
 	if ( !pose.is_centroid() ) {
-		core::util::switch_to_residue_type_set( pose, "centroid" );
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
 	}
 }
 
