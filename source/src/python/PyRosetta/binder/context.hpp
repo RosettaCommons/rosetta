@@ -158,6 +158,9 @@ public:
 	/// find gloval insertion operator for given type, return nullptr if not such operator find
 	clang::FunctionDecl const * global_insertion_operator(clang::CXXRecordDecl const *);
 
+	/// generate unique trace line containing `info` to insert into the code
+	std::string trace_line(std::string const &info);
+
 private:
 
 	/// bind all objects residing in namespaces and it dependency
@@ -189,6 +192,9 @@ private:
 
 	/// set of items unique id's to keep track of whats binded and not
 	std::set<string> binded;
+
+	/// counter to generate unique trace lines
+	int trace_counter = -1;
 
 	// set of classes for which forward declaration is needed
 	//std::set<clang::CXXRecordDecl const *> forward;

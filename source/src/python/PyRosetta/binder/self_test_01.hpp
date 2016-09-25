@@ -26,39 +26,49 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
-namespace a {
-struct A {};
-}
+class Common {};
+class Base1 : public virtual Common
+{};
+class Base2 : public virtual Common
+{};
+class Derived : public Base1, public Base2, public virtual Common
+{};
+
+// class Base1 {};
+// class Base2 : public virtual Base1 {};
+// class Derived : public virtual Base1, public Base2 {};
+
+
 
 
 struct V {};
 
-struct A /// comment 3
-/// comment 4
-{
-	/// comment 5
-	int value;
-	std::string s_;
+// struct A /// comment 3
+// /// comment 4
+// {
+// 	/// comment 5
+// 	int value;
+// 	std::string s_;
 
-	virtual void foo() {}
-	virtual void foo2() = 0;
+// 	virtual void foo() {}
+// 	virtual void foo2() = 0;
 
-	virtual void foo_v(V&) {}
+// 	virtual void foo_v(V&) {}
 
-	virtual std::string foo_s() { return s_; }
-	virtual std::string const &foo_sr() { return s_; }
+// 	virtual std::string foo_s() { return s_; }
+// 	virtual std::string const &foo_sr() { return s_; }
 
-	virtual int &foo_int_r() { return value; }
-
-
-};
+// 	virtual int &foo_int_r() { return value; }
 
 
+// };
 
-std::ostream & operator << ( std::ostream & os, A const & a)
-{
-	return ( os << "A("<< a.value << ')' );
-}
+
+
+// std::ostream & operator << ( std::ostream & os, A const & a)
+// {
+// 	return ( os << "A("<< a.value << ')' );
+// }
 
 
 

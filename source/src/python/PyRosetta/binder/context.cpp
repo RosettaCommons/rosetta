@@ -106,8 +106,6 @@ void Context::add(BinderOP &b)
 	if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
 }
 
-
-
 void Context::add_insertion_operator(clang::FunctionDecl const *F)
 {
 	insertion_operators[ function_pointer_type(F) ] = F;
@@ -378,6 +376,9 @@ void Context::generate(Config const &config)
 				// }
 
 				prefix_code += binders[i]->prefix_code();
+
+				if(O_trace) code += trace_line( binders[i]->id() );
+
 				code += binders[i]->code();
 				binders[i]->add_relevant_includes(includes);
 			}
@@ -427,5 +428,12 @@ void Context::generate(Config const &config)
 		namespaces_file_handle << modules;
 	}
 }
+
+/// generate unique trace line containing `info` to insert into the code
+std::string Context::trace_line(std::string const &info)
+{
+	return "\tstd::cout << \"B" + std::to_string(++trace_counter) + "_[" + info + "] \";\n";
+}
+
 
 } // namespace binder

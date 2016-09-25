@@ -31,7 +31,7 @@ PlatformBits = platform.architecture()[0][:2]
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
 
-_pybind11_version_ = '591a9999c2ccc68efa345363e7de2e5ef4fe512f'  # 'PyRosetta'
+_pybind11_version_ = '1ee4128cfe8efcab618a980649cad9d830d8b32b'
 
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
@@ -316,8 +316,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     libs = generate_rosetta_cmake_files(rosetta_source_path, prefix) + generate_rosetta_external_cmake_files(rosetta_source_path, prefix)
 
     rosetta_cmake =  ''.join( ['include({}.cmake)\n'.format(l) for l in libs] )
-    rosetta_cmake += '\ninclude_directories(SYSTEM {})\n\n'.format( ' '.join(get_rosetta_system_include_directories()+[Options.pybind11] ) )
-    rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join(get_rosetta_include_directories() ) )
+    rosetta_cmake += '\ninclude_directories(SYSTEM {})\n\n'.format( ' '.join(get_rosetta_system_include_directories() ) )
+    rosetta_cmake += '\ninclude_directories({})\n\n'.format( ' '.join( get_rosetta_include_directories() + [Options.pybind11] ) )
     rosetta_cmake += 'add_definitions({})\n'.format(' '.join([ '-D'+d for d in get_defines()] ) )
 
     cmake = open('cmake.template').read()
@@ -372,9 +372,10 @@ def generate_bindings(rosetta_source_path):
 
     if Platform == 'macos': includes = '-isystem/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1' + includes
 
-    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix}{annotate} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines,
+    execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines,
                                                                                                                                                             prefix=prefix, config=os.path.abspath('./rosetta.config'),
-                                                                                                                                                            annotate=' --annotate-includes' if Options.annotate_includes else '') ) # -stdlib=libc++ -x c++
+                                                                                                                                                            annotate=' --annotate-includes' if Options.annotate_includes else '',
+                                                                                                                                                            trace=' --trace' if Options.trace else '',) ) # -stdlib=libc++ -x c++
 
     sources = open(prefix+'rosetta.sources').read().split()
 
@@ -418,9 +419,9 @@ def create_package(rosetta_source_path, path):
     package_prefix = path + '/setup'
     if not os.path.isdir(package_prefix): os.makedirs(package_prefix)
 
-    shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/self-test.py', path)
-    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/demo', path + '/demo', update=False)
-    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/test', path + '/test', update=False)
+    for f in 'self-test.py PyMol-RosettaServer.py'.split(): shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/' + f, path)
+
+    for d in 'demo test'.split(): distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/' + d, path + '/' + d, update=False)
 
     distutils.dir_util.copy_tree(rosetta_source_path + '/../database', package_prefix + '/database', update=False)
     distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/package', package_prefix, update=False)
@@ -449,6 +450,7 @@ def main(args):
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
+    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
 
     parser.add_argument("--pydoc", default='pydoc', help="Specify pydoc executable to use (default is 'pydoc')")
     parser.add_argument('--documentation', default='', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation)')

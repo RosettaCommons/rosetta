@@ -20,6 +20,7 @@
 
 extern llvm::cl::opt<bool> O_annotate_includes;
 extern llvm::cl::opt<bool> O_single_file;
+extern llvm::cl::opt<bool> O_trace;
 
 namespace binder {
 } // namespace binder

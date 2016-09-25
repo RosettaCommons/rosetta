@@ -653,17 +653,23 @@ string ClassBinder::maybe_base_classes(Context &context)
 					auto e = std::find(skip_list.begin(), skip_list.end(), standard_name( R->getQualifiedNameAsString() ));
 
 					if( e == skip_list.end()  and  is_bindable(R)  and  !is_skipping_requested(R, Config::get()) ) {
-						r = ", pybind11::base<{}>()"_format( class_qualified_name(R) );
+						//r = ", pybind11::base<{}>()"_format( class_qualified_name(R) );
+						r += ", {}"_format( class_qualified_name(R) );
 
 						binder::request_bindings(b->getType().getCanonicalType(), context);
 
 						dependencies_.push_back(R);
-						break; // right now pybind11 support only one base class
+
+						//break; // right now pybind11 support only one base class
 					}
 				}
 			}
 		}
 	}
+	// if( std::count(r.begin(), r.end(), ',') > 1 ) {
+	// 	outs() << "Multiple inheritance: " << r << "\n";
+	// }
+
 	return r;
 }
 
@@ -674,7 +680,7 @@ void ClassBinder::bind_with(string const &binder, Context &context)
 
 	string const module_variable_name =  context.module_variable_name( namespace_from_named_decl(C) );
 
-	c += binder + standard_name( template_specialization(C) ) + '(' + module_variable_name;
+	c += '\t' + binder + standard_name( template_specialization(C) ) + '(' + module_variable_name;
 
 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
@@ -807,7 +813,7 @@ void ClassBinder::bind(Context &context)
 
 	string maybe_trampoline = callback_structure_constructible ? ", " + binding_qualified_name : "";
 
-	c += '\t' + R"(pybind11::class_<{}{}{}> cl({}, "{}", "{}"{});)"_format(qualified_name, maybe_holder_type, maybe_trampoline, module_variable_name, python_class_name(C), generate_documentation_string_for_declaration(C),  maybe_base_classes(context)) + '\n';
+	c += '\t' + R"(pybind11::class_<{}{}{}{}> cl({}, "{}", "{}");)"_format(qualified_name, maybe_holder_type, maybe_trampoline, maybe_base_classes(context), module_variable_name, python_class_name(C), generate_documentation_string_for_declaration(C)) + '\n';
 	c += "\tpybind11::handle cl_type = cl;\n\n";
 
 	//if(callback_structure_constructible) c += "\tcl.alias<{}>();\n"_format(qualified_name);
@@ -840,9 +846,7 @@ void ClassBinder::bind(Context &context)
 			/*and  !C->needsImplicitDefaultConstructor() and !C->hasNonTrivialDefaultConstructor()*/
 			) {  // No constructors defined, adding default constructor
 
-			//c += "\tcl.def(pybind11::init<>());\n";  // making sure that default is appering first
-			c += "\tcl.def(pybind11::init<>());";  // making sure that default is appering first
-
+			c += "\tcl.def(pybind11::init<>());\n";  // making sure that default is appering first
 		}
 		c += constructors;
 	}

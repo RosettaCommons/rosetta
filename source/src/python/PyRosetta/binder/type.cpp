@@ -135,6 +135,7 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/stl_map.h>",      "<map>"),
 		make_pair("<bits/streambuf.tcc>",  "<streambuf>"),
 		make_pair("<bits/stl_bvector.h>",  "<vector>"),
+		make_pair("<bits/stl_vector.h>",   "<vector>"),
 		make_pair("<bits/algorithmfwd.h>", "<algorithm>"),
 		make_pair("<bits/stl_algo.h>",     "<algorithm>"),
 		make_pair("<bits/fstream.tcc>",    "<fstream>"),
@@ -160,7 +161,10 @@ void add_relevant_include_for_decl(NamedDecl const *decl, IncludeSet &includes/*
 		make_pair("<bits/locale_classes.h>",   "<locale>"),
 		make_pair("<bits/locale_classes.tcc>", "<locale>"),
 
+		make_pair("<__tree>",              "<iterator>"),
 		make_pair("<bits/stl_iterator.h>", "<iterator>"),
+
+		make_pair("<__functional_base>", "<functional>"),
 	};
 
 	string name = decl->getQualifiedNameAsString();
@@ -323,6 +327,8 @@ bool is_python_builtin(NamedDecl const *C)
 
 													  //"std::iterator", "std::reverse_iterator",
 													  //"std::vector", "std::map", "std::list", "std::set",
+
+													  "std::__value_type",
 
  	};
 
