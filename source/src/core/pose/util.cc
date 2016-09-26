@@ -1129,6 +1129,11 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose ) {
 	using namespace basic::options;
 
 	std::string filename( option[ OptionKeys::in::file::psipred_ss2 ]().name() );
+	return read_psipred_ss2_file( pose, filename );
+}
+
+utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose, std::string const & filename ) {
+	using namespace basic::options;
 
 	utility::vector1< char > secstructs;
 	utility::io::izstream data( filename );

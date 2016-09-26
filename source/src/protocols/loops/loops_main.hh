@@ -222,7 +222,8 @@ void filter_loop_neighbors_by_distance(
 /// file.
 bool
 set_secstruct_from_psipred_ss2(
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	std::string const & filename = std::string()
 );
 
 /// @brief another helper function to set secondary structure of a Pose from an external file.

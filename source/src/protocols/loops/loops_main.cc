@@ -1231,11 +1231,19 @@ trim_back_sequence_mapping(
 ///////////////////////////////////////////////////////////////////
 bool
 set_secstruct_from_psipred_ss2(
-	pose::Pose & pose
+	pose::Pose & pose,
+	std::string const & filename
 )
 
 {
-	utility::vector1< char > secstructs = read_psipred_ss2_file( pose );
+	utility::vector1< char > secstructs;
+	if ( filename.empty() ) {
+		// File name taken from -in:file:psipred_ss2
+		secstructs = read_psipred_ss2_file( pose );
+	}
+	else {
+		secstructs = read_psipred_ss2_file( pose, filename );
+	}
 	// if don't have a psipred file...
 	if ( secstructs.size() == 0 ) {
 		// instead roughly guess at secondary structure.

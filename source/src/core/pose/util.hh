@@ -133,6 +133,7 @@ set_ss_from_phipsi(
 //  pose::Pose &pose
 // );
 
+utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose, std::string const & filename );
 utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 
 /// getters/setters for things in the Pose DataCache
