@@ -104,7 +104,7 @@ switch_to_residue_type_set(
 		if ( rsd.type().residue_type_set() && rsd.type().residue_type_set()->category() == type_set.category() ) {
 			if ( ! warned ) {
 				TR.Warning << "When switching to a " << string_from_type_set_category( type_set.category() ) << " ResidueTypeSet: "
-						<< " Pose already contains " << string_from_type_set_category( type_set.category() ) << " ResidueTypes." << std::endl;
+					<< " Pose already contains " << string_from_type_set_category( type_set.category() ) << " ResidueTypes." << std::endl;
 				warned = true;
 			}
 			TR.Debug << "core::util::switch_to_residue_type_set: residue " << i << " already in a " <<
@@ -215,7 +215,7 @@ switch_to_centroid_rot_set(
 		if ( existing_rsd_typeset_category == rsd_set.category() ) {
 			if ( ! warned ) {
 				TR.Warning << "When switching to a " << string_from_type_set_category( rsd_set.category() ) << " ResidueTypeSet: "
-						<< " Pose already contains " << string_from_type_set_category( existing_rsd_typeset_category ) << " ResidueTypes." << std::endl;
+					<< " Pose already contains " << string_from_type_set_category( existing_rsd_typeset_category ) << " ResidueTypes." << std::endl;
 				warned = true;
 			}
 			TR.Debug << "core::util::switch_to_residue_type_set: residue " << i << " already in a " <<

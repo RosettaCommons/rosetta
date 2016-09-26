@@ -60,10 +60,10 @@ public:
 	);
 
 private:
-		core::scoring::motif::MotifHits motif_hits_ ;
-		int	total_count_		;
-//	Size total_rot_;
-//	utility::vector1< core::pose::PoseCOP > poses_;
+	core::scoring::motif::MotifHits motif_hits_ ;
+	int total_count_  ;
+	// Size total_rot_;
+	// utility::vector1< core::pose::PoseCOP > poses_;
 
 }; // MotifHitsRotamersOperation
 

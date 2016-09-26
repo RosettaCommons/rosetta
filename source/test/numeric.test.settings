@@ -60,6 +60,10 @@ sources = {
 	"kdtree" : [
 		"kdtree",
 	],
+	"kinematic_closure" : [
+		"bridgeObjects",
+		#"DixonResultantTests",
+	],
 	"linear_algebra": [
 		"GeneralizedEigenSolverTests",
 	],
@@ -88,6 +92,7 @@ libraries    = [
 subprojects  = []
 testinputfiles = [
 	"interpolation/Histogram_sample.hist",
+	"kinematic_closure/test_peptide.pdb",
 	"mt19937.u",
 	"sampling.prob",
 ]

@@ -812,7 +812,7 @@ public: // Methods: basic mathematical
 			xx_ * v.x_ + xy_ * v.y_ + xz_ * v.z_,
 			yx_ * v.x_ + yy_ * v.y_ + yz_ * v.z_,
 			zx_ * v.x_ + zy_ * v.y_ + zz_ * v.z_
-						 );
+		);
 	}
 
 
@@ -2273,11 +2273,11 @@ operator >( T const & t, xyzMatrix< T > const & m );
 // xyzVector< T >
 // operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
 // {
-// 	return xyzVector< T >(
-// 		m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
-// 		m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
-// 		m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
-// 	);
+//  return xyzVector< T >(
+//   m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
+//   m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
+//   m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
+//  );
 // }
 
 

@@ -214,14 +214,14 @@ ConstraintOP
 NamedAtomPairConstraint::remap_resid(
 	core::id::SequenceMapping const &seqmap
 ) const {
-	if( seqmap[named_atom1_.rsd()] !=0 && seqmap[named_atom2_.rsd()] !=0 ) {
+	if ( seqmap[named_atom1_.rsd()] !=0 && seqmap[named_atom2_.rsd()] !=0 ) {
 		core::id::NamedAtomID newat1( named_atom1_.atom(), seqmap[named_atom1_.rsd()] );
 		core::id::NamedAtomID newat2( named_atom2_.atom(), seqmap[named_atom2_.rsd()] );
 		NamedAtomPairConstraintOP new_cst( new NamedAtomPairConstraint( newat1, newat2, get_func().clone(), score_type() ) );
 		debug_assert( new_cst );
 		return ConstraintOP( new_cst );
 	}
-	
+
 	return ConstraintOP( /*NULL*/ );
 }
 

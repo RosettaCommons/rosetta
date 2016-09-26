@@ -309,7 +309,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 bool
 ChemicalManager::has_residue_type_set( std::string const & tag ) {
 #if defined MULTI_THREADED && defined CXX11
-		utility::thread::ReadLockGuard lock( restype_mutex_ );
+	utility::thread::ReadLockGuard lock( restype_mutex_ );
 #endif
 	return( residue_type_sets_.find( tag )  != residue_type_sets_.end() );
 }
@@ -613,21 +613,21 @@ type_set_category_from_string( std::string const & category ) {
 std::string
 string_from_type_set_category( TypeSetCategory category ) {
 	switch ( category ) {
-	case FULL_ATOM_t:
+	case FULL_ATOM_t :
 		return FA_STANDARD;
-	case DEFAULT_t:
+	case DEFAULT_t :
 		return "default";
-	case CENTROID_t:
+	case CENTROID_t :
 		return CENTROID;
-	case CENTROID_ROT_t:
+	case CENTROID_ROT_t :
 		return CENTROID_ROT;
-	case HYBRID_FA_STANDARD_CENTROID_t:
+	case HYBRID_FA_STANDARD_CENTROID_t :
 		return HYBRID_FA_STANDARD_CENTROID;
-	case COARSE_RNA_t:
+	case COARSE_RNA_t :
 		return COARSE_RNA;
-	case INVALID_t:
+	case INVALID_t :
 		return "INVALID_CATEGORY";
-	default:
+	default :
 		TR.Error << "Value " << category << " is not a valid TypeSetCategory." << std::endl;
 		utility_exit_with_message("Can't convert TypeSetCategory to string.");
 	}

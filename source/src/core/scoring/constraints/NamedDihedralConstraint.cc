@@ -125,7 +125,7 @@ ConstraintOP
 NamedDihedralConstraint::remap_resid(
 	core::id::SequenceMapping const &seqmap
 ) const {
-	if( seqmap[named_atom1_.rsd()] !=0 && seqmap[named_atom2_.rsd()] !=0 && seqmap[named_atom3_.rsd()] !=0 && seqmap[named_atom4_.rsd()] !=0 ) {
+	if ( seqmap[named_atom1_.rsd()] !=0 && seqmap[named_atom2_.rsd()] !=0 && seqmap[named_atom3_.rsd()] !=0 && seqmap[named_atom4_.rsd()] !=0 ) {
 		core::id::NamedAtomID newat1( named_atom1_.atom(), seqmap[named_atom1_.rsd()] );
 		core::id::NamedAtomID newat2( named_atom2_.atom(), seqmap[named_atom2_.rsd()] );
 		core::id::NamedAtomID newat3( named_atom3_.atom(), seqmap[named_atom3_.rsd()] );
@@ -134,7 +134,7 @@ NamedDihedralConstraint::remap_resid(
 		debug_assert( new_cst );
 		return ConstraintOP( new_cst );
 	}
-	
+
 	return ConstraintOP( /*NULL*/ );
 }
 

@@ -56,7 +56,7 @@ private:
 	std::string tag_name_,dumpfile_,mode_,allowed_aas_;
 	bool halt_on_error_;
 	core::scoring::ScoreFunctionCOP scorefxn_ ;
-	core::pack::task::TaskFactoryOP task_factory_ ;	
+	core::pack::task::TaskFactoryOP task_factory_ ;
 };
 
 } // matdes

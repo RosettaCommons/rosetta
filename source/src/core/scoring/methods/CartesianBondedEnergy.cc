@@ -3635,10 +3635,10 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) 
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ])
 					* Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ]) 
+				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ])
 					* Kphi * del_phi;
 			}
 			r1_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
