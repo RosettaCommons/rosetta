@@ -19,7 +19,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <string>
 
 #ifdef WIN32 //VC++ needs full class declaration

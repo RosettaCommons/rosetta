@@ -27,10 +27,16 @@
 #include <core/io/raw_data/ScoreStructJSON.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
+///Basic headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
@@ -99,6 +105,7 @@ bool ScoreFileData::write_pose(
 
 	return write_struct( outputter, score_map, string_map );
 }
+
 
 } // namespace silent
 } // namespace io

@@ -7,39 +7,50 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd2/SilentFileJobInputter.hh
-/// @brief  header file for SilentFileJobInputter class
+/// @file   protocols/jd3/SilentFilePoseInputter.hh
+/// @brief  header file for SilentFilePoseInputter class
 /// @author James Thompson
 
 
-#ifndef INCLUDED_protocols_jd2_SilentFileJobInputter_hh
-#define INCLUDED_protocols_jd2_SilentFileJobInputter_hh
+#ifndef INCLUDED_protocols_jd3_pose_inputters_SilentFilePoseInputter_hh
+#define INCLUDED_protocols_jd3_pose_inputters_SilentFilePoseInputter_hh
 
 //unit headers
-#include <protocols/jd2/JobInputter.hh>
-#include <protocols/jd2/SilentFileJobInputter.fwd.hh>
-#include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.hh>
+
+// package headers
+#include <protocols/jd3/pose_inputters/SilentFilePoseInputter.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 
-#include <utility/vector1.hh>
-
-
 //utility headers
+#include <utility/vector1.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 
 namespace protocols {
-namespace jd2 {
+namespace jd3 {
+namespace pose_inputters {
 
-/// @details This is the simplest implementation of JobInputter, which reads from -s/-l and SilentFile files.
-class SilentFileJobInputter : public protocols::jd2::JobInputter
+class SilentFilePoseInputter : public PoseInputter
 {
 public:
 
-	SilentFileJobInputter();
+	SilentFilePoseInputter();
 
-	virtual ~SilentFileJobInputter();
+	virtual ~SilentFilePoseInputter();
+
+	virtual bool job_available_on_command_line() const;
+
+	/// @brief Constructs a list of PoseInputSource objects reading from the
+	/// -s or -l command line flags. This stores the names of the PDBs that
+	/// are to be read in, and it initializes the input tags based on the pdb
+	/// names, stripping the path and the extension from the file name.
+	virtual PoseInputSources pose_input_sources_from_command_line() const;
+
+	virtual PoseInputSources pose_input_sources_from_tag( utility::tag::TagCOP ) const;
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)
@@ -47,28 +58,30 @@ public:
 	/// reference from the InnerJob or, on first demand of a pose from that
 	/// InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill
 	/// the reference.  This implementation uses pose_from_pdb
-	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	//virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
+	core::pose::PoseOP pose_from_input_source(
+		PoseInputSource const & input_source,
+		utility::options::OptionCollection const & options
+	) const;
 
 	/// @brief this function returns the SilentStruct that belongs to the given job
-	virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
-
-	/// @brief this function determines what jobs exist from -in::file::silent and
-	/// -in::file::tags.
-	virtual void fill_jobs( Jobs & jobs );
-
-	/// @brief Return the type of input source that the SilentFileJobInputter is currently
-	///  using.
-	/// @return Always <em>SILENT_FILE</em>.
-	virtual JobInputterInputSource::Enum input_source() const;
+	//virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
 
 	core::io::silent::SilentFileData const& silent_file_data() const { return sfd_; };
+
+	/// @brief returns the schema for the PDB element used in a job-definition file
+	/// including all options that govern how a PDB is loaded.
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static void list_options_read( utility::options::OptionKeyList & read_options );
 
 private:
 	core::io::silent::SilentFileData sfd_;
 	//	utility::vector1< FileName > silent_files_;
-}; // SilentFileJobInputter
+}; // SilentFilePoseInputter
 
-} // namespace jd2
+} // namespace pose_inputters
+} // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd2_SilentFileJobInputter_HH
+#endif //INCLUDED_protocols_jd3_SilentFilePoseInputter_HH

@@ -8,28 +8,36 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   ScoreMap.cc
-/// @brief  A place to put some common functions for scoremap output
+/// @brief  A place to put some common functions for score-file output
 /// @author Monica Berrondo
 
 // Unit headers
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 
-// ObjexxFCL headers
+// utility 
 
-#include <utility/vector1.hh>
+// ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
+
+///Basic headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 
 
 using namespace core;
 
-namespace protocols {
-namespace jd2 {
+namespace core {
+namespace io {
+namespace raw_data {
 
 /// @details Auto-generated virtual destructor
 ScoreMap::~ScoreMap() = default;
@@ -115,6 +123,47 @@ ScoreMap::print(
 
 }
 
+void
+ScoreMap::add_arbitrary_string_data_from_pose(
+	core::pose::Pose const & pose,
+	std::map < std::string, std::string > & string_map
+)
+{
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		basic::datacache::CacheableStringMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
 
-} //jd2
-} //protocols
+		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			string_map[it->first] = it->second;
+		}
+	}
+}
+
+void
+ScoreMap::add_arbitrary_score_data_from_pose(
+	core::pose::Pose const & pose,
+	std::map < std::string, core::Real > & score_map
+)
+{
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		basic::datacache::CacheableStringFloatMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
+
+		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			score_map[it->first] = it->second;
+		}
+	}
+}
+
+
+} // raw_data
+} // io
+} // core

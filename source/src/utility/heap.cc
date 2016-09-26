@@ -21,7 +21,19 @@
 // C++ Headers
 namespace utility {
 
-// @brief Auto-generated virtual destructor
+heap::heap( int max_items ) {
+	// somewhere in porting this over, I made an off-by-one error in the rest of
+	// the heap machinery. So, decrement max_items by 1 to actually do the right
+	// thing. I recognize that this is a stupid thing to do, but at least it was
+	// quick!
+	heap_  .resize( max_items + 2 );
+	coheap_.resize( max_items + 2 );
+	// two extra values are for storing maximum and current number of items
+	heap_init( max_items );
+}
+
+
+// @brief virtual destructor
 heap::~heap() {}
 
 
@@ -167,12 +179,16 @@ heap::reset_coval( int val, float coval )
 	} // else, noop -- if the old coval == new coval, don't shuffle any part of the heap
 }
 
-
-/// @brief returns the smallest covalue stored in the heap.
 float
 heap::heap_head() const
 {
 	return coheap_[ 0 ];
+}
+
+int
+heap::head_item() const
+{
+	return heap_[ 0 ];
 }
 
 float
@@ -180,6 +196,15 @@ heap::coval( int index ) const
 {
 	return coheap_[ index ];
 }
+
+/// @brief Return the colvaue for a particular item
+float
+heap::coval_for_val( int val ) const
+{
+	int index = index_for_val( val );
+	return coheap_[ index ];
+}
+
 
 int
 heap::val( int index ) const
@@ -281,6 +306,18 @@ heap::heap_up(
 	heap_[indx] = value;
 }
 
+int
+heap::heap_size() const
+{
+	return heap_[ heap_.size() - 1 ];
+}
+
+int
+heap::heap_capacity() const
+{
+	return heap_[ heap_.size() - 2 ];
+}
+
 int &
 heap::heap_size()
 {
@@ -309,7 +346,7 @@ heap::increase_coval( int index, float coval )
 }
 
 int
-heap::index_for_val( int val ) {
+heap::index_for_val( int val ) const {
 	for ( int ii = 0, ii_end = heap_size(); ii < ii_end; ++ii ) {
 		if ( heap_[ ii ] == val ) {
 			return ii;

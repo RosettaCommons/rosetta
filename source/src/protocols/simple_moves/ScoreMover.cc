@@ -36,7 +36,7 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
@@ -139,10 +139,10 @@ ScoreMover::apply( Pose & pose ) {
 	if ( verbose_ ) {
 		/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
 		using namespace basic::datacache;
-		protocols::jd2::ScoreMap::nonzero_energies( score_map_, score_function_, pose );
+		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, score_function_, pose );
 		pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
 		pose.energies().show( TR );
-		protocols::jd2::ScoreMap::print( score_map_, TR );
+		core::io::raw_data::ScoreMap::print( score_map_, TR );
 
 		score_function_->show(TR, pose);
 		TR << std::endl;

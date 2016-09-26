@@ -34,6 +34,7 @@
 
 // Utility headers
 #include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector0.hh>
@@ -202,6 +203,7 @@ public:
 	AnnealableGraphBaseCOP ig() const;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static void list_options_read( utility::options::OptionKeyList & opts );
 
 protected:
 	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.

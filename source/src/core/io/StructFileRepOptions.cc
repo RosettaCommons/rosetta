@@ -25,6 +25,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh> // to be used in the near future
 #include <utility/string_util.hh>
@@ -387,6 +388,128 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_output_pose_energies_table(options[ OptionKeys::out::file::output_pose_energies_table ]()); //JD2 only?
 	set_output_pose_cache_data(options[ OptionKeys::out::file::output_pose_cache_data ]()); //JD2 only?
 	set_fold_tree_io( options[ OptionKeys::out::file::output_pose_fold_tree]());
+}
+
+bool
+StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
+{
+	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_	                     ) return false;
+	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
+	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
+	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
+	if ( fold_tree_io_                                          != other.fold_tree_io_                                         ) return false;
+	if ( ignore_unrecognized_res_                               != other.ignore_unrecognized_res_                              ) return false;
+	if ( ignore_sugars_                                         != other.ignore_sugars_                                        ) return false;
+	if ( ignore_waters_                                         != other.ignore_waters_                                        ) return false;
+	if ( ignore_zero_occupancy_                                 != other.ignore_zero_occupancy_                                ) return false;
+	if ( keep_input_protonation_state_                          != other.keep_input_protonation_state_                         ) return false;
+	if ( preserve_header_                                       != other.preserve_header_                                      ) return false;
+	if ( preserve_crystinfo_                                    != other.preserve_crystinfo_                                   ) return false;
+	if ( missing_dens_as_jump_                                  != other.missing_dens_as_jump_                                 ) return false;
+	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
+	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
+	if ( normalize_to_thk_                                      != other.normalize_to_thk_                                     ) return false;
+	if ( output_torsions_                                       != other.output_torsions_                                      ) return false;
+	if ( output_virtual_                                        != other.output_virtual_                                       ) return false;
+	if ( output_virtual_zero_occ_                               != other.output_virtual_zero_occ_                              ) return false;
+	if ( pdb_parents_                                           != other.pdb_parents_                                          ) return false;
+	if ( per_chain_renumbering_                                 != other.per_chain_renumbering_                                ) return false;
+	if ( randomize_missing_coords_                              != other.randomize_missing_coords_                             ) return false;
+	if ( remember_unrecognized_res_                             != other.remember_unrecognized_res_                            ) return false;
+	if ( remember_unrecognized_water_                           != other.remember_unrecognized_water_                          ) return false;
+	if ( renumber_pdb_                                          != other.renumber_pdb_                                         ) return false;
+	if ( suppress_zero_occ_pdb_output_                          != other.suppress_zero_occ_pdb_output_                         ) return false;
+	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
+	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
+	if ( write_pdb_parametric_info_                             != other.write_pdb_parametric_info_                            ) return false;
+	if ( write_all_connect_info_                                != other.write_all_connect_info_                               ) return false;
+	if ( chains_whose_residues_are_separate_chemical_entities_  != other.chains_whose_residues_are_separate_chemical_entities_ ) return false;
+	if ( residues_for_atom_name_remapping_                      != other.residues_for_atom_name_remapping_                     ) return false;
+	if ( pdb_comments_                                          != other.pdb_comments_                                         ) return false;
+	if ( show_all_fixes_                                        != other.show_all_fixes_                                       ) return false;
+	if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
+
+	return true;
+}
+
+bool
+StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
+{
+	if ( check_if_residues_are_Ntermini_                        <  other.check_if_residues_are_Ntermini_                       ) return true;
+	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
+	if ( check_if_residues_are_Ctermini_                        <  other.check_if_residues_are_Ctermini_	                     ) return true;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_	                     ) return false;
+	if ( skip_connect_info_                                     <  other.skip_connect_info_                                    ) return true;
+	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
+	if ( connect_info_cutoff_                                   <  other.connect_info_cutoff_                                  ) return true;
+	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
+	if ( exit_if_missing_heavy_atoms_                           <  other.exit_if_missing_heavy_atoms_                          ) return true;
+	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
+	if ( fold_tree_io_                                          <  other.fold_tree_io_                                         ) return true;
+	if ( fold_tree_io_                                          != other.fold_tree_io_                                         ) return false;
+	if ( ignore_unrecognized_res_                               <  other.ignore_unrecognized_res_                              ) return true;
+	if ( ignore_unrecognized_res_                               != other.ignore_unrecognized_res_                              ) return false;
+	if ( ignore_sugars_                                         <  other.ignore_sugars_                                        ) return true;
+	if ( ignore_sugars_                                         != other.ignore_sugars_                                        ) return false;
+	if ( ignore_waters_                                         <  other.ignore_waters_                                        ) return true;
+	if ( ignore_waters_                                         != other.ignore_waters_                                        ) return false;
+	if ( ignore_zero_occupancy_                                 <  other.ignore_zero_occupancy_                                ) return true;
+	if ( ignore_zero_occupancy_                                 != other.ignore_zero_occupancy_                                ) return false;
+	if ( keep_input_protonation_state_                          <  other.keep_input_protonation_state_                         ) return true;
+	if ( keep_input_protonation_state_                          != other.keep_input_protonation_state_                         ) return false;
+	if ( preserve_header_                                       <  other.preserve_header_                                      ) return true;
+	if ( preserve_header_                                       != other.preserve_header_                                      ) return false;
+	if ( preserve_crystinfo_                                    <  other.preserve_crystinfo_                                   ) return true;
+	if ( preserve_crystinfo_                                    != other.preserve_crystinfo_                                   ) return false;
+	if ( missing_dens_as_jump_                                  <  other.missing_dens_as_jump_                                 ) return true;
+	if ( missing_dens_as_jump_                                  != other.missing_dens_as_jump_                                 ) return false;
+	if ( no_chainend_ter_                                       <  other.no_chainend_ter_                                      ) return true;
+	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
+	if ( no_output_cen_                                         <  other.no_output_cen_                                        ) return true;
+	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
+	if ( normalize_to_thk_                                      <  other.normalize_to_thk_                                     ) return true;
+	if ( normalize_to_thk_                                      != other.normalize_to_thk_                                     ) return false;
+	if ( output_torsions_                                       <  other.output_torsions_                                      ) return true;
+	if ( output_torsions_                                       != other.output_torsions_                                      ) return false;
+	if ( output_virtual_                                        <  other.output_virtual_                                       ) return true;
+	if ( output_virtual_                                        != other.output_virtual_                                       ) return false;
+	if ( output_virtual_zero_occ_                               <  other.output_virtual_zero_occ_                              ) return true;
+	if ( output_virtual_zero_occ_                               != other.output_virtual_zero_occ_                              ) return false;
+	if ( pdb_parents_                                           <  other.pdb_parents_                                          ) return true;
+	if ( pdb_parents_                                           != other.pdb_parents_                                          ) return false;
+	if ( per_chain_renumbering_                                 <  other.per_chain_renumbering_                                ) return true;
+	if ( per_chain_renumbering_                                 != other.per_chain_renumbering_                                ) return false;
+	if ( randomize_missing_coords_                              <  other.randomize_missing_coords_                             ) return true;
+	if ( randomize_missing_coords_                              != other.randomize_missing_coords_                             ) return false;
+	if ( remember_unrecognized_res_                             <  other.remember_unrecognized_res_                            ) return true;
+	if ( remember_unrecognized_res_                             != other.remember_unrecognized_res_                            ) return false;
+	if ( remember_unrecognized_water_                           <  other.remember_unrecognized_water_                          ) return true;
+	if ( remember_unrecognized_water_                           != other.remember_unrecognized_water_                          ) return false;
+	if ( renumber_pdb_                                          <  other.renumber_pdb_                                         ) return true;
+	if ( renumber_pdb_                                          != other.renumber_pdb_                                         ) return false;
+	if ( suppress_zero_occ_pdb_output_                          <  other.suppress_zero_occ_pdb_output_                         ) return true;
+	if ( suppress_zero_occ_pdb_output_                          != other.suppress_zero_occ_pdb_output_                         ) return false;
+	if ( use_pdb_format_HETNAM_records_                         <  other.use_pdb_format_HETNAM_records_                        ) return true;
+	if ( use_pdb_format_HETNAM_records_                         != other.use_pdb_format_HETNAM_records_                        ) return false;
+	if ( write_pdb_link_records_                                <  other.write_pdb_link_records_                               ) return true;
+	if ( write_pdb_link_records_                                != other.write_pdb_link_records_                               ) return false;
+	if ( write_pdb_parametric_info_                             <  other.write_pdb_parametric_info_                            ) return true;
+	if ( write_pdb_parametric_info_                             != other.write_pdb_parametric_info_                            ) return false;
+	if ( write_all_connect_info_                                <  other.write_all_connect_info_                               ) return true;
+	if ( write_all_connect_info_                                != other.write_all_connect_info_                               ) return false;
+	if ( chains_whose_residues_are_separate_chemical_entities_  <  other.chains_whose_residues_are_separate_chemical_entities_ ) return true;
+	if ( chains_whose_residues_are_separate_chemical_entities_  != other.chains_whose_residues_are_separate_chemical_entities_ ) return false;
+	if ( residues_for_atom_name_remapping_                      <  other.residues_for_atom_name_remapping_                     ) return true;
+	if ( residues_for_atom_name_remapping_                      != other.residues_for_atom_name_remapping_                     ) return false;
+	if ( pdb_comments_                                          <  other.pdb_comments_                                         ) return true;
+	if ( pdb_comments_                                          != other.pdb_comments_                                         ) return false;
+	if ( show_all_fixes_                                        <  other.show_all_fixes_                                       ) return true;
+	if ( show_all_fixes_                                        != other.show_all_fixes_                                       ) return false;
+	if ( constraints_from_link_records_                         <  other.constraints_from_link_records_                        ) return true;
+	//if ( constraints_from_link_records_                         != other.constraints_from_link_records_                        ) return false;
+	return false;
+
 }
 
 

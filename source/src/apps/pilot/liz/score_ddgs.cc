@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/sasa.hh>
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>

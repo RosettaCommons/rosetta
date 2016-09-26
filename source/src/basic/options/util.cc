@@ -31,9 +31,10 @@
 #include <basic/Tracer.hh>
 
 // option key includes
-
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+// boost includes
+#include <boost/algorithm/string/replace.hpp>
 
 namespace basic {
 namespace options {
@@ -215,6 +216,15 @@ read_subset_of_global_option_collection(
 	}
 	return opts;
 }
+
+std::string
+replace_option_namespace_colons_with_underscores( utility::options::OptionKey const & key )
+{
+	std::string name = key.identifier();
+	boost::replace_all( name, ":", "__" );
+	return name;
+}
+
 
 } // namespace options
 } // namespace basic

@@ -19,6 +19,7 @@
 #include <protocols/jd3/StandardJobQueen.hh>
 
 // Package headers
+#include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/PoseInputSource.hh>
@@ -112,8 +113,9 @@ public:
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
-		utility::options::OptionCollectionCOP job_options
-	) const
+		utility::options::OptionCollectionCOP job_options,
+		utility::vector1< JobResultCOP > const &
+	)
 	{
 		if ( complete_job_maturation_ ) {
 			complete_job_maturation_( larval_job, job_options );
@@ -128,8 +130,6 @@ public:
 
 	virtual void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobResultOP /*result*/ ) {}
 
-
-	virtual bool more_jobs_remain() { return false; }
 
 public:
 
@@ -171,10 +171,14 @@ public:
 	void test_job_options_initialization() {
 		core_init_with_additional_options( "-bool_arg1 -bool_arg_sjq_does_not_track -string_arg1 wakka_wakka_wakka -string_arg_sjq_does_not_track yippie -s 1ubq.pdb -intvect_arg1 1 2 3 4 5" );
 		DummyJobQueen djq;
-		LarvalJobs jobs = djq.determine_job_list();
+		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
+		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+		TS_ASSERT( ! jobs.empty() );
+		if ( jobs.empty() ) return;
 
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
-		djq.mature_larval_job( jobs.front() ); // invokes callback_complete_larval_job_maturation1
+		utility::vector1< JobResultOP > empty_vector;
+		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
 	}
 
 	static
@@ -260,6 +264,8 @@ public:
 		std::string job_def_xsd = djq.job_definition_xsd();
 		// now lets turn this into a Tag object and then make sure the Job tag has the definition it ought to
 
+		//std::cout << "job def xsd:\n" << job_def_xsd << std::endl;
+
 		TagCOP job_def_xsd_tag = Tag::create( job_def_xsd );
 		TS_ASSERT_EQUALS( job_def_xsd_tag->getName(), std::string( "xs:schema" ) );
 
@@ -278,7 +284,7 @@ public:
 		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "string_arg1" ));
 		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "string_arg2" ));
 		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "string_arg_w_default" ));
-		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "dummy_jq:bool_arg4" ));
+		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "dummy_jq__bool_arg4" ));
 		TS_ASSERT( tag_has_subtag_w_name( options_type_xs_all, "xs:element", "intvect_arg1" ));
 	}
 
@@ -306,7 +312,7 @@ public:
 			"  <Options>\n"
 			"   <bool_arg1/>\n"
 			"   <string_arg1 value=\"wakka_wakka_wakka\"/>\n"
-			"\t <intvect_arg value=\"1 2 3 4 5\"/>\n"
+			"   <intvect_arg1 value=\"1 2 3 4 5\"/>\n"
 			"  </Options>\n"
 			" </Job>\n"
 			"</JobDefinitionFile>\n";
@@ -314,10 +320,19 @@ public:
 		core_init(); // all options passed through job-definition file
 
 		DummyJobQueen djq;
-		LarvalJobs jobs = djq.determine_job_list_from_xml_file( jobdef_file );
+		try {
+			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		djq.initial_job_dag(); // no need to hold the DAG returned by this func, but it must be called
 
+		LarvalJobs jobs = djq.determine_job_list( 1, 1000 );
+
+		utility::vector1< JobResultOP > empty_vector;
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
-		djq.mature_larval_job( jobs.front() ); // invokes callback_complete_larval_job_maturation1
+		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
 
 	}
 

@@ -26,7 +26,7 @@ class JobDistributor;
 typedef utility::pointer::shared_ptr< JobDistributor > JobDistributorOP;
 typedef utility::pointer::shared_ptr< JobDistributor const > JobDistributorCOP;
 
-}//jd2
+}//jd3
 }//protocols
 
-#endif //INCLUDED_protocols_jd3_JobDistributor_HH
+#endif //INCLUDED_protocols_jd3_JobDistributor_FWD_HH

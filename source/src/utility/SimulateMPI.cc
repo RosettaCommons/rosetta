@@ -22,9 +22,11 @@ msg_name( simulate_mpi_message_type msg_type ) {
 	switch( msg_type ) {
 	case smpi_char  : return "smpi_char";
 	case smpi_integer : return "smpi_integer";
+	case smpi_size : return "smpi_size";
 	case smpi_string : return "smpi_string";
 	case smpi_double : return "smpi_double";
 	case smpi_integers : return "smpi_integers";
+	case smpi_sizes : return "smpi_sizes";
 	case smpi_doubles : return "smpi_doubles";
 	}
 	return "unknown message type";
@@ -59,6 +61,11 @@ void SimulateMPIMessage::set_integer_msg( int setting ) {
 	integer_msg_ = setting;
 }
 
+void SimulateMPIMessage::set_size_msg( platform::Size setting ) {
+	msg_type_ = smpi_size;
+	size_msg_ = setting;
+}
+
 void SimulateMPIMessage::set_string_msg( std::string const & setting ) {
 	msg_type_ = smpi_string;
 	string_msg_ = setting;
@@ -72,6 +79,11 @@ void SimulateMPIMessage::set_double_msg( double setting ) {
 void SimulateMPIMessage::set_integers_msg( utility::vector1< int > const & setting ) {
 	msg_type_ = smpi_integers;
 	integers_msg_ = setting;
+}
+
+void SimulateMPIMessage::set_sizes_msg( utility::vector1< platform::Size > const & setting ) {
+	msg_type_ = smpi_sizes;
+	sizes_msg_ = setting;
 }
 
 void SimulateMPIMessage::set_doubles_msg( utility::vector1< double > const & setting ) {
@@ -109,7 +121,7 @@ SimulateMPIMessageOP
 SimulateMPIData::pop_next_message_for_node_of_type( platform::Size dst, simulate_mpi_message_type msg_type )
 {
 	SimulateMPIMessageOP most_recent_message( 0 );
-	platform::Size most_recent_index( 0 );
+	platform::Size most_recent_index( 0 ); // this is an impossible message index
 
 	for ( platform::Size ii = 0; ii < mpi_nprocs_; ++ii ) {
 		clear_processed_msgs( messages_[ dst ][ ii ] );
@@ -295,6 +307,34 @@ SimulateMPI::send_integer_to_node(
 	simulation_->queue_message( msg );
 }
 
+platform::Size
+SimulateMPI::receive_size_from_node(int source)
+{
+	assert(simulation_);
+	assert(0 <= source);
+	assert(source < mpi_nprocs());
+
+	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_size );
+	return msg->size_msg();
+
+}
+
+void
+SimulateMPI::send_size_to_node(
+	int destination,
+	platform::Size message)
+{
+	assert(simulation_);
+	assert(0 <= destination);
+	assert(destination < mpi_nprocs());
+
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
+	msg->src( rank_ );
+	msg->dst( destination );
+	msg->set_size_msg( message );
+	simulation_->queue_message( msg );
+}
+
 vector1< int >
 SimulateMPI::receive_integers_from_node(
 	int source
@@ -350,6 +390,35 @@ SimulateMPI::send_double_to_node(
 	msg->dst( destination );
 	msg->set_double_msg( message );
 	simulation_->queue_message( msg );
+}
+
+vector1< platform::Size >
+SimulateMPI::receive_sizes_from_node(int source)
+{
+	assert(simulation_);
+	assert(0 <= source);
+	assert(source < mpi_nprocs());
+
+	SimulateMPIMessageOP msg = simulation_->pop_next_message_of_type( rank_, source, smpi_sizes );
+	return msg->sizes_msg();
+}
+
+void
+SimulateMPI::send_sizes_to_node(
+	int destination,
+	vector1< platform::Size > const & message
+)
+{
+	assert(simulation_);
+	assert(0 <= destination);
+	assert(destination < mpi_nprocs());
+
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
+	msg->src( rank_ );
+	msg->dst( destination );
+	msg->set_sizes_msg( message );
+	simulation_->queue_message( msg );
+
 }
 
 vector1< double >

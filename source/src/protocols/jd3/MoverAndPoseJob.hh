@@ -21,6 +21,7 @@
 // Package headers
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobResult.hh>
+#include <protocols/jd3/JobSummary.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
@@ -28,6 +29,11 @@
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace jd3 {
@@ -39,23 +45,30 @@ public:
 	MoverAndPoseJob();
 	~MoverAndPoseJob() override;
 
-
-	JobResultOP run() override;
+	virtual
+	CompletedJobOutput run() override;
 
 	void mover( moves::MoverOP setting );
 	void pose( core::pose::PoseOP setting );
 
 	moves::MoverOP mover();
 	core::pose::PoseOP pose();
+	core::pose::PoseCOP pose() const;
 
 protected:
 	/// @brief Factory method so derived classes can return their own result classes,
 	/// which themselves should derive from PoseJobResult.
 	virtual PoseJobResultOP create_job_result();
 
+	virtual EnergyJobSummaryOP create_job_summary();
+
 	/// @brief Method that allows derived classes to tuck data into the result object
-	/// as they see fit.
-	virtual void finalize_results( PoseJobResultOP result );
+	/// as they see fit. Noop in the base class.
+	virtual void finalize_job_result( PoseJobResultOP result );
+
+	/// @brief Method that allows derived classes to tuck data into the job summary
+	/// object as they see fit. Noop in the base class.
+	virtual void finalize_job_summary( EnergyJobSummaryOP summary );
 
 private:
 	moves::MoverOP mover_;
@@ -76,10 +89,38 @@ public:
 private:
 
 	core::pose::PoseOP pose_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+class EnergyJobSummary : public JobSummary
+{
+public:
+	EnergyJobSummary();
+	virtual ~EnergyJobSummary();
+
+	core::Real energy() const;
+	void energy( core::Real setting );
+private:
+	core::Real energy_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_MoverAndPoseJob )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_Job_HH

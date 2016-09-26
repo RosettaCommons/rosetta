@@ -62,3 +62,4 @@ _performance_
 *~
 run_membrane_utests.py
 *.bak
+*.hh.def

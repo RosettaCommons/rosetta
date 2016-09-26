@@ -28,6 +28,7 @@
 #include <utility/options/keys/all.hh>
 #include <utility/options/keys/OptionKey.hh>
 #include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 // C++ headers
 #include <string>

@@ -222,62 +222,62 @@ HBondOptions::parse_my_tag(
 		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "decompose_bb_hb_into_pair_energies" ) );
 	}
 
-	if ( tag->hasOption( "hbonds:exclude_DNA_DNA_hbond" ) ) {
-		exclude_DNA_DNA( tag->getOption<bool>( "hbonds:exclude_DNA_DNA_hbond" ) );
+	if ( tag->hasOption( "hbonds__exclude_DNA_DNA_hbond" ) ) {
+		exclude_DNA_DNA( tag->getOption<bool>( "hbonds__exclude_DNA_DNA_hbond" ) );
 	}
-	if ( tag->hasOption( "hbonds:use_hb_env_dep_DNA" ) ) {
-		use_hb_env_dep_DNA( tag->getOption<bool>( "hbonds:use_hb_env_dep_DNA" ) );
+	if ( tag->hasOption( "hbonds__use_hb_env_dep_DNA" ) ) {
+		use_hb_env_dep_DNA( tag->getOption<bool>( "hbonds__use_hb_env_dep_DNA" ) );
 	}
-	if ( tag->hasOption( "hbonds:put_intra_into_total" ) ) {
-		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
+	if ( tag->hasOption( "hbonds__put_intra_into_total" ) ) {
+		put_intra_into_total( tag->getOption<bool>( "hbonds__put_intra_into_total" ) );
 	}
-	if ( tag->hasOption( "hbonds:exclude_self_hbonds" ) ) {
-		exclude_self_hbonds( tag->getOption<bool>( "hbonds:exclude_self_hbonds" ) );
+	if ( tag->hasOption( "hbonds__exclude_self_hbonds" ) ) {
+		exclude_self_hbonds( tag->getOption<bool>( "hbonds__exclude_self_hbonds" ) );
 	}
-	if ( tag->hasOption( "hbonds:use_hb_env_dep" ) ) {
-		use_hb_env_dep( tag->getOption<bool>( "hbonds:use_hb_env_dep" ) );
+	if ( tag->hasOption( "hbonds__use_hb_env_dep" ) ) {
+		use_hb_env_dep( tag->getOption<bool>( "hbonds__use_hb_env_dep" ) );
 	}
-	if ( tag->hasOption( "hbonds:smooth_hb_env_dep" ) ) {
-		smooth_hb_env_dep( tag->getOption<bool>( "hbonds:smooth_hb_env_dep" ) );
+	if ( tag->hasOption( "hbonds__smooth_hb_env_dep" ) ) {
+		smooth_hb_env_dep( tag->getOption<bool>( "hbonds__smooth_hb_env_dep" ) );
 	}
-	if ( tag->hasOption( "hbonds:decompose_bb_hb_into_pair_energies" ) ) {
-		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "hbonds:decompose_bb_hb_into_pair_energies" ) );
+	if ( tag->hasOption( "hbonds__decompose_bb_hb_into_pair_energies" ) ) {
+		decompose_bb_hb_into_pair_energies( tag->getOption<bool>( "hbonds__decompose_bb_hb_into_pair_energies" ) );
 	}
-	if ( tag->hasOption( "hbonds:exclude_intra_res_protein" ) ) {
-		exclude_intra_res_protein( tag->getOption<bool>( "hbonds:exclude_intra_res_protein" ) );
+	if ( tag->hasOption( "hbonds__exclude_intra_res_protein" ) ) {
+		exclude_intra_res_protein( tag->getOption<bool>( "hbonds__exclude_intra_res_protein" ) );
 	}
-	if ( tag->hasOption( "hbonds:exclude_intra_res_RNA" ) ) {
-		exclude_intra_res_RNA( tag->getOption<bool>( "hbonds:exclude_intra_res_RNA" ) );
+	if ( tag->hasOption( "hbonds__exclude_intra_res_RNA" ) ) {
+		exclude_intra_res_RNA( tag->getOption<bool>( "hbonds__exclude_intra_res_RNA" ) );
 	}
-	if ( tag->hasOption( "hbonds:put_intra_into_total" ) ) {
-		put_intra_into_total( tag->getOption<bool>( "hbonds:put_intra_into_total" ) );
+	//if ( tag->hasOption( "hbonds__put_intra_into_total" ) ) {
+	//	put_intra_into_total( tag->getOption<bool>( "hbonds__put_intra_into_total" ) );
+	//}
+	if ( tag->hasOption( "hbonds__bb_donor_acceptor_check" ) ) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__bb_donor_acceptor_check" ) );
 	}
-	if ( tag->hasOption( "hbonds:bb_donor_acceptor_check" ) ) {
-		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:bb_donor_acceptor_check" ) );
+	if ( tag->hasOption( "hbonds__params_database_tag" ) ) {
+		params_database_tag( tag->getOption<std::string>( "hbonds__params_database_tag" ) );
 	}
-	if ( tag->hasOption( "hbonds:params_database_tag" ) ) {
-		params_database_tag( tag->getOption<std::string>( "hbonds:params_database_tag" ) );
+	if ( tag->hasOption( "hbonds__use_sp2_chi_penalty" ) ) {
+		use_sp2_chi_penalty( tag->getOption<bool>( "hbonds__use_sp2_chi_penalty" ) );
 	}
-	if ( tag->hasOption( "hbonds:use_sp2_chi_penalty" ) ) {
-		use_sp2_chi_penalty( tag->getOption<bool>( "hbonds:use_sp2_chi_penalty" ) );
+	if ( tag->hasOption( "hbonds__sp2_BAH180_rise" ) ) {
+		sp2_BAH180_rise( tag->getOption<Real>( "hbonds__sp2_BAH180_rise" ) );
 	}
-	if ( tag->hasOption( "hbonds:sp2_BAH180_rise" ) ) {
-		sp2_BAH180_rise( tag->getOption<Real>( "hbonds:sp2_BAH180_rise" ) );
+	if ( tag->hasOption( "hbonds__sp2_outer_width" ) ) {
+		sp2_outer_width( tag->getOption<Real>( "hbonds__sp2_outer_width" ) );
 	}
-	if ( tag->hasOption( "hbonds:sp2_outer_width" ) ) {
-		sp2_outer_width( tag->getOption<Real>( "hbonds:sp2_outer_width" ) );
+	if ( tag->hasOption( "hbonds__measure_sp3acc_BAH_from_hvy" ) ) {
+		measure_sp3acc_BAH_from_hvy( tag->getOption<bool>( "hbonds__measure_sp3acc_BAH_from_hvy" ) );
 	}
-	if ( tag->hasOption( "hbonds:measure_sp3acc_BAH_from_hvy" ) ) {
-		measure_sp3acc_BAH_from_hvy( tag->getOption<bool>( "hbonds:measure_sp3acc_BAH_from_hvy" ) );
+	if ( tag->hasOption( "hbonds__fade_energy" ) ) {
+		fade_energy( tag->getOption<bool>( "hbonds__fade_energy" ) );
 	}
-	if ( tag->hasOption( "hbonds:fade_energy" ) ) {
-		fade_energy( tag->getOption<bool>( "hbonds:fade_energy" ) );
+	if ( tag->hasOption( "hbonds__Mbhbond" ) ) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__Mbhbond" ) );
 	}
-	if ( tag->hasOption( "hbonds:Mbhbond" ) ) {
-		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:Mbhbond" ) );
-	}
-	if ( tag->hasOption( "hbonds:mphbond" ) ) {
-		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds:mphbond" ) );
+	if ( tag->hasOption( "hbonds__mphbond" ) ) {
+		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__mphbond" ) );
 	}
 }
 
@@ -291,25 +291,25 @@ HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes
 		+ XMLSchemaAttribute( "use_hb_env_dep", xsct_rosetta_bool )
 		+ XMLSchemaAttribute( "smooth_hb_env_dep", xsct_rosetta_bool )
 		+ XMLSchemaAttribute( "decompose_bb_hb_into_pair_energies", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:exclude_DNA_DNA_hbond", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:use_hb_env_dep_DNA", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:put_intra_into_total", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:exclude_self_hbonds", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:use_hb_env_dep", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:smooth_hb_env_dep", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:decompose_bb_hb_into_pair_energies", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:exclude_intra_res_protein", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:exclude_intra_res_RNA", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:put_intra_into_total", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:bb_donor_acceptor_check", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:params_database_tag", xs_string )
-		+ XMLSchemaAttribute( "hbonds:use_sp2_chi_penalty", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:sp2_BAH180_rise", xs_decimal )
-		+ XMLSchemaAttribute( "hbonds:sp2_outer_width", xs_decimal )
-		+ XMLSchemaAttribute( "hbonds:measure_sp3acc_BAH_from_hvy", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:fade_energy", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:Mbhbond", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "hbonds:mphbond", xsct_rosetta_bool );
+		+ XMLSchemaAttribute( "hbonds__exclude_DNA_DNA_hbond", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__use_hb_env_dep_DNA", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__put_intra_into_total", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__exclude_self_hbonds", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__use_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__smooth_hb_env_dep", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__decompose_bb_hb_into_pair_energies", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__exclude_intra_res_protein", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__exclude_intra_res_RNA", xsct_rosetta_bool )
+		//+ XMLSchemaAttribute( "hbonds__put_intra_into_total", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__bb_donor_acceptor_check", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__params_database_tag", xs_string )
+		+ XMLSchemaAttribute( "hbonds__use_sp2_chi_penalty", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__sp2_BAH180_rise", xs_decimal )
+		+ XMLSchemaAttribute( "hbonds__sp2_outer_width", xs_decimal )
+		+ XMLSchemaAttribute( "hbonds__measure_sp3acc_BAH_from_hvy", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__fade_energy", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__Mbhbond", xsct_rosetta_bool )
+		+ XMLSchemaAttribute( "hbonds__mphbond", xsct_rosetta_bool );
 
 }
 

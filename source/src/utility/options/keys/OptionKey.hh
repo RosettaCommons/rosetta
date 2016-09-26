@@ -169,24 +169,6 @@ public: // Properties
 
 }; // OptionKey
 
-/// @brief Convenience function for appending an option key to an option
-/// key list (which itself is a list of pointers to OptionKeys, using
-/// the VariantKey class) so that many option keys can be appended by
-/// simply chaining a set of calls using "+".
-///
-/// @details For example if you have to add the option keys
-/// packing::ex1, packing::ex2, packing::ex3 and packing::ex4
-/// to a list of option keys named optlist, then you can write:
-///
-///     using namespace basic::options::OptionKeys::packing;
-///     optlist + ex1 + ex2 + ex3 + ex4;
-inline
-OptionKeyList &
-operator + ( OptionKeyList & key_list, OptionKey const & key )
-{
-	key_list.push_back( keys::VariantKey< OptionKey > ( key ) );
-	return key_list;
-}
 
 } // namespace options
 } // namespace utility

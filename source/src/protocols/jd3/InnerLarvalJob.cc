@@ -19,6 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.hh>
 
 // Basic headers
 #include <basic/datacache/ConstDataMap.hh>
@@ -32,6 +33,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -42,6 +53,19 @@ InnerLarvalJob::InnerLarvalJob() :
 	bad_( false ),
 	const_data_cache_( new basic::datacache::ConstDataMap )
 {}
+
+InnerLarvalJob::InnerLarvalJob( InnerLarvalJob const & src ) :
+	input_tag_                ( src.input_tag_                ),
+	job_tag_                  ( src.job_tag_                  ),
+	outputter_                ( src.outputter_                ),
+	input_sources_            ( src.input_sources_            ),
+	nstruct_                  ( src.nstruct_                  ),
+	input_job_result_indices_ ( src.input_job_result_indices_ ),
+	bad_                      ( src.bad_                      ),
+	const_data_cache_         ( src.const_data_cache_         ),
+	jobdef_tag_               ( src.jobdef_tag_               )
+	{}
+
 
 InnerLarvalJob::InnerLarvalJob( core::Size nstruct ) :
 	input_sources_(),
@@ -188,11 +212,29 @@ InnerLarvalJob::const_data_map() const
 	return *const_data_cache_;
 }
 
+utility::tag::TagCOP
+InnerLarvalJob::jobdef_tag() const
+{
+	return jobdef_tag_;
+}
+
+void
+InnerLarvalJob::jobdef_tag( utility::tag::TagCOP setting )
+{
+	jobdef_tag_ = setting;
+}
+
 // basic::resource_manager::JobOptions const &
 // InnerLarvalJob::job_options() const
 // {
 //  return *job_options_;
 // }
+
+void
+InnerLarvalJob::nstruct_max( core::Size setting )
+{
+	nstruct_ = setting;
+}
 
 core::Size InnerLarvalJob::n_input_sources() const
 {
@@ -212,6 +254,17 @@ PoseInputSource const &
 InnerLarvalJob::input_source( Size index ) const
 {
 	return *input_sources_[ index ];
+}
+
+utility::vector1< core::Size > const &
+InnerLarvalJob::input_job_result_indices() const
+{
+	return input_job_result_indices_;
+}
+
+void InnerLarvalJob::add_input_job_result_index( core::Size job_index )
+{
+	input_job_result_indices_.push_back( job_index );
 }
 
 
@@ -262,3 +315,45 @@ InnerLarvalJob::concatenated_input_source_names() const
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::InnerLarvalJob::save( Archive & arc ) const {
+	arc( CEREAL_NVP( input_tag_ ) ); // std::string
+	arc( CEREAL_NVP( job_tag_ ) ); // std::string
+	arc( CEREAL_NVP( outputter_ ) ); // std::string
+	arc( CEREAL_NVP( input_sources_ ) ); // utility::vector1<PoseInputSourceCOP>
+	arc( CEREAL_NVP( nstruct_ ) ); // core::Size
+	arc( CEREAL_NVP( input_job_result_indices_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( bad_ ) ); // _Bool
+	arc( CEREAL_NVP( const_data_cache_ ) ); // basic::datacache::ConstDataMapOP
+	arc( CEREAL_NVP( jobdef_tag_ ) ); // utility::tag::TagCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::InnerLarvalJob::load( Archive & arc ) {
+	arc( input_tag_ ); // std::string
+	arc( job_tag_ ); // std::string
+	arc( outputter_ ); // std::string
+	utility::vector1< std::shared_ptr< protocols::jd3::PoseInputSource > > local_input_sources;
+	arc( local_input_sources ); // utility::vector1<PoseInputSourceCOP>
+	input_sources_ = local_input_sources; // copy the non-const pointer(s) into the const pointer(s)
+	arc( nstruct_ ); // core::Size
+	arc( input_job_result_indices_ ); // utility::vector1<core::Size>
+	arc( bad_ ); // _Bool
+	arc( const_data_cache_ ); // basic::datacache::ConstDataMapOP
+	utility::tag::TagOP local_jobdef_tag;
+	arc( local_jobdef_tag ); // utility::tag::TagOP
+	jobdef_tag_ = local_jobdef_tag;
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::InnerLarvalJob );
+CEREAL_REGISTER_TYPE( protocols::jd3::InnerLarvalJob )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_InnerLarvalJob )
+#endif // SERIALIZATION

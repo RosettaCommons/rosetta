@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/jd2/MPIWorkPartitionJobDistributor.hh
-/// @brief  header for MPIWorkPartitionJobDistributor - intended for MPI jobs on small numbers of nodes where the load can be balanced equally by the user
+/// @file   protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh
+/// @brief  jd3 header for MPIWorkPartitionJobDistributor - intended for MPI jobs on small numbers of nodes where the load can be balanced equally by the user
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
+/// @author Andy Watkins (amw579@nyu.edu)
 
-#ifndef INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_hh
-#define INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_hh
+#ifndef INCLUDED_protocols_jd3_job_distributors_MPIWorkPartitionJobDistributor_hh
+#define INCLUDED_protocols_jd3_job_distributors_MPIWorkPartitionJobDistributor_hh
 
 // Unit headers
-#include <protocols/jd2/MPIWorkPartitionJobDistributor.fwd.hh>
+#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.fwd.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributorFactory.hh>
+#include <protocols/jd3/JobDistributor.hh>
+#include <protocols/jd3/Job.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 
@@ -32,12 +32,11 @@
 
 #include <platform/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
-#include <protocols/jd2/JobInputter.fwd.hh>
-#include <protocols/jd2/JobOutputter.fwd.hh>
-#include <protocols/jd2/Parser.fwd.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
+#include <protocols/jd3/LarvalJob.fwd.hh>
+#include <protocols/jd3/Job.hh>
+#include <protocols/jd3/JobDistributor.fwd.hh>
+#include <protocols/jd3/JobQueen.fwd.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
@@ -65,7 +64,8 @@
 
 
 namespace protocols {
-namespace jd2 {
+namespace jd3 {
+namespace job_distributors {
 
 /// @details This job distributor is meant for running jobs where the number of jobs is equal to the number of processors
 ///(or, similarly, the jobs % processors calculation is very close to the number of processors and NOT a small number).
@@ -77,55 +77,60 @@ namespace jd2 {
 class MPIWorkPartitionJobDistributor : public JobDistributor
 {
 protected:
-	/// @brief ctor is protected; singleton pattern
-  MPIWorkPartitionJobDistributor();
-
-  virtual void handle_interrupt() {}
+	virtual void handle_interrupt() {}
 
 public:
-	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
-	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~MPIWorkPartitionJobDistributor();
+	///@brief ctor is protected; singleton pattern
+	MPIWorkPartitionJobDistributor();
+
+	virtual ~MPIWorkPartitionJobDistributor();
 
 	virtual
 	void
-	go( protocols::moves::MoverOP mover );
+	go( JobQueenOP queen );
 
-  virtual
-  core::Size
-  get_new_job_id();
+	virtual
+	core::Size
+	get_new_job_id();
 
-  virtual
-  void
-  mark_current_job_id_for_repetition();
+	//virtual
+	//void
+	//mark_current_job_id_for_repetition();
 
-  virtual
-  void
-  remove_bad_inputs_from_job_list();
+	//virtual
+	//void
+	//remove_bad_inputs_from_job_list();
 
-  friend class JobDistributorFactory;  //singleton management
+	friend class JobDistributorFactory;  //singleton management
 
 private:
-	/// @brief ctor helper function splits up job list
-  void
-  determine_job_ids_to_run();
+	///@brief ctor helper function splits up job list
+	void
+	determine_job_ids_to_run();
 
-  /// @brief total number of processing elements
-  core::Size npes_;
+	bool
+	more_jobs_in_current_round();
 
-  /// @brief rank of the "local" instance
-  core::Size rank_;
+	LarvalJobOP
+	select_next_job();
 
-  //@brief start of Jobs vector slice
-  core::Size job_id_start_;
+	///@brief total number of processing elements
+	core::Size npes_;
 
-  //@brief end of Jobs vector slice
-  core::Size job_id_end_;
+	///@brief rank of the "local" instance
+	core::Size rank_;
 
-  core::Size next_job_to_try_assigning_;
+	//@brief start of Jobs vector slice
+	core::Size job_id_start_;
+
+	//@brief end of Jobs vector slice
+	core::Size job_id_end_;
+
+	core::Size next_job_to_try_assigning_;
 };
 
-}//jd2
+}//job_distributors
+}//jd3
 }//protocols
 
 #endif //INCLUDED_protocols_jd2_MPIWorkPartitionJobDistributor_HH

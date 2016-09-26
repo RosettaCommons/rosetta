@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 #include <utility/CSI_Sequence.fwd.hh>
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKey.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 // option key includes
 #include <basic/options/keys/score.OptionKeys.gen.hh>

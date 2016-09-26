@@ -35,79 +35,20 @@
 namespace protocols {
 namespace jd3 {
 
+/// @brief OK -- I don't know what the division of labor between a JobDistributor base class
+/// and a JobDistributor subclass, so I'm just going to start writing a simple JobDistributor
+/// and then follow it by writing an MPI job distributor and then I'll see what shakes out.
 class JobDistributor : public utility::pointer::ReferenceCount {
-public:
-	typedef utility::vector1< LarvalJobOP > LarvalJobVector;
-
 public:
 
 	JobDistributor();
 	~JobDistributor() override;
 
-	/// @brief The main method for executing a protocol.  Derived classes have the option of
-	/// overriding the behavior of the base class, or changing the behavior of the base class
-	/// version of this function by changing the other virtual methods it calls.
+	/// @brief The main method for executing a protocol.
 	virtual
 	void
-	go( JobQueenOP queen );
+	go( JobQueenOP queen ) = 0;
 
-protected:
-
-	/// @brief Set the job queen -- this must be called by the derived classes if they override
-	/// the go() method.
-	void set_job_queen( JobQueenOP job_queen );
-
-	/// @brief Store the list of jobs to be run in the current round
-	void store_jobs_for_current_round( LarvalJobs const & jobs );
-
-	/// @brief Access to the JobQueen object for derived JobDistributors
-	JobQueen & job_queen();
-
-	virtual
-	LarvalJobs
-	determine_jobs_for_next_round();
-
-	virtual
-	bool
-	more_jobs_in_current_round();
-
-	virtual
-	LarvalJobOP
-	select_next_job();
-
-	virtual
-	void
-	purge_similar_jobs_which_have_bad_inputs( LarvalJobOP job );
-
-	/// @brief Invoke this non-virtual method to iterate across the jobs_for_current_round_ list
-	/// stored in the base class; useful if the derived class looks at or asks the
-	/// base class to look at the jobs_for_current_round_ list.
-	void
-	mark_similar_jobs_which_have_bad_inputs_in_job_list( LarvalJobOP job );
-
-	virtual
-	void
-	process_exception_from_job( LarvalJobOP job, utility::excn::EXCN_Base const & exception );
-
-	virtual
-	void
-	process_job_result( LarvalJobOP job, JobResultOP result );
-
-	virtual
-	void
-	note_round_completed();
-
-	virtual
-	bool
-	another_round_remains();
-
-private:
-
-	JobQueenOP job_queen_;
-
-	LarvalJobVector jobs_for_current_round_;
-	core::Size njobs_for_round_;
-	core::Size next_job_index_;
 
 };
 

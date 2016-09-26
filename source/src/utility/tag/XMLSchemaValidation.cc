@@ -276,10 +276,25 @@ validate_xml_against_xsd(
 	//xmlDoc * xsd_doc = xmlParseDoc( xsd_xmlchar_string );
 
 	xmlDoc * xsd_doc = xmlParseMemory( xsd_string.c_str(), xsd_string.size() );
+	if ( ! xsd_doc ) {
+		output.valid( false );
+		output.errors( handler1.errors() );
+		output.warnings( handler1.warnings() );
+		return output;
+	}
 
 	xmlSchemaParserCtxtPtr schema_parser_context = xmlSchemaNewDocParserCtxt( xsd_doc );
 	//xmlSchemaSetParserErrors( schema_parser_context, handle_xml_error, handle_xml_warning, &handler );
 	xmlSchemaPtr schema = xmlSchemaParse( schema_parser_context );
+
+	if ( ! schema ) {
+		xmlFreeDoc( xsd_doc );
+		xmlSchemaFreeParserCtxt( schema_parser_context );
+		output.valid( false );
+		output.errors( handler1.errors() );
+		output.warnings( handler1.warnings() );
+		return output;
+	}
 
 	//std::cout << "Parsed the schema" << std::endl;
 	xmlSchemaValidCtxtPtr schema_validator = xmlSchemaNewValidCtxt( schema );
@@ -287,8 +302,22 @@ validate_xml_against_xsd(
 
 	//xmlSchemaSetValidErrors( schema_validator, handle_xml_error, handle_xml_warning, &handler );
 
+	XMLErrorHandler handler3;
+	handler3.set_file_contents( xml_string );
+	xmlSetStructuredErrorFunc( & handler3, handle_structured_xml_error );
+
 	xmlChar * xml_input_xmlchar = xmlCharStrdup( xml_string.c_str() );
-	xmlDoc * xml_doc = xmlParseDoc( xml_input_xmlchar );
+	xmlDoc * xml_doc = xmlParseDoc( xml_input_xmlchar ); // need to figure out how to get error messages from this step
+	if ( ! xml_doc ) {
+		xmlFreeDoc( xsd_doc );
+		xmlSchemaFreeParserCtxt( schema_parser_context );
+		xmlSchemaFreeValidCtxt( schema_validator );
+		output.valid( false );
+		output.errors( handler3.errors() );
+		output.warnings( handler3.warnings() );
+		return output;
+	}
+
 
 	//std::cout << "Validating XML document" << std::endl;
 	XMLErrorHandler handler2;
@@ -300,11 +329,14 @@ validate_xml_against_xsd(
 
 	// clean up
 	//free( xsd_xmlchar_string );
+
 	free( xml_input_xmlchar );
+
 	xmlSchemaFree( schema );
 	xmlSchemaFreeParserCtxt( schema_parser_context );
 	xmlSchemaFreeValidCtxt( schema_validator );
 	xmlFreeDoc( xsd_doc );
+	xmlFreeDoc( xml_doc );
 
 	//output.valid( first_error_code == 0 );
 	output.valid( validation_output == 0 );

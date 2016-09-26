@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
 
 //////////////////////////////////////////////////////////////////////
 ///
@@ -337,7 +346,7 @@ double PolycubicSpline< N >::F( utility::fixedsizearray1< double, N > const & xs
 		d3ps[ ii ] = ( dps[ ii ] * dps[ ii ] * dps[ ii ] - dps[ ii ] ) * sqr( delta_[ ii ] ) / 6;
 		d3ms[ ii ] = ( dms[ ii ] * dms[ ii ] * dms[ ii ] - dms[ ii ] ) * sqr( delta_[ ii ] ) / 6;
 
-		std::cout << ii << ": delta_akt " << delta_akts[ ii ] << " dps " << dps[ ii ] << " dms " << dms[ ii ] << " d3ps " << d3ps[ ii ] << " d3ms " << d3ms[ ii ] << "\n";
+		//std::cout << ii << ": delta_akt " << delta_akts[ ii ] << " dps " << dps[ ii ] << " dms " << dms[ ii ] << " d3ps " << d3ps[ ii ] << " d3ms " << d3ms[ ii ] << "\n";
 		while ( bins[ ii ] < 1 ) bins[ ii ] += dims[ ii ];
 	}
 
@@ -348,11 +357,11 @@ double PolycubicSpline< N >::F( utility::fixedsizearray1< double, N > const & xs
 		for ( Size ii = 1; ii <= N; ++ii ) {
 			position[ ii ] = ( ( posi - 1 ) & static_cast< int >( ( 1 << (N - ii) ) ) ) ? bins[ ii ] % dims[ ii ] : ( bins[ ii ] - 1 ) % dims[ ii ];
 		}
-		std::cout << "One position relevant to ( ";
-		for ( Size ii = 1; ii <= N; ++ii ) std::cout << xs[ ii ] << " ";
-		std::cout << " ) is ( ";
-		for ( Size ii = 1; ii <= N; ++ii ) std::cout << position[ ii ] << " ";
-		std::cout << " )\n";
+		//std::cout << "One position relevant to ( ";
+		//for ( Size ii = 1; ii <= N; ++ii ) std::cout << xs[ ii ] << " ";
+		//std::cout << " ) is ( ";
+		//for ( Size ii = 1; ii <= N; ++ii ) std::cout << position[ ii ] << " ";
+		//std::cout << " )\n";
 
 		for ( Size iid = 1; iid <= ( 1 << N ); ++iid ) {
 			double coeff = n_derivs_[ iid ]( position );
@@ -367,9 +376,9 @@ double PolycubicSpline< N >::F( utility::fixedsizearray1< double, N > const & xs
 				}
 			}
 
-			if ( coeff != 0 ) {
-				std::cout << "iid " << iid << " coeff " << coeff << std::endl;
-			}
+			//if ( coeff != 0 ) {
+			//	std::cout << "iid " << iid << " coeff " << coeff << std::endl;
+			//}
 			value += coeff;
 		}
 	}
@@ -427,7 +436,7 @@ double PolycubicSpline< N >::dFdxi( Size n, const utility::fixedsizearray1< doub
 		dms[ ii ] = 1 - dps[ ii ];
 		d3ps[ ii ] = ( dps[ ii ] * dps[ ii ] * dps[ ii ] - dps[ ii ] ) * sqr( delta_[ ii ] ) / 6;
 		d3ms[ ii ] = ( dms[ ii ] * dms[ ii ] * dms[ ii ] - dms[ ii ] ) * sqr( delta_[ ii ] ) / 6;
-		std::cout << ii << ": delta_akt " << delta_akts[ ii ] << " dps " << dps[ ii ] << " dms " << dms[ ii ] << " d3ps " << d3ps[ ii ] << " d3ms " << d3ms[ ii ] << "\n";
+		//std::cout << ii << ": delta_akt " << delta_akts[ ii ] << " dps " << dps[ ii ] << " dms " << dms[ ii ] << " d3ps " << d3ps[ ii ] << " d3ms " << d3ms[ ii ] << "\n";
 
 		while ( bins[ ii ] < 1 ) bins[ ii ] += dims[ ii ];
 	}

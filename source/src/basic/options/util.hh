@@ -20,7 +20,7 @@
 // utility headers
 #include <utility/vector1.hh>  // for vector1
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 namespace basic {
 namespace options {
@@ -48,6 +48,9 @@ utility::options::OptionCollectionOP
 read_subset_of_global_option_collection(
 	utility::options::OptionKeyList const & opt_keys
 );
+
+std::string
+replace_option_namespace_colons_with_underscores( utility::options::OptionKey const & key );
 
 } // namespace options
 } // namespace basic

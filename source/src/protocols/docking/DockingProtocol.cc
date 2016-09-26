@@ -55,7 +55,7 @@
 
 #include <basic/datacache/DataMap.hh>
 
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -969,7 +969,7 @@ DockingProtocol::apply( pose::Pose & pose )
 				job->add_string_real_pair("cen_rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ));
 			}
 			// store the low res scores for output
-			protocols::jd2::ScoreMap::score_map_from_scored_pose( lowres_scores, pose );
+			core::io::raw_data::ScoreMap::score_map_from_scored_pose( lowres_scores, pose );
 		}
 		if ( lowres_filter_ ) {
 			passed_lowres_filter = lowres_filter_->apply( pose );

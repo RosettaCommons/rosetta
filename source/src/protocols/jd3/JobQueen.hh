@@ -20,7 +20,9 @@
 //project headers
 #include <core/types.hh>
 #include <protocols/jd3/Job.fwd.hh>
+#include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobResult.fwd.hh>
+#include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -74,10 +76,26 @@ public:
 	/// definable for the resource manager.
 	virtual std::string resource_definition_xsd() const = 0;
 
-	/// @brief This function determines what jobs exist.  This function neither knows nor
-	/// cares what jobs are already complete on disk/memory - it just figures out what
-	/// ones should exist given the input.
-	virtual LarvalJobs determine_job_list() = 0;
+	/// @brief The JobQueen creates a directed acyclic graph (DAG) describing the sets of all
+	/// jobs and the interdependencies between them to the JobDistributor.  The JobDistributor
+	/// will allow the JobQueen to update the DAG by adding new nodes and adding edges to new
+	/// nodes if the JobQueen does not know up front how many nodes will be in the graph.
+	virtual JobDigraphOP initial_job_dag() = 0;
+
+	/// @brief The JobQueen is allowed to update the JobDigraph over the course of execution
+	/// but only in a particular way: by adding new nodes, and then by adding edges that land
+	/// on those new nodes.  The JobQueen is not allowed to add edges that land on an old node.
+	virtual void update_job_dag( JobDigraphUpdater & updater ) = 0;
+
+	/// @brief The JobDistributor asks the JobQueen for a list of jobs that should be performed.
+	/// This function neither knows nor cares what jobs are already complete on disk/memory
+	/// - it just figures out what ones should exist given the input.  The JobDistributor
+	/// tells the %JobQueen which node in the JobDAG it is requesting jobs for, and puts
+	/// a limit on the number of LarvalJobs that the JobQueen should return.
+	/// The JobDistributor will call this function repeatedly for a single node until the
+	/// %JobQueen returns an empty list, at which point, the JobDistributor will consider
+	/// the node's jobs exhausted.
+	virtual LarvalJobs determine_job_list( Size job_dag_node_index, Size max_njobs ) = 0;
 
 	/// @biref The JobQueen must be able to determine if a particular job has already
 	/// completed (or alternatively, has already been started by another process), and
@@ -91,16 +109,23 @@ public:
 	virtual void mark_job_as_having_begun( LarvalJobCOP job ) = 0;
 
 	/// @brief Mature the input larval job into a full fledged job that will be run
-	/// within this process (i.e. on this CPU), and so can hold pointers to
+	/// within this process (i.e. on this CPU), and thus can hold pointers to
 	/// data that may persist inside the ResourceManager or may even be used by
-	/// another process running in this thread.  To pull that off, the Job object
+	/// another process running in this thread. To pull that off, the Job object
 	/// must share no non-bitwise-const data with any other Job object.  That means
-	/// if the Job were to contain a Pose and a Mover (as the StandardJob does), then
+	/// if the Job were to contain a Pose and a Mover (as the MoverAndPoseJob does), then
 	/// so each Mover should be freshly constructed, and if the Pose had been copied
 	/// from an existing Pose, must use the Pose's "deep_copy" method (since Pose's
 	/// sometimes share non-constant data between them, e.g. the AtomTree observer
-	/// system, and the *sigh* constraints ).
-	virtual JobOP mature_larval_job( LarvalJobCOP job ) = 0;
+	/// system, and sometimes Constraints ). The JobResults vector, which is supplied
+	/// by the Jobdistributor, has entries corresponding to the JobResults from
+	/// JobIDs in its input_job_result_indices vector.
+	virtual JobOP mature_larval_job( LarvalJobCOP job, utility::vector1< JobResultCOP > const & input_job_results ) = 0;
+
+	/// @brief There are two interfaces to note_job_completed: one in which the
+	/// job index alone is passed in, a second in which the entire LarvalJob is
+	/// provided.
+	virtual bool larval_job_needed_for_note_job_completed() const = 0;
 
 	/// @brief The JobDistributor will call this function to inform the JobQueen that
 	/// a job has "completed" -- in the sense that it will not be run in the future.
@@ -109,19 +134,52 @@ public:
 	/// whether it failed.
 	virtual void note_job_completed( LarvalJobCOP job, JobStatus status ) = 0;
 
+	/// @brief The JobDistributor will call this function to inform the JobQueen that
+	/// a job has "completed" -- in the sense that it will not be run in the future.
+	/// It does not guarantee that the job was run on this CPU or that it successfully
+	/// completed anywhere.  The JobStatus indicates whether the job completed or
+	/// whether it failed.
+	virtual void note_job_completed( core::Size job_id, JobStatus status ) = 0;
+
+	/// @brief There are two interfaces to completed_job_summary: one in which the
+	/// job index alone is passed in, a second in which the entire LarvalJob is
+	/// provided.
+	virtual bool larval_job_needed_for_completed_job_summary() const = 0;
+
 	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
-	/// JobResult generated within a Job batch. This guarantee allows the JobQueen to
+	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
 	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
 	/// from structures instead of forcing that computation into accessory scripts.
-	virtual void completed_job_result( LarvalJobCOP job, JobResultOP result ) = 0;
+	virtual void completed_job_summary( LarvalJobCOP job, JobSummaryOP summary ) = 0;
 
-	/// @brief The %JobQueen may indicate to the JobDistributor that multiple rounds of structure
-	/// generation are desired by returning "true" to this function call (this function can constitutively
-	/// return "false" and the first round will still always be executed).  After returning "true",
-	/// the JobDistributor will ask the %JobQueen for another list of jobs through its determine_job_list
-	/// method.  After the first round, only the %JobQueens which were given the JobResult data
-	/// (one %JobQueen per Job batch) will be asked for a second job list.
-	virtual bool more_jobs_remain() = 0;
+	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
+	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to
+	/// aggregate data across all of the Jobs so that Rosetta is able to compute data
+	/// from structures instead of forcing that computation into accessory scripts.
+	virtual void completed_job_summary( core::Size job_id, JobSummaryOP summary ) = 0;
+
+	/// @brief The JobDistributor asks the JobQueen which JobResults should be queued for output.
+	/// Each job should be indicated by its "global" index. This is asked of each queen which has
+	/// seen the job summaries for a batch of jobs.  The JobQueen should ask for a given
+	/// JobResult only once.  After a job result is output, the JobDistributor will discard the
+	/// JobResult, so the JobQueen should not tell the JobDistributor to output a job if it will
+	/// be used as an input to another job in the future.
+	virtual std::list< core::Size > jobs_that_should_be_output() = 0;
+
+	/// @brief The JobDistributor, to manage memory use, asks the JobQueen which JobResults may be
+	/// discarded because they will not be used in the future.  The JobDistributor will exit with
+	/// an error message if the %JobQueen gives it a LarvalJob that lists one of these discarded
+	/// JobResults as a required input for that LarvalJob.
+	virtual std::list< core::Size > job_results_that_should_be_discarded() = 0;
+
+	/// @brief The JobDistributor hands the JobResult for a particular larval job to a JobQueen
+	/// after it has been requested through a call to jobs_that_should_be_output, but the JobDistributor
+	/// will not necessarily give the JobResult to the JobQueen that requested the job result.
+	virtual void completed_job_result( LarvalJobCOP job, JobResultOP job_result ) = 0;
+
+	/// @brief Send all buffered output to disk -- called by the JobDistributor right before it shuts down
+	/// if it hits an error or catches an exception that it cannot ignore.
+	virtual void flush() = 0;
 
 }; // JobQueen
 

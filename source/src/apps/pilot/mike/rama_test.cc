@@ -29,7 +29,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 //#include <utility/exit.hh>
 //#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>

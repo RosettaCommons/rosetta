@@ -65,8 +65,7 @@ public:
 
 	// Shared finalization goes here.
 	void tearDown() {
-		// Being a smart pointer, g should be destructed and "free'd" correctly, but a g->delete_everything()
-		// could be placed here, if desired.
+		g = 0;
 	}
 
 

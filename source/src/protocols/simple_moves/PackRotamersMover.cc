@@ -33,6 +33,7 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
@@ -364,6 +365,12 @@ void PackRotamersMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		.element_name( PackRotamersMoverCreator::mover_name() )
 		.add_attributes( attributes )
 		.write_complex_type_to_schema( xsd );
+}
+
+void PackRotamersMover::list_options_read( utility::options::OptionKeyList & opts )
+{
+	using namespace basic::options::OptionKeys;
+	opts + packing::ndruns;
 }
 
 void

@@ -22,12 +22,16 @@ namespace jd3 {
 
 class MoverAndPoseJob;
 class PoseJobResult;
+class EnergyJobSummary;
 
 typedef utility::pointer::shared_ptr< MoverAndPoseJob > MoverAndPoseJobOP;
 typedef utility::pointer::shared_ptr< MoverAndPoseJob const > MoverAndPoseJobCOP;
 
 typedef utility::pointer::shared_ptr< PoseJobResult > PoseJobResultOP;
 typedef utility::pointer::shared_ptr< PoseJobResult const > PoseJobResultCOP;
+
+typedef utility::pointer::shared_ptr< EnergyJobSummary > EnergyJobSummaryOP;
+typedef utility::pointer::shared_ptr< EnergyJobSummary const > EnergyJobSummaryCOP;
 
 } // namespace jd3
 } // namespace protocols

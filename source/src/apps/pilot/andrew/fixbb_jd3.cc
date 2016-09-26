@@ -10,6 +10,10 @@
 /// @file /src/apps/public/design/fixbb_jd3.cc
 /// @brief  Fixed backbone design, using the jd3 JobDistributor
 
+#ifdef USEMPI
+#include <mpi.h>
+#endif
+
 //core library
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -42,6 +46,7 @@
 
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/Job.hh>
+#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/LarvalJob.hh>
@@ -75,6 +80,8 @@ basic::options::BooleanOptionKey const off_rotamer_pack("off_rotamer_pack");
 }}}//basic::options::OptionKeys
 
 
+static basic::Tracer TR( "apps.pilot.andrew.fixbb_jd3" );
+
 class FixbbJobQueen : public protocols::jd3::StandardJobQueen
 {
 public:
@@ -84,6 +91,7 @@ public:
 		core::scoring::list_read_options_in_get_score_function( opts );
 		core::pack::task::PackerTask::list_options_read( opts );
 		core::pack::task::operation::ReadResfile::list_options_read( opts );
+		protocols::simple_moves::PackRotamersMover::list_options_read( opts );
 		add_options( opts );
 		add_option( basic::options::OptionKeys::minimize_sidechains );
 		add_option( basic::options::OptionKeys::min_pack );
@@ -151,9 +159,12 @@ public:
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP larval_job,
-		utility::options::OptionCollectionCOP job_options
-	) const
+		utility::options::OptionCollectionCOP job_options,
+		utility::vector1< protocols::jd3::JobResultCOP > const &
+	)
 	{
+
+		TR << "Completing larval job maturation" << std::endl;
 
 		using namespace protocols::jd3;
 		using namespace protocols::moves;
@@ -168,14 +179,20 @@ public:
 
 
 		TagCOP job_tag;
-		if ( larval_job->inner_job()->const_data_map().has( "tags", "job_tags" ) ) {
-			job_tag = larval_job->inner_job()->const_data_map().get_ptr< Tag >( "tags", "job_tags" );
+		if ( larval_job->inner_job()->jobdef_tag())  {
+			job_tag = larval_job->inner_job()->jobdef_tag();
 		}
 		SequenceMoverOP seq( new SequenceMover );
 
 		if ( job_tag ) {
+			TR << "Initializing fixbb job from job_tag" << std::endl;
 			// parse the score functions and task operations in the common & job tags
 			DataMap datamap;
+			// pass the job options to the datamap so that the InitializeFromOptionCollection task operation
+			// can access the per-job options.
+			utility::options::OptionCollectionOP local_job_options( new utility::options::OptionCollection( *job_options ));
+			datamap.add( "options", "job_options", local_job_options );
+
 			TagCOP common_tag = common_block_tags();
 			parse_sfxns_and_taskops( *pose, common_tag, datamap );
 			parse_sfxns_and_taskops( *pose,    job_tag, datamap );
@@ -183,6 +200,7 @@ public:
 			MoverOP pack_mover;
 			if ( job_tag->hasTag( PackRotamersMoverCreator::mover_name() ) ) {
 				pack_mover = MoverOP( new PackRotamersMover( *job_options ));
+				TR << "Calling PRM::parse_my_tag" << std::endl;
 				pack_mover->parse_my_tag(
 					job_tag->getTag( PackRotamersMoverCreator::mover_name() ),
 					datamap,
@@ -266,15 +284,15 @@ public:
 	//virtual bool has_job_completed( protocols::jd3::LarvalJobCOP job ) { return pose_outputter_for_job( *job->inner_job() )->job_has_already_completed( *job ); }
 	virtual void mark_job_as_having_begun( protocols::jd3::LarvalJobCOP /*job*/ ) {/*TEMP*/}
 
-	virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
+	//virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 
-	virtual void completed_job_result( protocols::jd3::LarvalJobCOP job, protocols::jd3::JobResultOP result ) {
-		using namespace protocols::jd3;
-		PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
-		core::pose::PoseOP pose = pose_result->pose();
-		utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
-		pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
-	}
+	//virtual void completed_job_result( protocols::jd3::LarvalJobCOP job, protocols::jd3::JobResultOP result ) {
+	//	using namespace protocols::jd3;
+	//	PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
+	//	core::pose::PoseOP pose = pose_result->pose();
+	//	utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
+	//	pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
+	//}
 
 	virtual bool more_jobs_remain() { return false; }
 
@@ -285,6 +303,8 @@ public:
 		basic::datacache::DataMap & datamap
 	) const
 	{
+		if ( ! tag ) return;
+
 		using namespace utility::tag;
 		using namespace protocols::jd2::parser;
 

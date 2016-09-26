@@ -27,7 +27,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -148,6 +148,14 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
+	bool
+	operator == ( StructFileRepOptions const & other ) const;
+
+	bool
+	operator < ( StructFileRepOptions const & other ) const;
+
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options

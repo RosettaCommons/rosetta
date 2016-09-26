@@ -31,6 +31,11 @@
 #include <set>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -47,9 +52,20 @@ public:
 
 	virtual JobStatus status() const = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // JobResult
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_JobResult )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_JobResult_HH

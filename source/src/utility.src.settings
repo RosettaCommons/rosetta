@@ -45,6 +45,7 @@ sources = {
 	"utility/graph": [
 		"ArrayPool",
 		"DisjointSets",
+		"Digraph",
 		"Graph",
 		"graph_util",
 	],
@@ -79,6 +80,7 @@ sources = {
 		"VectorOption",
 	],
 	"utility/options/keys": [
+		"OptionKeyList",
 		"OptionKeys",
 	],
 	"utility/pointer": [

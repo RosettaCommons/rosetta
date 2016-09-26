@@ -61,6 +61,22 @@ receive_integer_from_node( int source );
 void
 send_integer_to_node( int destination, int message );
 
+/// @brief Use MPI to receive a single unsigned (usually 64-bit) integer from a particular node.
+platform::Size
+receive_size_from_node( int source );
+
+/// @brief Use MPI to send a single unsigned (usually 64-bit) integer to a particular node
+void
+send_size_to_node( int destination, platform::Size message );
+
+/// @brief Use MPI to receive a vector of integers from a particular node.
+utility::vector1< platform::Size >
+receive_sizes_from_node( int source );
+
+void
+send_sizes_to_node( int destination, utility::vector1< platform::Size > const & message );
+
+
 /// @brief Use MPI to receive a vector of integers from a particular node.
 utility::vector1< int >
 receive_integers_from_node( int source );

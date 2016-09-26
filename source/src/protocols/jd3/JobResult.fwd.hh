@@ -11,8 +11,8 @@
 /// @brief  The declaration for class protocols::jd3::JobResult
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_JobResult_hh
-#define INCLUDED_protocols_jd3_JobResult_hh
+#ifndef INCLUDED_protocols_jd3_JobResult_FWD_HH
+#define INCLUDED_protocols_jd3_JobResult_FWD_HH
 
 //utility headers
 #include <utility/pointer/owning_ptr.hh>

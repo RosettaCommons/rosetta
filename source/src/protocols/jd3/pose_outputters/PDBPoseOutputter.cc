@@ -38,7 +38,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-
+#include <utility/options/keys/OptionKeyList.hh>
 
 namespace protocols {
 namespace jd3 {
@@ -48,7 +48,7 @@ PDBPoseOutputter::PDBPoseOutputter() {}
 PDBPoseOutputter::~PDBPoseOutputter() {}
 
 bool
-PDBPoseOutputter::outputter_specified_by_command_line() const
+PDBPoseOutputter::outputter_specified_by_command_line()
 {
 	return basic::options::option[ basic::options::OptionKeys::out::pdb ].user() ||
 		basic::options::option[ basic::options::OptionKeys::out::pdb_gz ].user();
@@ -79,6 +79,20 @@ PDBPoseOutputter::determine_job_tag(
 	} else {
 		job.job_tag( job.input_tag() );
 	}
+}
+
+/// @details In returning the empty string, we signal to the JobQueen (or any other
+/// user) that all %PDBPoseOutputters are interchangable -- that they do not buffer data
+/// destined for a single file, and so a single %PDBPoseOutputter may be used for all
+/// output Poses.
+std::string
+PDBPoseOutputter::outputter_for_job(
+	utility::tag::TagCOP,
+	utility::options::OptionCollection const &,
+	InnerLarvalJob const &
+) const
+{
+	return "";
 }
 
 bool PDBPoseOutputter::job_has_already_completed( LarvalJob const & /*job*/ ) const
@@ -121,10 +135,12 @@ PDBPoseOutputter::output_pdb_name( LarvalJob const & job ) const
 		ext = ".pdb.gz";
 	}
 
-	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) ) + job.job_tag() + "_" +
-		ObjexxFCL::lead_zero_string_of( job.nstruct_index(), std::max( 4, int( std::log10( job.nstruct_max() ))) ) +
-		ext;
+	return ( job.status_prefix() == "" ? "" : ( job.status_prefix() + "_" ) ) + job.job_tag() + "_"
+		+ job.nstruct_suffixed_job_tag()
+		+ ext;
 }
+
+void PDBPoseOutputter::flush() {}
 
 std::string
 PDBPoseOutputter::keyname() { return "PDB"; }
@@ -178,6 +194,12 @@ void PDBPoseOutputterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 void PDBPoseOutputterCreator::list_options_read( utility::options::OptionKeyList & read_options ) const
 {
 	PDBPoseOutputter::list_options_read( read_options );
+}
+
+bool
+PDBPoseOutputterCreator::outputter_specified_by_command_line() const
+{
+	return PDBPoseOutputter::outputter_specified_by_command_line();
 }
 
 

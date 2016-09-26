@@ -82,6 +82,18 @@
 
 #include <string>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector0.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace boost {
 void throw_exception(std::exception const&) {
 	std::cerr << "some kind of exception was thrown" << std::endl;
@@ -583,3 +595,58 @@ std::ostream& operator<<(std::ostream& out, TagCOP const& tag_ptr) {
 
 } // namespace tag
 } // namespace utility
+
+#ifdef    SERIALIZATION
+
+//template< class Archive >
+//void deserialize_tags_t( Archive & arc, utility::tag::Tag::tags_t & tags )
+//{
+//
+//}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+utility::tag::Tag::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( mOptions_ ) ); // options_t
+	arc( CEREAL_NVP( accessed_options_ ) ); // options_t
+	arc( CEREAL_NVP( vTags_ ) ); // tags_t
+	arc( CEREAL_NVP( mvTags_ ) ); // std::map<std::string, tags_t>
+	arc( CEREAL_NVP( parentTag_ ) ); // TagCAP
+	arc( CEREAL_NVP( quote_options_ ) ); // bool
+
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+utility::tag::Tag::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( mOptions_ ); // options_t
+	arc( accessed_options_ ); // options_t
+
+	utility::vector0< std::shared_ptr< utility::tag::Tag > > local_vTags;
+	arc( local_vTags ); // tags_t
+	vTags_ = local_vTags; // copy the non-const pointer(s) into the const pointer(s)
+
+	std::map< std::string, utility::vector0< TagOP > > local_mvTags;
+	arc( local_mvTags ); // std::map<std::string, tags_t>
+	for ( std::map< std::string, utility::vector0< TagOP > >::const_iterator
+			iter = local_mvTags.begin(), iter_end = local_mvTags.end();
+			iter != iter_end; ++iter ) {
+		mvTags_[ iter->first ] = iter->second;
+	}
+
+	TagAP local_parentTag;
+	arc( local_parentTag ); // TagCAP
+	parentTag_ = local_parentTag;
+
+	arc( quote_options_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( utility::tag::Tag );
+CEREAL_REGISTER_TYPE( utility::tag::Tag )
+
+CEREAL_REGISTER_DYNAMIC_INIT( utility_tag_Tag )
+#endif // SERIALIZATION

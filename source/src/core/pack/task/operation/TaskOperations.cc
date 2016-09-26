@@ -40,6 +40,7 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/keys/VariantKey.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -539,7 +540,7 @@ InitializeFromOptionCollection::apply( pose::Pose const &, PackerTask & task ) c
 void
 InitializeFromOptionCollection::parse_tag( TagCOP tag, DataMap & datamap )
 {
-	runtime_assert( datamap.has( "options"));
+	//runtime_assert( datamap.has( "options"));
 	std::string which_options = tag->getOption< std::string >( "option_collection", "job_options" );
 	if ( ! datamap.has( "options", which_options ) ) {
 		throw utility::excn::EXCN_Msg_Exception( "Failed to find options named \"" + which_options + "\" in the InitializeFromOptionCollection task operation" );

@@ -26,6 +26,14 @@
 #include <map>
 #include <string>
 
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -51,6 +59,7 @@ public:
 
 	bool operator == ( PoseInputSource const & rhs ) const;
 	bool operator != ( PoseInputSource const & rhs ) const;
+	bool operator <  ( PoseInputSource const & rhs ) const;
 
 	std::string const & input_tag() const;
 	StringStringMap const & string_string_map() const;
@@ -65,9 +74,20 @@ private:
 	std::string input_tag_;
 	StringStringMap string_string_map_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_PoseInputSource )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_PoseInputSource_HH

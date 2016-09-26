@@ -26,6 +26,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // Basic headers
 #include <basic/datacache/ConstDataMap.fwd.hh>
@@ -36,6 +37,11 @@
 
 #include <utility/vector1.hh>
 
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace jd3 {
@@ -59,6 +65,7 @@ public:
 
 	InnerLarvalJob();
 	InnerLarvalJob( core::Size nstruct );
+	InnerLarvalJob( InnerLarvalJob const & src );
 
 	~InnerLarvalJob() override;
 
@@ -130,6 +137,12 @@ public:
 	/// @brief Read access to the ConstDataMap that the %InnerLarvalJob holds.
 	basic::datacache::ConstDataMap const & const_data_map() const;
 
+	utility::tag::TagCOP jobdef_tag() const;
+
+	void nstruct_max( core::Size setting );
+
+	void jobdef_tag( utility::tag::TagCOP setting );
+
 	/// @brief Return the number of pose input sources for this job.
 	core::Size n_input_sources() const;
 
@@ -140,6 +153,14 @@ public:
 
 	/// @brief Retrieve a particular PoseInputSource
 	PoseInputSource const & input_source( Size index ) const;
+
+	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
+	/// already-executed (Lavral)Jobs
+	utility::vector1< core::Size > const &
+	input_job_result_indices() const;
+
+	void add_input_job_result_index( core::Size job_index );
+
 
 	/// @brief Store the fact that this job is bad, for some reason or another, e.g. it has
 	/// malformed inputs.
@@ -167,16 +188,33 @@ private:
 	utility::vector1< PoseInputSourceCOP > input_sources_;
 
 	core::Size nstruct_;
+
+	/// @brief What set of JobResults are required as inputs for the JobQueen to mature larval jobs that point at
+	/// this %InnerLarvalJob into a full job?
+	utility::vector1< core::Size > input_job_result_indices_;
+
 	bool bad_;
 
 	/// @brief The %InnerLarvalJob holds a const data cache to ensure that if two %InnerLarvalJobs point to the same
 	/// piece of data, modification to one of the %InnerLarvalJobs objects cannot disrupt the other %InnerLarvalJob.
 	/// Arbitrary data can be cached here by the JobQueen as she initializes the %InnerLarvalJobs.
 	basic::datacache::ConstDataMapOP const_data_cache_;
+	utility::tag::TagCOP jobdef_tag_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // InnerLarvalJob
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jd3_InnerLarvalJob )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_jd3_InnerLarvalJob_HH

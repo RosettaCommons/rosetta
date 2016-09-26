@@ -22,7 +22,7 @@
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 
 // utility headers
-#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -40,10 +40,11 @@ public:
 	virtual std::string keyname() const = 0;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 	virtual void list_options_read( utility::options::OptionKeyList & read_options ) const = 0;
+	virtual bool outputter_specified_by_command_line() const = 0;
 };
 
 } // namespace pose_outputters
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
+#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputterCreator_HH

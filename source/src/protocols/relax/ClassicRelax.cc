@@ -54,7 +54,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -788,7 +788,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	// add scores to map for output
 	std::map < std::string, core::Real > score_map;
-	protocols::jd2::ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
+	core::io::raw_data::ScoreMap::nonzero_energies( score_map, get_scorefxn(), pose );
 	if ( get_native_pose()!=nullptr ) {
 		score_map["rms"] = CA_rmsd( *get_native_pose(), pose );
 	}

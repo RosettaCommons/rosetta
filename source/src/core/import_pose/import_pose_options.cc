@@ -30,6 +30,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 // C++ headers
 
@@ -171,6 +172,59 @@ void ImportPoseOptions::list_options_read( utility::options::OptionKeyList & rea
 		+ in::metals_distance_constraint_multiplier
 		+ in::metals_angle_constraint_multiplier;
 
+}
+
+bool
+ImportPoseOptions::operator == ( ImportPoseOptions const & other ) const
+{
+	if ( ! StructFileReaderOptions::operator == ( other ) ) return false;
+
+	if ( centroid_                              	!= other.centroid_                               ) return false;
+	if ( fold_tree_io_                          	!= other.fold_tree_io_                           ) return false;
+	if ( membrane_                              	!= other.membrane_                               ) return false;
+	if ( no_optH_                               	!= other.no_optH_                                ) return false;
+	if ( pack_missing_sidechains_               	!= other.pack_missing_sidechains_                ) return false;
+	if ( read_fold_tree_                        	!= other.read_fold_tree_                         ) return false;
+	if ( skip_set_reasonable_fold_tree_         	!= other.skip_set_reasonable_fold_tree_          ) return false;
+	if ( set_up_metal_bonds_                    	!= other.set_up_metal_bonds_                     ) return false;
+	if ( metal_bond_LJ_multiplier_              	!= other.metal_bond_LJ_multiplier_               ) return false;
+	if ( metal_bond_dist_constraint_multiplier_ 	!= other.metal_bond_dist_constraint_multiplier_  ) return false;
+	if ( metal_bond_angle_constraint_multiplier_	!= other.metal_bond_angle_constraint_multiplier_ ) return false;
+	if ( residue_type_set_                        != other.residue_type_set_                       ) return false;
+	return true;
+}
+
+bool
+ImportPoseOptions::operator < ( ImportPoseOptions const & other ) const
+{
+	if (   StructFileReaderOptions::operator <  ( other ) ) return true;
+	if ( ! StructFileReaderOptions::operator == ( other ) ) return false;
+
+	if ( centroid_                              	<  other.centroid_                               ) return true;
+	if ( centroid_                              	!= other.centroid_                               ) return false;
+	if ( fold_tree_io_                          	<  other.fold_tree_io_                           ) return true;
+	if ( fold_tree_io_                          	!= other.fold_tree_io_                           ) return false;
+	if ( membrane_                              	<  other.membrane_                               ) return true;
+	if ( membrane_                              	!= other.membrane_                               ) return false;
+	if ( no_optH_                               	<  other.no_optH_                                ) return true;
+	if ( no_optH_                               	!= other.no_optH_                                ) return false;
+	if ( pack_missing_sidechains_               	<  other.pack_missing_sidechains_                ) return true;
+	if ( pack_missing_sidechains_               	!= other.pack_missing_sidechains_                ) return false;
+	if ( read_fold_tree_                        	<  other.read_fold_tree_                         ) return true;
+	if ( read_fold_tree_                        	!= other.read_fold_tree_                         ) return false;
+	if ( skip_set_reasonable_fold_tree_         	<  other.skip_set_reasonable_fold_tree_          ) return true;
+	if ( skip_set_reasonable_fold_tree_         	!= other.skip_set_reasonable_fold_tree_          ) return false;
+	if ( set_up_metal_bonds_                    	<  other.set_up_metal_bonds_                     ) return true;
+	if ( set_up_metal_bonds_                    	!= other.set_up_metal_bonds_                     ) return false;
+	if ( metal_bond_LJ_multiplier_              	<  other.metal_bond_LJ_multiplier_               ) return true;
+	if ( metal_bond_LJ_multiplier_              	!= other.metal_bond_LJ_multiplier_               ) return false;
+	if ( metal_bond_dist_constraint_multiplier_ 	<  other.metal_bond_dist_constraint_multiplier_  ) return true;
+	if ( metal_bond_dist_constraint_multiplier_ 	!= other.metal_bond_dist_constraint_multiplier_  ) return false;
+	if ( metal_bond_angle_constraint_multiplier_	<  other.metal_bond_angle_constraint_multiplier_ ) return true;
+	if ( metal_bond_angle_constraint_multiplier_	!= other.metal_bond_angle_constraint_multiplier_ ) return false;
+	if ( residue_type_set_                        <  other.residue_type_set_                       ) return true;
+	//if ( residue_type_set_                        == other.residue_type_set_                       ) return false;
+	return false;
 }
 
 } // namespace import_pose

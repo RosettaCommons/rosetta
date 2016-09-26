@@ -24,7 +24,7 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/string_util.hh>

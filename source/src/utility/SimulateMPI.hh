@@ -45,9 +45,11 @@ namespace utility {
 enum simulate_mpi_message_type {
 	smpi_char = 1,
 	smpi_integer,
+	smpi_size,
 	smpi_string,
 	smpi_double,
 	smpi_integers,
+	smpi_sizes,
 	smpi_doubles
 };
 
@@ -66,18 +68,22 @@ public:
 
 	void set_char_msg( char setting );
 	void set_integer_msg( int setting );
+	void set_size_msg( platform::Size setting );
 	void set_string_msg( std::string const & setting );
 	void set_double_msg( double setting );
 	void set_integers_msg( utility::vector1< int > const & setting );
+	void set_sizes_msg( utility::vector1< platform::Size > const & setting );
 	void set_doubles_msg( utility::vector1< double > const & setting );
 
 	platform::Size index() const { return index_; }
 	simulate_mpi_message_type msg_type() const { return msg_type_; }
 	char char_msg() const { return char_msg_; }
 	int  integer_msg() const { return integer_msg_; }
+	platform::Size size_msg() const { return size_msg_; }
 	std::string const & string_msg() const { return string_msg_; }
 	double double_msg() const { return double_msg_; }
 	utility::vector1< int > const & integers_msg() const { return integers_msg_; }
+	utility::vector1< platform::Size > const & sizes_msg() const { return sizes_msg_; }
 	utility::vector1< double > const & doubles_msg() const { return doubles_msg_; }
 
 private:
@@ -88,9 +94,11 @@ private:
 	simulate_mpi_message_type msg_type_;
 	char char_msg_;
 	int  integer_msg_;
+	platform::Size size_msg_;
 	std::string string_msg_;
 	double double_msg_;
 	utility::vector1< int > integers_msg_;
+	utility::vector1< platform::Size > sizes_msg_;
 	utility::vector1< double > doubles_msg_;
 };
 
@@ -187,6 +195,16 @@ public:
 		int message);
 
 	static
+	platform::Size
+	receive_size_from_node(int source);
+
+	static
+	void
+	send_size_to_node(
+		int destination,
+		platform::Size message);
+
+	static
 	vector1< int >
 	receive_integers_from_node(int source);
 
@@ -195,6 +213,17 @@ public:
 	send_integers_to_node(
 		int destination,
 		vector1< int > const & message);
+
+
+	static
+	vector1< platform::Size >
+	receive_sizes_from_node(int source);
+
+	static
+	void
+	send_sizes_to_node(
+		int destination,
+		vector1< platform::Size > const & message);
 
 	static
 	double

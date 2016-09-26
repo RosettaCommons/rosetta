@@ -254,12 +254,15 @@ sources = {
 		"BluePrint",
 	],
 	"jd3" : [
-		"StandardJobQueen",
-		"validate_w_xsd",
+            	"StandardJobQueen",
+	#	"validate_w_xsd",
 	],
 	#"jd3/pose_inputters" : [
 	#	"PDBPoseInputter",
 	#],
+	"jd3/job_distributors" : [
+		"MPIWorkPoolJobDistributor",
+	],
 	"jobdist" : [
 		"PlainSilentFileJobDistributor",
 	],

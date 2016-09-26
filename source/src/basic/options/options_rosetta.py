@@ -1176,6 +1176,15 @@ Options = Option_Group( '',
 
 	), # -run
 
+	# jd3 Options ---------------------------------------------------------
+	Option_Group( 'jd3',
+		Option('mpi_work_partition_job_distributor','Boolean',desc='determine if we should use the WorkPartition job distributor', default='false'),
+		Option('job_definition_schema','File',desc='If provided on the command line, the job distributor will write the XML Schema for the applciation\'s job definition file out to disk and then exit' ),
+		Option( 'mpi_fast_nonblocking_output', 'Boolean', desc='By default the master node blocks while a slave node outputs to avoid two slaves writing to a score file or silent file at the same time setting this to true disables that feature', default='false' ),
+		Option( 'n_archive_nodes', 'Integer', desc='The number of nodes that should perform archival roles only. This flag is only used by the MPIWorkPoolJobDistributor', default='0' ),
+		Option( 'do_not_archive_on_node0', 'Boolean', desc='Should the master node in the MPIWorkPoolJobDistributor archive any JobResults on it?', default='false' ),
+	), # -jd3
+
 	# jd2 Options ---------------------------------------------------------
 	Option_Group( 'jd2',
 		Option('pose_input_stream','Boolean',desc='Use PoseInputStream classes for Pose input', default='false' ),

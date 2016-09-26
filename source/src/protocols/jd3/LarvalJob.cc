@@ -17,15 +17,35 @@
 // Package headers
 #include <protocols/jd3/InnerLarvalJob.hh>
 
+// ObjexxFCL headers
+#include <ObjexxFCL/string.functions.hh>
+
+// C++ headers
+#include <cmath>
+
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace jd3 {
 
-LarvalJob::LarvalJob( InnerLarvalJobOP inner_job, core::Size nstruct_index ) :
+LarvalJob::LarvalJob( InnerLarvalJobOP inner_job, core::Size nstruct_index, core::Size job_index ) :
 	inner_job_(std::move( inner_job )),
 	nstruct_index_( nstruct_index ),
+	job_index_( job_index ),
 	completed_( false ),
-	bad_( false )
+	bad_( false ),
+	defines_retry_limit_( false ),
+	retry_limit_( 1 )
 {}
 
 LarvalJob::~LarvalJob() = default;
@@ -80,6 +100,17 @@ std::string LarvalJob::job_tag() const {
 	return inner_job_->job_tag();
 }
 
+/// @details The number of leading zeros is determined by the maximum number of jobs for the inner-job
+/// that this job points at.  For 9999  nstruct, there should be 4 digits: 1 + int(log10( 9999 )) = 1 + int( 3.9999 ) = 4
+/// For 10K nstruct, there should be 5 digits; 1 + int( log10( 10K )) = 5
+std::string LarvalJob::nstruct_suffixed_job_tag() const
+{
+	return inner_job_->job_tag() + "_" +
+		ObjexxFCL::lead_zero_string_of( nstruct_index_, std::max( 4, 1 + int( std::log10( nstruct_max() ))) );
+
+}
+
+
 /// @brief The index used to identify which job this is out of many that have identical inputs
 /// but different random number seeds (controlled by the command-line flag "nstruct")
 core::Size LarvalJob::nstruct_index() const {
@@ -91,13 +122,33 @@ core::Size LarvalJob::nstruct_max() const {
 	return inner_job_->nstruct_max();
 }
 
-void LarvalJob::set_status_prefix( std::string prefix ) {
+core::Size LarvalJob::job_index() const {
+	return job_index_;
+}
+
+utility::vector1< core::Size > const &
+LarvalJob::input_job_result_indices() const
+{
+	return inner_job_->input_job_result_indices();
+}
+
+void LarvalJob::set_status_prefix( std::string const & prefix ) {
 	status_prefix_ = prefix;
+}
+
+void LarvalJob::set_status_suffix( std::string const & suffix )
+{
+	status_suffix_ = suffix;
 }
 
 std::string const &
 LarvalJob::status_prefix() const {
 	return status_prefix_;
+}
+
+std::string const &
+LarvalJob::status_suffix() const {
+	return status_suffix_;
 }
 
 bool LarvalJob::completed() const {
@@ -112,6 +163,14 @@ bool LarvalJob::bad() const {
 	return bad_;
 }
 
+bool LarvalJob::defines_retry_limit() const {
+	return defines_retry_limit_;
+}
+
+core::Size LarvalJob::retry_limit() const {
+	return retry_limit_;
+}
+
 void LarvalJob::completed( bool setting ) {
 	completed_ = setting;
 }
@@ -119,6 +178,12 @@ void LarvalJob::completed( bool setting ) {
 void LarvalJob::bad( bool setting ) {
 	bad_ = setting;
 }
+
+void LarvalJob::retry_limit( core::Size setting ) {
+	defines_retry_limit_ = true;
+	retry_limit_ = setting;
+}
+
 
 std::ostream &
 operator << ( std::ostream & out, const LarvalJob & job )
@@ -129,3 +194,44 @@ operator << ( std::ostream & out, const LarvalJob & job )
 
 } // namespace jd3
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::jd3::LarvalJob::LarvalJob() : nstruct_index_( 0 ), job_index_( 0 ) {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::LarvalJob::save( Archive & arc ) const {
+	arc( CEREAL_NVP( inner_job_ ) ); // InnerLarvalJobOP
+	arc( CEREAL_NVP( nstruct_index_ ) ); // core::Size
+	arc( CEREAL_NVP( job_index_ ) ); // core::Size
+	arc( CEREAL_NVP( status_prefix_ ) ); // std::string
+	arc( CEREAL_NVP( status_suffix_ ) ); // std::string
+	arc( CEREAL_NVP( completed_ ) ); // _Bool
+	arc( CEREAL_NVP( bad_ ) ); // _Bool
+	arc( CEREAL_NVP( defines_retry_limit_ ) ); // _Bool
+	arc( CEREAL_NVP( retry_limit_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::LarvalJob::load( Archive & arc ) {
+	arc( inner_job_ ); // InnerLarvalJobOP
+	arc( nstruct_index_ ); // core::Size
+	arc( job_index_ ); // core::Size
+	arc( status_prefix_ ); // std::string
+	arc( status_suffix_ ); // std::string
+	arc( completed_ ); // _Bool
+	arc( bad_ ); // _Bool
+	arc( defines_retry_limit_ ); // _Bool
+	arc( retry_limit_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::LarvalJob );
+CEREAL_REGISTER_TYPE( protocols::jd3::LarvalJob )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_LarvalJob )
+#endif // SERIALIZATION

@@ -42,7 +42,7 @@
 
 //old JD and relevant headers
 //#include <protocols/jobdist/standard_mains.hh>
-//#include <protocols/jd2/ScoreMap.hh>
+//#include <core/io/raw_data/ScoreMap.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -206,7 +206,7 @@ public:
 
       if ( old_pose.residue( res_no ).name() != curr_pose.residue( res_no ).name() ){
 //	score_map_["pKa"] = curr_pH;
-//	protocols::jd2::ScoreMap::nonzero_energies( score_map_, score_fxn, curr_pose );
+//	core::io::raw_data::ScoreMap::nonzero_energies( score_map_, score_fxn, curr_pose );
         break;
       }
 

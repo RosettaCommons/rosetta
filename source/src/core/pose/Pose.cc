@@ -1913,6 +1913,16 @@ bool Pose::is_centroid() const {
 	return conformation_->is_centroid();
 }
 
+
+void Pose::store_const_data(
+	std::string const & category,
+	std::string const & name,
+	utility::pointer::ReferenceCountCOP ptr
+)
+{
+	constant_cache_->add( category, name, ptr );
+}
+
 /// @brief notify DestructionEvent observers
 /// @remarks called only upon destruction of the Pose
 void

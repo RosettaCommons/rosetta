@@ -16,17 +16,42 @@
 
 // Package headers
 #include <protocols/jd3/JobDistributor.hh>
+//#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
+#include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
+#include <protocols/jd3/job_distributors/VanillaJobDistributor.hh>
+
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/jd3.OptionKeys.gen.hh>
 
 //#include <protocols/jd3/job_distributors/FileSystemJobDistributor.hh>
 
 namespace protocols {
 namespace jd3 {
 
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd3.JobDistributorFactory" );
+
 JobDistributorOP
 JobDistributorFactory::create_job_distributor()
 {
 	// TEMP!
-	return JobDistributorOP( new JobDistributor );
+#ifdef USEMPI
+#ifdef SERIALIZATION
+	// In future: some command line option?
+	// if ( basic::options::option[ basic::options::OptionKeys::jd3::mpi_work_partition_job_distributor ].value() ) {
+	// 	return JobDistributorOP( new job_distributors::MPIWorkPartitionJobDistributor );
+	// } else {
+	return JobDistributorOP( new job_distributors::MPIWorkPoolJobDistributor );
+	//}
+#else
+	TR.Error << "JD3 cannot be used with MPI but without serialization; you must add \"extras=mpi,serlization\" to your ./scons.py build command" << std::endl;
+	return nullptr;
+#endif // SERIALIZATION
+
+#else
+
+	return JobDistributorOP( new job_distributors::VanillaJobDistributor );
+#endif
 }
 
 

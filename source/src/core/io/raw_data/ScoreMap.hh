@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   ScoreMap.hh
-/// @brief  A place to put some common functions for scoremap output
+/// @brief  A place to put some common functions for score-file output
 /// @author Monica Berrondo
 
-#ifndef INCLUDED_protocols_jd2_ScoreMap_hh
-#define INCLUDED_protocols_jd2_ScoreMap_hh
+#ifndef INCLUDED_core_io_raw_data_ScoreMap_hh
+#define INCLUDED_core_io_raw_data_ScoreMap_hh
 
 #include <core/types.hh>
 
@@ -25,8 +25,9 @@
 #include <map>
 
 
-namespace protocols {
-namespace jd2 {
+namespace core {
+namespace io {
+namespace raw_data {
 
 class ScoreMap : public utility::pointer::ReferenceCount {
 public:
@@ -53,8 +54,25 @@ public:
 		std::map < std::string, core::Real > & score_map,
 		std::ostream & out
 	);
+
+	static
+	void
+	add_arbitrary_string_data_from_pose(
+		core::pose::Pose const & pose,
+		std::map < std::string, std::string > & string_map
+	);
+
+	static
+	void
+	add_arbitrary_score_data_from_pose(
+		core::pose::Pose const & pose,
+		std::map < std::string, core::Real > & score_map
+	);
+
 };
-}// jd2
-}// protocols
+
+} // raw_data
+} // io
+} // core
 
 #endif

@@ -143,6 +143,69 @@ send_integer_to_node(
 	MPI_Send( &message, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
 }
 
+platform::Size
+receive_size_from_node(
+	int source
+) {
+	//std::cerr << "receive_integer_from_node " << mpi_rank() << std::endl;
+
+	platform::Size return_val(0);
+	int tag( 1 );
+	MPI_Status stat;
+	int const nints = sizeof( platform::Size ) / sizeof( int );
+	MPI_Recv( &return_val, nints, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
+	return return_val;
+}
+
+void
+send_size_to_node(
+	int destination,
+	platform::Size message
+) {
+	//std::cerr << "send_integer_to_node " << mpi_rank() << std::endl;
+
+	int tag( 1 );
+	int const nints = sizeof( platform::Size ) / sizeof( int );
+	MPI_Send( &message, nints, MPI_INT, destination, tag, MPI_COMM_WORLD );
+}
+
+utility::vector1< platform::Size >
+receive_sizes_from_node(
+	int source
+) {
+	//std::cerr << "receive_integers_from_node " << mpi_rank() << std::endl;
+
+	utility::vector1< platform::Size > return_val;
+	int len( 0 );
+	int tag( 1 );
+	MPI_Status stat;
+	MPI_Recv( &len, 1, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
+	int const nints = sizeof( platform::Size ) / sizeof( int ); // 1 on 32-bit systems, 2 on 64-bit systems.
+	if ( len != 0 ) {
+		return_val.resize( len );
+		int * intarray = new int[ len*nints ];
+		MPI_Recv( intarray, len*nints, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
+		for ( int ii = 0; ii < len; ++ii ) return_val[ ii + 1 ] = * ( reinterpret_cast< platform::Size * > (& intarray[ 2*ii ])) ;
+		delete [] intarray;
+	}
+	return return_val;
+}
+
+void
+send_sizes_to_node(
+	int destination,
+	utility::vector1< platform::Size > const & message
+) {
+	//std::cerr << "send_integers_to_node " << mpi_rank() << std::endl;
+
+	int tag( 1 );
+	int len( message.size() );
+	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
+	if ( len != 0 ) {
+		int const nints = sizeof( platform::Size ) / sizeof( int ); // 1 on 32-bit systems, 2 on 64-bit systems.
+		MPI_Send( reinterpret_cast< int * > (const_cast< platform::Size * > (&message[1])), len*nints, MPI_INT, destination, tag, MPI_COMM_WORLD );
+	}
+}
 
 utility::vector1< int >
 receive_integers_from_node(
@@ -380,6 +443,54 @@ send_integers_to_node(
 	}
 }
 
+platform::Size
+receive_size_from_node(
+	int source
+)
+{
+	if ( SimulateMPI::simulate_mpi() ) {
+		return SimulateMPI::receive_size_from_node(source);
+	} else {
+		platform::Size return_val = 0;
+		return return_val;
+	}
+}
+
+void
+send_size_to_node(
+	int destination,
+	platform::Size message
+) {
+	if ( SimulateMPI::simulate_mpi() ) {
+		SimulateMPI::send_size_to_node(destination, message);
+	} else {
+		return;
+	}
+}
+
+utility::vector1< platform::Size >
+receive_sizes_from_node(
+	int source
+) {
+	if ( SimulateMPI::simulate_mpi() ) {
+		return SimulateMPI::receive_sizes_from_node(source);
+	} else {
+		utility::vector1< platform::Size > return_val;
+		return return_val;
+	}
+}
+
+void
+send_sizes_to_node(
+	int destination,
+	utility::vector1< platform::Size > const & message
+) {
+	if ( SimulateMPI::simulate_mpi() ) {
+		SimulateMPI::send_sizes_to_node(destination, message);
+	} else {
+		return;
+	}
+}
 
 double
 receive_double_from_node(

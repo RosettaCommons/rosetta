@@ -18,7 +18,9 @@
 #include <protocols/jd3/Job.fwd.hh>
 
 // Package headers
+#include <protocols/jd3/CompletedJobOutput.hh>
 #include <protocols/jd3/JobResult.fwd.hh>
+#include <protocols/jd3/JobSummary.fwd.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -49,6 +51,8 @@ class Job : public utility::pointer::ReferenceCount
 {
 public:
 
+public:
+
 	Job();
 	~Job() override;
 
@@ -60,7 +64,7 @@ public:
 	/// put into the JobResult -- large data should not be repeatedly serialized and shipped between
 	/// nodes.
 	virtual
-	JobResultOP run() = 0;
+	CompletedJobOutput run() = 0;
 
 }; // Job
 

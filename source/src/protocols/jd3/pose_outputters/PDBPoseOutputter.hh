@@ -37,8 +37,9 @@ public:
 	PDBPoseOutputter();
 	virtual ~PDBPoseOutputter();
 
+	static
 	bool
-	outputter_specified_by_command_line() const;
+	outputter_specified_by_command_line();
 
 	virtual
 	void
@@ -46,6 +47,14 @@ public:
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob & job
+	) const;
+
+	virtual
+	std::string
+	outputter_for_job(
+		utility::tag::TagCOP output_tag,
+		utility::options::OptionCollection const & job_options,
+		InnerLarvalJob const & job
 	) const;
 
 	virtual
@@ -60,6 +69,11 @@ public:
 		utility::options::OptionCollection const & job_options,
 		core::pose::Pose const & pose
 	);
+
+	/// @brief Currently a no-op since the "write output pose" method sends all
+	/// outputs to disk.
+	virtual
+	void flush();
 
 	/// @brief Return the stiring used by the PDBPoseOutputterCreator for this class
 	virtual

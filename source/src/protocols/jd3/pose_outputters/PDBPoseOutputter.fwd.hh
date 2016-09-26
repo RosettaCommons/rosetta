@@ -20,7 +20,7 @@
 
 namespace protocols {
 namespace jd3 {
-namespace pose_outputtes {
+namespace pose_outputters {
 
 class PDBPoseOutputter;
 

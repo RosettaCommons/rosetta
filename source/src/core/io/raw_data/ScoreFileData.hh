@@ -30,6 +30,7 @@
 namespace core {
 namespace io {
 namespace raw_data {
+
 class ScoreFileData : public RawFileData {
 public:
 	///////////////////////////////////////////////////////////////////////////

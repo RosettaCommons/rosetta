@@ -475,6 +475,8 @@ void MinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "chi_task_operations", xs_string )
 		+ XMLSchemaAttribute( "bondangle_task_operations", xs_string )
 		+ XMLSchemaAttribute( "bondlength_task_operations", xs_string );
+	rosetta_scripts::attributes_for_parse_score_function( attributes );
+
 
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );

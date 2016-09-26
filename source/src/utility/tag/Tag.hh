@@ -31,6 +31,11 @@
 // Boost headers
 #include <boost/lexical_cast.hpp>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace utility {
 namespace tag {
 
@@ -171,6 +176,11 @@ private:
 	/// @brief if true, options will be quoted when the tag is outputted
 	///        if false, options will be left as-is (default)
 	bool quote_options_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // class Tag
 
@@ -189,5 +199,10 @@ Tag::getOption<bool>(std::string const& key) const;
 
 } // namespace tag
 } // namespace utility
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( utility_tag_Tag )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_utility_tag_tag_HH

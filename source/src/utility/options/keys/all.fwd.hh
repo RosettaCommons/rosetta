@@ -33,6 +33,7 @@
 #include <utility/options/keys/StringVectorOptionKey.fwd.hh>
 #include <utility/options/keys/FileVectorOptionKey.fwd.hh>
 #include <utility/options/keys/PathVectorOptionKey.fwd.hh>
+#include <utility/options/keys/ResidueChainVectorOptionKey.fwd.hh>
 #include <utility/options/keys/AnyVectorOptionKey.fwd.hh>
 
 

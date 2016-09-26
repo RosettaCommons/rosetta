@@ -45,6 +45,7 @@
 //Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 // basic headers
 #include <basic/Tracer.hh>

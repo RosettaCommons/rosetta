@@ -34,4 +34,4 @@ typedef utility::pointer::shared_ptr< PoseOutputterCreator const > PoseOutputter
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputter_HH
+#endif //INCLUDED_protocols_jd3_pose_outputters_PoseOutputterCreator_HH

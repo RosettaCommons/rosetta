@@ -81,6 +81,9 @@ PDBPoseInputter::pose_input_sources_from_tag( utility::tag::TagCOP tag ) const
 	if ( tag->hasOption( "filename" ) ) {
 
 		utility::file::FileName fname( tag->getOption< std::string >( "filename" ) );
+		if ( tag->hasOption( "path" ) ) {
+			fname.path( tag->getOption< std::string >( "path" ) );
+		}
 		PoseInputSourceOP input_source( new PoseInputSource( keyname() ));
 		input_source->input_tag( fname.base() );
 		input_source->store_string_pair( "filename", fname.name() );

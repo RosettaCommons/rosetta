@@ -412,6 +412,23 @@ public:
 			"</ROSETTASCRIPTS>\n";
 	}
 
+	// here's an xml file that is missing quotes and so it is not properly
+	// formatted -- the error message we get from having a bad XML file
+	// should be different (but definitely present!) from the error message
+	// of having an invalid xml file (i.e. one that does not match the schema
+	std::string example_xml_doc3() {
+		return
+			"<ROSETTASCRIPTS>\n"
+			" <RESIDUE_SELECTORS>\n"
+			"  <And name=and_selector>\n"
+			"   <Chain chains=A,B/>\n"
+			"   <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"  </And>\n"
+			"  <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" </RESIDUE_SELECTORS>\n"
+			"</ROSETTASCRIPTS>\n";
+	}
+
 	void dont_test_residue_selector_schemas() {
 		std::cout << "XSD for ResidueSelectors" << std::endl;
 		XMLSchemaDefinition xsd;
@@ -479,7 +496,7 @@ public:
 		TS_ASSERT( xsd.full_definition().size() > 0 );
 	}
 
-	void dont_test_validate_good_xml_file_against_xsd_using_libxml2() {
+	void test_validate_good_xml_file_against_xsd_using_libxml2() {
 		XMLValidationOutput output = validate_xml_against_xsd( example_xml_doc1(), example_xsd() );
 		TS_ASSERT( output.valid() );
 		TS_ASSERT( output.errors().empty() );
@@ -528,7 +545,7 @@ public:
 
 	}
 
-	void test_validate_bad_xml_file1_against_xsd_using_libxml2() {
+	void test_validate_invalid_xml_file_against_xsd_using_libxml2() {
 		XMLValidationOutput output = validate_xml_against_xsd( example_xml_doc2(), example_xsd() );
 		TS_ASSERT( ! output.valid() );
 		TS_ASSERT_EQUALS( output.errors().size(), 2 );
@@ -566,6 +583,226 @@ public:
 		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
 
 	}
+
+	void test_validate_bad_xml_file_against_xsd_using_libxml2() {
+		XMLValidationOutput output = validate_xml_against_xsd( example_xml_doc3(), example_xsd() );
+		TS_ASSERT( ! output.valid() );
+		TS_ASSERT_EQUALS( output.errors().size(), 15 );
+		TS_ASSERT( output.warnings().empty() );
+
+		std::string gold_errors =
+			"Error: AttValue: \" or \' expected\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"Error: attributes construct error\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"Error: Couldn\'t find end of Start Tag And line 3\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"Error: AttValue: \" or \' expected\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"9: </ROSETTASCRIPTS>\n"
+			"Error: attributes construct error\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"9: </ROSETTASCRIPTS>\n"
+			"Error: Couldn\'t find end of Start Tag Chain line 4\n"
+			"\n"
+			"1: <ROSETTASCRIPTS>\n"
+			"2:  <RESIDUE_SELECTORS>\n"
+			"3:   <And name=and_selector>\n"
+			"4:    <Chain chains=A,B/>\n"
+			"5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			"6:   </And>\n"
+			"7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			"8:  </RESIDUE_SELECTORS>\n"
+			"9: </ROSETTASCRIPTS>\n"
+			"Error: AttValue: \" or \' expected\n"
+			"\n"
+			" 1: <ROSETTASCRIPTS>\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: attributes construct error\n"
+			"\n"
+			" 1: <ROSETTASCRIPTS>\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: Couldn\'t find end of Start Tag Neighborhood line 5\n"
+			"\n"
+			" 1: <ROSETTASCRIPTS>\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: Opening and ending tag mismatch: RESIDUE_SELECTORS line 2 and And\n"
+			"\n"
+			" 1: <ROSETTASCRIPTS>\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: AttValue: \" or \' expected\n"
+			"\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: attributes construct error\n"
+			"\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: Couldn\'t find end of Start Tag JumpDownstream line 7\n"
+			"\n"
+			" 2:  <RESIDUE_SELECTORS>\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: Opening and ending tag mismatch: ROSETTASCRIPTS line 1 and RESIDUE_SELECTORS\n"
+			"\n"
+			" 3:   <And name=and_selector>\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n"
+			"Error: Extra content at the end of the document\n"
+			"\n"
+			" 4:    <Chain chains=A,B/>\n"
+			" 5:    <Neighborhood resnums=1,2,3 distance=10.0/>\n"
+			" 6:   </And>\n"
+			" 7:   <JumpDownstream name=ds_jump_2 jump=2/>\n"
+			" 8:  </RESIDUE_SELECTORS>\n"
+			" 9: </ROSETTASCRIPTS>\n"
+			"10: \n";
+
+		TS_ASSERT_EQUALS( output.error_messages(), gold_errors );
+
+		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
+
+	}
+
+	void test_validate_xml_file_against_bad_xsd_using_libxml2() {
+		XMLValidationOutput output = validate_xml_against_xsd( example_xml_doc1(), example_bad_xsd() );
+		TS_ASSERT( ! output.valid() );
+		TS_ASSERT_EQUALS( output.errors().size(), 2 );
+		TS_ASSERT( output.warnings().empty() );
+
+		std::string gold_errors =
+			"From line 102:\n"
+			"Error: Element \'{http://www.w3.org/2001/XMLSchema}all\': The content is not valid. Expected is (annotation?, (annotation?, element*).\n"
+			"\n"
+			" 97:  <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			" 98: </xs:complexType>\n"
+			" 99: \n"
+			"100: <xs:complexType name=\"rs_NeighborhoodType\" mixed=\"true\">\n"
+			"101:  <xs:all>\n"
+			"102:   <xs:group ref=\"residue_selector\" minOccurs=\"0\" maxOccurs=\"1\"/>\n"
+			"103:  </xs:all>\n"
+			"104:  <xs:attribute name=\"selector\" type=\"xs:string\"/>\n"
+			"105:  <xs:attribute name=\"resnums\" type=\"int_cslist\"/>\n"
+			"106:  <xs:attribute name=\"distance\" type=\"xs:decimal\" use=\"required\"/>\n"
+			"107:  <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			"From line 112:\n"
+			"Error: Element \'{http://www.w3.org/2001/XMLSchema}all\': The content is not valid. Expected is (annotation?, (annotation?, element*).\n"
+			"\n"
+			"107:  <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			"108: </xs:complexType>\n"
+			"109: \n"
+			"110: <xs:complexType name=\"rs_NotType\" mixed=\"true\">\n"
+			"111:  <xs:all>\n"
+			"112:   <xs:group ref=\"residue_selector\" minOccurs=\"0\" maxOccurs=\"1\"/>\n"
+			"113:  </xs:all>\n"
+			"114:  <xs:attribute name=\"selector\" type=\"xs:string\"/>\n"
+			"115:  <xs:attribute name=\"name\" type=\"xs:string\"/>\n"
+			"116: </xs:complexType>\n"
+			"117: \n";
+
+		TS_ASSERT_EQUALS( output.error_messages(), gold_errors );
+
+		//std::cout << "Errors:\n" << output.error_messages() << std::endl;
+
+	}
+
 
 	void dont_test_validate_bad_xml_file_from_disk() {
 		//std::string xsd_fname( argv[1] );

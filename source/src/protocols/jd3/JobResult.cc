@@ -15,6 +15,14 @@
 #include <protocols/jd3/JobResult.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace jd3 {
 
@@ -25,3 +33,21 @@ JobResult::~JobResult() = default;
 } // namespace jd3
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jd3::JobResult::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jd3::JobResult::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobResult );
+CEREAL_REGISTER_TYPE( protocols::jd3::JobResult )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jd3_JobResult )
+#endif // SERIALIZATION

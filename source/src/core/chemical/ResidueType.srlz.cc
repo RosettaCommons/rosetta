@@ -42,8 +42,14 @@ namespace chemical {
 template < class Archive >
 void serialize_residue_type( Archive & arc, ResidueTypeCOP restype )
 {
-	if ( restype->in_residue_type_set() ) {
+	//std::cout << "Serializing RT: " << restype << std::endl;
+	if ( ! restype ) {
+		bool rt_is_nonnull( false );
+		arc( rt_is_nonnull );
+	} else if ( restype->in_residue_type_set() ) {
+		bool rt_is_nonnull( true );
 		bool yes_restype_is_in_rts( true );
+		arc( rt_is_nonnull );
 		arc( yes_restype_is_in_rts );
 		arc( restype->residue_type_set()->name() );
 		arc( restype->name() );
@@ -58,14 +64,20 @@ INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, serialize_residue_type, ResidueTypeCOP );
 template < class Archive >
 void deserialize_residue_type( Archive & arc, ResidueTypeCOP & restype )
 {
-	bool in_global_rts( true ); arc( in_global_rts );
-	if ( in_global_rts ) {
-		std::string rts_name, rt_name;
-		arc( rts_name, rt_name );
-		restype = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_map( rt_name ).get_self_ptr();
+	bool rt_is_nonnull( true ); arc( rt_is_nonnull );
+	if ( rt_is_nonnull ) {
+
+		bool in_global_rts( true ); arc( in_global_rts );
+		if ( in_global_rts ) {
+			std::string rts_name, rt_name;
+			arc( rts_name, rt_name );
+			restype = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_map( rt_name ).get_self_ptr();
+		} else {
+			// TEMP!
+			std::cout << "UNIMPLEMENTED CASE IN ResidueType.srlz.cc::deserialize_residue_type!" << std::endl;
+		}
 	} else {
-		// TEMP!
-		std::cout << "UNIMPLEMENTED CASE IN ResidueType.srlz.cc::deserialize_residue_type!" << std::endl;
+		restype = 0;
 	}
 }
 INSTANTIATE_FOR_INPUT_ARCHIVES( void, deserialize_residue_type, ResidueTypeCOP & );

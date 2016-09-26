@@ -27,7 +27,7 @@
 
 // utility headers
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -44,16 +44,25 @@ public:
 	PoseOutputter();
 	virtual ~PoseOutputter();
 
-	virtual
-	bool
-	outputter_specified_by_command_line() const = 0;
-
 	/// @brief Determine the inner-larval job's "job_tag" from the <Output> tag / per-job options
 	virtual
 	void determine_job_tag(
 		utility::tag::TagCOP output_tag,
 		utility::options::OptionCollection const & job_options,
 		InnerLarvalJob & job
+	) const = 0;
+
+	/// @brief Return an identifier string for the specific instance of the %PoseOutputter that ought to be used
+	/// for a particular job so that the %PoseOutputter can e.g. aggregate all of the outputs for a group of jobs
+	/// and output them all at once when flush is called.  The outputter may return the empty string if all
+	/// outputters (of the same type) are interchangable (e.g. the PDBPoseOutputter).
+	/// e.g., the SilentFilePoseOutputter returns the name of the file that it sends its outputs to.
+	virtual
+	std::string
+	outputter_for_job(
+		utility::tag::TagCOP output_tag,
+		utility::options::OptionCollection const & job_options,
+		InnerLarvalJob const & job
 	) const = 0;
 
 	virtual
@@ -69,12 +78,18 @@ public:
 		core::pose::Pose const & pose
 	) = 0;
 
+	/// @brief Output from a pose outputter may be held back and only flushed when requested
+	/// by the JobQueen; I/O can be expensive, so it's a good idea to gather up the
+	/// results of many outputs before flushing them to disk.
+	virtual
+	void flush() = 0;
+
 	/// @brief Return the stiring used by the PoseOutputterCreator for this class
 	virtual
 	std::string
 	class_key() const = 0;
 
-}; // PoseInputter
+};
 
 } // namespace pose_outputters
 } // namespace jd3

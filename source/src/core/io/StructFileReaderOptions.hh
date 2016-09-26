@@ -64,6 +64,12 @@ public:
 	void
 	list_options_read( utility::options::OptionKeyList & read_options );
 
+	bool
+	operator == ( StructFileReaderOptions const & other ) const;
+
+	bool
+	operator < ( StructFileReaderOptions const & other ) const;
+
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options( utility::options::OptionCollection const & options );

@@ -29,6 +29,7 @@
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/SingletonBase.hh>
 
 // c++ headers
 #include <list>
@@ -56,14 +57,13 @@ public:
 
 class PoseInputterFactory : public utility::SingletonBase< PoseInputterFactory > {
 public:
-	friend class utility::SingletonBase< PoseInputterFactory >;
 
 	typedef std::map< std::string, PoseInputterCreatorOP > PoseInputterMap;
 	typedef std::list< PoseInputterCreatorCOP > CreatorList;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
 
-	virtual ~PoseInputterFactory();
+	friend class utility::SingletonBase< PoseInputterFactory >;
 
 	void factory_register( PoseInputterCreatorOP creator );
 

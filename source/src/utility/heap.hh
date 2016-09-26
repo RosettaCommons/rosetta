@@ -34,20 +34,13 @@ class heap : public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief Create a heap with this number of items.
-	heap( int max_items ) {
-		// somewhere in porting this over, I made an off-by-one error in the rest of
-		// the heap machinery. So, decrement max_items by 1 to actually do the right
-		// thing. I recognize that this is a stupid thing to do, but at least it was
-		// quick!
-		heap_  .resize( max_items + 2 );
-		coheap_.resize( max_items + 2 );
-		// two extra values are for storing maximum and current number of items
-		heap_init( max_items );
-	}
+	heap( int max_items );
 
 	virtual ~heap() ; // auto-removing definition from header{}
 
-	/// @brief Inserts a value into the heap that is sorted by coval.
+	/// @brief Inserts a value into the heap that is sorted by coval. The err status
+	/// will be set to true if the heap is already at capacity; this function w
+	/// not increase the size of the heap.
 	void
 	heap_insert( int val, float coval, bool & err );
 
@@ -67,15 +60,27 @@ public:
 	float
 	heap_head() const;
 
+	/// @brief returns the item with the smallest covalue
+	int
+	head_item() const;
+
+	/// @brief Return the colvaue for a particular position in the heap
 	float
 	coval( int index ) const;
 
+	/// @brief Return the item index for a particular position in the heap
 	int
 	val( int index ) const;
 
+	/// @brief Return the colvaue for a particular item; O(N)
+	float
+	coval_for_val( int val ) const;
+
+	/// @brief Return the size of the heap.
 	int
 	size() const;
 
+	/// @brief Return the capacity of the heap.
 	int
 	capacity() const;
 
@@ -89,6 +94,9 @@ private:
 	void
 	heap_up( int index_in );
 
+	int heap_size() const;
+	int heap_capacity() const;
+
 	int & heap_size();
 	int & heap_capacity();
 
@@ -98,7 +106,7 @@ private:
 	void
 	increase_coval( int index, float coval );
 
-	int index_for_val( int val );
+	int index_for_val( int val ) const;
 
 private:
 	utility::vector0< int > heap_;

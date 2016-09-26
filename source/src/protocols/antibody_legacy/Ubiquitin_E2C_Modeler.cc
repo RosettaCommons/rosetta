@@ -61,7 +61,7 @@ using namespace ObjexxFCL::format;
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/jd2/ScoreMap.hh>
+#include <core/io/raw_data/ScoreMap.hh>
 
 //#include <utility/vector1.hh>
 
@@ -671,7 +671,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 
 				// add scores to map for output
 				score_map_[ "AD_k48_CA_CA" ] = ubi_cov_bond_dist;
-				protocols::jd2::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
+				core::io::raw_data::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
 
 				// check low-res docking filter
 				( *dock_lowres_cst_scorefxn_ )( pose_in );
@@ -692,7 +692,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 
 				// add scores to map for output
 				score_map_[ "AD_k48_CA_CA" ] = ubi_cov_bond_dist;
-				protocols::jd2::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
+				core::io::raw_data::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
 
 				// check highres docking filter
 				( *dockfa_cst_scorefxn_ )( pose_in );
@@ -716,10 +716,10 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	// add scores to map for output
 	if ( applied_fullatom_pert_ || cov_bond_only_flag_ ) {
 		( *output_full_scorefxn_ )( pose_in );
-		protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
+		core::io::raw_data::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 	} else {
 		( *output_cen_scorefxn_ )( pose_in );
-		protocols::jd2::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
+		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
 	}
 
 	if ( !cov_bond_only_flag_ ) {
@@ -2467,7 +2467,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 		// convert to centroid mode
 		to_centroid.apply( pose_in );
 		monoub_centroid_mode_perturbation( pose_in );
-		protocols::jd2::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
+		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, lowres_cst_scorefxn_, pose_in);
 
 		// check low-res docking filter
 		( *dock_lowres_cst_scorefxn_ )( pose_in );
@@ -2485,7 +2485,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 
 			// add scores to map for output
 
-			protocols::jd2::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
+			core::io::raw_data::ScoreMap::nonzero_energies( score_map_, pack_cst_scorefxn_, pose_in);
 
 			// check highres docking filter
 			( *dockfa_cst_scorefxn_ )( pose_in );
@@ -2502,10 +2502,10 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 	// add scores to map for output
 	if ( applied_fullatom_pert_ ) {
 		( *output_full_scorefxn_ )( pose_in );
-		protocols::jd2::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
+		core::io::raw_data::ScoreMap::nonzero_energies(score_map_, output_full_scorefxn_, pose_in);
 	} else {
 		( *output_cen_scorefxn_ )( pose_in );
-		protocols::jd2::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
+		core::io::raw_data::ScoreMap::nonzero_energies( score_map_, output_cen_scorefxn_, pose_in);
 	}
 
 	score_map_["AJ_monoub_rms"] = monoub_calc_Lrmsd( pose_in, start_pose );

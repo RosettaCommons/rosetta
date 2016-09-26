@@ -27,6 +27,7 @@ typedef utility::pointer::shared_ptr< Job const > JobCOP;
 
 enum JobStatus {
 	jd3_job_status_success,
+	jd3_job_previously_executed,
 	jd3_job_status_inputs_were_bad,
 	jd3_job_status_failed_w_exception,
 	jd3_job_status_failed_retry,

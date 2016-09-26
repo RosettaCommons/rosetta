@@ -19,6 +19,7 @@
 
 #include <utility/pointer/std/owning_ptr.fwd.hh>
 #include <memory>
+#include <utility/pointer/std/owning_ptr.fwd.hh>
 
 namespace utility {
 namespace pointer {

@@ -81,6 +81,7 @@ sources = {
 	"tag" : [
  		"Tag",
  		"XMLSchemaGeneration",
+		"validate_w_xsd",
 	],
 	"thread" : [
  		"ReadWriteMutex",

@@ -15,6 +15,7 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
+#include <test/util/mpi_funcs.hh>
 
 // Unit headers
 #include <devel/mmt_msd/MMTReceiver.hh>
@@ -136,7 +137,7 @@ public:
 	}
 
 
-	void ts_assert_mpi_buffer_has_string(
+	/*void ts_assert_mpi_buffer_has_string(
 		core::Size source,
 		std::string message_tag,
 		std::string expected_message
@@ -204,7 +205,7 @@ public:
 			TS_ASSERT( false );
 		}
 		return msg;
-	}
+	}*/
 
 	void test_provide_an_empty_test() {
 		TS_ASSERT( true );

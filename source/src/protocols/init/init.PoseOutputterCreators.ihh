@@ -15,3 +15,4 @@
 
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputterCreator.hh>
+#include <protocols/jd3/pose_outputters/ScoreFileOutputterCreator.hh>
