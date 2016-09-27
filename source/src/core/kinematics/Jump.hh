@@ -32,7 +32,8 @@
 namespace core {
 namespace kinematics {
 
-static const utility::vector1<Real> ZERO( 6, 0.0 );
+// This needs to be a function to avoid the static intitilization order fiasco
+utility::vector1<Real> const & ZERO();
 
 /// @brief an object which makes rigid-body transformation with translational and rotational perturbation
 ///
@@ -54,7 +55,7 @@ public:
 	/// @brief construction
 	Jump ():
 		rt_(),
-		rb_delta( 2, ZERO ),
+		rb_delta( 2, ZERO() ),
 		rb_center( 2, Vector(0.0) ),
 		invert_upstream_(false),
 		invert_downstream_(false)
@@ -63,7 +64,7 @@ public:
 	/// @brief constructor with only RT
 	Jump( const RT & src_rt ):
 		rt_( src_rt ),
-		rb_delta ( 2, ZERO ),
+		rb_delta ( 2, ZERO() ),
 		rb_center( 2, Vector(0.0) ),
 		invert_upstream_(false),
 		invert_downstream_(false)
@@ -72,7 +73,7 @@ public:
 	/// @brief get RT from two stubs and ZERO rb_delta
 	Jump ( Stub const & stub1, Stub const & stub2 ):
 		rt_( stub1, stub2 ),
-		rb_delta( 6, ZERO ),
+		rb_delta( 6, ZERO() ),
 		rb_center( 2, Vector(0.0) ),
 		invert_upstream_(false),
 		invert_downstream_(false)

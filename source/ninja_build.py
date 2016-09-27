@@ -22,7 +22,7 @@ class MyParser(argparse.ArgumentParser):
 def clean_build_path(build_path):
     for root, dirs, files in os.walk(build_path, topdown=False):
         for name in files:
-            if name != "CMakeLists.txt":
+            if name != "CMakeLists.txt" and name != "buildme.sh":
                 os.remove(os.path.join(root, name))
         for name in dirs:
             os.rmdir(os.path.join(root, name))

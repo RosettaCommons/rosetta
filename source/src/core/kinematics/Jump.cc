@@ -44,8 +44,10 @@
 namespace core {
 namespace kinematics {
 
-
-//static const utility::vector1<double> ZERO( 6, 0.0 );
+utility::vector1<Real> const & ZERO() {
+	static const utility::vector1<Real> zero_( 6, 0.0 );
+	return zero_;
+}
 
 // convenience
 numeric::xyzMatrix< core::Real >
@@ -58,7 +60,7 @@ void
 Jump::reset()
 {
 	rt_.reset();
-	rb_delta[1] = rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO();
 	rb_center[1] = rb_center[2] = Vector(0.0);
 	invert_downstream_ = invert_upstream_ = false;
 }
@@ -84,7 +86,7 @@ Jump::fold_in_rb_deltas()
 	rt_.fold_in_rb_deltas( rb_delta[2], rb_center[2] );
 	rt_.reverse();
 
-	rb_delta[1] = rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO();
 }
 
 void
@@ -331,7 +333,7 @@ Jump::reversed() const
 void
 Jump::identity_transform()
 {
-	rb_delta[1] = rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO();
 	rb_center[1] = rb_center[2] = Vector(0.0);
 	rt_.identity_transform();
 }
@@ -384,7 +386,7 @@ Jump::from_stubs(
 {
 	// here we ignore inversion.  R/T of a jump is always stored w.r.t. a right-handed system
 	rt_.from_stubs( stub1, stub2 );
-	rb_delta[1] = rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -417,7 +419,7 @@ Jump::from_bond_cst(
 	Stub new_stubB(b1,b2,b3);
 	debug_assert( new_stubB.is_orthogonal(1e-3) );
 	rt_.from_stubs( stubA, new_stubB );
-	rb_delta[1] = rb_delta[2] = ZERO;
+	rb_delta[1] = rb_delta[2] = ZERO();
 	atoms[4] = b1;
 	atoms[5] = b2;
 	atoms[6] = b3;
@@ -432,7 +434,7 @@ operator >>(
 )
 {
 	is >> jump.rt_;
-	jump.rb_delta[1] = jump.rb_delta[2] = ZERO;
+	jump.rb_delta[1] = jump.rb_delta[2] = ZERO();
 	jump.rb_center[1] = jump.rb_center[2] = Jump::Vector( 0.0 );
 	return is;
 }

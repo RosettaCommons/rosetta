@@ -1,26 +1,13 @@
-\/source\/bin\/
-\/database\/
-read.*from
-Reading\ in.*lib
-Basic\ usage\:
-Reading.*library
-Read.*lines.*from.*file
-Reading.*file
-INSERT\ INTO.*database
+##### Be as specific as reasonable when making patterns here
+##### Remember that the patterns are regex substrings
+##### e.g. 'time' will match (and erase) 'runtime error' or 'antimetabolite' 
+[0-9.]+ seconds([^A-Za-z]|$)
+core.init: Rosetta version
+core.init: 'RNG device' seed mode,
+core.init.random: RandomGenerator:init: Normal mode, seed=
 Finished.+in [0-9]+ seconds.
-time
-Time
-seconds
-library took .+ seconds to load
-core.init: command
 protocols.jd2.JobDistributor: .+ reported success in [0-9]+ seconds
 protocols.jd2.JobDistributor: [0-9]+ jobs considered, [0-9]+ jobs attempted in [0-9]+ seconds
-core.init: 'RNG device' seed mode, using
-TIMING
-core.init.random: RandomGenerator:init: Normal mode, seed=
-Rosetta version
-svn_version
-TIME_STAMP
 Warning: Unable to locate database file .*Dunbrack[0-9]+.lib.bin
 core.pack.dunbrack.RotamerLibrary: Opening file .* for output.
 core.pack.dunbrack.RotamerLibrary: Moving temporary file to .*Dunbrack[0-9]+.lib.bin
@@ -32,15 +19,25 @@ core.pack.dunbrack.RotamerLibrary: Total memory on Dunbrack Libraries: [0-9]+ by
 core.pack.dunbrack.RotamerLibrary: dunbrack library is out-dated
 core.pack.dunbrack.RotamerLibrary: cannot find binary dunbrack library under name
 core.pack.dunbrack.RotamerLibrary: Random tempname will be:
-current_directory=
-reating tricubic splines
-core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created [0-9]+ residue types
-core.chemical.ResidueTypeSet: Finished initializing centroid residue type set.  Created [0-9]+ residue types
-core.mm.MMTorsionLibrary: MM torsion sets added fully assigned: [0-9]+; wildcard: [0-9]+ and [0-9]+ virtual parameter
-core.scoring.mm.MMLJEnergyTable: Initializing MM LJ Energy Tables with [0-9]+ atom types
-core.mm.MMLJLibrary: MM lj sets added: [0-9]+
-core.mm.MMBondAngleLibrary: MM bond angle sets added fully assigned: [0-9]+; wildcard: [0-9]+ and [0-9]+ virtual parameter
-Processed a total of .+ significant \(.+ raw\) lines in .+ files
+core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected
+core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file
+core.pack.dunbrack.RotamerLibrary: Dunbrack.*library took [0-9.]+ seconds to load from binary
+basic.io.database: Using '.*' as the cached file.
 Processing time: .+sec
+: TIME_STAMP:[ ]
+TIMING.*took
+Loopstat: .* time[ ]
+protocols.looprelax: Buildtime:
+protocols.looprelax: Refinetime:
+protocols.abinitio: Timeperstep:
+Found .* alternative states in time:
+LoopMover_Perturb_QuickCCD: Looptime [0-9.]+
+Time in sampler: [0-9.]+
+Clocks - loop .* run [0-9.]+ of [0-9.]+ - total time: [0-9.]+
+Time taken: [0-9.]+
+time in function = [0-9.]+
+Total clustering time : [0-9.]+
+time_taken_so_far = [0-9.]+
+Time for DARC runs: [0-9.]+
+time to finish decoy [0-9.]+
 Found .+ duplicate lines in .+ blocks in .+ files
-Chunk took [0-9]+ seconds.
