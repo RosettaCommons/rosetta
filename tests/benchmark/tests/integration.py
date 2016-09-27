@@ -113,7 +113,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
 
     if re.search("--demos", additional_flags) or re.search("--tutorials", additional_flags):
-        timeout = 60*30
+        timeout = 60*45
 
     #Special case valgrind as it takes a *long* time - be very generous with the timeout.
     if re.search("--valgrind", additional_flags):

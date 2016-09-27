@@ -101,8 +101,10 @@ public:
 		Size & residue_num
 	);
 
+	/// @details a value of 0 for the chain means to ignore PDBInfo settings,
+	/// and treat the resnum as Rosetta/Pose numbering.
 	static Size
-	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 'A' );
+	parse_residue( pose::Pose const& pose, int const resnum, char const chain = 0 );
 
 	// gkt - tmp hack for BoundFunc, should be private
 protected:

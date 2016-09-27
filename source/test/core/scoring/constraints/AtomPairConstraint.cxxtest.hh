@@ -21,8 +21,11 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/XYZ_Func.hh>
@@ -40,7 +43,6 @@
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -250,6 +252,24 @@ public:
 		TS_ASSERT( *atom_pair_cst4 != *atom_pair_cst1 );
 	}
 
+	void test_PDBno_readin() {
+		using namespace core::scoring::constraints;
+		core::pose::Pose pose( create_twores_1ubq_pose() );
+		pose.pdb_info()->number(1,393);
+		pose.pdb_info()->chain(1,'B');
+		// Yup - inverted chain order.
+		pose.pdb_info()->number(2,345);
+		pose.pdb_info()->chain(2,'A');
+
+		std::stringstream infile(" CA 345A CA 393B HARMONIC 4.3 0.25 1 ");
+
+		AtomPairConstraintOP atom_pair_cst( new AtomPairConstraint );
+
+		atom_pair_cst->read_def( infile, pose, ConstraintIO::get_func_factory() );
+
+		TS_ASSERT_EQUALS( atom_pair_cst->atom1().rsd(), 2);
+		TS_ASSERT_EQUALS( atom_pair_cst->atom2().rsd(), 1);
+	}
 
 	void test_serialize_AtomPairConstraint() {
 		TS_ASSERT( true ); // for non-serialization builds

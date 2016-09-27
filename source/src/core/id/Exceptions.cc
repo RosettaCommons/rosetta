@@ -20,7 +20,7 @@ namespace core {
 namespace id {
 
 EXCN_AtomNotFound::EXCN_AtomNotFound( NamedAtomID const& id ) :
-	EXCN_Msg_Exception( "Atom "+id.to_string()+" not found"), id_( id ) {}
+	EXCN_Msg_Exception( "Atom '"+id.to_string()+"' not found"), id_( id ) {}
 
 }
 }

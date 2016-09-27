@@ -608,20 +608,23 @@ ConstraintIO::parse_residue( pose::Pose const& pose, std::string const & residue
 
 	data >> resnum;
 
-	if ( (data >> chain).fail() ) chain = 'A';
+	if ( (data >> chain).fail() ) chain = 0;
 
 	residue_num = parse_residue( pose, resnum, chain );
 }
 
 
 Size
-ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 'A' */ )
+ConstraintIO::parse_residue( pose::Pose const& pose, int const resnum, char const chain /* = 0 */ )
 {
 	// this option is a vector1< bool > for pretty arcane reasons -- rosetta does not provide a set default option for bool, but does so for vector< bool>.
 	using namespace basic::options;
-	bool force_pdb_info_mapping = option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ? option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false;
-	if ( chain != 'A' || force_pdb_info_mapping ) {
+	if ( chain != 0 ) {
 		return pose.pdb_info()->pdb2pose( chain, resnum );
+	}
+	bool force_pdb_info_mapping = option[ OptionKeys::constraints::force_pdb_info_mapping ]().size() ? option[ OptionKeys::constraints::force_pdb_info_mapping ]()[1] : false;
+	if ( force_pdb_info_mapping ) {
+		return pose.pdb_info()->pdb2pose( 'A', resnum );
 	}
 	return Size( resnum );
 }
