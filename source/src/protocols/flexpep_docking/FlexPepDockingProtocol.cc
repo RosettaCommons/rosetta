@@ -1410,19 +1410,57 @@ FlexPepDockingProtocol::get_name() const {
 	return "FlexPepDockingProtocol";
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief mark peptide residues that are in the native structure interface,
+//	  defined by any atom-atom contact (distance under provided distance cutoff)
+//
+// @param native_interface_residues[out]
+//	An array of positions - set to true for interface residues
+// @param distance
+//	Size - the atom pair distance under which the pair is considered in contact
 
-//////////////////////////////////////////////////////////////////////////////////
+void
+FlexPepDockingProtocol::markInterfaceBySideChainContacts
+( ObjexxFCL::FArray1D_bool& native_interface_residues, core::Size distance) const
+{
+	pose::Pose native_pose;
+	native_pose=*get_native_pose();
+	core::pose::PDBInfoCOP pdbinfo = native_pose.pdb_info();
+
+
+	for ( int i=flags_.peptide_first_res(); i<=flags_.peptide_last_res(); ++i ) {
+		//iterate over the protein
+		for ( int j=flags_.receptor_first_res(); j<=flags_.receptor_last_res(); ++j ) {
+			if ( fpdock_metrics_.isInContact(native_pose.residue(i),native_pose.residue(j),distance) ) {
+				native_interface_residues(i)=true;
+				native_interface_residues(j)=true;
+			}
+		}		
+	}
+	for (core::Size i=1; i<=native_interface_residues.size1() ;++i){
+		if (native_interface_residues(i)==true) {
+			TR << " residue " << pdbinfo->pose2pdb(i) << " is at the interface" << std::endl;
+		}
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief mark the peptide residues in the native structure interface
+//	  defined by any two residues with Cb distance under 8A
 //        If no receptor - trivially mark all residues
 //
 // @param superpos_partner[out]
 //        An array of positions - set to true for peptide residues
 // @param native_interface_residues[out]
-//        An array of positions - set to true for interface peptide residues
+//        An array of positions - set to true for interface peptide/peptide and receptor residues
+// @param mark_receptor_interface 
+//	  Boolean, instructs whether interface subset will be comprised of receptor residues too
+
 void
 FlexPepDockingProtocol::markNativeInterface
 ( ObjexxFCL::FArray1D_bool& superpos_partner,
-	ObjexxFCL::FArray1D_bool& native_interface_residues) const
+	ObjexxFCL::FArray1D_bool& native_interface_residues, bool mark_receptor_interface) const
 {
 	pose::Pose native_pose;
 	protocols::scoring::InterfaceOP native_interface;
@@ -1434,10 +1472,20 @@ FlexPepDockingProtocol::markNativeInterface
 		native_interface->distance(8); // between CB atoms, CA for Gly (to be precise, the anchor atom is set within the mini DB)
 		native_pose.update_residue_neighbors();
 		native_interface->calculate( native_pose );
+		if (mark_receptor_interface) {
+			for ( int i=flags_.receptor_first_res(); i <= flags_.receptor_last_res(); ++i ) {
+				if ( native_interface->is_interface(i) ) {
+					TR.Debug << "Receptor residue " << i-flags_.receptor_first_res()+1
+								<< " in interface" << std::endl;
+					native_interface_residues(i)=true;
+
+				}
+			}
+		}
 	}
 	// mark interface and peptide residues
 	for ( int i=flags_.peptide_first_res();
-			i <= flags_.peptide_last_res(); i++ ) {
+			i <= flags_.peptide_last_res(); ++i ) {
 		superpos_partner(i)=true;
 		if ( flags_.pep_fold_only ) { // not docking mode
 			native_interface_residues(i) = true;
@@ -1448,6 +1496,9 @@ FlexPepDockingProtocol::markNativeInterface
 		}
 	}
 }
+
+
+
 
 void
 FlexPepDockingProtocol::addLowResStatistics
@@ -1487,7 +1538,8 @@ FlexPepDockingProtocol::addLowResStatistics
 	// mark peptide residues and interface (computed from native)
 	FArray1D_bool superpos_partner ( native_CEN.size(), false );
 	FArray1D_bool native_interface_residues ( native_CEN.size(), false );
-	markNativeInterface(superpos_partner, native_interface_residues);
+	markNativeInterface(superpos_partner, native_interface_residues, false );
+
 	// add all peptide RMSD:
 	using core::scoring::rmsd_with_super;
 	using core::scoring::rmsd_no_super_subset;
@@ -1559,16 +1611,25 @@ FlexPepDockingProtocol::storeJobStatistics
 	// calculate and store the rms of the starting structure to the native
 	pose::Pose native_pose( *get_native_pose() );
 	FArray1D_bool superpos_partner ( native_pose.size(), false );
+	FArray1D_bool superpos_partner_for_all_if ( native_pose.size(), false );
+	// native_interface_residues will store peptide interface residues
+	// whereas native_all_interface_residues will store receptor interface residues too
 	FArray1D_bool native_interface_residues ( native_pose.size(), false );
-	markNativeInterface(superpos_partner, native_interface_residues);
-
+	FArray1D_bool native_all_interface_residues (native_pose.size(), false );
+	core::Real contact_distance = 4;
+	FArray1D_bool all_interface_residues_by_sc_contacts (native_pose.size(), false );
+	markNativeInterface(superpos_partner, native_interface_residues,false);
+	markNativeInterface(superpos_partner_for_all_if, native_all_interface_residues, true);
+	markInterfaceBySideChainContacts(all_interface_residues_by_sc_contacts, contact_distance);
 
 	// start pose statistics:
 	using core::scoring::rmsd_with_super;
 	using core::scoring::rmsd_no_super_subset;
+	using core::scoring::rmsd_with_super_subset;
 	using core::scoring::is_protein_CA;
 	using core::scoring::is_protein_backbone;
 	using core::scoring::is_polymer_heavyatom;
+	using core::scoring::is_protein_sidechain_heavyatom;
 
 	if ( ! flags_.pep_fold_only ) {
 		cur_job->add_string_real_pair( "startRMSca",
@@ -1596,6 +1657,19 @@ FlexPepDockingProtocol::storeJobStatistics
 			rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_protein_CA ) );
 		cur_job->add_string_real_pair( "rmsBB_if",
 			rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_protein_backbone ) );
+		cur_job->add_string_real_pair( "rmsSC_CAPRI_if",
+			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_sidechain_heavyatom ) );
+		cur_job->add_string_real_pair( "rmsALL_CAPRI_if", 
+			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_polymer_heavyatom ) );
+		cur_job->add_string_real_pair( "rmsBB_CAPRI_if",
+			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_backbone ) );
+		cur_job->add_string_real_pair( "rmsBB_allIF",
+			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_protein_backbone ) );
+		cur_job->add_string_real_pair( "rmsALL_allIF",
+			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_polymer_heavyatom ) );
+		cur_job->add_string_real_pair( "rmsSC_allIF",
+			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_protein_sidechain_heavyatom ) );
+	
 		if ( ! flags_.design_peptide ) {
 			cur_job->add_string_real_pair( "rmsALL_if",
 				rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_polymer_heavyatom ) );
@@ -1613,6 +1687,8 @@ FlexPepDockingProtocol::storeJobStatistics
 			rmsd_with_super(native_pose, start_pose, is_polymer_heavyatom ) );
 
 		// final pose statistics - all peptide residues:
+		
+
 		cur_job->add_string_real_pair( "rmsCA",
 			rmsd_with_super( native_pose, final_pose, is_protein_CA ) );
 		cur_job->add_string_real_pair( "rmsBB",
@@ -1628,6 +1704,8 @@ FlexPepDockingProtocol::storeJobStatistics
 				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 5.0 /*RMS threashold*/) );
 			cur_job->add_string_real_pair( "fnat3.5",
 				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 3.5 /*RMS threashold*/) );
+			cur_job->add_string_real_pair( "fnat4",
+				fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 4.0 /*RMS threashold*/) );
 		}
 		// torsion RMS data
 		cur_job->add_string_real_pair( "startRMSphipsi",
@@ -1753,10 +1831,12 @@ void FlexPepDockingProtocol::parse_my_tag(
 	if ( tag->hasOption("receptor_chain") ) {
 		flags_.set_receptor_chain
 			( tag->getOption<std::string>( "receptor_chain" ) );
+		flags_.set_user_defined_receptor(true);
 	}
 	if ( tag->hasOption( "peptide_chain" ) ) {
 		flags_.set_peptide_chain
 			( tag->getOption<std::string>( "peptide_chain" ).at(0) );
+		flags_.set_user_defined_peptide(true);
 	}
 
 	// TODO: handle mutually exclusive options as in FlexPepDockingFlags

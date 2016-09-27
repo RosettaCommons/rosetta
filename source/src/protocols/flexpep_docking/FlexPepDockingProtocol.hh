@@ -158,6 +158,18 @@ private:
 		core::pose::Pose & pose
 	);
 
+	///////////////////////////////////////////////////////////////////////////////////
+	// @brief mark peptide residues that are in the native structure interface,
+	//        defined by any atom-atom contact (distance under provided distance cutoff)
+	//
+	// @param native_interface_residues[out]
+	//      An array of positions - set to true for interface residues
+	// @param distance
+        // 	Size - the atom pair distance under which the pair is considered in contact
+	///////////////////////////////////////////////////////////////////////////////////
+	void markInterfaceBySideChainContacts
+	( ObjexxFCL::FArray1D_bool & native_interface_residues, core::Size distance) const;
+
 
 	/////////////////////////////////////////////////////////////////////////////
 	// @brief mark the peptide residues in the native structure interface
@@ -169,7 +181,7 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	void markNativeInterface
 	( ObjexxFCL::FArray1D_bool & superpos_partner,
-		ObjexxFCL::FArray1D_bool & native_interface_residues) const;
+		ObjexxFCL::FArray1D_bool & native_interface_residues, bool mark_receptor_interface) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// @brief

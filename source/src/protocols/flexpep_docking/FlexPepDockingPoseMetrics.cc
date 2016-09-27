@@ -98,14 +98,16 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 	return fnat;
 }
 
+
+ 
 bool FlexPepDockingPoseMetrics::isInContact(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2,
 	core::Real threashold
 ) const
 {
-	core::Size natoms_res1 = res1.natoms();
-	core::Size natoms_res2 = res2.natoms();
+	core::Size natoms_res1 = res1.nheavyatoms(); // changing atoms to be the heavy atoms only (no hydrogens)
+	core::Size natoms_res2 = res2.nheavyatoms();
 	for ( core::Size i = 1; i <= natoms_res1; ++i ) {
 		for ( core::Size j = 1; j <= natoms_res2; ++j ) {
 			core::Distance dist = res1.xyz(i).distance( res2.xyz(j) );

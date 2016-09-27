@@ -115,6 +115,13 @@ public:
 	calc_pep_scores
 	( core::pose::Pose const & pose, core::Real& pepScore, core::Real& pepScore_noref ) const;
 
+
+	// helper method to check if two given residues are within "threashold" of each other
+	bool isInContact ( core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real threashold ) const;
+
+	
 	// ======== Accessor Methods ========
 
 	void set_flags(FlexPepDockingFlagsCOP flags){
@@ -125,10 +132,6 @@ public:
 private:
 	FlexPepDockingFlagsCOP flags_;
 
-	// helper method to check if two given residues are within "threashold" of each other
-	bool isInContact ( core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2,
-		core::Real threashold ) const;
 
 
 }; // end class FlexPepDockingPoseMetrics

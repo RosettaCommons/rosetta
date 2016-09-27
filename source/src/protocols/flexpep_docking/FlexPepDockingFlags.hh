@@ -100,6 +100,25 @@ public:
 		peptide_chain_ = ch; valid_peptide_chain_ = true;
 	}
 
+	void set_user_defined_receptor(bool state) {
+		user_set_receptor_chain_=state;
+	}
+
+	void set_user_defined_peptide(bool state) {
+			user_set_peptide_chain_=state;
+	}
+
+	bool user_defined_receptor_chain() const
+	{
+		return user_set_receptor_chain_;
+	}
+
+	bool user_defined_peptide_chain() const
+	{
+		return user_set_peptide_chain_;
+	}
+
+
 	int receptor_first_res() const;
 
 	int receptor_last_res() const;
@@ -131,6 +150,8 @@ private:
 	bool valid_chain_bounds_; // refers to fields above
 	std::string ref_start_struct_;
 	bool valid_ref_start_struct_;
+	bool user_set_receptor_chain_;
+	bool user_set_peptide_chain_;
 public:
 	bool pep_fold_only;
 	int receptor_anchor_pos; // anchor position within the receptor protein

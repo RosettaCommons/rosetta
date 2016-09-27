@@ -54,6 +54,8 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	valid_chain_bounds_ = false;
 	valid_receptor_chain_ = false;
 	valid_peptide_chain_ = false;
+	user_set_receptor_chain_ = false;
+	user_set_peptide_chain_ = false;
 	valid_ref_start_struct_ = false;
 	receptor_anchor_pos = -1; // -1 == invalid
 
@@ -152,11 +154,13 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 
 
 	if ( option[ OptionKeys::flexPepDocking::receptor_chain ].user() ) {
+		set_user_defined_receptor(true);
 		this->set_receptor_chain
 			(option[ OptionKeys::flexPepDocking::receptor_chain ]() );
 		// TODO: validate string size!
 	}
 	if ( option[ OptionKeys::flexPepDocking::peptide_chain ].user() ) {
+		set_user_defined_peptide(true);
 		this->set_peptide_chain
 			(option[ OptionKeys::flexPepDocking::peptide_chain ]().at(0) );
 		// TODO: validate string size!
@@ -208,7 +212,6 @@ char FlexPepDockingFlags::peptide_chain() const
 	std::cout << "ERROR: peptide chain invalid" << std::endl;
 	exit(-1);
 }
-
 
 int FlexPepDockingFlags::receptor_first_res() const
 {
@@ -297,11 +300,11 @@ FlexPepDockingFlags::updateChains
 	}
 	core::Size resi = 1;
 	// get receptor chain if needed
-	if ( !valid_receptor_chain_ && ! pep_fold_only ) {
+	if ( !user_defined_receptor_chain() && ! pep_fold_only ) {
 		receptor_chain_ = " ";
 		receptor_chain_.at(0) = pdbinfo->chain(resi);
 		// make sure receptor is different from peptide
-		if ( valid_peptide_chain_ && (receptor_chain_.at(0) == peptide_chain_) ) {
+		if ( user_defined_peptide_chain() && (receptor_chain_.at(0) == peptide_chain_) ) {
 			do{ resi++; }
 			while(resi <= pose.size() && pdbinfo->chain(resi) == peptide_chain_);
 			receptor_chain_.at(0) = pdbinfo->chain(resi);
@@ -309,7 +312,7 @@ FlexPepDockingFlags::updateChains
 		valid_receptor_chain_ = true;
 	}
 	// get peptide chain if needed
-	if ( !valid_peptide_chain_ ) {
+	if ( !user_defined_peptide_chain() ) {
 		if ( pep_fold_only ) {
 			this->set_peptide_chain(pdbinfo->chain(resi));
 		} else { // docking mode
