@@ -41,7 +41,7 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
-//#include <protocols/relax/RelaxProtocolBase.hh>
+#include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
 
@@ -109,7 +109,8 @@ void relax_model(core::pose::PoseOP &pose)
 		option[ OptionKeys::out::file::scorefile ].value("score-relax.sf");
 	}
 
-	protocols::relax::FastRelaxOP relax_protocol( new protocols::relax::FastRelax() );
+	// have to specify no ramping, because options are not yet set on the command line
+	protocols::relax::FastRelaxOP relax_protocol( new protocols::relax::FastRelax(core::scoring::get_score_function(), "NO CST RAMPING") );
 
 	// set packer task related defaults on pose
 	TaskFactoryOP task_factory( new TaskFactory() );
@@ -124,13 +125,12 @@ void relax_model(core::pose::PoseOP &pose)
 	relax_protocol->set_task_factory( task_factory );
 
 	// set relax defaults
-	relax_protocol->set_scorefxn( core::scoring::get_score_function() );
 	relax_protocol->constrain_relax_to_start_coords( true );
 	relax_protocol->constrain_coords( true );
 	relax_protocol->coord_constrain_sidechains( true );
 
 	relax_protocol->ramp_down_constraints( false );
-
+	
 	//relax
 	relax_protocol->apply( *pose );
 }
@@ -320,17 +320,16 @@ int antibody_main()
 
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
 
-
-				if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
-					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
-					converter.apply(*model);
-				}
-
 				if( !basic::options::option[ basic::options::OptionKeys::no_relax ]() ) {
 					relax_model(model);
 					model->dump_pdb(prefix + "model" + suffix + ".relaxed.pdb");
 				}
 
+				if ( basic::options::option[ basic::options::OptionKeys::antibody::output_ab_scheme].user()){
+					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
+					converter.apply(*model);
+				}
+				
 			}
 		}
 		else {
