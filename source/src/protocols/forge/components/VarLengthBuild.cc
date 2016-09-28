@@ -43,7 +43,10 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -488,7 +491,6 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//remove the added residue
 			//pose.conformation().delete_residue_slow(pose.size());
 			//need to extend the archive pose, otherwise the connectivity is wrong
-
 			for ( Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii ) {
 				ResidueType const & rsd_type(pose.residue_type(ii));
 				Size res1 = ii;
@@ -530,8 +532,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	// recover side chains in fixed regions
-
-	restore_residues( original2modified, archive_pose, pose );
+	if(!basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())
+		restore_residues( original2modified, archive_pose, pose );
+		//The second repeat is messed up in the archive pose. If this causes trouble try adding a repeat_popogation step. But to do that you
+		//need to create a new loops and RemodelLoopMover.
 
 	// finalize wrt to success/failure
 	if ( get_last_move_status() == MS_SUCCESS ) {
@@ -577,11 +581,17 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	using protocols::forge::methods::find_cutpoint;
 	using protocols::forge::methods::linear_chainbreak;
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	typedef utility::vector1< Interval > Intervals;
 
 	// safety, clear the energies object
 	pose.energies().clear();
-
+	//get non-canonical fragments in before constraints are originally setup
+	if ( option[OptionKeys::remodel::staged_sampling::starting_non_canonical].user() ) {
+		set_starting_non_canonical(pose);
+	}
 	// grab new secondary structure
 	String ss;
 	if ( !new_secondary_structure_override_.empty() ) { // user has overridden the string auto-setup
@@ -1035,6 +1045,28 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 	}
 
 	return frames;
+}
+
+void VarLengthBuild::set_starting_non_canonical(Pose & pose){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
+	using core::Size;
+	std::string const & non_canonical_str =option[OptionKeys::remodel::staged_sampling::starting_non_canonical];
+	utility::vector1< std::string > set_starting_residue_v( utility::string_split( non_canonical_str , ',' ) );
+	std::string aa_type = set_starting_residue_v[1];
+	Size pos;
+	std::stringstream(set_starting_residue_v[2]) >> pos;
+	ResidueTypeSetCOP rsd_type_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
+	ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( aa_type ).get_all_possible_residue_types();
+	ResidueType const & rsd_type = *allowed_types[1];
+	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);//pose has two coppies. This is the first
+			Size repeat_length = pose.total_residue()/2;
+			replace_pose_residue_copying_existing_coordinates(pose,pos+repeat_length,rsd_type);
+	} else {
+			replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);
+	}
 }
 
 

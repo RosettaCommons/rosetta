@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/motif/MotifScore.cc
-/// @brief  Will's motif score to determine how well packed the protein core is
+/// @details  Will's motif score to determine how well packed the protein core is implemented as an energy function and used on Secondary Structure Elements
 /// @author TJ Brunette
 ///
 // Unit headers
@@ -75,7 +75,7 @@ SSElementMotifContactEnergyCreator::score_types_for_method() const {
 
 SSElementMotifContactEnergy::SSElementMotifContactEnergy():
 	parent(methods::EnergyMethodCreatorOP( new SSElementMotifContactEnergyCreator ) )
-{
+	{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	mman_ = core::scoring::motif::MotifHashManager::get_instance();
@@ -109,13 +109,32 @@ vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(cons
 }
 
 Size SSElementMotifContactEnergy::which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const{
-	for ( Size ii=1; ii<=ssElements.size(); ++ii ) {
-		if ( res>= ssElements[ii].first && res<=ssElements[ii].second ) {
+	for(Size ii=1; ii<=ssElements.size(); ++ii){
+		if(res>= ssElements[ii].first && res<=ssElements[ii].second){
 			return(ii);
 		}
 	}
 	return(0);
 }
+
+Size SSElementMotifContactEnergy::get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const {
+	Size contacts_between_ssElement_threshold_ = 3;
+	std::map<Size,Size> element_ct;
+	std::multiset<Size>::iterator itr;
+	std::map<Size,Size>::iterator map_itr;
+	for(itr = ssElements_in_contact.begin(); itr!=ssElements_in_contact.end(); ++itr){
+		Size counts = ssElements_in_contact.count(*itr);
+		element_ct.insert(std::pair<Size,Size>(*itr,counts));
+	}
+	Size above_threshold_ct =0;
+	for(map_itr=element_ct.begin(); map_itr!=element_ct.end(); ++map_itr){
+		if(map_itr->second>=contacts_between_ssElement_threshold_){
+			above_threshold_ct++;
+		}
+	}
+	return(above_threshold_ct);
+}
+
 
 Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const Pose & pose) const{
 	using core::kinematics::FoldTree;
@@ -154,29 +173,47 @@ Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1
 	return(ssElements_in_contact.size());
 }
 
+
 //I have implemented this as a WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
 void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1<std::pair<Size,Size> > ss_elements = get_ss_elements(pose);
-	Size ignore_terminal_ss = option[OptionKeys::score::ignore_terminal_ss_elements]();
 	Size startElement = 1;
 	Size endElement = ss_elements.size();
-	if ( ignore_terminal_ss>0 ) {
+	Size ignore_terminal_ss = option[OptionKeys::score::ignore_terminal_ss_elements]();
+	if(ignore_terminal_ss>0){
 		startElement+=ignore_terminal_ss;
 		endElement-=ignore_terminal_ss;
 	}
+	Real score = 0;
+	// if(only_n_term_)
+	//     return(get_SSelements_in_contact(1,ss_elements,pose));
+	// if(only_c_term_)
+	//     return(get_SSelements_in_contact(ss_elements.size(),ss_elements,pose));
+	// if(false){
+	//     Real tmpScore = 0;
+	//     Size ct = 0;
+	//     for(Size ii=startElement; ii<=endElement; ++ii){
+	//         tmpScore+=get_SSelements_in_contact(ii,ss_elements,pose);
+	//         ct+=1;
+	//     }
+	//     if(ct!=0)
+	//         score = tmpScore/Real(ct);
+	// }
+	//else{//worst contact
 	Real tmpScore = 9999;
-	for ( Size ii=startElement; ii<=endElement; ++ii ) {
+	for(Size ii=startElement; ii<=endElement; ++ii){
 		Real tmp=get_SSelements_in_contact(ii,ss_elements,pose);
-		if ( tmp<tmpScore ) {
+		if(tmp<tmpScore)
 			tmpScore=tmp;
-		}
 	}
-	if ( tmpScore>option[OptionKeys::score::max_contacting_ss]() ) {
-		tmpScore=option[OptionKeys::score::max_contacting_ss]();
-	}
-	totals[ss_contact_worst] =(-1*tmpScore);
+	score= tmpScore;
+	//}
+	if(score==4)//only give a boost if this is equal to 4.
+		totals[ss_contact_worst] = -1;
+	else
+		totals[ss_contact_worst] = 1;
 }
 
 

@@ -25,11 +25,11 @@
 #include <core/pose/symmetry/util.hh>
 
 
-#include <core/sequence/ABEGOManager.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/indexed_structure_store/FragmentStore.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -47,7 +47,7 @@
 
 
 //// C++ headers
-static THREAD_LOCAL basic::Tracer tr("protocols.filters.LeastNativeLike9merFilter");
+static THREAD_LOCAL basic::Tracer TR("protocols.filters.LeastNativeLike9merFilter");
 
 namespace protocols {
 namespace simple_filters {
@@ -76,15 +76,15 @@ LeastNativeLike9merFilter::report( std::ostream & out, Pose const & pose ) const
 }
 
 
-
 /// @brief
 LeastNativeLike9merFilter::Real
 LeastNativeLike9merFilter::compute( const Pose & pose ) const
 {
 	using namespace core::indexed_structure_store;
-	core::sequence::ABEGOManager AM;
-	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
-	Size fragment_length = ABEGOHashedFragmentStore_->get_fragment_length();
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.dssp_reduced();
+	std::string dssp_string = dssp.get_dssp_secstruct();
+	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	Real worstRmsd = 0;
 	Size startRes = 1;
 	Size endRes = pose.size()-fragment_length+1;
@@ -98,19 +98,20 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 		endRes = endRes-1;
 	}
 	for ( Size resid=startRes; resid<=endRes; ++resid ) {
-		std::string fragAbegoStr = "";
-		for ( Size ii=0; ii<fragment_length; ++ii ) {
-			fragAbegoStr += abegoSeq[resid+ii];
-		}
-		if ( only_helices_ && fragAbegoStr == "AAAAAAAAA" ) {
-			Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
+		std::string frag_ss = dssp_string.substr(resid-1,fragment_length);
+		if ( only_helices_ && frag_ss == "HHHHHHHHH" ) {
+			Real tmpRmsd = SSHashedFragmentStore_->lookback(pose,resid,frag_ss,false);
+			if(tmpRmsd>rmsd_lookup_thresh_)
+				TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
 			if ( tmpRmsd>worstRmsd ) {
 				worstRmsd = tmpRmsd;
 			}
 		}
 		if ( !only_helices_ ) {
-			if ( fragAbegoStr != "AAAAAAAAA" ) {
-				Real tmpRmsd = ABEGOHashedFragmentStore_->lookback(pose,resid,fragAbegoStr);
+			if ( frag_ss != "HHHHHHHHH" ) {
+				Real tmpRmsd = SSHashedFragmentStore_->lookback_account_for_dssp_inaccuracy(pose,resid,frag_ss,true,rmsd_lookup_thresh_);
+				if(tmpRmsd>rmsd_lookup_thresh_)
+					TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
 				if ( tmpRmsd>worstRmsd ) {
 					worstRmsd = tmpRmsd;
 				}
@@ -126,12 +127,12 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 bool LeastNativeLike9merFilter::apply(const Pose & pose ) const
 {
 	Real value = compute( pose );
-	tr << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
+	TR << "value" << value << "filtered_value_" << filtered_value_ << std::endl;
 	if ( value <= filtered_value_ ) {
-		tr << "Successfully passed filt " << value << std::endl;
+		TR << "Successfully passed filt " << value << std::endl;
 		return true;
 	} else {
-		tr << "Filter failed current threshold=" << value << "/" << filtered_value_ << std::endl;
+		TR << "Filter failed current threshold=" << value << "/" << filtered_value_ << std::endl;
 		return false;
 	}
 } // apply_filter
@@ -154,9 +155,9 @@ LeastNativeLike9merFilter::parse_my_tag(
 		rmsd_lookup_thresh_ = tag->getOption<Real>("rmsd_lookup_threshold",0.40);
 	}
 	only_helices_ = tag->getOption<bool>( "only_helices", false ); //lower threshold to remove kinked helices
-	ABEGOHashedFragmentStore_ = ABEGOHashedFragmentStore::get_instance();
-	ABEGOHashedFragmentStore_->set_threshold_distance(rmsd_lookup_thresh_);
-	tr << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
+	SSHashedFragmentStore_ = SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_->set_threshold_distance(rmsd_lookup_thresh_);
+	TR << "Structures which has the best fragment RMSD at the worst position greater than " << filtered_value_ << " will be filtered." << std::endl;
 	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
 
 }

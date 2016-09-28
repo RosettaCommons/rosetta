@@ -136,11 +136,13 @@
 #include <protocols/simple_filters/ResidueDepthFilterCreator.hh>
 #include <protocols/simple_filters/ResidueIEFilterCreator.hh>
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
+#include <protocols/simple_filters/ResidueSelectionDistanceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeight2Creator.hh>
 #include <protocols/simple_filters/SavePoseConstraintToFileFilterCreator.hh>
 #include <protocols/simple_filters/SSElementMotifContactFilterCreator.hh>
+#include <protocols/simple_filters/SSElementBisectddGFilterCreator.hh>
 #include <protocols/simple_filters/SaveResfileToDiskFilterCreator.hh>
 #include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/simple_filters/ScoreTypeFilterCreator.hh>

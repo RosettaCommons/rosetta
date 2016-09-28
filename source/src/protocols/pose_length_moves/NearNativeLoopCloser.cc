@@ -19,8 +19,8 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
-//#include <protocols/jd2/Job.hh>
-//#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobOutputter.hh>
 
 // Core Headers
 #include <core/chemical/AA.hh>
@@ -36,7 +36,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/indexed_structure_store/FragmentStore.hh>
 
 #include <core/kinematics/AtomTree.hh>
@@ -48,7 +48,11 @@
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
+#include <protocols/simple_moves/ConstrainToIdealMover.hh>
 
+
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -65,12 +69,19 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/sequence/ABEGOManager.hh>
+#include <core/sequence/SSManager.hh>
 
 #include <core/types.hh>
 
 #include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringMap.hh>
+
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -97,6 +108,7 @@
 //output
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
+//#include <unistd.h>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.NearNativeLoopCloser" );
 
@@ -106,21 +118,22 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-PossibleLoop::PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,Size loopLength,Size resBeforeLoop, Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, Size insertedBeforeLoopRes, Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP,core::pose::Pose const originalPose ){
+PossibleLoop::PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,Size loopLength,Size resBeforeLoop, Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, Size insertedBeforeLoopRes, Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP, core::pose::PoseOP orig_atom_type_fullLengthPoseOP){
 	TR << "creatingPotentialLoop" <<  resAdjustmentBeforeLoop << "," << resAdjustmentAfterLoop <<"," << loopLength << "," << resBeforeLoop << ","<< resAfterLoop << std::endl;
 	resAdjustmentBeforeLoop_ = resAdjustmentBeforeLoop;
 	resAdjustmentAfterLoop_ = resAdjustmentAfterLoop;
 	loopLength_ = loopLength;
 	resBeforeLoop_ = resBeforeLoop;
+	fullLength_resBeforeLoop_ = resBeforeLoop;
 	resAfterLoop_ = resAfterLoop;
 	resTypeBeforeLoop_ = resTypeBeforeLoop;
 	resTypeAfterLoop_ = resTypeAfterLoop;
 	insertedBeforeLoopRes_ = insertedBeforeLoopRes;
 	insertedAfterLoopRes_ = insertedAfterLoopRes;
+	original_atom_type_fullLengthPoseOP_ = orig_atom_type_fullLengthPoseOP;
 	fullLengthPoseOP_ = fullLengthPoseOP;
-	originalPose_ = originalPose;
 	below_distance_threshold_=false;
-	stub_rmsd_= 9999;
+	stub_rmsd_match_= 9999;
 	uncached_stub_rmsd_=9999;
 	final_rmsd_=9999;
 	outputed_ = false;
@@ -192,7 +205,7 @@ void PossibleLoop::evaluate_distance_closure(){
 	//std::cout << "XresBeforeLoop_" << tmpResidueBeforeLoop << " resAfterLoop_" << tmpResidueAfterLoop << " loopLength_" << loopLength_ << "resBeforeLoop_" << resBeforeLoop_ << "resAfterLoop_" << resAfterLoop_ << " currentDist" << currentDist << "maxDist" << maxDist << std::endl;
 	if ( currentDist < maxDist ) {
 		below_distance_threshold_=true;
-		stub_rmsd_=999;//so they get sorted to the front
+		stub_rmsd_match_=999;//so they get sorted to the front
 		uncached_stub_rmsd_=999;
 	} else {
 		below_distance_threshold_=false;
@@ -201,18 +214,7 @@ void PossibleLoop::evaluate_distance_closure(){
 
 
 void PossibleLoop::generate_stub_rmsd(){
-	ABEGOHashedFragmentStore_ = core::indexed_structure_store::ABEGOHashedFragmentStore::get_instance();
-	std::string stub_ss = "";
-	stub_ss+=resTypeBeforeLoop_;
-	stub_ss+=resTypeBeforeLoop_;
-	for ( Size ii=1; ii<=loopLength_; ++ii ) {
-		stub_ss+='L';
-	}
-	stub_ss+=resTypeAfterLoop_;
-	stub_ss+=resTypeAfterLoop_;
-	stub_rmsd_= 9999;
-	stub_abego_= 9999;
-	stub_index_= 9999;
+	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
 	Size tmpResidueAfterLoop = resBeforeLoop_+insertedBeforeLoopRes_+insertedAfterLoopRes_-resAdjustmentAfterLoop_+1;
 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
@@ -222,58 +224,65 @@ void PossibleLoop::generate_stub_rmsd(){
 	residues.push_back(tmpResidueAfterLoop);
 	residues.push_back(tmpResidueAfterLoop+1);
 	for ( Size ii=1; ii<=residues.size(); ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, ABEGOHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
+		BOOST_FOREACH ( std::string atom_name, SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(fullLengthPoseOP_->residue(residues[ii]).xyz(atom_name));
 		}
 	}
-	ABEGOHashedFragmentStore_->lookback_stub(coordinates,stub_ss,stub_rmsd_,stub_index_,stub_abego_);
-	//std::cout << "XresBeforeLoop_" << tmpResidueBeforeLoop << " resAfterLoop_" << tmpResidueAfterLoop << " loopLength_" << loopLength_ << " currentRMSDDist" << stub_rmsd_ << std::endl;
+	stub_rmsd_match_= 9999;
+	stub_index_match_= 9999;
+	stub_ss_index_match_= 9999;
+	SSHashedFragmentStore_->lookback_stub(coordinates,resTypeBeforeLoop_,resTypeAfterLoop_,loopLength_, stub_rmsd_match_,stub_index_match_,stub_ss_index_match_);
 }
 
+
 void PossibleLoop::generate_uncached_stub_rmsd(){
-	ABEGOHashedFragmentStore_ = core::indexed_structure_store::ABEGOHashedFragmentStore::get_instance();
-	std::string full_stub_ss = "";
-	std::string short_stub_ss ="";
+	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
 	uncached_stub_rmsd_= 9999;
-	uncached_stub_abego_= 9999;
 	uncached_stub_index_= 9999;
-	//insert secondary structure:
-	full_stub_ss+=resTypeBeforeLoop_;
-	full_stub_ss+=resTypeBeforeLoop_;
-	short_stub_ss+=resTypeBeforeLoop_;
-	short_stub_ss+=resTypeBeforeLoop_;
-	for ( Size ii=1; ii<=loopLength_; ++ii ) {
-		short_stub_ss+='L';
-		full_stub_ss+='L';
-	}
-	for ( Size ii=1; ii<=9-2-loopLength_; ++ii ) {
-		full_stub_ss+=resTypeAfterLoop_;
-	}
-	short_stub_ss+=resTypeAfterLoop_;
-	short_stub_ss+=resTypeAfterLoop_;
-	//std::cout << "stub_ss" << short_stub_ss << "," << full_stub_ss << std::endl;
 	Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
 	Size tmpResidueAfterLoop = resBeforeLoop_+insertedBeforeLoopRes_+insertedAfterLoopRes_-resAdjustmentAfterLoop_+1;
 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 	vector1<Size> residues;
 	residues.push_back(tmpResidueBeforeLoop-1);
 	residues.push_back(tmpResidueBeforeLoop);
-
 	for ( Size ii=0; ii<9-2-loopLength_; ++ii ) {
 		if ( tmpResidueAfterLoop+ii < fullLengthPoseOP_->size() ) {
 			residues.push_back(tmpResidueAfterLoop+ii);
 		}
 	}
 	for ( Size ii=1; ii<=residues.size(); ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, ABEGOHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
+		BOOST_FOREACH ( std::string atom_name, SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(fullLengthPoseOP_->residue(residues[ii]).xyz(atom_name));
 		}
 	}
-	ABEGOHashedFragmentStore_->lookback_uncached_stub(coordinates,short_stub_ss,full_stub_ss,uncached_stub_rmsd_,uncached_stub_index_,uncached_stub_abego_);
-	//std::cout << "XresBeforeLoop_" << tmpResidueBeforeLoop << " resAfterLoop_" << tmpResidueAfterLoop << " loopLength_" << loopLength_ << " currentRMSDDist" << uncached_stub_rmsd_ << std::endl;
+	SSHashedFragmentStore_->lookback_uncached_stub(coordinates,stub_ss_index_match_,loopLength_,uncached_stub_rmsd_,uncached_stub_index_);
 }
 
-void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop){
+core::pose::PoseOP PossibleLoop::get_finalPoseOP(){
+	bool fullatom_original = original_atom_type_fullLengthPoseOP_->is_fullatom();
+	bool fullatom_finalPose = finalPoseOP_->is_fullatom();
+	if(!fullatom_original || (fullatom_original && fullatom_finalPose))
+		return(finalPoseOP_);
+	else{
+		core::util::switch_to_residue_type_set(*finalPoseOP_, core::chemical::FA_STANDARD);
+		//fix the residues before the loop
+		for(Size ii=1; ii<=resBeforeLoop_; ++ii)
+			finalPoseOP_->replace_residue(ii, original_atom_type_fullLengthPoseOP_->residue(ii), true );
+		//fix the residues after the loop
+		Size residue_after_loop_orig = fullLength_resBeforeLoop_+insertedBeforeLoopRes_+insertedAfterLoopRes_-resAdjustmentAfterLoop_+1;
+		//std::cout << "fullLength_resBeforeLoop_" << fullLength_resBeforeLoop_ << "," <<  insertedBeforeLoopRes_ << "," << insertedAfterLoopRes_ << "," << resAdjustmentAfterLoop_ << std::endl;
+		Size residue_to_change = finalPoseOP_->total_residue()-resAfterLoop_+1;
+		for(Size ii=0; ii<residue_to_change; ++ii){
+			Size orig_res_numb =  residue_after_loop_orig+ii;
+			Size current_res_numb = resAfterLoop_+ii;
+			finalPoseOP_->replace_residue(current_res_numb, original_atom_type_fullLengthPoseOP_->residue(orig_res_numb), true );
+		}
+		return(finalPoseOP_);
+	}
+
+}
+
+void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real rms_threshold,std::string closure_type){
 	using namespace core::chemical;
 	//step 1 : generate trim pose.
 	//Size tmpResidueBeforeLoop = resBeforeLoop_+resAdjustmentBeforeLoop_;
@@ -297,64 +306,105 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop){
 	if ( !output_closed ) {
 		finalPoseOP_=working_poseOP;
 	} else {
-		//Step 2 : Add loop residues
-		extendRegion(true, resBeforeLoop_, loopLength_,working_poseOP);
-		resAfterLoop_=resAfterLoop_+loopLength_;
-		//Step 3 : Generate coordinate constraints
-		working_poseOP->remove_constraints();
-		add_coordinate_csts_from_lookback(uncached_stub_abego_,uncached_stub_index_,resBeforeLoop_-1,true,working_poseOP);
-		add_dihedral_csts_from_lookback(uncached_stub_abego_,uncached_stub_index_,working_poseOP);
-		//Step 3 : Generate score function
-		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
-		scorefxn->set_weight(core::scoring::coordinate_constraint, 0.7);
-		scorefxn->set_weight(core::scoring::dihedral_constraint, 20.0 );
-		scorefxn->set_weight(core::scoring::rama,1.0);
-		scorefxn->set_weight(core::scoring::cart_bonded, 1.0 );
-		scorefxn->set_weight(core::scoring::cart_bonded_length,0.2);
-		scorefxn->set_weight(core::scoring::cart_bonded_angle,0.5);
-		scorefxn->set_weight(core::scoring::vdw, 2 );
-		//step 3: assign_phi_psi
-
-		assign_phi_psi_omega(uncached_stub_abego_,uncached_stub_index_,ideal_loop, working_poseOP);
-		//step 4: initial minimize
-		minimize_loop(scorefxn,ideal_loop,working_poseOP);
-		//debug code--------
-		/*core::sequence::ABEGOManager AM;
-		std::string fragment_abego = AM.base5index2symbolString(uncached_stub_abego_,9);
-		std::cout << "goal abego:" << fragment_abego << std::endl;
-		for(Size ii=resBeforeLoop_; ii<=resAfterLoop_; ++ii){
-		std::cout << ii << ":After_min_phi,psi,omega" << working_poseOP->phi(ii) << "," << working_poseOP->psi(ii) <<"," << working_poseOP->omega(ii) << std::endl;
-		}*/
-		//---------------------
-		vector1<Size> resids;
-		resids.push_back(resBeforeLoop_-1);
-		resids.push_back(resBeforeLoop_+1);
-		resids.push_back(resBeforeLoop_+2);
-		Real rmsd = rmsd_lookback(resids, *working_poseOP);
-		final_rmsd_ = rmsd;
-		finalPoseOP_=working_poseOP;
-		//Step 5: Kic to initially close loops if ideal
-		if ( ideal_loop ) {
-			core::sequence::ABEGOManager AM;
-			std::string fragment_abego = AM.base5index2symbolString(uncached_stub_abego_,9);
-			bool success = kic_closure(scorefxn,working_poseOP,fragment_abego);
-			rmsd = rmsd_lookback(resids, *working_poseOP);
-			if ( success ) {
+		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+		Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+		if(closure_type == "kic"){
+			core::scoring::ScoreFunctionOP scorefxn_tmp( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
+			extendRegion(true, resBeforeLoop_, loopLength_,working_poseOP);
+			resAfterLoop_=resAfterLoop_+loopLength_;
+			bool success = kic_closure(scorefxn_tmp,working_poseOP,resBeforeLoop_,resAfterLoop_,200);
+			vector1<Size> resids;
+			for(int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2){
+				Size tmp_resid = get_valid_resid(ii,*working_poseOP);
+				resids.push_back(tmp_resid);
+			}
+			Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
+			if ( success ){
 				final_rmsd_=rmsd;
 				finalPoseOP_=working_poseOP;
-			} else {
-				final_rmsd_ = 999;
+			}
+		}
+		if(closure_type == "lookback"){
+			//Step 2 : Add loop residues
+			extendRegion(true, resBeforeLoop_, loopLength_,working_poseOP);
+			resAfterLoop_=resAfterLoop_+loopLength_;
+			//Step 3 : Generate coordinate constraints
+			working_poseOP->remove_constraints();
+			add_coordinate_csts_from_lookback(stub_ss_index_match_,uncached_stub_index_,resBeforeLoop_-1,true,working_poseOP);
+			add_dihedral_csts_from_lookback(stub_ss_index_match_,uncached_stub_index_,resBeforeLoop_-1,working_poseOP);
+			//Step 3 : Generate score function
+			core::scoring::ScoreFunctionOP scorefxn_tmp( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
+			core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
+			scorefxn->set_weight(core::scoring::coordinate_constraint, 0.7);
+			scorefxn->set_weight(core::scoring::dihedral_constraint, 20.0 );
+			scorefxn->set_weight(core::scoring::rama,1.0);
+			scorefxn->set_weight(core::scoring::cart_bonded, 1.0 );
+			scorefxn->set_weight(core::scoring::cart_bonded_length,0.2);
+			scorefxn->set_weight(core::scoring::cart_bonded_angle,0.5);
+			scorefxn->set_weight(core::scoring::vdw, 2 );
+			//step 3: assign_phi_psi
+			assign_phi_psi_omega_from_lookback(stub_ss_index_match_,uncached_stub_index_, working_poseOP);
+			//step 4: initial minimize
+			minimize_loop(scorefxn,ideal_loop,working_poseOP);
+			//Get rmsd
+			vector1<Size> resids;
+			for(int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2){
+				Size tmp_resid = get_valid_resid(ii,*working_poseOP);
+				resids.push_back(tmp_resid);
+			}
+			Real current_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
+			//step 5: iterative minimize over multiple lookbacks
+			core::sequence::SSManager SM;
+			std::string fragStore_ss_string = SM.index2symbolString(stub_ss_index_match_,fragment_length);
+			core::scoring::dssp::Dssp frag_dssp( *working_poseOP);
+			frag_dssp.dssp_reduced();
+			std::string tmp_dssp = frag_dssp.get_dssp_secstruct();
+			std::string desired_dssp = tmp_dssp.substr(0,resBeforeLoop_-1-1)+fragStore_ss_string+tmp_dssp.substr(resBeforeLoop_+fragment_length-1-1,tmp_dssp.length());
+			Real match_rmsd;
+			Size match_index;
+			Size match_ss_index;
+			scorefxn->set_weight(core::scoring::coordinate_constraint, 0.4);
+			//iterate---
+			for(Size jj=1; jj<=2 && current_rmsd<rms_threshold+0.5; ++jj){//The 0.5 RMSD is arbitrary.
+				working_poseOP->remove_constraints();
+				for(Size ii=1; ii<=resids.size(); ++ii){
+					std::string frag_ss = desired_dssp.substr(resids[ii]-1,9);
+					Real tmp_rmsd = SSHashedFragmentStore_->lookback_account_for_dssp_inaccuracy(*working_poseOP,resids[ii],frag_ss,match_rmsd,match_index,match_ss_index);
+					if(tmp_rmsd < rms_threshold+0.5){
+						add_coordinate_csts_from_lookback(match_ss_index,match_index,resids[ii],false,working_poseOP);
+					}
+				}
+				minimize_loop(scorefxn,ideal_loop,working_poseOP);
+				current_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
+				//std::cout << "rd" << jj << " rmsd" << current_rmsd << std::endl;
+			}
+			final_rmsd_= current_rmsd;
+			finalPoseOP_=working_poseOP;
+			//Step 5: Kic to initially close loops if ideal
+			if ( ideal_loop ) {
+				//uses kic to close the last couple residues in the loop
+				Size res_from_end_of_loop=3;
+				Size firstLoopRes= resAfterLoop_-res_from_end_of_loop;
+				Size lastLoopRes=resAfterLoop_;
+				bool success = kic_closure(scorefxn,working_poseOP,firstLoopRes,lastLoopRes,10);
+				Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
+				if ( success ) {
+					final_rmsd_=rmsd;
+				 	finalPoseOP_=working_poseOP;
+				 }
+				 else {
+				 	final_rmsd_ = 999;
+				}
 			}
 		}
 	}
 }
 
 
-void PossibleLoop::assign_phi_psi_omega(Size base5index, Size index, bool ideal_loop, core::pose::PoseOP & poseOP){
-	//Haven't been able to get this to work. Should be able to set Phi/psi
-	vector<Real> phi_v = ABEGOHashedFragmentStore_->get_fragment_store(base5index)->realVector_groups["phi"][index];
-	vector<Real> psi_v = ABEGOHashedFragmentStore_->get_fragment_store(base5index)->realVector_groups["psi"][index];
-	vector<Real> omega_v = ABEGOHashedFragmentStore_->get_fragment_store(base5index)->realVector_groups["omega"][index];
+void PossibleLoop::assign_phi_psi_omega_from_lookback(Size db_index, Size fragment_index, core::pose::PoseOP & poseOP){
+	vector<Real> phi_v = SSHashedFragmentStore_->get_fragment_store(db_index)->realVector_groups["phi"][fragment_index];
+	vector<Real> psi_v = SSHashedFragmentStore_->get_fragment_store(db_index)->realVector_groups["psi"][fragment_index];
+	vector<Real> omega_v = SSHashedFragmentStore_->get_fragment_store(db_index)->realVector_groups["omega"][fragment_index];
 	//to keep the structure ideal I don't assign omega
 	kinematics::FoldTree ft;
 	ft = poseOP->fold_tree();
@@ -363,16 +413,10 @@ void PossibleLoop::assign_phi_psi_omega(Size base5index, Size index, bool ideal_
 	ft.add_edge(1,poseOP->size(),1); //edges need to be added in order so the fold tree is completely connected.
 	ft.add_edge(poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
-	//poseOP->set_psi(resBeforeLoop_,psi_v[1]);
-	//poseOP->set_omega(resBeforeLoop_,omega_v[1]);
 	for ( Size ii=0; ii<loopLength_+2; ++ii ) {//set phi psi for residues after loop
 		poseOP->set_phi(resBeforeLoop_+ii,phi_v[ii+1]);
 		poseOP->set_psi(resBeforeLoop_+ii,psi_v[ii+1]);
-		if ( !ideal_loop ) {
-			poseOP->set_omega(resBeforeLoop_+ii,omega_v[ii+1]);
-		} else {
-			poseOP->set_omega(resBeforeLoop_+ii,180);
-		}
+		poseOP->set_omega(resBeforeLoop_+ii,omega_v[ii+1]);
 	}
 }
 
@@ -420,7 +464,9 @@ void PossibleLoop::output_fragment_debug(std::vector< numeric::xyzVector<numeric
 	out.close();
 }
 
-void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size fragment_index, Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP){
+
+
+void PossibleLoop::add_coordinate_csts_from_lookback(Size stub_ss_index_match, Size fragment_index, Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
@@ -428,7 +474,7 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 	using namespace chemical;
 	using namespace protocols::generalized_kinematic_closure;
 	typedef numeric::xyzMatrix< Real >  Matrix;
-	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates = ABEGOHashedFragmentStore_->get_fragment_coordinates(base5Abego_index,fragment_index);
+	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates = SSHashedFragmentStore_->get_fragment_coordinates(stub_ss_index_match,fragment_index);
 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates_rot;
 	if ( !match_stub_alone ) {
 		//full length fragment
@@ -552,121 +598,53 @@ void PossibleLoop::add_coordinate_csts_from_lookback(Size base5Abego_index, Size
 	poseOP->add_constraints( csts );
 }
 
-void PossibleLoop::add_dihedral_csts_from_lookback(Size base5Abego_index,Size fragment_index,core::pose::PoseOP & poseOP){
+void PossibleLoop::add_dihedral_csts_from_lookback(Size stub_ss_index_match,Size fragment_index,Size pose_residue, core::pose::PoseOP & poseOP){
 	using namespace core::scoring::func;
 	using numeric::conversions::radians;
 	using namespace core::scoring::constraints;
 	using namespace core::id;
-	vector<Real> phi_v = ABEGOHashedFragmentStore_->get_fragment_store(base5Abego_index)->realVector_groups["phi"][fragment_index];
-	vector<Real> psi_v = ABEGOHashedFragmentStore_->get_fragment_store(base5Abego_index)->realVector_groups["psi"][fragment_index];
-	vector<Real> omega_v = ABEGOHashedFragmentStore_->get_fragment_store(base5Abego_index)->realVector_groups["omega"][fragment_index];
-	core::Real phi_sd_deg = 10;
-	core::Real psi_sd_deg = 30;
-	core::Real omega_sd_deg=10;
+	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+	vector<Real> phi_v = SSHashedFragmentStore_->get_fragment_store(stub_ss_index_match)->realVector_groups["phi"][fragment_index];
+	vector<Real> psi_v = SSHashedFragmentStore_->get_fragment_store(stub_ss_index_match)->realVector_groups["psi"][fragment_index];
+	vector<Real> omega_v = SSHashedFragmentStore_->get_fragment_store(stub_ss_index_match)->realVector_groups["omega"][fragment_index];
+	core::Real phi_sd_deg = 30; //40
+	core::Real psi_sd_deg = 30; //40
+	core::Real omega_sd_deg=10; //10
 	core::Real phi_sd_rad = numeric::conversions::radians(phi_sd_deg);
 	core::Real psi_sd_rad = numeric::conversions::radians(psi_sd_deg);
 	core::Real omega_sd_rad = numeric::conversions::radians(omega_sd_deg);
-	for ( Size ii=resBeforeLoop_-1; ii<=resAfterLoop_+1; ++ii ) {
+	for ( Size ii=pose_residue; ii<pose_residue+fragment_length; ++ii ) {
 		AtomID c_0(poseOP->residue(ii-1).atom_index( "C" ),ii-1);
 		AtomID n_1(poseOP->residue( ii ).atom_index( "N" ),ii);
 		AtomID ca_1( poseOP->residue( ii ).atom_index( "CA" ),ii);
 		AtomID c_1( poseOP->residue(ii).atom_index( "C" ), ii );
 		AtomID n_2( poseOP->residue(ii+1).atom_index( "N" ),ii+1);
 		AtomID ca_2( poseOP->residue(ii+1).atom_index( "CA" ),ii+1);
-		//phi---
-		Real phi_radians = radians(phi_v[ii-resBeforeLoop_+1]);
+		// std::cout << "phi" << ii << "phi_v[ii-resBeforeLoop_+1]" << phi_v[ii-resBeforeLoop_+1] << std::endl;
+		// std::cout << "psi" << ii << "psi_v[ii-resBeforeLoop_+1]" << psi_v[ii-resBeforeLoop_+1] << std::endl;
+		// std::cout << "omega" << ii << "omega_v[ii-resBeforeLoop_+1]" << omega_v[ii-resBeforeLoop_+1] << std::endl;
+		Real phi_radians = radians(phi_v[ii-pose_residue]);
 		//std::cout << "phi" << phi_v[ii-resBeforeLoop_+1]  <<"," << phi_radians << std::endl;
 		CircularHarmonicFuncOP phi_func(new CircularHarmonicFunc( phi_radians, phi_sd_rad ) );
 		ConstraintOP phi_cst( new DihedralConstraint(
 			c_0,n_1,ca_1,c_1, phi_func ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( phi_cst ) );
 		//psi-----
-		Real psi_radians = radians(psi_v[ii-resBeforeLoop_+1]);
+		Real psi_radians = radians(psi_v[ii-pose_residue]);
 		//std::cout << "psi" << psi_v[ii-resBeforeLoop_+1]  <<"," << psi_radians << std::endl;
 		CircularHarmonicFuncOP psi_func(new CircularHarmonicFunc( psi_radians, psi_sd_rad) );
 		ConstraintOP psi_cst( new DihedralConstraint(n_1,ca_1,c_1,n_2, psi_func  ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( psi_cst ) );
 		//omega-----
-		Real omega_radians = radians(omega_v[ii-resBeforeLoop_+1]);
+		Real omega_radians = radians(omega_v[ii-pose_residue]);
 		//std::cout << "omega" << omega_v[ii-resBeforeLoop_+1]  <<"," << omega_radians << std::endl;
 		CircularHarmonicFuncOP omega_func(new CircularHarmonicFunc( omega_radians, omega_sd_rad) );
 		ConstraintOP omega_cst( new DihedralConstraint(ca_1,c_1,n_2,ca_2, omega_func ) );
 		poseOP->add_constraint( scoring::constraints::ConstraintCOP( omega_cst ) );
 	}
+
 }
 
-// void PossibleLoop::add_ideal_dihedral_csts_from_lookback(Size base5Abego_index,core::pose::PoseOP & poseOP){
-//  using namespace core::scoring::func;
-//  using numeric::conversions::radians;
-//  using namespace core::scoring::constraints;
-//  using namespace core::id;
-//  core::sequence::ABEGOManager AM;
-//  std::string fragment_abego = AM.base5index2symbolString(uncached_stub_abego_,9);
-//  vector<Real> phi_v;
-//  vector<Real> psi_v;
-//  vector<Real> omega_v;
-//  for(Size ii=0; ii<fragment_abego.size(); ++ii){
-//   std::string res_abego = fragment_abego.substr(ii,1);
-//   if(res_abego == "A"){
-//    phi_v.push_back(-57.8); //from ideal helix parameters
-//    psi_v.push_back(-47.0);
-//    omega_v.push_back(180);
-//   }
-//   if(res_abego == "B"){
-//    phi_v.push_back(-90); // From : http://www.proteinstructures.com/Structure/Structure/Ramachandran-plot.html
-//    psi_v.push_back(150);
-//    omega_v.push_back(180);
-//   }
-//   if(res_abego == "E"){
-//    phi_v.push_back(80); //From: estimated from Nobu and Rei's PNAS paper
-//    psi_v.push_back(-160);
-//    omega_v.push_back(180);
-//   }
-//   if(res_abego == "G"){
-//    phi_v.push_back(80); //From: estimated from Nobu and Rei's PNAS paper
-//    psi_v.push_back(45);
-//    omega_v.push_back(180);
-//   }
-//   if(res_abego == "O"){//Probably won't work. But taken from type A. Here: http://www.cryst.bbk.ac.uk/PPS2/projects/pauly/proline/struc.html
-//    phi_v.push_back(-60);
-//    psi_v.push_back(-30);
-//    omega_v.push_back(0);
-//   }
-//  }
-//  core::Real phi_sd_deg = 10;
-//  core::Real psi_sd_deg = 30;
-//  core::Real omega_sd_deg=10;
-//  core::Real phi_sd_rad = numeric::conversions::radians(phi_sd_deg);
-//  core::Real psi_sd_rad = numeric::conversions::radians(psi_sd_deg);
-//  core::Real omega_sd_rad = numeric::conversions::radians(omega_sd_deg);
-//  for(Size ii=resBeforeLoop_-1; ii<=resAfterLoop_+1; ++ii){
-//   AtomID c_0(poseOP->residue(ii-1).atom_index( "C" ),ii-1);
-//   AtomID n_1(poseOP->residue( ii ).atom_index( "N" ),ii);
-//   AtomID ca_1( poseOP->residue( ii ).atom_index( "CA" ),ii);
-//   AtomID c_1( poseOP->residue(ii).atom_index( "C" ), ii );
-//   AtomID n_2( poseOP->residue(ii+1).atom_index( "N" ),ii+1);
-//   AtomID ca_2( poseOP->residue(ii+1).atom_index( "CA" ),ii+1);
-//   //phi---
-//   Real phi_radians = radians(phi_v[ii-resBeforeLoop_+1]);
-//   //std::cout << "phi" << phi_v[ii-resBeforeLoop_+1]  <<"," << phi_radians << std::endl;
-//   CircularHarmonicFuncOP phi_func(new CircularHarmonicFunc( phi_radians, phi_sd_rad ) );
-//   ConstraintOP phi_cst( new DihedralConstraint(
-//    c_0,n_1,ca_1,c_1, phi_func ) );
-//   poseOP->add_constraint( scoring::constraints::ConstraintCOP( phi_cst ) );
-//   //psi-----
-//   Real psi_radians = radians(psi_v[ii-resBeforeLoop_+1]);
-//   //std::cout << "psi" << psi_v[ii-resBeforeLoop_+1]  <<"," << psi_radians << std::endl;
-//   CircularHarmonicFuncOP psi_func(new CircularHarmonicFunc( psi_radians, psi_sd_rad) );
-//   ConstraintOP psi_cst( new DihedralConstraint(n_1,ca_1,c_1,n_2, psi_func  ) );
-//   poseOP->add_constraint( scoring::constraints::ConstraintCOP( psi_cst ) );
-//   //omega-----
-//   Real omega_radians = radians(omega_v[ii-resBeforeLoop_+1]);
-//   //std::cout << "omega" << omega_v[ii-resBeforeLoop_+1]  <<"," << omega_radians << std::endl;
-//   CircularHarmonicFuncOP omega_func(new CircularHarmonicFunc( omega_radians, omega_sd_rad) );
-//   ConstraintOP omega_cst( new DihedralConstraint(ca_1,c_1,n_2,ca_2, omega_func ) );
-//   poseOP->add_constraint( scoring::constraints::ConstraintCOP( omega_cst ) );
-//  }
-// }
 
 Size PossibleLoop::get_valid_resid(int resid,core::pose::Pose const pose){
 	if ( resid<1 ) {
@@ -694,15 +672,13 @@ std::vector< numeric::xyzVector<numeric::Real> > PossibleLoop::get_coordinates_f
 	return(coordinates);
 }
 
-Real PossibleLoop::get_vdw_change(core::pose::PoseOP poseOP){
-	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-	scorefxn->set_weight( core::scoring::vdw, 1.0 );
-	Real loop_vdw_score = scorefxn->score(*poseOP);
-	Real orig_vdw_score = scorefxn->score(originalPose_);
-	return(loop_vdw_score-orig_vdw_score);
-}
-
-
+// Real PossibleLoop::get_vdw_change(core::pose::PoseOP poseOP){
+// 	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+// 	scorefxn->set_weight( core::scoring::vdw, 1.0 );
+// 	Real loop_vdw_score = scorefxn->score(*poseOP);
+// 	Real orig_vdw_score = scorefxn->score(*original_poseOP_);
+// 	return(loop_vdw_score-orig_vdw_score);
+// }
 
 
 
@@ -716,19 +692,11 @@ Real PossibleLoop::rmsd_between_coordinates(std::vector< numeric::xyzVector<nume
 }
 
 //closes the loop robustly. However, the phi/psi omega fall into the wrong abego types.
-bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pose::PoseOP & poseOP,std::string fragment_abego){
+bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pose::PoseOP & poseOP,Size firstLoopRes, Size lastLoopRes,Size numb_kic_cycles){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace chemical;
 	using namespace protocols::generalized_kinematic_closure;
-	string abegoBefore = "A";
-	string abegoAfter = "A";
-	if ( resTypeBeforeLoop_ == 'E' ) {
-		abegoBefore = "B";
-	}
-	if ( resTypeAfterLoop_ == 'E' ) {
-		abegoAfter = "B";
-	}
 	GeneralizedKICOP genKIC(new GeneralizedKIC());
 	kinematics::FoldTree ft;
 	ft = poseOP->fold_tree();
@@ -738,18 +706,7 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	ft.add_edge(poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
 	genKIC->add_filter( "loop_bump_check" );
-	Size res_from_end_of_loop=3;
-	Size firstLoopRes= resAfterLoop_-res_from_end_of_loop;
-	Size lastLoopRes=resAfterLoop_;
 	//hold first res to the correct ABEGO
-	for ( Size ii=0; ii<4; ++ii ) {
-		Size abego_res_id = 2+loopLength_-res_from_end_of_loop+ii;
-		std::string res_abego = fragment_abego.substr(abego_res_id,1);
-		genKIC->add_filter( "backbone_bin" );
-		genKIC->set_filter_resnum(firstLoopRes+ii);
-		genKIC->load_filter_bin_params("ABEGO");
-		genKIC->set_filter_bin(res_abego);
-	}
 	scorefxn->score(*poseOP);
 	for ( core::Size ii=firstLoopRes; ii<=lastLoopRes; ii++ ) {
 		genKIC->add_loop_residue( ii );
@@ -766,10 +723,10 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	genKIC->add_value_to_perturber_value_list(180.0);
 	Size midLoop = ((lastLoopRes-firstLoopRes)/2)+firstLoopRes;
 	genKIC->set_pivot_atoms( firstLoopRes, "CA", midLoop, "CA" , lastLoopRes, "CA" );
-	genKIC->set_closure_attempts(500);
+	genKIC->set_closure_attempts(numb_kic_cycles);
 	genKIC->set_selector_type("lowest_energy_selector");
 	genKIC->set_selector_scorefunction(scorefxn);
-	genKIC->close_bond(lastLoopRes-1,"C",lastLoopRes,"N",lastLoopRes-1,"CA",lastLoopRes,"CA",1.32/*bondlength*/,123/*bondangle1*/,114/*bondagle2*/,180/*torsion*/,false,false);
+	genKIC->close_bond(lastLoopRes-1,"C",lastLoopRes,"N",lastLoopRes-1,"CA",lastLoopRes,"CA",1.32829/*bondlength*/,116.2/*bondangle1*/,121.7/*bondagle2*/,180/*torsion*/,false,false);
 	poseOP->conformation().reset_chain_endings();
 	genKIC->apply(*poseOP);
 	bool kicSuccess = genKIC->last_run_successful();
@@ -785,13 +742,9 @@ bool PossibleLoop::kic_closure(core::scoring::ScoreFunctionOP scorefxn,core::pos
 	return false;
 }
 
+
 void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool ideal_loop,core::pose::PoseOP & poseOP){
 	using namespace core::optimization;
-	//MinimizerOptions min_options("linmin", 0.01, true, false, false );
-	//MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
-	MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
-	AtomTreeMinimizer minimizer;
-	core::kinematics::MoveMap mm;
 	kinematics::FoldTree ft;
 	ft = poseOP->fold_tree();
 	ft.clear();
@@ -801,40 +754,28 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 	poseOP->fold_tree(ft);
 	Size firstLoopRes=resBeforeLoop_;
 	Size lastLoopRes=resAfterLoop_;
+	core::kinematics::MoveMap mm;
 	mm.set_bb  ( false );
 	mm.set_chi ( false );
 	mm.set_jump( false );
 	mm.set_bb_true_range(firstLoopRes,lastLoopRes);
-	if ( ideal_loop ) {
-		for ( Size ii=firstLoopRes; ii<lastLoopRes-1; ++ii ) {//Don't allow omega to move if loop ideal
-			mm.set(core::id::TorsionID( ii, core::id::BB, core::id::omega_torsion), false );
-		}
+	if(ideal_loop){
+		MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+		AtomTreeMinimizer minimizer;
+		minimizer.run( *poseOP, mm,*scorefxn, min_options );
+		//std::cout << "after atom tree minimize" << std::endl;
+		//scorefxn->show(std::cout,*poseOP);
+	}else{//use cartesian minimization if it's ok.
+		MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+		CartesianMinimizer minimizer;
+		minimizer.run( *poseOP, mm,*scorefxn, min_options );
+		//std::cout << "after atom tree minimize" << std::endl;
+		//scorefxn->show(std::cout,*poseOP);
 	}
-	//std::cout << "before minimize" << std::endl;
-	//scorefxn->show(std::cout,*poseOP);
-	minimizer.run( *poseOP, mm,*scorefxn, min_options );
-	//std::cout << "after minimize" << std::endl;
-	//scorefxn->show(std::cout,*poseOP);
-	//-----------close fold tree ----------------
 	ft = poseOP->fold_tree();
 	ft.clear();
 	ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 	poseOP->fold_tree(ft);
-}
-
-
-Real PossibleLoop::rmsd_lookback(vector1<Size> resids, core::pose::Pose const pose){
-	Real rmsLookbackScore = 0;
-	string topABEGO;
-	for ( Size ii=1; ii<=resids.size(); ++ii ) {
-		Size validResid = get_valid_resid(resids[ii],pose);
-		set<Size> resToTryAllABEGO;
-		Real tmpRMSLookbackScore = ABEGOHashedFragmentStore_->lookback(pose,validResid);
-		if ( tmpRMSLookbackScore>rmsLookbackScore ) {
-			rmsLookbackScore=tmpRMSLookbackScore;
-		}
-	}
-	return(rmsLookbackScore);
 }
 
 
@@ -858,7 +799,7 @@ NearNativeLoopCloserCreator::create_mover() const {
 
 
 NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
-	char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed){
+	char chainBeforeLoop, char chainAfterLoop,Real rmsThreshold, Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed,std::string closure_type){
 	resAdjustmentStartLow_=resAdjustmentStartLow;
 	resAdjustmentStartHigh_=resAdjustmentStartHigh;
 	resAdjustmentStopLow_=resAdjustmentStopLow;
@@ -880,18 +821,29 @@ NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdju
 	output_all_=false;
 	top_outputed_ = false;
 	max_vdw_change_ = max_vdw_change;
+	closure_type_ = closure_type;
+	TR << "native loop closer init"<< resAdjustmentStartLow_ << "," << resAdjustmentStartHigh_ <<"," << resAdjustmentStopLow_ <<"," << resAdjustmentStopHigh_ << "," << loopLengthRangeLow_ << "," << loopLengthRangeHigh_ << std::endl;
+	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
+	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 }
 
 std::string NearNativeLoopCloser::get_name() const {
 	return "NearNativeLoopCloser";
 }
 
-void NearNativeLoopCloser::apply(core::pose::Pose & pose) {
+Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	//time_t start_time = time(NULL);
-	core::pose::PoseOP orig_poseOP = pose.clone();
-	if ( pose.is_fullatom() ) {
-		utility_exit_with_message("***Loop closure only operates on centroid structures***");
+	//get name of pose for multi-pose mover-------------------
+	pose_name_ = "No_Name_Found";
+	if ( pose.pdb_info() && ( pose.pdb_info()->name() != "" ) ) {
+		pose_name_ = pose.pdb_info()->name();
+	} else if ( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
+		pose_name_ = static_cast< basic::datacache::CacheableString const & >( pose.data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
+	} else {
+		pose_name_ = jd2::JobDistributor::get_instance()->current_job()->input_tag();
 	}
+	//do actual closer
 	//-------deal with multiple chains-for easier indexing-----------
 	if ( chainBeforeLoop_!=chainAfterLoop_ ) { //connecting chains
 		combine_chains(pose);
@@ -913,7 +865,12 @@ void NearNativeLoopCloser::apply(core::pose::Pose & pose) {
 				}
 			}
 			std::string new_chain_order=int_to_string.str();
-			core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
+			core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
+			if(pose.is_fullatom()){
+				scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
+
+			}
+			core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
 			simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
 			switch_chains->scorefxn(scorefxn);
 			switch_chains->chain_order(new_chain_order);
@@ -924,39 +881,60 @@ void NearNativeLoopCloser::apply(core::pose::Pose & pose) {
 	possibleLoops_ = create_potential_loops(pose);
 	if ( !output_closed_ ) {
 		for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
-			possibleLoops_[ii]->generate_output_pose(false,ideal_);
+			possibleLoops_[ii]->generate_output_pose(false,ideal_,rmsThreshold_,closure_type_);
 		}
 	} else {
-		//-------check CA-CA distance viability of loop-----------
-		for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
-			possibleLoops_[ii]->evaluate_distance_closure();
-			if ( possibleLoops_[ii]->get_below_distance_threshold() && output_closed_ ) {
-				possibleLoops_[ii]->generate_stub_rmsd();
-				if ( possibleLoops_[ii]->get_stubRMSD()<rmsThreshold_+ 0.10 ) {
-					possibleLoops_[ii]->generate_uncached_stub_rmsd();
-				}
-
+		if(closure_type_ == "kic"){
+			for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
+				possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,closure_type_);
 			}
 		}
-		//-------sort loops by stub rmsd-----------
-		std::sort(possibleLoops_.begin(), possibleLoops_.end(), StubRMSDComparator());
-		//-------get final output------------
-		for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
-			if ( possibleLoops_[ii]->get_uncached_stubRMSD() <rmsThreshold_+0.20 ) {
-				possibleLoops_[ii]->generate_output_pose(true,ideal_);
+		if(closure_type_ == "lookback"){
+			//-------check CA-CA distance viability of loop-----------
+			for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
+				possibleLoops_[ii]->evaluate_distance_closure();
+				if ( possibleLoops_[ii]->get_below_distance_threshold() && output_closed_ ) {
+					possibleLoops_[ii]->generate_stub_rmsd();
+					if ( possibleLoops_[ii]->get_stubRMSD()<rmsThreshold_+ 0.10 ) {
+						possibleLoops_[ii]->generate_uncached_stub_rmsd();
+					}
+				}
 			}
+			//-------sort loops by stub rmsd-----------
+			std::sort(possibleLoops_.begin(), possibleLoops_.end(), StubRMSDComparator());
+			//-------get final output------------
+			for ( Size ii=1; ii<=possibleLoops_.size(); ++ii ) {
+				if ( possibleLoops_[ii]->get_uncached_stubRMSD() <rmsThreshold_+0.20 ) {
+					possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,closure_type_);
+				}
+			}
+			//debug code--------------------
+			// for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
+			// 	//std::cout <<"rmsds" << ii << "," <<  possibleLoops_[ii]->get_stubRMSD() << "," << possibleLoops_[ii]->get_uncached_stubRMSD() <<  "," << possibleLoops_[ii]->get_final_RMSD() << std::endl;
+			// 	//std::cout << possibleLoops_[ii]->get_description();
+			// 	if( possibleLoops_[ii]->get_uncached_stubRMSD() < 0.4){
+			// 		std::stringstream numbConvert;
+			// 		numbConvert << "bust_" << ii << ".pdb";
+			// 		std::string tmp_pdb_name= numbConvert.str();
+			// 		possibleLoops_[ii]->get_finalPoseOP()->dump_pdb(tmp_pdb_name);
+			// 	}
+			// }
+			//
 		}
 	}
-	core::pose::PoseOP tmpPoseOP=get_additional_output();
-	if ( tmpPoseOP==nullptr ) {
-		pose=*orig_poseOP;
-	} else {
+	Real return_rmsd;
+	core::pose::PoseOP tmpPoseOP=get_additional_output_with_rmsd(return_rmsd);
+	if ( tmpPoseOP!=NULL ) {
 		pose=*tmpPoseOP;
 	}
+	return(return_rmsd);
 	//time_t end_time = time(NULL);
 	//std::cout << "total_time" << end_time-start_time << std::endl;
 }
 
+void NearNativeLoopCloser::apply(core::pose::Pose & pose) {
+	close_loop(pose);
+}
 
 void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 	if ( !(has_chain(chainBeforeLoop_,pose) && has_chain(chainAfterLoop_,pose)) ) {
@@ -990,7 +968,11 @@ void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 	}
 	std::string new_chain_order=int_to_string.str();
 	simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
+	core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
+	if(pose.is_fullatom()){
+		scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
+	}
+	core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
 	switch_chains->scorefxn(scorefxn);
 	switch_chains->chain_order(new_chain_order);
 	switch_chains->apply(pose);
@@ -1067,6 +1049,11 @@ core::pose::PoseOP NearNativeLoopCloser::create_maximum_length_pose(char resType
 		ft.add_edge(full_length_poseOP->size(),resAfterLoop_,core::kinematics::Edge::PEPTIDE);
 		full_length_poseOP->fold_tree(ft);
 		full_length_poseOP->conformation().delete_residue_range_slow(resBeforeLoop_+1,resAfterLoop_-1);
+		//repair fold tree
+		ft = full_length_poseOP->fold_tree();
+		ft.clear();
+		ft.add_edge(1,full_length_poseOP->total_residue(),core::kinematics::Edge::PEPTIDE);
+		full_length_poseOP->fold_tree(ft);
 		renumber_pdbinfo_based_on_conf_chains(*full_length_poseOP,true,false,false,false);
 		resAfterLoop_ = resBeforeLoop_+1;
 	}
@@ -1112,10 +1099,13 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		resAdjustmentStartHigh_=high_start; //So they are extended an equal length. This value applies to both sheet and helices. Kinda confusing I know.
 		resAdjustmentStopHigh_=high_start;
 		core::pose::PoseOP max_length_poseOP = create_maximum_length_pose(resTypeBeforeLoop,resTypeAfterLoop,pose);
+		core::pose::PoseOP orig_atom_type_max_length_poseOP = max_length_poseOP->clone();
+		if(max_length_poseOP->is_fullatom())
+			core::util::switch_to_residue_type_set(*max_length_poseOP, core::chemical::CENTROID);
 		for ( int ii=low_start; ii<=high_start; ++ii ) {
 			for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
-				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->size()-3) ) { //ensures at least a 3 residue SS element next to loop
-					PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,ii,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,pose));
+				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) { //ensures at least a 3 residue SS element next to loop
+					PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,ii,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP));
 					possibleLoops.push_back(tmpLoopOP);
 				}
 			}
@@ -1124,19 +1114,23 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		if ( resTypeBeforeLoop=='E' ) {
 			TR << "WARNING:: Not extending 1 side of sheet and only eating in 1 residue" <<std::endl;
 			resAdjustmentStartHigh_=0;
-			resAdjustmentStartLow_=-1;
+			resAdjustmentStartLow_=resAdjustmentStopLow_sheet_;
 		}
 		if ( resTypeAfterLoop=='E' ) {
 			TR << "WARNING: Not extending 1 side of sheet and only eating in 1 residue" << std::endl;
 			resAdjustmentStopHigh_=0;
-			resAdjustmentStopLow_=-1;
+			resAdjustmentStopLow_=resAdjustmentStopHigh_sheet_;
 		}
 		core::pose::PoseOP max_length_poseOP = create_maximum_length_pose(resTypeBeforeLoop,resTypeAfterLoop,pose);
+		core::pose::PoseOP orig_atom_type_max_length_poseOP = max_length_poseOP->clone();
+		if(max_length_poseOP->is_fullatom()){
+			core::util::switch_to_residue_type_set(*max_length_poseOP, core::chemical::CENTROID);
+		}
 		for ( int ii=resAdjustmentStartLow_; ii<=resAdjustmentStartHigh_; ++ii ) {
 			for ( int jj=resAdjustmentStopLow_; jj<=resAdjustmentStopHigh_; ++jj ) {
 				for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
-					if ( (ii+resBeforeLoop_>=3)&&(jj+resAfterLoop_<=max_length_poseOP->size()-3) ) {
-						PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,jj,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,pose));
+					if ( (ii+resBeforeLoop_>=3)&&(jj+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) {
+						PossibleLoopOP tmpLoopOP=PossibleLoopOP(new PossibleLoop(ii,jj,kk,resBeforeLoop_,resAfterLoop_,resTypeBeforeLoop,resTypeAfterLoop,resAdjustmentStartHigh_,resAdjustmentStopHigh_,max_length_poseOP,orig_atom_type_max_length_poseOP));
 						possibleLoops.push_back(tmpLoopOP);
 					}
 				}
@@ -1166,6 +1160,8 @@ NearNativeLoopCloser::parse_my_tag(
 	chainBeforeLoop_ = tag->getOption<char>("chainBeforeLoop",'A');
 	chainAfterLoop_ = tag->getOption<char>("chainAfterLoop",'A');
 	idealExtension_ = tag->getOption<bool>("idealExtension",true);
+	if(!idealExtension_)
+		utility_exit_with_message("the ideal extension flag works but it seems to mess up the pose more than help so delete this line & recompile if you really want to use it");
 	max_vdw_change_ = tag->getOption<core::Real>("max_vdw_change",8.0);
 	ideal_ = tag->getOption<bool>("ideal",false);
 	if ( chainBeforeLoop_==chainAfterLoop_ ) {
@@ -1174,9 +1170,9 @@ NearNativeLoopCloser::parse_my_tag(
 	}
 	output_closed_ = tag->getOption<bool>("close",true);
 	if ( output_closed_ ) {
-		ABEGOHashedFragmentStore_ = core::indexed_structure_store::ABEGOHashedFragmentStore::get_instance();
-		ABEGOHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
-		ABEGOHashedFragmentStore_->generate_ss_stub_to_abego();
+		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+		SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
+		SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 		TR << "database loaded!!" << std::endl;
 	}
 	output_all_= tag->getOption<bool>("output_all",false);
@@ -1216,46 +1212,47 @@ NearNativeLoopCloser::parse_my_tag(
 }
 
 core::pose::PoseOP NearNativeLoopCloser::get_additional_output(){
+	Real tmp_rmsd;
+	return(get_additional_output_with_rmsd(tmp_rmsd));
+}
+
+core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & return_rmsd){
 	std::sort(possibleLoops_.begin(), possibleLoops_.end(), FinalRMSDComparator());
 	if ( !output_all_&&top_outputed_ ) {
 		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 		return nullptr;
 	}
-	for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
+	for ( Size ii=1; ii<=possibleLoops_.size(); ++ii ) {
+		//std::cout << ii << "all final rmsd" << possibleLoops_[ii]->get_final_RMSD() << std::endl;
 		//std::cout << possibleLoops_[ii]->get_description() << std::endl;
-		//std::cout << "ii" << ii <<" rmsd:" <<  possibleLoops_[ii]->get_final_RMSD() << std::endl;
 		if ( !possibleLoops_[ii]->outputed()&&(possibleLoops_[ii]->get_final_RMSD()<rmsThreshold_) ) {
-			//std::cout << "Best Rmsd" << possibleLoops_[ii]->get_final_RMSD() << std::endl;
-			Real vdw_score = possibleLoops_[ii]->get_vdw_change(possibleLoops_[ii]->get_finalPoseOP());
-			//std::cout << "vdw_score" << vdw_score <<"," <<  max_vdw_change_ << std::endl;
-			if ( vdw_score>max_vdw_change_ ) {
-				TR << "Rejecting loop because of VDW change" << vdw_score << std::endl;
-				possibleLoops_[ii]->outputed(true);//a hack setting this to true... But allows only one calculation of VDW per loop
-			} else {
-				possibleLoops_[ii]->outputed(true);
-				top_outputed_=true;
-				set_last_move_status(protocols::moves::MS_SUCCESS);
-				return(possibleLoops_[ii]->get_finalPoseOP());
-			}
+			TR << "Loop outputed with " << possibleLoops_[ii]->get_final_RMSD() << " rmsd" << std::endl;
+			possibleLoops_[ii]->outputed(true);
+			top_outputed_=true;
+			set_last_move_status(protocols::moves::MS_SUCCESS);
+			possibleLoops_[ii]->get_finalPoseOP()->data().set(
+				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,basic::datacache::DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( pose_name_ ) ) );
+			return_rmsd = possibleLoops_[ii]->get_final_RMSD();
+			return(possibleLoops_[ii]->get_finalPoseOP());
 		}
 		if ( !output_closed_ && (!possibleLoops_[ii]->outputed()) ) {
 			possibleLoops_[ii]->outputed(true);
 			set_last_move_status(protocols::moves::MS_SUCCESS);
+			return_rmsd = possibleLoops_[ii]->get_final_RMSD();
 			return(possibleLoops_[ii]->get_finalPoseOP());
 		}
 	}
-	Real low_rmsd=999;
-	for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
-		if ( !possibleLoops_[ii]->outputed() ) {
-			if ( possibleLoops_[ii]->get_final_RMSD()< low_rmsd ) {
-				low_rmsd = possibleLoops_[ii]->get_final_RMSD();
-			}
-		}
-	}
-	TR << "no closure found" << std::endl;
-	TR << "Best rmsd was:" << low_rmsd << std::endl;
+	// Real low_rmsd=999;
+	// for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
+	// 	if ( !possibleLoops_[ii]->outputed() ) {
+	// 		if ( possibleLoops_[ii]->get_final_RMSD()< low_rmsd ) {
+	// 			low_rmsd = possibleLoops_[ii]->get_final_RMSD();
+	// 		}
+	// 	}
+	// }
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
-	return nullptr;
+	return_rmsd = 9999;
+	return NULL;
 }
 
 }//pose_length_moves

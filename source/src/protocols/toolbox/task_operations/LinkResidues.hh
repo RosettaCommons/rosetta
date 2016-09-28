@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -54,7 +55,7 @@ public:
 	~LinkResidues();
 
 	virtual TaskOperationOP clone() const;
-
+	void remap_allowed_residues_to_template(core::pose::Pose const & pose, core::pack::rotamer_set::RotamerLinksOP & links) const;
 	void add_group( std::string group );
 
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
@@ -65,6 +66,7 @@ public:
 
 private:
 	utility::vector1< std::string > allGroups_;
+	std::string template_group_;
 
 };
 

@@ -20,35 +20,68 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+
+#include <core/pack/task/TaskFactory.hh>
 
 namespace protocols {
 namespace simple_moves {
 
+using utility::vector1;
 
 class MergePDBMover : public moves::Mover {
+
 public:
+	struct Overlap{
+		Size start_overlap_xmlPose;
+		Size end_overlap_xmlPose;
+		Size start_overlap_pose;
+		Size end_overlap_pose;
+		Overlap(Size start_overlap_xmlPose_i, Size end_overlap_xmlPose_i, Size start_overlap_pose_i, Size end_overlap_pose_i){
+			start_overlap_xmlPose = start_overlap_xmlPose_i;
+			end_overlap_xmlPose = end_overlap_xmlPose_i;
+			start_overlap_pose = start_overlap_pose_i;
+			end_overlap_pose = end_overlap_pose_i;
+		}
+		void print(){
+			std::cout << start_overlap_xmlPose <<"," << end_overlap_xmlPose << "::" << start_overlap_pose << "," << end_overlap_pose << std::endl;
+		}
+	};
 	MergePDBMover();
+	utility::vector1<Overlap> determine_overlap(Pose const pose);
+	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, vector1<MergePDBMover::Overlap> overlaps);
+	utility::vector1<core::pose::PoseOP> pack_and_minimize(vector1<core::pose::PoseOP> poses, vector1<MergePDBMover::Overlap> overlaps,core::Real baseline_score);
+	core::pose::PoseOP get_additional_output();
 
-	void determine_overlap(Pose const pose, Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose);
-	void generate_overlap(Pose & pose, Size start_overlap_parent, Size end_overlap_parent, Size start_overlap_pose, Size end_overlap_pose);
-	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
 
-	moves::MoverOP clone() const override;
-	moves::MoverOP fresh_instance() const override;
+	moves::MoverOP clone() const;
+	moves::MoverOP fresh_instance() const;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
+		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose ) override;
+		core::pose::Pose const & pose );
 
 private:
-	core::pose::PoseOP parent_pose_;
+	vector1<core::pose::PoseOP> outputPoses_;
+	vector1<bool> outputYet_;
+	core::pose::PoseOP xml_input_pose_;
 	std::string overlap_location_pose_;
-	Size overlap_range_;
-	Size overlap_max_length_;
+	core::Real overlap_max_rmsd_;
+	Size overlap_length_;
+	Size overlap_scan_range_;
+	core::Real design_range_;
+	core::Real packing_range_;
+	core::scoring::ScoreFunctionOP sfxn_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	bool do_minimize_;
+
 };
 
 } // simple_moves

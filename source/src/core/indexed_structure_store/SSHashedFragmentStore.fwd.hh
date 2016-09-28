@@ -11,8 +11,8 @@
 /// @brief A wrapper to allow me to load the hashed fragment store on the datacache.
 /// @author TJ Brunette tjbrunette@gmail.com
 
-#ifndef INCLUDED_core_indexed_structure_store_ABEGOHashedFragmentStore_fwd_hh
-#define INCLUDED_core_indexed_structure_store_ABEGOHashedFragmentStore_fwd_hh
+#ifndef INCLUDED_core_indexed_structure_store_SSHashedFragmentStore_fwd_hh
+#define INCLUDED_core_indexed_structure_store_SSHashedFragmentStore_fwd_hh
 
 
 namespace core
@@ -20,7 +20,7 @@ namespace core
 namespace indexed_structure_store
 {
 
-class ABEGOHashedFragmentStore;
+class SSHashedFragmentStore;
 
 
 }

@@ -109,51 +109,55 @@ ConstraintSetCOP ConstraintSetMover::constraint_set() const { return constraint_
 void
 ConstraintSetMover::apply( Pose & pose )
 {
-	if ( !constraint_set_low_res_ && !pose.is_fullatom() ) {
-		// uninitialized filename not tolerated, in order to avoid potential confusion
-		if ( cst_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
-		// special case: set cst_file_ to "none" to effectively remove constraints from Pose
-		else if ( cst_file_ == "none" ) constraint_set_low_res_ = ConstraintSetOP( new ConstraintSet );
-		else {
-			constraint_set_low_res_ =
-				ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet ), pose );
-			//ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
-		}
+	if( cst_file_ == "print"){
+		std::cout << "*****************showing constraint set************************"  <<std::endl;
+		pose.constraint_set()->show_definition(std::cout,pose);
 	}
-
-	if ( !constraint_set_high_res_ && pose.is_fullatom() ) {
-		// uninitialized filename not tolerated, in order to avoid potential confusion
-		if ( cst_fa_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
-		// special case: set cst_file_ to "none" to effectively remove constraints from Pose
-		else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = ConstraintSetOP( new ConstraintSet );
-		else {
-			constraint_set_high_res_ =
-				ConstraintIO::get_instance()->read_constraints( cst_fa_file_, ConstraintSetOP( new ConstraintSet ), pose );
-			//ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
+	else{
+		if ( !constraint_set_low_res_ && !pose.is_fullatom() ) {
+			// uninitialized filename not tolerated, in order to avoid potential confusion
+			if ( cst_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
+			// special case: set cst_file_ to "none" to effectively remove constraints from Pose
+			else if ( cst_file_ == "none" ) constraint_set_low_res_ = ConstraintSetOP( new ConstraintSet );
+			else {
+				constraint_set_low_res_ =
+					ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet ), pose );
+				//ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
+			}
 		}
-	}
-
-	if ( pose.is_fullatom() ) {
-		if ( add_constraints() ) {
-			pose.add_constraints( constraint_set_high_res_->get_all_constraints());
+		if ( !constraint_set_high_res_ && pose.is_fullatom() ) {
+			// uninitialized filename not tolerated, in order to avoid potential confusion
+			if ( cst_fa_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
+			// special case: set cst_file_ to "none" to effectively remove constraints from Pose
+			else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = ConstraintSetOP( new ConstraintSet );
+			else {
+				constraint_set_high_res_ =
+					ConstraintIO::get_instance()->read_constraints( cst_fa_file_, ConstraintSetOP( new ConstraintSet ), pose );
+				//ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
+			}
+		}
+		if ( pose.is_fullatom() ) {
+			if ( add_constraints() ) {
+				pose.add_constraints( constraint_set_high_res_->get_all_constraints());
+			} else {
+				pose.constraint_set( constraint_set_high_res_ );
+			}
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "High-res constraints:" << std::endl;
+				constraint_set_high_res_->show_definition(TR.Debug, pose);
+				TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
+			}
 		} else {
-			pose.constraint_set( constraint_set_high_res_ );
-		}
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "High-res constraints:" << std::endl;
-			constraint_set_high_res_->show_definition(TR.Debug, pose);
-			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
-		}
-	} else {
-		if ( add_constraints() ) {
-			pose.add_constraints( constraint_set_low_res_->get_all_constraints() );
-		} else {
-			pose.constraint_set( constraint_set_low_res_ );
-		}
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "Low-res constraints:" << std::endl;
-			constraint_set_low_res_->show_definition(TR.Debug, pose);
-			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
+			if ( add_constraints() ) {
+				pose.add_constraints( constraint_set_low_res_->get_all_constraints() );
+			} else {
+				pose.constraint_set( constraint_set_low_res_ );
+			}
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Low-res constraints:" << std::endl;
+				constraint_set_low_res_->show_definition(TR.Debug, pose);
+				TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
+			}
 		}
 	}
 }

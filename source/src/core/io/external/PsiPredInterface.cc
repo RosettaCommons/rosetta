@@ -234,6 +234,35 @@ PsiPredInterface::parse_psipred_output(
 	return result;
 }
 
+utility::vector1< utility::vector1 < Real > >
+PsiPredInterface::parse_psipred_output_probabilities(
+	std::string const & psipred_str ) const {
+	std::istringstream psipred( psipred_str );
+	utility::vector1< utility::vector1 < Real > > probabilities;
+	std::string pred_ss( "" );
+	std::string line;
+	while ( getline( psipred, line ) ) {
+		if ( line[0] == '#' || line == "" ) {
+			continue;
+		}
+		std::istringstream line_stream( line );
+		core::Size resi( 0 );
+		char resn( 'X' ), ss( 'Y' );
+		core::Real loop( 0.0 ), helix( 0.0 ), sheet( 0.0 );
+
+		line_stream >> resi >> resn >> ss >> loop >> helix >> sheet;
+		//TR << "Read line, resi=" << resi << " resn=" << resn << " ss=" << ss << " loop=" << loop << " helix=" << helix << " casheet=" << sheet << std::endl;
+		utility::vector1 < Real > tmp_prob;
+		tmp_prob.push_back(loop);
+		tmp_prob.push_back(helix);
+		tmp_prob.push_back(sheet);
+		probabilities.push_back(tmp_prob);
+	}
+	return probabilities;
+}
+
+
+
 /// @brief create fasta file, run psipred, returns psipred output if successful
 PsiPredResult
 PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const & blueprint_ss ){
@@ -332,6 +361,80 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 
 	return result;
 }
+
+	//@brief wrapper for run_psired that returns a vector of probabilities. 1 vector is returned for each chain
+utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInterface::run_psipred_prob(core::pose::Pose const & pose){
+	utility::vector1<utility::vector1< utility::vector1< core::Real > > > combined_results;
+	core::Size start_residue = 1;
+	for ( core::Size i=1; i<=pose.conformation().num_chains(); ++i ) {
+		// check pose split to see if there are protein residues present
+		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
+		std::string pose_seq = pose.chain_sequence(i);
+		std::string seq = "";
+		for ( core::Size ii=0; ii<pose_seq.size(); ++ii ) {
+			char const j = pose_seq[ii];
+			if ( ( j == 'A' ) || ( j == 'C' ) || ( j == 'D' ) || ( j == 'E' ) ||
+					( j == 'F' ) || ( j == 'G' ) || ( j == 'H' ) || ( j == 'I' ) ||
+					( j == 'K' ) || ( j == 'L' ) || ( j == 'M' ) || ( j == 'N' ) ||
+					( j == 'P' ) || ( j == 'Q' ) || ( j == 'R' ) || ( j == 'S' ) ||
+					( j == 'T' ) || ( j == 'V' ) || ( j == 'W' ) || ( j == 'Y' ) ) {
+				seq += j;
+			}
+		}
+		if ( seq.size() == 0 ) {
+			TR << "Skipping chain " << i << " because there are no protein residues" << std::endl;
+			continue;
+		}
+		TR.Debug << "seq : " << seq << std::endl;
+		core::Size time_val = time(NULL);
+		std::string const filebase = pose.sequence().substr(0,10) + "_" + boost::lexical_cast< std::string >(time_val);
+		std::string const fasta_filename = create_fasta_file( filebase, seq );
+		std::string const psipred_filename = filebase + ".ss2";
+
+		//TR << "Psipred filename: " << psipred_filename << std::endl;
+		// ensure we can get a shell
+		runtime_assert( cmd_ != "" );
+		// Call psipred on the fasta file
+		std::string command = cmd_ + " " + fasta_filename;
+#ifndef WIN32
+		command += " > /dev/null";
+#endif
+		TR.Debug << "Trying to run " << command << std::endl;
+
+#ifdef __native_client__
+	  		core::Size retval = 1;
+#else
+		core::Size retval = system( command.c_str() );
+#endif
+		if ( retval != 0 ) {
+			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
+		}
+
+		// open and read psipred output into a stringstream buffer
+		utility::io::izstream t( psipred_filename );
+		std::stringstream buffer;
+		buffer << t.rdbuf();
+		t.close();
+
+
+		utility::vector1< utility::vector1< core::Real > > chain_result( parse_psipred_output_probabilities( buffer.str()) );
+		combined_results.push_back(chain_result);
+
+		// clean up psipred files
+		cleanup_after_psipred( psipred_filename,fasta_filename );
+
+		start_residue += seq.size();
+
+		// parse and save result in the cache
+	}
+
+	//for (core::Size j = 1; j <= result.psipred_prob.size(); ++j) {
+	// TR << "result" << j << "  " << result.psipred_prob[j] << std::endl;
+	//}
+
+	return combined_results;
+}
+
 
 void
 PsiPredInterface::cleanup_after_psipred( std::string const & psipred_filename, std::string const & fasta_filename ) const {

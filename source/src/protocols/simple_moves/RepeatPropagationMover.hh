@@ -17,8 +17,11 @@
 #define INCLUDED_protocols_simple_moves_RepeatPropagationMover_hh
 
 #include <protocols/simple_moves/RepeatPropagationMover.fwd.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 // Utility Headers
 #include <core/types.hh>
+#include <core/id/SequenceMapping.hh>
 
 // C++ Headers
 #include <string>
@@ -45,17 +48,29 @@ public:
 	moves::MoverOP clone() const override { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
-	void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-	void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-	void copy_phi_psi_omega(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-	void add_caps(core::pose::Pose & pose, core::pose::Pose & repeat_pose);
-	void determine_overlap(Pose const pose, Pose & parent_pose,Size overlap_max_length,Size overlap_range, std::string overlap_location_pose,Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose);
+	void initialize_repeat_pose( Pose & pose, Pose & repeat_pose);
+	void duplicate_residues_by_type(Pose & pose, Pose & repeat_pose);
+	void copy_phi_psi_omega(Pose & pose, Pose & repeat_pose);
+	void add_caps(Pose & pose, Pose & repeat_pose);
+	std::vector<Real> get_center_of_mass(Real* coordinates, int number_of_atoms);
+	void repeat_ligand(Pose & pose, Pose & repeat_pose);
+	utility::vector1<Size> initial_constrained_residues(const Pose & pose);
+	void fix_ligand_residues(Pose & pose, Pose & repeat_pose);
+	core::id::SequenceMapping setup_repeat_seqmap(Size repeat_number,Size ligand_in_pose, Size ligand_in_repeat);
+	void repeat_ligand_constraints(Pose & pose, Pose & repeat_pose);
+	void determine_overlap(const Pose & pose, Pose & parent_pose,Size overlap_max_length,Size overlap_range, std::string overlap_location_pose,Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose);
 	void generate_overlap(Pose & pose, Pose & parent_pose, std::string overlap_location_pose,Size start_overlap_parent, Size end_overlap_parent, Size start_overlap_pose, Size end_overlap_pose);
+	void detect_last_repeat_residue(const Pose & pose);
+	void trim_back_repeat_to_repair_scar(Pose & pose);
 	Size first_res_;
 	Size last_res_;
+	bool deal_with_ideal_loop_closure_scar_;
+	Size orig_number_repeats_;
+	Size orig_pdb_length_;
 	Size numb_repeats_;
 	bool repeat_without_replacing_pose_;
 	bool maintain_cap_;
+	bool maintain_ligand_;
 	Size nTerm_cap_size_;
 	Size cTerm_cap_size_;
 };

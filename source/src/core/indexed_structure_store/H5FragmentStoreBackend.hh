@@ -60,6 +60,8 @@ public:
 	static H5::DataType FragmentRealGroupEntryDatatype(std::string group_field);
 	static H5::DataType FragmentReal1PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec);
 	static H5::DataType FragmentString1PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec);
+	static H5::DataType FragmentString5PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec);
+
 
 private:
 	H5::H5File target_file_;

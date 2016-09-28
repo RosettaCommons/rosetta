@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/motif/MotifScore.cc
-/// @brief  Will's motif score to determine how well packed the protein core is
+/// @brief  Will's motif score to determine how well packed the protein core is but only counts the best packed residue over a region. This makes sure all parts of the protein are packed
 /// @author TJ Brunette
 ///
 // Unit headers

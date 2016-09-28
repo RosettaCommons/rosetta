@@ -8,7 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/protocols/pose_length_moves/InsertResMover.hh
-/// @brief
+/// @brief inserts ideal residues into pose. Useful for extending helices
+///
+/// @author TJ Brunette tjbrunette@gmail.com
 
 #ifndef INCLUDED_protocols_pose_length_moves_InsertResMover_hh
 #define INCLUDED_protocols_pose_length_moves_InsertResMover_hh
@@ -70,6 +72,7 @@ private:
 	Real psi_;
 	Real omega_;
 	core::scoring::ScoreFunctionOP scorefxn_;
+	Size steal_angles_from_res_;
 };
 
 

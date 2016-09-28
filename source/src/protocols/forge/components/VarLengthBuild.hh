@@ -511,6 +511,7 @@ protected: // fragment management
 
 protected:  //constraint management
 
+	void set_starting_non_canonical(Pose & pose); //must be setup before constraints
 
 	void setup_remodel_constraints( Pose & pose );
 

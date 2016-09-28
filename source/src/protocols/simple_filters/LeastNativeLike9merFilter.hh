@@ -22,7 +22,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/pose/Pose.fwd.hh>
 // Utility headers
 
@@ -89,7 +89,7 @@ private:
 
 	Real filtered_value_;
 	Real rmsd_lookup_thresh_;
-	core::indexed_structure_store::ABEGOHashedFragmentStore * ABEGOHashedFragmentStore_;
+	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	bool ignore_terminal_res_;
 	bool only_helices_;
 

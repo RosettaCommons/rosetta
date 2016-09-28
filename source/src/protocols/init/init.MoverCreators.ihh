@@ -148,10 +148,6 @@
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 #include <protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh>
 
-#include <protocols/frag_picker/frag_movers/FragSetFromH5MoverCreator.hh>
-#include <protocols/frag_picker/frag_movers/MergeFragSetMoverCreator.hh>
-#include <protocols/frag_picker/frag_movers/ReduceFragLengthMoverCreator.hh>
-
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
 #include <protocols/helical_bundle/BackboneGridSamplerCreator.hh>
@@ -260,6 +256,8 @@
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
 
+#include <protocols/pose_length_moves/AnalyzeLoopModelingCreator.hh>
+#include <protocols/pose_length_moves/ConnectChainsMoverCreator.hh>
 #include <protocols/pose_length_moves/FixAllLoopsMoverCreator.hh>
 #include <protocols/pose_length_moves/InsertResMoverCreator.hh>
 #include <protocols/pose_length_moves/NearNativeLoopCloserCreator.hh>
@@ -384,6 +382,7 @@
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
 #include <protocols/simple_moves/RepeatPropagationMoverCreator.hh>
+#include <protocols/simple_moves/ResetFoldTreeCreator.hh>
 #include <protocols/simple_moves/ResidueTypeConstraintMoverCreator.hh>
 #include <protocols/simple_moves/ReportEffectivePKACreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMoverCreator.hh>

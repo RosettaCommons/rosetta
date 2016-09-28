@@ -20,7 +20,6 @@ using namespace jd2::parser;
 static DataLoaderRegistrator< ScoreFunctionLoaderCreator > reg_ScoreFunctionLoaderCreator;
 static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoaderCreator;
 static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;
-static DataLoaderRegistrator< FragSetLoaderCreator > reg_FragSetLoaderCreator;
 static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCreator;
 static DataLoaderRegistrator< ResidueSelectorLoaderCreator > reg_ResidueSelectorLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;

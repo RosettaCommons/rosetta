@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/motif/MotifScore.cc
-/// @brief  Will's motif score to determine how well packed the protein core is
+/// @brief  Will's motif score to determine how well packed the protein core is implemented as energy function
 /// @author TJ Brunette
 
 
@@ -39,38 +39,40 @@ namespace methods {
 using utility::vector1;
 using core::Size;
 using core::Real;
+using std::set;
 
 class SSElementMotifContactEnergy : public WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy parent;
+    typedef WholeStructureEnergy parent;
 
 public:
-	SSElementMotifContactEnergy();
+    SSElementMotifContactEnergy();
 
-	virtual
-	EnergyMethodOP
-	clone() const {
-		return EnergyMethodOP( new SSElementMotifContactEnergy );
-	}
+    virtual
+    EnergyMethodOP
+    clone() const {
+        return EnergyMethodOP( new SSElementMotifContactEnergy );
+    }
 
-	vector1<std::pair<Size,Size> > get_ss_elements(const pose::Pose & pose) const;
+    vector1<std::pair<Size,Size> > get_ss_elements(const pose::Pose & pose) const;
 
-	Size which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const;
+    Size which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const;
 
-	Size get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const pose::Pose & pose) const;
-
-
-	/// @brief Called at the end of the energy evaluation.
-	virtual void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
+    Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
+    Size get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const pose::Pose & pose) const;
 
 
-	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+    /// @brief Called at the end of the energy evaluation.
+    virtual void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
 
 
-	virtual core::Size version() const;
+    virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const {};
+
+
+    virtual core::Size version() const;
 
 private:
-	core::scoring::motif::MotifHashManager *mman_;
+    core::scoring::motif::MotifHashManager *mman_;
 };
 
 } // motif

@@ -11,11 +11,11 @@
 
 sources = {
 	"core/indexed_structure_store": [
-		"ABEGOHashedFragmentStore",
 		"FragmentStore",
 		"FragmentLookup",
 		"H5FragmentStoreBackend",
 		"BinaryFragmentStoreBackend",
+		"SSHashedFragmentStore",
 		"StructureStoreManager",
 	],
 	"core/io": [
@@ -537,6 +537,7 @@ sources = {
 	"core/scoring/methods": [
 		"AspartimidePenaltyEnergy",
 		"BurialEnergy",
+		"Burial_v2Energy",
 		"CartesianBondedEnergy",
 		"CenHBEnergy",
 		"CenPairEnergy",
@@ -852,7 +853,8 @@ sources = {
 		"SequenceFactory",
 		"SequenceProfile",
 		"SimpleScoringScheme",
-		"SWAligner",
+		"SSManager",
+        "SWAligner",
 		"util",
 	],
 

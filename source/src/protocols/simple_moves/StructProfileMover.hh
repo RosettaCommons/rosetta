@@ -16,7 +16,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/StructProfileMover.fwd.hh>
 
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
@@ -67,7 +67,7 @@ private:
 	bool outputProfile_;
 	bool add_csts_to_pose_;
 	Size cenType_;
-	core::indexed_structure_store::ABEGOHashedFragmentStore * ABEGOHashedFragmentStore_;
+	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 	typedef utility::vector1< utility::vector1< utility::vector1< Probability > > > Probability_AA_n_n;
 	Probability_AA_n_n P_AA_SS_burial_;
 	Real allowed_deviation_;

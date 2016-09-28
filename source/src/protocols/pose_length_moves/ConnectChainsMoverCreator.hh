@@ -7,35 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file       protocols/frag_picker/fragment_movers/MergeFragSetMoverCreator
-///
-/// @brief      Merges two fragment sets
-/// @details
-///
-/// @author     TJ Brunette (tjbrunette@gmail.com)
-/// @note
+/// @file
+/// @brief
+/// @author Tj Brunette
 
-#ifndef INCLUDED_protocols_frag_picker_fragment_movers_MergeFragSetMoverCreator_hh
-#define INCLUDED_protocols_frag_picker_fragment_movers_MergeFragSetMoverCreator_hh
 
-// Project headers
+#ifndef INCLUDED_protocols_pose_length_moves_ConnectChainsMoverCreator_hh
+#define INCLUDED_protocols_pose_length_moves_ConnectChainsMoverCreator_hh
+
 #include <protocols/moves/MoverCreator.hh>
 
-
 namespace protocols {
-namespace frag_picker {
-namespace frag_movers {
+namespace pose_length_moves {
 
-class MergeFragSetMoverCreator : public moves::MoverCreator
-{
+class ConnectChainsMoverCreator : public protocols::moves::MoverCreator {
 public:
-	virtual moves::MoverOP create_mover() const;
+	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static  std::string mover_name();
 };
 
-}//frag_movers
-}//frag_picker
-}//protocols
+}
+}
 
 #endif
+

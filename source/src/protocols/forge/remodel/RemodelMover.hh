@@ -334,12 +334,15 @@ public: // virtual main methods
 	virtual
 	void apply( Pose & pose );
 
+
 	virtual std::string get_name() const;
 
 	bool confirm_sequence(core::pose::Pose & pose );
 
 
 private: // protocol methods
+	forge::remodel::RemodelData setup_remodel_data_for_loop_btw_parametric_components(core::pose::Pose & pose);
+
 	bool SamePose(Pose const & pose1, Pose const & pose2);
 
 	void register_user_options();

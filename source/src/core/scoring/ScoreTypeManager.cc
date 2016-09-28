@@ -282,7 +282,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "other_pose"] = other_pose;
 
 	name2score_type_[ "env" ]    = env;
-	name2score_type_[ "burial" ] = burial;
+	name2score_type_[ "burial" ] = burial; //Probably unused
+	name2score_type_[ "burial_v2" ] = burial_v2; //burial score from a set of residues
 	name2score_type_[ "abego" ]  = abego;
 	name2score_type_[ "pair" ]   = pair;
 	name2score_type_[ "cbeta" ]  = cbeta;

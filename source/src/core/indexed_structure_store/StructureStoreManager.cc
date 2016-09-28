@@ -113,6 +113,9 @@ FragmentStoreOP StructureStoreManager::load_fragment_store(std::string lookup_na
 
 
 std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace OptionKeys::indexed_structure_store;
 	std::string if_cached_name;
 	if_cached_name = group_field + lookup_name;
 	for ( Size ii=1; ii<=fields_to_load.size(); ++ii ) {
@@ -123,6 +126,18 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		return(iter->second);
 	} else {
 		FragmentStoreOP fullStore = load_fragment_store(lookup_name,store_path,fields_to_load,fields_to_load_types);
+		if(option[OptionKeys::indexed_structure_store::exclude_homo].user()){
+			fullStore->delete_homologs();
+		}
+		// fullStore->fragment_threshold_distances.clear();
+		// fullStore->fragment_coordinates.clear();
+		// fullStore->int64_groups.clear();
+		// fullStore->real_groups.clear();
+		// fullStore->realVector_groups.clear();
+		// fullStore->string_groups.clear();
+		// std::cout <<"Pause hereC-after delete to watch memory memory" << std::endl;
+		// usleep(10000000);
+		// std::cout << "end pauseC-after delete" << std::endl;
 		std::map <Size,Size> type_ct;
 		std::map <Size,Size>::iterator type_ct_iter;
 		std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
@@ -141,6 +156,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		FragmentSpecification fragment_spec = fullStore->fragment_specification;
 		for ( type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter ) {
 			FragmentStoreOP fragment_store = FragmentStoreOP(new FragmentStore(fragment_spec, type_ct_iter->second ));
+			fragment_store->hash_id = type_ct_iter->first;
 			typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
 		}
 		//populate fragment stores
@@ -161,6 +177,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 			}
 		}//ends the copying of the fragmentCoordinates
 		fullStore->fragment_coordinates.clear();
+		vector1<numeric::xyzVector<numeric::Real> >().swap(fullStore->fragment_coordinates);
 		//-------------Copy the real_groups
 		for ( auto itr = fullStore->real_groups.begin(); itr !=  fullStore->real_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
@@ -173,6 +190,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 			}
 		}
 		fullStore->real_groups.clear();
+		std::map<std::string, std::vector<numeric::Real> >().swap(fullStore->real_groups);
 		//-------------Copy the realVector_groups
 		for ( auto itr = fullStore->realVector_groups.begin(); itr !=  fullStore->realVector_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
@@ -189,6 +207,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 			}
 		}
 		fullStore->realVector_groups.clear();
+		std::map<std::string, std::vector<std::vector<numeric::Real> > >().swap(fullStore->realVector_groups);
 		//-------------Copy the string_groups
 		for ( auto itr = fullStore->string_groups.begin(); itr !=  fullStore->string_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
@@ -201,6 +220,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 			}
 		}
 		fullStore->string_groups.clear();
+		std::map<std::string, std::vector<std::string> >().swap(fullStore->string_groups);
 		//-------------Copy & Erase the int64_groups while ignoring group_field
 		for ( auto itr = fullStore->int64_groups.begin(); itr !=  fullStore->int64_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
@@ -215,6 +235,9 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 			}
 		}
 		fullStore->int64_groups.clear();
+		std::map<std::string, std::vector<numeric::Size> >().swap(fullStore->int64_groups);
+		fullStore->fragment_threshold_distances.clear();
+		std::vector<numeric::Real>().swap(fullStore->fragment_threshold_distances);
 		grouped_fragment_map_[if_cached_name]=typed_frags;
 		return(typed_frags);
 	}

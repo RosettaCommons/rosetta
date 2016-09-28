@@ -194,6 +194,7 @@ RotamerSets::build_rotamers(
 
 	if ( task_->rotamer_links_exist() ) {
 		//check all the linked positions
+
 		TR << "RotamerLinks detected!" << std::endl;
 
 		bool quasiflag = false;
@@ -381,6 +382,7 @@ void RotamerSets::copy_residue_conenctions_and_variants(pose::Pose const & pose,
 	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 	core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS_VARIANT, pose);
 	//standard cases
+
 	if ( seqpos==1 ) {
 		core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS_VARIANT, pose);
 	}

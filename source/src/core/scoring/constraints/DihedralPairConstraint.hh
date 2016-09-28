@@ -110,6 +110,8 @@ public:
 	AtomID const &
 	atom( Size const n ) const;
 
+	virtual void show_def( std::ostream &, pose::Pose const & ) const;
+
 	virtual void show( std::ostream & out ) const;
 
 	// Coppied Remapped_clone from AtomPairConstraint

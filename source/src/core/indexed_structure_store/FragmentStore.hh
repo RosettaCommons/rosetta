@@ -29,6 +29,8 @@
 #include <map>
 #include <iostream>
 
+#include <ctime>
+
 namespace core
 {
 namespace indexed_structure_store
@@ -72,7 +74,27 @@ public:
 	void resize(numeric::Size num_fragments);
 	void add_threshold_distance_allFrag(numeric::Real distance);
 
-	void generate_subset_fragment_store(std::vector<numeric::Size> residues, std::string name);
+	template <class T> void inline_vector_delete(std::vector<T>& data_vector, const std::vector<bool>& delete_vector){
+	typename std::vector<T>::iterator read_position = data_vector.begin();
+	typename std::vector<T>::iterator write_position = data_vector.begin();
+	typename std::vector<T>::iterator end_position = data_vector.end();
+	for(std::vector<bool>::const_iterator itr=delete_vector.begin(); itr!= delete_vector.end(); ++itr){
+		if(*itr==true){
+			read_position++;
+		}
+		else{
+			*write_position = *read_position;
+			read_position++;
+			write_position++;
+		}
+	}
+	data_vector.erase(write_position,end_position);
+}
+
+	std::set<std::string> get_homologs();
+	void delete_homologs();
+
+	void generate_residue_subset_fragment_store(std::vector<numeric::Size> residues);
 
 	FragmentLookupOP get_fragmentLookup();
 
@@ -81,13 +103,15 @@ public:
 
 	FragmentSpecification fragment_specification;
 	numeric::Size num_fragments_;
+	numeric::Size hash_id;
 	std::vector<numeric::Real> fragment_threshold_distances;
 	std::vector<numeric::xyzVector<numeric::Real> > fragment_coordinates;
 	std::map<std::string, std::vector<numeric::Size> > int64_groups;
 	std::map<std::string, std::vector<numeric::Real> > real_groups;
 	std::map<std::string, std::vector<std::vector<numeric::Real> > >realVector_groups;
 	std::map<std::string, std::vector<std::string> > string_groups;
-	std::map<std::string, FragmentStoreOP> fragmentStore_groups;
+	FragmentStoreOP residue_subset_fragment_store;
+
 private:
 	FragmentLookupOP fragLookupOP_; //stored here to cache the removal of center of mass
 };

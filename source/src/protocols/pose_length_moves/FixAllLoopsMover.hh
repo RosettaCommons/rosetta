@@ -8,7 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/protocols/pose_length_moves/FixAllLoopsMover.hh
-/// @brief
+/// @details connects chains using a very fast RMSD lookback. only works for chains <5 residues. Designed to make loops look within .4 RMSD to naturally occuring loops
+/// @author TJ Brunette tjbrunette@gmail.com
+
 
 #ifndef INCLUDED_protocols_pose_length_moves_FixAllLoopsMover_hh
 #define INCLUDED_protocols_pose_length_moves_FixAllLoopsMover_hh
@@ -18,7 +20,6 @@
 
 #include <protocols/pose_length_moves/FixAllLoopsMover.fwd.hh>
 
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //#include <protocols/loops/Loop.hh>
@@ -26,6 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 // C++ Headers
 #include <string>
 #include <map>
@@ -35,7 +37,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ctime>
-
 
 namespace protocols {
 namespace pose_length_moves {
@@ -71,7 +72,7 @@ private:
 	Size lastResidue_;
 	//time_t start_time_;
 
-	core::indexed_structure_store::ABEGOHashedFragmentStore * ABEGOHashedFragmentStore_;
+	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };
 
 

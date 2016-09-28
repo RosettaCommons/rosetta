@@ -276,6 +276,8 @@ static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalMode
 
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
+static MoverRegistrator< pose_length_moves::AnalyzeLoopModelingCreator > reg_AnalyzeLoopModelingCreator;
+static MoverRegistrator< pose_length_moves::ConnectChainsMoverCreator > reg_ConnectchainsMoverCreator;
 static MoverRegistrator< pose_length_moves::FixAllLoopsMoverCreator > reg_FixAllLoopsMoverCreator;
 static MoverRegistrator< pose_length_moves::InsertResMoverCreator > reg_InsertResMoverCreator;
 static MoverRegistrator< pose_length_moves::NearNativeLoopCloserCreator > reg_NearNativeLoopCloserCreator;
@@ -401,6 +403,7 @@ static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueC
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
 static MoverRegistrator< simple_moves::RepeatPropagationMoverCreator > reg_RepeatPropagationMoverCreator;
+static MoverRegistrator< simple_moves::ResetFoldTreeCreator > ResetFoldTreeCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;
 static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;

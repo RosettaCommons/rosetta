@@ -49,6 +49,8 @@
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -132,6 +134,8 @@
 
 // C++ headers
 #include <utility>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 
 //#define FILE_DEBUG 1
@@ -491,6 +495,7 @@ void RemodelMover::apply( Pose & pose ) {
 	using protocols::moves::FAIL_RETRY;
 	using protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using namespace ObjexxFCL;
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
@@ -524,7 +529,7 @@ void RemodelMover::apply( Pose & pose ) {
 		//        if not at command line but given in rosetta scripts, use that.
 		//        if not given at command line or rosetta scripts, make ad hoc blueprint.
 		TR << "apply(): reading blueprint file " << std::endl;
-		if ( option[OptionKeys::remodel::blueprint].user() ) {
+		if ( option[OptionKeys::remodel::blueprint].user() && ! option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user()) {
 			blueprint_ =option[OptionKeys::remodel::blueprint]();
 			remodel_data.getLoopsToBuildFromFile(blueprint_);
 		} else {
@@ -547,6 +552,8 @@ void RemodelMover::apply( Pose & pose ) {
 				remodel_data.getLoopsToBuildFromBlueprint(ad_hoc_blueprint.str());
 			}
 		}
+		if(option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user())
+			remodel_data = setup_remodel_data_for_loop_btw_parametric_components(pose);
 
 		remodel_data.updateWithDsspAssignment( dsspSS );
 		//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated
@@ -560,9 +567,7 @@ void RemodelMover::apply( Pose & pose ) {
 		// create a scorefunction and score the pose first
 		scoring::ScoreFunctionOP sfx = scoring::get_score_function();
 		(*sfx)( pose );
-
 		working_model.workingSetGen( pose, remodel_data );
-
 		remodel_data_ = remodel_data; // will use the movemap for natro definition later
 		working_model_ = working_model;
 
@@ -589,7 +594,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		*/
 
-		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+		if ( option[OptionKeys::remodel::repeat_structure].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			//for cases involve jxn, need to make pose longer so manager won't complain
 			//about missing residues
 
@@ -612,6 +617,58 @@ void RemodelMover::apply( Pose & pose ) {
 					pose.set_omega(pose.size()-1,180);
 				}
 			}
+		}
+		if ( option[OptionKeys::remodel::repeat_structure].user() && option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
+			core::pose::PoseOP chain1 = pose.split_by_chain(1);
+			core::pose::PoseOP chain2 = pose.split_by_chain(2);
+			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());
+			remove_upper_terminus_type_from_pose_residue(pose,pose.total_residue());
+			remove_lower_terminus_type_from_pose_residue(*chain2,1);
+			for ( Size res=1; res<=chain2->total_residue(); ++res ) {
+				pose.append_residue_by_bond(chain2->residue(res),false/*ideal bonds*/);
+			}
+			String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
+			if ( build_aa_type.size() == 1 ) {
+				char build_aa_oneLetter= build_aa_type[0];
+				build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
+			}
+			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
+			for ( Size i = 1; i<= len_diff*2; ++i ) { //all new residues are appended on the end.
+				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+				pose.set_omega(pose.total_residue()-1,180);
+			}
+			//for cases involve jxn, need to make pose longer so manager won't complain
+			//about missing residues
+			//this is pre modify, so simply extend to 2x blueprint length,
+			//The first 1/2 the pose and the second
+			/*String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
+			core::pose::PoseOP chain1 = pose.split_by_chain(1);
+			core::pose::PoseOP chain2 = pose.split_by_chain(2);
+			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
+			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());
+			if ( build_aa_type.size() == 1 ) {
+				char build_aa_oneLetter= build_aa_type[0];
+				build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
+			}
+			for ( Size i = 1; i<= len_diff; ++i ) {
+				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+				pose.set_omega(pose.total_residue()-1,180);
+			}
+			append_pose_to_pose(pose,*chain2,false);
+			for ( Size i = 1; i<= len_diff; ++i ) {
+				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+				pose.set_omega(pose.total_residue()-1,180);
+			}
+			*/
 		}
 		//
 		// Pose testArc;
@@ -776,7 +833,6 @@ void RemodelMover::apply( Pose & pose ) {
 			pose.fold_tree(f);
 			TR << "rerooting tree: " << pose.fold_tree() << std::endl;
 		}
-
 		while ( i > 0 ) {
 
 			// cache the modified pose first for REPEAT
@@ -809,7 +865,6 @@ void RemodelMover::apply( Pose & pose ) {
 					//return;
 				}
 			}
-
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 				add_lower_terminus_type_to_pose_residue(pose,1);
@@ -829,7 +884,6 @@ void RemodelMover::apply( Pose & pose ) {
 				false, // keep_insertion_code
 				false // rotate_chain_id
 			);
-
 			//test
 			//pose.dump_pdb("check.pdb");
 			/*
@@ -1352,6 +1406,49 @@ void RemodelMover::apply( Pose & pose ) {
 		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() ) )
 	);
 
+}
+
+/// @brief sets up remodel data for combining blueprint with parametric mode
+forge::remodel::RemodelData RemodelMover::setup_remodel_data_for_loop_btw_parametric_components(core::pose::Pose & pose){
+	using namespace ObjexxFCL;
+	forge::remodel::RemodelData remodel_data;
+	blueprint_ =option[OptionKeys::remodel::blueprint]();
+	std::stringstream parametric_blueprint;
+	core::pose::PoseOP chain1 = pose.split_by_chain(1);
+	scoring::dssp::Dssp dssp( *chain1 );
+	ObjexxFCL::FArray1D_char dsspSS( chain1->total_residue() );
+	dssp.dssp_reduced(dsspSS);
+	parametric_blueprint << "1  x   " << dsspSS(2) << std::endl; //the first and last position get the wrong secondary structure
+	parametric_blueprint << "2  x   " << dsspSS(2) << std::endl;
+	for ( Size i = 3; i <= chain1->total_residue()-2; ++i ) {
+		//number
+		parametric_blueprint << i;
+		//residue
+		parametric_blueprint << "  x";
+		//type
+		parametric_blueprint << "  ."  << std::endl;
+	}
+	if ( blueprint_ == "" ) {
+			TR << "No blueprint file given!" << std::endl;
+			utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
+	}
+	parametric_blueprint << chain1->total_residue()-1 << "  x   " << dsspSS(chain1->total_residue()-1 ) << std::endl;
+	std::stringstream data;
+	std::string line;
+	utility::io::izstream file_data( blueprint_.c_str() );
+	while ( getline( file_data, line ) ) {
+		data << line << std::endl;
+	}
+	if ( !data ) {
+		TR << "Can't open blueprint file " <<  blueprint_ << std::endl;
+		utility::exit(EXIT_FAILURE, __FILE__, __LINE__);
+	}
+	parametric_blueprint << data.str();
+	parametric_blueprint << chain1->total_residue() << "  x   L" << std::endl; //The last residue gets the wrong dssp.
+	//std::cout <<"converting to string" << parametric_blueprint.str() << std::endl;
+	remodel_data.getLoopsToBuildFromBlueprint(parametric_blueprint.str());
+	TR << "parametric_blueprint" << parametric_blueprint.str() << std::endl;
+	return(remodel_data);
 }
 
 

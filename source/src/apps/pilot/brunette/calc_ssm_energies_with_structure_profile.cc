@@ -20,7 +20,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -36,11 +36,11 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/pose/motif/reference_frames.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -384,9 +384,8 @@ public:
 		// get scorefunction, set ref to 0
 		sfxn_ = core::scoring::get_score_function();
 		sfxn_->set_weight( core::scoring::ref, 0.0 );
-		//added-tj
-		Real res_type_wt = basic::options::option[basic::options::OptionKeys::ssm::res_type_constraint_wt]();
-
+		//added-tj begin
+		//Real res_type_wt = basic::options::option[basic::options::OptionKeys::ssm::res_type_constraint_wt]();
 		sfxn_->set_weight(core::scoring::res_type_constraint,10.0);
 		//added-tj end
 		if (  basic::options::option[basic::options::OptionKeys::ssm::with_ss] ) {
@@ -547,13 +546,13 @@ int main( int argc, char * argv [] )
 		NEW_OPT(ssm::parallel, "parallel", utility::vector1<core::Size>());
 
 		NEW_OPT(ssm::rmsThreshold, "rmsThreshold", 0.4);
-		NEW_OPT(ssm::consider_topN_frags, "consider_topN_frags", 300);
+		NEW_OPT(ssm::consider_topN_frags, "consider_topN_frags", 50);
 		NEW_OPT(ssm::burialWt,"burialWt",0.8);
-		NEW_OPT(ssm::only_loops,"only_loops",true);
+		NEW_OPT(ssm::only_loops,"only_loops",false);
 		NEW_OPT(ssm::allowed_deviation,"allowed_deviation",0.10);
 		NEW_OPT(ssm::allowed_deviation_loops,"allowed_deviation_loops",0.10);
 		NEW_OPT(ssm::eliminate_background,"eliminate_background",true);
-		NEW_OPT(ssm::res_type_constraint_wt,"res_type_constraint_wt",5.0);
+		NEW_OPT(ssm::res_type_constraint_wt,"res_type_constraint_wt",2.0);
 
 		devel::init(argc, argv);
 

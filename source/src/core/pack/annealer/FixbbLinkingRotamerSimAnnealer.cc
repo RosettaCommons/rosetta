@@ -217,6 +217,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 		//experimental
 		utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
+
 		for ( Size ii=1; ii<=segmentTest.size(); ++ii ) {
 			// get the first element of the last repeat.  it should be segment length why? :: Bad logic.
 			//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
@@ -308,13 +309,13 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			bool found_rotamer = false;
 			Size num_linked_res =0;
+
 			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) { // go through each linked residue
 				num_linked_res++;
 				TR.Debug << "analyzing num_linked_res: " << num_linked_res << std::endl;
 				if ( ( *itr != 0 ) && ( *itr != moltenres_id ) ) { //skip this step if residue is self
-
 					//try multiple substitutions
-					if ( TR.Trace.visible() ) {
+					if ( TR.Trace.visible()) {
 						TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
 					}
 
@@ -391,6 +392,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					found_rotamer = true;
 					other_prevrotamer_state = state_on_node(*itr);
 				}
+
 			} //for linked residues
 
 			if ( ( !found_rotamer ) && ( ! ( quasiflag ) ) ) { // any of the linked position without the same rotamer should be passed (don't do this for quasisymmetry)

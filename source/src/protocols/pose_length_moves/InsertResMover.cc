@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/protocols/moves/InsertResMover.fwd.hh
-/// @brief
+/// @details inserts ideal residues into pose. Useful for extending helices
 ///
 /// @author TJ Brunette tjbrunette@gmail.com
 ///
@@ -25,9 +25,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
-#include <core/indexed_structure_store/FragmentStore.hh>
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -131,21 +128,26 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 		tmpPsi = psi_;
 		tmpOmega = omega_;
 	}
+	if(steal_angles_from_res_!= 0){
+		tmpPhi =  poseOP->phi(steal_angles_from_res_);
+		tmpPsi =  poseOP->psi(steal_angles_from_res_);
+		tmpOmega = poseOP->omega(steal_angles_from_res_);
+	}
 	kinematics::FoldTree backupFt = poseOP->fold_tree();
 	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
 	bool fullatom = poseOP->is_fullatom();
 	core::chemical::ResidueTypeSetCOP rs(core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
-	//adding a virtual atom at the center of mass
-	numeric::xyzVector<core::Real> CoM;
-	CoM = center_of_mass(*poseOP);
-	new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("VRT") );
-	new_rsd->atom(1).xyz(CoM);
-	//Set up fold tree for this one case --------------------------------------------------
-	poseOP->append_residue_by_jump( *new_rsd,poseOP->size());
 	kinematics::FoldTree ft;
-	if ( inPoseResidue != 1 ) {
+	//Code below is a bunch of junk. I need a uniform way to deal with broken fold trees
+	if ( inPoseResidue != 1 && inPoseResidue!=poseOP->total_residue()) {
+		numeric::xyzVector<core::Real> CoM;
+		CoM = center_of_mass(*poseOP);
+		new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("VRT") );
+		new_rsd->atom(1).xyz(CoM);
+		//Set up fold tree for this one case --------------------------------------------------
+		poseOP->append_residue_by_jump( *new_rsd,poseOP->total_residue());
 		if ( grow_toward_Nterm_ ) {
 			ft.add_edge(1,inPoseResidue-1,core::kinematics::Edge::PEPTIDE);
 			ft.add_edge(1,poseOP->size(),1);
@@ -160,25 +162,20 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 		ft.add_edge(1,poseOP->size(),core::kinematics::Edge::PEPTIDE);
 		poseOP->fold_tree(ft);
 	}
-	/*std::cout << "hereB" << std::endl;
-	ft.add_edge(inPoseResidue,poseOP->size()-1,core::kinematics::Edge::PEPTIDE);
-	std::cout << "hereC" << std::endl;
-	*/
 	poseOP->fold_tree(ft);
 	if ( grow_toward_Nterm_ ) {
 		for ( Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
-			poseOP->conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd,inPoseResidue, true); //was prepend
+			poseOP->conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd,inPoseResidue, true);
 		}
 	} else {
 		for ( Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
-			poseOP->conformation().safely_append_polymer_residue_after_seqpos( *new_rsd,inPoseResidue, true); //was prepend
+			poseOP->conformation().safely_append_polymer_residue_after_seqpos( *new_rsd,inPoseResidue+ii, true);
 		}
 	}
 	renumber_pdbinfo_based_on_conf_chains(*poseOP,true,false,false,false);
 	for ( Size ii=0; ii<=length; ++ii ) {
-		std::cout << "setting" << inPoseResidue+ii << "::" << tmpPhi << std::endl;
 		poseOP->set_phi(inPoseResidue+ii, tmpPhi );
 		poseOP->set_psi(inPoseResidue+ii, tmpPsi );
 		poseOP->set_omega(inPoseResidue+ii, tmpOmega );
@@ -199,7 +196,6 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 	}
 	for ( Size length=lowAddRes_; length<=highAddRes_; ++length ) {
 		core::pose::PoseOP tmpPoseOP = pose.clone();
-		std::cout << "about to extend region" << std::endl;
 		extendRegion(tmpPoseOP,chain_id,length);
 		posesToOutput_.push_back(tmpPoseOP);
 		posesOutputed_.push_back(false);
@@ -227,6 +223,7 @@ InsertResMover::parse_my_tag(
 	core::pose::Pose const & ){
 	chain_ = ( tag->getOption< std::string >( "chain", "999") );
 	resType_ = ( tag->getOption< std::string >( "resType", "H") );
+	steal_angles_from_res_= (tag->getOption<Size>("steal_angles_from_res",0));
 	residue_ = ( tag->getOption< Size >( "residue", 1) );
 	grow_toward_Nterm_ = ( tag->getOption< bool >( "grow_toward_Nterm", false) );
 	ideal_ = ( tag->getOption< bool >( "ideal", true) );
@@ -247,7 +244,7 @@ InsertResMover::parse_my_tag(
 		lowAddRes_ = atoi(additionRes_split[1].c_str());
 		highAddRes_ = atoi(additionRes_split[1].c_str());
 	}
-	std::cout << "additionalRes" << lowAddRes_  <<"," << highAddRes_ << std::endl;
+	TR << "additionalRes" << lowAddRes_  <<"," << highAddRes_ << std::endl;
 }
 
 core::pose::PoseOP InsertResMover::get_additional_output(){

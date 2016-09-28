@@ -173,6 +173,8 @@ sources = {
 	],
     "protocols/pose_length_moves": [
 		#"DeleteResMover",
+		"AnalyzeLoopModeling",
+		"ConnectChainsMover",
 		"FixAllLoopsMover",
 		"InsertResMover",
 		"NearNativeLoopCloser",

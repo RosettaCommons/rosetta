@@ -416,6 +416,7 @@ enum ScoreType {
 	ss_pair,
 	rsigma,
 	sheet,
+	burial_v2, // burial of a list of residues converted to score function.
 	burial, // informatic burial prediction
 	abego,  // informatic torsion-bin prediction
 

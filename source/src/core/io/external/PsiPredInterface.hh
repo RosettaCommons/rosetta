@@ -69,6 +69,9 @@ public:
 	PsiPredResult
 	run_psipred( core::pose::Pose const & pose, std::string const & blueprint_ss );
 
+	//@brief wrapper for run_psired that returns a vector of probabilities
+	utility::vector1< utility::vector1< utility::vector1< core::Real > > > run_psipred_prob(core::pose::Pose const & pose);
+
 	/// @brief in its current form PsiPredResultMap is not assignable but compiler tries to generate assigment operator anyway
 	PsiPredInterface & operator= ( const PsiPredInterface & ) = delete;
 
@@ -89,6 +92,9 @@ private:
 	parse_psipred_output( std::string const & psipred_str,
 		std::string const & blueprint_ss,
 		std::string const & psipred_horiz_filename ) const;
+
+	/// @brief Parses the psipred output and returns the probabilities
+	utility::vector1< utility::vector1 < Real > > parse_psipred_output_probabilities(std::string const & psipred_str) const;
 
 	/// @brief Parses the psipred pass2 horiz file and returns predicted secondary structure and confidence for each position.
 	std::pair< std::string, utility::vector1< core::Size > >

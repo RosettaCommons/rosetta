@@ -8,11 +8,15 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/protocols/moves/FixAllLoopsMover.fwd.hh
-/// @brief
-///
+/// @brief connects chains using a very fast RMSD lookback. only works for chains <5 residues. Designed to make loops look within .4 RMSD to naturally occuring loops
 /// @author TJ Brunette tjbrunette@gmail.com
 ///
 // Unit headers
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pose/symmetry/util.hh>
+
 #include <protocols/pose_length_moves/FixAllLoopsMover.hh>
 #include <protocols/pose_length_moves/FixAllLoopsMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
@@ -21,7 +25,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 
-#include <core/indexed_structure_store/ABEGOHashedFragmentStore.hh>
+#include <core/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
@@ -92,10 +96,13 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 		}
 		lastSecStruct = dssp_string.substr(ii-1,1);
 	}
-	return(pose_loops);
-}
+ 	return(pose_loops);
+ }
 
-void FixAllLoopsMover::apply(core::pose::Pose & pose) {
+ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
+	if( core::pose::symmetry::is_symmetric(pose) ){
+		utility_exit_with_message("***fixing loops on a symmetric structure would be a bad idea because the fold tree is not properly maintained");
+	}
 	protocols::loops::Loops pose_loops = get_loops(pose);
 	bool failure = false;
 	if ( firstResidue_==1 && lastResidue_>pose.size() ) {
@@ -105,17 +112,23 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 	}
 	TR << "loop RMSD before optimization" << std::endl;
 	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
-		Size lookback_resid = pose_loops[ii].start()-2;
-		if ( lookback_resid>=pose.size()-9+1 ) {
-			lookback_resid = pose.size()-9+1; //loop is in the final 9 residues
-		}
-		Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,lookback_resid);
+		vector1<Size> resids;
+		resids.push_back(pose_loops[ii].start()-3);
+		resids.push_back(pose_loops[ii].start()-1);
+		resids.push_back(pose_loops[ii].start()+1);
+		resids.push_back(pose_loops[ii].start()+2);
+		Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
 		TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 	}
 	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 		if ( pose_loops[ii].start()>=firstResidue_ && pose_loops[ii].stop()<=lastResidue_ ) {
 			TR << "working on " << pose_loops[ii].start() << "-" <<  pose_loops[ii].stop() << std::endl;
-			Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,pose_loops[ii].start()-2);
+			vector1<Size> resids;
+			resids.push_back(pose_loops[ii].start()-3);
+			resids.push_back(pose_loops[ii].start()-1);
+			resids.push_back(pose_loops[ii].start()+1);
+			resids.push_back(pose_loops[ii].start()+2);
+			Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
 			if ( loop_rmsd > rmsThreshold_ ) {
 				NearNativeLoopCloserOP loopCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold_,max_vdw_change_,true,ideal_,true));
 				loopCloserOP->apply(pose);
@@ -138,17 +151,18 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		pose_loops = get_loops(pose);
 		TR << "loop RMSD after optimization (note:Residue numbers may have changed)" << std::endl;
 		for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
-			Size lookback_resid = pose_loops[ii].start()-2;
-			if ( lookback_resid>=pose.size()-9+1 ) {
-				lookback_resid = pose.size()-9+1; //loop is in the final 9 residues
-			}
-			Real loop_rmsd = ABEGOHashedFragmentStore_->lookback(pose,lookback_resid);
+			vector1<Size> resids;
+			resids.push_back(pose_loops[ii].start()-3);
+			resids.push_back(pose_loops[ii].start()-1);
+			resids.push_back(pose_loops[ii].start()+1);
+			resids.push_back(pose_loops[ii].start()+2);
+			Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
 			TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 		}
 	}
-	//time_t end_time = time(NULL);
-	//std::cout << "total_time" << end_time-start_time_ << std::endl;
-}
+// 	//time_t end_time = time(NULL);
+// 	//std::cout << "total_time" << end_time-start_time_ << std::endl;
+ }
 
 
 std::string FixAllLoopsMover::get_name() const {
@@ -223,11 +237,11 @@ FixAllLoopsMover::parse_my_tag(
 		firstResidue_ = atoi(residueRange_split[1].c_str());
 		lastResidue_ = atoi(residueRange_split[2].c_str());
 	}
-	ABEGOHashedFragmentStore_ = core::indexed_structure_store::ABEGOHashedFragmentStore::get_instance();
-	ABEGOHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
-	ABEGOHashedFragmentStore_->generate_ss_stub_to_abego();
+	SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
+	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
+	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 	TR << "database loaded!!" << std::endl;
-	//std::cout << resAdjustmentStartLow_ <<"," << resAdjustmentStartHigh_ << ",:," << resAdjustmentStopLow_ << "," << resAdjustmentStopHigh_ << ",:," << loopLengthRangeLow_ <<"," << loopLengthRangeHigh_ << std::endl;
+	std::cout << resAdjustmentStartLow_ <<"," << resAdjustmentStartHigh_ << ",:," << resAdjustmentStopLow_ << "," << resAdjustmentStopHigh_ << ",:," << loopLengthRangeLow_ <<"," << loopLengthRangeHigh_ << std::endl;
 }
 
 }//pose_length_moves

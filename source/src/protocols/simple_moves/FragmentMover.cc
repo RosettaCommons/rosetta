@@ -38,6 +38,8 @@
 // option key includes
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
@@ -269,7 +271,8 @@ ClassicFragmentMover::set_defaults() {
 	using namespace basic::options;
 	check_ss_ = !option[ basic::options::OptionKeys::run::remove_ss_length_screen ]();
 
-	bApplyEndBias_ = true;
+	bApplyEndBias_ = option[basic::options::OptionKeys::abinitio::apply_end_bias]();
+
 	end_bias_ = 30.0; //classic is 60  // pose_simple_moves is 30
 	min_overlap_ = 0;
 	min_frag_length_ = 0;

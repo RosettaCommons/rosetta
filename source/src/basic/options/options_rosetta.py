@@ -3322,6 +3322,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'log_frags',               'File',         desc='fragment insertions (each trial) will be logged to file',     default='' ),
 		Option( 'only_stage1',             'Boolean',      desc='useful for benchmarks sets cycle of all higher stages to 0',     default='false' ),
 		Option( 'end_bias',                'Real',         desc='set the endbias for Fragment moves',     default='30.0' ),
+		Option( 'apply_end_bias',      'Boolean',          desc='eliminate the endbias for Fragment moves',default='true' ),
+
 		Option( 'symmetry_residue',        'Integer',      desc='hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1',     default='-1' ),
 		Option( 'vdw_weight_stage1',       'Real',         desc='vdw weight in stage1',     default='1.0' ),
 		Option( 'override_vdw_all_stages', 'Boolean',      desc='apply vdw_weight_stage1 for all stages',     default='false' ),
@@ -5587,6 +5589,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'fragment_store', 'File', desc='Fragment store. [.h5] file'),
 		Option( 'fragment_threshold_distance', 'Real', desc='sets the fragment threshold distance when being read in by the VallLookback score function',default = '0.4'),
 		Option( 'store_name', 'String', desc='name of store in hdf5',default = '9_mer'),
+		Option( 'exclude_homo','String', desc='turns on delete homologs from hdf5 database and gives files'),
 	), # -indexed_structure_store
 	Option_Group( 'lh',
 #		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),
@@ -6681,11 +6684,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option(  'residues_to_sample', 'File', desc = 'residues to allow sampling (format:1,3,5)', default = ''),
 			Option(  'starting_sequence', 'String', desc = 'AA sequence to start', default = ''),
 			Option(  'starting_pdb', 'File', desc = 'pdb to start', default = ''),
+			Option ( 'starting_non_canonical', 'String', desc = 'position,non canonical to be added', default=''),
 			Option(  'require_frags_match_blueprint', 'Boolean', desc = 'makes sure the frags match the definition in the blueprint', default = 'true'),
 			Option( 'start_w_ideal_helices', 'Boolean', desc = 'begins with all helices set to -63.8 phi and -41.1 for psi.', default = 'false'),
 			Option( 'sample_over_loops', 'Boolean', desc = 'sample residues defined as loops in the blueprint', default = 'false'),
 			Option( 'small_moves', 'Boolean', desc = 'add a stage of small moves', default = 'false'),
+			Option( 'fa_mode', 'Boolean', desc = 'does the fragment assembly stage in fa', default= 'false'),
 			Option( 'fa_relax_moves', 'Boolean', desc = 'Adds a stage of fa relax', default = 'false'),
+			Option( 'sym_move', 'Boolean', desc ='Adds a symmetry move to the abinitio stage', default='false'), 
+		  Option( 'loop_btw_parametric_components', 'Boolean' , desc='Sets up a mode where a loop can be inserted into a parametric repeat', default='false'),
+			Option( 'pre_centroid', 'Boolean' , desc='initialize fa mode with 200 cycles of centroid', default='false'),
 		), # -remodel:staged_sampling
 		Option_Group( 'domainFusion',
 			Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),

@@ -335,6 +335,11 @@ bool DihedralPairConstraint::same_type_as_me( Constraint const & other ) const {
 	return dynamic_cast< DihedralPairConstraint const * > (&other);
 }
 
+void DihedralPairConstraint::show_def( std::ostream & os, pose::Pose const & ) const
+{
+	show( os );
+}
+
 
 void DihedralPairConstraint::show( std::ostream & out ) const {
 	out << "DihedralPairConstraint";

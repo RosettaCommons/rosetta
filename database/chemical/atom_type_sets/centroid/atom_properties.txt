@@ -55,3 +55,8 @@ Ca2p    CA    1.3670    0.1200    0.0000    2.0000   10.7000 SP3_HYBRID  # radiu
 #atom types for carbohydrates. Values come from rosetta_database/chemical/atom_type_sets/fa_standard/atom_properties.txt
 COO      C    2.0000    0.1200   -1.4000    3.5000    8.3000
 Nlys     N    1.7500    0.2384  -20.0000    6.0000   11.2000 DONOR
+
+#atom types for l-ncaa. Values come from rosetta_database/chemical/atom_type_sets/fa_standard/atom_properties.txt
+Npro     N    1.7500    0.2384   -1.5500    3.5000    0.0000 DONOR
+Fe3p    FE    0.6500    0.0000   -5.0000    3.5000    1.2000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3
+

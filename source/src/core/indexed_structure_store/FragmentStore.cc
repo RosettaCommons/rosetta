@@ -16,6 +16,15 @@
 #include <core/indexed_structure_store/FragmentStore.hh>
 #include <core/indexed_structure_store/FragmentLookup.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
+
+#include <utility/io/izstream.hh>
+#include <utility/excn/Exceptions.hh>
+
+#include <set>
+#include <vector>
+
 namespace core
 {
 namespace indexed_structure_store
@@ -52,7 +61,66 @@ void FragmentStore::add_threshold_distance_allFrag(numeric::Real distance)
 	}
 }
 
-void FragmentStore::generate_subset_fragment_store(std::vector<numeric::Size> residues, std::string name){
+std::set<std::string> FragmentStore::get_homologs(){
+	std::set<std::string> homologs;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace OptionKeys::indexed_structure_store;
+	std::string homolog_fn = option[OptionKeys::indexed_structure_store::exclude_homo]();
+	utility::io::izstream data( homolog_fn.c_str() );
+	if ( !data.good() ) {
+		utility_exit_with_message(
+			"ERROR: Unable to open homolog file'" + homolog_fn + "'"
+		);
+	}
+	std::string line;
+	while ( getline(data,line) ) {
+		std::string pdbid = line.substr(0,5);
+		homologs.insert(pdbid);
+	}
+	return(homologs);
+}
+
+
+void FragmentStore::delete_homologs(){
+	std::vector<bool> residues_to_delete;
+	std::vector<bool> coordinates_to_delete;
+	std::set<std::string> homologs = get_homologs();
+	numeric::Size fragment_length = fragment_specification.fragment_length;
+	//determine which to delete
+	for(numeric::Size ii=0; ii<string_groups["name"].size(); ++ii){
+		std::string string_ii = string_groups["name"][ii];
+		if(homologs.find(string_ii) != homologs.end()){
+			residues_to_delete.push_back(true);
+			for(numeric::Size ii=0; ii<fragment_length; ++ii)
+				coordinates_to_delete.push_back(true);
+			num_fragments_--;
+		}
+		else{
+			residues_to_delete.push_back(false);
+			for(numeric::Size ii=0; ii<fragment_length; ++ii)
+				coordinates_to_delete.push_back(false);
+		}
+	}
+	//string_groups
+	inline_vector_delete(string_groups["aa"],residues_to_delete);
+	//realVector_groups
+	for(std::map<std::string, std::vector<std::vector<numeric::Real> > >::iterator itr=realVector_groups.begin(); itr!=realVector_groups.end(); ++itr)
+		inline_vector_delete(itr->second,residues_to_delete);
+	//real_groups
+	for(std::map<std::string, std::vector<numeric::Real> >::iterator itr=real_groups.begin(); itr!=real_groups.end(); ++itr)
+		inline_vector_delete(itr->second,residues_to_delete);
+	//int64_groups
+	for(std::map<std::string, std::vector<numeric::Size> >::iterator itr=int64_groups.begin(); itr!=int64_groups.end(); ++itr)
+		inline_vector_delete(itr->second,residues_to_delete);
+	//fragment_threshold_distances
+		inline_vector_delete(fragment_threshold_distances,residues_to_delete);
+	//fragment_coordinates
+		inline_vector_delete(fragment_coordinates,coordinates_to_delete);
+}
+
+
+void FragmentStore::generate_residue_subset_fragment_store(std::vector<numeric::Size> residues){
 	numeric::Size tmp_fragment_length = residues.size();
 	FragmentSpecification tmp_fragment_spec = FragmentSpecification(tmp_fragment_length,fragment_specification.fragment_atoms);
 	FragmentStoreOP tmp_fragment_store = FragmentStoreOP(new FragmentStore(tmp_fragment_spec,num_fragments_));
@@ -78,7 +146,7 @@ void FragmentStore::generate_subset_fragment_store(std::vector<numeric::Size> re
 		}
 	}
 	tmp_fragment_store->add_threshold_distance_allFrag(0);
-	fragmentStore_groups[name]=tmp_fragment_store;
+	residue_subset_fragment_store=tmp_fragment_store;
 }
 
 

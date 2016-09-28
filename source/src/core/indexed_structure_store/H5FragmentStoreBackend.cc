@@ -106,6 +106,17 @@ H5::DataType H5FragmentStoreBackend::FragmentString1PerResGroupEntryDatatype(std
 	return entry_type;
 }
 
+H5::DataType H5FragmentStoreBackend::FragmentString5PerResGroupEntryDatatype(std::string group_field,FragmentSpecification fragment_spec)
+{
+	using namespace H5;
+	CompType entry_type(sizeof(char)*fragment_spec.fragment_length*5);
+	hsize_t array_length[1];
+	array_length[0] = fragment_spec.fragment_length ;
+	H5::StrType string_type(H5::PredType::C_S1, 5);
+	entry_type.insertMember(group_field, 0, ArrayType(string_type, 1, array_length));
+	return entry_type;
+}
+
 
 H5FragmentStoreBackend::H5FragmentStoreBackend(std::string target_filename)
 {
@@ -170,8 +181,8 @@ void H5FragmentStoreBackend::append_to_fragment_store(FragmentStoreOP fragment_s
 	DataSet store_dataset(target_file_.openDataSet(store_path));
 	DataSpace store_dataspace(store_dataset.getSpace());
 	TR.Debug <<"Loading group type: " << group_field << " of type " << group_type << std::endl;
-	if(group_type != "int64" && group_type != "real" && group_type != "char_per_residue" && group_type != "real_per_residue")
-		utility_exit_with_message(group_type + " is not a valid entry in the fragment store. Currently only int64 and real are implemented");
+	if(group_type != "int64" && group_type != "real" && group_type != "char_per_residue" && group_type != "real_per_residue" && group_type != "five_char_per_residue")
+		utility_exit_with_message(group_type + " is not a valid entry in the fragment store. Currently only int64,real,char and 5char are implemented");
 	if(group_type =="int64"){
 		std::vector<numeric::Size> int64_group;
 		int64_group.resize(store_dataspace.getSimpleExtentNpoints());
@@ -198,7 +209,7 @@ void H5FragmentStoreBackend::append_to_fragment_store(FragmentStoreOP fragment_s
 		FragmentReal1PerResGroupEntryDatatype(group_field,fragment_store->fragment_specification));
 		std::vector<numeric::Real>::iterator begin_itr,end_itr;
 		begin_itr = real_group.begin();
-		for(numeric::Size ii=0; ii<=(numeric::Size)store_dataspace.getSimpleExtentNpoints(); ++ii){
+		for(numeric::Size ii=0; ii<(numeric::Size)store_dataspace.getSimpleExtentNpoints(); ++ii){
 			end_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
 			std::vector<numeric::Real> numericSplit(begin_itr,end_itr);
 			real_group_processed.push_back(numericSplit);
@@ -219,6 +230,22 @@ void H5FragmentStoreBackend::append_to_fragment_store(FragmentStoreOP fragment_s
 			std::string aa(begin_itr,end_itr);
 			char_per_residue_group_processed.push_back(aa);
 			begin_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment();
+		}
+		fragment_store->string_groups.insert(std::pair<std::string,std::vector<std::string> > (group_field,char_per_residue_group_processed));
+	}
+	if(group_type == "five_char_per_residue"){
+		//1 residue string with same length as the number of frags.
+		std::vector<char> char_per_residue_group;
+		std::vector<std::string> char_per_residue_group_processed;
+		char_per_residue_group.resize(store_dataspace.getSimpleExtentNpoints()*fragment_store->fragment_specification.coordinates_per_fragment()*5);
+		store_dataset.read(&char_per_residue_group[0],FragmentString5PerResGroupEntryDatatype(group_field,fragment_store->fragment_specification));
+		std::vector<char>::iterator begin_itr,end_itr;
+		begin_itr = char_per_residue_group.begin();
+		for(numeric::Size ii=0; ii<(numeric::Size)store_dataspace.getSimpleExtentNpoints(); ++ii){
+			end_itr=begin_itr+5;
+			std::string name(begin_itr,end_itr);
+			char_per_residue_group_processed.push_back(name);
+			begin_itr=begin_itr+fragment_store->fragment_specification.coordinates_per_fragment()*5;//skip the other 8 residues
 		}
 		fragment_store->string_groups.insert(std::pair<std::string,std::vector<std::string> > (group_field,char_per_residue_group_processed));
 		}
