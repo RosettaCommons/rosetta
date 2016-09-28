@@ -64,7 +64,7 @@ InnerLarvalJob::InnerLarvalJob( InnerLarvalJob const & src ) :
 	bad_                      ( src.bad_                      ),
 	const_data_cache_         ( src.const_data_cache_         ),
 	jobdef_tag_               ( src.jobdef_tag_               )
-	{}
+{}
 
 
 InnerLarvalJob::InnerLarvalJob( core::Size nstruct ) :

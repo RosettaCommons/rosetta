@@ -113,9 +113,9 @@ thermal_sampler()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
-	
+
 	FullModelInfoOP my_model;
-	
+
 	// input stream
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
@@ -133,16 +133,16 @@ thermal_sampler()
 
 	Pose pose;
 	input->fill_pose( pose, *rsd_set );
-	
+
 	utility::vector1< pose::PoseOP > other_poses;
 	if ( !option[ in::file::silent ].user() ) protocols::stepwise::setup::cleanup( pose );
-	
-	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ){
+
+	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ) {
 		protocols::stepwise::setup::fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 	}
-	
+
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
-	
+
 	using namespace protocols::farna::thermal_sampling;
 
 	ThermalSamplingMoverOP ts( new ThermalSamplingMover );

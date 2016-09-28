@@ -85,7 +85,7 @@ void JobDirectedNode::all_jobs_completed( bool setting )
 	all_jobs_completed_ = setting;
 	if ( all_jobs_completed_ ) {
 		for ( DirectedEdgeListIter iter = outgoing_edge_list_begin();
-					iter != outgoing_edge_list_end(); ++iter ) {
+				iter != outgoing_edge_list_end(); ++iter ) {
 			JobDirectedNode * neighb = static_cast< JobDirectedNode * >
 				( (*iter)->get_head_node() );
 			debug_assert( neighb->n_predecessors_w_outstanding_jobs_ > 0 );

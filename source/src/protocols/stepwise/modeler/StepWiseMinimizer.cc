@@ -162,21 +162,21 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 		pose = *pose_list_[ n ];
 		Real const score_original = pose.energies().total_energy();
 		Real score_before_min;
-		
+
 		if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
 
 		// The movemap has all dofs for "non-fixed residues" free to move.
 		get_move_map_and_atom_level_domain_map( mm, pose );
-		
+
 		// We can also let sidechains minimize in fixed-residues -- for
 		// speed only look at neighbors of moving residues.
 		let_neighboring_side_chains_minimize( mm, pose );
-		
+
 		score_before_min = (*minimize_scorefxn_)( pose );
 		do_minimize( pose, mm );
-			
+
 		close_chainbreaks( pose, mm );
-		
+
 		TR << "Score minimized from " << F(8,3, score_before_min) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << "   [original: " << F(8,3,score_original);
 		if ( hasPoseExtraScore( pose, "cluster_size" ) ) TR << " with cluster_size " << I( 4, getPoseExtraScore( pose, "cluster_size" ) );
 		TR <<  "]" <<  std::endl;

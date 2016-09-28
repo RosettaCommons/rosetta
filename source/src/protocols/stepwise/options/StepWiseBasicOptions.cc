@@ -110,10 +110,10 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	minimize_waters_ = option[ basic::options::OptionKeys::stepwise::minimize_waters ]();
 	hydrate_magnesiums_ = option[ basic::options::OptionKeys::magnesium::hydrate ]();
 	test_all_mg_hydration_frames_ = option[ magnesium::all_hydration_frames ]();
-	
+
 	if ( option[ basic::options::OptionKeys::stepwise::minimizer_mode ]() == "THERMAL_SAMPLER" ) {
 		minimizer_mode_ = modeler::THERMAL_SAMPLER;
-	} else { 
+	} else {
 		minimizer_mode_ = modeler::TRADITIONAL_MINIMIZER;
 	}
 	n_cycles_ = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ]();

@@ -49,7 +49,7 @@ public:
 
 	/// @brief Default constructor
 	ThermalMinimizer();
-	
+
 	/// @brief Copy constructor (not needed unless you need deep copies)
 	ThermalMinimizer( ThermalMinimizer const & src );
 
@@ -98,8 +98,8 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP
 	clone() const;
-	
-	void set_n_cycle( Size const setting ) { n_cycle_ = setting; } 
+
+	void set_n_cycle( Size const setting ) { n_cycle_ = setting; }
 	void set_temp( Real const temp ) { temp_ = temp; }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { score_fxn_ = scorefxn; }
 	void set_mm( core::kinematics::MoveMapOP mm ) { mm_ = mm; }

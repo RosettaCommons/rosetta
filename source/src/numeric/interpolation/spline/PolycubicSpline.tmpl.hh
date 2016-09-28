@@ -377,7 +377,7 @@ double PolycubicSpline< N >::F( utility::fixedsizearray1< double, N > const & xs
 			}
 
 			//if ( coeff != 0 ) {
-			//	std::cout << "iid " << iid << " coeff " << coeff << std::endl;
+			// std::cout << "iid " << iid << " coeff " << coeff << std::endl;
 			//}
 			value += coeff;
 		}

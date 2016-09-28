@@ -138,73 +138,73 @@ public:
 
 
 	/*void ts_assert_mpi_buffer_has_string(
-		core::Size source,
-		std::string message_tag,
-		std::string expected_message
+	core::Size source,
+	std::string message_tag,
+	std::string expected_message
 	)
 	{
-		try {
-			std::string msg = utility::receive_string_from_node( source );
-			TS_ASSERT( msg == expected_message );
-			if ( msg != expected_message ) {
-				std::cerr << "SimulateMPI string for tag " << message_tag << " did not match expected string:";
-				std::cerr << "Expected: " << expected_message << "\n";
-				std::cerr << "Actual: " << msg << "\n";
-			}
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
+	try {
+	std::string msg = utility::receive_string_from_node( source );
+	TS_ASSERT( msg == expected_message );
+	if ( msg != expected_message ) {
+	std::cerr << "SimulateMPI string for tag " << message_tag << " did not match expected string:";
+	std::cerr << "Expected: " << expected_message << "\n";
+	std::cerr << "Actual: " << msg << "\n";
+	}
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
+	TS_ASSERT( false );
+	}
 	}
 
 	std::string ts_assert_mpi_buffer_has_string(
-		core::Size source,
-		std::string message_tag
+	core::Size source,
+	std::string message_tag
 	)
 	{
-		std::string msg;
-		try {
-			msg = utility::receive_string_from_node( source );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
-		return msg;
+	std::string msg;
+	try {
+	msg = utility::receive_string_from_node( source );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
+	TS_ASSERT( false );
+	}
+	return msg;
 	}
 
 	void ts_assert_mpi_buffer_has_integer(
-		core::Size source,
-		std::string message_tag,
-		int expected_message
+	core::Size source,
+	std::string message_tag,
+	int expected_message
 	)
 	{
-		try {
-			int msg = utility::receive_integer_from_node( source );
-			TS_ASSERT( msg == expected_message );
-			if ( msg != expected_message ) {
-				std::cerr << "SimulateMPI string for tag " << message_tag << " did not match expected string:";
-				std::cerr << "Expected: " << expected_message << "\n";
-				std::cerr << "Actual: " << msg << "\n";
-			}
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
+	try {
+	int msg = utility::receive_integer_from_node( source );
+	TS_ASSERT( msg == expected_message );
+	if ( msg != expected_message ) {
+	std::cerr << "SimulateMPI string for tag " << message_tag << " did not match expected string:";
+	std::cerr << "Expected: " << expected_message << "\n";
+	std::cerr << "Actual: " << msg << "\n";
+	}
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
+	TS_ASSERT( false );
+	}
 	}
 
 	double ts_assert_mpi_buffer_has_double(
-		core::Size source,
-		std::string message_tag
+	core::Size source,
+	std::string message_tag
 	)
 	{
-		double msg( 0 );
-		try {
-			msg = utility::receive_double_from_node( source );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
-			TS_ASSERT( false );
-		}
-		return msg;
+	double msg( 0 );
+	try {
+	msg = utility::receive_double_from_node( source );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+	std::cerr << "Exception caught for tag " << message_tag << ": " << e.msg() << std::endl;
+	TS_ASSERT( false );
+	}
+	return msg;
 	}*/
 
 	void test_provide_an_empty_test() {

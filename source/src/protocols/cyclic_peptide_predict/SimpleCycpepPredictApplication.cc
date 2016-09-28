@@ -152,7 +152,10 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds     );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency       );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_relax_rounds          );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds      );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds        );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -234,7 +237,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
 	abba_bins_(""),
-	do_not_count_adjacent_res_hbonds_(true)
+	do_not_count_adjacent_res_hbonds_(true),
+	angle_relax_rounds_(0),
+	angle_length_relax_rounds_(0),
+	cartesian_relax_rounds_(0)
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -306,7 +312,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
 	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
 	abba_bins_(src.abba_bins_),
-	do_not_count_adjacent_res_hbonds_(src.do_not_count_adjacent_res_hbonds_)
+	do_not_count_adjacent_res_hbonds_(src.do_not_count_adjacent_res_hbonds_),
+	angle_relax_rounds_(src.angle_relax_rounds_),
+	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
+	cartesian_relax_rounds_(src.cartesian_relax_rounds_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -469,6 +478,16 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	do_not_count_adjacent_res_hbonds_ = option[basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds]();
 
+	if ( option[basic::options::OptionKeys::cyclic_peptide::angle_relax_rounds].user() ) {
+		set_angle_relax_rounds( static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::angle_relax_rounds]() ) );
+	}
+	if ( option[basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds].user() ) {
+		set_angle_length_relax_rounds( static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds]() ) );
+	}
+	if ( option[basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds].user() ) {
+		set_cartesian_relax_rounds( static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds]() ) );
+	}
+
 	return;
 } //initialize_from_options()
 
@@ -626,6 +645,33 @@ SimpleCycpepPredictApplication::disable_cis_pro_sampling() {
 	sample_cis_pro_frequency_ = 0.0;
 }
 
+/// @brief Set the number of rounds of relaxation with flexible
+/// bond angles.
+void
+SimpleCycpepPredictApplication::set_angle_relax_rounds(
+	core::Size const rounds_in
+) {
+	angle_relax_rounds_ = rounds_in;
+}
+
+/// @brief Set the number of rounds of relaxation with flexible
+/// bond angles and bond lengths.
+void
+SimpleCycpepPredictApplication::set_angle_length_relax_rounds(
+	core::Size const rounds_in
+) {
+	angle_length_relax_rounds_ = rounds_in;
+}
+
+/// @brief Set the number of rounds of Cartesian relaxation.
+///
+void
+SimpleCycpepPredictApplication::set_cartesian_relax_rounds(
+	core::Size const rounds_in
+) {
+	cartesian_relax_rounds_ = rounds_in;
+}
+
 
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -650,6 +696,23 @@ SimpleCycpepPredictApplication::run() const {
 	if ( sfxn_highhbond->get_weight( core::scoring::atom_pair_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::atom_pair_constraint, 1.0); }
 	if ( sfxn_highhbond->get_weight( core::scoring::angle_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::angle_constraint, 1.0); }
 	if ( sfxn_highhbond->get_weight( core::scoring::dihedral_constraint ) == 0.0 ) { sfxn_highhbond_cst->set_weight( core::scoring::dihedral_constraint, 1.0); }
+	core::scoring::ScoreFunctionOP sfxn_highhbond_cst_cart, sfxn_default_cst_cart;
+	if ( angle_relax_rounds() > 0 || angle_length_relax_rounds() > 0 || cartesian_relax_rounds() > 0 ) {
+		sfxn_highhbond_cst_cart = sfxn_highhbond_cst->clone();
+		debug_assert( sfxn_highhbond_cst_cart );
+		if ( sfxn_highhbond_cst_cart->get_weight( core::scoring::cart_bonded ) == 0.0 ) {
+			TR << "Activating cart_bonded (with weight=0.5) for high-hbonds scorefunction Cartesian variant, and de-activating pro_close term." << std::endl;
+			sfxn_highhbond_cst_cart->set_weight( core::scoring::cart_bonded, 0.5 );
+			sfxn_highhbond_cst_cart->set_weight( core::scoring::pro_close, 0.0 );
+		}
+		sfxn_default_cst_cart = sfxn_default_cst->clone();
+		debug_assert( sfxn_default_cst_cart );
+		if ( sfxn_default_cst_cart->get_weight( core::scoring::cart_bonded ) == 0.0 ) {
+			TR << "Activating cart_bonded (with weight=0.5) for default scorefunction Cartesian variant, and de-activating pro_close term." << std::endl;
+			sfxn_default_cst_cart->set_weight( core::scoring::cart_bonded, 0.5 );
+			sfxn_default_cst_cart->set_weight( core::scoring::pro_close, 0.0 );
+		}
+	}
 
 	//Get the sequence that we're considering:
 	utility::vector1 < std::string > resnames;
@@ -724,7 +787,7 @@ SimpleCycpepPredictApplication::run() const {
 #endif
 
 		//Do the kinematic closure:
-		bool const success( genkic_close(pose, sfxn_highhbond_cst, sfxn_default, total_hbond, cyclic_offset) );
+		bool const success( genkic_close(pose, sfxn_highhbond_cst, sfxn_highhbond_cst_cart, sfxn_default, total_hbond, cyclic_offset) );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -751,35 +814,17 @@ SimpleCycpepPredictApplication::run() const {
 		//If we reach here, then closure was successful.  Time to relax the pose.
 
 		TR << "Closure successful." << std::endl;
-		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_default_cst, 1) );
-		//Mover to update terminal peptide bond O and H atoms:
-		protocols::cyclic_peptide::DeclareBondOP final_termini( new protocols::cyclic_peptide::DeclareBond );
-		set_up_termini_mover( final_termini, pose );
 
-		(*sfxn_default_cst)(*pose);
-		core::Real cur_energy( pose->energies().total_energy() );
-		for ( core::Size i=1, imax=fast_relax_rounds_; i<=imax; ++i ) {
-			core::pose::PoseOP pose_copy( pose->clone() );
-			TR << "Applying final FastRelax, round " << i << "." << std::endl;
-			frlx->apply( *pose_copy );
-			final_termini->apply( *pose_copy );
-			(*sfxn_default_cst)(*pose_copy);
-			if ( pose_copy->energies().total_energy() < cur_energy ) {
-				cur_energy = pose_copy->energies().total_energy();
-				(*pose) = (*pose_copy);
-			}
-#ifdef BOINC_GRAPHICS
-			// attach boinc graphics pose observer
-			protocols::boinc::Boinc::update_graphics_current( *pose );
-#endif
+		if ( fast_relax_rounds_ > 0 ) do_final_fastrelax( pose, sfxn_default_cst, fast_relax_rounds_, false, false, false );
+		if ( angle_relax_rounds() > 0 ) do_final_fastrelax( pose, sfxn_default_cst_cart, angle_relax_rounds(), true, false, false );
+		if ( angle_length_relax_rounds() > 0 ) do_final_fastrelax( pose, sfxn_default_cst_cart, angle_length_relax_rounds(), true, true, false );
+		if ( cartesian_relax_rounds() > 0 ) do_final_fastrelax( pose, sfxn_default_cst_cart, cartesian_relax_rounds(), false, false, true );
+		if ( angle_relax_rounds() > 0 || angle_length_relax_rounds() > 0 || cartesian_relax_rounds() > 0 ) {
+			do_final_fastrelax( pose, sfxn_default_cst, 1, false, false, false ); //Do one more round of regular FastRelax if we've done any Cartesian, just to make sure we're in a pro_close minimum.
 		}
-
-		//pose->dump_pdb( "before.pdb" ); //DELETE ME -- for debugging only.
 
 		//Undo the cyclic permutation in anticipation of re-aligning to the native:
 		depermute( pose, cyclic_offset );
-
-		//pose->dump_pdb( "after.pdb" ); //DELETE ME -- for debugging only.
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -864,6 +909,57 @@ SimpleCycpepPredictApplication::run() const {
 	return;
 }
 
+/// @brief Carry out the final FastRelax.
+///
+void
+SimpleCycpepPredictApplication::do_final_fastrelax(
+	core::pose::PoseOP pose,
+	core::scoring::ScoreFunctionOP sfxn,
+	core::Size const relax_rounds,
+	bool const angle_min,
+	bool const length_min,
+	bool const cartesian_min
+) const {
+	protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn, 1) );
+	if ( cartesian_min ) {
+		frlx->cartesian(true);
+	} else {
+		if ( angle_min ) {
+			frlx->minimize_bond_angles(true);
+		}
+		if ( length_min ) {
+			frlx->minimize_bond_lengths(true);
+		}
+	}
+
+	//Mover to update terminal peptide bond O and H atoms:
+	protocols::cyclic_peptide::DeclareBondOP final_termini( new protocols::cyclic_peptide::DeclareBond );
+	set_up_termini_mover( final_termini, pose );
+
+	(*sfxn)(*pose);
+	core::Real cur_energy( pose->energies().total_energy() );
+	for ( core::Size i=1; i<=relax_rounds; ++i ) {
+		core::pose::PoseOP pose_copy( pose->clone() );
+		if ( TR.visible() ) {
+			TR << "Applying final FastRelax, round " << i;
+			if ( cartesian_min ) TR << ", with Cartesian minimization.";
+			else if ( angle_min && length_min ) TR << ", with bond angle and bond length minimization.";
+			else if ( angle_min && !length_min ) TR << ", with bond angle minimization.";
+			TR << "." << std::endl;
+		}
+		frlx->apply( *pose_copy );
+		final_termini->apply( *pose_copy );
+		(*sfxn)(*pose_copy);
+		if ( pose_copy->energies().total_energy() < cur_energy ) {
+			cur_energy = pose_copy->energies().total_energy();
+			(*pose) = (*pose_copy);
+		}
+#ifdef BOINC_GRAPHICS
+		// attach boinc graphics pose observer
+		protocols::boinc::Boinc::update_graphics_current( *pose );
+#endif
+	}
+}
 
 /// @brief Actually build the geometry that we'll be working with.
 ///
@@ -1276,6 +1372,7 @@ bool
 SimpleCycpepPredictApplication::genkic_close(
 	core::pose::PoseOP pose,
 	core::scoring::ScoreFunctionOP sfxn_highhbond,
+	core::scoring::ScoreFunctionOP sfxn_highhbond_cart,
 	core::scoring::ScoreFunctionCOP sfxn_default,
 	protocols::filters::CombinedFilterOP total_hbond,
 	core::Size const cyclic_offset
@@ -1363,15 +1460,53 @@ SimpleCycpepPredictApplication::genkic_close(
 			pp->add_mover_filter_pair( D_beta_cst, "Add_D_Beta_AACompositionConstraints", nullptr );
 		}
 
-		protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
-		set_up_design_taskoperations( fdes, cyclic_offset, pose->size() );
-		pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
+		if ( fast_relax_rounds_ > 0 ) {
+			protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
+			set_up_design_taskoperations( fdes, cyclic_offset, pose->size() );
+			pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
+		}
+		if ( angle_relax_rounds() > 0 ) {
+			protocols::denovo_design::movers::FastDesignOP fdes2( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_relax_rounds()) );
+			fdes2->minimize_bond_angles(true);
+			set_up_design_taskoperations( fdes2, cyclic_offset, pose->size() );
+			pp->add_mover_filter_pair( fdes2, "High_Hbond_FastDesign_angle_relax", nullptr );
+		}
+		if ( angle_length_relax_rounds() > 0 ) {
+			protocols::denovo_design::movers::FastDesignOP fdes3( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_length_relax_rounds()) );
+			fdes3->minimize_bond_angles(true);
+			fdes3->minimize_bond_lengths(true);
+			set_up_design_taskoperations( fdes3, cyclic_offset, pose->size() );
+			pp->add_mover_filter_pair( fdes3, "High_Hbond_FastDesign_angle_length_relax", nullptr );
+		}
+		if ( cartesian_relax_rounds() > 0 ) {
+			protocols::denovo_design::movers::FastDesignOP fdes4( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, cartesian_relax_rounds()) );
+			fdes4->cartesian(true);
+			set_up_design_taskoperations( fdes4, cyclic_offset, pose->size() );
+			pp->add_mover_filter_pair( fdes4, "High_Hbond_FastDesign_Cartesian_relax", nullptr );
+		}
 
 		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
 		pp->add_mover_filter_pair( clear_aacomp_cst, "Clear_AACompositionConstraints", nullptr );
 	} else {
-		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
-		pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", nullptr );
+		if ( fast_relax_rounds_ > 0 ) {
+			protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
+			pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", nullptr );
+		}
+		if ( angle_relax_rounds() > 0 ) {
+			protocols::relax::FastRelaxOP frlx2( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_relax_rounds() ) );
+			frlx2->minimize_bond_angles(true);
+			pp->add_mover_filter_pair( frlx2, "High_Hbond_FastRelax_angles", nullptr );
+		}
+		if ( angle_length_relax_rounds() > 0 ) {
+			protocols::relax::FastRelaxOP frlx3( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_length_relax_rounds() ) );
+			frlx3->minimize_bond_angles(true);
+			pp->add_mover_filter_pair( frlx3, "High_Hbond_FastRelax_angles_bondlengths", nullptr );
+		}
+		if ( cartesian_relax_rounds() > 0 ) {
+			protocols::relax::FastRelaxOP frlx4( new protocols::relax::FastRelax(sfxn_highhbond_cart, cartesian_relax_rounds() ) );
+			frlx4->minimize_bond_angles(true);
+			pp->add_mover_filter_pair( frlx4, "High_Hbond_FastRelax_Cartesian", nullptr );
+		}
 	}
 
 	//Update O and H atoms at the cyclization point:

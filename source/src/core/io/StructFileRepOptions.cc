@@ -394,7 +394,7 @@ bool
 StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 {
 	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
-	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_	                     ) return false;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                      ) return false;
 	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
 	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
 	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
@@ -438,8 +438,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 {
 	if ( check_if_residues_are_Ntermini_                        <  other.check_if_residues_are_Ntermini_                       ) return true;
 	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
-	if ( check_if_residues_are_Ctermini_                        <  other.check_if_residues_are_Ctermini_	                     ) return true;
-	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_	                     ) return false;
+	if ( check_if_residues_are_Ctermini_                        <  other.check_if_residues_are_Ctermini_                      ) return true;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                      ) return false;
 	if ( skip_connect_info_                                     <  other.skip_connect_info_                                    ) return true;
 	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
 	if ( connect_info_cutoff_                                   <  other.connect_info_cutoff_                                  ) return true;

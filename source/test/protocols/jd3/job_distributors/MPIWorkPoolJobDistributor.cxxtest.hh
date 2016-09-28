@@ -117,7 +117,7 @@ public:
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP job,
- 		utility::options::OptionCollectionCOP,
+		utility::options::OptionCollectionCOP,
 		utility::vector1< JobResultCOP > const &
 	) override
 	{
@@ -187,7 +187,7 @@ public:
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP job,
- 		utility::options::OptionCollectionCOP,
+		utility::options::OptionCollectionCOP,
 		utility::vector1< JobResultCOP > const &
 	) override
 	{
@@ -603,7 +603,7 @@ class PoolJQ8 : public PoolJQ1
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP job,
- 		utility::options::OptionCollectionCOP,
+		utility::options::OptionCollectionCOP,
 		utility::vector1< JobResultCOP > const &
 	) override
 	{
@@ -627,7 +627,7 @@ class PoolJQ9 : public PoolJQ1
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP job,
- 		utility::options::OptionCollectionCOP,
+		utility::options::OptionCollectionCOP,
 		utility::vector1< JobResultCOP > const &
 	) override
 	{
@@ -651,7 +651,7 @@ class PoolJQ10 : public PoolJQ1
 	protocols::jd3::JobOP
 	complete_larval_job_maturation(
 		protocols::jd3::LarvalJobCOP job,
- 		utility::options::OptionCollectionCOP,
+		utility::options::OptionCollectionCOP,
 		utility::vector1< JobResultCOP > const &
 	) override
 	{

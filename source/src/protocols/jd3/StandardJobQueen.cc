@@ -112,8 +112,8 @@ InputSourceAndImportPoseOptions::operator = ( InputSourceAndImportPoseOptions co
 
 bool InputSourceAndImportPoseOptions::operator == ( InputSourceAndImportPoseOptions const & rhs ) const
 {
-	if ( input_source_ != rhs.input_source_ && ! (*input_source_ == *rhs.input_source_ )) return false;
-	if ( import_pose_options_ != rhs.import_pose_options_ && ! (*import_pose_options_ == *rhs.import_pose_options_ )) return false;
+	if ( input_source_ != rhs.input_source_ && ! (*input_source_ == *rhs.input_source_ ) ) return false;
+	if ( import_pose_options_ != rhs.import_pose_options_ && ! (*import_pose_options_ == *rhs.import_pose_options_ ) ) return false;
 	return true;
 }
 
@@ -649,16 +649,16 @@ StandardJobQueen::preliminary_job_nodes() const
 ////void
 ////StandardJobQueen::declare_job_node_to_be_preliminary( core::Size job_node_index )
 ////{
-////	if ( job_node_index > job_graph_.num_nodes() ) {
-////		throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
-////			+ " as a preliminary job node as the job_graph_ has only " + utility::to_string( job_graph_.num_nodes() ) + "nodes." );
-////	}
-////	if ( job_graph_->get_node()->indegree() != 0 ) {
-////		throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
-////			+ " as a preliminary job node as this node has an indegree of " + utility::to_string( job_graph_->get_node()->indegree() )
-////			+ " and it must instead have an indegree of 0." );
-////	}
-////	preliminary_job_nodes_.push_back( job_node_index );
+//// if ( job_node_index > job_graph_.num_nodes() ) {
+////  throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
+////   + " as a preliminary job node as the job_graph_ has only " + utility::to_string( job_graph_.num_nodes() ) + "nodes." );
+//// }
+//// if ( job_graph_->get_node()->indegree() != 0 ) {
+////  throw utility::excn::EXCN_Msg_Exception( "Could not declare job node " + utility::to_string( job_node_index )
+////   + " as a preliminary job node as this node has an indegree of " + utility::to_string( job_graph_->get_node()->indegree() )
+////   + " and it must instead have an indegree of 0." );
+//// }
+//// preliminary_job_nodes_.push_back( job_node_index );
 ////}
 
 /// @brief Read access to derived JobQueens to the preliminary job list.
@@ -891,7 +891,7 @@ StandardJobQueen::secondary_outputters_for_job(
 core::Size
 StandardJobQueen::nstruct_for_job( utility::tag::TagCOP job_tag ) const
 {
-	if ( job_tag && job_tag->hasOption( "nstruct" )) {
+	if ( job_tag && job_tag->hasOption( "nstruct" ) ) {
 		return job_tag->getOption< core::Size >( "nstruct" );
 	}
 	return basic::options::option[ basic::options::OptionKeys::out::nstruct ];

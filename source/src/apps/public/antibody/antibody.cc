@@ -130,7 +130,7 @@ void relax_model(core::pose::PoseOP &pose)
 	relax_protocol->coord_constrain_sidechains( true );
 
 	relax_protocol->ramp_down_constraints( false );
-	
+
 	//relax
 	relax_protocol->apply( *pose );
 }
@@ -329,7 +329,7 @@ int antibody_main()
 					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
 					converter.apply(*model);
 				}
-				
+
 			}
 		}
 		else {

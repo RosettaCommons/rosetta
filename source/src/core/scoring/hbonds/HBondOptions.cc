@@ -250,7 +250,7 @@ HBondOptions::parse_my_tag(
 		exclude_intra_res_RNA( tag->getOption<bool>( "hbonds__exclude_intra_res_RNA" ) );
 	}
 	//if ( tag->hasOption( "hbonds__put_intra_into_total" ) ) {
-	//	put_intra_into_total( tag->getOption<bool>( "hbonds__put_intra_into_total" ) );
+	// put_intra_into_total( tag->getOption<bool>( "hbonds__put_intra_into_total" ) );
 	//}
 	if ( tag->hasOption( "hbonds__bb_donor_acceptor_check" ) ) {
 		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__bb_donor_acceptor_check" ) );

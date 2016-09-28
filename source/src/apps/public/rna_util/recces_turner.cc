@@ -87,7 +87,7 @@ utility::vector1<Size> const & dangling_rsd
 }
 //////////////////////////////////////////////////////////////////////////////
 PoseOP pose_setup( utility::vector1< Size > & bp_rsd, utility::vector1< Size > & dangling_rsd, utility::vector1< Size > & all_rsd
- ) {
+) {
 	std::string const & seq1_( option[seq1]() );
 	std::string const & seq2_( option[seq2]() );
 	Size const len1( get_sequence_len( seq1_ ) );
@@ -133,10 +133,10 @@ MC_run() {
 	utility::vector1< Real > weights_;
 	utility::vector1< Real > const & orig_weights( option[ st_weights ]() );
 	if ( temps_.size() != orig_weights.size() ) {
-		weights_.push_back( 0 );
+	weights_.push_back( 0 );
 	}
 	weights_.insert( weights_.end(), orig_weights.begin(),
-		orig_weights.end() );
+	orig_weights.end() );
 	runtime_assert( temps_.size() == weights_.size() );
 
 	Size const n_cycle_( option[n_cycle]() );
@@ -144,9 +144,9 @@ MC_run() {
 	// Score function setup
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) {
-		scorefxn = get_score_function();
+	scorefxn = get_score_function();
 	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
+	scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	}
 	*/
 
@@ -170,24 +170,24 @@ MC_run() {
 	/*
 	RNA_MC_MultiSuite sampler;
 	for ( Size i = 1; i <= total_len; ++i ) {
-		bool const sample_near_a_form( bp_rsd.has_value( i ) );
-		if ( i == 1 || ( i > len1 && i != total_len ) ) {
-			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i ) );
-			suite_sampler->set_sample_bb( i != 1 );
-			suite_sampler->set_sample_lower_nucleoside( true );
-			suite_sampler->set_sample_upper_nucleoside( false );
-			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			suite_sampler->set_a_form_range( option[a_form_range]() );
-			sampler.add_external_loop_rotamer( suite_sampler );
-		} else {
-			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i - 1 ) );
-			suite_sampler->set_sample_bb( len1 == total_len || i != total_len );
-			suite_sampler->set_sample_lower_nucleoside( false );
-			suite_sampler->set_sample_upper_nucleoside( true );
-			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			suite_sampler->set_a_form_range( option[a_form_range]() );
-			sampler.add_external_loop_rotamer( suite_sampler );
-		}
+	bool const sample_near_a_form( bp_rsd.has_value( i ) );
+	if ( i == 1 || ( i > len1 && i != total_len ) ) {
+	RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i ) );
+	suite_sampler->set_sample_bb( i != 1 );
+	suite_sampler->set_sample_lower_nucleoside( true );
+	suite_sampler->set_sample_upper_nucleoside( false );
+	suite_sampler->set_sample_near_a_form( sample_near_a_form );
+	suite_sampler->set_a_form_range( option[a_form_range]() );
+	sampler.add_external_loop_rotamer( suite_sampler );
+	} else {
+	RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i - 1 ) );
+	suite_sampler->set_sample_bb( len1 == total_len || i != total_len );
+	suite_sampler->set_sample_lower_nucleoside( false );
+	suite_sampler->set_sample_upper_nucleoside( true );
+	suite_sampler->set_sample_near_a_form( sample_near_a_form );
+	suite_sampler->set_a_form_range( option[a_form_range]() );
+	sampler.add_external_loop_rotamer( suite_sampler );
+	}
 	}
 	sampler.init();
 	sampler.apply( pose );
@@ -203,7 +203,7 @@ MC_run() {
 	update_scores( scores, pose, scorefxn );
 	utility::vector1< float > const null_arr_;
 	utility::vector1<utility::vector1< float > > data(
-		temps_.size(), null_arr_ );
+	temps_.size(), null_arr_ );
 
 	Real const min( -100.05 ), max( 800.05 ), spacing( 0.1 );
 	Histogram null_hist( min, max, spacing);
@@ -230,47 +230,47 @@ MC_run() {
 	// Main sampling cycle
 	Size pct = 0;
 	for ( Size n = 1; n <= n_cycle_; ++n ) {
-		if ( n % ( n_cycle_/100 ) == 0 ) {
-			++pct;
-			std::cout << pct << "% complete." << std::endl;
-		}
-		++sampler;
-		sampler.apply( pose );
-		if ( tempering.boltzmann( pose ) || n == n_cycle_ ) {
-			if ( save_scores ) fill_data( data[ temp_id ], curr_counts, scores );
-			++n_accept_total;
-			hist_list[ temp_id ].add( scores[ 1 ], curr_counts );
-			update_scores( scores, pose, scorefxn );
-			if ( n == n_cycle_ ) break;
-			sampler.update();
-			curr_counts = 1;
-			if ( option[ dump_pdb ]() && scores[ 1 ] < min_score ) {
-				min_score = scores[ 1 ];
-				min_pose = pose;
-			}
-			if ( n_dump != 0 && n * (n_dump + 1) / double(n_cycle_) >= curr_dump ) {
-				std::ostringstream oss;
-				oss << "intermediate" << '_' << curr_dump << ".pdb";
-				pose.dump_pdb(oss.str());
-				++curr_dump;
-			}
-		} else {
-			++curr_counts;
-		}
+	if ( n % ( n_cycle_/100 ) == 0 ) {
+	++pct;
+	std::cout << pct << "% complete." << std::endl;
+	}
+	++sampler;
+	sampler.apply( pose );
+	if ( tempering.boltzmann( pose ) || n == n_cycle_ ) {
+	if ( save_scores ) fill_data( data[ temp_id ], curr_counts, scores );
+	++n_accept_total;
+	hist_list[ temp_id ].add( scores[ 1 ], curr_counts );
+	update_scores( scores, pose, scorefxn );
+	if ( n == n_cycle_ ) break;
+	sampler.update();
+	curr_counts = 1;
+	if ( option[ dump_pdb ]() && scores[ 1 ] < min_score ) {
+	min_score = scores[ 1 ];
+	min_pose = pose;
+	}
+	if ( n_dump != 0 && n * (n_dump + 1) / double(n_cycle_) >= curr_dump ) {
+	std::ostringstream oss;
+	oss << "intermediate" << '_' << curr_dump << ".pdb";
+	pose.dump_pdb(oss.str());
+	++curr_dump;
+	}
+	} else {
+	++curr_counts;
+	}
 
-		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
-			++n_t_jumps_accept;
-			if ( save_scores ) fill_data( data[ temp_id ], curr_counts, scores );
-			hist_list[ temp_id ].add( scores[ 1 ], curr_counts );
-			curr_counts = 1;
-			set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
-			temp_id = tempering.temp_id();
-		}
+	if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
+	++n_t_jumps_accept;
+	if ( save_scores ) fill_data( data[ temp_id ], curr_counts, scores );
+	hist_list[ temp_id ].add( scores[ 1 ], curr_counts );
+	curr_counts = 1;
+	set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
+	temp_id = tempering.temp_id();
+	}
 	}
 	if ( option[dump_pdb]() ) {
-		pose.dump_pdb( "end.pdb" );
-		min_pose.dump_pdb( "min.pdb" );
-		scorefxn->show( min_pose );
+	pose.dump_pdb( "end.pdb" );
+	min_pose.dump_pdb( "min.pdb" );
+	scorefxn->show( min_pose );
 	}
 	*/
 
@@ -279,35 +279,35 @@ MC_run() {
 
 	//std::cout << "n_cycles: " << n_cycle_ << std::endl;
 	//std::cout << "Accept rate: " << double( n_accept_total ) / n_cycle_
-	//	<< std::endl;
+	// << std::endl;
 	//std::cout << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps
-	//	<< std::endl;
+	// << std::endl;
 	//Real const time_in_test = static_cast<Real>( clock() - time_start )
-	//	/ CLOCKS_PER_SEC;
+	// / CLOCKS_PER_SEC;
 	//std::cout << "Time in sampler: " <<  time_in_test << std::endl;
 
 	/*
-	 for ( Size i = 1; i <= temps_.size(); ++i ) {
-		if ( save_scores ) {
-			std::ostringstream oss;
-			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision( 2 )
-				<< temps_[ i ] << ".bin.gz";
-			Size const data_dim2( scorefxn->get_nonzero_weighted_scoretypes().size() + 2 );
-			Size const data_dim1( data[ i ].size() / data_dim2 );
-			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[ i ] );
-		}
-		std::ostringstream oss;
-		oss << option[ out_prefix ]() << '_' << std::fixed << std::setprecision( 2 )
-			<< temps_[ i ] << ".hist.gz";
-		utility::vector1< Size > const & hist( hist_list[ i ].get_hist() );
-		utility::vector1< Real > const & scores( hist_list[ i ].get_scores() );
-		vector2disk_in1d( oss.str(), hist );
-
-		std::ostringstream oss1;
-		oss1 << option[ out_prefix ]() << "_hist_scores.gz";
-		vector2disk_in1d( oss1.str(), scores );
+	for ( Size i = 1; i <= temps_.size(); ++i ) {
+	if ( save_scores ) {
+	std::ostringstream oss;
+	oss << option[out_prefix]() << '_' << std::fixed << std::setprecision( 2 )
+	<< temps_[ i ] << ".bin.gz";
+	Size const data_dim2( scorefxn->get_nonzero_weighted_scoretypes().size() + 2 );
+	Size const data_dim1( data[ i ].size() / data_dim2 );
+	vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[ i ] );
 	}
-	 */
+	std::ostringstream oss;
+	oss << option[ out_prefix ]() << '_' << std::fixed << std::setprecision( 2 )
+	<< temps_[ i ] << ".hist.gz";
+	utility::vector1< Size > const & hist( hist_list[ i ].get_hist() );
+	utility::vector1< Real > const & scores( hist_list[ i ].get_scores() );
+	vector2disk_in1d( oss.str(), hist );
+
+	std::ostringstream oss1;
+	oss1 << option[ out_prefix ]() << "_hist_scores.gz";
+	vector2disk_in1d( oss1.str(), scores );
+	}
+	*/
 }
 //////////////////////////////////////////////////////////////////////////////
 void*

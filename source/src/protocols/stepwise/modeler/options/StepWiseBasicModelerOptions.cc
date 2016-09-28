@@ -89,7 +89,7 @@ StepWiseBasicModelerOptions::initialize_from_command_line(){
 	dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
 	skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ basic::options::OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
-	}
+}
 
 } //options
 } //modeler

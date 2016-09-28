@@ -143,7 +143,7 @@ VanillaJobDistributor::construct_job_result_input_list( LarvalJobCOP larval_job 
 	utility::vector1< JobResultCOP > input_job_results;
 	input_job_results.reserve( larval_job->input_job_result_indices().size() );
 	for ( utility::vector1< core::Size >::const_iterator result_index_iter = larval_job->input_job_result_indices().begin();
-				result_index_iter != larval_job->input_job_result_indices().end(); ++result_index_iter ) {
+			result_index_iter != larval_job->input_job_result_indices().end(); ++result_index_iter ) {
 		if ( job_results_.count( *result_index_iter ) == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result " +
 				utility::to_string( *result_index_iter ) + " requested by LarvalJob " + larval_job->job_tag() );
@@ -183,7 +183,7 @@ VanillaJobDistributor::potentially_output_some_job_results()
 	// ask the job queen if she wants to output any results
 	SizeList jobs_to_output = job_queen_->jobs_that_should_be_output();
 	for ( SizeList::const_iterator output_iter = jobs_to_output.begin();
-				output_iter != jobs_to_output.end(); ++output_iter ) {
+			output_iter != jobs_to_output.end(); ++output_iter ) {
 		if ( job_results_.count( *output_iter ) == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result " + utility::to_string( *output_iter ) +
 				" for outputting as requested by the JobQeen. Has this job already been output?" );
@@ -201,7 +201,7 @@ VanillaJobDistributor::potentially_discard_some_job_results()
 	// ask the job queen if she wants to discard any results
 	SizeList jobs_to_discard = job_queen_->job_results_that_should_be_discarded();
 	for ( SizeList::const_iterator discard_iter = jobs_to_discard.begin();
-				discard_iter != jobs_to_discard.end(); ++discard_iter ) {
+			discard_iter != jobs_to_discard.end(); ++discard_iter ) {
 		if ( job_results_.count( *discard_iter ) == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Failed to retrieve job result " + utility::to_string( *discard_iter )
 				+ " for discardting as requested by the JobQeen. Has this job already been output?" );

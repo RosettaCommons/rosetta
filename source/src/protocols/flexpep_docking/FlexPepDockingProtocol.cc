@@ -1412,12 +1412,12 @@ FlexPepDockingProtocol::get_name() const {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief mark peptide residues that are in the native structure interface,
-//	  defined by any atom-atom contact (distance under provided distance cutoff)
+//   defined by any atom-atom contact (distance under provided distance cutoff)
 //
 // @param native_interface_residues[out]
-//	An array of positions - set to true for interface residues
+// An array of positions - set to true for interface residues
 // @param distance
-//	Size - the atom pair distance under which the pair is considered in contact
+// Size - the atom pair distance under which the pair is considered in contact
 
 void
 FlexPepDockingProtocol::markInterfaceBySideChainContacts
@@ -1435,10 +1435,10 @@ FlexPepDockingProtocol::markInterfaceBySideChainContacts
 				native_interface_residues(i)=true;
 				native_interface_residues(j)=true;
 			}
-		}		
+		}
 	}
-	for (core::Size i=1; i<=native_interface_residues.size1() ;++i){
-		if (native_interface_residues(i)==true) {
+	for ( core::Size i=1; i<=native_interface_residues.size1() ; ++i ) {
+		if ( native_interface_residues(i)==true ) {
 			TR << " residue " << pdbinfo->pose2pdb(i) << " is at the interface" << std::endl;
 		}
 	}
@@ -1447,15 +1447,15 @@ FlexPepDockingProtocol::markInterfaceBySideChainContacts
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief mark the peptide residues in the native structure interface
-//	  defined by any two residues with Cb distance under 8A
+//   defined by any two residues with Cb distance under 8A
 //        If no receptor - trivially mark all residues
 //
 // @param superpos_partner[out]
 //        An array of positions - set to true for peptide residues
 // @param native_interface_residues[out]
 //        An array of positions - set to true for interface peptide/peptide and receptor residues
-// @param mark_receptor_interface 
-//	  Boolean, instructs whether interface subset will be comprised of receptor residues too
+// @param mark_receptor_interface
+//   Boolean, instructs whether interface subset will be comprised of receptor residues too
 
 void
 FlexPepDockingProtocol::markNativeInterface
@@ -1472,11 +1472,11 @@ FlexPepDockingProtocol::markNativeInterface
 		native_interface->distance(8); // between CB atoms, CA for Gly (to be precise, the anchor atom is set within the mini DB)
 		native_pose.update_residue_neighbors();
 		native_interface->calculate( native_pose );
-		if (mark_receptor_interface) {
+		if ( mark_receptor_interface ) {
 			for ( int i=flags_.receptor_first_res(); i <= flags_.receptor_last_res(); ++i ) {
 				if ( native_interface->is_interface(i) ) {
 					TR.Debug << "Receptor residue " << i-flags_.receptor_first_res()+1
-								<< " in interface" << std::endl;
+						<< " in interface" << std::endl;
 					native_interface_residues(i)=true;
 
 				}
@@ -1659,7 +1659,7 @@ FlexPepDockingProtocol::storeJobStatistics
 			rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_protein_backbone ) );
 		cur_job->add_string_real_pair( "rmsSC_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_sidechain_heavyatom ) );
-		cur_job->add_string_real_pair( "rmsALL_CAPRI_if", 
+		cur_job->add_string_real_pair( "rmsALL_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_polymer_heavyatom ) );
 		cur_job->add_string_real_pair( "rmsBB_CAPRI_if",
 			rmsd_with_super_subset( native_pose, final_pose, native_all_interface_residues, is_protein_backbone ) );
@@ -1669,7 +1669,7 @@ FlexPepDockingProtocol::storeJobStatistics
 			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_polymer_heavyatom ) );
 		cur_job->add_string_real_pair( "rmsSC_allIF",
 			rmsd_with_super_subset( native_pose, final_pose, all_interface_residues_by_sc_contacts, is_protein_sidechain_heavyatom ) );
-	
+
 		if ( ! flags_.design_peptide ) {
 			cur_job->add_string_real_pair( "rmsALL_if",
 				rmsd_no_super_subset( native_pose, final_pose, native_interface_residues, is_polymer_heavyatom ) );
@@ -1687,7 +1687,7 @@ FlexPepDockingProtocol::storeJobStatistics
 			rmsd_with_super(native_pose, start_pose, is_polymer_heavyatom ) );
 
 		// final pose statistics - all peptide residues:
-		
+
 
 		cur_job->add_string_real_pair( "rmsCA",
 			rmsd_with_super( native_pose, final_pose, is_protein_CA ) );

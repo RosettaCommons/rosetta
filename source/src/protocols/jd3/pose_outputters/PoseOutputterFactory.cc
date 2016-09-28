@@ -188,11 +188,11 @@ void PoseOutputterFactory::define_pose_outputter_xml_schema( utility::tag::XMLSc
 
 //void PoseOutputterFactory::define_secondary_pose_outputter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 //{
-//	utility::tag::define_xml_schema_group(
-//		secondary_pose_outputter_creator_map_,
-//		secondary_pose_outputter_xml_schema_group_name(),
-//		& PoseOutputterFactory::complex_type_name_for_secondary_pose_outputter,
-//		xsd );
+// utility::tag::define_xml_schema_group(
+//  secondary_pose_outputter_creator_map_,
+//  secondary_pose_outputter_xml_schema_group_name(),
+//  & PoseOutputterFactory::complex_type_name_for_secondary_pose_outputter,
+//  xsd );
 //}
 
 void PoseOutputterFactory::list_options_read( utility::options::OptionKeyList & read_options ) const

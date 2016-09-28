@@ -99,7 +99,7 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 }
 
 
- 
+
 bool FlexPepDockingPoseMetrics::isInContact(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2,

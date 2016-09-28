@@ -179,7 +179,7 @@ public:
 
 
 		TagCOP job_tag;
-		if ( larval_job->inner_job()->jobdef_tag())  {
+		if ( larval_job->inner_job()->jobdef_tag() )  {
 			job_tag = larval_job->inner_job()->jobdef_tag();
 		}
 		SequenceMoverOP seq( new SequenceMover );
@@ -287,11 +287,11 @@ public:
 	//virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 
 	//virtual void completed_job_result( protocols::jd3::LarvalJobCOP job, protocols::jd3::JobResultOP result ) {
-	//	using namespace protocols::jd3;
-	//	PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
-	//	core::pose::PoseOP pose = pose_result->pose();
-	//	utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
-	//	pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
+	// using namespace protocols::jd3;
+	// PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult > ( result );
+	// core::pose::PoseOP pose = pose_result->pose();
+	// utility::options::OptionCollectionCOP job_options = options_for_job( *job->inner_job() );
+	// pose_outputter_for_job( *job->inner_job() )->write_output_pose( *job, *job_options, *pose );
 	//}
 
 	virtual bool more_jobs_remain() { return false; }

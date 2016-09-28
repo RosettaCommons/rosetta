@@ -126,13 +126,13 @@ public:
 
 	void set_test_all_mg_hydration_frames( bool const & setting ){ test_all_mg_hydration_frames_ = setting; }
 	bool test_all_mg_hydration_frames() const{ return test_all_mg_hydration_frames_; }
-	
+
 	modeler::MinimizerMode const & minimizer_mode() const { return minimizer_mode_; }
 	void set_minimizer_mode( modeler::MinimizerMode const & setting ){ minimizer_mode_ = setting; }
-	
+
 	Size const & n_cycles() const { return n_cycles_; }
 	void set_n_cycles( Size const setting ) { n_cycles_ = setting; }
-	
+
 protected:
 
 	void
@@ -167,7 +167,7 @@ private:
 	bool minimize_waters_;
 	bool hydrate_magnesiums_;
 	bool test_all_mg_hydration_frames_;
-	
+
 	modeler::MinimizerMode minimizer_mode_;
 	Size n_cycles_;
 };

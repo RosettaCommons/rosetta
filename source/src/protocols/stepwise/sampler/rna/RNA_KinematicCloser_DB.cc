@@ -161,9 +161,9 @@ void RNA_KinematicCloser_DB::init( const Pose & pose_current, const Pose & pose_
 			pose_closed.xyz( NamedAtomID( " P  ", cutpos + 1 ) ) ) );
 		db_ang_[ 8 ] = theta_C3prime_O3prime_nextP;
 		//Real const virtual_current_ = degrees( angle_radians(
-		//	pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
-		//	pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
-		//	pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
+		// pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
+		// pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
+		// pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 		Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
 			pose_closed.xyz( NamedAtomID( " O3'", cutpos ) ),
 			pose_closed.xyz( NamedAtomID( " P  ", cutpos + 1 ) ),

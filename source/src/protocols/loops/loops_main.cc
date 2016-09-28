@@ -1240,8 +1240,7 @@ set_secstruct_from_psipred_ss2(
 	if ( filename.empty() ) {
 		// File name taken from -in:file:psipred_ss2
 		secstructs = read_psipred_ss2_file( pose );
-	}
-	else {
+	} else {
 		secstructs = read_psipred_ss2_file( pose, filename );
 	}
 	// if don't have a psipred file...

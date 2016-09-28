@@ -165,7 +165,7 @@ private:
 	// @param native_interface_residues[out]
 	//      An array of positions - set to true for interface residues
 	// @param distance
-        // 	Size - the atom pair distance under which the pair is considered in contact
+	//  Size - the atom pair distance under which the pair is considered in contact
 	///////////////////////////////////////////////////////////////////////////////////
 	void markInterfaceBySideChainContacts
 	( ObjexxFCL::FArray1D_bool & native_interface_residues, core::Size distance) const;

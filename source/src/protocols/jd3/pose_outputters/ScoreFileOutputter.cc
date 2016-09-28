@@ -70,7 +70,7 @@ ScoreFileOutputter::write_output_pose(
 		utility::tag::TagCOP job_output_tag;
 		if ( job.inner_job()->jobdef_tag() ) {
 			utility::tag::TagCOP job_tags = job.inner_job()->jobdef_tag();
-			if ( job_tags->hasTag( "SecondaryOutput" )) {
+			if ( job_tags->hasTag( "SecondaryOutput" ) ) {
 				job_output_tag = job_tags->getTag( "SecondaryOutput" );
 			}
 		}
@@ -141,7 +141,7 @@ void ScoreFileOutputter::list_options_read( utility::options::OptionKeyList & re
 	using namespace basic::options::OptionKeys;
 	read_options
 		+ run::no_scorefile
-	  + out::file::scorefile
+		+ out::file::scorefile
 		+ out::path::score
 		+ out::path::all
 		+ out::prefix
@@ -160,11 +160,11 @@ ScoreFileOutputter::filename_for_job(
 
 	utility::file::FileName scorefile_name;
 
-	if ( output_tag && output_tag->hasTag( keyname() )) {
+	if ( output_tag && output_tag->hasTag( keyname() ) ) {
 		utility::tag::TagCOP score_tag = output_tag->getTag( keyname() );
-		if ( score_tag->hasOption( "filename" )) {
+		if ( score_tag->hasOption( "filename" ) ) {
 			scorefile_name = score_tag->getOption< std::string >( "filename" );
-			if ( score_tag->hasOption( "path" )) {
+			if ( score_tag->hasOption( "path" ) ) {
 				utility::file::FileName scorefile_path( score_tag->getOption< std::string >( "path" ));
 				scorefile_name.path( scorefile_path.path() );
 			}

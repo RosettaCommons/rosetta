@@ -89,15 +89,15 @@ Size find_likely_first_chain_ending( Pose const & pose ) {
 		// Where is the bond length from ii to ii+1 too long?
 		if ( pose.residue( ii ).xyz( "O3'" ).distance_squared( pose.residue( ii + 1 ) .xyz( "P" ) ) > 4 ) {
 			return ii;
-		} 
+		}
 	}
 	return pose.size();
 }
 
 
-	/////////////////////
-	/// Constructors	///
-	/////////////////////
+/////////////////////
+/// Constructors ///
+/////////////////////
 
 /// @brief Default constructor
 ThermalSamplingMover::ThermalSamplingMover():
@@ -136,14 +136,14 @@ ThermalSamplingMover::ThermalSamplingMover( ThermalSamplingMover const & src ):
 ThermalSamplingMover::~ThermalSamplingMover(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
 ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	runtime_assert( temps_.size() != 0 );
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::rna::farna::thermal_sampling;
@@ -154,15 +154,15 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
-	
+
 	using namespace protocols::stepwise::sampler::rna;
 	using namespace protocols::moves;
 	using namespace core::id;
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::setup;
-	
+
 	clock_t const time_start( clock() );
-	
+
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
@@ -170,34 +170,34 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	} else {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
 	}
-	
+
 	// Silent file output setup
-	std::string const silent_file = option[ out::file::silent	]();
+	std::string const silent_file = option[ out::file::silent ]();
 	SilentFileData silent_file_data;
-	
+
 	// if trying to compute stem RMSD
 	pose::Pose start_pose;
-	
+
 	// do it
 	scorefxn->show( pose );
-	
+
 	Size const total_len( pose.size() );
 	bool const sample_near_a_form( false );
-	
+
 	//Setting up the internal move sampler
 	pose::PoseOP ref_pose(new pose::Pose(pose));
-	
+
 	utility::vector1<bool> is_free;
 	std::sort( residues_.begin(), residues_.end() );
 	TR << "Sample residues: " << residues_ <<std::endl;
-	
+
 	//Assign "free" residues (get bigger gaussian stdev)
 	for ( Size i = 1; i <= residues_.size(); ++i ) {
-		if ( std::find( free_rsd_.begin(), free_rsd_.end(), residues_[i]) != free_rsd_.end() ) 
+		if ( std::find( free_rsd_.begin(), free_rsd_.end(), residues_[i]) != free_rsd_.end() ) {
 			is_free.push_back( true );
-		else is_free.push_back( false );
+		} else is_free.push_back( false );
 	}
-	
+
 	utility::vector1<RNA_MC_KIC_SamplerOP> sampler;
 	utility::vector1<MC_OneTorsionOP> chi_sampler;
 	utility::vector1<core::id::TorsionID> chi_torsion_ids;
@@ -207,19 +207,19 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			// AMW TODO: make it so the MC_KIC_Sampler can handle terminal residue?
 			if ( seqpos == pose.size() ) continue; // we need one torsion from i+1
 			if ( seqpos == 1 ) continue; // no seqpos - 1
-			
+
 			RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, seqpos-1, seqpos ) );
 			suite_sampler->init();
 			suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );
 			sampler.push_back( suite_sampler );
 		}
-		
+
 		//Set up the chi samplers
-		core::Real init_torsion; 
+		core::Real init_torsion;
 		for ( Size const seqpos : residues_ ) {
 			// skip if movemap exists but dof off
 			if ( mm_ && !mm_->get_chi( seqpos ) ) continue;
-			
+
 			core::id::TorsionID chi_ID (core::id::TorsionID( seqpos, id::CHI, 1));
 			chi_torsion_ids.push_back( chi_ID );
 			init_torsion = ref_pose->torsion( chi_ID );
@@ -229,13 +229,13 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			chi_sampler.push_back( chi_torsion );
 		}
 	}
-	
+
 	// AMW TODO: look at recces turner for clever use of upper and lower nucleoside
-	
+
 	//Set up the regular torsion samplers, necessary for free energy comparisons
 	//Don't sample chi torsions here because there is a separate chi sampler
 	RNA_MC_MultiSuite standard_sampler;
-	
+
 	// Preserve recces_turner mode until we can figure out how best to unify it.
 	if ( recces_turner_mode_ ) {
 		Size const len1 = find_likely_first_chain_ending( pose );
@@ -244,9 +244,9 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			// bp_rsd == ! free_rsd in the recces_turner case, so...
 			bool const sample_near_a_form( ! free_rsd_.has_value( i ) );
 			if ( i == 1 || ( i > len1 && i != pose.size() ) ) {
-		RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i ) );
+				RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( i ) );
 				suite_sampler->set_sample_bb( i != 1 );
-		suite_sampler->set_sample_lower_nucleoside( true );
+				suite_sampler->set_sample_lower_nucleoside( true );
 				suite_sampler->set_sample_upper_nucleoside( false );
 				suite_sampler->set_sample_near_a_form( sample_near_a_form );
 				// Since we're trying to preserve classic recces. add another flag if we want (a_form_range)
@@ -267,31 +267,31 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 		}
 	} else {
 		for ( Size i = 1; i <= residues_.size(); ++i ) {
-			if ( residues_[i] != 1 && ( i == 1 || residues_[i] != residues_[i-1]+1 ) ) { 
+			if ( residues_[i] != 1 && ( i == 1 || residues_[i] != residues_[i-1]+1 ) ) {
 				//create samplers for [i]-1 and [i]
-				
+
 				// Can't just have a continue condition because we might want to set up the second sampler
 				// AMW 9/23: The BB will never have it. Trust residues_...
 				//if ( !mm_ || ( mm_ && mm_->get_bb( residues_[i] - 1 ) ) ) {
-					TR << "Going to attempt to sample " << residues_[i] - 1 << " with a RNA_MC_Suite and pose size is " << pose.size() << std::endl;
-					RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues_[i] - 1 ) );
-					suite_sampler_1->set_init_from_pose( pose );
-					suite_sampler_1->set_sample_bb( true );
-					suite_sampler_1->set_sample_lower_nucleoside( false );
-					suite_sampler_1->set_sample_upper_nucleoside( false );
-					suite_sampler_1->set_pucker_flip_rate( 0 );
-					suite_sampler_1->set_sample_near_a_form( sample_near_a_form );
-					suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
-					standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
-				}
-			//} 
-			
+				TR << "Going to attempt to sample " << residues_[i] - 1 << " with a RNA_MC_Suite and pose size is " << pose.size() << std::endl;
+				RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues_[i] - 1 ) );
+				suite_sampler_1->set_init_from_pose( pose );
+				suite_sampler_1->set_sample_bb( true );
+				suite_sampler_1->set_sample_lower_nucleoside( false );
+				suite_sampler_1->set_sample_upper_nucleoside( false );
+				suite_sampler_1->set_pucker_flip_rate( 0 );
+				suite_sampler_1->set_sample_near_a_form( sample_near_a_form );
+				suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
+				standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
+			}
+			//}
+
 			// AMW TODO: not 100% sure which bbs should be involved here, do please look into this
 			// probably by looking at definitions of these samplers.
 			// can't do this!
 			if ( residues_[i] == pose.size() ) continue;
 			//if ( mm_ && !mm_->get_bb( residues_[i] ) ) continue;
-			TR << "Going to attempt to sample " << residues_[i] << " with a RNA_MC_Suite	and pose size is " << pose.size() << std::endl;
+			TR << "Going to attempt to sample " << residues_[i] << " with a RNA_MC_Suite\tand pose size is " << pose.size() << std::endl;
 			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( residues_[i] ) );
 			suite_sampler->set_init_from_pose( pose );
 			suite_sampler->set_sample_bb( true );
@@ -304,47 +304,47 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 		}
 	}
 	standard_sampler.init();
-	
-	//Make a list of all the backbone torsion IDs that are sampled 
+
+	//Make a list of all the backbone torsion IDs that are sampled
 	// Since AMW changes this will always be complete
 	// AMW: notably, this is NOT modified based on the above MoveMap conditionals
 	// but, that's okay for now. If you're supplying a movemap, you are probably not using
 	// the data-dumping functionality anyway (minimizer replacement mode)
 	utility::vector1<core::id::TorsionID> bb_torsion_ids;
-	
+
 	for ( Size i = 1; i <= residues_.size(); ++i ) {
 		if ( i == 1 || residues_[ i - 1 ] != residues_[ i ] - 1 ) {
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_[1]-1, id::BB, EPSILON ) );
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_[1]-1, id::BB, ZETA ) );
 		}
-		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, ALPHA) );	
-		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, BETA) );	
-		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, GAMMA) );	
-		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, EPSILON) );	
-		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, ZETA) );	
+		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, ALPHA) );
+		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, BETA) );
+		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, GAMMA) );
+		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, EPSILON) );
+		bb_torsion_ids.push_back( core::id::TorsionID( residues_[i], id::BB, ZETA) );
 		if ( i == residues_.size() || residues_[ i + 1 ] != residues_[ i ] + 1 ) {
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_.back()+1, id::BB, ALPHA ) );
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_.back()+1, id::BB, BETA ) );
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_.back()+1, id::BB, GAMMA ) );
 		}
 	}
-	
+
 	bool const is_save_scores( true );
-	
+
 	Size curr_counts( 1 );
 	utility::vector1<float> scores;
 	update_scores( scores, pose, scorefxn );
 	utility::vector1<float> const null_arr_;
 	utility::vector1<utility::vector1<float> > data( temps_.size(), null_arr_ );
-	
+
 	Real const min( -100.05 ), max( 100.05 ), spacing( 0.1 );
 	Histogram null_hist( min, max, spacing);
 	utility::vector1<Histogram> hist_list( temps_.size(), null_hist );
-	
+
 	// Min-score pose
 	Pose min_pose = pose;
 	Real min_score( 99999 );
-	
+
 	SimulatedTempering tempering( pose, scorefxn, temps_, st_weights_ );
 	MonteCarlo mc(pose, *scorefxn, 1. );
 	Size n_accept_total( 0 ), n_accept_backbone( 0 );
@@ -353,37 +353,37 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	int const dump_interval( option[dump_freq]() );
 	bool did_move;
 	int index;
-	Size temp_id( 1 ); 
-	
+	Size temp_id( 1 );
+
 	std::stringstream name, name2;
 	name << option[out_prefix]() << "_bb_torsions.txt";
 	name2 << option[out_prefix]() << "_chi_torsions.txt";
 	std::ofstream bb_tor_file( name.str() );
 	std::ofstream chi_tor_file( name2.str() );
-	
+
 	if ( dumping_app_ ) {
 		std::stringstream initstr;
 		initstr << option[out_prefix]() << "_init.pdb";
 		pose.dump_pdb( initstr.str() );
 	}
-	
+
 	set_gaussian_stdevs( sampler, chi_sampler, standard_sampler, tempering, total_len, total_sampled_, is_free );
-	
+
 	Pose stored_pose_ = pose;
 	// Vector center_vector = Vector( 0.0 );
 	// protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 700, 700, false, false , center_vector );
-	
+
 	// Main sampling cycle
-	// AMW: Had to change the structure of the main loop so that all conditional 
-	// references to "index" were together 
+	// AMW: Had to change the structure of the main loop so that all conditional
+	// references to "index" were together
 	Size pct = 0;
 	for ( Size n = 1; n <= n_cycle_; ++n ) {
-		
+
 		if ( n % ( n_cycle_ / 100 ) == 0 ) {
 			++pct;
 			std::cout << pct << "% complete." << std::endl;
 		}
-		
+
 		did_move = true;
 		// Sampler updates
 		bool boltz = false;
@@ -438,13 +438,13 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				}
 			}
 		}
-		
+
 		if ( ( boltz && did_move ) || n == n_cycle_ ) {
-			if ( option[out_torsions]() && !recces_turner_mode_) {
+			if ( option[out_torsions]() && !recces_turner_mode_ ) {
 				utility::vector1<core::Real> bb_torsions = get_torsions(bb_torsion_ids, pose);
 				utility::vector1<core::Real> chi_torsions = get_torsions(chi_torsion_ids, pose);
-				bb_tor_file << curr_counts<< "	"<< bb_torsions <<"\n";
-				chi_tor_file << curr_counts<< "	"<< chi_torsions <<"\n";
+				bb_tor_file << curr_counts<< "\t"<< bb_torsions <<"\n";
+				chi_tor_file << curr_counts<< "\t"<< chi_torsions <<"\n";
 			}
 			++n_accept_total;
 			curr_counts = 1;
@@ -456,7 +456,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			++curr_counts;
 			if ( did_move ) pose = stored_pose_;
 		}
-		
+
 		if ( n % t_jump_interval == 0 && tempering.t_jump() ) {
 			++n_t_jumps_accept;
 			fill_data( data[temp_id], curr_counts, scores );
@@ -477,7 +477,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			silent_file_data.write_silent_struct( silent, silent_file, false /*write score only*/ );
 		}
 	}
-	
+
 	TR << "Score for the end pose" << std::endl;
 	scorefxn->show( pose );
 	if ( dumping_app_ ) {
@@ -489,41 +489,41 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	}
 	TR << "Score for the min pose" << std::endl;
 	scorefxn->show( min_pose );
-	
+
 	TR << "n_cycles: " << n_cycle_ << std::endl;
 	TR << "Total accept rate: " << double( n_accept_total ) / n_cycle_ << std::endl;
 	TR << "Backbone accept rate: " << double( n_accept_backbone ) / ((n_cycle_ / 2) - (n_cycle_ / 10)) << std::endl;
 	TR << "Chi accept rate: " << double( n_accept_chi ) / (n_cycle_ / 2) << std::endl;
 	TR << "Standard accept rate: " << double( n_accept_standard ) / (n_cycle_ / 10) << std::endl;
 	TR << "Temp jump accept rate: " << double( n_t_jumps_accept ) / (n_cycle_ / t_jump_interval) << std::endl;
-	
+
 	// If we're being called from an app that wants to dump data after sampling
 	// like recces_turner or thermal_sampler
 	if ( dumping_app_ ) {
-		for ( Size i = 1; i <= temps_.size(); ++i) {
+		for ( Size i = 1; i <= temps_.size(); ++i ) {
 			if ( is_save_scores ) {
 				std::ostringstream oss;
 				oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
-				<< temps_[i] << ".bin.gz";
+					<< temps_[i] << ".bin.gz";
 				Size const data_dim2( scorefxn->get_nonzero_weighted_scoretypes().size() + 2 );
 				Size const data_dim1( data[i].size() / data_dim2 );
 				vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[i] );
 			}
 			std::ostringstream oss;
 			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
-			<< temps_[i] << ".hist.gz";
+				<< temps_[i] << ".hist.gz";
 			utility::vector1<Size> const & hist( hist_list[i].get_hist() );
 			utility::vector1<Real> const & scores( hist_list[i].get_scores() );
 			vector2disk_in1d( oss.str(), hist );
-			
+
 			std::ostringstream oss1;
 			oss1 << option[out_prefix]() << "_hist_scores.gz";
 			vector2disk_in1d( oss1.str(), scores );
 		}
 		bb_tor_file.close();
 		chi_tor_file.close();
-		
-		
+
+
 		// Some simple text data files
 		std::stringstream str, str2, str3;
 		str << option[out_prefix]() << "_data.txt";
@@ -532,27 +532,27 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 		std::ofstream datafile ( (str.str()).c_str() );
 		// In rare circumstances, I guess data[1] has odd parity -- saw a bounds issue
 		for ( Size i = 1; i <= data[1].size() - 1; i+=2 ) {
-			datafile << data[1][i] << "	 " << data[1][i+1] << "\n";
+			datafile << data[1][i] << "\t " << data[1][i+1] << "\n";
 		}
 		datafile.close();
 		std::ofstream histfile ( (str2.str()).c_str() );
 		utility::vector1<Size> const & hist( hist_list[1].get_hist() );
-		for ( Size i = 1; i<=hist.size(); i++){
-			histfile<< hist[i] << "\n"; 
+		for ( Size i = 1; i<=hist.size(); i++ ) {
+			histfile<< hist[i] << "\n";
 		}
 		histfile.close();
 		utility::vector1<Real> const & escores( hist_list[1].get_scores() );
 		std::ofstream scorefile ( (str3.str()).c_str() );
-		for ( Size i = 1; i<=escores.size(); i++){
+		for ( Size i = 1; i<=escores.size(); i++ ) {
 			scorefile<< escores[i] << "\n";
 		}
 		scorefile.close();
 	}
-	
+
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
-	std::cout << "Time in sampler: " <<	time_in_test << std::endl;
-	
-	
+	std::cout << "Time in sampler: " << time_in_test << std::endl;
+
+
 	// If we're using this as a mover in a larger protocol, the most reasonable
 	// choice for the final pose is the min score pose
 	pose = min_pose;
@@ -560,19 +560,19 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 /// @brief Sets thermal sampling level given a MoveMap
 void
-ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap( 
-	core::pose::Pose const & pose, 
-	core::kinematics::MoveMap const & mm 
+ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap(
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMap const & mm
 ) {
 	// Stupid starting point: if delta and epsilon are free you're a free_rsd
 	// otherwise you're just a rsd
 	residues_.clear();
 	free_rsd_.clear();
-	
+
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( mm.get( core::id::TorsionID( ii, id::BB, BETA ) ) && mm.get( core::id::TorsionID( ii, id::BB, GAMMA ) ) ) { 
+		if ( mm.get( core::id::TorsionID( ii, id::BB, BETA ) ) && mm.get( core::id::TorsionID( ii, id::BB, GAMMA ) ) ) {
 			residues_.push_back( ii );
-			if ( mm.get( core::id::TorsionID( ii, id::BB, DELTA ) ) && mm.get( core::id::TorsionID( ii, id::BB, EPSILON ) ) ) { 
+			if ( mm.get( core::id::TorsionID( ii, id::BB, DELTA ) ) && mm.get( core::id::TorsionID( ii, id::BB, EPSILON ) ) ) {
 				free_rsd_.push_back( ii );
 			}
 		}
@@ -582,7 +582,7 @@ ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap(
 	TR << "Free residues is " << free_rsd_ << std::endl;
 	// total_sampled_ needs to be updated
 	total_sampled_ = residues_.size();
-	
+
 	mm_ = std::make_shared< core::kinematics::MoveMap >( mm );
 }
 

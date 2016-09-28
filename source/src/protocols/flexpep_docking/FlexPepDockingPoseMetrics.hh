@@ -121,7 +121,7 @@ public:
 		core::conformation::Residue const & res2,
 		core::Real threashold ) const;
 
-	
+
 	// ======== Accessor Methods ========
 
 	void set_flags(FlexPepDockingFlagsCOP flags){

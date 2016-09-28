@@ -921,7 +921,7 @@ visit(
 		visited_status[ node_index ] = TEMPORARY_VISITED;
 		DirectedNode const & node = *g.get_node( node_index );
 		for ( DirectedNode::DirectedEdgeListConstIter iter = node.const_outgoing_edge_list_begin();
-					iter != node.const_outgoing_edge_list_end(); ++iter ) {
+				iter != node.const_outgoing_edge_list_end(); ++iter ) {
 			visit( g, (*iter)->get_head_node_ind(), visited_status, toposort_order, is_DAG );
 			if ( ! is_DAG ) { return; }
 		}

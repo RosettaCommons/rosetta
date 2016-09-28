@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 
-// utility 
+// utility
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

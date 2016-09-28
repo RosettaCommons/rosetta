@@ -105,7 +105,7 @@ public:
 	}
 
 	void set_user_defined_peptide(bool state) {
-			user_set_peptide_chain_=state;
+		user_set_peptide_chain_=state;
 	}
 
 	bool user_defined_receptor_chain() const

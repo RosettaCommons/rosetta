@@ -48,7 +48,7 @@ public:
 
 	/// @brief Default constructor
 	ThermalSamplingMover();
-	
+
 	/// @brief Copy constructor (not needed unless you need deep copies)
 	ThermalSamplingMover( ThermalSamplingMover const & src );
 
@@ -97,19 +97,19 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP
 	clone() const;
-	
-	void set_residues( utility::vector1< Size > const & residues ) { residues_ = residues; } 
-	utility::vector1< Size > residues() const { return residues_; } 
-	void set_free_rsd( utility::vector1< Size > const & free_rsd ) { free_rsd_ = free_rsd; } 
-	utility::vector1< Size > free_rsd() const { return free_rsd_; } 
 
-	void set_recces_turner_mode( bool const setting ) { recces_turner_mode_ = setting; } 
+	void set_residues( utility::vector1< Size > const & residues ) { residues_ = residues; }
+	utility::vector1< Size > residues() const { return residues_; }
+	void set_free_rsd( utility::vector1< Size > const & free_rsd ) { free_rsd_ = free_rsd; }
+	utility::vector1< Size > free_rsd() const { return free_rsd_; }
+
+	void set_recces_turner_mode( bool const setting ) { recces_turner_mode_ = setting; }
 	void set_dumping_app( bool const setting ) { dumping_app_ = setting; }
-	void set_n_cycle( Size const setting ) { n_cycle_ = setting; } 
-	void set_dump_silent( bool const setting ) { dump_pdb_ = setting; } 
-	void set_dump_pdb( bool const setting ) { dump_silent_ = setting; } 
-	void set_temps( utility::vector1< Size > const & temps ) { temps_ = temps; } 
-	void set_weights( utility::vector1< Size > const & weights ) { st_weights_ = weights; } 
+	void set_n_cycle( Size const setting ) { n_cycle_ = setting; }
+	void set_dump_silent( bool const setting ) { dump_pdb_ = setting; }
+	void set_dump_pdb( bool const setting ) { dump_silent_ = setting; }
+	void set_temps( utility::vector1< Size > const & temps ) { temps_ = temps; }
+	void set_weights( utility::vector1< Size > const & weights ) { st_weights_ = weights; }
 
 	void set_residue_sampling_from_pose_and_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );
 
@@ -128,7 +128,7 @@ private: // data
 	Real angle_range_bb_;
 	utility::vector1< Real > temps_;
 	utility::vector1< Real > st_weights_;
-	
+
 	core::kinematics::MoveMapOP mm_;
 };
 

@@ -85,30 +85,30 @@ namespace modeler {
 
 
 void set_gaussian_stdevs(
-  utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
-  utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
-  Real const temp,
-  Size const //total_sampled
+	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
+	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
+	Real const temp,
+	Size const //total_sampled
 ) {
-  Real internal_bb_stdev( 0.1 * pow( temp, 0.25 ) + 0.1);
-  Real chi_stdev( 5 * pow( temp , 0.5) + 15 );
-  if ( temp < 0 ) {
-    internal_bb_stdev = 0.5 ;
-    chi_stdev = -1 ;
-  }
-  for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
-    internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
-  }
-  for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
-    chi_sampler[i]->set_gaussian_stdev( chi_stdev );
-  }
+	Real internal_bb_stdev( 0.1 * pow( temp, 0.25 ) + 0.1);
+	Real chi_stdev( 5 * pow( temp , 0.5) + 15 );
+	if ( temp < 0 ) {
+		internal_bb_stdev = 0.5 ;
+		chi_stdev = -1 ;
+	}
+	for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
+		internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
+	}
+	for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
+		chi_sampler[i]->set_gaussian_stdev( chi_stdev );
+	}
 }
 
-	
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 ThermalMinimizer::ThermalMinimizer():
@@ -142,7 +142,7 @@ mm_compatible_with_kic( core::kinematics::MoveMapOP mm, Size const ii ) {
 	if ( !mm->get( TorsionID( ii + 1, BB, ALPHA ) ) ) return false;
 	if ( !mm->get( TorsionID( ii + 1, BB, BETA ) ) ) return false;
 	if ( !mm->get( TorsionID( ii + 1, BB, GAMMA ) ) ) return false;
-	
+
 	return true;
 }
 
@@ -151,13 +151,13 @@ mm_compatible_with_kic( core::kinematics::MoveMapOP mm, Size const ii ) {
 ThermalMinimizer::~ThermalMinimizer(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
 ThermalMinimizer::apply( core::pose::Pose & pose ) {
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::rna::farna::thermal_sampling;
@@ -168,13 +168,13 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
-	
+
 	using namespace protocols::stepwise::sampler::rna;
 	using namespace protocols::moves;
 	using namespace core::id;
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::setup;
-	
+
 	Size total_sampled = 0;
 	if ( mm_ ) {
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -187,38 +187,38 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 					|| mm_->get( core::id::TorsionID( ii, id::BB, 6 ) )
 					|| mm_->get( core::id::TorsionID( ii, id::CHI, 1 ) )
 					|| mm_->get( core::id::TorsionID( ii, id::CHI, 4 ) )
-			) {
+					) {
 				++total_sampled;
 			}
 		}
 	}
-	
+
 	if ( total_sampled == 0 ) return;
-	
+
 	clock_t const time_start( clock() );
 
 	// do it
 	score_fxn_->show( pose );
-	
+
 	//Size const total_len( pose.size() );
 	//bool const sample_near_a_form( false );
-	
+
 	//Setting up the internal move sampler
 	pose::PoseOP ref_pose(new pose::Pose(pose));
-	
+
 	utility::vector1<RNA_MC_KIC_SamplerOP> sampler;
 	utility::vector1<MC_OneTorsionOP> tors_sampler;
 	//Set up the internal move samplers
 	for ( Size ii = 2; ii <= pose.size() - 1; ++ii ) {
 		// use the movemap, luke
 		if ( !mm_ || !mm_compatible_with_kic( mm_, ii ) ) continue;
-		
+
 		RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, ii-1, ii ) );
 		suite_sampler->init();
 		suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );
 		sampler.push_back( suite_sampler );
 	}
-		
+
 	//Set up the torsion samplers
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Don't set up OneTorsion samplers for which KIC could do the job.
@@ -290,27 +290,27 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			tors_sampler.push_back( tors_mc );
 		}
 	}
-	
+
 	// Min-score pose
 	Pose min_pose = pose;
 	Real min_score( 99999 );
 
 	auto st_temps = utility::tools::make_vector1< Real >( temp_ );
 	auto st_weights = utility::tools::make_vector1< Real >( 0 );
-	
+
 	SimulatedTempering tempering( pose, score_fxn_, st_temps, st_weights );
 	MonteCarlo mc(pose, *score_fxn_, 1.0 );
 	Size n_accept_total( 0 ), n_accept_backbone( 0 );
-	Size n_accept_chi( 0 ); 
+	Size n_accept_chi( 0 );
 	bool did_move;
 	bool boltz = false;
 	int index;
-	//Size temp_id( 1 ); 
+	//Size temp_id( 1 );
 
 	set_gaussian_stdevs( sampler, tors_sampler, temp_, total_sampled );
-	
+
 	Pose stored_pose_ = pose;
-	
+
 	// Main sampling cycle
 	for ( Size n = 1; n <= n_cycle_; ++n ) {
 		did_move = true;
@@ -354,20 +354,20 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			if ( did_move ) pose = stored_pose_;
 		}
 	}
-	
+
 	TR << "Score for the end pose" << std::endl;
 	score_fxn_->show( pose );
 	TR << "Score for the min pose" << std::endl;
 	score_fxn_->show( min_pose );
-	
+
 	TR << "n_cycles: " << n_cycle_ << std::endl;
 	TR << "Total accept rate: " << double( n_accept_total ) / n_cycle_ << std::endl;
 	TR << "Backbone accept rate: " << double( n_accept_backbone ) / ((n_cycle_ / 2) - (n_cycle_ / 10)) << std::endl;
 	TR << "Chi accept rate: " << double( n_accept_chi ) / (n_cycle_ / 2) << std::endl;
-	
+
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 	std::cout << "Time in sampler: " <<  time_in_test << std::endl;
-	
+
 	pose = min_pose;
 }
 

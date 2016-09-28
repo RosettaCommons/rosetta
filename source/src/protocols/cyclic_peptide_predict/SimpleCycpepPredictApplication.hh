@@ -136,12 +136,36 @@ public:
 	///
 	void disable_cis_pro_sampling();
 
+	/// @brief Set the number of rounds of relaxation with flexible
+	/// bond angles.
+	void set_angle_relax_rounds( core::Size const rounds_in );
+
+	/// @brief Set the number of rounds of relaxation with flexible
+	/// bond angles and bond lengths.
+	void set_angle_length_relax_rounds( core::Size const rounds_in );
+
+	/// @brief Set the number of rounds of Cartesian relaxation.
+	///
+	void set_cartesian_relax_rounds( core::Size const rounds_in );
+
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
 	void run() const;
 
 private:
 	/// ------------- Methods ----------------------------
+
+	/// @brief Carry out the final FastRelax.
+	///
+	void
+	do_final_fastrelax(
+		core::pose::PoseOP pose,
+		core::scoring::ScoreFunctionOP sfxn,
+		core::Size const relax_rounds,
+		bool const angle_min,
+		bool const length_min,
+		bool const cartesian_min
+	) const;
 
 	/// @brief Actually build the geometry that we'll be working with.
 	///
@@ -226,6 +250,7 @@ private:
 	genkic_close(
 		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP sfxn_highhbond,
+		core::scoring::ScoreFunctionOP sfxn_highhbond_cart,
 		core::scoring::ScoreFunctionCOP sfxn_default,
 		protocols::filters::CombinedFilterOP total_hbond,
 		core::Size const cyclic_offset
@@ -388,6 +413,18 @@ private:
 	/// @brief Frequency for sampling cis prolines.
 	///
 	inline core::Real const & sample_cis_pro_frequency() const { return sample_cis_pro_frequency_; }
+
+	/// @brief Bond angle relax rounds.
+	///
+	inline core::Size angle_relax_rounds() const { return angle_relax_rounds_; }
+
+	/// @brief Bond angle / bond length relax rounds.
+	///
+	inline core::Size angle_length_relax_rounds() const { return angle_length_relax_rounds_; }
+
+	/// @brief Cartesian relax rounds.
+	///
+	inline core::Size cartesian_relax_rounds() const { return cartesian_relax_rounds_; }
 
 private:
 	/// ------------- Data -------------------------------
@@ -636,6 +673,18 @@ private:
 	/// @brief Prevent counting of hydrogen bonds to adjacent residues?
 	/// @details Default true.
 	bool do_not_count_adjacent_res_hbonds_;
+
+	/// @brief Number of rounds of relaxation with flexible bond angles.
+	/// @details Default 0.
+	core::Size angle_relax_rounds_;
+
+	/// @brief Number of rounds of relaxation with flexible bond angles and bond lengths.
+	/// @details Default 0.
+	core::Size angle_length_relax_rounds_;
+
+	/// @brief Number of rounds of Cartesian-space relaxation.
+	/// @details Default 0.
+	core::Size cartesian_relax_rounds_;
 
 };
 
