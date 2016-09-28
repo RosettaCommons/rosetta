@@ -40,6 +40,11 @@ settings = {
             "cc" : "mpicc",
         },
         "removes" : {
+            "flags" : {
+                "warn" : [
+                    "Werror",
+		],
+            },
         },
     },
 }
