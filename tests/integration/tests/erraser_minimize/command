@@ -49,4 +49,5 @@ cd %(workdir)s
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # Remove timing information from full_minimize_temp_1.out
-sed -i 's/Chunk took 2 seconds/Chunk took SSS seconds/' full_minimize_temp_1.out
+egrep -v 'Chunk took [0-9]+ seconds' full_minimize_temp_1.out > full_minimize_temp_1.out.tmp
+mv -f full_minimize_temp_1.out.tmp full_minimize_temp_1.out
