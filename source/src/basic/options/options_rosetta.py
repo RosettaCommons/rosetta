@@ -6851,7 +6851,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'temps', 'RealVector', desc="Simulated tempering temperatures", default=[] ),
           Option( 'st_weights', 'RealVector', desc="Simulated tempering weights", default=[] ),
           Option( 'dump_freq', 'Integer', desc="Frequency to dump pdb or silent files", default='500' ),
-			),
+			), # -rna:farna:thermal_sampling
 		), # -rna:farna
 	), # -rna
 
@@ -7010,6 +7010,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'rmsd_screen', 'Real', desc="keep sampled residues within this rmsd from the native pose",default="0.0" ),
 		Option( 'skip_minimize', 'Boolean', desc="Skip minimize, e.g. in prepack step",default="false" ),
 		Option( 'virtualize_packable_moieties_in_screening_pose', 'Boolean', desc="Virtualize 2'-OH, terminal phosphates in stepwise contact screening, before actual packing ",default="false" ),
+		Option( 'minimizer_mode', 'String', desc="Minimize using thermal sampler (THERMAL_SAMPLER) or traditionally (TRADITIONAL_MINIMIZER, or really anything else)", default='TRADITIONAL_MINIMIZER' ),
 		Option( 'sampler_silent_file', 'String', desc='In StepWiseConnectionSampler, where to output all poses that pass filters', default='' ),
 		Option( 'superimpose_over_all', 'Boolean', desc='In final superimposition, do not keep any domains fixed, superimpose over everything',default="false" ),
 		Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 BOND_TO_PREVIOUS 4'", default=[] ),

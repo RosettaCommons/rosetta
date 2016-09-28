@@ -150,6 +150,7 @@ static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPer
 static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzdesHeaderMoverCreator;
 
 static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
+static MoverRegistrator< farna::thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
 static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
@@ -442,6 +443,8 @@ static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMin
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
+
+static MoverRegistrator< stepwise::modeler::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;
 
 static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;

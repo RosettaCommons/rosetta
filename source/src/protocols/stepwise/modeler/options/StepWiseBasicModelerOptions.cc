@@ -17,6 +17,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
@@ -88,7 +89,7 @@ StepWiseBasicModelerOptions::initialize_from_command_line(){
 	dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
 	skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ basic::options::OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
-}
+	}
 
 } //options
 } //modeler

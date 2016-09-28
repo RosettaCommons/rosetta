@@ -63,6 +63,7 @@ sources = {
         "RNA_DeNovoParameters",
     ],
     "protocols/farna/thermal_sampling": [
+        "ThermalSamplingMover",
         "thermal_sampler",
         "util",
     ],
@@ -206,6 +207,7 @@ sources = {
         "StepWiseModeler",
         "StepWiseConnectionSampler",
         "StepWiseMinimizer",
+        "ThermalMinimizer",
         "constraint_util",
         "file_util",
         "output_util",

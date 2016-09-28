@@ -56,9 +56,6 @@ void set_gaussian_stdevs(
 	utility::vector1<bool> is_free
 );
 
-///////////////////////////////////////////////////////////////////////////////
-void thermal_sampler( Pose & pose );
-
 }
 }
 }

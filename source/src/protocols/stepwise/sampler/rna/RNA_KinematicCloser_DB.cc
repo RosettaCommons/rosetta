@@ -116,30 +116,30 @@ void RNA_KinematicCloser_DB::init( const Pose & pose_current, const Pose & pose_
 		pivots[i] = 3 * i + 2;
 	}
 
-	atom_ids_.push_back( NamedAtomID ( " C3'", moving_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", moving_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " P  ", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O5'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C5'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C4'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C3'", chainbreak_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", chainbreak_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " P  ", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C4'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C2'", chainbreak_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "O5'", moving_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "C5'", moving_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "C4'", moving_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "C3'", chainbreak_suite_ ) );
-	pivot_ids_.push_back( NamedAtomID ( "O3'", chainbreak_suite_ ) );
-	pivot_ids_.push_back( NamedAtomID ( " P  ", chainbreak_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "O3'", chainbreak_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "C5'", chainbreak_suite_ + 1 ) );
-	pivot_ids_.push_back( NamedAtomID ( "C4'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", moving_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", moving_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " P  ", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O5'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C5'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C4'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " P  ", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O5'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C5'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C4'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C2'", chainbreak_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "O5'", moving_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "C5'", moving_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "C4'", moving_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "C3'", chainbreak_suite_ ) );
+	pivot_ids_.emplace_back( NamedAtomID( "O3'", chainbreak_suite_ ) );
+	pivot_ids_.emplace_back( NamedAtomID( " P  ", chainbreak_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "O3'", chainbreak_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "C5'", chainbreak_suite_ + 1 ) );
+	pivot_ids_.emplace_back( NamedAtomID( "C4'", chainbreak_suite_ + 1 ) );
 
 	fill_chainTORS( pose_current );
 	if ( verbose_ ) output_chainTORS();
@@ -151,36 +151,36 @@ void RNA_KinematicCloser_DB::init( const Pose & pose_current, const Pose & pose_
 		Size const cutpos = chainbreak_suite_;
 		////////////////////////////////////////////////////////////////
 		Real const d_O3prime_nextP = (
-			pose_closed.xyz( NamedAtomID ( " O3'", cutpos ) ) -
-			pose_closed.xyz( NamedAtomID ( " P  ", cutpos + 1 ) ) ).length();
+			pose_closed.xyz( NamedAtomID( " O3'", cutpos ) ) -
+			pose_closed.xyz( NamedAtomID( " P  ", cutpos + 1 ) ) ).length();
 		db_len_[ 8 ] = d_O3prime_nextP;
 		////////////////////////////////////////////////////////////////
 		Real const theta_C3prime_O3prime_nextP = degrees( angle_radians(
-			pose_closed.xyz( NamedAtomID ( " C3'", cutpos ) ),
-			pose_closed.xyz( NamedAtomID ( " O3'", cutpos ) ),
-			pose_closed.xyz( NamedAtomID ( " P  ", cutpos + 1 ) ) ) );
+			pose_closed.xyz( NamedAtomID( " C3'", cutpos ) ),
+			pose_closed.xyz( NamedAtomID( " O3'", cutpos ) ),
+			pose_closed.xyz( NamedAtomID( " P  ", cutpos + 1 ) ) ) );
 		db_ang_[ 8 ] = theta_C3prime_O3prime_nextP;
 		//Real const virtual_current_ = degrees( angle_radians(
-		// pose_current.xyz( NamedAtomID ( " C3'", cutpos ) ),
-		// pose_current.xyz( NamedAtomID ( " O3'", cutpos ) ),
-		// pose_current.xyz( NamedAtomID ( "OVL1", cutpos ) ) ) );
+		//	pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
+		//	pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
+		//	pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 		Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
-			pose_closed.xyz( NamedAtomID ( " O3'", cutpos ) ),
+			pose_closed.xyz( NamedAtomID( " O3'", cutpos ) ),
 			pose_closed.xyz( NamedAtomID( " P  ", cutpos + 1 ) ),
 			pose_closed.xyz( NamedAtomID( " O5'", cutpos + 1 ) ) ) );
 		db_ang_[ 9 ] = theta_O3prime_nextP_nextO5prime;
 		////////////////////////////////////////////////////////////////
 		Real const phi_C4prime_C3prime_O3prime_nextP = degrees( dihedral_radians(
-			pose_current.xyz( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
+			pose_current.xyz( NamedAtomID( " C4'", moving_suite_ + 1 ) ),
 			pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
 			pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
 			pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 		dt_ang_[ 7 ] =  phi_C4prime_C3prime_O3prime_nextP;
 		Real const phi_C3prime_O3prime_nextP_nextO5prime = degrees( dihedral_radians(
-			pose_current.xyz( NamedAtomID ( " C3'", cutpos ) ),
-			pose_current.xyz( NamedAtomID ( " O3'", cutpos ) ),
-			pose_current.xyz( NamedAtomID ( "OVL1", cutpos ) ),
-			pose_current.xyz( NamedAtomID ( "OVL2", cutpos ) ) ) );
+			pose_current.xyz( NamedAtomID( " C3'", cutpos ) ),
+			pose_current.xyz( NamedAtomID( " O3'", cutpos ) ),
+			pose_current.xyz( NamedAtomID( "OVL1", cutpos ) ),
+			pose_current.xyz( NamedAtomID( "OVL2", cutpos ) ) ) );
 		dt_ang_[ 8 ] =  phi_C3prime_O3prime_nextP_nextO5prime;
 		Real const phi_O3prime_nextP_nextO5prime_nextC5prime =
 			degrees( dihedral_radians(
@@ -309,7 +309,7 @@ RNA_KinematicCloser_DB::figure_out_offset (
 	} else {
 		offset_save_.push_back( pose.dof ( dof_id ) -
 			radians( original_torsion_value ) );
-		dof_ids_.push_back ( dof_id );
+		dof_ids_.emplace_back ( dof_id );
 		if ( verbose_ ) {
 			TR << dof_id;
 			TR << "  offset " << pose.dof( dof_id ) << " " <<

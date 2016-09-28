@@ -94,7 +94,6 @@ protected:
 	bool disallow_realign_;
 	bool coordinate_constraints_during_minimize_;
 	bool virtualize_packable_moieties_in_screening_pose_;
-
 };
 
 } //options

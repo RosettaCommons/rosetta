@@ -30,6 +30,7 @@
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
 #include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/stepwise/modeler/ThermalMinimizer.hh>
 #include <protocols/magnesium/util.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <core/id/AtomID.hh>
@@ -160,21 +161,22 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 
 		pose = *pose_list_[ n ];
 		Real const score_original = pose.energies().total_energy();
-
+		Real score_before_min;
+		
 		if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
 
 		// The movemap has all dofs for "non-fixed residues" free to move.
 		get_move_map_and_atom_level_domain_map( mm, pose );
-
+		
 		// We can also let sidechains minimize in fixed-residues -- for
 		// speed only look at neighbors of moving residues.
 		let_neighboring_side_chains_minimize( mm, pose );
-
-		Real const score_before_min = (*minimize_scorefxn_)( pose );
+		
+		score_before_min = (*minimize_scorefxn_)( pose );
 		do_minimize( pose, mm );
-
+			
 		close_chainbreaks( pose, mm );
-
+		
 		TR << "Score minimized from " << F(8,3, score_before_min) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << "   [original: " << F(8,3,score_original);
 		if ( hasPoseExtraScore( pose, "cluster_size" ) ) TR << " with cluster_size " << I( 4, getPoseExtraScore( pose, "cluster_size" ) );
 		TR <<  "]" <<  std::endl;
@@ -231,17 +233,28 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	kinematics::MoveMap mm_save = mm;
 	setup_vary_bond_geometry( pose, mm ); // careful -- must only do once, or constraints will keep getting added...
 	rna::add_syn_anti_chi_constraints( pose );
-	if ( options_->cart_min() ) {
-		cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
-	} else {
-		atom_tree_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
+
+	// AMW: I'm very much NOT sold on a particular temperature here. It's a shame we can't
+	// do proper ST. Importantly, I think it's easy to get too hot here.
+	if ( options_->minimizer_mode() == THERMAL_SAMPLER ) {
+		protocols::stepwise::modeler::ThermalMinimizer tm;
+		// Also hands over the movemap so that the samplers can read it.
+		tm.set_scorefxn( minimize_scorefxn_ );
+		tm.set_mm( std::make_shared< kinematics::MoveMap >( mm ) );
+		tm.set_n_cycle( options_->n_cycles() );
+		tm.set_temp( 0.5 );
+		tm.apply( pose );
+	} else if ( options_->minimizer_mode() == TRADITIONAL_MINIMIZER ) {
+		if ( options_->cart_min() ) {
+			cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
+		} else {
+			atom_tree_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
+		}
 	}
 	pose.constraint_set( save_pose_constraints );
 	mm = mm_save;
 
-
 	rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
-
 }
 
 //////////////////////////////////////////////////////////////////////////

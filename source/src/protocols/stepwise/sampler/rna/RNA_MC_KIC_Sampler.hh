@@ -160,7 +160,7 @@ private:
 	RNA_MC_KIC_Sampler( const RNA_MC_KIC_Sampler & );
 	void operator=( const RNA_MC_KIC_Sampler & );
 
-	core::Real vector_sum( utility::vector1< core::Real > const vector );
+	core::Real vector_sum( utility::vector1< core::Real > const & vector );
 
 	core::Real jacobian_, angle_;
 	core::pose::PoseOP ref_pose_;

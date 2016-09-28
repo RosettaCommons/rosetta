@@ -117,11 +117,17 @@ void vector2disk_in2d(
 	core::Size const dim2,
 	utility::vector1<T> const & out_vector
 ) {
+	//std::cout << "dim1 " << dim1 << " dim2 " << dim2 << " out " << out_vector.size() << std::endl;
 	utility::io::ozstream out( out_filename.c_str(), std::ios::out | std::ios::binary );
 	runtime_assert( dim1 * dim2 == out_vector.size() );
 	out.write( (const char*) &dim1, sizeof(core::Size) );
 	out.write( (const char*) &dim2, sizeof(core::Size) );
-	out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	if ( out_vector.size() == 0 ) {
+		std::cout << "Warning: no data available for the requested condition. Output file may be malformed.\n";
+		// noop
+	} else {
+		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+	}
 	out.close();
 }
 

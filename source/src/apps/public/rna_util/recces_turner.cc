@@ -27,6 +27,7 @@
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_Suite.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_MultiSuite.hh>
+#include <protocols/farna/thermal_sampling/ThermalSamplingMover.hh>
 #include <protocols/farna/thermal_sampling/util.hh>
 
 #include <utility/io/ozstream.hh>
@@ -85,19 +86,35 @@ utility::vector1<Size> const & dangling_rsd
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-PoseOP pose_setup(
-	std::string const & seq1,
-	std::string const & seq2,
-	Size const len1
-) {
+PoseOP pose_setup( utility::vector1< Size > & bp_rsd, utility::vector1< Size > & dangling_rsd, utility::vector1< Size > & all_rsd
+ ) {
+	std::string const & seq1_( option[seq1]() );
+	std::string const & seq2_( option[seq2]() );
+	Size const len1( get_sequence_len( seq1_ ) );
+	Size const len2( get_sequence_len( seq2_ ) );
+
 	protocols::stepwise::modeler::rna::helix::RNA_HelixAssembler assembler;
 	assembler.use_phenix_geo( true );
-	PoseOP pose( assembler.build_init_pose( seq1, seq2 ) );
+	PoseOP pose( assembler.build_init_pose( seq1_, seq2_ ) );
 	add_variant_type_to_pose_residue( *pose, chemical::VIRTUAL_PHOSPHATE, 1 );
-	if ( seq1 != "" && seq2 != "" ) {
+	if ( seq1_ != "" && seq2_ != "" ) {
 		add_variant_type_to_pose_residue(
 			*pose, chemical::VIRTUAL_PHOSPHATE, len1 + 1 );
 	}
+
+
+	// Figure out bp and dangling residues
+	Size const n_bp( std::min( len1, len2 ) );
+	Size const total_len( len1 + len2 );
+	for ( Size i = 1; i <= total_len; ++i ) {
+		if ( i > n_bp && i <= total_len - n_bp ) {
+			dangling_rsd.push_back( i );
+		} else {
+			bp_rsd.push_back( i );
+		}
+		all_rsd.push_back( i );
+	}
+
 	return pose;
 }
 
@@ -108,8 +125,8 @@ MC_run() {
 	using namespace protocols::moves;
 	using namespace scoring;
 
+	/*
 	clock_t const time_start( clock() );
-
 	utility::vector1< Real > const & temps_( option[ temps ]() );
 	runtime_assert( temps_.size() != 0 );
 
@@ -123,10 +140,6 @@ MC_run() {
 	runtime_assert( temps_.size() == weights_.size() );
 
 	Size const n_cycle_( option[n_cycle]() );
-	std::string const & seq1_( option[seq1]() );
-	std::string const & seq2_( option[seq2]() );
-	Size const len1( get_sequence_len( seq1_ ) );
-	Size const len2( get_sequence_len( seq2_ ) );
 
 	// Score function setup
 	ScoreFunctionOP scorefxn;
@@ -135,23 +148,26 @@ MC_run() {
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	}
+	*/
+
 
 	// Pose setup
-	Pose pose( *pose_setup( seq1_, seq2_, len1 ) );
-
 	// Figure out bp and dangling residues
-	utility::vector1< Size > bp_rsd, dangling_rsd;
-	Size const n_bp( std::min( len1, len2 ) );
-	Size const total_len( len1 + len2 );
-	for ( Size i = 1; i <= total_len; ++i ) {
-		if ( i > n_bp && i <= total_len - n_bp ) {
-			dangling_rsd.push_back( i );
-		} else {
-			bp_rsd.push_back( i );
-		}
-	}
+	utility::vector1< Size > bp_rsd, dangling_rsd, all_rsd;
+	Pose pose( *pose_setup( bp_rsd, dangling_rsd, all_rsd ) );
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
+
+	using namespace protocols::farna::thermal_sampling;
+	ThermalSamplingMoverOP ts( new ThermalSamplingMover );
+	ts->set_residues( all_rsd );
+	ts->set_free_rsd( dangling_rsd );
+	ts->set_recces_turner_mode( true );
+	ts->set_dumping_app( true );
+	ts->apply( pose );
 
 	// Sampler setup
+	/*
 	RNA_MC_MultiSuite sampler;
 	for ( Size i = 1; i <= total_len; ++i ) {
 		bool const sample_near_a_form( bp_rsd.has_value( i ) );
@@ -256,20 +272,22 @@ MC_run() {
 		min_pose.dump_pdb( "min.pdb" );
 		scorefxn->show( min_pose );
 	}
+	*/
 
 	// Output simple statistics and the data
 	//pose.dump_pdb("final.pdb");
 
-	std::cout << "n_cycles: " << n_cycle_ << std::endl;
-	std::cout << "Accept rate: " << double( n_accept_total ) / n_cycle_
-		<< std::endl;
-	std::cout << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps
-		<< std::endl;
-	Real const time_in_test = static_cast<Real>( clock() - time_start )
-		/ CLOCKS_PER_SEC;
-	std::cout << "Time in sampler: " <<  time_in_test << std::endl;
+	//std::cout << "n_cycles: " << n_cycle_ << std::endl;
+	//std::cout << "Accept rate: " << double( n_accept_total ) / n_cycle_
+	//	<< std::endl;
+	//std::cout << "T_jump accept rate: " << double( n_t_jumps_accept ) / n_t_jumps
+	//	<< std::endl;
+	//Real const time_in_test = static_cast<Real>( clock() - time_start )
+	//	/ CLOCKS_PER_SEC;
+	//std::cout << "Time in sampler: " <<  time_in_test << std::endl;
 
-	for ( Size i = 1; i <= temps_.size(); ++i ) {
+	/*
+	 for ( Size i = 1; i <= temps_.size(); ++i ) {
 		if ( save_scores ) {
 			std::ostringstream oss;
 			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision( 2 )
@@ -289,12 +307,14 @@ MC_run() {
 		oss1 << option[ out_prefix ]() << "_hist_scores.gz";
 		vector2disk_in1d( oss1.str(), scores );
 	}
+	 */
 }
 //////////////////////////////////////////////////////////////////////////////
 void*
 my_main( void* )
 {
 	MC_run();
+	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
 //////////////////////////////////////////////////////////////////////////////

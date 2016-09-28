@@ -121,6 +121,7 @@
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <protocols/farna/ErraserMinimizerMoverCreator.hh>
+#include <protocols/farna/thermal_sampling/ThermalSamplingMoverCreator.hh>
 #include <protocols/farna/RNAIdealizeMoverCreator.hh>
 
 #include <protocols/features/ReportToDBCreator.hh>
@@ -422,6 +423,8 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/TaskAwareSymMinMoverCreator.hh>
+
+#include <protocols/stepwise/modeler/ThermalMinimizerCreator.hh>
 
 #include <protocols/toolbox/task_operations/StoreCombinedStoredTasksMoverCreator.hh>
 #include <protocols/toolbox/task_operations/StoreCompoundTaskMoverCreator.hh>

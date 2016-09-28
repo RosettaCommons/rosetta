@@ -51,6 +51,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/sampler/rna/RNA_MC_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
+#include <protocols/farna/thermal_sampling/ThermalSamplingMover.hh>
 #include <protocols/farna/thermal_sampling/thermal_sampler.hh>
 #include <protocols/farna/thermal_sampling/util.hh>
 
@@ -63,6 +64,8 @@
 #include <string>
 
 // option key includes
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -73,11 +76,8 @@
 
 #include <utility/excn/Exceptions.hh>
 
+OPT_KEY( Boolean, recces_turner_mode )
 
-// option key includes
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 using namespace core::pose;
 using namespace basic::options;
@@ -90,51 +90,6 @@ using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
 using namespace protocols::farna::thermal_sampling;
 using utility::vector1;
-
-
-//////////////////////////////////////////////////////////////////////////////
-utility::vector1<core::Real> get_torsions(
-	utility::vector1<core::id::TorsionID> & torsion_ids,
-	const Pose & pose
-) {
-	utility::vector1<core::Real> curr_torsions;
-	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
-		curr_torsions.push_back( pose.torsion( torsion_ids[i] ) );
-	}
-	return curr_torsions;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void set_gaussian_stdevs(
-	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
-	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
-	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
-	moves::SimulatedTempering const & tempering,
-	Size const & total_rsd,
-	Size const & sampled_rsd,
-	utility::vector1<bool> is_free
-) {
-	Real const temp( tempering.temperature() );
-	Real internal_bb_stdev( 0.1 * pow( temp, 0.25 ) + 0.1);
-	Real free_chi_stdev( 55 * pow( temp, 0.5 ) + 50 );
-	Real chi_stdev( 5 * pow( temp , 0.5) + 15 );
-	Real standard_bb_stdev( 8 * pow( temp, 0.5 ) / (2 * total_rsd + sampled_rsd) );
-	if ( temp < 0 ) {
-		internal_bb_stdev = 0.5 ;
-		free_chi_stdev = -1 ;
-		chi_stdev = -1 ;
-		standard_bb_stdev = -1 ;
-	}
-	for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
-		internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
-	}
-	for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
-		if ( is_free[i] ) {
-			chi_sampler[i]->set_gaussian_stdev( free_chi_stdev );
-		} else chi_sampler[i]->set_gaussian_stdev( chi_stdev );
-	}
-	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -158,7 +113,9 @@ thermal_sampler()
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
-
+	
+	FullModelInfoOP my_model;
+	
 	// input stream
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
@@ -176,9 +133,23 @@ thermal_sampler()
 
 	Pose pose;
 	input->fill_pose( pose, *rsd_set );
+	
+	utility::vector1< pose::PoseOP > other_poses;
+	if ( !option[ in::file::silent ].user() ) protocols::stepwise::setup::cleanup( pose );
+	
+	if ( !full_model_info_defined( pose ) || option[ in::file::fasta ].user() ){
+		protocols::stepwise::setup::fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+	}
+	
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
+	
+	using namespace protocols::farna::thermal_sampling;
 
-	protocols::farna::thermal_sampling::thermal_sampler( pose );
+	ThermalSamplingMoverOP ts( new ThermalSamplingMover );
+	ts->set_dumping_app( true );
+	ts->set_recces_turner_mode( option[ recces_turner_mode ] );
 
+	ts->apply( pose );
 }
 
 
@@ -204,6 +175,8 @@ main( int argc, char * argv [] )
 		std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
 		std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
+		NEW_OPT( recces_turner_mode, "run in recces_turner mode for some perverse reason?", "false" );
 
 		utility::vector1< int > null_int_vector;
 		utility::vector1< core::Real > null_real_vector;

@@ -33,6 +33,11 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
+enum MinimizerMode {
+	THERMAL_SAMPLER,
+	TRADITIONAL_MINIMIZER
+};
+	
 class StepWiseMinimizer: public moves::Mover {
 
 public:

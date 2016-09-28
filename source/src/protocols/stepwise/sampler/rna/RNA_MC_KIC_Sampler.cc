@@ -270,7 +270,7 @@ Real RNA_MC_KIC_Sampler::get_jacobian( pose::Pose & pose ) {
 	return jacobian_;
 }
 ///////////////////////////////////////////////////////////////////////////
-Real RNA_MC_KIC_Sampler::vector_sum( utility::vector1< core::Real > const vector ) {
+Real RNA_MC_KIC_Sampler::vector_sum( utility::vector1< core::Real > const & vector ) {
 	sum_ = 0;
 	for ( Size i = 1; i<=vector.size(); ++i ) {
 		sum_ += vector[i];

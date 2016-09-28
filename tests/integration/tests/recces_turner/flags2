@@ -1,9 +1,9 @@
 -score:weights stepwise/rna/turner
 -seq1 gu
 -seq2 ac
--n_cycle 900
--temps 0.8 1.0 1.4 1.8 3.0 7.0 30.0
--dump_pdb
--st_weights 0 8.040240299411192 15.388984320514624 17.78382799898234 17.756742506652625 14.960472306659012 11.80844522568297
--out_prefix ST
+-rna:farna:thermal_sampling:n_cycle 900
+-rna:farna:thermal_sampling:temps 0.8 1.0 1.4 1.8 3.0 7.0 30.0
+-rna:farna:thermal_sampling:dump_pdb
+-rna:farna:thermal_sampling:st_weights 0 8.040240299411192 15.388984320514624 17.78382799898234 17.756742506652625 14.960472306659012 11.80844522568297
+-rna:farna:thermal_sampling:out_prefix ST
 
