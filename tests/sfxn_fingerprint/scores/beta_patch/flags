@@ -1,0 +1,6 @@
+-in:file:silent ./../../data/five_structures.out
+-beta
+-beta_patch
+-in:file:silent_struct_type binary
+-in:file:fullatom
+-out:nooutput
