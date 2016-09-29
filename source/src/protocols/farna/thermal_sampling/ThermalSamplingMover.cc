@@ -109,7 +109,6 @@ ThermalSamplingMover::ThermalSamplingMover():
 	dump_silent_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::dump_silent ]() ),
 	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_chi ]() ),
 	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_bb ]() ),
-	angle_range_bb_varying_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_bb_varying ]() ),
 	temps_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::temps ]() ),
 	st_weights_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::st_weights ]() )
 {
@@ -202,16 +201,6 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	utility::vector1<RNA_MC_KIC_SamplerOP> sampler;
 	utility::vector1<MC_OneTorsionOP> chi_sampler;
 	utility::vector1<core::id::TorsionID> chi_torsion_ids;
-
-
-
-  utility::vector1<Real> const & supplied_bb_angles( option[angle_range_bb_varying]() );
-  bool const bb_ang_supplied( false );
-  if ( supplied_bb_angles.size() != 0 ) {
-            bool const bb_ang_supplied( true );
-																				}
-	
-
 	if ( !recces_turner_mode_ ) {
 		//Set up the internal move samplers
 		for ( Size const seqpos : residues_ ) {
@@ -222,22 +211,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, seqpos-1, seqpos ) );
 			suite_sampler->init();
 			suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );
-		//	bool const bb_ang_supplied( false ); //disables varying agnles unless in recces_turner_mode	
-		//	if ( bb_ang_supplied ) {
-     // suite_sampler->set_angle_range_from_init_torsions( supplied_bb_angles[i] );
-    //  												}
-		//	else {suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );}
-
-
 			sampler.push_back( suite_sampler );
 		}
-
-
-
-
-
-
-
 
 		//Set up the chi samplers
 		core::Real init_torsion;
@@ -306,15 +281,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				suite_sampler_1->set_sample_upper_nucleoside( false );
 				suite_sampler_1->set_pucker_flip_rate( 0 );
 				suite_sampler_1->set_sample_near_a_form( sample_near_a_form );
-				
-				if ( bb_ang_supplied ) {
-      suite_sampler_1->set_angle_range_from_init( supplied_bb_angles[i] );
-                                }
-        else {suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
-              }
-
-
-
+				suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
 				standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
 			}
 			//}
@@ -332,15 +299,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			suite_sampler->set_sample_upper_nucleoside( false );
 			suite_sampler->set_pucker_flip_rate( 0 );
 			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			
-
-			if ( bb_ang_supplied ) {
-      suite_sampler->set_angle_range_from_init( supplied_bb_angles[i] );
-                              }
-      else {suite_sampler->set_angle_range_from_init( angle_range_bb_ );}
-
-
-
+			suite_sampler->set_angle_range_from_init( angle_range_bb_ );
 			standard_sampler.add_external_loop_rotamer( suite_sampler );
 		}
 	}
