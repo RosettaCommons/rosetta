@@ -119,8 +119,9 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 	if ( pose.size()== last_res_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("can not handle situation where last_res is being repeated (yet...)");
 	}
-	if(orig_pdb_length_!=9999)
+	if ( orig_pdb_length_!=9999 ) {
 		detect_last_repeat_residue(pose);
+	}
 	if ( repeat_without_replacing_pose_ ) {
 		copy_phi_psi_omega(pose,pose);
 	} else {
@@ -131,36 +132,37 @@ void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 		if ( maintain_cap_ ) {
 			add_caps(pose,*repeat_poseOP);
 		}
-		if(maintain_ligand_){
+		if ( maintain_ligand_ ) {
 			repeat_ligand(pose,*repeat_poseOP);
 			fix_ligand_residues(pose,*repeat_poseOP);
 			repeat_ligand_constraints(pose,*repeat_poseOP);
 		}
 		pose = *repeat_poseOP;
 		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
-		if(deal_with_ideal_loop_closure_scar_)
+		if ( deal_with_ideal_loop_closure_scar_ ) {
 			trim_back_repeat_to_repair_scar(pose);
+		}
 	}
 
 	//rd2
-// 	std::cout <<"after propogation_______________________________________________________________________________" << std::endl;
-// 	for(Size ii=1; ii<= 75; ii++){
-// 		Real distN_CA = pose.residue(ii).xyz("N").distance(pose.residue(ii).xyz("CA"));
-// 		Real distCA_C = pose.residue(ii).xyz("CA").distance(pose.residue(ii).xyz("C"));
-// 		Real distC_N = pose.residue(ii).xyz("C").distance(pose.residue(ii+1).xyz("N"));
-// 		conformation::Residue const & rsd1( pose.residue( ii ) );
-// 		conformation::Residue const & rsd2( pose.residue( ii+1 ) );
-// 		AtomID const n1( rsd1.atom_index("N" ), ii );
-// 		AtomID const ca1( rsd1.atom_index("CA"), ii );
-// 		AtomID const c1( rsd1.atom_index("C" ), ii );
-// 		AtomID const n2( rsd2.atom_index("N" ), ii+1 );
-// 		AtomID const ca2( rsd2.atom_index("CA"), ii+1 );
-// 		AtomID const c2( rsd2.atom_index("C" ), ii+1 );
-// 		Real angle1 = pose.atom_tree().bond_angle(n1,ca1,c1);
-// 		Real angle2 = pose.atom_tree().bond_angle(ca1,c1,n2);
-// 		Real angle3 = pose.atom_tree().bond_angle(c1,n2,ca2);
-// 		std::cout << ii << ",a:" << pose.phi(ii) <<"," <<  pose.psi(ii) << "," << pose.omega(ii) << "," <<distN_CA << ","<< distCA_C << "," << distC_N <<"||" <<angle1 <<"," << angle2 <<"," << angle3 << std::endl;
-// 	}
+	//  std::cout <<"after propogation_______________________________________________________________________________" << std::endl;
+	//  for(Size ii=1; ii<= 75; ii++){
+	//   Real distN_CA = pose.residue(ii).xyz("N").distance(pose.residue(ii).xyz("CA"));
+	//   Real distCA_C = pose.residue(ii).xyz("CA").distance(pose.residue(ii).xyz("C"));
+	//   Real distC_N = pose.residue(ii).xyz("C").distance(pose.residue(ii+1).xyz("N"));
+	//   conformation::Residue const & rsd1( pose.residue( ii ) );
+	//   conformation::Residue const & rsd2( pose.residue( ii+1 ) );
+	//   AtomID const n1( rsd1.atom_index("N" ), ii );
+	//   AtomID const ca1( rsd1.atom_index("CA"), ii );
+	//   AtomID const c1( rsd1.atom_index("C" ), ii );
+	//   AtomID const n2( rsd2.atom_index("N" ), ii+1 );
+	//   AtomID const ca2( rsd2.atom_index("CA"), ii+1 );
+	//   AtomID const c2( rsd2.atom_index("C" ), ii+1 );
+	//   Real angle1 = pose.atom_tree().bond_angle(n1,ca1,c1);
+	//   Real angle2 = pose.atom_tree().bond_angle(ca1,c1,n2);
+	//   Real angle3 = pose.atom_tree().bond_angle(c1,n2,ca2);
+	//   std::cout << ii << ",a:" << pose.phi(ii) <<"," <<  pose.psi(ii) << "," << pose.omega(ii) << "," <<distN_CA << ","<< distCA_C << "," << distC_N <<"||" <<angle1 <<"," << angle2 <<"," << angle3 << std::endl;
+	//  }
 }
 
 void RepeatPropagationMover::initialize_repeat_pose( Pose & pose, Pose & repeat_pose){
@@ -234,8 +236,9 @@ void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 	core::conformation::ResidueOP new_ligand = pose.residue(ligand_residue).clone();
 	repeat_pose.append_residue_by_jump(*new_ligand,1,"","",true);
 
-	if(ligand_residue == 0)
+	if ( ligand_residue == 0 ) {
 		utility_exit_with_message("ligand not found in pdb");
+	}
 	Size repeat_length = last_res_ - first_res_+1;
 	std::vector< numeric::xyzVector<numeric::Real> > ligand1_coordinates;
 	std::vector< numeric::xyzVector<numeric::Real> > ligand1_com_coordinates;
@@ -253,7 +256,7 @@ void RepeatPropagationMover::repeat_ligand(Pose & pose, Pose & repeat_pose){
 	}
 	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &ligand1_com_coordinates.front().x() , ligand1_com_coordinates.size());
 	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &repeat1_com_coordinates.front().x() , repeat1_com_coordinates.size());
-	for( Size repeat_id = 2; repeat_id <= numb_repeats_-1; ++repeat_id){ //switched to 2
+	for ( Size repeat_id = 2; repeat_id <= numb_repeats_-1; ++repeat_id ) { //switched to 2
 		//generate new ligand------------
 		core::conformation::ResidueOP new_ligand = pose.residue(ligand_residue).clone();
 		//get xyz for ligand-----------
@@ -313,15 +316,17 @@ vector1<Size> RepeatPropagationMover::initial_constrained_residues(const Pose & 
 					AtomPairConstraintCOP cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 					Size res1  =  cst->atom1().rsd();
 					Size res2  =  cst->atom2().rsd();
-					if(pose.residue( res1 ).is_protein() )
+					if ( pose.residue( res1 ).is_protein() ) {
 						constrained_residues.push_back(res1);
-					if(pose.residue( res2 ).is_protein() )
+					}
+					if ( pose.residue( res2 ).is_protein() ) {
 						constrained_residues.push_back(res2);
+					}
 				}
 			}
-		}
-		else
+		} else {
 			std::cout << "*************currently only implemented for MultiConstraint" << std::endl;
+		}
 	}
 	return(constrained_residues);
 }
@@ -332,10 +337,10 @@ void RepeatPropagationMover::fix_ligand_residues(Pose & pose, Pose & repeat_pose
 	// pose.constraint_set()->show_definition( std::cout, pose );
 	Size repeat_length = last_res_ - first_res_+1;
 	vector1<Size> constrained_residues = initial_constrained_residues(pose);
-	for(Size ii=1; ii<=constrained_residues.size(); ++ii){
-		if(pose.residue(constrained_residues[ii]).is_protein()){
+	for ( Size ii=1; ii<=constrained_residues.size(); ++ii ) {
+		if ( pose.residue(constrained_residues[ii]).is_protein() ) {
 			Size residue_in_repeat = constrained_residues[ii]%repeat_length;
-			for(Size jj=1; jj<=numb_repeats_; ++jj){
+			for ( Size jj=1; jj<=numb_repeats_; ++jj ) {
 				Size residue_to_fix = residue_in_repeat+repeat_length*(jj-1);
 				repeat_pose.replace_residue(residue_to_fix, pose.residue(constrained_residues[ii]), true );
 			}
@@ -346,7 +351,7 @@ void RepeatPropagationMover::fix_ligand_residues(Pose & pose, Pose & repeat_pose
 core::id::SequenceMapping RepeatPropagationMover::setup_repeat_seqmap(Size repeat_number,Size ligand_in_pose, Size ligand_in_repeat){
 	Size repeat_length = last_res_ - first_res_+1;
 	core::id::SequenceMapping seqmap;
-	for(Size ii=1; ii<=repeat_length*2; ++ii){
+	for ( Size ii=1; ii<=repeat_length*2; ++ii ) {
 		seqmap.insert_aligned_residue_safe(ii,ii+((int)repeat_number-1)*repeat_length);
 	}
 	seqmap.insert_aligned_residue_safe(ligand_in_pose,ligand_in_repeat);
@@ -361,25 +366,27 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	repeat_pose.remove_constraints();
 	Size repeat_length = last_res_ - first_res_+1;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
-	for(Size ii=1; ii<=numb_repeats_-1; ++ii){
+	for ( Size ii=1; ii<=numb_repeats_-1; ++ii ) {
 		BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
 			if ( c->type() == "MultiConstraint" ) {
 				MultiConstraintCOP multi_cst_old( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 				ConstraintCOPs constraints_l2=multi_cst_old->member_constraints();
 				BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
-					if ( c_l2->type() == "AtomPair" ) {//it seemed like the wrong residue numbering was stored in the top level multi-constraint
+					if ( c_l2->type() == "AtomPair" ) { //it seemed like the wrong residue numbering was stored in the top level multi-constraint
 						AtomPairConstraintCOP old_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 						core::id::SequenceMapping seq_map;
 						Size res1  =  old_cst->atom1().rsd();
 						Size res2  =  old_cst->atom2().rsd();
-						if(pose.residue( res1 ).is_protein() )
+						if ( pose.residue( res1 ).is_protein() ) {
 							res1 = res1+repeat_length*(ii-1);
-						else
+						} else {
 							res1 = res1+ii-1;//ligand location
-						if(pose.residue( res2 ).is_protein() )
+						}
+						if ( pose.residue( res2 ).is_protein() ) {
 							res2 = res2+repeat_length*(ii-1);
-						else
+						} else {
 							res2 = res2+ii-1;//ligand location
+						}
 						seq_map.insert_aligned_residue_safe(old_cst->atom1().rsd(),res1);
 						seq_map.insert_aligned_residue_safe(old_cst->atom2().rsd(),res2);
 						MultiConstraintOP multi_cst_new(utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint> (multi_cst_old->remap_resid(seq_map) ));
@@ -393,7 +400,7 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	//setup observer
 	EnzdesCacheableObserverOP enz_obs( get_enzdes_observer( repeat_pose ) );
 	for ( core::Size ii = 1; ii <= repeat_pose.total_residue(); ii++ ) {
-		if (repeat_pose.residue( ii ).is_ligand() ) {
+		if ( repeat_pose.residue( ii ).is_ligand() ) {
 			Size ligand_residue_pos = ii;
 			core::conformation::ResidueCOP ligand_residue = repeat_pose.residue( ii ).get_self_ptr();
 			utility::vector1< core::conformation::ResidueCOP > tmp_residue_cloud;
@@ -407,25 +414,27 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	Size n_csts_repeat_pose = pose_cst_cache->ncsts()*(numb_repeats_-1);
 	Size n_csts_pose = pose_cst_cache->ncsts();
 	EnzConstraintIOCOP pose_cstio( pose_cst_cache->enzcst_io()); //should be able to use the pose_io but modify the cst_cache
-	if ( !repeat_cst_cache )
+	if ( !repeat_cst_cache ) {
 		toolbox::match_enzdes_util::get_enzdes_observer( repeat_pose )->set_cst_cache( toolbox::match_enzdes_util::EnzdesCstCacheOP( new EnzdesCstCache( pose_cstio, n_csts_repeat_pose+1 ) ) ); //+1 is for the positions to hold fix
+	}
 	repeat_cst_cache = get_enzdes_observer( repeat_pose )->cst_cache();
 	//fill repeat_cst_cache
 	//setup cst_cache
 	Size pose_ligand_position = 999;
-	for(Size ii=1; ii<=pose.total_residue() && pose_ligand_position==999; ++ii){
-		if (repeat_pose.residue( ii ).is_ligand() ) {
-			 pose_ligand_position = ii;
+	for ( Size ii=1; ii<=pose.total_residue() && pose_ligand_position==999; ++ii ) {
+		if ( repeat_pose.residue( ii ).is_ligand() ) {
+			pose_ligand_position = ii;
 		}
 	}
-	if(!pose_cst_cache->contains_position(pose_ligand_position))
+	if ( !pose_cst_cache->contains_position(pose_ligand_position) ) {
 		utility_exit_with_message("ligand not constrainted the code below will need to be adjusted to accomodate");
-	for(Size ii=1; ii<=numb_repeats_-1; ++ii){
+	}
+	for ( Size ii=1; ii<=numb_repeats_-1; ++ii ) {
 		Size repeat_ligand_position = repeat_length*numb_repeats_+ii; //protein length + number of repeats.
 		core::id::SequenceMapping seqmap = setup_repeat_seqmap(ii,pose_ligand_position,repeat_ligand_position);
 		std::cout << "seqmap about to be applied" << std::endl;
 		seqmap.show(std::cout);
-		for(Size jj=1; jj<=n_csts_pose; ++jj){
+		for ( Size jj=1; jj<=n_csts_pose; ++jj ) {
 			Size cst_location_in_cst_cache = ((int)ii-1)*n_csts_pose+jj;
 			EnzdesCstParamCacheOP tmp_param_cache =pose_cst_cache->param_cache(jj);
 			EnzdesCstParamCacheOP copy_of_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache(*tmp_param_cache));
@@ -437,14 +446,14 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	std::map<Size,std::string> last_repeat_constrained_res; //I use a map so if there's multiple constraints on a residue I only add 1 pose_constraint
 	std::map<Size,std::string> first_repeat_constrained_res;
 	vector1<Size> pose_constrained_positions = pose_cst_cache->ordered_constrained_positions(pose);
-	for(Size jj=1; jj<=pose_constrained_positions.size(); ++jj){
+	for ( Size jj=1; jj<=pose_constrained_positions.size(); ++jj ) {
 		Size residue_numb = pose_constrained_positions[jj];
-		if(!pose.residue( jj ).is_ligand()){
-			if (residue_numb<=repeat_length){
+		if ( !pose.residue( jj ).is_ligand() ) {
+			if ( residue_numb<=repeat_length ) {
 				Size location_in_repeat = residue_numb + (numb_repeats_-1)*repeat_length; //place in first repeat + 3 repeats
 				last_repeat_constrained_res.insert(std::pair<Size,std::string>(location_in_repeat,pose.residue(residue_numb).name3() ) );
 			}
-			if (residue_numb>repeat_length && residue_numb <=2*repeat_length){
+			if ( residue_numb>repeat_length && residue_numb <=2*repeat_length ) {
 				Size location_in_repeat = residue_numb-repeat_length; //place in first repeat + 3 repeats
 				first_repeat_constrained_res.insert(std::pair<Size,std::string>(location_in_repeat,pose.residue(residue_numb).name3() ) );
 			}
@@ -452,12 +461,12 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	}
 	//debug print out first and last residues to constrain
 	EnzdesCstParamCacheOP extra_res_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
-	for(std::map<Size,std::string>::iterator itr =first_repeat_constrained_res.begin() ; itr != first_repeat_constrained_res.end(); ++itr){
+	for ( std::map<Size,std::string>::iterator itr =first_repeat_constrained_res.begin() ; itr != first_repeat_constrained_res.end(); ++itr ) {
 		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
 		TR <<"Constraining additional residue" <<  itr->first << std::endl;
 
 	}
-	for(std::map<Size,std::string>::iterator itr =last_repeat_constrained_res.begin() ; itr != last_repeat_constrained_res.end(); ++itr){
+	for ( std::map<Size,std::string>::iterator itr =last_repeat_constrained_res.begin() ; itr != last_repeat_constrained_res.end(); ++itr ) {
 		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
 		TR <<"Constraining additional residue" <<  itr->first << std::endl;
 	}
@@ -472,12 +481,12 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	//debug code
 	// std::cout << "all fixed constraints" << std::endl;
 	// for(Size ii=1; ii<=repeat_cst_cache->ncsts(); ++ii){
-	// 	std::cout << "cst index" << ii << std::endl;
-	// 	EnzdesCstParamCacheOP tmp_param_cache = repeat_cst_cache->param_cache(ii);
-	// 	utility::vector1< ConstraintCOP > & cur_active_constraints = tmp_param_cache->active_pose_constraints();
-	// 	for ( utility::vector1< ConstraintCOP >::iterator cst_it = cur_active_constraints.begin(); cst_it != cur_active_constraints.end(); ++cst_it ) {
-	// 		(*cst_it)->show(std::cout);
-	// 	}
+	//  std::cout << "cst index" << ii << std::endl;
+	//  EnzdesCstParamCacheOP tmp_param_cache = repeat_cst_cache->param_cache(ii);
+	//  utility::vector1< ConstraintCOP > & cur_active_constraints = tmp_param_cache->active_pose_constraints();
+	//  for ( utility::vector1< ConstraintCOP >::iterator cst_it = cur_active_constraints.begin(); cst_it != cur_active_constraints.end(); ++cst_it ) {
+	//   (*cst_it)->show(std::cout);
+	//  }
 	// }
 }
 
@@ -708,9 +717,9 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	numb_repeats_ = tag->getOption<Size>("numb_repeats");
 	deal_with_ideal_loop_closure_scar_ = false;
-	if(orig_pdb_length_==9999)
+	if ( orig_pdb_length_==9999 ) {
 		deal_with_ideal_loop_closure_scar_ = false;
-	else{
+	} else {
 		deal_with_ideal_loop_closure_scar_ = true;
 		numb_repeats_=numb_repeats_+1;
 	}

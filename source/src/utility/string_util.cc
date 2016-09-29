@@ -107,7 +107,7 @@ quoted_split(std::string const & s ) {
 			} else {
 				indquote = true;
 			}
-		} else if ( s[ii] == '\'' ) {
+		} else if ( s[ii] == '\'' ) { //THE '\'' IN THIS LINE TRIPS UP THE BEAUTIFIER.
 			if ( insquote ) {
 				insquote = false;
 			} else if ( indquote ) {

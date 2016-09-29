@@ -126,7 +126,7 @@ std::map<Size, FragmentStoreOP> StructureStoreManager::load_grouped_fragment_sto
 		return(iter->second);
 	} else {
 		FragmentStoreOP fullStore = load_fragment_store(lookup_name,store_path,fields_to_load,fields_to_load_types);
-		if(option[OptionKeys::indexed_structure_store::exclude_homo].user()){
+		if ( option[OptionKeys::indexed_structure_store::exclude_homo].user() ) {
 			fullStore->delete_homologs();
 		}
 		// fullStore->fragment_threshold_distances.clear();

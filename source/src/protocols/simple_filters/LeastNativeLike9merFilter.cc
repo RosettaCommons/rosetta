@@ -101,8 +101,9 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 		std::string frag_ss = dssp_string.substr(resid-1,fragment_length);
 		if ( only_helices_ && frag_ss == "HHHHHHHHH" ) {
 			Real tmpRmsd = SSHashedFragmentStore_->lookback(pose,resid,frag_ss,false);
-			if(tmpRmsd>rmsd_lookup_thresh_)
+			if ( tmpRmsd>rmsd_lookup_thresh_ ) {
 				TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
+			}
 			if ( tmpRmsd>worstRmsd ) {
 				worstRmsd = tmpRmsd;
 			}
@@ -110,8 +111,9 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 		if ( !only_helices_ ) {
 			if ( frag_ss != "HHHHHHHHH" ) {
 				Real tmpRmsd = SSHashedFragmentStore_->lookback_account_for_dssp_inaccuracy(pose,resid,frag_ss,true,rmsd_lookup_thresh_);
-				if(tmpRmsd>rmsd_lookup_thresh_)
+				if ( tmpRmsd>rmsd_lookup_thresh_ ) {
 					TR << "position:" << resid << " rmsd:" << tmpRmsd <<std::endl;
+				}
 				if ( tmpRmsd>worstRmsd ) {
 					worstRmsd = tmpRmsd;
 				}

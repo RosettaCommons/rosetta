@@ -362,7 +362,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 	return result;
 }
 
-	//@brief wrapper for run_psired that returns a vector of probabilities. 1 vector is returned for each chain
+//@brief wrapper for run_psired that returns a vector of probabilities. 1 vector is returned for each chain
 utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInterface::run_psipred_prob(core::pose::Pose const & pose){
 	utility::vector1<utility::vector1< utility::vector1< core::Real > > > combined_results;
 	core::Size start_residue = 1;

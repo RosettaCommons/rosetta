@@ -75,21 +75,20 @@ public:
 	void add_threshold_distance_allFrag(numeric::Real distance);
 
 	template <class T> void inline_vector_delete(std::vector<T>& data_vector, const std::vector<bool>& delete_vector){
-	typename std::vector<T>::iterator read_position = data_vector.begin();
-	typename std::vector<T>::iterator write_position = data_vector.begin();
-	typename std::vector<T>::iterator end_position = data_vector.end();
-	for(std::vector<bool>::const_iterator itr=delete_vector.begin(); itr!= delete_vector.end(); ++itr){
-		if(*itr==true){
-			read_position++;
+		typename std::vector<T>::iterator read_position = data_vector.begin();
+		typename std::vector<T>::iterator write_position = data_vector.begin();
+		typename std::vector<T>::iterator end_position = data_vector.end();
+		for ( std::vector<bool>::const_iterator itr=delete_vector.begin(); itr!= delete_vector.end(); ++itr ) {
+			if ( *itr==true ) {
+				read_position++;
+			} else {
+				*write_position = *read_position;
+				read_position++;
+				write_position++;
+			}
 		}
-		else{
-			*write_position = *read_position;
-			read_position++;
-			write_position++;
-		}
+		data_vector.erase(write_position,end_position);
 	}
-	data_vector.erase(write_position,end_position);
-}
 
 	std::set<std::string> get_homologs();
 	void delete_homologs();

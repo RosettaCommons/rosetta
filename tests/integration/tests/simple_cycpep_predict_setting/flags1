@@ -9,6 +9,7 @@
 -min_genkic_hbonds 5
 -min_final_hbonds 5
 -symmetric_gly_tables true
+-cyclic_peptide:sample_cis_pro_frequency 0.0
 -user_set_alpha_dihedrals 3 -61 -41 180 4 -61 -41 180 5 -61 -41 180 6 -61 -41 180 7 -61 -41 180 8 -61 -41 180 9 -61 -41 180 15 61 41 180 16 61 41 180 17 61 41 180 18 61 41 180 19 61 41 180 20 61 41 180 21 61 41 180 27 -61 -41 180 28 -61 -41 180 29 -61 -41 180 30 -61 -41 180 31 -61 -41 180 32 -61 -41 180 33 -61 -41 180 38 61 41 180 39 61 41 180 40 61 41 180 41 61 41 180 42 61 41 180 43 61 41 180 44 61 41 180 45 61 41 180 
 -user_set_alpha_dihedral_perturbation 10.0
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

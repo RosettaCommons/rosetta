@@ -88,35 +88,39 @@ void FragmentStore::delete_homologs(){
 	std::set<std::string> homologs = get_homologs();
 	numeric::Size fragment_length = fragment_specification.fragment_length;
 	//determine which to delete
-	for(numeric::Size ii=0; ii<string_groups["name"].size(); ++ii){
+	for ( numeric::Size ii=0; ii<string_groups["name"].size(); ++ii ) {
 		std::string string_ii = string_groups["name"][ii];
-		if(homologs.find(string_ii) != homologs.end()){
+		if ( homologs.find(string_ii) != homologs.end() ) {
 			residues_to_delete.push_back(true);
-			for(numeric::Size ii=0; ii<fragment_length; ++ii)
+			for ( numeric::Size ii=0; ii<fragment_length; ++ii ) {
 				coordinates_to_delete.push_back(true);
+			}
 			num_fragments_--;
-		}
-		else{
+		} else {
 			residues_to_delete.push_back(false);
-			for(numeric::Size ii=0; ii<fragment_length; ++ii)
+			for ( numeric::Size ii=0; ii<fragment_length; ++ii ) {
 				coordinates_to_delete.push_back(false);
+			}
 		}
 	}
 	//string_groups
 	inline_vector_delete(string_groups["aa"],residues_to_delete);
 	//realVector_groups
-	for(std::map<std::string, std::vector<std::vector<numeric::Real> > >::iterator itr=realVector_groups.begin(); itr!=realVector_groups.end(); ++itr)
+	for ( std::map<std::string, std::vector<std::vector<numeric::Real> > >::iterator itr=realVector_groups.begin(); itr!=realVector_groups.end(); ++itr ) {
 		inline_vector_delete(itr->second,residues_to_delete);
+	}
 	//real_groups
-	for(std::map<std::string, std::vector<numeric::Real> >::iterator itr=real_groups.begin(); itr!=real_groups.end(); ++itr)
+	for ( std::map<std::string, std::vector<numeric::Real> >::iterator itr=real_groups.begin(); itr!=real_groups.end(); ++itr ) {
 		inline_vector_delete(itr->second,residues_to_delete);
+	}
 	//int64_groups
-	for(std::map<std::string, std::vector<numeric::Size> >::iterator itr=int64_groups.begin(); itr!=int64_groups.end(); ++itr)
+	for ( std::map<std::string, std::vector<numeric::Size> >::iterator itr=int64_groups.begin(); itr!=int64_groups.end(); ++itr ) {
 		inline_vector_delete(itr->second,residues_to_delete);
+	}
 	//fragment_threshold_distances
-		inline_vector_delete(fragment_threshold_distances,residues_to_delete);
+	inline_vector_delete(fragment_threshold_distances,residues_to_delete);
 	//fragment_coordinates
-		inline_vector_delete(fragment_coordinates,coordinates_to_delete);
+	inline_vector_delete(fragment_coordinates,coordinates_to_delete);
 }
 
 

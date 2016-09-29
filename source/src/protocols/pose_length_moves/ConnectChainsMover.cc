@@ -78,19 +78,19 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 	boost::replace_all(output_chains_,"[","");
 	boost::replace_all(output_chains_,"]","");
 	utility::vector1< std::string > output_strings( utility::string_split( output_chains_ , '|' ) );
-	for(Size ii=1; ii<=output_strings.size(); ii++){
+	for ( Size ii=1; ii<=output_strings.size(); ii++ ) {
 		utility::vector1< std::string > chains_in_pose(utility::string_split( output_strings[ii] , ',' ) );
 		chains_in_poses.push_back(chains_in_pose);
-		for(Size jj=1; jj<=chains_in_pose.size(); ++jj){
+		for ( Size jj=1; jj<=chains_in_pose.size(); ++jj ) {
 			tmp_chains_set.insert(chains_in_pose[jj]);
 			//get individual chains
 			utility::vector1< std::string > single_residue_chains(utility::string_split( chains_in_pose[jj] , '+' ) );
-			for(Size kk=1; kk<=single_residue_chains.size(); ++kk){
+			for ( Size kk=1; kk<=single_residue_chains.size(); ++kk ) {
 				tmp_chains_set.insert(single_residue_chains[kk]);
 			}
 		}
 	}
-	for(set<std::string>::iterator iter=tmp_chains_set.begin(); iter!=tmp_chains_set.end(); iter++){
+	for ( set<std::string>::iterator iter=tmp_chains_set.begin(); iter!=tmp_chains_set.end(); iter++ ) {
 		individual_chains.push_back(*iter);
 		TR << "chains" << *iter << std::endl;
 	}
@@ -101,15 +101,14 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 
 map<std::string, Chain> ConnectChainsMover::generate_connected_chains(core::pose::Pose const pose,vector1<std::string> individual_chains){
 	map<std::string, Chain> connected_chains;
-	for(Size ii=1;ii<=individual_chains.size(); ++ii){
+	for ( Size ii=1; ii<=individual_chains.size(); ++ii ) {
 		Size chain_length = boost::count(individual_chains[ii],'+');
-		if(chain_length ==0){
+		if ( chain_length ==0 ) {
 			Size chain_id =  get_chain_id_from_chain(individual_chains[ii],pose);
 			core::pose::PoseOP chain = pose.split_by_chain(chain_id);
 			struct Chain chain_tmp(chain,0);
 			connected_chains.insert(std::pair<std::string, Chain>(individual_chains[ii],chain_tmp));
-		}
-		else{
+		} else {
 			assemble_missing_chain(connected_chains,"",individual_chains[ii]);
 		}
 	}
@@ -119,21 +118,23 @@ map<std::string, Chain> ConnectChainsMover::generate_connected_chains(core::pose
 void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder){
 	Size chain_remainder_length = boost::count(chain_remainder,'+');
 	Size chain_assembled_length = boost::count(chain_assembled,'+');
-	if(chain_remainder.size()!=0)
+	if ( chain_remainder.size()!=0 ) {
 		chain_remainder_length++;
-	if(chain_assembled.size()!=0)
-		chain_assembled_length++;
-	vector1< std::string > chain_remainder_split(utility::string_split(chain_remainder , '+' ) );
-	if(chain_remainder_length == 0){
-		return;
 	}
-	else{
+	if ( chain_assembled.size()!=0 ) {
+		chain_assembled_length++;
+	}
+	vector1< std::string > chain_remainder_split(utility::string_split(chain_remainder , '+' ) );
+	if ( chain_remainder_length == 0 ) {
+		return;
+	} else {
 		std::string to_assemble_string = "";
-		if(chain_assembled_length==0)
+		if ( chain_assembled_length==0 ) {
 			to_assemble_string = chain_remainder_split[1];
-		else
+		} else {
 			to_assemble_string = chain_assembled + "+" + chain_remainder_split[1];
-		if(connected_chains.find(to_assemble_string) == connected_chains.end()){
+		}
+		if ( connected_chains.find(to_assemble_string) == connected_chains.end() ) {
 			TR << "connecting" << chain_assembled << " to " << chain_remainder_split[1] << std::endl;
 			//not found. connect chains & put in connected chains
 			core::pose::PoseOP chainA = connected_chains.at(chain_assembled).poseOP;
@@ -145,31 +146,35 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 			append_pose_to_pose(*chainA_plus,*chainB,true);
 			renumber_pdbinfo_based_on_conf_chains(*chainA_plus,true,false,false,false);
 			utility::vector1< char > pdb_chains;
-			for(Size ii=1; ii<=chainA->total_residue(); ++ii)
+			for ( Size ii=1; ii<=chainA->total_residue(); ++ii ) {
 				pdb_chains.push_back('A');
-			for(Size ii=1; ii<=chainB->total_residue(); ++ii)
+			}
+			for ( Size ii=1; ii<=chainB->total_residue(); ++ii ) {
 				pdb_chains.push_back('B');
+			}
 			chainA_plus->pdb_info()->set_chains(pdb_chains);
- 			if(chainA_rmsd > rmsThreshold_ || chainB_rmsd > rmsThreshold_){//no closure needed if rmsd is > threshold. But fill in the DB so this is not re-tried
+			if ( chainA_rmsd > rmsThreshold_ || chainB_rmsd > rmsThreshold_ ) { //no closure needed if rmsd is > threshold. But fill in the DB so this is not re-tried
 				Real tmp_rmsd = chainA_rmsd;
-				if(tmp_rmsd < chainB_rmsd)
+				if ( tmp_rmsd < chainB_rmsd ) {
 					tmp_rmsd = chainB_rmsd;
+				}
 				struct Chain chain_tmp(chainA_plus,tmp_rmsd);
 				connected_chains.insert(std::pair<std::string, Chain>(to_assemble_string,chain_tmp));
-			}
-			else{
+			} else {
 				Real return_rmsd = loopCloserOP->close_loop(*chainA_plus);
-				if(return_rmsd < chainA_rmsd)
+				if ( return_rmsd < chainA_rmsd ) {
 					return_rmsd = chainA_rmsd;
-				if(return_rmsd < chainB_rmsd)
+				}
+				if ( return_rmsd < chainB_rmsd ) {
 					return_rmsd = chainB_rmsd;
+				}
 				struct Chain chain_tmp(chainA_plus,return_rmsd);
 				connected_chains.insert(std::pair<std::string, Chain>(to_assemble_string,chain_tmp));
 			}
 		}
 		std::string next_remainder = "";
-		if(chain_remainder_length>1){
-			for(Size ii=2; ii<chain_remainder_length; ii++){
+		if ( chain_remainder_length>1 ) {
+			for ( Size ii=2; ii<chain_remainder_length; ii++ ) {
 				next_remainder+=chain_remainder_split[ii] + "+";
 			}
 			next_remainder+=chain_remainder_split[chain_remainder_length];
@@ -182,28 +187,28 @@ void ConnectChainsMover::generate_best_final_pose(core::pose::Pose & pose,vector
 	Real low_rmsd = 9999999;
 	Size low_rmsd_pose_index = 0;
 	std::string low_rmsd_chain_string = "";
-	for(Size ii=1; ii<=chains_in_poses.size(); ++ii){
+	for ( Size ii=1; ii<=chains_in_poses.size(); ++ii ) {
 		Real tmp_pose_rmsd = 0;
 		std::string tmp_chain_string = "";
-		for(Size jj=1; jj<=chains_in_poses[ii].size(); ++jj){
+		for ( Size jj=1; jj<=chains_in_poses[ii].size(); ++jj ) {
 			Real tmp_chain_rmsd = connected_chains.at(chains_in_poses[ii][jj]).rmsd;
 			tmp_chain_string += chains_in_poses[ii][jj] + ",";
-			if(tmp_pose_rmsd<tmp_chain_rmsd)
+			if ( tmp_pose_rmsd<tmp_chain_rmsd ) {
 				tmp_pose_rmsd = tmp_chain_rmsd;
+			}
 		}
-		if(tmp_pose_rmsd < low_rmsd){
+		if ( tmp_pose_rmsd < low_rmsd ) {
 			low_rmsd = tmp_pose_rmsd;
 			low_rmsd_pose_index = ii;
 			low_rmsd_chain_string = tmp_chain_string;
 		}
 	}
-	if(low_rmsd > rmsThreshold_){
+	if ( low_rmsd > rmsThreshold_ ) {
 		utility_exit_with_message("No loop closures found below threshold, exiting");
-	}
-	else{
+	} else {
 		TR << "low rmsd to nine residue region in VALL: " << low_rmsd << " description of output chain:" << low_rmsd_chain_string << std::endl;
 		core::pose::PoseOP return_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][1]).poseOP->clone();
-		for(Size jj=2; jj<=chains_in_poses[low_rmsd_pose_index].size(); ++jj){
+		for ( Size jj=2; jj<=chains_in_poses[low_rmsd_pose_index].size(); ++jj ) {
 			core::pose::PoseOP append_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][jj]).poseOP;
 			append_pose_to_pose(*return_pose,*append_pose,true);
 		}

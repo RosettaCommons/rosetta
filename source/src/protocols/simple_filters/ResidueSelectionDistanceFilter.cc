@@ -87,22 +87,20 @@ ResidueSelectionDistanceFilter::compute( core::pose::Pose const & pose ) const {
 			valid_res.push_back( resid );
 		}
 	}
-	if(valid_res.size()<=1)//can not measure distance if < 1 residue
+	if ( valid_res.size()<=1 ) { //can not measure distance if < 1 residue
 		return(0);
+	}
 	core::Size ct=0;
 	core::Real total_distance=0;
-	for(core::Size ii=1; ii<=valid_res.size(); ++ii){
-		for(core::Size jj=ii+1; jj<=valid_res.size(); ++jj){
+	for ( core::Size ii=1; ii<=valid_res.size(); ++ii ) {
+		for ( core::Size jj=ii+1; jj<=valid_res.size(); ++jj ) {
 			core::conformation::Residue const res_res1( pose.conformation().residue( valid_res[ii] ) );
 			core::conformation::Residue const res_res2( pose.conformation().residue( valid_res[jj] ) );
-			if (atom_to_measure_=="nbr")
-			{
+			if ( atom_to_measure_=="nbr" ) {
 				core::Real const distance( res_res1.xyz( res_res1.nbr_atom() ).distance( res_res2.xyz( res_res2.nbr_atom() ) ) );
 				total_distance += distance;
 				ct+=1;
-			}
-			else
-			{
+			} else {
 				core::Real const distance( res_res1.xyz( atom_to_measure_ ).distance( res_res2.xyz( atom_to_measure_ ) ) );
 				total_distance += distance;
 				ct+=1;
@@ -121,7 +119,7 @@ ResidueSelectionDistanceFilter::parse_my_tag(
 	core::pose::Pose const &
 ) {
 	atom_to_measure_ = "nbr";
-	if( tag->hasOption("atom")){
+	if ( tag->hasOption("atom") ) {
 		atom_to_measure_ = tag->getOption< std::string >("atom");
 	}
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 99.0 );

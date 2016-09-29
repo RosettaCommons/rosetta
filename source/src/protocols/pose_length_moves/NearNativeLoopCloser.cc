@@ -261,18 +261,19 @@ void PossibleLoop::generate_uncached_stub_rmsd(){
 core::pose::PoseOP PossibleLoop::get_finalPoseOP(){
 	bool fullatom_original = original_atom_type_fullLengthPoseOP_->is_fullatom();
 	bool fullatom_finalPose = finalPoseOP_->is_fullatom();
-	if(!fullatom_original || (fullatom_original && fullatom_finalPose))
+	if ( !fullatom_original || (fullatom_original && fullatom_finalPose) ) {
 		return(finalPoseOP_);
-	else{
+	} else {
 		core::util::switch_to_residue_type_set(*finalPoseOP_, core::chemical::FA_STANDARD);
 		//fix the residues before the loop
-		for(Size ii=1; ii<=resBeforeLoop_; ++ii)
+		for ( Size ii=1; ii<=resBeforeLoop_; ++ii ) {
 			finalPoseOP_->replace_residue(ii, original_atom_type_fullLengthPoseOP_->residue(ii), true );
+		}
 		//fix the residues after the loop
 		Size residue_after_loop_orig = fullLength_resBeforeLoop_+insertedBeforeLoopRes_+insertedAfterLoopRes_-resAdjustmentAfterLoop_+1;
 		//std::cout << "fullLength_resBeforeLoop_" << fullLength_resBeforeLoop_ << "," <<  insertedBeforeLoopRes_ << "," << insertedAfterLoopRes_ << "," << resAdjustmentAfterLoop_ << std::endl;
 		Size residue_to_change = finalPoseOP_->total_residue()-resAfterLoop_+1;
-		for(Size ii=0; ii<residue_to_change; ++ii){
+		for ( Size ii=0; ii<residue_to_change; ++ii ) {
 			Size orig_res_numb =  residue_after_loop_orig+ii;
 			Size current_res_numb = resAfterLoop_+ii;
 			finalPoseOP_->replace_residue(current_res_numb, original_atom_type_fullLengthPoseOP_->residue(orig_res_numb), true );
@@ -308,23 +309,23 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 	} else {
 		SSHashedFragmentStore_ = core::indexed_structure_store::SSHashedFragmentStore::get_instance();
 		Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
-		if(closure_type == "kic"){
+		if ( closure_type == "kic" ) {
 			core::scoring::ScoreFunctionOP scorefxn_tmp( core::scoring::ScoreFunctionFactory::create_score_function("score3"));
 			extendRegion(true, resBeforeLoop_, loopLength_,working_poseOP);
 			resAfterLoop_=resAfterLoop_+loopLength_;
 			bool success = kic_closure(scorefxn_tmp,working_poseOP,resBeforeLoop_,resAfterLoop_,200);
 			vector1<Size> resids;
-			for(int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2){
+			for ( int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2 ) {
 				Size tmp_resid = get_valid_resid(ii,*working_poseOP);
 				resids.push_back(tmp_resid);
 			}
 			Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
-			if ( success ){
+			if ( success ) {
 				final_rmsd_=rmsd;
 				finalPoseOP_=working_poseOP;
 			}
 		}
-		if(closure_type == "lookback"){
+		if ( closure_type == "lookback" ) {
 			//Step 2 : Add loop residues
 			extendRegion(true, resBeforeLoop_, loopLength_,working_poseOP);
 			resAfterLoop_=resAfterLoop_+loopLength_;
@@ -348,7 +349,7 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 			minimize_loop(scorefxn,ideal_loop,working_poseOP);
 			//Get rmsd
 			vector1<Size> resids;
-			for(int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2){
+			for ( int ii=resBeforeLoop_-3; ii<=(int)resBeforeLoop_+3; ii=ii+2 ) {
 				Size tmp_resid = get_valid_resid(ii,*working_poseOP);
 				resids.push_back(tmp_resid);
 			}
@@ -365,12 +366,12 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 			Size match_ss_index;
 			scorefxn->set_weight(core::scoring::coordinate_constraint, 0.4);
 			//iterate---
-			for(Size jj=1; jj<=2 && current_rmsd<rms_threshold+0.5; ++jj){//The 0.5 RMSD is arbitrary.
+			for ( Size jj=1; jj<=2 && current_rmsd<rms_threshold+0.5; ++jj ) {//The 0.5 RMSD is arbitrary.
 				working_poseOP->remove_constraints();
-				for(Size ii=1; ii<=resids.size(); ++ii){
+				for ( Size ii=1; ii<=resids.size(); ++ii ) {
 					std::string frag_ss = desired_dssp.substr(resids[ii]-1,9);
 					Real tmp_rmsd = SSHashedFragmentStore_->lookback_account_for_dssp_inaccuracy(*working_poseOP,resids[ii],frag_ss,match_rmsd,match_index,match_ss_index);
-					if(tmp_rmsd < rms_threshold+0.5){
+					if ( tmp_rmsd < rms_threshold+0.5 ) {
 						add_coordinate_csts_from_lookback(match_ss_index,match_index,resids[ii],false,working_poseOP);
 					}
 				}
@@ -390,10 +391,9 @@ void PossibleLoop::generate_output_pose(bool output_closed,bool ideal_loop, Real
 				Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(*working_poseOP,resids);
 				if ( success ) {
 					final_rmsd_=rmsd;
-				 	finalPoseOP_=working_poseOP;
-				 }
-				 else {
-				 	final_rmsd_ = 999;
+					finalPoseOP_=working_poseOP;
+				} else {
+					final_rmsd_ = 999;
 				}
 			}
 		}
@@ -673,11 +673,11 @@ std::vector< numeric::xyzVector<numeric::Real> > PossibleLoop::get_coordinates_f
 }
 
 // Real PossibleLoop::get_vdw_change(core::pose::PoseOP poseOP){
-// 	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-// 	scorefxn->set_weight( core::scoring::vdw, 1.0 );
-// 	Real loop_vdw_score = scorefxn->score(*poseOP);
-// 	Real orig_vdw_score = scorefxn->score(*original_poseOP_);
-// 	return(loop_vdw_score-orig_vdw_score);
+//  core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+//  scorefxn->set_weight( core::scoring::vdw, 1.0 );
+//  Real loop_vdw_score = scorefxn->score(*poseOP);
+//  Real orig_vdw_score = scorefxn->score(*original_poseOP_);
+//  return(loop_vdw_score-orig_vdw_score);
 // }
 
 
@@ -759,13 +759,13 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 	mm.set_chi ( false );
 	mm.set_jump( false );
 	mm.set_bb_true_range(firstLoopRes,lastLoopRes);
-	if(ideal_loop){
+	if ( ideal_loop ) {
 		MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
 		AtomTreeMinimizer minimizer;
 		minimizer.run( *poseOP, mm,*scorefxn, min_options );
 		//std::cout << "after atom tree minimize" << std::endl;
 		//scorefxn->show(std::cout,*poseOP);
-	}else{//use cartesian minimization if it's ok.
+	} else { //use cartesian minimization if it's ok.
 		MinimizerOptions min_options("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
 		CartesianMinimizer minimizer;
 		minimizer.run( *poseOP, mm,*scorefxn, min_options );
@@ -866,7 +866,7 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 			}
 			std::string new_chain_order=int_to_string.str();
 			core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
-			if(pose.is_fullatom()){
+			if ( pose.is_fullatom() ) {
 				scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
 
 			}
@@ -884,12 +884,12 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 			possibleLoops_[ii]->generate_output_pose(false,ideal_,rmsThreshold_,closure_type_);
 		}
 	} else {
-		if(closure_type_ == "kic"){
+		if ( closure_type_ == "kic" ) {
 			for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
 				possibleLoops_[ii]->generate_output_pose(true,ideal_,rmsThreshold_,closure_type_);
 			}
 		}
-		if(closure_type_ == "lookback"){
+		if ( closure_type_ == "lookback" ) {
 			//-------check CA-CA distance viability of loop-----------
 			for ( Size ii=1; ii<=possibleLoops_.size(); ii++ ) {
 				possibleLoops_[ii]->evaluate_distance_closure();
@@ -910,14 +910,14 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 			}
 			//debug code--------------------
 			// for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
-			// 	//std::cout <<"rmsds" << ii << "," <<  possibleLoops_[ii]->get_stubRMSD() << "," << possibleLoops_[ii]->get_uncached_stubRMSD() <<  "," << possibleLoops_[ii]->get_final_RMSD() << std::endl;
-			// 	//std::cout << possibleLoops_[ii]->get_description();
-			// 	if( possibleLoops_[ii]->get_uncached_stubRMSD() < 0.4){
-			// 		std::stringstream numbConvert;
-			// 		numbConvert << "bust_" << ii << ".pdb";
-			// 		std::string tmp_pdb_name= numbConvert.str();
-			// 		possibleLoops_[ii]->get_finalPoseOP()->dump_pdb(tmp_pdb_name);
-			// 	}
+			//  //std::cout <<"rmsds" << ii << "," <<  possibleLoops_[ii]->get_stubRMSD() << "," << possibleLoops_[ii]->get_uncached_stubRMSD() <<  "," << possibleLoops_[ii]->get_final_RMSD() << std::endl;
+			//  //std::cout << possibleLoops_[ii]->get_description();
+			//  if( possibleLoops_[ii]->get_uncached_stubRMSD() < 0.4){
+			//   std::stringstream numbConvert;
+			//   numbConvert << "bust_" << ii << ".pdb";
+			//   std::string tmp_pdb_name= numbConvert.str();
+			//   possibleLoops_[ii]->get_finalPoseOP()->dump_pdb(tmp_pdb_name);
+			//  }
 			// }
 			//
 		}
@@ -969,7 +969,7 @@ void NearNativeLoopCloser::combine_chains(core::pose::Pose & pose){
 	std::string new_chain_order=int_to_string.str();
 	simple_moves::SwitchChainOrderMoverOP switch_chains(new simple_moves::SwitchChainOrderMover());
 	core::scoring::ScoreFunctionOP scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function("score3");
-	if(pose.is_fullatom()){
+	if ( pose.is_fullatom() ) {
 		scorefxn_tmp = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS);
 	}
 	core::scoring::ScoreFunctionOP scorefxn(core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_tmp));
@@ -1100,8 +1100,9 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		resAdjustmentStopHigh_=high_start;
 		core::pose::PoseOP max_length_poseOP = create_maximum_length_pose(resTypeBeforeLoop,resTypeAfterLoop,pose);
 		core::pose::PoseOP orig_atom_type_max_length_poseOP = max_length_poseOP->clone();
-		if(max_length_poseOP->is_fullatom())
+		if ( max_length_poseOP->is_fullatom() ) {
 			core::util::switch_to_residue_type_set(*max_length_poseOP, core::chemical::CENTROID);
+		}
 		for ( int ii=low_start; ii<=high_start; ++ii ) {
 			for ( Size kk=loopLengthRangeLow_; kk<=loopLengthRangeHigh_; ++kk ) {
 				if ( (ii+resBeforeLoop_>=3)&&(ii+resAfterLoop_<=max_length_poseOP->total_residue()-3) ) { //ensures at least a 3 residue SS element next to loop
@@ -1123,7 +1124,7 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 		}
 		core::pose::PoseOP max_length_poseOP = create_maximum_length_pose(resTypeBeforeLoop,resTypeAfterLoop,pose);
 		core::pose::PoseOP orig_atom_type_max_length_poseOP = max_length_poseOP->clone();
-		if(max_length_poseOP->is_fullatom()){
+		if ( max_length_poseOP->is_fullatom() ) {
 			core::util::switch_to_residue_type_set(*max_length_poseOP, core::chemical::CENTROID);
 		}
 		for ( int ii=resAdjustmentStartLow_; ii<=resAdjustmentStartHigh_; ++ii ) {
@@ -1160,8 +1161,9 @@ NearNativeLoopCloser::parse_my_tag(
 	chainBeforeLoop_ = tag->getOption<char>("chainBeforeLoop",'A');
 	chainAfterLoop_ = tag->getOption<char>("chainAfterLoop",'A');
 	idealExtension_ = tag->getOption<bool>("idealExtension",true);
-	if(!idealExtension_)
+	if ( !idealExtension_ ) {
 		utility_exit_with_message("the ideal extension flag works but it seems to mess up the pose more than help so delete this line & recompile if you really want to use it");
+	}
 	max_vdw_change_ = tag->getOption<core::Real>("max_vdw_change",8.0);
 	ideal_ = tag->getOption<bool>("ideal",false);
 	if ( chainBeforeLoop_==chainAfterLoop_ ) {
@@ -1244,11 +1246,11 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & 
 	}
 	// Real low_rmsd=999;
 	// for ( Size ii=1; ii<possibleLoops_.size(); ++ii ) {
-	// 	if ( !possibleLoops_[ii]->outputed() ) {
-	// 		if ( possibleLoops_[ii]->get_final_RMSD()< low_rmsd ) {
-	// 			low_rmsd = possibleLoops_[ii]->get_final_RMSD();
-	// 		}
-	// 	}
+	//  if ( !possibleLoops_[ii]->outputed() ) {
+	//   if ( possibleLoops_[ii]->get_final_RMSD()< low_rmsd ) {
+	//    low_rmsd = possibleLoops_[ii]->get_final_RMSD();
+	//   }
+	//  }
 	// }
 	set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 	return_rmsd = 9999;

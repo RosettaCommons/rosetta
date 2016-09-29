@@ -157,10 +157,12 @@ Real SSElementBisectddGFilter::get_ddg_bisect_score(Size element, protocols::loo
 	core::pose::Pose cTerm_pose;
 	utility::vector1<Size> nTerm_positions;
 	utility::vector1<Size> cTerm_positions;
-	for(Size ii=1; ii<=ssElements[element].stop();++ii)
+	for ( Size ii=1; ii<=ssElements[element].stop(); ++ii ) {
 		nTerm_positions.push_back(ii);
-	for(Size ii=ssElements[element+1].start(); ii<=pose_length;++ii)
+	}
+	for ( Size ii=ssElements[element+1].start(); ii<=pose_length; ++ii ) {
 		cTerm_positions.push_back(ii);
+	}
 	pdbslice(nTerm_pose,pose,nTerm_positions);
 	pdbslice(cTerm_pose,pose,cTerm_positions);
 	append_pose_to_pose(nTerm_pose,cTerm_pose,true);

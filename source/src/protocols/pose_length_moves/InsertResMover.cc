@@ -128,7 +128,7 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 		tmpPsi = psi_;
 		tmpOmega = omega_;
 	}
-	if(steal_angles_from_res_!= 0){
+	if ( steal_angles_from_res_!= 0 ) {
 		tmpPhi =  poseOP->phi(steal_angles_from_res_);
 		tmpPsi =  poseOP->psi(steal_angles_from_res_);
 		tmpOmega = poseOP->omega(steal_angles_from_res_);
@@ -141,7 +141,7 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	core::chemical::ResidueTypeSetCOP rs(core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
 	kinematics::FoldTree ft;
 	//Code below is a bunch of junk. I need a uniform way to deal with broken fold trees
-	if ( inPoseResidue != 1 && inPoseResidue!=poseOP->total_residue()) {
+	if ( inPoseResidue != 1 && inPoseResidue!=poseOP->total_residue() ) {
 		numeric::xyzVector<core::Real> CoM;
 		CoM = center_of_mass(*poseOP);
 		new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("VRT") );

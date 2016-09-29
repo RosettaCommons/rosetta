@@ -315,7 +315,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				TR.Debug << "analyzing num_linked_res: " << num_linked_res << std::endl;
 				if ( ( *itr != 0 ) && ( *itr != moltenres_id ) ) { //skip this step if residue is self
 					//try multiple substitutions
-					if ( TR.Trace.visible()) {
+					if ( TR.Trace.visible() ) {
 						TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
 					}
 

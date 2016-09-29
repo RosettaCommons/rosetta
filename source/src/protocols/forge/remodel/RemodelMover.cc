@@ -529,7 +529,7 @@ void RemodelMover::apply( Pose & pose ) {
 		//        if not at command line but given in rosetta scripts, use that.
 		//        if not given at command line or rosetta scripts, make ad hoc blueprint.
 		TR << "apply(): reading blueprint file " << std::endl;
-		if ( option[OptionKeys::remodel::blueprint].user() && ! option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user()) {
+		if ( option[OptionKeys::remodel::blueprint].user() && ! option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			blueprint_ =option[OptionKeys::remodel::blueprint]();
 			remodel_data.getLoopsToBuildFromFile(blueprint_);
 		} else {
@@ -552,8 +552,9 @@ void RemodelMover::apply( Pose & pose ) {
 				remodel_data.getLoopsToBuildFromBlueprint(ad_hoc_blueprint.str());
 			}
 		}
-		if(option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user())
+		if ( option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			remodel_data = setup_remodel_data_for_loop_btw_parametric_components(pose);
+		}
 
 		remodel_data.updateWithDsspAssignment( dsspSS );
 		//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated
@@ -650,23 +651,23 @@ void RemodelMover::apply( Pose & pose ) {
 			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
 			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());
 			if ( build_aa_type.size() == 1 ) {
-				char build_aa_oneLetter= build_aa_type[0];
-				build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
+			char build_aa_oneLetter= build_aa_type[0];
+			build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
 			}
 			for ( Size i = 1; i<= len_diff; ++i ) {
-				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
-				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-				pose.set_omega(pose.total_residue()-1,180);
+			core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+			pose.set_omega(pose.total_residue()-1,180);
 			}
 			append_pose_to_pose(pose,*chain2,false);
 			for ( Size i = 1; i<= len_diff; ++i ) {
-				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
-				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-				pose.set_omega(pose.total_residue()-1,180);
+			core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+			pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+			pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+			pose.set_omega(pose.total_residue()-1,180);
 			}
 			*/
 		}
@@ -1429,8 +1430,8 @@ forge::remodel::RemodelData RemodelMover::setup_remodel_data_for_loop_btw_parame
 		parametric_blueprint << "  ."  << std::endl;
 	}
 	if ( blueprint_ == "" ) {
-			TR << "No blueprint file given!" << std::endl;
-			utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
+		TR << "No blueprint file given!" << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
 	parametric_blueprint << chain1->total_residue()-1 << "  x   " << dsspSS(chain1->total_residue()-1 ) << std::endl;
 	std::stringstream data;

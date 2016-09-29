@@ -696,10 +696,10 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	// core::conformation::symmetry::SymmetryInfoOP pose_symmInfoOP;
 	if ( core::pose::symmetry::is_symmetric(pose) && core::pose::symmetry::is_symmetric(repeat_pose) ) {
 		// if(option[OptionKeys::remodel::staged_sampling::sym_move].user()){
-		// 	SymmetricConformation & pose_symmConf (dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-		// 	pose_symmInfoOP( pose_symmConf.Symmetry_Info().clone() );
-		// 	SymmetricConformation & repeat_pose_symmConf (dynamic_cast<SymmetricConformation &> ( repeat_pose.conformation()) );
-		// 	repeat_pose_symmInfoOP( repeat_pose_symmConf.Symmetry_Info().clone() );
+		//  SymmetricConformation & pose_symmConf (dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		//  pose_symmInfoOP( pose_symmConf.Symmetry_Info().clone() );
+		//  SymmetricConformation & repeat_pose_symmConf (dynamic_cast<SymmetricConformation &> ( repeat_pose.conformation()) );
+		//  repeat_pose_symmInfoOP( repeat_pose_symmConf.Symmetry_Info().clone() );
 		// }
 		// save the constraints, as it would be lost
 		ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
@@ -895,11 +895,11 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		repeat_pose.pdb_info()->obsolete(true);
 
 		// if(option[OptionKeys::remodel::staged_sampling::sym_move].user()){
-		// 	SymmetricConformation & pose_symmConf (dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-		// 	pose_symmConf.Symmetry_Info()
-		// 	pose_symmInfoOP( pose_symmConf.Symmetry_Info().clone() );
-		// 	SymmetricConformation & repeat_pose_symmConf (dynamic_cast<SymmetricConformation &> ( repeat_pose.conformation()) );
-		// 	repeat_pose_symmInfoOP( repeat_pose_symmConf.Symmetry_Info().clone() );
+		//  SymmetricConformation & pose_symmConf (dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+		//  pose_symmConf.Symmetry_Info()
+		//  pose_symmInfoOP( pose_symmConf.Symmetry_Info().clone() );
+		//  SymmetricConformation & repeat_pose_symmConf (dynamic_cast<SymmetricConformation &> ( repeat_pose.conformation()) );
+		//  repeat_pose_symmInfoOP( repeat_pose_symmConf.Symmetry_Info().clone() );
 		// }
 	}
 
@@ -1121,11 +1121,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		ScoreFunctionOP sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		ScoreFunctionOP sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
 		// if(option[OptionKeys::remodel::staged_sampling::fa_mode].user()){
-		// 	//experimental code
-		// 	sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
-		// 	sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
-		// 	core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
-		// 	core::util::switch_to_residue_type_set(repeat_pose_, core::chemical::FA_STANDARD);
+		//  //experimental code
+		//  sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
+		//  sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_fa" ) );
+		//  core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
+		//  core::util::switch_to_residue_type_set(repeat_pose_, core::chemical::FA_STANDARD);
 		// }
 		sfxStage0_OP->set_weight(scoring::atom_pair_constraint, 0.0);
 		sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
@@ -1165,7 +1165,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			stage4_cycles = 10;
 		}
 		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked.
-		if(option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user()){
+		if ( option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			stage1_cycles = 300;
 			stage2_cycles = 100;
 			stage3_cycles = 500;
@@ -1173,9 +1173,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			abinitio_stage( pose, 3, movemap,sfxStage0_OP,3,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
 		}
-		if(option[OptionKeys::remodel::staged_sampling::fa_mode].user()){
+		if ( option[OptionKeys::remodel::staged_sampling::fa_mode].user() ) {
 			//compact the structure in centroid
-			if(option[OptionKeys::remodel::staged_sampling::pre_centroid].user()){
+			if ( option[OptionKeys::remodel::staged_sampling::pre_centroid].user() ) {
 				abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
 				abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			}
@@ -1188,7 +1188,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
 			abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		}
-		if(!option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user()){
+		if ( !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() && !option[OptionKeys::remodel::staged_sampling::loop_btw_parametric_components].user() ) {
 			abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 			abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
@@ -2347,9 +2347,9 @@ void RemodelLoopMover::abinitio_stage(
 	// Had fold and dock protocol put together but the library levels have issue with this
 	// protocols::symmetric_docking::SymDockProtocolOP symdock;
 	// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].user()){
-	// 	core::scoring::ScoreFunctionOP  docking_score_low  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
-	// 	core::scoring::ScoreFunctionOP  docking_score_high  = ScoreFunctionFactory::create_score_function( "docking" );
-	// 	symdock =  protocols::symmetric_docking::SymDockProtocolOP(new protocols::symmetric_docking::SymDockProtocol( false, false, false, docking_score_low, docking_score_high ));
+	//  core::scoring::ScoreFunctionOP  docking_score_low  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
+	//  core::scoring::ScoreFunctionOP  docking_score_high  = ScoreFunctionFactory::create_score_function( "docking" );
+	//  symdock =  protocols::symmetric_docking::SymDockProtocolOP(new protocols::symmetric_docking::SymDockProtocol( false, false, false, docking_score_low, docking_score_high ));
 	// }
 
 	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,sfxOP,fragScoreThreshold);
@@ -2383,7 +2383,7 @@ void RemodelLoopMover::abinitio_stage(
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			Size copy_size =0;
 			Size total_residue = pose.total_residue();
-			if ( core::pose::symmetry::is_symmetric(pose) ){
+			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				total_residue = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 			}
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
@@ -2430,7 +2430,7 @@ void RemodelLoopMover::abinitio_stage(
 		if ( recover_low ) {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				Size total_residue = pose.total_residue();
-				if ( core::pose::symmetry::is_symmetric(pose) ){
+				if ( core::pose::symmetry::is_symmetric(pose) ) {
 					total_residue = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 				}
 				Size copy_size =0;
@@ -2466,7 +2466,7 @@ void RemodelLoopMover::abinitio_stage(
 		}
 		// part of the sym dock protocol that was removed
 		// if(sym_dock_moves && option[OptionKeys::remodel::staged_sampling::sym_move].user()){
-		// 	symdock->apply(repeat_pose_);
+		//  symdock->apply(repeat_pose_);
 		// }
 	}
 }
@@ -3730,15 +3730,17 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 	scoring::dssp::Dssp dssp( pose );
 	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
 	dssp.dssp_reduced(dsspSS);
-	if(dsspSS[1]=='L' && dsspSS[2]=='H')//often dssp mis-assignes residues at the beginning and end of chain.
+	if ( dsspSS[1]=='L' && dsspSS[2]=='H' ) { //often dssp mis-assignes residues at the beginning and end of chain.
 		dsspSS[1]='H';
-	if(dsspSS[pose.total_residue()]=='L' && dsspSS[pose.total_residue()-1] == 'H')
+	}
+	if ( dsspSS[pose.total_residue()]=='L' && dsspSS[pose.total_residue()-1] == 'H' ) {
 		dsspSS[pose.total_residue()]='H';
+	}
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//At this point the pose is 2x. So we need to copy the helical residues twice.
 		Size repeatRes = (pose.size()/2);
 		for ( Size ii=1; ii<=ss.size(); ++ii ) {
-			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H') { //only fix the residues that are not initialized to helix
+			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H' ) { //only fix the residues that are not initialized to helix
 				pose.set_phi(ii,-57.8);
 				pose.set_phi(ii+repeatRes,-57.8);
 				pose.set_psi(ii,-47.0);
@@ -3751,7 +3753,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 		}
 	} else {
 		for ( Size ii=1; ii<=ss.size(); ++ii ) {
-			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H') {
+			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H' ) {
 				pose.set_phi(ii,-57.8);
 				pose.set_psi(ii,-47.0);
 				pose.set_omega(ii,180);

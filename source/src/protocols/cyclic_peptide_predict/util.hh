@@ -40,7 +40,8 @@ namespace cyclic_peptide_predict {
 enum SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE {
 	SORT_BY_ENERGIES=1,
 	SORT_BY_RMSD,
-	SORT_BY_HBONDS
+	SORT_BY_HBONDS,
+	SORT_BY_CIS_PEPTIDE_BONDS
 };
 
 /// @brief Given a list of job summaries, sort these by some criterion (e.g. energies, rmsd, etc.) from lowest to highest.

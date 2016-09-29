@@ -93,8 +93,8 @@ public:
 	bool operator()(std::string x, std::string y) {
 		Size x_chain_length = boost::count(x,'+');
 		Size y_chain_length = boost::count(y,'+');
-		if( x_chain_length < y_chain_length) return true;
-		else if(x_chain_length > y_chain_length) return false;
+		if ( x_chain_length < y_chain_length ) return true;
+		else if ( x_chain_length > y_chain_length ) return false;
 		else return(x<y);
 	}
 };

@@ -249,7 +249,7 @@ void
 SimpleCycpepPredictApplication_MPI::set_sort_type(
 	std::string const &sort_type
 ) {
-	runtime_assert_string_msg( sort_type == "energy" ||  sort_type == "rmsd" || sort_type == "hbonds",
+	runtime_assert_string_msg( sort_type == "energy" ||  sort_type == "rmsd" || sort_type == "hbonds" || sort_type == "cis_peptide_bonds",
 		"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication_MPI::set_sort_type(): The sort type " + sort_type + " is unknown." );
 
 	if( sort_type == "energy" ) {
@@ -258,6 +258,8 @@ SimpleCycpepPredictApplication_MPI::set_sort_type(
 		set_sort_type( SORT_BY_RMSD );
 	} else if (sort_type == "hbonds" ) {
 		set_sort_type( SORT_BY_HBONDS );
+	} else if (sort_type == "cis_peptide_bonds" ) {
+		set_sort_type( SORT_BY_CIS_PEPTIDE_BONDS );
 	}
 
 	return;
@@ -835,13 +837,15 @@ SimpleCycpepPredictApplication_MPI::receive_and_sort_job_summaries(
 	unsigned long * jobindexbuf( new unsigned long[sizebuf] );
 	double * energiesbuf( new double[sizebuf] );
 	double * rmsdbuf( new double[sizebuf] );
-	double * hbondsbuf( new double[sizebuf] );
+	unsigned long * hbondsbuf( new unsigned long[sizebuf] );
+	unsigned long * cispepbondbuf( new unsigned long[sizebuf] );
 
 	MPI_Recv( procbuf, sizebuf, MPI_INT, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the originating process indices.
 	MPI_Recv( jobindexbuf, sizebuf, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the originating process job indices.
 	MPI_Recv( energiesbuf, sizebuf, MPI_DOUBLE, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the pose energies.
 	MPI_Recv( rmsdbuf, sizebuf, MPI_DOUBLE, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the RMSD values.
-	MPI_Recv( hbondsbuf, sizebuf, MPI_DOUBLE, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the hydrogen bond counts.
+	MPI_Recv( hbondsbuf, sizebuf, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the hydrogen bond counts.
+	MPI_Recv( cispepbondbuf, sizebuf, MPI_UNSIGNED_LONG, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status ); //Receive the cis-peptide bond counts.
 
 	for(core::Size i=1, imax=static_cast<core::Size>(sizebuf); i<=imax; ++i) {
 		summary_list.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary ) );
@@ -850,7 +854,8 @@ SimpleCycpepPredictApplication_MPI::receive_and_sort_job_summaries(
 		summary_list[i]->set_jobindex_on_originating_node( static_cast<core::Size>(jobindexbuf[i-1]) );
 		summary_list[i]->set_pose_energy( static_cast<core::Real>(energiesbuf[i-1]) );
 		summary_list[i]->set_rmsd( static_cast<core::Real>(rmsdbuf[i-1]) );
-		summary_list[i]->set_hbonds( static_cast<core::Real>(hbondsbuf[i-1]) );
+		summary_list[i]->set_hbonds( static_cast<core::Size>(hbondsbuf[i-1]) );
+		summary_list[i]->set_cis_peptide_bonds( static_cast<core::Size>(cispepbondbuf[i-1]) );
 	}
 
 	debug_assert(summary_list.size() == static_cast<core::Size>(sizebuf));
@@ -881,6 +886,7 @@ SimpleCycpepPredictApplication_MPI::receive_and_sort_job_summaries(
 	delete[] energiesbuf;
 	delete[] rmsdbuf;
 	delete[] hbondsbuf;
+	delete[] cispepbondbuf;
 }
 
 /// @brief Recieve a list of job summaries.
@@ -900,21 +906,24 @@ SimpleCycpepPredictApplication_MPI::send_job_summaries(
 	unsigned long * jobindexbuf( new unsigned long[sizebuf] );
 	double * energiesbuf( new double[sizebuf] );
 	double * rmsdbuf( new double[sizebuf] );
-	double * hbondsbuf( new double[sizebuf] );
+	unsigned long * hbondsbuf( new unsigned long[sizebuf] );
+	unsigned long * cispepbondbuf( new unsigned long[sizebuf] );
 
 	for(core::Size i=1, imax=summary_list.size(); i<=imax; ++i) {
 		procbuf[i-1] = summary_list[i]->originating_node_MPI_rank();
 		jobindexbuf[i-1] = static_cast<unsigned long>( summary_list[i]->jobindex_on_originating_node() );
 		energiesbuf[i-1] = static_cast<double>( summary_list[i]->pose_energy() );
 		rmsdbuf[i-1] = static_cast<double>( summary_list[i]->rmsd() );
-		hbondsbuf[i-1] = static_cast<double>( summary_list[i]->hbonds() );
+		hbondsbuf[i-1] = static_cast<unsigned long>( summary_list[i]->hbonds() );
+		cispepbondbuf[i-1] = static_cast<unsigned long>( summary_list[i]->cis_peptide_bonds() );
 	}
 
 	MPI_Send( procbuf, sizebuf, MPI_INT, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the originating process indices.
 	MPI_Send( jobindexbuf, sizebuf, MPI_UNSIGNED_LONG, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the originating process job indices.
 	MPI_Send( energiesbuf, sizebuf, MPI_DOUBLE, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the pose energies.
 	MPI_Send( rmsdbuf, sizebuf, MPI_DOUBLE, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the RMSD values.
-	MPI_Send( hbondsbuf, sizebuf, MPI_DOUBLE, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the hydrogen bond counts.
+	MPI_Send( hbondsbuf, sizebuf, MPI_UNSIGNED_LONG, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the hydrogen bond counts.
+	MPI_Send( cispepbondbuf, sizebuf, MPI_UNSIGNED_LONG, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the cis-peptide bond counts.
 
 	//Send the message history lists (MPI_ranks_handling_message()):
 	for(core::Size i=1, imax=summary_list.size(); i<=imax; ++i) {	
@@ -935,6 +944,7 @@ SimpleCycpepPredictApplication_MPI::send_job_summaries(
 	delete[] energiesbuf;
 	delete[] rmsdbuf;
 	delete[] hbondsbuf;
+	delete[] cispepbondbuf;
 }
 
 /// @brief Given a short list of job summaries, split the list by the index of the node that I'd have to send the request to, and send requests for full poses down the hierarchy.
@@ -1159,12 +1169,12 @@ SimpleCycpepPredictApplication_MPI::emperor_write_summaries_to_tracer(
 ) const {
 	if( !TR_summary.visible() ) return; //Do nothing if the tracer is off.
 	TR_summary << "Summary for " << summary_list.size() << " job(s) returning results:\n";
-	TR_summary << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tNode_path_to_emperor\n";
+	TR_summary << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tCisPepBonds\tNode_path_to_emperor\n";
 
 	core::Real numerator(0), denominator(0); //For calculating PNear.
 
 	for( core::Size i=1, imax=summary_list.size(); i<=imax; ++i ) {
-		TR_summary << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t" << summary_list[i]->rmsd() << "\t" << summary_list[i]->pose_energy() << "\t" << summary_list[i]->hbonds() << "\t";
+		TR_summary << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t" << summary_list[i]->rmsd() << "\t" << summary_list[i]->pose_energy() << "\t" << summary_list[i]->hbonds() << "\t" << summary_list[i]->cis_peptide_bonds() << "\t";
 		for(core::Size j=1, jmax=summary_list[i]->MPI_ranks_handling_message().size(); j<=jmax; ++j) {
 			TR_summary << summary_list[i]->MPI_ranks_handling_message()[j];
 			if( j<jmax ) TR_summary << ",";
@@ -1230,10 +1240,10 @@ SimpleCycpepPredictApplication_MPI::emperor_select_best_summaries(
 
 	if( TR.Debug.visible() ) {
 		TR.Debug << "Shortlisted jobs:\n";
-		TR.Debug << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tNode_path_to_emperor\n";
+		TR.Debug << "MPI_slave_node\tJobindex_on_node\tRMSD\tEnergy\tHbonds\tCisPepBonds\tNode_path_to_emperor\n";
 
 		for(core::Size i=1, imax=summary_shortlist.size(); i<=imax; ++i) {
-			TR.Debug << summary_shortlist[i]->originating_node_MPI_rank() << "\t" << summary_shortlist[i]->jobindex_on_originating_node() << "\t" << summary_shortlist[i]->rmsd() << "\t" << summary_shortlist[i]->pose_energy() << "\t" << summary_shortlist[i]->hbonds() << "\t";
+			TR.Debug << summary_shortlist[i]->originating_node_MPI_rank() << "\t" << summary_shortlist[i]->jobindex_on_originating_node() << "\t" << summary_shortlist[i]->rmsd() << "\t" << summary_shortlist[i]->pose_energy() << "\t" << summary_shortlist[i]->hbonds() << "\t" << summary_shortlist[i]->cis_peptide_bonds() << "\t";
 			for(core::Size j=1, jmax=summary_shortlist[i]->MPI_ranks_handling_message().size(); j<=jmax; ++j) {
 				TR.Debug << summary_shortlist[i]->MPI_ranks_handling_message()[j];
 				if( j<jmax ) TR.Debug << ",";

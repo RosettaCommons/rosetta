@@ -74,7 +74,7 @@ SSHashedFragmentStore::SSHashedFragmentStore(){
 	fields_to_load_types.push_back("real_per_residue");
 	fields_to_load.push_back("aa");
 	fields_to_load_types.push_back("char_per_residue");
-	if(option[OptionKeys::indexed_structure_store::exclude_homo].user()){
+	if ( option[OptionKeys::indexed_structure_store::exclude_homo].user() ) {
 		fields_to_load.push_back("name");
 		fields_to_load_types.push_back("five_char_per_residue");
 	}
@@ -109,9 +109,10 @@ void SSHashedFragmentStore::init_SS_stub_HashedFragmentStore(){
 	for ( Size ii=1; ii<=types.size(); ++ii ) {
 		for ( Size jj=1; jj<=loops.size(); ++jj ) {
 			for ( Size kk=1; kk<=types.size(); ++kk ) {
-					std::string ss_stub = types[ii]+loops[jj]+types[kk];
-					if(ss_stub.size()<=fragment_length)
-						ss_stubs.push_back(ss_stub);
+				std::string ss_stub = types[ii]+loops[jj]+types[kk];
+				if ( ss_stub.size()<=fragment_length ) {
+					ss_stubs.push_back(ss_stub);
+				}
 			}
 		}
 	}
@@ -119,15 +120,15 @@ void SSHashedFragmentStore::init_SS_stub_HashedFragmentStore(){
 	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	for ( fragStoreMap_iter = SSHashedFragmentStore_.begin(); fragStoreMap_iter != SSHashedFragmentStore_.end(); fragStoreMap_iter++ ) {
 		std::string fragStore_ss_string = SM.index2symbolString(fragStoreMap_iter->first,fragment_length);
-		for (Size ii=1; ii<=ss_stubs.size(); ++ii){
-			if ( fragStore_ss_string.substr(0,ss_stubs[ii].size())==ss_stubs[ii]){
+		for ( Size ii=1; ii<=ss_stubs.size(); ++ii ) {
+			if ( fragStore_ss_string.substr(0,ss_stubs[ii].size())==ss_stubs[ii] ) {
 				std::vector<Size> residues;
 				residues.push_back(0);
 				residues.push_back(1);
 				residues.push_back(ss_stubs[ii].size()-2);
 				residues.push_back(ss_stubs[ii].size()-1);
 				fragStoreMap_iter->second->generate_residue_subset_fragment_store(residues);
-				if(SS_stub_HashedFragmentStoreIndex_.find(ss_stubs[ii]) == SS_stub_HashedFragmentStoreIndex_.end()){
+				if ( SS_stub_HashedFragmentStoreIndex_.find(ss_stubs[ii]) == SS_stub_HashedFragmentStoreIndex_.end() ) {
 					vector1<Size> fragStoreIndex_vector;
 					SS_stub_HashedFragmentStoreIndex_.insert(std::pair<std::string,vector1<Size> > (ss_stubs[ii],fragStoreIndex_vector));
 				}
@@ -161,9 +162,9 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	valid_frag_ss.insert(frag_ss);
 	set<std::string>::iterator iter;
 	//step1 HL -> LL,HH
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		Size found = iter->find("HL");
-		while(found!=std::string::npos){
+		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
 			std::string tmp_string2 = *iter;
 			tmp_string1[found] ='L';
@@ -178,10 +179,10 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	tmp_frag_ss.clear();
 	union_frag_ss.clear();
 	//step2 EL -> LL,EE
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		set<std::string> union_frag_ss;
 		Size found = iter->find("EL");
-		while(found!=std::string::npos){
+		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
 			std::string tmp_string2 = *iter;
 			tmp_string1[found] ='L';
@@ -196,10 +197,10 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	tmp_frag_ss.clear();
 	union_frag_ss.clear();
 	//step3 LH -> LL,HH
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		set<std::string> union_frag_ss;
 		Size found = iter->find("LH");
-		while(found!=std::string::npos){
+		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
 			std::string tmp_string2 = *iter;
 			tmp_string1[found] ='H';
@@ -214,10 +215,10 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 	tmp_frag_ss.clear();
 	union_frag_ss.clear();
 	//step4 LE -> LL,EE
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		set<std::string> union_frag_ss;
 		Size found = iter->find("LE");
-		while(found!=std::string::npos){
+		while ( found!=std::string::npos ) {
 			std::string tmp_string1 = *iter;
 			std::string tmp_string2 = *iter;
 			tmp_string1[found] ='E';
@@ -237,11 +238,12 @@ set<std::string> SSHashedFragmentStore::potential_valid_ss_strings(std::string f
 
 Real SSHashedFragmentStore::max_rmsd_in_region(pose::Pose const pose, vector1<Size> resids){
 	Real high_rmsd=0;
-	for(Size ii=1; ii<=resids.size(); ++ii){
+	for ( Size ii=1; ii<=resids.size(); ++ii ) {
 		Size valid_resid = get_valid_resid(pose,resids[ii]);
 		Real tmp_rmsd = lookback_account_for_dssp_inaccuracy(pose,valid_resid,true,0.0);
-		if(tmp_rmsd >high_rmsd)
+		if ( tmp_rmsd >high_rmsd ) {
 			high_rmsd=tmp_rmsd;
+		}
 	}
 	return(high_rmsd);
 }
@@ -259,17 +261,20 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 	set<std::string> valid_frag_ss = potential_valid_ss_strings(frag_ss);
 	set<std::string>::iterator iter;
 	iter = valid_frag_ss.find("HHHHHHHHH"); //only check all helical if that was requested. This is for time.
-	if(iter!=valid_frag_ss.end())
+	if ( iter!=valid_frag_ss.end() ) {
 		valid_frag_ss.erase(iter);
+	}
 	iter = valid_frag_ss.find(frag_ss);
-	if(iter!=valid_frag_ss.end())
+	if ( iter!=valid_frag_ss.end() ) {
 		valid_frag_ss.erase(iter);
+	}
 	Real low_rmsd = lookback(pose,resid,frag_ss,find_closest); //tries original first.
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
-		if(low_rmsd>rms_threshold || find_closest){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
+		if ( low_rmsd>rms_threshold || find_closest ) {
 			Real tmp_rmsd = lookback(pose,resid,*iter,find_closest);
-			if(tmp_rmsd<low_rmsd)
+			if ( tmp_rmsd<low_rmsd ) {
 				low_rmsd = tmp_rmsd;
+			}
 		}
 	}
 	return(low_rmsd);
@@ -280,8 +285,9 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 	set<std::string> valid_frag_ss = potential_valid_ss_strings(frag_ss);
 	set<std::string>::iterator iter;
 	iter = valid_frag_ss.find("HHHHHHHHH"); //only check all helical if that was requested. This is for time.
-	if(iter!=valid_frag_ss.end())
+	if ( iter!=valid_frag_ss.end() ) {
 		valid_frag_ss.erase(iter);
+	}
 	Real low_rmsd = 5;
 	core::sequence::SSManager SM;
 	Size fragment_length = get_fragment_length();
@@ -293,7 +299,7 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 		}
 	}
 	//find top hit
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		Size ss_index = SM.symbolString2index(*iter);
 		if ( SSHashedFragmentStore_.find(ss_index)  != SSHashedFragmentStore_.end() ) {
 			FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(ss_index);
@@ -341,10 +347,11 @@ Real SSHashedFragmentStore::lookback(pose::Pose const pose, Size resid,string fr
 			}
 		}
 		FragmentLookupResult lookupResults;
-		if(find_closest)
+		if ( find_closest ) {
 			lookupResults = selected_fragLookupOP->lookup_closest_fragment(&coordinates[0]);
-		else
+		} else {
 			lookupResults = selected_fragLookupOP->lookup_fragment(&coordinates[0]);
+		}
 		returnRmsd = lookupResults.match_rmsd;
 	} else {
 		TR.Debug << "SS not found in map!! given rms 5" << std::endl;
@@ -358,12 +365,14 @@ vector <bool> SSHashedFragmentStore::generate_subset_residues_to_compare(Size lo
 	vector<bool> tmp;
 	tmp.push_back(true);
 	tmp.push_back(true);
-	for(Size ii=0; ii<loop_length; ++ii)
+	for ( Size ii=0; ii<loop_length; ++ii ) {
 		tmp.push_back(false);
+	}
 	tmp.push_back(true);
 	tmp.push_back(true);
-	for(Size ii=4+loop_length; ii<fragment_length; ++ii)
+	for ( Size ii=4+loop_length; ii<fragment_length; ++ii ) {
 		tmp.push_back(match_tail);
+	}
 	return(tmp);
 }
 
@@ -373,9 +382,9 @@ void SSHashedFragmentStore::lookback_stub(std::vector< numeric::xyzVector<numeri
 	//Size tmp_match_index;
 	std::map<std::string, vector1<Size> >::iterator iter;
 	Size fragment_length = get_fragment_length();
-	for(iter=SS_stub_HashedFragmentStoreIndex_.begin(); iter != SS_stub_HashedFragmentStoreIndex_.end(); ++iter){
-		if((iter->first.size() == 4+loop_length) && (iter->first[0]==resTypeBeforeLoop) && (iter->first[iter->first.size()-1]==resTypeAfterLoop)){
-			for(Size ii=1; ii<=iter->second.size(); ++ii){
+	for ( iter=SS_stub_HashedFragmentStoreIndex_.begin(); iter != SS_stub_HashedFragmentStoreIndex_.end(); ++iter ) {
+		if ( (iter->first.size() == 4+loop_length) && (iter->first[0]==resTypeBeforeLoop) && (iter->first[iter->first.size()-1]==resTypeAfterLoop) ) {
+			for ( Size ii=1; ii<=iter->second.size(); ++ii ) {
 				FragmentStoreOP stub_fragStoreOP = SSHashedFragmentStore_[iter->second[ii]]->residue_subset_fragment_store;
 				FragmentLookupOP stub_fragLookupOP = stub_fragStoreOP->get_fragmentLookup();
 				vector<bool> residues_to_compare = generate_subset_residues_to_compare(loop_length,fragment_length,false);
@@ -407,8 +416,9 @@ void SSHashedFragmentStore::lookback_uncached_stub(std::vector< numeric::xyzVect
 	for ( Size jj=0; jj<selected_fragStoreOP->num_fragments_; ++jj ) {
 		std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates;
 		for ( Size kk = 0;  kk < residues_to_compare.size(); ++kk ) {
-			if ( residues_to_compare[kk] )
+			if ( residues_to_compare[kk] ) {
 				fragCoordinates.push_back(selected_fragStoreOP->fragment_coordinates[jj*9+kk]);
+			}
 		}
 		numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
 		Real tmp_rmsd = qcp.calc_centered_coordinate_rmsd( &coordinates.front().x(), &fragCoordinates.front().x(), fragCoordinates.size(), &rot_vector[1]);
@@ -425,80 +435,80 @@ std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::get_frag
 }
 
 // std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::lookback_xyz(pose::Pose const pose, Size resid){
-// 	using namespace core::indexed_structure_store;
-// 	core::sequence::ABEGOManager AM;
-// 	typedef numeric::xyzVector<Real> Vec;
-// 	utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
-// 	Size fragmentStore_fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
-// 	std::string fragAbegoStr = "";
-// 	for ( Size ii=0; ii<fragmentStore_fragment_length; ++ii ) {
-// 		fragAbegoStr += abegoSeq[resid+ii];
-// 	}
-// 	Size base5index = AM.symbolString2base5index(fragAbegoStr);
-// 	TR.Debug << "fragAbegoStr:" << fragAbegoStr << std::endl;
-// 	if ( SSHashedFragmentStore_.find(base5index) == SSHashedFragmentStore_.end() ) {
-// 		utility_exit_with_message("ABEGO not found in map. FAILURE");
-// 	}
-// 	//case where item is found in map;
-// 	FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(base5index);
-// 	FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
-// 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
-// 	std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates;
-// 	for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
-// 		BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
-// 			coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
-// 		}
-// 	}
-// 	FragmentLookupResult lookupResult = selected_fragLookupOP->lookup_closest_fragment(&coordinates[0]);
-// 	for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
-// 		Real xTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].x();
-// 		Real yTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].y();
-// 		Real zTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].z();
-// 		fragCoordinates.push_back(Vec(xTmp,yTmp,zTmp));
-// 	}
-// 	return(fragCoordinates);
+//  using namespace core::indexed_structure_store;
+//  core::sequence::ABEGOManager AM;
+//  typedef numeric::xyzVector<Real> Vec;
+//  utility::vector1< std::string > abegoSeq = AM.get_symbols( pose,1 );//1 stands for class of ABEGO strings
+//  Size fragmentStore_fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
+//  std::string fragAbegoStr = "";
+//  for ( Size ii=0; ii<fragmentStore_fragment_length; ++ii ) {
+//   fragAbegoStr += abegoSeq[resid+ii];
+//  }
+//  Size base5index = AM.symbolString2base5index(fragAbegoStr);
+//  TR.Debug << "fragAbegoStr:" << fragAbegoStr << std::endl;
+//  if ( SSHashedFragmentStore_.find(base5index) == SSHashedFragmentStore_.end() ) {
+//   utility_exit_with_message("ABEGO not found in map. FAILURE");
+//  }
+//  //case where item is found in map;
+//  FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(base5index);
+//  FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
+//  std::vector< numeric::xyzVector<numeric::Real> > coordinates;
+//  std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates;
+//  for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
+//   BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
+//    coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
+//   }
+//  }
+//  FragmentLookupResult lookupResult = selected_fragLookupOP->lookup_closest_fragment(&coordinates[0]);
+//  for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
+//   Real xTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].x();
+//   Real yTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].y();
+//   Real zTmp = selected_fragStoreOP->fragment_coordinates[lookupResult.match_index+ii].z();
+//   fragCoordinates.push_back(Vec(xTmp,yTmp,zTmp));
+//  }
+//  return(fragCoordinates);
 // }
 
 
 
 // vector<FragmentLookupResult> SSHashedFragmentStore::get_N_fragments(std::string abego_string,Size topNFrags){
-// 	//get number of fragments
-// 	FragmentStoreOP selected_fragStoreOP = get_fragment_store(abego_string);
-// 	vector<Size> chosen_fragments;
-// 	vector<FragmentLookupResult> lookupResults;
-// 	//numeric::Size random_index = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
-// 	for ( Size ii=0; ii<topNFrags && ii<selected_fragStoreOP->num_fragments_; ++ii ) {
-// 		Size random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
-// 		while ( std::find(chosen_fragments.begin(),chosen_fragments.end(),random_frag)!= chosen_fragments.end() )
-// 				random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
-// 		chosen_fragments.push_back(random_frag);
-// 	}
-// 	for ( Size ii=0; ii<chosen_fragments.size(); ++ii ) {
-// 		FragmentLookupResult tmpFragInfo;
-// 		tmpFragInfo.match_index = chosen_fragments[ii];
-// 		lookupResults.push_back(tmpFragInfo);
-// 	}
-// 	return(lookupResults);
+//  //get number of fragments
+//  FragmentStoreOP selected_fragStoreOP = get_fragment_store(abego_string);
+//  vector<Size> chosen_fragments;
+//  vector<FragmentLookupResult> lookupResults;
+//  //numeric::Size random_index = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
+//  for ( Size ii=0; ii<topNFrags && ii<selected_fragStoreOP->num_fragments_; ++ii ) {
+//   Size random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
+//   while ( std::find(chosen_fragments.begin(),chosen_fragments.end(),random_frag)!= chosen_fragments.end() )
+//     random_frag = numeric::random::rg().random_range(0,selected_fragStoreOP->num_fragments_);
+//   chosen_fragments.push_back(random_frag);
+//  }
+//  for ( Size ii=0; ii<chosen_fragments.size(); ++ii ) {
+//   FragmentLookupResult tmpFragInfo;
+//   tmpFragInfo.match_index = chosen_fragments[ii];
+//   lookupResults.push_back(tmpFragInfo);
+//  }
+//  return(lookupResults);
 // }
 
 // struct less_then_match_rmsd
 // {
-// 	inline bool operator() (const FragmentLookupResult& struct1, const FragmentLookupResult& struct2)
-// 	{
-// 		return (struct1.match_rmsd < struct2.match_rmsd);
-// 	}
+//  inline bool operator() (const FragmentLookupResult& struct1, const FragmentLookupResult& struct2)
+//  {
+//   return (struct1.match_rmsd < struct2.match_rmsd);
+//  }
 // };
 
 
 // vector<FragmentLookupResult> SSHashedFragmentStore::get_topN_fragments(std::string /*selectionType*/,Size topNFrags, pose::Pose const pose, Size resid,Real rms_threshold,std::string fragAbegoStr){
-// 	vector<FragmentLookupResult> lookupResults = get_fragments_below_rms(pose,resid,rms_threshold,fragAbegoStr);
-// 	//sort array based on rms
-// 	std::sort(lookupResults.begin(), lookupResults.end(),less_then_match_rmsd());
-// 	vector<FragmentLookupResult> topLookupResults;
-// 	for ( int ii=0; ii<(int)topNFrags; ++ii ) {
-// 		topLookupResults.push_back(lookupResults[ii]);
-// 	}
-// 	return(topLookupResults);
+//  vector<FragmentLookupResult> lookupResults = get_fragments_below_rms(pose,resid,rms_threshold,fragAbegoStr);
+//  //sort array based on rms
+//  std::sort(lookupResults.begin(), lookupResults.end(),less_then_match_rmsd());
+//  vector<FragmentLookupResult> topLookupResults;
+//  for ( int ii=0; ii<(int)topNFrags; ++ii ) {
+//   topLookupResults.push_back(lookupResults[ii]);
+//  }
+//  return(topLookupResults);
 // }
 
 void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resid, Real rms_threshold, vector1<vector<Real> > & hits_cen, vector1<Real> & hits_rms, vector1<std::string> & hits_aa){
@@ -521,19 +531,20 @@ void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resi
 	//generate valid SS types while removing all helical
 	set<std::string> valid_frag_ss = potential_valid_ss_strings(frag_ss);
 	set<std::string>::iterator iter;
-	if(frag_ss != "HHHHHHHHH"){
+	if ( frag_ss != "HHHHHHHHH" ) {
 		iter = valid_frag_ss.find("HHHHHHHHH");
-		if(iter!=valid_frag_ss.end())
+		if ( iter!=valid_frag_ss.end() ) {
 			valid_frag_ss.erase(iter);
+		}
 	}
 	//loop through valid SS and collect fragments
-	for(iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter){
+	for ( iter=valid_frag_ss.begin(); iter!=valid_frag_ss.end(); ++iter ) {
 		Size ss_index = SM.symbolString2index(*iter);
-		if(SSHashedFragmentStore_.find(ss_index)!= SSHashedFragmentStore_.end()){
+		if ( SSHashedFragmentStore_.find(ss_index)!= SSHashedFragmentStore_.end() ) {
 			FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(ss_index);
 			FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
 			vector<FragmentLookupResult> lookupResults = selected_fragLookupOP->lookup_close_fragments(&coordinates[0], rms_threshold);
-			for(Size ii=0; ii<lookupResults.size(); ++ii){
+			for ( Size ii=0; ii<lookupResults.size(); ++ii ) {
 				hits_rms.push_back(lookupResults[ii].match_rmsd);
 				std::vector<Real> cen_list_frag = selected_fragStoreOP->realVector_groups["cen"][lookupResults[ii].match_index];
 				hits_cen.push_back(cen_list_frag);

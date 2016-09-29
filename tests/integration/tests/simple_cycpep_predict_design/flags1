@@ -9,6 +9,7 @@
 -min_genkic_hbonds 1
 -min_final_hbonds 1
 -cyclic_peptide:design_peptide
+-cyclic_peptide:sample_cis_pro_frequency 0.0
 -cyclic_peptide:allowed_residues_by_position inputs/allowed_types.txt
 -cyclic_peptide:rama_cutoff 0.3
 -aa_composition_setup_file inputs/global_preferences.comp

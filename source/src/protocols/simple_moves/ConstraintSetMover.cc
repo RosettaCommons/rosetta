@@ -109,11 +109,10 @@ ConstraintSetCOP ConstraintSetMover::constraint_set() const { return constraint_
 void
 ConstraintSetMover::apply( Pose & pose )
 {
-	if( cst_file_ == "print"){
+	if ( cst_file_ == "print" ) {
 		std::cout << "*****************showing constraint set************************"  <<std::endl;
 		pose.constraint_set()->show_definition(std::cout,pose);
-	}
-	else{
+	} else {
 		if ( !constraint_set_low_res_ && !pose.is_fullatom() ) {
 			// uninitialized filename not tolerated, in order to avoid potential confusion
 			if ( cst_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");

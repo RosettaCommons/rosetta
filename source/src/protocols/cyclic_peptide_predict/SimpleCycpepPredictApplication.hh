@@ -129,12 +129,20 @@ public:
 	void set_abba_bins_binfile_contents( std::string const &contents_in );
 
 	/// @brief Set the frequency with which we sample cis proline.
-	/// @details Implicitly sets sample_cis_pro_ to "true".
+	/// @details Implicitly sets sample_cis_pro_ to "true" if freq_in is not 0.0, "false" if it is.
 	void set_sample_cis_pro_frequency( core::Real const &freq_in );
 
 	/// @brief Set cis proline sampling OFF.
 	///
 	void disable_cis_pro_sampling();
+
+	/// @brief Set the total energy cutoff.
+	/// @details Also sets use_total_energy_cutoff_ to 'true'.
+	void set_total_energy_cutoff( core::Real const &value_in );
+
+	/// @brief Sets use_total_energy_cutoff_ to 'false'.
+	///
+	void disable_total_energy_cutoff();
 
 	/// @brief Set the number of rounds of relaxation with flexible
 	/// bond angles.
@@ -154,6 +162,12 @@ public:
 
 private:
 	/// ------------- Methods ----------------------------
+
+	/// @brief Count the number of cis-peptide bonds in the pose.
+	///
+	core::Size count_cis_peptide_bonds(
+		core::pose::PoseCOP pose
+	) const;
 
 	/// @brief Carry out the final FastRelax.
 	///
@@ -512,6 +526,14 @@ private:
 	/// @brief The minimum number of mainchain hydrogen bonds that a final solution must have.
 	/// @details Defaults to 0 (report only).
 	core::Real min_final_hbonds_;
+
+	/// @brief The total energy cutoff above which solutions are discarded.
+	/// @details Defaults to 0.0.
+	core::Real total_energy_cutoff_;
+
+	/// @brief Determines whether the total energy cutoff should be used.
+	/// @details Defaults to 'false'.
+	bool use_total_energy_cutoff_;
 
 	/// @brief The hbond energy cutoff above which a hbond is no longer counted.
 	/// @details Defaults to -0.25.

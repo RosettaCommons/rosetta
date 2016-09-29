@@ -79,9 +79,10 @@ void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & p
 	using namespace core;
 	using namespace core::id;
 	SequenceMappingOP seqmap( new core::id::SequenceMapping() );
-	for(Size ii=1; ii<=pose.total_residue(); ++ii)
+	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		links->set_template(ii,ii);
-	if(template_group_!= ""){
+	}
+	if ( template_group_!= "" ) {
 		vector1< Size > template_set = core::pose::get_resnum_list_ordered( template_group_, pose );
 		//get positions
 		for ( Size ii=1; ii<=allGroups_.size(); ++ii ) {
@@ -100,8 +101,9 @@ void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & p
 			//go through the sets and set them to be equal
 			for ( Size kk=1; kk<=grp_i.size(); ++kk ) {
 				Size numResInSet = grp_i[kk].size();
-				if(grp_i[kk].size() != template_set.size())
+				if ( grp_i[kk].size() != template_set.size() ) {
 					utility_exit_with_message("template and groups must all be the same size. Can not continue");
+				}
 				for ( Size mm=1; mm<=numResInSet; ++mm ) {
 					Size source = template_set[mm];
 					Size target = grp_i[kk][mm];
@@ -158,7 +160,7 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 	//print out equivalent residues
 	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
 		TR.Debug << ii <<" ";
-		for (set<Size>::iterator equiv_pos_itr=equiv_pos[ii].begin(); equiv_pos_itr!=equiv_pos[ii].end(); ++equiv_pos_itr) {
+		for ( set<Size>::iterator equiv_pos_itr=equiv_pos[ii].begin(); equiv_pos_itr!=equiv_pos[ii].end(); ++equiv_pos_itr ) {
 			TR.Debug << *equiv_pos_itr <<",";
 		}
 		TR.Debug << std::endl;
@@ -192,10 +194,9 @@ LinkResidues::parse_tag( TagCOP tag , DataMap & )
 			allGroups_.push_back( grp_i );
 		}
 	}
-	if(tag->hasOption("template_group")){
+	if ( tag->hasOption("template_group") ) {
 		template_group_ = tag->getOption<std::string>("template_group");
-	}
-	else{
+	} else {
 		template_group_ = "";
 	}
 

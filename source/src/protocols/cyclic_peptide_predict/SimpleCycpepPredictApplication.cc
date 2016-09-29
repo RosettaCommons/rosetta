@@ -102,6 +102,7 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
+#include <numeric/angle.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -127,6 +128,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::high_hbond_weight_multiplier         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_genkic_hbonds                    );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::min_final_hbonds                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::total_energy_cutoff                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff                  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds                    );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds                      );
@@ -200,6 +202,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	high_hbond_weight_multiplier_(10),
 	min_genkic_hbonds_(3.0),
 	min_final_hbonds_(0.0),
+	total_energy_cutoff_(0.0),
+	use_total_energy_cutoff_(false),
 	hbond_energy_cutoff_(-0.25),
 	fast_relax_rounds_(3),
 	count_sc_hbonds_(false),
@@ -218,8 +222,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	user_set_dihedral_perturbation_(0.0),
 	filter_oversaturated_hbond_acceptors_(true),
 	oversaturated_hbond_cutoff_energy_(-0.1),
-	sample_cis_pro_(false),
-	sample_cis_pro_frequency_(0.0),
+	sample_cis_pro_(true),
+	sample_cis_pro_frequency_(0.3),
 	design_peptide_(false),
 	design_filename_(""),
 	prevent_design_file_read_( !allow_file_read ),
@@ -275,6 +279,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	high_hbond_weight_multiplier_(src.high_hbond_weight_multiplier_),
 	min_genkic_hbonds_(src.min_genkic_hbonds_),
 	min_final_hbonds_(src.min_final_hbonds_),
+	total_energy_cutoff_(src.total_energy_cutoff_),
+	use_total_energy_cutoff_(src.use_total_energy_cutoff_),
 	hbond_energy_cutoff_(src.hbond_energy_cutoff_),
 	fast_relax_rounds_(src.fast_relax_rounds_),
 	count_sc_hbonds_(src.count_sc_hbonds_),
@@ -350,6 +356,9 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	high_hbond_weight_multiplier_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::high_hbond_weight_multiplier]() );
 	min_genkic_hbonds_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::min_genkic_hbonds]() );
 	min_final_hbonds_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::min_final_hbonds]() );
+	if ( option[basic::options::OptionKeys::cyclic_peptide::total_energy_cutoff].user() ) {
+		set_total_energy_cutoff( option[basic::options::OptionKeys::cyclic_peptide::total_energy_cutoff]() );
+	}
 	hbond_energy_cutoff_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff]() );
 	fast_relax_rounds_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds]() );
 	count_sc_hbonds_ = option[basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds]();
@@ -627,14 +636,19 @@ SimpleCycpepPredictApplication::set_abba_bins_binfile_contents(
 }
 
 /// @brief Set the frequency with which we sample cis proline.
-/// @details Implicitly sets sample_cis_pro_ to "true".
+/// @details Implicitly sets sample_cis_pro_ to "true" if freq_in is not 0.0, "false" if it is.
 void
 SimpleCycpepPredictApplication::set_sample_cis_pro_frequency(
 	core::Real const &freq_in
 ) {
 	runtime_assert_string_msg( 0.0 <= freq_in && freq_in <= 1.0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_sample_cis_pro_frequency(): The frequency must be between 0 and 1." );
 	sample_cis_pro_frequency_ = freq_in;
-	sample_cis_pro_ = true;
+	if ( freq_in > 0.0 ) {
+		sample_cis_pro_ = true;
+	} else {
+		sample_cis_pro_ = false;
+		TR << "Disabling cis-proline sampling." << std::endl;
+	}
 }
 
 /// @brief Set cis proline sampling OFF.
@@ -643,6 +657,23 @@ void
 SimpleCycpepPredictApplication::disable_cis_pro_sampling() {
 	sample_cis_pro_ = false;
 	sample_cis_pro_frequency_ = 0.0;
+}
+
+/// @brief Set the total energy cutoff.
+/// @details Also sets use_total_energy_cutoff_ to 'true'.
+void
+SimpleCycpepPredictApplication::set_total_energy_cutoff(
+	core::Real const &value_in
+) {
+	total_energy_cutoff_ = value_in;
+	use_total_energy_cutoff_ = true;
+}
+
+/// @brief Sets use_total_energy_cutoff_ to 'false'.
+///
+void
+SimpleCycpepPredictApplication::disable_total_energy_cutoff() {
+	use_total_energy_cutoff_ = false;
 }
 
 /// @brief Set the number of rounds of relaxation with flexible
@@ -836,6 +867,18 @@ SimpleCycpepPredictApplication::run() const {
 		//Score the pose before output:
 		(*sfxn_default)(*pose);
 
+		//Filter based on total energy:
+		if ( use_total_energy_cutoff_ && pose->energies().total_energy() > total_energy_cutoff_ ) {
+			TR << "Total final pose energy is " << pose->energies().total_energy() << ", which is greater than the cutoff of " << total_energy_cutoff_ << ".  Failing job." << std::endl;
+			TR.flush();
+			checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
+#ifdef BOINC
+			//Increment total jobs and check whether it's time to quit.
+			if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+#endif
+			continue;
+		}
+
 		//Re-filter based on number of Hbonds (using option[min_final_hbonds]()):
 		core::Real const final_hbonds( total_hbond->compute( *pose ) );
 		if ( final_hbonds > -1.0*min_final_hbonds_ ) {
@@ -854,11 +897,14 @@ SimpleCycpepPredictApplication::run() const {
 		if ( native_pose ) {
 			native_rmsd = align_and_calculate_rmsd(pose, native_pose);
 		}
-		TR << "Result\tRMSD\tEnergy\tHbonds" << std::endl;
+
+		core::Size const cis_peptide_bonds( count_cis_peptide_bonds( pose ) );
+
+		TR << "Result\tRMSD\tEnergy\tHbonds\tCisPepBonds" << std::endl;
 		TR << irepeat << "\t";
 		if ( native_pose ) { TR << native_rmsd; }
 		else { TR << "--"; }
-		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << std::endl;
+		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << "\t" << cis_peptide_bonds << std::endl;
 
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
 			core::io::silent::SilentStructOP ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
@@ -871,6 +917,7 @@ SimpleCycpepPredictApplication::run() const {
 			ss->fill_struct( *pose, std::string(tag) );
 			if ( native_pose ) ss->add_energy( "RMSD", native_rmsd ); //Add the RMSD to the energy to be written out in the silent file.
 			ss->add_energy( "HBOND_COUNT", -1.0*final_hbonds ); //Add the hbond count to be written out in the silent file.
+			ss->add_energy( "CIS_PEPTIDE_BOND_COUNT", cis_peptide_bonds ); //Add the cis-peptide bond count to be written out in the silent file.
 #ifdef BOINC_GRAPHICS
 			protocols::boinc::Boinc::update_graphics_current( *pose );
 			protocols::boinc::Boinc::update_graphics_current_ghost( *pose );
@@ -885,7 +932,7 @@ SimpleCycpepPredictApplication::run() const {
 			if ( silentlist_out_ ) {
 				silentlist_->push_back(ss);
 				core::Size curjob( summarylist_->size() + 1 );
-				summarylist_->push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), -1.0*final_hbonds ) ) );
+				summarylist_->push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP( new SimpleCycpepPredictApplication_MPI_JobResultsSummary( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) ) );
 			}
 		} else { //if pdb output
 			char outstring[512];
@@ -907,6 +954,21 @@ SimpleCycpepPredictApplication::run() const {
 
 	end_checkpointing(); //Delete the checkpoint file at this point, since all jobs have completed.
 	return;
+}
+
+/// @brief Count the number of cis-peptide bonds in the pose.
+/// @details Counts as cis if in the range (-90,90].
+core::Size
+SimpleCycpepPredictApplication::count_cis_peptide_bonds(
+	core::pose::PoseCOP pose
+) const {
+	core::Size count(0);
+	for ( core::Size i=1, imax=pose->total_residue(); i<=imax; ++i ) {
+		core::Real const omegaval( numeric::principal_angle_degrees( pose->omega(i) /*Should handle terminal peptide bonds.*/ ) );
+		TR.Debug << "omega" << i << "=" << omegaval << std::endl;
+		if ( omegaval <= 90 && omegaval > -90 ) ++count; //Count this as cis if in the interval (-90,90]
+	}
+	return count;
 }
 
 /// @brief Carry out the final FastRelax.

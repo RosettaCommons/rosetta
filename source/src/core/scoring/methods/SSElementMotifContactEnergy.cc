@@ -75,7 +75,7 @@ SSElementMotifContactEnergyCreator::score_types_for_method() const {
 
 SSElementMotifContactEnergy::SSElementMotifContactEnergy():
 	parent(methods::EnergyMethodCreatorOP( new SSElementMotifContactEnergyCreator ) )
-	{
+{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	mman_ = core::scoring::motif::MotifHashManager::get_instance();
@@ -109,8 +109,8 @@ vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(cons
 }
 
 Size SSElementMotifContactEnergy::which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const{
-	for(Size ii=1; ii<=ssElements.size(); ++ii){
-		if(res>= ssElements[ii].first && res<=ssElements[ii].second){
+	for ( Size ii=1; ii<=ssElements.size(); ++ii ) {
+		if ( res>= ssElements[ii].first && res<=ssElements[ii].second ) {
 			return(ii);
 		}
 	}
@@ -122,13 +122,13 @@ Size SSElementMotifContactEnergy::get_ssElements_in_contact_w_threshold(std::mul
 	std::map<Size,Size> element_ct;
 	std::multiset<Size>::iterator itr;
 	std::map<Size,Size>::iterator map_itr;
-	for(itr = ssElements_in_contact.begin(); itr!=ssElements_in_contact.end(); ++itr){
+	for ( itr = ssElements_in_contact.begin(); itr!=ssElements_in_contact.end(); ++itr ) {
 		Size counts = ssElements_in_contact.count(*itr);
 		element_ct.insert(std::pair<Size,Size>(*itr,counts));
 	}
 	Size above_threshold_ct =0;
-	for(map_itr=element_ct.begin(); map_itr!=element_ct.end(); ++map_itr){
-		if(map_itr->second>=contacts_between_ssElement_threshold_){
+	for ( map_itr=element_ct.begin(); map_itr!=element_ct.end(); ++map_itr ) {
+		if ( map_itr->second>=contacts_between_ssElement_threshold_ ) {
 			above_threshold_ct++;
 		}
 	}
@@ -182,7 +182,7 @@ void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, Scor
 	Size startElement = 1;
 	Size endElement = ss_elements.size();
 	Size ignore_terminal_ss = option[OptionKeys::score::ignore_terminal_ss_elements]();
-	if(ignore_terminal_ss>0){
+	if ( ignore_terminal_ss>0 ) {
 		startElement+=ignore_terminal_ss;
 		endElement-=ignore_terminal_ss;
 	}
@@ -203,17 +203,19 @@ void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, Scor
 	// }
 	//else{//worst contact
 	Real tmpScore = 9999;
-	for(Size ii=startElement; ii<=endElement; ++ii){
+	for ( Size ii=startElement; ii<=endElement; ++ii ) {
 		Real tmp=get_SSelements_in_contact(ii,ss_elements,pose);
-		if(tmp<tmpScore)
+		if ( tmp<tmpScore ) {
 			tmpScore=tmp;
+		}
 	}
 	score= tmpScore;
 	//}
-	if(score==4)//only give a boost if this is equal to 4.
+	if ( score==4 ) { //only give a boost if this is equal to 4.
 		totals[ss_contact_worst] = -1;
-	else
+	} else {
 		totals[ss_contact_worst] = 1;
+	}
 }
 
 

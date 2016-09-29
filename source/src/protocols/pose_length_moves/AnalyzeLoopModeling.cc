@@ -109,30 +109,35 @@ protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & 
 		Size before_loop_start = pose_loops[ii-1].stop()+1;
 		Size before_loop_end = pose_loops[ii].start()-1;
 		bool same_res_type = true;
-		for(Size jj=before_loop_start+1; jj<=before_loop_end; ++jj) //gets rid of screwing helix-sheet transitions
-			if(dssp_string[jj-1]!= dssp_string[before_loop_start-1])
+		for ( Size jj=before_loop_start+1; jj<=before_loop_end; ++jj ) { //gets rid of screwing helix-sheet transitions
+			if ( dssp_string[jj-1]!= dssp_string[before_loop_start-1] ) {
 				same_res_type = false;
+			}
+		}
 		Size length_before_loop = before_loop_end-before_loop_start+1;
 		Size after_loop_start = pose_loops[ii].stop()+1;
 		Size after_loop_end = pose_loops[ii+1].start()-1;
 		Size length_after_loop = after_loop_end-after_loop_start+1;
-		for(Size jj=after_loop_start+1; jj<=after_loop_end; ++jj)
-			if(dssp_string[jj-1]!= dssp_string[after_loop_start-1])
+		for ( Size jj=after_loop_start+1; jj<=after_loop_end; ++jj ) {
+			if ( dssp_string[jj-1]!= dssp_string[after_loop_start-1] ) {
 				same_res_type = false;
-		if(length_before_loop>=min_SS_length && length_after_loop>=min_SS_length && same_res_type)
+			}
+		}
+		if ( length_before_loop>=min_SS_length && length_after_loop>=min_SS_length && same_res_type ) {
 			pose_loops_pass2.add_loop(pose_loops[ii].start(),pose_loops[ii].stop());
+		}
 	}
 	//std::cout << dssp_string << std::endl;
 	// for (int ii=pose_loops_pass2.num_loop(); ii>=0; --ii ) {
-	// 	Size loopStart=pose_loops_pass2[ii].start();
-	// 	Size loopEnd=pose_loops_pass2[ii].stop();
-	// 	Size loopLength = loopEnd-loopStart+1;
-	// 	if(loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_){
-	// 		std::cout << loopStart << "-" << loopEnd << std::endl;
-	// 	}
+	//  Size loopStart=pose_loops_pass2[ii].start();
+	//  Size loopEnd=pose_loops_pass2[ii].stop();
+	//  Size loopLength = loopEnd-loopStart+1;
+	//  if(loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_){
+	//   std::cout << loopStart << "-" << loopEnd << std::endl;
+	//  }
 	// }
- 	return(pose_loops_pass2);
- }
+	return(pose_loops_pass2);
+}
 
 Real AnalyzeLoopModeling::rmsd_between_coordinates(std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates,std::vector< numeric::xyzVector<numeric::Real> > coordinates){
 	numeric::alignment::QCP_Kernel<core::Real>::remove_center_of_mass( &fragCoordinates.front().x() , fragCoordinates.size());
@@ -148,9 +153,9 @@ Real AnalyzeLoopModeling::get_loop_rmsd(core::pose::Pose native_pose,core::pose:
 	std::vector< numeric::xyzVector<numeric::Real> > native_coordinates;
 	std::vector< numeric::xyzVector<numeric::Real> > test_coordinates;
 	for ( Size ii = loopStart;  ii <= loopEnd; ++ii ) {
-			native_coordinates.push_back(native_pose.residue(ii).xyz("CA"));
-			test_coordinates.push_back(test_pose.residue(ii).xyz("CA"));
-		}
+		native_coordinates.push_back(native_pose.residue(ii).xyz("CA"));
+		test_coordinates.push_back(test_pose.residue(ii).xyz("CA"));
+	}
 	return(rmsd_between_coordinates(native_coordinates,test_coordinates));
 }
 
@@ -169,10 +174,10 @@ Size AnalyzeLoopModeling::get_valid_resid(int resid,core::pose::Pose const pose)
 
 Real AnalyzeLoopModeling::generate_lookback_rmsd(core::pose::Pose pose, Size position){
 	vector1<Size> resids;
-	for(int ii=position-3; ii<=(int)position+2; ii=ii+3){
+	for ( int ii=position-3; ii<=(int)position+2; ii=ii+3 ) {
 		Size tmp_resid = get_valid_resid(ii,pose);
-			resids.push_back(tmp_resid);
-		}
+		resids.push_back(tmp_resid);
+	}
 	Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
 	return(rmsd);
 }
@@ -205,7 +210,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 		Size loopEnd=pose_loops[ii].stop();
 		Size loopLength = loopEnd-loopStart+1;
 		std::string tag = jd2::JobDistributor::get_instance()->current_job()->input_tag();
-		if(loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_){
+		if ( loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_ ) {
 			core::pose::PoseOP kicPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPlusPoseOP = pose.clone();
@@ -228,7 +233,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 			acc_out << tag << "," << pose_loops[ii].start()-1 << "," << loopLength << "," << kicRmsd << "," << lookbackRmsd << "," <<kicVallRmsd << "," << lookbackVallRmsd << "," << lookbackPlusVallRmsd << "," << poseVallRmsd << std::endl;
 		}
 	}
- }
+}
 
 
 std::string AnalyzeLoopModeling::get_name() const {

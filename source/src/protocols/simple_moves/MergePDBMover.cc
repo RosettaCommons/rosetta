@@ -168,7 +168,7 @@ vector1<core::pose::PoseOP> MergePDBMover::generate_overlaps(Pose & pose, vector
 	using namespace core::id;
 	using namespace core::scoring;
 	vector1<core::pose::PoseOP> outputPoses;
-	for(Size kk=1; kk<=overlaps.size(); ++kk){
+	for ( Size kk=1; kk<=overlaps.size(); ++kk ) {
 		Size start_overlap_pose = overlaps[kk].start_overlap_pose;
 		Size end_overlap_pose = overlaps[kk].end_overlap_pose;
 		Size start_overlap_xmlPose = overlaps[kk].start_overlap_xmlPose;
@@ -209,7 +209,7 @@ vector1<core::pose::PoseOP> MergePDBMover::generate_overlaps(Pose & pose, vector
 		if ( overlap_location_pose_== "n_term" ) {
 			remove_upper_terminus_type_from_pose_residue(*xml_input_pose_slice,xml_input_pose_slice->total_residue());
 			remove_lower_terminus_type_from_pose_residue(*ref_pose_slice,1);
-			for(Size ii=1; ii<=ref_pose_slice->total_residue(); ++ii){
+			for ( Size ii=1; ii<=ref_pose_slice->total_residue(); ++ii ) {
 				xml_input_pose_slice->append_residue_by_bond(ref_pose_slice->residue(ii),false/*ideal bonds*/);
 			}
 			//append_pose_to_pose(*xml_input_pose_slice,*ref_pose_slice,false);
@@ -219,7 +219,7 @@ vector1<core::pose::PoseOP> MergePDBMover::generate_overlaps(Pose & pose, vector
 		if ( overlap_location_pose_== "c_term" ) {
 			remove_upper_terminus_type_from_pose_residue(*ref_pose_slice,ref_pose_slice->total_residue());
 			remove_lower_terminus_type_from_pose_residue(*xml_input_pose_slice,1);
-			for(Size ii=1; ii<=xml_input_pose_slice->total_residue(); ++ii){
+			for ( Size ii=1; ii<=xml_input_pose_slice->total_residue(); ++ii ) {
 				ref_pose_slice->append_residue_by_bond(xml_input_pose_slice->residue(ii),false/*ideal bonds*/);
 			}
 			//append_pose_to_pose(*ref_pose_slice,*xml_input_pose_slice,false);
@@ -235,7 +235,7 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 	using namespace core::scoring;
 	using namespace core::pack::task::operation;
 	vector1<core::pose::PoseOP> outputPoses;
-	for(Size kk=1; kk<=overlaps.size(); ++kk){
+	for ( Size kk=1; kk<=overlaps.size(); ++kk ) {
 		poses[kk]->conformation().detect_disulfides();
 		sfxn_->score(*poses[kk]);
 		Size start_overlap_pose = overlaps[kk].start_overlap_pose;
@@ -256,7 +256,7 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 		}
 		core::pack::task::operation::PreventRepacking turn_off_packing;
 		core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
-		if(design_range_>0){
+		if ( design_range_>0 ) {
 			utility::vector1< bool > mutant_resnums_and_neighbors = mutant_resnums;
 			core::select::fill_neighbor_residues(*poses[kk], mutant_resnums_and_neighbors, design_range_);
 			TR << "designed residues";
@@ -270,7 +270,7 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 			}
 			TR << std::endl;
 		}
-		if(packing_range_>0){
+		if ( packing_range_>0 ) {
 			utility::vector1< bool > mutant_resnums_and_neighbors = mutant_resnums;
 			core::select::fill_neighbor_residues(*poses[kk], mutant_resnums_and_neighbors, packing_range_);
 			TR << "packed residues";
@@ -290,7 +290,7 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 		Size pack_rounds = 2;
 		protocols::simple_moves::PackRotamersMover packer = PackRotamersMover(sfxn_, task, pack_rounds);
 		packer.apply(*poses[kk]);
-		if(do_minimize_){
+		if ( do_minimize_ ) {
 			optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 			minopt.max_iter( 25 );
 			optimization::AtomTreeMinimizer minimizer;
@@ -301,16 +301,17 @@ vector1<core::pose::PoseOP> MergePDBMover::pack_and_minimize(vector1<core::pose:
 
 		Real score = sfxn_->score(*poses[kk]);
 		TR << "score after pack and min" << score << "baseline_score" << baseline_score << std::endl;
-		if(score<baseline_score)
+		if ( score<baseline_score ) {
 			outputPoses.push_back(poses[kk]);
+		}
 	}
 	return(outputPoses);
 }
 
 
 core::pose::PoseOP MergePDBMover::get_additional_output(){
-	for(Size ii=1; ii<=outputYet_.size(); ++ii){
-		if(outputYet_[ii]==false){
+	for ( Size ii=1; ii<=outputYet_.size(); ++ii ) {
+		if ( outputYet_[ii]==false ) {
 			set_last_move_status(protocols::moves::MS_SUCCESS);
 			outputYet_[ii]=true;
 			return(outputPoses_[ii]);
@@ -328,8 +329,9 @@ void MergePDBMover::apply( Pose & pose )
 	xml_input_pose_->conformation().detect_disulfides();
 	core::Real baseline_score = sfxn_->score(pose);
 	core::Real xml_score = sfxn_->score(*xml_input_pose_);
-	if(baseline_score<xml_score)
+	if ( baseline_score<xml_score ) {
 		baseline_score = xml_score;
+	}
 
 	//Step 1 get location
 	vector1<Overlap> overlaps = determine_overlap(pose);
@@ -337,8 +339,9 @@ void MergePDBMover::apply( Pose & pose )
 	vector1<core::pose::PoseOP> combined_poses = generate_overlaps(pose, overlaps);
 	outputPoses_ = pack_and_minimize(combined_poses,overlaps,baseline_score);
 
-	for(Size ii=1; ii<=outputPoses_.size(); ++ii)
+	for ( Size ii=1; ii<=outputPoses_.size(); ++ii ) {
 		outputYet_.push_back(false);
+	}
 
 	core::pose::PoseOP tmpPoseOP=get_additional_output();
 	if ( tmpPoseOP!=NULL ) {

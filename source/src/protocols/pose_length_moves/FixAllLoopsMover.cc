@@ -96,11 +96,11 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 		}
 		lastSecStruct = dssp_string.substr(ii-1,1);
 	}
- 	return(pose_loops);
- }
+	return(pose_loops);
+}
 
- void FixAllLoopsMover::apply(core::pose::Pose & pose) {
-	if( core::pose::symmetry::is_symmetric(pose) ){
+void FixAllLoopsMover::apply(core::pose::Pose & pose) {
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("***fixing loops on a symmetric structure would be a bad idea because the fold tree is not properly maintained");
 	}
 	protocols::loops::Loops pose_loops = get_loops(pose);
@@ -160,9 +160,9 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 			TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 		}
 	}
-// 	//time_t end_time = time(NULL);
-// 	//std::cout << "total_time" << end_time-start_time_ << std::endl;
- }
+	//  //time_t end_time = time(NULL);
+	//  //std::cout << "total_time" << end_time-start_time_ << std::endl;
+}
 
 
 std::string FixAllLoopsMover::get_name() const {

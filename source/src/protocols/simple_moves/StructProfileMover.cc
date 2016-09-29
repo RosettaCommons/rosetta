@@ -185,66 +185,66 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 		}
 
 
-vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
-	vector1<string> top_hits_aa;
-	//I want to normalize the rmsd & burial
-	vector1<vector<Real> > hits_cen;
-	vector1<Real> hits_rms;
-	vector1<std::string> hits_aa;
-	SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
-	if ( hits_cen.size() == 0 ) {
-		return top_hits_aa;
-	}
-	vector1<Hit>hits;
-	for ( Size ii=1; ii<=hits_cen.size(); ++ii ) {
-		Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
-		struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
-		hits.push_back(result_tmp);
-	}
-	//step1 get max and min cen and rmsd
-	Real maxRmsd = -9999;
-	Real minRmsd = 9999;
-	Real maxCend = -9999;
-	Real minCend = 9999;
-	for ( Size ii=1; ii<=hits.size(); ++ii ) {
-		if ( hits[ii].cend>maxCend ) {
-			maxCend = hits[ii].cend;
+		vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
+			vector1<string> top_hits_aa;
+		//I want to normalize the rmsd & burial
+		vector1<vector<Real> > hits_cen;
+		vector1<Real> hits_rms;
+		vector1<std::string> hits_aa;
+		SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
+		if ( hits_cen.size() == 0 ) {
+			return top_hits_aa;
 		}
-		if ( hits[ii].cend<minCend ) {
-			minCend = hits[ii].cend;
+		vector1<Hit>hits;
+		for ( Size ii=1; ii<=hits_cen.size(); ++ii ) {
+			Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
+			struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
+			hits.push_back(result_tmp);
 		}
-		if ( hits[ii].rmsd>maxRmsd ) {
-			maxRmsd = hits[ii].rmsd;
+		//step1 get max and min cen and rmsd
+		Real maxRmsd = -9999;
+		Real minRmsd = 9999;
+		Real maxCend = -9999;
+		Real minCend = 9999;
+		for ( Size ii=1; ii<=hits.size(); ++ii ) {
+			if ( hits[ii].cend>maxCend ) {
+				maxCend = hits[ii].cend;
+			}
+			if ( hits[ii].cend<minCend ) {
+				minCend = hits[ii].cend;
+			}
+			if ( hits[ii].rmsd>maxRmsd ) {
+				maxRmsd = hits[ii].rmsd;
+			}
+			if ( hits[ii].rmsd<minRmsd ) {
+				minRmsd = hits[ii].rmsd;
+			}
 		}
-		if ( hits[ii].rmsd<minRmsd ) {
-			minRmsd = hits[ii].rmsd;
+		//step2 set normatlized rmsd cend and set score
+		for ( Size ii=1; ii<=hits.size(); ++ii ) {
+			hits[ii].cend_norm = 1-(maxCend-hits[ii].cend)/(maxCend-minCend);
+			hits[ii].rmsd_norm = 1-(maxRmsd-hits[ii].rmsd)/(maxRmsd-minRmsd);
+			hits[ii].score = hits[ii].cend_norm*(burialWt_)+hits[ii].rmsd_norm*(1-burialWt_);
 		}
+		//step3 sort array based on score
+		if ( consider_topN_frags_ < hits.size() ) {
+			std::sort(hits.begin(), hits.end(), less_then_match_rmsd());
+		}
+		//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
+		// lookupResultsPlusV[ii].print();
+		//}
+		//step4 get AA from top hits
+		for ( Size ii=1; ii<=hits.size()&&ii<consider_topN_frags_; ++ii ) {
+			top_hits_aa.push_back(hits[ii].aa);
+		}
+		return(top_hits_aa);
 	}
-	//step2 set normatlized rmsd cend and set score
-	for ( Size ii=1; ii<=hits.size(); ++ii ) {
-		hits[ii].cend_norm = 1-(maxCend-hits[ii].cend)/(maxCend-minCend);
-		hits[ii].rmsd_norm = 1-(maxRmsd-hits[ii].rmsd)/(maxRmsd-minRmsd);
-		hits[ii].score = hits[ii].cend_norm*(burialWt_)+hits[ii].rmsd_norm*(1-burialWt_);
-	}
-	//step3 sort array based on score
-	if ( consider_topN_frags_ < hits.size() ) {
-		std::sort(hits.begin(), hits.end(), less_then_match_rmsd());
-	}
-	//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
-	// lookupResultsPlusV[ii].print();
-	//}
-	//step4 get AA from top hits
-	for ( Size ii=1; ii<=hits.size()&&ii<consider_topN_frags_; ++ii ) {
-		top_hits_aa.push_back(hits[ii].aa);
-	}
-	return(top_hits_aa);
-}
 
-vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
-	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+	vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
+		Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	Size nres1 = pose.size();
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	for ( Size ii=1; ii<nres1-fragment_length+1; ++ii ) {
@@ -260,7 +260,7 @@ vector1<vector1<Size> > StructProfileMover::generate_counts(vector1<vector1<std:
 	//step1---Initialize counts to zero
 	vector1<vector1<Size> > counts;
 	Size nres1 = pose.size();
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	for ( Size ii=1; ii<=nres1; ++ii ) {
@@ -319,7 +319,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vecto
 vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background(vector1<vector1<Size> > res_per_pos, vector1<Real> cenList, Pose const pose){
 	//step1---Get total counts for each position
 	Size nres1 = pose.size();
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	vector1<Size> total_cts;
@@ -352,7 +352,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 					tmp_score = -std::log(rmsdProb-backgroundProb);
 				}
 			}
-			if(ignore_terminal_res_ && (ii==1 || ii==nres1)){
+			if ( ignore_terminal_res_ && (ii==1 || ii==nres1) ) {
 				tmp_score = 0.0;  //phi is 0 in first position and psi and omega are 0 in last position. Can cause odd behavior to the profile so no weight is allowed
 			}
 			if ( pose.secstruct(ii) != 'L' && only_loops_ ) {
@@ -369,7 +369,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score_wo_background
 void StructProfileMover::save_MSAcst_file(vector1<vector1<Real> > profile_score,core::pose::Pose const pose){
 	std::string profile_name( "profile" );
 	Size nres1 = pose.size();
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	utility::io::ozstream profile_out(profile_name);
@@ -399,7 +399,7 @@ void StructProfileMover::add_MSAcst_to_pose(vector1<vector1<Real> > profile_scor
 	using namespace core::sequence;
 	SequenceProfileOP profileOP = SequenceProfileOP(new SequenceProfile( profile_score, pose.sequence(), "structProfile" ));
 	Size nres1 = pose.size();
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
 	for ( core::Size seqpos( 1 ), end( nres1 ); seqpos <= end; ++seqpos ) {
@@ -419,16 +419,17 @@ vector1< Real> StructProfileMover::calc_cenlist(Pose const pose){
 	using namespace core::chemical;
 	using namespace core::scoring;
 	core::pose::PoseOP centroidPose = pose.clone();
-	if(centroidPose->is_fullatom())
+	if ( centroidPose->is_fullatom() ) {
 		core::util::switch_to_residue_type_set(*centroidPose, core::chemical::CENTROID_t );
+	}
 	ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
-	if( core::pose::symmetry::is_symmetric(pose) ){
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		sfcen=core::scoring::symmetry::symmetrize_scorefunction(*sfcen);
 	}
 	sfcen->score(*centroidPose);
 	vector1 <Real> cenlist;
 	Size nres1 = centroidPose->size();
-	if( core::pose::symmetry::is_symmetric(*centroidPose) ){
+	if ( core::pose::symmetry::is_symmetric(*centroidPose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(*centroidPose)->num_independent_residues();
 	}
 	for ( Size ii = 1; ii <= nres1; ++ii ) {

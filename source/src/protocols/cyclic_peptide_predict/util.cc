@@ -71,6 +71,12 @@ sort_jobsummaries_list(
 			} else {
 				greater_summaries.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP(jobsummaries[i]) );
 			}
+		} else if ( sort_type == SORT_BY_CIS_PEPTIDE_BONDS ) {
+			if ( jobsummaries[i]->cis_peptide_bonds() < pivot->cis_peptide_bonds() ) {
+				lesser_summaries.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP(jobsummaries[i]) );
+			} else {
+				greater_summaries.push_back( SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP(jobsummaries[i]) );
+			}
 		}
 	}
 
@@ -144,6 +150,14 @@ void mergesort_jobsummaries_list (
 			}
 		} else if ( sort_type == SORT_BY_HBONDS ) {
 			if ( additional_index > additional_size || ( !(original_index>origlist_size) && origlist_copy[original_index]->hbonds() < additional_list[additional_index]->hbonds() ) ) {
+				list_to_sort_into[i] = origlist_copy[original_index];
+				++original_index;
+			} else {
+				list_to_sort_into[i] = additional_list[additional_index];
+				++additional_index;
+			}
+		} else if ( sort_type == SORT_BY_CIS_PEPTIDE_BONDS ) {
+			if ( additional_index > additional_size || ( !(original_index>origlist_size) && origlist_copy[original_index]->cis_peptide_bonds() < additional_list[additional_index]->cis_peptide_bonds() ) ) {
 				list_to_sort_into[i] = origlist_copy[original_index];
 				++original_index;
 			} else {

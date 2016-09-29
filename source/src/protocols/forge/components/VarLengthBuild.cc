@@ -532,10 +532,11 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	// recover side chains in fixed regions
-	if(!basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())
+	if ( !basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 		restore_residues( original2modified, archive_pose, pose );
-		//The second repeat is messed up in the archive pose. If this causes trouble try adding a repeat_popogation step. But to do that you
-		//need to create a new loops and RemodelLoopMover.
+	}
+	//The second repeat is messed up in the archive pose. If this causes trouble try adding a repeat_popogation step. But to do that you
+	//need to create a new loops and RemodelLoopMover.
 
 	// finalize wrt to success/failure
 	if ( get_last_move_status() == MS_SUCCESS ) {
@@ -1061,11 +1062,11 @@ void VarLengthBuild::set_starting_non_canonical(Pose & pose){
 	ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( aa_type ).get_all_possible_residue_types();
 	ResidueType const & rsd_type = *allowed_types[1];
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);//pose has two coppies. This is the first
-			Size repeat_length = pose.total_residue()/2;
-			replace_pose_residue_copying_existing_coordinates(pose,pos+repeat_length,rsd_type);
+		replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);//pose has two coppies. This is the first
+		Size repeat_length = pose.total_residue()/2;
+		replace_pose_residue_copying_existing_coordinates(pose,pos+repeat_length,rsd_type);
 	} else {
-			replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);
+		replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);
 	}
 }
 

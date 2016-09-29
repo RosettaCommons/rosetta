@@ -70,27 +70,28 @@ core::Real Burial_v2Energy::using_atom_distance(core::pose::Pose const & pose) c
 	Real score = 0;
 	Real dist_cutoff = 8;
 	Size residue_gap = 6; //number of residues to not measure. This is so I don't count contacts in the same chain as burial
-	for(Size resid=1; resid<=residue_ids_.size(); ++resid){
+	for ( Size resid=1; resid<=residue_ids_.size(); ++resid ) {
 		//get the number of cb within 8 angstroms of an atom in the side-chain
 		conformation::Residue heme_rsd = pose.residue( residue_ids_[resid] );
 		//std::cout << "examining resid" << residue_ids_[resid] << std::endl;
-		for(Size ii=1; ii<=pose.total_residue(); ++ii){
+		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
 			bool found = false;
-			if(std::abs((int)residue_ids_[resid]-(int)ii)>(int)residue_gap){//don't measure any residue within 6 of the selected residue. Looking for long range measurements
+			if ( std::abs((int)residue_ids_[resid]-(int)ii)>(int)residue_gap ) { //don't measure any residue within 6 of the selected residue. Looking for long range measurements
 				conformation::Residue protein_rsd = pose.residue(ii);
 				numeric::xyzVector<core::Real> protein_xyz = pose.residue(ii).nbr_atom_xyz();
 				for ( Size atomno = 1; atomno <= pose.residue_type(residue_ids_[resid]).natoms() && found==false; ++atomno ) {//ncaa atom
 					//get the number of cb within 8 angstroms of an atom in the side-chain
 					numeric::xyzVector<core::Real> heme_xyz = heme_rsd.xyz(atomno);
 					Real dist = heme_xyz.distance(protein_xyz);
-					if(dist < dist_cutoff){
+					if ( dist < dist_cutoff ) {
 						//std::cout << "non-heme:" << ii <<"," << dist << std::endl;
 						found = true;
 					}
 				}
 			}
-			if(found)
+			if ( found ) {
 				score--;
+			}
 		}
 	}
 	return(score);
@@ -104,7 +105,7 @@ core::Real Burial_v2Energy::using_totalSasa(core::pose::Pose const & pose) const
 	basic::MetricValue< utility::vector1< core::Real > > residue_sasa;
 	pose.metric( "sasa", "residue_sasa", residue_sasa ); //this does not represent a new calculation since pose metric calculators are smart enough to figure it out
 	runtime_assert( pose.total_residue() == (residue_sasa.value()).size() );
-	for(Size resid=1; resid<=residue_ids_.size(); ++resid){
+	for ( Size resid=1; resid<=residue_ids_.size(); ++resid ) {
 		core::Real this_sasa = residue_sasa.value()[residue_ids_[resid]];
 		//std::cout << "this_sasa" << this_sasa << std::endl;
 		score+=this_sasa;
@@ -123,10 +124,11 @@ void Burial_v2Energy::finalize_total_energy(
 	ScoreFunction const & ,
 	EnergyMap & totals
 ) const {
-	if(pose.is_fullatom())
+	if ( pose.is_fullatom() ) {
 		totals[burial_v2] =using_totalSasa(pose)/10; //For HEM the sasa score was about 10x higher.
-	else
+	} else {
 		totals[burial_v2] =using_atom_distance(pose);
+	}
 }
 
 
@@ -151,7 +153,7 @@ void Burial_v2Energy::init_from_file() {
 	getline(input,line); // header
 	residue_ids_ = utility::string_split(line,',',core::Size());
 	// for(Size ii=1; ii<=residue_ids_.size(); ++ii)
-	// 	std::cout << "residue_ids_[1]" << residue_ids_[ii] << std::endl;
+	//  std::cout << "residue_ids_[1]" << residue_ids_[ii] << std::endl;
 }
 
 } // methods
