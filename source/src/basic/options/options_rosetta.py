@@ -6852,6 +6852,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'free_residues', 'IntegerVector', desc="residues that are 'free,' affects stdev of chi sampler", default=[] ),
           Option( 'n_cycle', 'Integer', desc="cycle number for Random sampling", default='0' ),
           Option( 'angle_range_bb', 'Real', desc="range bb torsions are allowed to move", default='180' ),
+          Option( 'angle_range_bb_varying', 'RealVector', desc="allow for verying the bbangles sampled during thermal sampler", default=[] ),
           Option( 'angle_range_chi', 'Real', desc="range chi torsions are allowed to move", default='180' ),
           Option( 'chi_stdev', 'Real', desc="standard deviation for chi sampler", default='20' ),
           Option( 'bb_stdev', 'Real', desc="standard deviation for backbone sampler", default='1' ),

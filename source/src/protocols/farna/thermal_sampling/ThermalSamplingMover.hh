@@ -126,6 +126,7 @@ private: // data
 	bool dump_silent_ = false;
 	Real angle_range_chi_;
 	Real angle_range_bb_;
+	utility::vector1< Real > angle_range_bb_varying_;
 	utility::vector1< Real > temps_;
 	utility::vector1< Real > st_weights_;
 
