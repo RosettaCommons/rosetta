@@ -351,6 +351,7 @@ public:
 	//
 	//
 	/// @brief return the sequence of a particular CDR loop
+	///  Deprecated in favor of on the fly sequence.
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
 		Size left_stem = 0,
@@ -360,9 +361,16 @@ public:
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
 		core::pose::Pose const & pose,
-		CDRDefinitionEnum const & transform,
 		Size left_stem = 0,
 		Size right_stem = 0) const;
+	
+	///@brief On-The-Fly CDR sequence
+	std::string
+	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
+		core::pose::Pose const & pose,
+		Size left_stem,
+		Size right_stem,
+		CDRDefinitionEnum const & transform) const;
 
 	/// @brief return the antibody sequence of LH or just H for camelid
 	std::string

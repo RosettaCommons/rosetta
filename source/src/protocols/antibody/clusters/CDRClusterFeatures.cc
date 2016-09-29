@@ -170,7 +170,7 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 
 		//Short-circuit evaluation here:
 		if ( ab_info->has_cluster_for_cdr(cdr) && (std::find(cdrs_.begin(), cdrs_.end(), cluster->cdr()) != cdrs_.end()) ) {
-			std::string sequence = ab_info->get_CDR_sequence_with_stem(cdr, pose, North, 0, 0);
+			std::string sequence = ab_info->get_CDR_sequence_with_stem(cdr, pose, 0, 0, North);
 			std::stringstream str_chain;
 			str_chain << ab_info->get_CDR_chain(cdr);
 			stmt.bind(1, struct_id);

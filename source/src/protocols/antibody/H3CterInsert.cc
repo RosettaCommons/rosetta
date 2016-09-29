@@ -43,14 +43,19 @@ namespace protocols {
 namespace antibody {
 
 
-H3CterInsert::H3CterInsert() : Mover() {
-	user_defined_ = false;
+H3CterInsert::H3CterInsert() :
+	Mover(),
+	ab_info_(/*NULL*/)
+{
+
 }
 
 
-H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info, bool camelid ) : Mover() {
-	user_defined_ = true;
-	init(antibody_info, camelid, false);
+H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info ) :
+	Mover(),
+	ab_info_(antibody_info)
+{
+
 }
 
 
@@ -58,26 +63,20 @@ H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info, bool camelid
 H3CterInsert::~H3CterInsert() = default;
 
 
-void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark) {
+void H3CterInsert::init(core::pose::Pose const & pose) {
 	Mover::type( "H3CterInsert" );
-
-	set_default();
-
-	if ( user_defined_ ) {
-		is_camelid_ = camelid;
-		benchmark_  = benchmark;
-		ab_info_= antibody_info;
+	
+	if (! ab_info_ ){
+		ab_info_ = AntibodyInfoOP( new AntibodyInfo( pose ));
 	}
-
-	//    setup_objects();
-
-	read_H3_cter_fragment( ) ;
+	
+	set_default();
+	read_H3_cter_fragment( pose ) ;
 
 }
 
 
 void H3CterInsert::set_default() {
-	is_camelid_ = false;
 	benchmark_ = false;
 }
 
@@ -95,7 +94,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 
 	//    finalize_setup(pose);
 
-
+	init( pose );
 	TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
 
 	Size loop_begin(0), loop_end(0), cutpoint(0);
@@ -126,7 +125,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 		//TR<<f<<std::endl;
 
 		//inserting base dihedrals
-		Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
+		Size cter_insertion_pos( ab_info_->is_camelid() ? 4 : 2 ); // not sure why 4 for camelid
 
 
 		if ( (ab_info_->get_CDR_loop(h3).stop()-cter_insertion_pos) <= ab_info_->get_CDR_loop(h3).start() ) {
@@ -161,7 +160,7 @@ std::string H3CterInsert::get_name() const {
 
 
 /// FIXME: JQX the get_CDR_loop is so weird here
-void H3CterInsert::read_H3_cter_fragment( ) {
+void H3CterInsert::read_H3_cter_fragment( core::pose::Pose const & pose ) {
 	using namespace fragment;
 
 	TR <<  "Reading CDR H3 C-ter Fragments" << std::endl;
@@ -178,7 +177,7 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
 
 	TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
-	std::string aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,2,2);
+	std::string aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,pose, 2,2);
 
 	TR<<"aa_1name.size()="<<aa_1name.length()<<std::endl;
 

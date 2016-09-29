@@ -75,18 +75,17 @@ void ModelCDRH3::init( ) {
 
 	//TODO:
 	//JQX: need to deal with this
-	if ( is_camelid_ && ab_info_->get_H3_kink_type()!=Kinked && ab_info_->get_H3_kink_type()!=Extended ) {
+	if ( ab_info_->is_camelid() && ab_info_->get_H3_kink_type()!=Kinked && ab_info_->get_H3_kink_type()!=Extended ) {
 		c_ter_stem_ = 0;
 	}
 
-	h3_cter_insert_mover_ = H3CterInsertOP( new H3CterInsert(ab_info_, is_camelid_) );
+	h3_cter_insert_mover_ = H3CterInsertOP( new H3CterInsert(ab_info_) );
 	h3_perturb_ccd_build_ = H3PerturbCCDOP( new H3PerturbCCD(ab_info_, lowres_scorefxn_) );
 }
 
 
 void ModelCDRH3::set_default() {
 	benchmark_          = false;
-	is_camelid_         = false;
 	do_cter_insert_     = true;
 	loops_flag_         = true;
 	dle_flag_           = true;
@@ -270,15 +269,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	} // while( ( cut_separation > 1.9 )
 
 	TR <<  "Finished Modeling Centroid CDR H3 loop" << std::endl;
-
-
-	//#############################  //JQX: this should not be here
-	if ( is_camelid_ ) {
-		//RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop(h1) );
-		//refine_cdr_centroid.apply(pose_in);
-	}
-	//#############################
-
 
 	TR << "Finished applying CDR H3 modeler" << std::endl;
 

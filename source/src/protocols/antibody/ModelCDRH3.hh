@@ -63,11 +63,6 @@ public:
 		benchmark_ = setting;
 	}
 
-	/// @brief enable camelid modeling mode
-	inline void set_camelid( bool setting ) {
-		is_camelid_ = setting;
-	}
-
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
 	void set_lowres_score_func(core::scoring::ScoreFunctionCOP lowres_scorefxn );
@@ -129,10 +124,6 @@ private:
 	bool dle_flag_;
 
 	bool bad_nter_;
-
-
-	/// @brief is camelid antibody without light chain
-	bool is_camelid_;
 
 	antibody::AntibodyInfoOP ab_info_;
 

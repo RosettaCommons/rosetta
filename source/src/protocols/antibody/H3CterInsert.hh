@@ -40,7 +40,7 @@ public:
 	H3CterInsert();
 
 	/// @brief constructor with arguments
-	H3CterInsert(antibody::AntibodyInfoOP antibody_info, bool camelid );
+	H3CterInsert(antibody::AntibodyInfoOP antibody_info );
 
 
 	/// @brief default destructor
@@ -52,7 +52,7 @@ public:
 	std::string get_name() const override;
 
 	// read CDR H3 C-terminal fragments (size: 4)
-	void read_H3_cter_fragment();
+	void read_H3_cter_fragment( core::pose::Pose const & pose);
 
 
 private:
@@ -62,18 +62,10 @@ private:
 
 	AntibodyInfoOP ab_info_;
 
-	bool user_defined_;
-
 	/// @brief benchmark flag
 	bool benchmark_;
 
-	/// @brief is camelid antibody without light chain
-	bool is_camelid_;
-
-
-	void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
-	//    void setup_objects();
-	//    void finalize_setup( core::pose::Pose & pose );
+	void init(core::pose::Pose const & pose);
 
 
 	std::string H3_ter_library_filename_;
