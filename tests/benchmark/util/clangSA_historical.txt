@@ -1,0 +1,4 @@
+# This is the list of historical issues for the clang static analysis benchmark script
+# The difference between historical and exclusion is that we know historical are a problem,
+# we've just not got around to fixing them yet.
+

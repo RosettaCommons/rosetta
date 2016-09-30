@@ -309,11 +309,6 @@ find_lactams( Pose & pose ) {
 	}
 }
 
-AtomID
-cst_atomid( Pose & pose, std::string name, Size resi ){
-	return *new core::id::AtomID(pose.residue(resi).atom_index(name), resi);
-}
-
 // find all ostensible lactams with bad bond distances and revert those residues...
 void revert_lactams( Pose & pose ) {
 
@@ -351,7 +346,7 @@ void revert_lactams( Pose & pose ) {
 
 					AtomPairConstraint const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
 
-					if ( constraint_i.atom(1) == cst_atomid( pose, "NZ", lys_id ) && constraint_i.atom(2) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id) ) {
+					if ( constraint_i.atom(1) == AtomID(pose.residue(glu_id).atom_index("NZ"), glu_id) && constraint_i.atom(2) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id) ) {
 						pose.remove_constraint( cs[i], true );
 					}
 				}
@@ -363,10 +358,10 @@ void revert_lactams( Pose & pose ) {
 
 					AngleConstraint const & constraint_i( static_cast< AngleConstraint const & > (other_cst) );
 
-					if ( constraint_i.atom(1) == *new AtomID(pose.residue(lys_id).atom_index( "NZ" ), lys_id) && constraint_i.atom(2) == *new AtomID( pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id)  &&  constraint_i.atom(3) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ), glu_id) ) {
+					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "NZ" ), lys_id) && constraint_i.atom(2) == AtomID( pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ), glu_id) && constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ), glu_id) ) {
 						pose.remove_constraint( cs[i], true );
 					}
-					if ( constraint_i.atom(1) == *new AtomID(pose.residue(lys_id).atom_index( "1HZ" ), lys_id) && constraint_i.atom(2) == *new AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id)  &&  constraint_i.atom(3) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id) ) {
+					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "1HZ" ), lys_id) && constraint_i.atom(2) == AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) && constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id) ) {
 						pose.remove_constraint( cs[i], true );
 					}
 				}
@@ -378,10 +373,10 @@ void revert_lactams( Pose & pose ) {
 
 					DihedralConstraint const & constraint_i( static_cast< DihedralConstraint const & > (other_cst) );
 
-					if ( constraint_i.atom(1) == *new AtomID(pose.residue(lys_id).atom_index( "1HZ" ),lys_id) && constraint_i.atom(2) == *new AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) && constraint_i.atom(3) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id)  &&  constraint_i.atom(4) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ),glu_id) ) {
+					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "1HZ" ),lys_id) && constraint_i.atom(2) == AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) && constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id)  &&  constraint_i.atom(4) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ),glu_id) ) {
 						pose.remove_constraint( cs[i], true );
 					}
-					if ( constraint_i.atom(1) == *new AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) &&  constraint_i.atom(2) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id) &&  constraint_i.atom(3) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ),glu_id) &&  constraint_i.atom(4) == *new AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CG" : "CB" ),glu_id)  ) {
+					if ( constraint_i.atom(1) == AtomID(pose.residue(lys_id).atom_index( "NZ" ),lys_id) &&  constraint_i.atom(2) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CD" : "CG" ),glu_id) &&  constraint_i.atom(3) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "OE1" : "OD1" ),glu_id) &&  constraint_i.atom(4) == AtomID(pose.residue(glu_id).atom_index( pose.residue(glu_id).name3() == "GLU"? "CG" : "CB" ),glu_id)  ) {
 						pose.remove_constraint( cs[i], true );
 					}
 				}

@@ -1,0 +1,6 @@
+# This is the exclusion list for clang static analysis benchmark script
+# Only put things here if you *know* they aren't an issue.
+# For each, add a comment as to why it isn't an issue.
+# (Note: *All* instances of the error will be suppressed in the file, not just
+# for the line you want. Be careful.)
+
