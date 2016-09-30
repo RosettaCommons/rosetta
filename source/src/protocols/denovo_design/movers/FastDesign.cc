@@ -255,7 +255,7 @@ FastDesign::set_constraint_weight(
 {
 	runtime_assert( local_scorefxn != 0 );
 	if ( cgs_.size() ) {
-		protocols::constraint_generator::RemoveConstraints rm_csts( cgs_ );
+		protocols::constraint_generator::RemoveConstraints rm_csts( cgs_, true );
 
 		try {
 			rm_csts.apply( pose );

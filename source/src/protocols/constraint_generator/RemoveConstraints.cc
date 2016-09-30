@@ -36,13 +36,17 @@ namespace constraint_generator {
 
 RemoveConstraints::RemoveConstraints():
 	protocols::moves::Mover( RemoveConstraints::class_name() ),
-	generators_()
+	generators_(),
+	exception_on_failure_( true )
 {
 }
 
-RemoveConstraints::RemoveConstraints( ConstraintGeneratorCOPs const & generators ):
+RemoveConstraints::RemoveConstraints(
+	ConstraintGeneratorCOPs const & generators,
+	bool const exception_on_failure ):
 	protocols::moves::Mover( RemoveConstraints::class_name() ),
-	generators_( generators )
+	generators_( generators ),
+	exception_on_failure_( exception_on_failure )
 {
 }
 
@@ -97,7 +101,8 @@ RemoveConstraints::apply( core::pose::Pose & pose )
 		if ( !csts.empty() ) {
 			if ( ! pose.remove_constraints( csts, false ) ) {
 				if ( ! pose.remove_constraints( csts, true ) ) {
-					throw EXCN_RemoveCstsFailed();
+					if ( exception_on_failure_ )
+						throw EXCN_RemoveCstsFailed();
 				}
 			}
 		}

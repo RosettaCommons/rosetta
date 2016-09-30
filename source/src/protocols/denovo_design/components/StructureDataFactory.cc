@@ -28,6 +28,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/select/residue_selector/ResidueVector.hh>
 #include <core/sequence/ABEGOManager.hh>
 
 // Basic/Utility headers
@@ -356,6 +357,8 @@ StructureDataFactory::create_from_motifs( std::string const & motif_str, Segment
 StructureData
 StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentName const & prefix ) const
 {
+	using core::select::residue_selector::ResidueVector;
+
 	// the object we will add to
 	StructureData sd( "StructureDataFactory::infer_from_pose()" );
 
@@ -386,8 +389,16 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentNam
 		// collect information about the residues from [ chain_start, chain_end ]
 		core::Size const chain_length = chain_end - chain_start + 1;
 
+		// look for non-polymers
+		ResidueVector non_polymer;
+		for ( core::Size resid=chain_start; resid<=chain_end; ++resid ) {
+			if ( pose.residue( resid ).is_polymer() ) continue;
+			non_polymer.push_back( resid );
+		}
+		TR.Debug << "Found non-polymer residues: " << non_polymer << std::endl;
+
 		// get chain ss
-		std::string const chain_ss = pose_ss.substr( chain_start - 1, chain_length );
+		std::string chain_ss = pose_ss.substr( chain_start - 1, chain_length );
 		debug_assert( chain_ss.size() == chain_length );
 
 		// get chain abego
@@ -398,7 +409,26 @@ StructureDataFactory::infer_from_pose( core::pose::Pose const & pose, SegmentNam
 			chain_abego[ chain_length-1 ] = 'X';
 		}
 
-		add_segments_for_chain( prefix, sd, chain_ss, chain_abego, counts );
+		// if non-polymer residues are present, segments must be separate
+		core::Size prev_resid = chain_start;
+		std::string::iterator ss = chain_ss.begin();
+		std::string::iterator abego = chain_abego.begin();
+		for ( ResidueVector::const_iterator non_poly=non_polymer.begin(); non_poly!=non_polymer.end(); ++non_poly ) {
+			core::Size const local_resid = *non_poly - prev_resid + 1;
+			std::string const local_ss( ss, ss + local_resid );
+			std::string const local_abego( abego, abego + local_resid );
+			add_segments_for_chain( prefix, sd, local_ss, local_abego, counts );
+			TR << "Local ss = " << local_ss << " Chain ss = " << chain_ss << " Local_resid = " << local_resid << std::endl;
+			prev_resid += local_ss.size();
+			ss = ss + local_resid;
+			abego = abego + local_resid;
+		}
+
+		std::string const local_ss( ss, chain_ss.end() );
+		std::string const local_abego( abego, chain_abego.end() );
+		if ( !local_ss.empty() && !local_abego.empty() ) {
+			add_segments_for_chain( prefix, sd, local_ss, local_abego, counts );
+		}
 		chain_start = *r + 1;
 	}
 

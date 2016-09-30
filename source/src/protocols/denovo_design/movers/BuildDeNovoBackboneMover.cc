@@ -501,7 +501,7 @@ BuildDeNovoBackboneMover::postfold_movers(
 	// 1. Remove coodinate constraints for overlapping regions
 	//    if they were added
 	if ( !generators.empty() ) {
-		protocols::moves::MoverOP rm_csts( new protocols::constraint_generator::RemoveConstraints( generators ) );
+		protocols::moves::MoverOP rm_csts( new protocols::constraint_generator::RemoveConstraints( generators, false ) );
 		if ( rm_csts ) movers.push_back( rm_csts );
 	}
 
@@ -642,7 +642,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		utility_exit_with_message( msg.str() );
 	}
 
-// apply user-provided movers
+	// apply user-provided movers
 	apply_movers( postfold, pose );
 
 	// modify structuredata so this portion of the structure can be checked independently

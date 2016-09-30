@@ -141,6 +141,7 @@ ExtendedPoseBuilder::extend_pose(
 {
 	Resids const endings = calc_chain_endings( sd );
 	TR.Debug << "Chain endings = " << endings << std::endl;
+	TR.Debug << "SD= " << sd << std::endl;
 
 	SegmentNames::const_iterator prev_template = template_segments.end();
 	SegmentNames::const_iterator next_template = template_segments.begin();

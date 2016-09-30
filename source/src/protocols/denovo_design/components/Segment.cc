@@ -745,14 +745,18 @@ Segment::set_template_pose(
 		utility_exit_with_message( msg.str() );
 	}
 	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code. It should be eventually removed
-	if ( ( start_resid - 1 > 0 ) && ( full_template_pose.residue( start_resid - 1 ).is_protein() ) ) {
+	if ( ( start_resid - 1 > 0 ) &&
+			( full_template_pose.residue( start_resid - 1 ).is_protein() ) &&
+			( full_template_pose.residue( start_resid ).is_protein() ) ) {
 		lower_dihedrals_ = ResidueDihedrals( full_template_pose, start_resid - 1 );
 		lower_residue_ = full_template_pose.residue( start_resid - 1 ).clone();
 	} else {
 		lower_dihedrals_ = ResidueDihedrals();
 	}
 	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code.  It should be eventually removed
-	if ( ( stop_resid + 1 <= full_template_pose.size() ) && ( full_template_pose.residue( stop_resid + 1 ).is_protein() ) ) {
+	if ( ( stop_resid + 1 <= full_template_pose.size() ) &&
+		( full_template_pose.residue( stop_resid + 1 ).is_protein() ) &&
+		( full_template_pose.residue( stop_resid ).is_protein() ) ) {
 		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
 		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
 	} else {
