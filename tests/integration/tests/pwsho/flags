@@ -1,0 +1,2 @@
+-s input/1vii.pdb
+-score:patch occ_Hbond_sol_fitted

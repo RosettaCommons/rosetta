@@ -28,8 +28,9 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 
+#include <utility/vector1.hh>
 
 //#include <core/scoring/EnergyMap.hh>
 
@@ -143,6 +144,9 @@ public:
 
 private:
 
+	/// @brief initializes amplitude scaling factors from command-line
+	void init_amp_scaling_factors();
+
 	Real
 	res_res_occ_sol_one_way(
 		conformation::Residue const & polar_rsd,
@@ -195,6 +199,12 @@ private:
 
 
 private:
+
+	// atom type set (assumed to be FA_STANDARD)
+	chemical::AtomTypeSetCOP atom_type_set_ptr_;
+
+	// atom-type-specific scaling factors for tha amplitudes of Gaussians (those of non-polar atoms are left at 0)
+	utility::vector1<core::Real> amp_scaling_factors_;
 
 	// const-ref to scoring database
 	DatabaseOccSolEne const & occ_hbond_sol_database_;

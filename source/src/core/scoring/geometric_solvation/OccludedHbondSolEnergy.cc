@@ -30,10 +30,12 @@
 // in eg. a "geometric solvation potential" object,
 // so that they don't need to be computed over and over again
 
-
-// Unit Headers
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergy.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergyCreator.hh>
+#include <numeric/trig.functions.hh>
+#include <numeric/deriv/distance_deriv.hh>
+#include <numeric/deriv/angle_deriv.hh>
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -42,18 +44,11 @@
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <utility/options/OptionCollection.hh>
 #include <basic/Tracer.hh>
-
-// Package headers
-
-// Project headers
-#include <numeric/trig.functions.hh>
-#include <numeric/deriv/distance_deriv.hh>
-#include <numeric/deriv/angle_deriv.hh>
-
-// Utility headers
 #include <ObjexxFCL/format.hh>
-
 #include <utility/vector1.hh>
 
 
@@ -95,14 +90,19 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy(
 	bool const verbose )
 :
 	parent( methods::EnergyMethodCreatorOP( new OccludedHbondSolEnergyCreator ) ),
+	atom_type_set_ptr_( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) ),
+	amp_scaling_factors_(atom_type_set_ptr_->n_atomtypes(), 0),
 	occ_hbond_sol_database_( ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
 	verbose_( verbose )
 {
+	init_amp_scaling_factors();
 	if ( verbose_ ) tr <<"OccludedHbondSolEnergy constructor" << std::endl;
 }
 
 OccludedHbondSolEnergy::OccludedHbondSolEnergy( OccludedHbondSolEnergy const & src ):
 	parent( src ),
+	atom_type_set_ptr_(src.atom_type_set_ptr_),
+	amp_scaling_factors_(src.amp_scaling_factors_),
 	occ_hbond_sol_database_( src.occ_hbond_sol_database_ ),
 	verbose_( src.verbose_ )
 {
@@ -114,6 +114,36 @@ OccludedHbondSolEnergy::clone() const
 {
 	return methods::EnergyMethodOP( new OccludedHbondSolEnergy( *this ) );
 }
+
+///
+/// @brief initializes amplitude scaling factors from command-line
+///
+void OccludedHbondSolEnergy::init_amp_scaling_factors() {
+
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Ntrp")] = option[score::occ_sol_fitted::Ntrp_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("NH2O")] = option[score::occ_sol_fitted::NH2O_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Nlys")] = option[score::occ_sol_fitted::Nlys_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Narg")] = option[score::occ_sol_fitted::Narg_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Nbb")] = option[score::occ_sol_fitted::Nbb_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Nhis")] = option[score::occ_sol_fitted::Nhis_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OH")] = option[score::occ_sol_fitted::OH_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("ONH2")] = option[score::occ_sol_fitted::ONH2_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OOC")] = option[score::occ_sol_fitted::OOC_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Oaro")] = option[score::occ_sol_fitted::Oaro_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Oet2")] = option[score::occ_sol_fitted::Oet2_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Oet3")] = option[score::occ_sol_fitted::Oet3_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OCbb")] = option[score::occ_sol_fitted::OCbb_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("HOH")] = option[score::occ_sol_fitted::HOH_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OPha")] = option[score::occ_sol_fitted::OPha_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OHha")] = option[score::occ_sol_fitted::OHha_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OC3")] = option[score::occ_sol_fitted::OC3_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("OSi")] = option[score::occ_sol_fitted::OSi_amp_scaling];
+	amp_scaling_factors_[atom_type_set_ptr_->atom_type_index("Oice")] = option[score::occ_sol_fitted::Oice_amp_scaling];
+}
+
 
 void
 OccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
@@ -361,7 +391,12 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	// geometric filters are met, compute energy (and derivatives, if desired)
 	// get the appropriate parameters
-	Real const amp = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_amp );
+	Real sf = amp_scaling_factors_[polar_atom_type_lookup_index];
+	if(!sf) {
+		tr << "Unsupported atom type index: " << polar_atom_type_lookup_index << std::endl;
+		exit(0);
+	}
+	Real const amp = sf*occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_amp );
 	Real const dist_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_dist_mu );
 	Real const twice_dist_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_twice_dist_sigma_sq );
 	Real const cos_angle_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_cos_angle_mu );

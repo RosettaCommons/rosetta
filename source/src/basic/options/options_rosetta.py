@@ -1464,6 +1464,27 @@ Options = Option_Group( '',
 			Option( 'gpu_processor','Integer', desc="GPU processor number - for systems with more than 1", default='0'),
 			Option( 'centroid_density_mass','Real'  , desc="density mass of centroid", default='0.0'),
 		), #-score:fiber_diffraction
+		Option_Group('occ_sol_fitted',
+			Option('Ntrp_amp_scaling', 'Real', desc='scaling factor for Ntrp atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('NH2O_amp_scaling', 'Real', desc='scaling factor for NH2O atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Nlys_amp_scaling', 'Real', desc='scaling factor for Nlys atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Narg_amp_scaling', 'Real', desc='scaling factor for Narg atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Nbb_amp_scaling', 'Real', desc='scaling factor for Nbb atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Nhis_amp_scaling', 'Real', desc='scaling factor for Nhis atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OH_amp_scaling', 'Real', desc='scaling factor for OH atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('ONH2_amp_scaling', 'Real', desc='scaling factor for ONH2 atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OOC_amp_scaling', 'Real', desc='scaling factor for OOC atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Oaro_amp_scaling', 'Real', desc='scaling factor for Oaro atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Oet2_amp_scaling', 'Real', desc='scaling factor for Oet2 atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Oet3_amp_scaling', 'Real', desc='scaling factor for Oet3 atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OCbb_amp_scaling', 'Real', desc='scaling factor for OCbb atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('HOH_amp_scaling', 'Real', desc='scaling factor for HOH atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OPha_amp_scaling', 'Real', desc='scaling factor for OPha atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OHha_amp_scaling', 'Real', desc='scaling factor for OHha atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OC3_amp_scaling', 'Real', desc='scaling factor for OC3 atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('OSi_amp_scaling', 'Real', desc='scaling factor for OSi atoms\'s amplitude of the gaussian', default='1.0'),
+			Option('Oice_amp_scaling', 'Real', desc='scaling factor for Oice atoms\'s amplitude of the gaussian', default='1.0'),
+		) #-score:occ_sol_fitted
 	), # -score
 
 	# packing options -----------------------------------------------------------
