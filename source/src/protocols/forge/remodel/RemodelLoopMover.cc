@@ -1096,6 +1096,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			movemapAll.set_bb(i, false);
 			movemapAll.set_chi(i, false);
 		}
+
 		//set loop locations to true
 		for ( Size ii=1; ii<=loops_->num_loop(); ++ii ) {
 			for ( Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ) {
@@ -1142,6 +1143,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//setup locations to sample--------------------------
 		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose,9);
 		std::set<Size> sampleSubsetResidues = generate_residues_to_sample(true,pose,9);
+
 		//Initialize with any full length fragments-------------------------------
 		if ( option[OptionKeys::remodel::use_same_length_fragments] ) {
 			//999 allows for frags > 9 resiudes
@@ -3726,21 +3728,24 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 	using namespace core;
 	using namespace ObjexxFCL;
 	std::string ss = remodel_data_.ss;
-	std::cout << "ss:" << ss << std::endl;
+	TR << "ss:" << ss << std::endl;
 	scoring::dssp::Dssp dssp( pose );
-	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
+	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue());
 	dssp.dssp_reduced(dsspSS);
-	if ( dsspSS[1]=='L' && dsspSS[2]=='H' ) { //often dssp mis-assignes residues at the beginning and end of chain.
-		dsspSS[1]='H';
+	if ( dsspSS(1)=='L' && dsspSS(2)=='H' ) { //often dssp mis-assignes residues at the beginning and end of chain.
+		dsspSS(1)='H';
 	}
-	if ( dsspSS[pose.total_residue()]=='L' && dsspSS[pose.total_residue()-1] == 'H' ) {
-		dsspSS[pose.total_residue()]='H';
+	Size n_res = pose.total_residue();
+	if(n_res>2){
+		if(dsspSS(n_res)=='L' && dsspSS(n_res-1) == 'H'){
+			dsspSS(n_res)='H';
+		}
 	}
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//At this point the pose is 2x. So we need to copy the helical residues twice.
 		Size repeatRes = (pose.size()/2);
 		for ( Size ii=1; ii<=ss.size(); ++ii ) {
-			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H' ) { //only fix the residues that are not initialized to helix
+			if ( ss[ii-1] == 'H' && dsspSS(ii) != 'H' ) { //only fix the residues that are not initialized to helix
 				pose.set_phi(ii,-57.8);
 				pose.set_phi(ii+repeatRes,-57.8);
 				pose.set_psi(ii,-47.0);
@@ -3753,7 +3758,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 		}
 	} else {
 		for ( Size ii=1; ii<=ss.size(); ++ii ) {
-			if ( ss[ii-1] == 'H' && dsspSS[ii] != 'H' ) {
+			if ( ss[ii-1] == 'H' && dsspSS(ii) != 'H' ) {
 				pose.set_phi(ii,-57.8);
 				pose.set_psi(ii,-47.0);
 				pose.set_omega(ii,180);
@@ -3761,6 +3766,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 			}
 		}
 	}
+
 }
 
 
