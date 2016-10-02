@@ -25,12 +25,6 @@ pdb1lnt_pose()
 	return rna_pose_from_string( pdb1lnt() );
 }
 
-core::pose::PoseOP
-pdb1lnt_poseop()
-{
-	return rna_poseop_from_string( pdb1lnt() );
-}
-
 inline
 std::string
 pdb1lnt()

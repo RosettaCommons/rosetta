@@ -26,6 +26,8 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
+#include <core/scoring/MinimizationData.fwd.hh>
+
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -61,13 +63,28 @@ public:
 
 	virtual
 	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
+	
+	virtual
+	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
+	
 	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
@@ -101,6 +118,28 @@ public:
 		EnergyMap & emap
 	) const;
 
+	void
+	setup_for_minimizing_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData & pair_data
+	) const;
+	
+	void
+	residue_pair_energy_ext(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
+	
 	/// @brief Returns "true" because this energy method has not been updated to
 	/// use the new derivative evaluation machinery.  Note that this class requires
 	/// the definition of this method because it's parent class, FA_ElecEnergy,
@@ -108,14 +147,14 @@ public:
 	/// if this class did not return "true", it would be asked to evaluate derivatives
 	/// in ways it cannot yet evaluate them in.
 	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return true; }
-
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
 
 	/// @brief Jan 10, 2012. Parin Sripakdeevon (sripakpa@stanford.edu)
 	/// Returns "false" to overwrite the behavior in the parent class (FA_ElecEnergy)!
+	/// AMW: changed this so that we do use the extended interface
 	virtual
 	bool
-	use_extended_residue_pair_energy_interface() const { return false; }
+	use_extended_residue_pair_energy_interface() const { return true; }
 
 	virtual
 	void
@@ -139,7 +178,19 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const;
 
-
+	inline
+	Real
+	score_atom_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		Size const at1,
+		Size const at2,
+		EnergyMap & emap,
+		ScoreFunction const & sfxn,
+		Real const cpweight,
+		Real & d2
+	) const;
+	
 	virtual
 	void
 	backbone_backbone_energy(
@@ -178,12 +229,35 @@ public:
 	) const;
 
 	virtual
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+	
+	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
+	bool
+	requires_a_setup_for_minimizing_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
+	
+	//bool
+	//requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
+	
+	//bool
+	//requires_a_setup_for_scoring_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
+	
 public:
 
 	Real
@@ -199,8 +273,9 @@ public:
 	void
 	eval_atom_derivative_RNA(
 		conformation::Residue const & rsd1,
-		Size const & i,
+		Size const i,
 		conformation::Residue const & rsd2,
+		Size const j,
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2

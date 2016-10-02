@@ -234,6 +234,7 @@ sources = {
 		"EnergyGraph",
 		"EnergyMap",
 		"EnvPairPotential",
+		#"FA_Stack",
 		"OmegaTether",
 		"Ramachandran",
 		"Ramachandran_power",

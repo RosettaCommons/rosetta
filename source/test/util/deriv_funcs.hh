@@ -347,7 +347,7 @@ public:
 		for ( int ii = 1; ii <= min_map_->nangles(); ++ii, ++dof_iterator ) {
 
 			TS_ASSERT_DELTA( result.step_data( ii, 1 ).num_deriv(), result.step_data( ii, 1 ).ana_deriv(), tolerance );
-			if ( false ) { /// re-enable to look at all derivatives
+			if ( true ) { /// re-enable to look at all derivatives
 				std::cout << "dof  " << ii << " " << (*dof_iterator)->dof_id() << std::endl;
 				std::cout << "    F1: " << (*dof_iterator)->F1().x() << " " <<
 					(*dof_iterator)->F1().y() << " " <<

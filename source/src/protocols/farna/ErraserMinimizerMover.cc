@@ -1190,10 +1190,14 @@ ErraserMinimizerMover::apply(
 		}
 		pose.constraint_set( cst_set );
 	}
-
+	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
+	
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
 		time_t chunk_start = time(0);
-
+		
+		// Don't retain those dirty constraints from chunk n-1 -- they don't
+		// matter, since those residues can't move!
+		pose.constraint_set( saved_cst_set );
 		std::stringstream outname;
 		outname << "full_minimize_temp_" << chunk_i << ".out";
 		std::ofstream out( outname.str() );
