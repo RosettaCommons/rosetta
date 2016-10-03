@@ -215,6 +215,9 @@ reorder_pose( core::pose::Pose & pose, utility::vector1< core::Size > & res_list
 bool
 just_modeling_RNA( utility::vector1< std::string > const & fasta_files );
 
+void
+setup_for_density_scoring( core::pose::Pose & pose );
+
 } //setup
 } //stepwise
 } //protocols

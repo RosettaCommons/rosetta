@@ -51,7 +51,7 @@ public:
 
 	/// @brief Is a map loaded?
 	bool isMapLoaded() {
-		return is_map_loaded;
+		return is_map_loaded_;
 	};
 
 	/// @brief Load an MRC (="new-CCP4") density map
@@ -63,6 +63,11 @@ public:
 	//Pre-compute the unweighted score of atom in a gride
 	void precompute_unweighted_score();
 
+	//@brief Set is_score_precomputed
+	void is_score_precomputed( bool const & setting ) {
+		is_score_precomputed_ = setting;
+	}
+	
 	//Return the score of a given residue
 	core::Real
 	residue_score( core::conformation::Residue const & rsd );
@@ -75,7 +80,7 @@ private:
 
 	numeric::xyzMatrix<core::Real> f2c, c2f, i2c, c2i;
 
-	bool is_map_loaded, is_score_precomputed;
+	bool is_map_loaded_, is_score_precomputed_;
 
 	core::Real map_reso, cell_volume, r_cell_volume, max_del_grid, grid_spacing, gaussian_max_d, normalization, avg_rho_obs;
 

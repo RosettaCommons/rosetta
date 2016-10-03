@@ -19,6 +19,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
@@ -115,6 +116,8 @@ private:
 	void
 	setup_initial_jump( core::pose::Pose & pose );
 
+	core::conformation::ResidueOP
+  create_residue_to_add( pose::Pose const & pose );
 
 private:
 

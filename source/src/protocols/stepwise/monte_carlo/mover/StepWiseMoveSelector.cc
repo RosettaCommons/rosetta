@@ -321,11 +321,11 @@ StepWiseMoveSelector::select_random_move( pose::Pose const &  ) const {
 Real
 StepWiseMoveSelector::proposal_probability( StepWiseMove const & swa_move ) const {
 	runtime_assert( swa_moves_.size() == proposal_probabilities_.size() );
-	runtime_assert( swa_moves_.has_value( swa_move ) );
 	if ( !swa_moves_.has_value( swa_move ) ) {
 		TR << TR.Red << "WARNING! WARNING! WARNING! swa_moves_.has_value( swa_move ) == false!" << TR.Reset << std::endl;
 		return 1.0;
 	}
+  runtime_assert( swa_moves_.has_value( swa_move ) );
 	return proposal_probabilities_[ swa_moves_.index( swa_move ) ];
 }
 

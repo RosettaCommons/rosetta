@@ -1819,6 +1819,17 @@ DeleteChildProton::apply( ResidueType & rsd ) const {
 }
 
 bool
+VirtualizeAll::apply( ResidueType & rsd ) const {
+	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
+		rsd.set_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
+		rsd.atom( ii ).charge( 0.0 );
+		rsd.atom( ii ).is_virtual( true );
+	}	
+	return false;
+}
+
+bool
 AddConnectAndTrackingVirt::apply( ResidueType & rsd ) const {
 	if ( !rsd.has( atom_ ) ) return true; // failure!
 
@@ -2244,6 +2255,8 @@ patch_operation_from_patch_file_line(
 		//std::string atom1, atom2;
 		//l >> atom1 >> atom2;
 		return PatchOperationOP( new ChiralFlipAtoms );//( atom1, atom2 ) );
+	} else if ( tag == "VIRTUALIZE_ALL" ) {
+		return PatchOperationOP( new VirtualizeAll );//( atom1, atom2 ) );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

@@ -49,7 +49,7 @@ def rosetta_bin_path(exe_file, rosetta_folder = "") :
         exe_folder = rosetta_folder
     check_path_exist(exe_folder)
     # AMW: check for the "no extension" symlink (cmake) first
-    name_extensions = [ ".cxx11.linuxclangrelease", ".linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
+    name_extensions = [ "linuxgccrelease", ".linuxclangrelease", "", ".macosgccrelease", ".macosclangrelease",
                        "failed_to_find_Rosetta_path"] #this makes a better error message if pathing fails
     exe_path = ""
     for name in name_extensions :
@@ -467,7 +467,7 @@ def phenix_rna_validate(input_pdb, outliers_only = True):
     data_headers = {
         # "<header>" : "<type>"
         "Sugar pucker" : "pucker",
-        "Backbone bond lenths" : "bond",
+        "Backbone bond lengths" : "bond",
         "Backbone bond angles" : "angle",
         "Backbone torsion suites" : "suite",
         # legacy format used prior to phenix release 1703
@@ -528,6 +528,7 @@ def find_error_res(input_pdb):
     
     for error_type, output in data.iteritems():
         for cols in output:
+            chn = cols[1]
             res = int( cols[2] )
             if "suite" in error_type:
                 suitename = cols[3]
@@ -535,8 +536,8 @@ def find_error_res(input_pdb):
                 if suitename == "__" or not suiteness < 0.1:
                     continue
                 if res > 1:
-                    error_res.append( res - 1 )
-            error_res.append( res )
+                    error_res.append( "%s:%s" % ( chn, res - 1 ) )
+            error_res.append( "%s:%s" % ( chn, res ) )
     
     error_res = list(set(sorted(error_res)))
     return error_res
@@ -658,10 +659,11 @@ def load_pdb_coord(input_pdb) :
     """
     check_path_exist(input_pdb)
 
+    current_chn = ''
     current_res = ''
-    coord_all = []
+    coord_all = {}
     coord_res = []
-    coord_C1 = []
+    coord_C1 = {}
     for line in open(input_pdb) :
         if len(line) < 22 :
             continue
@@ -669,61 +671,26 @@ def load_pdb_coord(input_pdb) :
             continue
         if line[13] == 'H' or line[12] == 'H' or line[77] == 'H':
             continue
-        res = line[21:27]
-        if res != current_res :
+        chn = line[21]
+        res = line[22:27]
+        crs = "%s:%s" % ( chn, res.strip() )
+
+        if res != current_res or chn != current_chn:
             if current_res != '' :
-                coord_all.append(coord_res)
+                coord_all["%s:%s" % ( current_chn, current_res.strip() )] = coord_res
             current_res = res
+            current_chn = chn
             coord_res = []
 
         coord_cur = [float(line[30:38]), float(line[38:46]), float(line[46:54])]
         coord_res.append(coord_cur)
         if line[13:16] == "C1'" or line[13:16] == 'CA ' :
-            #NOTICE: CA matching is a PHENIX conference rna_prot_erraser hack
-            coord_C1.append( coord_cur )
-    coord_all.append(coord_res)
+            coord_C1[crs] = coord_cur
+    coord_all["%s:%s" % ( current_chn, current_res.strip() ) ] = coord_res
     if len(coord_C1) != len(coord_all) :
         error_exit("Number of residues != number of C1'!!!")
 
     return [coord_all, coord_C1]
-####################################
-def find_nearby_res(input_pdb, input_res, dist_cutoff, reload = True):
-    """
-    Find nearby residues to the input residues by a distance_cutoff.
-    All the residues should be in the same chain with continous numbering starting from 1.
-    """
-    check_path_exist(input_pdb)
-
-    try :
-        coord_all
-        coord_C1
-        if reload:
-            [coord_all, coord_C1] = load_pdb_coord(input_pdb)
-    except :
-        [coord_all, coord_C1] = load_pdb_coord(input_pdb)
-
-    res_list = []
-    for i in input_res:
-        if not i in range(1, len(coord_all) + 1) :
-            error_exit("Input residues outside the range of pdb residues!")
-        for j in range(1, len(coord_all) + 1) :
-            if (j in input_res or j in res_list) : continue
-            dist_C1 = compute_dist( coord_C1[i-1], coord_C1[j-1] )
-            if dist_C1 > dist_cutoff + 8:
-                continue
-            for coord_target_atom in coord_all[i-1] :
-                found_qualifying_atom = False
-                for coord_all_atom in coord_all[j-1] :
-                    dist = compute_dist( coord_target_atom, coord_all_atom)
-                    if dist < dist_cutoff:
-                        res_list.append(j)
-                        found_qualifying_atom = True
-                        break
-                if found_qualifying_atom:
-                    break
-
-    res_list.sort()
-    return res_list
 #############################################################
 def regularize_pdb(input_pdb, out_name) :
     """
@@ -1242,18 +1209,18 @@ def res_wise_rmsd(pdb1, pdb2) :
     coord_pdb1 = load_pdb_coord(pdb1) [0]
     coord_pdb2 = load_pdb_coord(pdb2) [0]
 
-    if len(coord_pdb1) != len(coord_pdb2) :
+    if len(coord_pdb1.items()) != len(coord_pdb2.items()) :
         error_exit("Two pdbs have different # of residues!!!")
 
     res_rmsd_list = []
-    for i in range(0, len(coord_pdb1)) :
-        if len(coord_pdb1[i]) != len(coord_pdb2[i]) :
+    for res, coords in coord_pdb1.iteritems():
+        if len(coord_pdb1[res]) != len(coord_pdb2[res]) :
             error_exit("Residue %s have different # of atoms in the two pdbs!!!" % (i+1) )
         res_rmsd = 0.0
-        for j in range(0, len(coord_pdb1[i])) :
-            res_rmsd += compute_squared_dist(coord_pdb1[i][j], coord_pdb2[i][j])
-        res_rmsd = math.sqrt(res_rmsd / len(coord_pdb1[i]))
-        res_rmsd_list.append([i+1, res_rmsd])
+        for j in range(0, len(coord_pdb1[res])) :
+            res_rmsd += compute_squared_dist(coord_pdb1[res][j], coord_pdb2[res][j])
+        res_rmsd = math.sqrt(res_rmsd / len(coord_pdb1[res]))
+        res_rmsd_list.append([res, res_rmsd])
 
     return res_rmsd_list
 

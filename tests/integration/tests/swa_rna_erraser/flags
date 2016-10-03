@@ -30,3 +30,5 @@
 -s missing_rebuild_res_native.pdb
 -native native_struct.pdb
 -fasta fasta
+# don't renormalize electron density every residue
+-score:pose_sequence_const true

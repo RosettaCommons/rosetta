@@ -26,13 +26,16 @@
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
+#include <fstream>
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMover" );
 
@@ -292,7 +295,7 @@ StepWiseMasterMover::setup_unified_stepwise_modeler(){
 void
 StepWiseMasterMover::initialize_pose_if_empty( pose::Pose & pose ){
 	if ( pose.size() > 0 ) return;
-	runtime_assert( options_->from_scratch_frequency() > 0.0 );
+	runtime_assert( options_->from_scratch_frequency() > 0.0 || options_->mapfile_activated() );
 	add_or_delete_mover_->apply( pose );
 	runtime_assert( pose.size() > 0 );
 }
@@ -345,6 +348,55 @@ StepWiseMasterMover::do_test_move( StepWiseMove const & move,
 	return true;
 }
 
+std::string
+name_from_move( StepWiseMove const & stepwise_move, Pose const & start_pose ) {
+	std::stringstream ss;
+	ss << "seq_rebuild_temp_" 
+	   << start_pose.pdb_info()->chain( stepwise_move.moving_res() ) 
+	   << ':' << start_pose.pdb_info()->number( stepwise_move.moving_res() ) 
+	   << ".out";
+	return ss.str();
+}
+
+/////////////////////////////////////////////////////////
+void
+StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::Pose & output_pose, bool const checkpointing_breadcrumbs ) {
+	using namespace options;
+	output_pose = start_pose;
+	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
+	initialize();
+
+
+	utility::vector1< StepWiseMove > stepwise_moves, internal_moves, terminal_moves;
+	stepwise_move_selector_->get_resample_terminal_move_elements( output_pose, terminal_moves );
+	//stepwise_move_selector_->get_resample_internal_move_elements( output_pose, internal_moves );
+	stepwise_move_selector_->get_resample_internal_local_move_elements( output_pose, internal_moves );
+
+	// get first terminal move
+	if ( terminal_moves.size() >= 1 ) {
+		stepwise_moves.push_back( terminal_moves[1] );
+	}
+	// get internal moves
+	for ( Size n = 1; n <= internal_moves.size(); n++ ) {
+		stepwise_moves.push_back( internal_moves[n] );
+	}
+	// get last terminal residue
+	if ( terminal_moves.size() >= 2 ) {
+		stepwise_moves.push_back( terminal_moves[2] );
+	}
+
+	// do moves in serial
+	for ( Size n = 1; n <= stepwise_moves.size(); n++ ) {
+		StepWiseMove const & stepwise_move = stepwise_moves[ n ];
+		TR.Debug << "Applying Move: " << stepwise_move << "." << std::endl;
+		apply( output_pose, stepwise_move, true /* figure_out_all_possible_moves */ );
+		if ( checkpointing_breadcrumbs ) {
+			std::ofstream out( name_from_move( stepwise_move, start_pose ) );
+			out << "DONE!\n";
+			out.close();
+		}
+	}
+}
 
 /////////////////////////////////////////////////////////
 // Called by build_full_model() in stepwise/monte_carlo/util.cc

@@ -123,9 +123,7 @@ CarbonHBondEnergy::residue_pair_energy(
 	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
-
+) const {
 	Real bb_bb(0.0);
 	Real bb_sc(0.0);
 	Real sc_sc(0.0);
@@ -138,7 +136,6 @@ CarbonHBondEnergy::residue_pair_energy(
 	// store the energies
 	emap[ ch_bond ] += ch_bond_E;
 	// std::cout << "RUNNING SUM: " << rsd1.seqpos() <<  " " << rsd2.seqpos() << " " << ch_bond_E << " " << emap[ ch_bond ] << std::endl;
-
 }
 
 bool
@@ -151,8 +148,7 @@ CarbonHBondEnergy::backbone_backbone_energy(
 	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 	Real ch_bond_E =
 		bb_bb_carbon_hbond_one_way( rsd1, rsd2 ) +
 		bb_bb_carbon_hbond_one_way( rsd2, rsd1 ) ;
@@ -171,8 +167,7 @@ CarbonHBondEnergy::backbone_sidechain_energy(
 	pose::Pose const &,
 	ScoreFunction const &,
 	EnergyMap & emap
-) const
-{
+) const {
 	Real ch_bond_E =
 		bb_sc_carbon_hbond_one_way( rsd1, rsd2 ) +
 		sc_bb_carbon_hbond_one_way( rsd2, rsd1 ) ;
@@ -192,8 +187,7 @@ CarbonHBondEnergy::sidechain_sidechain_energy(
 	pose::Pose const & ,
 	ScoreFunction const & ,
 	EnergyMap & emap
-) const
-{
+) const {
 	Real ch_bond_E =
 		sc_sc_carbon_hbond_one_way( rsd1, rsd2 ) +
 		sc_sc_carbon_hbond_one_way( rsd2, rsd1 ) ;
@@ -213,8 +207,7 @@ CarbonHBondEnergy::path_distance_OK(
 	conformation::Residue const & rsd2,
 	Size const ii,
 	Size const jj
-) const
-{
+) const {
 	Size const & i( rsd1.seqpos() );
 	Size const & j( rsd2.seqpos() );
 	// std::cout << i << " " << j << " " << ii << " " << jj << std::endl;
@@ -237,26 +230,17 @@ CarbonHBondEnergy::res_res_carbon_hbond_one_way(
 	Real & bb_bb,
 	Real & bb_sc,
 	Real & sc_sc
-) const
-{
+) const {
 
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_apolar().begin(),
-			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
-
+	for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(),
-				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
+		for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 			//check here whether is backbone
-			Size const acc_atm( *anum );
 
 			/// square-distance check outside the call to get_atom_atom_carbon_hbond_energy
 			if ( don_rsd.xyz( don_h_atm ).distance_squared( acc_rsd.xyz( acc_atm ) ) > max_dis2_ ) continue;
@@ -285,24 +269,16 @@ Real
 CarbonHBondEnergy::bb_bb_carbon_hbond_one_way(
 	conformation::Residue const & don_rsd,
 	conformation::Residue const & acc_rsd
-) const
-{
+) const {
 
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_apolar().begin(),
-			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 		if ( don_h_atm >= don_rsd.first_sidechain_hydrogen() ) continue;
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(),
-				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-			Size const acc_atm( *anum );
+		for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 			if ( acc_atm > acc_rsd.last_backbone_atom() ) continue;
 
 			/// square-distance check outside the call to get_atom_atom_carbon_hbond_energy
@@ -328,18 +304,11 @@ CarbonHBondEnergy::sc_bb_carbon_hbond_one_way(
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_apolar().begin(),
-			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 		if ( don_h_atm < don_rsd.first_sidechain_hydrogen() ) continue;
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(),
-				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-			Size const acc_atm( *anum );
+		for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 			if ( acc_atm > acc_rsd.last_backbone_atom() ) continue;
 
 			/// square-distance check outside the call to get_atom_atom_carbon_hbond_energy
@@ -359,9 +328,7 @@ Real
 CarbonHBondEnergy::bb_sc_carbon_hbond_one_way(
 	conformation::Residue const & don_rsd, // backbone atoms on donor
 	conformation::Residue const & acc_rsd  // sidechain atoms on acceptor
-) const
-{
-
+) const {
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
@@ -396,9 +363,7 @@ Real
 CarbonHBondEnergy::sc_sc_carbon_hbond_one_way(
 	conformation::Residue const & don_rsd,
 	conformation::Residue const & acc_rsd
-) const
-{
-
+) const {
 	Real res_res_energy( 0.0 ), energy( 0.0 );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
@@ -435,8 +400,7 @@ CarbonHBondEnergy::res_res_carbon_hbond_derivs_one_way(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & don_atom_derivs,
 	utility::vector1< DerivVectorPair > & acc_atom_derivs
-) const
-{
+) const {
 	bool const eval_bbbb( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_bb ] != 0.0 );
 	bool const eval_bbsc( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_sc ] != 0.0 );
 	bool const eval_scsc( weights[ ch_bond ] != 0.0 || weights[ ch_bond_bb_sc ] != 0.0 ); //Mistake on this line? Parin S. (sripakpa@stanford.edu) Jan 11, 2012
@@ -444,10 +408,7 @@ CarbonHBondEnergy::res_res_carbon_hbond_derivs_one_way(
 	bool const eval_sc( eval_bbsc || eval_scsc );
 
 	// Here we go -- cycle through non-polar hydrogens in don_aa, and all acceptors.
-	for ( chemical::AtomIndices::const_iterator
-			hnum  = don_rsd.Hpos_apolar().begin(),
-			hnume = don_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-		Size const don_h_atm( *hnum );
+	for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 		bool const don_h_bb( don_rsd.atom_is_backbone( don_h_atm ) );
 		if ( don_h_bb ) {
 			if ( ! eval_bb ) continue;
@@ -457,11 +418,7 @@ CarbonHBondEnergy::res_res_carbon_hbond_derivs_one_way(
 
 		//  std::cout << "Apolar hydrogen: " << don_rsd.atom_name( don_h_atm ) << " in " <<  don_rsd.name1() << don_rsd.seqpos() << std::endl;
 
-		for ( chemical::AtomIndices::const_iterator
-				anum  = acc_rsd.accpt_pos().begin(),
-				anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-
-			Size const acc_atm( *anum );
+		for ( Size const acc_atm : acc_rsd.accpt_pos() ) {
 			bool const acc_bb( acc_rsd.atom_is_backbone( acc_atm ) );
 
 			/// skip the derivative evaluation if we have a zero weight for the interaction we're examining
@@ -547,9 +504,7 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 	Real & energy,
 	bool const update_deriv /*= false*/,
 	Vector & f2 /*=ZERO_VECTOR*/ // Only computes the force vector between don and acceptor -- calling code must compute f1
-) const
-{
-
+) const {
 	energy = 0.0;
 	f2 = 0.0;
 
@@ -563,9 +518,7 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 	//No virtual atom seem to reach to point, probably becuase virtual_atom is neither Hpos_apolar nor accpt_atom.
 	//But should still have these checks here just to be safe. [Parin S. (sripakpa@stanford.edu) Jan 11, 2012]
 	if ( acc_rsd.is_virtual( acc_atm ) ) return false;
-
 	if ( don_rsd.is_virtual( don_atm ) ) return false;
-
 	if ( don_rsd.is_virtual( don_h_atm) ) return false;
 
 
@@ -620,190 +573,10 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 				" atom "<< acc_rsd.atom_name( acc_atm ) <<
 				" with energy "<< F(8,3,energy) << " [" << F(8,3,H_A_vector.length()) << "]" << std::endl;
 		}
-
 	}
-
 
 	return true;
 }
-
-/* //Unused
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Stupid helper function
-// These should probably live inside conformation::Residue.
-//
-bool
-CarbonHBondEnergy::atom_is_apolar_h( conformation::Residue const & rsd, Size const atm ) const
-{
-for ( chemical::AtomIndices::const_iterator
-hnum  = rsd.Hpos_apolar().begin(),
-hnume = rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-Size const don_h_atm( *hnum );
-if ( don_h_atm == atm ) return true;
-}
-return false;
-}
-//////////////////////////////////////////////////////////////////////////////
-// Stupid helper function
-// These should probably live inside conformation::Residue.
-bool
-CarbonHBondEnergy::atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const
-{
-for ( chemical::AtomIndices::const_iterator
-anum  = rsd.accpt_pos().begin(),
-anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-Size const acc_atm( *anum );
-if ( acc_atm == atm ) return true;
-}
-return false;
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
-/*void
-CarbonHBondEnergy::get_deriv_acceptor(
-conformation::Residue const & current_rsd,
-Size const current_atm,
-conformation::Residue const & other_rsd,
-Vector & F1,
-Vector & F2
-) const
-{
-
-Real dummy_energy( 0.0 );
-Vector f1( 0.0 ), f2( 0.0 );
-for ( chemical::AtomIndices::const_iterator
-anum  = other_rsd.accpt_pos().begin(),
-anume = other_rsd.accpt_pos().end(); anum != anume; ++anum ) {
-Size const acc_atm ( *anum );
-get_atom_atom_carbon_hbond_energy( current_atm, current_rsd,
-acc_atm, other_rsd,
-dummy_energy, true, false, f1, f2 );
-Real w = get_deriv_weight_for_atom_pair( current_rsd, current_atm, other_rsd, acc_atm );
-F1 += w * f1;
-F2 += w * f2;
-}
-}*/
-
-
-//////////////////////////////////////////////////////////////////////////////
-/*void
-CarbonHBondEnergy::get_deriv_donor(
-conformation::Residue const & current_rsd,
-Size const current_atm,
-conformation::Residue const & other_rsd,
-Vector & F1,
-Vector & F2
-) const
-{
-
-Real dummy_energy( 0.0 );
-Vector f1( 0.0 ), f2( 0.0 );
-for ( chemical::AtomIndices::const_iterator
-hnum  = other_rsd.Hpos_apolar().begin(),
-hnume = other_rsd.Hpos_apolar().end(); hnum != hnume; ++hnum ) {
-
-Size const don_h_atm( *hnum );
-
-get_atom_atom_carbon_hbond_energy( don_h_atm, other_rsd,
-current_atm, current_rsd,
-dummy_energy, true, true, f1, f2 );
-Real w = get_deriv_weight_for_atom_pair( current_rsd, current_atm, other_rsd, don_h_atm );
-
-F1 -= w*f1;
-F2 -= w*f2;
-}
-
-}*/
-
-/*Real
-CarbonHBondEnergy::get_deriv_weight_for_atom_pair(
-conformation::Residue const & rsd1,
-Size const at1,
-conformation::Residue const & rsd2,
-Size const at2
-) const
-{
-if ( rsd1.atom_is_backbone( at1 ) ) {
-if ( rsd2.atom_is_backbone( at2 ) ) {
-return wbb_bb_;
-} else {
-return wbb_sc_;
-}
-} else if ( rsd2.atom_is_backbone(at2) ) {
-return wbb_sc_;
-} else {
-return wsc_sc_;
-}
-}*/
-
-
-//////////////////////////////////////////////////////////////////////////////
-// Note that this computes every interaction *twice* -- three times if you
-//  note that the score calculation above does most of the computation already.
-// Oh well -- we currently assume derivative calculation doesn't happen too often!
-//
-/*void
-CarbonHBondEnergy::eval_atom_derivative(
-id::AtomID const & atom_id,
-pose::Pose const & pose,
-kinematics::DomainMap const &,
-ScoreFunction const &,
-EnergyMap const &,
-Vector & F1,
-Vector & F2
-) const
-{
-//  Real energy( 0.0 ); //not actually returned.
-//hbonds::Deriv deriv;
-
-EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-
-Size const i( atom_id.rsd() );
-conformation::Residue const & current_rsd( pose.residue( i ) );
-Size const current_atm( atom_id.atomno() );
-
-//  Size const nres = pose.size();
-//  static bool const update_deriv( true );
-
-Vector f1( 0.0 ),f2( 0.0 ); // Accumulates!
-
-if ( atom_is_apolar_h( current_rsd, current_atm ) ){
-
-// Loop over all potential acceptors in the pose -- go over neighbors.
-for( graph::Graph::EdgeListConstIter
-iter = energy_graph.get_node( i )->const_edge_list_begin();
-iter != energy_graph.get_node( i )->const_edge_list_end();
-++iter ){
-Size j( (*iter)->get_other_ind( i ) );
-get_deriv_acceptor(  current_rsd, current_atm, pose.residue(j), f1, f2 );
-}
-
-//Intra residue...
-get_deriv_acceptor(  current_rsd, current_atm, pose.residue(i), f1, f2 );
-
-} else if ( atom_is_acceptor( current_rsd, current_atm ) ) {
-
-// Loop over all potential carbon hydrogen-bond donors in the pose  -- including within the same residue.
-for( graph::Graph::EdgeListConstIter
-iter = energy_graph.get_node( i )->const_edge_list_begin();
-iter != energy_graph.get_node( i )->const_edge_list_end();
-++iter ){
-Size j( (*iter)->get_other_ind( i ) );
-get_deriv_donor(  current_rsd, current_atm, pose.residue(j), f1, f2 );
-}
-
-//Intra residue...
-get_deriv_donor(  current_rsd, current_atm, pose.residue(i), f1, f2 );
-
-}
-
-
-F1 +=  f1; // already weighted
-F2 +=  f2; // already weighted
-
-}*/
 
 void
 CarbonHBondEnergy::eval_residue_pair_derivatives(
@@ -816,8 +589,7 @@ CarbonHBondEnergy::eval_residue_pair_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
-) const
-{
+) const {
 	res_res_carbon_hbond_derivs_one_way( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
 	res_res_carbon_hbond_derivs_one_way( rsd2, rsd1, weights, r2_atom_derivs, r1_atom_derivs );
 }
@@ -829,8 +601,7 @@ CarbonHBondEnergy::eval_intrares_derivatives(
 	pose::Pose const &,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
-) const
-{
+) const {
 	/// intra-residue carbon hbond derivatives; one call to
 	res_res_carbon_hbond_derivs_one_way( rsd, rsd, weights, atom_derivs, atom_derivs );
 }
@@ -857,9 +628,7 @@ CarbonHBondEnergy::eval_intrares_energy(
 	pose::Pose const & ,
 	ScoreFunction const & ,
 	EnergyMap & emap
-) const
-{
-
+) const {
 	Real bb_bb(0.0);
 	Real bb_sc(0.0);
 	Real sc_sc(0.0);
@@ -870,17 +639,16 @@ CarbonHBondEnergy::eval_intrares_energy(
 	emap[ ch_bond_sc_sc ] += sc_sc;
 
 	// std::cout << "INTRARES" << rsd.seqpos() << " " << res_energy << " " << emap[ch_bond] << std::endl;
-
 }
 
 /// @brief CarbonHBondEnergy is not context sensitive
 void
 CarbonHBondEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /*context_graphs_required*/
-) const
-{
+) const {
 	/*nothing*/
 }
+
 core::Size
 CarbonHBondEnergy::version() const
 {

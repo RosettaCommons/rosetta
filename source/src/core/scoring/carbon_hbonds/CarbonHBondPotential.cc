@@ -168,9 +168,7 @@ CarbonHBondPotential::get_potential_RNA(
 	Vector const & z_i /*unit vector pointing from donor to its connected hydrogen*/,
 	bool const & update_deriv,
 	Vector & deriv_vector
-) const
-{
-
+) const {
 	Real const r = r_vec.length();
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
@@ -206,11 +204,9 @@ CarbonHBondPotential::get_potential_RNA(
 		Real const dEdz = dEdr * (z/r) + ( r*r - z*z) * dEdcoskappa / (r * r * r);
 
 		deriv_vector = dEdx * x_i + dEdz * z_i;
-
 	}
 
 	return score;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -222,8 +218,7 @@ CarbonHBondPotential::get_potential(
 	Vector const & B_A_vector,
 	bool calculate_deriv,
 	Vector & deriv_vector
-) const
-{
+) const {
 	deriv_vector = 0.;
 
 	Real dist_H_A = H_A_vector.length();
@@ -308,8 +303,7 @@ CarbonHBondPotential::get_potential(
 	Vector const & H_A_vector, //vector of hydrogen to acceptor
 	Vector const & D_H_vector, //vector of donor hv atom to hydrogen
 	Vector const & B_A_vector //vector of acceptor's base atom to acceptor
-) const
-{
+) const {
 	Vector deriv_vector;
 	return get_potential(atom_type_index, H_A_vector, D_H_vector, B_A_vector, false, deriv_vector);
 }

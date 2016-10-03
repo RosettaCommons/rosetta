@@ -252,6 +252,10 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) ) {
 				// One or more residues in this LINK is not recognized.  Move on!
 				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
+			} else if ( ( link.resSeq1 == link.resSeq2 - 1 && link.name1 == " O3'" && link.name2 == " P  " )
+					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == " P  " && link.name2 == " O3'" ) ) {
+				// We have a normal polymeric connection written as a LINK.
+				TR.Debug << "Omitting LINK record that represents the canonical polymeric connectivity of a NCNT." << std::endl;
 			} else if ( ( link.resSeq1 == link.resSeq2 - 1 && link.name1 == " C  " && link.name2 == " N  " )
 					||  ( link.resSeq1 == link.resSeq2 + 1 && link.name1 == " N  " && link.name2 == " C  " ) ) {
 				// We have a normal polymeric connection written as a LINK.

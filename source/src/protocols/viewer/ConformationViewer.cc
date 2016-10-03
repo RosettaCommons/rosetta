@@ -121,7 +121,8 @@ ConformationViewer::display_func()
 
 	Vector const center_vector = center_vector_defined_ ? center_vector_ : residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() );
 
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && false) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && 
+		 basic::options::option[ basic::options::OptionKeys::edensity::render_density ]() ) {
 
 		const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
 		runtime_assert ( edm.isMapLoaded() );

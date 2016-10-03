@@ -479,6 +479,12 @@ get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
 	for ( Size i = 1; i <= res_list.size(); i++ ) {
 		Size const i_full = res_list[ i ];
 		Size const & domain = input_domain_map[ i_full ];
+
+    // calebgeniesse: do not consider virt roots, required for electron density scoring
+    if ( pose.residue( full_to_sub( i_full, pose ) ).is_virtual_residue() ) {
+		  continue;
+    }
+
 		if ( domain == 0 ) {
 			// single residues
 			move_elements.push_back( utility::tools::make_vector1( i_full ) );

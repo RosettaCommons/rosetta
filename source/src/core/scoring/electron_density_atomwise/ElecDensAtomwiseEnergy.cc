@@ -19,6 +19,7 @@
 // Package headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -87,7 +88,7 @@ methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 void
 ElecDensAtomwiseEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	ScoreFunction const & sfxn
 ) const {
 	using namespace methods;
 
@@ -130,8 +131,17 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 		LREnergyContainerOP new_dec( new OneToAllEnergyContainer (
 			virt_res_idx, pose.size(),  elec_dens_atomwise ) );
 		energies.set_long_range_container ( lr_type, new_dec );
-	}
+		get_density_map().is_score_precomputed( false );
+	} else {
 
+		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
+	  //                for now, just always recompute
+		get_density_map().is_score_precomputed( sfxn.energy_method_options().pose_sequence_const() );
+		// AMW; I think the above argument is actually fine, certainly for the resampling case
+		// Maybe we should have a flag guarantee_pose_sequence_constant === no renormalization
+		// could possibly be needed
+		// amw ok I did that
+	}
 	//Pre-calculate the normalization factor and the correlation per
 	//atom
 	get_density_map().compute_normalization( pose );

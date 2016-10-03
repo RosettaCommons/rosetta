@@ -77,9 +77,6 @@ public:
 	void set_global_optimize( bool const & setting ){ global_optimize_ = setting; }
 	bool global_optimize() const{ return global_optimize_; }
 
-	void set_mapfile_activated( bool const & setting ){ mapfile_activated_ = setting; }
-	bool mapfile_activated() const{ return mapfile_activated_; }
-
 	void set_sample_beta( bool const & setting ){ sample_beta_ = setting; }
 	bool sample_beta() const{ return sample_beta_; }
 
@@ -151,7 +148,6 @@ protected:
 private:
 
 	bool global_optimize_;
-	bool mapfile_activated_;
 	bool sample_beta_;
 	bool move_jumps_between_chains_;
 	bool disable_sampling_of_loop_takeoff_;

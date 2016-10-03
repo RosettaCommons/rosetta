@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -79,8 +80,8 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.El
 
 /// null constructor
 ElectronDensityAtomwise::ElectronDensityAtomwise() {
-	is_map_loaded = false;
-	is_score_precomputed = false;
+	is_map_loaded_ = false;
+	is_score_precomputed_ = false;
 	grid = numeric::xyzVector< int >( 0, 0, 0 );
 	orig = numeric::xyzVector< int >( 0, 0, 0 );
 	cell_dimensions = numeric::xyzVector< float >( 1, 1, 1 );
@@ -663,7 +664,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	max_del_grid = std::max( cell_dimensions[0] / ( ( double ) grid[0] ) , cell_dimensions[1] / ( ( double ) grid[1] ) );
 	max_del_grid = std::max( max_del_grid , cell_dimensions[2] / ( ( double ) grid[2] ) );
 	calculate_index2cart();
-	is_map_loaded = true;
+	is_map_loaded_ = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -859,7 +860,8 @@ ElectronDensityAtomwise::trilinear_gradient(
 core::Real
 ElectronDensityAtomwise::spline_interpolation(
 	ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector< core::Real > const & idxX ) const {
+	numeric::xyzVector< core::Real > const & idxX 
+) const {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = {idxX[2], idxX[1], idxX[0]};
 	core::Real retval = core::scoring::electron_density::SplineInterp::interp3( &coeffs[0], dims, pt );
@@ -876,8 +878,9 @@ ElectronDensityAtomwise::spline_coeffs( ObjexxFCL::FArray3D< double > & data ,
 //////////////////////////////////////////////////////////////////
 //Compute Normalization factor given a pose
 void
-ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
-	if ( is_score_precomputed ) return;
+ElectronDensityAtomwise::compute_normalization ( pose::Pose const & pose ) {
+	if ( is_score_precomputed_ ) return;
+	atom_weight_stored.clear();
 
 	//rho_calc_array initialization
 	ObjexxFCL::FArray3D< double >  rho_calc_array;
@@ -999,16 +1002,17 @@ ElectronDensityAtomwise::compute_normalization( pose::Pose const & pose ) {
 	//Per atom energy = normalization * ( sum(rho_atom*rho_obs) - sum(rho_atom) * avg_rho_obs )
 	normalization = - ( ( double ) sum_weight ) / ( sqrt( sum_rho_calc_square - sum_rho_calc * sum_rho_calc / n_grid_points ) * sqrt( sum_rho_obs_square - sum_rho_obs * sum_rho_obs / n_grid_points ) );
 	avg_rho_obs = sum_rho_obs / n_grid_points;
-	TR << "RSCC of starting pose = " << rscc << std::endl;
-	TR << "Score of starting pose = " << -( rscc * sum_weight ) << std::endl;
-	TR << "normalization factor = " << normalization << std::endl;
-	TR << "avg_rho_obs = " << avg_rho_obs << std::endl;
+
+	TR.Debug << "RSCC of starting pose = " << rscc << std::endl;
+	TR.Debug << "Score of starting pose = " << -( rscc * sum_weight ) << std::endl;
+	TR.Debug << "normalization factor = " << normalization << std::endl;
+	TR.Debug << "avg_rho_obs = " << avg_rho_obs << std::endl;
 }
 
 //Pre-compute the unweighted score of atom in a grid
 void
 ElectronDensityAtomwise::precompute_unweighted_score() {
-	if ( is_score_precomputed ) return;
+	if ( is_score_precomputed_ ) return;
 
 	ObjexxFCL::FArray3D< double > unweighted_score;
 	ObjexxFCL::FArray3D< std::complex<double> > density_transformed,
@@ -1075,7 +1079,10 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 		cplx_density[i] = ( double ) density[i];
 	}
 
-	density.clear();
+	// calebgeniesse: cannot recompute normalization if this is cleared,
+	//                and no obvious reason that it needs to be cleared.
+	//density.clear();
+
 	numeric::fourier::fft3_dynamic( cplx_density, density_transformed );
 	cplx_density.clear();
 
@@ -1098,7 +1105,7 @@ ElectronDensityAtomwise::precompute_unweighted_score() {
 	//compute spline coefficient for interpolation
 	spline_coeffs( unweighted_score, unweighted_score_coeff );
 	unweighted_score.clear();
-	is_score_precomputed = true;
+	is_score_precomputed_ = true;
 }
 
 ///////////////////////////////////////////////////////////////////////

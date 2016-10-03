@@ -48,11 +48,23 @@ get_minimize_scorefxn( core::pose::Pose const & pose,
 		// this will exit with error if coordinate_constraints are not turned on
 		check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	}
-	// minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
-	minimize_scorefxn->set_weight( linear_chainbreak, 5.0 ); // unify with RNA.
 	if ( options->turn_off_rna_chem_map_during_optimize() )  minimize_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
 	if ( options->cart_min() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
-	if ( options->mapfile_activated() && minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+	if ( options->mapfile_activated() ) {
+    if ( minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
+      minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+		}
+    if ( minimize_scorefxn->get_weight( linear_chainbreak ) == 0.0 ) {
+      minimize_scorefxn->set_weight( linear_chainbreak, 100.0 );
+		}
+    if ( minimize_scorefxn->get_weight( chainbreak ) == 0.0 ) {
+      minimize_scorefxn->set_weight( chainbreak, 40.0 );
+		}
+  } else {
+	  // minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
+	  minimize_scorefxn->set_weight( linear_chainbreak, 5.0 ); // unify with RNA.
+  }
+
 	return minimize_scorefxn;
 }
 
@@ -73,15 +85,33 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 		if ( !options->lores() ) {
 			sample_scorefxn->set_weight( fa_rep, 0.12 ); // from RNA.
 		}
-		sample_scorefxn->set_weight( linear_chainbreak, 0.0 ); // from RNA.
-		sample_scorefxn->set_weight( chainbreak, 0.0 ); // from RNA.
-		/////////////////////////////////////////////////////
+		if ( options->mapfile_activated() ) {
+      if ( sample_scorefxn->get_weight( linear_chainbreak ) == 0.0 ) {
+		    sample_scorefxn->set_weight( linear_chainbreak, 100.0 );
+			}
+      if ( sample_scorefxn->get_weight( chainbreak ) == 0.0 ) {
+	  	  sample_scorefxn->set_weight( chainbreak, 40.0 );
+			}
+    } else {
+		  sample_scorefxn->set_weight( linear_chainbreak, 0.0 ); // from RNA.
+	  	sample_scorefxn->set_weight( chainbreak, 0.0 ); // from RNA.
+		}
+  /////////////////////////////////////////////////////
 	} else { // this used to happen for proteins -- may decide to deprecate.
 		sample_scorefxn = ScoreFunctionFactory::create_score_function( sample_weights );
 		check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, sample_scorefxn );
-		sample_scorefxn->set_weight( linear_chainbreak, 0.2 /*arbitrary*/ ); // will cause problem with RNA?!
-		if ( options->mapfile_activated()  && sample_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
-			sample_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+		if ( options->mapfile_activated() ) {
+      if ( sample_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) {
+        sample_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+			}
+      if ( sample_scorefxn->get_weight( linear_chainbreak ) == 0.0 ) {
+        sample_scorefxn->set_weight( linear_chainbreak, 100.0 );
+			}
+      if ( sample_scorefxn->get_weight( chainbreak ) == 0.0 ) {
+        sample_scorefxn->set_weight( chainbreak, 40.0 );
+			}
+		} else {
+      sample_scorefxn->set_weight( linear_chainbreak, 0.2 /*arbitrary*/ ); // will cause problem with RNA?!
 		}
 	}
 	if ( options->turn_off_rna_chem_map_during_optimize() )  sample_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...

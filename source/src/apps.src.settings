@@ -251,6 +251,7 @@ sources = {
 	],
 	"public/stepwise/": [
 		"stepwise",
+		"resample_full_model",
 	],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",

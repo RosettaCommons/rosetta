@@ -1421,6 +1421,7 @@ Options = Option_Group( '',
 		Option( 'just_calc_rmsd', "Boolean", desc="In rna_score, just calculate rmsd -- do not replace score.", default='false' ),
 		Option( 'envsmooth_zero_negatives', "Boolean", desc="use alternative envsmooth table with a floor of 0.0 (envsmooth awards no energy bonus)", default='false' ),
 		Option( 'rama_power', 'Real', desc='If rama > 0.0, raise to the nth power.  This has been useful for Foldit design.  Note that this creates derivative discontinuities, so it should be used with caution!  If not specified, the default rama behaviour (no power function) is preserved.', default='1.0' ),
+		Option( 'pose_sequence_const', 'Boolean', desc='Guarantees that the pose being studied will not change sequence over the lifetime of the EnergyMethods in question. Allows a major optimization: you only have to initialize large electron density maps once.', default='false'),
 		Option_Group( 'saxs',
 			Option('min_score', 'Real', desc="minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum", default='-5' ),
 			Option( 'custom_ff', 'String',desc="Name of config file providing extra from factors",default=""),
@@ -4996,6 +4997,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'n_kbins', 'Integer', default = '1', desc='Number of B-factor bins'),
 #		Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
 		Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
+		Option( 'render_density', 'Boolean', default = 'false', desc='render electron density in graphics mode build'),
 	), # -edensity
 
 	## options for enzyme design

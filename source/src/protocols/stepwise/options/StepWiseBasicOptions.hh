@@ -112,6 +112,9 @@ public:
 	void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 	bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
 
+	bool mapfile_activated() const { return mapfile_activated_; }
+	void set_mapfile_activated( bool const & setting ){ mapfile_activated_ = setting; }
+
 	void set_lores( bool const & setting ){ lores_ = setting; }
 	bool lores() const{ return lores_; }
 
@@ -167,6 +170,7 @@ private:
 	bool minimize_waters_;
 	bool hydrate_magnesiums_;
 	bool test_all_mg_hydration_frames_;
+	bool mapfile_activated_;
 
 	modeler::MinimizerMode minimizer_mode_;
 	Size n_cycles_;

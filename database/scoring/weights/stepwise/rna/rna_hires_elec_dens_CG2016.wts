@@ -1,0 +1,23 @@
+NO_HB_ENV_DEP
+fa_atr			        0.23
+fa_rep      		        4.0
+fa_intra_rep 		        0.8
+rna_torsion     	       55.0
+rna_sugar_close 	       10.0
+hbond_sr_bb_sc  	       10.0
+hbond_lr_bb_sc  	       40.0
+hbond_sc        	       40.0
+geom_sol_fast        	        0.768
+ch_bond        			0.42
+lk_nonpolar     		0.32
+fa_elec_rna_phos_phos    	1.05
+fa_stack        		1.0
+elec_dens_atomwise         	5.0
+rna_bond_geometry               8.0
+angle_constraint 		1.0
+dihedral_constraint 	       50.0
+atom_pair_constraint       	1.0
+rna_bulge                  	1.0
+chainbreak      	       40.00
+linear_chainbreak      	      500.00
+free_2HOprime 			1.0

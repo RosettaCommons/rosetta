@@ -1881,6 +1881,20 @@ display_density(
 	glDisable(GL_LIGHTING);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::ResidueCOP > const & residues ) {
+	Size nres( 0 );
+	for ( Size n = 1; n <= residues.size(); n++ ) {
+		if ( residues[ n ]->is_protein() || residues[ n ]->is_NA() ) {
+			nres++;
+		}
+	}
+	if ( nres == 0 ) nres = 1;
+	gs.nres_for_graphics = nres;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 draw_conformation_and_density(
 	utility::vector1< core::conformation::ResidueCOP > const & residues,
@@ -1936,9 +1950,35 @@ draw_conformation_and_density(
 		glPushMatrix();
 		glTranslatef(-center.x(), -center.y(), -center.z());
 
-		draw_backbone( gs, residues, ss );
-		draw_sidechains( gs, residues, 1, total_residue );
-		draw_sphere( gs, residues, SPHERE_MODE_LIGAND );
+		utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere;
+		for ( Size n = 1; n <= residues.size(); n++ ) {
+			conformation::ResidueCOP rsd = residues[ n ];
+			if ( rsd->is_protein() ) {
+				residues_protein.push_back( rsd );
+			} else if ( rsd->is_metal() ) {
+				residues_sphere.push_back( rsd );
+			} else {
+				other_residues.push_back( rsd );
+			}
+		}
+
+		fill_nres_for_graphics( gs, residues );
+		if  ( residues_protein.size() > 0 ) {
+			draw_backbone( gs, residues_protein, ss );
+			draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
+			draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
+		}
+
+		if ( other_residues.size() > 0 ) {
+			ColorMode colormode_save = gs.Color_mode;
+			gs.Color_mode = RHIJU_COLOR;
+			display_residues_wireframe( gs, other_residues, Vector( 0.0, 0.0, 0.0) );
+			gs.Color_mode = colormode_save;
+		}
+
+		//draw_backbone( gs, residues, ss );
+		//draw_sidechains( gs, residues, 1, total_residue );
+		//draw_sphere( gs, residues, SPHERE_MODE_LIGAND );
 
 		render_density( gs, triangles );  // renders "on-demand" depending on gs object
 		display_density( gs, triangles );
@@ -1949,18 +1989,6 @@ draw_conformation_and_density(
 	//glDisable(GL_LIGHT1);// Turn lighting off
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::ResidueCOP > const & residues ) {
-	Size nres( 0 );
-	for ( Size n = 1; n <= residues.size(); n++ ) {
-		if ( residues[ n ]->is_protein() || residues[ n ]->is_NA() ) {
-			nres++;
-		}
-	}
-	if ( nres == 0 ) nres = 1;
-	gs.nres_for_graphics = nres;
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

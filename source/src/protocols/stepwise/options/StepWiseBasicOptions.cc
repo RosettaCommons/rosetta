@@ -20,6 +20,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -69,6 +70,7 @@ StepWiseBasicOptions::initialize_variables(){
 	vary_rna_bond_geometry_ = false;
 	vary_polar_hydrogen_geometry_ = false;
 	use_packer_instead_of_rotamer_trials_ = false;
+	mapfile_activated_ = false;
 	lores_ = false;
 	verbose_sampler_ = false;
 	minimize_waters_ = false;
@@ -105,6 +107,8 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
 	output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
 	output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();
+	mapfile_activated_ = option[ basic::options::OptionKeys::edensity::mapfile ].user();
+
 	lores_ = option[ basic::options::OptionKeys::stepwise::lores ]();
 	verbose_sampler_ = option[ basic::options::OptionKeys::stepwise::verbose_sampler ]();
 	minimize_waters_ = option[ basic::options::OptionKeys::stepwise::minimize_waters ]();

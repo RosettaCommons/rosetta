@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/util.hh> // for reroot
 #include <protocols/stepwise/modeler/rna/util.hh> // for virtualize_free_rna_moieties
 #include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh> // for fill_vdw_cached_rep_screen_info_from_command_line
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
@@ -38,6 +39,7 @@
 #include <core/sequence/util.hh>
 #include <utility/stream_util.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/tools/make_vector1.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -45,6 +47,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
@@ -464,6 +467,15 @@ get_sequence_information( std::string const & fasta_file,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
+
+	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
+	if ( option[ edensity::mapfile ].user() ) {
+		// update fasta_sequences accordingly
+		Size idx = fasta_sequences.size();
+		fasta_sequences[idx]->append_char('X');
+		fasta_sequences[idx]->id( fasta_sequences[idx]->id() + " z:1" );
+	}
+
 	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
@@ -499,6 +511,14 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	FullModelParametersOP full_model_parameters = get_sequence_information( fasta_file, cutpoint_open_in_full_model );
 	std::string const & desired_sequence = full_model_parameters->full_sequence();
 
+	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
+	if ( option[ edensity::mapfile ].user() ) {
+		// update pose
+		if ( pose_pointers[1]->total_residue() > 0 ) {
+			setup_for_density_scoring( *pose_pointers[1] );
+		}
+	}
+
 	if ( option[ full_model::cutpoint_open ].user() ) {
 		cutpoint_open_in_full_model =
 			full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
@@ -530,6 +550,16 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		full_model_parameters->conventional_to_full( option[ full_model::virtual_sugar_res ].resnum_and_chain() );
 	update_jump_res( jump_res, extra_minimize_jump_res );
 
+	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
+	if ( option[ edensity::mapfile ].user() ) {
+		preferred_root_res = full_model_parameters->conventional_to_full( 
+			std::make_pair( 
+				utility::tools::make_vector1< int >(1), 
+				utility::tools::make_vector1< char >('z')
+			) 
+		);
+	}
+
 	// Figure out res_list and input_domain_map.
 	vector1< vector1< Size > > pose_res_lists;
 	std::string const clean_desired_seq = core::pose::rna::remove_bracketed( desired_sequence );
@@ -545,8 +575,23 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		}
 	}
 
+	// calebgeniesse: override input_domain_map if mapfile provided via cmd-line (hacky)
+	if ( desired_sequence[desired_sequence.size()-1] == 'X' ) {
+		input_domain_map[desired_sequence.size()] = 1;// input_domain_map.size() ? max(input_domain_map) + 1 : 1; // or just 1?
+	}
+
 	if ( option[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res, terminal_res, working_res, input_domain_map, cutpoint_open_in_full_model );
 	add_block_stack_variants( pose_pointers, pose_res_lists, block_stack_above_res, block_stack_below_res );
+
+	// calebgeniesse: hacky way of making sure virt root is not included in terminal_res/extra_minimize_res
+	if ( desired_sequence[desired_sequence.size()-1] == 'X' ) {
+		if ( terminal_res.has_value( desired_sequence.size() ) ){
+			terminal_res.erase( std::remove(terminal_res.begin(), terminal_res.end(), desired_sequence.size()), terminal_res.end());
+		}
+		if ( extra_minimize_res.has_value( desired_sequence.size() ) ){
+			extra_minimize_res.erase( std::remove(extra_minimize_res.begin(), extra_minimize_res.end(), desired_sequence.size()), extra_minimize_res.end());
+		}  
+	}
 
 	// everything that is not fixed is sampleable (unless -sample_res explicitly specified).
 	if ( sample_res.size() == 0 )  sample_res  = figure_out_sample_res( input_domain_map, working_res );
@@ -1292,6 +1337,15 @@ just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
 	std::string sequence = core::sequence::read_fasta_file_return_str( fasta_files[1] );
 	parse_out_non_standard_residues( sequence );
 	return ( modeler::rna::just_modeling_RNA( sequence ) );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//calebgeniesse: setup for density scoring
+void
+setup_for_density_scoring( core::pose::Pose & pose ) {
+	// add virtual root for density scoring
+  TR << "Adding virtual residue as root" << std::endl;
+  pose::addVirtualResAsRoot( pose );
 }
 
 } //setup

@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -16,7 +17,6 @@
 #include <protocols/stepwise/modeler/options/StepWiseProteinModelerOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -62,7 +62,6 @@ void
 StepWiseProteinModelerOptions::initialize_variables(){
 
 	global_optimize_ = false;
-	mapfile_activated_ = false;
 	sample_beta_ = false;
 	move_jumps_between_chains_ = false;
 	disable_sampling_of_loop_takeoff_ = false;
@@ -96,7 +95,6 @@ void
 StepWiseProteinModelerOptions::initialize_from_command_line(){
 
 	global_optimize_ = option[ basic::options::OptionKeys::stepwise::protein::global_optimize ]();
-	mapfile_activated_ = option[edensity::mapfile].user();
 	sample_beta_ = option[ basic::options::OptionKeys::stepwise::protein::sample_beta ]();
 	move_jumps_between_chains_ = option[ basic::options::OptionKeys::stepwise::protein::move_jumps_between_chains ]();
 	disable_sampling_of_loop_takeoff_ = option[ basic::options::OptionKeys::stepwise::protein::disable_sampling_of_loop_takeoff ]();

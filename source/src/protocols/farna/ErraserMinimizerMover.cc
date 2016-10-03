@@ -224,14 +224,16 @@ void ErraserMinimizerMover::initialize_from_options() {
 	std::copy( option[ fixed_res ].value().begin(), option[ fixed_res ].value().end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
 	cutpoint_list_ = option[ full_model::cutpoint_open ].value();
 
-	//Setup score function.
-	std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
-	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
-		TR << "User passed in score:weight option: " << score_weight_file << std::endl;
+	if ( !ready_set_only_ ) {
+		//Setup score function.
+		std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
+		if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
+			score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
+			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
+		}
+		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
+		edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 	}
-	scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
-	edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 }
 
 void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
@@ -251,6 +253,17 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 
 	cutpoint_list_ = string_to_size_vector( tag->getOption< std::string >( "cutpoint_list", "" ) );
 	output_pdb_name_ = tag->getOption< std::string >( "output_pdb_name", output_pdb_name_ );
+	
+	if ( !ready_set_only_ ) {
+		//Setup score function.
+		std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
+		if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
+			score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
+			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
+		}
+		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
+		edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
+	}
 }
 
 bool
@@ -526,6 +539,11 @@ ErraserMinimizerMover::vary_bond_geometry(
 	TR << "]" << std::endl;
 	// First, set appropriate DOFs to move in the movemap, mm
 	for ( Size i = 1; i <= nres; ++i )  {
+
+		// Don't do anything for protein residues, because we don't have them as ideals.
+		// In the future, apply cart_bonded.
+		if ( pose.residue_type( i ).is_protein() ) continue;
+
 		if ( chunk.find( i ) == chunk.end() ) continue;
 		if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue; //FCC
 		if ( !allow_insert( i ) ) continue;
@@ -572,6 +590,10 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 	// Next, build lists on bonds and bond angles and restrain them to present values.
 	for ( Size i = 1; i <= nres; i++ )  {
+		// Don't do anything for protein residues, because we don't have them as ideals.
+		// In the future, apply cart_bonded.
+		if ( pose.residue_type( i ).is_protein() ) continue;
+		
 		if ( chunk.find( i ) == chunk.end() ) continue;
 		if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue; //FCC
 		if ( !allow_insert( i ) ) continue;
@@ -587,6 +609,10 @@ ErraserMinimizerMover::vary_bond_geometry(
 			// Constrain all mobile bond lengths.
 			for ( auto const & nbr : nbrs ) {
 				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
+				// Don't do anything for protein residues, because we don't have them as ideals.
+				// In the future, apply cart_bonded.
+				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
+				
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 				Size const k( nbr.atomno() );
 
@@ -600,12 +626,20 @@ ErraserMinimizerMover::vary_bond_geometry(
 			// Bond angles
 			for ( auto const & nbr : nbrs ) {
 				if ( nbr.rsd() > nres || nbr.rsd() < 1 ) continue;
+				// Don't do anything for protein residues, because we don't have them as ideals.
+				// In the future, apply cart_bonded.
+				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
+				
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 
 				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
 				Size const & k( nbr.atomno() ) ;
 
 				for ( auto const & ang_nbr : nbrs ) {
+					// Don't do anything for protein residues, because we don't have them as ideals.
+					// In the future, apply cart_bonded.
+					if ( pose.residue_type( ang_nbr.rsd() ).is_protein() ) continue;
+				
 					if ( ang_nbr.rsd() > nres || ang_nbr.rsd() < 1 ) continue;
 					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr.rsd() ) );
 
@@ -621,6 +655,10 @@ ErraserMinimizerMover::vary_bond_geometry(
 				utility::vector1< AtomID > nbrs2( pose.conformation().bonded_neighbor_all_res( nbr ) );
 
 				for ( auto const & nbr2 : nbrs2 ) {
+					// Don't do anything for protein residues, because we don't have them as ideals.
+					// In the future, apply cart_bonded.
+					if ( pose.residue_type( nbr2.rsd() ).is_protein() ) continue;
+				
 					if ( nbr2.rsd() > nres || nbr2.rsd() < 1 ) break;
 					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2.rsd() ) );
 
@@ -763,33 +801,48 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 	pose.constraint_set( cst_set );
 }
 
+template< typename T >
+void remove_set1_elements_from_set2( 
+	std::set< T > const & set1,
+	std::set< T > & set2
+) {
+	for ( auto it = set1.begin(); it != set1.end(); ++it ) {
+		set2.erase( set2.find( *it ) );
+	}
+}
+
 void
 fill_gaps_and_remove_isolated_res(
 	std::set< Size > & res_list,
 	Size const total_res,
 	std::set< Size > & res_remove
 ) {
+	TR << "Fill gaps and remove isolated res " << std::endl;
+
 	// res_list is sorted
 	if ( *std::next(res_list.begin()) - *res_list.begin() != 1 ) {
 		res_remove.insert( *res_list.begin() );
 	}
-	for ( std::set< Size >::const_iterator it = std::next(res_list.begin()); it != std::prev(res_list.end()); ++it ) {
+	TR << "Fill gaps and remove isolated res " << std::endl;
+
+	for ( auto it = std::next(res_list.begin()); it != std::prev(res_list.end()); ++it ) {
 		if ( *std::next(it) - *it != 1 && *it - *std::prev(it) != 1 ) {
 			res_remove.insert( *it );
 		}
 	}
+	TR << "Fill gaps and remove isolated res " << std::endl;
 	if ( *std::prev(res_list.end()) - *std::prev(res_list.end(),2) != 1 ) {
 		res_remove.insert( *std::prev(res_list.end()) );
 	}
 
+	TR << "Fill gaps and remove isolated res " << std::endl;
+
 	// remove res in res_remove from res_list
-	for ( std::set< Size >::const_iterator it = res_remove.begin(); it != res_remove.end(); ++it ) {
-		res_list.erase( res_list.find( *it ) );
-	}
+	remove_set1_elements_from_set2( res_remove, res_list );
 
 	// add some new residues
 	std::set< Size > new_res;
-	for ( std::set< Size >::const_iterator it = res_list.begin(); it != std::prev(res_list.end()); ++it ) {
+	for ( auto it = res_list.begin(); it != std::prev(res_list.end()); ++it ) {
 		Size const gap = *std::next(it) - *it;
 		// fill in gaps of length less than four
 		if ( gap > 1 && gap <= 4 ) {
@@ -798,6 +851,9 @@ fill_gaps_and_remove_isolated_res(
 			}
 		}
 	}
+	
+	TR << "Fill gaps and remove isolated res " << std::endl;
+
 	Size const gap = total_res - *std::prev(res_list.end());
 	if ( gap > 0 && gap <= 4 ) {
 		for ( Size n = *std::prev(res_list.end()) + 1; n <= total_res; ++n ) {
@@ -866,22 +922,39 @@ erase_if_in_any_slice( utility::vector1< std::set< Size > > const & res_list_sli
 	}
 }
 
+void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::set< Size > > const & res_list_sliced ) {	
+	std::set< Size > clean_res_list_new;
+	for ( auto const & res_list : res_list_sliced ) {
+		std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
+		TR << "cleanres_list_new: [ ";
+		for ( auto const elem : clean_res_list_new ) TR << elem << " ";
+		TR << "]" << std::endl;
+		res_list_new = clean_res_list_new;
+		clean_res_list_new.clear();
+	}
+}
+
+
 void
 identify_chunks(
 	Pose const & pose,
-	utility::vector1< std::set< Size > > & sliced_list_final
+	utility::vector1< std::set< Size > > & sliced_list_final,
+	Size const virtual_res_pos
 ) {
 	TR << "Identifying chunks..." << std::endl;
-	Size const total_res = pose.total_residue();
+	Size const total_res = pose.size() - 1;
 	if ( total_res <= 150 ) {
 		// All in one.
 		std::set< Size > res_set;
-		for ( Size i = 1; i <= total_res; ++i ) res_set.insert( i );
+		for ( Size i = 1; i <= total_res; ++i ) {
+			if ( i != virtual_res_pos ) res_set.insert( i );
+		}
 		sliced_list_final.push_back( res_set );
 		return;
 	}
+
 	TR << "Found " << total_res << " residues." << std::endl;
-	Size const n_chunk = pose.total_residue() / 100;
+	Size const n_chunk = pose.size() / 100;
 	Size n_chunk_left = n_chunk;
 	Size chunk_size = 0;
 	std::set< Size > res_list_unsliced;
@@ -890,39 +963,39 @@ identify_chunks(
 	utility::vector1< std::set< Size > > res_list_sliced;
 	std::set< Size > res_list_current;
 	while ( res_list_unsliced.size() != 0 ) {
+		TR << "Unsliced: " << res_list_unsliced.size() << std::endl;
+		TR << "Current:  " << res_list_current.size() << std::endl;
+		for ( auto const & sl : sliced_list_final ) {
+			TR << "One slice:  " << sl.size() << std::endl;
+		}
+
 		if ( res_list_current.size() == 0 ) {
 			// python pop 0 to res_list_current
 			Size res = *res_list_unsliced.begin();
-			TR << "Starting new chunk with res " << res << std::endl;
+			TR << "Starting new chunk from scratch with res " << res << std::endl;
+			chunk_size = res_list_unsliced.size() / n_chunk_left;
 			res_list_unsliced.erase(res_list_unsliced.begin());
 			res_list_current.insert( res );
-			chunk_size = res_list_unsliced.size() / n_chunk_left;
+			TR << "Objective is to get " << chunk_size << " res in this chunk." << std::endl;
 			n_chunk_left -= 1;
 		}
 
 		std::set< Size > res_list_new = find_nearby_res(pose, res_list_current, 3.5 );
-		//TR << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
-		//TR << "To wit, res_list_new: [ ";
-		//for ( auto const elem : res_list_new ) TR << elem << " ";
-		//TR << "]" << std::endl;
+		TR << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
+		TR << "To wit, res_list_new: [ ";
+		for ( auto const elem : res_list_new ) TR << elem << " ";
+		TR << "]" << std::endl;
 
-		std::set< Size > clean_res_list_new;
-		for ( auto const & res_list : res_list_sliced ) {
-			std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
-			//TR << "cleanres_list_new: [ ";
-			//for ( auto const elem : clean_res_list_new ) TR << elem << " ";
-			//TR << "]" << std::endl;
-			res_list_new = clean_res_list_new;
-			clean_res_list_new.clear();
-		}
-
+		// Remove all residues previously in a res list from res_list_new
+		clean_res_list( res_list_new, res_list_sliced );
+		
 		if ( res_list_new.size() == 0 && res_list_current.size() < chunk_size * 0.7 ) {
-			//TR << "No new residues identified and the current res list size " <<  res_list_current.size();
-			//TR << " is less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
+			TR << "No nearby new residues identified, but the current res list size " <<  res_list_current.size();
+			TR << " is still less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
 			while ( true ) {
 				// "pop 0th element to res"
 				Size res = *res_list_unsliced.begin();
-				//TR << "So, we pop " << res << std::endl;
+				TR << "So, we pop " << res << std::endl;
 				res_list_unsliced.erase(res_list_unsliced.begin());
 				if ( res_list_current.find( res ) == res_list_current.end() ) {
 					res_list_new.insert(res);
@@ -931,49 +1004,58 @@ identify_chunks(
 			}
 		}
 
-		//TR << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl;
+		TR << "Inserting res_list_new ( " << res_list_new.size() << " residues ) into current " << std::endl;
 		res_list_current.insert( res_list_new.begin(), res_list_new.end() );
 
+		TR << "We have obtained a residue list of " << res_list_current.size() << " and our target chunk size is " << chunk_size << std::endl;
 		if ( res_list_current.size() >= chunk_size || res_list_new.size() == 0 ) {
-			//TR << "We have exceeded chunk size with res_list_current or failed at res_list_new" << std::endl;
+			TR << "We have exceeded chunk size with res_list_current or failed at res_list_new" << std::endl;
 
-			//TR << "res_list_current: [ ";
-			//for ( auto const elem : res_list_current ) TR << elem << " ";
-			//TR << "]" << std::endl;
+			TR << "res_list_current: [ ";
+			for ( auto const elem : res_list_current ) TR << elem << " ";
+			TR << "]" << std::endl;
 
 			std::set< Size > unused;
-			fill_gaps_and_remove_isolated_res(res_list_current, total_res, unused );
+			fill_gaps_and_remove_isolated_res( res_list_current, total_res, unused );
 
-			//TR << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
+			TR << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
 			for ( auto const & res : res_list_current ) {
+				//TR << "Trying to remove " << res << std::endl;
 				if ( res_list_unsliced.find(res) != res_list_unsliced.end() ) {
+					//TR << "Found" << res << std::endl;
 					res_list_unsliced.erase(res_list_unsliced.find(res));
+					//TR << "So the unsliced length is now " << res_list_unsliced.size()  << std::endl;
 				}
 			}
-			//res_list_current = sorted(res_list_current)
 
-			//TR << "Gonna add this chunk to my lists of chunks" << std::endl;
+			TR << "Gonna add this chunk to my lists of chunks" << std::endl;
 			res_list_sliced.push_back( res_list_current );
 			sliced_list_final.push_back( res_list_current );
-			if ( n_chunk_left == 1 ) {
+			if ( n_chunk_left == 0 ) {
+				return;
+			} else if ( n_chunk_left == 1 ) {
+				TR << "What remains is: ";
+				for ( Size const res : res_list_unsliced ) TR << res << " ";
+				//if ( res_list_unsliced.size() == 0 ) break;
+				TR << std::endl;
 				res_list_current = res_list_unsliced;
 				std::set< Size > removed_res;
 				fill_gaps_and_remove_isolated_res(res_list_current, total_res, removed_res);
 				sliced_list_final.push_back( res_list_current );
+				TR << "Adding res_list_current to the list of sliced_list_final" << std::endl;
 				while ( removed_res.size() != 0 ) {
+					TR << "Trying to remove res from each sliced list, to some end" << std::endl;
 					std::set< Size > res_remove;
-					for ( std::set< Size >::iterator res = removed_res.begin(); res != removed_res.end(); ++res ) {
+					for ( Size const res : removed_res ) {
 						std::set< Size > just_res;
-						just_res.insert( *res );
+						just_res.insert( res );
 						std::set< Size > res_list_near = find_nearby_res( pose, just_res, 2.0 );
-						for ( utility::vector1< std::set< Size > >::iterator res_list = sliced_list_final.begin();
-								res_list != sliced_list_final.end(); ++res_list ) {
+						for ( auto & sliced_list : sliced_list_final  ) {
 							bool can_break = false;
-							for ( std::set< Size >::iterator res_near = res_list_near.begin();
-									res_near != res_list_near.end(); ++res_near ) {
-								if ( res_list->find(*res_near) != res_list->end() ) {
-									res_list->insert(*res);
-									res_remove.insert(*res);
+							for ( Size const near_res : res_list_near ) {
+								if ( sliced_list.find( near_res ) != sliced_list.end() ) {
+									sliced_list.insert( res );
+									res_remove.insert( res );
 									can_break = true;
 									break;
 								}
@@ -987,7 +1069,7 @@ identify_chunks(
 				}
 				break;
 			} else {
-				//TR << "Ready for new beginnings." << std::endl;
+				TR << "Ready for new beginnings." << std::endl;
 				res_list_current.clear();
 				res_list_current.insert(*res_list_unsliced.begin());
 				res_list_unsliced.erase(res_list_unsliced.begin());
@@ -1018,6 +1100,21 @@ ErraserMinimizerMover::turn_off_for_chunks(
 	}
 
 	// AMW TODO: Turn ON all DOFs that cross between chunk_i and the universe
+}
+
+core::Vector com_of_true_residues( kinematics::MoveMap const & mm, Pose const & pose ) {
+	// Just average heavyatom position
+	core::Vector avg( 0 );
+	Size natoms = 0;
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		if ( !mm.get_bb( ii ) && !mm.get_chi( ii ) ) continue;
+
+		for ( Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
+			avg += pose.residue( ii ).xyz( jj );
+			natoms += 1;
+		}
+	}
+	return avg / Real(natoms);
 }
 
 
@@ -1069,7 +1166,7 @@ ErraserMinimizerMover::apply(
 	utility::vector1< std::set< Size > > chunks;
 	// AMW TODO: read chunks from temp file if exists
 	TR << "About to try to identify chunks if needed." << std::endl;
-	identify_chunks( pose, chunks );
+	identify_chunks( pose, chunks, virtual_res_pos );
 	Size const n_chunk = chunks.size();
 	TR << "Identified " << n_chunk << " chunks" << std::endl;
 	for ( Size ii = 1; ii <= n_chunk; ++ii ) {
@@ -1143,26 +1240,25 @@ ErraserMinimizerMover::apply(
 		TR << "fixed res: ";
 	}
 
-	for ( std::set< Size >::const_iterator fixed_res_num = fixed_res_list_.begin(); fixed_res_num != fixed_res_list_.end(); ++fixed_res_num ) {
+	for ( Size const fixed_res_num : fixed_res_list_ ) {
+		TR << fixed_res_num << " ";
 
-		TR << *fixed_res_num << " ";
+		add_fixed_res_constraints( pose, fixed_res_num, virtual_res_pos );
 
-		add_fixed_res_constraints( pose, *fixed_res_num, virtual_res_pos );
+		mm.set_chi( fixed_res_num, false );
+		mm.set_bb(  fixed_res_num, false );
 
-		mm.set_chi( *fixed_res_num, false );
-		mm.set_bb(  *fixed_res_num, false );
+		allow_insert( fixed_res_num ) = false;
 
-		allow_insert( *fixed_res_num ) = false;
-
-		if ( *fixed_res_num - 1 > 0 &&
-				fixed_res_list_.find( *fixed_res_num ) == fixed_res_list_.end() &&
-				cut_lower.find( *fixed_res_num ) == cut_lower.end() ) {
-			allow_insert( *fixed_res_num ) = true;
+		if ( fixed_res_num - 1 > 0 &&
+				fixed_res_list_.find( fixed_res_num ) == fixed_res_list_.end() &&
+				cut_lower.find( fixed_res_num ) == cut_lower.end() ) {
+			allow_insert( fixed_res_num ) = true;
 		}
-		if ( *fixed_res_num + 1 <= nres &&
-				fixed_res_list_.find( *fixed_res_num + 1 ) == fixed_res_list_.end() &&
-				cut_upper.find( *fixed_res_num ) == cut_upper.end() ) {
-			allow_insert( *fixed_res_num ) = true;
+		if ( fixed_res_num + 1 <= nres &&
+				fixed_res_list_.find( fixed_res_num + 1 ) == fixed_res_list_.end() &&
+				cut_upper.find( fixed_res_num ) == cut_upper.end() ) {
+			allow_insert( fixed_res_num ) = true;
 		}
 	}
 	TR << std::endl;
@@ -1218,7 +1314,8 @@ ErraserMinimizerMover::apply(
 		Real const score_before = ( ( *scorefxn_ )( pose ) );
 		Real const edens_score_before = ( ( *edens_scorefxn_ )( pose ) );
 
-		protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+		core::Vector chunk_com = com_of_true_residues( chunk_mm, pose );
+		protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, true, chunk_com );
 
 		// Start Minimizing the Full Structure
 		Pose const start_pose = pose;

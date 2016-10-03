@@ -207,7 +207,7 @@ def outlier_rebuild_if_necessary( step, rebuild_res_error, rebuild_option ):
         rebuild_option.out_pdb = "rebuild_outlier_%s.pdb" % step
         rebuild_option.rebuild_res_list = rebuild_res_error
         rebuild_option.log_out = 'rebuild_outlier_%s.out' % step
-        seq_rebuild( rebuild_option )
+        seq_rebuild_new( rebuild_option )
 
 def rmsd_rebuild_if_necessary( step, rebuild_res_rmsd, rebuild_option ):
     if rebuild_option.rebuild_rmsd :
@@ -222,7 +222,7 @@ def rmsd_rebuild_if_necessary( step, rebuild_res_rmsd, rebuild_option ):
         rebuild_option.rebuild_res_list = rebuild_res_rmsd
         rebuild_option.native_edensity_cutoff = 0.97
         rebuild_option.log_out = 'rebuild_rmsd_%s.out' % step
-        seq_rebuild( rebuild_option )
+        seq_rebuild_new( rebuild_option )
 
 ##### erraser_single_res start ########################################
 def erraser_single_res( option ) :
@@ -604,8 +604,7 @@ def rebuild_completed( file ):
 
 def seq_rebuild_new( option ) :
     
-    rna_swa_test_exe = rosetta_bin_path("seq_rebuild", option.rosetta_bin )
-    
+    rna_swa_test_exe = rosetta_bin_path("resample_full_model", option.rosetta_bin )
     stdout = sys.stdout
     stderr = sys.stderr
     if option.log_out != "" :
@@ -642,33 +641,60 @@ def seq_rebuild_new( option ) :
     sucessful_res = []
     failed_res = []        
 
+    #-sample_res R:20-21
     common_cmd= ""
-    common_cmd += "-rebuild_res "
+    common_cmd += "-sample_res "
     for res in option.rebuild_res_list: 
-        if rebuild_completed("seq_rebuild_temp_%d.out" % res): continue
+        if rebuild_completed("seq_rebuild_temp_%s.out" % res): continue
         common_cmd += "%s " % res
     
     # other options from SWA_rebuild
     #common_cmd += " -database %s " % database_folder
     common_cmd += " -VERBOSE %s" % str(option.verbose).lower()
-    #common_cmd += " -fasta %s " % fasta_file
+    # addressed later
+    #common_cmd += " -fasta fasta " # % fasta_file
+    common_cmd += " -stepwise::rna::erraser true "
+    common_cmd += " -stepwise::choose_random  false "
+    common_cmd += " -stepwise::output_minimized_pose_list false "
+    common_cmd += " -stepwise::monte_carlo::minimize_single_res_frequency 1.0 "
+    common_cmd += " -stepwise::enumerate true "
+    common_cmd += " -score:pose_sequence_const true "
 
+    ### AMW: Things we may need to figure out how to handle in the new, stepwise framework
+    ###
     #PHENIX conference -- HACK -- try to specify exactly the jump points. Needed for RNA/protein poses.
     #protein case
-    
-    # AMW: handle this in C++ layer, rebuild_res_final before/after is there for each one
+    #if option.rna_prot_erraser :
+    #    common_cmd += " -jump_point_pairs %d-%d " % ( rebuild_res_final-1, rebuild_res_final+1 )
+    #else : #RNA only original case
+    #    common_cmd += " -jump_point_pairs NOT_ASSERT_IN_FIXED_RES 1-%d " % total_res
+    # AMW HELP
+    #-stepwise::num_pose_minimize 1
+    #cluster_args += " -add_lead_zero_to_tag true "
 
-    if option.rna_prot_erraser :
-        common_cmd += " -jump_point_pairs %d-%d " % ( rebuild_res_final-1, rebuild_res_final+1 )
-    else : #RNA only original case
-    	common_cmd += " -jump_point_pairs NOT_ASSERT_IN_FIXED_RES 1-%d " % total_res
 
-
+    ### AMW: These are things that USED to be provided but I don't think should be anymore.
     # AMW: Be alert to the possibility that this shouldn't be NEARLY this many residues
-    common_cmd += " -alignment_res 1-%d " % total_res
-
+    #common_cmd += " -alignment_res 1-%d " % total_res
     # I think this is correct because it's the virt.
-    common_cmd += " -rmsd_res %d " %(total_res)
+    #common_cmd += " -rmsd_res %d " %(total_res)
+    #if len(cutpoint_res_final) != 0 :
+    #    common_cmd += " -full_model:cutpoint_open "
+    #    for cutpoint in cutpoint_res_final :
+    #        common_cmd += '%d ' % cutpoint
+    
+    #AMW: does clustering really require different cutpoint_closed logic?
+    #if not is_chain_break :
+    #    cluster_args += " -cutpoint_closed %d " % rebuild_res_final
+
+    # AMW TODO: as before, cutpoint_res_final assigned in C++
+    #if len(cutpoint_res_final) != 0:
+    #    cluster_args += " -full_model:cutpoint_open "
+    #    for cutpoint in cutpoint_res_final:
+    #        cluster_args += '%d ' % cutpoint
+
+    #sampling_cmd += " -constrain_chi %s " % str(option.constrain_chi).lower()
+
     
     common_cmd += " -native " + SWA_option.input_pdb
     common_cmd += " -score:weights %s " % option.scoring_file
@@ -679,16 +705,12 @@ def seq_rebuild_new( option ) :
     if option.use_2prime_OH_potential is False:
         common_cmd += " -use_2prime_OH_potential %s " % str(option.use_2prime_OH_potential).lower()
 
+    
     if option.map_file != "" :
         common_cmd += " -edensity:mapfile %s " % option.map_file
         common_cmd += " -edensity:mapreso %s " % option.map_reso
         common_cmd += " -edensity:realign no "
-
-    # Handle cutpoint res in C++ too AMW TODO
-    if len(cutpoint_res_final) != 0 :
-        common_cmd += " -full_model:cutpoint_open "
-        for cutpoint in cutpoint_res_final :
-            common_cmd += '%d ' % cutpoint
+        common_cmd += " -edensity:render_density false " # AMW 9/24 addition
 
     if option.fcc2012_new_torsional_potential :
         common_cmd += " -score:rna_torsion_potential FCC2012_RNA11_based_new "
@@ -703,22 +725,36 @@ def seq_rebuild_new( option ) :
     # save me from myself
     common_cmd += ' -skip_connect_info true '
     common_cmd += " -out:file:write_pdb_link_records true "
+    
+    #####################Create fasta file########################
+    fasta_file=temp_dir + '/fasta'
+    print "About to call pdb2fasta"
+
+    # This has no using_protein toggle
+    #print ["pdb2fasta.py", SWA_option.input_pdb, ">", fasta_file ]
+    with open( fasta_file, "w" ) as out:
+        subprocess.call(["pdb2fasta.py", SWA_option.input_pdb ], stdout=out ) #, ">", fasta_file ])
+    # AMW TODO: old version of pdb2fasta in tools can't do the tag-with-dashes
+    # needed by modern stepwise
+    #pdb2fasta(SWA_option.input_pdb, fasta_file, using_protein = option.rna_prot_erraser)
+    print "came back from pdb2fasta"
 
     ################Sampler Options##################################
     sampling_cmd = rna_swa_test_exe #+ ' -algorithm rna_sample '
     sampling_cmd += " -s %s " % SWA_option.input_pdb #start_pdb
-    sampling_cmd += " -fasta fasta "
+    sampling_cmd += " -fasta %s " % fasta_file
+    sampling_cmd += " -ignore_zero_occupancy false " # AMW 9/24 addition
     sampling_cmd += " -out:file:silent blah.out "
     sampling_cmd += " -output_virtual true "
     sampling_cmd += " -rm_virt_phosphate true "
     sampling_cmd += " -sampler_extra_chi_rotamer true "
     sampling_cmd += " -cluster::radius %s " % 0.3
-    sampling_cmd += " -centroid_screen true "
+    sampling_cmd += " -stepwise:rna:centroid_screen true "
     #sampling_cmd += " -VDW_atr_rep_screen false "
     sampling_cmd += " -sampler_allow_syn_pyrimidine %s " % str(option.allow_syn_pyrimidine).lower()
     sampling_cmd += " -minimize_and_score_native_pose %s " % str(option.include_native).lower()
     sampling_cmd += " -native_edensity_score_cutoff %s " % option.native_edensity_cutoff
-    sampling_cmd += " -constrain_chi %s " % str(option.constrain_chi).lower()
+    
     
     # This logic also exists in the C++, reconcile
     native_screen = True
@@ -739,8 +775,6 @@ def seq_rebuild_new( option ) :
     # That will tell you whether to pass cutpoint_closed.
 
     specific_cmd = ""
-    # Don't specify this! seq_rebuild will loop.
-    #specific_cmd += " -sample_res %d " % rebuild_res_final
     ##################################################################
     #if not is_chain_break :
     #
@@ -755,48 +789,29 @@ def seq_rebuild_new( option ) :
 
     cluster_args = ""
         
-    #AMW: does clustering really require different cutpoint_closed logic?
-    #if not is_chain_break :
-    #    cluster_args += " -cutpoint_closed %d " % rebuild_res_final
-
-    # AMW TODO: as before, cutpoint_res_final assigned in C++
-    if len(cutpoint_res_final) != 0:
-        cluster_args += " -full_model:cutpoint_open "
-        for cutpoint in cutpoint_res_final:
-            cluster_args += '%d ' % cutpoint
-
-    # AMW TODO: handle -rmsd_res being C++!"res" because we can't pass two args
-    #cluster_args += " -rmsd_res %d " % rebuild_res_final
-    cluster_args += " -add_lead_zero_to_tag true "
     cluster_args += " -PBP_clustering_at_chain_closure true "
 
     # handle this in C++
     #no_clustering  = " -suite_cluster_radius 0.0 "
     #no_clustering += " -loop_cluster_radius 0.0 "
-
-
-    with_clustering  = ""
-    with_clustering += " -suite_cluster_radius %s " % option.cluster_RMSD
-    with_clustering += " -loop_cluster_radius 999.99 "
-    with_clustering += " -clusterer_num_pose_kept %d " % option.num_pose_kept_cluster
+    #with_clustering  = ""
+    #with_clustering += " -suite_cluster_radius %s " % option.cluster_RMSD
+    #with_clustering += " -loop_cluster_radius 999.99 "
+    #with_clustering += " -clusterer_num_pose_kept %d " % option.num_pose_kept_cluster
 
     #command = (cluster_args + ' ' + common_cmd +  with_clustering +
     #      " -recreate_silent_struct true -out:file:silent %s" % cluster_filename )
         
-    command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd + cluster_args + with_clustering
+    command = sampling_cmd + ' ' + specific_cmd + ' ' + common_cmd + cluster_args #+ with_clustering
     if option.verbose: print  '\n', command, '\n'
     subprocess_call( command, 'seq_rebuild.out', 'seq_rebuild.err' )
     os.chdir( base_dir )
-
-
-
-
 
     # success reporting may go here
 
     print '###################################'
 
-    copy('temp.pdb', option.out_pdb)
+    copy("%s/SEQ_REBUILD.pdb" % temp_dir, option.out_pdb)
     os.chdir(base_dir)
 
     if not option.kept_temp_folder:

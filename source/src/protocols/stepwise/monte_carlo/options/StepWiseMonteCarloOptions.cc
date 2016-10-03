@@ -188,8 +188,9 @@ StepWiseMonteCarloOptions::setup_modeler_options() const{
 	options->set_choose_random( !enumerate_ );
 	options->set_virtualize_packable_moieties_in_screening_pose( virtualize_packable_moieties_in_screening_pose() );
 	if ( preminimize_ ) options->set_use_packer_instead_of_rotamer_trials( true );  // to match SWA for proteins.
-	if ( enumerate_ ) options->set_output_minimized_pose_list( true ); // to match legacy SWA
-
+	if ( enumerate_ && !erraser() ) {
+      options->set_output_minimized_pose_list( true ); // to match legacy SWA (turn off for erraser)
+	}
 	// protein-specific
 	options->set_skip_coord_constraints( skip_coord_constraints() );
 	options->set_filter_native_big_bins( filter_native_big_bins() );

@@ -265,19 +265,15 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 	using namespace core::chemical::rna;
 	using namespace protocols::stepwise::modeler::rna;
 
-	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-	std::string const & full_sequence  = full_model_info.full_sequence();
+	//FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	//std::string const & full_sequence  = full_model_info.full_sequence();
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
 	Size res_to_add = res_to_build_off + 1;
 
-	char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
-	choose_random_if_unspecified_nucleotide( newrestype );
-	chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-	ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
-	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_aa( my_aa ) );
-	core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-	Size actual_offset = offset;
+	core::conformation::ResidueOP new_rsd = create_residue_to_add( pose );
+
+  Size actual_offset = offset;
 	if ( swa_move_.attachment_type() == BOND_TO_PREVIOUS ) {
 		runtime_assert( offset == 1 );
 		remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res_to_build_off ); // got to be safe.
@@ -333,21 +329,17 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 	using namespace core::chemical::rna;
 	using namespace protocols::stepwise::modeler::rna;
 
-	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-	std::string const & full_sequence  = full_model_info.full_sequence();
+	//FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	//std::string const & full_sequence  = full_model_info.full_sequence();
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
 	Size res_to_add = res_to_build_off;
 
 	runtime_assert( res_list[ res_to_add ] > 1 );
 
-	char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
-	choose_random_if_unspecified_nucleotide( newrestype );
-	chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-	ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
-	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_aa( my_aa ) );
-	core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-	Size actual_offset = offset;
+	core::conformation::ResidueOP new_rsd = create_residue_to_add( pose );
+
+ 	Size actual_offset = offset;
 	if ( swa_move_.attachment_type() == BOND_TO_NEXT ) {
 		runtime_assert( offset == 1 );
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,    res_to_build_off ); // got to be safe.
@@ -544,6 +536,30 @@ AddMover::setup_initial_jump( pose::Pose & pose ) {
 	// get jump number, and add the new jump into pose
 	Size const & jump_nr = ft.get_jump_that_builds_residue( res_to_add );
 	pose.set_jump( jump_nr, new_jump );
+}
+
+
+///////////////////////////////////////////////////////////////////////
+// @brief: figure out the res type of the residue to add and create it
+core::conformation::ResidueOP
+AddMover::create_residue_to_add( pose::Pose const & pose ) {
+
+  // figure out new residue type from sequence
+	std::string const & full_sequence  = const_full_model_info( pose ).full_sequence();
+	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
+ 	char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
+	modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
+
+  // use name3 to account for non-canonicals
+  std::string newrestype3 = chemical::name_from_aa( chemical::aa_from_oneletter_code( newrestype ) );
+	if ( nc_res_map.find( res_to_add_in_full_model_numbering_ ) != nc_res_map.end() ) {
+		newrestype3 = nc_res_map.at( res_to_add_in_full_model_numbering_ );
+	}
+
+	// figure out residue type from name3
+	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
+	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_name3( newrestype3 ) );
+  return conformation::ResidueFactory::create_residue( rsd_type );
 }
 
 

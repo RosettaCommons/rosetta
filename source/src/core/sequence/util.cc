@@ -829,9 +829,24 @@ strip_spacers( std::string & sequence )
 {
 	std::string new_sequence;
 	utility::vector1< Size > spacer_pos;
+	Size offset = 0;
 	for ( Size n = 1; n <= sequence.size(); n++ ) {
+		if ( sequence[ n - 1 ] == '[' ) {
+			new_sequence += sequence[ n - 1 ];
+			++n;
+			++offset;
+			while ( sequence[ n - 1 ] != ']' ) {
+				new_sequence += sequence[ n - 1 ];
+				++n;
+				++offset;
+			}
+		}
+		if ( sequence[ n - 1 ] == '[' ) {
+			new_sequence += sequence[ n - 1 ];
+		}
 		if ( spacers.has_value( sequence[ n - 1 ] ) ) {
-			if ( new_sequence.size() > 0 ) spacer_pos.push_back( new_sequence.size() );
+			Size spacer_position = new_sequence.size() - offset;
+			if ( new_sequence.size() > 0 ) spacer_pos.push_back( spacer_position );
 			continue;
 		}
 		new_sequence += sequence[ n - 1 ];

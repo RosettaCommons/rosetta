@@ -93,6 +93,9 @@ public:
 	core::Real const & proposal_density_ratio() const { return proposal_density_ratio_; }
 
 	void
+	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs );
+
+	void
 	build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
 
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }

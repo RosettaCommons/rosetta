@@ -368,7 +368,7 @@ numeric::xyzVector< core::Real >
 get_ring_current_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xyz,
 	conformation::Residue const & source_rsd,
 	core::Size const source_ring_ID,
-	RNA_CS_residue_parameters const & source_rsd_CS_params ){
+	RNA_CS_residue_parameters const & source_rsd_CS_params ) {
 
 	//Use cylindrical coordinates, ring_effect is a function of z and rho.
 	//RC =( -1.0 * source_rsd_CS_params.ring_current_coeff() * (rci / rca) * (pterm(z, rho) + mterm(z, rho) ) );

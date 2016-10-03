@@ -18,7 +18,9 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
+#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -66,22 +68,33 @@ FromScratchMover::apply( core::pose::Pose & pose,
 	using namespace core::pose::full_model_info;
 
 	// an alias:
-	utility::vector1< Size > const & resnum = residues_to_instantiate_in_full_model_numbering;
+	utility::vector1< Size > resnum = residues_to_instantiate_in_full_model_numbering;
 
 	// only do dinucleotides for now.
 	runtime_assert( resnum.size() == 2 );
 
 	std::string new_sequence;
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
 	for ( Size n = 1; n <= resnum.size(); n++ ) {
 		char newrestype = full_sequence[ resnum[n]-1 ];
 		modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 		new_sequence += newrestype;
+    if ( nc_res_map.find( resnum[n] ) != nc_res_map.end() ) {
+			new_sequence += "[" + nc_res_map.at( resnum[n] ) + "]";
+    }
 	}
 
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	PoseOP new_pose( new Pose );
 	make_pose_from_sequence( *new_pose, new_sequence, *rsd_set );
+
+	// calebgeniesse: add virt root for density scoring, only when instantiating initial pose, for now
+	if ( pose.total_residue() < 1 && full_sequence[full_sequence.size()-1] == 'X' ) {
+		TR << "Adding virtual residue as root" << std::endl;
+		core::pose::addVirtualResAsRoot( *new_pose );
+		resnum.push_back( full_sequence.size() );
+	}
 
 	update_full_model_info_and_switch_focus_to_new_pose( pose, *new_pose, resnum );
 	fix_up_jump_atoms_and_residue_type_variants( pose );
