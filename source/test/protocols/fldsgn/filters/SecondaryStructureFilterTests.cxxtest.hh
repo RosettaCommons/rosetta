@@ -20,7 +20,6 @@
 // Project Headers
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>
 
-
 // Core Headers
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
@@ -53,7 +52,6 @@ public:
 class SecondaryStructureFilterTests : public CxxTest::TestSuite {
 public:
 	typedef ss_test::SecondaryStructureFilterProt SecondaryStructureFilter;
-
 	//Define Variables
 
 public:
@@ -90,11 +88,15 @@ public:
 		filt.set_use_dssp( true );
 		filt.filtered_ss( built_ss );
 
+		// filtered ss should be correctly determined
+		TS_ASSERT_EQUALS( filt.get_filtered_secstruct_( pose ), built_ss );
+
 		// we should fail without setting strand pairings - DSSP will never recognize residue 2 as E
 		TS_ASSERT( !filt.apply( pose ) );
 
 		/// try to add a strand pairing
-		filt.set_strand_pairings( "1-2.P.1" );
+		std::string const spairstr = "1-2.P.1";
+		filt.set_strand_pairings( spairstr );
 
 		// built ss should be equal to get_filtered_secstruct_
 		std::string filt_ss = filt.get_filtered_secstruct_( pose );
@@ -127,8 +129,6 @@ public:
 
 		// filter should fail because residue 2 is supposed to be paired and E but isn't
 		TS_ASSERT( !filt.apply( pose ) );
-
-
 	}
 
 };

@@ -140,6 +140,11 @@ public: // scoring
 	/// @brief calc score
 	void score( SS_Info2_COP const ss_info, Real & hh_score, Real & hs_score ) const;
 
+private:
+	/// @brief Gets HSS Triplet containing helix helix_id.
+	/// @details  Currently exits with error if more than one HSS triplet contain the helix
+	HSSTripletOP
+	get_hssop( Size const helix_id ) const;
 
 private: // secondary structure data
 

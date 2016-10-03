@@ -184,6 +184,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 	using protocols::fldsgn::topology::Strands;
 	using protocols::fldsgn::topology::HelixPairing;
 	using protocols::fldsgn::topology::HelixPairings;
+	using protocols::fldsgn::topology::HSSTriplets;
 
 	// parameters for score calculation
 	Real hs_dist_wts = 0.5*hs_dist_wts_;
@@ -303,8 +304,8 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			Helix const & h1 = *helices[ hpair.h1() ];
 			Helix const & h2 = *helices[ hpair.h2() ];
 
-			HSSTripletOP hssop1 = hss3set_->hss_triplet( hpair.h1() );
-			HSSTripletOP hssop2 = hss3set_->hss_triplet( hpair.h2() );
+			HSSTripletOP const hssop1 = get_hssop( hpair.h1() );
+			HSSTripletOP const hssop2 = get_hssop( hpair.h2() );
 
 			// make sure that HSSTripletOP is defined
 			runtime_assert( hssop1 && hssop2 );
@@ -342,6 +343,29 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 
 
 }  // score
+
+NatbiasHelicesSheetPotential::HSSTripletOP
+NatbiasHelicesSheetPotential::get_hssop( Size const helix_id ) const
+{
+	using protocols::fldsgn::topology::HSSTriplets;
+	HSSTriplets const triplets = hss3set_->hss_triplets( helix_id );
+	if ( triplets.empty() ) return HSSTripletOP();
+
+	// TL: the code above depends on there only being one triplet for each helix
+	//     however, there is no reason why a user might now want to specify more than one.
+	//     If a user wants to use this potential with helices in more than one triplet, the code
+	//     above needs to be modified.  As a stopgap, we throw an error to prevent unwanted/unexpected
+	//     behavior
+	if ( triplets.size() > 1 ) {
+		std::stringstream msg;
+		msg << "Helix " << helix_id << " is present in more than one HSS triplet. This is not yet supported by "
+			<< "NatbiasHelicesSheetPotential -- please update protocols/fldsgn/sspot/NatbiasHelicesSheetPotential.cc"
+			<< std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+
+	return *triplets.begin();
+}
 
 
 } // ns sspot

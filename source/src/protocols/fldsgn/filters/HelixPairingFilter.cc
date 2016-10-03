@@ -376,19 +376,17 @@ HelixPairingFilter::secstruct( core::pose::Pose const & pose ) const
 topology::HelixPairingSet
 HelixPairingFilter::compute_helix_pairing_set( core::pose::Pose const & pose ) const
 {
-	using namespace protocols::denovo_design::components;
+	using protocols::denovo_design::components::SegmentPairing;
+	using protocols::denovo_design::components::StructureData;
+	using protocols::denovo_design::components::StructureDataFactory;
 
 	if ( hpairset_ ) {
 		return *hpairset_;
 	} else {
 		StructureData const sd = StructureDataFactory::get_instance()->create_from_pose( pose );
-		std::stringstream helix_str;
-		for ( SegmentPairingCOPs::const_iterator p=sd.pairings_begin(); p!=sd.pairings_end(); ++p ) {
-			if ( p != sd.pairings_begin() ) helix_str << ';';
-			helix_str << (*p)->pairing_string( sd );
-		}
-		TR << "Found helix pairings: " << helix_str.str() << std::endl;
-		return HelixPairingSet( helix_str.str() );
+		std::string const helix_pair_str = SegmentPairing::get_helix_pairings( sd );
+		TR << "Found helix pairings: " << helix_pair_str << std::endl;
+		return HelixPairingSet( helix_pair_str );
 	}
 }
 

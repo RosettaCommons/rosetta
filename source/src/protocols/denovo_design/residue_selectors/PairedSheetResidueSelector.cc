@@ -152,6 +152,19 @@ PairedSheetResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	std::string const secstruct = get_secstruct( pose );
 	std::string const sheet_topology = get_sheet_topology( pose );
+
+	ResidueSubset subset( pose.size(), false );
+
+	// if no pairings are specified, assume all E residues are paired
+	if ( sheet_topology.empty() ) {
+		core::Size resid = 1;
+		for ( auto ss : secstruct ) {
+			if ( ss == 'E' ) subset[ resid ] = true;
+			++resid;
+		}
+		return subset;
+	}
+
 	TR.Debug << "Using sheet topology " << sheet_topology << std::endl;
 
 	// now we check the strand pairing definitions in the BluePrint -- if some of them are impossible, DSSP will never return 'E',
@@ -161,7 +174,6 @@ PairedSheetResidueSelector::apply( core::pose::Pose const & pose ) const
 	StrandPairings const pairs( spairs.strand_pairings() );
 
 	// determine paired residues
-	ResidueSubset subset( pose.size(), false );
 	for ( StrandPairings::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
 		for ( core::Size s1_resid=(*pair)->begin1(); s1_resid<=(*pair)->end1(); ++s1_resid ) {
 			if ( !(*pair)->has_paired_residue( s1_resid ) ) continue;
@@ -214,11 +226,10 @@ PairedSheetResidueSelector::get_sheet_topology( core::pose::Pose const & pose ) 
 		return components::SegmentPairing::get_strand_pairings( factory.get_from_const_pose( pose ) );
 	}
 
-	std::stringstream msg;
-	msg << "PairedSheetResidueSelector(): Could not determine strand pairings!  "
-		<< "You must specify them using the \"sheet_topology\" option or attach a StructureData object to the pose"
+	TR << "Could not determine strand pairings! "
+		<< "You must specify them using the \"sheet_topology\" option or attach a StructureData object to the pose. "
+		<< "No residues will be selected."
 		<< std::endl;
-	utility_exit_with_message( msg.str() );
 	return "";
 }
 

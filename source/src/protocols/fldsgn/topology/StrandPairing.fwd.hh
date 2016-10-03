@@ -31,6 +31,7 @@ typedef utility::pointer::shared_ptr< StrandPairingSet > StrandPairingSetOP;
 typedef utility::pointer::shared_ptr< StrandPairing const > StrandPairingCOP;
 typedef utility::pointer::shared_ptr< StrandPairingSet const > StrandPairingSetCOP;
 typedef utility::vector1< StrandPairingOP > StrandPairings;
+typedef utility::vector1< StrandPairingCOP > StrandPairingCOPs;
 
 // typedef utility::pointer::owning_ptr< Residues > ResiduesOP;
 //typedef utility::pointer::owning_ptr< StrandPairing const > StrandPairingCOP;

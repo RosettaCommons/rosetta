@@ -32,7 +32,36 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-// @brief Auto-generated virtual destructor
+/// @brief construct from numbers
+TripletID::TripletID( core::Size const helix_id, core::Size const strand1_id, core::Size const strand2_id ):
+	helix( helix_id ),
+	strand1( strand1_id ),
+	strand2( strand2_id )
+{}
+
+/// @brief construct from HSSTriplet
+TripletID::TripletID( HSSTriplet const & hss ):
+	helix( hss.helix() ),
+	strand1( hss.strand1() ),
+	strand2( hss.strand2() )
+{}
+
+bool
+TripletID::operator<( TripletID const & other ) const
+{
+	if ( helix != other.helix ) return ( helix < other.helix );
+	if ( strand1 != other.strand1 ) return ( strand1 < other.strand1 );
+	return ( strand2 < other.strand2 );
+}
+
+std::ostream &
+operator<<( std::ostream & os, TripletID const & id )
+{
+	os << "helix: " << id.helix << " strand1: " << id.strand1 << " strand2: " << id.strand2;
+	return os;
+}
+
+/// @brief Auto-generated virtual destructor
 HSSTriplet::~HSSTriplet() {}
 
 
@@ -312,16 +341,16 @@ HSSTripletSet::add_hsstriplets( HSSTriplets const & s )
 void
 HSSTripletSet::push_back( HSSTripletOP const hsop )
 {
-	for ( std::map< Size, HSSTripletOP >::const_iterator it=helix2hss_.begin(),
-			ite=helix2hss_.end(); it!=ite ; ++it ) {
-		if ( it->first == hsop->helix() ) {
-			TR <<  "Helix "  <<  it->first << " is already defined in HSSTriplet. " << std::endl;
-			assert( false );
-		}
+	TripletID const hs_id( *hsop );
+	TripletMap::iterator triplet = helix2hss_.find( hs_id );
+	if ( triplet != helix2hss_.end() ) {
+		TR <<  "Triplet "  <<  hs_id << " is already defined in HSSTriplet.  It will not be added to the set" << std::endl;
+		assert( false );
+		return;
 	}
 
 	hss_triplets_.push_back( hsop );
-	helix2hss_[ hsop->helix() ] = hsop;
+	helix2hss_[ hs_id ] = hsop;
 }
 
 /// @brief clear data
@@ -332,14 +361,32 @@ HSSTripletSet::clear()
 	helix2hss_.clear();
 }
 
-
-/// @brief
-HSSTripletOP
-HSSTripletSet::hss_triplet( Size const helix )
+/// @brief returns list of Triplets containing given helix
+HSSTriplets
+HSSTripletSet::hss_triplets( Size const helix ) const
 {
-	return helix2hss_[ helix ];
+	HSSTriplets triplets;
+	for ( HSSTriplets::const_iterator hss=begin(); hss!=end(); ++hss ) {
+		if ( (*hss)->helix() == helix ) triplets.push_back( *hss );
+	}
+	return triplets;
 }
 
+/// @brief returns the Triplet containing given helix, strand1, and strand2
+///        Exits and throws an error if the triplet isn't found
+HSSTripletOP
+HSSTripletSet::hss_triplet( Size const helix, Size const s1, Size const s2 ) const
+{
+	TripletID const hs_id( helix, s1, s2 );
+	TripletMap::const_iterator hss_it = helix2hss_.find( hs_id );
+	if ( hss_it == helix2hss_.end() ) {
+		std::stringstream msg;
+		msg << "HSSTripletSet::hss_triplet(): Cannot find a HSS Triplet with parameters "
+			<< hs_id << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	return hss_it->second;
+}
 
 /// @brief return all data
 HSSTriplets const &

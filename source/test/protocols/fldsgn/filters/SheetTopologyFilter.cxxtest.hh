@@ -75,6 +75,7 @@ public:
 		filt.filtered_sheet_topology( "1-2.A.99;2-3.A.99" );
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/fldsgn/filters/test_sheet.pdb" );
+
 		core::Real score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
 		TS_ASSERT_DELTA( score, 0.0, 1e-4 );
@@ -83,28 +84,35 @@ public:
 		filt.filtered_sheet_topology( "1-2.P.99;2-3.A.99" );
 		score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
-		TS_ASSERT_DELTA( score, 0.5, 1e-4 );
+		TS_ASSERT_DELTA( score, 0.4166, 1e-4 );
 
 		// all should be wrong
-		filt.filtered_sheet_topology( "1-3.P.99;2-3.A.99" );
+		filt.filtered_sheet_topology( "2-3.P.99;1-2.A.99" );
 		score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
-		TS_ASSERT_DELTA( score, 0.0, 1e-4 );
+		TS_ASSERT_DELTA( score, 0.5834, 1e-4 );
 
 		// now use actual numbers, count pairings
-		filt.set_secstruct( "LEEEEEEHHHHHHLLHHHHHHHHHHHHHLLEEEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
-		filt.filtered_sheet_topology( "1-2.P.-1;2-3.P.0" );
+		filt.set_secstruct( "LLEEEEEHHHHHHLLHHHHHHHHHHHHHLLLEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
+		filt.filtered_sheet_topology( "1-2.P.-1;2-3.P.1" );
 		score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
 		TS_ASSERT_DELTA( score, 0.0, 1e-4 );
 
-		filt.set_secstruct( "LEEEEELHHHHHHLLHHHHHHHHHHHHHLLLEEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
+		filt.set_secstruct( "LLEEEEEHHHHHHLLHHHHHHHHHHHHHLLLEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
 		filt.filtered_sheet_topology( "1-2.P.-1;2-3.P.0" );
 		score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
-		TS_ASSERT_DELTA( score, 0.417, 1e-2 );
+		TS_ASSERT_DELTA( score, 0.5833, 1e-2 );
 
 		filt.set_secstruct( "LEEEEELHHHHHHLLHHHHHHHHHHHHHLLLEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
+		filt.filtered_sheet_topology( "1-2.P.-1;2-3.P.1" );
+		score = filt.compute( input_pose );
+		TR << "Score = " << score << std::endl;
+		TS_ASSERT_DELTA( score, 0.4545, 1e-2 );
+
+		filt.set_secstruct( "LEEEEELHHHHHHLLHHHHHHHHHHHHHLLLEEEEEEELLLHHHHHHHHHHHHHHHHHHLLLEEEEEEEL" );
+		filt.filtered_sheet_topology( "1-2.P.-1;2-3.P.0" );
 		score = filt.compute( input_pose );
 		TR << "Score = " << score << std::endl;
 		TS_ASSERT_DELTA( score, 1.0, 1e-2 );

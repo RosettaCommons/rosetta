@@ -245,6 +245,11 @@ void SetSecStructEnergies::apply( Pose & pose )
 
 	std::string const ss = get_secstruct( pose );
 
+	TR.Debug << "Using secstruct " << ss << std::endl;
+	TR.Debug << "Using strand pairs " << ss_pair_ << std::endl;
+	TR.Debug << "Using helix pairs " << hh_pair_ << std::endl;
+	TR.Debug << "Using hss-triplets" << hss_triplet_ << std::endl;
+
 	// set NatbiasSecondaryStructure energy
 	SS_Info2_OP ssinfo( new SS_Info2( ss ) );
 

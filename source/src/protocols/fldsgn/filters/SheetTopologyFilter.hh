@@ -38,7 +38,8 @@
 #include <utility/vector1.hh>
 
 
-//// C++ headers
+// C++ headers
+#include <set>
 
 namespace protocols {
 namespace fldsgn {
@@ -62,6 +63,9 @@ public:
 	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
+	typedef std::pair< core::Size, core::Size > ResiduePairing;
+	typedef std::set< ResiduePairing > ResiduePairingSet;
+	typedef utility::vector1< ResiduePairingSet > ResiduePairingSets;
 
 public:// constructor/destructor
 
@@ -94,18 +98,19 @@ public:// virtual constructor
 public:// mutator
 
 
-	// @brief set filtered sheet_topology by SrandPairingSetOP
+	// @brief set filtered sheet_topology by StrandPairingSetOP
 	void filtered_sheet_topology( StrandPairingSetOP const & sps );
 
-	// @brief set filtered sheet_topology by SrandPairingSetOP
+	// @brief set filtered sheet_topology by string
 	void filtered_sheet_topology( String const & sheet_topology );
 
+	/// @brief set user-specified pose secondary structure
 	void set_secstruct( std::string const & ss );
 
 	/// @brief if true, and secstruct is unset, dssp is used on the input.  Otherwise, the pose.secstruct() is used
 	void set_use_dssp( bool const use_dssp );
-public:// accessor
 
+public:// accessor
 
 	// @brief get name of this filter
 	virtual std::string name() const { return "SheetTopologyFilter"; }
@@ -132,6 +137,60 @@ public:// virtual main operation
 	// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
 
+private:
+	/// @brief Returns the desired strand pairing topology string
+	/// @details  Rules for selecting this topology string:
+	///           1. If a user-specified filtered_sheet_topology_ is set, return that
+	///           2. If StructureData is cached in the pose, determine pairings from that
+	///           3. throw error
+	std::string
+	get_filtered_sheet_topology( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns the pose secondary structure to be used in computation
+	/// @details  Rules for selecting the secondary structure:
+	///           1. If a user-specified secstruct_input_ is set, return this
+	///           2. If use_dssp is true, determine secondary structure by DSSP
+	///           3. Return pose secondary stucture otherwise
+	std::string
+	get_secstruct( core::pose::Pose const & pose ) const;
+
+	/// @brief Given the filtered strand pairings, compute the number of residue pairings possible
+	/// @param[in] spairset The strand pairing set to be used to find residue pairings.  It is
+	///                     non-const because the pairings are stored as OPs, so begin() and end()
+	///                     are non-const
+	/// @param[in] ss_info  SS_Info2 object describing the secondary structure of the pose
+	/// @returns Vector of ResiduePairingSets, one for each strand pairing, in the same order as
+	///          in spairset
+	ResiduePairingSets
+	compute_residue_pairings(
+		topology::StrandPairingSet & spairset,
+		topology::SS_Info2 const & ss_info ) const;
+
+	/// @brief Computes number of pairings in the given StrandPairing
+	/// @param[in] pairing  StrandPairing which contains residue pairing information
+	/// @param[in] ss_info  SS_Info2 object describing the secondary structure of the pose
+	/// @returns ResiduePairingSet containing pairs of residues
+	ResiduePairingSet
+	compute_paired_residues(
+		topology::StrandPairing const & pairing,
+		topology::SS_Info2 const & ss_info ) const;
+
+	/// @brief Counts total number of residue pairings present in the ResiduePairingSets
+	core::Size
+	count_residue_pairings( ResiduePairingSets const & pair_sets ) const;
+
+	/// @brief Counts number of residue pairs in the filtered_pair_set are present in the pose_pair_set
+	core::Size
+	count_good_pairings(
+		ResiduePairingSet const & filtered_pair_set,
+		ResiduePairingSet const & pose_pair_set ) const;
+
+	/// @brief Replace register shift of pairings in pose_spairset with 99 if register shift in filtered_spairset
+	///        is 99
+	void
+	replace_register_shifts(
+		topology::StrandPairingSet & spairset,
+		topology::StrandPairingSet & filtered_spairset ) const;
 
 private:
 
@@ -143,15 +202,19 @@ private:
 
 	bool use_dssp_;
 
-	SS_Info2_OP ssinfo_;
-
 };
 
-core::Size
-compute_paired_residues( topology::StrandPairingCOP filt_pair, topology::StrandPairingCOP pair );
+/// @brief Searches the StrandPairingSet for a pairing containing s1 and s2. Returns OP to it
+topology::StrandPairingOP
+find_pairing( topology::StrandPairingSet & spairset, core::Size const s1, core::Size const s2 );
 
+/// @brief Searches the StrandPairingSet for a pairing containing s1 and s2. Returns its 1-based index
 core::Size
-compute_total_paired_residues( topology::StrandPairingCOP filt_pair );
+find_pairing_idx( topology::StrandPairingSet & spairset, core::Size const s1, core::Size const s2 );
+
+/// @brief helper function for replacing register shift of all pairs with 99
+std::string
+remove_register_shifts( std::string const & pair_str );
 
 } // filters
 } // fldsgn

@@ -54,6 +54,7 @@ public:
 	typedef core::Size Size;
 	typedef protocols::filters::FilterOP FilterOP;
 	typedef core::pose::Pose Pose;
+	typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
 	typedef protocols::fldsgn::topology::HSSTriplet  HSSTriplet;
 	typedef protocols::fldsgn::topology::HSSTriplets  HSSTriplets;
 	typedef protocols::fldsgn::topology::HSSTripletSet  HSSTripletSet;
@@ -68,16 +69,16 @@ public:
 public:// constructor/destructor
 
 
-	// @brief default constructor
+	/// @brief default constructor
 	HSSTripletFilter();
 
-	// @brief constructor with arguments
+	/// @brief constructor with arguments
 	HSSTripletFilter( HSSTriplets const & hss3s );
 
-	// @brief constructor with arguments
+	/// @brief constructor with arguments
 	HSSTripletFilter( String const & hss3s );
 
-	// @brief copy constructor
+	/// @brief copy constructor -- required because we clone the hss3set_ pointer
 	HSSTripletFilter( HSSTripletFilter const & rval );
 
 	virtual ~HSSTripletFilter(){}
@@ -95,6 +96,8 @@ public:// virtual constructor
 
 public:// mutator
 
+	/// @brief add filtered HSSTriplets from string
+	void add_hsstriplets( String const & hss3s );
 
 	// @brief add hsstriplets for filtering
 	void add_hsstriplets( HSSTriplets const & hss3s );
@@ -152,15 +155,44 @@ public:// virtual main operation
 	// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
 
+private:
+	/// @brief    computes and returns secondary structure string to use for this filter.
+	/// @details  if secstruct_ is non-empty, returns that
+	///           if use_dssp_ is true, use DSSP to compute secstruct
+	///           otherwise, use secstruct stored in the pose
+	String
+	get_secstruct( Pose const & pose ) const;
+
+	/// @brief    returns HSSTriplets object to use for this filter
+	/// @details  if hss triplets are given prior to apply time, returns those
+	///           otherwise, look for HSS info in the pose's StructureData and return that
+	HSSTriplets
+	get_hss3s( Pose const & pose ) const;
+
+	/// @brief    checks secondary structure elements in the triplet, returns false if invalid
+	/// @details  If the pose doesn't contain the helix or strands, returns false
+	///           If the length of the helix is < 5, returns false
+	///           If the length of either strand is < 2, returns false
+	bool
+	check_elements( HSSTriplet const & hss, SS_Info2 const & ss_info ) const;
+
+	/// @brief given an HSS triplet, compute the distance from helix to sheet
+	Real
+	compute_dist( HSSTriplet const & hss ) const;
+
+	/// @brief given an hs-angle, return a valid angle accounting for ignore_helix_direction_
+	///        if ignore_helix_direction_ is true, this basically makes angle periodic from
+	///        -90 to 90
+	Real
+	compute_angle( Real const angle ) const;
 
 private:
-
 
 	/// @brief hsstriplet
 	HSSTripletSetOP hss3set_;
 
 	/// @brief if value is empty, dssp will run for ss definition ( default is emptry )
-	mutable String secstruct_;
+	String secstruct_;
 
 	/// @brief filtered min distance between helix and sheet
 	Real filter_min_dist_;
@@ -180,11 +212,11 @@ private:
 	/// @brief output type, dist or angle
 	String output_type_;
 
-	/// @brief output value, the result of filterring calculation
-	mutable Real output_value_;
-
 	/// @brief if set, the filter will ignore the direction of the helix and return an angle between -90 and 90 instead of -180 and 180
 	bool ignore_helix_direction_;
+
+	/// @brief if set, and secstruct_ is empty, secondary structure will be determined by dssp.  Otherwise, it will be taken from the pose.
+	bool use_dssp_;
 };
 
 } // filters

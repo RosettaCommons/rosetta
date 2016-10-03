@@ -208,6 +208,7 @@ public: // typedef
 
 	typedef std::string String;
 	typedef core::Size Size;
+	typedef core::Real Real;
 	typedef utility::vector1< Size > VecSize;
 	typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;

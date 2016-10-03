@@ -30,6 +30,27 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+struct TripletID {
+public:
+	/// @brief construct from numbers
+	TripletID( core::Size const helix_id, core::Size const strand1_id, core::Size const strand2_id );
+
+	/// @brief construct from HSSTriplet
+	TripletID( HSSTriplet const & hss );
+
+	/// @brief comparison operator required to use this as a key to a std::map
+	/// @details First compare helix, then strand1, then strand2
+	bool
+	operator<( TripletID const & other ) const;
+
+	friend std::ostream &
+	operator<<( std::ostream & os, TripletID const & id );
+
+	core::Size helix;
+	core::Size strand1;
+	core::Size strand2;
+};
+
 class HSSTriplet : public utility::pointer::ReferenceCount {
 public:
 
@@ -223,6 +244,7 @@ public:
 
 	typedef core::Size Size;
 	typedef std::string String;
+	typedef std::map< TripletID, HSSTripletOP > TripletMap;
 
 
 public:
@@ -295,10 +317,13 @@ public: // accessor
 
 public: //accessor
 
+	/// @brief returns the Triplet containing given helix, strand1, and strand2
+	///        Exits and throws an error if the triplet isn't found
+	HSSTripletOP hss_triplet( Size const helix, Size const s1, Size const s2 ) const;
 
-	/// @brief
-	HSSTripletOP hss_triplet( Size const helix );
-
+	/// @brief returns list of Triplets containing given helix
+	HSSTriplets
+	hss_triplets( Size const helix ) const;
 
 	/// @brief
 	HSSTriplets const & hss_triplets() const;
@@ -310,7 +335,7 @@ private: //data
 	HSSTriplets hss_triplets_;
 
 
-	std::map< Size, HSSTripletOP > helix2hss_;
+	TripletMap helix2hss_;
 
 
 }; // HSSTripletSet

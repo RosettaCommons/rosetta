@@ -134,14 +134,23 @@ protected:
 	std::string
 	get_filtered_secstruct( core::pose::Pose const & pose ) const;
 
+	/// @brief returns the strand pairing string to be used in computation
+	/// @param[in] pose  Pose to be analyzed
+	/// @details  If strand_pairings_ is non-empty, it will be returned
+	///           Otherwise, the strand pairings will be computed from the Pose's StructureData
+	///           If StructureData is not present and strand_pairings_ are not specified, quit
+	std::string
+	get_strand_pairings( core::pose::Pose const & pose ) const;
+
 	/// @brief If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues,
 	///        respectively, it sets the unpaired residues to 'h' so that they still match.
-	/// @param[in]     pose      Input pose to be tested.
-	/// @param[in/out] secstruct Desired secondary structure. It will be modified in-place
+	/// @param[in]     pose            Input pose to be tested.
+	/// @param[in/out] secstruct       Desired secondary structure. It will be modified in-place
+	/// @param[in]     strand_pairings Strand pairings to be used for modification
 	/// @details If strand_pairings_ is user-specified, the specific residue pairings will be computed based on it.
 	///          If strand_pairings_ is empty, residue pairings will be taken from the cached StructureData in
 	///          the pose, if present.
-	///          If strand_pairings_ is empty and no cached StructureData was found, this will do nothing.
+	///          If strand_pairings is empty and no cached StructureData was found, this will do nothing.
 	///          Any unpaired residues found in the sheet topology with 'E' secondary structure will be changed
 	///          to 'h' (to allow either loop or strand)
 	void

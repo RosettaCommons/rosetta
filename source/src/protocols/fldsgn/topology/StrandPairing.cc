@@ -16,18 +16,14 @@
 
 
 // Project Headers
-#include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/DimerPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // utility headers
 #include <utility/string_util.hh>
 #include <utility/stream_util.hh>
-#include <utility/exit.hh>
-
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
 #include <sstream>
 #include <boost/lexical_cast.hpp>
@@ -35,12 +31,10 @@
 
 #include <utility/vector1.hh>
 
-
 static THREAD_LOCAL basic::Tracer TR( "protocols.topology.StrandPairing" );
 
-using namespace core;
 typedef std::string String;
-typedef utility::vector1< Size > VecSize;
+typedef utility::vector1< core::Size > VecSize;
 
 namespace protocols {
 namespace fldsgn {
@@ -263,7 +257,7 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 
 
 /// @brief return length of 1st strand
-Size
+StrandPairing::Size
 StrandPairing::size1() const
 {
 	if ( end1_ >= begin1_ ) {
@@ -275,7 +269,7 @@ StrandPairing::size1() const
 
 
 /// @brief return length of 2nd strand
-Size
+StrandPairing::Size
 StrandPairing::size2() const
 {
 	if ( end2_ >= begin2_ ) {
@@ -324,7 +318,7 @@ StrandPairing::has_paired_residue( Size const res ) const
 }
 
 /// @brief return residue pairing
-Size
+StrandPairing::Size
 StrandPairing::residue_pair( Size const res ) const
 {
 	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
@@ -636,7 +630,7 @@ StrandPairingSet::neighbor_strands( Size const s ) const
 
 /// @brief the name of StrandPairingSet without register shift
 /// For example, 2kl8 of ferredoxin-like fold is described as 1-3.A;2-3.A;1-4.A
-String
+StrandPairingSet::String
 StrandPairingSet::name_wo_rgstr() const
 {
 	String spairs = "";

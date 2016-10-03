@@ -161,7 +161,7 @@ SecondaryStructureFilter::parse_my_tag(
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
 
-	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_ ) );
+	set_use_dssp( tag->getOption< bool >( "compute_pose_secstruct_by_dssp", use_dssp_ ) );
 
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 
@@ -187,10 +187,11 @@ SecondaryStructureFilter::set_blueprint( std::string const & blueprint_file )
 }
 
 /// @brief If a strand pairing is impossible (i.e. the structure has two strands, 5 and 6 residues, respectively, it sets the unpaired residues to 'h' so that they still match.
-/// @param[in]     pose      Input pose to be tested.
-/// @param[in/out] secstruct Desired secondary structure. It will be modified in-place
-/// @details If strand_pairings_ is user-specified, the specific residue pairings will be computed based on it.
-///          If strand_pairings_ is empty, residue pairings will be taken from the cached StructureData in
+/// @param[in]     pose            Input pose to be tested.
+/// @param[in/out] secstruct       Desired secondary structure. It will be modified in-place
+/// @param[in]     strand_pairings Strand pairings to be used for modification
+/// @details If strand_pairings is user-specified, the specific residue pairings will be computed based on it.
+///          If strand_pairings is empty, residue pairings will be taken from the cached StructureData in
 ///          the pose, if present.
 ///          If strand_pairings_ is empty and no cached StructureData was found, this will do nothing.
 ///          Any unpaired residues found in the sheet topology with 'E' secondary structure will be changed
@@ -235,6 +236,36 @@ SecondaryStructureFilter::correct_for_incomplete_strand_pairings(
 	}
 }
 
+/*
+/// @brief returns the strand pairing string to be used in computation
+/// @param[in] pose  Pose to be analyzed
+/// @details  If strand_pairings_ is non-empty, it will be returned
+///           Otherwise, the strand pairings will be computed from the Pose's StructureData
+///           If StructureData is not present and strand_pairings_ are not specified, quit
+std::string
+SecondaryStructureFilter::get_strand_pairings( core::pose::Pose const & pose ) const
+{
+	using protocols::denovo_design::components::SegmentPairing;
+	using protocols::denovo_design::components::StructureData;
+	using protocols::denovo_design::components::StructureDataFactory;
+
+	if ( !strand_pairings_.empty() ) return strand_pairings_;
+
+	StructureDataFactory const & factory = *StructureDataFactory::get_instance();
+	if ( factory.has_cached_data( pose ) ) {
+		StructureData const & sd = factory.get_from_const_pose( pose );
+		std::string const strand_pairings = SegmentPairing::get_strand_pairings( sd );
+		tr.Debug << "Found StrandPairings in the cached StructureData: " << strand_pairings << std::endl;
+		return strand_pairings;
+	}
+
+	tr.Debug << "Could not get strand pairings to use in the filter. If there are strand pairings, "
+		<< "make sure the strand_pairings option is set OR there is a StructureData object cached in the pose."
+		<< std::endl;
+	return "";
+}
+*/
+
 /// @brief returns the number of residues in the protein that have matching secondary structure
 /// @param[in] pose   Pose to be analyzed
 /// @param[in] subset Subset of the pose to be analyzed. Only residues that are true in the subset
@@ -262,7 +293,7 @@ SecondaryStructureFilter::compute(
 	}
 
 	std::string filter_ss = get_filtered_secstruct( pose );
-	if ( !strand_pairings_.empty() ) correct_for_incomplete_strand_pairings( pose, filter_ss );
+	correct_for_incomplete_strand_pairings( pose, filter_ss );
 
 	if ( pose.size() != filter_ss.length() ) {
 		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
@@ -349,13 +380,12 @@ SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose 
 	if ( !filtered_ss_.empty() ) return filtered_ss_;
 
 	// 2. Use StructureData if present
-	// TODO: uncomment this once I've updated the 'Tomponent' classes
-	//denovo_design::components::StructureDataFactory const & factory =
-	// *denovo_design::components::StructureDataFactory::get_instance();
-	//if ( factory.has_cached_data( pose ) ) {
-	// tr.Debug << "Getting filtered_ss from StructureData" << std::endl;
-	// return factory.get_from_const_pose( pose ).ss();
-	//}
+	denovo_design::components::StructureDataFactory const & factory =
+		*denovo_design::components::StructureDataFactory::get_instance();
+	if ( factory.has_cached_data( pose ) ) {
+		tr.Debug << "Getting filtered_ss from StructureData" << std::endl;
+		return factory.get_from_const_pose( pose ).ss();
+	}
 
 	// 3. Use pose secstruct
 	tr.Debug << "Getting filtered_ss from pose" << std::endl;
