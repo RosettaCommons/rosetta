@@ -28,11 +28,15 @@
 #include <utility/io/izstream.hh>
 
 #include <core/chemical/AA.hh>
+#include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
+
+#include <map>
 
 namespace core {
 namespace scoring {
@@ -47,6 +51,29 @@ public:
 	RamaPrePro();
 	~RamaPrePro() override = default;
 
+	/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
+	/// @details This version only works for noncanonical or canonical residues with any number of mainchain
+	/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
+	/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
+	/// score_rama value is populated.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	eval_rpp_rama_score(
+		core::chemical::ResidueTypeCOP res1,
+		AA const res_aa2,
+		utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
+		Real & score_rama,
+		utility::vector1 < core::Real > &gradient,
+		bool const return_derivs
+	) const;
+
+
+	/// @brief Evaluate the rama score for this residue (res_aa1) given the identity of the next (res_aa2).
+	/// @details This version only works for canonical L-amino acids, canonical D-amino acids, or glycine.  If the next
+	/// residue's identity is pro or d-pro, a different score table is used.  Note:
+	/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
+	/// score_rama value is populated.
+	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	void
 	eval_rpp_rama_score(
 		AA const res_aa1,
@@ -55,30 +82,31 @@ public:
 		Real const psi,
 		Real & score_rama,
 		Real & denergy_dphi,
-		Real & denergy_dpsi
+		Real & denergy_dpsi,
+		bool const return_derivs
 	) const;
 
 
-protected:
+private: //Private methods.
 
-	void read_rpp_tables();
-
-	/// @brief adapted from Max's code, ramachandran.cc
-	/// @details If symmetrize_gly is true, the plot for glycine is made symmetric.
-	void read_rama_map_file_shapovalov ( std::string const & filename, utility::vector1<  ObjexxFCL::FArray2D< Real > > &data, bool const symmetrize_gly );
-
-	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &, core::Real const &offset);
-
-	/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
-	/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
-	/// in the D-amino acid region of Ramachandran space).  However, the intrinsic propensities of glycine make it equally inclined to favour
-	/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
-	/// to bicubic interpolation setup.
+	/// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing
+	/// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	void symmetrize_gly_table( ObjexxFCL::FArray2D< core::Real > & data, core::Real &entropy ) const;
+	void read_canonical_rpp_tables();
 
-	// spline interpolated p(phi,psi)
-	utility::vector1< numeric::interpolation::spline::BicubicSpline > rama_splines_, rama_pp_splines_;
+	/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
+	///
+	bool is_pro( core::chemical::AA const &aa) const;
+
+private: //Private member variables.
+
+	/// @brief Owning pointers to the MainchainScoreTables for the canonical amino acids.
+	///
+	std::map < core::chemical::AA, core::chemical::mainchain_potential::MainchainScoreTableCOP > canonical_score_tables_;
+
+	/// @brief Owning pointers to the MainchainScoreTables for the canonical amino acids, pre-proline versions.
+	///
+	std::map < core::chemical::AA, core::chemical::mainchain_potential::MainchainScoreTableCOP > canonical_prepro_score_tables_;
 
 };
 

@@ -15,7 +15,7 @@
 ///
 /// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
-/// *****NOTE**** The MathTensor class is indexed at 0!!!!
+/// *****NOTE**** The MathNTensor class is indexed at 0!
 ///
 /// @references
 /// Nils Woetzl
@@ -24,6 +24,7 @@
 /// @author Steven Combs, Nils Woetzl, Jens Meiler
 /// @author ported to Rosetta by Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author generalized to N dimensions by Andrew Watkins
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- added default constructor
 ///
 /////////////////////////////////////////////////////////////////////////
 
@@ -62,15 +63,17 @@ public:
 	// construction and destruction //
 	//////////////////////////////////
 
+	/// @brief Default constructor -- make a MathNTensor that's 0-dimensional with 0 elements.
+	///
 	MathNTensor() :
 		parent()
 	{
 		size_ = 0;
 		data_ = nullptr;
-		//std::fill( data_, data_ + size_, 0 );
 	}
 
-	//! construct Tensor from vector of dims and single element
+	/// @brief Constructor: make a MathNTensor from fixedsizearray of dims and single element.
+	/// @details The single element gets copied to every entry in the MathNTensor, initializing it.
 	MathNTensor(
 		utility::fixedsizearray1< Size, N > const & n_bins,
 		T    const & value = T()
@@ -87,6 +90,31 @@ public:
 		std::fill( data_, data_ + size_, value );
 	}
 
+	/// @brief Constructor: make a MathNTensor from vector of dims and single element.
+	/// @details The single element gets copied to every entry in the MathNTensor, initializing it.
+	MathNTensor(
+		utility::vector1< Size > const & n_bins,
+		T    const & value = T()
+	) :
+		parent(N),
+		n_bins_( )
+	{
+		runtime_assert( n_bins.size() == N );
+		utility::fixedsizearray1< T, N > nbinsarray;
+
+		size_ = 1;
+		for ( Size i = 1; i <= N; ++i ) {
+			nbinsarray[i] = n_bins[i];
+			size_ *= n_bins[ i ];
+		}
+		n_bins_ = nbinsarray;
+		if ( size_ == 0 ) data_ = 0;
+		else data_ = new T[ size_ ];
+		std::fill( data_, data_ + size_, value );
+	}
+
+	/// @brief Copy constructor.
+	///
 	MathNTensor( MathNTensor const & src ) :
 		parent( src.num_dimensions() ),
 		n_bins_( src.n_bins_ ),
@@ -96,6 +124,8 @@ public:
 		std::copy( src.data_, src.data_ + size_, data_ ); //for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = src.data_[ ii ]; }
 	}
 
+	/// @brief Assignment operator.
+	///
 	MathNTensor< T, N > &
 	operator= ( MathNTensor< T, N > const & rhs ) {
 		if ( this != &rhs ) {
@@ -111,7 +141,8 @@ public:
 		return *this;
 	}
 
-
+	/// @brief Destructor.
+	///
 	~MathNTensor() {
 		delete[] data_;
 	}
@@ -121,6 +152,8 @@ public:
 		return std::accumulate( data_, data_ + size_, 0 );
 	}
 
+	/// @brief Is the position in the N-Tensor given by the positions vector a valid position?
+	/// @details Returns true if each coordinate is in the range [1, dimension], false otherwise.
 	inline
 	bool is_valid_position( utility::fixedsizearray1< Size, N > const & positions ) const {
 		bool validity = true;
@@ -139,7 +172,7 @@ public:
 		return validity;
 	}
 
-	// Raw pointer constructor.  Avoid this.
+	/// @brief Raw pointer constructor.  Avoid this.
 	//template< Size N >
 	MathNTensor(
 		utility::fixedsizearray1< Size, N > const & n_bins,
@@ -163,17 +196,16 @@ public:
 		return n_bins_[ i ];
 	}
 
-	/// @brief return number of dimensions overall
-	//template< Size N >
+	/// @brief Return number of dimensions overall (i.e. the dimensionality
+	/// of this MathNTensor).
 	inline
 	Size num_dimensions() const
 	{
 		return N;
 	}
 
-	/// @brief copies elements of argument matrix into this object at position ( layer )
+	/// @brief Copies elements of argument matrix into this object at position ( layer )
 	/// @details layer is the FIRST index.
-	//template< Size N >
 	void
 	replace_layer( Size layer, MathNTensor< T, N-1 > const & matrix) {
 
@@ -228,6 +260,8 @@ public:
 		return data_[ index ];
 	}
 
+	/// @brief ONLY for 3-dimensional tensors, replace a layer with a 2D matrix.
+	///
 	void
 	replace_layer( Size const layer, MathMatrix< T > const & matrix )
 	{
@@ -249,9 +283,30 @@ public:
 		}
 	}
 
+	/// @brief ONLY for 2-dimensional tensors, give me a MathMatrix that's identical to the tensor.  (That is, convert
+	/// the MathNTensor to MathMatrix form.
+	/// @details Throws if this is not a 2D tensor.
+	/// @return A MathMatrix containing the full contents of the MathNTensor.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	MathMatrix< T >
+	get_mathmatrix()
+	{
+		runtime_assert_string_msg( N == 2, "Error in numeric::MathNTensor::get_MathMatrix(): This operation can only be used for two-dimensional tensors." );
+		MathMatrix < T > outmatrix( n_bins_[1], n_bins_[2] );
+		Size count(0);
+		for ( Size i=0, imax=n_bins_[1]; i<imax; ++i ) {
+			for ( Size j=0, jmax=n_bins_[2]; j<jmax; ++j ) {
+				outmatrix(i,j)=data_[count];
+				++count;
+			}
+		}
+		return outmatrix;
+	}
 
-	// Accessors, both as const and nonconst reference and via
-	// fixedsizearray1, vector1, or sequences of values.
+
+	/// @brief Access a position in the N-dimensional tensor.
+	/// @details Accessors, both as const and nonconst reference and via
+	/// fixedsizearray1, vector1, or sequences of values.
 	T &
 	operator() ( utility::fixedsizearray1< Size, N > const & position ) {
 		assert( is_valid_position( position ) );
@@ -266,6 +321,8 @@ public:
 		//col + ncols_*( row + nrows_* layer) ];
 	}
 
+	/// @brief Use an N-vector of coordinates to access a position in the N-dimensional tensor.
+	/// @details Const access (assignment prohibited).
 	T const &
 	operator() ( utility::fixedsizearray1< Size, N > const & position ) const {
 		assert( is_valid_position( position ) );
@@ -361,7 +418,13 @@ public:
 
 private:
 	utility::fixedsizearray1< Size, N > n_bins_;   // number of each dimension
+
+	/// @brief The total number of bins in the MathNTensor (the product of all dimensions).
+	///
 	Size size_;    // nlayers_ * nrows_ * ncols_
+
+	/// @brief Array of data stored in this N-tensor.
+	///
 	T * data_;
 };
 

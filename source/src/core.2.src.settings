@@ -77,7 +77,10 @@ sources = {
 		#"Element",
 		#"ElementTypeSet",
 	],
-
+	"core/chemical/mainchain_potential": [
+		"MainchainScoreTable",
+		"util",
+	],
 	"core/chemical/rings": [
 		"ring_conformer_io",
 		"RingConformerManager",

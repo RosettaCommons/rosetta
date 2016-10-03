@@ -77,6 +77,7 @@ SIDECHAIN_THIOL # This residue type is capable of forming a disulfide bond
 DISULFIDE_BONDED  # This residue type contains a disulfide bond/noncanonical connection
 ELECTROPHILE # This residue type has a side-chain that can be conjugated to a nucleophile (for example, it contains an alpha-beta unsaturated carbonyl)
 SIDECHAIN_AMINE
+N_METHYLATED # A methyl group replaces the amide proton in residues in the MIDDLE of a sequence (not at the N-terminus)
 
 ## Membranes
 MEMBRANE

@@ -1110,7 +1110,7 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
-	
+
 	option_keys.push_back("pose_sequence_const");
 	option_values.push_back(pose_sequence_const_ ? "1" : "0");
 

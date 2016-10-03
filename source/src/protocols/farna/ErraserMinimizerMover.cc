@@ -253,7 +253,7 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 
 	cutpoint_list_ = string_to_size_vector( tag->getOption< std::string >( "cutpoint_list", "" ) );
 	output_pdb_name_ = tag->getOption< std::string >( "output_pdb_name", output_pdb_name_ );
-	
+
 	if ( !ready_set_only_ ) {
 		//Setup score function.
 		std::string score_weight_file = "stepwise/rna/rna_hires_elec_dens";
@@ -593,7 +593,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 		// Don't do anything for protein residues, because we don't have them as ideals.
 		// In the future, apply cart_bonded.
 		if ( pose.residue_type( i ).is_protein() ) continue;
-		
+
 		if ( chunk.find( i ) == chunk.end() ) continue;
 		if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue; //FCC
 		if ( !allow_insert( i ) ) continue;
@@ -612,7 +612,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 				// Don't do anything for protein residues, because we don't have them as ideals.
 				// In the future, apply cart_bonded.
 				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
-				
+
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 				Size const k( nbr.atomno() );
 
@@ -629,7 +629,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 				// Don't do anything for protein residues, because we don't have them as ideals.
 				// In the future, apply cart_bonded.
 				if ( pose.residue_type( nbr.rsd() ).is_protein() ) continue;
-				
+
 				chemical::ResidueType const & residue_type2( pose.residue_type( nbr.rsd() ) );
 
 				if ( ! check_if_connected_in_atom_tree( pose, j_atomid, nbr ) ) continue;
@@ -639,7 +639,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 					// Don't do anything for protein residues, because we don't have them as ideals.
 					// In the future, apply cart_bonded.
 					if ( pose.residue_type( ang_nbr.rsd() ).is_protein() ) continue;
-				
+
 					if ( ang_nbr.rsd() > nres || ang_nbr.rsd() < 1 ) continue;
 					chemical::ResidueType const & residue_type3( pose.residue_type( ang_nbr.rsd() ) );
 
@@ -658,7 +658,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 					// Don't do anything for protein residues, because we don't have them as ideals.
 					// In the future, apply cart_bonded.
 					if ( pose.residue_type( nbr2.rsd() ).is_protein() ) continue;
-				
+
 					if ( nbr2.rsd() > nres || nbr2.rsd() < 1 ) break;
 					chemical::ResidueType const & residue_type3( pose.residue_type( nbr2.rsd() ) );
 
@@ -802,7 +802,7 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 }
 
 template< typename T >
-void remove_set1_elements_from_set2( 
+void remove_set1_elements_from_set2(
 	std::set< T > const & set1,
 	std::set< T > & set2
 ) {
@@ -851,7 +851,7 @@ fill_gaps_and_remove_isolated_res(
 			}
 		}
 	}
-	
+
 	TR << "Fill gaps and remove isolated res " << std::endl;
 
 	Size const gap = total_res - *std::prev(res_list.end());
@@ -922,7 +922,7 @@ erase_if_in_any_slice( utility::vector1< std::set< Size > > const & res_list_sli
 	}
 }
 
-void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::set< Size > > const & res_list_sliced ) {	
+void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::set< Size > > const & res_list_sliced ) {
 	std::set< Size > clean_res_list_new;
 	for ( auto const & res_list : res_list_sliced ) {
 		std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
@@ -988,7 +988,7 @@ identify_chunks(
 
 		// Remove all residues previously in a res list from res_list_new
 		clean_res_list( res_list_new, res_list_sliced );
-		
+
 		if ( res_list_new.size() == 0 && res_list_current.size() < chunk_size * 0.7 ) {
 			TR << "No nearby new residues identified, but the current res list size " <<  res_list_current.size();
 			TR << " is still less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
@@ -1287,10 +1287,10 @@ ErraserMinimizerMover::apply(
 		pose.constraint_set( cst_set );
 	}
 	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
-	
+
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
 		time_t chunk_start = time(0);
-		
+
 		// Don't retain those dirty constraints from chunk n-1 -- they don't
 		// matter, since those residues can't move!
 		pose.constraint_set( saved_cst_set );

@@ -18,6 +18,8 @@
 #include <numeric/numeric.functions.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/MathNTensorBase.fwd.hh>
+
 #include <limits>
 #include <cmath>
 #include <algorithm>
@@ -157,6 +159,18 @@ T find_nearest_value(typename utility::vector1<T> const & input_list, T key)
 	return find_nearest_value<T>(temp_list,key,initial_minimum,initial_maximum);
 
 }
+
+/// @brief Utility function to access an entry in a MathNTensor of arbitrary dimensionality unknown at compile time, given a MathNTensorBaseOP.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real & access_Real_MathNTensor( MathNTensorBaseOP< Real > tensorbase, utility::vector1< Size > const &position );
+
+/// @brief Utility function to get const access to an entry in a MathNTensor of arbitrary dimensionality unknown at compile time, given a MathNTensorBaseCOP.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real const & const_access_Real_MathNTensor( MathNTensorBaseCOP< Real > tensorbase, utility::vector1< Size > const &position );
+
+/// @brief Given a MathNTensorBaseCOP, get the size along one dimension.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Size get_Real_MathNTensor_dimension_size( MathNTensorBaseCOP< Real > tensorbase, Size const dimension_index );
 
 } // numeric
 

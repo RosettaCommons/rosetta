@@ -89,6 +89,9 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
+#include <core/chemical/mainchain_potential/util.hh>
 
 #include <basic/database/open.hh>
 
@@ -168,6 +171,8 @@ ScoringManager::ScoringManager() :
 	memb_etables_(),
 	cp_rep_map_byname_(),
 	aa_composition_setup_helpers_(),
+	rama_prepro_mainchain_potentials_(),
+	rama_prepro_mainchain_potentials_beforeproline_(),
 	method_creator_map_( n_score_types, nullptr )
 {}
 
@@ -1072,6 +1077,52 @@ ScoringManager::get_cloned_aa_comp_setup_helpers(
 		return_vect.push_back( aa_composition_setup_helpers_[i]->clone() );
 	}
 	return return_vect;
+}
+
+/// @brief Get a particular MainchainScoreTable for the rama_prepro score term.
+/// @details If this has not yet been populated, loads the data from disk (lazy loading).  NOT THREADSAFE.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::chemical::mainchain_potential::MainchainScoreTableCOP
+ScoringManager::get_rama_prepro_mainchain_torsion_potential(
+	core::chemical::ResidueTypeCOP restype,
+	bool const use_polycubic_interpolation,
+	bool const prepro_table
+) const {
+	using namespace core::chemical::mainchain_potential;
+
+	std::string const & mapname( restype->get_rama_prepro_mainchain_torsion_potential_name(prepro_table) );
+
+	// First, check to see whether we need to create the potential.  THIS NEEDS TO BE MADE THREADSAFE.
+	if (
+			(!prepro_table && !rama_prepro_mainchain_potentials_.count( mapname )) ||
+			(prepro_table && !rama_prepro_mainchain_potentials_beforeproline_.count( mapname ))
+			) {
+		std::string const mapfile( restype->get_rama_prepro_map_file_name(prepro_table) );
+		if ( mapfile.empty() ) return MainchainScoreTableCOP(); //Return null pointer if there's no mapfile.
+		utility::vector1< std::pair< std::string, MainchainScoreTableOP > > newtables;
+		core::chemical::mainchain_potential::read_rama_map_file_shapovalov( mapfile, use_polycubic_interpolation, newtables ); //Read the file, and put results for ALL types in "newtables".
+		bool mytype_found(false);
+		for ( core::Size i=1, imax=newtables.size(); i<=imax; ++i ) {
+			if ( newtables[i].first.compare( mapname ) == 0 ) mytype_found = true; //Found the type we're trying to load.
+			if (
+					( prepro_table && rama_prepro_mainchain_potentials_beforeproline_.count( newtables[i].first ) ) ||
+					( ! prepro_table && rama_prepro_mainchain_potentials_.count( newtables[i].first ) )
+					) {
+				TR.Warning << "When trying to load RamaPrePro tables for residue type " << mapname << ", re-encountered tables for " << newtables[i].first << " (which were already loaded).  Skipping." << std::endl;
+			} else {
+				if ( prepro_table ) {
+					rama_prepro_mainchain_potentials_beforeproline_[ newtables[i].first ] = newtables[i].second;
+				} else {
+					rama_prepro_mainchain_potentials_[ newtables[i].first ] = newtables[i].second;
+				}
+			}
+		}
+		runtime_assert_string_msg( mytype_found, "Error in core::scoring::ScoringManager::get_rama_prepro_mainchain_torsion_potential().  Could not load RamaPrePro scoring table for " + mapname + " from file " + mapfile + "." );
+	}
+
+	// Next, find and return the potenial.
+	if ( prepro_table ) return rama_prepro_mainchain_potentials_beforeproline_.at( mapname ); //If we're fetching a preproline table.
+	return rama_prepro_mainchain_potentials_.at( mapname ); //Otherwise.
 }
 
 

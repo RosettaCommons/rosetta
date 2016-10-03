@@ -127,6 +127,10 @@ ResidueType::ResidueType(
 	carbohydrate_info_(/* NULL */),
 	rings_and_their_edges_(),
 	nbr_atom_indices_( 0 ),
+	rama_prepro_mainchain_torsion_potential_name_(),
+	rama_prepro_mainchain_torsion_potential_name_beforeproline_(),
+	rama_prepro_map_file_name_(),
+	rama_prepro_map_file_name_beforeproline_(),
 	finalized_(false),
 	nondefault_(false)
 {}
@@ -251,6 +255,10 @@ ResidueType::operator=( ResidueType const & residue_type )
 	actcoord_atoms_indices_ = residue_type.actcoord_atoms_indices_;
 	cut_bond_neighbor_indices_ = residue_type.cut_bond_neighbor_indices_;
 	atom_shadowed_indices_ = residue_type.atom_shadowed_indices_;
+	rama_prepro_mainchain_torsion_potential_name_ = residue_type.rama_prepro_mainchain_torsion_potential_name_;
+	rama_prepro_mainchain_torsion_potential_name_beforeproline_ = residue_type.rama_prepro_mainchain_torsion_potential_name_beforeproline_;
+	rama_prepro_map_file_name_ = residue_type.rama_prepro_map_file_name_;
+	rama_prepro_map_file_name_beforeproline_ = residue_type.rama_prepro_map_file_name_beforeproline_;
 	finalized_ = residue_type.finalized_;
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
@@ -3390,6 +3398,16 @@ ResidueType::update_derived_data()
 		}
 	}
 
+	// Set the RamaPrePro potential name to be this residue's name.
+	if ( is_base_type() ) {
+		if ( !rama_prepro_map_file_name_.empty() ) {
+			set_rama_prepro_mainchain_torsion_potential_name( name(), false );
+		}
+		if ( !rama_prepro_map_file_name_beforeproline_.empty() ) {
+			set_rama_prepro_mainchain_torsion_potential_name( name(), true );
+		}
+	}
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3780,6 +3798,22 @@ ResidueType::rotamer_library_specification( rotamers::RotamerLibrarySpecificatio
 rotamers::RotamerLibrarySpecificationCOP
 ResidueType::rotamer_library_specification() const {
 	return rotamer_library_specification_;
+}
+
+/// @brief Nonconst access to the RotamerLibrarySpecification.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+rotamers::RotamerLibrarySpecificationOP
+ResidueType::rotamer_library_specification_nonconst() {
+	return rotamer_library_specification_;
+}
+
+
+/// @brief Remove any rotamer library specifications attached to this ResidueType.
+/// @details After this operation, the rotamer_library_specification() method returns a NULL pointer.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ResidueType::strip_rotamer_library_specification() {
+	rotamer_library_specification_.reset();
 }
 
 void ResidueType::assign_neighbor_atom()
@@ -4256,6 +4290,112 @@ ResidueType::debug_dump_icoor() const
 		tr.Debug << " Atom name: " << atom_name( ii ) << "vertex: " << atom_vertex( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
 	}
 	pretty_print_atomicoor(tr.Debug, *this);
+}
+
+/// @brief Get the key name for the mainchain torsion potential.
+/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+/// residue types (in which case this function returns the string stored in the base ResidueType), though this can be overridden.
+std::string const &
+ResidueType::get_rama_prepro_mainchain_torsion_potential_name( bool const pre_proline_position ) const {
+
+	if ( pre_proline_position ) {
+		if ( !rama_prepro_mainchain_torsion_potential_name_beforeproline_.empty() ) return rama_prepro_mainchain_torsion_potential_name_beforeproline_;
+		//If the string is empty...:
+		if ( !is_base_type() ) {
+			std::string const & basestring( get_base_type_cop()->get_rama_prepro_mainchain_torsion_potential_name(pre_proline_position) );
+			if ( !basestring.empty() ) return basestring;
+		}
+		return rama_prepro_mainchain_torsion_potential_name_beforeproline_; //Returns an empty string if this is empty AND the base type is empty.
+	}
+
+	//Otherwise...
+
+	if ( !rama_prepro_mainchain_torsion_potential_name_.empty() ) return rama_prepro_mainchain_torsion_potential_name_;
+	//If the string is empty...:
+	if ( !is_base_type() ) {
+		std::string const & basestring( get_base_type_cop()->get_rama_prepro_mainchain_torsion_potential_name(pre_proline_position) );
+		if ( !basestring.empty() ) return basestring;
+	}
+	return rama_prepro_mainchain_torsion_potential_name_; //Returns an empty string if this is empty AND the base type is empty.
+}
+
+/// @brief Set the key name for the mainchain torsion potential.
+/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+/// residue types (pointing the function to the base type), though this can be overridden using this function.
+void
+ResidueType::set_rama_prepro_mainchain_torsion_potential_name(
+	std::string const &name_in,
+	bool const pre_proline_position
+) {
+	if ( pre_proline_position ) {
+		rama_prepro_mainchain_torsion_potential_name_beforeproline_ = name_in;
+	} else {
+		rama_prepro_mainchain_torsion_potential_name_ = name_in;
+	}
+}
+
+/// @brief Get the file name for the mainchain torsion potential used by the RamaPrePro score term.
+/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+/// residue types (in which case this function returns the string stored in the base ResidueType), though this can be overridden.
+std::string const &
+ResidueType::get_rama_prepro_map_file_name( bool const pre_proline_position ) const {
+	if ( pre_proline_position ) {
+		if ( !rama_prepro_map_file_name_beforeproline_.empty() ) return rama_prepro_map_file_name_beforeproline_;
+		//If the string is empty...:
+		if ( !is_base_type() ) {
+			std::string const & basestring( get_base_type_cop()->get_rama_prepro_map_file_name(pre_proline_position) );
+			if ( !basestring.empty() ) return basestring;
+		}
+		return rama_prepro_map_file_name_beforeproline_; //Returns an empty string if this is empty AND the base type is empty.
+	}
+
+	//Otherwise...
+
+	if ( !rama_prepro_map_file_name_.empty() ) return rama_prepro_map_file_name_;
+	//If the string is empty...:
+	if ( !is_base_type() ) {
+		std::string const & basestring( get_base_type_cop()->get_rama_prepro_map_file_name(pre_proline_position) );
+		if ( !basestring.empty() ) return basestring;
+	}
+	return rama_prepro_map_file_name_; //Returns an empty string if this is empty AND the base type is empty.
+}
+
+/// @brief Set the file name for the mainchain torsion potential used by the RamaPrePro score term.
+/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+/// residue types (pointing the function to the base type), though this can be overridden using this function.
+void
+ResidueType::set_rama_prepro_map_file_name(
+	std::string const &filename_in,
+	bool const pre_proline_position
+) {
+	if ( pre_proline_position ) {
+		rama_prepro_map_file_name_beforeproline_ = filename_in;
+	} else {
+		rama_prepro_map_file_name_ = filename_in;
+	}
+}
+
+/// @brief Returns true if and only if (a) this is not a base type, AND (b) there is a rama_prepro_mainchain_torsion_map_file_name_
+/// defined for this ResidueType (which is presumably different from that of the base type).
+/// @details If pre_proline_position is true, checks rama_prepro_mainchain_torsion_map_file_name_beforeproline_ instead of
+/// rama_prepro_mainchain_torsion_potential_name_.
+bool
+ResidueType::defines_custom_rama_prepro_map( bool const pre_proline_position ) const {
+	if ( is_base_type() ) return false;
+	if ( pre_proline_position ) {
+		return ( !rama_prepro_map_file_name_beforeproline_.empty() );
+	}
+	return !rama_prepro_map_file_name_beforeproline_.empty();
+}
+
+/// @brief Set the names of the mainchain torsion potential maps to use to "".
+///
+void
+ResidueType::reset_mainchain_torsion_potential_names() {
+	rama_prepro_mainchain_torsion_potential_name_.clear();
+	rama_prepro_map_file_name_.clear();
+	rama_prepro_mainchain_torsion_potential_name_beforeproline_.clear();
+	rama_prepro_map_file_name_beforeproline_.clear();
 }
 
 

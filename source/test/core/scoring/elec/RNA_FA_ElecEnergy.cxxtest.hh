@@ -85,7 +85,7 @@ public:
 		sfxn.set_weight( fa_elec_rna_base_base, 0.75 );
 		sfxn.set_weight( fa_elec_rna_sugr_base, 0.75 );
 		sfxn.set_weight( fa_elec_rna_sugr_sugr, 0.75 );
-		 */
+		*/
 		kinematics::MoveMap movemap;
 		movemap.set_bb( true );
 		movemap.set_chi( true );

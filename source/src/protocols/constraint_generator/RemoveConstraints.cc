@@ -101,8 +101,9 @@ RemoveConstraints::apply( core::pose::Pose & pose )
 		if ( !csts.empty() ) {
 			if ( ! pose.remove_constraints( csts, false ) ) {
 				if ( ! pose.remove_constraints( csts, true ) ) {
-					if ( exception_on_failure_ )
+					if ( exception_on_failure_ ) {
 						throw EXCN_RemoveCstsFailed();
+					}
 				}
 			}
 		}

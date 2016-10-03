@@ -31,7 +31,7 @@
 
 // Utility and Numeric Headers
 #include <utility/vector1.hh>
-#include <numeric/interpolation/spline/Cubic_spline.hh>
+#include <numeric/interpolation/spline/CubicSpline.hh>
 
 // C++ Headers
 #include <iostream>

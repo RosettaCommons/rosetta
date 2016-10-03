@@ -32,7 +32,7 @@
 #include <numeric/interpolation/periodic_range/full/interpolation.hh>
 #include <numeric/interpolation/periodic_range/half/interpolation.hh>
 
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>

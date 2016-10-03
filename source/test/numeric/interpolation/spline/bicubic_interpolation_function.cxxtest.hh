@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   numeric/interpolation/spline
-/// @brief  test suite for numeric::interpolation::spline::Bicubic_spline
+/// @brief  test suite for numeric::interpolation::spline::BicubicSpline
 /// @author Steven Combs (steven.combs@vanderbilt.edu)
 /// This tests the functions that are in the bicubic spline class except for
 /// the e_periodic steps.
@@ -20,9 +20,9 @@
 
 // Unit headers
 #include <numeric/types.hh>
-//#include <numeric/interpolation/spline/Bicubic_spline.hh>
-//#include <numeric/interpolation/spline/Cubic_spline.hh>
-//#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
+//#include <numeric/interpolation/spline/BicubicSpline.hh>
+//#include <numeric/interpolation/spline/CubicSpline.hh>
+//#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 //#include <numeric/MathVector_operations.hh>
 
 #include <basic/Tracer.hh>

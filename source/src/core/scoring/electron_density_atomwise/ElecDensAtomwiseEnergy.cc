@@ -135,7 +135,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	} else {
 
 		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
-	  //                for now, just always recompute
+		//                for now, just always recompute
 		get_density_map().is_score_precomputed( sfxn.energy_method_options().pose_sequence_const() );
 		// AMW; I think the above argument is actually fine, certainly for the resampling case
 		// Maybe we should have a flag guarantee_pose_sequence_constant === no renormalization

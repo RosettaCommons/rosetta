@@ -351,10 +351,10 @@ StepWiseMasterMover::do_test_move( StepWiseMove const & move,
 std::string
 name_from_move( StepWiseMove const & stepwise_move, Pose const & start_pose ) {
 	std::stringstream ss;
-	ss << "seq_rebuild_temp_" 
-	   << start_pose.pdb_info()->chain( stepwise_move.moving_res() ) 
-	   << ':' << start_pose.pdb_info()->number( stepwise_move.moving_res() ) 
-	   << ".out";
+	ss << "seq_rebuild_temp_"
+		<< start_pose.pdb_info()->chain( stepwise_move.moving_res() )
+		<< ':' << start_pose.pdb_info()->number( stepwise_move.moving_res() )
+		<< ".out";
 	return ss.str();
 }
 

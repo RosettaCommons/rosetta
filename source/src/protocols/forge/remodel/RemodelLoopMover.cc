@@ -3736,8 +3736,8 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 		dsspSS(1)='H';
 	}
 	Size n_res = pose.total_residue();
-	if(n_res>2){
-		if(dsspSS(n_res)=='L' && dsspSS(n_res-1) == 'H'){
+	if ( n_res>2 ) {
+		if ( dsspSS(n_res)=='L' && dsspSS(n_res-1) == 'H' ) {
 			dsspSS(n_res)='H';
 		}
 	}

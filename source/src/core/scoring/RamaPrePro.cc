@@ -10,7 +10,7 @@
 /// @file   core/scoring/RamaPrePro.cc
 /// @brief
 /// @author Frank DiMaio
-/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with canonical D-amino acids; returns 0 for noncanonicals.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) Feb 2016 -- made this compatible with canonical D-amino acids; returns 0 for noncanonicals.  Also, refactored greatly in Sept 2016 to support noncanonical rama tables with arbitrary numbers of degrees of freedom.
 
 // Unit Headers
 #include <core/scoring/RamaPrePro.hh>
@@ -21,6 +21,10 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
 #include <basic/basic.hh>
 
 // Numeric Headers
@@ -52,14 +56,87 @@ namespace scoring {
 
 static basic::Tracer TR("core.scoring.RamaPrePro");
 
-RamaPrePro::RamaPrePro() {
+RamaPrePro::RamaPrePro() :
+	canonical_score_tables_(),
+	canonical_prepro_score_tables_()
+{
 	using namespace basic::options;
-	read_rpp_tables( );
+	read_canonical_rpp_tables( );
 }
 
+/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
+/// @details This version only works for noncanonical or canonical residues with any number of mainchain
+/// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
+/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
+/// score_rama value is populated.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+RamaPrePro::eval_rpp_rama_score(
+	core::chemical::ResidueTypeCOP res1,
+	AA const res_aa2,
+	utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
+	Real & score_rama,
+	utility::vector1 < core::Real > &gradient,
+	bool const return_derivs
+) const {
+	core::chemical::AA const res_aa1( res1->backbone_aa() );
+	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
+			!res1->defines_custom_rama_prepro_map( is_pro( res_aa2 ) )
+			) {
+		debug_assert( mainchain_torsions.size() == 2 );
+		core::Real denergy_dphi, denergy_dpsi;
+		eval_rpp_rama_score( res_aa1, res_aa2, mainchain_torsions[1], mainchain_torsions[2], score_rama, denergy_dphi, denergy_dpsi, return_derivs ); //Call the version that uses fast enum-based lookups of scoring tables.
+		if ( return_derivs ) {
+			gradient.resize(2);
+			gradient[1] = denergy_dphi; gradient[2] = denergy_dpsi;
+		}
+		return;
+	}
 
-///////////////////////////////////////////////////////////////////////////////
-///
+	//Otherwise, we need to do slower scoring table lookups:
+	bool const is_d( res1->is_d_aa() ); //Score tables are loaded for L-amino acids; D-versions are mirrored.
+
+	//Flip torsions for D-amino acids.
+	if ( is_d ) {
+		for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] *= -1.0;
+	}
+
+	core::chemical::ResidueTypeCOP ltype( is_d ? res1->residue_type_set()->get_mirrored_type( res1 )  : res1 );
+
+	ScoringManager* manager( ScoringManager::get_instance() );
+
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_pro( res_aa2 ) ) );
+	if ( !cur_table ) { //No scoring table defined for this residue type.
+		if ( return_derivs ) {
+			gradient.resize( res1->mainchain_atoms().size() - 1 );
+			gradient[1] = 0.0;
+			gradient[2] = 0.0;
+		} else {
+			score_rama = 0.0;
+		}
+		return;
+	}
+
+	// If we reach this point, a scoring table is defined.
+	debug_assert( mainchain_torsions.size() == res1->mainchain_atoms().size() - 1 );
+	if ( return_derivs ) {
+		gradient.resize( res1->mainchain_atoms().size() - 1 );
+		cur_table->gradient( mainchain_torsions, gradient );
+		// Flip gradient for D-amino acids.
+		if ( is_d ) {
+			for ( core::Size i=1, imax=gradient.size(); i<=imax; ++i ) gradient[i] *= -1.0;
+		}
+	} else {
+		score_rama = cur_table->energy( mainchain_torsions );
+	}
+}
+
+/// @brief Evaluate the rama score for this residue (res_aa1) given the identity of the next (res_aa2).
+/// @details This version only works for canonical L-amino acids, canonical D-amino acids, or glycine.  If the next
+/// residue's identity is pro or d-pro, a different score table is used.  Note:
+/// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
+/// score_rama value is populated.
+/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 void
 RamaPrePro::eval_rpp_rama_score(
 	AA const res_aa1,
@@ -68,224 +145,91 @@ RamaPrePro::eval_rpp_rama_score(
 	Real const psi,
 	Real & score_rama,
 	Real & denergy_dphi,
-	Real & denergy_dpsi
+	Real & denergy_dpsi,
+	bool const return_derivs
 ) const {
+
 	bool const is_d( core::chemical::is_canonical_D_aa(res_aa1) );
 	core::Real const d_multiplier( is_d ? -1.0 : 1.0 );
 
 	//If this is neither a canonical D-amino acid, nor a canonical L-amino acid, nor glycine return 0:
 	if ( !core::chemical::is_canonical_L_aa( res_aa1 ) && !is_d && res_aa1 != core::chemical::aa_gly ) {
-		score_rama = 0.0;
-		denergy_dphi = 0.0;
-		denergy_dpsi = 0.0;
+		if ( return_derivs ) {
+			denergy_dphi = 0.0;
+			denergy_dpsi = 0.0;
+		} else {
+			score_rama = 0.0;
+		}
+		return;
 	}
 
 	//Get the L-equivalent if this is a canonical D-residue:
 	core::chemical::AA const res_aa1_copy( is_d ? core::chemical::get_L_equivalent(res_aa1) : res_aa1 );
-	core::Real const phi_copy( is_d ? -1.0*phi : phi );
-	core::Real const psi_copy( is_d ? -1.0*psi : psi );
 
 	if ( res_aa1_copy > core::chemical::num_canonical_aas ) { //Noncanonical case: return 0.
-		score_rama = 0.0;
-		denergy_dphi = 0.0;
-		denergy_dpsi = 0.0;
-	} else { //Canonical case: return something
-		if ( res_aa2 == core::chemical::aa_pro || res_aa2 == core::chemical::aa_dpr ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
-			score_rama = rama_pp_splines_[res_aa1_copy].F(phi_copy,psi_copy);
-			denergy_dphi = d_multiplier * rama_pp_splines_[res_aa1_copy].dFdx(phi_copy,psi_copy);
-			denergy_dpsi = d_multiplier * rama_pp_splines_[res_aa1_copy].dFdy(phi_copy,psi_copy);
+		if ( return_derivs ) {
+			denergy_dphi = 0.0;
+			denergy_dpsi = 0.0;
 		} else {
-			score_rama = rama_splines_[res_aa1_copy].F(phi_copy,psi_copy);
-			denergy_dphi = d_multiplier * rama_splines_[res_aa1_copy].dFdx(phi_copy,psi_copy);
-			denergy_dpsi = d_multiplier * rama_splines_[res_aa1_copy].dFdy(phi_copy,psi_copy);
+			score_rama = 0.0;
+		}
+	} else { //Canonical case: return something
+		utility::vector1< core::Real > phipsi(2);
+		phipsi[1] = d_multiplier * phi;
+		phipsi[2] = d_multiplier * psi;
+		utility::vector1 < core::Real > derivs(2);
+		core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table;
+		if ( is_pro( res_aa2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
+			cur_table =  canonical_prepro_score_tables_.at(res_aa1_copy);
+		} else {
+			cur_table =  canonical_score_tables_.at(res_aa1_copy);
+		}
+		debug_assert(cur_table);
+		if ( return_derivs ) {
+			cur_table->gradient( phipsi, derivs );
+			denergy_dphi = d_multiplier * derivs[1];
+			denergy_dpsi = d_multiplier * derivs[2];
+		} else {
+			score_rama = cur_table->energy(phipsi);
 		}
 	}
 }
 
-/// load tables
-
-void
-RamaPrePro::read_rpp_tables( ) {
-	bool const symmetrize_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() ); //Should the gly tables be symmetrized?
-
-	rama_splines_.resize(20);
-	rama_pp_splines_.resize(20);
-
-	// allocate space for raw data
-	utility::vector1<  ObjexxFCL::FArray2D< Real > > data(20);
-	for ( int i=1; i<=20; ++i ) {
-		data[i].dimension(36,36);
-	}
-
-	std::string allmap, prepromap, suffix("");
-	bool const use_steep( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]() );
-	bool const nobidentate( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]() );
-	if ( nobidentate ) suffix = ".rb";
-	//if ( use_steep ) suffix += ".100_2_0_20";
-	// new logic Aug 1 2016: just revert back to rama map by Maxim (for non-prepros) until we get better scheme...
-	if ( use_steep ) suffix += ".shapovalov.kappa25";
-	allmap = "scoring/score_functions/rama/fd/all.ramaProb" + suffix;
-	prepromap = "scoring/score_functions/rama/fd/prepro.ramaProb";
-
-	///fpd hardcode for now
-	read_rama_map_file_shapovalov(allmap, data, symmetrize_gly);
-	for ( int i=1; i<=20; ++i ) {
-		setup_interpolation( data[i], rama_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
-	}
-
-	read_rama_map_file_shapovalov(prepromap, data, symmetrize_gly);
-	for ( int i=1; i<=20; ++i ) {
-		setup_interpolation( data[i], rama_pp_splines_[i], (i == static_cast<int>( core::chemical::aa_gly ) && symmetrize_gly) ? 5.0 : 0.0  ); //VKM: To symmetrize the gly tables, I need a five degree offset.  Question: should everything be offset by five degrees?
-	}
-}
-
-
-/// @brief Adapted from Max's code, ramachandran.cc
-/// @details If symmetrize_gly is true, the plot for glycine is made symmetric.
-void
-RamaPrePro::read_rama_map_file_shapovalov (
-	std::string const &filename,
-	utility::vector1<  ObjexxFCL::FArray2D< Real > > &data,
-	bool const symmetrize_gly
-) {
-	//ala     -180.0  -180.0  5.436719e-004   7.517165e+000
-	utility::io::izstream  iunit;
-
-	// search in the local directory first
-	iunit.open( filename );
-
-	if ( !iunit.good() ) {
-		iunit.close();
-		if ( !basic::database::open( iunit, filename ) ) {
-			std::stringstream err_msg;
-			err_msg << "Unable to open Ramachandran map '" << filename << "'.";
-			utility_exit_with_message(err_msg.str());
-		}
-	}
-
-	char line[256];
-
-	int i; // aa index
-	int j, k; //phi and psi indices
-	char aa[4];
-	std::string aaStr;
-	double phi, psi, prob, minusLogProb;
-	utility::vector1< core::Real > entropy(20,0);
-
-	// read the file
-	do {
-		iunit.getline( line, 255 );
-
-		if ( iunit.eof() ) break;
-		if ( line[0]=='#' || line[0]=='\n' || line[0]=='\r' ) continue;
-
-		std::sscanf( line, "%3s%lf%lf%lf%lf", aa, &phi, &psi, &prob, &minusLogProb );
-		std::string prevAAStr = aaStr;
-		//std::cout << line << " :: " << aaStr << std::endl;
-		aaStr = std::string(aa);
-		boost::to_upper(aaStr);
-		i = core::chemical::aa_from_name(aaStr);
-
-		if ( phi < 0 ) phi += 360;
-		if ( psi < 0 ) psi += 360;
-
-		j = static_cast<int>( ceil(phi / 10.0 - 0.5) + 1 );
-		k = static_cast<int>( ceil(psi / 10.0 - 0.5) + 1 );
-
-		data[i](j,k) = prob;
-		entropy[i] += prob * (-minusLogProb);
-	} while (true);
-
-	// Symmetrize the gly table, if we should:
-	if ( symmetrize_gly ) {
-		symmetrize_gly_table( data[static_cast<int>(core::chemical::aa_gly)], entropy[static_cast<int>(core::chemical::aa_gly)] );
-	}
-
-	// correct
-	for ( int i=1; i<=20; ++i ) { //loop through all amino acids
-		for ( int j=1; j<=36; ++j ) {
-			for ( int k=1; k<=36; ++k ) {
-				data[i](j,k) = -std::log( data[i](j,k) ) + entropy[i];
-			}
-		}
-	}
-}
-
-void
-RamaPrePro::setup_interpolation(
-	ObjexxFCL::FArray2D< Real > & x,
-	numeric::interpolation::spline::BicubicSpline  &sx,
-	core::Real const &offset
-) {
-	using namespace numeric;
-	using namespace numeric::interpolation::spline;
-
-	// just interpolate phi/psi
-	MathMatrix< Real > energy_vals( 36, 36 );
-	for ( Size jj = 0; jj < 36; ++jj ) {
-		for ( Size kk = 0; kk < 36; ++kk ) {
-			energy_vals( jj, kk ) = x(jj+1,kk+1);
-		}
-	}
-	BorderFlag periodic_boundary[2] = { e_Periodic, e_Periodic };
-	Real start_vals[2] = {offset, offset}; // fpd: shapovalov has 0 degree shift
-	Real deltas[2] = {10.0, 10.0};   // grid is 10 degrees wide
-	bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
-	std::pair< Real, Real > unused[2];
-	unused[0] = std::make_pair( 0.0, 0.0 );
-	unused[1] = std::make_pair( 0.0, 0.0 );
-	sx.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
-}
-
-/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
-/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
-/// in the D-amino acid region of Ramachandran space).  However, the intrinsic propensities of glycine make it equally inclined to favour
-/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
-/// to bicubic interpolation setup.
+/// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing
+/// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
-RamaPrePro::symmetrize_gly_table(
-	ObjexxFCL::FArray2D< core::Real > & data,
-	core::Real &entropy
+RamaPrePro::read_canonical_rpp_tables( ) {
+
+	canonical_score_tables_.clear();
+	canonical_prepro_score_tables_.clear();
+
+	ScoringManager* manager( ScoringManager::get_instance() ); //Raw pointer to the ScoringManager singleton.  Note that this is a rare instance in which there is no reason to use an owning pointer.
+	core::chemical::ResidueTypeSetCOP rts( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+	//Read the score tables for this residue.
+	for ( core::Size i( static_cast<core::Size>( core::chemical::first_l_aa )); i<=static_cast<core::Size>( core::chemical::num_canonical_aas ); ++i ) { //Loop through the canonical amino acids.
+		core::chemical::ResidueTypeCOP restype( rts->get_representative_type_aa(static_cast< core::chemical::AA >(i) ) );
+		runtime_assert( restype ); //There shouldn't be a problem getting the residue type.
+
+		core::chemical::mainchain_potential::MainchainScoreTableCOP curtable( manager->get_rama_prepro_mainchain_torsion_potential( restype,  true /*RamaPrePro always uses polycubic interpolation*/, false /*Not a prepro table*/) );
+		runtime_assert_string_msg( curtable, "Error in core::scoring::RamaPrePro::read_canonical_rpp_tables(): Could not read table for " + restype->name() + "." );
+		canonical_score_tables_[ static_cast< core::chemical::AA >(i) ] = curtable;
+
+		core::chemical::mainchain_potential::MainchainScoreTableCOP curtable_pp( manager->get_rama_prepro_mainchain_torsion_potential( restype,  true /*RamaPrePro always uses polycubic interpolation*/, true /*A prepro table*/ ) );
+		runtime_assert_string_msg( curtable_pp, "Error in core::scoring::RamaPrePro::read_canonical_rpp_tables(): Could not read pre-proline table for " + restype->name() + "." );
+		canonical_prepro_score_tables_[ static_cast< core::chemical::AA >(i) ] = curtable_pp;
+	}
+}
+
+/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+RamaPrePro::is_pro(
+	core::chemical::AA const &aa
 ) const {
-	TR << "Symmetrizing glycine RamaPrePro table." << std::endl;
-
-	//The following is for debugging only:
-	/*TR << "MATRIX_BEFORE:" << std::endl;
-	for(core::Size j=1; j<=36; ++j) {
-	for(core::Size k=1; k<=36; ++k) {
-	TR << data(j,k) << "\t";
-	}
-	TR << std::endl;
-	}
-	TR << std::endl;*/
-
-	entropy = 0;
-	for ( core::Size j=1; j<=35; ++j ) {
-		for ( core::Size k=j+1; k<=36; ++k ) { //Loop though one triangle of the data matrix
-			core::Real const avg( (data(j,k) + data(37-j,37-k) ) / 2 );
-			data(j,k) = avg;
-			data(37-j,37-k) = avg;
-			entropy += avg * (-2.0) * std::log(avg);
-		}
-	}
-
-	for ( core::Size j=1; j<=18; ++j ) { //Loop through half of the diagonal
-		core::Real const avg( ( data(j,j) + data(37-j,37-j) )/2 );
-		data(j,j)=avg;
-		data(37-j,37-j) = avg;
-		entropy += avg * (-2.0) * std::log(avg);
-	}
-
-	//The following is for debugging only:
-	/*TR << "MATRIX_AFTER:" << std::endl;
-	for(core::Size j=1; j<=36; ++j) {
-	for(core::Size k=1; k<=36; ++k) {
-	TR << data(j,k) << "\t";
-	}
-	TR << std::endl;
-	}*/
+	return (aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr );
 }
 
-}
-}
+} //namespace scoring
+} //namespace core

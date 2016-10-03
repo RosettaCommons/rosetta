@@ -63,6 +63,7 @@ NBR_ATOM CB
 # APL CB to sidechain heavyatom distance; swept all chi combos at 5 degree intervals
 NBR_RADIUS 5.37514
 FIRST_SIDECHAIN_ATOM CB
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/fd/all.ramaProb scoring/score_functions/rama/fd/prepro.ramaProb
 ACT_COORD_ATOMS CD2 CE3 END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  

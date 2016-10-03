@@ -21,6 +21,7 @@ sources = {
 		"EulerAngles",
 		"HomogeneousTransform",
 		"interpolate",
+		"MathNTensor",
 		"MultiDimensionalHistogram",
 		"numeric.functions",
 		"PCA",
@@ -52,8 +53,8 @@ sources = {
 	],
 	"interpolation/spline" : [
         	"bicubic_interpolation_function",
-		"Bicubic_spline",
-		"Cubic_spline",
+		"BicubicSpline",
+		"CubicSpline",
 		"TricubicSpline",
 		"PolycubicSpline",
 	],

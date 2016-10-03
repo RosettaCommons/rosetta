@@ -1,0 +1,175 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/chemical/mainchain_potential/MainchainScoreTable.hh
+/// @brief  Headers for a general class for storing a torsional potential for mainchain resiudes.
+/// @details Can be used by terms like rama, rama_prepro, p_aa_pp.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+
+#ifndef INCLUDED_core_chemical_mainchain_potential_MainchainTorsionPotential_hh
+#define INCLUDED_core_chemical_mainchain_potential_MainchainTorsionPotential_hh
+
+// Unit Headers
+#include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
+
+// Project Headers
+#include <core/types.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/io/izstream.hh>
+#include <utility/vector1.hh>
+
+// Numeric Headers
+#include <numeric/MathNTensorBase.fwd.hh>
+#include <numeric/interpolation/spline/PolycubicSplineBase.fwd.hh>
+#include <numeric/interpolation/spline/BicubicSpline.fwd.hh>
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
+
+// C++ Headers
+#include <sstream>
+#include <string> //getline overload
+
+namespace core {
+namespace chemical {
+namespace mainchain_potential {
+
+class MainchainScoreTable : public utility::pointer::ReferenceCount
+{
+
+public:
+
+	/// @brief Default constructor.
+	///
+	MainchainScoreTable();
+
+	/// @brief Default destructor.
+	///
+	~MainchainScoreTable() {}
+
+public: //Read functions:
+
+	/// @brief Parse a Shapovalov-style rama database file and set up this MainchainScoreTable.
+	/// @param[in] filename The name of the file that was read.  (Just used for output messages -- this function does not file read).
+	/// @param[in] file_contents The slurped contents of the file to parse.
+	/// @param[in] res_type_name The name of the ResidueType for which we're reading data.  Data lines for other residue types will be
+	/// ignored.
+	/// @param[in] use_polycubic_interpolation If true, uses polycubic interpolation; if false, uses polylinear interpolation.
+	void parse_rama_map_file_shapovalov(
+		std::string const &filename,
+		std::string const &file_contents,
+		std::string const &res_type_name,
+		bool const use_polycubic_interpolation
+	);
+
+public: //Accessor functions:
+
+	/// @brief Access values in this MainchainScoreTable.
+	/// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
+	/// that all coordinates are in the range [0, 360).
+	core::Real energy( utility::vector1 < core::Real > coords ) const;
+
+	/// @brief Get the gradient with respect to x1,x2,x3,...xn for this MainchainScoreTable.
+	/// @param[in] coords_in The coordinates at which to evaluate the gradient.
+	/// @param[out] gradient_out The resulting gradient.
+	void gradient( utility::vector1 < core::Real > coords_in, utility::vector1 < core::Real > &gradient_out ) const;
+
+	/// @brief Set whether we should symmetrize tables for glycine.
+	///
+	void set_symmetrize_gly( bool const setting_in );
+
+	/// @brief Return whether we should symmetrize tables for glycine.
+	///
+	inline bool symmetrize_gly() const { return symmetrize_gly_; }
+
+private: //Private functions:
+
+	/// @brief Check that the stringstream doesn't have bad or eof status, and throw an error message if it does.
+	///
+	void check_linestream( std::istringstream const &linestream, std::string const &filename ) const;
+
+	/// @brief Initialize the energies_ and probabilities_ tensors to 0-containing N-tensors, of the
+	/// dimensions given by the dimensions vector.
+	void initialize_tensors( utility::vector1 < core::Size > dimensions );
+
+	/// @brief Convert the energies from probabilities to Rosetta energy units, and add the
+	/// entropic correction factor.
+	void iteratively_correct_energy_tensor( core::Real const &entropy );
+
+	/// @brief Given coordinates in the energy tensor, go to the next bin.
+	/// @details As row ends are reached, the row resets to 1 and the next column is selected (and so forth down the dimensions).
+	/// Returns "true" if increment was successful, "false" if the end of the tensor has been reached.
+	bool increment_coords( utility::vector1 < core::Size > &coords, numeric::MathNTensorBaseCOP< core::Real > tensor ) const;
+
+	/// @brief Given a set of coordinates in a MathNTensor, get the opposite coordinates.
+	/// @details For example, in a 2D 5x5 tensor, (1, 3) would yield an opposite of (3, 1).
+	void get_opposite_coord( utility::vector1 < core::Size > const &coord, numeric::MathNTensorBaseCOP< core::Real > tensor, utility::vector1 <core::Size> &opposite_coord ) const;
+
+	/// @brief Once the internal MathNTensor has been set up, set up polycubic interpolation.
+	/// @details This function includes special-case logic for setting up cubic interpolation in the 1D case and
+	/// bicubic interpolation in the 2D case, since these are not handled by the PolycubicSpline class.
+	/// @param[in] offsets Vector of offset values, from 0 to 1 -- where centres are, as fraction of bin width.
+	/// @param[in] dimensions Vector of number of entries in each dimension.  Bin widths are inferred from this: 36 entries would correspond to 10-degree bins.
+	void set_up_polycubic_interpolation(
+		utility::vector1 < core::Real > const &offsets,
+		utility::vector1 < core::Size > const &dimensions
+	);
+
+	/// @brief Given a tensor, symmetrize it.
+	/// @details Assumes that tensor stores probabilities; updates entropy in the process.
+	void symmetrize_tensor(
+		numeric::MathNTensorBaseOP< core::Real > tensor,
+		core::Real &entropy,
+		core::Real const &minusLogProb
+	) const;
+
+private: //Private variables:
+
+	/// @brief Dimensionality of this MainchainScoreTable.
+	/// @details Minimum 1, maximum 9.  A value of 0 indicates that it is uninitialized.
+	core::Size dimension_;
+
+	/// @brief N-dimensional tensor for storing energies data.
+	///
+	numeric::MathNTensorBaseOP< core::Real > energies_;
+
+	/// @brief N-dimensional tensor for storing probabilities data.
+	///
+	numeric::MathNTensorBaseOP< core::Real > probabilities_;
+
+	/// @brief Is this MainchainScoreTable set up with polycubic interpolation?
+	/// @details Default true.  If false, interpolation is linear.
+	bool use_polycubic_interpolation_;
+
+	/// @brief Interpolation spline for the 1D case.
+	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is 1D.
+	/// Null otherwise.
+	numeric::interpolation::spline::CubicSplineOP energies_spline_1D_;
+
+	/// @brief Interpolation spline for the 2D case.
+	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is 2D.
+	/// Null otherwise.
+	numeric::interpolation::spline::BicubicSplineOP energies_spline_2D_;
+
+	/// @brief Interpolation spline for the N-dimensional case, where N > 2.
+	/// @details Only used if use_polycubic_interpolation_ is true and the energies_ MathNTensor is N-dimensional, where N > 2.
+	/// Null otherwise.
+	numeric::interpolation::spline::PolycubicSplineBaseOP energies_spline_ND_;
+
+	/// @brief Symmetrize glycine tables?
+	/// @details Read from option system by default.
+	bool symmetrize_gly_;
+
+};
+
+} //mainchain_potential
+} //chemical
+} //core
+
+#endif //INCLUDED_core_chemical_mainchain_potential_MainchainTorsionPotential_hh

@@ -850,6 +850,23 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Remove existing rotamer specifications (of any type).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+class RemoveRotamerSpecifications : public PatchOperation {
+public:
+	/// @brief Constructor.
+	///
+	RemoveRotamerSpecifications();
+
+	/// @brief Strip all RotamerSpecifications from the ResidueType.
+	///
+	bool
+	apply( ResidueType & rsd ) const;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set the path to a rotamer library for an NCAA that is not in dunbrack
 class NCAARotLibPath : public PatchOperation {
 public:
@@ -862,6 +879,24 @@ public:
 
 private:
 	std::string path_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set the number of rotamer bins per chi for an NCAA that is not in dunbrack.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+class NCAARotLibNumRotamerBins : public PatchOperation {
+public:
+	/// @brief Constructor
+	///
+	NCAARotLibNumRotamerBins( utility::vector1< core::Size > const &binsizes_in );
+
+	/// @brief Set the number of rotamer bins per chi for an NCAA.
+	///
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	utility::vector1 < core::Size > binsizes_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1083,7 +1118,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief virtualize all 
+/// @brief virtualize all
 class VirtualizeAll: public PatchOperation {
 public:
 	/// @brief constructor

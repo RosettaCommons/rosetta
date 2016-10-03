@@ -642,7 +642,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		utility_exit_with_message( msg.str() );
 	}
 
-	// apply user-provided movers
+// apply user-provided movers
 	apply_movers( postfold, pose );
 
 	// modify structuredata so this portion of the structure can be checked independently
