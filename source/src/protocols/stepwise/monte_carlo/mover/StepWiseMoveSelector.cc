@@ -467,7 +467,7 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 
 		// could be a 3' chain terminus
 		Size const i_full = res_list[ i ] ;
-		if ( i_full >= nres_full && !is_cutpoint_in_full_pose[ i_full ] ) continue;
+		if ( i_full >= nres_full || is_cutpoint_in_full_pose[ i_full ] ) continue;
 
 		// direct addition of single residue (or potentially, a block of residues starting with this residue)
 		if ( is_addable_res( i_full + 1, pose ) ) {
@@ -498,7 +498,6 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 		Size const i_full = res_list[ i ];
 		if ( i_full <= 1 || is_cutpoint_in_full_pose[ i_full - 1 ] ) continue;
 		// good, there's still a gap!
-
 
 		// direct addition of single residue (or potentially, a block of residues starting with this residue)
 		if ( is_addable_res( i_full - 1, pose ) ) {
