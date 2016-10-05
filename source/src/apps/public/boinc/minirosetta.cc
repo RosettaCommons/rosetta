@@ -55,11 +55,11 @@
 
 #include <core/types.hh>
 
-#ifndef BOINC
-#ifndef WIN32
+//#ifndef BOINC
+//#ifndef WIN32
 #include <devel/init.hh>
-#endif
-#endif
+//#endif
+//#endif
 
 #ifdef BOINC
 #include <core/pose/Pose.hh>
@@ -153,12 +153,12 @@ main( int argc, char * argv [] )
 	std::cerr << "Initializing core..." << std::endl;std::cerr.flush();
 #endif
 
-#ifndef BOINC
-#ifndef WIN32
+//#ifndef BOINC
+//#ifndef WIN32
 		// No devel in BOINC builds
 		devel::init( argc, argv );
-#endif
-#endif
+//#endif
+//#endif
 
 #ifdef BOINC
 	protocols::init::init( argc, argv );
