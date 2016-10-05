@@ -25,3 +25,4 @@ source/ide/RosettaMini.xcodeproj/xcuserdata/
 database/chemical/components.*
 tests/sfxn_fingerprint/new/
 .idea
+.beaut
