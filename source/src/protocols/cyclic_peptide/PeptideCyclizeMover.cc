@@ -248,13 +248,17 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 		printf("this is where angle constraints being set, if not assigned\n");
 		std::cout << "we are first setting the angle function " << cst_func_angle_ << " between " << res1_angle_ << atom1_angle_ << " and " << res_center_ << atom_center_ << " and " << res2_angle_ << atom2_angle_ << std::endl << "and then the function " << cst_func_angle2_ << " between " << res1_angle_ << atom1_angle2_ << " and " << res_center2_ << atom_center2_ << " and " << res2_angle_ << atom2_angle2_ << std::endl;
 	} else {
+
+		std::cout << "setting angles you assigned" << std::endl;
+		std::cout <<res1_angle_ << atom1_angle_ << res_center_<< atom_center_ << res2_angle_ << atom2_angle_ << cst_func_angle_ << std::endl;
 		angle1->set(res_center_,atom_center_,res1_angle_,atom1_angle_,res2_angle_,atom2_angle_,cst_func_angle_);
-		angle2->apply(pose);
+		angle1->apply(pose);
 	}
 
 	protocols::cyclic_peptide::CreateTorsionConstraintOP torsion(new protocols::cyclic_peptide::CreateTorsionConstraint);
 	torsion->set(res1_torsion_,atom1_torsion_,res2_torsion_,atom2_torsion_,res3_torsion_,atom3_torsion_,res4_torsion_,atom4_torsion_,cst_func_torsion_);
 	torsion->apply(pose);
+	
 	std::cout << "we are setting the torsion function " << cst_func_torsion_ << " between " << res1_torsion_ << atom1_torsion_ << " and " << res2_torsion_ << atom2_torsion_ << " and " << res3_torsion_ << atom3_torsion_ << " and " << res4_torsion_ << atom4_torsion_ << std::endl;
 
 	if ( !bond_assigned_ ) {
@@ -304,19 +308,19 @@ PeptideCyclizeMover::parse_my_tag(
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Bond" ) {
 			printf ("you have assigned a Bond to be formed\n");
-			set_bond ((*tag_it)->getOption<core::Size> ("res1",0),(*tag_it)->getOption<std::string> ("atom1",""),(*tag_it)->getOption<core::Size> ("res2",0),(*tag_it)->getOption<std::string> ("atom2",""), (*tag_it)->getOption< bool >( "add_termini", "" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
+			set_bond ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"), (*tag_it)->getOption< bool >( "add_termini" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
 		}
 		if ( (*tag_it)->getName() == "Distance" ) {
 			printf ("getting distance constraints from user\n");
-			set_distance ((*tag_it)->getOption<core::Size> ("res1",0),(*tag_it)->getOption<std::string> ("atom1",""),(*tag_it)->getOption<core::Size> ("res2",0),(*tag_it)->getOption<std::string> ("atom2",""),(*tag_it)->getOption<std::string> ("cst_func",""));
+			set_distance ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
 		}
 		if ( (*tag_it)->getName() == "Angle" ) {
 			printf ("getting angle constraints from user \n");
-			set_angle ((*tag_it)->getOption<core::Size> ("res1",0),(*tag_it)->getOption<std::string> ("atom1",""),(*tag_it)->getOption<core::Size> ("res2",0),(*tag_it)->getOption<std::string> ("atom2",""),(*tag_it)->getOption<core::Size> ("res_center",0),(*tag_it)->getOption<std::string> ("atom_center",""),(*tag_it)->getOption<std::string> ("cst_func",""));
+			set_angle ((*tag_it)->getOption<core::Size> ("res_center"),(*tag_it)->getOption<std::string> ("atom_center"),(*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
 		}
 		if ( (*tag_it)->getName() == "Torsion" ) {
-			printf ("getting torsion constraints from user\n");
-			set_torsion ((*tag_it)->getOption<core::Size> ("res1",0),(*tag_it)->getOption<std::string> ("atom1",""),(*tag_it)->getOption<core::Size> ("res2",0),(*tag_it)->getOption<std::string> ("atom2",""),(*tag_it)->getOption<core::Size> ("res3",0),(*tag_it)->getOption<std::string> ("atom3",""),(*tag_it)->getOption<core::Size> ("res4",0),(*tag_it)->getOption<std::string> ("atom4",""),(*tag_it)->getOption<std::string> ("cst_func",""));
+			std::cout << "getting torsion constraints from user" << std::endl;
+			set_torsion ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<core::Size> ("res3"),(*tag_it)->getOption<std::string> ("atom3"),(*tag_it)->getOption<core::Size> ("res4"),(*tag_it)->getOption<std::string> ("atom4"),(*tag_it)->getOption<std::string> ("cst_func"));
 		}
 	}
 
