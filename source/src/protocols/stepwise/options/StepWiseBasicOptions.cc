@@ -78,6 +78,8 @@ StepWiseBasicOptions::initialize_variables(){
 	test_all_mg_hydration_frames_ = false;
 	minimizer_mode_ = modeler::TRADITIONAL_MINIMIZER;
 	n_cycles_ = 100;
+	thermal_sampler_temperature_ = 0.5;
+	thermal_sampler_output_min_pose_ = false;
 }
 
 /// @brief clone the options
@@ -121,6 +123,9 @@ StepWiseBasicOptions::initialize_from_command_line(){
 		minimizer_mode_ = modeler::TRADITIONAL_MINIMIZER;
 	}
 	n_cycles_ = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ]();
+	auto temps = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::temps ]();
+	thermal_sampler_temperature_ = ( temps.size() > 0 )  ? temps[ 1 ] : 0.5;
+	thermal_sampler_output_min_pose_ = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::output_min_pose ]();
 
 }
 

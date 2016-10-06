@@ -242,7 +242,9 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 		tm.set_scorefxn( minimize_scorefxn_ );
 		tm.set_mm( std::make_shared< kinematics::MoveMap >( mm ) );
 		tm.set_n_cycle( options_->n_cycles() );
-		tm.set_temp( 0.5 );
+		tm.set_temp( options_->thermal_sampler_temperature() );
+		tm.set_kic_sampling( false ); // TEMPORARY -- FOR DEBUGGING.
+		tm.set_output_min_pose( options_->thermal_sampler_output_min_pose() ); // Testing this -- true jitter?
 		tm.apply( pose );
 	} else if ( options_->minimizer_mode() == TRADITIONAL_MINIMIZER ) {
 		if ( options_->cart_min() ) {

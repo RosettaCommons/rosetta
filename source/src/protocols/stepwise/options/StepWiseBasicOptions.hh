@@ -136,6 +136,11 @@ public:
 	Size const & n_cycles() const { return n_cycles_; }
 	void set_n_cycles( Size const setting ) { n_cycles_ = setting; }
 
+	core::Real const & thermal_sampler_temperature() const { return thermal_sampler_temperature_; }
+
+	void set_thermal_sampler_output_min_pose( bool const & setting ){ thermal_sampler_output_min_pose_ = setting; }
+	bool thermal_sampler_output_min_pose() const{ return thermal_sampler_output_min_pose_; }
+
 protected:
 
 	void
@@ -172,8 +177,12 @@ private:
 	bool test_all_mg_hydration_frames_;
 	bool mapfile_activated_;
 
+	// thermal_sampler
 	modeler::MinimizerMode minimizer_mode_;
 	Size n_cycles_;
+	core::Real thermal_sampler_temperature_;
+	bool thermal_sampler_output_min_pose_;
+
 };
 
 } //options

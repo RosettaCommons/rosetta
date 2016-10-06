@@ -106,6 +106,12 @@ public:
 
 	//void set_residue_sampling_from_pose_and_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );
 
+	void set_kic_sampling( bool const & setting ){ kic_sampling_ = setting; }
+	bool kic_sampling() const { return kic_sampling_; }
+
+	void set_output_min_pose( bool const & setting ){ output_min_pose_ = setting; }
+	bool output_min_pose() const { return output_min_pose_; }
+
 private: // methods
 
 private: // data
@@ -115,6 +121,8 @@ private: // data
 	Real temp_ = 1.0;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::kinematics::MoveMapOP mm_;
+	bool kic_sampling_;
+	bool output_min_pose_;
 };
 
 std::ostream &

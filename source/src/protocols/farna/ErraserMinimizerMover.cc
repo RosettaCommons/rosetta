@@ -1351,7 +1351,7 @@ ErraserMinimizerMover::apply(
 			}
 		}
 		time_t chunk_end = time(0);
-		out << "Chunk took " << (chunk_end-chunk_start) << " seconds." << std::endl;
+		out << "CPU time for chunk: " << (chunk_end-chunk_start) << " seconds." << std::endl;
 		out << "DONE!" << std::endl;
 		std::stringstream fn;
 		fn << "debug_chunk_" << chunk_i << ".pdb";

@@ -6718,7 +6718,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'small_moves', 'Boolean', desc = 'add a stage of small moves', default = 'false'),
 			Option( 'fa_mode', 'Boolean', desc = 'does the fragment assembly stage in fa', default= 'false'),
 			Option( 'fa_relax_moves', 'Boolean', desc = 'Adds a stage of fa relax', default = 'false'),
-			Option( 'sym_move', 'Boolean', desc ='Adds a symmetry move to the abinitio stage', default='false'), 
+			Option( 'sym_move', 'Boolean', desc ='Adds a symmetry move to the abinitio stage', default='false'),
 		  Option( 'loop_btw_parametric_components', 'Boolean' , desc='Sets up a mode where a loop can be inserted into a parametric repeat', default='false'),
 			Option( 'pre_centroid', 'Boolean' , desc='initialize fa mode with 200 cycles of centroid', default='false'),
 		), # -remodel:staged_sampling
@@ -6886,6 +6886,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'temps', 'RealVector', desc="Simulated tempering temperatures", default=[] ),
           Option( 'st_weights', 'RealVector', desc="Simulated tempering weights", default=[] ),
           Option( 'dump_freq', 'Integer', desc="Frequency to dump pdb or silent files", default='500' ),
+				  Option( 'output_min_pose', 'Boolean', desc="Make last pose the minimum score pose ('recover low')", default='true' ),
 			), # -rna:farna:thermal_sampling
 		), # -rna:farna
 	), # -rna
