@@ -26,7 +26,15 @@ enum E1 {E1A, E1B};
 /// comment 0
 namespace utility {
 
-class Common {};
+
+class Common
+{
+public:
+
+	/// some docs
+	int const test(char q, char w, int a=1, int b=2, float c=3) const { return 0; }
+};
+
 class Base1 : public virtual Common
 {};
 class Base2 : public virtual Common

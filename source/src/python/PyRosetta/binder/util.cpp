@@ -266,6 +266,7 @@ string get_text(comments::Comment const *C, SourceManager const & SM, SourceLoca
 	}
 }
 
+
 // extract doc string (Doxygen comments) for given declaration and convert it to C++ source code string
 std::string generate_documentation_string_for_declaration(clang::Decl const* decl)
 {

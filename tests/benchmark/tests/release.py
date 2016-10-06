@@ -65,7 +65,7 @@ def release(name, package_name, package_dir, working_dir, platform, config):
 
     # Creating git repository with binaries, only for named branches
     if config['branch'] != 'commits' or True:
-        git_repository_name = '{name}.{package_name}.{branch}'.format(**vars())
+        git_repository_name = '{package_name}.{branch}'.format(**vars())
         git_release_path = '{}/{name}/git/{branch}/'.format(config['release_root'], **vars())
         git_origin = os.path.abspath(git_release_path + git_repository_name + '.git')  # bare repositiry
         git_working_dir = working_dir + '/' + git_repository_name

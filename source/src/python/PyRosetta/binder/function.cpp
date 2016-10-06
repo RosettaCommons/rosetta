@@ -183,6 +183,12 @@ string function_qualified_name(FunctionDecl const *F)
 	return r;
 }
 
+/// generate human redable C++ type signature for given function
+// string function_type_signature(FunctionDecl const *F)
+// {
+// 	return "C++: " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ')' + (F->isConst() ? " const" : "") + " --> " + standard_name( F->getReturnType().getCanonicalType().getAsString() ) + '\n';
+// }
+
 
 // generate vector<QualType> with all types that function uses including: return type, types of function arguments and template arguments
 vector<QualType> get_type_dependencies(FunctionDecl const *F)
@@ -254,9 +260,13 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 	CXXMethodDecl const * m = dyn_cast<CXXMethodDecl>(F);
 	string maybe_static = m and m->isStatic() ? "_static" : "";
 
-	string function;
+	string function, documentation;
 	if( args_to_bind == F->getNumParams() ) {
 		function = "({}) &{}{}"_format(function_pointer_type(F), function_qualified_name, template_specialization(F));
+
+		documentation = generate_documentation_string_for_declaration(F);
+		if( documentation.size() ) documentation += "\\n\\n";
+		documentation += "C++: " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ')' + (m  and  m->isConst() ? " const" : "") + " --> " + standard_name( F->getReturnType().getCanonicalType().getAsString() );
 	}
 	else {
 		pair<string, string> args = function_arguments_for_lambda(F, args_to_bind);
@@ -278,8 +288,9 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 	else if( F->getReturnType()->isLValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_lvalue_reference_return_value_policy();
 	else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_rvalue_reference_return_value_policy();
 
+
 	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
-	string r = R"(.def{}("{}", {}, "{}"{})"_format(maybe_static, function_name, function, generate_documentation_string_for_declaration(F), maybe_return_policy);
+	string r = R"(.def{}("{}", {}, "{}"{})"_format(maybe_static, function_name, function, documentation, maybe_return_policy);
 
 	if(request_bindings_f) request_bindings(F->getReturnType().getCanonicalType(), context);
 
@@ -312,12 +323,16 @@ string bind_function(string const & module, FunctionDecl const *F, Context &cont
 {
 	string code;
 
-	uint args_to_bind = 0;
-	for(; args_to_bind < F->getNumParams(); ++args_to_bind) {
+	int num_params = F->getNumParams();
+
+	int args_to_bind = 0;
+	for(; args_to_bind < num_params; ++args_to_bind) {
 		if( F->getParamDecl(args_to_bind)->hasDefaultArg() ) break;
 	}
 
-	for(; args_to_bind <= F->getNumParams(); ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == F->getNumParams(), context) + '\n';
+	for(; args_to_bind <= num_params; ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == num_params, context) + '\n';
+	//for(int i = num_params; i >= args_to_bind ; --i) code += module + bind_function(F, i, i == num_params, context) + '\n';
+
 
 	return code;
 	// string function_name = python_function_name(F);
