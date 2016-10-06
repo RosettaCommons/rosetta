@@ -32,6 +32,8 @@
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random.functions.hh>
+#include <numeric/conversions.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
@@ -62,10 +64,10 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false),check_rmsd_(false),initial_perturb_(0.0)
-{
-
-}
+Transform::Transform():
+	Mover("Transform")
+	// & in class defaults
+{}
 
 
 Transform::Transform(Transform const & ) = default;
@@ -77,7 +79,8 @@ Transform::Transform(
 	core::Real const & angle,
 	core::Size const & cycles,
 	core::Real const & temp
-) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false),output_sampled_space_(false),check_rmsd_(false)
+) : Mover("Transform")
+	// & in class defaults
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -87,10 +90,7 @@ Transform::Transform(
 	transform_info_.temperature = temp;
 }
 
-Transform::~Transform()
-{
-	//
-}
+Transform::~Transform() = default;
 
 protocols::moves::MoverOP Transform::clone() const
 {
@@ -135,7 +135,15 @@ void Transform::parse_my_tag
 	transform_info_.repeats = tag->getOption<core::Size>("repeats",1);
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
-
+	if ( initial_perturb_ < 0 ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("The initial_perturb option to the Transform mover must be positive.");
+	}
+	if ( tag->hasOption("initial_angle_perturb") ) {
+		initial_angle_perturb_ = tag->getOption<core::Real>("initial_angle_perturb",0.0);
+		if ( initial_angle_perturb_ < 0 ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("The initial_angle_perturb option to the Transform mover must be positive.");
+		}
+	} // else leave as default: 360 degree sampling
 
 	if ( tag->hasOption("rmsd") ) {
 		check_rmsd_ = true;
@@ -198,10 +206,11 @@ void Transform::apply(core::pose::Pose & pose)
 		bool not_converged = true;
 		core::conformation::UltraLightResidue ligand_residue(pose.residue(begin).get_self_ptr());
 
-		//For benchmarking purposes it is sometimes desirable to translate the ligand
-		//away from the starting point before beginning a trajectory.
-		if ( initial_perturb_ > 0.0 ) {
-			translate_ligand(ligand_residue,initial_perturb_ );
+		// For benchmarking purposes it is sometimes desirable to translate the ligand
+		// away from the starting point and randomize its orientation before beginning a trajectory.
+		// The defaults of 0.0 & -360.0 won't trigger, but if either are set to positive they will.
+		if ( initial_perturb_ > 0.0 || initial_angle_perturb_ > 0.0 ) {
+			randomize_ligand( ligand_residue, initial_perturb_, initial_angle_perturb_ );
 		}
 		last_score = grid_manager->total_score(ligand_residue);
 		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
@@ -301,22 +310,26 @@ void Transform::apply(core::pose::Pose & pose)
 }
 
 
-void Transform::translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance)
+void Transform::randomize_ligand(core::conformation::UltraLightResidue & residue, core::Real distance, core::Real angle)
 {
-	core::Vector translation(
-		distance*numeric::random::rg().uniform(),
-		distance*numeric::random::rg().uniform(),
-		distance*numeric::random::rg().uniform());
+	// Pick a random direction, then translate a random distance in that direction, up to the given maximum
+	core::Vector trans_axis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
 
-	core::Real angle = 360;
+	// sampling with sqrt( rnd * r^2 ) is to give an equal sampling distribution in volume (as opposed to equal sampling of distance
+	core::Vector translation( std::sqrt( numeric::random::rg().uniform() * distance * distance ) * trans_axis );
+
+	// Pick a (new) random axis, then rotate around that axis by up to the given maximum.
+	// (Opposite direction rotation is handled by positive rotation around the opposite-direction vector)
+	core::Vector axis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
+
+	core::Real chosen_angle( angle*numeric::random::rg().uniform() );
 
 	numeric::xyzMatrix<core::Real> rotation(
-		numeric::z_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) * (
-		numeric::y_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) *
-		numeric::x_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) ));
+		numeric::rotation_matrix( axis, numeric::conversions::to_radians( chosen_angle ) ) );
 
 	residue.transform(rotation,translation);
 }
+
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if ( transform_info_.angle ==0 && transform_info_.move_distance == 0 ) {

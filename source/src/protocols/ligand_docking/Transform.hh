@@ -84,8 +84,9 @@ public:
 
 private:
 
-	/// @brief translate a ligand residue by some random value within a uniform distribution with a max of distance
-	void translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance);
+	/// @brief Performa a randomization of the ligand residue, translating by some random value within a uniform distribution with a max of distance,
+	/// and rotating around a random axis with a uniformly random angle of between -angle/2 and +angle/2 (in degrees).
+	void randomize_ligand(core::conformation::UltraLightResidue & residue, core::Real distance, core::Real angle);
 
 	/// @brief translate and rotate a random value by the distances specified in the Transform_info object, using a gaussian distribution
 	void transform_ligand(core::conformation::UltraLightResidue & residue);
@@ -103,11 +104,12 @@ private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
-	bool optimize_until_score_is_negative_;
-	bool output_sampled_space_;
-	bool check_rmsd_;
+	bool optimize_until_score_is_negative_ = false;
+	bool output_sampled_space_ = false;
+	bool check_rmsd_ = false;
 	std::string sampled_space_file_;
-	core::Real initial_perturb_;
+	core::Real initial_perturb_ = 0.0;
+	core::Real initial_angle_perturb_ = -360.0;
 
 };
 
