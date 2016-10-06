@@ -46,11 +46,8 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
-mv full_minimize_temp_1.out tmp
-cat tmp | egrep -v "Chunk took" > full_minimize_temp_1.out
-
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # Remove timing information from full_minimize_temp_1.out
-egrep -v 'Chunk took [0-9]+ seconds' full_minimize_temp_1.out > full_minimize_temp_1.out.tmp
+egrep -v 'seconds' full_minimize_temp_1.out > full_minimize_temp_1.out.tmp
 mv -f full_minimize_temp_1.out.tmp full_minimize_temp_1.out

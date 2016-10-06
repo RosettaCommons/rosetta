@@ -41,3 +41,4 @@ time_taken_so_far = [0-9.]+
 Time for DARC runs: [0-9.]+
 time to finish decoy [0-9.]+
 Found .+ duplicate lines in .+ blocks in .+ files
+Processed a total .* lines in .* files
