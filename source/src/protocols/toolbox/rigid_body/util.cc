@@ -33,6 +33,7 @@ using namespace core::pose;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
 
+using utility::operator <<;
 
 //////////////////////////////////////////////////////////////////
 //
