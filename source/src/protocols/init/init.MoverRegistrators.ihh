@@ -98,6 +98,7 @@ static MoverRegistrator< denovo_design::movers::BridgeChainsMoverCreator > reg_B
 // TL: this one is here to keep compatibility with a publication (Kuhlman, Jacobs, and Linsky, 2016)
 static MoverRegistrator< denovo_design::movers::BridgeChainsCreator > reg_BridgeChainsCreator;
 static MoverRegistrator< denovo_design::movers::BuildDeNovoBackboneMoverCreator > reg_BuildDeNovoBackboneMoverCreator;
+static MoverRegistrator< denovo_design::movers::DeclareStructureDataCovalentBondMoverCreator > reg_DeclareStructureDataCovalentBondMover;
 static MoverRegistrator< denovo_design::movers::ExtendChainMoverCreator > reg_ExtendChainMoverCreator;
 static MoverRegistrator< denovo_design::movers::FastDesignCreator > reg_FastDesignCreator;
 static MoverRegistrator< denovo_design::movers::SetResidueAliasMoverCreator > reg_SetResidueAliasMoverCreator;

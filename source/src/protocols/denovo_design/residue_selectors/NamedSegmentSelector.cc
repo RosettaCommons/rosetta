@@ -96,9 +96,7 @@ NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 	SignedResidSet const resids = resid_set();
 
 	// subset to work on
-	ResidueSubset subset;
-	if ( !resids.empty() ) subset = compute_residue_subset_from_resids( sd, resids );
-	else subset = compute_residue_subset( sd );
+	ResidueSubset subset = compute_residue_subset( sd, resids );
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		subset = symmetric_residue_subset( pose, subset );
@@ -114,96 +112,63 @@ NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 	return subset;
 }
 
-/// @brief computes a residue subset based on StructureData
-///        If pose is symmetric, this will only be for the asymmetric unit
+/// @brief Computes residue subset from a Segment and list of resids
+/// @param[out] subset ResidueSubset to be modified
+/// @param[in]  sd     StructureData object
+/// @param[in]  resids List of signed residue numbers, can be empty if
+///                    the entire segment is being selected
+void
+NamedSegmentSelector::compute_residue_subset_for_segment(
+	ResidueSubset & subset,
+	components::Segment const & seg,
+	SignedResidSet const & resids ) const
+{
+	if ( resids.empty() ) {
+		for ( core::Size resid=seg.lower(); resid<=seg.upper(); ++resid ) {
+			subset[ resid ] = true;
+		}
+	} else {
+		for ( auto const & r : resids ) {
+			subset[ seg.segment_to_pose( r ) ] = true;
+		}
+	}
+}
+
+/// @brief Computes residue subset from a StructureData and list of resids
+/// @param[in]  sd     StructureData object
+/// @param[in]  resids List of signed residue number, can be empty if no
+///                    residue numbers are specified
 NamedSegmentSelector::ResidueSubset
-NamedSegmentSelector::compute_residue_subset_from_resids(
+NamedSegmentSelector::compute_residue_subset(
 	components::StructureData const & sd,
 	SignedResidSet const & resids ) const
 {
-	debug_assert( ! resids.empty() );
-
 	ResidueSubset subset( sd.pose_length(), false );
 
-	// if residues are specified, the segment name provided must be an actual segment
-	// rather than an alias or segment group
-	if ( !sd.has_segment( segment_ ) ) {
-		std::stringstream msg;
-		msg << class_name() << "::apply(): Specific residues are provided (" << residues_
-			<< "), but the name provided (" << segment_
-			<< ") does not match any named segments found in the pose ("
-			<< SegmentNameList( sd.segments_begin(), sd.segments_end() )
-			<< ").  Alias or segment groups cannot be specified with residues" << std::endl;
-		msg << "SD=" << sd << std::endl;
-		if ( error_on_missing_segment_ ) {
-			utility_exit_with_message( msg.str() );
-		} else {
-			TR << msg.str();
-			return subset;
-		}
-	}
-
-	components::Segment const & res = sd.segment( segment_ );
-	for ( SignedResidSet::const_iterator r=resids.begin(); r!=resids.end(); ++r ) {
-		core::Size const pose_resid = res.segment_to_pose( *r );
-		subset[ pose_resid ] = true;
-	}
-
-	return subset;
-}
-
-/// @brief computes a residue subset based on StructureData
-///        If pose is symmetric, this will only be for the asymmetric unit
-NamedSegmentSelector::ResidueSubset
-NamedSegmentSelector::compute_residue_subset( components::StructureData const & sd ) const
-{
-	ResidueSubset subset( sd.pose_length(), false );
-
-	// compute intervals and use the to modify the subset
-	ResidueRanges const intervals = compute_residue_intervals( sd );
-	for ( ResidueRanges::const_iterator n=intervals.begin(); n!=intervals.end(); ++n ) {
-		core::Size start = n->start();
-		core::Size stop = n->stop();
-		debug_assert( start <= sd.pose_length() );
-		debug_assert( stop <= sd.pose_length() );
-		debug_assert( start >= 1 );
-		debug_assert( stop >= 1 );
-		if ( start > stop ) {
-			core::Size tmp = stop;
-			stop = start;
-			start = tmp;
-		}
-		debug_assert( start <= stop );
-		for ( core::Size resid=start; resid<=stop; ++resid ) {
-			subset[ resid ] = true;
-		}
-	}
-	return subset;
-}
-
-NamedSegmentSelector::ResidueRanges
-NamedSegmentSelector::compute_residue_intervals( components::StructureData const & sd ) const
-{
-	using core::select::residue_selector::ResidueRange;
-
-	ResidueRanges intervals;
 	if ( sd.has_segment( segment_ ) ) {
 		// Case 1: single segment specified
-		components::Segment const & res = sd.segment( segment_ );
-		intervals.push_back( ResidueRange( res.lower(), res.upper() ) );
+		compute_residue_subset_for_segment( subset, sd.segment( segment_ ), resids );
 	} else if ( sd.has_alias( segment_ ) ) {
 		// Case 2: alias specified
 		TR.Debug << segment_ << " is an alias." << std::endl;
-		core::Size const start = sd.alias( segment_ );
-		intervals.push_back( ResidueRange( start, start ) );
+		subset[ sd.alias( segment_ ) ] = true;
+		if ( !resids.empty() ) {
+			std::stringstream msg;
+			msg << class_name() << ": you cannot specify residue numbers with an alias" << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
 	} else if ( sd.has_segment_group( segment_ ) ) {
 		// Case 3: segment group specified
 		SegmentNames const segments = sd.segment_group( segment_ );
 		TR.Debug << segment_ << " is a multi-segment group composed of " << segments << "." << std::endl;
+		if ( !resids.empty() ) {
+			std::stringstream msg;
+			msg << class_name() << ": you cannot specify residue numbers with a segment group" << std::endl;
+			utility_exit_with_message( msg.str() );
+		}
 		for ( SegmentNames::const_iterator c=segments.begin(); c!=segments.end(); ++c ) {
 			TR.Debug << "Adding interval for segment " << *c << std::endl;
-			components::Segment const & seg = sd.segment( *c );
-			intervals.push_back( ResidueRange( seg.lower(), seg.upper() ) );
+			compute_residue_subset_for_segment( subset, sd.segment( *c ), resids );
 		}
 	} else {
 		std::stringstream error_msg;
@@ -212,7 +177,8 @@ NamedSegmentSelector::compute_residue_intervals( components::StructureData const
 		if ( error_on_missing_segment_ ) utility_exit_with_message( error_msg.str() );
 		else TR << error_msg.str() << std::endl;
 	}
-	return intervals;
+
+	return subset;
 }
 
 NamedSegmentSelector::SignedResidSet

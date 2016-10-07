@@ -102,14 +102,23 @@ private:
 	SignedResidSet
 	resid_set() const;
 
-	ResidueRanges
-	compute_residue_intervals( components::StructureData const & sd ) const;
+	/// @brief Computes residue subset from a Segment and list of resids
+	/// @param[out] subset ResidueSubset to be modified
+	/// @param[in]  sd     StructureData object
+	/// @param[in]  resids List of signed residue numbers, can be empty if
+	///                    the entire segment is being selected
+	void
+	compute_residue_subset_for_segment(
+		ResidueSubset & subset,
+		components::Segment const & seg,
+		SignedResidSet const & resids ) const;
 
+	/// @brief Computes residue subset from a StructureData and list of resids
+	/// @param[in]  sd     StructureData object
+	/// @param[in]  resids List of signed residue number, can be empty if no
+	///                    residue numbers are specified
 	ResidueSubset
-	compute_residue_subset( components::StructureData const & sd ) const;
-
-	ResidueSubset
-	compute_residue_subset_from_resids(
+	compute_residue_subset(
 		components::StructureData const & sd,
 		SignedResidSet const & resids ) const;
 

@@ -71,6 +71,7 @@ sources = {
 		"AddSegmentDataMover",
 		"BridgeChainsMover",
 		"BuildDeNovoBackboneMover",
+		"DeclareStructureDataCovalentBondMover",
 		"DisulfidizeMover",
 		"ExtendChainMover",
 		"FastDesign",

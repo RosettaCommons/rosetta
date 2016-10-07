@@ -87,6 +87,7 @@
 #include <protocols/denovo_design/movers/BridgeChainsMoverCreator.hh>
 #include <protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh>
 #include <protocols/denovo_design/movers/ExtendChainMoverCreator.hh>
+#include <protocols/denovo_design/movers/DeclareStructureDataCovalentBondMoverCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 #include <protocols/denovo_design/movers/FastDesignCreator.hh>
 #include <protocols/denovo_design/movers/MakeAsymmetricStructureDataMoverCreator.hh>
