@@ -64,7 +64,7 @@ public:
 		TS_ASSERT_EQUALS( conformers[ 3 ].CP_parameters[ PHI ], 135.0 );
 		TS_ASSERT_EQUALS( conformers[ 1 ].CP_parameters[ THETA ], 30.0 );
 		TS_ASSERT_EQUALS( conformers[ 2 ].CP_parameters[ 5 ], 120.0 );
-		TS_ASSERT_EQUALS( conformers[ 3 ].nu_angles.size(), 7 );  // 1 fewer angles than the ring size should be read.
+		TS_ASSERT_EQUALS( conformers[ 3 ].nu_angles.size(), 8 );  // fd: now same number of nus as ring size
 		TS_ASSERT_EQUALS( conformers[ 1 ].nu_angles[ 1 ], -60.0 );
 		TS_ASSERT_EQUALS( conformers[ 2 ].nu_angles[ 3 ], 60.0 );
 		TS_ASSERT_EQUALS( conformers[ 3 ].nu_angles[ 5 ], 30.0 );

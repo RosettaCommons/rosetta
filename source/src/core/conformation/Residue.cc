@@ -403,7 +403,7 @@ Residue::carbohydrate_info() const
 
 // Return the current RingConformer of this residue's nth ring.
 chemical::rings::RingConformer const &
-Residue::ring_conformer( core::uint const ring_num ) const
+Residue::ring_conformer( core::uint const ring_num, core::Real limit/*=90*/ ) const
 {
 	PyAssert( ( ring_num <= rsd_type_.n_rings() ),
 		"Residue::ring_conformer(core::uint const ring_num): variable ring_num is out of range!" );
@@ -422,7 +422,7 @@ Residue::ring_conformer( core::uint const ring_num ) const
 		nus.push_back( nus_[ n_nus_on_previous_rings + i ] );
 	}
 
-	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus_ );
+	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus_, limit );
 }
 
 core::Size

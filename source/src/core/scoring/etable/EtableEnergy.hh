@@ -769,9 +769,11 @@ public:
 	//
 	TableLookupEvaluator const & intrares_evaluator() const { return intrares_evaluator_; }
 	TableLookupEvaluator const & interres_evaluator() const { return interres_evaluator_; }
+	TableLookupEvaluator const & nonprot_intrares_evaluator() const { return nonprot_intrares_evaluator_; }
 
 	TableLookupEvaluator & intrares_evaluator() { return intrares_evaluator_; }
 	TableLookupEvaluator & interres_evaluator() { return interres_evaluator_; }
+	TableLookupEvaluator & nonprot_intrares_evaluator() { return nonprot_intrares_evaluator_; }
 
 private:
 	// bookkeeping variable -- are intra- or interresidue weights being using at the moment?
@@ -783,6 +785,7 @@ private:
 
 	TableLookupEvaluator intrares_evaluator_;
 	TableLookupEvaluator interres_evaluator_;
+	TableLookupEvaluator nonprot_intrares_evaluator_;
 
 };
 
@@ -845,9 +848,11 @@ public:
 
 	AnalyticEtableEvaluator const & intrares_evaluator() const { return intrares_evaluator_; }
 	AnalyticEtableEvaluator const & interres_evaluator() const { return interres_evaluator_; }
+	AnalyticEtableEvaluator const & nonprot_intrares_evaluator() const { return nonprot_intrares_evaluator_; }
 
 	AnalyticEtableEvaluator & intrares_evaluator() { return intrares_evaluator_; }
 	AnalyticEtableEvaluator & interres_evaluator() { return interres_evaluator_; }
+	AnalyticEtableEvaluator & nonprot_intrares_evaluator() { return nonprot_intrares_evaluator_; }
 
 private:
 	// bookkeeping variable -- are intra- or interresidue weights being using at the moment?
@@ -859,6 +864,7 @@ private:
 
 	mutable AnalyticEtableEvaluator intrares_evaluator_;
 	mutable AnalyticEtableEvaluator interres_evaluator_;
+	mutable AnalyticEtableEvaluator nonprot_intrares_evaluator_;
 
 
 };

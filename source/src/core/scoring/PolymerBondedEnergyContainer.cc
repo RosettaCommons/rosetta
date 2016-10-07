@@ -33,6 +33,7 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/base_class.hpp>
 #include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
 
@@ -104,32 +105,32 @@ Size PolymerBondedNeighborIterator::neighbor_id() const {
 void PolymerBondedNeighborIterator::save_energy( EnergyMap const & emap ) {
 	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
 		Real const energy( emap[ parent_->score_types()[i] ] );
-		parent_->set_energy( base_ , i , energy);
+		parent_->set_energy( base_, neighbor_id() , i , energy);
 	}
 }
 
 void PolymerBondedNeighborIterator::retrieve_energy( EnergyMap & emap ) const {
 	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
-		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_ , i );
+		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_, neighbor_id() , i );
 	}
 }
 
 void PolymerBondedNeighborIterator::accumulate_energy( EnergyMap & emap ) const {
 	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
-		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_ , i );
+		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_, neighbor_id() , i );
 	}
 }
 
 void PolymerBondedNeighborIterator::mark_energy_computed() {
-	parent_->set_computed( base_ , true );
+	parent_->set_computed( base_, neighbor_id() , true );
 }
 
 void PolymerBondedNeighborIterator::mark_energy_uncomputed() {
-	parent_->set_computed( base_ , false );
+	parent_->set_computed( base_, neighbor_id(), false );
 }
 
 bool PolymerBondedNeighborIterator::energy_computed() const {
-	return parent_->get_computed( base_ );
+	return parent_->get_computed( base_, neighbor_id() );
 }
 
 /////////////////////////////////////////////////////
@@ -194,18 +195,18 @@ Size PolymerBondedNeighborConstIterator::neighbor_id() const {
 
 void PolymerBondedNeighborConstIterator::retrieve_energy( EnergyMap & emap ) const {
 	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
-		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_ , i );
+		emap[ parent_->score_types()[i] ] = parent_->get_energy( base_, neighbor_id() , i );
 	}
 }
 
 void PolymerBondedNeighborConstIterator::accumulate_energy( EnergyMap & emap ) const {
 	for ( Size i=1; i<=parent_->score_types().size(); ++i ) {
-		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_ , i );
+		emap[ parent_->score_types()[i] ] += parent_->get_energy( base_, neighbor_id() , i );
 	}
 }
 
 bool PolymerBondedNeighborConstIterator::energy_computed() const {
-	return parent_->get_computed( base_ );
+	return parent_->get_computed( base_, neighbor_id() );
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -230,8 +231,6 @@ PolymerBondedEnergyContainer::PolymerBondedEnergyContainer(
 	score_types_( score_type_in )
 {
 	initialize_peptide_bonded_pair_indices( pose ); //Sets size_ and peptide_bonded_pair_indices_.
-	computed_.resize( size_, false);
-	tables_.resize( size_, utility::vector1< core::Real >( score_types_.size(), 0.0) );
 }
 
 
@@ -256,19 +255,12 @@ PolymerBondedEnergyContainer::size() const {
 
 ResidueNeighborConstIteratorOP
 PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
-		//If out of range, return no interactions
-		return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
-	}
-
 	utility::vector1<core::Size> neighbors;
-	auto it = peptide_bonded_pair_indices_.find(resid);
-	if ( it != peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(it->second);
-	}
-	auto itinv = inv_peptide_bonded_pair_indices_.find(resid);
-	if ( itinv != inv_peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(itinv->second);
+	typedef std::multimap<core::Size, core::Size>::const_iterator it;
+	std::pair<it,it> range = chemical_edges_.equal_range(resid);
+
+	for (it p = range.first; p != range.second; ++p) {
+		neighbors.push_back(p->second);
 	}
 
 	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
@@ -281,15 +273,15 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_end( int resid ) const {
 
 ResidueNeighborConstIteratorOP
 PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
-		//If out of range, return no interactions
-		return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, utility::vector1<core::Size>(), *this ) );
-	}
-
 	utility::vector1<core::Size> neighbors;
-	auto it = peptide_bonded_pair_indices_.find(resid);
-	if ( it != peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(it->second);
+	typedef std::multimap<core::Size, core::Size>::const_iterator it;
+	std::pair<it,it> range = chemical_edges_.equal_range(resid);
+
+	for (it p = range.first; p != range.second; ++p) {
+		// use residue ordering to decide lower vs upper
+		if ((int)p->second > resid) {
+			neighbors.push_back(p->second);
+		}
 	}
 
 	return ResidueNeighborConstIteratorOP( new PolymerBondedNeighborConstIterator( resid, neighbors, *this ) );
@@ -303,17 +295,12 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_end( int resid ) con
 //////////////////// non-const versions
 ResidueNeighborIteratorOP
 PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
-		//If out of range, return no interactions
-		return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
-	}
-
 	utility::vector1<core::Size> neighbors;
-	if ( peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
-	}
-	if ( inv_peptide_bonded_pair_indices_.find(resid) != inv_peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(inv_peptide_bonded_pair_indices_[resid]);
+	typedef std::multimap<core::Size, core::Size>::const_iterator it;
+	std::pair<it,it> range = chemical_edges_.equal_range(resid);
+
+	for (it p = range.first; p != range.second; ++p) {
+		neighbors.push_back(p->second);
 	}
 
 	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
@@ -327,14 +314,15 @@ PolymerBondedEnergyContainer::neighbor_iterator_end( int resid ) {
 ResidueNeighborIteratorOP
 PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	if ( resid <= (int)(0) || resid > static_cast<int>(size_) ) {
-		//If out of range, return no interactions
-		return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, utility::vector1<core::Size>(), *this ) );
-	}
-
 	utility::vector1<core::Size> neighbors;
-	if ( peptide_bonded_pair_indices_.find(resid) != peptide_bonded_pair_indices_.end() ) {
-		neighbors.push_back(peptide_bonded_pair_indices_[resid]);
+	typedef std::multimap<core::Size, core::Size>::const_iterator it;
+	std::pair<it,it> range = chemical_edges_.equal_range(resid);
+
+	for (it p = range.first; p != range.second; ++p) {
+		// use residue ordering to decide lower vs upper
+		if ((int)p->second > resid) {
+			neighbors.push_back(p->second);
+		}
 	}
 
 	return ResidueNeighborIteratorOP( new PolymerBondedNeighborIterator( resid, neighbors, *this ) );
@@ -352,6 +340,7 @@ PolymerBondedEnergyContainer::is_valid(
 	core::pose::Pose const &pose
 ) const {
 	//First, check that the number of residues is correct:
+
 	core::Size nres( pose.size() );
 	//fd This does not work if the scoring subunit is not the first ....
 	//if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -361,22 +350,33 @@ PolymerBondedEnergyContainer::is_valid(
 
 	//Next, check that the correct connections have been set up.
 	core::Size connect_count(0);
-	bool correct_connections_found(true);
+	//bool correct_connections_found(true);
 	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues (or all residues in the asymmetric unit, if this is a symmetric pose).
-		core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
-		if ( !other_res ) continue; //These are not connected by normal polymeric connection.
+		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
 
-		//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Check that they're stored:
-		if ( peptide_bonded_pair_indices_.count(ir) == 0 || peptide_bonded_pair_indices_.at(ir) != other_res ) {
-			correct_connections_found = false;
-			break;
+		core::conformation::Residue const & rsd = pose.residue(ir);
+		core::Size nconnected = rsd.n_current_residue_connections(); // not sure if this should be "possible" instead
+
+		typedef std::multimap<core::Size, core::Size>::const_iterator it;
+		std::pair<it,it> range = chemical_edges_.equal_range(ir);
+
+		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+			core::Size connect_i = rsd.residue_connection_partner( ic );
+			bool connect_found = false;
+			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
+
+			for (it p = range.first; p != range.second && !connect_found; ++p)
+					if (p->second == connect_i) connect_found = true;
+
+			if (!connect_found) {
+				return false;
+			}
+			connect_count++;
 		}
+	}
 
-		//Increment the count of connections found.  At the end, this should match the number of elements in the peptide_bonded_pair_indices_ map.
-		++connect_count;
-	} //End loop through all residues (in asymmetric unit, in symmetric case).
-
-	return ( correct_connections_found && ( connect_count == peptide_bonded_pair_indices_.size() ) );
+	// now we need to make sure there are no additional edges in current container
+	return ( connect_count == size_ );
 }
 
 /// @brief Given a pose, set up a list of pairs of peptide-bonded residues.
@@ -389,65 +389,24 @@ void
 PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 	core::pose::Pose const &pose
 ) {
-	//fd This does not work if the scoring subunit is not the first ....
-	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	// size_ = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
-	//} else {
-	size_ = pose.size();
-	//}
+	core::Size nres = pose.total_residue();
+	chemical_edges_.clear();
 
-	peptide_bonded_pair_indices_.clear();
-	inv_peptide_bonded_pair_indices_.clear();
-
-	for ( core::Size ir=1; ir<=size_; ++ir ) { //Loop through all resiudes (asymmetric case) or residues in asymmetric unit (symmetric case).
+	for ( core::Size ir=1; ir<=nres; ++ir ) {
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
-		core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
-		if ( !other_res ) continue; //These are not connected by normal polymeric connection.
-
-		//OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
-		debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
-		debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
-		peptide_bonded_pair_indices_[ir] =  other_res;
-		inv_peptide_bonded_pair_indices_[other_res] =  ir;
+		core::conformation::Residue const & rsd = pose.residue(ir);
+		core::Size nconnected = rsd.n_current_residue_connections(); // not sure if this should be "possible" instead
+		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+			std::pair<core::Size,core::Size> edge = std::make_pair(ir,rsd.residue_connection_partner( ic ));
+			chemical_edges_.insert(edge);
+			if (edge.first < edge.second) {
+				tables_[edge] = utility::vector1<core::Real>(score_types_.size(),0.0);
+				computed_[edge] = false;
+			}
+		}
 	}
 
-	//fd This does not work if the scoring subunit is not the first ....
-	// for ( core::Size ir=1; ir<=size_; ++ir ) { //Loop through all resiudes (asymmetric case) or residues in asymmetric unit (symmetric case).
-	//  core::Size other_res( other_res_index( pose, ir ) ); //Get the index of the residue that this one is connected to at its upper_connect (if any).
-	//  if ( !other_res ) continue; //These are not connected by normal polymeric connection.
-	//
-	//  //OK, these two residues are connected by a peptide bond (or, at least, a polymer bond).  Store them:
-	//  debug_assert(peptide_bonded_pair_indices_.count(ir) == 0); //Should always be true.
-	//  debug_assert(inv_peptide_bonded_pair_indices_.count(other_res) == 0); //Should always be true.
-	//  peptide_bonded_pair_indices_[ir] =  other_res;
-	//  inv_peptide_bonded_pair_indices_[other_res] =  ir;
-	// }
-}
-
-/// @brief Logic to get the residue that this residue is connected to at its upper_connect, and which is connected to this residue at its lower_connect.
-/// @details Returns 0 if this residue is not polymeric, if it lacks an upper_connect, if it's not connected to anything at its upper connect, if the
-/// thing that it's connected to is not polymeric, if the thing that it's connected to lacks a lower_connect, or if the thing that it's connected to is not
-/// connected to it at its lower connect.  Phew, what a mouthful!
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-core::Size
-PolymerBondedEnergyContainer::other_res_index(
-	core::pose::Pose const &pose,
-	core::Size const this_res_index
-) const {
-	//fpd if this logic is updated, the logic in CartesianBondedEnergy::eval_intrares_energy must similarly be updated
-
-	if ( !pose.residue(this_res_index).type().is_polymer() ) return 0; //Skip this residue if it's not a polymer.
-	if ( !pose.residue(this_res_index).has_upper_connect() ) return 0; //Skip this residue if it's not one that has an upper_connect.
-	core::Size const other_res( pose.residue(this_res_index).residue_connection_partner( pose.residue(this_res_index).upper_connect().index() ) ); //Index of residue connected to at upper_conect.
-	if ( other_res == 0 ) return 0; //Skip this residue if it's not connected to anything at its upper_connect.
-
-	//Skip this pair if the connection is not polymer-like:
-	if ( !pose.residue(other_res).type().is_polymer() ) return 0;
-	if ( !pose.residue(other_res).has_lower_connect() ) return 0;
-	if ( pose.residue(other_res).residue_connection_partner( pose.residue(other_res).lower_connect().index() ) != this_res_index ) return 0;
-
-	//OK, all checks have passed at this point.  This res is connected normally to other_res.  Return the index of the other residue.
-	return other_res;
+	size_ = chemical_edges_.size();
 }
 
 
@@ -468,8 +427,7 @@ core::scoring::PolymerBondedEnergyContainer::save( Archive & arc ) const {
 	arc( CEREAL_NVP( score_types_ ) ); // utility::vector1<ScoreType>
 	arc( CEREAL_NVP( tables_ ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( computed_ ) ); // utility::vector1<_Bool>
-	arc( CEREAL_NVP( peptide_bonded_pair_indices_ ) ); // std::map<Size,Size>
-	arc( CEREAL_NVP( inv_peptide_bonded_pair_indices_ ) ); // std::map<Size,Size>
+	arc( CEREAL_NVP( chemical_edges_ ) ); // std::multimap<Size,Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -480,8 +438,7 @@ core::scoring::PolymerBondedEnergyContainer::load( Archive & arc ) {
 	arc( score_types_ ); // utility::vector1<ScoreType>
 	arc( tables_ ); // utility::vector1<utility::vector1<Real> >
 	arc( computed_ ); // utility::vector1<_Bool>
-	arc( peptide_bonded_pair_indices_ ); // std::map<Size,Size>
-	arc( inv_peptide_bonded_pair_indices_ ); // std::map<Size,Size>
+	arc( chemical_edges_ ); // std::multimap<Size,Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::PolymerBondedEnergyContainer );

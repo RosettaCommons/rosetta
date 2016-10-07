@@ -34,6 +34,7 @@
 #include <core/pose/carbohydrates/util.hh>
 
 // Numeric headers
+#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 
@@ -142,6 +143,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	using namespace chemical::carbohydrates;
 	using namespace pose::carbohydrates;
 	using namespace scoring::carbohydrates;
+	using numeric::constants::d::pi;
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Evaluating torsion: " << torsion_id << endl;
@@ -267,7 +269,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 			deriv = -deriv;
 		}
 	}
-	return weights[ sugar_bb ] * deriv;
+	return weights[ sugar_bb ] * deriv * 180/pi;
 }
 
 
