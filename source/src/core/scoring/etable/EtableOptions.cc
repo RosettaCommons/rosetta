@@ -14,18 +14,20 @@
 // Unit headers
 #include <core/scoring/etable/EtableOptions.hh>
 
+// Basic headers
 #include <basic/options/option.hh>
-
 #include <basic/Tracer.hh>
 
-// option key includes
-
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
+
+// option key includes
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 
 #ifdef SERIALIZATION
@@ -43,7 +45,12 @@ namespace core {
 namespace scoring {
 namespace etable {
 
+/// @details Delegating constructor that passes the global option collection to the other constructor.
 EtableOptions::EtableOptions() :
+	EtableOptions( basic::options::option )
+{}
+
+EtableOptions::EtableOptions( utility::options::OptionCollection const & options ) :
 	etable_type( "FA_STANDARD_DEFAULT" ), // this string must be kept the same as the variable in ScoringManager.cc named FA_STANDARD_DEFAULT
 	analytic_etable_evaluation( false ),
 	max_dis( 6.0 ),
@@ -56,22 +63,9 @@ EtableOptions::EtableOptions() :
 	lj_hbond_hdis(1.95),
 	enlarge_h_lj_wdepth(false)
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	analytic_etable_evaluation = option[ score::analytic_etable_evaluation ];
-	max_dis = option[ score::fa_max_dis ];
-	if ( option[ score::no_smooth_etables ] && !option[ score::fa_max_dis ].user() ) {
-		basic::T("core.scoring.etable") << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
-		max_dis = 5.5;
-	}
-	if ( option[ score::no_lk_polar_desolvation ] ) {
-		no_lk_polar_desolvation = false;
-	}
-
-	lj_hbond_OH_donor_dis = option[ corrections::score::lj_hbond_OH_donor_dis ];
-	lj_hbond_hdis = option[ corrections::score::lj_hbond_hdis ];
-
+	initialize_from_options( options );
 }
+
 
 // Another constructor
 EtableOptions::EtableOptions( EtableOptions const & src ) :
@@ -198,6 +192,44 @@ EtableOptions::append_schema_attributes( utility::tag::AttributeList & attribute
 	attributes
 		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xs_decimal )
 		+ XMLSchemaAttribute( "lj_hbond_hdis", xs_decimal );
+}
+
+void
+EtableOptions::initialize_from_options()
+{
+	initialize_from_options( basic::options::option );
+}
+
+void
+EtableOptions::initialize_from_options( utility::options::OptionCollection const & options )
+{
+	using namespace basic::options::OptionKeys;
+	analytic_etable_evaluation = options[ score::analytic_etable_evaluation ];
+	max_dis = options[ score::fa_max_dis ];
+	if ( options[ score::no_smooth_etables ] && !options[ score::fa_max_dis ].user() ) {
+		basic::T("core.scoring.etable") << "no_smooth_etables requested and fa_max_dis not specified: using 5.5 as default" << std::endl;
+		max_dis = 5.5;
+	}
+	if ( options[ score::no_lk_polar_desolvation ] ) {
+		no_lk_polar_desolvation = false;
+	}
+
+	lj_hbond_OH_donor_dis = options[ corrections::score::lj_hbond_OH_donor_dis ];
+	lj_hbond_hdis = options[ corrections::score::lj_hbond_hdis ];
+
+}
+
+void
+EtableOptions::list_options_read( utility::options::OptionKeyList & options_read )
+{
+	using namespace basic::options::OptionKeys;
+	options_read
+		+ corrections::score::lj_hbond_hdis
+		+ corrections::score::lj_hbond_OH_donor_dis
+		+ score::analytic_etable_evaluation
+		+ score::fa_max_dis
+		+ score::no_smooth_etables
+		+ score::no_lk_polar_desolvation;
 }
 
 } // etable

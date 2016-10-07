@@ -40,6 +40,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 
 #ifdef SERIALIZATION
@@ -57,7 +58,15 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-HBondOptions::HBondOptions( std::string params_db_tag /* = "sp2_elec_params") */ ):
+/// @details delegating constructor passing in the global option collection
+HBondOptions::HBondOptions( std::string params_db_tag ) :
+	HBondOptions( basic::options::option, params_db_tag )
+{}
+
+HBondOptions::HBondOptions(
+	utility::options::OptionCollection const & options,
+	std::string params_db_tag
+):
 	exclude_DNA_DNA_( true ),
 	exclude_intra_res_protein_( true ),
 	exclude_intra_res_RNA_( false ),
@@ -87,70 +96,103 @@ HBondOptions::HBondOptions( std::string params_db_tag /* = "sp2_elec_params") */
 	hb_env_dep_new_low_nneigh_ ( 10 ),  //fpd new envdep HB
 	hb_env_dep_new_high_nneigh_ ( 20 )  //fpd new envdep HB
 {
-	using namespace basic::options;
-	if ( params_database_tag_.size() == 0 ) {
-		params_database_tag_ = option[OptionKeys::score::hbond_params];
-	}
-	initialize_from_options();
+	initialize_from_options( options );
 }
 
-void HBondOptions::initialize_from_options() {
+void HBondOptions::initialize_from_options()
+{
+	initialize_from_options( basic::options::option );
+}
+
+void HBondOptions::initialize_from_options( utility::options::OptionCollection const & options )
+{
 	using namespace basic::options;
-	if ( option.has(OptionKeys::membrane::Mhbond_depth) &&
-			option[OptionKeys::membrane::Mhbond_depth].user() ) {
-		Mbhbond_ = option[OptionKeys::membrane::Mhbond_depth];//pba
+	if ( params_database_tag_.size() == 0 ) {
+		params_database_tag_ = options[OptionKeys::score::hbond_params];
 	}
 
-	if ( option.has( OptionKeys::mp::scoring::hbond ) ) {
-		mphbond_ = option[ OptionKeys::mp::scoring::hbond ];
+	if ( options.has(OptionKeys::membrane::Mhbond_depth) &&
+			options[OptionKeys::membrane::Mhbond_depth].user() ) {
+		Mbhbond_ = options[OptionKeys::membrane::Mhbond_depth];//pba
 	}
 
-	exclude_DNA_DNA_ = option[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
-	decompose_bb_hb_into_pair_energies_ = option[ OptionKeys::score::hbond_bb_per_residue_energy ];
-	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
-	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
-	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
-	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
-
-	if ( option[ OptionKeys::score::length_dep_srbb ].user() ) {
-		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
-	}
-	if ( option[ OptionKeys::score::ldsrbb_low_scale ].user() ) {
-		ldsrbb_low_scale_ = option[ OptionKeys::score::ldsrbb_low_scale ];
-	}
-	if ( option[ OptionKeys::score::ldsrbb_high_scale ].user() ) {
-		ldsrbb_high_scale_ = option[ OptionKeys::score::ldsrbb_high_scale ];
-	}
-	if ( option[ OptionKeys::score::ldsrbb_minlength ].user() ) {
-		ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
-	}
-	if ( option[ OptionKeys::score::ldsrbb_maxlength ].user() ) {
-		ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
+	if ( options.has( OptionKeys::mp::scoring::hbond ) ) {
+		mphbond_ = options[ OptionKeys::mp::scoring::hbond ];
 	}
 
-	if ( option[ OptionKeys::score::hb_env_dep_new ].user() ) {
-		use_hb_env_dep_new_ = option[ OptionKeys::score::hb_env_dep_new ]();
+	exclude_DNA_DNA_ = options[OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	decompose_bb_hb_into_pair_energies_ = options[ OptionKeys::score::hbond_bb_per_residue_energy ];
+	use_sp2_chi_penalty_ = options[OptionKeys::corrections::score::hb_sp2_chipen ];
+	bb_donor_acceptor_check_ = ! options[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
+	sp2_BAH180_rise_ = options[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+	put_intra_into_total_ = options[basic::options::OptionKeys::score::put_intra_into_total]();
+
+	if ( options[ OptionKeys::score::length_dep_srbb ].user() ) {
+		length_dependent_srbb_ = options[ OptionKeys::score::length_dep_srbb ];
 	}
-	if ( option[ OptionKeys::score::hb_env_dep_new_low_scale ].user() ) {
-		hb_env_dep_new_low_scale_ = option[ OptionKeys::score::hb_env_dep_new_low_scale ]();
+	if ( options[ OptionKeys::score::ldsrbb_low_scale ].user() ) {
+		ldsrbb_low_scale_ = options[ OptionKeys::score::ldsrbb_low_scale ];
 	}
-	if ( option[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user() ) {
-		hb_env_dep_new_low_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_low_nneigh ]();
+	if ( options[ OptionKeys::score::ldsrbb_high_scale ].user() ) {
+		ldsrbb_high_scale_ = options[ OptionKeys::score::ldsrbb_high_scale ];
 	}
-	if ( option[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user() ) {
-		hb_env_dep_new_high_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_high_nneigh ]();
+	if ( options[ OptionKeys::score::ldsrbb_minlength ].user() ) {
+		ldsrbb_minlength_ = options[ OptionKeys::score::ldsrbb_minlength ];
+	}
+	if ( options[ OptionKeys::score::ldsrbb_maxlength ].user() ) {
+		ldsrbb_maxlength_ = options[ OptionKeys::score::ldsrbb_maxlength ];
 	}
 
-	if ( option.has(OptionKeys::corrections::score::hb_sp2_outer_width) ) {
-		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
+	if ( options[ OptionKeys::score::hb_env_dep_new ].user() ) {
+		use_hb_env_dep_new_ = options[ OptionKeys::score::hb_env_dep_new ]();
+	}
+	if ( options[ OptionKeys::score::hb_env_dep_new_low_scale ].user() ) {
+		hb_env_dep_new_low_scale_ = options[ OptionKeys::score::hb_env_dep_new_low_scale ]();
+	}
+	if ( options[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user() ) {
+		hb_env_dep_new_low_nneigh_ = options[ OptionKeys::score::hb_env_dep_new_low_nneigh ]();
+	}
+	if ( options[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user() ) {
+		hb_env_dep_new_high_nneigh_ = options[ OptionKeys::score::hb_env_dep_new_high_nneigh ]();
 	}
 
-	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
-	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
-
-	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift) ) {
-		hbond_energy_shift_ = option[ OptionKeys::corrections::score::hbond_energy_shift ];
+	if ( options.has(OptionKeys::corrections::score::hb_sp2_outer_width) ) {
+		sp2_outer_width_ = options[ OptionKeys::corrections::score::hb_sp2_outer_width ];
 	}
+
+	measure_sp3acc_BAH_from_hvy_ = options[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
+	fade_energy_ = options[ OptionKeys::corrections::score::hb_fade_energy ];
+
+	if ( options.has( OptionKeys::corrections::score::hbond_energy_shift) ) {
+		hbond_energy_shift_ = options[ OptionKeys::corrections::score::hbond_energy_shift ];
+	}
+}
+
+void
+HBondOptions::list_options_read( utility::options::OptionKeyList & option_list ) {
+	using namespace basic::options;
+	option_list
+		+ OptionKeys::corrections::score::hb_fade_energy
+		+ OptionKeys::corrections::score::hbond_energy_shift
+		+ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy
+		+ OptionKeys::corrections::score::hb_sp2_BAH180_rise
+		+ OptionKeys::corrections::score::hb_sp2_chipen
+		+ OptionKeys::corrections::score::hb_sp2_outer_width
+		+ OptionKeys::dna::specificity::exclude_dna_dna
+		+ OptionKeys::membrane::Mhbond_depth
+		+ OptionKeys::mp::scoring::hbond
+		+ OptionKeys::score::hb_env_dep_new
+		+ OptionKeys::score::hb_env_dep_new_high_nneigh
+		+ OptionKeys::score::hb_env_dep_new_low_nneigh
+		+ OptionKeys::score::hb_env_dep_new_low_scale
+		+ OptionKeys::score::hbond_bb_per_residue_energy
+		+ OptionKeys::score::hbond_disable_bbsc_exclusion_rule
+		+ OptionKeys::score::hbond_params
+		+ OptionKeys::score::ldsrbb_high_scale
+		+ OptionKeys::score::ldsrbb_low_scale
+		+ OptionKeys::score::ldsrbb_maxlength
+		+ OptionKeys::score::ldsrbb_minlength
+		+ OptionKeys::score::length_dep_srbb;
 }
 
 /// copy constructor

@@ -23,9 +23,15 @@
 
 // Package headers
 #include <utility/vector1.hh>
+#include <utility/keys/VariantKey.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKey.hh>
+#include <basic/options/util.hh>
 
-//Auto Headers
-
+// option key includes
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 using basic::T;
 using basic::Error;
@@ -49,6 +55,7 @@ using namespace scoring;
 class ScoreFunctionTest : public CxxTest::TestSuite {
 
 public:
+	typedef utility::keys::VariantKey< utility::options::OptionKey > VariantOptionKey;
 
 	void setUp() {
 		core_init();
@@ -123,6 +130,63 @@ public:
 		utility::vector1< bool > residue_mask(pose.size(), true);
 		Real sc_exc2(scfxn.get_sub_score(pose, residue_mask));
 		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
+	}
+
+	void test_ScoreFunction_list_options_read_in_sync() {
+		using namespace utility::keys;
+		TS_ASSERT( true );
+
+		utility::options::OptionKeyList sfxn_ctor_options;
+		ScoreFunction::list_options_read( sfxn_ctor_options );
+
+		TS_ASSERT_EQUALS( std::count( sfxn_ctor_options.begin(), sfxn_ctor_options.end(), VariantOptionKey( basic::options::OptionKeys::score::elec_die )), 1 );
+		TS_ASSERT_EQUALS( std::count( sfxn_ctor_options.begin(), sfxn_ctor_options.end(), VariantOptionKey( basic::options::OptionKeys::score::grp_cpfxn )), 1 );
+		TS_ASSERT_EQUALS( std::count( sfxn_ctor_options.begin(), sfxn_ctor_options.end(), VariantOptionKey( basic::options::OptionKeys::corrections::score::lj_hbond_hdis )), 1 );
+
+		// cursory check that not all options are in here, because that would be weird
+		TS_ASSERT_EQUALS( std::count( sfxn_ctor_options.begin(), sfxn_ctor_options.end(), VariantOptionKey( basic::options::OptionKeys::in::file::s )), 0 );
+
+		utility::options::OptionCollectionCOP sfxn_option_collection =
+			basic::options::read_subset_of_global_option_collection( sfxn_ctor_options );
+
+		// Now, try to call get_scoref_fxn using the local option collection
+		try {
+			set_throw_on_next_assertion_failure(); // just in case
+			ScoreFunction sfxn( *sfxn_option_collection );
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			std::cerr << e.msg() << std::endl;
+			TS_ASSERT( false ); // we screwed the pooch
+		}
+
+	}
+
+	void test_ScoreFunction_ctor_actually_reads_option_collection()
+	{
+
+		using namespace utility::keys;
+		TS_ASSERT( true );
+
+		utility::options::OptionKeyList sfxn_ctor_options;
+		ScoreFunction::list_options_read( sfxn_ctor_options );
+
+		// Now drop one of the options from the list, one which always gets read, and make sure that
+		// when we call the initialize_from_options function, that an assertion failure occurs
+		sfxn_ctor_options.remove( VariantOptionKey( basic::options::OptionKeys::corrections::score::lj_hbond_hdis ));
+
+		utility::options::OptionCollectionCOP sfxn_option_collection =
+			basic::options::read_subset_of_global_option_collection( sfxn_ctor_options );
+
+		// Now, try to create a ScoreFunction from the local option collection
+		try {
+			set_throw_on_next_assertion_failure();
+			ScoreFunction sfxn( *sfxn_option_collection );
+			TS_ASSERT( false ); // we screwed the pooch
+		} catch ( ... ) {
+			// good -- if we don't list an option that we're going to read, then
+			// an exception will be thrown / an assertion failure will get triggered
+			TS_ASSERT( true );
+		}
+
 	}
 
 };

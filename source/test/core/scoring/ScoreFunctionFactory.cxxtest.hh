@@ -25,8 +25,15 @@
 #include <basic/database/open.hh>
 
 #include <basic/options/option.hh>
+#include <basic/options/util.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
-//Auto Headers
+
+// option key includes
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //#include <basic/Tracer.hh>
 
@@ -175,6 +182,35 @@ public:
 		TS_ASSERT(ScoreFunctionFactory::validate_beta("beta", basic::options::option));
 
 		return;
+	}
+
+	void test__list_read_options_in_get_score_function__in_sync_w__get_score_function() {
+		using namespace core::scoring;
+		typedef utility::keys::VariantKey< utility::options::OptionKey > VariantOptionKey;
+
+		TS_ASSERT( true );
+
+		utility::options::OptionKeyList get_sfxn_options;
+		list_read_options_in_get_score_function( get_sfxn_options );
+
+		TS_ASSERT_EQUALS( std::count( get_sfxn_options.begin(), get_sfxn_options.end(), VariantOptionKey( basic::options::OptionKeys::score::empty )), 1 );
+		TS_ASSERT_EQUALS( std::count( get_sfxn_options.begin(), get_sfxn_options.end(), VariantOptionKey( basic::options::OptionKeys::score::weights )), 1 );
+		TS_ASSERT_EQUALS( std::count( get_sfxn_options.begin(), get_sfxn_options.end(), VariantOptionKey( basic::options::OptionKeys::score::patch )), 1 );
+
+		// cursory check that not all options are in here, because that would be weird
+		TS_ASSERT_EQUALS( std::count( get_sfxn_options.begin(), get_sfxn_options.end(), VariantOptionKey( basic::options::OptionKeys::in::file::s )), 0 );
+
+		utility::options::OptionCollectionCOP get_sfxn_option_collection =
+			basic::options::read_subset_of_global_option_collection( get_sfxn_options );
+
+		// Now, try to call get_scoref_fxn using the local option collection
+		try {
+			set_throw_on_next_assertion_failure(); // just in case
+			get_score_function( *get_sfxn_option_collection );
+		} catch ( ... ) {
+			TS_ASSERT( false ); // we screwed the pooch
+		}
+
 	}
 
 }; //ScoreFunctionFactoryTest

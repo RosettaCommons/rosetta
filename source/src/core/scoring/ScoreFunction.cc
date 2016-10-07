@@ -50,15 +50,17 @@
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/kinematics/MinimizerMapBase.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 
-/// Utility headers
+/// Basic headers
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -66,20 +68,17 @@
 #include <basic/init.hh>
 #endif
 
+// Numeric headers
 #include <numeric/random/DistributionSampler.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility/io/izstream.hh>
 
-#include <core/id/DOF_ID.hh>
+// Utility headers
+#include <utility/io/izstream.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/scoring/EnergyGraph.hh>
-
-static THREAD_LOCAL basic::Tracer tr( "core.scoring" );
-
-using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
+// ObjexxFCL Headers
+#include <ObjexxFCL/format.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -91,6 +90,11 @@ using namespace ObjexxFCL::format;
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
+static THREAD_LOCAL basic::Tracer tr( "core.scoring" );
+
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
+
 namespace core {
 namespace scoring {
 
@@ -99,13 +103,26 @@ Size n_minimization_sfxn_evals( 0 );
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-ScoreFunction::ScoreFunction()
+
+/// @details Constructor delegation using the OptionCollection ctor, passing the
+/// global options collection in as input.
+ScoreFunction::ScoreFunction() :
+	ScoreFunction( basic::options::option )
 {
-	reset();
 }
 
+ScoreFunction::ScoreFunction( utility::options::OptionCollection const & options )
+{
+	reset( options );
+}
 
 ScoreFunction::~ScoreFunction() = default;
+
+void
+ScoreFunction::list_options_read( utility::options::OptionKeyList & option_list )
+{
+	methods::EnergyMethodOptions::list_options_read( option_list );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoreFunctionOP
@@ -131,6 +148,14 @@ ScoreFunction::clone_as_base_class() const
 void
 ScoreFunction::reset()
 {
+	reset( basic::options::option );
+}
+
+
+void
+ScoreFunction::reset( utility::options::OptionCollection const & options )
+{
+
 #ifdef PYROSETTA
 		// Sanity check: check if core::init was called already and abort otherwise with helpful message...
 		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize ScoreFunction object before core::init was called detected… Have you forgot to call core::init?");
@@ -139,10 +164,12 @@ ScoreFunction::reset()
 	score_function_info_current_ = true;
 	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo );
 	any_intrares_energies_ = false;
-	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions );
+	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( options ) );
 	initialize_methods_arrays();
 	weights_.clear();
 }
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// read info from file

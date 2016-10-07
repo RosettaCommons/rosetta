@@ -36,6 +36,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -53,11 +55,22 @@ namespace hbonds {
 class HBondOptions : public utility::pointer::ReferenceCount {
 public:
 
+	/// @brief Constructor that initializes th
 	HBondOptions( std::string params_db_tag = "" );
+
+	/// @brief Constructor using options given in a (possibly local) option collection.
+	HBondOptions( utility::options::OptionCollection const & options, std::string params_db_tag = "" );
 
 	// HBondOptions(); // removed in favor of single constructor to avoid copying code.
 
+	/// @brief Initialize this object from the global option collection
 	void initialize_from_options();
+
+	/// @brief Initialize this object from a (possibly local) option collection
+	void initialize_from_options( utility::options::OptionCollection const & option_list );
+
+	/// @brief Documentation functon that lists the options that are read in the initialize_from_options function
+	static void list_options_read( utility::options::OptionKeyList & option_list );
 
 	virtual ~HBondOptions();
 

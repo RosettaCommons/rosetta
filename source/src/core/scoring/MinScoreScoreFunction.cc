@@ -23,9 +23,19 @@
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
-#include <basic/Tracer.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+
+// Utility headers
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
+
+// C++ headers
 #include <limits>
+
+
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.MinScoreScoreFunction" );
 
 #ifdef    SERIALIZATION
@@ -41,7 +51,11 @@ namespace scoring {
 
 ///////////////////////////////////////////////////////////////////////////////
 MinScoreScoreFunction::MinScoreScoreFunction():
-	ScoreFunction(),
+	MinScoreScoreFunction( basic::options::option )
+{}
+
+MinScoreScoreFunction::MinScoreScoreFunction( utility::options::OptionCollection const & options ):
+	ScoreFunction( options ),
 	// RM 2013-11-18: Make it work like regular scorefunction if min not specified.
 	min_score_( -1 * std::numeric_limits< core::Real >::max() )
 {}
@@ -73,13 +87,26 @@ MinScoreScoreFunction::assign( MinScoreScoreFunction const & src )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::Real min_score )
+/// @details delegate to the option-collection accepting version of this constructor
+MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::Real min_score ) :
+	MinScoreScoreFunction( src, min_score, basic::options::option )
+{}
+
+MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::Real min_score, utility::options::OptionCollection const & options  ) :
+	ScoreFunction( options )
 {
 	ScoreFunction::assign( src );
 	min_score_ = min_score;
 }
 
-MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score )
+/// @details delegate to the option-collection accepting version of this constructor
+MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score ) :
+	MinScoreScoreFunction( min_score, basic::options::option )
+{
+}
+
+MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score, utility::options::OptionCollection const & options ) :
+	ScoreFunction( options )
 {
 	min_score_ = min_score;
 }
@@ -105,6 +132,11 @@ MinScoreScoreFunction::operator()( pose::Pose & pose ) const
 	return pose.energies().total_energies()[ total_score ];
 }
 
+void
+MinScoreScoreFunction::list_options_read( utility::options::OptionKeyList & options_read )
+{
+	ScoreFunction::list_options_read( options_read );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 } // namespace scoring

@@ -16,10 +16,15 @@
 
 
 #include <core/types.hh>
+
+// Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
+// C++ headers
 #include <string>
 
 #ifdef    SERIALIZATION
@@ -37,6 +42,8 @@ class EtableOptions : public utility::pointer::ReferenceCount {
 public:
 
 	EtableOptions();
+	EtableOptions( utility::options::OptionCollection const & options );
+
 	~EtableOptions();
 
 	EtableOptions( EtableOptions const & src );
@@ -65,6 +72,13 @@ public:
 	static
 	void
 	append_schema_attributes( utility::tag::AttributeList & attributes );
+
+	void initialize_from_options();
+	void initialize_from_options( utility::options::OptionCollection const & options );
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & option_list );
 
 public:
 

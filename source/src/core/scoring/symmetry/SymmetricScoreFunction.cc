@@ -74,6 +74,10 @@ SymmetricScoreFunction::SymmetricScoreFunction():
 	ScoreFunction()
 {}
 
+SymmetricScoreFunction::SymmetricScoreFunction( utility::options::OptionCollection const & options ):
+	ScoreFunction( options )
+{}
+
 ///////////////////////////////////////////////////////////////////////////////
 ScoreFunctionOP
 SymmetricScoreFunction::clone() const
@@ -1011,6 +1015,12 @@ SymmetricScoreFunction::correct_finalize_score( pose::Pose & pose ) const {
 
 	pose.energies().finalized_energies() -= interface_energies;
 	pose.energies().finalized_energies() += delta_energy;
+}
+
+void
+SymmetricScoreFunction::list_options_read( utility::options::OptionKeyList & options_read )
+{
+	ScoreFunction::list_options_read( options_read );
 }
 
 } // symmetry

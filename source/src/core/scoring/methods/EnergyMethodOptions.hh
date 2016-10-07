@@ -34,12 +34,12 @@
 /// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ Headers
 #include <map>
-
-#include <utility/vector1.hh>
-
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -59,12 +59,12 @@ namespace methods {
 
 class EnergyMethodOptions : public utility::pointer::ReferenceCount {
 public:
-	///
+
+	/// @brief Default constructor, reads from the global options system
 	EnergyMethodOptions();
 
-	/// @brief Initialize a new EnergyMethodOptions with defaults from the command line.
-	void
-	initialize_from_options();
+	/// @brief Initialize an EnergyMethodOptions object from a (possibly local) option collection
+	EnergyMethodOptions( utility::options::OptionCollection const & options );
 
 	/// copy constructor
 	EnergyMethodOptions( EnergyMethodOptions const & src );
@@ -81,6 +81,19 @@ public:
 	clone() const{
 		return EnergyMethodOptionsOP( new EnergyMethodOptions( *this ) );
 	}
+
+	/// @brief Initialize a new EnergyMethodOptions with defaults from the global option collection
+	void
+	initialize_from_options();
+
+	/// @brief Initialize a new EnergyMethodOptions with defaults from a (possibly local) option collection
+	void
+	initialize_from_options( utility::options::OptionCollection const & options );
+
+	/// @brief Append the option keys read by the initialize_from_options method to the input option-key list
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & read_options );
 
 
 	/// @brief Get the nth aa_composition setup file name from the list of setup files.

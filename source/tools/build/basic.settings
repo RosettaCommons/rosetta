@@ -1705,9 +1705,101 @@ settings = {
                     "Werror",
                     "Wno-long-long",
                     "Wno-strict-aliasing",
+                    #"Winconsistent-missing-override", -- 3.5 doesn't like this one
                     #"Wno-documentation",
                     #"Wno-padded",
                     #"Wno-weak-vtables",
+                ],
+            },
+        },
+    },
+
+    # The inconsistent-missing-override flag does nothing w/ clang 3.6
+    #"clang, 3.6" : {
+    #    "appends" : {
+    #        "flags" : {
+    #            "warn" : [
+    #                "Winconsistent-missing-override",
+    #            ],
+    #        },
+    #    },
+    #},
+
+    "clang, 3.7" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 3.8" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 3.9" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 4.0" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 4.1" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 4.2" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 5.0" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
+                ],
+            },
+        },
+    },
+
+    "clang, 5.1" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Winconsistent-missing-override",
                 ],
             },
         },

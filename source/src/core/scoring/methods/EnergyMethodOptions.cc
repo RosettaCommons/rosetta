@@ -35,8 +35,12 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
+
+// Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/options/keys/OptionKeyList.hh>
 
 #include <cppdb/frontend.h>
 
@@ -63,7 +67,14 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+/// @details Delegating constructor using the global option collection
 EnergyMethodOptions::EnergyMethodOptions():
+	EnergyMethodOptions( basic::options::option )
+{
+}
+
+///
+EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection const & options ) :
 	aa_composition_setup_files_(),
 	aspartimide_penalty_value_(25.0),
 	// hard-wired default, but you can set this with etable_type( string )
@@ -100,8 +111,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	geom_sol_intrares_path_distance_cutoff_( 7 ), // originally implemented for RNA base/phosphate.
 	eval_intrares_elec_ST_only_( false ),
 	envsmooth_zero_negatives_( false ),
-	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions() )),
-	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions() )),
+	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions( options ) )),
+	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions( options ) )),
 	rna_options_( new rna::RNA_EnergyMethodOptions() ),
 	free_dof_options_( new methods::FreeDOF_Options() ),
 	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
@@ -116,57 +127,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	symmetric_gly_tables_(false),
 	bond_angle_residue_type_param_set_(/* NULL */)
 {
-	initialize_from_options();
+	initialize_from_options( options );
 	method_weights_[ free_res ] = utility::vector1< Real >();
-}
-
-void EnergyMethodOptions::initialize_from_options() {
-	utility::vector1 < std::string > emptyvector;
-
-	aa_composition_setup_files_ = (basic::options::option[ basic::options::OptionKeys::score::aa_composition_setup_file ].user() ? basic::options::option[ basic::options::OptionKeys::score::aa_composition_setup_file ]() : emptyvector);
-	aspartimide_penalty_value_ = basic::options::option[ basic::options::OptionKeys::score::aspartimide_penalty_value ]();
-	elec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_max_dis ]();
-	elec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_min_dis ]();
-	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
-	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
-	elec_sigmoidal_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die ]();
-	elec_sigmoidal_D_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ]();
-	elec_sigmoidal_D0_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ]();
-	elec_sigmoidal_S_ = basic::options::option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ]();
-	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
-	grpelec_fade_type_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_type ]();
-	grpelec_fade_param1_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_param1 ]();
-	grpelec_fade_param2_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_param2 ]();
-	grpelec_fade_hbond_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_fade_hbond ]();
-	grp_cpfxn_ = basic::options::option[ basic::options::OptionKeys::score::grp_cpfxn ]();
-	elec_group_file_ = basic::options::option[ basic::options::OptionKeys::score::elec_group_file ]();
-	grpelec_context_dependent_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_context_dependent ]();
-	use_polarization_= basic::options::option[basic::options::OptionKeys::score::use_polarization]();
-	use_gen_kirkwood_= basic::options::option[basic::options::OptionKeys::score::use_gen_kirkwood]();
-	protein_dielectric_= basic::options::option[basic::options::OptionKeys::score::protein_dielectric]();
-	water_dielectric_= basic::options::option[basic::options::OptionKeys::score::water_dielectric]();
-	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
-	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
-	put_intra_into_total( basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]() );
-	geom_sol_interres_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
-	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
-	eval_intrares_elec_ST_only_ = basic::options::option[basic::options::OptionKeys::score::eval_intrares_elec_ST_only]();
-	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
-	symmetric_gly_tables_ = basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
-
-	// check to see if the unfolded state command line options are set by the user
-	if ( basic::options::option[basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
-		unfolded_energies_type_ = UNFOLDED_SPLIT_USER_DEFINED;
-	}
-
-	if ( basic::options::option[basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file].user() ) {
-		split_unfolded_label_type_ = SPLIT_UNFOLDED_USER_DEFINED;
-		split_unfolded_value_type_ = SPLIT_UNFOLDED_USER_DEFINED;
-	}
-
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user() ) {
-		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]() );
-	}
 }
 
 /// copy constructor
@@ -239,6 +201,109 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 	}
 	return *this;
 }
+
+void EnergyMethodOptions::initialize_from_options() {
+	initialize_from_options( basic::options::option );
+}
+
+/// @details If you add an option to the EnergyMethodOptions that is initialized from the input option collection,
+/// make sure you add that option key to the list_options_read function below.
+void EnergyMethodOptions::initialize_from_options( utility::options::OptionCollection const & options ) {
+	utility::vector1 < std::string > emptyvector;
+
+	hbond_options_->initialize_from_options( options );
+	etable_options_->initialize_from_options( options );
+
+	aa_composition_setup_files_ = (options[ basic::options::OptionKeys::score::aa_composition_setup_file ].user() ? options[ basic::options::OptionKeys::score::aa_composition_setup_file ]() : emptyvector);
+	aspartimide_penalty_value_ = options[ basic::options::OptionKeys::score::aspartimide_penalty_value ]();
+	elec_max_dis_ = options[basic::options::OptionKeys::score::elec_max_dis ]();
+	elec_min_dis_ = options[basic::options::OptionKeys::score::elec_min_dis ]();
+	elec_die_ = options[ basic::options::OptionKeys::score::elec_die ]();
+	elec_no_dis_dep_die_ = options[ basic::options::OptionKeys::score::elec_r_option ]();
+	elec_sigmoidal_die_ = options[ basic::options::OptionKeys::score::elec_sigmoidal_die ]();
+	elec_sigmoidal_D_ = options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ]();
+	elec_sigmoidal_D0_ = options[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ]();
+	elec_sigmoidal_S_ = options[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ]();
+	smooth_fa_elec_ = options[ basic::options::OptionKeys::score::smooth_fa_elec ]();
+	grpelec_fade_type_ = options[ basic::options::OptionKeys::score::grpelec_fade_type ]();
+	grpelec_fade_param1_ = options[ basic::options::OptionKeys::score::grpelec_fade_param1 ]();
+	grpelec_fade_param2_ = options[ basic::options::OptionKeys::score::grpelec_fade_param2 ]();
+	grpelec_fade_hbond_ = options[ basic::options::OptionKeys::score::grpelec_fade_hbond ]();
+	grp_cpfxn_ = options[ basic::options::OptionKeys::score::grp_cpfxn ]();
+	elec_group_file_ = options[ basic::options::OptionKeys::score::elec_group_file ]();
+	grpelec_context_dependent_ = options[ basic::options::OptionKeys::score::grpelec_context_dependent ]();
+	use_polarization_= options[ basic::options::OptionKeys::score::use_polarization]();
+	use_gen_kirkwood_= options[ basic::options::OptionKeys::score::use_gen_kirkwood]();
+	protein_dielectric_= options[ basic::options::OptionKeys::score::protein_dielectric]();
+	water_dielectric_= options[ basic::options::OptionKeys::score::water_dielectric]();
+	exclude_DNA_DNA_ = options[ basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	exclude_intra_res_protein_ = !options[ basic::options::OptionKeys::score::include_intra_res_protein]();
+	put_intra_into_total( options[ basic::options::OptionKeys::score::put_intra_into_total]() );
+	geom_sol_interres_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
+	geom_sol_intrares_path_distance_cutoff_ = options[ basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
+	eval_intrares_elec_ST_only_ = options[ basic::options::OptionKeys::score::eval_intrares_elec_ST_only]();
+	envsmooth_zero_negatives_ = options[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
+	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
+
+	// check to see if the unfolded state command line options are set by the user
+	if ( options[ basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
+		unfolded_energies_type_ = UNFOLDED_SPLIT_USER_DEFINED;
+	}
+
+	if ( options[ basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file].user() ) {
+		split_unfolded_label_type_ = SPLIT_UNFOLDED_USER_DEFINED;
+		split_unfolded_value_type_ = SPLIT_UNFOLDED_USER_DEFINED;
+	}
+
+	if ( options[ basic::options::OptionKeys::edensity::sc_scaling ].user() ) {
+		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, options[ basic::options::OptionKeys::edensity::sc_scaling ]() );
+	}
+
+}
+
+/// @details If you add a read to an option in initialize_from_options above, you must
+/// update this function.
+void
+EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_options )
+{
+	hbonds::HBondOptions::list_options_read( read_options );
+	etable::EtableOptions::list_options_read( read_options );
+	read_options
+		+ basic::options::OptionKeys::dna::specificity::exclude_dna_dna
+		+ basic::options::OptionKeys::edensity::sc_scaling
+		+ basic::options::OptionKeys::score::aa_composition_setup_file
+		+ basic::options::OptionKeys::score::aspartimide_penalty_value
+		+ basic::options::OptionKeys::score::elec_die
+		+ basic::options::OptionKeys::score::elec_group_file
+		+ basic::options::OptionKeys::score::elec_max_dis
+		+ basic::options::OptionKeys::score::elec_min_dis
+		+ basic::options::OptionKeys::score::elec_r_option
+		+ basic::options::OptionKeys::score::elec_sigmoidal_die
+		+ basic::options::OptionKeys::score::elec_sigmoidal_die_D
+		+ basic::options::OptionKeys::score::elec_sigmoidal_die_D0
+		+ basic::options::OptionKeys::score::elec_sigmoidal_die_S
+		+ basic::options::OptionKeys::score::envsmooth_zero_negatives
+		+ basic::options::OptionKeys::score::eval_intrares_elec_ST_only
+		+ basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff
+		+ basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff
+		+ basic::options::OptionKeys::score::grp_cpfxn
+		+ basic::options::OptionKeys::score::grpelec_context_dependent
+		+ basic::options::OptionKeys::score::grpelec_fade_hbond
+		+ basic::options::OptionKeys::score::grpelec_fade_param1
+		+ basic::options::OptionKeys::score::grpelec_fade_param2
+		+ basic::options::OptionKeys::score::grpelec_fade_type
+		+ basic::options::OptionKeys::score::include_intra_res_protein
+		+ basic::options::OptionKeys::score::protein_dielectric
+		+ basic::options::OptionKeys::score::put_intra_into_total
+		+ basic::options::OptionKeys::score::smooth_fa_elec
+		+ basic::options::OptionKeys::score::symmetric_gly_tables
+		+ basic::options::OptionKeys::score::use_gen_kirkwood
+		+ basic::options::OptionKeys::score::use_polarization
+		+ basic::options::OptionKeys::score::water_dielectric
+		+ basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file
+		+ basic::options::OptionKeys::unfolded_state::unfolded_energies_file;
+}
+
 
 string const &
 EnergyMethodOptions::etable_type() const {

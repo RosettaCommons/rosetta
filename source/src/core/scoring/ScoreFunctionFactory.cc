@@ -83,9 +83,9 @@ ScoreFunctionFactory::create_score_function(
 	} else if ( options[ score::docking_interface_score ]() ) {
 		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
 	} else if ( options[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction );
+		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( options ) );
 	} else {
-		scorefxn = ScoreFunctionOP( new ScoreFunction );
+		scorefxn = ScoreFunctionOP( new ScoreFunction( options ) );
 	}
 
 	// Avoid loading the score12 patch if we're using
@@ -210,6 +210,11 @@ void
 ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts )
 {
 	using namespace basic::options::OptionKeys;
+
+	MinScoreScoreFunction::list_options_read( opts );
+	DockingScoreFunction::list_options_read( opts );
+	ScoreFunction::list_options_read( opts );
+	symmetry::SymmetricScoreFunction::list_options_read( opts );
 
 	opts
 		+ score::min_score_score
@@ -346,7 +351,7 @@ get_score_function(
 {
 	using namespace basic::options::OptionKeys;
 
-	if ( options[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	if ( options[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( options ) );
 
 	std::string weight_set = options[ score::weights ];
 	utility::vector1< std::string > patch_tags = options[ score::patch ]();
@@ -431,8 +436,12 @@ get_score_function(
 }
 
 void
-list_read_options_in_get_score_function( utility::options::OptionKeyList & opts ) {
+list_read_options_in_get_score_function( utility::options::OptionKeyList & opts )
+{
 	using namespace basic::options::OptionKeys;
+
+	// the call to create_score_function reads a significant number of options
+	ScoreFunctionFactory::list_read_options( opts );
 
 	opts
 		+ score::empty

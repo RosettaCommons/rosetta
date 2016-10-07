@@ -27,7 +27,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -47,6 +48,9 @@ public:
 	/// ctor
 	MinScoreScoreFunction();
 
+	/// ctor
+	MinScoreScoreFunction( utility::options::OptionCollection const & options );
+
 private:
 
 	MinScoreScoreFunction &
@@ -57,8 +61,10 @@ private:
 public:
 
 	MinScoreScoreFunction( ScoreFunction const & src, core::Real const );
+	MinScoreScoreFunction( ScoreFunction const & src, core::Real const, utility::options::OptionCollection const & options );
 
 	MinScoreScoreFunction( core::Real const );
+	MinScoreScoreFunction( core::Real const, utility::options::OptionCollection const & options );
 
 	/// @brief INTERNAL USE ONLY
 	void
@@ -76,6 +82,10 @@ public:
 
 	Real
 	operator ()( pose::Pose & pose ) const override;
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & options_read );
 
 private:
 	core::Real min_score_;

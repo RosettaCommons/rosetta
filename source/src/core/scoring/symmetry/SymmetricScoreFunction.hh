@@ -49,6 +49,9 @@ public:
 	/// ctor
 	SymmetricScoreFunction();
 
+	/// @brief Constructor initializing base class data from a (possibly local) options collection
+	SymmetricScoreFunction( utility::options::OptionCollection const & );
+
 private:
 
 	// Copy constructors and assignment operators may discard subtype information.
@@ -143,6 +146,10 @@ public:
 
 	void
 	correct_finalize_score( pose::Pose & pose ) const;
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & options_read );
 
 #ifdef    SERIALIZATION
 public:

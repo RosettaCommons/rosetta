@@ -25,7 +25,13 @@
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
+
+// basic headers
 #include <basic/Tracer.hh>
+
+// Utility headers
+//#include <utility/options/OptionCollection.fwd.hh>
+//#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.DockingScoreFunction" );
 
@@ -43,6 +49,10 @@ namespace scoring {
 ///////////////////////////////////////////////////////////////////////////////
 DockingScoreFunction::DockingScoreFunction():
 	ScoreFunction()
+{}
+
+DockingScoreFunction::DockingScoreFunction( utility::options::OptionCollection const & options ):
+	ScoreFunction( options )
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -114,6 +124,13 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void
+DockingScoreFunction::list_options_read( utility::options::OptionKeyList & options_read )
+{
+	ScoreFunction::list_options_read( options_read );
+}
+
 } // namespace scoring
 } // namespace core
 

@@ -22,10 +22,6 @@
 #include <map>
 #include <string>
 
-// Utility headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -55,7 +51,14 @@
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
+
+// ObjexxFCL headers
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
 
 #ifdef WIN32 //VC++ needs full class declaration
@@ -112,10 +115,17 @@ public:
 
 public:
 
-	/// ctor
+	/// @brief default ctor that initializes its EnergyMethodOptions object from the global option collection
 	ScoreFunction();
 
+	/// @brief ctor that initializes its EnergyMethodOptions object from a (possibly local) option collection
+	ScoreFunction( utility::options::OptionCollection const & options );
+
 	~ScoreFunction() override;
+
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & option_list );
 
 	/// self pointers
 	inline ScoreFunctionCOP get_self_ptr() const { return shared_from_this(); }
@@ -136,6 +146,7 @@ private:
 	operator=( ScoreFunction const & );
 
 public:
+
 	/// @brief NOT FOR GENERAL USE
 	/// Copy the information about src into the current score function.
 	/// There are deep interactions with subclasses,
@@ -152,8 +163,11 @@ public:
 	/// @brief If you *want* to discard subclass information, the following function is availible
 	ScoreFunctionOP clone_as_base_class() const;
 
-	/// @brief Resets the ScoreFunction to default values
+	/// @brief Resets the ScoreFunction to default values, reading from the global options collection
 	void reset();
+
+	/// @brief Resets the ScoreFunction to default values, reading from a (possibly local) options collection
+	void reset( utility::options::OptionCollection const & options );
 
 	/// @brief Randomly perturbs non-zero score function weights
 	void perturb_weights();

@@ -26,7 +26,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -45,6 +46,7 @@ public:
 
 	/// ctor
 	DockingScoreFunction();
+	DockingScoreFunction( utility::options::OptionCollection const & options );
 
 private:
 	/// @brief Copy constructor and assignment operators private for *ScoreFunctions as they discard subtype info.
@@ -70,6 +72,9 @@ public:
 	Real
 	operator ()( pose::Pose & pose ) const override;
 
+	static
+	void
+	list_options_read( utility::options::OptionKeyList & options_read );
 
 #ifdef    SERIALIZATION
 public:
