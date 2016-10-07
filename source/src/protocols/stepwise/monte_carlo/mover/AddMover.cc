@@ -122,12 +122,20 @@ AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_m
 
 //////////////////////////////////////////////////////////////////////
 void
-AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
-{
+AddMover::apply( 
+#ifdef GL_GRAPHICS
+	core::pose::Pose & viewer_pose, 
+#else
+	core::pose::Pose & pose, 
+#endif
+	StepWiseMove const & swa_move
+) {
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
+#ifdef GL_GRAPHICS
 	Pose pose = viewer_pose; // hard copy -- try to avoid graphics problems when variants are added.
+#endif
 	runtime_assert( pose.size() >= 1 );
 
 	// will record which new dofs added.
@@ -154,8 +162,11 @@ AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 
 	fix_up_jump_atoms_and_residue_type_variants( pose );
 
+#ifdef GL_GRAPHICS
 	viewer_pose = pose;
-
+#else
+#	define viewer_pose pose 
+#endif
 	setup_initial_torsions( viewer_pose );
 
 	///////////////////////////////////
@@ -170,6 +181,9 @@ AddMover::apply( core::pose::Pose & viewer_pose, StepWiseMove const & swa_move )
 			sample_by_monte_carlo_internal( viewer_pose );
 		}
 	}
+#ifndef GL_GRAPHICS
+#	undef viewer_pose
+#endif
 }
 
 

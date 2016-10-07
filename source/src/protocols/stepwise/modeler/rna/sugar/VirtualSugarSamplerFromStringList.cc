@@ -88,8 +88,10 @@ VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
 	tag_into_pose( pose, "" );
 
 	///////////////////////////////////////////////////////////////
+#ifdef GL_GRAPHICS
 	pose::Pose const pose_save = pose;
 	pose = pose_save; //this recopy is useful for triggering graphics.
+#endif
 
 	utility::vector1< SugarModeling > sugar_modeling_list = setup_sugar_modeling_list( pose );
 	if ( empty_sugar_modeling_list( sugar_modeling_list ) ) return;

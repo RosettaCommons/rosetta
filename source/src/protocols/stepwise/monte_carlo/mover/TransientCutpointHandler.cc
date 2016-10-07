@@ -64,11 +64,19 @@ TransientCutpointHandler::~TransientCutpointHandler()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void
-TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
+TransientCutpointHandler::put_in_cutpoints( 
+#ifdef GL_GRAPHICS
+	core::pose::Pose & viewer_pose
+#else
+	core::pose::Pose & pose
+#endif
+) {
 
 	using namespace core::pose::rna;
 
+#ifdef GL_GRAPHICS
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
+#endif
 	utility::vector1< std::pair< id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, cutpoint_suite_ );
 
 	// record the alpha torsion
@@ -83,7 +91,9 @@ TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
 	// reset the alpha torsion to its original value
 	pose.set_torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1), alpha_ );
 
+#ifdef GL_GRAPHICS
 	viewer_pose = pose;
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -123,11 +133,17 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void
-TransientCutpointHandler::take_out_cutpoints( core::pose::Pose & viewer_pose ){
-
+TransientCutpointHandler::take_out_cutpoints( 
+#ifdef GL_GRAPHICS
+	core::pose::Pose & viewer_pose 
+#else
+	core::pose::Pose & pose
+#endif
+) {
 	using namespace core::chemical;
-
+#ifdef GL_GRAPHICS
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
+#endif
 
 	// remove chainbreak variants. along with fold_tree restorer, put into separate function.
 	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
@@ -138,7 +154,9 @@ TransientCutpointHandler::take_out_cutpoints( core::pose::Pose & viewer_pose ){
 	f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
 	pose.fold_tree( f );
 
+#ifdef GL_GRAPHICS
 	viewer_pose = pose;
+#endif
 }
 
 } //mover

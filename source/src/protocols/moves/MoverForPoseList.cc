@@ -30,8 +30,7 @@ MoverForPoseList::MoverForPoseList():
 {}
 
 //Destructor
-MoverForPoseList::~MoverForPoseList()
-= default;
+MoverForPoseList::~MoverForPoseList() = default;
 
 // Yup, that's all this is for.
 void
@@ -42,9 +41,13 @@ MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list ){
 }
 
 // Could save time and memory by not copying into viewer_pose (see above)
+#ifdef GL_GRAPHICS
 void
-MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list,
-	core::pose::Pose & viewer_pose ){
+MoverForPoseList::apply(
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	core::pose::Pose & viewer_pose 
+) {
+
 	utility::vector1< core::pose::PoseOP > output_pose_list;
 	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
 		viewer_pose = ( *pose_list[n] ); //set viewer_pose;
@@ -53,6 +56,17 @@ MoverForPoseList::apply( utility::vector1< core::pose::PoseOP > & pose_list,
 	}
 	pose_list = output_pose_list;
 }
+#else
+void
+MoverForPoseList::apply(
+	utility::vector1< core::pose::PoseOP > & pose_list,
+	core::pose::Pose & 
+) {
+	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
+		apply( *pose_list[n] );
+	}
+}
+#endif
 
 
 } //moves

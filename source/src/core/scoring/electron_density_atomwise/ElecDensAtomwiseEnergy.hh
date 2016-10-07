@@ -26,10 +26,43 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
+#include <basic/datacache/CacheableData.hh>
 
 namespace core {
 namespace scoring {
 namespace electron_density_atomwise {
+
+class PoseSequence;
+typedef std::shared_ptr< PoseSequence > PoseSequenceOP;
+typedef std::shared_ptr< PoseSequence const > PoseSequenceCOP;
+
+class PoseSequence : public basic::datacache::CacheableData {
+public:
+	PoseSequence( std::string const & pose_sequence ):
+		pose_sequence_( pose_sequence )
+	{}
+
+	PoseSequence() = default;
+
+	std::string const & pose_sequence() const { return pose_sequence_; }
+	
+	~PoseSequence() = default;
+
+	PoseSequenceOP
+	copy_clone() const
+	{
+		return PoseSequenceOP( new PoseSequence( *this ) );
+	}
+
+	basic::datacache::CacheableDataOP
+	clone() const override
+	{
+		return basic::datacache::CacheableDataOP( new PoseSequence( *this ) );
+	}
+
+private:
+	std::string pose_sequence_ = "";
+};
 
 class ElecDensAtomwiseEnergy : public methods::ContextIndependentLRTwoBodyEnergy {
 public:

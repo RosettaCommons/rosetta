@@ -99,6 +99,7 @@ public:
 		NATIVE_ANTIBODY_SEQ, //For keeping track of the near-native sequence during antibody design.
 		STORED_RESIDUE_SUBSET, //For storing residue subsets
 		CONSTRAINT_GENERATOR, //For constraint generator data
+		POSE_SEQUENCE, //For constraint generator data
 
 		// *** IMPORTANT ***  // The 'num_cacheable_data_types' below must be the last enum, and must
 		// always be set equal to the (last-2) enum. The 'dummy_cacheable_data_type'

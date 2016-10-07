@@ -56,10 +56,16 @@ SideChainCopier::~SideChainCopier()
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
-
+SideChainCopier::apply(
+#ifdef GL_GRAPHICS
+	core::pose::Pose & viewer_pose
+#else
+	core::pose::Pose & pose
+#endif
+) {
+#ifdef GL_GRAPHICS
 	Pose pose = viewer_pose; // to prevent crashes in graphics.
-
+#endif
 	runtime_assert( pose.size() == reference_pose_.size() );
 	Real const ho2prime_tolerance( 1.0e-3 );
 	Real const orient_backbone_tolerance( 1.0e-3 );
@@ -90,8 +96,10 @@ SideChainCopier::apply( core::pose::Pose & viewer_pose ) {
 		}
 	}
 
+#ifdef GL_GRAPHICS
 	core::scoring::constraints::map_constraints_from_original_pose( viewer_pose, pose );
 	viewer_pose = pose;
+#endif
 }
 
 } //packer

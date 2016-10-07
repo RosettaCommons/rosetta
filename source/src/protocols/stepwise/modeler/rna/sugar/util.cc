@@ -52,7 +52,12 @@ namespace sugar {
 //  reminimized.
 //
 void
-minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
+minimize_all_sampled_floating_bases( 
+#ifdef GL_GRAPHICS
+	core::pose::Pose & viewer_pose,
+#else
+	core::pose::Pose & ,
+#endif
 	utility::vector1< SugarModeling > const & modeling_list,
 	utility::vector1< PoseOP > & pose_data_list,
 	core::scoring::ScoreFunctionCOP const & scorefxn,
@@ -69,8 +74,9 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 
 	output_title_text( "Enter minimize_all_sampled_floating_bases", TR.Debug );
 
+#ifdef GL_GRAPHICS 
 	pose::Pose const viewer_pose_copy = viewer_pose;
-
+#endif
 	if ( modeling_list.size() == 0 ) return;
 	if ( pose_data_list.size() == 0 ) return;
 
@@ -110,8 +116,11 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
 
 		TR << TR.Blue << "Minimizing pose " << n <<  " out of " << pose_data_list.size() << TR.Reset << std::endl;
-
+#ifdef GL_GRAPHICS
 		viewer_pose = ( *pose_data_list[n] );
+#else
+#	define viewer_pose ( *pose_data_list[n] )
+#endif
 
 		utility::vector1 < core::Size > const & working_moving_partition_res = working_parameters_->working_moving_partition_res();
 		utility::vector1 < core::Size > already_virtualized_res_list;
@@ -144,12 +153,15 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 					core::chemical::VIRTUAL_PHOSPHATE, working_parameters_->five_prime_chain_break_res() + 1 );
 			}
 		}
-
+#ifdef GL_GRAPHICS
 		( *pose_data_list[n] ) = viewer_pose;
+#else
+#	undef viewer_pose
+#endif
 	}
-
+#ifdef GL_GRAPHICS
 	viewer_pose = viewer_pose_copy;
-
+#endif
 	output_title_text( "Exit minimize_all_sampled_floating_bases", TR.Debug );
 }
 

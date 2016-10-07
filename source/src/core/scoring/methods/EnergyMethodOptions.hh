@@ -398,9 +398,6 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void symmetric_gly_tables( bool const setting );
 
-	bool pose_sequence_const() const { return pose_sequence_const_; }
-	void pose_sequence_const( bool const setting ) { pose_sequence_const_ = setting; }
-
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -582,7 +579,6 @@ private:
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;
 	core::scoring::mm::MMBondAngleResidueTypeParamSetOP bond_angle_residue_type_param_set_;
-	bool pose_sequence_const_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

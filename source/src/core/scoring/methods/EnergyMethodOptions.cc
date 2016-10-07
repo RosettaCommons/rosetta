@@ -114,8 +114,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
 	symmetric_gly_tables_(false),
-	bond_angle_residue_type_param_set_(/* NULL */),
-	pose_sequence_const_(false)
+	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options();
 	method_weights_[ free_res ] = utility::vector1< Real >();
@@ -168,7 +167,6 @@ void EnergyMethodOptions::initialize_from_options() {
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user() ) {
 		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]() );
 	}
-	pose_sequence_const_ = basic::options::option[ basic::options::OptionKeys::score::pose_sequence_const ]();
 }
 
 /// copy constructor
@@ -238,7 +236,6 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		pb_unbound_tag_ = src.pb_unbound_tag_;
 		fastdens_perres_weights_ = src.fastdens_perres_weights_;
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
-		pose_sequence_const_ = src.pose_sequence_const_;
 	}
 	return *this;
 }
@@ -852,8 +849,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
 		( a.pb_bound_tag_ == b.pb_bound_tag_ ) &&
 		( a.pb_unbound_tag_ == b.pb_unbound_tag_ ) &&
-		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) &&
-		( a.pose_sequence_const_ == b.pose_sequence_const_ ) );
+		( a.fastdens_perres_weights_ == b.fastdens_perres_weights_ ) );
 }
 
 /// used inside ScoreFunctionInfo::operator==
@@ -935,7 +931,6 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
-	out << "EnergyMethodOptions::show: pose_sequence_const: " << pose_sequence_const_ << std::endl;
 	out << "EnergyMethodOptions::show: bond_angle_central_atoms_to_score:";
 	if ( bond_angle_residue_type_param_set_ ) {
 		out << "setting ignored";
@@ -1111,9 +1106,6 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
 
-	option_keys.push_back("pose_sequence_const");
-	option_values.push_back(pose_sequence_const_ ? "1" : "0");
-
 	string statement_string;
 	switch(db_session->get_db_mode()){
 	case utility::sql_database::DatabaseMode::sqlite3 :
@@ -1206,7 +1198,6 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
-	arc( CEREAL_NVP( pose_sequence_const_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -1267,7 +1258,6 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
 	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
-	arc( CEREAL_NVP( pose_sequence_const_ ) ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::EnergyMethodOptions );

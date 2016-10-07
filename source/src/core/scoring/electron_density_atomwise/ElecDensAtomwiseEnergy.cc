@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 
@@ -88,7 +89,7 @@ methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 void
 ElecDensAtomwiseEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const & sfxn
+	ScoreFunction const & 
 ) const {
 	using namespace methods;
 
@@ -136,7 +137,7 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 
 		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
 		//                for now, just always recompute
-		get_density_map().is_score_precomputed( sfxn.energy_method_options().pose_sequence_const() );
+		get_density_map().is_score_precomputed( pose.annotated_sequence() == pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() );
 		// AMW; I think the above argument is actually fine, certainly for the resampling case
 		// Maybe we should have a flag guarantee_pose_sequence_constant === no renormalization
 		// could possibly be needed
@@ -146,6 +147,9 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	//atom
 	get_density_map().compute_normalization( pose );
 	get_density_map().precompute_unweighted_score();
+
+	// if in fact the sequence DID change, now we should set the new seuqence
+	pose.data().set( pose::datacache::CacheableDataType::POSE_SEQUENCE, std::make_shared< PoseSequence >( pose.annotated_sequence() ) );
 }
 
 ///////////////////////////////////////////////////////////////////////
