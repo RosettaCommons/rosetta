@@ -218,7 +218,7 @@ namespace cppdb {
 			virtual ~result();
 		private:
 			struct data;
-			std::auto_ptr<data> d;
+			std::unique_ptr<data> d;
 		};
 
 		class statements_cache;
@@ -410,7 +410,7 @@ namespace cppdb {
 			/// \endcond
 		private:
 			struct data;
-			std::auto_ptr<data> d;
+			std::unique_ptr<data> d;
 			statements_cache *cache_;
 		};
 	
@@ -428,7 +428,7 @@ namespace cppdb {
 			~statements_cache();
 		private:
 			struct data;
-			std::auto_ptr<data> d;
+			std::unique_ptr<data> d;
 		};
 
 		/// \endcond
@@ -639,7 +639,7 @@ namespace cppdb {
 		private:
 
 			struct data;
-			std::auto_ptr<data> d;
+			std::unique_ptr<data> d;
 			statements_cache cache_;
 			ref_ptr<loadable_driver> driver_;
 			ref_ptr<pool> pool_;

@@ -66,7 +66,7 @@ namespace cppdb {
 		void gc();
 	private:
 		struct data;
-		std::auto_ptr<data> d;
+		std::unique_ptr<data> d;
 
 		mutex lock_;
 		typedef std::map<std::string,ref_ptr<pool> > connections_type;

@@ -83,7 +83,7 @@ namespace cppdb {
 		ref_ptr<backend::connection> get();
 
 		struct data;
-		std::auto_ptr<data> d;
+		std::unique_ptr<data> d;
 		
 		struct entry {
 			entry() : last_used(0) {}

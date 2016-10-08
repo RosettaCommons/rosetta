@@ -1103,7 +1103,7 @@ public:
 	}
 	statement *real_prepare(std::string const &q,bool prepared)
 	{
-		std::auto_ptr<statement> st(new statement(q,dbc_,wide_,prepared));
+		std::unique_ptr<statement> st(new statement(q,dbc_,wide_,prepared));
 		std::string seq = ci_.get("@sequence_last","");
 		if(seq.empty()) {
 			std::string eng=engine();

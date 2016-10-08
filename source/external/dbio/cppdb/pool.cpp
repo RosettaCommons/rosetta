@@ -103,7 +103,7 @@ namespace cppdb {
 	// this is thread safe member function
 	void pool::put(backend::connection *c_in)
 	{
-		std::auto_ptr<backend::connection> c(c_in);
+		std::unique_ptr<backend::connection> c(c_in);
 		if(limit_ == 0)
 			return;
 		pool_type garbage;

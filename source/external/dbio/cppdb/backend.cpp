@@ -265,7 +265,7 @@ namespace cppdb {
 		}
 		void connection::connection_specific_reset(std::type_info const &type,connection_specific_data *ptr)
 		{
-			std::auto_ptr<connection_specific_data> tmp(ptr);
+			std::unique_ptr<connection_specific_data> tmp(ptr);
 			if(ptr && typeid(*ptr)!=type) {
 				throw cppdb_error(
 					std::string("cppdb::connection_specific::Inconsistent pointer type")
