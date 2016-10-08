@@ -250,7 +250,7 @@ void PhenixInterface::fitBfactors (
 	fix_bfactorsH( pose_asu );
 	fix_bfactorsMissing( pose_asu );
 
-	pose_asu.dump_pdb( pdbout , "1" );
+	pose_asu.dump_pdb( pdbout  );
 
 	// load module
 	PyObject *pModule = PyImport_ImportModule( "phenix.refinement.command_line" );
@@ -913,7 +913,7 @@ void PhenixInterface::initialize_target_evaluator(
 
 	chdir(tempdir_.c_str());
 
-	pose_asu.dump_pdb( buffer , "1" );
+	pose_asu.dump_pdb( buffer );
 
 	// load the module
 	PyObject *pModule = PyImport_ImportModule( "phenix.rosetta.xray_target" );
