@@ -2198,22 +2198,6 @@ BZA 2H3 2C3  C4  H4 0 40 1
 BZA CH3  C1 1C2 1H2 0 40 1
 BZA CH3  C1 2C2 2H2 0 40 1
 
-# group 2: planar groups
-Abe  C2   N2   CN2   CAN2  0 40 2
-Alt  C2   N2   CN2   CAN2  0 40 2
-Dau  C2   N2   CN2   CAN2  0 40 2
-Fuc  C2   N2   CN2   CAN2  0 40 2
-Gal  C2   N2   CN2   CAN2  0 40 2
-Glc  C2   N2   CN2   CAN2  0 40 2
-Glc  N2   CN2  CAN2  OCN2  0 180 2
-Gul  C2   N2   CN2   CAN2  0 40 2
-Ido  C2   N2   CN2   CAN2  0 40 2
-Man  C2   N2   CN2   CAN2  0 40 2
-Neu  C2   N2   CN2   CAN2  0 40 2
-Psi  C2   N2   CN2   CAN2  0 40 2
-Qui  C2   N2   CN2   CAN2  0 40 2
-Rha  C2   N2   CN2   CAN2  0 40 2
-
 #Cribbed for beta AAs.
 B3A CM N CA CB 4.1445 81 1
 B3A N CM CA CB 2.1402 84 1

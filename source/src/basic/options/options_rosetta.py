@@ -236,9 +236,6 @@ Options = Option_Group( '',
 				"Duplicate codes in successive files will overwrite previous "
 				"ones.",
 			short="Specify (a) *.codes file(s) of alternate 3-letter codes."),
-        Option("only_chairs", "Boolean",
-                desc="Triggers loading of only the chair conformations of sugars with 6 member rings.",
-                legal=["true","false"], default="false"),
 		Option( 'fix_disulf', 'File',
 				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-separated "
 						"residue indices per line.  This option replaces the old '-run:fix_disulf' option.", ),

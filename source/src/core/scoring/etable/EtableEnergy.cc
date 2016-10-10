@@ -79,9 +79,6 @@ EtableEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_intra_atr_xover4 );
 	sts.push_back( fa_intra_rep_xover4 );
 	sts.push_back( fa_intra_sol_xover4 );
-	sts.push_back( fa_intra_atr_nonprotein);
-	sts.push_back( fa_intra_rep_nonprotein );
-	sts.push_back( fa_intra_sol_nonprotein );
 	//  note that 'classic' fa_intra_atr, fa_intra_rep, and fa_intra_sol terms are now in EtableClassicIntraEnergy. -- rhiju
 	return sts;
 }
@@ -124,8 +121,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
 	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
-	interres_evaluator_( etable_in ),
-	nonprot_intrares_evaluator_( etable_in )
+	interres_evaluator_( etable_in )
 {
 	if ( do_classic_intrares ) {
 		interres_evaluator_.set_scoretypes( fa_atr_dummy, fa_rep_dummy, fa_sol_dummy );
@@ -139,7 +135,6 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 			intrares_evaluator_.set_scoretypes( fa_intra_atr_xover4, fa_intra_rep_xover4, fa_intra_sol_xover4 );
 		}
 	}
-	nonprot_intrares_evaluator_.set_scoretypes( fa_intra_atr_nonprotein, fa_intra_rep_nonprotein, fa_intra_sol_nonprotein );
 }
 
 TableLookupEtableEnergy::TableLookupEtableEnergy(
@@ -147,8 +142,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 ) :
 	BaseEtableEnergy< TableLookupEtableEnergy >( src ),
 	intrares_evaluator_( src.intrares_evaluator_ ),
-	interres_evaluator_( src.interres_evaluator_ ),
-	nonprot_intrares_evaluator_( src.nonprot_intrares_evaluator_ )
+	interres_evaluator_( src.interres_evaluator_ )
 {
 }
 
@@ -216,12 +210,6 @@ TableLookupEtableEnergy::eval_intrares_energy(
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
 	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
 
-	if (!res.is_protein()) {
-		nonprot_intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
-		emap[ nonprot_intrares_evaluator_.st_atr() ] = tbemap[ nonprot_intrares_evaluator_.st_atr() ];
-		emap[ nonprot_intrares_evaluator_.st_rep() ] = tbemap[ nonprot_intrares_evaluator_.st_rep() ];
-		emap[ nonprot_intrares_evaluator_.st_sol() ] = tbemap[ nonprot_intrares_evaluator_.st_sol() ];
-	}
 }
 
 /// @details
@@ -251,8 +239,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	methods::EnergyMethodCreatorOP( new EtableEnergyCreator ),
 	etable_in, options, do_classic_intrares ),
 	intrares_evaluator_( etable_in ),
-	interres_evaluator_( etable_in ),
-	nonprot_intrares_evaluator_( etable_in )
+	interres_evaluator_( etable_in )
 {
 	if ( do_classic_intrares ) {
 		interres_evaluator_.set_scoretypes( fa_atr_dummy, fa_rep_dummy, fa_sol_dummy );
@@ -265,7 +252,6 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 			intrares_evaluator_.set_scoretypes( fa_intra_atr_xover4, fa_intra_rep_xover4, fa_intra_sol_xover4 );
 		}
 	}
-	nonprot_intrares_evaluator_.set_scoretypes( fa_intra_atr_nonprotein, fa_intra_rep_nonprotein, fa_intra_sol_nonprotein );
 }
 
 AnalyticEtableEnergy::AnalyticEtableEnergy(
@@ -273,8 +259,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 ) :
 	BaseEtableEnergy< AnalyticEtableEnergy >( src ),
 	intrares_evaluator_( src.intrares_evaluator_ ),
-	interres_evaluator_( src.interres_evaluator_ ),
-	nonprot_intrares_evaluator_( src.nonprot_intrares_evaluator_ )
+	interres_evaluator_( src.interres_evaluator_ )
 {
 }
 
@@ -316,11 +301,7 @@ AnalyticEtableEnergy::defines_intrares_energy(
 			weights[ fa_rep ] != 0 ||
 			weights[ fa_sol ] != 0 );
 	}
-	return (
-		weights[ fa_intra_atr_nonprotein ] != 0 ||
-		weights[ fa_intra_rep_nonprotein ] != 0 ||
-		weights[ fa_intra_atr_nonprotein ] != 0 ||
-		weights[ fa_intra_atr_xover4 ] != 0 ||
+	return ( weights[ fa_intra_atr_xover4 ] != 0 ||
 		weights[ fa_intra_rep_xover4 ] != 0 ||
 		weights[ fa_intra_sol_xover4 ] != 0 );
 }
@@ -347,15 +328,7 @@ AnalyticEtableEnergy::eval_intrares_energy(
 	emap[ intrares_evaluator_.st_atr() ] = tbemap[ intrares_evaluator_.st_atr() ];
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
 	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
-
-	if (!res.is_protein()) {
-		nonprot_intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
-		emap[ nonprot_intrares_evaluator_.st_atr() ] = tbemap[ nonprot_intrares_evaluator_.st_atr() ];
-		emap[ nonprot_intrares_evaluator_.st_rep() ] = tbemap[ nonprot_intrares_evaluator_.st_rep() ];
-		emap[ nonprot_intrares_evaluator_.st_sol() ] = tbemap[ nonprot_intrares_evaluator_.st_sol() ];
-	}
 }
-
 core::Size
 AnalyticEtableEnergy::version() const
 {

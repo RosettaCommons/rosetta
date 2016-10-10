@@ -21,7 +21,6 @@
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/rings/RingConformer.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -299,13 +298,6 @@ public:
 		bool prepro
 	);
 
-	// getters
-	Real k_length() { return k_length_; }
-	Real k_angle() { return k_angle_; }
-	Real k_torsion() { return k_torsion_; }
-	Real k_torsion_proton() { return k_torsion_proton_; }
-	Real k_torsion_improper() { return k_length_; }
-
 private:
 	// helper functions: find the ideal values by constructing from Rosetta's params file
 	void
@@ -464,19 +456,6 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-	void
-	eval_residue_pair_derivatives_sorted(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
-		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
-	) const;
-
 	// dof (bbdep) derivatives
 	virtual
 	Real
@@ -553,15 +532,6 @@ private:
 		EnergyMap & emap
 	) const;
 
-
-	/// @brief helper function to handle intrares ring torsions & angles
-	void
-	eval_singleres_ring_energies(
-		conformation::Residue const & rsd,
-		//ResidueCartBondedParameters const & resparams,
-		pose::Pose const & pose,
-		EnergyMap & emap
-	) const;
 
 	/// @brief helper function to handle intrares bond improper torsions
 	void
@@ -677,16 +647,6 @@ private:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & r_atom_derivs
 	) const;
-
-	/// @brief evaluate intra-residue ring derivatives
-	void
-	eval_singleres_ring_derivatives(
-		conformation::Residue const & rsd,
-		//ResidueCartBondedParameters const & resparams,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
-	) const;
-
 
 	/// @brief evaluate intra-residue improper torsion derivatives
 	void

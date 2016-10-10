@@ -1760,41 +1760,6 @@ FoldTree::renumber_jumps()
 	}
 }
 
-//@details Assigns new numbers to the jumps while maintaining the relative
-// order of the labels.
-void
-FoldTree::renumber_jumps_ordered()
-{
-	int counter(0);
-	new_topology = true;
-	int highest_label(0);
-	core::Size edgecounter = 0;
-	utility::vector1< int > jump_labels;
-	for (iterator it = edge_list_.begin(), it_end = edge_list_.end();
-			it != it_end; ++it ){
-			edgecounter++;
-		if ( it->is_jump() ){
-				jump_labels.push_back(it->label());
-				++counter;
-				if( it->label() > highest_label ) highest_label = it->label();
-		}
-	}
-
-	for ( iterator it = edge_list_.begin(), it_end = edge_list_.end();
-			it != it_end; ++it ) {
-		if ( it->is_jump() ) {
-			//determine the number of jumps with lower labels to account for missing
-			int lower_count = 0;
-			for( Size i=1; i<=jump_labels.size(); i++){
-					if( jump_labels[i] <= it->label()) lower_count +=1;
-			}
-			//TR << "renumber jumps:: from,to " << it->label() << ' ' <<
-			//	it->label()-(it->label()-lower_count) << std::endl;
-			it->label() = it->label()-(it->label()-lower_count);
-		}
-	}
-}
-
 /////////////////////////////////////////////////////////////////////////////
 /// @details Is the tree connected?
 /// returns true if fold_tree is connected

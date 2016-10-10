@@ -73,10 +73,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_intra_atr_xover4" ] = fa_intra_atr_xover4;
 	name2score_type_[ "fa_intra_rep_xover4" ] = fa_intra_rep_xover4;
 	name2score_type_[ "fa_intra_sol_xover4" ] = fa_intra_sol_xover4;
-	name2score_type_[ "fa_intra_atr_nonprotein" ] = fa_intra_atr_nonprotein;
-	name2score_type_[ "fa_intra_rep_nonprotein" ] = fa_intra_rep_nonprotein;
-	name2score_type_[ "fa_intra_sol_nonprotein" ] = fa_intra_sol_nonprotein;
-
 	name2score_type_[ "fa_atr_dummy" ] = fa_atr_dummy;
 	name2score_type_[ "fa_rep_dummy" ] = fa_rep_dummy;
 	name2score_type_[ "fa_sol_dummy" ] = fa_sol_dummy;
@@ -97,7 +93,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cart_bonded_angle" ] = cart_bonded_angle;
 	name2score_type_[ "cart_bonded_length" ] = cart_bonded_length;
 	name2score_type_[ "cart_bonded_torsion" ] = cart_bonded_torsion;
-	name2score_type_[ "cart_bonded_ring" ] = cart_bonded_ring;
 	name2score_type_[ "cart_bonded_proper" ] = cart_bonded_proper;
 	name2score_type_[ "cart_bonded_improper" ] = cart_bonded_improper;
 	// name2score_type_[ "csd_torsion" ] = csd_torsion; kwk commenting out csd atom type related code until I have implemented them fully

@@ -467,19 +467,15 @@ set_fold_tree_from_symm_data(
 
 		Size num_jumps_subunit( f_orig.num_jump() );
 
-		//store chemical edge information
-		utility::vector1< core::kinematics::Edge > edges_subunit( f_orig.get_chemical_edges() );
-		Size num_edges_subunit = edges_subunit.size();
-
-		// Store number of jumps, cuts, and account for chemical edges.
+		// Store number of jumps and cuts
 		Size njumps( 0 );
-		Size total_num_cuts( num_cuts_subunit*subunits + num_edges_subunit*subunits + subunits + num_virtuals - 1 );
-		Size total_num_jumps( num_jumps_subunit*subunits + num_edges_subunit*subunits + num_virtual_connects );
+		Size total_num_cuts( num_cuts_subunit*subunits + subunits + num_virtuals - 1 );
+		Size total_num_jumps( num_jumps_subunit*subunits + num_virtual_connects );
 
 		// store information from subunit foldtree
 		utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
 		ObjexxFCL::FArray1D_int cuts( total_num_cuts );
-		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit+num_edges_subunit ),
+		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit ),
 			jumps( 2, total_num_jumps );
 
 		for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
@@ -495,17 +491,6 @@ set_fold_tree_from_symm_data(
 				cuts( njumps ) = new_cut_pos;
 				int new_jump_pos1( i*num_res_subunit + jump_points_subunit(1,j) );
 				int new_jump_pos2( i*num_res_subunit + jump_points_subunit(2,j) );
-				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
-				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
-			}
-			//Add the edge points as jumps. This is a hack to get around tree_from_jumps_and_cuts ignoring edges.
-			// They are replaced with true chemical edges later
-			for ( Size j = 1; j <= num_edges_subunit; ++j ) {
-				++njumps;
-				int new_cut_pos( i*num_res_subunit + edges_subunit.at( j ).stop()-1 );
-				cuts( njumps ) = new_cut_pos;
-				int new_jump_pos1( i*num_res_subunit + edges_subunit.at(j).start() );
-				int new_jump_pos2( i*num_res_subunit + edges_subunit.at(j).stop() );
 				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
 				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
 			}
@@ -557,21 +542,6 @@ set_fold_tree_from_symm_data(
 
 		// Now create foldtree
 		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts );
-		
-		//Replace the chemical edges into the fold tree before reordering
-		for (Size i=0; i < subunits; i++){
-				for (Size j=1; j<=edges_subunit.size(); j++){
-						core::kinematics::Edge subunit_edge = edges_subunit[j];
-						Size start = i*num_res_subunit + edges_subunit[j].start();
-						Size stop = i*num_res_subunit + edges_subunit[j].stop();
-						int jump_label = f.edge_label(start,stop);
-						core::kinematics::Edge current_edge = f.jump_edge(jump_label);
-						core::kinematics::Edge future_edge( start, stop, -2, subunit_edge.start_atom(), subunit_edge.stop_atom(), subunit_edge.keep_stub_in_residue());
-						f.replace_edge(current_edge,future_edge);
-						f.renumber_jumps_ordered();
-				}
-		}
-
 		f.reorder( num_res_real + 1 );
 
 		// now set jump atoms from f_orig

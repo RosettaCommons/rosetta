@@ -786,9 +786,6 @@ BaseEtableEnergy< Derived >::finalize_total_energy(
 
 					conformation::Atom const & jatom( ires.atom(jj) );
 					static_cast< Derived const & > (*this).intrares_evaluator().atom_pair_energy( iatom, jatom, cp_weight, tbenergy_map, dsq );
-					if (!ires.is_protein()) {
-						static_cast< Derived const & > (*this).nonprot_intrares_evaluator().atom_pair_energy( iatom, jatom, cp_weight, tbenergy_map, dsq );
-					}
 				}
 
 				///prepare_for_residue_pair( 1,2, pose ); // set inter-res
@@ -1737,10 +1734,6 @@ BaseEtableEnergy< Derived >::eval_intrares_energy_ext(
 		conformation::Atom const & atom1( rsd.atom( neighbs[ ii ].atomno1() ) );
 		conformation::Atom const & atom2( rsd.atom( neighbs[ ii ].atomno2() ) );
 		static_cast< Derived const & > (*this).intrares_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
-		if (!rsd.is_protein()) {
-			static_cast< Derived const & > (*this).nonprot_intrares_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
-		}
-
 		//std::cout << "evaluated " << neighbs[ ii ].atomno1() << " " << neighbs[ ii ].atomno2() << " " <<
 		// emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << " " <<
 		// emap[ fa_intra_atr ] << " " << emap[ fa_intra_rep ] << " " << emap[ fa_intra_sol ] << std::endl;
@@ -1803,17 +1796,13 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 
 	//prepare_for_residue_pair( 1, 1, pose ); // set intra-res
 	typename Derived::Evaluator evaluator( static_cast< Derived const & > (*this).intrares_evaluator() );
-	typename Derived::Evaluator nonprot_evaluator( static_cast< Derived const & > (*this).nonprot_intrares_evaluator() );
 	evaluator.set_weights( weights );
 
 	Vector f1(0.0),f2(0.0);
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
 		conformation::Atom const & atom1( rsd.atom( neighbs[ ii ].atomno1() ) );
 		conformation::Atom const & atom2( rsd.atom( neighbs[ ii ].atomno2() ) );
-		Real dE_dR_over_r( evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
-		if (!rsd.is_protein()) {
-			dE_dR_over_r += nonprot_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
-		}
+		Real const dE_dR_over_r( evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
 		if ( dE_dR_over_r != 0.0 ) {
 			f1 *= dE_dR_over_r * neighbs[ ii ].weight();
 			f2 *= dE_dR_over_r * neighbs[ ii ].weight();
@@ -1975,7 +1964,6 @@ BaseEtableEnergy< Derived >::eval_atom_derivative(
 			( pose.energies().nblist( nblist_type() ).atom_neighbors( id ) );
 
 		typename Derived::Evaluator intrares_evaluator( static_cast< Derived const & > (*this).intrares_evaluator() );
-		typename Derived::Evaluator nonprot_intrares_evaluator( static_cast< Derived const & > (*this).nonprot_intrares_evaluator() );
 		typename Derived::Evaluator interres_evaluator( static_cast< Derived const & > (*this).interres_evaluator() );
 		intrares_evaluator.set_weights( weights );
 		interres_evaluator.set_weights( weights );
@@ -1992,10 +1980,7 @@ BaseEtableEnergy< Derived >::eval_atom_derivative(
 			if ( idresid == (Size) nbr.rsd() ) {
 				Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
 				conformation::Atom const & atom2( pose.residue( nbr.rsd() ).atom( nbr.atomno() ) );
-				Real dE_dR_over_r( intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
-				if (!pose.residue( idresid ).is_protein()) {
-					dE_dR_over_r += nonprot_intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
-				}
+				Real const dE_dR_over_r( intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );
 				//std::cout << "  gold atom deriv: " << idresid << " " << id.atomno() << " with " << nbr.rsd() << " " << nbr.atomno() << ". w= " << nbr.weight() << " dE_dR_over_r: " << dE_dR_over_r << std::endl ;
 				if ( dE_dR_over_r != 0.0 ) {
 					F1 += dE_dR_over_r * cp_weight * f1;

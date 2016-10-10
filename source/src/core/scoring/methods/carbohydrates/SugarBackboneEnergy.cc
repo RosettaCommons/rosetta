@@ -170,7 +170,6 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	using namespace chemical::carbohydrates;
 	using namespace pose::carbohydrates;
 	using namespace scoring::carbohydrates;
-	using numeric::constants::d::pi;
 
 	TR.Debug << "Evaluating torsion: " << torsion_id << endl;
 

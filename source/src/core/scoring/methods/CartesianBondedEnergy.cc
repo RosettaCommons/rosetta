@@ -173,7 +173,6 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 	sts.push_back( cart_bonded_angle );
 	sts.push_back( cart_bonded_length );
 	sts.push_back( cart_bonded_torsion );
-	sts.push_back( cart_bonded_ring );
 	sts.push_back( cart_bonded_proper );
 	sts.push_back( cart_bonded_improper );
 	return sts;
@@ -1752,7 +1751,6 @@ CartesianBondedEnergy::setup_for_scoring(
 		s_types.push_back( cart_bonded_angle );
 		s_types.push_back( cart_bonded_length );
 		s_types.push_back( cart_bonded_torsion );
-		s_types.push_back( cart_bonded_ring );
 		s_types.push_back( cart_bonded_proper );
 		s_types.push_back( cart_bonded_improper );
 		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
@@ -1781,13 +1779,13 @@ CartesianBondedEnergy::idealize_proline_nvs(
 bool
 CartesianBondedEnergy::defines_residue_pair_energy(
 	pose::Pose const &,
-	Size ,
-	Size
+	Size res1,
+	Size res2
 ) const {
 	// is this fn. called?
+	//std::cout << "******CartesianBondedEnergy::defines_residue_pair_energy() WAS CALLED!*****" << std::endl; //DELETE ME
 	// VKM -- 10 Sept 2016: No, no it doesn't seem to be.
-	// FD in that case, since logic below is no longer correct, just return true
-	return ( true );
+	return ( res1 == (res2+1) || res1 == (res2-1) );
 }
 
 
@@ -1800,16 +1798,10 @@ CartesianBondedEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	bool res1first = rsd2.seqpos() > rsd1.seqpos();
 
-	// override ordering if one residue has an upper connection to another (cyclic)
-	if (rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos()) {
-		res1first = true;
-	} else if (rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos()) {
-		res1first = false;
-	}
+	core::Size const rsd1_next( rsd1.has_upper_connect() ? rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) : 0 ); //The index of the residue connected to residue 1's C-terminus.
 
-	if ( res1first ) {
+	if ( rsd2.seqpos() == rsd1_next || rsd2.seqpos() > rsd1.seqpos() ) {
 		residue_pair_energy_sorted( rsd1, rsd2, pose, sf, emap );
 	} else { //Assumes that residue 1 is connected to residue 2's C-terminus.
 		residue_pair_energy_sorted( rsd2, rsd1, pose, sf, emap );
@@ -1900,34 +1892,6 @@ void
 CartesianBondedEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & min1,
-	ResSingleMinimizationData const & min2,
-	ResPairMinimizationData const & min12,
-	pose::Pose const & pose,
-	EnergyMap const & wts,
-	utility::vector1< DerivVectorPair > & r1_derivs,
-	utility::vector1< DerivVectorPair > & r2_derivs
-) const {
-	bool res1first = rsd2.seqpos() > rsd1.seqpos();
-
-	// override ordering if one residue has an upper connection to another (cyclic)
-	if (rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos()) {
-		res1first = true;
-	} else if (rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos()) {
-		res1first = false;
-	}
-
-	if ( res1first ) {
-		eval_residue_pair_derivatives_sorted( rsd1, rsd2, min1, min2, min12, pose, wts, r1_derivs, r2_derivs );
-	} else { //Assumes that residue 1 is connected to residue 2's C-terminus.
-		eval_residue_pair_derivatives_sorted( rsd2, rsd1, min1, min2, min12, pose, wts, r1_derivs, r2_derivs );
-	}
-}
-
-void
-CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & /*min_data*/,
@@ -1939,7 +1903,9 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 {
 	using namespace numeric;
 
+	debug_assert( rsd2.seqpos() > rsd1.seqpos() );
 	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
+
 
 	//Multipliers for D-amino acids:
 	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
@@ -1966,6 +1932,16 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 
 	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
+
+	//fpd now handled by intrares
+	// cterm special case
+	//Size nres = pose.size();
+	//if ( core::pose::symmetry::is_symmetric(pose) ) {
+	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	//}
+	//if ( rsd2.seqpos() == nres ) {
+	// eval_singleres_derivatives(rsd2, res2params, phi2, psi2, weights, r2_atom_derivs );
+	//}
 
 	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
 
@@ -2194,7 +2170,19 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 		eval_singleres_energy(rsd1, rsd1params, phi1, psi1, pose, emap ); // calls singleres improper
 	}
 
+	//fpd this logic is now handled in eval_intrares_energy
+	// last residue won't ever be rsd1, so we need to explicitly call eval_singleres for rsd2 if rsd2 is the last residue
+	//Size nres = pose.size();
+	//if ( core::pose::symmetry::is_symmetric(pose) ) {
+	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
+	//}
+	//if ( rsd2.seqpos() == nres && rsd2.aa() != core::chemical::aa_vrt ) {
+	// // get one body component for the last residue
+	// eval_singleres_energy(rsd2, rsd2params, phi2, psi2, pose, emap );
+	//}
+
 	// If residue1 and 2 are the same, stop here to avoid double-counting.
+	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
 	if ( !rsd1.is_bonded(rsd2) ) return;
 	if ( rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
 	if ( rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
@@ -2222,91 +2210,8 @@ CartesianBondedEnergy::eval_singleres_energy(
 	eval_singleres_improper_energies( rsd, resparams, phi, psi, pose, emap );
 	eval_singleres_angle_energies(   rsd, resparams, phi, psi, pose, emap );
 	eval_singleres_length_energies(  rsd, resparams, phi, psi, pose, emap );
-	try {
-		eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
-	} catch ( utility::excn::EXCN_Base const & e ) {
-		pose.dump_pdb("badstructure.pdb");
-		std::cout << "caught exception " << e.msg() << std::endl;
-		exit(0);
-	}
-	//eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
+
 }
-
-void
-CartesianBondedEnergy::eval_singleres_ring_energies(
-	conformation::Residue const & rsd,
-	//ResidueCartBondedParameters const & resparams,
-	pose::Pose const & pose,
-	EnergyMap & emap
-) const
-{
-	using namespace core::chemical;
-	using numeric::constants::d::pi;
-
-	Size const n_rings( rsd.type().n_rings() );
-	if ( n_rings==0 ) return;
-
-	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
-		// get the conformer of the ring
-		core::chemical::rings::RingConformer rc = rsd.ring_conformer( jj, 180.0 );
-
-		// now constrain each element of the ring
-		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
-
-		for (core::Size ii=1; ii<=atms.size(); ++ii) {
-			core::Size atm1 = atms[(ii+atms.size()-2)%atms.size()+1];
-			core::Size atm2 = atms[ii];
-			core::Size atm3 = atms[ii%atms.size()+1];
-			core::Size atm4 = atms[(ii+1)%atms.size()+1];
-
-			// 1 constrain angle
-			Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-			Real theta0 = rc.tau_angles[ii]*pi/180.0;
-			Real angle = numeric::angle_radians( rsd.xyz(atm1), rsd.xyz(atm2), rsd.xyz(atm3) );
-			Real const energy_angle = eval_score( angle, Ktheta, theta0 );
-
-			// Send a message to the user about a bad angle, if necessary.
-			// Make sure not to send output to a tracer in the middle of
-			// scoring unless that tracer is visible, since that can be very expensive
-			if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
-					pose.pdb_info()->number(rsd.seqpos()) << " RING angle: " <<
-					get_restag(rsd.type()) << " : " <<
-					rsd.atom_name( atm1 ) << " , " << rsd.atom_name( atm2 ) << " , " <<
-					rsd.atom_name( atm3 ) << "   (" <<
-					Ktheta << ") " << 180/pi * angle << " " << 180/pi * theta0 << "    sc=" <<
-					energy_angle << std::endl;
-			}
-
-			// accumulate the energy
-			emap[ cart_bonded_ring ] += energy_angle;
-			emap[ cart_bonded ] += energy_angle; // potential double counting*/
-
-			// 2 constrain torsion
-			Real Kphi =  db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
-			Real phi0 = rc.nu_angles[ii]*pi/180.0;
-			angle = numeric::dihedral_radians(
-				rsd.xyz( atm1 ), rsd.xyz( atm2 ), rsd.xyz( atm3 ), rsd.xyz( atm4 ) );
-			Real del_phi = basic::subtract_radian_angles(angle, phi0);
-
-			core::Real const energy_torsion = eval_score( del_phi, Kphi, 0 );
-
-			if ( energy_torsion > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
-				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
-					pose.pdb_info()->number(rsd.seqpos()) << " RING torsion: " <<
-					get_restag(rsd.type()) << " : " <<
-					rsd.atom_name( atm1 ) << " , " << rsd.atom_name( atm2 ) << " , " <<
-					rsd.atom_name( atm3 ) << " , " << rsd.atom_name( atm4 ) << "   (" <<
-					Kphi << ") " << 180/pi * angle << " " << 180/pi * phi0 << "    sc="  << energy_torsion << std::endl;
-			}
-
-			emap[ cart_bonded_ring ] += energy_torsion;
-			emap[ cart_bonded ] += energy_torsion; // potential double counting*/
-
-		}
-	}
-}
-
 
 void
 CartesianBondedEnergy::eval_singleres_improper_energies(
@@ -2345,7 +2250,7 @@ CartesianBondedEnergy::eval_singleres_improper_energies(
 		if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd.seqpos()) << " improper torsion: " <<
-				get_restag(rsd.type()) << " : " <<
+				rsd.name() << " : " <<
 				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
 				rsd.atom_name( atids[3] ) << " , " << rsd.atom_name( atids[4] ) << "   (" <<
 				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_improper << std::endl;
@@ -2377,7 +2282,6 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
 		CartBondedParameters const & tor_params( *tps[ ii ].second );
 
-
 		Real Kphi = tor_params.K(0,0);
 		Real phi0 = d_multiplier * tor_params.mu(0,0);
 		Real angle = numeric::dihedral_radians(
@@ -2391,7 +2295,7 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 		if ( TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd.seqpos()) << " intrares torsion: " <<
-				get_restag(rsd.type()) << " : " <<
+				rsd.name() << " : " <<
 				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
 				rsd.atom_name( atids[3] ) << " , " << rsd.atom_name( atids[4] ) << "   (" <<
 				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
@@ -2421,18 +2325,6 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 	for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
 		CartBondedParameters const & ang_params( *aps[ ii ].second );
-
-		// ring angle?  Let cart_bonded_ring handle it
-		Size const n_rings( rsd.type().n_rings() );
-		bool skip_this_angle=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) ) {
-				skip_this_angle=true;
-			}
-		}
-		if (skip_this_angle) continue;
-
 		Real Ktheta = ang_params.K(phi,psi);
 		Real theta0 = ang_params.mu(phi,psi);
 		Real angle = numeric::angle_radians( rsd.xyz(atids[1]), rsd.xyz(atids[2]), rsd.xyz(atids[3]) );
@@ -2445,7 +2337,7 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 		if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " <<
 				pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
-				get_restag(rsd.type()) << " : " <<
+				rsd.name() << " : " <<
 				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << " , " <<
 				rsd.atom_name( atids[3] ) << "   (" <<
 				Ktheta << ") " << angle << " " << theta0 << "    sc=" <<
@@ -2486,7 +2378,7 @@ CartesianBondedEnergy::eval_singleres_length_energies(
 		// scoring unless that tracer is visible, since that can be very expensive
 		if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
-				get_restag( rsd.type() ) << " : " <<
+				rsd.type().name() << " : " <<
 				rsd.atom_name( atids[1] ) << " , " << rsd.atom_name( atids[2] ) << "   ("
 				<< Kd << ")   " << d << "  " << d0
 				<< "   sc=" << energy_length << std::endl;
@@ -2533,10 +2425,14 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2554,7 +2450,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 			// scoring unless that tracer is visible, since that can be very expensive
 			if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos()
-					<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << get_restag(rsd1.type())
+					<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name()
 					<< ":" << rsd1.atom_name( atids[1] ) << " , "
 					<< rsd1.atom_name( atids[2] ) << " , " << rsd2.atom_name( rsd2params.bb_N_index() )<< "   ("
 					<< Ktheta << ")   " << angle << "  " << theta0
@@ -2618,7 +2514,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				// scoring unless that tracer is visible, since that can be very expensive
 				if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 					TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos()
-						<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << get_restag(rsd1.type())
+						<< " pdbpos: " << pose.pdb_info()->number(rsd1.seqpos()) << " angle rsd1: " << rsd1.name()
 						<< ":" << rsd1.atom_name( res1_lower_atomno ) << " , "
 						<< rsd1.atom_name( resconn_atomno1 ) << " , " << rsd2.atom_name( resconn_atomno2 )<< "   ("
 						<< Ktheta << ")   " << angle << "  " << theta0
@@ -2646,10 +2542,14 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2668,7 +2568,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 			// scoring unless that tracer is visible, since that can be very expensive
 			if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos()
-					<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << get_restag(rsd2.type())
+					<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name()
 					<< ":" << rsd2.atom_name( atids[1] ) << " , "
 					<< rsd2.atom_name( atids[2] ) << " , " << rsd1.atom_name( rsd1params.bb_C_index()  )
 					<< "   (" << Ktheta << ")   " << angle << "  " << theta0
@@ -2734,7 +2634,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 				// scoring unless that tracer is visible, since that can be very expensive
 				if ( energy_angle > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 					TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd2.seqpos()
-						<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << get_restag(rsd2.type())
+						<< " pdbpos: " << pose.pdb_info()->number(rsd2.seqpos()) << " angle rsd2: " << rsd2.name()
 						<< ":" << rsd2.atom_name( res2_lower_atomno ) << " , "
 						<< rsd2.atom_name( resconn_atomno2 ) << " , " << rsd1.atom_name( resconn_atomno1 )
 						<< "   (" << Ktheta << ")   " << angle << "  " << theta0
@@ -2763,10 +2663,14 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		/////////////
 		/// finally, compute the bondlength across the interface
@@ -2786,7 +2690,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 		if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 			TR.Debug << pose.pdb_info()->name()
 				<< " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
-				<< get_restag(rsd1.type()) << ":" << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " << rsd2.atom_name( rsd2params.bb_N_index() )<< "   ("
+				<< rsd1.name() << ":" << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " << rsd2.atom_name( rsd2params.bb_N_index() )<< "   ("
 				<< Kd << ")   " << length << "  " << d0
 				<< "   sc=" << energy_length << std::endl;
 		}
@@ -2842,7 +2746,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			if ( energy_length > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name()
 					<< " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
-					<< get_restag(rsd1.type()) << ":" << rsd1.atom_name( resconn_atomno1 ) << " , " << rsd2.atom_name( resconn_atomno2 )<< "   ("
+					<< rsd1.name() << ":" << rsd1.atom_name( resconn_atomno1 ) << " , " << rsd2.atom_name( resconn_atomno2 )<< "   ("
 					<< Kd << ")   " << length << "  " << d0
 					<< "   sc=" << energy_length << std::endl;
 			}
@@ -2870,13 +2774,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
-	// exit if this is not a backbone connection
-	if ( rsd1.is_upper_terminus() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos()) return;
-
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
-
-	// note: this function is hardcoded for the particular planar groups crossing residue connections
-	//       a more general scheme would be quite nice
 
 	// backbone CA-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
@@ -2902,7 +2800,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
-					get_restag(rsd1.type()) << " : " <<
+					rsd1.name() << " : " <<
 					rsd2.atom_name( rsd2params.bb_CA_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() )  << " , " << rsd2.atom_name( rsd2params.bb_H_index() ) << "   (" <<
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
@@ -2940,7 +2838,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
-					get_restag(rsd1.type()) << " : " <<
+					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() )  << " , " << rsd2.atom_name( rsd2params.bb_H_index() ) << "   (" <<
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
@@ -2978,7 +2876,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
-					get_restag(rsd1.type()) << " : " <<
+					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
@@ -3014,7 +2912,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 			if ( energy_improper > CUTOFF && TR.Debug.visible() && pose.pdb_info() ) {
 				TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd1.seqpos() << " pdbpos: " <<
 					pose.pdb_info()->number(rsd1.seqpos()) << " improper torsion: " <<
-					get_restag(rsd1.type()) << " : " <<
+					rsd1.name() << " : " <<
 					rsd1.atom_name( rsd1params.bb_O_index() ) << " , " << rsd1.atom_name( rsd1params.bb_C_index() ) << " , " <<
 					rsd2.atom_name( rsd2params.bb_N_index() ) << " , " << rsd1.atom_name( rsd1params.bb_CA_index() ) << "   (" <<
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
@@ -3047,106 +2945,8 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 	eval_singleres_improper_derivatives( rsd, resparams, phi, psi, weights, r_atom_derivs );
 	eval_singleres_angle_derivatives(   rsd, resparams, phi, psi, weights, r_atom_derivs );
 	eval_singleres_length_derivatives(  rsd, resparams, phi, psi, weights, r_atom_derivs );
-	eval_singleres_ring_derivatives(  rsd, weights, r_atom_derivs );//BF. note removed resparams as unused variable.
 
 }
-
-/// @brief helper function to handle intrares bond torsions
-void
-CartesianBondedEnergy::eval_singleres_ring_derivatives(
-	conformation::Residue const & rsd,
-	//ResidueCartBondedParameters const & resparams,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
-) const
-{
-	using namespace core::chemical;
-	using numeric::constants::d::pi;
-
-	Size const n_rings( rsd.type().n_rings() );
-	if ( n_rings==0 ) return;
-
-	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
-
-	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
-		// get the conformer of the ring
-		core::chemical::rings::RingConformer rc = rsd.ring_conformer( jj, 180.0 );
-
-		// now constrain each element of the ring
-		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
-
-		for (core::Size ii=1; ii<=atms.size(); ++ii) {
-			core::Size rt1 = atms[(ii+atms.size()-2)%atms.size()+1];
-			core::Size rt2 = atms[ii];
-			core::Size rt3 = atms[ii%atms.size()+1];
-			core::Size rt4 = atms[(ii+1)%atms.size()+1];
-
-			// 1  angle
-			Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
-			Real theta0 = rc.tau_angles[ii]*pi/180.0;
-
-			Vector f1(0.0), f2(0.0);
-			Real theta(0.0), dE_dtheta;
-
-			numeric::deriv::angle_p1_deriv( rsd.xyz(rt1), rsd.xyz(rt2), rsd.xyz(rt3), theta, f1, f2 );
-			if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-				dE_dtheta = weight * Ktheta * ((theta > theta0)>0? 0.5 : -0.5);
-			} else {
-				dE_dtheta = weight * Ktheta * (theta - theta0);
-			}
-
-			r_atom_derivs[ rt1 ].f1() += dE_dtheta * f1;
-			r_atom_derivs[ rt1 ].f2() += dE_dtheta * f2;
-
-			numeric::deriv::angle_p2_deriv( rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), theta, f1, f2 );
-			r_atom_derivs[ rt2 ].f1() += dE_dtheta * f1;
-			r_atom_derivs[ rt2 ].f2() += dE_dtheta * f2;
-
-			numeric::deriv::angle_p1_deriv( rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), theta, f1, f2 );
-			r_atom_derivs[ rt3 ].f1() += dE_dtheta * f1;
-			r_atom_derivs[ rt3 ].f2() += dE_dtheta * f2;
-
-			// 2  torsion
-			Real Kphi =  db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
-			Real phi0 = rc.nu_angles[ii]*pi/180.0;
-
-			f1 = f2 = Vector(0.0);
-			Real phi=0, dE_dphi;
-
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
-			Real del_phi = basic::subtract_radian_angles(phi, phi0);
-			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-				dE_dphi = weight * Kphi * (del_phi>0? 0.5 : -0.5);
-			} else {
-				dE_dphi = weight * Kphi * del_phi;
-			}
-
-			r_atom_derivs[ rt1 ].f1() += dE_dphi * f1;
-			r_atom_derivs[ rt1 ].f2() += dE_dphi * f2;
-
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				rsd.xyz( rt1 ), rsd.xyz( rt2 ), rsd.xyz( rt3 ), rsd.xyz( rt4 ), phi, f1, f2 );
-			r_atom_derivs[ rt2 ].f1() += dE_dphi * f1;
-			r_atom_derivs[ rt2 ].f2() += dE_dphi * f2;
-
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p2_cosine_deriv(
-				rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
-
-			r_atom_derivs[ rt3 ].f1() += dE_dphi * f1;
-			r_atom_derivs[ rt3 ].f2() += dE_dphi * f2;
-
-			f1 = f2 = Vector(0.0);
-			numeric::deriv::dihedral_p1_cosine_deriv(
-				rsd.xyz( rt4 ), rsd.xyz( rt3 ), rsd.xyz( rt2 ), rsd.xyz( rt1 ), phi, f1, f2 );
-			r_atom_derivs[ rt4 ].f1() += dE_dphi * f1;
-			r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
-		}
-	}
-}
-
 
 /// @brief helper function to handle intrares bond angles
 void
@@ -3169,18 +2969,6 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] );
 		CartBondedParameters const & ang_params( *aps[ ii ].second );
 		if ( ang_params.is_null() ) continue;
-
-		// ring angle?  Let cart_bonded_ring handle it
-		Size const n_rings( rsd.type().n_rings() );
-		bool skip_this_angle=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) ) {
-				skip_this_angle=true;
-			}
-		}
-		if (skip_this_angle) continue;
-
 		Real Ktheta = ang_params.K(phi,psi);
 		Real theta0 = ang_params.mu(phi,psi);
 
@@ -3193,7 +2981,6 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 		} else {
 			dE_dtheta = weight * Ktheta * (theta - theta0);
 		}
-
 		r_atom_derivs[ rt1 ].f1() += dE_dtheta * f1;
 		r_atom_derivs[ rt1 ].f2() += dE_dtheta * f2;
 
@@ -3241,7 +3028,6 @@ CartesianBondedEnergy::eval_singleres_length_derivatives(
 		} else {
 			dE_dd = weight * Kd * (d - d0);
 		}
-
 		r_atom_derivs[ rt1 ].f1() += dE_dd * f1;
 		r_atom_derivs[ rt1 ].f2() += dE_dd * f2;
 
@@ -3334,18 +3120,6 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
 		CartBondedParameters const & tor_params( *itps[ ii ].second );
-
-		// ring tors?  Let cart_bonded_ring handle it
-		Size const n_rings( rsd.type().n_rings() );
-		bool skip_this_torsion=false;
-		for ( core::uint i( 1 ); i <= n_rings && !skip_this_torsion; ++i ) {
-			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
-				skip_this_torsion=true;
-			}
-		}
-		if (skip_this_torsion) continue;
-
 		Real Kphi = tor_params.K(0,0);
 		Real phi0 = d_multiplier * tor_params.mu(0,0);
 
@@ -3396,10 +3170,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
@@ -3521,10 +3293,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
@@ -3641,10 +3411,15 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 ) const
 {
 	using namespace core::chemical;
-	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
-	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
-	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
-	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()))
+			&& (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified to check for D-amino acids (VKM)
+			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
+
+		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		// lookup Kd and d0
 		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
@@ -3710,7 +3485,6 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			} else {
 				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
 			}
-
 			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dd * f1;
 			r2_atom_derivs[ resconn_atomno2 ].f2() += dE_dd * f2;
 

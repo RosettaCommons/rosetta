@@ -94,9 +94,7 @@ public:
 
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformer const & get_ideal_conformer_from_nus(
-		utility::vector1< core::Angle > const & angles,
-		core::Real limit=90.0 ) const;
+	RingConformer const & get_ideal_conformer_from_nus( utility::vector1< core::Angle > const & angles ) const;
 
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.

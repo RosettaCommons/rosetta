@@ -227,8 +227,6 @@ CartesianMinimizerMap::setup(
 	kinematics::MoveMap move_map_torsional;
 	move_map_torsional.set_bb(true);
 	move_map_torsional.set_chi(true);
-	move_map_torsional.set_nu(true);
-	move_map_torsional.set_branches(true);
 	id::DOF_ID_Mask dof_mask(false);
 	pose::setup_dof_mask_from_move_map( move_map_torsional, pose, dof_mask );
 

@@ -267,10 +267,6 @@ public:
 	/// How?
 	void renumber_jumps();
 
-	///@brief Renumbers the jump edges in the FoldTree while
-	// maintaining relative labels.
-	void renumber_jumps_ordered();
-	
 	/// @brief Deletes edges with start==stop
 	/// allowable 1->1 edge for single residue FoldTree
 	void delete_self_edges();

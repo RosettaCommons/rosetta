@@ -2180,21 +2180,3 @@ VAL HB CB CG2 2HG2 -3.141592654 24.336 3
 VAL HB CB CG2 3HG2 -1.047197551 24.336 3
 VAL N C CA CB 2.1466 29.4476 1
 VAL N C CA HA -2.08278 39.904 1
-
-# carbohydrates
-
-# group 2: planar groups
-Abe  C2   N2   CN2   CAN2  0 40 2
-Alt  C2   N2   CN2   CAN2  0 40 2
-Dau  C2   N2   CN2   CAN2  0 40 2
-Fuc  C2   N2   CN2   CAN2  0 40 2
-Gal  C2   N2   CN2   CAN2  0 40 2
-Glc  C2   N2   CN2   CAN2  0 40 2
-Glc  N2   CN2  CAN2  OCN2  0 180 2
-Gul  C2   N2   CN2   CAN2  0 40 2
-Ido  C2   N2   CN2   CAN2  0 40 2
-Man  C2   N2   CN2   CAN2  0 40 2
-Neu  C2   N2   CN2   CAN2  0 40 2
-Psi  C2   N2   CN2   CAN2  0 40 2
-Qui  C2   N2   CN2   CAN2  0 40 2
-Rha  C2   N2   CN2   CAN2  0 40 2
