@@ -12,11 +12,11 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 /// @author  Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 
-// Unit headers
+// Unit Headers
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/Pose.hh>
 
-// Package headers
+// Package Headers
 #include <core/io/carbohydrates/pose_io.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
@@ -26,7 +26,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 
-// Project headers
+// Project Headers
 #include <core/id/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
@@ -38,25 +38,25 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 
-// Utility headers
+// Utility Headers
 #include <utility/string_constants.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-// Basic headers
+// Basic Headers
 #include <basic/Tracer.hh>
 
-// Numeric headers
+// Numeric Headers
 #include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 
-// External headers
+// External Headers
 #include <boost/lexical_cast.hpp>
 #include <basic/basic.hh>
 
-// C++ header
+// C++ Header
 #include <list>
 
 
@@ -67,9 +67,6 @@ static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.util" );
 namespace core {
 namespace pose {
 namespace carbohydrates {
-
-using namespace std;
-using namespace core;
 
 // Helper Functions ///////////////////////////////////////////////////////////
 // Use a saccharide residue's connections to find the residue from which it follows or branches.
@@ -84,17 +81,70 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 			residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
 		return residue.residue_connection_partner( id_of_connection_to_parent );
 	} else /* residue is lower terminus */ {
-		TR.Debug << "This residue is a lower terminus! Returning 0." << endl;
+		TR.Debug << "This residue is a lower terminus! Returning 0." << std::endl;
 		return 0;
 	}
 }
 
+// TODO: What if this is is a sialic acid as reducing end?
+// Use a saccharide residue's connections to find the residue following it from a given linkage position.
+/// @param   <linkage_position>: an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment
+/// point on the parent monosaccharide residue; e.g., 4 specifies O4
+/// @return  The sequence position of the residue downstream of this one attached to the given linkage positions.  This
+/// is n+1, if the linkage position is the same as the main chain connectivity, or zero if N/A, i.e., if this is the
+/// upper terminus.
+core::uint
+find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & residue, core::uint linkage_position )
+{
+	using namespace std;
+	using namespace chemical::carbohydrates;
+
+	debug_assert( residue.is_carbohydrate() );
+	debug_assert( linkage_position <= CarbohydrateInfo::MAX_C_SIZE_LIMIT );
+
+	CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+
+	if ( residue.is_upper_terminus() ) {
+		TR.Debug << "Residue " << residue.seqpos() << " is an upper terminus! Returning 0." << endl;
+		return 0;
+	} else if ( linkage_position > info->n_carbons() ) {
+		TR.Warning << "Residue " << residue.seqpos() << " does not have a position " << linkage_position << '!' << endl;
+		return 0;
+	} else {
+		string atom_name( "O" + string( 1, ( '0' + linkage_position ) ) );  // to get "O1", "O2", etc.
+
+		if ( ! residue.has( atom_name ) ) {
+			TR.Warning << "Residue " << residue.seqpos() << " does not have an " << atom_name << endl;
+			return 0;
+		}
+
+		TR.Debug << "Finding seqpos of child residue of " << residue.seqpos() << " at " << atom_name;
+
+		uint index( residue.atom_index( atom_name ) );
+		if ( info->cyclic_oxygen_index() == index ) {  // This means that this is an exocyclic linkage.
+			atom_name = "O" + string( 1, ( '0' + linkage_position + 1 ) );  // Try the next oxygen instead.
+			index = residue.atom_index( atom_name );
+			TR.Debug << "; cyclic oxygen, finding " << atom_name << " instead.";
+		}
+
+		TR.Debug << endl;
+
+		chemical::ResidueType const & type( residue.type() );
+		if ( type.atom_forms_residue_connection( index ) ) {
+			uint const id_of_connection_to_child( type.residue_connection_id_for_atom( index ) );
+			return residue.residue_connection_partner( id_of_connection_to_child );
+		} else {
+			return 0;
+		}
+	}
+}
 
 // Return pointers to the two residues of the glycosidic bond.
 /// @return  Pointers to the residue at <sequence_position> and its parent or else the same pointer twice if undefined.
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP >
 get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 {
+	using namespace std;
 	using namespace conformation;
 
 	// Get the 1st residue of interest.
@@ -121,18 +171,19 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 /// parent monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies that the residue at <seqpos> is a lower
 /// terminus or connected to a non-sugar.
 core::uint
-get_linkage_position_of_saccharide_residue( Pose const & pose, uint const resnum ) {
-	using namespace utility;
+get_linkage_position_of_saccharide_residue( Pose const & pose, uint const resnum )
+{
 	using namespace conformation;
 
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
-	pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( pose, resnum ) );
-	return get_linkage_position_of_saccharide_residue(*residues.first, *residues.second);
-
+	std::pair< ResidueCOP, ResidueCOP > const residues( get_glycosidic_bond_residues( pose, resnum ) );
+	return get_linkage_position_of_saccharide_residue( *residues.first, *residues.second );
 }
 
 core::uint
-get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, conformation::Residue const & parent_rsd){
+get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, conformation::Residue const & parent_rsd )
+{
+	using namespace std;
 
 	if ( rsd.seqpos() == parent_rsd.seqpos() ) {  // This occurs when there is no parent residue.
 		TR.Debug << "This residue is a lower terminus! Returning 0." << endl;
@@ -183,40 +234,44 @@ get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd, c
 	return utility::string2Size(utility::to_string(connect_atom_name[2]) );
 }
 
-///@brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic atom in linkage.
-bool
-has_exocyclic_glycosidic_linkage( Pose const & pose, uint seqpos){
 
-	conformation::Residue const & rsd      = pose.residue( seqpos );
+// Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
+/// @details  Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
+/// @author   Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+bool
+has_exocyclic_glycosidic_linkage( Pose const & pose, uint seqpos )
+{
+	conformation::Residue const & rsd = pose.residue( seqpos );
 	core::Size lower_resnum = find_seqpos_of_saccharides_parent_residue( rsd );
 	//Lowest of saccharide chain.  Return false.
 	if ( lower_resnum == 0 ) {
-		TR.Debug << "has_exocyclic_glycosidic_linkage: This residue is a lower terminus! Returning false." << endl;
+		TR.Debug << "has_exocyclic_glycosidic_linkage: This residue is a lower terminus! Returning false." << std::endl;
 		return false;
 	}
 	//TR << "lower resnum: " << lower_resnum << std::endl;
 
 	conformation::Residue const & prev_rsd = pose.residue( lower_resnum );
 	return has_exocyclic_glycosidic_linkage( rsd, prev_rsd );
-
 }
 
-///@brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
-/// Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
+// Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic carbon.
+/// @details  Does not currently work for aa->glycan.  Returns false if previous residue is not carbohydrate.
+/// @author   Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 bool
-has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd ){
-
-	//What does this mean for ASN-glycan connections?? Technically, it won't be an exocyclic atom - but it WILL have omega and omega2 if ASN - so be careful here!
+has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformation::Residue const & parent_rsd )
+{
+	// What does this mean for ASN-glycan connections?? Technically, it won't be an exocyclic atom -
+	// but it WILL have omega and omega2 if ASN - so be careful here!
 	if ( ! parent_rsd.is_carbohydrate() ) {
-		TR << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << endl;
+		TR << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << std::endl;
 		return false;
 	}
 
-	core::Size n_carbons = parent_rsd.carbohydrate_info()->n_carbons();
-	core::Size linkage_position = get_linkage_position_of_saccharide_residue(rsd, parent_rsd);
+	core::Size const n_carbons = parent_rsd.carbohydrate_info()->n_carbons();
+	core::Size linkage_position = get_linkage_position_of_saccharide_residue( rsd, parent_rsd );
 	core::Size last_carbon = parent_rsd.carbohydrate_info()->last_carbon_in_ring();
 
-	if ( (n_carbons == linkage_position) && (last_carbon != linkage_position) ) {
+	if ( ( n_carbons == linkage_position ) && ( last_carbon != linkage_position ) ) {
 		return true;
 	} else {
 		return false;
@@ -234,6 +289,7 @@ has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformatio
 utility::vector1< id::AtomID >
 get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 {
+	using namespace std;
 	using namespace id;
 	using namespace utility;
 	using namespace conformation;
@@ -285,6 +341,7 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 utility::vector1< id::AtomID >
 get_reference_atoms_for_psi( Pose const & pose, uint const sequence_position )
 {
+	using namespace std;
 	using namespace id;
 	using namespace utility;
 	using namespace conformation;
@@ -331,6 +388,7 @@ get_reference_atoms_for_psi( Pose const & pose, uint const sequence_position )
 utility::vector1< id::AtomID >
 get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_position )
 {
+	using namespace std;
 	using namespace id;
 	using namespace utility;
 	using namespace conformation;
@@ -344,7 +402,8 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 		return ids;
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
-		TR.Warning << "Omega is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
+		TR.Warning << "Omega is undefined for residue " << sequence_position <<
+				" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
 
@@ -382,6 +441,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 utility::vector1< id::AtomID >
 get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_position )
 {
+	using namespace std;
 	using namespace id;
 	using namespace utility;
 	using namespace conformation;
@@ -395,11 +455,10 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 		return ids;
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
-		TR.Warning << "Omega2 is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
+		TR.Warning << "Omega2 is undefined for residue " << sequence_position <<
+				" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
-
-
 
 	// Set the atom names of the four reference atoms.
 	// Reference 0 is OX(n-1) for polysaccharides.
@@ -482,6 +541,7 @@ get_reference_atoms( uint const torsion_id, Pose const & pose, uint const sequen
 /// virtual atoms be deleted?
 void
 align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, uint const sequence_position ) {
+	using namespace std;
 	using namespace id;
 	using namespace conformation;
 
@@ -597,28 +657,27 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-		case  BB :
-			if ( ! residue.is_upper_terminus() ) {
-				// If this is a main-chain torsion, we need the next residue on the main chain.
-				next_rsd_num = torsion_id.rsd() + 1;
-				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-					return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
+			case  BB :
+				if ( ! residue.is_upper_terminus() ) {
+					// If this is a main-chain torsion, we need the next residue on the main chain.
+					next_rsd_num = torsion_id.rsd() + 1;
+					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+						return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
+					}
 				}
-			}
-			break;
-		case BRANCH :
-			{
-			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-			next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
-			if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-				return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
-			}
+				break;
+			case BRANCH :
+				if ( torsion_id.torsion() <= residue.n_non_polymeric_residue_connections() ) {
+					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+					next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+						return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
+					}
+				}
+				break;
+			default :
+				break;
 		}
-			break;
-		default :
-			break;
-		}
-
 	}
 	return false;
 }
@@ -627,6 +686,9 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
 /// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 2 ) is psi.  For a sugar, psi (of the next
 /// residue) is the penultimate torsion, and the number of main-chain torsions varies per saccharide residue.
+/// @note  This function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
+/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
+/// torsion is through CHI.
 bool
 is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
@@ -637,32 +699,32 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-		case BB :
-			if ( ! residue.is_upper_terminus() ) {
-				// If this is a main-chain torsion, we need the next residue on the main chain.
-				next_rsd_num = torsion_id.rsd() + 1;
-				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
+			case BB :
+				if ( ! residue.is_upper_terminus() ) {
+					// If this is a main-chain torsion, we need the next residue on the main chain.
+					next_rsd_num = torsion_id.rsd() + 1;
+					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
+					}
 				}
-			}
-			break;
-		case CHI :
-			{
-			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-			// A psi angle will always have the third atom of its definition be a connect atom.
-			uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
-			Size const n_branches( residue.n_non_polymeric_residue_connections() );
-			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-				if ( next_rsd.is_carbohydrate() ) {
-					return ( residue.connect_atom( next_rsd ) == third_atom );
+				break;
+			case CHI :
+				{
+					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+					// A psi angle will always have the third atom of its definition be a connect atom.
+					uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
+					Size const n_branches( residue.n_non_polymeric_residue_connections() );
+					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+						if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == third_atom ) ) {
+							return true;
+						}
+					}
 				}
-			}
-		}
-			break;
-		default :
-			break;
+				break;
+			default :
+				break;
 		}
 	}
 	return false;
@@ -672,7 +734,10 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 /// @details  Carbohydrates linkages are defined as the torsion angles leading back to the previous residue.  Much
 /// of Rosetta code relies on TorsionIDs and assumes TorsionID( n, BB, 3 ) is omega.  For a sugar, omega (of the next
 /// residue) is the 3rd-to-last torsion, and the number of main-chain torsions varies per saccharide residue.
-/// @remarks  Currently, this only works properly if there is a single omega and not yet for exocyclic branches either.
+/// @note     This function currently will not recognize additional omegas beyond omega1.\n
+/// Also, this function will return false if the TorsionID is a CHI and the torsion is already covered by an equivalent
+/// BB.  In other words, TorsionIDs for CHIs only return true for branch connections, where the ONLY way to access that
+/// torsion is through CHI.
 bool
 is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
@@ -683,38 +748,64 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-		case BB :
-			if ( ! residue.is_upper_terminus() ) {
-				// If this is a main-chain torsion, we need the next residue on the main chain.
-				next_rsd_num = torsion_id.rsd() + 1;
-				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+			case BB :
+				if ( ! residue.is_upper_terminus() ) {
+					// If this is a main-chain torsion, we need the next residue on the main chain.
+					next_rsd_num = torsion_id.rsd() + 1;
+					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+						if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
+							return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
+						}
 					}
 				}
-			}
-			break;
-		case CHI :
-			{
-			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-			// An omega angle will always have the fourth atom of its definition be a connect atom.
-			uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
-			Size const n_branches( residue.n_non_polymeric_residue_connections() );
-			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-				if ( next_rsd.is_carbohydrate() ) {
-					return ( residue.connect_atom( next_rsd ) == fourth_atom );
+				break;
+			case CHI :
+				{
+					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+					// An omega angle will always have the fourth atom of its definition be a connect atom.
+					uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
+					Size const n_branches( residue.n_non_polymeric_residue_connections() );
+					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+						if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == fourth_atom ) ) {
+							return true;
+						}
+					}
 				}
-			}
-		}
-			break;
-		default :
-			break;
+				break;
+			default :
+				break;
 		}
 	}
 	return false;
+}
+
+// Return the sequence position of the immediate downstream (child) residue affected by this torsion.
+/// @note  This method is designed for saccharide residues, because it makes assumptions about CHI and BRANCH numbering.
+core::uint
+get_downstream_residue_that_this_torsion_moves( Pose const & pose, id::TorsionID const & torsion_id )
+{
+	using namespace id;
+
+	conformation::Residue const & rsd( pose.residue( torsion_id.rsd() ) );
+	uint next_rsd( 0 );
+	if ( torsion_id.type() == BB ) {
+		debug_assert( torsion_id.torsion() <= rsd.n_mainchain_atoms() );
+		// If this is a main-chain torsion, we can be confident that the next residue on this chain MUST be n+1.
+		next_rsd = torsion_id.rsd() + 1;
+	} else if ( torsion_id.type() == BRANCH ) {
+		debug_assert( torsion_id.torsion() <= rsd.n_non_polymeric_residue_connections() );
+		Size const n_mainchain_connections( rsd.n_polymeric_residue_connections() );
+		next_rsd = rsd.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+	} else if ( torsion_id.type() == CHI ) {
+		next_rsd = find_seqpos_of_saccharides_child_residue_at( rsd, torsion_id.torsion() );
+	}
+	if ( ! next_rsd ) {
+		TR.Error << "Torsion " << torsion_id << " does not move any downstream residues!  Returning 0." << std::endl;
+	}
+	return next_rsd;
 }
 
 
@@ -722,12 +813,10 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 // Getters ////////////////////////////////////////////////////////////////////
 
 ///@brief Get the number of glycosidic torsions for this residue.  Up to 4 (omega2).
-Size get_n_glycosidic_torsions_in_res(
-	Pose & pose,
-	uint const sequence_position)
+Size
+get_n_glycosidic_torsions_in_res( Pose & pose, uint const sequence_position )
 {
-
-	core::Size n_torsions = 0;
+	core::Size n_torsions( 0 );
 	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
 		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, pose, sequence_position );
 		if ( ref_atoms.size() != 0 ) {
@@ -760,7 +849,7 @@ get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const seq
 
 	if ( ref_atoms.size() == 0 ) {
 		// This occurs when there is no parent residue or when the glycosidic bond is not exocyclic (omega only).
-		TR.Warning << "Returning zero." << endl;
+		TR.Warning << "Returning zero." << std::endl;
 		return 0.0;
 	}
 
@@ -808,6 +897,7 @@ set_glycosidic_torsion( uint const torsion_id, Pose & pose, uint const sequence_
 void
 idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 {
+	using namespace std;
 	using namespace conformation;
 
 	// Work backward through the list of glycans and fix their glycosidic bonds to be ideal, if such data is known.
@@ -878,12 +968,13 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 /// Also, I've not written this to handle creation of glycolipids yet.
 void
 glycosylate_pose(
-	Pose & pose,
-	uint const sequence_position,
-	std::string const & atom_name,
-	std::string const & iupac_sequence,
-	bool const idealize_linkages /*true*/ )
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & iupac_sequence,
+		bool const idealize_linkages /*true*/ )
 {
+	using namespace std;
 	using namespace utility;
 	using namespace chemical;
 	using namespace conformation;
@@ -918,8 +1009,8 @@ glycosylate_pose(
 	// Keep track of branch points as we go.
 	list< pair< uint, string > > branch_points;
 
-
 	//JAB - reverting this till we can fix it
+	// TODO: Fix it.
 	/*
 	Size const initial_sizes( pose.size() );
 	PDBInfoOP info( new PDBInfo( *pose.pdb_info() ) );//Copy because as we add residues it will change PDB Info - and not the way we want.
@@ -939,8 +1030,6 @@ glycosylate_pose(
 	new_chain_id = utility::ALPHANUMERICS[ last_chain_index + 1 ];
 	}
 	*/
-
-
 
 	// Begin with the first sugar.
 	ResidueType const & first_sugar_type( *residue_types.front() );
@@ -974,7 +1063,6 @@ glycosylate_pose(
 	pose.pdb_info(info);
 	*/
 
-
 	//JAB - this leaves an intact PDBInfo, which we absolutely need for Link Records to be written out properly.
 	// However, the PDBInfo records we start with are completely wiped out.
 	// We tried a fix above, but this leaves the PDB unreadable by Rosetta...
@@ -984,20 +1072,19 @@ glycosylate_pose(
 	info->name( pose.sequence() );  // Use the sequence as the default name.
 	pose.pdb_info( info );
 
-
 	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
-		pose.residue( sequence_position ).name3() << sequence_position << endl;
+			pose.residue( sequence_position ).name3() << sequence_position << endl;
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose(
-	Pose & pose,
-	uint const sequence_position,
-	std::string const & iupac_sequence,
-	bool const idealize_linkages /*true*/ )
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & iupac_sequence,
+		bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -1010,8 +1097,8 @@ glycosylate_pose(
 		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
-			"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
+				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
+				"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
 	}
 }
 
@@ -1019,11 +1106,11 @@ glycosylate_pose(
 // Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void
 glycosylate_pose_by_file(
-	Pose & pose,
-	uint const sequence_position,
-	std::string const & atom_name,
-	std::string const & filename,
-	bool const idealize_linkages /*true*/ )
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & filename,
+		bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace io::carbohydrates;
@@ -1042,10 +1129,10 @@ glycosylate_pose_by_file(
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose_by_file(
-	Pose & pose,
-	uint const sequence_position,
-	std::string const & filename,
-	bool const idealize_linkages /*true*/ )
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & filename,
+		bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -1054,14 +1141,14 @@ glycosylate_pose_by_file(
 		glycosylate_pose_by_file( pose, sequence_position, "OG", filename, idealize_linkages );
 	} else if ( glycosylation_site == "THR" ) {
 		glycosylate_pose_by_file( pose, sequence_position, "OG1", filename, idealize_linkages );
-		// TODO: Add Trp, after creating an appropriate patch file.
+	} else if ( glycosylation_site == "TRP" ) {
+		glycosylate_pose_by_file( pose, sequence_position, "CD1", filename, idealize_linkages );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
-			"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
+				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
+				"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
 	}
 }
-
 
 
 // Set the dihedral angles involved in a glycosidic linkage based on statistical data.
@@ -1087,7 +1174,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 				torsion_mean = basic::periodic_range( conformer.get_torsion_mean( omega_dihedral, i - 2 ), 360);
 			}
 			TR.Debug << "Setting from " << get_glycosidic_torsion( i, pose, upper_residue ) <<
-				" to " << torsion_mean << endl;  // TEMP
+				" to " << torsion_mean << std::endl;  // TEMP
 			set_glycosidic_torsion( i, pose, upper_residue, torsion_mean );
 		}
 	} else if ( use_prob_for_sd ) {
@@ -1102,7 +1189,7 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 
 
 			if ( i <= 3 ) { // phi, psi, or omega1
-				MainchainTorsionType torsion_type = static_cast<MainchainTorsionType>( i );
+				MainchainTorsionType torsion_type = static_cast< MainchainTorsionType >( i );
 				mean = conformer.get_torsion_mean( torsion_type );
 				sd = conformer.get_torsion_sd( torsion_type );
 				conformer_angle = basic::periodic_range( mean - sd + numeric::random::rg().uniform() * sd * 2, 360.0 );
@@ -1120,132 +1207,6 @@ void set_dihedrals_from_linkage_conformer_data( Pose & pose,
 			set_glycosidic_torsion( i, pose, upper_residue, conformer_angle );
 		}
 	}
-}
-
-core::chemical::carbohydrates::LinkageType
-get_linkage_type_for_residue_for_CHI( core::Size torsion, conformation::Residue const & rsd,
-	pose::Pose const & pose)
-
-{
-	using core::Size;
-	using core::Angle;
-	using core::Real;
-	using utility::vector1;
-	using namespace chemical::rings;
-	using namespace core::chemical::carbohydrates;
-
-	if ( !rsd.is_carbohydrate() ) {
-		return LINKAGE_NA;
-	}
-
-	CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
-	if ( torsion == id::phi_dihedral ) {
-		// TODO: Wood's lab assumed that the rings would always be 4C1 chairs. If an alpha sugar is flipped, it should
-		// probably be treated as a beta.  I should probably abandon getting the anomeric form and explicitly determine
-		// axial/equatorial here too.
-		if ( info->is_alpha_sugar() ) {
-			return ALPHA_LINKS;
-
-		} else if ( info->is_beta_sugar() ) {
-			return BETA_LINKS;
-
-		} else {
-			return LINKAGE_NA;
-		}
-	} else if ( torsion == id::psi_dihedral ) {
-
-		if ( rsd.seqpos() == 1 ) {
-			return LINKAGE_NA;
-		}
-
-		// Calculate psi component.
-		// For psi, we need to get information from the previous residue.
-		conformation::Residue const & prev_rsd( pose.residue(
-			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
-		// If this is not a saccharide residue, do nothing.
-		if ( ! prev_rsd.is_carbohydrate() ) {
-			return LINKAGE_NA;
-		}
-
-
-		CarbohydrateInfoCOP prev_info( prev_rsd.carbohydrate_info() );
-		// If this is not a pyranose, do nothing, because we do not have statistics for this residue.
-		if ( ! prev_info->is_pyranose() ) {
-			return LINKAGE_NA;
-		}
-
-		// What is our connecting atom?
-		uint const connect_atom( prev_rsd.connect_atom( rsd ) );
-
-
-		// Now, get the ring atoms.
-		// We can assume that the ring we care about is the 1st ring, since this is a sugar.
-		vector1< uint > const ring_atoms( prev_rsd.type().ring_atoms( 1 ) );
-
-		// Next, we must figure out which position on the ring has the glycosidic bond.
-		uint position( 0 );
-		vector1< uint > const bonded_heavy_atoms( prev_rsd.get_adjacent_heavy_atoms( connect_atom ) );
-		Size const n_bonded_heavy_atoms( bonded_heavy_atoms.size() );
-		Size const n_ring_atoms( ring_atoms.size() );
-		for ( uint i( 1 ); i <= n_bonded_heavy_atoms; ++i ) {
-			for ( uint j( 1 ); j <= n_ring_atoms; ++ j ) {
-				if ( ring_atoms[ j ] == bonded_heavy_atoms[ i ] ) {
-					// We found the attachment position.
-					position = j;
-					break;
-				}
-			}
-			if ( position != 0 ) {
-				break;  // We already found this heavy atom.
-			}
-		}
-
-		// Finally, check if it's axial or equatorial and call the appropriate function.
-		//  This also checks for exocyclic linkage and returns neither if found.
-		switch ( is_atom_axial_or_equatorial_to_ring( prev_rsd, connect_atom, ring_atoms ) ) {
-		case AXIAL :
-			if ( position % 2 == 0 ) {  // even
-				return _2AX_3EQ_4AX_LINKS;
-			} else /* odd */ {
-				return _2EQ_3AX_4EQ_LINKS;
-			}
-			break;
-		case EQUATORIAL :
-			if ( position % 2 == 0 ) {  // even
-				return _2EQ_3AX_4EQ_LINKS;
-			} else /* odd */ {
-				return _2AX_3EQ_4AX_LINKS;
-			}
-			break;
-		case NEITHER :
-			return LINKAGE_NA;
-		}
-
-		//If we somehow get to this point, return NA
-		return LINKAGE_NA;
-	} else {
-		//Should probably throw instead of exit.
-		utility_exit_with_message( "no data for torsion");
-	}
-}
-
-utility::vector1< core::chemical::carbohydrates::LinkageType >
-get_linkage_types_for_dihedral( core::Size torsion ){
-
-	using namespace core::chemical::carbohydrates;
-
-	utility::vector1< LinkageType > linkages(2);
-	if ( torsion == id::phi_dihedral ) {
-		linkages[ 1 ] = ALPHA_LINKS;
-		linkages[ 2 ] = BETA_LINKS;
-	} else if ( torsion == id::psi_dihedral ) {
-		linkages[ 1 ] = _2AX_3EQ_4AX_LINKS;
-		linkages[ 2 ] = _2EQ_3AX_4EQ_LINKS;
-	} else {
-		//Should probably throw instead of exit.
-		utility_exit_with_message( "no data for torsion");
-	}
-	return linkages;
 }
 
 
@@ -1281,28 +1242,18 @@ remove_carbohydrate_branch_point_variants( Pose & pose, core::Size const seqpos)
 
 		} else {
 			remove_variant_type_from_pose_residue( pose, SC_BRANCH_POINT, seqpos);
-
 		}
-
-
 	}
-
-
 }
 
 
-
-/////////////////////////////////////////// Glycan Trimming ////////////////////////////
-
-
+// Glycan Trimming ////////////////////////////////////////////////////////////
 
 /// @brief Delete the glycan from this residue onward toward the end of the branch.  Like chopping off a tree trunk at position resnum (not including resnum). Also known as defoliating.
 ///  If resnum is the protein branch point, will change variant.
 //   If no more carbohydrates exist in the pose, will change the pose status.
 void
-delete_carbohydrate_branch(
-	Pose & pose,
-	uint const delete_to)
+delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 {
 	using namespace utility;
 	using namespace chemical;
@@ -1323,7 +1274,6 @@ delete_carbohydrate_branch(
 
 	Size current_delete_to = delete_to;
 	while ( tips.size() > 0 ) {
-
 		//TR << "\n" << "TRIP: " <<  i << std::endl;
 
 		pose.reference_pose_from_current( ref_pose_name, true );
@@ -1357,7 +1307,6 @@ delete_carbohydrate_branch(
 		//TR << pose << std::endl; //Debugging for now.
 
 		i+=1;
-
 	}
 
 	// Update branching of starting_position residue.  After all this deletion, it will not have any branches and should be a tip.
@@ -1375,7 +1324,6 @@ delete_carbohydrate_branch(
 		}
 	}
 	pose.conformation().contains_carbohydrate_residues( found_carbohydrate );
-
 }
 
 
@@ -1383,12 +1331,10 @@ delete_carbohydrate_branch(
 ///  May require a better name.
 ///  Returns pair of all_upstream_residues, tips.
 ///  Tips are the ends of linear glycan branches.
-
 std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > >
 get_carbohydrate_residues_upstream(
 	Pose const & pose,
 	uint const starting_position)
-
 {
 	using namespace core::chemical::carbohydrates;
 
@@ -1415,7 +1361,6 @@ get_carbohydrate_residues_upstream(
 	get_branching_residues( pose, starting_position, children_residues, list_of_residues, tips );
 
 	return std::make_pair( list_of_residues, tips );
-
 }
 
 
@@ -1428,16 +1373,13 @@ get_carbohydrate_residues_upstream(
 ///
 ///  See Also: get_carbohydrate_residues_upstream
 ///            trim_carbohydrate_branch_from_X
-///
 void
 get_branching_residues( Pose const & pose,
 	Size parent_residue,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
-
 {
-
 	for ( core::Size i =1; i <= children_residues.size(); ++i ) {
 		Size res = children_residues[ i ];
 		utility::vector1< Size > children;
@@ -1447,7 +1389,6 @@ get_branching_residues( Pose const & pose,
 			get_branching_residues( pose, res, children, list_of_residues, tips);
 		}
 	}
-
 }
 
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
@@ -1458,7 +1399,6 @@ get_branching_residues( Pose const & pose,
 ///
 ///  See Also: get_carbohydrate_residues_upstream
 ///            trim_carbohydrate_branch_from_X
-///
 void
 fill_upstream_children_res_and_tips( Pose const & pose,
 	Size res,
@@ -1466,9 +1406,7 @@ fill_upstream_children_res_and_tips( Pose const & pose,
 	utility::vector1< Size > & children_residues,
 	utility::vector1< Size > & list_of_residues,
 	utility::vector1< Size > & tips )
-
 {
-
 	Size connections = pose.residue( res ).n_possible_residue_connections(); //Want the index to match here.
 	for ( core::Size connection = 1; connection <= connections; ++connection ) {
 
@@ -1483,17 +1421,14 @@ fill_upstream_children_res_and_tips( Pose const & pose,
 			}
 		}
 	}
-
-
 }
 
 
 /// @brief Get all residue numbers in order from the tip to (and not including) stop_at_residue or a branch point.
 ///  All residue numbers are the tip or a linear polymer of glycans.
 ///  Useful for glycan stripping.
-///
 utility::vector1< core::Size >
-get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue)
+get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue )
 {
 	// This logic can be simplified even further, but this works.
 
@@ -1513,12 +1448,11 @@ get_resnums_in_leaf( Pose const & pose, Size tip_residue, Size stop_at_residue)
 		Size parent = find_seqpos_of_saccharides_parent_residue( pose.residue(res) );
 		//TR <<  "Res: " << res << " Parent: " << parent << std::endl;
 
-		if ( res != tip_residue ) resnums.push_back( res );
-		if ( parent == 0 || parent == stop_at_residue ) break;
+		if ( res != tip_residue ) { resnums.push_back( res ); }
+		if ( parent == 0 || parent == stop_at_residue ) { break; }
 
 		res = parent;
 		//TR << "connections: " << pose.residue( res ).n_current_residue_connections() << std::endl;
-
 	}
 	return resnums;
 }
@@ -1543,9 +1477,7 @@ delete_leaf( Pose & pose, utility::vector1< Size > leaf, std::string ref_pose_na
 
 		//pose.delete_polymer_residue( new_resnum );
 		pose.delete_residue_slow( new_resnum );
-
 	}
-
 }
 
 }  // namespace carbohydrates

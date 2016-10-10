@@ -28,6 +28,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 
+// Basic header
 #include <basic/Tracer.hh>
 
 // Numeric headers

@@ -975,8 +975,8 @@ public:
 
 	/// @brief Does an atom form any inter-residue chemical bonds?
 	bool
-	atom_forms_residue_connection( Size const atomid ) {
-		return atom_2_residue_connection_map_[ atomid ].size() != 0;
+	atom_forms_residue_connection( Size const atomid ) const {
+		return atom_2_residue_connection_map_.at( atomid ).size() != 0;
 	}
 
 	/// @brief How many inter-residue chemical bonds does a particular atom form?

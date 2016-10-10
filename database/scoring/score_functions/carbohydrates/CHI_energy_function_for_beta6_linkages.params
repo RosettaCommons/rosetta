@@ -1,0 +1,11 @@
+# This file contains lists of values of the Gaussian parameters for each of
+# the terms of the CHI energy function for the psi angle in beta6
+# linkages, as defined in:
+A.K. Nivedha et al. JCTC 2016, 12, 892-901
+
+# The function is defined for the range [0, 360).
+
+a    7.249     1.900     0.741       0.200    0.287     1.226     7.411   -0.615   -0.350  # magnitudes of the distributions
+b    3.606    96.593   141.664  162000.000  228.171   292.206   369.868  271.319  183.000  # midpoints of the distributions
+c 2459.239  2683.887  1150.048     400.000  272.201  1134.525  3499.160  532.437  100.000  # twice the squares of the widths of the distributions
+d    0.0  # intercept (coefficient of zeroth order term)

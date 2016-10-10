@@ -23,7 +23,7 @@ namespace core {
 namespace scoring {
 namespace carbohydrates {
 
-/// @brief  A reproduction of the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab.
+/// @brief  A reproduction of the "CarboHydrate Intrinsic" (CHI) energy functions developed by Woods Lab.
 class CHIEnergyFunction;
 
 typedef utility::pointer::shared_ptr< CHIEnergyFunction > CHIEnergyFunctionOP;

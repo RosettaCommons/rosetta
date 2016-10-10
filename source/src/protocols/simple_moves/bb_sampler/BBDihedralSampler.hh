@@ -10,7 +10,7 @@
 /// @file protocols/simple_moves/bb_sampler/BBDihedralSampler.hh
 /// @brief This class functions to hold, access, and set independent and dependent dihedral data.
 ///   It can act as a base class for particular types of data.
-/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)  and Jason W. Labonte (JWLabonte@jhu.edu)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
 #ifndef INCLUDED_protocols_simple_moves_bb_sampler_BBDihedralSampler_hh
@@ -39,20 +39,20 @@ enum BBSampleType {
 ///   It is an abstract base class for particular types of data.
 ///
 ///   get_torsion functions should give either the minima on a set of data or sample via the probability
-///   If you are subclassing, you do not nessessarily need to use the BBSampleType.
+///   If you are subclassing, you do not necessarily need to use the BBSampleType.
 ///
 ///    Feel free to implement more types. See the SugarBBSampler and RangedBBSampler as examples.
 ///
-///   Technically - with now storing the torsion_types as Size (due to waay to many in sugars) - we can now remove the 'BB' part of this whole thing.
+///   Technically - with now storing the torsion_types as Size (due to waay too many in sugars) - we can now remove the 'BB' part of this whole thing.
 ///
 class BBDihedralSamplerBase : public utility::pointer::ReferenceCount {
 
 public:
 
 	BBDihedralSamplerBase();
-	BBDihedralSamplerBase(core::Size torsion_type, BBSampleType sampling_type = probability);
+	BBDihedralSamplerBase( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 
-	BBDihedralSamplerBase(BBDihedralSamplerBase const & src);
+	BBDihedralSamplerBase( BBDihedralSamplerBase const & src );
 
 	virtual ~BBDihedralSamplerBase();
 
@@ -64,7 +64,7 @@ public:
 
 	///@brief Set the torsion type we will be querying.
 	void
-	set_torsion_type( core::Size torsion_type ) {
+	set_torsion_type( core::id::MainchainTorsionType torsion_type ) {
 		torsion_type_ = torsion_type;
 	};
 
@@ -85,10 +85,8 @@ public:
 
 protected:
 
-	core::Size torsion_type_;
+	core::id::MainchainTorsionType torsion_type_;
 	BBSampleType sampling_type_;
-
-
 };
 
 
@@ -102,7 +100,7 @@ class BBDihedralSampler : public BBDihedralSamplerBase {
 public:
 
 	BBDihedralSampler();
-	BBDihedralSampler( core::Size torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler( BBDihedralSampler const & src );
 
@@ -126,12 +124,11 @@ public:
 };
 
 
-
 class BBDihedralSampler2D : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSampler2D();
-	BBDihedralSampler2D( core::Size torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler2D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler2D(BBDihedralSampler2D const & src);
 
@@ -159,7 +156,6 @@ public:
 protected:
 
 
-
 };
 
 
@@ -167,7 +163,7 @@ class BBDihedralSampler3D : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSampler3D();
-	BBDihedralSampler3D( core::Size torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSampler3D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 
 	BBDihedralSampler3D(BBDihedralSampler3D const & src);
 
@@ -201,7 +197,7 @@ class BBDihedralSamplerND : public BBDihedralSamplerBase {
 
 public:
 	BBDihedralSamplerND();
-	BBDihedralSamplerND( core::Size torsion_type, BBSampleType sampling_type = probability );
+	BBDihedralSamplerND( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type = probability );
 	BBDihedralSamplerND(BBDihedralSamplerND const & src);
 
 	virtual ~BBDihedralSamplerND();
@@ -228,16 +224,8 @@ public:
 
 };
 
-
-
 } //protocols
 } //pose
 } //core
 
-
 #endif //INCLUDED_core_pose_BBDihedralSampler_hh
-
-
-
-
-

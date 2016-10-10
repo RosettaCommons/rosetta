@@ -64,6 +64,7 @@ sources = {
 		"Conformation",
 		"Residue",
 		"UltraLightResidue",
+		"util",
 	],
 	"conformation/symmetry" : [
 		"MirrorSymmetricConformation",
@@ -282,7 +283,9 @@ sources = {
 	],
 	"scoring/carbohydrates" : [
 		"CHIEnergyFunction",
+		"OmegaPreferencesFunction",
 		"database_io",
+		"util",
 	],
 	"scoring/carbon_hbonds" : [
 		"CarbonHBondEnergy",

@@ -37,7 +37,7 @@ public:
 };
 
 }  // namespace carbohydrates
-}  // namesoace methods
+}  // namespace methods
 }  // namespace scoring
 }  // namespace core
 

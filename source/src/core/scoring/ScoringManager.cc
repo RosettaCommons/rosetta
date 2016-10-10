@@ -44,6 +44,7 @@
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
+#include <core/scoring/carbohydrates/OmegaPreferencesFunction.hh>
 #include <core/scoring/dna/DNABFormPotential.hh>
 #include <core/scoring/dna/DNATorsionPotential.hh>
 #include <core/scoring/dna/DNA_BasePotential.hh>
@@ -886,12 +887,11 @@ ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type
 
 ///////////////////////////////////////////////////////////////////////////////
 carbohydrates::CHIEnergyFunction const &
-ScoringManager::get_CHIEnergyFunction(bool setup_for_sampling /* false */, Real step_size /* 0.1 */) const
+ScoringManager::get_CHIEnergyFunction( bool setup_for_sampling /* false */, Real step_size /* 0.1 */ ) const
 {
 	if ( CHI_energy_function_ == nullptr ) {
-		TR << "Creating chi energy function." <<std::endl;
-		CHI_energy_function_ =  carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
-
+		TR << "Creating CHI Energy Function." << std::endl;
+		CHI_energy_function_ = carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
 	}
 
 	if ( setup_for_sampling && ( ! CHI_energy_function_->sampling_data_setup() ) ) {
@@ -900,6 +900,19 @@ ScoringManager::get_CHIEnergyFunction(bool setup_for_sampling /* false */, Real 
 	}
 
 	return *CHI_energy_function_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+carbohydrates::OmegaPreferencesFunction const &
+ScoringManager::get_OmegaPreferencesFunction() const
+{
+	if ( carbohydrate_omega_preferences_function_ == nullptr ) {
+		TR << "Creating carbohydrate omega preferences function." << std::endl;
+		carbohydrate_omega_preferences_function_ =
+				carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
+
+	}
+	return *carbohydrate_omega_preferences_function_;
 }
 
 

@@ -11,8 +11,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_conformation_util_hh
-#define INCLUDED_core_conformation_util_hh
+#ifndef INCLUDED_core_conformation_util_HH
+#define INCLUDED_core_conformation_util_HH
 
 
 // Unit headers
@@ -401,18 +401,24 @@ stub_id_to_named_stub_id(
 );
 
 
+// Ring-related Functions /////////////////////////////////////////////////////
+
+/// @brief  What is the attachment position of the query atom on the given ring?
+core::uint position_of_atom_on_ring(
+		Residue const & residue,
+		core::uint query_atom,
+		utility::vector1< core::uint > const & ring_atoms );
+
 /// @brief  Is the query atom in this residue axial or equatorial to the given ring or neither?
-///
 chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
-	Residue const & residue,
-	uint query_atom,
-	utility::vector1< uint > const & ring_atoms );
+		Residue const & residue,
+		core::uint query_atom,
+		utility::vector1< core::uint > const & ring_atoms );
 
 /// @brief  Is the query atom in this residue axial or equatorial or neither?
-//chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, uint query_atom );
+//chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, core::uint query_atom );
 
 } // conformation
 } // core
 
-
-#endif
+#endif  // INCLUDED_core_conformation_util_HH

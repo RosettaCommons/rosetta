@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/SugarBBSampler.cc
-/// @brief Sample dihdrals using sugar bb data.
+/// @file protocols/simple_moves/bb_sampler/SugarBBSampler.cc
+/// @brief Sample dihdrals using sugar_bb data.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
+#include <core/scoring/carbohydrates/util.hh>
 #include <core/pose/carbohydrates/util.hh>
 
-#include <core/chemical/carbohydrates/LinkageType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
@@ -72,7 +72,6 @@ SugarBBSampler::SugarBBSampler( SugarBBSampler const & src ):
 }
 
 
-
 SugarBBSamplerOP
 SugarBBSampler::clone() const {
 	return SugarBBSamplerOP( new SugarBBSampler( *this ) );
@@ -80,8 +79,8 @@ SugarBBSampler::clone() const {
 
 
 core::Real
-SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
-
+SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
+{
 	using core::scoring::ScoringManager;
 
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {
@@ -101,14 +100,12 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 		throw utility::excn::EXCN_Msg_Exception( msg );
 	}
 
-
 	CHIEnergyFunction const & sugar_bb =
-		ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
+			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
 
-
-	//Get Linkage Type
-	core::conformation::Residue const & rsd = pose.residue( resnum );
-	LinkageType linkage_type = get_linkage_type_for_residue_for_CHI( torsion_type_, rsd, pose );
+	// Get linkage type.
+	CHIEnergyFunctionLinkageType linkage_type =
+			get_CHI_energy_function_linkage_type_for_residue_in_pose( torsion_type_, pose, resnum );
 
 	if ( linkage_type == LINKAGE_NA ) {
 		std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
@@ -133,8 +130,8 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const{
 	}
 
 
-	//Fix Phi or Psi for L or D AA
-
+	//Fix Phi or Psi for L or D
+	core::conformation::Residue const & rsd = pose.residue( resnum );
 	if ( torsion_type_ == phi_dihedral && rsd.carbohydrate_info()->is_L_sugar() ) {
 		// L-Sugars use the mirror image of the score functions.
 
@@ -164,12 +161,6 @@ SugarBBSampler::set_torsion_to_pose(Pose & pose, core::Size resnum) const{
 }
 
 
-} //carbohydrates
-} //pose
-} //core
-
-
-
-
-
-
+}  // bb_sampler
+}  // simple_moves
+}  // protocols

@@ -247,7 +247,9 @@ sources = {
 	],
 	"core/scoring/carbohydrates": [
 		"CHIEnergyFunction",
+		"OmegaPreferencesFunction",
 		"database_io",
+		"util",
 	],
 	"core/scoring/carbon_hbonds": [
 		"CarbonHBondEnergy",

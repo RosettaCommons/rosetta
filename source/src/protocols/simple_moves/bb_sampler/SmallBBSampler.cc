@@ -40,14 +40,14 @@ SmallBBSampler::SmallBBSampler( core::Real angle_max):
 	set_angle_max( angle_max);
 }
 
-SmallBBSampler::SmallBBSampler( core::Size torsion_type):
+SmallBBSampler::SmallBBSampler( core::id::MainchainTorsionType torsion_type):
 	BBDihedralSampler()
 {
 	torsion_type_ = torsion_type;
 	set_angle_max( 360 );
 }
 
-SmallBBSampler::SmallBBSampler( core::Size torsion_type, core::Real angle_max):
+SmallBBSampler::SmallBBSampler( core::id::MainchainTorsionType torsion_type, core::Real angle_max):
 	BBDihedralSampler()
 
 {
@@ -122,9 +122,3 @@ SmallBBSampler::clone() const {
 } //protocols
 } //simple_moves
 } //bb_sampler
-
-
-
-
-
-

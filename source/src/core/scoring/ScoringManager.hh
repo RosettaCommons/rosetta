@@ -45,6 +45,7 @@
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
 
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
+#include <core/scoring/carbohydrates/OmegaPreferencesFunction.fwd.hh>
 
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
 
@@ -255,8 +256,12 @@ public:
 	disulfides::DisulfideMatchingPotential &
 	get_DisulfideMatchingPotential() const;
 
-	carbohydrates::CHIEnergyFunction const &
-	get_CHIEnergyFunction( bool setup_sampling_data = false, Real sampling_step_size = 0.1 ) const;
+	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction(
+			bool setup_sampling_data = false,
+			Real sampling_step_size = 0.1 ) const;
+
+	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction() const;
+
 
 	bool
 	has_energy_method( ScoreType t ) const;
@@ -380,6 +385,7 @@ private:
 	//ReferenceEnergyPotential referenceEnergyPotential_;
 	mutable UnfoldedStatePotentialOP unf_state_;
 	mutable carbohydrates::CHIEnergyFunctionOP CHI_energy_function_;
+	mutable carbohydrates::OmegaPreferencesFunctionOP carbohydrate_omega_preferences_function_;
 
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;

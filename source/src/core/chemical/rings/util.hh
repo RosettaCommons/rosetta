@@ -37,9 +37,9 @@ typedef numeric::xyzVector< Distance > Coords;
 
 /// @brief  Are the query atom coordinates axial or equatorial to the given ring or neither?
 AxEqDesignation is_atom_axial_or_equatorial_to_ring(
-	Coords const & query_atom,
-	Coords const & attachment_atom,
-	utility::vector1< Coords > const & ring_atoms );
+		Coords const & query_atom,
+		Coords const & attachment_atom,
+		utility::vector1< Coords > const & ring_atoms );
 
 }  // namespace rings
 }  // namespace chemical

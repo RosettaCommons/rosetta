@@ -36,12 +36,11 @@
 #include <utility/string_util.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 
-static THREAD_LOCAL basic::Tracer TR("core.pose.carbohydrates.util.cxxtest");
+static THREAD_LOCAL basic::Tracer TR( "core.pose.carbohydrates.util.cxxtest" );
+
 
 class CarbohydratePoseUtilityFunctionTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
@@ -50,25 +49,28 @@ public:  // Standard methods //////////////////////////////////////////////////
 	{
 		using namespace core::pose;
 		using namespace core::import_pose;
-		using namespace basic::options;
 
 		core_init_with_additional_options( "-include_sugars" );
 
 		// Test branched oligosaccharide.
-		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
+		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , PDB_file);
 
 		// Test oligosaccharide with exocyclic linkage.
-		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb", core::import_pose::PDB_file );
+		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb", PDB_file );
+
+		// Test oligosaccharide with multiple branches off a single residue.
+		make_pose_from_saccharide_sequence( bisected_man_,
+				"a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-[b-d-GlcpNAc-(1->4)]-b-D-Manp" );
 
 		// Test exocyclic carbon in linkage.
-		pose_from_file( exo_test_, "core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", core::import_pose::PDB_file);
-		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , core::import_pose::PDB_file);
+		pose_from_file( exo_test_,
+				"core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", PDB_file);
+		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , PDB_file);
 
-		std::string man9_s = "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc";
-		man9_op_ = pose_from_saccharide_sequence(man9_s, "fa_standard", true, false); //No need to idealize.
-		//TR << "Loaded man9_op_.  What the fuck is wrong!!!???" << std::endl;
+		std::string const man9_s( "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+				"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
+		man9_op_ = pose_from_saccharide_sequence( man9_s, "fa_standard", true, false ); //No need to idealize.
 		TR << *man9_op_ << std::endl;
-
 	}
 
 	// Destruction
@@ -77,17 +79,33 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 
 public:  // Tests /////////////////////////////////////////////////////////////
-	void test_find_seqpos_of_saccharides_parent_residue()
+	void test_find_seqpos_of_saccharides_relatives()
 	{
+		using namespace std;
 		using namespace core::pose::carbohydrates;
 
-		TR <<  "Testing find_seqpos_of_saccharides_parent_residue() function."  << std::endl;
+		TR << "Testing find_seqpos_of_saccharides_parent_residue() function." << endl;
 
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 1 ) ), 0 );  // 1st has no parent.
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 2 ) ), 1 );
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( Lex_.residue( 3 ) ), 1 );  // 3rd is on a branch.
 
 		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_parent_residue( isomaltose_.residue( 2 ) ), 1 );  // a ->6 linkage
+
+
+		TR << "Testing find_seqpos_of_saccharides_child_residue_at() function." << endl;
+
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 1 ), 0 );
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 2 ), 0 );
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 3 ), 2 );  // main
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 4 ), 3 );
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 5 ), 4 );  // as O6
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 6 ), 4 );
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 1 ), 7 ), 0 );  // OoB
+
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 2 ), 4 ), 0 );  // term.
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 3 ), 4 ), 0 );  // term.
+		TS_ASSERT_EQUALS( find_seqpos_of_saccharides_child_residue_at( bisected_man_.residue( 4 ), 4 ), 0 );  // term.
 	}
 
 	void test_get_glycosidic_bond_residues()
@@ -185,17 +203,21 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 	void test_TorsionID_query_functions()
 	{
+		using namespace std;
 		using namespace core::id;
 		using namespace core::pose::carbohydrates;
 
-		TR <<  "Testing functions that query if the given TorsionID is of a glycosidic torsion."  << std::endl;
+		TR << "Testing functions that query if the given TorsionID is of a glycosidic torsion." << endl;
 
-		// Are they phis?
+		TR << " Testing recognition of phi..." << endl;
+
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
 		TS_ASSERT( is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
+
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 6 ) ) );  // out of bounds
 
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
@@ -203,8 +225,13 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 7 ) ) );  // out of bounds
+
 		// Nus can never be phis!
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
+
+		TS_ASSERT( is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BRANCH, 2 ) ) );  // out of bounds
 
 		// Termini cannot have a phi(n+1)!
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
@@ -213,7 +240,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );  // virtual-atom-moving torsion
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
@@ -225,12 +252,13 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );  // virtual-atom-moving torsion
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
 
+		// Test a system with an exocyclic linkage.
 		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
@@ -244,22 +272,45 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
 		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
 
+		// Test a system with multiple branches.
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BB, 3 ) ) );  // psi(2)
+		TS_ASSERT( is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BB, 4 ) ) );  // phi(2)
 
-		// Are they psis?
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, CHI, 3 ) ) );  // virtual-atom-moving
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, CHI, 4 ) ) );  // psi(3)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, CHI, 5 ) ) );  // omega(4)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, CHI, 6 ) ) );  // psi(4)
+
+		TS_ASSERT( is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( is_glycosidic_phi_torsion( bisected_man_, TorsionID( 1, BRANCH, 2 ) ) );  // phi(4)
+
+
+		TR << " Testing recognition of psi..." << endl;
+
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
 		TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
 
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 6 ) ) );  // out of bounds
+
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
 		TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
-		//TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // virtual-atom-moving torsion
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 7 ) ) );  // out of bounds
+
 		// Nus can never be psis!
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
+
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BRANCH, 2 ) ) );  // out of bounds
 
 		// Termini cannot have a psi(n+1)!
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
@@ -286,6 +337,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
 
+		// Test a system with an exocyclic linkage.
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
@@ -297,15 +349,33 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
 		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
-		//TS_ASSERT( is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // virtual-atom-moving torsion
+
+		// Test a system with multiple branches.
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BB, 3 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BB, 4 ) ) );  // phi(2)
+
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, CHI, 3 ) ) );  // virtual-atom-moving
+		TS_ASSERT( is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, CHI, 4 ) ) );  // psi(3)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, CHI, 5 ) ) );  // omega(4)
+		TS_ASSERT( is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, CHI, 6 ) ) );  // psi(4)
+
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( bisected_man_, TorsionID( 1, BRANCH, 2 ) ) );  // phi(4)
 
 
-		// Are they omegas?
+		TR << " Testing recognition of omega1..." << endl;
+
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
+
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 6 ) ) );  // out of bounds
 
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
@@ -313,22 +383,40 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 7 ) ) );  // out of bounds
+
 		// Nus can never be omegas!
 		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
 
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BRANCH, 2 ) ) );  // out of bounds
+
 		// Termini cannot have an omega(n+1)!
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 1 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 2 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 3 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 6 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 7 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 1 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 3 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 4 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 5 ) ) );
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 2, CHI, 6 ) ) );
 
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
+
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
+
+		// Test a system with an exocyclic linkage.
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
@@ -339,8 +427,51 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
 		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
-		//TS_ASSERT( is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
-		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2), already covered
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // virtual-atom-moving
+
+		// Test a system with multiple branches.
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BB, 3 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BB, 4 ) ) );  // phi(2)
+
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, CHI, 3 ) ) );  // virtual-atom-moving
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, CHI, 4 ) ) );  // psi(3)
+		TS_ASSERT( is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, CHI, 5 ) ) );  // omega(4)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, CHI, 6 ) ) );  // psi(4)
+
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BRANCH, 1 ) ) );  // phi(3)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( bisected_man_, TorsionID( 1, BRANCH, 2 ) ) );  // phi(4)
+	}
+
+	void test_get_downstream_residue_that_this_torsion_moves()
+	{
+		using namespace core::id;
+		using namespace core::pose::carbohydrates;
+
+		TR << "Testing get_downstream_residue_that_this_torsion_moves() function." << std::endl;
+
+		// All main-chain torsions move the next residue in the main chain.
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BB, 1 ) ), 2 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BB, 2 ) ), 2 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BB, 3 ) ), 2 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BB, 4 ) ), 2 );
+
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 1 ) ), 0 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 2 ) ), 0 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 3 ) ), 2 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 4 ) ), 3 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 5 ) ), 4 );
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 6 ) ), 4 );
+
+		TS_ASSERT_EQUALS(
+				get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 1 ) ), 3 );
+		TS_ASSERT_EQUALS(
+				get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 2 ) ), 4 );
+
+		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, NU, 1 ) ), 0 );
 	}
 
 	void test_exocyclic_detection()
@@ -354,13 +485,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT( ! has_exocyclic_glycosidic_linkage( exo_test_, 2 ) );
 		TS_ASSERT_THROWS_NOTHING( has_exocyclic_glycosidic_linkage( exo_test_, 1) ); //Make sure we don't crash
 		TS_ASSERT( ! has_exocyclic_glycosidic_linkage( exo_test_, 1) ); //Make sure we get false.
-
 	}
 
 	void test_glycan_leafs()
 	{
-
-
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
@@ -390,12 +518,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( get_resnums_in_leaf(*man9_op_, 6 /* tip */, 3 /* stop at */), branch_tip_6);
 
 		TR.flush();
-
 	}
 
 	void test_glycan_branch()
 	{
-
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
@@ -476,12 +602,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		*/
 
 		TR.flush();
-
 	}
 
 	void test_glycan_trimming()
 	{
-
 		using core::Size;
 		using namespace utility;
 		using namespace core::pose::carbohydrates;
@@ -540,15 +664,12 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		man9_copy->dump_pdb("man9_trim_at_1.pdb");
 
 		TR.flush();
-
-
 	}
 
-private:  // Private datum ////////////////////////////////////////////////////
+private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose Lex_;  // Lewisx: beta-D-Galp-(1->4)-[alpha-D-Fucp-(1->3)]-D-GlcpNAc
 	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
+	core::pose::Pose bisected_man_;  // a-D-Manp-(1->3)-[b-d-GlcpNAc-(1->4)]-[a-D-Manp-(1->6)]-b-D-Manp
 	core::pose::Pose exo_test_; // alpha-L-Fucp-(1->6)-D-GlcpNAc-(1->4)-D-GlcpNAc
 	core::pose::PoseOP man9_op_; // a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc
-
-
 };  // class CarbohydratePoseUtilityFunctionTests

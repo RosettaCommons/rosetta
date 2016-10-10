@@ -410,15 +410,15 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 
 			//Randomize starting structure if set.
 			if ( random_start_ ) {
-				random_sampler->set_torsion_type( torsion_id);
-				random_sampler->set_torsion_to_pose(pose, i);
+				random_sampler->set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );
+				random_sampler->set_torsion_to_pose( pose, i );
 
 			} else if ( sugar_bb_start_ ) {
 
 				//Continue if we don't have sugar bb data.  Its ok.
 				try {
-					random_sugar_sampler->set_torsion_type( torsion_id );
-					random_sugar_sampler->set_torsion_to_pose(pose, i);
+					random_sugar_sampler->set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );
+					random_sugar_sampler->set_torsion_to_pose( pose, i );
 
 				} catch ( utility::excn::EXCN_Base& excn ) {
 					continue;
@@ -612,5 +612,3 @@ GlycanRelaxMoverCreator::mover_name(){
 
 } //protocols
 } //carbohydrates
-
-

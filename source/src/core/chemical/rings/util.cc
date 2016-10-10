@@ -52,9 +52,9 @@ namespace rings {
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-	Coords const & query_atom,
-	Coords const & attachment_atom,
-	utility::vector1< Coords > const & ring_atoms )
+		Coords const & query_atom,
+		Coords const & attachment_atom,
+		utility::vector1< Coords > const & ring_atoms )
 {
 	using namespace numeric;
 	using namespace numeric::constants::r;

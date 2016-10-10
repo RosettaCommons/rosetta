@@ -15,18 +15,19 @@
 #ifndef INCLUDED_core_scoring_carbohydrates_CHIEnergyFunction_HH
 #define INCLUDED_core_scoring_carbohydrates_CHIEnergyFunction_HH
 
-// Unit header
+// Unit Headers
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
-#include <core/chemical/carbohydrates/LinkageType.hh>
+#include <core/scoring/carbohydrates/CHIEnergyFunctionLinkageType.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/id/types.hh>
 
-// Utity header
+// Utility Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+// C++ Headers
 #include <map>
 
 
@@ -34,10 +35,10 @@ namespace core {
 namespace scoring {
 namespace carbohydrates {
 
-
-///@brief Struct for CHI-based dihedral sampling.
-struct CHIDihedralSamplingData{
-	chemical::carbohydrates::LinkageType linkage_type;
+/// @brief  Struct for CHI-based dihedral sampling.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+struct CHIDihedralSamplingData {
+	CHIEnergyFunctionLinkageType linkage_type;
 	Real step_size;
 
 	utility::vector1< Real > probabilities;
@@ -48,9 +49,12 @@ struct CHIDihedralSamplingData{
 /// @details  This is an implementation of the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab.\n
 /// The Gaussian parameters for the function depend on whether the glycosidic bond in question is a phi or psi angle.\n
 /// The parameters further depend on if the phi angles are at alpha or beta linkages and on if the psi angles are at
-/// ->2-axial, ->3-equatorial, or ->4-axial OR ->2-equatorial, ->3-axial, or ->4-equatorial linkages.\n
-/// The function has not been developed for ->6 linkages (with omega angles).
+/// ->2-axial, ->3-equatorial, or ->4-axial OR ->2-equatorial, ->3-axial, or ->4-equatorial linkages.  If at exocyclic
+/// linkages, psi instead depends on whether the linkage is alpha or beta.\n
+/// Functions for omega angles and (2->3) and (2->6) linkages (found in ketoses) could not be developed with QM, so
+/// knowledge-based functions were created instead.
 /// @ref      A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
+/// @ref      A.K. Nivedha et al. JCTC 2016, 12, 892-901
 class CHIEnergyFunction : public utility::pointer::ReferenceCount {
 public:  // Standard Methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
@@ -60,58 +64,50 @@ public:  // Standard Methods //////////////////////////////////////////////////
 
 
 public:  // Other Public Methods //////////////////////////////////////////////
-	Energy operator()( chemical::carbohydrates::LinkageType type, Angle x ) const;
+	Energy operator()( CHIEnergyFunctionLinkageType type, Angle x ) const;
 
-	Real evaluate_derivative( chemical::carbohydrates::LinkageType type, Angle x ) const;
+	Real evaluate_derivative( CHIEnergyFunctionLinkageType type, Angle x ) const;
+
 
 public: // Dihedral Sampling Methods //////////////////////////////////////////
+	CHIDihedralSamplingData const & get_chi_sampling_data( CHIEnergyFunctionLinkageType type ) const;
 
-	//CHIDihedralSamplingData const &
-	//get_chi_sampling_data(id::MainchainTorsionType torsion, LikageType type);
+	///@brief Set up CHI sampling data.
+	void setup_for_sampling( core::Real step_size = 0.1 );
 
-	CHIDihedralSamplingData const &
-	get_chi_sampling_data(chemical::carbohydrates::LinkageType type) const;
+	bool sampling_data_setup() const;
 
-	///@brief Sets up CHI sampling data
-	void
-	setup_for_sampling(core::Real step_size = 0.1);
+	bool sampling_data_setup( CHIEnergyFunctionLinkageType linkage_type ) const;
 
-	bool
-	sampling_data_setup() const;
-
-	bool
-	sampling_data_setup( chemical::carbohydrates::LinkageType type ) const;
 
 private:  // Private methods //////////////////////////////////////////////////
-	// Return single CHI energy function term, ae^-((x-b)^2/c), for the given type and index.
-	Energy evaluate_term( chemical::carbohydrates::LinkageType type, uint i, Angle x ) const;
+	// Return single CHI Energy Function term, ae^-((x-b)^2/c), for the given type and index.
+	Energy evaluate_term( CHIEnergyFunctionLinkageType type, uint i, Angle x ) const;
 
 	// Sum the individual terms.
-	Energy evaluate_function( chemical::carbohydrates::LinkageType type, Angle x ) const;
+	Energy evaluate_function( CHIEnergyFunctionLinkageType type, Angle x ) const;
 
 	void init();
 
 
 private:  // Private Data /////////////////////////////////////////////////////
 	// Gaussian function parameters for the CHI energy function as defined in:
-	// A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39.
+	// A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39 and
+	// A.K. Nivedha et al. JCTC 2016, 12, 892-901.
 	// The outer vector is indexed by the chemical::carbohydrates::LinkageType enum.
 	utility::vector1< utility::vector1 < Real > > a_;  // magnitude of the Gaussian distribution
 	utility::vector1< utility::vector1 < Real > > b_;  // midpoint of the Gaussian distribution
 	utility::vector1< utility::vector1 < Real > > c_;  // twice the square of the width of the Gaussian distribution
 	utility::vector1< Real > d_;  // the intercept (coefficient of the zeroth term)
 
-private:
-	//Formatted Sampling Data
-
-	std::map< chemical::carbohydrates::LinkageType, CHIDihedralSamplingData > dihedral_sampling_data_;
+private:  // Formatted Sampling Data //////////////////////////////////////////
+	std::map< CHIEnergyFunctionLinkageType, CHIDihedralSamplingData > dihedral_sampling_data_;
 };  // class CHIEnergyFunction
 
 
 // Helper methods /////////////////////////////////////////////////////////////
 // This allows one to use a for loop with LinkageType enum values.
-chemical::carbohydrates::LinkageType & operator++( chemical::carbohydrates::LinkageType & type );
-
+CHIEnergyFunctionLinkageType & operator++( CHIEnergyFunctionLinkageType & type );
 
 }  // namespace carbohydrates
 }  // namespace scoring

@@ -3,6 +3,8 @@
 # defined in:
 # A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
 
+# The function is defined for the range [-180, 180).
+
 a   4.5054e2   2.3712e1   5.9353     2.2467e1   1.0036e1  -1.8141e1   5.8823    # magnitudes of the distributions
 b  -3.3077e2   3.0463e2  -1.5208e2  -2.3516e1   1.2096e2  -2.4268e1   1.9632e1  # midpoints of the distributions
 c   4.4498e3   8.3752e3   6.0498e3   6.0690e2   4.038e3    5.4305e2   8.9793e2  # twice the squares of the widths of the distributions

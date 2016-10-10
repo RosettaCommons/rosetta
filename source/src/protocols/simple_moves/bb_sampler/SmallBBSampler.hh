@@ -39,8 +39,8 @@ public:
 	SmallBBSampler();
 	SmallBBSampler( core::Real all_ss_angle_max);
 
-	SmallBBSampler( core::Size torsion_type);
-	SmallBBSampler( core::Size torsion_type, core::Real all_ss_angle_max);
+	SmallBBSampler( core::id::MainchainTorsionType torsion_type);
+	SmallBBSampler( core::id::MainchainTorsionType torsion_type, core::Real all_ss_angle_max);
 
 public:
 
@@ -116,11 +116,4 @@ private:
 } //simple_moves
 } //bb_sampler
 
-
-
 #endif //INCLUDED_protocols_simple_moves_bb_sampler_SmallBBSampler_hh
-
-
-
-
-

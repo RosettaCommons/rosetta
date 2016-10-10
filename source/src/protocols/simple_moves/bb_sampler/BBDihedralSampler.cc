@@ -33,7 +33,7 @@ BBDihedralSamplerBase::BBDihedralSamplerBase():
 
 }
 
-BBDihedralSamplerBase::BBDihedralSamplerBase( core::Size torsion_type, BBSampleType sampling_type ):
+BBDihedralSamplerBase::BBDihedralSamplerBase( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type ):
 	torsion_type_(torsion_type),
 	sampling_type_(sampling_type)
 {
@@ -56,10 +56,6 @@ BBDihedralSamplerBase::clone() const {
 }
 
 
-
-
-
-
 //////////////////// 1D ////////////////
 BBDihedralSampler::BBDihedralSampler():
 	BBDihedralSamplerBase()
@@ -67,7 +63,7 @@ BBDihedralSampler::BBDihedralSampler():
 
 }
 
-BBDihedralSampler::BBDihedralSampler( core::Size torsion_type, BBSampleType sampling_type ):
+BBDihedralSampler::BBDihedralSampler( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type ):
 	BBDihedralSamplerBase( torsion_type, sampling_type )
 {
 
@@ -88,10 +84,6 @@ BBDihedralSampler::clone() const {
 }
 
 
-
-
-
-
 //////////////////// 2D ////////////////////
 
 BBDihedralSampler2D::BBDihedralSampler2D():
@@ -100,7 +92,7 @@ BBDihedralSampler2D::BBDihedralSampler2D():
 
 }
 
-BBDihedralSampler2D::BBDihedralSampler2D( core::Size torsion_type, BBSampleType sampling_type ):
+BBDihedralSampler2D::BBDihedralSampler2D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type ):
 	BBDihedralSamplerBase( torsion_type, sampling_type )
 {
 
@@ -121,10 +113,6 @@ BBDihedralSampler2D::clone() const {
 }
 
 
-
-
-
-
 //////////////////// 3D ////////////////////
 
 BBDihedralSampler3D::BBDihedralSampler3D():
@@ -133,7 +121,7 @@ BBDihedralSampler3D::BBDihedralSampler3D():
 
 }
 
-BBDihedralSampler3D::BBDihedralSampler3D( core::Size torsion_type, BBSampleType sampling_type ):
+BBDihedralSampler3D::BBDihedralSampler3D( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type ):
 	BBDihedralSamplerBase( torsion_type, sampling_type )
 {
 
@@ -154,10 +142,6 @@ BBDihedralSampler3D::clone() const {
 }
 
 
-
-
-
-
 /////////////////// ND /////////////////
 
 BBDihedralSamplerND::BBDihedralSamplerND():
@@ -166,7 +150,7 @@ BBDihedralSamplerND::BBDihedralSamplerND():
 
 }
 
-BBDihedralSamplerND::BBDihedralSamplerND( core::Size torsion_type, BBSampleType sampling_type ):
+BBDihedralSamplerND::BBDihedralSamplerND( core::id::MainchainTorsionType torsion_type, BBSampleType sampling_type ):
 	BBDihedralSamplerBase( torsion_type, sampling_type )
 {
 
@@ -186,12 +170,6 @@ BBDihedralSamplerND::clone() const {
 	return BBDihedralSamplerNDOP(NULL);
 }
 
-
 } //protocols
 } //pose
 } //core
-
-
-
-
-

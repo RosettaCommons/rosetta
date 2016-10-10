@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file    core/scoring/methods/carbohydrates/SugarBackboneEnergy.fwd.hh
-/// @brief   Forward declarations for SugarBackboneEnergy.
+/// @file    core/scoring/carbohydrates/OmegaPreferencesFunction.fwd.hh
+/// @brief   Forward declarations for OmegaPreferencesFunction.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
+#ifndef INCLUDED_core_scoring_carbohydrates_OmegaPreferencesFunction_FWD_HH
+#define INCLUDED_core_scoring_carbohydrates_OmegaPreferencesFunction_FWD_HH
 
 // Utility header
 #include <utility/pointer/owning_ptr.hh>
@@ -21,19 +21,16 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
 namespace carbohydrates {
 
-/// @brief  An energy method class for scoring a carbohydrate backbone based on its glycosidic (phi, psi, and omega)
-/// angles.
-class SugarBackboneEnergy;
+/// @brief  A function to penalize glycosidic omega angles that do not demonstrate the gauche effect.
+class OmegaPreferencesFunction;
 
-typedef utility::pointer::shared_ptr< SugarBackboneEnergy > SugarBackboneEnergyOP;
-typedef utility::pointer::shared_ptr< SugarBackboneEnergy const> SugarBackboneEnergyCOP;
+typedef utility::pointer::shared_ptr< OmegaPreferencesFunction > OmegaPreferencesFunctionOP;
+typedef utility::pointer::shared_ptr< OmegaPreferencesFunction const> OmegaPreferencesFunctionCOP;
 
 }  // namespace carbohydrates
-}  // namespace methods
 }  // namespace scoring
 }  // namespace core
 
-#endif // INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
+#endif // INCLUDED_core_scoring_carbohydrates_OmegaPreferencesFunction_FWD_HH

@@ -3,6 +3,8 @@
 # ->3-equatorial, and ->4-axial linkages, as defined in:
 # A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
 
+# The function is defined for the range [0, 360).
+
 a   4.6237     4.6139     4.9419     4.029e-1   7.9888e-1  2.2299e-1  # magnitudes of the distributions
 b   5.0456     3.6249e2   1.212e2    2.4143e2   6.8425e1   1.9293e2   # midpoints of the distributions
 c   5.0058e3   2.0906e3   2.0938e3   4.5683e2   6.7881e2   3.4725e2   # twice the squares of the widths of the distributions

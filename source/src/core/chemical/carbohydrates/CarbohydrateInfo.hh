@@ -512,9 +512,15 @@ private: // Private data //////////////////////////////////////////////////////
 	utility::vector1< core::uint > branch_points_;
 	bool has_exocyclic_linkage_to_child_mainchain_;
 
-	// Constants.
-	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
-	static core::Size const MIN_C_SIZE_LIMIT;
+
+public:  // Constants /////////////////////////////////////////////////////////
+	// These values should not change. Hypothetically, one could have a carbohydrate larger than 9 carbons in length,
+	// but I have never seen one.  (Most sugars will have 5 or 6 carbons; sialic acids are common and have 9 carbons.)
+	// If a 10-carbon or larger sugar is needed, a major refactoring will need to occur, due to how the atoms are named
+	// -- the third column in the PDB and params format is a single-digit atom number.  If a 10-carbon or larger sugar
+	// is simply a ligand, it would probably be best to treat it as such with a "non-carbohydrate" params file. ~Labonte
+	static core::Size const MAX_C_SIZE_LIMIT = 9;  // maximum size of a carbohydrate carbon chain in Rosetta
+	static core::Size const MIN_C_SIZE_LIMIT = 3;
 };  // class CarbohydrateInfo
 
 

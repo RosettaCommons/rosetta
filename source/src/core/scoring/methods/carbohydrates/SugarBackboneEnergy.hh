@@ -18,6 +18,7 @@
 // Unit header
 #include <core/scoring/methods/carbohydrates/SugarBackboneEnergy.fwd.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
+#include <core/scoring/carbohydrates/OmegaPreferencesFunction.fwd.hh>
 
 // Package headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -37,12 +38,15 @@ namespace methods {
 namespace carbohydrates {
 
 
-/// @details  This class makes use of the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab.\n
+/// @details  This class makes use of the "CarboHydrate Intrinsic" (CHI) Energy Functions developed by Woods Lab.\n
 /// Carbohydrate phi angles are scored based on whether they are at alpha or beta linkages.\n
 /// Psi angles are scored based on whether they are at ->2-axial, ->3-equatorial, or ->4-axial OR ->2-equatorial,
-/// ->3-axial, or ->4-equatorial linkages.\n
-/// ->6 linkages (with omega angles) are not scored.
+/// ->3-axial, or ->4-equatorial linkages OR alpha6 linkages OR beta6 linkages.\n
+/// Omega angles (in ->6-linkages) are scored with a different function, based on whether O4 (if present) is axial or
+/// equatorial, which is the origin of the so-called gauche effect.
+/// All other glycosidic linkages are not scored.
 /// @ref      A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
+/// @ref      A.K. Nivedha et al. JCTC 2016, 12, 892-901
 class SugarBackboneEnergy : public ContextIndependentOneBodyEnergy {
 public:  // Standard Methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
@@ -74,24 +78,24 @@ public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 
 	/// @brief    Evaluate the DoF derivative for a particular residue.
 	virtual core::Real eval_residue_dof_derivative(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
-		id::DOF_ID const & dof_id,
-		id::TorsionID const & torsion_id,
-		pose::Pose const & pose,
-		ScoreFunction const & sf,
-		EnergyMap const & weights ) const;
+			conformation::Residue const & rsd,
+			ResSingleMinimizationData const & min_data,
+			id::DOF_ID const & dof_id,
+			id::TorsionID const & torsion_id,
+			pose::Pose const & pose,
+			ScoreFunction const & sf,
+			EnergyMap const & weights ) const;
 
 
 private:  // Private methods //////////////////////////////////////////////////
 	virtual core::Size version() const { return 1; }  // initial versioning
 
 private:  // Private Data /////////////////////////////////////////////////////
-	// the "CarboHydrate Intrinsic" (CHI) energy function developed by Woods Lab
-	scoring::carbohydrates::CHIEnergyFunction const & E_;
+	// the "CarboHydrate Intrinsic" (CHI) Energy Function developed by Woods Lab
+	scoring::carbohydrates::CHIEnergyFunction const & E_cef_;
 
-
-
+	// an energy function for omega preferences
+	scoring::carbohydrates::OmegaPreferencesFunction const & E_opf_;
 };
 
 }  // namespace carbohydrates
