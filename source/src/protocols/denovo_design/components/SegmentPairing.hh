@@ -19,7 +19,6 @@
 #include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/types.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
@@ -79,6 +78,9 @@ public:
 
 	friend std::ostream &
 	operator<<( std::ostream & os, SegmentPairing const & pairing );
+
+	bool
+	has_segment( std::string const & segment ) const;
 
 	SegmentNames const &
 	segments() const;
@@ -163,16 +165,14 @@ private:
 
 class StrandPairing : public SegmentPairing {
 public:
-	typedef utility::vector1< core::Size > StrandExtensions;
-public:
 	StrandPairing();
 
 	StrandPairing(
 		SegmentName const & s1,
 		SegmentName const & s2,
-		architects::StrandOrientation const & orient1,
-		architects::StrandOrientation const & orient2,
-		architects::RegisterShift const & shift );
+		StrandOrientation const & orient1,
+		StrandOrientation const & orient2,
+		RegisterShift const & shift );
 
 	virtual
 	~StrandPairing() {};
@@ -200,28 +200,28 @@ public:
 	bool
 	parallel() const;
 
-	architects::StrandOrientation
+	StrandOrientation
 	orient1() const;
 
-	architects::StrandOrientation
+	StrandOrientation
 	orient2() const;
 
-	architects::RegisterShift
+	RegisterShift
 	shift() const;
 
 private:
-	architects::RegisterShift
+	RegisterShift
 	nobu_register_shift(
 		StructureData const & sd,
 		protocols::fldsgn::topology::Strand const & s1,
 		protocols::fldsgn::topology::Strand const & s2,
-		architects::RegisterShift const nc_order_shift,
-		architects::StrandOrientation const & nc_order_orient ) const;
+		RegisterShift const nc_order_shift,
+		StrandOrientation const & nc_order_orient ) const;
 
 private:
-	architects::StrandOrientation orient1_;
-	architects::StrandOrientation orient2_;
-	architects::RegisterShift shift_;
+	StrandOrientation orient1_;
+	StrandOrientation orient2_;
+	RegisterShift shift_;
 };
 
 class HelixSheetPairing : public SegmentPairing {

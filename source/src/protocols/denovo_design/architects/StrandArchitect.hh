@@ -19,6 +19,8 @@
 #include <protocols/denovo_design/architects/DeNovoArchitect.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/components/Segment.fwd.hh>
+#include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Core headers
@@ -35,21 +37,11 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
-/// @brief Individual strands are oriented pointing either "UP" or "DOWN"
-///        If two adjacent strands have the same orientation, they are parallel
-///        If two adjacent strands have different orientation, they are antiparallel
-enum StrandOrientation {
-	UP = 1,
-	DOWN = 2,
-	ORIENTATIONS_END = 3
-};
-typedef utility::vector1< StrandOrientation > StrandOrientations;
+typedef utility::vector1< core::Size > StrandExtensions;
 
-typedef long int RegisterShift;
-typedef utility::vector1< RegisterShift > RegisterShifts;
-
-typedef long int StrandBulge;
-typedef utility::vector1< StrandBulge > StrandBulges;
+typedef components::SegmentResid SegmentResid;
+typedef utility::vector1< SegmentResid > StrandBulges;
+typedef utility::vector1< StrandBulges > AllowedStrandBulges;
 
 ///@brief Architect that creates a beta strand
 class StrandArchitect : public protocols::denovo_design::architects::DeNovoArchitect {
@@ -59,6 +51,10 @@ public:
 	typedef protocols::denovo_design::architects::DeNovoArchitectOP DeNovoArchitectOP;
 	typedef protocols::denovo_design::components::StructureData StructureData;
 	typedef protocols::denovo_design::components::StructureDataOP StructureDataOP;
+	typedef components::RegisterShift RegisterShift;
+	typedef components::RegisterShifts RegisterShifts;
+	typedef components::StrandOrientation StrandOrientation;
+	typedef components::StrandOrientations StrandOrientations;
 
 public:
 	StrandArchitect( std::string const & id_value );
@@ -95,62 +91,41 @@ public:
 	set_length( Lengths const & lengths_val );
 
 	void
-	set_orientation( std::string const & orientations_str );
+	set_bulges( std::string const & bulges_str );
 
 	void
-	set_orientation( StrandOrientations const & orientations );
-
-	void
-	set_register_shift( std::string const & register_shift_str );
-
-	void
-	set_register_shift( RegisterShifts const & register_shifts );
-
-	void
-	set_bulge( std::string const & bulges_str );
-
-	void
-	set_bulge( StrandBulges const & bulges );
+	set_bulges( AllowedStrandBulges const & bulges );
 
 	void
 	enumerate_permutations();
 
 public:
 	static std::string const
-	register_shift_keyname();
-
-	static std::string const
-	orientation_keyname();
-
-	static std::string const
 	bulge_keyname();
 
 	static StrandOrientation
 	int_to_orientation( int const integer );
 
-	static StrandBulge
-	retrieve_bulge( StructureData const & sd, std::string const & segment_id );
+	static StrandBulges
+	retrieve_bulges( StructureData const & sd, std::string const & segment_id );
 
 public:
-	/// interaction with StructureData
-	RegisterShift
-	retrieve_register_shift( StructureData const & sd ) const;
-
-	StrandOrientation
-	retrieve_orientation( StructureData const & sd ) const;
-
-	StrandBulge
-	retrieve_bulge( StructureData const & sd ) const;
+	StrandBulges
+	retrieve_bulges( StructureData const & sd ) const;
 
 private:
 	void
-	store_register_shift( StructureData & sd, RegisterShift const shift ) const;
+	store_bulges( StructureData & sd, StrandBulges const & bulge ) const;
 
-	void
-	store_orientation( StructureData & sd, StrandOrientation const orient ) const;
-
-	void
-	store_bulge( StructureData & sd, StrandBulge const bulge ) const;
+	/// @brief Given a list of bulges, build a motif
+	/// @param[in] bulges    List of bulge positions to place onto the strand
+	/// @param[in] secstruct Secondary structure for the new segment
+	/// @param[in] abego     Abego for the new segment, without bulges placed
+	StructureDataOP
+	create_motif(
+		StrandBulges const & bulges,
+		std::string const & secstruct,
+		std::string const & abego ) const;
 
 private:
 	void
@@ -166,9 +141,7 @@ private:
 private:
 	components::StructureDataCOPs motifs_;
 	Lengths lengths_;
-	StrandOrientations orientations_;
-	RegisterShifts register_shifts_;
-	StrandBulges bulges_;
+	AllowedStrandBulges bulges_;
 	bool updated_;
 
 };

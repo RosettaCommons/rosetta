@@ -18,11 +18,11 @@
 	<ResidueRange name="L08" start="111" stop="111" safe="0" nterm="1" cterm="1" group="12" cutpoint="0" ss="L" abego="G" lower_segment="E06" upper_segment="H04" />
 	<ResidueRange name="H04" start="112" stop="122" safe="0" nterm="1" cterm="0" group="4" cutpoint="0" ss="HHHHHHHHHHHL" abego="AAAAAAAAAAAX" lower_segment="L08" />
 	<!-- Strand pairings -->
-	<Pairing type="StrandPairing" segments="E03,E04" orient1="1" orient2="0" shift="-1" />
-	<Pairing type="StrandPairing" segments="E04,E05" orient1="0" orient2="1" shift="0" />
-	<Pairing type="StrandPairing" segments="E05,E06" orient1="1" orient2="0" shift="4" />
-	<Pairing type="StrandPairing" segments="E06,E01" orient1="0" orient2="0" shift="2" />
-	<Pairing type="StrandPairing" segments="E01,E02" orient1="0" orient2="1" shift="0" />
+	<Pairing type="StrandPairing" segments="E03,E04" orient1="1" orient2="2" shift="-1" />
+	<Pairing type="StrandPairing" segments="E04,E05" orient1="2" orient2="1" shift="0" />
+	<Pairing type="StrandPairing" segments="E05,E06" orient1="1" orient2="2" shift="4" />
+	<Pairing type="StrandPairing" segments="E06,E01" orient1="2" orient2="2" shift="2" />
+	<Pairing type="StrandPairing" segments="E01,E02" orient1="2" orient2="1" shift="0" />
 	<!-- Helix pairings -->
 	<Pairing type="HelixPairing" segments="H01,H02" parallel="0" />
 	<Pairing type="HelixPairing" segments="H02,H03" parallel="0" />

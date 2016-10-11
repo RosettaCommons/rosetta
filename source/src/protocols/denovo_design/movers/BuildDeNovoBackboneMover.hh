@@ -22,6 +22,7 @@
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/denovo_design/architects/DeNovoArchitect.fwd.hh>
 #include <protocols/denovo_design/components/DivideAndConqueror.fwd.hh>
+#include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/components/StructureDataPerturber.fwd.hh>
 #include <protocols/denovo_design/components/ExtendedPoseBuilder.fwd.hh>
@@ -57,6 +58,8 @@ public:
 	typedef protocols::constraint_generator::ConstraintGeneratorOP ConstraintGeneratorOP;
 	typedef protocols::constraint_generator::ConstraintGeneratorCOP ConstraintGeneratorCOP;
 	typedef protocols::constraint_generator::ConstraintGeneratorCOPs ConstraintGeneratorCOPs;
+	typedef components::RegisterShift RegisterShift;
+	typedef components::StrandOrientation StrandOrientation;
 
 public:
 	BuildDeNovoBackboneMover();

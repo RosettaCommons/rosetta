@@ -121,8 +121,8 @@ public:
 
 	void reset( protocols::denovo_design::components::StructureData & perm )
 	{
-		using protocols::denovo_design::architects::UP;
-		using protocols::denovo_design::architects::DOWN;
+		using protocols::denovo_design::components::UP;
+		using protocols::denovo_design::components::DOWN;
 		using protocols::denovo_design::components::StrandPairing;
 		using protocols::denovo_design::components::StrandPairingOP;
 		perm.clear_pairings();
@@ -160,8 +160,8 @@ public:
 		using protocols::denovo_design::components::StructureData;
 		using protocols::denovo_design::components::StructureDataOP;
 		using protocols::denovo_design::components::StructureDataFactory;
-		using protocols::denovo_design::architects::UP;
-		using protocols::denovo_design::architects::DOWN;
+		using protocols::denovo_design::components::UP;
+		using protocols::denovo_design::components::DOWN;
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 

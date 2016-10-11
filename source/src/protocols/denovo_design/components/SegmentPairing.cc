@@ -15,6 +15,7 @@
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -35,8 +36,7 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-std::string
-	SegmentPairing::TAG_NAME = "Pairing";
+std::string SegmentPairing::TAG_NAME = "Pairing";
 
 std::string
 SegmentPairing::type_to_str( PairingType const & type )
@@ -77,6 +77,15 @@ SegmentPairing::parse_my_tag( utility::tag::Tag const & tag )
 	std::string const segment_str = tag.getOption< std::string >( "segments", "" );
 	if ( !segment_str.empty() ) set_segments( segment_str );
 	parse_tag( tag );
+}
+
+bool
+SegmentPairing::has_segment( std::string const & segment ) const
+{
+	for ( std::string const & s : segments_ ) {
+		if ( s == segment ) return true;
+	}
+	return false;
 }
 
 SegmentNames const &
@@ -122,7 +131,7 @@ operator<<( std::ostream & os, SegmentPairing const & pairing )
 
 core::select::residue_selector::ResidueVector
 get_strand_residues(
-	architects::StrandOrientation const & orient,
+	StrandOrientation const & orient,
 	core::Size const start,
 	core::Size const stop,
 	core::select::residue_selector::ResidueVector const & bulges )
@@ -131,12 +140,12 @@ get_strand_residues(
 	std::set< core::Size > const bulge_set( bulges.begin(), bulges.end() );
 
 	core::select::residue_selector::ResidueVector resids;
-	if ( orient == architects::UP ) {
+	if ( orient == UP ) {
 		for ( core::Size resid=start; resid<=stop; ++resid ) {
 			if ( bulge_set.find( resid ) != bulge_set.end() ) continue;
 			resids.push_back( resid );
 		}
-	} else if ( orient == architects::DOWN ) {
+	} else if ( orient == DOWN ) {
 		for ( core::Size resid=stop; resid>=start; --resid ) {
 			if ( bulge_set.find( resid ) != bulge_set.end() ) continue;
 			resids.push_back( resid );
@@ -180,9 +189,9 @@ add_paired_residues(
 	core::Size const strand1 = ss_info.strand_id( sd.segment( seg1_name ).safe() );
 	core::Size const strand2 = ss_info.strand_id( sd.segment( seg2_name ).safe() );
 
-	architects::StrandOrientation const o1 = p.orient1();
-	architects::StrandOrientation const o2 = p.orient2();
-	architects::RegisterShift const shift = p.shift();
+	StrandOrientation const o1 = p.orient1();
+	StrandOrientation const o2 = p.orient2();
+	RegisterShift const shift = p.shift();
 
 	ResidueVector const bulges1 = get_bulges( strands[strand1]->begin(), strands[strand1]->end(), abego );
 	ResidueVector const bulges2 = get_bulges( strands[strand2]->begin(), strands[strand2]->end(), abego );
@@ -207,10 +216,11 @@ SegmentPairing::get_strand_residue_pairs( StructureData const & sd )
 	protocols::fldsgn::topology::SS_Info2 const ss_info( sd.ss() );
 
 	ResiduePairs pairs;
-	SegmentPairingCOPs pairings = get_pairings( sd, STRAND );
-	for ( SegmentPairingCOPs::const_iterator p=pairings.begin(); p!=pairings.end(); ++p ) {
-		StrandPairingCOP strand_pair = utility::pointer::static_pointer_cast< StrandPairing const >( *p );
-		add_paired_residues( sd, *strand_pair, ss_info, pairs );
+	SegmentPairingCOPs const pairings = get_pairings( sd, STRAND );
+	for ( SegmentPairingCOP const & pairing : pairings ) {
+		debug_assert( utility::pointer::dynamic_pointer_cast< StrandPairing const >( pairing ) );
+		StrandPairingCOP spairing = utility::pointer::static_pointer_cast< StrandPairing const >( pairing );
+		add_paired_residues( sd, *spairing, ss_info, pairs );
 	}
 	return pairs;
 }
@@ -316,8 +326,8 @@ HelixPairing::to_xml( utility::tag::Tag & tag ) const
 
 StrandPairing::StrandPairing():
 	SegmentPairing(),
-	orient1_( architects::UP ),
-	orient2_( architects::DOWN ),
+	orient1_( UP ),
+	orient2_( DOWN ),
 	shift_( 0 )
 {
 }
@@ -325,9 +335,9 @@ StrandPairing::StrandPairing():
 StrandPairing::StrandPairing(
 	SegmentName const & s1,
 	SegmentName const & s2,
-	architects::StrandOrientation const & orient1,
-	architects::StrandOrientation const & orient2,
-	architects::RegisterShift const & shift ):
+	StrandOrientation const & orient1,
+	StrandOrientation const & orient2,
+	RegisterShift const & shift ):
 	SegmentPairing( boost::assign::list_of (s1)(s2).convert_to_container< SegmentNames >() ),
 	orient1_( orient1 ),
 	orient2_( orient2 ),
@@ -346,15 +356,15 @@ StrandPairing::parse_tag( utility::tag::Tag const & tag )
 {
 	orient1_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient1", orient1_ ) );
 	orient2_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient2", orient2_ ) );
-	shift_ = tag.getOption< architects::RegisterShift >( "shift", shift_ );
+	shift_ = tag.getOption< RegisterShift >( "shift", shift_ );
 }
 
 void
 StrandPairing::to_xml( utility::tag::Tag & tag ) const
 {
-	tag.setOption< architects::StrandOrientation >( "orient1", orient1_ );
-	tag.setOption< architects::StrandOrientation >( "orient2", orient2_ );
-	tag.setOption< architects::RegisterShift >( "shift", shift_ );
+	tag.setOption< StrandOrientation >( "orient1", orient1_ );
+	tag.setOption< StrandOrientation >( "orient2", orient2_ );
+	tag.setOption< RegisterShift >( "shift", shift_ );
 }
 
 bool
@@ -393,19 +403,19 @@ StrandPairing::pairing_string( StructureData const & sd ) const
 	return pair_str.str();
 }
 
-architects::StrandOrientation
+StrandOrientation
 StrandPairing::orient1() const
 {
 	return orient1_;
 }
 
-architects::StrandOrientation
+StrandOrientation
 StrandPairing::orient2() const
 {
 	return orient2_;
 }
 
-architects::RegisterShift
+RegisterShift
 StrandPairing::shift() const
 {
 	return shift_;
@@ -423,27 +433,27 @@ count_bulges(
 	return bulge_count;
 }
 
-architects::RegisterShift
+RegisterShift
 StrandPairing::nobu_register_shift(
 	StructureData const & sd,
 	protocols::fldsgn::topology::Strand const & s1,
 	protocols::fldsgn::topology::Strand const & s2,
-	architects::RegisterShift const nc_order_shift,
-	architects::StrandOrientation const & nc_order_orient ) const
+	RegisterShift const nc_order_shift,
+	StrandOrientation const & nc_order_orient ) const
 {
 	core::Size const bulges1 = count_bulges( s1, sd.abego() );
 	core::Size const bulges2 = count_bulges( s2, sd.abego() );
 
-	architects::RegisterShift preliminary_shift;
+	RegisterShift preliminary_shift;
 	// E1 = E2 + X + Y, X = shift_
-	if ( nc_order_orient == architects::UP ) {
+	if ( nc_order_orient == UP ) {
 		// X is all that matters
 		preliminary_shift = nc_order_shift;
-	} else if ( nc_order_orient == architects::DOWN ) {
+	} else if ( nc_order_orient == DOWN ) {
 		// Y is all that matters
-		architects::RegisterShift const len1 = s1.length() - bulges1;
-		architects::RegisterShift const len2 = s2.length() - bulges2;
-		architects::RegisterShift const flipped_shift = len1 - ( len2 + nc_order_shift );
+		RegisterShift const len1 = s1.length() - bulges1;
+		RegisterShift const len2 = s2.length() - bulges2;
+		RegisterShift const flipped_shift = len1 - ( len2 + nc_order_shift );
 		preliminary_shift = flipped_shift;
 	}  else {
 		std::stringstream msg;

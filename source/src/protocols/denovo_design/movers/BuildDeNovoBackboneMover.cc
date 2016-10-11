@@ -642,18 +642,8 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		utility_exit_with_message( msg.str() );
 	}
 
-// apply user-provided movers
+	// apply user-provided movers
 	apply_movers( postfold, pose );
-
-	// modify structuredata so this portion of the structure can be checked independently
-	components::StructureData const saved_sd = factory.get_from_pose( pose );
-	//components::StructureData check_sd = saved_sd;
-	//modify_for_check( check_sd );
-	//TR.Debug << "SD for check = " << check_sd << std::endl;
-	//factory.save_into_pose( pose, check_sd );
-
-	// save modified secstruct into pose for checking
-	//SetPoseSecstructFromStructureDataMover().apply( pose );
 
 	// set Energies object -- sets hbonds info in the Energies object in the pose
 	pose.energies().clear();
@@ -661,10 +651,6 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 
 	// check pose against user-provided filters
 	check_pose( pose );
-
-	// save new sd into pose
-	//TR.Debug << "Saving into pose: " << saved_sd << std::endl;
-	//components::StructureDataFactory::get_instance()->save_into_pose( pose, saved_sd );
 }
 
 void
@@ -932,139 +918,6 @@ add_overlap_to_loops(
 	}
 	return residues;
 }
-
-architects::RegisterShift
-compute_nobu_register_shift(
-	components::StructureData const & sd,
-	components::SegmentPair const & pair,
-	architects::StrandOrientation const & o1,
-	architects::StrandOrientation const & o2,
-	architects::RegisterShift const & shift )
-{
-	bool const order_reversed = ( sd.segment( pair.first ).safe() > sd.segment( pair.second ).safe() );
-	architects::StrandOrientation const ref_orientation = order_reversed ? o2 : o1;
-
-	if ( ref_orientation == architects::UP ) {
-		if ( order_reversed ) {
-			return -shift;
-		} else {
-			return shift;
-		}
-	} else if ( ref_orientation == architects::DOWN ) {
-		architects::RegisterShift const inverted_shift =
-			sd.segment( pair.first ).elem_length() - ( sd.segment( pair.second ).elem_length() + shift );
-		if ( order_reversed ) {
-			return -inverted_shift;
-		} else {
-			return inverted_shift;
-		}
-	} else {
-		std::stringstream msg;
-		msg << "compute_nobu_register_shift(): Invalid orientation for strand named " << pair.first << " : " << o1 << std::endl;
-		utility_exit_with_message( msg.str() );
-	}
-	return 0;
-}
-
-protocols::fldsgn::topology::StrandPairingSet
-compute_strand_pairings( components::StructureData const & sd, components::SegmentPairSet const & pairs )
-{
-	using protocols::fldsgn::topology::StrandPairing;
-	using protocols::fldsgn::topology::StrandPairingOP;
-	using protocols::fldsgn::topology::StrandPairingSet;
-	using protocols::fldsgn::topology::SS_Info2;
-
-	SS_Info2 const ss_info( sd.ss() );
-	StrandPairingSet pairset;
-
-	for ( components::SegmentPairSet::const_iterator pair=pairs.begin(); pair!=pairs.end(); ++pair ) {
-		if ( !sd.has_segment( pair->first ) ) continue;
-		if ( !sd.has_segment( pair->second ) ) continue;
-		components::Segment const & seg1 = sd.segment( pair->first );
-		components::Segment const & seg2 = sd.segment( pair->second );
-		architects::StrandOrientation const o1 =
-			architects::StrandArchitect::int_to_orientation( sd.get_data_int( pair->first, architects::StrandArchitect::orientation_keyname() ) );
-		architects::StrandOrientation const o2 =
-			architects::StrandArchitect::int_to_orientation( sd.get_data_int( pair->second, architects::StrandArchitect::orientation_keyname() ) );
-		architects::RegisterShift const tomp_shift = sd.get_data_int( pair->second, architects::StrandArchitect::register_shift_keyname() );
-
-		core::Size const length = seg1.elem_length() <= seg2.elem_length() ? seg1.elem_length() : seg2.elem_length();
-		architects::RegisterShift const shift = compute_nobu_register_shift( sd, *pair, o1, o2, tomp_shift );
-		char const orient = ( o1 == o2 ) ? 'P' : 'A';
-		StrandPairingOP sp( new StrandPairing(
-			ss_info.strand_id( seg1.safe() ),  // Strand 1
-			ss_info.strand_id( seg2.safe() ),  // Strand 2
-			seg1.start(),                     // Strand 1 start res
-			seg2.start(),                     // Strand 2 start res
-			length,                        // pairing length
-			shift,                        // register shift
-			orient ) );                      // orientation
-		TR << "Created strand pairing for *pair " << *sp << std::endl;
-		pairset.push_back( sp );
-	}
-	pairset.finalize();
-	return pairset;
-}
-
-architects::RegisterShift
-retrieve_shift( components::StructureData const & sd, SegmentName const & segment_name )
-{
-	return sd.get_data_int( segment_name, architects::StrandArchitect::register_shift_keyname() );
-}
-
-architects::StrandOrientation
-retrieve_orientation( components::StructureData const & sd, SegmentName const & segment_name )
-{
-	return architects::StrandArchitect::int_to_orientation(
-		sd.get_data_int( segment_name, architects::StrandArchitect::orientation_keyname() ) );
-}
-
-/*
-/// @brief returns sorted vector of bulge residues
-core::select::residue_selector::ResidueVector
-get_bulges( components::StructureData const & sd )
-{
-core::select::residue_selector::ResidueVector bulges;
-std::string::const_iterator ss = sd.ss().begin();
-std::string::const_iterator ab = sd.abego().begin();
-for ( core::Size resid=1; resid<=sd.pose_length(); ++resid, ++ss, ++ab ) {
-if ( ( *ss == 'E' ) && ( *ab == 'A' ) ) bulges.push_back( resid );
-}
-return bulges;
-}
-
-void
-modify_for_check( components::StructureData & sd )
-{
-using core::select::residue_selector::ResidueVector;
-using core::select::residue_selector::ResidueSubset;
-using protocols::fldsgn::topology::StrandPairingSet;
-using components::ResiduePairs;
-
-ResidueSubset paired( sd.pose_length(), false );
-
-ResiduePairs const pairs = components::SegmentPairing::get_strand_residue_pairs( sd );
-for ( ResiduePairs::const_iterator p=pairs.begin(); p!=pairs.end(); ++p ) {
-paired[p->first] = true;
-paired[p->second] = true;
-}
-
-ResidueVector const bulges = get_bulges( sd );
-TR.Debug << "Bulges = " << bulges << std::endl;
-for ( ResidueVector::const_iterator r=bulges.begin(); r!=bulges.end(); ++r ) {
-paired[*r] = true;
-}
-TR.Debug << "Pair set = " << paired << std::endl;
-
-core::Size resid = 1;
-for ( ResidueSubset::const_iterator p=paired.begin(); p!=paired.end(); ++p, ++resid ) {
-if ( !*p && ( sd.ss()[ resid - 1 ] == 'E' ) ) {
-TR << "Setting ss for residue " << resid << " to L" << std::endl;
-sd.set_ss( resid, 'L' );
-}
-}
-}
-*/
 
 } //protocols
 } //denovo_design

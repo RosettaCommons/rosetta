@@ -16,6 +16,7 @@
 #include <protocols/denovo_design/architects/StrandArchitectCreator.hh>
 
 // Protocol headers
+#include <protocols/denovo_design/architects/StructureArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/util.hh>
@@ -38,9 +39,7 @@ StrandArchitect::StrandArchitect( std::string const & id_value ):
 	DeNovoArchitect( id_value ),
 	motifs_(),
 	lengths_(),
-	orientations_( 1, UP ),
-	register_shifts_( 1, 0 ),
-	bulges_( 1, 0 ),
+	bulges_(),
 	updated_( false )
 {
 }
@@ -66,14 +65,8 @@ StrandArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap 
 	std::string const lengths_str = tag->getOption< std::string >( "length", "" );
 	if ( !lengths_str.empty() ) set_length( lengths_str );
 
-	std::string const orientation_str = tag->getOption< std::string >( "orientation", "" );
-	if ( !orientation_str.empty() ) set_orientation( orientation_str );
-
-	std::string const register_shift_str = tag->getOption< std::string >( "register_shift", "" );
-	if ( !register_shift_str.empty() ) set_register_shift( register_shift_str );
-
 	std::string const bulge_str = tag->getOption< std::string >( "bulge", "" );
-	if ( !bulge_str.empty() ) set_bulge( bulge_str );
+	if ( !bulge_str.empty() ) set_bulges( bulge_str );
 
 	if ( ! updated_ ) enumerate_permutations();
 }
@@ -93,30 +86,41 @@ StrandArchitect::design( core::pose::Pose const &, core::Real & random ) const
 	return StructureDataOP( new StructureData( *motifs_[ idx ] ) );
 }
 
+/// @brief Given a list of bulges, build a motif
+/// @param[in] bulges    List of bulge positions to place onto the strand
+/// @param[in] secstruct Secondary structure for the new segment
+/// @param[in] abego     Abego for the new segment, without bulges placed
+StrandArchitect::StructureDataOP
+StrandArchitect::create_motif(
+		StrandBulges const & bulges,
+		std::string const & secstruct,
+		std::string const & abego ) const
+{
+	StructureDataOP sd( new StructureData( id() ) );
+	std::string abego_str = abego;
+	for ( auto const & b : bulges ) {
+		if ( b ) abego_str[ b ] = 'A';
+	}
+	sd->add_segment( components::Segment( id(), secstruct, abego_str, false, false ) );
+	store_bulges( *sd, bulges );
+	return sd;
+}
+
 components::StructureDataCOPs
 StrandArchitect::compute_permutations() const
 {
 	components::StructureDataCOPs motifs;
-	for ( Lengths::const_iterator l=lengths_.begin(); l!=lengths_.end(); ++l ) {
+	for ( core::Size const & l : lengths_ ) {
 		std::stringstream secstruct;
-		secstruct << 'L' << std::string( *l, 'E' ) << 'L';
+		secstruct << 'L' << std::string( l, 'E' ) << 'L';
 		std::stringstream abego;
-		abego << 'X' << std::string( *l, 'B' ) << 'X';
+		abego << 'X' << std::string( l, 'B' ) << 'X';
 
-		for ( StrandOrientations::const_iterator o=orientations_.begin(); o!=orientations_.end(); ++o ) {
-			for ( RegisterShifts::const_iterator s=register_shifts_.begin(); s!=register_shifts_.end(); ++s ) {
-				for ( StrandBulges::const_iterator b=bulges_.begin(); b!=bulges_.end(); ++b ) {
-					StructureDataOP sd( new StructureData( id() ) );
-					std::string abego_str = abego.str();
-					if ( *b != 0 ) {
-						abego_str[ *b ] = 'A';
-					}
-					sd->add_segment( components::Segment( id(), secstruct.str(), abego_str, false, false ) );
-					store_register_shift( *sd, *s );
-					store_bulge( *sd, *b );
-					store_orientation( *sd, *o );
-					motifs.push_back( sd );
-				}
+		if ( bulges_.empty() ) {
+			motifs.push_back( create_motif( StrandBulges(), secstruct.str(), abego.str() ) );
+		} else {
+			for ( StrandBulges const & bulgelist : bulges_ ) {
+				motifs.push_back( create_motif( bulgelist, secstruct.str(), abego.str() ) );
 			}
 		}
 	}
@@ -124,8 +128,6 @@ StrandArchitect::compute_permutations() const
 		std::stringstream msg;
 		msg << "StrandArchitect: no strand permutations could be generated with the given user input." << std::endl;
 		msg << "Lengths: " << lengths_ << std::endl;
-		msg << "Orientations: " << orientations_ << std::endl;
-		msg << "Shifts: " << register_shifts_ << std::endl;
 		msg << "Bulges: " << bulges_ << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
@@ -164,151 +166,62 @@ StrandArchitect::motifs_end() const
 	return motifs_.end();
 }
 
-/// @brief retrieve register shift
-RegisterShift
-StrandArchitect::retrieve_register_shift( StructureData const & sd ) const
-{
-	return sd.get_data_int( id(), register_shift_keyname() );
-}
-
-StrandOrientation
+StrandArchitect::StrandOrientation
 StrandArchitect::int_to_orientation( int const orient )
 {
-	if ( orient >= ORIENTATIONS_END ) {
+	if ( orient == 0 ) {
 		std::stringstream msg;
 		msg << class_name() << ": int_to_orientation(): Found orientation inside StructureData with value ("
-			<< orient << "), but there are only " << ORIENTATIONS_END - 1 << " possible orientations." << std::endl;
+			<< orient << "), but orientations must be between 1 and " << components::ORIENTATIONS_END - 1 << "." << std::endl;
+		utility_exit_with_message( msg.str() );
+	}
+	if ( orient >= components::ORIENTATIONS_END ) {
+		std::stringstream msg;
+		msg << class_name() << ": int_to_orientation(): Found orientation inside StructureData with value ("
+			<< orient << "), but there are only " << components::ORIENTATIONS_END - 1 << " possible orientations." << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	return static_cast< StrandOrientation >( orient );
 }
 
-/// @brief retrieve orientation
-StrandOrientation
-StrandArchitect::retrieve_orientation( StructureData const & sd ) const
+StrandBulges
+StrandArchitect::retrieve_bulges( StructureData const & sd ) const
 {
-	return int_to_orientation( sd.get_data_int( id(), orientation_keyname() ) );
+	return retrieve_bulges( sd, id() );
 }
 
-StrandBulge
-StrandArchitect::retrieve_bulge( StructureData const & sd ) const
+StrandBulges
+StrandArchitect::retrieve_bulges( StructureData const & sd, std::string const & segment_id )
 {
-	return static_cast< StrandBulge >( sd.get_data_int( id(), bulge_keyname() ) );
-}
-
-StrandBulge
-StrandArchitect::retrieve_bulge( StructureData const & sd, std::string const & segment_id )
-{
-	return static_cast< StrandBulge >( sd.get_data_int( segment_id, bulge_keyname() ) );
-}
-
-void
-StrandArchitect::store_register_shift( StructureData & sd, RegisterShift const shift ) const
-{
-	sd.set_data_int( id(), register_shift_keyname(), shift );
+	std::string const value = sd.get_data_str( segment_id, bulge_keyname() );
+	utility::vector1< std::string > const fields = utility::string_split( value, ';' );
+	StrandBulges bulges;
+	for ( std::string const & position : fields ) {
+		if ( position.empty() ) continue;
+		bulges.push_back( boost::lexical_cast< SegmentResid >( position ) );
+	}
+	return bulges;
 }
 
 void
-StrandArchitect::store_orientation( StructureData & sd, StrandOrientation const orient ) const
+StrandArchitect::store_bulges( StructureData & sd, StrandBulges const & bulges ) const
 {
-	sd.set_data_int( id(), orientation_keyname(), orient );
+	std::stringstream storage;
+	if ( bulges.empty() ) {
+		sd.set_data_str( id(), bulge_keyname(), "" );
+	} else {
+		for ( SegmentResid const r : bulges ) {
+			if ( !storage.str().empty() ) storage << ';';
+			storage << r;
+		}
+		sd.set_data_str( id(), bulge_keyname(), storage.str() );
+	}
 }
-
-void
-StrandArchitect::store_bulge( StructureData & sd, StrandBulge const bulge ) const
-{
-	sd.set_data_int( id(), bulge_keyname(), bulge );
-}
-
-std::string const
-StrandArchitect::register_shift_keyname()
-{
-	return "register_shift";
-}
-
-std::string const
-StrandArchitect::orientation_keyname()
-{
-	return "orientation";
-}
-
 
 std::string const
 StrandArchitect::bulge_keyname()
 {
 	return "bulge";
-}
-
-/// @brief set register shift
-void
-StrandArchitect::set_register_shift( RegisterShifts const & shifts )
-{
-	register_shifts_ = shifts;
-	needs_update();
-}
-
-/// @brief set allowed register shifts from a string
-void
-StrandArchitect::set_register_shift( std::string const & val )
-{
-	RegisterShifts retval;
-	utility::vector1< std::string > const str_shifts( utility::string_split( val, ',' ) );
-	for ( utility::vector1< std::string >::const_iterator s=str_shifts.begin(); s!=str_shifts.end(); ++s ) {
-		TR.Debug << *s << " " << val << std::endl;
-		if ( s->empty() ) continue;
-		utility::vector1< std::string > const ranges( utility::string_split( *s, ':' ) );
-		if ( ranges.size() == 1 ) {
-			retval.push_back( boost::lexical_cast< RegisterShift >( ranges[1] ) );
-		} else if ( ranges.size() == 2 ) {
-			RegisterShift const start( boost::lexical_cast< RegisterShift >( ranges[1] ) );
-			RegisterShift const end( boost::lexical_cast< RegisterShift >( ranges[2] ) );
-			for ( RegisterShift i=start; i<=end; ++i ) {
-				retval.push_back( i );
-			}
-		} else {
-			utility_exit_with_message( "Invalid register shift input: " + val );
-		}
-	}
-	set_register_shift( retval );
-}
-
-/// @brief set allowed orientations from a string
-void
-StrandArchitect::set_orientation( std::string const & val )
-{
-	StrandOrientations retval;
-	utility::vector1< std::string > const str_orients( utility::string_split( val, ',' ) );
-	for ( utility::vector1< std::string >::const_iterator s=str_orients.begin(); s!=str_orients.end(); ++s ) {
-		TR.Debug << *s << " " << val << std::endl;
-		if ( s->empty() ) continue;
-		utility::vector1< std::string > const ranges( utility::string_split( *s, ':' ) );
-		// check input string to make sure only "A", "P" are specified
-		for ( core::Size i=1; i<=ranges.size(); ++i ) {
-			if ( ( ranges[i] != "U" ) && ( ranges[i] != "D" ) ) {
-				utility_exit_with_message( "Invalid orientation character: " + ranges[i] );
-			}
-		}
-		if ( ranges.size() == 1 ) {
-			if ( ranges[1] == "U" ) {
-				retval.push_back( UP );
-			} else {
-				retval.push_back( DOWN );
-			}
-		} else if ( ranges.size() == 2 ) {
-			retval.push_back( UP );
-			retval.push_back( DOWN );
-		} else {
-			utility_exit_with_message( "Invalid orientation input: " + val );
-		}
-	}
-	set_orientation( retval );
-}
-
-void
-StrandArchitect::set_orientation( StrandOrientations const & orientations )
-{
-	orientations_ = orientations;
-	needs_update();
 }
 
 void
@@ -325,13 +238,23 @@ StrandArchitect::set_length( Lengths const & lengths_val )
 }
 
 void
-StrandArchitect::set_bulge( std::string const & bulges_str )
+StrandArchitect::set_bulges( std::string const & bulges_str )
 {
-	set_bulge( parse_length_str< StrandBulge >( bulges_str ) );
+	// bulges string if of format LENGTHS_B1;LENGTHS_B2;...;LENGTHS_BN
+	// LENGTHS_B1 .. LENGTHS_BN are lengths strings
+	// e.g. "2,3,4;5:8;10" means there are three bulges.  The first is at 2, 3 or 4.
+	//      the second is at 5, 6, 7 or 8.  The third is at 10.
+	AllowedStrandBulges allowed_bulges;
+	utility::vector1< std::string > const fields = utility::string_split( bulges_str, ';' );
+	for ( std::string const & bulge_positions : fields ) {
+		allowed_bulges.push_back( parse_length_str< SegmentResid >( bulge_positions ) );
+	}
+
+	set_bulges( allowed_bulges );
 }
 
 void
-StrandArchitect::set_bulge( StrandBulges const & bulges )
+StrandArchitect::set_bulges( AllowedStrandBulges const & bulges )
 {
 	bulges_ = bulges;
 	needs_update();

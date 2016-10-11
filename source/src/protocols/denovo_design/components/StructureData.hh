@@ -631,6 +631,9 @@ public:
 	void
 	add_pairing( SegmentPairing const & pairing );
 
+	SegmentPairingCOP
+	pairing( SegmentNames const & segments ) const;
+
 	SegmentPairingCOPs::const_iterator
 	pairings_begin() const;
 

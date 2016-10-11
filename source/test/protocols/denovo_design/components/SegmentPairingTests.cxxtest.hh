@@ -70,8 +70,8 @@ public:
 
 	void test_helix_pairing_str()
 	{
-		using protocols::denovo_design::architects::UP;
-		using protocols::denovo_design::architects::DOWN;
+		using protocols::denovo_design::components::UP;
+		using protocols::denovo_design::components::DOWN;
 		using protocols::denovo_design::components::HelixPairing;
 		using protocols::denovo_design::components::StrandPairing;
 		using protocols::denovo_design::components::HelixSheetPairing;
@@ -131,8 +131,8 @@ public:
 
 	void test_strand_pairing() {
 		using protocols::denovo_design::components::StrandPairing;
-		using protocols::denovo_design::architects::UP;
-		using protocols::denovo_design::architects::DOWN;
+		using protocols::denovo_design::components::UP;
+		using protocols::denovo_design::components::DOWN;
 
 		std::string const motif_str = "1LX-5EB-2LX-6EB-2LX-6EB-2LX-4EB-1LX";
 		StructureData const orig = StructureDataFactory::get_instance()->create_from_motifs( motif_str, "" );
@@ -228,8 +228,8 @@ public:
 	void test_bulge_strandpairing() {
 		using protocols::denovo_design::abego_vector;
 		using protocols::denovo_design::count_bulges;
-		using protocols::denovo_design::architects::UP;
-		using protocols::denovo_design::architects::DOWN;
+		using protocols::denovo_design::components::UP;
+		using protocols::denovo_design::components::DOWN;
 		using protocols::denovo_design::components::StrandPairing;
 
 		std::string const motif_str = "1LX-5EB-2LG-4EB-1LX";

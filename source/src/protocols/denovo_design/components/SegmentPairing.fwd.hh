@@ -26,6 +26,19 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
+/// @brief Individual strands are oriented pointing either "UP" or "DOWN"
+///        If two adjacent strands have the same orientation, they are parallel
+///        If two adjacent strands have different orientation, they are antiparallel
+enum StrandOrientation {
+	UP = 1,
+	DOWN = 2,
+	ORIENTATIONS_END = 3
+};
+typedef utility::vector1< StrandOrientation > StrandOrientations;
+
+typedef long int RegisterShift;
+typedef utility::vector1< RegisterShift > RegisterShifts;
+
 typedef std::pair< core::Size, core::Size > ResiduePair;
 typedef utility::vector1< ResiduePair > ResiduePairs;
 

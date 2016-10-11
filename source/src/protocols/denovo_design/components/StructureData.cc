@@ -2316,6 +2316,25 @@ StructureData::has_free_upper_terminus( std::string const & id_val ) const
 	return segment( id_val ).has_free_upper_terminus();
 }
 
+SegmentPairingCOP
+StructureData::pairing( SegmentNames const & segments ) const
+{
+	SegmentPairingCOP retval;
+	for ( SegmentPairingCOP const & pair : pairings_ ) {
+		if ( pair->segments() == segments ) {
+			if ( retval ) {
+				std::stringstream msg;
+				msg << "StructureData::pairing(): More than one pairing was found containing segments "
+					<< segments << std::endl;
+				msg << "SD=" << *this << std::endl;
+				utility_exit_with_message( msg.str() );
+			}
+			retval = pair;
+		}
+	}
+	return retval;
+}
+
 /// @brief non-const iterator to end of segment names list
 SegmentNameList::iterator
 StructureData::segments_end_nonconst()

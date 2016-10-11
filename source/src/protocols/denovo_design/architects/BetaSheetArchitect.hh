@@ -26,6 +26,7 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueVector.fwd.hh>
 
 // Utility headers
 #include <utility/excn/EXCN_Base.hh>
@@ -46,6 +47,15 @@ public:
 	typedef utility::vector1< components::StructureDataCOP > StructureDataCOPs;
 	typedef utility::vector1< StrandArchitectOP > StrandArchitectOPs;
 	typedef std::map< std::string, core::Size > StrandExtensionsMap;
+
+	typedef components::StrandOrientation StrandOrientation;
+	typedef components::StrandOrientations StrandOrientations;
+	typedef components::RegisterShift RegisterShift;
+	typedef components::RegisterShifts RegisterShifts;
+	typedef core::select::residue_selector::ResidueVector ResidueVector;
+
+	typedef std::vector< components::StrandPairingCOP > PairingsInfo;
+	typedef std::vector< PairingsInfo >  PairingsInfoVector;
 
 public:
 	BetaSheetArchitect( std::string const & id_value );
@@ -122,14 +132,26 @@ private:
 	needs_update();
 
 	void
-	store_strand_pairings( StructureData & sd ) const;
+	store_sheet_idx( StructureData & sd, core::Size const sheet_idx ) const;
+
+	/// @brief set allowed register shifts from a string
+	void
+	add_register_shifts( std::string const & val );
 
 	void
-	store_sheet_idx( StructureData & sd, core::Size const sheet_idx ) const;
+	add_orientations( std::string const & orientations_str );
+
+	components::StructureDataCOPs
+	filter_permutations( components::StructureDataCOPs const & perms ) const;
+
+	components::StructureDataCOPs
+	add_pairings( components::StructureDataCOPs const & perms ) const;
 
 private:
 	StructureDataCOPs permutations_;
 	StrandArchitectOPs strands_;
+	utility::vector1< StrandOrientations > orientations_;
+	utility::vector1< RegisterShifts > shifts_;
 	StrandExtensionsMap extensions_;
 	components::SheetDBOP sheetdb_;
 	bool use_sheetdb_;
