@@ -114,7 +114,7 @@ BuildDeNovoBackboneMover::parse_my_tag(
 	std::string const stop_segments_csv = tag->getOption< std::string >( "stop_segments", "" );
 	if ( tag->hasOption( "stop_segments" ) ) set_stop_segments( stop_segments_csv );
 
-	iterations_per_phase_ = tag->getOption< core::Size >( "iterations_per_phase", iterations_per_phase_ );
+	set_iterations_per_phase( tag->getOption< core::Size >( "iterations_per_phase", iterations_per_phase_ ) );
 	dump_pdbs_ = tag->getOption< bool >( "dump_pdbs", dump_pdbs_ );
 
 	core::Size idx = 1;
@@ -175,6 +175,12 @@ void
 BuildDeNovoBackboneMover::set_id( std::string const & id_value )
 {
 	id_ = id_value;
+}
+
+void
+BuildDeNovoBackboneMover::set_iterations_per_phase( core::Size const niter )
+{
+	iterations_per_phase_ = niter;
 }
 
 protocols::filters::FilterOP

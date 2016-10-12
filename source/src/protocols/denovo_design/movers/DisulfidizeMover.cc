@@ -35,6 +35,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -688,6 +689,12 @@ DisulfidizeMover::tag_disulfides(
 	core::pose::Pose & pose,
 	DisulfidizeMover::DisulfideList const & disulf ) const
 {
+	std::stringstream disulf_comment;
+	for ( DisulfideList::const_iterator ds=disulf.begin(); ds!=disulf.end(); ++ds ) {
+		if ( !disulf_comment.str().empty() ) disulf_comment << ";";
+		disulf_comment << ds->first << "," << ds->second;
+	}
+	core::pose::add_comment( pose, "DISULFIDIZE", disulf_comment.str() );
 	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
 		tag_disulfide( pose, (*itr).first, (*itr).second );
 	}

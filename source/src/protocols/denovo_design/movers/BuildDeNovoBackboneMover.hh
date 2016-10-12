@@ -144,6 +144,9 @@ public:
 	void
 	add_postfold_mover( protocols::moves::Mover const & mover );
 
+	void
+	set_iterations_per_phase( core::Size const niter );
+
 private:
 	FoldScore
 	folding_score( core::pose::Pose const & pose ) const;

@@ -43,6 +43,7 @@ BridgeChainsMover::BridgeChainsMover():
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
 	scorefxn_(),
 	overlap_( 1 ),
+	iterations_( 0 ),
 	dry_run_( false )
 {
 }
@@ -52,6 +53,7 @@ BridgeChainsMover::BridgeChainsMover( std::string const & class_name ):
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
 	scorefxn_(),
 	overlap_( 1 ),
+	iterations_( 0 ),
 	dry_run_( false )
 {
 }
@@ -71,6 +73,7 @@ BridgeChainsMover::parse_my_tag(
 	architect_->parse_my_tag( tag, data );
 	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
 	set_dry_run( tag->getOption< core::Size >( "dry_run", dry_run_ ) );
+	iterations_ = tag->getOption< core::Size >( "trials", iterations_ );
 
 	core::scoring::ScoreFunctionCOP sfxn = protocols::rosetta_scripts::parse_score_function( tag, data );
 	if ( sfxn ) set_scorefxn( *sfxn );
@@ -123,6 +126,7 @@ BridgeChainsMover::apply( core::pose::Pose & pose )
 	BuildDeNovoBackboneMover assemble;
 	assemble.set_architect( arch );
 	assemble.set_build_overlap( overlap() );
+	assemble.set_iterations_per_phase( iterations_ );
 	if ( dry_run() ) {
 		assemble.set_folder( components::RandomTorsionPoseFolder() );
 	} else {

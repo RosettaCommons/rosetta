@@ -16,6 +16,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MakePolyXMover.fwd.hh>
 
@@ -39,6 +40,8 @@ public:
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
+	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 
@@ -79,9 +82,10 @@ private:
 	/// @brief if true, proline, cystein are not converted
 	bool keep_disulfide_cys_;
 
+	/// @brief selects which residues to mutate
+	ResidueSelectorCOP selector_;
 
 };
-
 
 } // simple_moves
 } // protocols

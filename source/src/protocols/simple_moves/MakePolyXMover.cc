@@ -18,8 +18,10 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -56,7 +58,8 @@ MakePolyXMover::MakePolyXMover():
 	aa_( "ALA" ), //SML Jul 10 2016, changed AA to ALA.  Unclear if a typo or deliberate non amino acid?
 	keep_pro_( false ),
 	keep_gly_( true ),
-	keep_disulfide_cys_( false )
+	keep_disulfide_cys_( false ),
+	selector_( new core::select::residue_selector::TrueResidueSelector )
 {}
 
 MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
@@ -64,7 +67,8 @@ MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bo
 	aa_(std::move( aa )),
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
-	keep_disulfide_cys_( keep_disulfide_cys )
+	keep_disulfide_cys_( keep_disulfide_cys ),
+	selector_( new core::select::residue_selector::TrueResidueSelector )
 {}
 
 MakePolyXMover::~MakePolyXMover() = default;
@@ -82,10 +86,12 @@ protocols::moves::MoverOP MakePolyXMover::fresh_instance() const {
 /// @details virtual main
 void MakePolyXMover::apply( Pose & pose )
 {
+	using core::select::residue_selector::ResidueSubset;
+	ResidueSubset const subset = selector_->apply( pose );
 	// flip to poly-ala-gly-pro-disulf pose
 	utility::vector1< Size > protein_residues;
 	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
-		if ( pose.residue( i ).is_protein() ) {
+		if ( subset[ i ] && pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
 		}
 	}
@@ -93,6 +99,7 @@ void MakePolyXMover::apply( Pose & pose )
 	TR << "Pose is converted to poly " << aa_ << std::endl;
 	construct_poly_XXX_pose( aa_, pose, protein_residues, keep_pro_, keep_gly_, keep_disulfide_cys_ );
 }
+
 
 std::string
 MakePolyXMover::get_name() const {
@@ -103,7 +110,7 @@ MakePolyXMover::get_name() const {
 void
 MakePolyXMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & )
@@ -112,6 +119,9 @@ MakePolyXMover::parse_my_tag(
 	keep_pro_  = tag->getOption<bool>( "keep_pro", 0 );
 	keep_gly_  = tag->getOption<bool>( "keep_gly", 1 );
 	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulfide_cys", 0 );
+
+	ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	if ( selector ) selector_ = selector;
 
 	TR << "MakePolyXMover was loaded" << std::endl;
 

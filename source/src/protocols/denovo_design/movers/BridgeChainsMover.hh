@@ -120,6 +120,7 @@ private:
 	connection::ConnectionArchitectOP architect_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Size overlap_;
+	core::Size iterations_;
 	bool dry_run_;
 
 };
