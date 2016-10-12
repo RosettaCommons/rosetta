@@ -6,18 +6,18 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file src/devel/simple_moves/GenericSimulatedAnnealer.hh
+/// @file src/protocols/simple_moves/GenericSimulatedAnnealer.hh
 /// @brief perform a given mover and sample structures by MonteCarlo with simulated annealing of acceptance temperatures
 /// @details The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_GenericSimulatedAnnealer_hh
-#define INCLUDED_devel_denovo_design_GenericSimulatedAnnealer_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericSimulatedAnnealer_hh
+#define INCLUDED_protocols_simple_moves_GenericSimulatedAnnealer_hh
 
 // Unit header
-#include <devel/denovo_design/GenericSimulatedAnnealer.fwd.hh>
+#include <protocols/simple_moves/GenericSimulatedAnnealer.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 
 // Package headers
@@ -32,9 +32,14 @@
 
 // External headers
 
-namespace devel {
-namespace denovo_design {
+namespace protocols {
+namespace simple_moves {
 
+/// @brief Describes result of a trial
+/// @details REJECTED : Move was rejected
+///          ACCEPTED : Move was accepted
+///          FAILED   : Some failure occurred during the move
+///          FINISHED : The stopping condition was met
 enum TrialResult {
 	REJECTED,
 	ACCEPTED,
@@ -42,6 +47,7 @@ enum TrialResult {
 	FINISHED
 };
 
+/// @brief Represents a set of filter scores that have been accepted
 class AcceptedScores : public utility::vector1< core::Real > {
 public:
 	AcceptedScores( core::Size const iteration ):
@@ -68,6 +74,8 @@ private:
 	core::Real rank_score_;
 };
 
+/// @brief GenericSimulatedAnnealer mover for performing simulated annealing trajectories
+/// @details  This class extends GenericMonteCarloMover to provide temperature scaling
 class GenericSimulatedAnnealer : public protocols::simple_moves::GenericMonteCarloMover {
 public:
 	/// @brief default constructor
@@ -85,8 +93,10 @@ public:
 	/// @brief apply GenericSimulatedAnnealer (Mover)
 	void apply( Pose & pose ) override;
 
+	/// @brief name of this mover
 	std::string get_name() const override;
 
+	/// @brief XML interface to this mover
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -94,6 +104,7 @@ public:
 		Movers_map const & movers,
 		Pose const & ) override;
 
+	/// @brief Clears accepted data and initialize with new pose
 	virtual void reset( Pose & pose );
 
 	/// @brief given a pose, score the result
@@ -126,7 +137,7 @@ public: // mutators
 	/// @brief scales temperatures by the factor provided
 	void scale_temperatures( core::Real const temp_factor );
 	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
-	/// @brief uses randomly generated numbers to assess acceptance of scores with temperatures
+	///        uses randomly generated numbers to assess acceptance of scores with temperatures
 	TrialResult boltzmann_result( core::pose::Pose & pose );
 	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
 	TrialResult boltzmann_result( core::pose::Pose & pose,
@@ -179,8 +190,8 @@ private:
 /// @brief helper function that safely replaces a file with another
 void replace_file( std::string const & origfile, std::string const & newfile );
 
-} // namespace denovo_design
-} // namespace devel
+} // namespace simple_moves
+} // namespace protocols
 
 #endif
 

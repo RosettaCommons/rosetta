@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/GenericSimulatedAnnealer.fwd.hh
+/// @file src/protocols/simple_moves/GenericSimulatedAnnealer.fwd.hh
 /// @brief
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_GenericSimulatedAnnealer_fwd_hh
-#define INCLUDED_devel_denovo_design_GenericSimulatedAnnealer_fwd_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericSimulatedAnnealer_fwd_hh
+#define INCLUDED_protocols_simple_moves_GenericSimulatedAnnealer_fwd_hh
 
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
 
-namespace devel {
-namespace denovo_design {
+namespace protocols {
+namespace simple_moves {
 
 class GenericSimulatedAnnealer;
 typedef utility::pointer::shared_ptr< GenericSimulatedAnnealer >  GenericSimulatedAnnealerOP;
 typedef utility::pointer::shared_ptr< GenericSimulatedAnnealer const >  GenericSimulatedAnnealerCOP;
 
 
-} // namespace denovo_design
-} // namespace devel
+} // namespace simple_moves
+} // namespace protocols
 
 #endif

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/devel/denovo_design/GenericSimulatedAnnealer.cxxtest.hh
-/// @brief  test suite for devel::denovo_design::GenericSimulatedAnnealer
+/// @file   test/protocols/simple_moves/GenericSimulatedAnnealer.cxxtest.hh
+/// @brief  test suite for protocols::simple_moves::GenericSimulatedAnnealer
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 
@@ -17,7 +17,7 @@
 #include <test/protocols/init_util.hh>
 
 // Unit headers
-#include <devel/denovo_design/GenericSimulatedAnnealer.hh>
+#include <protocols/simple_moves/GenericSimulatedAnnealer.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -40,7 +40,7 @@
 // C++ headers
 #include <iostream>
 
-static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer.cxxtest");
+static basic::Tracer TR("protocols.simple_moves.GenericSimulatedAnnealer.cxxtest");
 
 // --------------- Test Class --------------- //
 class GenericSimulatedAnnealerTests : public CxxTest::TestSuite {
@@ -71,7 +71,7 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSet & residue_set = ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD );
 		if ( !residue_set.has_name("D2I") ) {
-			params_files.push_back("devel/denovo_design/D2I.params");
+			params_files.push_back("protocols/simple_moves/D2I.params");
 		}
 		residue_set.read_files_for_custom_residue_types(params_files);
 
@@ -99,7 +99,7 @@ public:
 			core::scoring::score_type_from_name( "total_score" ),
 			999999.9 ) );
 
-		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
+		std::string const pdb_file( "protocols/simple_moves/test_input.pdb" );
 		core::import_pose::pose_from_file( input_pose, pdb_file , core::import_pose::PDB_file);
 		mut_to_trp->apply( input_pose );
 		mut_to_trp2->apply( input_pose );
@@ -114,7 +114,7 @@ public:
 		TR << "Starting test_acceptance()" << std::endl;
 		core::pose::Pose pose( input_pose );
 
-		devel::denovo_design::GenericSimulatedAnnealer annealer;
+		protocols::simple_moves::GenericSimulatedAnnealer annealer;
 		annealer.set_mover( mut_to_ala );
 		annealer.add_filter( num_trp, true, 0.0, "low", true );
 		annealer.set_maxtrials(2);
@@ -155,9 +155,9 @@ public:
 		TR << "STARTING checkpointing test" << std::endl;
 
 		// set up two genericsimulatedannealers
-		std::string const checkpoint_file( "devel/denovo_design/mc" );
+		std::string const checkpoint_file( "protocols/simple_moves/mc" );
 		std::string const checkpoint_silent_file( checkpoint_file + ".out" );
-		devel::denovo_design::GenericSimulatedAnnealer annealer;
+		protocols::simple_moves::GenericSimulatedAnnealer annealer;
 		annealer.checkpoint_file( checkpoint_file );
 		annealer.set_mover( mut_to_ala );
 		annealer.add_filter( num_trp, true, 0.0, "low", true );
@@ -165,7 +165,7 @@ public:
 		TR << "Annealer filters: " << annealer.filters().size() << std::endl;
 		annealer.set_maxtrials(1);
 
-		devel::denovo_design::GenericSimulatedAnnealer annealer2;
+		protocols::simple_moves::GenericSimulatedAnnealer annealer2;
 		annealer2.checkpoint_file( checkpoint_file );
 		annealer2.set_mover( mut_to_ala2 );
 		annealer2.add_filter( num_trp, true, 0.0, "low", true );
@@ -266,7 +266,7 @@ public:
 		core::pose::Pose pose( input_pose );
 		core::pose::Pose start_pose( pose );
 		// now test with multiple filters
-		devel::denovo_design::GenericSimulatedAnnealer annealer3;
+		protocols::simple_moves::GenericSimulatedAnnealer annealer3;
 		annealer3.set_maxtrials( 2 );
 		annealer3.set_mover( mut_to_ala );
 		// this one counts trp residues and scores
@@ -288,8 +288,8 @@ public:
 		utility::vector1< core::Real > randoms( annealer3.filters().size(), 1.0 );
 		mut_to_ala->apply( pose );
 		// should be accepted
-		devel::denovo_design::TrialResult result( annealer3.boltzmann_result( pose, randoms ) );
-		TS_ASSERT( result == devel::denovo_design::ACCEPTED );
+		protocols::simple_moves::TrialResult result( annealer3.boltzmann_result( pose, randoms ) );
+		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
 		// ensure the scoring counts are tabulated properly
 		TR << "number of accepted scores is now: " << annealer3.num_accepted_scores() << std::endl;
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
@@ -302,7 +302,7 @@ public:
 		// this one should be rejected -- it will have a worse score and all randoms are zero
 		mut_to_phe->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == devel::denovo_design::REJECTED );
+		TS_ASSERT( result == protocols::simple_moves::REJECTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
 		TS_ASSERT( annealer3.accepted_scores( 2 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -317,7 +317,7 @@ public:
 		// make the mutation back to TRP, which should be rejected based on ntrp filter
 		mut_to_trp->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == devel::denovo_design::REJECTED );
+		TS_ASSERT( result == protocols::simple_moves::REJECTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 2 );
 		TS_ASSERT( annealer3.accepted_scores( 2 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -333,7 +333,7 @@ public:
 		// make the mutation back to TRP, which should be accepted based on temperature
 		mut_to_trp->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == devel::denovo_design::ACCEPTED );
+		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 3 );
 		TS_ASSERT( annealer3.accepted_scores( 3 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );
@@ -370,7 +370,7 @@ public:
 		// now switch res 25 to phe which will result in a new acceptance but with different temps
 		mut_to_phe->apply( pose );
 		result = annealer3.boltzmann_result( pose, randoms );
-		TS_ASSERT( result == devel::denovo_design::ACCEPTED );
+		TS_ASSERT( result == protocols::simple_moves::ACCEPTED );
 		TS_ASSERT( annealer3.num_accepted_scores() == 4 );
 		TS_ASSERT( annealer3.accepted_scores( 4 ).size() == annealer3.filters().size() );
 		TS_ASSERT_DELTA( annealer3.last_accepted_scores()[1], num_trp->report_sm( pose ), 1e-6 );

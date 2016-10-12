@@ -655,6 +655,7 @@ sources = {
 		"ForceDisulfidesMover",
 		"FragmentMover",
 		"GenericMonteCarloMover",
+		"GenericSimulatedAnnealer",
 		"GreenPacker",
 		"GunnCost",
 		"LoadPDBMover",

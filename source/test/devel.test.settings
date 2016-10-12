@@ -19,7 +19,6 @@ sources = {
 		"BuildBetaSheet",
 		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
-		"GenericSimulatedAnnealer",
 	],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",
@@ -65,8 +64,6 @@ libraries    = ["devel",
 subprojects  = []
 testinputfiles = [
 		"denovo_design/cat_residues.pdb",
-		"denovo_design/test_input.pdb",
-		"denovo_design/D2I.params",
 		"denovo_design/test_foldability.pdb",
 		"denovo_design/C5_Z.sym",
     "znhash/1EER_A.pdb",

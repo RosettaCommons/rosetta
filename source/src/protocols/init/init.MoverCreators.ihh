@@ -368,6 +368,7 @@
 #include <protocols/simple_moves/FindConsensusSequenceCreator.hh>
 #include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
 #include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
+#include <protocols/simple_moves/GenericSimulatedAnnealerCreator.hh>
 #include <protocols/simple_moves/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
 #include <protocols/simple_moves/MakePolyXMoverCreator.hh>

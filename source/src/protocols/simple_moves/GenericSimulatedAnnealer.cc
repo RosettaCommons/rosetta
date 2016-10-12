@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/GenericSimulatedAnnealer.cc
+/// @file src/protocols/simple_moves/GenericSimulatedAnnealer.cc
 /// @brief perform a given mover and sample structures by MonteCarlo with gradual simulated annealing
 /// @details The score evaluation of pose during MC after applying mover is done by
 /// either FilterOP that can do report_sm() or ScoreFunctionOP.
@@ -16,8 +16,8 @@
 
 
 // Unit Headers
-#include <devel/denovo_design/GenericSimulatedAnnealer.hh>
-#include <devel/denovo_design/GenericSimulatedAnnealerCreator.hh>
+#include <protocols/simple_moves/GenericSimulatedAnnealer.hh>
+#include <protocols/simple_moves/GenericSimulatedAnnealerCreator.hh>
 
 // Package Headers
 
@@ -37,10 +37,10 @@
 #include <fstream>
 #include <boost/foreach.hpp>
 
-static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.GenericSimulatedAnnealer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GenericSimulatedAnnealer" );
 
-namespace devel {
-namespace denovo_design {
+namespace protocols {
+namespace simple_moves {
 
 
 std::string
@@ -746,5 +746,5 @@ GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 }
 
 
-} // ns denovo_design
-} // ns devel
+} // ns simple_moves
+} // ns protocols

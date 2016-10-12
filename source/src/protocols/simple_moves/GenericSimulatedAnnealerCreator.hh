@@ -11,13 +11,13 @@
 /// @brief This class will create instances of Mover GenericSimulatedAnnealer for the MoverFactory
 /// @author Tom Linsky (tlinsky@gmail.com)
 
-#ifndef INCLUDED_devel_denovo_design_GenericSimulatedAnnealerCreator_hh
-#define INCLUDED_devel_denovo_design_GenericSimulatedAnnealerCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_GenericSimulatedAnnealerCreator_hh
+#define INCLUDED_protocols_simple_moves_GenericSimulatedAnnealerCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
-namespace devel {
-namespace denovo_design {
+namespace protocols {
+namespace simple_moves {
 
 class GenericSimulatedAnnealerCreator : public protocols::moves::MoverCreator {
 public:
