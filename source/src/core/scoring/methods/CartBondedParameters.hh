@@ -20,7 +20,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/MathMatrix.hh>
 
 #include <ObjexxFCL/FArray2D.hh>

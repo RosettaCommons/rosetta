@@ -755,8 +755,8 @@ Segment::set_template_pose(
 	}
 	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code.  It should be eventually removed
 	if ( ( stop_resid + 1 <= full_template_pose.size() ) &&
-			( full_template_pose.residue( stop_resid + 1 ).is_protein() ) &&
-			( full_template_pose.residue( stop_resid ).is_protein() ) ) {
+		( full_template_pose.residue( stop_resid + 1 ).is_protein() ) &&
+		( full_template_pose.residue( stop_resid ).is_protein() ) ) {
 		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
 		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
 	} else {

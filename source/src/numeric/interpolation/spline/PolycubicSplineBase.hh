@@ -53,10 +53,6 @@ public:
 		dimensionality_( dimensionality_in )
 	{}
 
-	/// @brief Virtual destructor needed for polymorphism.
-	///
-	virtual ~PolycubicSplineBase() {}
-
 	/////////////////
 	// data access //
 	/////////////////

@@ -20,7 +20,7 @@
 /// @author Steven Combs, Ralf Mueller, Jens Meiler
 ///
 /////////////////////////////////////////////////////////////////////////
-#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathMatrix_operations.hh>
 

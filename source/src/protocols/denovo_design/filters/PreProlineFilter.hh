@@ -26,7 +26,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Numeric headers
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 // C++ headers
 

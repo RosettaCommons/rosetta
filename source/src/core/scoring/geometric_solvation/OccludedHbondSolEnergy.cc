@@ -392,7 +392,7 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 	// geometric filters are met, compute energy (and derivatives, if desired)
 	// get the appropriate parameters
 	Real sf = amp_scaling_factors_[polar_atom_type_lookup_index];
-	if ( !sf ) {
+	if(!sf) {
 		tr << "Unsupported atom type index: " << polar_atom_type_lookup_index << std::endl;
 		exit(0);
 	}

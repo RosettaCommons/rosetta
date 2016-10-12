@@ -25,7 +25,6 @@
 // Package headers
 #include <numeric/types.hh>
 #include <numeric/MathNTensorBase.fwd.hh>
-#include <numeric/MathNTensor.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -51,15 +50,15 @@ public:
 		dimensionality_(0)
 	{}
 
-	/// @brief Virtual destructor needed for polymorphism.
-	///
-	virtual ~MathNTensorBase() {}
-
 	/// @brief Costructor with dimensionality value.
 	///
 	MathNTensorBase( Size const dimensionality_in ) :
 		dimensionality_(dimensionality_in)
 	{}
+
+	/// @brief Destructor.
+	///
+	~MathNTensorBase() {}
 
 	/// @brief Get the dimensionality of derived classes.
 	/// @details Will need to store this in order to cast pointers to the appropriate type for the derived class.

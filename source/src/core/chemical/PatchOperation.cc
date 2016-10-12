@@ -893,24 +893,6 @@ SetOrientAtom::apply( ResidueType & rsd ) const
 	return false;
 }
 
-
-/// @brief Constructor.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-RemoveRotamerSpecifications::RemoveRotamerSpecifications() {}
-
-/// @brief Strip all RotamerSpecifications from the ResidueType.
-/// @return Success ("false" -- i.e. no error thrown) or failure ("true").
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-bool
-RemoveRotamerSpecifications::apply( ResidueType & rsd ) const {
-	using namespace core::chemical::rotamers;
-
-	if ( rsd.rotamer_library_specification() ) {
-		rsd.strip_rotamer_library_specification();
-	}
-	return false;
-}
-
 NCAARotLibPath::NCAARotLibPath( std::string const & path_in ) :
 	path_( path_in )
 {}
@@ -938,28 +920,6 @@ NCAARotLibPath::apply( ResidueType & rsd ) const
 	}
 	ncaa_libspec->ncaa_rotlib_path( path_ );
 	rsd.rotamer_library_specification( ncaa_libspec );
-	return false;
-}
-
-/// @brief Constructor
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-NCAARotLibNumRotamerBins::NCAARotLibNumRotamerBins(
-	utility::vector1< core::Size > const &binsizes_in
-) :
-	binsizes_( binsizes_in )
-{}
-
-/// @brief Set the number of rotamer bins per chi for an NCAA.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-bool
-NCAARotLibNumRotamerBins::apply(
-	ResidueType & rsd
-) const {
-	using namespace core::chemical::rotamers;
-
-	NCAARotamerLibrarySpecificationOP ncaa_libspec( utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification >( rsd.rotamer_library_specification_nonconst() ) );
-	runtime_assert_string_msg( ncaa_libspec, "A patch may only set the number of NCAA rotamer bins (\"NCAA_ROTLIB_NUM_ROTAMER_BINS\") for a residue type that already has an NCAA rotamer library specified, either in the params file or in patches." );
-	ncaa_libspec->ncaa_rotlib_n_bin_per_rot( binsizes_ );
 	return false;
 }
 
@@ -1865,7 +1825,7 @@ VirtualizeAll::apply( ResidueType & rsd ) const {
 		rsd.set_mm_atom_type( rsd.atom_name( ii ), "VIRT" );
 		rsd.atom( ii ).charge( 0.0 );
 		rsd.atom( ii ).is_virtual( true );
-	}
+	}	
 	return false;
 }
 
@@ -2209,26 +2169,13 @@ patch_operation_from_patch_file_line(
 		l >> target >> new_atom;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new ReplaceMainchainAtom( target, new_atom ) );
-	} else if ( tag == "REMOVE_ROTAMER_SPECIFICATIONS" ) {
-		return PatchOperationOP( new RemoveRotamerSpecifications() );
+
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new NCAARotLibPath( path ) );
-	} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
-		core::Size n_rots(0);
-		utility::vector1<core::Size> n_bins_per_rot;
-		l >> n_rots;
-		if ( l.fail() ) utility_exit_with_message( line );
-		n_bins_per_rot.resize( n_rots );
-		for ( Size i = 1; i <= n_rots; ++i ) {
-			Size bin_size(0);
-			l >> bin_size;
-			if ( l.fail() ) utility_exit_with_message( line );
-			n_bins_per_rot[i] = bin_size;
-		}
-		return PatchOperationOP( new NCAARotLibNumRotamerBins( n_bins_per_rot ) );
+
 	} else if ( tag == "SET_NBR_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) utility_exit_with_message( line );

@@ -81,8 +81,6 @@ sources = {
 
 	"cyclic_peptide" : [
                 "FlipChiralityMover",
-		"NMethylationTests",
-		"NMethylationTests_betanov15",
 		"OversaturatedHbondAcceptorFilterTests",
 	],
 	"cyclic_peptide_predict" : [

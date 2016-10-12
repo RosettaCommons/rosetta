@@ -72,14 +72,6 @@ write_graphviz(
 	bool header = true
 );
 
-/// @brief Certain commandline flags override the default RamaPrePro maps used by the 20
-/// canonical amino acids.  This function applies those overrides.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-void
-set_up_mapfile_reassignments_from_commandline(
-	ResidueTypeOP rsd
-);
-
 void
 setup_atom_type_reassignments_from_commandline(
 	std::string const & rsd_type_name,

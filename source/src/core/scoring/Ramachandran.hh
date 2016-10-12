@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>

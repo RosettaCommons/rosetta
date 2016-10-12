@@ -74,8 +74,6 @@ DIMETHYLATION  # used for PTM patches
 TRIMETHYLATION  # used for PTM patches
 DIIODINATION  # used for PTM patches
 
-N_METHYLATION # Methylation on the peptide bond nitrogen
-
 ACETYLATED_NTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
 METHYLATED_CTERMINUS_VARIANT  # for creating amino acid dipeptides for NCAA rotamer libraries
 PHOSPHONATE_UPPER_VARIANT  # for terminal amino phosphonic acids

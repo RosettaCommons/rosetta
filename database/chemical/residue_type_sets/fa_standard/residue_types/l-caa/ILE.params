@@ -48,7 +48,6 @@ CHI 2  CA   CB   CG1  CD1
 PROPERTIES PROTEIN CANONICAL_AA ALPHA_AA L_AA HYDROPHOBIC METALBINDING ALIPHATIC
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
-RAMA_PREPRO_FILENAME scoring/score_functions/rama/fd/all.ramaProb scoring/score_functions/rama/fd/prepro.ramaProb
 # APL O to CB distance; max observed in ubiquitin
 NBR_RADIUS 3.4473
 FIRST_SIDECHAIN_ATOM CB

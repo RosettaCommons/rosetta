@@ -30,7 +30,7 @@
 #define INCLUDED_numeric_interpolation_spline_TricubicSpline_hh
 
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
+#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/MathTensor.hh>
 
 #include <utility>

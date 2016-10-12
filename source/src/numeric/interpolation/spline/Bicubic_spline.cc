@@ -22,11 +22,11 @@
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 // Package headers
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/MathVector_operations.hh>
 #include <numeric/MathMatrix.hh>

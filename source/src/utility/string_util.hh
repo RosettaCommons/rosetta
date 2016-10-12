@@ -210,8 +210,6 @@ startswith(std::string const & haystack, std::string const & needle);
 bool
 endswith(std::string const & haystack, std::string const & needle);
 
-/// @brief Take all of the contents from the std::istream "in" and put them in the std::string "out".
-/// @details Useful for reading the full contents of a file into a string.
 void
 slurp(std::istream & in, std::string & out);
 

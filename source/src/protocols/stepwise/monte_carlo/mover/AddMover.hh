@@ -117,7 +117,7 @@ private:
 	setup_initial_jump( core::pose::Pose & pose );
 
 	core::conformation::ResidueOP
-	create_residue_to_add( pose::Pose const & pose );
+  create_residue_to_add( pose::Pose const & pose );
 
 private:
 

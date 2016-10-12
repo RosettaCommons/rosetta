@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   numeric/interpolation/spline
-/// @brief  test suite for numeric::interpolation::spline::BicubicSpline
+/// @brief  test suite for numeric::interpolation::spline::Bicubic_spline
 /// @author Steven Combs (steven.combs@vanderbilt.edu)
 /// This tests the functions that are in the bicubic spline class except for
 /// the e_periodic steps.
@@ -18,16 +18,16 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <numeric/interpolation/spline/BicubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/MathVector_operations.hh>
 
 
 // --------------- Test Class --------------- //
 
 
-class BicubicSpline_tests : public CxxTest::TestSuite {
+class Bicubic_spline_tests : public CxxTest::TestSuite {
 
 
 public:

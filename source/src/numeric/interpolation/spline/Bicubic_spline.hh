@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////
 ///
 /// @brief
-/// Bicubic spline for all your hearts' desires
+/// Bicubic spline for all your hearts desires
 ///
 /// @details
 /// This is an implementation of an algorithm from Numerical Recipes. It relies heavily
@@ -54,13 +54,11 @@
 ///
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDED_numeric_interpolation_spline_BicubicSpline_hh
-#define INCLUDED_numeric_interpolation_spline_BicubicSpline_hh
-
-#include <numeric/interpolation/spline/BicubicSpline.fwd.hh>
+#ifndef INCLUDED_numeric_interpolation_spline_Bicubic_spline_hh
+#define INCLUDED_numeric_interpolation_spline_Bicubic_spline_hh
 
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
+#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/MathMatrix.hh>
 
 namespace numeric {

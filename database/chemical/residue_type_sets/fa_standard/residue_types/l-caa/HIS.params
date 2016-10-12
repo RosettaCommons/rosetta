@@ -45,7 +45,6 @@ CHI 2  CA   CB   CG   ND1
 PROPERTIES PROTEIN CANONICAL_AA ALPHA_AA L_AA POLAR SC_ORBITALS METALBINDING
 METAL_BINDING_ATOMS O ND1 NE2
 NBR_ATOM CB
-RAMA_PREPRO_FILENAME scoring/score_functions/rama/fd/all.ramaProb scoring/score_functions/rama/fd/prepro.ramaProb
 # APL CB to sidechain heavy atom disance -- max observed on residue 74 of ubiquitin
 NBR_RADIUS 3.6718
 FIRST_SIDECHAIN_ATOM CB

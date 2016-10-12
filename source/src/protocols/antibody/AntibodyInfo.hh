@@ -363,7 +363,7 @@ public:
 		core::pose::Pose const & pose,
 		Size left_stem = 0,
 		Size right_stem = 0) const;
-
+	
 	///@brief On-The-Fly CDR sequence
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,

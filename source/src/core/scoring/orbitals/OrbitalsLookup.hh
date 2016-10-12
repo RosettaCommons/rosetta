@@ -19,8 +19,8 @@
 
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
-#include <numeric/interpolation/spline/BicubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 

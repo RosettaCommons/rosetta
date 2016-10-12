@@ -472,16 +472,6 @@ read_topology_file(
 /// "PROTON_CHI 2 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0"
 /// from SER.params.
 ///
-/// RAMA_PREPRO_FILENAME:
-/// Specify mainchain torsion potential to be used for this ResidueType when scoring with the
-/// rama_prepro score term.  Two strings follow.  The first is the filename for general scoring,
-/// and the second is the filename for scoring in the special case of this residue occurring before
-/// a proline residue.
-///
-/// RAMA_PREPRO_RESNAME:
-/// The name of the amino acid as listed in the rama_prepro scoring table file in the database.  If not
-/// specified, the amino acid name is used.
-///
 /// REMAP_PDB_ATOM_NAMES:
 /// When reading in a PDB, attempt to match the input atoms for this residue
 /// based on elements and estimated connectivity, rather than atom names.
@@ -919,19 +909,12 @@ read_topology_file(
 			l >> tag;
 			rsd->aa( tag );
 			found_AA_record = true;
+
 		} else if ( tag == "BACKBONE_AA" ) {
 			l >> tag;
 			rsd->backbone_aa( tag );
-		} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
-			l >> tag;
-			rsd->set_rama_prepro_map_file_name(tag, false);
-			l >> tag;
-			rsd->set_rama_prepro_map_file_name(tag, true);
-		} else if ( tag == "RAMA_PREPRO_RESNAME" ) {
-			l >> tag;
-			rsd->set_rama_prepro_mainchain_torsion_potential_name(tag, false);
-			rsd->set_rama_prepro_mainchain_torsion_potential_name(tag, true);
-		}  else if ( tag == "NAME" ) {
+
+		} else if ( tag == "NAME" ) {
 			l >> tag;
 			rsd->name( tag ); //The name will have variant types appended to it; it will be the unique identifer for a ResidueType.
 			rsd->base_name( tag ); //The base name stays the same once set.  It's common to all ResidueTypes that share a base type but differ in their VariantTypes.
@@ -1278,9 +1261,6 @@ read_topology_file(
 
 	} // scope
 
-	//Set up command-line overrides of RamaPrePro maps:
-	set_up_mapfile_reassignments_from_commandline( rsd );
-
 	// calculate any remaining derived data
 	rsd->finalize();
 
@@ -1529,29 +1509,6 @@ write_graphviz(
 	boost::write_graphviz( ss, rsd.graph(), gpw, gpw, gpw );
 	out << ss.str() << std::endl;
 } // write_graphviz
-
-
-/// @brief Certain commandline flags override the default RamaPrePro maps used by the 20
-/// canonical amino acids.  This function applies those overrides.
-/// @author Vikram K. Mulligan (vmullig@uw.edu).
-void
-set_up_mapfile_reassignments_from_commandline(
-	ResidueTypeOP rsd
-) {
-
-	if ( !is_canonical_L_aa( rsd->aa() ) ) return; //Note that is_canonical_L_aa() returns true also for glycine.
-
-	bool const steep(basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_steep ]());
-	bool const nobidentate(basic::options::option[ basic::options::OptionKeys::corrections::score::rama_prepro_nobidentate ]());
-	if ( !steep && !nobidentate ) return; //Do nothing if the options that we're setting up haven't been set.
-
-	std::string curmap( rsd->get_rama_prepro_map_file_name(false) );
-
-	if ( nobidentate ) curmap += ".rb";
-	if ( steep ) curmap += ".shapovalov.kappa25";
-
-	rsd->set_rama_prepro_map_file_name(curmap, false);
-}
 
 ////////////////////////////////////////////////////////
 void

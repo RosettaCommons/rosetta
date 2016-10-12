@@ -10,8 +10,7 @@
 /// @file   core/scoring/methods/RamaPreProEnergy.cc
 /// @brief  A variation on the Ramachandran scorefunction that has separate probability tables for residues that precede prolines.
 /// @author Frank DiMaio
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- not the original author, but modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic
-/// geometry.  Refactored greatly to support arbitrary heteropolymer building blocks with any number of mainchain torsions.
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- not the original author, but modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic geometry.
 
 // Unit headers
 #include <core/scoring/methods/RamaPreProEnergy.hh>
@@ -150,15 +149,16 @@ RamaPreProEnergy::residue_pair_energy(
 	conformation::Residue const &res_lo = (res1_is_lo) ? rsd1 : rsd2;
 	conformation::Residue const &res_hi = (res2_is_lo) ? rsd1 : rsd2;
 
+	if ( !res_lo.type().is_alpha_aa() ) return; //Only applies to alpha-amino acids.
+
 	if ( res_lo.has_variant_type(core::chemical::CUTPOINT_LOWER) ) return;
 	if ( res_hi.has_variant_type(core::chemical::CUTPOINT_UPPER) ) return;
 	if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return; // Rama not defined.  Note that is_terminus() checks for UPPER_TERMINUS or LOWER_TERMINUS variant types; it knows nothing about sequence position.
 
-	utility::vector1 < core::Real > mainchain_torsions( res_lo.type().mainchain_atoms().size() - 1 );
-	for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(i) );
-	Real rama_score;
-	utility::vector1 < core::Real > gradient; //Dummy argument for below.
-	potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.aa(), mainchain_torsions, rama_score, gradient, false /*Don't return gradient*/ );
+	Real const phi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(1)));
+	Real const psi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(2)));
+	Real rama_score, drpp_dphi, drpp_dpsi;
+	potential_.eval_rpp_rama_score( res_lo.type().backbone_aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
 
 	emap[ rama_prepro ] += rama_score;
 }
@@ -183,25 +183,22 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		if ( tor_id.rsd() != res_lo.seqpos() ) return 0.0;
 		if ( res_lo.is_terminus() || !res_lo.has_lower_connect() || !res_lo.has_upper_connect() ) return 0.0;
-		if ( pose.fold_tree().is_cutpoint( res_lo.seqpos() ) ) return 0.0;
+		if ( pose.fold_tree().is_cutpoint( res_lo.seqpos() ) ) { return 0.0; }
 
 		conformation::Residue const &res_hi( pose.residue( res_lo.residue_connection_partner( res_lo.upper_connect().index() ) ) );
 
-		if ( tor_id.torsion() == res_lo.type().mainchain_atoms().size() ) return 0.0; //No derivative for omega, the inter-residue torsion.
+		if ( res_lo.is_protein() && res_lo.type().is_alpha_aa() && tor_id.torsion() <= 2 ) {
+			Real const phi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(1)));
+			Real const psi ( nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(2)));
+			Real rama_score, drpp_dphi, drpp_dpsi;
+			potential_.eval_rpp_rama_score( res_lo.type().backbone_aa(), res_hi.aa(), phi, psi, rama_score, drpp_dphi, drpp_dpsi );
 
-		utility::vector1 < core::Real > mainchain_torsions( res_lo.type().mainchain_atoms().size() - 1 );
-		for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(i) );
-		Real rama_score; //Dummy argument to below.
-		utility::vector1 < core::Real > gradient; //Dummy argument for below.
-		potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.aa(), mainchain_torsions, rama_score, gradient, true /*Do return gradient*/ );
-
-		debug_assert( gradient.size() == res_lo.type().mainchain_atoms().size() - 1 );
-		deriv = gradient[tor_id.torsion()];
+			deriv = ( tor_id.torsion() == 1 ? drpp_dphi : drpp_dpsi );
+		}
 	}
-
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	return weights[ rama_prepro ] * numeric::conversions::degrees( deriv );
+	return numeric::conversions::degrees( weights[ rama_prepro ] * deriv );
 }
 
 core::Size

@@ -17,8 +17,8 @@
 #include <core/scoring/CenRotEnvPairPotential.fwd.hh>
 
 #include <core/scoring/SmoothEnvPairPotential.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

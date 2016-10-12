@@ -97,7 +97,7 @@ resample_full_model_test()
 		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	}
 
-	// read starting pose
+	// read starting pose 
 	PDBPoseInputStream input( option[ in::file::s ]() );
 
 	// setup poses
@@ -105,23 +105,23 @@ resample_full_model_test()
 
 
 	// iterate over input stream
-	input.fill_pose( start_pose, *rsd_set );
-	stepwise::setup::fill_full_model_info_from_command_line( start_pose/*, other_ops */);
+  input.fill_pose( start_pose, *rsd_set );
+  stepwise::setup::fill_full_model_info_from_command_line( start_pose/*, other_ops */);
 	(*scorefxn)(start_pose);
 
 	seq_rebuild_pose = start_pose;
 	protocols::viewer::add_conformation_viewer(seq_rebuild_pose.conformation(), "current", 500, 500);
 
 
-	// initialize options
+  // initialize options 
 	options::StepWiseMonteCarloOptionsOP options( new options::StepWiseMonteCarloOptions );
-	options->initialize_from_command_line();
+  options->initialize_from_command_line();
 	options->set_erraser( true );
 	options->set_enumerate( true );
-	options->set_skip_deletions( true );
+  options->set_skip_deletions( true );
 	options->set_output_minimized_pose_list( false );
 
-	// run StepWiseMasterMover::resample_full_model
+  // run StepWiseMasterMover::resample_full_model
 	mover::StepWiseMasterMover master_mover( scorefxn, options );
 	master_mover.resample_full_model( start_pose, seq_rebuild_pose, true /*checkpointing_breadcrumbs*/ );
 
@@ -130,15 +130,15 @@ resample_full_model_test()
 
 	// show scores of start_pose and full_model_pose
 	//if ( option[ show_scores ]() ) {
-	std::cout << "\n Score before seq_rebuild:" << std::endl;
-	scorefxn->show( std::cout, start_pose );
-	std::cout << "\n Score after seq_rebuild:" << std::endl;
-	scorefxn->show( std::cout, seq_rebuild_pose );
+	  std::cout << "\n Score before seq_rebuild:" << std::endl;
+		scorefxn->show( std::cout, start_pose );
+		std::cout << "\n Score after seq_rebuild:" << std::endl;
+  	scorefxn->show( std::cout, seq_rebuild_pose );
 	//}
 
-	// dump pdb -- should figure out file name based on inputs
+	// dump pdb -- should figure out file name based on inputs 
 	seq_rebuild_pose.dump_pdb( "SEQ_REBUILD.pdb" );
-
+	 
 
 	// write out to silent file
 	//std::string tag = "S_0";

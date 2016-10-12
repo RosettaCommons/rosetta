@@ -110,8 +110,8 @@
 #include <numeric/internal/RowPointers.hh>
 #include <numeric/internal/RowVectors.hh>
 #include <numeric/internal/RowsPointer.hh>
-#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>
 #include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/util.hh>
@@ -236,9 +236,14 @@ RotamericSingleResidueDunbrackLibrary< T, N >::eval_rotameric_energy_deriv(
 	bool eval_deriv
 ) const
 {
+	//There's probably a better way to check this.
+	debug_assert( rsd.type().backbone_aa() == aa() ||
+		( core::chemical::is_canonical_D_aa( rsd.aa() )
+		&& core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
+
 	ChiVector chi ( rsd.chi() );
 	//Invert if we're dealing with a D-amino acid.
-	if ( rsd.type().is_d_aa() ) for ( core::Size i = 1; i <= chi.size(); i++ ) chi[ i ] *= -1.0;
+	if ( core::chemical::is_canonical_D_aa( rsd.aa() ) ) for ( core::Size i = 1; i <= chi.size(); i++ ) chi[ i ] *= -1.0;
 
 	Real4 & chimean           ( scratch.chimean()           );
 	Real4 & chisd             ( scratch.chisd()             );
@@ -614,7 +619,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 {
 	utility::fixedsizearray1< Real, N > bbs = get_bbs_from_rsd( rsd );
 	//For D-amino acids, invert phi and psi:
-	if ( rsd.type().is_d_aa() ) for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= -1.0;
+	if ( core::chemical::is_canonical_D_aa( rsd.aa() ) ) for ( Size bbi = 1; bbi <= N; ++bbi ) bbs[ bbi ] *= -1.0;
 
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;

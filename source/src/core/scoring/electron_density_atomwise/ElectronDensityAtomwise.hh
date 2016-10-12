@@ -67,7 +67,7 @@ public:
 	void is_score_precomputed( bool const & setting ) {
 		is_score_precomputed_ = setting;
 	}
-
+	
 	//Return the score of a given residue
 	core::Real
 	residue_score( core::conformation::Residue const & rsd );

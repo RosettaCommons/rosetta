@@ -7,26 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @brief Forward declarations for the bicubic spline class.
-/// @author Steven Combs
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
+// @author Steven Combs
 
-#ifndef INCLUDED_numeric_interpolation_spline_BicubicSpline_fwd_hh
-#define INCLUDED_numeric_interpolation_spline_BicubicSpline_fwd_hh
 
-#include <utility/pointer/owning_ptr.hh>
+#ifndef INCLUDED_numeric_interpolation_spline_Cubic_spline_fwd_hh
+#define INCLUDED_numeric_interpolation_spline_Cubic_spline_fwd_hh
+
 
 namespace numeric {
 namespace interpolation {
 namespace spline {
 
-class BicubicSpline;
+enum BorderFlag { e_Natural, e_Periodic, e_FirstDer};
 
-typedef utility::pointer::shared_ptr< BicubicSpline > BicubicSplineOP;
-typedef utility::pointer::shared_ptr< BicubicSpline const > BicubicSplineCOP;
+}
+}
+}
 
-}//end namespace spline
-}//end namespace interpolation
-}//end namespace numeric
 
-#endif /* BICUBIC_SPLINE_FWD_HH_ */
+#endif /* CUBIC_SPLINE_FWD_HH_ */

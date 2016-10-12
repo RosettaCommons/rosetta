@@ -5,7 +5,6 @@ patches/NtermProteinFull.txt
 patches/protein_cutpoint_upper.txt
 patches/protein_cutpoint_lower.txt
 patches/disulfide.txt
-patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).
 
 ## DNA standard
 patches/nucleic/dna/LowerDNA.txt
