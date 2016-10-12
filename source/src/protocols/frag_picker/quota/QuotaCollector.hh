@@ -41,7 +41,7 @@ namespace quota {
 class QuotaCollector : public CandidatesCollector {
 public:
 
-	QuotaCollector(Size query_size, Size frag_size)  { storage_.resize(query_size-frag_size+1); frag_size_ = frag_size; }
+	QuotaCollector(core::Size query_size, core::Size frag_size)  { storage_.resize(query_size-frag_size+1); frag_size_ = frag_size; }
 
 	/// @brief  Insert a fragment candidate to the container
 	bool add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>);
@@ -50,18 +50,18 @@ public:
 	void clear();
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	Size count_candidates(Size) const;
+	core::Size count_candidates(core::Size) const;
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	Size count_candidates() const;
+	core::Size count_candidates() const;
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be ale to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	Size query_length() const { return storage_.size(); }
+	core::Size query_length() const { return storage_.size(); }
 
-	//Undefined, commenting out to fix PyRosetta build  ScoredCandidatesVector1 const & get_candidates(Size position_in_query) const;
-	ScoredCandidatesVector1 & get_candidates(Size position_in_query);
+	//Undefined, commenting out to fix PyRosetta build  ScoredCandidatesVector1 const & get_candidates(core::Size position_in_query) const;
+	ScoredCandidatesVector1 & get_candidates(core::Size position_in_query);
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
@@ -70,14 +70,14 @@ public:
 
 	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size pos, CandidatesCollectorOP collector) {
+	void insert(core::Size pos, CandidatesCollectorOP collector) {
 		QuotaCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::QuotaCollector > ( collector );
 		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
 		}
-		for ( Size j=1; j<=storage_[pos].size(); ++j ) {
+		for ( core::Size j=1; j<=storage_[pos].size(); ++j ) {
 			ScoredCandidatesVector1 & content = c->get_pool(pos, j)->get_candidates(0);
-			for ( Size l=1; l<=content.size(); l++ ) storage_[pos][j]->push( content[l] );
+			for ( core::Size l=1; l<=content.size(); l++ ) storage_[pos][j]->push( content[l] );
 		}
 	}
 
@@ -85,19 +85,19 @@ public:
 	void list_pools(std::ostream & where) const;
 
 	/// @brief prints the number of quota pools for a given positio in query
-	Size count_pools(Size position) const {
+	core::Size count_pools(core::Size position) const {
 		return storage_[position].size();
 	}
 
-	QuotaPoolCOP get_pool( Size position, Size pool_id ) const {
+	QuotaPoolCOP get_pool( core::Size position, core::Size pool_id ) const {
 		return storage_[position][pool_id];
 	}
 
-	QuotaPoolOP get_pool( Size position, Size pool_id ) {
+	QuotaPoolOP get_pool( core::Size position, core::Size pool_id ) {
 		return storage_[position][pool_id];
 	}
 
-	void add_pool(Size position,QuotaPoolOP the_pool) {
+	void add_pool(core::Size position,QuotaPoolOP the_pool) {
 		if ( position <= storage_.size() ) {
 			storage_[position].push_back(the_pool);
 		}
@@ -105,10 +105,10 @@ public:
 
 	void renormalize_quota_pools();
 
-	void attach_secondary_structure_pools(Real,core::fragment::SecondaryStructureOP,
-		std::string, Size, utility::vector1<Size>,utility::vector1<Real>,Size);
+	void attach_secondary_structure_pools(core::Real,core::fragment::SecondaryStructureOP,
+		std::string, core::Size, utility::vector1<core::Size>,utility::vector1<core::Real>,core::Size);
 private:
-	Size frag_size_;
+	core::Size frag_size_;
 	ScoredCandidatesVector1 frags_for_pos_;
 	utility::vector1< utility::vector1<QuotaPoolOP> > storage_;
 };

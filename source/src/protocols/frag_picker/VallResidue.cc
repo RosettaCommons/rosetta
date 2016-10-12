@@ -311,15 +311,15 @@ utility::vector1<core::chemical::AA> VallResidue::order_vector() {
 }
 
 /// @brief return a formatting string for fill_from_string() dependent
-///  upon actual type of core::Real and core::Size
+///  upon actual type of core::Real and core::core::Size
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string() {
 	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<Size, unsigned long>::value;
-	bool const is_double = is_same<Real, double>::value;
+	bool const is_ulong = is_same<core::Size, unsigned long>::value;
+	bool const is_double = is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -341,7 +341,7 @@ VallResidue::String VallResidue::format_string() {
 	s << "%*s"; // (string) dummy
 
 	// (real)   (aa profile_info, 20 columns)
-	for ( Size i = 0; i < 20; ++i ) {
+	for ( core::Size i = 0; i < 20; ++i ) {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
@@ -354,8 +354,8 @@ VallResidue::String VallResidue::format_string_cs() {
 	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<Size, unsigned long>::value;
-	bool const is_double = is_same<Real, double>::value;
+	bool const is_ulong = is_same<core::Size, unsigned long>::value;
+	bool const is_double = is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -374,12 +374,12 @@ VallResidue::String VallResidue::format_string_cs() {
 	s << (is_double ? "%lf" : "%f") << " "; // (real)   omega
 
 	// (real)   (aa profile_info, 20 columns)
-	for ( Size i = 0; i < 20; ++i ) {
+	for ( core::Size i = 0; i < 20; ++i ) {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
 	// (real)   (CS data, 12 columns)
-	for ( Size i = 0; i < 12; ++i ) {
+	for ( core::Size i = 0; i < 12; ++i ) {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
@@ -389,15 +389,15 @@ VallResidue::String VallResidue::format_string_cs() {
 }
 
 /// @brief return a formatting string for fill_from_string_version1() dependent
-///  upon actual type of core::Real and core::Size
+///  upon actual type of core::Real and core::core::Size
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string_version1() {
 	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<Size, unsigned long>::value;
-	bool const is_double = is_same<Real, double>::value;
+	bool const is_ulong = is_same<core::Size, unsigned long>::value;
+	bool const is_double = is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -424,12 +424,12 @@ VallResidue::String VallResidue::format_string_version1() {
 	s << (is_ulong ? "%ld" : "%d") << " "; // (size) nali
 
 	// (real)   (aa profile_info, 20 columns)
-	for ( Size i = 0; i < 20; ++i ) {
+	for ( core::Size i = 0; i < 20; ++i ) {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
 	// (real)  (aa structure profile_info, 20 columns)
-	for ( Size i = 0; i < 20; ++i ) {
+	for ( core::Size i = 0; i < 20; ++i ) {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
@@ -442,8 +442,8 @@ VallResidue::String VallResidue::format_string_residue_depth_version1() {
 	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<Size, unsigned long>::value;
-	bool const is_double = is_same<Real, double>::value;
+	bool const is_ulong = is_same<core::Size, unsigned long>::value;
+	bool const is_double = is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;

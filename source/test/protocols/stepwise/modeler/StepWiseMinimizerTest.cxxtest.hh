@@ -58,6 +58,7 @@ public:
 
 	void test_num_pose_minimize(){
 
+		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;

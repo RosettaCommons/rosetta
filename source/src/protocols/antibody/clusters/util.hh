@@ -26,8 +26,6 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-using utility::vector1;
-using core::Real;
 
 void
 add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info);
@@ -37,7 +35,12 @@ get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const 
 
 /// @brief Calculates the dihedral distance used to match cluster centers.
 core::Real
-calculate_dihedral_distance(vector1< Real > cluster_phis, vector1< Real> pose_phis, vector1< Real > cluster_psis, vector1< Real > pose_psis);
+calculate_dihedral_distance(
+	utility::vector1< core::Real > cluster_phis,
+	utility::vector1< core::Real > pose_phis,
+	utility::vector1< core::Real > cluster_psis,
+	utility::vector1< core::Real > pose_psis
+);
 
 /// @brief Very basic way to check to make sure pose residues are North_AHO (North, et al) scheme, which allows the clustering.
 /// @details If any of these anchor residues that are checked are missing, it will return false.

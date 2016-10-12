@@ -24,6 +24,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.VDW_BinScreener" );
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace screener {

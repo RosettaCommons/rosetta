@@ -36,8 +36,6 @@ namespace core {
 namespace io {
 namespace sequence_comparation {
 
-using utility::file::FileName;
-using utility::vector1;
 /// @brief DesignContrast contains information for comparing the native protein sequence to
 /// designed protein sequence. And output the compare resultes to a special formated file which
 /// can be used for statistics calculations
@@ -58,30 +56,30 @@ public :
 	void setNeighbors(pose::Pose & pose);
 
 	/// @brief Get number of neighbors for all residues in pose
-	vector1<int> & getNeighbors();
-	vector1<int> const & getNeighbors() const;
+	utility::vector1<int> & getNeighbors();
+	utility::vector1<int> const & getNeighbors() const;
 
 	/// @brief Set secondary structure for all residues in pose
 	void setSecStruct(pose::Pose & pose);
 
 	/// @brief Get secondary structure for all residues in pose
-	vector1<std::string> & getSecStruct();
-	vector1<std::string> const & getSecStruct() const;
+	utility::vector1<std::string> & getSecStruct();
+	utility::vector1<std::string> const & getSecStruct() const;
 
 	/// @brief Get pdb file names from the pdb list files.
 	void setNames (); // vector1<std::string> & pdb_file_names ); the pdb_file_names is a private member
 
 
-	vector1<FileName> & getPdbNames();
-	vector1<FileName> const & getPdbNames() const;
+	utility::vector1<utility::file::FileName> & getPdbNames();
+	utility::vector1<utility::file::FileName> const & getPdbNames() const;
 
-	vector1<FileName> & getListNames();
-	vector1<FileName> const & getListNames() const;
+	utility::vector1<utility::file::FileName> & getListNames();
+	utility::vector1<utility::file::FileName> const & getListNames() const;
 
 	void setPdbCodes();
 
-	vector1<std::string> & getPdbCodes();
-	vector1<std::string> const & getPdbCodes() const;
+	utility::vector1<std::string> & getPdbCodes();
+	utility::vector1<std::string> const & getPdbCodes() const;
 
 	/// @brief this function will output the sequence comparing result between native pose and designed pose
 	void output_sqc_file (
@@ -95,12 +93,12 @@ public :
 	void clear();
 
 private:
-	vector1<FileName> list_file_names_;
-	//vector1<std::string> pdb_file_names_;
-	vector1<FileName> pdb_file_names_;
-	vector1<int> nneighbs_;
-	vector1<std::string> secstructs_;
-	vector1<std::string> pdb_codes_;
+	utility::vector1<utility::file::FileName> list_file_names_;
+	//utility::vector1<std::string> pdb_file_names_;
+	utility::vector1<utility::file::FileName> pdb_file_names_;
+	utility::vector1<int> nneighbs_;
+	utility::vector1<std::string> secstructs_;
+	utility::vector1<std::string> pdb_codes_;
 };
 } // namespace sequence_comparation
 } // namespace io

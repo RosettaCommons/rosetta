@@ -35,7 +35,7 @@ namespace scores {
 class RDCScore: public CachingScoringMethod {
 public:
 	/// @brief  creates a RDC-based scoring function.
-	RDCScore( Size, Real, bool);
+	RDCScore( core::Size, core::Real, bool);
 
 	void do_caching( VallChunkOP );
 	void clean_up();
@@ -56,7 +56,7 @@ public:
 		MakeFragmentScoringMethod("RDCScore") {
 	}
 
-	FragmentScoringMethodOP make( Size, Real, bool, FragmentPickerOP, std::string );
+	FragmentScoringMethodOP make( core::Size, core::Real, bool, FragmentPickerOP, std::string );
 };
 
 } // scores

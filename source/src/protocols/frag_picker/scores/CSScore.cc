@@ -53,7 +53,7 @@ static THREAD_LOCAL basic::Tracer trCSScore(
 // The Talos file reader is passed in as an object, and secondary shifts are calculated during CSScore construction
 // (Secondary shifts are shift deviations from random coil, where random coil values are defined according to
 // the combination of atom type, residue type, previous residue type, and next residue type.
-CSScore::CSScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
+CSScore::CSScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	CSTalosIO& reader) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "CSScore")
 {
@@ -76,7 +76,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	////larger differences are adjusted down to clip_factor*v_shift
 	////(the new score is sigmoidal, so clip factors are not required)
 	////ONLY USED IN THE OLD MFR VERSION OF THE SCORE
-	//Real const clip_factor(3.0);
+	//core::Real const clip_factor(3.0);
 
 	//bool vall_data(false);
 	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
@@ -90,25 +90,25 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	cached_scores_id_ = tmp;
 
 	//Initialize empty 2D table, vall-length x target-length
-	Size query_sequence_length = target_shifts_.size();
-	std::pair< Real, Real > empty(0,0);
-	utility::vector1< utility::vector1< std::pair< Real, Real> > > temp( current_chunk->size(),
-		utility::vector1<std::pair< Real, Real> > (query_sequence_length, empty ) );
+	core::Size query_sequence_length = target_shifts_.size();
+	std::pair< core::Real, core::Real > empty(0,0);
+	utility::vector1< utility::vector1< std::pair< core::Real, core::Real> > > temp( current_chunk->size(),
+		utility::vector1<std::pair< core::Real, core::Real> > (query_sequence_length, empty ) );
 	//runtime_assert( target_shifts_.size() > 0 );
 
 	//SIGMOID CONSTANTS - Should be set in constructor, not command line flags
-	Real a( option[frags::sigmoid_cs_A]() ); // default = 4
-	Real b( option[frags::sigmoid_cs_B]() ); // default = 5
+	core::Real a( option[frags::sigmoid_cs_A]() ); // default = 4
+	core::Real b( option[frags::sigmoid_cs_B]() ); // default = 5
 
 
 	//Loop logic is "For each target x vall residue comparison, sum up total of
 	//all shift differences"
-	for ( Size r = 1; r <= target_shifts_.size(); ++r ) {
-		utility::vector1< std::pair< Size, Real > > query_residue_shifts(target_shifts_[r]);
-		for ( Size i = 1; i <= current_chunk->size(); ++i ) {
-			Real tmp = 0.0;
-			Real count = 0.0;
-			for ( Size d = 1; d <= query_residue_shifts.size(); ++d ) {
+	for ( core::Size r = 1; r <= target_shifts_.size(); ++r ) {
+		utility::vector1< std::pair< core::Size, core::Real > > query_residue_shifts(target_shifts_[r]);
+		for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
+			core::Real tmp = 0.0;
+			core::Real count = 0.0;
+			for ( core::Size d = 1; d <= query_residue_shifts.size(); ++d ) {
 
 				//q_shift_type is target atom type, q_shift is that atom's secondary shift
 				// 1 = N
@@ -117,8 +117,8 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 				// 4 = CA
 				// 5 = CB (HA2 for Gly)
 				// 6 = HN
-				Size q_shift_type(query_residue_shifts[d].first);
-				Real q_shift(query_residue_shifts[d].second);
+				core::Size q_shift_type(query_residue_shifts[d].first);
+				core::Real q_shift(query_residue_shifts[d].second);
 
 				//v_shift is the vall atom's secondary shift, v_sigma is the average deviation
 				//on v_shifts for that type of atom at the vall residue's specific phi/psi location
@@ -134,15 +134,15 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 					continue;
 				}
 
-				Real v_shift(res->secondary_shifts()[(q_shift_type*2)-1]);
+				core::Real v_shift(res->secondary_shifts()[(q_shift_type*2)-1]);
 				//q_shift_type*2-1 because the array of 12 numbers goes shift1, sigma1, shift2, sigma2...
-				Real v_sigma(res->secondary_shifts()[ q_shift_type*2 ]);
+				core::Real v_sigma(res->secondary_shifts()[ q_shift_type*2 ]);
 
 				//v_sigma is only 0.0 for atoms that don't exist in the vall. CB on glycine, for example.
 				if ( v_sigma > 0.0 ) {
 
-					Real sig_diff(std::abs((q_shift - v_shift) / v_sigma ));
-					Real sigmoid_diff( 1 / ( 1 + exp((-a*sig_diff)+b) ) );
+					core::Real sig_diff(std::abs((q_shift - v_shift) / v_sigma ));
+					core::Real sigmoid_diff( 1 / ( 1 + exp((-a*sig_diff)+b) ) );
 
 					tmp += sigmoid_diff;
 					count += 1;
@@ -150,11 +150,11 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 
 					//THIS IS WHAT THE ORIGINAL CSROSETTA CS SCORE FUNCTION LOOKED LIKE:
-					//Real c1_weight(1.0); //Reweight hydrogen and nitrogen values by 0.9
+					//core::Real c1_weight(1.0); //Reweight hydrogen and nitrogen values by 0.9
 					//if ((q_shift_type == 1) || (q_shift_type == 6)) {// or (q_shift_type == 3)) {
 					// c1_weight = 0.9;
 					//}
-					//Real diff(q_shift - v_shift);
+					//core::Real diff(q_shift - v_shift);
 					//if ( std::abs(diff) > (clip_factor*v_sigma) ) {
 					// diff = clip_factor*v_sigma;
 					//}
@@ -203,18 +203,18 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 		cached_scores_id_ = tmp;
 	}
 
-	//Size offset_q = fragment->get_first_index_in_query() - 1;
-	//Size offset_v = fragment->get_first_index_in_vall() - 1;
+	//core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	//core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	Real totalScore = 0.0;
-	Real totalCount = 0.0;
+	core::Real totalScore = 0.0;
+	core::Real totalCount = 0.0;
 
-	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= fragment->get_length(); i++ ) {
 		runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
 		runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
 
 
-		std::pair< Real, Real> tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
+		std::pair< core::Real, core::Real> tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
 			[fragment->get_first_index_in_query() + i - 1];
 
 		//tmp.first is the score for that residue comparison
@@ -226,7 +226,7 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 
 	// runtime_assert( totalScore != NULL );
 
-	totalScore /= (Real) fragment->get_length();
+	totalScore /= (core::Real) fragment->get_length();
 
 	scores->set_score_component(totalScore, id_);
 
@@ -239,8 +239,8 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 void CSScore::clean_up() {
 }
 
-FragmentScoringMethodOP MakeCSScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeCSScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string // line
 ) {
 

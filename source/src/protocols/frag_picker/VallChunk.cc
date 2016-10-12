@@ -51,7 +51,7 @@ void VallChunk::create_key() {
 
 std::string& VallChunk::get_sequence() {
 	if ( sequence_.length() == 0 ) {
-		for ( Size i = 1; i <= residues_.size(); i++ ) {
+		for ( core::Size i = 1; i <= residues_.size(); i++ ) {
 			char next = residues_.at(i)->aa();
 			sequence_ += next;
 		}

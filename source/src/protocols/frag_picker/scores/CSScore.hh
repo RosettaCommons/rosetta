@@ -33,9 +33,9 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
-//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
+//typedef utility::vector1<utility::vector1<std::pair<core::Real,core::Real> > > Score_Matrix;
 class CSScore;
 typedef utility::pointer::shared_ptr< CSScore > CSScoreOP;
 typedef utility::pointer::shared_ptr< CSScore const > CSScoreCOP;
@@ -48,7 +48,7 @@ public:
 	/// @brief  creates a Phi-Psi-based scoring function.
 	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 
-	CSScore(Size, Real, bool, CSTalosIO&);
+	CSScore(core::Size, core::Real, bool, CSTalosIO&);
 	void do_caching(VallChunkOP);
 	void clean_up();
 	bool score(FragmentCandidateOP, FragmentScoreMapOP);
@@ -63,8 +63,8 @@ private:
 
 	//Shift Data. Should be one vector per residue, and residues without shift data should
 	//have empty vectors.
-	utility::vector1< utility::vector1< std::pair< Size, Real > > > target_shifts_;
-	utility::vector1< utility::vector1< std::pair< Real, Real> > > scores_;
+	utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > target_shifts_;
+	utility::vector1< utility::vector1< std::pair< core::Real, core::Real> > > scores_;
 
 	std::string cached_scores_id_;
 
@@ -80,7 +80,7 @@ public:
 		MakeFragmentScoringMethod("CSScore") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

@@ -74,6 +74,7 @@ using namespace ObjexxFCL::format;
 using namespace ObjexxFCL;
 using namespace core;
 using namespace core::pose::rna;
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace farna {

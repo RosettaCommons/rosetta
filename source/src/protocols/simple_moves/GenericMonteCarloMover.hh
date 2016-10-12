@@ -50,9 +50,6 @@
 namespace protocols {
 namespace simple_moves {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::moves;
-
 /// @brief Trigger API definition
 typedef boost::function<bool(core::Size,
 	core::Size,
@@ -153,7 +150,7 @@ public:
 
 	/// @brief Does what the mover needs to do when a pose is accepted, given a pose and scores
 	void
-	accept( Pose & pose, utility::vector1< core::Real > const & provisional_scores, MCA const mca_status );
+	accept( Pose & pose, utility::vector1< core::Real > const & provisional_scores, protocols::moves::MCA const mca_status );
 
 	Size num_designable( Pose & pose, PackerTaskOP & task);
 
@@ -175,7 +172,7 @@ public: // accessor
 	Real current_score() const;
 
 	/// @brief return mc_accepted
-	MCA mc_accpeted() const;
+	protocols::moves::MCA mc_accpeted() const;
 
 	/// @brief Return the score function in use
 	ScoreFunctionOP score_function() const {
@@ -357,7 +354,7 @@ protected:
 	void progress_file( std::string const & s ){ progress_file_ = s; }
 
 	/// @brief Sets mc_accpeted
-	void set_mc_accepted( MCA const m ){ mc_accepted_ = m; }
+	void set_mc_accepted( moves::MCA const m ){ mc_accepted_ = m; }
 
 	int trial_counter_ = 0;
 
@@ -447,7 +444,7 @@ private:
 	PoseOP lowest_score_pose_;
 
 	/// @brief result of the last call to boltzmann
-	MCA mc_accepted_ = MCA_accepted_score_beat_last;
+	moves::MCA mc_accepted_ = moves::MCA_accepted_score_beat_last;
 
 	/// @brief to change the sing of calculated "score"
 	Real flip_sign_ = 1;

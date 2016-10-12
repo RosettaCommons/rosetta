@@ -40,6 +40,8 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
+using namespace core;
+
 //Constructor
 RNA_AtrRepChecker::RNA_AtrRepChecker( pose::Pose const & pose,
 	working_parameters::StepWiseWorkingParametersCOP & working_parameters,

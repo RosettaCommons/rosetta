@@ -39,8 +39,6 @@
 // C++ headers
 #include <string>
 
-using core::chemical::rna::PuckerState;
-
 namespace core {
 namespace pose {
 namespace rna {
@@ -54,17 +52,17 @@ public:
 	//Apply ideal coords to one residue. Keep the backbone torsion values by default
 	//std::map < id::DOF_ID , Real > apply_and_return( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
 
-	void apply( Pose & pose, Size const seqpos, PuckerState pucker, bool const keep_backbone_torsion = true ) const;
+	void apply( Pose & pose, Size const seqpos, core::chemical::rna::PuckerState pucker, bool const keep_backbone_torsion = true ) const;
 
 	//Apply ideal coords to whole pose.
 	//pucker_conformations: 0 for keeping pucker, 1 for North, 2 for South
-	void apply( Pose & pose, utility::vector1 < PuckerState > const & puckers, bool const keep_backbone_torsion = true ) const;
+	void apply( Pose & pose, utility::vector1 < core::chemical::rna::PuckerState > const & puckers, bool const keep_backbone_torsion = true ) const;
 
 	//Apply ideal coords to whole pose. Keep all pucker state
 	void apply( Pose & pose, bool const keep_backbone_torsion = true ) const;
 
 	// Apply ideal coord to puckers only, assuming ideal coords of A
-	void apply_pucker( Pose & pose, Size const seqpos, PuckerState pucker, bool const keep_backbone_torsion = true ) const;
+	void apply_pucker( Pose & pose, Size const seqpos, core::chemical::rna::PuckerState pucker, bool const keep_backbone_torsion = true ) const;
 
 	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
 

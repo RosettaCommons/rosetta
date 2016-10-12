@@ -32,13 +32,13 @@ void CompositeFragmentSelector::select_fragments(
 		selectors_[1]->select_fragments(in,out);
 		return;
 	}
-	Size n = selectors_.size();
+	core::Size n = selectors_.size();
 	ScoredCandidatesVector1 tmp, tmp_tmp;
 	selectors_[1]->select_fragments(in,tmp);
-	for ( Size i=2; i<=n-1; i++ ) {
+	for ( core::Size i=2; i<=n-1; i++ ) {
 		selectors_[i]->select_fragments(tmp,tmp_tmp);
 		tmp.clear();
-		for ( Size j=1; j<=tmp_tmp.size(); j++ ) {
+		for ( core::Size j=1; j<=tmp_tmp.size(); j++ ) {
 			tmp.push_back(tmp_tmp[j]);
 		}
 	}

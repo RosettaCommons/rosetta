@@ -51,6 +51,7 @@ namespace methods {
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.CenPairMotifDegreeEnergy" );
 
 using namespace core::scoring::motif;
+using utility::vector1;
 
 methods::EnergyMethodOP
 CenPairMotifDegreeEnergyCreator::create_energy_method(
@@ -107,7 +108,7 @@ void CenPairMotifDegreeEnergy::finalize_total_energy( pose::Pose & pose, ScoreFu
 					Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
 					char ss1 = dssp.get_dssp_secstruct( ir );
 					char aa1 = pose.residue(ir).name1();
-					vector1<Size> contactingRes;
+					utility::vector1<Size> contactingRes;
 					for ( size_t jr = 1; jr <= nres2; ++jr ) {// was ir+1 so it only scanned residues once. but this will scan it twice.
 						if ( ir != jr && !tree.is_jump_point(ir) && !tree.is_jump_point(jr) ) {
 							Real dist = pose.residue(ir).xyz("CA").distance(pose.residue(jr).xyz("CA"));

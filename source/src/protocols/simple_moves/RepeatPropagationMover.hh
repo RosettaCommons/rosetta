@@ -35,15 +35,12 @@
 static basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
 namespace protocols {
 namespace simple_moves {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::moves;
 
 class RepeatPropagationMover : public protocols::moves::Mover
 {
 public:
 	RepeatPropagationMover();
-	void apply( Pose & pose ) override;
+	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 	moves::MoverOP clone() const override { return moves::MoverOP( new RepeatPropagationMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -52,27 +49,27 @@ private:
 	void duplicate_residues_by_type(Pose & pose, Pose & repeat_pose);
 	void copy_phi_psi_omega(Pose & pose, Pose & repeat_pose);
 	void add_caps(Pose & pose, Pose & repeat_pose);
-	std::vector<Real> get_center_of_mass(Real* coordinates, int number_of_atoms);
+	std::vector<core::Real> get_center_of_mass(core::Real* coordinates, int number_of_atoms);
 	void repeat_ligand(Pose & pose, Pose & repeat_pose);
-	utility::vector1<Size> initial_constrained_residues(const Pose & pose);
+	utility::vector1<core::Size> initial_constrained_residues(const Pose & pose);
 	void fix_ligand_residues(Pose & pose, Pose & repeat_pose);
-	core::id::SequenceMapping setup_repeat_seqmap(Size repeat_number,Size ligand_in_pose, Size ligand_in_repeat);
+	core::id::SequenceMapping setup_repeat_seqmap(core::Size repeat_number,core::Size ligand_in_pose, core::Size ligand_in_repeat);
 	void repeat_ligand_constraints(Pose & pose, Pose & repeat_pose);
-	void determine_overlap(const Pose & pose, Pose & parent_pose,Size overlap_max_length,Size overlap_range, std::string overlap_location_pose,Size & start_overlap_parent, Size & end_overlap_parent, Size & start_overlap_pose, Size & end_overlap_pose);
-	void generate_overlap(Pose & pose, Pose & parent_pose, std::string overlap_location_pose,Size start_overlap_parent, Size end_overlap_parent, Size start_overlap_pose, Size end_overlap_pose);
+	void determine_overlap(const Pose & pose, Pose & parent_pose,core::Size overlap_max_length,core::Size overlap_range, std::string overlap_location_pose,core::Size & start_overlap_parent, core::Size & end_overlap_parent, core::Size & start_overlap_pose, core::Size & end_overlap_pose);
+	void generate_overlap(Pose & pose, Pose & parent_pose, std::string overlap_location_pose,core::Size start_overlap_parent, core::Size end_overlap_parent, core::Size start_overlap_pose, core::Size end_overlap_pose);
 	void detect_last_repeat_residue(const Pose & pose);
 	void trim_back_repeat_to_repair_scar(Pose & pose);
-	Size first_res_;
-	Size last_res_;
+	core::Size first_res_;
+	core::Size last_res_;
 	bool deal_with_ideal_loop_closure_scar_;
-	Size orig_number_repeats_;
-	Size orig_pdb_length_;
-	Size numb_repeats_;
+	core::Size orig_number_repeats_;
+	core::Size orig_pdb_length_;
+	core::Size numb_repeats_;
 	bool repeat_without_replacing_pose_;
 	bool maintain_cap_;
 	bool maintain_ligand_;
-	Size nTerm_cap_size_;
-	Size cTerm_cap_size_;
+	core::Size nTerm_cap_size_;
+	core::Size cTerm_cap_size_;
 };
 } //protocols
 } //moves

@@ -26,22 +26,25 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
+using core::Size;
+using core::Real;
+
 /// @details Auto-generated virtual destructor
 ABEGO_SS_Map::~ABEGO_SS_Map() {}
 
 char ABEGO_SS_Map::all_abego_[6] = {'X','A','B','E','G','O'};
 char ABEGO_SS_Map::all_ss_[4] = {'X','H','E','L'};
 
-ABEGO_SS_Map::ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> > ss_abego_types) {
+ABEGO_SS_Map::ABEGO_SS_Map(utility::vector1< std::pair<core::Size,core::Size> > ss_abego_types) {
 
-	for ( Size i=1; i<=3; i++ ) {
+	for ( core::Size i=1; i<=3; i++ ) {
 		utility::vector1<bool> row;
-		for ( Size j=1; j<=5; j++ ) {
+		for ( core::Size j=1; j<=5; j++ ) {
 			row.push_back(false);
 		}
 		ss_abego_types_.push_back(row);
 	}
-	for ( Size i=1; i<=ss_abego_types.size(); i++ ) {
+	for ( core::Size i=1; i<=ss_abego_types.size(); i++ ) {
 		set_status(ss_abego_types[i],true);
 	}
 }
@@ -49,8 +52,8 @@ ABEGO_SS_Map::ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> > ss_abego_typ
 std::string ABEGO_SS_Map::show_valid() {
 
 	std::ostringstream ss;
-	for ( Size i=1; i<=3; i++ ) {
-		for ( Size j=1; j<=5; j++ ) {
+	for ( core::Size i=1; i<=3; i++ ) {
+		for ( core::Size j=1; j<=5; j++ ) {
 			if ( ! ss_abego_types_[i][j] ) continue;
 			ss<< "("<<all_ss_[i]<<","<<all_abego_[j]<<") ";
 		}
@@ -59,7 +62,7 @@ std::string ABEGO_SS_Map::show_valid() {
 	return ss.str();
 }
 
-Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real const omega) {
+core::Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real const omega) {
 
 	if ( std::abs( omega ) < 90 ) {
 		return 5; // cis-omega
@@ -79,7 +82,7 @@ Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real
 	return 0;
 }
 
-Size abego_index(char abego_class) {
+core::Size abego_index(char abego_class) {
 
 	switch(abego_class) {
 	case 'A' :
@@ -105,7 +108,7 @@ Size abego_index(char abego_class) {
 	}
 }
 
-Size ss_index(char ss_class) {
+core::Size ss_index(char ss_class) {
 
 	switch(ss_class) {
 	case 'H' :

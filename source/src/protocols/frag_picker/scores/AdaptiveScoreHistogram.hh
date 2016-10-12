@@ -27,29 +27,26 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class AdaptiveScoreHistogram : public utility::pointer::ReferenceCount {
 public:
-	AdaptiveScoreHistogram(Real,Real);
+	AdaptiveScoreHistogram(core::Real,core::Real);
 	virtual ~AdaptiveScoreHistogram();
 
-	void insert(Real);
+	void insert(core::Real);
 
-	inline Size at(Size index) {
+	inline core::Size at(core::Size index) {
 		return data_.at(index);
 	}
 
-	inline Size operator[](Size index) {
+	inline core::Size operator[](core::Size index) {
 		return data_[index];
 	}
 
-	inline Size size() {
+	inline core::Size size() {
 		return data_.size();
 	}
 
-	inline utility::vector1<Size>& expose_counts() {
+	inline utility::vector1<core::Size>& expose_counts() {
 		return data_;
 	}
 
@@ -57,14 +54,14 @@ public:
 		data_.clear();
 	}
 
-	Size sum();
+	core::Size sum();
 
-	Real p_value(Real);
+	core::Real p_value(core::Real);
 private:
-	Real bin_size_;
+	core::Real bin_size_;
 	bool is_up_to_date_;
-	utility::vector1<Size> data_;
-	utility::vector1<Size> cumulative_sums_;
+	utility::vector1<core::Size> data_;
+	utility::vector1<core::Size> cumulative_sums_;
 };
 } // scores
 } // frag_picker

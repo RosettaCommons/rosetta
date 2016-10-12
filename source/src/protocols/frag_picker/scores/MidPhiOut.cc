@@ -42,14 +42,14 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-MidPhiOut::MidPhiOut(Size priority, Real lowest_acceptable_value, bool use_lowest) :
+MidPhiOut::MidPhiOut(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "MidPhiOut") {
 }
 
 void MidPhiOut::do_caching(VallChunkOP current_chunk) {
 
 	chunk_phi_.redimension(current_chunk->size());
-	for ( Size i = 1; i <= current_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_phi_(i) = r->phi();
 	}
@@ -68,13 +68,13 @@ bool MidPhiOut::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 		cached_scores_id_ = tmp;
 	}
 
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	Real r_phi = static_cast< Real > ( fragment->get_length() );
+	core::Real r_phi = static_cast< core::Real > ( fragment->get_length() );
 	r_phi = (r_phi/2)+0.5+offset_v;
-	Size i_phi = static_cast< Size > ( r_phi );
+	core::Size i_phi = static_cast< core::Size > ( r_phi );
 
-	Real phi = chunk_phi_(i_phi);
+	core::Real phi = chunk_phi_(i_phi);
 
 	scores->set_score_component( phi, id_);
 
@@ -98,8 +98,8 @@ void MidPhiOut::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakeMidPhiOut::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeMidPhiOut::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string ) {
 
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new MidPhiOut(priority,

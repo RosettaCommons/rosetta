@@ -75,6 +75,7 @@ using namespace core::pose::full_model_info;
 
 using ObjexxFCL::string_of;
 using utility::operator<<;
+using core::kinematics::FoldTree;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.util" );
 
@@ -1975,7 +1976,7 @@ get_unique_connection_res( pose::Pose const & pose,
 bool
 stepwise_addable_pose_residue( Size const n /*in pose numbering*/, pose::Pose const & pose ) {
 	runtime_assert( full_model_info_defined( pose ) );
-	vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 	return stepwise_addable_residue( res_list[ n ],
 		const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map() );
 }

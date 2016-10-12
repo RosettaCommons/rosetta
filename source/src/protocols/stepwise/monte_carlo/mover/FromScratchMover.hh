@@ -22,9 +22,6 @@
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -46,7 +43,7 @@ public:
 
 	void
 	apply( core::pose::Pose & pose,
-		utility::vector1<Size> const & residues_to_instantiate_in_full_model_numbering ) const;
+		utility::vector1<core::Size> const & residues_to_instantiate_in_full_model_numbering ) const;
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -57,10 +54,10 @@ public:
 private:
 
 	void
-	update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< Size > const & resnum ) const;
+	update_full_model_info_and_switch_focus_to_new_pose( core::pose::Pose & pose, core::pose::Pose & new_pose, utility::vector1< core::Size > const & resnum ) const;
 
 	void
-	sample_by_swa( pose::Pose & pose, Size const sample_res ) const;
+	sample_by_swa( core::pose::Pose & pose, core::Size const sample_res ) const;
 
 private:
 

@@ -24,9 +24,6 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -40,7 +37,7 @@ class PhosphateMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	PhosphateMover( Size const sample_res,
+	PhosphateMover( core::Size const sample_res,
 		PhosphateTerminus which_terminus_,
 		core::scoring::ScoreFunctionCOP scorefxn );
 
@@ -58,7 +55,7 @@ public:
 public:
 
 	void
-	screen_phosphate( pose::Pose & pose );
+	screen_phosphate( core::pose::Pose & pose );
 
 	bool instantiated_phosphate() const{ return instantiated_phosphate_; }
 
@@ -71,36 +68,36 @@ private:
 	initialize_variables();
 
 	void
-	setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose & pose  );
+	setup_variants_and_free_pose_for_terminal_phosphate( core::pose::Pose & pose  );
 
 	void
-	setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose );
+	setup_variants_and_free_pose_for_five_prime_phosphate( core::pose::Pose & pose );
 
 	void
-	setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose );
+	setup_variants_and_free_pose_for_three_prime_phosphate( core::pose::Pose & pose );
 
 	void
-	screen_five_prime_phosphate( pose::Pose & pose );
+	screen_five_prime_phosphate( core::pose::Pose & pose );
 
 	void
-	screen_three_prime_phosphate( pose::Pose & pose );
+	screen_three_prime_phosphate( core::pose::Pose & pose );
 
 	void
-	setup_atom_and_neighbor_list( pose::Pose & pose );
+	setup_atom_and_neighbor_list( core::pose::Pose & pose );
 
 	bool
-	check_phosphate_contacts_donor( pose::Pose & pose ) const;
+	check_phosphate_contacts_donor( core::pose::Pose & pose ) const;
 
 	bool
 	pass_clash_check( std::string const & atom_name,
-		Size const n,
-		pose::Pose & pose );
+		core::Size const n,
+		core::pose::Pose & pose );
 
 	void
-	apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+	apply_Aform_torsions_to_five_prime_phosphate( core::pose::Pose & pose, core::Size const sample_res ) const;
 
 	void
-	apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const;
+	apply_Aform_torsions_to_three_prime_phosphate( core::pose::Pose & pose, core::Size const sample_res ) const;
 
 private:
 
@@ -112,13 +109,13 @@ private:
 	bool instantiated_phosphate_;
 	bool force_phosphate_instantiation_;
 
-	pose::PoseOP pose_free_;
+	core::pose::PoseOP pose_free_;
 
-	utility::vector1< Vector > donor_atom_xyz_list_;
-	utility::vector1< Vector > donor_base_atom_xyz_list_;
-	utility::vector1< Size > neighbor_copy_dofs_;
-	Size op1_atom_idx_, op2_atom_idx_;
-	Size number_score_calls_;
+	utility::vector1< core::Vector > donor_atom_xyz_list_;
+	utility::vector1< core::Vector > donor_base_atom_xyz_list_;
+	utility::vector1< core::Size > neighbor_copy_dofs_;
+	core::Size op1_atom_idx_, op2_atom_idx_;
+	core::Size number_score_calls_;
 
 	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 

@@ -79,11 +79,11 @@ public:
 
 	// align all templates to a reference model
 	void
-	align_templates_by_domain(core::pose::PoseOP & ref_pose, utility::vector1 <Loops> domains=utility::vector1 <Loops>());
+	align_templates_by_domain(core::pose::PoseOP & ref_pose, utility::vector1 <protocols::loops::Loops> domains=utility::vector1 <protocols::loops::Loops>());
 
 	// align 1 templates to a reference model
 	void
-	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains);
+	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <protocols::loops::Loops> domains);
 
 	void domain_parse_templates(core::Size nres);
 
@@ -109,7 +109,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	// set options
 	void set_batch_relax( core::Size newval ) { batch_relax_ = newval; }

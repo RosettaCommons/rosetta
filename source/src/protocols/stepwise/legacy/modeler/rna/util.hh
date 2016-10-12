@@ -22,9 +22,6 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -32,44 +29,44 @@ namespace modeler {
 namespace rna {
 
 bool
-check_can_prepend( utility::vector1< Size > const & seq_num_list );
+check_can_prepend( utility::vector1< core::Size > const & seq_num_list );
 
 bool
-check_can_append( utility::vector1< Size > const & seq_num_list );
+check_can_append( utility::vector1< core::Size > const & seq_num_list );
 
 void
-output_pair_size( std::pair < Size, Size > const & pair_size, std::ostream & outstream = std::cout );
+output_pair_size( std::pair < core::Size, core::Size > const & pair_size, std::ostream & outstream = std::cout );
 
 void
-output_pair_size( utility::vector1 < std::pair < Size, Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_pair_size( utility::vector1 < std::pair < core::Size, core::Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream = std::cout, core::Size const spacing = 40 );
 
-void output_is_prepend_map( std::string const & tag, std::map< Size, bool > const & my_map, Size const max_seq_num, std::ostream & outstream = std::cout, Size const tag_spacing = 40 );
-
-void
-output_bool_list( std::string const & tag, utility::vector1< bool > const & bool_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+void output_is_prepend_map( std::string const & tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, std::ostream & outstream = std::cout, core::Size const tag_spacing = 40 );
 
 void
-output_bool_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_bool_list( std::string const & tag, utility::vector1< bool > const & bool_list, std::ostream & outstream = std::cout, core::Size const spacing = 40 );
 
 void
-output_size_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_bool_list( std::string const & tag, utility::vector1< core::Size > const & size_list, std::ostream & outstream = std::cout, core::Size const spacing = 40 );
 
 void
-sort_pair_list( utility::vector1< std::pair < Size, Size > > pair_list );
+output_size_list( std::string const & tag, utility::vector1< core::Size > const & size_list, std::ostream & outstream = std::cout, core::Size const spacing = 40 );
 
 void
-output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream = std::cout );
+sort_pair_list( utility::vector1< std::pair < core::Size, core::Size > > pair_list );
 
 void
-output_fold_tree_info( pose::Pose const & pose, std::string pose_name, std::ostream & outstream = std::cout );
+output_fold_tree_info( core::kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream = std::cout );
+
+void
+output_fold_tree_info( core::pose::Pose const & pose, std::string pose_name, std::ostream & outstream = std::cout );
 
 
-Real
-full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom );
+core::Real
+full_length_rmsd_over_residue_list( core::pose::Pose const & pose1, core::pose::Pose const & pose2, utility::vector1 < core::Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom );
 
 
 void
-print_backbone_torsions( pose::Pose const & pose, Size five_prime_chainbreak );
+print_backbone_torsions( core::pose::Pose const & pose, core::Size five_prime_chainbreak );
 
 core::Size
 setup_chain_break_jump_point( core::pose::Pose & pose,
@@ -81,21 +78,21 @@ remove_chain_break_jump_point( core::pose::Pose & pose,
 	core::Size const moving_res,
 	core::Size const reference_res );
 
-Size
-setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const & reference_base, bool verbose = false );
+core::Size
+setup_bulge_jump_point( core::pose::Pose & pose, core::Size const & moving_base, core::Size const & reference_base, bool verbose = false );
 
 void
-apply_rotamer( pose::Pose & pose, utility::vector1< protocols::stepwise::modeler::rna::Torsion_Info >  const & rotamer_list );
+apply_rotamer( core::pose::Pose & pose, utility::vector1< protocols::stepwise::modeler::rna::Torsion_Info >  const & rotamer_list );
 
 bool
-is_same_sugar_pucker( pose::Pose const & current_pose, pose::Pose const & cluster_center_pose, Size const seq_num );
+is_same_sugar_pucker( core::pose::Pose const & current_pose, core::pose::Pose const & cluster_center_pose, core::Size const seq_num );
 
 void
-setup_simple_fold_tree( pose::Pose & pose );
+setup_simple_fold_tree( core::pose::Pose & pose );
 
 void
 import_pose_from_silent_file(
-	pose::Pose & import_pose,
+	core::pose::Pose & import_pose,
 	std::string const & silent_file,
 	std::string const & input_tag );
 
@@ -109,7 +106,7 @@ void
 print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const & WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );
 
 void
-set_nucleotide_to_A_form( pose::Pose & pose, Size const seq_num );
+set_nucleotide_to_A_form( core::pose::Pose & pose, core::Size const seq_num );
 
 std::string
 path_basename( std::string const & full_path );

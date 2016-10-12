@@ -67,6 +67,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.EvolutionaryDynami
 static THREAD_LOCAL basic::Tracer TR_energies( "protocols.simple_moves.EvolutionaryDynamicsMover.individual_energies" );
 
 using namespace core;
+using namespace protocols::moves;
 
 namespace protocols {
 namespace simple_moves {

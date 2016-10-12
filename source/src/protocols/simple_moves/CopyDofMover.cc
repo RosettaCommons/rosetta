@@ -40,6 +40,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
 namespace protocols {
 namespace simple_moves {
 
+using namespace core;
+
 //Constructor
 CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map ):
 	template_pose_( template_pose ),

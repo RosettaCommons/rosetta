@@ -32,6 +32,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/chemical/rna/util.hh> // for information on phosphate atoms.
+#include <core/pose/copydofs/CopyDofs.hh> // FIXED_DOMAIN
 
 #include <utility/exit.hh>
 
@@ -49,6 +50,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.AtomLevelDomainMap" );
 using namespace core;
 using core::id::AtomID;
 using core::id::NamedAtomID;
+using core::pose::copydofs::FIXED_DOMAIN;
 
 ///////////////////////////////////////////////////////////////////////////
 //

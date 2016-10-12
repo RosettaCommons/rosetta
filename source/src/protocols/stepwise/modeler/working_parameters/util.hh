@@ -23,31 +23,28 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
 namespace working_parameters {
 
 StepWiseWorkingParametersOP
-setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
-	pose::Pose const & pose,
-	pose::PoseCOP native_pose,
-	utility::vector1< Size > const & bridge_res,
-	utility::vector1< Size > const & working_minimize_res );
+setup_working_parameters_for_swa( utility::vector1< core::Size > const & moving_res_list,
+	core::pose::Pose const & pose,
+	core::pose::PoseCOP native_pose,
+	utility::vector1< core::Size > const & bridge_res,
+	utility::vector1< core::Size > const & working_minimize_res );
 
 StepWiseWorkingParametersOP
-setup_working_parameters_explicit( Size const rebuild_res,
-	pose::Pose const & pose,
-	pose::PoseCOP native_pose );
+setup_working_parameters_explicit( core::Size const rebuild_res,
+	core::pose::Pose const & pose,
+	core::pose::PoseCOP native_pose );
 
 bool
-figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res );
+figure_out_rebuild_bulge_mode( core::pose::Pose const & pose, core::Size const rebuild_res );
 
 bool
-figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite );
+figure_out_sample_both_sugar_base_rotamer( core::pose::Pose const & pose, bool const floating_base, core::Size const rebuild_suite );
 
 } //working_parameters
 } //modeler

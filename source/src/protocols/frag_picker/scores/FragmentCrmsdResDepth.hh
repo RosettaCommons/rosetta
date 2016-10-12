@@ -37,7 +37,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by its crmsd to the given reference structure
 class FragmentCrmsdResDepth: public CachingScoringMethod {
@@ -45,11 +45,11 @@ public:
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	FragmentCrmsdResDepth(Size, Real, bool, core::pose::PoseOP, utility::vector1<core::Real> & query_residue_depth);
+	FragmentCrmsdResDepth(core::Size, core::Real, bool, core::pose::PoseOP, utility::vector1<core::Real> & query_residue_depth);
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
-	FragmentCrmsdResDepth(Size, Real, bool, utility::vector1< utility::vector1<Real> >,  utility::vector1<core::Real> & query_residue_depth);
+	FragmentCrmsdResDepth(core::Size, core::Real, bool, utility::vector1< utility::vector1<core::Real> >,  utility::vector1<core::Real> & query_residue_depth);
 
 	~FragmentCrmsdResDepth();
 
@@ -60,8 +60,8 @@ public:
 
 private:
 	std::string cached_scores_id_;
-	Size n_atoms_;
-	pose::PoseOP reference_pose_;
+	core::Size n_atoms_;
+	core::pose::PoseOP reference_pose_;
 	ObjexxFCL::FArray2D_double reference_coordinates_;
 	ObjexxFCL::FArray2D_double chunk_coordinates_;
 	ObjexxFCL::FArray2D_double fragment_coordinates_;
@@ -69,7 +69,7 @@ private:
 	ObjexxFCL::FArray1D_double weights_;
 	utility::vector1<core::Real> query_residue_depth_;
 
-	void fill_CA_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, Size);
+	void fill_CA_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, core::Size);
 };
 
 /// @brief  Maker class that produces a new FragmentCrmsdResDepth object
@@ -80,7 +80,7 @@ public:
 		MakeFragmentScoringMethod("FragmentCrmsdResDepth") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

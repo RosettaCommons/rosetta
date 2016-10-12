@@ -907,7 +907,7 @@ SimpleCycpepPredictApplication::run() const {
 		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << "\t" << cis_peptide_bonds << std::endl;
 
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
-			core::io::silent::SilentStructOP ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
+			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
 			char tag[512];
 			if ( my_rank_ > 0 ) {
 				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat) );
@@ -925,7 +925,7 @@ SimpleCycpepPredictApplication::run() const {
 			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
 #endif
 			if ( silent_out_ ) {
-				core::io::silent::SilentFileDataOP silent_file (new io::silent::SilentFileData );
+				core::io::silent::SilentFileDataOP silent_file (new core::io::silent::SilentFileData );
 				silent_file->set_filename( out_filename_ );
 				silent_file->write_silent_struct( *ss, out_filename_ );
 			}

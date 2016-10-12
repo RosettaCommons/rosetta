@@ -34,25 +34,20 @@ namespace protocols {
 namespace farna {
 namespace thermal_sampling {
 
-using namespace core::pose;
-using namespace core;
-using namespace protocols;
-using namespace protocols::stepwise;
-
 //////////////////////////////////////////////////////////////////////////////
 utility::vector1<core::Real> get_torsions(
 	utility::vector1<core::id::TorsionID> & torsion_ids,
-	const Pose & pose
+	const core::pose::Pose & pose
 );
 
 //////////////////////////////////////////////////////////////////////////////
 void set_gaussian_stdevs(
 	utility::vector1<protocols::stepwise::sampler::rna::RNA_MC_KIC_SamplerOP> & internal_bb_sampler,
 	utility::vector1<protocols::stepwise::sampler::MC_OneTorsionOP> & chi_sampler,
-	sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
+	protocols::stepwise::sampler::rna::RNA_MC_MultiSuite & standard_bb_sampler,
 	moves::SimulatedTempering const & tempering,
-	Size const & total_rsd,
-	Size const & sampled_rsd,
+	core::Size const & total_rsd,
+	core::Size const & sampled_rsd,
 	utility::vector1<bool> is_free
 );
 

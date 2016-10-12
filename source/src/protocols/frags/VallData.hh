@@ -33,15 +33,12 @@
 namespace protocols {
 namespace frags {
 
-using core::Real;
-using core::Size;
-
 inline
 char
 torsion2big_bin(
-	Real const phi,
-	Real const psi,
-	Real const omega
+	core::Real const phi,
+	core::Real const psi,
+	core::Real const omega
 )
 {
 	if ( std::abs( omega ) < 90 ) { // this is not quite right: should be omega BEFORE the residue...
@@ -69,7 +66,7 @@ public:
 	/// default constructor
 	VallData ()
 	{
-		Size const big_size( 100000 ); // rough guess
+		core::Size const big_size( 100000 ); // rough guess
 		sequence_.reserve( big_size );
 		secstruct_.reserve( big_size );
 		bigbin_.reserve( big_size );
@@ -81,7 +78,7 @@ public:
 	/// constructor from input vall database file
 	VallData ( std::string const & filename )
 	{
-		Size const big_size( 100000 ); // rough guess
+		core::Size const big_size( 100000 ); // rough guess
 		// prevent lots of redimensioning as we read file? does this even matter?
 		sequence_.reserve( big_size );
 		secstruct_.reserve( big_size );
@@ -113,9 +110,9 @@ public:
 	add_line(
 		const char sq,
 		const char ss,
-		const Real ph,
-		const Real ps,
-		const Real om
+		const core::Real ph,
+		const core::Real ps,
+		const core::Real om
 	)
 	{
 		runtime_assert( ss == 'H' || ss == 'E' || ss == 'L' );
@@ -123,7 +120,7 @@ public:
 		if ( phi_.empty() ) {
 			chain_.push_back( 1 );
 		} else {
-			Real const prev_psi( psi_.back() ), prev_omega( omega_.back() );
+			core::Real const prev_psi( psi_.back() ), prev_omega( omega_.back() );
 			if ( ( std::abs( prev_psi ) + std::abs( prev_omega ) ) < 0.01 ) {
 				chain_.push_back( chain_.back() + 1 );
 			} else {
@@ -145,23 +142,23 @@ public:
 	utility::vector1< char > const & secstruct() const {return secstruct_;}
 	utility::vector1< char > const & bigbin() const {return bigbin_;}
 
-	utility::vector1< Real > const & phi  () const {return phi_;}
-	utility::vector1< Real > const & psi  () const {return psi_;}
-	utility::vector1< Real > const & omega() const {return omega_;}
+	utility::vector1< core::Real > const & phi  () const {return phi_;}
+	utility::vector1< core::Real > const & psi  () const {return psi_;}
+	utility::vector1< core::Real > const & omega() const {return omega_;}
 
-	utility::vector1< Size > const & chain() const {return chain_;}
+	utility::vector1< core::Size > const & chain() const {return chain_;}
 
 	//  inline
 	//  bool
-	//  is_lower_terminus( Size const pos ) const
+	//  is_lower_terminus( core::Size const pos ) const
 	//  {
 	//   return ( ( pos == 1 ) ||
-	//        ( std::abs( psi_[ pos-1 ] ) + std::abs( omega_[ pos-1 ] ) + std::abs( phi_[ pos   ] ) < Real(0.01) ) );
+	//        ( std::abs( psi_[ pos-1 ] ) + std::abs( omega_[ pos-1 ] ) + std::abs( phi_[ pos   ] ) < core::Real(0.01) ) );
 	//  }
 
 	//  inline
 	//  bool
-	//  is_upper_terminus( Size const pos ) const
+	//  is_upper_terminus( core::Size const pos ) const
 	//  {
 	//   return ( ( pos == size() ) ||
 	//        ( std::abs( psi_[ pos   ] ) + std::abs( omega_[ pos   ] ) + std::abs( phi_[ pos+1 ] ) < 0.01 ) );
@@ -169,7 +166,7 @@ public:
 
 	//  inline
 	//  bool
-	//  is_terminus( Size const pos ) const
+	//  is_terminus( core::Size const pos ) const
 	//  {
 	//   return ( is_lower_terminus( pos ) || is_upper_terminus( pos ) );
 	//  }
@@ -179,7 +176,7 @@ public:
 	int size() const { return sequence_.size(); }
 
 	/// number of chains
-	Size
+	core::Size
 	num_chains() const
 	{
 		return chain_.back();
@@ -188,51 +185,51 @@ public:
 	// pick fragments for a single residue position from vall database
 	void
 	get_frags(
-		Size const nfrags,
+		core::Size const nfrags,
 		std::string const & target_seq,
 		std::string const & target_ss,
-		Real const seq_weight,
-		Real const ss_weight,
+		core::Real const seq_weight,
+		core::Real const ss_weight,
 		bool const exclude_gly,
 		bool const exclude_pro,
 		bool const exclude_cis_peptides, // at non-pre-Pro positions
-		utility::vector1< Size > const & homs_to_exclude,
+		utility::vector1< core::Size > const & homs_to_exclude,
 		SingleResidueTorsionFragmentLibrary & library,
-		Real const bb_weight = 0.0,
+		core::Real const bb_weight = 0.0,
 		std::string const & target_bb = std::string()
 	) const;
 
 	// pick fragments for a single residue position from vall database
 	void
 	get_frags(
-		Size const nfrags,
+		core::Size const nfrags,
 		std::string const & target_seq,
 		utility::vector1< std::map< char, core::Real > > const & target_ss,
-		Real const seq_weight,
-		Real const ss_weight,
+		core::Real const seq_weight,
+		core::Real const ss_weight,
 		bool const exclude_gly,
 		bool const exclude_pro,
 		bool const exclude_cis_peptides, // at non-pre-Pro positions
-		utility::vector1< Size > const & homs_to_exclude,
+		utility::vector1< core::Size > const & homs_to_exclude,
 		SingleResidueTorsionFragmentLibrary & library,
-		Real const bb_weight = 0.0,
+		core::Real const bb_weight = 0.0,
 		std::string const & target_bb = std::string()
 	) const;
 
 	void
 	get_cheating_frags(
-		Size const nfrags,
+		core::Size const nfrags,
 		std::string const & target_seq,
 		std::string const & target_ss,
-		utility::vector1< Real > const & target_phi,
-		utility::vector1< Real > const & target_psi,
-		utility::vector1< Real > const & target_omega,
-		Real const seq_weight,
-		Real const ss_weight,
-		Real const torsion_weight,
-		Real const min_torsion_dev,
-		Real const max_torsion_dev,
-		utility::vector1< Size > const & homs_to_exclude,
+		utility::vector1< core::Real > const & target_phi,
+		utility::vector1< core::Real > const & target_psi,
+		utility::vector1< core::Real > const & target_omega,
+		core::Real const seq_weight,
+		core::Real const ss_weight,
+		core::Real const torsion_weight,
+		core::Real const min_torsion_dev,
+		core::Real const max_torsion_dev,
+		utility::vector1< core::Size > const & homs_to_exclude,
 		SingleResidueTorsionFragmentLibrary & library
 	) const;
 
@@ -241,11 +238,11 @@ private:
 	utility::vector1< char > secstruct_;
 	utility::vector1< char > bigbin_;
 
-	utility::vector1< Real > phi_;
-	utility::vector1< Real > psi_;
-	utility::vector1< Real > omega_;
+	utility::vector1< core::Real > phi_;
+	utility::vector1< core::Real > psi_;
+	utility::vector1< core::Real > omega_;
 
-	utility::vector1< Size > chain_;
+	utility::vector1< core::Size > chain_;
 
 };
 
@@ -253,51 +250,51 @@ private:
 /// handles loading the vall if necessary
 void
 get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
-	Real const seq_weight,
-	Real const ss_weight,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
-	Real const bb_weight = 0.0,
+	core::Real const bb_weight = 0.0,
 	std::string const & target_bb = std::string()
 );
 
 /// handles loading the vall if necessary
 void
 get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	utility::vector1< std::map< char, core::Real > > const & target_ss, // HEL
-	Real const seq_weight,
-	Real const ss_weight,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
-	Real const bb_weight = 0.0,
+	core::Real const bb_weight = 0.0,
 	std::string const & target_bb = std::string()
 );
 
 void
 get_cheating_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
-	utility::vector1< Real > const & target_phi,
-	utility::vector1< Real > const & target_psi,
-	utility::vector1< Real > const & target_omega,
-	Real const seq_weight,
-	Real const ss_weight,
-	Real const torsion_weight,
-	Real const min_torsion_dev,
-	Real const max_torsion_dev,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Real > const & target_phi,
+	utility::vector1< core::Real > const & target_psi,
+	utility::vector1< core::Real > const & target_omega,
+	core::Real const seq_weight,
+	core::Real const ss_weight,
+	core::Real const torsion_weight,
+	core::Real const min_torsion_dev,
+	core::Real const max_torsion_dev,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library
 );
 

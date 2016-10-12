@@ -22,9 +22,9 @@ FourAtomsConstraintData::~FourAtomsConstraintData() {}
 
 /// @brief makes a new object
 FourAtomsConstraintData::FourAtomsConstraintData(core::scoring::func::FuncOP function,
-	Size first_atom, Size second_offset, Size second_atom,
-	Size third_offset, Size third_atom, Size fourth_offset,
-	Size fourth_atom) {
+	core::Size first_atom, core::Size second_offset, core::Size second_atom,
+	core::Size third_offset, core::Size third_atom, core::Size fourth_offset,
+	core::Size fourth_atom) {
 	func_ = function;
 	first_atom_ = first_atom;
 	second_atom_ = second_atom;

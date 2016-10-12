@@ -40,7 +40,7 @@ public:
 	/// @brief Creates a pool of a given size and name
 	/// @param name - name assigned to this pool. This in general may be any string that
 	/// later allows one control pool's behavior from a flag file
-	QuotaPool(std::string const & pool_name, Real quota_fraction):
+	QuotaPool(std::string const & pool_name, core::Real quota_fraction):
 		pool_name_(pool_name),
 		quota_fraction_(quota_fraction)
 	{}
@@ -50,13 +50,13 @@ public:
 	virtual bool could_be_accepted(ScoredCandidate) const = 0;
 
 	/// @brief Says how many fragments (in total) may fit into this pool
-	virtual Size total_size() const = 0;
+	virtual core::Size total_size() const = 0;
 
 	/// @brief Says how many fragments are currently in this pool
-	virtual Size current_size() const = 0;
+	virtual core::Size current_size() const = 0;
 
 	/// @brief Says how many fragments can still be inserted into this pool
-	virtual Size size_left() const = 0;
+	virtual core::Size size_left() const = 0;
 
 	/// @brief Makes the pool empty by removing all candidates
 	virtual void clear() = 0;
@@ -67,7 +67,7 @@ public:
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	virtual Size count_candidates() const = 0;
+	virtual core::Size count_candidates() const = 0;
 
 	/// @brief returns the name assigned to this quota pool
 	inline
@@ -83,19 +83,19 @@ public:
 	}
 
 	/// @brief returns the fraction of this quota pool in the entire population of fragments
-	Real get_fraction() const { return quota_fraction_; }
+	core::Real get_fraction() const { return quota_fraction_; }
 
 	/// @brief Sets the fraction of this quota pool in the entire population of fragments
-	virtual void set_fraction(Real new_fraction) { quota_fraction_ = new_fraction; }
+	virtual void set_fraction(core::Real new_fraction) { quota_fraction_ = new_fraction; }
 
 	/// @brief provides the score for a candidate that was used to sort a quota pool
 	/// @details This base class returns the most recent total score for a fragment
-	inline virtual Real quota_score(ScoredCandidate candidate) const {
+	inline virtual core::Real quota_score(ScoredCandidate candidate) const {
 		return candidate.second->get_most_recent_total_score();
 	}
 private:
 	std::string pool_name_;
-	Real quota_fraction_;
+	core::Real quota_fraction_;
 };
 
 } // quota

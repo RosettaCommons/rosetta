@@ -30,6 +30,7 @@
 
 #include <utility/vector1.hh>
 
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace farna {

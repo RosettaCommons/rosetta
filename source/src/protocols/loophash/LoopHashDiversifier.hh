@@ -31,10 +31,6 @@
 namespace protocols {
 namespace loophash {
 
-using core::Real;
-using core::Size;
-using std::string;
-
 class LoopHashDiversifier : public protocols::moves::Mover
 {
 public:
@@ -78,29 +74,29 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashDiversifier ); }
 	~LoopHashDiversifier() override;
 
-	Real min_inter_ss_bbrms() const;
-	void min_inter_ss_bbrms( Real const min_inter_ss_bbrms );
-	Real max_inter_ss_bbrms() const;
-	void max_inter_ss_bbrms( Real const max_inter_ss_bbrms );
+	core::Real min_inter_ss_bbrms() const;
+	void min_inter_ss_bbrms( core::Real const min_inter_ss_bbrms );
+	core::Real max_inter_ss_bbrms() const;
+	void max_inter_ss_bbrms( core::Real const max_inter_ss_bbrms );
 
-	Real min_intra_ss_bbrms() const;
-	void min_intra_ss_bbrms( Real const min_intra_ss_bbrms );
-	Real max_intra_ss_bbrms() const;
-	void max_intra_ss_bbrms( Real const max_intra_ss_bbrms );
+	core::Real min_intra_ss_bbrms() const;
+	void min_intra_ss_bbrms( core::Real const min_intra_ss_bbrms );
+	core::Real max_intra_ss_bbrms() const;
+	void max_intra_ss_bbrms( core::Real const max_intra_ss_bbrms );
 
-	Real min_rms() const;
-	void min_rms( Real const min_rms );
-	Real max_rms() const;
-	void max_rms( Real const max_rms );
+	core::Real min_rms() const;
+	void min_rms( core::Real const min_rms );
+	core::Real max_rms() const;
+	void max_rms( core::Real const max_rms );
 
-	Size num_iterations() const;
-	void num_iterations( Size const num_iterations );
+	core::Size num_iterations() const;
+	void num_iterations( core::Size const num_iterations );
 
-	Size num_try_div() const;
-	void num_try_div( Size const num_try_div );
+	core::Size num_try_div() const;
+	void num_try_div( core::Size const num_try_div );
 
-	utility::vector1< Size > loop_sizes() const;
-	void add_loop_size( Size const loop_size );
+	utility::vector1< core::Size > loop_sizes() const;
+	void add_loop_size( core::Size const loop_size );
 
 	void cenfilter( protocols::filters::FilterOP cenfilter );
 	void ranking_cenfilter( protocols::filters::FilterOP filter ){ ranking_cenfilter_ = filter; }
@@ -108,35 +104,35 @@ public:
 
 private:
 	// loopsampler
-	utility::vector1< Size > loop_sizes_;
+	utility::vector1< core::Size > loop_sizes_;
 	LoopHashLibraryOP library_;
 
 	//torsion-angle rmsd for residue windows that span two pieces of secondary structure
-	Real min_inter_ss_bbrms_, max_inter_ss_bbrms_;
+	core::Real min_inter_ss_bbrms_, max_inter_ss_bbrms_;
 
 	//torsion-angle rmsd for residue windows that are a single pieces of secondary structure
-	Real min_intra_ss_bbrms_, max_intra_ss_bbrms_;
+	core::Real min_intra_ss_bbrms_, max_intra_ss_bbrms_;
 
 	//Anstrom Rmsd cuttofs for loophash generated structures
-	Real min_rms_, max_rms_;
+	core::Real min_rms_, max_rms_;
 
 	//Residues to loophash over
-	Size start_res_, stop_res_;
+	core::Size start_res_, stop_res_;
 
 	//loophash window size & loophash fragment size
-	Size window_size_;
+	core::Size window_size_;
 
 	//max loophash radius
-	Size max_radius_;
+	core::Size max_radius_;
 
 	//Max models to create in loophash (number of fragment tried is 200x this)
-	Size max_struct_;
+	core::Size max_struct_;
 
 	//Number of loophash runs to execute
-	Size num_iterations_;
+	core::Size num_iterations_;
 
 	//Number of loophash runs to try in each execution
-	Size num_try_div_;
+	core::Size num_try_div_;
 
 	bool diversify_loop_only_;
 
@@ -149,7 +145,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_cen_cst_, scorefxn_rama_cst_;
 
 	// structure store
-	std::vector< std::pair< Real, core::io::silent::SilentStructOP > > all_structs_;
+	std::vector< std::pair< core::Real, core::io::silent::SilentStructOP > > all_structs_;
 };
 
 

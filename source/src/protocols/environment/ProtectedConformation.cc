@@ -48,6 +48,7 @@ namespace protocols {
 namespace environment {
 
 using namespace core;
+using namespace core::conformation;
 
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;

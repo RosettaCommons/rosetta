@@ -22,9 +22,6 @@
 #include <string>
 #include <ostream>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -41,7 +38,7 @@ class PhosphateMove: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	PhosphateMove( Size const rsd,
+	PhosphateMove( core::Size const rsd,
 		PhosphateTerminus const terminus ):
 		rsd_( rsd ),
 		terminus_( terminus )

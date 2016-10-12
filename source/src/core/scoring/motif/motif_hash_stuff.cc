@@ -126,8 +126,18 @@ using utility::vector1;
 using std::endl;
 //using core::import_pose::pose_from_file;
 using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
 using core::pose::xyzStripeHashPoseCOP;
+using core::pose::xyzStripeHashPose;
+using core::id::AtomID;
+using core::pose::Pose;
+using core::pose::PoseCOP;
+using core::pose::PoseCOP;
+using core::Real;
+using core::scoring::ScoreFunctionOP;
+using core::Size;
+using std::string;
+using utility::vector1;
+using numeric::geometry::hashing::Real3;
 
 /************************************************ helpers ***********************************************/
 static inline double sqr(double const & x) { return x*x; }

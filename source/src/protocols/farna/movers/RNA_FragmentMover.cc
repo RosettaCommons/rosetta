@@ -47,6 +47,7 @@
 
 
 using namespace core;
+using namespace protocols::farna::fragments;
 using basic::T;
 
 

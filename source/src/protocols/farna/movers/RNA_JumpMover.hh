@@ -24,10 +24,6 @@
 #include <core/pose/rna/BasePair.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::movers;
-using namespace protocols::farna::libraries;
-
 namespace protocols {
 namespace farna {
 namespace movers {
@@ -37,7 +33,7 @@ class RNA_JumpMover: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	RNA_JumpMover( RNA_JumpLibraryCOP rna_jump_library,
+	RNA_JumpMover( protocols::farna::libraries::RNA_JumpLibraryCOP rna_jump_library,
 		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 	//destructor
@@ -51,8 +47,8 @@ public:
 
 	void
 	add_new_RNA_jump(
-		pose::Pose & pose,
-		Size const & which_jump,
+		core::pose::Pose & pose,
+		core::Size const & which_jump,
 		bool & success ) const;
 
 
@@ -73,18 +69,18 @@ private:
 
 	bool
 	check_forward_backward(
-		pose::Pose & pose,
+		core::pose::Pose & pose,
 		Size const jump_pos ) const;
 
 	Size
 	check_in_chain_connections( Size const & pos1, Size const & pos2 ) const;
 
 	void
-	sample_alternative_chain_connection( pose::Pose & pose, Size const & which_jump ) const;
+	sample_alternative_chain_connection( core::pose::Pose & pose, Size const & which_jump ) const;
 
 private:
 
-	RNA_JumpLibraryCOP rna_jump_library_;
+	protocols::farna::libraries::RNA_JumpLibraryCOP rna_jump_library_;
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
 	core::pose::rna::RNA_BasePairList rna_pairing_list_;
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;

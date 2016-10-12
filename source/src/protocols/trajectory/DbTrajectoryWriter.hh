@@ -27,10 +27,6 @@
 namespace protocols {
 namespace trajectory {
 
-using core::Size;
-using core::Real;
-using core::pose::Pose;
-
 class DbTrajectoryWriter : private boost::noncopyable {
 
 public:
@@ -38,16 +34,16 @@ public:
 	/// @brief Constructor.  The given pose will be recorded as the first frame
 	/// in the trajectory.  Some performance settings can optionally be given.
 	DbTrajectoryWriter(
-		Size job_id, Pose const & pose, Size frequency=1, Size cache_limit=200);
+		core::Size job_id, core::pose::Pose const & pose, core::Size frequency=1, core::Size cache_limit=200);
 
 	/// @brief Specify that a pose should be saved once every N iterations.
-	void set_frequency(Size setting);
+	void set_frequency(core::Size setting);
 
 	/// @brief Specify the number of poses that can be cached.
-	void set_cache_limit(Size setting);
+	void set_cache_limit(core::Size setting);
 
 	/// @brief Add the given pose to the trajectory being saved.
-	void update(Pose const & pose);
+	void update(core::pose::Pose const & pose);
 
 	/// @brief Make sure any cached poses have been saved.
 	void finalize() const;
@@ -62,12 +58,12 @@ private:
 
 private:
 
-	Size job_id_;
-	Size iteration_;
-	Size frequency_;
-	Size cache_limit_;
+	core::Size job_id_;
+	core::Size iteration_;
+	core::Size frequency_;
+	core::Size cache_limit_;
 
-	struct Frame { Size iteration; Pose pose; };
+	struct Frame { core::Size iteration; core::pose::Pose pose; };
 	mutable utility::vector1<Frame> frame_cache_;
 
 };

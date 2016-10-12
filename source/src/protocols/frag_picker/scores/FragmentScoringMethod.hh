@@ -30,14 +30,11 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief  a fragment candidate score
 class FragmentScoringMethod: public utility::pointer::ReferenceCount {
 public:
 
-	FragmentScoringMethod(Size priority, Real lowest_acceptable_value,
+	FragmentScoringMethod(core::Size priority, core::Real lowest_acceptable_value,
 		bool use_lowest, std::string name):
 		priority_ (priority),
 		name_(name),
@@ -53,25 +50,25 @@ public:
 	}
 
 	/// @brief Returns an integer index assigned to this scoring method by a scoring manager
-	inline Size get_id() {
+	inline core::Size get_id() {
 		return id_;
 	}
 
 	/// @brief Sets a new integer index for this scoring method.
 	/// @details the method should be called only by a scoring manager
-	inline void set_id(Size id) {
+	inline void set_id(core::Size id) {
 		id_ = id;
 	}
 
 	/// @brief Returns a priority of this scoring method.
 	/// @details The higher the priority, the earlier a given scoring method is evaluated
-	inline Size get_priority() {
+	inline core::Size get_priority() {
 		return priority_;
 	}
 
 	/// @brief Returns the lowest acceptable score value for this scoring method.
 	/// @details Fragments that are below the threshold will be discarded
-	inline Real get_min_allowed_score() {
+	inline core::Real get_min_allowed_score() {
 		return lowest_acceptable_value_;
 	}
 
@@ -83,15 +80,15 @@ public:
 
 	/// @brief Sets a new value of the lowest acceptable score
 	/// @details Fragments that are below the threshold will be discarded
-	inline void set_min_allowed_score(Real lowest_acceptable_value) {
+	inline void set_min_allowed_score(core::Real lowest_acceptable_value) {
 		lowest_acceptable_value_ = lowest_acceptable_value;
 	}
 
 protected:
-	Size id_;
-	Size priority_;
+	core::Size id_;
+	core::Size priority_;
 	std::string name_;
-	Real lowest_acceptable_value_;
+	core::Real lowest_acceptable_value_;
 	bool use_lowest_;
 };
 
@@ -102,7 +99,7 @@ public:
 		name_(name) {
 	}
 
-	virtual FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP,
+	virtual FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP,
 		std::string) =0;
 
 	inline std::string& get_score_name() {

@@ -60,6 +60,7 @@ namespace antibody {
 using namespace protocols::features;
 using namespace protocols::analysis;
 using namespace core::scoring;
+using utility::vector1;
 
 AntibodyFeatures::AntibodyFeatures():
 	InterfaceFeatures()

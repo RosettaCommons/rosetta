@@ -20,6 +20,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace screener {

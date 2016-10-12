@@ -141,15 +141,15 @@ void NonlocalFrags::initialize() {
 		min_seq_sep_ = option[ frags::contacts::min_seq_sep ]();
 	}
 	if ( option[ frags::contacts::dist_cutoffs ].user() ) {
-		utility::vector1<Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
+		utility::vector1<core::Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
 		if ( dist_cutoffs.size() != 1 ) {
 			utility_exit_with_message( "Error: only one frags::contacts::dist_cutoffs value is allowed!" );
 		}
-		Real min_dist = dist_cutoffs[1];
+		core::Real min_dist = dist_cutoffs[1];
 		ca_dist_squared_ = min_dist*min_dist;
 	}
 	if ( option[ frags::nonlocal::min_contacts_per_res ].user() ) {
-		min_contacts_per_res_ = (Size)option[ frags::nonlocal::min_contacts_per_res ]();
+		min_contacts_per_res_ = (core::Size)option[ frags::nonlocal::min_contacts_per_res ]();
 	}
 	// for valid interacting pair
 	if ( option[ frags::nonlocal::max_ddg_score ].user() ) {
@@ -202,8 +202,8 @@ void NonlocalFrags::write_checkpoint( std::string const & tag, std::string const
 	boinc_begin_critical_section();
 #endif
 	if ( data.size() ) {
-		Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
-		Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
+		core::Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
+		core::Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
 		std::string chainj, chaink;
 		std::istringstream line_stream(data);
 		line_stream >> pdbinfonumberj >> chainj >> pdbinfonumberk >> chaink >>
@@ -229,8 +229,8 @@ void NonlocalFrags::read_checkpoint_file() {
 	std::string line;
 	std::ifstream checkpoint( checkpointfile_.c_str() );
 	while ( getline(checkpoint,line) ) {
-		Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
-		Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
+		core::Size pdbinfonumberj, pdbinfonumberk, contact_cnt;
+		core::Real sub_pose_score, relaxed_rmsd, relaxed_score, relaxed_ddg_score;
 		std::string tag, chainj, chaink;
 
 		std::istringstream line_stream(line);
@@ -269,12 +269,12 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 
 	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-	Real unmodified_pose_score = (*scorefxn)( pose );
+	core::Real unmodified_pose_score = (*scorefxn)( pose );
 
 	std::string output_name = protocols::jd2::current_output_name();
 
 #ifdef BOINC_GRAPHICS
-	Size step_cnt = 0;
+	core::Size step_cnt = 0;
 	std::string input_tag = protocols::jd2::get_current_job()->input_tag();
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
@@ -313,7 +313,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		}
 		// remove virtual residue
 		pose::Pose temp_pose = unmodified_pose;
-		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			temp_pose.replace_residue( ii, pose.residue( ii ), false );
 		}
 		pose = temp_pose;
@@ -332,29 +332,29 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 
 	// iterate each frag size
 	// note: shall this be random for BOINC?
-	Size total_residue = pose.size();
+	core::Size total_residue = pose.size();
 
-	// Size frag_len = numeric::random::random_element( frag_sizes_ );  //  = frag_sizes_[ i ]; // frag size
-	for ( Size i=1; i <= frag_sizes_.size(); ++i ) {   // frag_sizes_ loop
+	// core::Size frag_len = numeric::random::random_element( frag_sizes_ );  //  = frag_sizes_[ i ]; // frag size
+	for ( core::Size i=1; i <= frag_sizes_.size(); ++i ) {   // frag_sizes_ loop
 
-		Size frag_len = frag_sizes_[ i ]; // frag size
+		core::Size frag_len = frag_sizes_[ i ]; // frag size
 
 
-		Size total_len = frag_len*2;
+		core::Size total_len = frag_len*2;
 		if ( total_residue >= frag_len+min_seq_sep_+frag_len ) {    // continue; // skip if pose is too small
 
-			Size min_contacts = min_contacts_per_res_*frag_len; // min non-local contacts
+			core::Size min_contacts = min_contacts_per_res_*frag_len; // min non-local contacts
 
 #ifdef BOINC_GRAPHICS
 			pose::Pose best_energy_pose;
-			Real min_relaxed_score = 100000000.0;
+			core::Real min_relaxed_score = 100000000.0;
 #endif
 
 			// find non-local pairs
-			Size contact_cnt = 0;
+			core::Size contact_cnt = 0;
 			bool continue_k = false;
-			for ( Size j=1; j<=total_residue-frag_len-min_seq_sep_; ++j ) {
-				for ( Size k=j+frag_len+min_seq_sep_; k<=total_residue-frag_len; ++k ) {
+			for ( core::Size j=1; j<=total_residue-frag_len-min_seq_sep_; ++j ) {
+				for ( core::Size k=j+frag_len+min_seq_sep_; k<=total_residue-frag_len; ++k ) {
 					if ( single_chain_ && (pose.residue(j).chain() != pose.residue(k).chain()) ) continue;
 
 					// get tag for this frag pair
@@ -376,17 +376,17 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 					// count CA contacts
 					contact_cnt = 0;
 					continue_k = false;
-					Size prev_chain_m = 0;
-					Size prev_chain_n = 0;
-					Size prev_resnum_m = 0;
-					Size prev_resnum_n = 0;
-					numeric::xyzVector< Real> prev_ca_xyz_m(0.0), prev_ca_xyz_n(0.0);
-					for ( Size m=0; m<frag_len; ++m ) {
+					core::Size prev_chain_m = 0;
+					core::Size prev_chain_n = 0;
+					core::Size prev_resnum_m = 0;
+					core::Size prev_resnum_n = 0;
+					numeric::xyzVector< core::Real> prev_ca_xyz_m(0.0), prev_ca_xyz_n(0.0);
+					for ( core::Size m=0; m<frag_len; ++m ) {
 						conformation::Residue const & rsd_m = pose.residue(j+m);
 						if ( !rsd_m.has("CA") || !rsd_m.is_protein() ) { continue_k = true; break; }
-						Size chain_m = rsd_m.chain();
-						Size resnum_m = pdbinfo->number(j+m);
-						numeric::xyzVector< Real> ca_xyz_m = rsd_m.xyz("CA");
+						core::Size chain_m = rsd_m.chain();
+						core::Size resnum_m = pdbinfo->number(j+m);
+						numeric::xyzVector< core::Real> ca_xyz_m = rsd_m.xyz("CA");
 						// make sure the fragment residues are sequential in the orig PDB and from the same chain!
 						if ( m>0 && (chain_m != prev_chain_m || resnum_m != prev_resnum_m+1 ||
 								ca_xyz_m.distance_squared(prev_ca_xyz_m) > 25) ) { // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
@@ -395,12 +395,12 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						prev_chain_m = chain_m;
 						prev_resnum_m = resnum_m;
 						prev_ca_xyz_m = ca_xyz_m;
-						for ( Size n=0; n<frag_len; ++n ) {
+						for ( core::Size n=0; n<frag_len; ++n ) {
 							conformation::Residue const & rsd_n = pose.residue(k+n);
-							Size chain_n = rsd_n.chain();
+							core::Size chain_n = rsd_n.chain();
 							if ( !rsd_n.has("CA") || !rsd_n.is_protein() || (single_chain_ && chain_m != chain_n) ) { continue_k = true; break; }
-							Size resnum_n = pdbinfo->number(k+n);
-							numeric::xyzVector< Real> ca_xyz_n = rsd_n.xyz("CA");
+							core::Size resnum_n = pdbinfo->number(k+n);
+							numeric::xyzVector< core::Real> ca_xyz_n = rsd_n.xyz("CA");
 							// make sure the fragment residues are sequential in the orig PDB and from the same chain!
 							if ( n>0 && (chain_n != prev_chain_n || resnum_n != prev_resnum_n+1 ||
 									ca_xyz_n.distance_squared(prev_ca_xyz_n) > 25) ) {  // CA-CA distance must be within 5 angstroms (i.e. no chainbreak)
@@ -421,16 +421,16 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						protocols::boinc::Boinc::update_mc_trial_info( step_cnt++, "NonLocalFrags_" + input_tag + tag );
 #endif
 						// Create a sub pose representing the pair
-						Size midpoint = static_cast<Size>(ceil(frag_len / 2.0));
+						core::Size midpoint = static_cast<core::Size>(ceil(frag_len / 2.0));
 						kinematics::FoldTree tree(total_len);
 						int jump_id = tree.new_jump( midpoint, frag_len+midpoint, frag_len );
 						tree.set_jump_atoms(jump_id, "CA", "CA");
 						assert(tree.check_fold_tree());
 						//   Create the sub pose
 						pose::Pose sub_pose;
-						utility::vector1<Size> positions;
-						for ( Size m=0; m<frag_len; ++m ) positions.push_back( j+m );
-						for ( Size m=0; m<frag_len; ++m ) positions.push_back( k+m );
+						utility::vector1<core::Size> positions;
+						for ( core::Size m=0; m<frag_len; ++m ) positions.push_back( j+m );
+						for ( core::Size m=0; m<frag_len; ++m ) positions.push_back( k+m );
 						pose::create_subpose( pose, positions, tree, sub_pose );
 
 						//   Detect disulfides
@@ -441,7 +441,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 
 						// RELAX non-local fragment pair
 						pose::Pose relax_sub_pose = sub_pose;
-						Real sub_pose_score = (*scorefxn)( sub_pose );
+						core::Real sub_pose_score = (*scorefxn)( sub_pose );
 #ifdef BOINC_GRAPHICS
 						protocols::boinc::Boinc::attach_graphics_current_pose_observer( relax_sub_pose );
 						protocols::boinc::Boinc::update_graphics_low_energy( relax_sub_pose, sub_pose_score );
@@ -450,16 +450,16 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 						sub_pose_relax_protocol->apply( relax_sub_pose );
 
 						// check relaxed pose
-						Real relaxed_rmsd = scoring::CA_rmsd( relax_sub_pose, sub_pose );
+						core::Real relaxed_rmsd = scoring::CA_rmsd( relax_sub_pose, sub_pose );
 						if ( relaxed_rmsd > max_rmsd_after_relax_ ) {
 							write_checkpoint( output_name + tag, "" );
 							continue;
 						}
-						Real relaxed_score = (*scorefxn)( relax_sub_pose );
+						core::Real relaxed_score = (*scorefxn)( relax_sub_pose );
 
 						// DDG of relaxed fragment pair
 						protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
-						Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
+						core::Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
 						if ( relaxed_ddg_score >= max_ddg_score_ ) {  // DDG FILTER VALUE
 							write_checkpoint( output_name + tag, "" );
 							continue;
@@ -511,7 +511,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		pose::Pose idealize_pose = unmodified_pose;
 
 #ifdef BOINC_GRAPHICS
-		Real score = (*scorefxn)(idealize_pose);
+		core::Real score = (*scorefxn)(idealize_pose);
 		protocols::boinc::Boinc::attach_graphics_current_pose_observer( idealize_pose );
 		protocols::boinc::Boinc::update_graphics_last_accepted( idealize_pose, score );
 		protocols::boinc::Boinc::update_graphics_low_energy( idealize_pose, score, protocols::boinc::Boinc::RESET );
@@ -524,7 +524,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		idealizer.fast( false );
 		idealizer.chainbreaks( true );
 		idealizer.apply( idealize_pose );
-		Real idealize_score = (*scorefxn)(idealize_pose);
+		core::Real idealize_score = (*scorefxn)(idealize_pose);
 		// add input score comment for output
 		std::stringstream scorestr;
 		scorestr << idealize_score;
@@ -561,7 +561,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 		}
 		// remove virtual residue
 		pose::Pose temp_pose = pose;
-		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			temp_pose.replace_residue( ii, idealize_pose.residue( ii ), false );
 		}
 		pose = temp_pose;

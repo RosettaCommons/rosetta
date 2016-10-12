@@ -25,9 +25,6 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief read a config file for quota selector
 class QuotaConfig {
 public:
@@ -39,20 +36,20 @@ public:
 	QuotaConfig() {}
 
 	/// @brief how many pools have been defined in a config file
-	inline Size count_pools() { return pool_names_.size(); }
+	inline core::Size count_pools() { return pool_names_.size(); }
 
 	/// @brief returns a fraction for a given pool
-	inline Real get_fraction(Size pool_id) { return pool_weights_[pool_id]; }
+	inline core::Real get_fraction(core::Size pool_id) { return pool_weights_[pool_id]; }
 
 	/// @brief returns a fraction for a given pool
-	inline void set_fraction(Size pool_id,Real fraction) { pool_weights_[pool_id] = fraction; }
+	inline void set_fraction(core::Size pool_id,core::Real fraction) { pool_weights_[pool_id] = fraction; }
 
 	/// @brief returns a fraction for a given pool
 	/// @details if the given string is not a valid name of a quota pool,
 	/// the method returns 0
-	inline Real get_fraction(std::string pool_name) {
+	inline core::Real get_fraction(std::string pool_name) {
 
-		for ( Size i=1; i<=pool_names_.size(); ++i ) {
+		for ( core::Size i=1; i<=pool_names_.size(); ++i ) {
 			if ( pool_names_[i].compare(pool_name) == 0 ) {
 				return pool_weights_[i];
 			}
@@ -64,7 +61,7 @@ public:
 	/// @brief returns true if a config file defined a given pool name
 	bool is_valid_quota_pool_name(std::string & pool_name) {
 
-		for ( Size i=1; i<=pool_names_.size(); ++i ) {
+		for ( core::Size i=1; i<=pool_names_.size(); ++i ) {
 			if ( pool_names_[i].compare(pool_name) == 0 ) {
 				return true;
 			}
@@ -74,10 +71,10 @@ public:
 	}
 
 	/// @brief return a string id (name) assigned to a given pool
-	inline std::string & get_pool_name(Size pool_id) { return pool_names_[pool_id]; }
+	inline std::string & get_pool_name(core::Size pool_id) { return pool_names_[pool_id]; }
 
 protected:
-	utility::vector1<Real> pool_weights_;
+	utility::vector1<core::Real> pool_weights_;
 	utility::vector1<std::string> pool_names_;
 };
 

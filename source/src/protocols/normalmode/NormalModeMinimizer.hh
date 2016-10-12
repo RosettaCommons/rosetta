@@ -34,10 +34,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::optimization;
-
 namespace protocols {
 namespace normalmode {
 
@@ -60,11 +56,11 @@ public:
 
 
 	void
-	apply( pose::Pose & pose ) override;
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief After minimization has concluded, the user may access the deriv-check result,
 	/// assuming that they have run the NormalModeMinimizer with deriv_check = true;
-	NumericalDerivCheckResultOP
+	core::optimization::NumericalDerivCheckResultOP
 	deriv_check_result() const;
 
 	void set_modes( utility::vector1< core::Size > const modes_using_in ){
@@ -87,7 +83,7 @@ public:
 private:
 	void
 	deriv_check_local(
-		pose::Pose const &pose,
+		core::pose::Pose const &pose,
 		protocols::normalmode::NormalModeMultifunc f ) const;
 
 
@@ -100,7 +96,7 @@ private:
 
 	Real dampen_;
 
-	NumericalDerivCheckResultOP deriv_check_result_;
+	core::optimization::NumericalDerivCheckResultOP deriv_check_result_;
 }; // NormalModeMinimizer
 
 

@@ -87,6 +87,7 @@ using namespace core::scoring::rna::chemical_shift;
 using namespace protocols;
 using namespace protocols::farna;
 using namespace protocols::farna::setup;
+using namespace protocols::farna::movers;
 
 using namespace ObjexxFCL;
 

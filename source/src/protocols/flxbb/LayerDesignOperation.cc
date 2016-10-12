@@ -120,7 +120,7 @@ CombinedTaskOperation::CombinedTaskOperation( VecTaskOP  ops ):
 { }
 
 void
-CombinedTaskOperation::apply(core::pose::Pose const & pose, PackerTask & task) const {
+CombinedTaskOperation::apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const {
 	using core::pack::task::operation::TaskOperationOP;
 	BOOST_FOREACH ( TaskOperationOP t_op, task_operations_ ) {
 		t_op->apply( pose, task );

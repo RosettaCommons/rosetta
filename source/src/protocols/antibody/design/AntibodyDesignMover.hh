@@ -258,7 +258,7 @@ private:
 
 	/// @brief Extend the native CDRs to be designed for benchmarking.
 	void
-	setup_random_start_pose(core::pose::Pose & pose, vector1<CDRNameEnum> & cdrs_to_design);
+	setup_random_start_pose(core::pose::Pose & pose, utility::vector1<CDRNameEnum> & cdrs_to_design);
 
 	void
 	setup_default_graft_settings();

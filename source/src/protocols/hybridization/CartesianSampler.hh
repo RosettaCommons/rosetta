@@ -51,11 +51,6 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::moves;
-using namespace protocols::loops;
-
 class CartesianSampler: public protocols::moves::Mover {
 public:
 	CartesianSampler();
@@ -179,7 +174,7 @@ private:
 	bool debug_;
 	bool fullatom_, bbmove_, recover_low_;
 	char force_ss_;
-	LoopsOP loops_;
+	protocols::loops::LoopsOP loops_;
 
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns

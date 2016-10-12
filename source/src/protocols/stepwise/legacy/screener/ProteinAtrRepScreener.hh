@@ -21,9 +21,6 @@
 #include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -33,7 +30,7 @@ class ProteinAtrRepScreener: public stepwise::screener::SampleApplier {
 
 public:
 	//constructor
-	ProteinAtrRepScreener( pose::Pose & pose_atr_rep_screen,
+	ProteinAtrRepScreener( core::pose::Pose & pose_atr_rep_screen,
 		protocols::stepwise::modeler::protein::checker::ProteinAtrRepCheckerOP atr_rep_checker );
 
 	//destructor

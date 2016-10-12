@@ -29,11 +29,6 @@
 namespace utility {
 namespace libsvm {
 
-using utility::vector1;
-using std::string;
-//using platform::Size;
-//using platform::Real;
-
 class Svm_node_rosetta: public utility::pointer::ReferenceCount {
 public:
 	Svm_node_rosetta(platform::Size index, platform::Real value);
@@ -58,11 +53,11 @@ private:
 
 class Svm_rosetta: public utility::pointer::ReferenceCount {
 public:
-	Svm_rosetta(string model_filename);
+	Svm_rosetta(std::string model_filename);
 	~Svm_rosetta() override;
 	platform::Size get_nr_class();
-	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > & features);
-	platform::Real predict( const vector1< Svm_node_rosettaOP > & features);
+	utility::vector1< platform::Real > predict_probability(utility::vector1< Svm_node_rosettaOP > & features);
+	platform::Real predict( const utility::vector1< Svm_node_rosettaOP > & features);
 private:
 	svm_model *svm_model_;
 };

@@ -25,9 +25,6 @@
 #include <core/pose/rna/BasePair.hh>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::setup;
-
 namespace protocols {
 namespace farna {
 namespace base_pairs {
@@ -39,7 +36,7 @@ public:
 	//constructor
 	RNA_BasePairHandler( core::pose::Pose const & pose );
 
-	RNA_BasePairHandler( RNA_DeNovoParameters const & rna_params );
+	RNA_BasePairHandler( protocols::farna::setup::RNA_DeNovoParameters const & rna_params );
 
 	//destructor
 	~RNA_BasePairHandler();

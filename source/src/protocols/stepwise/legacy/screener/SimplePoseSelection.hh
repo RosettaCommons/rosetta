@@ -22,9 +22,6 @@
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -35,7 +32,7 @@ class SimplePoseSelection: public stepwise::screener::StepWiseScreener {
 public:
 
 	//constructor
-	SimplePoseSelection( pose::Pose const & pose,
+	SimplePoseSelection( core::pose::Pose const & pose,
 		utility::vector1< Size > const & moving_res_list,
 		protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options,
 		bool const full_optimize );
@@ -57,16 +54,16 @@ public:
 	void
 	finalize();
 
-	utility::vector1< pose::PoseOP > pose_list() { return pose_list_; }
+	utility::vector1< core::pose::PoseOP > pose_list() { return pose_list_; }
 
 private:
 
-	pose::Pose const & pose_;
+	core::pose::Pose const & pose_;
 	utility::vector1< Size > const moving_res_list_;
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsCOP options_;
 	bool const full_optimize_;
 
-	utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< core::pose::PoseOP > pose_list_;
 
 };
 

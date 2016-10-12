@@ -19,9 +19,6 @@
 #include <protocols/stepwise/sampler/JumpStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinBetaAntiParallelStepWiseSampler.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -49,7 +46,7 @@ public:
 private:
 
 	Size
-	get_antiparallel_beta_jumps( pose::Pose const & pose, int const sample_res );
+	get_antiparallel_beta_jumps( core::pose::Pose const & pose, int const sample_res );
 
 };
 

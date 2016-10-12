@@ -51,21 +51,21 @@ void JCouplingIO::read(std::string const & file_name) {
 	}
 
 	std::string line;
-	Size len;
-	Real a, b, c, theta;
+	core::Size len;
+	core::Real a, b, c, theta;
 
 	getline(data, line);
 	std::istringstream line_stream(line);
 	line_stream >> len >> a >> b >> c >> theta;
 
-	utility::vector1< Real > tmpv(len);
-	utility::vector1< utility::vector1< Real > > temp_data( 1, tmpv );
+	utility::vector1< core::Real > tmpv(len);
+	utility::vector1< utility::vector1< core::Real > > temp_data( 1, tmpv );
 
 	while ( !data.eof() ) {
 		getline(data, line);
 		std::istringstream line_stream(line);
-		Real val, dev;
-		Size res;
+		core::Real val, dev;
+		core::Size res;
 		line_stream >> res >> val >> dev;
 
 		if ( !(option[frags::filter_JC].user() && (val >4) && (val<6)  ) ) {
@@ -87,11 +87,11 @@ void JCouplingIO::read(std::string const & file_name) {
 	sequence_length_ = len;
 }
 
-std::pair< Real, Real > JCouplingIO::get_data( Size const res_num, bool & has_data ){
+std::pair< core::Real, core::Real > JCouplingIO::get_data( core::Size const res_num, bool & has_data ){
 
 	has_data = false;
 
-	std::pair< Real, Real > temp;
+	std::pair< core::Real, core::Real > temp;
 
 	//std::cout << "GETTING " << res_num << " " << data_[res_num].size() << std::endl;
 
@@ -103,9 +103,9 @@ std::pair< Real, Real > JCouplingIO::get_data( Size const res_num, bool & has_da
 	return temp;
 }
 
-utility::vector1< Real > JCouplingIO::get_parameters() {
+utility::vector1< core::Real > JCouplingIO::get_parameters() {
 
-	utility::vector1<Real> params;
+	utility::vector1<core::Real> params;
 
 	params.push_back(A_);
 	params.push_back(B_);

@@ -47,7 +47,9 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.NMerSVMEnergy" );
 namespace core {
 namespace scoring {
 namespace methods {
+
 using namespace utility::libsvm;
+using utility::vector1;
 
 /// @details This must return a fresh instance of the NMerSVMEnergy class,
 /// never an instance already in use

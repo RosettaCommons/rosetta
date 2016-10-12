@@ -34,16 +34,8 @@
 namespace protocols {
 namespace frag_picker {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::fragment;
-
-using ObjexxFCL::format::F;
-using ObjexxFCL::format::I;
-
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
-	VallProviderOP, Size max_nfrags_per_pos = 900000000);
+	VallProviderOP, core::Size max_nfrags_per_pos = 900000000);
 
 /// @brief Vector candidate says which X-mer from vall fits to a query sequence
 /// @details Scores for a given fragment are stored separately in a FragmentScoreMap object
@@ -52,8 +44,8 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
 class FragmentCandidate: public utility::pointer::ReferenceCount {
 public:
 
-	FragmentCandidate(Size queryPosition, Size inChunkPosition,
-		VallChunkOP chunk, Size fragmentLength) :
+	FragmentCandidate(core::Size queryPosition, core::Size inChunkPosition,
+		VallChunkOP chunk, core::Size fragmentLength) :
 		chunk_(std::move(chunk)) {
 
 		assert(queryPosition>0);
@@ -73,7 +65,7 @@ public:
 
 	/// @brief returns a given residue from this fragment
 	/// @details the irgument is in the range [1,fragmentLength]
-	inline VallResidueOP get_residue(Size whichOne) const {
+	inline VallResidueOP get_residue(core::Size whichOne) const {
 		runtime_assert( chunk_ != nullptr );
 		runtime_assert( whichOne >= 1 && whichOne <= fragmentLength_ );
 		return chunk_->at(whichOne + vallResidueIndex_ - 1);
@@ -84,7 +76,7 @@ public:
 	inline std::string sequence() { return chunk_->get_sequence().substr(vallResidueIndex_-1, fragmentLength_); }
 
 	/// @brief returns an integer key identifying a fragment
-	inline Size key() const {
+	inline core::Size key() const {
 		return chunk_->at(vallResidueIndex_)->key();
 	}
 
@@ -99,24 +91,24 @@ public:
 	}
 
 	/// @brief returns the index of a very first residue in a query sequence that is covered by this fragment
-	inline Size get_first_index_in_query() const {
+	inline core::Size get_first_index_in_query() const {
 		return queryResidueIndex_;
 	}
 
 	/// @brief returns the index of a very first residue in a Vall chunk that is covered by this fragment
-	inline Size get_first_index_in_vall() const {
+	inline core::Size get_first_index_in_vall() const {
 		return vallResidueIndex_;
 	}
 
 	/// @brief returns a vall index of a middle residue in this fragment
 	/// @returns a position of the middle residue of this fragment in the vall sequence
-	inline Size get_vall_middle_res_id() {
+	inline core::Size get_vall_middle_res_id() {
 		return ( fragmentLength_/2 + 1) + ( vallResidueIndex_ ) - 1;
 	}
 
 	/// @brief returns a query index of a middle residue in this fragment
 	/// @returns a position of the middle residue of this fragment in the query sequence
-	inline Size get_query_middle_res_id() {
+	inline core::Size get_query_middle_res_id() {
 		return ( fragmentLength_/2 + 1) + ( queryResidueIndex_ ) - 1;
 	}
 
@@ -132,16 +124,17 @@ public:
 	}
 
 	/// @brief returns the length of this fragment
-	inline Size get_length() const {
+	inline core::Size get_length() const {
 		return fragmentLength_;
 	}
 
-	inline FragDataOP get_frag_data() {
+	inline core::fragment::FragDataOP get_frag_data() {
+		using namespace core::fragment;
 
 		AnnotatedFragDataOP fragdata( new AnnotatedFragData(get_pdb_id(),
 			queryResidueIndex_) );
 
-		for ( Size i = 1; i <= fragmentLength_; ++i ) {
+		for ( core::Size i = 1; i <= fragmentLength_; ++i ) {
 			fragdata->add_residue(
 				chunk_->at(i + vallResidueIndex_ - 1)->bbtorsion_srfd());
 		}
@@ -178,9 +171,9 @@ public:
 
 protected:
 	VallChunkOP chunk_;
-	Size vallResidueIndex_;
-	Size queryResidueIndex_;
-	Size fragmentLength_;
+	core::Size vallResidueIndex_;
+	core::Size queryResidueIndex_;
+	core::Size fragmentLength_;
 private:
 	static const std::string unknown_pool_name_;
 	std::string* pool_name_;
@@ -198,8 +191,8 @@ inline std::ostream& operator<<(std::ostream& out, std::pair<
 	out << pair.first->get_pdb_id() << " "
 		<< pair.first->get_first_index_in_vall() << " : "
 		<< pair.first->get_first_index_in_query() << " :";
-	utility::vector1<Real> c = pair.second->get_score_components();
-	for ( Size i = 1; i <= c.size(); i++ ) {
+	utility::vector1<core::Real> c = pair.second->get_score_components();
+	for ( core::Size i = 1; i <= c.size(); i++ ) {
 		out << " " << c.at(i);
 	}
 	return out;

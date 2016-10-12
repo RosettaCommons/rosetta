@@ -51,13 +51,14 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
+using namespace core;
 
 static THREAD_LOCAL basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentAllAtomCrmsd");
 
 FragmentAllAtomCrmsd::~FragmentAllAtomCrmsd() {}
 
-FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable_value,
+FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose) :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentAllAtomCrmsd"), query_sequence_(query_sequence) {
 
@@ -71,8 +72,8 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
 	core::pose::make_pose_from_sequence(*fragment_pose_, reference_pose_->sequence(), *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));
 }
 
-FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	std::string query_sequence, utility::vector1< utility::vector1<Real> > xyz)  :
+FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	std::string query_sequence, utility::vector1< utility::vector1<core::Real> > xyz)  :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentAllAtomCrmsd"),
 	query_sequence_(query_sequence) {
 
@@ -92,7 +93,7 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
 }
 
 void FragmentAllAtomCrmsd::fill_coords(core::pose::Pose const& pose,
-	FArray2_double& coords, Size n_res, std::string ) {
+	FArray2_double& coords, core::Size n_res, std::string ) {
 
 	trRmsScore.Debug << "Copying coordinates from ... The first residues are: "
 		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
@@ -133,11 +134,11 @@ void FragmentAllAtomCrmsd::fill_coords(core::pose::Pose const& pose,
 bool FragmentAllAtomCrmsd::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 
-	if ( (Size) fragment_coordinates_.size2() < f->get_length() * 4 ) {
+	if ( (core::Size) fragment_coordinates_.size2() < f->get_length() * 4 ) {
 		fragment_coordinates_.redimension(3, f->get_length()*4, 0.0);
 		frag_pos_coordinates_.redimension(3, f->get_length()*4, 0.0);
 	}
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		fragment_pose_->set_phi( i, f->get_residue(i)->phi() );
 		fragment_pose_->set_psi( i, f->get_residue(i)->psi() );
 		fragment_pose_->set_omega( i, f->get_residue(i)->omega() );
@@ -150,7 +151,7 @@ bool FragmentAllAtomCrmsd::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 
 	fill_coords(*fragment_pose_, fragment_coordinates_, f->get_length(), f->sequence());
 
-	Real rms = numeric::model_quality::rms_wrapper(f->get_length(),
+	core::Real rms = numeric::model_quality::rms_wrapper(f->get_length(),
 		fragment_coordinates_, frag_pos_coordinates_);
 
 	empty_map->set_score_component(rms, id_);
@@ -163,8 +164,8 @@ bool FragmentAllAtomCrmsd::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 }
 
 
-FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string) {
 
 	if ( option[in::file::native].user() ) {
@@ -193,7 +194,7 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::xyz]().c_str() << std::endl;
 		std::string line;
-		utility::vector1< utility::vector1< Real > > xyz;
+		utility::vector1< utility::vector1< core::Real > > xyz;
 		// std::istream & input = utility::io::izstream( option[ in::file::xyz ]().c_str() );
 		std::ifstream input( option[ in::file::xyz ]().c_str() );
 
@@ -202,8 +203,8 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 			trRmsScore.Warning << line<<std::endl;
 			if ( line.substr(0,1) == "#" ) continue;
 			std::istringstream line_stream( line );
-			utility::vector1<Real> row;
-			Real x,y,z;
+			utility::vector1<core::Real> row;
+			core::Real x,y,z;
 			char c;
 			line_stream >> c >> x >> y >> z;
 			seq += c;

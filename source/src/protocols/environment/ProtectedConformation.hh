@@ -40,9 +40,6 @@
 namespace protocols {
 namespace environment {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::conformation;
-
 class ProtectedConformation : public core::conformation::Conformation {
 	friend class DofUnlock;
 	friend class Environment;
@@ -67,7 +64,7 @@ public:
 	bool is_protected() const override { return true; }
 
 	//@brief return a copy of in_rsd with variants matched to seqpos in this conformation
-	ResidueOP match_variants( core::Size seqpos, Residue const& in_rsd ) const;
+	core::conformation::ResidueOP match_variants( core::Size seqpos, core::conformation::Residue const& in_rsd ) const;
 
 	//Annotation functions:
 	SequenceAnnotationCOP resolver() const;

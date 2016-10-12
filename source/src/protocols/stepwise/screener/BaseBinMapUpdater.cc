@@ -21,8 +21,10 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.BaseBinMapUpdater" );
 
+using namespace core;
 using namespace protocols::stepwise::sampler;
 using namespace protocols::stepwise::sampler::rigid_body;
+using namespace protocols::stepwise::modeler::rna::rigid_body;
 
 namespace protocols {
 namespace stepwise {

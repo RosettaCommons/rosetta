@@ -56,7 +56,10 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.submotif.SubMotifLibrar
 using namespace core;
 using namespace core::pose;
 using namespace core::pose::full_model_info;
+using namespace core::chemical::rna;
 using namespace protocols::stepwise::monte_carlo::mover;
+using core::kinematics::FoldTree;
+using utility::vector1;
 
 namespace protocols {
 namespace stepwise {

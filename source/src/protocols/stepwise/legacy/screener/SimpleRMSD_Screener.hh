@@ -22,9 +22,6 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -35,7 +32,7 @@ class SimpleRMSD_Screener: public stepwise::screener::StepWiseScreener {
 public:
 
 	//constructor
-	SimpleRMSD_Screener( pose::Pose const & pose,
+	SimpleRMSD_Screener( core::pose::Pose const & pose,
 		utility::vector1< Size > const & calc_rms_res,
 		core::pose::PoseCOP native_pose,
 		core::Real const rmsd_cutoff,
@@ -62,7 +59,7 @@ private:
 
 private:
 
-	pose::Pose const & pose_;
+	core::pose::Pose const & pose_;
 
 	utility::vector1< Size > calc_rms_res_;
 	core::pose::PoseCOP native_pose_;

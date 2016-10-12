@@ -85,6 +85,7 @@ using namespace protocols::viewer;
 using namespace basic::options;
 using namespace farna;
 using namespace farna::movers;
+using namespace farna::fragments;
 using namespace ObjexxFCL::format;
 //using namespace basic::options::OptionKeys;
 using namespace chemical;

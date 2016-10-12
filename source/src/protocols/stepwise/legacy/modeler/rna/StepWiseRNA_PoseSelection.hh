@@ -25,9 +25,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -53,8 +50,8 @@ public:
 	void
 	initialize_modeler_scorefxn( core::scoring::ScoreFunctionCOP & scorefxn );
 
-	Real
-	pose_selection_by_full_score( pose::Pose & current_pose, std::string const & tag );
+	core::Real
+	pose_selection_by_full_score( core::pose::Pose & current_pose, std::string const & tag );
 
 	void
 	cluster_pose_list();
@@ -73,12 +70,12 @@ public:
 	void
 	update_pose_list(
 		std::string const & tag,
-		pose::Pose const & current_pose,
-		Real const & current_score );
+		core::pose::Pose const & current_pose,
+		core::Real const & current_score );
 
-	utility::vector1< pose::PoseOP > pose_list();
+	utility::vector1< core::pose::PoseOP > pose_list();
 
-	void set_pose_list( utility::vector1< pose::PoseOP > & pose_list );
+	void set_pose_list( utility::vector1< core::pose::PoseOP > & pose_list );
 
 	void
 	finalize( bool const do_clustering = true );
@@ -91,8 +88,8 @@ private:
 	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 	core::scoring::ScoreFunctionOP modeler_scorefxn_;
 
-	Size num_pose_kept_;
-	Size const multiplier_;
+	core::Size num_pose_kept_;
+	core::Size const multiplier_;
 	core::Real cluster_rmsd_;
 	bool PBP_clustering_at_chain_closure_;
 	bool distinguish_pucker_;
@@ -102,7 +99,7 @@ private:
 
 	protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct & count_data_;
 
-	utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< core::pose::PoseOP > pose_list_;
 
 };
 

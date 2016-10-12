@@ -28,15 +28,15 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  Computes E-Value for a Profile object
 class ScoreEValuator: public ProfileScore {
 
 public:
-	ScoreEValuator(Size priority, Real lowest_acceptable_value,
-		bool use_lowest, sequence::SequenceProfileOP query_profile,
-		sequence::ScoringSchemeOP profile_scoring, Size largest_chunk_size) :
+	ScoreEValuator(core::Size priority, core::Real lowest_acceptable_value,
+		bool use_lowest, core::sequence::SequenceProfileOP query_profile,
+		core::sequence::ScoringSchemeOP profile_scoring, core::Size largest_chunk_size) :
 		ProfileScore(priority, lowest_acceptable_value, use_lowest, query_profile,
 		profile_scoring, largest_chunk_size) {
 		max_rand_ = 12;
@@ -47,7 +47,7 @@ public:
 	bool score(FragmentCandidateOP, FragmentScoreMapOP);
 	//bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map, std::ostream& out);
 private:
-	Size max_rand_;
+	core::Size max_rand_;
 };
 
 class MakeScoreEValuator: public MakeFragmentScoringMethod {
@@ -59,7 +59,7 @@ public:
 
 	using MakeFragmentScoringMethod::make;
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP);
 };
 
 } // scores

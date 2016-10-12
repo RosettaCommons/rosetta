@@ -54,8 +54,8 @@ static THREAD_LOCAL basic::Tracer trProfScoreSubMatrix(
 
 ProfileScoreSubMatrix::~ProfileScoreSubMatrix() {}
 
-ProfileScoreSubMatrix::ProfileScoreSubMatrix(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	std::string sequence,Size longest_vall_chunk,std::string subMatrixFile) :
+ProfileScoreSubMatrix::ProfileScoreSubMatrix(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	std::string sequence,core::Size longest_vall_chunk,std::string subMatrixFile) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"ProfileScoreSubMatrix")
 {
@@ -64,13 +64,13 @@ ProfileScoreSubMatrix::ProfileScoreSubMatrix(Size priority, Real lowest_acceptab
 	subMatrixFile_           = subMatrixFile;
 
 	// Setup scores to be the proper size, each sequence position has an entry for each chunk position.
-	for ( Size i = 1; i <= sequence.size(); ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= sequence.size(); ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
 	}
 
 	// Read in the SubMatrix, should be BLOSUM62 format?
-	sequence::MatrixScoringScheme sub_matrix_reader;
+	core::sequence::MatrixScoringScheme sub_matrix_reader;
 	sub_matrix_reader.read_from_file(subMatrixFile_);
 	sub_matrix_ = sub_matrix_reader.scoring_matrix();
 
@@ -87,19 +87,19 @@ void ProfileScoreSubMatrix::do_caching(VallChunkOP chunk) {
 		return;
 	}
 	cached_scores_id_ = tmp;
-	Size size_q = sequence_.size();
+	core::Size size_q = sequence_.size();
 
 	trProfScoreSubMatrix.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
 	PROF_START( basic::FRAGMENTPICKING_PROFILE_CAHING );
 
 	// For each position in sequence
-	for ( Size i = 1; i <= size_q; ++i ) {
+	for ( core::Size i = 1; i <= size_q; ++i ) {
 
 		AA seqAA = aa_from_oneletter_code( sequence_[i-1] );
 
 		// For each position in chunk
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 
 			AA chunkAA = aa_from_oneletter_code( chunk->at(j)->aa() );
 
@@ -122,8 +122,8 @@ bool ProfileScoreSubMatrix::cached_score(FragmentCandidateOP f, FragmentScoreMap
 		do_caching(f->get_chunk());
 	}
 
-	Real totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 
 		// Check sizes of fragment/chunk and scores
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
@@ -131,7 +131,7 @@ bool ProfileScoreSubMatrix::cached_score(FragmentCandidateOP f, FragmentScoreMap
 
 		totalScore += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -146,9 +146,9 @@ bool ProfileScoreSubMatrix::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 }
 
 // MISC = Substitution Matrix File Name ... the reader will spit out an error if the file does not exist.
-FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(Size priority, Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string misc) {
+FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string misc) {
 
-	Size len = picker->get_vall()->get_largest_chunk_size();
+	core::Size len = picker->get_vall()->get_largest_chunk_size();
 
 	trProfScoreSubMatrix << "Profile scoring method is: SubMatrix" << std::endl;
 

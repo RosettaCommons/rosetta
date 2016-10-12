@@ -88,7 +88,7 @@ SimplePDB::get_res_centers() const
 			last_icode = i->icode;
 		}
 	}
-	vector1< xyzVector<PackstatReal> > centers;
+	utility::vector1< xyzVector<PackstatReal> > centers;
 	res_labels_.clear();
 	xyzVector<PackstatReal> center(0,0,0);
 	last_res_num = -12345;
@@ -140,7 +140,7 @@ void SimplePDB::remove_surface_waters() {
 		// std::cerr << "REMOVE_SURFACE_WATERS " << count << std::endl;
 		count++;
 		compute_sasa_generic<SimplePDB_Atom>( atoms_, 3.0 );
-		vector1<SimplePDB_Atom> newatoms;
+		utility::vector1<SimplePDB_Atom> newatoms;
 		bool removed = false;
 		for ( Size i = 1; i <= atoms_.size(); ++i ) {
 			// std::cerr << "ATOM " << atoms_[i].res << " " << atoms_[i].sasa << std::endl;

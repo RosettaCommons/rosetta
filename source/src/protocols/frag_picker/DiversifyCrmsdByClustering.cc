@@ -39,8 +39,8 @@ static THREAD_LOCAL basic::Tracer trDiversifyCrmsdByClustering(
 void DiversifyCrmsdByClustering::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {
 
 	pose::PoseOP pose = src->get_chunk()->get_pose();
-	Size len = src->get_length();
-	Size offset = src->get_first_index_in_vall() - 1;
+	core::Size len = src->get_length();
+	core::Size offset = src->get_first_index_in_vall() - 1;
 	for ( core::Size i = 1; i <= len; i++ ) {
 		id::NamedAtomID idCA("CA", i+offset);
 		PointPosition const& xyz = pose->xyz(idCA);
@@ -58,36 +58,36 @@ void DiversifyCrmsdByClustering::select_fragments(
 {
 	if ( in.size()==0 ) return;
 
-	//-------------- Size of fragments
-	Size len = in[1].first->get_length();
+	//-------------- core::Size of fragments
+	core::Size len = in[1].first->get_length();
 	trDiversifyCrmsdByClustering.Debug << "Diversifying fragments of size "<<len<<" #(in) = "<<in.size()<<std::endl;
 	//-------------- Resize container for xyz data
 	if ( in.size() > xyz_.size() ) {
-		trDiversifyCrmsdByClustering.Trace << "Reallocated: to "<<xyz_.size()<<std::endl;
+		trDiversifyCrmsdByClustering.Trace << "core::Reallocated: to "<<xyz_.size()<<std::endl;
 		xyz_.resize(in.size());
 	}
 	//-------------- Resize each xyz vector to match fragments' size
-	for ( Size i=1; i<=in.size(); i++ ) {
-		if ( (Size)xyz_[i].size2() != len ) {
+	for ( core::Size i=1; i<=in.size(); i++ ) {
+		if ( (core::Size)xyz_[i].size2() != len ) {
 			xyz_[i].redimension(3,len,0.0);
 		}
 	}
 	//-------------- Copy xyz coordinates, setup ids
-	utility::vector1<Size> ids;
-	for ( Size i=1; i<=in.size(); i++ ) {
+	utility::vector1<core::Size> ids;
+	for ( core::Size i=1; i<=in.size(); i++ ) {
 		copy_coordinates(in[i].first,xyz_[i]);
 		ids.push_back(i);
 	}
 
 	//-------------- Prepare distance matrix
-	utility::vector1< utility::vector1<Real> > distances(in.size());
-	for ( Size i=1; i<=in.size(); i++ ) {
+	utility::vector1< utility::vector1<core::Real> > distances(in.size());
+	for ( core::Size i=1; i<=in.size(); i++ ) {
 		distances[i].resize( in.size() );
 	}
 
-	for ( Size i=2; i<=in.size(); i++ ) {
-		for ( Size j=2; j<=in.size(); j++ ) {
-			Real val = numeric::model_quality::rms_wrapper(len,xyz_[i],xyz_[j]);
+	for ( core::Size i=2; i<=in.size(); i++ ) {
+		for ( core::Size j=2; j<=in.size(); j++ ) {
+			core::Real val = numeric::model_quality::rms_wrapper(len,xyz_[i],xyz_[j]);
 			distances[ i ][ j ] = val;
 			distances[ j ][ i ] = val;
 		}
@@ -97,8 +97,8 @@ void DiversifyCrmsdByClustering::select_fragments(
 	utility::vector1<numeric::ClusteringTreeNodeOP> roots = alc.cluster(distances,frags_per_pos());
 
 	//----------- Retrieve clusters
-	for ( Size i=1; i<=frags_per_pos(); i++ ) {
-		utility::vector1<Size> ids_out;
+	for ( core::Size i=1; i<=frags_per_pos(); i++ ) {
+		utility::vector1<core::Size> ids_out;
 		numeric::get_cluster_data(ids,roots[i],ids_out);
 		out.push_back( in[ ids_out[1] ] );
 		trDiversifyCrmsdByClustering.Debug << "Fragment "<<i<<" cluster stats: dist="<<roots[i]->distance()

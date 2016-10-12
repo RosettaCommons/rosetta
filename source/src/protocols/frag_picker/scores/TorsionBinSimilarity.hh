@@ -29,7 +29,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1< utility::vector1 < Real > > Matrix;
+typedef utility::vector1< utility::vector1 < core::Real > > Matrix;
 
 class TorsionBinSimilarity;
 typedef utility::pointer::shared_ptr< TorsionBinSimilarity > TorsionBinSimilarityOP;
@@ -40,12 +40,12 @@ class TorsionBinSimilarity: public CachingScoringMethod {
 public:
 
 	TorsionBinSimilarity(
-		Size priority,
-		Real lowest_acceptable_value,
+		core::Size priority,
+		core::Real lowest_acceptable_value,
 		bool use_lowest,
 		utility::vector1< utility::vector1< core::Real > > query_bin_probs,
-		Size sequence_length,
-		Size longest_vall_chunk
+		core::Size sequence_length,
+		core::Size longest_vall_chunk
 	) :
 		CachingScoringMethod(
 		priority, lowest_acceptable_value, use_lowest,
@@ -54,8 +54,8 @@ public:
 		query_len_( sequence_length ),
 		query_bin_probs_( query_bin_probs )
 	{
-		for ( Size i = 1; i <= query_len_; ++i ) {
-			utility::vector1< Real > row(longest_vall_chunk);
+		for ( core::Size i = 1; i <= query_len_; ++i ) {
+			utility::vector1< core::Real > row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
 	}
@@ -74,14 +74,14 @@ private:
 		core::Real const omega
 	) const;
 
-	Size bin_index_( char const bin_name ) const;
+	core::Size bin_index_( char const bin_name ) const;
 
 protected:
 	Matrix scores_;
 
 private:
 	std::string name_;
-	Size query_len_;
+	core::Size query_len_;
 	utility::vector1< utility::vector1< core::Real > > query_bin_probs_;
 	std::string cached_scores_id_;
 }; // TorsionBinSimilarity
@@ -95,8 +95,8 @@ public:
 	{}
 
 	FragmentScoringMethodOP make(
-		Size priority,
-		Real lowest_acceptable_value,
+		core::Size priority,
+		core::Real lowest_acceptable_value,
 		bool use_lowest,
 		FragmentPickerOP picker,
 		std::string /* prediction_id */

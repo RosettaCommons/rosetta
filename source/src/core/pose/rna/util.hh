@@ -25,9 +25,6 @@
 #include <utility/vector1.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace core {
 namespace pose {
 namespace rna {
@@ -103,7 +100,7 @@ void
 apply_pucker(
 	Pose & pose,
 	Size const i,
-	PuckerState const pucker_state = ANY_PUCKER,
+	core::chemical::rna::PuckerState const pucker_state = core::chemical::rna::ANY_PUCKER,
 	bool const skip_same_state = false,
 	bool const idealize_coord = true );
 
@@ -147,10 +144,10 @@ has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n );
 
-ChiState
+core::chemical::rna::ChiState
 get_residue_base_state( core::pose::Pose const & pose, Size const seq_num );
 
-PuckerState
+core::chemical::rna::PuckerState
 get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num );
 
 Real

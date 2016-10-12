@@ -206,7 +206,7 @@ private:
 	/// @brief Checks for inconsistency in include_only and leave_out string vectors from GraftInstructions.
 	template < typename T >
 	bool
-	has_vec_inconsistency(vector1<T> const &  include, vector1<T> const & leave_out) const;
+	has_vec_inconsistency(utility::vector1<T> const &  include, utility::vector1<T> const & leave_out) const;
 
 	//Tried explicit function specialization here, but could not get it to work with clang.
 

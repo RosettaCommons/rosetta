@@ -43,6 +43,7 @@ namespace antibody {
 
 using namespace core;
 using namespace core::select;
+using utility::vector1;
 
 GraftedStemOptimizer::GraftedStemOptimizer( CDRNameEnum const & cdr_name,
 	AntibodyInfoOP antibody_info) : Mover( "GraftedStemOptimizer" ) {

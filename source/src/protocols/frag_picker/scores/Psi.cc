@@ -43,11 +43,11 @@ bool Psi::cached_score(FragmentCandidateOP fragment,
 
 bool Psi::score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
-	Real totalScore = 0;
-	Size conf_positions = 0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0;
+	core::Size conf_positions = 0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		// skip low confidence positions
-		Size qindex = i + f->get_first_index_in_query() - 1;
+		core::Size qindex = i + f->get_first_index_in_query() - 1;
 		VallResidueOP r = f->get_residue(i);
 		//  if (query_psi_prediction_conf_[qindex] < PSI_MIN_CONF) continue;
 		// skip last residue in query and last residue in vall chunk
@@ -57,7 +57,7 @@ bool Psi::score(FragmentCandidateOP f,
 		totalScore += fabs( (query_psi_prediction_[qindex] - r->dssp_psi())/ 180.0 );
 		conf_positions++;
 	}
-	totalScore /= (Real) conf_positions;
+	totalScore /= (core::Real) conf_positions;
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;

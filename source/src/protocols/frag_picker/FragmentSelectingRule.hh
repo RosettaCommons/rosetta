@@ -19,6 +19,7 @@
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 
+#include <core/types.hh>
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -32,7 +33,7 @@ class FragmentSelectingRule: public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments.
-	FragmentSelectingRule(Size frags_per_pos) {
+	FragmentSelectingRule(core::Size frags_per_pos) {
 		frags_per_pos_ = frags_per_pos;
 	}
 
@@ -40,7 +41,7 @@ public:
 	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) = 0;
 
 	/// @brief Says how many fragments will be selected for each position in a query sequence
-	inline Size frags_per_pos() {
+	inline core::Size frags_per_pos() {
 
 		return frags_per_pos_;
 	}
@@ -48,7 +49,7 @@ public:
 	~FragmentSelectingRule() override = default;
 
 private:
-	Size frags_per_pos_;
+	core::Size frags_per_pos_;
 };
 
 } // frag_picker

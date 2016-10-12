@@ -53,8 +53,8 @@ static THREAD_LOCAL basic::Tracer trProfScoreBlosum62(
 
 ProfileScoreBlosum62::~ProfileScoreBlosum62() {}
 
-ProfileScoreBlosum62::ProfileScoreBlosum62(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	sequence::SequenceProfileOP query_profile, Size longest_vall_chunk) :
+ProfileScoreBlosum62::ProfileScoreBlosum62(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	core::sequence::SequenceProfileOP query_profile, core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"ProfileScoreBlosum62")
 {
@@ -63,12 +63,12 @@ ProfileScoreBlosum62::ProfileScoreBlosum62(Size priority, Real lowest_acceptable
 	}
 	query_profile_ = query_profile;
 
-	for ( Size i = 1; i <= query_profile->length(); ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= query_profile->length(); ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
 	}
 
-	sequence::MatrixScoringScheme blosum_reader;
+	core::sequence::MatrixScoringScheme blosum_reader;
 
 	utility::file::FileName const fn("/work/rvernon/yangshen/adjust_tables/BLOSUM62");
 
@@ -86,27 +86,27 @@ void ProfileScoreBlosum62::do_caching(VallChunkOP chunk) {
 		return;
 	}
 	cached_scores_id_ = tmp;
-	Size size_q = query_profile_->length();
+	core::Size size_q = query_profile_->length();
 
 	trProfScoreBlosum62.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
 	PROF_START( basic::FRAGMENTPICKING_PROFILE_CAHING );
-	for ( Size i = 1; i <= size_q; ++i ) {
-		utility::vector1<Real> query_prof_row = query_profile_->prof_row(i);
+	for ( core::Size i = 1; i <= size_q; ++i ) {
+		utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(i);
 
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 
 			//AA aa = aa_from_oneletter_code( chunk->at(j)->aa() );
 
-			utility::vector1<Real> tmplt_prof_row = chunk->at(j)->profile();
-			Real score = 0.0;
-			for ( Size k1 = 1; k1 <= 20; k1++ ) {
+			utility::vector1<core::Real> tmplt_prof_row = chunk->at(j)->profile();
+			core::Real score = 0.0;
+			for ( core::Size k1 = 1; k1 <= 20; k1++ ) {
 				//score -= query_prof_row[k]*blosum_matrix_[k][aa];//*tmplt_prof_row[k];
-				for ( Size k2 = 1; k2 <= 20; k2++ ) {
+				for ( core::Size k2 = 1; k2 <= 20; k2++ ) {
 
-					Real diff = query_prof_row[k1]*sqrt(tmplt_prof_row[k2]);
+					core::Real diff = query_prof_row[k1]*sqrt(tmplt_prof_row[k2]);
 
-					Real sign(0.0);
+					core::Real sign(0.0);
 
 					if ( blosum_matrix_[k1][k2] < 0 ) {
 						sign = -1.0;
@@ -114,7 +114,7 @@ void ProfileScoreBlosum62::do_caching(VallChunkOP chunk) {
 						sign = 1.0;
 					}
 
-					Real blosum( pow( std::abs(blosum_matrix_[k1][k2]), 1/4) );
+					core::Real blosum( pow( std::abs(blosum_matrix_[k1][k2]), 1/4) );
 
 					score -= sign/(1+exp((-10*diff*blosum)+5));
 
@@ -125,10 +125,10 @@ void ProfileScoreBlosum62::do_caching(VallChunkOP chunk) {
 		}
 
 
-		//for (Size j = 1; j <= chunk->size(); ++j) {
-		// utility::vector1<Real> tmplt_prof_row = chunk->at(j)->profile();
-		// Real score = 0.0;
-		// for (Size k = 1; k <= 20; k++){
+		//for (core::Size j = 1; j <= chunk->size(); ++j) {
+		// utility::vector1<core::Real> tmplt_prof_row = chunk->at(j)->profile();
+		// core::Real score = 0.0;
+		// for (core::Size k = 1; k <= 20; k++){
 		//  score += std::abs(tmplt_prof_row[k] - query_prof_row[k]);
 		// }
 		// scores_[i][j] = score;
@@ -148,8 +148,8 @@ bool ProfileScoreBlosum62::cached_score(FragmentCandidateOP f, FragmentScoreMapO
 		do_caching(f->get_chunk());
 	}
 
-	Real totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 		assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
@@ -157,7 +157,7 @@ bool ProfileScoreBlosum62::cached_score(FragmentCandidateOP f, FragmentScoreMapO
 			+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()
 			+ i - 1];
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -172,16 +172,16 @@ bool ProfileScoreBlosum62::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 
 	//  PROF_START( basic::FRAGMENTPICKING_PROFILE_SCORE );
 
-	//  Real totalScore = 0.0;
-	//  for (Size i = 1; i <= f->get_length(); i++) {
-	//   utility::vector1<Real> query_prof_row = query_profile_->prof_row(f->get_first_index_in_query() + i - 1);
+	//  core::Real totalScore = 0.0;
+	//  for (core::Size i = 1; i <= f->get_length(); i++) {
+	//   utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(f->get_first_index_in_query() + i - 1);
 	//   VallChunkOP chunk = f->get_chunk();
-	//   utility::vector1<Real> tmplt_prof_row = chunk->at(f->get_first_index_in_vall() + i - 1)->profile();
-	//   for (Size k = 1; k <= 20; k++){
+	//   utility::vector1<core::Real> tmplt_prof_row = chunk->at(f->get_first_index_in_vall() + i - 1)->profile();
+	//   for (core::Size k = 1; k <= 20; k++){
 	//       totalScore += std::abs(tmplt_prof_row[k] - query_prof_row[k]);
 	//   }
 	//  }
-	//  totalScore /= (Real) f->get_length();
+	//  totalScore /= (core::Real) f->get_length();
 	//  empty_map->set_score_component(totalScore, id_);
 	//  PROF_STOP( basic::FRAGMENTPICKING_PROFILE_SCORE );
 	//  if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
@@ -190,10 +190,10 @@ bool ProfileScoreBlosum62::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 }
 
 
-FragmentScoringMethodOP MakeProfileScoreBlosum62::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeProfileScoreBlosum62::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
-	Size len = picker->get_vall()->get_largest_chunk_size();
+	core::Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreBlosum62 << "Profile scoring method is: Blosum62" << std::endl;
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreBlosum62(priority,
 		lowest_acceptable_value, use_lowest, picker->get_query_seq(), len) );

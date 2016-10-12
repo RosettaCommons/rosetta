@@ -22,9 +22,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -39,8 +36,9 @@ class BasePair : public utility::pointer::ReferenceCount {
 public:
 
 	BasePair( Size const res1 = 0, Size const res2 = 0,
-		BaseEdge const edge1 = ANY_BASE_EDGE, BaseEdge const edge2 = ANY_BASE_EDGE,
-		BaseDoubletOrientation const orientation = ANY_BASE_DOUBLET_ORIENTATION );
+		core::chemical::rna::BaseEdge const edge1 = core::chemical::rna::ANY_BASE_EDGE,
+		core::chemical::rna::BaseEdge const edge2 = core::chemical::rna::ANY_BASE_EDGE,
+		core::chemical::rna::BaseDoubletOrientation const orientation = core::chemical::rna::ANY_BASE_DOUBLET_ORIENTATION );
 
 	~BasePair(){}
 
@@ -66,14 +64,14 @@ public:
 	void set_res2( core::Size const & setting ){ res2_ = setting; }
 	core::Size res2() const { return res2_; }
 
-	void set_edge1( BaseEdge const & setting ){ edge1_ = setting; }
-	BaseEdge edge1() const { return edge1_; }
+	void set_edge1( core::chemical::rna::BaseEdge const & setting ){ edge1_ = setting; }
+	core::chemical::rna::BaseEdge edge1() const { return edge1_; }
 
-	void set_edge2( BaseEdge const & setting ){ edge2_ = setting; }
-	BaseEdge edge2() const { return edge2_; }
+	void set_edge2( core::chemical::rna::BaseEdge const & setting ){ edge2_ = setting; }
+	core::chemical::rna::BaseEdge edge2() const { return edge2_; }
 
-	void set_orientation( BaseDoubletOrientation const & setting ){ orientation_ = setting; }
-	BaseDoubletOrientation orientation() const { return orientation_; }
+	void set_orientation( core::chemical::rna::BaseDoubletOrientation const & setting ){ orientation_ = setting; }
+	core::chemical::rna::BaseDoubletOrientation orientation() const { return orientation_; }
 
 private:
 
@@ -84,12 +82,12 @@ private:
 
 	Size res1_;
 	Size res2_;
-	BaseEdge edge1_;
-	BaseEdge edge2_;
-	BaseDoubletOrientation orientation_; // 1 = antiparallel; 2 = parallel
+	core::chemical::rna::BaseEdge edge1_;
+	core::chemical::rna::BaseEdge edge2_;
+	core::chemical::rna::BaseDoubletOrientation orientation_; // 1 = antiparallel; 2 = parallel
 
 	// following is derived based on BasePairOrientation
-	LW_BaseDoubletOrientation LW_orientation_; // 1 = cis; 2 = trans
+	core::chemical::rna::LW_BaseDoubletOrientation LW_orientation_; // 1 = cis; 2 = trans
 
 
 #ifdef    SERIALIZATION

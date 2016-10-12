@@ -226,8 +226,9 @@ DesignTask_Layer::~DesignTask_Layer() = default;
 /// @brief setup PackerTask
 void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP const task )
 {
-
 	using namespace core::pack;
+	using namespace core::pack::task;
+
 	operation::InitializeFromCommandlineOP cmop( new operation::InitializeFromCommandline );
 	cmop->apply( pose, *task );
 	//DesignLayerOperationOP op = new DesignLayerOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
@@ -280,6 +281,8 @@ DesignTask_Normal::~DesignTask_Normal() = default;
 void DesignTask_Normal::setup( pose::Pose const & pose, pack::task::PackerTaskOP const task ){
 
 	using namespace core::pack;
+	using namespace core::pack::task;
+
 	operation::InitializeFromCommandlineOP cmop( new operation::InitializeFromCommandline );
 
 	// set packertask based on resfile

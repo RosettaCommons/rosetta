@@ -29,11 +29,6 @@
 
 #include <utility/vector1.hh>
 
-
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace pose;
-
 namespace protocols {
 namespace moves {
 
@@ -59,11 +54,11 @@ public:
 	// So this this can be called from RosettaScripts
 	void
 	parse_my_tag(
-		TagCOP tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		Pose const & /*pose*/ ) override;
+		core::pose::Pose const & /*pose*/ ) override;
 
 	void
 	setup_relevant_chains(
@@ -72,9 +67,9 @@ public:
 	);
 
 	// this is a hack because poses do not have canonical names!
-	std::string pose_name(Pose const & pose);
+	std::string pose_name(core::pose::Pose const & pose);
 
-	void apply( Pose& pose ) override;
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 	std::map<std::string, std::string> chain_map;

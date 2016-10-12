@@ -21,6 +21,8 @@ namespace core {
 namespace pose {
 namespace rna {
 
+using namespace core::chemical::rna;
+
 /////////////////////////////////////////////////////////////////////////
 LW_BaseDoubletOrientation
 get_LW_orientation( BaseEdge const & edge1, BaseEdge const & edge2, BaseDoubletOrientation const & orientation )

@@ -24,19 +24,17 @@
 
 #include <utility/vector1.hh>
 
-
-using namespace core;
-
 class SmallMoverBenchmark : public PerformanceBenchmark
 {
 public:
-	pose::PoseOP pose;
-	kinematics::MoveMapOP movemap;
+	core::pose::PoseOP pose;
+	core::kinematics::MoveMapOP movemap;
 	protocols::simple_moves::SmallMover small_mover;
 
 	SmallMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
+		using namespace core;
 		pose = pose::PoseOP( new pose::Pose() );
 		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
 

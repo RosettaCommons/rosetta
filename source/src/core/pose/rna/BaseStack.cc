@@ -30,6 +30,8 @@ namespace core {
 namespace pose {
 namespace rna {
 
+using namespace core::chemical::rna;
+
 ///////////////////////////////////////////////////////////////////
 BaseStack::BaseStack():
 	res1_( 0 ),

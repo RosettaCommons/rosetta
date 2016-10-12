@@ -34,7 +34,6 @@ namespace core
 namespace indexed_structure_store
 {
 
-using utility::vector1;
 // @brief Core database handle.
 // Encapsulates reading Structure/Residue data from data store and manages retrieval on indices on store.
 class StructureStoreManager : public utility::SingletonBase< StructureStoreManager >
@@ -57,8 +56,8 @@ public:
 	// lookup_name - Lookup name within store. Fragment lookups within store are
 	//     under <store_path>/fragments/<lookup_name>
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path);
-	FragmentStoreOP load_fragment_store(std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types);
-	std::map<numeric::Size,FragmentStoreOP> load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, vector1<std::string> fields_to_load, vector1<std::string> fields_to_load_types);
+	FragmentStoreOP load_fragment_store(std::string lookup_name, std::string store_path, utility::vector1<std::string> fields_to_load, utility::vector1<std::string> fields_to_load_types);
+	std::map<numeric::Size,FragmentStoreOP> load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, utility::vector1<std::string> fields_to_load, utility::vector1<std::string> fields_to_load_types);
 
 
 

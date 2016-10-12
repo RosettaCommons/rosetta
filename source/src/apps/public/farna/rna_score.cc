@@ -107,7 +107,7 @@ do_color_by_score( core::pose::Pose & pose ) {
 	ScoreFunction scorefxn;
 	EnergyMethodOptions options( scorefxn.energy_method_options() );
 	options.etable_options().no_lk_polar_desolvation = true;
-	if ( option[ soft_rep ]() ) options.etable_type( "FA_STANDARD_SOFT" );
+	if ( basic::options::option[ soft_rep ]() ) options.etable_type( "FA_STANDARD_SOFT" );
 	scorefxn.set_energy_method_options( options );
 	scorefxn.set_weight( fa_atr, 0.21 );
 	scorefxn.set_weight( fa_rep, 0.20 );

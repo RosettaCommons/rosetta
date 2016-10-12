@@ -62,11 +62,6 @@
 namespace protocols {
 namespace hybridization {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::moves;
-using namespace protocols::loops;
-
 class FoldTreeHybridize: public protocols::moves::Mover {
 
 public:
@@ -86,7 +81,7 @@ public:
 	void restore_original_foldtree(core::pose::Pose & pose);
 	void setup_foldtree(core::pose::Pose & pose);
 
-	numeric::xyzVector<Real> center_of_mass(core::pose::Pose const & pose);
+	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
 
 	void translate_virt_to_CoM(core::pose::Pose & pose);
 
@@ -220,7 +215,7 @@ private:
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_small_;
 	utility::vector1 < core::fragment::FragSetOP > frag_libs_big_;
 
-	Loops ss_chunks_pose_;
+	protocols::loops::Loops ss_chunks_pose_;
 
 	core::Size top_n_big_frag_;
 	core::Size top_n_small_frag_;

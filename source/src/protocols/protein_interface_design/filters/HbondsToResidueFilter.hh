@@ -41,13 +41,9 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-using protocols::filters::Filter;
-using protocols::filters::FilterOP;
-using protocols::filters::Filters_map;
-
 /// @brief returns true if the number of hbonding partners to a particular residue exceeds a certain value
 /// This filter is useful in conjunction with DesignMinimizeHbonds class
-class HbondsToResidueFilter : public Filter
+class HbondsToResidueFilter : public protocols::filters::Filter
 {
 public:
 	typedef core::Real Real;
@@ -77,11 +73,11 @@ public :
 
 
 	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
-		return FilterOP( new HbondsToResidueFilter( *this ) );
+	protocols::filters::FilterOP clone() const {
+		return protocols::filters::FilterOP( new HbondsToResidueFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
-		return FilterOP( new HbondsToResidueFilter() );
+	protocols::filters::FilterOP fresh_instance() const{
+		return protocols::filters::FilterOP( new HbondsToResidueFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -91,7 +87,7 @@ public :
 	///
 	core::Size compute( core::pose::Pose const & pose, core::Size const resnum_rosetta ) const;
 	virtual ~HbondsToResidueFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.
 	///

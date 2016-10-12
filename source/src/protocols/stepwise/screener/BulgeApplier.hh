@@ -23,9 +23,6 @@
 #include <protocols/stepwise/modeler/rna/bulge/BulgeApplyMover.fwd.hh>
 #include <protocols/stepwise/modeler/rna/bulge/BulgeUnApplyMover.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::stepwise::modeler::rna::checker;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -35,7 +32,9 @@ class BulgeApplier: public StepWiseScreener {
 public:
 
 	//constructor
-	BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker, RNA_BaseCentroidCheckerOP base_centroid_checker,
+	BulgeApplier(
+		protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
+		protocols::stepwise::modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 		Size const moving_res );
 
 	//destructor
@@ -59,8 +58,8 @@ private:
 
 private:
 
-	RNA_AtrRepCheckerOP atr_rep_checker_;
-	RNA_BaseCentroidCheckerOP base_centroid_checker_;
+	protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker_;
+	protocols::stepwise::modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
 	modeler::rna::bulge::BulgeApplyMoverOP   bulge_apply_mover_;
 	modeler::rna::bulge::BulgeUnApplyMoverOP bulge_unapply_mover_;
 

@@ -31,16 +31,6 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 #endif
 
-/*
-Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
-by our coding convention due to problem it create on modern compilers and because of name clashing.
-For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
-
-using namespace protocols::stepwise::modeler::rna::sugar;
-using namespace protocols::stepwise::modeler::rna::checker;
-using namespace core;
-*/
-
 // functionality in original floating_base modeler, setup for sample-and-screen framework.
 // This will likely be deprecated in favor of more general ResidueAlternative modeler
 

@@ -29,10 +29,6 @@
 namespace protocols {
 namespace kinematic_closure {
 
-using utility::pointer::ReferenceCount;
-using boost::noncopyable;
-using core::pose::Pose;
-
 /// @brief Represent a single solution to a kinematic closure problem.
 ///
 /// @details The ClosureSolution class represents the solutions returned by
@@ -41,7 +37,7 @@ using core::pose::Pose;
 /// solution to the given pose, while the latter does so only if the solution
 /// passes a rama and bump check.
 
-class ClosureSolution : public ReferenceCount, private noncopyable {
+class ClosureSolution : public utility::pointer::ReferenceCount, private boost::noncopyable {
 
 	friend class ClosureProblem;
 

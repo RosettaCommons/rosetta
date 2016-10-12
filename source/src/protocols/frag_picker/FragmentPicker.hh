@@ -55,22 +55,22 @@
 namespace protocols {
 namespace frag_picker {
 
-typedef std::pair<Size,Size> PosPair;
+typedef std::pair<core::Size,core::Size> PosPair;
 typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> Candidate;
 typedef utility::vector1<Candidate> Candidates;
-typedef std::map<Size, CandidatesCollectorOP> CandidatesSink;
+typedef std::map<core::Size, CandidatesCollectorOP> CandidatesSink;
 
 class QuotaDebug : public std::ostringstream {
 
 public:
-	Size nFrags_;
-	QuotaDebug(Size nFrags) { nFrags_ = nFrags; }
+	core::Size nFrags_;
+	QuotaDebug(core::Size nFrags) { nFrags_ = nFrags; }
 	utility::vector1<std::string> tags_;
-	std::map<std::string,Size> tag_map_;
+	std::map<std::string,core::Size> tag_map_;
 	void setup_summary(quota::QuotaCollector const & collector_);
 	void write_summary();
-	void log(Size,Size,utility::vector1<Real>);
-	Size max_pools();
+	void log(core::Size,core::Size,utility::vector1<core::Real>);
+	core::Size max_pools();
 
 private:
 	QuotaDebug(QuotaDebug const &);
@@ -148,19 +148,19 @@ public:
 
 	void quota_protocol();
 
-	void fragment_contacts( Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
+	void fragment_contacts( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
 
 	// multi-threaded task
-	void nonlocal_pairs_at_positions( utility::vector1<Size> const & positions, Size const & fragment_size, utility::vector1<bool> const & skip,
+	void nonlocal_pairs_at_positions( utility::vector1<core::Size> const & positions, core::Size const & fragment_size, utility::vector1<bool> const & skip,
 		utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs );
 
-	void nonlocal_pairs( Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
+	void nonlocal_pairs( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
 
 	// these should be private methods but some classes directly access these
 
 
 	/// @brief returns a pointer to a scoring manager
-	scores::FragmentScoreManagerOP get_score_manager(Size index=1) {
+	scores::FragmentScoreManagerOP get_score_manager(core::Size index=1) {
 		assert(index <= scores_.size());
 		return scores_[index];
 	}
@@ -199,32 +199,32 @@ public:
 	}
 
 	/// Returns the solvent accessibility prediction
-	utility::vector1<Real> & get_query_sa_prediction() {
+	utility::vector1<core::Real> & get_query_sa_prediction() {
 		return query_sa_prediction_;
 	}
 
 	/// Returns the phi prediction
-	utility::vector1<Real> & get_query_phi_prediction() {
+	utility::vector1<core::Real> & get_query_phi_prediction() {
 		return query_phi_prediction_;
 	}
 
 	/// Returns the psi prediction
-	utility::vector1<Real> & get_query_psi_prediction() {
+	utility::vector1<core::Real> & get_query_psi_prediction() {
 		return query_psi_prediction_;
 	}
 
 	/// Returns the phi prediction confidence
-	utility::vector1<Real> & get_query_phi_prediction_conf() {
+	utility::vector1<core::Real> & get_query_phi_prediction_conf() {
 		return query_phi_prediction_conf_;
 	}
 
 	/// Returns the psi prediction confidence
-	utility::vector1<Real> & get_query_psi_prediction_conf() {
+	utility::vector1<core::Real> & get_query_psi_prediction_conf() {
 		return query_psi_prediction_conf_;
 	}
 
 	/// Returns residue depth values
-	utility::vector1<Real> & get_query_residue_depth() {
+	utility::vector1<core::Real> & get_query_residue_depth() {
 		return query_residue_depth_;
 	}
 
@@ -257,7 +257,7 @@ public:
 	void add_query_ss(std::string, std::string);
 
 	/// @brief Sets the query secondary structure
-	inline Size count_query_ss() {
+	inline core::Size count_query_ss() {
 		return query_ss_profile_.size();
 	}
 
@@ -271,44 +271,44 @@ public:
 	void read_depth(std::string const & file_name);
 
 	// other stuff -----------------
-	inline Size size_of_query() {
+	inline core::Size size_of_query() {
 		assert(query_seq_as_string_.length() == query_profile_->length());
 		return query_seq_as_string_.length();
 	}
 
 	/// @brief Asks the picker to pick fragments from a given range in a query sequence
-	void set_picked_positions(Size,Size);
+	void set_picked_positions(core::Size,core::Size);
 
 	/// @brief Asks the picker to pick fragments for given positions in a query sequence
-	void set_picked_positions(utility::vector1<Size>);
+	void set_picked_positions(utility::vector1<core::Size>);
 
 	/// @brief picks fragment candidates.
 	/// @details These basically become fragments if pass the final selection.
 	/// Fragment candidates are stored in a container that a user must plug into the picker
 
 	/// multi-threaded task
-	void pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, Size const & index);
+	void pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, core::Size const & index);
 
 	void pick_candidates();
 
-	void pick_candidates(Size i_pos,Size frag_len);
+	void pick_candidates(core::Size i_pos,core::Size frag_len);
 
 
 	/// @brief Calculates total score for a given vector of small scores
 	/// (FragmentScoreMap object pointer)
 	/// @details FragmentScoreManager that is stored inside the picker is used
 	/// for this calculation. It particular it provides weights
-	double total_score(scores::FragmentScoreMapOP f, Size index=1);
+	double total_score(scores::FragmentScoreMapOP f, core::Size index=1);
 
 	// save results
 	void save_candidates();
 	void save_fragments();
 
 	/// @brief How long is the longest fragment?
-	Size max_frag_len() { return *std::max_element( frag_sizes_.begin(), frag_sizes_.end() ); }
+	core::Size max_frag_len() { return *std::max_element( frag_sizes_.begin(), frag_sizes_.end() ); }
 
 	// Delegators from FragmentScoreManager ---------------
-	void show_scoring_methods(std::ostream & out, Size index=1) {
+	void show_scoring_methods(std::ostream & out, core::Size index=1) {
 		if ( index > scores_.size() ) return;
 		scores_[index]->show_scoring_methods(out);
 	}
@@ -316,7 +316,7 @@ public:
 	/// @brief adds a new scoring method to the scoring scheme
 	void add_scoring_method(
 		scores::FragmentScoringMethodOP scoring_term,
-		Real weight, Size index=1) {
+		core::Real weight, core::Size index=1) {
 		if ( index > scores_.size() ) return;
 		scores_[index]->add_scoring_method(scoring_term, weight);
 	}
@@ -331,7 +331,7 @@ public:
 	void read_talos_ss(std::string const &, std::string);
 
 	// should be private but some classes directly access these
-	utility::vector1<Size> frag_sizes_;
+	utility::vector1<core::Size> frag_sizes_;
 
 	static QuotaDebug log_25_;
 	static QuotaDebug log_200_;
@@ -344,25 +344,25 @@ public:
 
 	bool is_valid_chunk( VallChunkOP chunk );
 
-	bool is_valid_chunk( Size const frag_len, VallChunkOP chunk );
+	bool is_valid_chunk( core::Size const frag_len, VallChunkOP chunk );
 
 	// Output fragments
-	void output_fragments( Size const fragment_size, utility::vector1<Candidates> const & final_fragments );
+	void output_fragments( core::Size const fragment_size, utility::vector1<Candidates> const & final_fragments );
 
 	// Picking machinery -----------------
 	/// @brief sets a collector where fragment candidates will be kept until final selection
-	void set_candidates_collector(Size frag_size,
-		CandidatesCollectorOP sink, Size index = 1) {
+	void set_candidates_collector(core::Size frag_size,
+		CandidatesCollectorOP sink, core::Size index = 1) {
 		if ( index == 0 ) {
-			candidates_sink_.insert(std::pair<Size, CandidatesCollectorOP>(frag_size, sink));
+			candidates_sink_.insert(std::pair<core::Size, CandidatesCollectorOP>(frag_size, sink));
 		} else {
-			candidates_sinks_[index].insert(std::pair<Size, CandidatesCollectorOP>(frag_size, sink));
+			candidates_sinks_[index].insert(std::pair<core::Size, CandidatesCollectorOP>(frag_size, sink));
 		}
 	}
 
 	/// @brief returns a pointer to the candidates collector currently used
 	/// @details one may need this instance to access the candidates that have been found by the picker
-	CandidatesCollectorOP get_candidates_collector(Size frag_size, Size index=1) {
+	CandidatesCollectorOP get_candidates_collector(core::Size frag_size, core::Size index=1) {
 		if ( index == 0 ) {
 			return candidates_sink_[frag_size];
 		} else {
@@ -375,21 +375,21 @@ public:
 		filters_.push_back(filter);
 	}
 
-	Size n_candidates_;
-	Size n_frags_;
+	core::Size n_candidates_;
+	core::Size n_frags_;
 	std::string prefix_;
 	FragmentSelectingRuleOP selector_;
 
 private:
-	Size max_threads_;
+	core::Size max_threads_;
 
-	Size max_frag_size_;
+	core::Size max_frag_size_;
 
 	core::sequence::SequenceProfileOP query_profile_;
 	std::string query_seq_as_string_;
 	std::map<std::string, core::fragment::SecondaryStructureOP> query_ss_profile_;
 	std::map<std::string, std::string> query_ss_as_string_;
-	utility::vector1<Size> query_positions_;
+	utility::vector1<core::Size> query_positions_;
 
 	VallProviderOP chunks_;
 	utility::vector1<VallChunkFilterOP> filters_;
@@ -404,33 +404,33 @@ private:
 
 
 	// for frag contacts
-	Size contacts_min_seq_sep_;
+	core::Size contacts_min_seq_sep_;
 	std::set<ContactType> contact_types_;
-	Real contacts_dist_cutoff_squared_;
-	utility::vector1<Real> contacts_dist_cutoffs_squared_;
+	core::Real contacts_dist_cutoff_squared_;
+	utility::vector1<core::Real> contacts_dist_cutoffs_squared_;
 	SidechainContactDistCutoffOP sidechain_contact_dist_cutoff_;
 
 	// for nonlocal contacts
-	Real nonlocal_min_contacts_per_res_;
+	core::Real nonlocal_min_contacts_per_res_;
 
 	// phi,psi,sa predictions
-	utility::vector1<Real> query_sa_prediction_;
-	utility::vector1<Real> query_phi_prediction_;
-	utility::vector1<Real> query_psi_prediction_;
-	utility::vector1<Real> query_phi_prediction_conf_;
-	utility::vector1<Real> query_psi_prediction_conf_;
+	utility::vector1<core::Real> query_sa_prediction_;
+	utility::vector1<core::Real> query_phi_prediction_;
+	utility::vector1<core::Real> query_psi_prediction_;
+	utility::vector1<core::Real> query_phi_prediction_conf_;
+	utility::vector1<core::Real> query_psi_prediction_conf_;
 
 	// residue depth
-	utility::vector1<Real> query_residue_depth_;
+	utility::vector1<core::Real> query_residue_depth_;
 
 	// atom pair constraint contact map
-	utility::vector1<utility::vector1<Real> >  atom_pair_constraint_contact_map_;
+	utility::vector1<utility::vector1<core::Real> >  atom_pair_constraint_contact_map_;
 
 	void
 	output_pair_counts(
-		Size const fragment_size,
-		Size const neighbors,
-		std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
+		core::Size const fragment_size,
+		core::Size const neighbors,
+		std::map<std::pair<core::Real,ContactType>, ContactCountsOP> contact_counts
 	);
 };
 

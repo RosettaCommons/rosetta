@@ -54,6 +54,7 @@ static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMasterMov
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using namespace core;
+using namespace core::pose;
 using namespace protocols::stepwise::monte_carlo::rna;
 using namespace protocols::stepwise::modeler;
 using namespace core::pose::full_model_info;

@@ -25,10 +25,6 @@
 #include <core/pose/MiniPose.fwd.hh>
 #include <iostream>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::farna::base_pairs;
-
 namespace protocols {
 namespace farna {
 namespace libraries {
@@ -43,11 +39,11 @@ class BasePairStepSequence: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	BasePairStepSequence( char const nt_i, char const nt_i_next, char const nt_j, char const nt_j_next, Size const num_bulge = 0 );
+	BasePairStepSequence( char const nt_i, char const nt_i_next, char const nt_j, char const nt_j_next, core::Size const num_bulge = 0 );
 
-	BasePairStepSequence( std::string const & sequence, Size const i, Size const i_next, Size const j, Size const j_next );
+	BasePairStepSequence( std::string const & sequence, core::Size const i, core::Size const i_next, core::Size const j, core::Size const j_next );
 
-	BasePairStepSequence( std::string const & sequence, BasePairStep const & base_pair_step );
+	BasePairStepSequence( std::string const & sequence, protocols::farna::base_pairs::BasePairStep const & base_pair_step );
 
 	//destructor
 	~BasePairStepSequence(){}
@@ -84,7 +80,7 @@ public:
 		os << bps.base_pair_step_sequence_.first.first << "-" << bps.base_pair_step_sequence_.first.second;
 		os << " ";
 		os << bps.base_pair_step_sequence_.second.first;
-		for ( Size n = 1; n <= Size(bps.num_bulge_); n++ ) os << "-n";
+		for ( core::Size n = 1; n <= core::Size(bps.num_bulge_); n++ ) os << "-n";
 		os << "-" << bps.base_pair_step_sequence_.second.second;
 		return os;
 	}
@@ -96,7 +92,7 @@ public:
 		bps_seq += base_pair_step_sequence_.first.second;
 		bps_seq += "_";
 		bps_seq += base_pair_step_sequence_.second.first;
-		for ( Size n = 1; n <= Size(num_bulge_); n++ ) bps_seq += 'n';
+		for ( core::Size n = 1; n <= core::Size(num_bulge_); n++ ) bps_seq += 'n';
 		bps_seq += base_pair_step_sequence_.second.second;
 		return bps_seq;
 	}
@@ -137,7 +133,7 @@ public:
 	mini_pose_list( BasePairStepSequence const & base_pair_step_sequence ) const;
 
 	// example of a full pose for each base pair step
-	pose::PoseCOP const &
+	core::pose::PoseCOP const &
 	scratch_pose( BasePairStepSequence const & base_pair_step_sequence ) const;
 
 	bool
@@ -159,7 +155,7 @@ private:
 
 	bool const canonical_;
 	mutable std::map< BasePairStepSequence, utility::vector1< core::pose::MiniPoseOP > > mini_pose_lists_;
-	mutable std::map< BasePairStepSequence, pose::PoseCOP > scratch_poses_;
+	mutable std::map< BasePairStepSequence, core::pose::PoseCOP > scratch_poses_;
 
 };
 

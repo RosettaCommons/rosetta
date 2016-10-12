@@ -49,6 +49,8 @@
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
+using namespace protocols::farna::options;
+using namespace protocols::farna::setup;
 using utility::vector1;
 
 vector1<pose::PoseOP> get_refine_pose_list( std::string const & input_silent_file,

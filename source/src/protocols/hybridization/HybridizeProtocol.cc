@@ -182,6 +182,7 @@ using namespace task;
 using namespace operation;
 using namespace scoring;
 using namespace constraints;
+using namespace protocols::loops;
 
 
 /////////////

@@ -99,6 +99,7 @@ using basic::datacache::DataCache_CacheableData;
 using core::Size;
 using core::pose::Pose;
 using core::pose::PoseOP;
+using utility::vector1;
 
 AntibodyDesignMover::AntibodyDesignMover():
 	ab_info_(/* NULL */),

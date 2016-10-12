@@ -37,8 +37,6 @@
 namespace numeric {
 namespace interpolation {
 
-using numeric::Real;
-
 /**
 * @brief A histogram with fixed-width bins
 *

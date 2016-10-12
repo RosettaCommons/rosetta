@@ -52,21 +52,21 @@ public:
 	/// @param score_components_id - which scores will be used to sort this pool
 	/// @param weights - weights for the scores that in general may be different than these used for fragment picking
 	/// @param fraction - fraction of this pool in the entire population
-	SecondaryStructurePool(Size,std::string,char,
-		utility::vector1<Size>&,utility::vector1<Real>&,Real,Size,Size);
+	SecondaryStructurePool(core::Size,std::string,char,
+		utility::vector1<core::Size>&,utility::vector1<core::Real>&,core::Real,core::Size,core::Size);
 
 	char get_ss_type() const { return ss_type_; }
 
 	virtual ~SecondaryStructurePool();
 
 	/// @brief Says how many fragments (in total) may fit into this pool
-	virtual Size total_size() const { return storage_->size(); }
+	virtual core::Size total_size() const { return storage_->size(); }
 
 	/// @brief Says how many fragments are currently in this pool
-	virtual Size current_size() const { return storage_->count_inserted();}
+	virtual core::Size current_size() const { return storage_->count_inserted();}
 
 	/// @brief Says how many fragments can still be inserted into this pool
-	virtual Size size_left() const { return total_size() - current_size(); }
+	virtual core::Size size_left() const { return total_size() - current_size(); }
 
 	virtual bool could_be_accepted(ScoredCandidate) const;
 
@@ -86,65 +86,65 @@ public:
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	Size count_candidates(Size) const { return current_size(); }
+	core::Size count_candidates(core::Size) const { return current_size(); }
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	Size count_candidates() const { return current_size(); }
+	core::Size count_candidates() const { return current_size(); }
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// @details This is a very special case - collector will be used only for a given position and it does NOT
 	/// know the tolal size. Thus it returns always 0
-	Size query_length() const { return 0; }
+	core::Size query_length() const { return 0; }
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size, CandidatesCollectorOP collector) {
+	void insert(core::Size, CandidatesCollectorOP collector) {
 		SecondaryStructurePoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::SecondaryStructurePool > ( collector );
 		if ( c == 0 ) {
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
 		}
 		ScoredCandidatesVector1 & content = c->get_candidates(0);
-		for ( Size l=1; l<=content.size(); l++ ) storage_->push( content[l] );
+		for ( core::Size l=1; l<=content.size(); l++ ) storage_->push( content[l] );
 	}
 
 	/// @brief  Returns all the candidate in this pool
-	ScoredCandidatesVector1 & get_candidates( Size //position_in_query
+	ScoredCandidatesVector1 & get_candidates( core::Size //position_in_query
 	) {
 		return storage_->expose_data();
 	}
 
-	void resize(Size new_size) {
+	void resize(core::Size new_size) {
 		storage_->resize(new_size,new_size*buffer_factor_);
 	}
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream &, scores::FragmentScoreManagerOP) const;
 
-	virtual void set_fraction(Real new_fraction) {
+	virtual void set_fraction(core::Real new_fraction) {
 		QuotaPool::set_fraction(new_fraction);
-		this_size_ = (Size)(total_size_*new_fraction);
+		this_size_ = (core::Size)(total_size_*new_fraction);
 		if ( this_size_ < 20 ) {
 			this_size_ = 20;
 		}
 		storage_->resize( this_size_,this_size_*buffer_factor_ );
 	}
 
-	virtual Real quota_score(ScoredCandidate candidate) const {
-		Real t2(0);
-		for ( Size i=1; i<=components_.size(); i++ ) {
+	virtual core::Real quota_score(ScoredCandidate candidate) const {
+		core::Real t2(0);
+		for ( core::Size i=1; i<=components_.size(); i++ ) {
 			t2 += candidate.second->at( components_[i] ) * weights_[i];
 		}
 		return t2;
 	}
 
 private:
-	Size total_size_;
-	Size this_size_;
+	core::Size total_size_;
+	core::Size this_size_;
 	char ss_type_;
-	utility::vector1<Size> components_;
-	utility::vector1<Real> weights_;
+	utility::vector1<core::Size> components_;
+	utility::vector1<core::Real> weights_;
 	BoundedQuotaContainerOP storage_;
-	Size buffer_factor_;
+	core::Size buffer_factor_;
 };
 
 } // quota

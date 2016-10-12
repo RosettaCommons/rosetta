@@ -80,6 +80,7 @@
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
+using namespace core;
 
 namespace protocols {
 namespace mpi_refinement {

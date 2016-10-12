@@ -44,7 +44,7 @@ typedef utility::pointer::shared_ptr< CachingScoringMethod const > CachingScorin
 class CachingScoringMethod: public FragmentScoringMethod {
 public:
 
-	CachingScoringMethod(Size priority, Real lowest_acceptable_value,
+	CachingScoringMethod(core::Size priority, core::Real lowest_acceptable_value,
 		bool use_lowest, std::string name) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, name) {
 	}

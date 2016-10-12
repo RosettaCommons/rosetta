@@ -22,11 +22,6 @@
 namespace protocols {
 namespace features {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::analysis;
-using utility::vector1;
-
-
 /// @brief Analyzes interfaces and interface residues of a pose mainly using InterfaceAnalayzerMover.
 /// By default, will analyze every interface with and report any that have dSASA > cutoff.  Interfaces to report can be set via code or RS.
 ///
@@ -88,7 +83,7 @@ public:
 	/// Note that here, you can also give A_C   and a new pose would be created with only A and C so that this interface can be tested.
 	/// Note also that multiple pose interfaces can be set.
 	virtual void
-	set_interface_chains(vector1< std::string > const & interfaces);
+	set_interface_chains(utility::vector1< std::string > const & interfaces);
 
 	/// @brief Pack the interface before separation? Default is false.
 	void
@@ -167,7 +162,7 @@ public:
 
 	/// @brief Gets all possible interface combinations of a given pose.
 	void
-	make_interface_combos(core::pose::Pose const & pose, vector1<std::string> & interfaces);
+	make_interface_combos(core::pose::Pose const & pose, utility::vector1<std::string> & interfaces);
 
 private:
 
@@ -187,10 +182,10 @@ private:
 
 	/// @brief Recursive function. Get all orders of ex ABCD.
 	void
-	get_all_string_combos(std::string & interface, std::string current, vector1<std::string> & chains) const;
+	get_all_string_combos(std::string & interface, std::string current, utility::vector1<std::string> & chains) const;
 
 	void
-	get_length_combos(std::string current, vector1<std::string> & sizes) const;
+	get_length_combos(std::string current, utility::vector1<std::string> & sizes) const;
 
 	std::string
 	get_all_pose_chains(core::pose::Pose const & pose);
@@ -198,14 +193,14 @@ private:
 protected:
 
 	bool
-	interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const;
+	interface_exists(utility::vector1<std::string> & interfaces, std::string & dock_chains) const;
 
 	bool
 	chains_exist_in_pose(core::pose::Pose const & pose, std::string const & interface) const;
 
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	vector1< std::string > interfaces_;
+	utility::vector1< std::string > interfaces_;
 
 	bool pack_together_;
 	bool pack_separated_;

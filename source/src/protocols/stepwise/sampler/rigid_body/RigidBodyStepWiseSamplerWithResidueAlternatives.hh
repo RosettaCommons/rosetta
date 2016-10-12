@@ -21,9 +21,6 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::stepwise::sampler::copy_dofs;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -34,7 +31,8 @@ class RigidBodyStepWiseSamplerWithResidueAlternatives: public StepWiseSamplerCom
 public:
 
 	//constructor
-	RigidBodyStepWiseSamplerWithResidueAlternatives( ResidueAlternativeStepWiseSamplerCombOP residue_alternative_rotamer,
+	RigidBodyStepWiseSamplerWithResidueAlternatives(
+		protocols::stepwise::sampler::copy_dofs::ResidueAlternativeStepWiseSamplerCombOP residue_alternative_rotamer,
 		RigidBodyStepWiseSamplerOP rigid_body_rotamer );
 
 	//destructor
@@ -63,9 +61,9 @@ public:
 	core::conformation::Residue const & get_residue_at_origin();
 
 	// from residue list rotamer
-	core::conformation::Residue const & get_residue_at_origin( Size const seqpos );
+	core::conformation::Residue const & get_residue_at_origin( core::Size const seqpos );
 
-	ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer();
+	protocols::stepwise::sampler::copy_dofs::ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer();
 	RigidBodyStepWiseSamplerOP rigid_body_rotamer();
 
 	/// @brief Name of the class
@@ -75,26 +73,26 @@ public:
 	virtual StepWiseSamplerType type() const { return RIGID_BODY_WITH_RESIDUE_ALTERNATIVES; }
 
 	void
-	apply_rigid_body_only( pose::Pose & pose );
+	apply_rigid_body_only( core::pose::Pose & pose );
 
 	void
-	fast_forward_to_next_residue_pair( Size const i, Size const j);
+	fast_forward_to_next_residue_pair( core::Size const i, core::Size const j);
 
 	void
-	fast_forward_to_next_residue( Size const i );
+	fast_forward_to_next_residue( core::Size const i );
 
-	Vector
-	get_xyz( Size const seqpos, std::string const & atom_name  );
+	core::Vector
+	get_xyz( core::Size const seqpos, std::string const & atom_name  );
 
-	conformation::ResidueCOP
-	get_residue( Size const seqpos );
+	core::conformation::ResidueCOP
+	get_residue( core::Size const seqpos );
 
 private:
 
-	ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer_;
+	protocols::stepwise::sampler::copy_dofs::ResidueAlternativeStepWiseSamplerCombOP residue_alternatives_rotamer_;
 	RigidBodyStepWiseSamplerOP rigid_body_rotamer_;
 
-	std::map< Size, conformation::ResidueOP > transformed_residues;
+	std::map< core::Size, core::conformation::ResidueOP > transformed_residues;
 
 
 };

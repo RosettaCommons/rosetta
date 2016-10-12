@@ -31,6 +31,8 @@ namespace core {
 namespace pose {
 namespace rna {
 
+using namespace core::chemical::rna;
+
 /////////////////////////////////////////////////////////////////////////
 BasePair::BasePair( Size const res1, Size const res2,
 	BaseEdge const edge1, BaseEdge const edge2,

@@ -35,6 +35,9 @@ namespace quota {
 static THREAD_LOCAL basic::Tracer trABEGO_SS_Config(
 	"protocols.frag_picker.quota.ABEGO_SS_Config");
 
+using core::Size;
+using core::Real;
+
 ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(file_name) {
 
 	utility::io::izstream data(file_name.c_str());
@@ -57,22 +60,22 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 		}
 		trABEGO_SS_Config.Trace << "Parsing a line: "<<line<<"\n\t("<<t.size()<<" tokens)"<<std::endl;
 		if ( line.find(':')!=line.npos ) {
-			//Size pool_id;
-			utility::vector1< std::pair<Size,Size> > bins;
+			//core::Size pool_id;
+			utility::vector1< std::pair<core::Size,core::Size> > bins;
 			std::string pool_name;
 			//pool_id = boost::lexical_cast<int>(t[1]);  set but never used ~Labonte
 			pool_name = t[2];
 			trABEGO_SS_Config.Trace << "a new pool defined: >"<<pool_name<<"<";
-			for ( Size i=3; i<=t.size(); i+=2 ) {
-				bins.push_back( std::pair<Size,Size>(ss_index(t[i][0]),abego_index(t[i+1][0])) );
+			for ( core::Size i=3; i<=t.size(); i+=2 ) {
+				bins.push_back( std::pair<core::Size,core::Size>(ss_index(t[i][0]),abego_index(t[i+1][0])) );
 				trABEGO_SS_Config.Trace << " "<<bins[bins.size()].first<<" : "<<bins[bins.size()].second;
 			}
 			trABEGO_SS_Config.Trace << std::endl;
 			pool_defs_.push_back( bins );
 			pool_names_.push_back( pool_name );
 		} else {
-			utility::vector1<Real> row;
-			for ( Size i=5; i<=t.size(); i++ ) {
+			utility::vector1<core::Real> row;
+			for ( core::Size i=5; i<=t.size(); i++ ) {
 				row.push_back( boost::lexical_cast<double>(t[i]) );
 			}
 			bin_probs_.push_back(row);
@@ -86,10 +89,10 @@ ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(fi
 	assert( pool_defs_.size() == pool_names_.size() ); // the number of pool names doesn't mach pool definitions
 }
 
-Real ABEGO_SS_Config::highest_probability(Size pos) {
+core::Real ABEGO_SS_Config::highest_probability(core::Size pos) {
 
-	Real max = -100000.0;
-	for ( Size i=1; i<=bin_probs_[pos].size(); i++ ) {
+	core::Real max = -100000.0;
+	for ( core::Size i=1; i<=bin_probs_[pos].size(); i++ ) {
 		if ( bin_probs_[pos][i] > max ) {
 			max = bin_probs_[pos][i];
 		}
@@ -97,11 +100,11 @@ Real ABEGO_SS_Config::highest_probability(Size pos) {
 	return max;
 }
 
-Size ABEGO_SS_Config::most_probable_bin(Size pos) {
+core::Size ABEGO_SS_Config::most_probable_bin(core::Size pos) {
 
-	Real max = -100000.0;
-	Size i_max = 0;
-	for ( Size i=1; i<=bin_probs_[pos].size(); i++ ) {
+	core::Real max = -100000.0;
+	core::Size i_max = 0;
+	for ( core::Size i=1; i<=bin_probs_[pos].size(); i++ ) {
 		if ( bin_probs_[pos][i] > max ) {
 			max = bin_probs_[pos][i];
 			i_max = i;

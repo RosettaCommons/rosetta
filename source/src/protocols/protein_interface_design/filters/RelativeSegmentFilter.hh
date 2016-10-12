@@ -26,12 +26,8 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-using protocols::filters::Filter;
-using protocols::filters::FilterOP;
-using protocols::filters::Filters_map;
-
 /// @brief returns the residues aligned to a segment on the input pdb to the source pdb
-class RelativeSegmentFilter : public Filter
+class RelativeSegmentFilter : public protocols::filters::Filter
 {
 public:
 	typedef core::Real Real;
@@ -39,17 +35,17 @@ public:
 public :
 	RelativeSegmentFilter() : Filter( "RelativeSegment" ) {}
 	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
-		return FilterOP( new RelativeSegmentFilter( *this ) );
+	protocols::filters::FilterOP clone() const {
+		return protocols::filters::FilterOP( new RelativeSegmentFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
-		return FilterOP( new RelativeSegmentFilter() );
+	protocols::filters::FilterOP fresh_instance() const{
+		return protocols::filters::FilterOP( new RelativeSegmentFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual ~RelativeSegmentFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	std::string source_pose() const { return source_pose_; }
 	void source_pose( std::string const & s ) { source_pose_ = s; }
 	core::Size start_res() const { return start_res_; }

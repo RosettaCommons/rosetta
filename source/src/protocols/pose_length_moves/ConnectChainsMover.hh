@@ -41,15 +41,12 @@
 
 namespace protocols {
 namespace pose_length_moves {
-using namespace core;
-using namespace std;
-using utility::vector1;
 
 struct Chain{
 public:
-	Real rmsd;
+	core::Real rmsd;
 	core::pose::PoseOP poseOP;
-	Chain(core::pose::PoseOP poseOP_i,Real rmsd_i){
+	Chain(core::pose::PoseOP poseOP_i, core::Real rmsd_i){
 		rmsd = rmsd_i;
 		poseOP = poseOP_i;
 	}
@@ -60,10 +57,10 @@ class ConnectChainsMover : public protocols::moves::Mover {
 
 public:
 	ConnectChainsMover();
-	void parse_input(vector1<std::string> & individual_chains,vector1< vector1 <std::string> > & chains_in_poses);
-	map<std::string, Chain> generate_connected_chains(core::pose::Pose const pose,vector1<std::string> individual_chains);
-	void assemble_missing_chain(map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder);
-	void generate_best_final_pose(core::pose::Pose & pose,vector1< vector1 <std::string> > chains_in_poses,map<std::string, Chain> connected_chains);
+	void parse_input(utility::vector1<std::string> & individual_chains,utility::vector1< utility::vector1 <std::string> > & chains_in_poses);
+	std::map<std::string, Chain> generate_connected_chains(core::pose::Pose const pose,utility::vector1<std::string> individual_chains);
+	void assemble_missing_chain(std::map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder);
+	void generate_best_final_pose(core::pose::Pose & pose,utility::vector1< utility::vector1 <std::string> > chains_in_poses,std::map<std::string, Chain> connected_chains);
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 	moves::MoverOP clone() const { return moves::MoverOP( new ConnectChainsMover( *this ) ); }
@@ -77,9 +74,9 @@ private:
 	int resAdjustmentStartHigh_sheet_;
 	int resAdjustmentStopLow_sheet_;
 	int resAdjustmentStopHigh_sheet_;
-	Size loopLengthRangeLow_;
-	Size loopLengthRangeHigh_;
-	Real rmsThreshold_;
+	core::Size loopLengthRangeLow_;
+	core::Size loopLengthRangeHigh_;
+	core::Real rmsThreshold_;
 	std::string output_chains_;
 
 	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
@@ -91,8 +88,8 @@ private:
 class chain_lt : public std::binary_function<std::string, std::string, bool> {
 public:
 	bool operator()(std::string x, std::string y) {
-		Size x_chain_length = boost::count(x,'+');
-		Size y_chain_length = boost::count(y,'+');
+		core::Size x_chain_length = boost::count(x,'+');
+		core::Size y_chain_length = boost::count(y,'+');
 		if ( x_chain_length < y_chain_length ) return true;
 		else if ( x_chain_length > y_chain_length ) return false;
 		else return(x<y);

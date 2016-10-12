@@ -693,10 +693,6 @@ public:
 };
 
 
-using namespace etrie;
-using namespace trie;
-using namespace basic::options;
-
 /// construction with an etable
 template < class Derived >
 BaseEtableEnergy< Derived >::BaseEtableEnergy(
@@ -708,7 +704,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 parent( creator ),
 etable_( etable_in ),
 safe_max_dis2( etable_in.get_safe_max_dis2() ),
-hydrogen_interaction_cutoff2_( option[ OptionKeys::score::fa_Hatr ] ?
+hydrogen_interaction_cutoff2_( basic::options::option[ basic::options::OptionKeys::score::fa_Hatr ] ?
 std::pow( std::sqrt( etable_in.hydrogen_interaction_cutoff2()) + std::sqrt( safe_max_dis2 ), 2)
 : etable_in.hydrogen_interaction_cutoff2() ),
 exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
@@ -929,6 +925,8 @@ BaseEtableEnergy< Derived >::setup_for_packing(
 	utility::vector1< bool > const &
 ) const
 {
+	using namespace trie;
+	using namespace etrie;
 
 	TrieCollectionOP tries( new TrieCollection );
 	tries->total_residue( pose.size() );
@@ -955,6 +953,8 @@ BaseEtableEnergy< Derived >::prepare_rotamers_for_packing(
 	conformation::RotamerSetBase & set
 ) const
 {
+	using namespace trie;
+	using namespace etrie;
 
 	EtableRotamerTrieOP rottrie = create_rotamer_trie( set, pose );
 	set.store_trie( methods::etable_method, rottrie );
@@ -970,6 +970,8 @@ BaseEtableEnergy< Derived >::update_residue_for_packing(
 	Size resid
 ) const
 {
+	using namespace trie;
+	using namespace etrie;
 
 	EtableRotamerTrieOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ), pose );
 
@@ -1040,7 +1042,7 @@ BaseEtableEnergy< Derived >::get_intrares_countpair(
 /// from class instantiation, and therefore shared between the creation of the trie count pair classes and the regular
 /// count pair classes
 template < class Derived >
-TrieCountPairBaseOP
+trie::TrieCountPairBaseOP
 BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
@@ -1058,7 +1060,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 }
 
 template < class Derived >
-TrieCountPairBaseOP
+trie::TrieCountPairBaseOP
 BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
@@ -1068,6 +1070,8 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	ScoreFunction const & sfxn
 ) const
 {
+	using namespace trie;
+	using namespace etrie;
 	using namespace count_pair;
 
 	TrieCountPairBaseOP tcpfxn;
@@ -1123,7 +1127,7 @@ conformation::Residue const & res2,
 pose::Pose const &
 ) const
 {
-using namespace count_pair;
+//using namespace count_pair;
 /// this code is incompatible with designing both disulfides and non-disulfies
 /// at the same residue...
 if ( res1.is_pseudobonded( res2.seqpos ) {
@@ -1589,6 +1593,9 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	debug_assert( set1.resid() != set2.resid() );
 
 	using namespace methods;
+	using namespace trie;
+	using namespace etrie;
+
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
 
@@ -1649,8 +1656,10 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
-
 	using namespace methods;
+	using namespace trie;
+	using namespace etrie;
+
 	// allocate space for the trie-vs-trie algorithm
 	utility::vector1< core::PackerEnergy > temp_vector1( set.num_rotamers(), 0.0 );
 	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
@@ -1818,7 +1827,7 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 /// needs to be contained by the trie.
 ///
 template < class Derived >
-EtableRotamerTrieOP
+etrie::EtableRotamerTrieOP
 BaseEtableEnergy< Derived >::create_rotamer_trie(
 	conformation::RotamerSetBase const & rotset,
 	pose::Pose const & // will be need to create tries for disulfides
@@ -1852,7 +1861,7 @@ BaseEtableEnergy< Derived >::create_rotamer_trie(
 
 /// @details Create a one-residue trie.
 template < class Derived >
-EtableRotamerTrieOP
+etrie::EtableRotamerTrieOP
 BaseEtableEnergy< Derived >::create_rotamer_trie(
 	conformation::Residue const & residue,
 	pose::Pose const & // will be need to create tries for disulfides

@@ -81,10 +81,10 @@ public:
 	/// @brief Sets up the comparator for a given FragmentScoreManager.
 	/// @details Only the scoring manager knows how to calculate the total score
 	/// from a vector of small scores (those gathered in a FragmentScoreMap object)
-	CompareByScoreCombination(utility::vector1<Size> which_components,utility::vector1<Real> weights) {
+	CompareByScoreCombination(utility::vector1<core::Size> which_components,utility::vector1<core::Real> weights) {
 
 		debug_assert ( which_components.size() == weights.size() );
-		for ( Size i=1; i<=which_components.size(); i++ ) {
+		for ( core::Size i=1; i<=which_components.size(); i++ ) {
 			components_.push_back( which_components[i] );
 			weights_.push_back( weights[i] );
 		}
@@ -98,9 +98,9 @@ public:
 		ScoredCandidate first_candidate,
 		ScoredCandidate second_candidate) override {
 
-		Real t1(0);
-		Real t2(0);
-		for ( Size i=1; i<=components_.size(); i++ ) {
+		core::Real t1(0);
+		core::Real t2(0);
+		for ( core::Size i=1; i<=components_.size(); i++ ) {
 			t1 += first_candidate.second->at( components_[i] ) * weights_[i];
 			t2 += second_candidate.second->at( components_[i] ) * weights_[i];
 		}
@@ -109,8 +109,8 @@ public:
 
 	~CompareByScoreCombination() override = default;
 private:
-	utility::vector1<Size> components_;
-	utility::vector1<Real> weights_;
+	utility::vector1<core::Size> components_;
+	utility::vector1<core::Real> weights_;
 };
 
 
@@ -120,7 +120,7 @@ class CompareScoreComponent : public FragmentComparatorBase {
 
 public:
 	/// @brief Sets up the comparator based on a given score component
-	CompareScoreComponent(Size component_id) {
+	CompareScoreComponent(core::Size component_id) {
 		component_id_ = component_id;
 	}
 
@@ -136,7 +136,7 @@ public:
 	}
 
 private:
-	Size component_id_;
+	core::Size component_id_;
 };
 
 } // frag_picker

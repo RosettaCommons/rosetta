@@ -40,9 +40,6 @@
 
 namespace protocols {
 namespace pose_length_moves {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using utility::vector1;
 
 class FixAllLoopsMover : public protocols::moves::Mover {
 public:
@@ -61,15 +58,15 @@ private:
 	int resAdjustmentStartHigh_sheet_;
 	int resAdjustmentStopLow_sheet_;
 	int resAdjustmentStopHigh_sheet_;
-	Size loopLengthRangeLow_;
-	Size loopLengthRangeHigh_;
-	Real rmsThreshold_;
-	Real max_vdw_change_;
+	core::Size loopLengthRangeLow_;
+	core::Size loopLengthRangeHigh_;
+	core::Real rmsThreshold_;
+	core::Real max_vdw_change_;
 	bool idealExtension_;
 	bool ideal_;
 	bool reject_failed_loops_;
-	Size firstResidue_;
-	Size lastResidue_;
+	core::Size firstResidue_;
+	core::Size lastResidue_;
 	//time_t start_time_;
 
 	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;

@@ -71,6 +71,7 @@ public:
 
 
 	void test_skip_preminimize() {
+		using namespace core;
 		using namespace core::pose;
 
 		PoseOP pose_save = pose->clone();

@@ -39,8 +39,8 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-DisulfideDistance::DisulfideDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	utility::vector1< Size > disulfide_data, Size largest_fragment) :
+DisulfideDistance::DisulfideDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	utility::vector1< core::Size > disulfide_data, core::Size largest_fragment) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "DisulfideDistance"),
 	disulfide_data_(disulfide_data),
 	largest_fragment_(largest_fragment)
@@ -52,15 +52,15 @@ void DisulfideDistance::do_caching(VallChunkOP current_chunk) {
 	n_res_ = current_chunk->size();
 
 	chunk_ca_distances_.redimension(n_res_, n_res_, 0.0);
-	for ( Size x = 1; x <= n_res_; ++x ) {
+	for ( core::Size x = 1; x <= n_res_; ++x ) {
 		VallResidueOP xr = current_chunk->at(x);
 
-		for ( Size y = x - largest_fragment_ - 3; (y <= x + largest_fragment_ + 3) && (y <= n_res_); ++y ) {
-			//for (Size y = 1; y <= n_res_; ++y) {
+		for ( core::Size y = x - largest_fragment_ - 3; (y <= x + largest_fragment_ + 3) && (y <= n_res_); ++y ) {
+			//for (core::Size y = 1; y <= n_res_; ++y) {
 			if ( y > 0 ) {
 				VallResidueOP yr = current_chunk->at(y);
 
-				Real distance = sqrt( pow( xr->x() - yr->x(), 2) + pow( xr->y() - yr->y(), 2) + pow( xr->z() - yr->z(), 2) );
+				core::Real distance = sqrt( pow( xr->x() - yr->x(), 2) + pow( xr->y() - yr->y(), 2) + pow( xr->z() - yr->z(), 2) );
 				chunk_ca_distances_(x,y) = distance;
 			}
 		}
@@ -79,24 +79,24 @@ bool DisulfideDistance::cached_score(FragmentCandidateOP fragment, FragmentScore
 		cached_scores_id_ = tmp;
 	}
 
-	Size offset_q = fragment->get_first_index_in_query() - 1;
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
-	Real score = 0.0;
+	core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Real score = 0.0;
 
 	//std::cout << "CACHING_FOR_DISULFIDE_DISTANCES" << std::endl;
 
-	for ( Size i = 1; i < fragment->get_length(); ++i ) {
+	for ( core::Size i = 1; i < fragment->get_length(); ++i ) {
 
 		if ( (i+offset_q) <= disulfide_data_.size() ) {
 			if ( disulfide_data_[i+offset_q] != 0 ) {
 
-				Size res1 = i+offset_q;//disulfide_[i+offset_q].first;
-				Size res2 = disulfide_data_[i+offset_q];//.second;
+				core::Size res1 = i+offset_q;//disulfide_[i+offset_q].first;
+				core::Size res2 = disulfide_data_[i+offset_q];//.second;
 
-				Size v1 = i+offset_v;
+				core::Size v1 = i+offset_v;
 
-				Size v2(0);
-				Size seq_sep(0);
+				core::Size v2(0);
+				core::Size seq_sep(0);
 
 				if ( res2 > res1 ) {
 					seq_sep = res2 - res1;
@@ -161,8 +161,8 @@ void DisulfideDistance::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakeDisulfideDistance::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
+FragmentScoringMethodOP MakeDisulfideDistance::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
 	, std::string )
 {
 
@@ -170,16 +170,16 @@ FragmentScoringMethodOP MakeDisulfideDistance::make(Size priority,
 
 		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
 
-		utility::vector1< std::pair<Size,Size> > disulfides_in_file;
+		utility::vector1< std::pair<core::Size,core::Size> > disulfides_in_file;
 
 		ds_file.disulfides(disulfides_in_file);
 
-		Size largest_number(0);
+		core::Size largest_number(0);
 
-		for ( Size i = 1; i <= disulfides_in_file.size(); ++i ) {
+		for ( core::Size i = 1; i <= disulfides_in_file.size(); ++i ) {
 
-			Size l = disulfides_in_file[i].first;
-			Size u = disulfides_in_file[i].second;
+			core::Size l = disulfides_in_file[i].first;
+			core::Size u = disulfides_in_file[i].second;
 
 			if ( u <= l ) {
 				utility_exit_with_message("[ERROR] Disulfide File Format: res2 must be > res1");
@@ -190,25 +190,25 @@ FragmentScoringMethodOP MakeDisulfideDistance::make(Size priority,
 			}
 		}
 
-		utility::vector1< Size > disulfide_data(largest_number,0);
+		utility::vector1< core::Size > disulfide_data(largest_number,0);
 
-		for ( Size i = 1; i <= disulfides_in_file.size(); ++i ) {
+		for ( core::Size i = 1; i <= disulfides_in_file.size(); ++i ) {
 
-			Size l = static_cast< Size > ( disulfides_in_file[i].first );
-			Size u = static_cast< Size > ( disulfides_in_file[i].second );
+			core::Size l = static_cast< core::Size > ( disulfides_in_file[i].first );
+			core::Size u = static_cast< core::Size > ( disulfides_in_file[i].second );
 
 			disulfide_data[u] = l;
 			disulfide_data[l] = u;
 		}
 
-		for ( Size i = 1; i <= largest_number; ++i ) {
+		for ( core::Size i = 1; i <= largest_number; ++i ) {
 
 			std::cout << "DISULFIDE_DATA " << i << " " << disulfide_data[i] << std::endl;
 
 		}
 
-		Size largest_fragment(0);
-		for ( Size i = 1; i <= picker->frag_sizes_.size(); ++i ) {
+		core::Size largest_fragment(0);
+		for ( core::Size i = 1; i <= picker->frag_sizes_.size(); ++i ) {
 			if ( picker->frag_sizes_[i] > largest_fragment ) largest_fragment = picker->frag_sizes_[i];
 		}
 

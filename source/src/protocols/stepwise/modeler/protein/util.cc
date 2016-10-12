@@ -55,6 +55,7 @@ using core::Size;
 using core::pose::Pose;
 using utility::tools::make_vector1;
 using ObjexxFCL::string_of;
+using namespace core;
 
 namespace protocols {
 namespace stepwise {

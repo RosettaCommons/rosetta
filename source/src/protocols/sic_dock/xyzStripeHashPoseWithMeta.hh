@@ -28,15 +28,13 @@
 namespace protocols {
 namespace sic_dock {
 
-using core::pose::PoseCoordPickMode;
-
 class xyzStripeHashPoseWithMeta : public numeric::geometry::hashing::xyzStripeHashWithMeta<float> {
 public:
 	xyzStripeHashPoseWithMeta(double radius) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {}
 
 	xyzStripeHashPoseWithMeta(double radius,
 		core::pose::Pose const & p,
-		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
+		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	) : numeric::geometry::hashing::xyzStripeHashWithMeta<float>(radius) {
 		init_with_pose(p,m);
 	}
@@ -51,7 +49,7 @@ public:
 	void
 	init_with_pose(
 		core::pose::Pose const & p,
-		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
+		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		utility::vector1<double> dummy;
 		init_with_pose(p,dummy,m);
@@ -90,7 +88,7 @@ public:
 	init_with_pose(
 		core::pose::Pose const & p,
 		utility::vector1<double> const & meta_in,
-		PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
+		core::pose::PoseCoordPickMode m = core::pose::PoseCoordPickMode_BB
 	){
 		int natom = 0;
 		for ( int ir = 1; ir <= (int)p.size(); ++ir ) {

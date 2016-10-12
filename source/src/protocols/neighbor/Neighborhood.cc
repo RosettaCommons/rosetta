@@ -23,6 +23,10 @@ namespace protocols {
 namespace neighbor {
 
 using core::Real;
+using core::Size;
+using core::pose::Pose;
+using utility::vector1;
+using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.neighbor" );
 

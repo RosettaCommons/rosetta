@@ -60,7 +60,7 @@ static THREAD_LOCAL basic::Tracer trRmsScore(
 
 FragmentCrmsd::~FragmentCrmsd() {}
 
-FragmentCrmsd::FragmentCrmsd(Size priority, Real lowest_acceptable_value,
+FragmentCrmsd::FragmentCrmsd(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsd") {
 	reference_pose_ = reference_pose;
@@ -70,8 +70,8 @@ FragmentCrmsd::FragmentCrmsd(Size priority, Real lowest_acceptable_value,
 	weights_.redimension(reference_pose_->size(), 1.0);
 }
 
-FragmentCrmsd::FragmentCrmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	utility::vector1< utility::vector1<Real> > xyz)  :
+FragmentCrmsd::FragmentCrmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	utility::vector1< utility::vector1<core::Real> > xyz)  :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentCrmsd") {
 
 	n_atoms_ = xyz.size();
@@ -88,15 +88,15 @@ FragmentCrmsd::FragmentCrmsd(Size priority, Real lowest_acceptable_value, bool u
 }
 
 void FragmentCrmsd::fill_CA_coords(core::pose::Pose const& pose,
-	FArray2_double& coords, Size n_atoms) {
+	FArray2_double& coords, core::Size n_atoms) {
 
 	trRmsScore.Debug << "Copying coordinates from ... The first residues are: "
 		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
 		<< pose.residue(3).name3() << std::endl;
 
 	for ( core::Size i = 1; i <= n_atoms; i++ ) {
-		id::NamedAtomID idCA("CA", i);
-		PointPosition const& xyz = pose.xyz(idCA);
+		core::id::NamedAtomID idCA("CA", i);
+		core::PointPosition const& xyz = pose.xyz(idCA);
 		for ( core::Size d = 1; d <= 3; ++d ) {
 			coords(d, i) = xyz[d - 1];
 		}
@@ -107,13 +107,13 @@ bool FragmentCrmsd::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 	PROF_START( basic::CA_RMSD_EVALUATION );
 
-	if ( (Size) fragment_coordinates_.size2() < f->get_length() ) {
+	if ( (core::Size) fragment_coordinates_.size2() < f->get_length() ) {
 		fragment_coordinates_.redimension(3, f->get_length(), 0.0);
 		frag_pos_coordinates_.redimension(3, f->get_length(), 0.0);
 	}
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		VallChunkOP chunk = f->get_chunk();
-		Size qindex = i + f->get_first_index_in_query() - 1;
+		core::Size qindex = i + f->get_first_index_in_query() - 1;
 		VallResidueOP r = chunk->at( f->get_first_index_in_vall() + i - 1 );
 		fragment_coordinates_(1, i) = r->x();
 		frag_pos_coordinates_(1, i) = reference_coordinates_(1, qindex);
@@ -122,7 +122,7 @@ bool FragmentCrmsd::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 		fragment_coordinates_(3, i) = r->z();
 		frag_pos_coordinates_(3, i) = reference_coordinates_(3, qindex);
 	}
-	Real rms = numeric::model_quality::rms_wrapper(f->get_length(),
+	core::Real rms = numeric::model_quality::rms_wrapper(f->get_length(),
 		fragment_coordinates_, frag_pos_coordinates_);
 
 	empty_map->set_score_component(rms, id_);
@@ -155,11 +155,11 @@ bool FragmentCrmsd::cached_score(FragmentCandidateOP fragment,
 	}
 
 	PROF_START( basic::CA_RMSD_EVALUATION );
-	Size frag_len = fragment->get_length();
-	if ( (Size) fragment_coordinates_.size2() < frag_len ) {
+	core::Size frag_len = fragment->get_length();
+	if ( (core::Size) fragment_coordinates_.size2() < frag_len ) {
 		fragment_coordinates_.redimension(3, frag_len, 0.0);
 	}
-	if ( (Size) frag_pos_coordinates_.size2() < frag_len ) {
+	if ( (core::Size) frag_pos_coordinates_.size2() < frag_len ) {
 		frag_pos_coordinates_.redimension(3, frag_len, 0.0);
 	}
 
@@ -172,7 +172,7 @@ bool FragmentCrmsd::cached_score(FragmentCandidateOP fragment,
 		}
 	}
 
-	Real rms = numeric::model_quality::rms_wrapper(frag_len,
+	core::Real rms = numeric::model_quality::rms_wrapper(frag_len,
 		fragment_coordinates_, frag_pos_coordinates_);
 
 	scores->set_score_component(rms, id_);
@@ -187,8 +187,8 @@ bool FragmentCrmsd::cached_score(FragmentCandidateOP fragment,
 void FragmentCrmsd::clean_up() {
 }
 
-FragmentScoringMethodOP MakeFragmentCrmsd::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeFragmentCrmsd::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string) {
 
 	if ( option[in::file::native].user() ) {
@@ -217,7 +217,7 @@ FragmentScoringMethodOP MakeFragmentCrmsd::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::xyz]().c_str() << std::endl;
 		std::string line;
-		utility::vector1< utility::vector1< Real > > xyz;
+		utility::vector1< utility::vector1< core::Real > > xyz;
 		// std::istream & input = utility::io::izstream( option[ in::file::xyz ]().c_str() );
 		std::ifstream input( option[ in::file::xyz ]().c_str() );
 
@@ -225,8 +225,8 @@ FragmentScoringMethodOP MakeFragmentCrmsd::make(Size priority,
 			trRmsScore.Warning << line<<std::endl;
 			if ( line.substr(0,1) == "#" ) continue;
 			std::istringstream line_stream( line );
-			utility::vector1<Real> row;
-			Real x,y,z;
+			utility::vector1<core::Real> row;
+			core::Real x,y,z;
 			line_stream >> x >> y >> z;
 			row.push_back(x);
 			row.push_back(y);

@@ -12,7 +12,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <protocols/toolbox/AtomID_Mapper.fwd.hh>
-#include <core/pose/copydofs/CopyDofs.hh> // for FIXED_DOMAIN (999)
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -31,8 +30,6 @@
 
 namespace protocols {
 namespace toolbox {
-
-using core::pose::copydofs::FIXED_DOMAIN;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -160,13 +157,13 @@ private:
 		utility::vector1< Size > const & allow_insert_res );
 
 	void
-	update_to_move_internal_phosphates( pose::Pose const & pose );
+	update_to_move_internal_phosphates( core::pose::Pose const & pose );
 
 	void
-	update_to_not_move_virtual_phosphates( pose::Pose const & pose );
+	update_to_not_move_virtual_phosphates( core::pose::Pose const & pose );
 
 	void
-	update_to_not_move_last_virtual_residue( pose::Pose const & pose );
+	update_to_not_move_last_virtual_residue( core::pose::Pose const & pose );
 
 	void
 	apply_allow_insert_res( utility::vector1< Size > const & allow_insert_res );

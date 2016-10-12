@@ -44,13 +44,13 @@ public:
 	/// @brief Prepare an atom-based score that utilizes some user-defined atoms
 	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
-	DihedralConstraintsScore(Size, Real, bool, std::string, Size, utility::vector1<
+	DihedralConstraintsScore(core::Size, core::Real, bool, std::string, core::Size, utility::vector1<
 		std::string>);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
 	/// @details These atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
-	DihedralConstraintsScore(Size, Real, bool, std::string, Size);
+	DihedralConstraintsScore(core::Size, core::Real, bool, std::string, core::Size);
 
 	/// @brief Calculates the score
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
@@ -58,7 +58,7 @@ public:
 private:
 	utility::vector1<utility::vector1<FourAtomsConstraintDataOP> > data_;
 	void read_constraints(std::string);
-	Size get_atom_type(std::string atom_name);
+	core::Size get_atom_type(std::string atom_name);
 	core::scoring::func::FuncFactory factory_;
 };
 
@@ -71,7 +71,7 @@ public:
 		MakeFragmentScoringMethod("DihedralConstraintsScore") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 } // scores
 } // frag_picker

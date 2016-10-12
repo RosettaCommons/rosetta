@@ -22,20 +22,15 @@
 #include <utility/vector1.fwd.hh>
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::stepwise::modeler::rna::rigid_body;
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
 
 class BaseBinMapUpdater: public StepWiseScreener {
-
 public:
 
 	//constructor
-	BaseBinMapUpdater( BaseBinMap & base_bin_map );
+	BaseBinMapUpdater( protocols::stepwise::modeler::rna::rigid_body::BaseBinMap & base_bin_map );
 
 	//destructor
 	~BaseBinMapUpdater();
@@ -57,14 +52,14 @@ public:
 private:
 
 	void
-	update_base_bin_map( BaseBin const & base_bin );
+	update_base_bin_map( protocols::stepwise::modeler::rna::rigid_body::BaseBin const & base_bin );
 
 	void
-	update_base_bin_map( utility::vector1< Real > const & rigid_body_values );
+	update_base_bin_map( utility::vector1< core::Real > const & rigid_body_values );
 
 private:
 
-	BaseBinMap & base_bin_map_;
+	protocols::stepwise::modeler::rna::rigid_body::BaseBinMap & base_bin_map_;
 };
 
 } //screener

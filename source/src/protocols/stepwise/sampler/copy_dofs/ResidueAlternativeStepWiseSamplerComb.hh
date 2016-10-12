@@ -25,16 +25,6 @@
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #endif
 
-
-/*
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::conformation;
-
-Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
-by our coding convention due to problems it create on modern compilers and because of the name clashing.
-For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
-*/
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {

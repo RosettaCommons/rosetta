@@ -56,6 +56,13 @@ static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
 
 using namespace core;
 using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace protocols::farna::fragments;
+using namespace protocols::farna::movers;
+using namespace protocols::farna::options;
+using namespace protocols::farna::base_pairs;
+using namespace protocols::farna::setup;
+using namespace protocols::farna::libraries;
+
 
 namespace protocols {
 namespace farna {

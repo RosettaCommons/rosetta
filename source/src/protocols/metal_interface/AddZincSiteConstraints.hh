@@ -27,9 +27,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace metal_interface {
 
@@ -41,10 +38,10 @@ public:
 	AddZincSiteConstraints( utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr );
 	~AddZincSiteConstraints() override;
 
-	virtual void add_constraints ( pose::Pose & pose );
-	virtual void evaluate_constraints( pose::Pose const & pose );
-	virtual void view_constraints_in_pymol( pose::Pose const & pose );
-	virtual void output_constraints_file( pose::Pose const & pose );
+	virtual void add_constraints ( core::pose::Pose & pose );
+	virtual void evaluate_constraints( core::pose::Pose const & pose );
+	virtual void view_constraints_in_pymol( core::pose::Pose const & pose );
+	virtual void output_constraints_file( core::pose::Pose const & pose );
 
 private:
 	std::string pdbname_;

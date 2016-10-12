@@ -58,14 +58,6 @@ namespace protocols {
 namespace docking {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace core::scoring;
-using namespace protocols::membrane;
-using namespace protocols::moves;
-using namespace protocols::docking;
-
 /// @brief Docks two proteins together in the membrane bilayer
 /// @details Requires running mpdocking_setup first to create a single pose;
 ///    Should also run docking_prepack before
@@ -96,10 +88,10 @@ public:
 public: // methods
 
 	/// @brief Create a Clone of this mover
-	virtual MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -150,7 +142,7 @@ private: // methods
 private: // data
 
 	// add membrane mover
-	AddMembraneMoverOP add_membrane_mover_;
+	protocols::membrane::AddMembraneMoverOP add_membrane_mover_;
 
 	// docking protocol
 	DockingProtocolOP docking_protocol_;
@@ -160,18 +152,18 @@ private: // data
 	bool highres_;
 
 	// scorefunction
-	ScoreFunctionOP lowres_scorefxn_;
-	ScoreFunctionOP highres_scorefxn_;
+	core::scoring::ScoreFunctionOP lowres_scorefxn_;
+	core::scoring::ScoreFunctionOP highres_scorefxn_;
 
 	// Membrane Center/Normal pair used for setup
-	Vector center_;
-	Vector normal_;
+	core::Vector center_;
+	core::Vector normal_;
 
 	// jump number to dock over
 	Size jump_num_;
 
 	// native for RMSD calculation
-	PoseOP native_;
+	core::pose::PoseOP native_;
 
 };
 

@@ -157,8 +157,8 @@ rb_entropy_test()
 
 
 	Size cycles( 1000000 );
-	Pose start_pose = pose;
-	Vector start_base_centroid = get_rna_base_centroid( start_pose.residue( 1 ) );
+	core::pose::Pose start_pose = pose;
+	Vector start_base_centroid = core::chemical::rna::get_rna_base_centroid( start_pose.residue( 1 ) );
 	Size const probe_jump_num( 1 );
 	Stub const upstream_stub = pose.conformation().upstream_jump_stub( probe_jump_num );
 	kinematics::Jump start_jump( start_pose.jump( probe_jump_num ) );

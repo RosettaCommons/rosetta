@@ -107,13 +107,16 @@
 
 using namespace ObjexxFCL::format; // AUTO USING NS
 using namespace core;
+using namespace protocols::farna::setup;
+using namespace protocols::farna::libraries;
+using namespace protocols::farna::base_pairs;
 
 namespace protocols {
 namespace farna {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_DeNovoProtocol" );
 
-RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options,
+RNA_DeNovoProtocol::RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP options,
 	RNA_DeNovoParametersCOP params):
 	Mover(),
 	options_(std::move( options )),

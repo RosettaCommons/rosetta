@@ -71,16 +71,9 @@
 namespace protocols {
 namespace residue_optimization {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace kinematics;
-using namespace chemical;
-using namespace scoring;
-using namespace pose;
-
 class MetapatchEnumeration {
 public:
-	MetapatchEnumeration( Pose pose, MoveMapOP mm, ScoreFunctionOP score_fxn, Size mode, bool pack, Real threshold, utility::vector1< std::string > metapatch_names, Real taboo = 5 ) :
+	MetapatchEnumeration( core::pose::Pose pose, core::kinematics::MoveMapOP mm, core::scoring::ScoreFunctionOP score_fxn, core::Size mode, bool pack, core::Real threshold, utility::vector1< std::string > metapatch_names, core::Real taboo = 5 ) :
 		pose_( pose ),
 		mm_(std::move( mm )),
 		sampling_score_fxn_( score_fxn ),
@@ -92,36 +85,36 @@ public:
 		taboo_( taboo )
 	{}
 
-	utility::vector1< Real > final_scores() { return final_scores_; }
+	utility::vector1< core::Real > final_scores() { return final_scores_; }
 	utility::vector1< std::string > summary_lines() { return summary_lines_; }
 
-	void generate_metapatched_variants( Size resi );
+	void generate_metapatched_variants( core::Size resi );
 
-	Real score() { return score_; }
+	core::Real score() { return score_; }
 
 private:
 
-	void generate_derived_types( Size resi, Size tp, utility::vector1< std::string > & types_considered );
-	Real binding( Pose pose );
-	void initial_sampling( Pose & pose );
-	void final_sampling( Pose & mut_pose, Size resi );
+	void generate_derived_types( core::Size resi, core::Size tp, utility::vector1< std::string > & types_considered );
+	core::Real binding( core::pose::Pose pose );
+	void initial_sampling( core::pose::Pose & pose );
+	void final_sampling( core::pose::Pose & mut_pose, core::Size resi );
 	bool tabooed( utility::vector1< std::string > const & patch_names );
 
-	utility::vector1< Real > final_scores_;
+	utility::vector1< core::Real > final_scores_;
 	utility::vector1< std::string > summary_lines_;
 
-	Pose pose_;
-	MoveMapOP mm_;
-	ScoreFunctionOP sampling_score_fxn_;
-	ScoreFunctionOP evaluation_score_fxn_;
-	Size mode_;
+	core::pose::Pose pose_;
+	core::kinematics::MoveMapOP mm_;
+	core::scoring::ScoreFunctionOP sampling_score_fxn_;
+	core::scoring::ScoreFunctionOP evaluation_score_fxn_;
+	core::Size mode_;
 	bool pack_;
-	Real threshold_;
+	core::Real threshold_;
 	utility::vector1< std::string > metapatch_names_;
 
-	Real score_;
+	core::Real score_;
 	// Score past which a mutation is no longer investigated
-	Real taboo_;
+	core::Real taboo_;
 	utility::vector1< utility::vector1< std::string > > tabooed_;
 
 };

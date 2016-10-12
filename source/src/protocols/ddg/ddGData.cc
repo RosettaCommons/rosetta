@@ -42,6 +42,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
+using namespace core;
 
 namespace protocols {
 namespace ddG {

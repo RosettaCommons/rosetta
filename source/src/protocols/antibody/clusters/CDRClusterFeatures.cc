@@ -41,6 +41,7 @@ namespace antibody {
 namespace clusters {
 using namespace protocols::features;
 using namespace protocols::antibody;
+using utility::vector1;
 
 CDRClusterFeatures::CDRClusterFeatures():
 	FeaturesReporter(),

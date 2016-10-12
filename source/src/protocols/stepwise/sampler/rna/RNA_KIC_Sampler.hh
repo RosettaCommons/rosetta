@@ -32,9 +32,6 @@
 #include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.fwd.hh>
 #include <core/chemical/rna/util.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -105,11 +102,11 @@ public:
 		set_and_reinit( torsion_screen_, setting );
 	}
 
-	void set_pucker_state( PuckerState const setting ) {
+	void set_pucker_state( core::chemical::rna::PuckerState const setting ) {
 		set_and_reinit( pucker_state_, setting );
 	}
 
-	void set_base_state( ChiState const setting ) {
+	void set_base_state( core::chemical::rna::ChiState const setting ) {
 		set_and_reinit( base_state_, setting );
 	}
 
@@ -141,8 +138,8 @@ private:
 
 	core::pose::PoseOP const ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
-	PuckerState pucker_state_;
-	ChiState base_state_;
+	core::chemical::rna::PuckerState pucker_state_;
+	core::chemical::rna::ChiState base_state_;
 	core::Size sample_nucleoside_;
 	core::Real bin_size_;
 	core::Size max_tries_;

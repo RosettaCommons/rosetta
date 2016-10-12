@@ -31,7 +31,9 @@ static basic::Tracer TR( "protocols.farna.base_pairs.RNA_BasePairHandler" );
 
 using namespace core;
 using namespace core::pose::rna;
+using namespace core::chemical::rna;
 using namespace ObjexxFCL::format;
+using namespace protocols::farna::setup;
 
 namespace protocols {
 namespace farna {

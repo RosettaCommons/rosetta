@@ -143,6 +143,7 @@ using namespace ObjexxFCL::format;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::pose;
+using namespace core;
 
 static basic::Tracer TR("denovo_density");
 

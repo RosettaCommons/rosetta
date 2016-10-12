@@ -31,6 +31,7 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.util" );
 
 using namespace core::scoring;
+using namespace core;
 
 namespace protocols {
 namespace stepwise {

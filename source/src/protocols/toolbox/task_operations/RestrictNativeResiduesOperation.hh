@@ -29,9 +29,6 @@
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::pack::task;
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

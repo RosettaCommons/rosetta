@@ -19,17 +19,14 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerBase.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
 
 void
 fast_forward_to_next_residue_pair( sampler::StepWiseSamplerBaseOP sampler,
-	Size const res1,
-	Size const res2 );
+	core::Size const res1,
+	core::Size const res2 );
 
 } //screener
 } //stepwise

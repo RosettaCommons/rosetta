@@ -22,9 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -39,13 +36,13 @@ setup_sampler( core::pose::Pose const & pose,
 	bool const close_chain );
 
 bool
-modeler_sugar_at_five_prime( pose::Pose const & pose,
-	Size const moving_suite );
+modeler_sugar_at_five_prime( core::pose::Pose const & pose,
+	core::Size const moving_suite );
 
 
 bool
-modeler_sugar_at_three_prime( pose::Pose const & pose,
-	Size const moving_suite );
+modeler_sugar_at_three_prime( core::pose::Pose const & pose,
+	core::Size const moving_suite );
 
 
 } //rna

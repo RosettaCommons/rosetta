@@ -45,15 +45,15 @@ bool HydrophobicityProfileSimilarity::cached_score(FragmentCandidateOP fragment,
 bool HydrophobicityProfileSimilarity::score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
 
-	static const Real MIN_HYDROPHOBIC_PROBABILITY(0.75);
+	static const core::Real MIN_HYDROPHOBIC_PROBABILITY(0.75);
 
-	Real totalScore = 0;
+	core::Real totalScore = 0;
 	VallChunkOP chunk = f->get_chunk();
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
-		Size qindex = i + f->get_first_index_in_query() - 1;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
+		core::Size qindex = i + f->get_first_index_in_query() - 1;
 		if ( is_hydrophobic_[query_[qindex - 1]] ) {
-			utility::vector1<Real> query_prof_row = query_profile_->prof_row(qindex);
-			Real query_hydrophobic_sum = query_prof_row[core::chemical::aa_from_oneletter_code( 'F' )] +
+			utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(qindex);
+			core::Real query_hydrophobic_sum = query_prof_row[core::chemical::aa_from_oneletter_code( 'F' )] +
 				query_prof_row[core::chemical::aa_from_oneletter_code( 'I' )] +
 				query_prof_row[core::chemical::aa_from_oneletter_code( 'L' )] +
 				query_prof_row[core::chemical::aa_from_oneletter_code( 'M' )] +
@@ -61,16 +61,16 @@ bool HydrophobicityProfileSimilarity::score(FragmentCandidateOP f,
 				query_prof_row[core::chemical::aa_from_oneletter_code( 'W' )] +
 				query_prof_row[core::chemical::aa_from_oneletter_code( 'Y' )];
 			if ( query_hydrophobic_sum > MIN_HYDROPHOBIC_PROBABILITY ) {
-				Size vallindex = f->get_first_index_in_vall() + i - 1;
-				utility::vector1<Real> tmplt_prof_row = chunk->at(vallindex)->profile();
-				Real tmplt_residue_hydrophobic_sum = tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'F' )] +
+				core::Size vallindex = f->get_first_index_in_vall() + i - 1;
+				utility::vector1<core::Real> tmplt_prof_row = chunk->at(vallindex)->profile();
+				core::Real tmplt_residue_hydrophobic_sum = tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'F' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'I' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'L' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'M' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'V' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'W' )] +
 					tmplt_prof_row[core::chemical::aa_from_oneletter_code( 'Y' )];
-				utility::vector1<Real> tmplt_prof_struct_row = chunk->at(vallindex)->profile_struct();
+				utility::vector1<core::Real> tmplt_prof_struct_row = chunk->at(vallindex)->profile_struct();
 				tmplt_residue_hydrophobic_sum += tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'F' )] +
 					tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'I' )] +
 					tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'L' )] +
@@ -78,14 +78,14 @@ bool HydrophobicityProfileSimilarity::score(FragmentCandidateOP f,
 					tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'V' )] +
 					tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'W' )] +
 					tmplt_prof_struct_row[core::chemical::aa_from_oneletter_code( 'Y' )];
-				tmplt_residue_hydrophobic_sum /= (Real) 2.0;
+				tmplt_residue_hydrophobic_sum /= (core::Real) 2.0;
 				if ( tmplt_residue_hydrophobic_sum < MIN_HYDROPHOBIC_PROBABILITY - 0.10 ) { // .1 buffer
 					totalScore += 0.5; // penalty if avg sum of hydrophobic residue profile values from vall sequence and structure profiles less than query avg sum
 				}
 			}
 		}
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;

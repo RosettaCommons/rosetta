@@ -47,9 +47,9 @@ static THREAD_LOCAL basic::Tracer trProfScoreL1(
 
 ProfileScoreL1::~ProfileScoreL1() {}
 
-ProfileScoreL1::ProfileScoreL1(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	sequence::SequenceProfileOP query_profile, utility::vector1<Size> & frag_sizes,
-	Size longest_vall_chunk) :
+ProfileScoreL1::ProfileScoreL1(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	core::sequence::SequenceProfileOP query_profile, utility::vector1<core::Size> & frag_sizes,
+	core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"ProfileScoreL1") {
 	if ( query_profile->size() != query_profile->length() ) {
@@ -57,14 +57,14 @@ ProfileScoreL1::ProfileScoreL1(Size priority, Real lowest_acceptable_value, bool
 	}
 	query_profile_ = query_profile;
 
-	for ( Size i = 1; i <= query_profile->length(); ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= query_profile->length(); ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
 	}
 	create_cache(frag_sizes,query_profile->length(),longest_vall_chunk,cache_);
 	if ( trProfScoreL1.visible() ) {
 		trProfScoreL1 << "Created cache for fraglen:";
-		for ( Size i=1; i<=cache_.size(); i++ ) {
+		for ( core::Size i=1; i<=cache_.size(); i++ ) {
 			if ( cache_[i].size() > 0 ) {
 				trProfScoreL1 <<" "<<i;
 			}
@@ -83,7 +83,7 @@ void ProfileScoreL1::do_caching(VallChunkOP chunk) {
 	cached_scores_id_ = tmp;
 
 	do_caching_simple(chunk);
-	for ( Size fl=1; fl<=cache_.size(); fl++ ) {
+	for ( core::Size fl=1; fl<=cache_.size(); fl++ ) {
 		if ( cache_[fl].size() != 0 ) {
 			trProfScoreL1.Trace << "caching profile score for " << chunk->get_pdb_id()
 				<< " of size " << chunk->size() << " for fragment size "<<fl<<std::endl;
@@ -95,16 +95,16 @@ void ProfileScoreL1::do_caching(VallChunkOP chunk) {
 
 void ProfileScoreL1::do_caching_simple(VallChunkOP chunk) {
 
-	Size size_q = query_profile_->length();
+	core::Size size_q = query_profile_->length();
 
 	trProfScoreL1.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
-	for ( Size i = 1; i <= size_q; ++i ) {
-		utility::vector1<Real> query_prof_row = query_profile_->prof_row(i);
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
-			utility::vector1<Real> tmplt_prof_row = chunk->at(j)->profile();
-			Real score = 0.0;
-			for ( Size k = 1; k <= 20; k++ ) {
+	for ( core::Size i = 1; i <= size_q; ++i ) {
+		utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(i);
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
+			utility::vector1<core::Real> tmplt_prof_row = chunk->at(j)->profile();
+			core::Real score = 0.0;
+			for ( core::Size k = 1; k <= 20; k++ ) {
 				score += std::abs(tmplt_prof_row[k] - query_prof_row[k]);
 			}
 			scores_[i][j] = score;
@@ -123,9 +123,9 @@ bool ProfileScoreL1::cached_score(FragmentCandidateOP f,
 		do_caching(f->get_chunk());
 	}
 
-	Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
+	core::Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
 
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -136,16 +136,16 @@ bool ProfileScoreL1::cached_score(FragmentCandidateOP f,
 
 bool ProfileScoreL1::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	Real totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
-		utility::vector1<Real> query_prof_row = query_profile_->prof_row(f->get_first_index_in_query() + i - 1);
+	core::Real totalScore = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
+		utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(f->get_first_index_in_query() + i - 1);
 		VallChunkOP chunk = f->get_chunk();
-		utility::vector1<Real> tmplt_prof_row = chunk->at(f->get_first_index_in_vall() + i - 1)->profile();
-		for ( Size k = 1; k <= 20; k++ ) {
+		utility::vector1<core::Real> tmplt_prof_row = chunk->at(f->get_first_index_in_vall() + i - 1)->profile();
+		for ( core::Size k = 1; k <= 20; k++ ) {
 			totalScore += std::abs(tmplt_prof_row[k] - query_prof_row[k]);
 		}
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -154,10 +154,10 @@ bool ProfileScoreL1::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 }
 
 
-FragmentScoringMethodOP MakeProfileScoreL1::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeProfileScoreL1::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
-	Size len = picker->get_vall()->get_largest_chunk_size();
+	core::Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreL1 << "Profile scoring method is: L1" << std::endl;
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreL1(priority,
 		lowest_acceptable_value, use_lowest, picker->get_query_seq(),
@@ -175,8 +175,8 @@ std::string tmp = f->get_chunk()->chunk_key();
 if (tmp.compare(cached_scores_id_) != 0)
 do_caching(f->get_chunk());
 
-Real totalScore = 0.0;
-for (Size i = 1; i <= f->get_length(); i++) {
+core::Real totalScore = 0.0;
+for (core::Size i = 1; i <= f->get_length(); i++) {
 assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 assert(f->get_first_index_in_vall()
 + i - 1<= scores_[1].size());
@@ -184,7 +184,7 @@ totalScore
 += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()
 + i - 1];
 }
-totalScore /= (Real) f->get_length();
+totalScore /= (core::Real) f->get_length();
 empty_map->set_score_component(totalScore, id_);
 if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
 return false;

@@ -33,6 +33,8 @@ namespace modeler {
 namespace protein {
 namespace loop_close {
 
+using namespace core;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // this is largely untested now -- if we want to reconstitute, we should
 // probably fold KIC into sampler, as is done for RNA.

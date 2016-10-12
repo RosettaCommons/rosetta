@@ -107,6 +107,7 @@ using namespace protocols::frag_picker;
 using namespace protocols::frag_picker::scores;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
 
@@ -124,8 +125,8 @@ void FragmentPicker::quota_protocol() {
 	pick_candidates();
 
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
-	for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-		Size fragment_size = frag_sizes_[iFragSize];
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+		core::Size fragment_size = frag_sizes_[iFragSize];
 		quota::QuotaCollectorOP c = (skip_merge) ?
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sinks_[1][fragment_size]) :
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sink_[fragment_size]); // merged storage
@@ -134,16 +135,16 @@ void FragmentPicker::quota_protocol() {
 		}
 		log_25_.setup_summary(*c);
 		log_200_.setup_summary(*c);
-		Size maxqpos = size_of_query() - fragment_size + 1;
+		core::Size maxqpos = size_of_query() - fragment_size + 1;
 
 		utility::vector1<Candidates> final_fragments(maxqpos); // final fragments
 
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
 			Candidates dummy_input, final_out;
 			if ( !skip_merge ) {  // merge candidates
-				for ( Size i=1; i<=candidates_sinks_.size(); ++i ) {
+				for ( core::Size i=1; i<=candidates_sinks_.size(); ++i ) {
 					candidates_sink_[fragment_size]->insert(qPos, candidates_sinks_[i][fragment_size]);
 				}
 			}
@@ -171,8 +172,8 @@ void FragmentPicker::keep_all_protocol() {
 	}
 
 	CompareTotalScore comparator(get_score_manager());
-	for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-		Size fragment_size = frag_sizes_[iFragSize];
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+		core::Size fragment_size = frag_sizes_[iFragSize];
 
 		utility::io::ozstream out_file;
 		if ( option[frags::describe_fragments].user() ) {
@@ -184,9 +185,9 @@ void FragmentPicker::keep_all_protocol() {
 		utility::io::ozstream output(out_file_name);
 		CandidatesCollectorOP storage = get_candidates_collector(fragment_size);
 
-		Size maxqpos = size_of_query() - fragment_size + 1;
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		core::Size maxqpos = size_of_query() - fragment_size + 1;
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
 
 			Candidates out;
@@ -198,11 +199,11 @@ void FragmentPicker::keep_all_protocol() {
 			output << "position: " << I(12, qPos) << " neighbors:   " << I(10,out.size()) << std::endl << std::endl;
 			FragmentScoreManagerOP ms = get_score_manager();
 			if ( ms->if_late_scoring_for_zeros() )  {
-				for ( Size fi = 1; fi <= out.size(); ++fi ) {
+				for ( core::Size fi = 1; fi <= out.size(); ++fi ) {
 					ms->score_zero_scores(out[fi].first,out[fi].second);
 				}
 			}
-			for ( Size fi = 1; fi <= out.size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= out.size(); ++fi ) {
 				out[fi].first->print_fragment(output);
 				output << std::endl;
 			}
@@ -220,11 +221,11 @@ void FragmentPicker::keep_all_protocol() {
 }
 
 
-void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vector1<Candidates> const & fragment_set ) {
+void FragmentPicker::fragment_contacts( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set ) {
 	using namespace ObjexxFCL;
 
 	// how many neighboring residues shall we also find contacts for?
-	Size neighbors = option[frags::contacts::neighbors]();
+	core::Size neighbors = option[frags::contacts::neighbors]();
 
 	// output all contacts?
 	std::set<ContactType>::iterator it, ctend = contact_types_.end();
@@ -242,14 +243,14 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	}
 
 	// initialize contact counts
-	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts;
+	std::map<std::pair<core::Real,ContactType>, ContactCountsOP> contact_counts;
 	for ( it=contact_types_.begin(); it != ctend; ++it ) {
 		if ( *it == CEN ) {
-			std::pair<Real,ContactType> p(0,*it);
+			std::pair<core::Real,ContactType> p(0,*it);
 			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 		} else {
-			for ( Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
-				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
+			for ( core::Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
+				std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
 				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 			}
 		}
@@ -260,21 +261,21 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 		output_all_contacts << "# i j type dist cutoff frag_pos frag_rank" << std::endl;
 	}
 
-	for ( Size iqpos = 1; iqpos <= query_positions_.size()-fragment_size+1; ++iqpos ) {
-		Size qPosi = query_positions_[iqpos];
+	for ( core::Size iqpos = 1; iqpos <= query_positions_.size()-fragment_size+1; ++iqpos ) {
+		core::Size qPosi = query_positions_[iqpos];
 		Candidates const & outi = fragment_set[qPosi];
-		for ( Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
+		for ( core::Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
 
 			// for neighboring contacts
 			// chunks can be different chains
 			VallChunkOP chunk = outi[fi].first->get_chunk();
 			int cPos_offset = outi[fi].first->get_first_index_in_vall() - qPosi;
 
-			for ( Size i=1; i<=fragment_size; ++i ) {
+			for ( core::Size i=1; i<=fragment_size; ++i ) {
 				VallResidueOP ri = outi[fi].first->get_residue(i);
-				Size q_pos_i = qPosi + i - 1;
-				for ( Size j=i+1; j<=fragment_size; ++j ) {
-					Size q_pos_j = qPosi + j - 1;
+				core::Size q_pos_i = qPosi + i - 1;
+				for ( core::Size j=i+1; j<=fragment_size; ++j ) {
+					core::Size q_pos_j = qPosi + j - 1;
 
 					// skip local contacts relative to query
 					if ( std::abs(int(q_pos_i-q_pos_j)) < (int)contacts_min_seq_sep_ ) continue;
@@ -284,10 +285,10 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 					for ( it=contact_types_.begin(); it != ctend; ++it ) {
 
 						// pair distance
-						Real distance_squared = ri->distance_squared(outi[fi].first->get_residue(j), *it);
+						core::Real distance_squared = ri->distance_squared(outi[fi].first->get_residue(j), *it);
 
 						// distance cutoff
-						Real cutoff_dist_squared = (*it == CEN) ?
+						core::Real cutoff_dist_squared = (*it == CEN) ?
 							sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outi[fi].first->get_residue(j)->aa() ) :
 							contacts_dist_cutoff_squared_;
 
@@ -302,26 +303,26 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 							// sorry for the copy and paste code below
 							if ( *it == CEN ) {
 								// iterate contact counts
-								std::pair<Real,ContactType> p(0,*it);
-								std::pair<Size,Size> querypair(q_pos_i, q_pos_j);
+								std::pair<core::Real,ContactType> p(0,*it);
+								std::pair<core::Size,core::Size> querypair(q_pos_i, q_pos_j);
 								contact_counts[p]->iterate(querypair);
 
 								// iterate neighboring contact counts
 								if ( neighbors > 0 ) {
 									int m_min_tmp = q_pos_i-neighbors;
-									Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
-									Size m_max = q_pos_i+neighbors;
+									core::Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
+									core::Size m_max = q_pos_i+neighbors;
 									int n_min_tmp = q_pos_j-neighbors;
-									Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
-									Size n_max = q_pos_j+neighbors;
+									core::Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
+									core::Size n_max = q_pos_j+neighbors;
 									// m == query position i
-									for ( Size m = m_min; m <= m_max; ++m ) {
+									for ( core::Size m = m_min; m <= m_max; ++m ) {
 										if ( m > size_of_query() ) continue;
 										// chunk_i = chunk position i
-										Size chunk_i = cPos_offset + m;
+										core::Size chunk_i = cPos_offset + m;
 										if ( chunk_i < 1 || chunk_i > chunk->size() ) continue;
 										// n == query position j
-										for ( Size n = n_min; n <= n_max; ++n ) {
+										for ( core::Size n = n_min; n <= n_max; ++n ) {
 											if ( n > size_of_query() ) continue;
 											if ( m == q_pos_i && n == q_pos_j ) continue;
 											// chunk_j = chunk position j
@@ -333,9 +334,9 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 											// skip local contacts relative to fragments
 											if ( std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
 
-											Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
+											core::Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
 											if ( dist_squared <= sidechain_contact_dist_cutoff_->get_cutoff_squared( chunk->at(chunk_i)->aa(), chunk->at(chunk_j)->aa() ) ) {
-												std::pair<Size,Size> neighbor_pair(m, n);
+												std::pair<core::Size,core::Size> neighbor_pair(m, n);
 												contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 											}
 										}
@@ -343,29 +344,29 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 								}
 
 							} else {
-								for ( Size cdi=1; cdi<=contacts_dist_cutoffs_squared_.size(); ++cdi ) {
+								for ( core::Size cdi=1; cdi<=contacts_dist_cutoffs_squared_.size(); ++cdi ) {
 									if ( distance_squared < contacts_dist_cutoffs_squared_[cdi] ) {
 										// iterate contact counts
-										std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[cdi],*it);
-										std::pair<Size,Size> querypair(q_pos_i, q_pos_j);
+										std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[cdi],*it);
+										std::pair<core::Size,core::Size> querypair(q_pos_i, q_pos_j);
 										contact_counts[p]->iterate(querypair);
 
 										// iterate neighboring contact counts
 										if ( neighbors > 0 ) {
 											int m_min_tmp = q_pos_i-neighbors;
-											Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
-											Size m_max = q_pos_i+neighbors;
+											core::Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
+											core::Size m_max = q_pos_i+neighbors;
 											int n_min_tmp = q_pos_j-neighbors;
-											Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
-											Size n_max = q_pos_j+neighbors;
+											core::Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
+											core::Size n_max = q_pos_j+neighbors;
 											// m == query position i
-											for ( Size m = m_min; m <= m_max; ++m ) {
+											for ( core::Size m = m_min; m <= m_max; ++m ) {
 												if ( m > size_of_query() ) continue;
 												// chunk_i = chunk position i
 												int chunk_i = cPos_offset + m;
 												if ( chunk_i < 1 || chunk_i > (int)chunk->size() ) continue;
 												// n == query position j
-												for ( Size n = n_min; n <= n_max; ++n ) {
+												for ( core::Size n = n_min; n <= n_max; ++n ) {
 													if ( n > size_of_query() ) continue;
 													if ( m == q_pos_i && n == q_pos_j ) continue;
 													// chunk_j = chunk position j
@@ -373,14 +374,14 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 													if ( chunk_j < 1 || chunk_j > (int)chunk->size() ) continue;
 
 													// skip local contacts relative to query
-													Size m_n_sep = std::abs(int(m - n));  // sequence separation
+													core::Size m_n_sep = std::abs(int(m - n));  // sequence separation
 													if ( m_n_sep < contacts_min_seq_sep_ ) continue;
 													// skip local contacts relative to fragments
 													if ( std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
 
-													Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
+													core::Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
 													if ( dist_squared <= contacts_dist_cutoffs_squared_[cdi] ) {
-														std::pair<Size,Size> neighbor_pair(m, n);
+														std::pair<core::Size,core::Size> neighbor_pair(m, n);
 														contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 													}
 												}
@@ -405,22 +406,22 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 
 
 // should be thread safe
-void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const & positions, Size const & fragment_size, utility::vector1<bool> const & skip,
+void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> const & positions, core::Size const & fragment_size, utility::vector1<bool> const & skip,
 	utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs ) {
 
-	Size const maxjqpos = size_of_query()-fragment_size+1;
+	core::Size const maxjqpos = size_of_query()-fragment_size+1;
 
 	// loop through query positions, qPosi
-	for ( Size p = 1; p <= positions.size(); ++p ) {
-		Size const qPosi = positions[p];
+	for ( core::Size p = 1; p <= positions.size(); ++p ) {
+		core::Size const qPosi = positions[p];
 		Candidates const & outi = fragment_set[qPosi];  // candidates at i
-		Size const minjqpos = qPosi+fragment_size+contacts_min_seq_sep_-1;
+		core::Size const minjqpos = qPosi+fragment_size+contacts_min_seq_sep_-1;
 		// loop through nonlocal query positions, qPosj
-		for ( Size jqpos = 1; jqpos <= query_positions_.size(); ++jqpos ) {
-			Size qPosj = query_positions_[jqpos];
+		for ( core::Size jqpos = 1; jqpos <= query_positions_.size(); ++jqpos ) {
+			core::Size qPosj = query_positions_[jqpos];
 			if ( qPosj > maxjqpos || qPosj < minjqpos ) continue;
 			bool skip_it = true;
-			for ( Size i=0; i<fragment_size; ++i ) {
+			for ( core::Size i=0; i<fragment_size; ++i ) {
 				if ( !skip[qPosi+i] || !skip[qPosj+i] ) {
 					skip_it = false;
 					break;
@@ -428,21 +429,21 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 			}
 			if ( skip_it ) continue;
 			Candidates const & outj = fragment_set[qPosj]; // candidates at j
-			for ( Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
-				for ( Size fj = 1; fj <= outj.size(); ++fj ) { // loop through selected fragments at qPosj
+			for ( core::Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
+				for ( core::Size fj = 1; fj <= outj.size(); ++fj ) { // loop through selected fragments at qPosj
 					if ( !outi[fi].first->same_chain( outj[fj].first ) ) continue; // skip if not from same pdb chain
 					//if (outi[fi].first->get_residue(1)->resi() >= outj[fj].first->get_residue(1)->resi()) continue; // skip inverse pairs
 					//if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < min_pdb_seq_sep) continue; // skip if too local in PDB
 					if ( std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < (int)fragment_size ) continue; // skip overlapping fragments in PDB
-					Size qpi = qPosi; // query position i in fragment
+					core::Size qpi = qPosi; // query position i in fragment
 					utility::vector1<ContactOP> contacts;
 					bool skip = false;
 					bool has_good_constraint = false;
 					bool has_constraints = (atom_pair_constraint_contact_map_.size() > 0) ? true : false;
-					for ( Size i=1; i<=fragment_size; ++i ) {
+					for ( core::Size i=1; i<=fragment_size; ++i ) {
 						VallResidueOP ri = outi[fi].first->get_residue(i);
-						Size qpj = qPosj; // query position j in fragment
-						for ( Size j=1; j<=fragment_size; ++j ) {
+						core::Size qpj = qPosj; // query position j in fragment
+						for ( core::Size j=1; j<=fragment_size; ++j ) {
 							if ( skip ) continue;
 							if ( std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_ ) continue;
 							// skip local contacts relative to fragments
@@ -450,11 +451,11 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 							std::set<ContactType>::iterator it, ctend;
 							for ( it=contact_types_.begin(); it != ctend; ++it ) {
 								// contact distance cutoff
-								Real cutoff_dist_squared = (*it == CEN) ?
+								core::Real cutoff_dist_squared = (*it == CEN) ?
 									sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outj[fj].first->get_residue(j)->aa() ) :
 									contacts_dist_cutoff_squared_;
 								// contact distance
-								Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
+								core::Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
 								if ( has_constraints && atom_pair_constraint_contact_map_[qpi][qpj] > 0 ) {
 									if ( dist_squared > atom_pair_constraint_contact_map_[qpi][qpj] ) {
 										skip = true;
@@ -481,7 +482,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 
 }
 
-void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<Candidates> const & fragment_set ) {
+void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set ) {
 	using namespace ObjexxFCL;
 
 	// always print ca coords
@@ -489,7 +490,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	option[frags::write_ca_coordinates].value(true);
 
 	// how many neighboring residues shall we also find contacts for?
-	Size neighbors = option[frags::contacts::neighbors]();
+	core::Size neighbors = option[frags::contacts::neighbors]();
 
 	// native
 	bool has_native = false;
@@ -510,8 +511,8 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			<< option[constraints::cst_file]()[1] << std::endl;
 		// initialize
 		atom_pair_constraint_contact_map_.resize(size_of_query());
-		for ( Size qi = 1; qi <= size_of_query(); qi++ ) {
-			for ( Size qj = 1; qj <= size_of_query(); qj++ ) {
+		for ( core::Size qi = 1; qi <= size_of_query(); qi++ ) {
+			for ( core::Size qj = 1; qj <= size_of_query(); qj++ ) {
 				atom_pair_constraint_contact_map_[qi].push_back( 0 );
 			}
 		}
@@ -524,7 +525,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		std::string line;
 		getline(data, line); // header line
 		std::string tag;
-		Size n_constr = 0;
+		core::Size n_constr = 0;
 		while ( !data.fail() ) {
 			char c = data.peek();
 			if ( c == '#' || c == '\n' ) {
@@ -539,7 +540,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			}
 			if ( tag == "AtomPair" ) {
 				std::string name1, name2, func_type;
-				Size id1, id2;
+				core::Size id1, id2;
 				data >> name1 >> id1 >> name2 >> id2 >> func_type;
 				tr.Debug << "read: " << name1 << " " << id1
 					<< " " << name2 << " " << id2 << " func: " << func_type
@@ -563,14 +564,14 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			core::sequence::read_aln( option[ cm::aln_format ](), option[ in::file::alignment ]()[1] );
 		tr.Info << "Input alignment used to skip aligned positions: " << std::endl;
 		tr.Info << alns[1] << std::endl;
-		Size const query_idx( 1 );
-		Size const templ_idx( 2 );
-		Size nres = size_of_query();
+		core::Size const query_idx( 1 );
+		core::Size const templ_idx( 2 );
+		core::Size nres = size_of_query();
 		core::id::SequenceMapping mapping_(
 			alns[1].sequence_mapping( query_idx, templ_idx )
 		);
-		for ( Size resi = 1; resi <= nres; resi++ ) {
-			Size t_resi = mapping_[ resi ];
+		for ( core::Size resi = 1; resi <= nres; resi++ ) {
+			core::Size t_resi = mapping_[ resi ];
 			bool const gap_exists( t_resi == 0 ); // query residue maps to a gap
 			if ( !gap_exists ) {
 				skip_position[resi] = true;
@@ -580,37 +581,37 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	}
 
 	// initialize contact counts
-	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts;
+	std::map<std::pair<core::Real,ContactType>, ContactCountsOP> contact_counts;
 	std::set<ContactType>::iterator it, end ;
 	for ( it=contact_types_.begin(), end =contact_types_.end(); it != end; ++it ) {
 		if ( *it == CEN ) {
-			std::pair<Real,ContactType> p(0,*it);
+			std::pair<core::Real,ContactType> p(0,*it);
 			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 		} else {
-			for ( Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
-				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
+			for ( core::Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
+				std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
 				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 			}
 		}
 	}
 
 
-	Real const min_contacts = (nonlocal_min_contacts_per_res_ < 1.0) ? 1.0 : nonlocal_min_contacts_per_res_*(Real)fragment_size;
-	Size const maxiqpos = size_of_query()-(contacts_min_seq_sep_-1)-fragment_size-fragment_size+1;
+	core::Real const min_contacts = (nonlocal_min_contacts_per_res_ < 1.0) ? 1.0 : nonlocal_min_contacts_per_res_*(core::Real)fragment_size;
+	core::Size const maxiqpos = size_of_query()-(contacts_min_seq_sep_-1)-fragment_size-fragment_size+1;
 
 	time_t time_start = time(nullptr);
 
-	utility::vector1<utility::vector1<Size> > qPosi_to_run( max_threads_ );
-	Size positions_cnt = 0;
-	for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-		Size qPosi = query_positions_[iqpos];
+	utility::vector1<utility::vector1<core::Size> > qPosi_to_run( max_threads_ );
+	core::Size positions_cnt = 0;
+	for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+		core::Size qPosi = query_positions_[iqpos];
 		if ( qPosi > maxiqpos ) continue;
 		positions_cnt++;
 	}
-	const Size qPosi_per_thread = positions_cnt/max_threads_;
-	Size thread = 1;
-	for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-		Size qPosi = query_positions_[iqpos];
+	const core::Size qPosi_per_thread = positions_cnt/max_threads_;
+	core::Size thread = 1;
+	for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+		core::Size qPosi = query_positions_[iqpos];
 		if ( qPosi > maxiqpos ) continue;
 		qPosi_to_run[thread].push_back( qPosi );
 		if ( qPosi_to_run[thread].size() >= qPosi_per_thread && thread < max_threads_ ) ++thread;
@@ -625,10 +626,10 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	boost::thread_group threads;
 #endif
 	tr.super_mute(true); // lets suppress tracer output when running multi threads
-	for ( Size j = 1; j <= max_threads_; ++j ) {
+	for ( core::Size j = 1; j <= max_threads_; ++j ) {
 		if ( qPosi_to_run[j].size() > 0 ) {
 			std::cout << "thread: " << j << " - " << qPosi_to_run[j].size() << " positions -";
-			for ( Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos ) std::cout << " " << qPosi_to_run[j][pos];
+			for ( core::Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos ) std::cout << " " << qPosi_to_run[j][pos];
 			std::cout << std::endl;
 #if defined MULTI_THREADED
 			threads.push_back( std::thread( boost::bind(
@@ -683,11 +684,11 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	FragmentScoreManagerOP ms = get_score_manager();
 
 	// now output the thread pairs and merge the contacts maps
-	for ( Size j = 1; j <= thread_pairs.size(); ++j ) {
-		for ( Size k = 1; k <= thread_pairs[j].size(); ++k ) {
+	for ( core::Size j = 1; j <= thread_pairs.size(); ++j ) {
+		for ( core::Size k = 1; k <= thread_pairs[j].size(); ++k ) {
 
-			Size qPosi = thread_pairs[j][k]->get_query_pos_i(); // fragment i pos
-			Size qPosj = thread_pairs[j][k]->get_query_pos_j(); // fragment j pos
+			core::Size qPosi = thread_pairs[j][k]->get_query_pos_i(); // fragment i pos
+			core::Size qPosj = thread_pairs[j][k]->get_query_pos_j(); // fragment j pos
 
 			// for neighboring contacts
 			// chunks can be different chains
@@ -701,15 +702,15 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 			if ( option[frags::nonlocal::output_silent]() ) {
 				// check if enough contacts exist to output fragment pair
-				std::map<ContactType, Size> contact_type_cnt;
-				std::map<ContactType, Size>::iterator iter, ctend2;
+				std::map<ContactType, core::Size> contact_type_cnt;
+				std::map<ContactType, core::Size>::iterator iter, ctend2;
 				bool output_pair = false;
 				for ( it=contact_types_.begin(), end = contact_types_.end(); it != end; ++it ) {
 					contact_type_cnt[*it] = 0;
 				}
-				for ( Size i=1; i<=contacts.size(); ++i ) contact_type_cnt[contacts[i]->type()]++;
+				for ( core::Size i=1; i<=contacts.size(); ++i ) contact_type_cnt[contacts[i]->type()]++;
 				for ( iter = contact_type_cnt.begin(), ctend2 = contact_type_cnt.end(); iter != ctend2; ++iter ) {
-					if ( (Real)iter->second >= min_contacts ) {
+					if ( (core::Real)iter->second >= min_contacts ) {
 						output_pair = true;
 						break;
 					}
@@ -745,17 +746,17 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 						// get pose CA coords
 						std::vector< core::Vector > pose_coords;
 						std::vector< core::Vector > native_pose_coords;
-						for ( Size i=1; i<=pose.size(); i++ ) {
+						for ( core::Size i=1; i<=pose.size(); i++ ) {
 							pose_coords.push_back( pose.residue(i).xyz("CA") );
 						}
-						for ( Size i=0; i<fragment_size; i++ ) {
+						for ( core::Size i=0; i<fragment_size; i++ ) {
 							// get native CA coords for frag i
-							Size respos = qPosi+i;
+							core::Size respos = qPosi+i;
 							native_pose_coords.push_back( nativePose->residue(respos).xyz("CA") );
 						}
-						for ( Size i=0; i<fragment_size; i++ ) {
+						for ( core::Size i=0; i<fragment_size; i++ ) {
 							// get native CA coords for frag j
-							Size respos = qPosj+i;
+							core::Size respos = qPosj+i;
 							native_pose_coords.push_back( nativePose->residue(respos).xyz("CA") );
 						}
 						int const natoms = pose_coords.size();
@@ -795,7 +796,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			}
 
 
-			for ( Size i = 1; i <= contacts.size(); ++i ) {
+			for ( core::Size i = 1; i <= contacts.size(); ++i ) {
 
 				// output all contacts
 				if ( output_all ) {
@@ -808,26 +809,26 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				// iterate contact counts
 				// sorry for the copy and paste code below
 				if ( contacts[i]->type() == CEN ) {
-					std::pair<Real,ContactType> p(0,CEN);
-					std::pair<Size,Size> querypair(contacts[i]->i(), contacts[i]->j());
+					std::pair<core::Real,ContactType> p(0,CEN);
+					std::pair<core::Size,core::Size> querypair(contacts[i]->i(), contacts[i]->j());
 					contact_counts[p]->iterate(querypair);
 
 					// iterate neighboring contact counts
 					if ( neighbors > 0 ) {
 						int m_min_tmp = contacts[i]->i()-neighbors;
 						int n_min_tmp = contacts[i]->j()-neighbors;
-						Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
-						Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
-						Size m_max = contacts[i]->i()+neighbors;
-						Size n_max = contacts[i]->j()+neighbors;
+						core::Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
+						core::Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
+						core::Size m_max = contacts[i]->i()+neighbors;
+						core::Size n_max = contacts[i]->j()+neighbors;
 						// m == query position i
-						for ( Size m = m_min; m <= m_max; ++m ) {
+						for ( core::Size m = m_min; m <= m_max; ++m ) {
 							if ( m > size_of_query() ) continue;
 							// chunk_i = chunk position i
 							int chunk_i = cPosi_offset + m;
 							if ( chunk_i < 1 || chunk_i > (int)chunki->size() ) continue;
 							// n == query position j
-							for ( Size n = n_min; n <= n_max; ++n ) {
+							for ( core::Size n = n_min; n <= n_max; ++n ) {
 								if ( n > size_of_query() ) continue;
 								if ( m == contacts[i]->i() && n == contacts[i]->j() ) continue;
 								// chunk_j = chunk position j
@@ -840,9 +841,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 								if ( std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
 
 								// contact distance
-								Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
+								core::Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
 								if ( dist_squared <= sidechain_contact_dist_cutoff_->get_cutoff_squared( chunki->at(chunk_i)->aa(), chunkj->at(chunk_j)->aa() ) ) {
-									std::pair<Size,Size> neighbor_pair(m, n);
+									std::pair<core::Size,core::Size> neighbor_pair(m, n);
 									contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 								}
 							}
@@ -850,28 +851,28 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 					}
 				} else {
 
-					for ( Size cdi=1; cdi<=contacts_dist_cutoffs_squared_.size(); ++cdi ) {
+					for ( core::Size cdi=1; cdi<=contacts_dist_cutoffs_squared_.size(); ++cdi ) {
 						if ( contacts[i]->dist_squared() <= contacts_dist_cutoffs_squared_[cdi] ) {
-							std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[cdi],contacts[i]->type());
-							std::pair<Size,Size> querypair(contacts[i]->i(), contacts[i]->j());
+							std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[cdi],contacts[i]->type());
+							std::pair<core::Size,core::Size> querypair(contacts[i]->i(), contacts[i]->j());
 							contact_counts[p]->iterate(querypair);
 
 							// iterate neighboring contact counts
 							if ( neighbors > 0 ) {
 								int m_min_tmp = contacts[i]->i()-neighbors;
 								int n_min_tmp = contacts[i]->j()-neighbors;
-								Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
-								Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
-								Size m_max = contacts[i]->i()+neighbors;
-								Size n_max = contacts[i]->j()+neighbors;
+								core::Size m_min = (m_min_tmp >= 1) ? m_min_tmp : 1;
+								core::Size n_min = (n_min_tmp >= 1) ? n_min_tmp : 1;
+								core::Size m_max = contacts[i]->i()+neighbors;
+								core::Size n_max = contacts[i]->j()+neighbors;
 								// m == query position i
-								for ( Size m = m_min; m <= m_max; ++m ) {
+								for ( core::Size m = m_min; m <= m_max; ++m ) {
 									if ( m > size_of_query() ) continue;
 									// chunk_i = chunk position i
 									int chunk_i = cPosi_offset + m;
 									if ( chunk_i < 1 || chunk_i > (int)chunki->size() ) continue;
 									// n == query position j
-									for ( Size n = n_min; n <= n_max; ++n ) {
+									for ( core::Size n = n_min; n <= n_max; ++n ) {
 										if ( n > size_of_query() ) continue;
 										if ( m == contacts[i]->i() && n == contacts[i]->j() ) continue;
 										// chunk_j = chunk position j
@@ -884,9 +885,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 										if ( std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
 
 										// contact distance
-										Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
+										core::Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
 										if ( dist_squared <= contacts_dist_cutoffs_squared_[cdi] ) {
-											std::pair<Size,Size> neighbor_pair(m, n);
+											std::pair<core::Size,core::Size> neighbor_pair(m, n);
 											contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 										}
 									}
@@ -914,9 +915,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 void
 FragmentPicker::output_pair_counts(
-	Size const fragment_size,
-	Size const neighbors,
-	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
+	core::Size const fragment_size,
+	core::Size const neighbors,
+	std::map<std::pair<core::Real,ContactType>, ContactCountsOP> contact_counts
 ) {
 	using namespace ObjexxFCL;
 	for ( auto contact_type : contact_types_ ) {
@@ -929,17 +930,17 @@ FragmentPicker::output_pair_counts(
 			output_contacts << "# i j count";
 			if ( neighbors > 0 ) output_contacts << " neighbors_" << neighbors << "_i_j_count";
 			output_contacts << std::endl;
-			std::pair<Real,ContactType> p(0,contact_type);
-			std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-			std::map<std::pair<Size,Size>, Size>::iterator iter, end;
+			std::pair<core::Real,ContactType> p(0,contact_type);
+			std::map<std::pair<core::Size,core::Size>, core::Size> query_counts = contact_counts[p]->counts();
+			std::map<std::pair<core::Size,core::Size>, core::Size>::iterator iter, end;
 			for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
-				std::pair<Size,Size> query_pair = iter->first;
+				std::pair<core::Size,core::Size> query_pair = iter->first;
 				output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
 				if ( neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair) ) {
-					std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-					std::map<std::pair<Size,Size>, Size>::iterator neigh_iter, nend;
+					std::map<std::pair<core::Size,core::Size>, core::Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
+					std::map<std::pair<core::Size,core::Size>, core::Size>::iterator neigh_iter, nend;
 					for ( neigh_iter = neighbor_counts.begin(), nend = neighbor_counts.end(); neigh_iter != nend; ++neigh_iter ) {
-						std::pair<Size,Size> neighbor_pair = neigh_iter->first;
+						std::pair<core::Size,core::Size> neighbor_pair = neigh_iter->first;
 						output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
 					}
 				}
@@ -947,24 +948,24 @@ FragmentPicker::output_pair_counts(
 			}
 			output_contacts.close();
 		} else {
-			for ( Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
+			for ( core::Size i=1; i<=contacts_dist_cutoffs_squared_.size(); ++i ) {
 				const std::string out_file_name_contacts = prefix_ + "." + contact_name(contact_type) + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoffs_squared_[i])) +
 					"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
 				utility::io::ozstream output_contacts(out_file_name_contacts);
 				output_contacts << "# i j count";
 				if ( neighbors > 0 ) output_contacts << " neighbors_" << neighbors << "_i_j_count";
 				output_contacts << std::endl;
-				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],contact_type);
-				std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-				std::map<std::pair<Size,Size>, Size>::iterator iter, end ;
+				std::pair<core::Real,ContactType> p(contacts_dist_cutoffs_squared_[i],contact_type);
+				std::map<std::pair<core::Size,core::Size>, core::Size> query_counts = contact_counts[p]->counts();
+				std::map<std::pair<core::Size,core::Size>, core::Size>::iterator iter, end ;
 				for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
-					std::pair<Size,Size> query_pair = iter->first;
+					std::pair<core::Size,core::Size> query_pair = iter->first;
 					output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
 					if ( neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair) ) {
-						std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-						std::map<std::pair<Size,Size>, Size>::iterator neigh_iter, nend;
+						std::map<std::pair<core::Size,core::Size>, core::Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
+						std::map<std::pair<core::Size,core::Size>, core::Size>::iterator neigh_iter, nend;
 						for ( neigh_iter = neighbor_counts.begin(), nend = neighbor_counts.end(); neigh_iter != nend; ++neigh_iter ) {
-							std::pair<Size,Size> neighbor_pair = neigh_iter->first;
+							std::pair<core::Size,core::Size> neighbor_pair = neigh_iter->first;
 							output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
 						}
 					}
@@ -977,20 +978,20 @@ FragmentPicker::output_pair_counts(
 }
 
 // should be thread safe
-void FragmentPicker::pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, Size const & index) {
-	for ( Size i=1; i<=chunks.size(); ++i ) {
+void FragmentPicker::pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, core::Size const & index) {
+	for ( core::Size i=1; i<=chunks.size(); ++i ) {
 		VallChunkOP chunk = chunks[i];
 		scores_[index]->do_caching(chunk);
 		scores::FragmentScoreMapOP empty_map = scores_[index]->create_empty_map();
-		for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-			Size fragment_size = frag_sizes_[iFragSize];
+		for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+			core::Size fragment_size = frag_sizes_[iFragSize];
 			if ( chunk->size() < fragment_size ) continue; // This fragment is too short
 			CandidatesCollectorOP sink = candidates_sinks_[index][fragment_size];
-			for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
-				Size iPos = query_positions_[iqpos];
+			for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
+				core::Size iPos = query_positions_[iqpos];
 				if ( iPos > size_of_query() - fragment_size + 1 ) continue;
 				// split chunk into fragment candidates and score them
-				for ( Size j = 1; j <= chunk->size() - fragment_size + 1; j++ ) {
+				for ( core::Size j = 1; j <= chunk->size() - fragment_size + 1; j++ ) {
 					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
 					if ( scores_[index]->score_fragment_from_cache(f, empty_map) ) {
 						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
@@ -1016,15 +1017,15 @@ void FragmentPicker::pick_candidates() {
 
 	if ( max_threads_ > 1 ) {
 		utility::vector1<utility::vector1<VallChunkOP> > chunks_to_run( max_threads_ );
-		Size valid_chunks_cnt = 0;
-		for ( Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
+		core::Size valid_chunks_cnt = 0;
+		for ( core::Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
 			VallChunkOP chunk = chunks_->at(i);
 			if ( !is_valid_chunk( chunk ) ) continue;
 			valid_chunks_cnt++;
 		}
-		const Size chunks_per_thread = valid_chunks_cnt/max_threads_;
-		Size thread = 1;
-		for ( Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
+		const core::Size chunks_per_thread = valid_chunks_cnt/max_threads_;
+		core::Size thread = 1;
+		for ( core::Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
 			VallChunkOP chunk = chunks_->at(i);
 			if ( !is_valid_chunk( chunk ) ) continue;
 			chunks_to_run[thread].push_back( chunk );
@@ -1036,7 +1037,7 @@ void FragmentPicker::pick_candidates() {
 		boost::thread_group threads;
 #endif
 		tr.super_mute(true); // lets suppress tracer output when running multi threads
-		for ( Size j = 1; j <= max_threads_; ++j ) {
+		for ( core::Size j = 1; j <= max_threads_; ++j ) {
 			if ( chunks_to_run[j].size() > 0 ) {
 				std::cout << "thread: " << j << " - " << chunks_to_run[j].size() << " chunks" << std::endl;
 #if defined MULTI_THREADED
@@ -1067,7 +1068,7 @@ void FragmentPicker::pick_candidates() {
 
 	scores::FragmentScoreMapOP empty_map = scores_[1]->create_empty_map();
 
-	for ( Size i = 1; i <= chunks_->size(); i++ ) { // loop over provided chunks
+	for ( core::Size i = 1; i <= chunks_->size(); i++ ) { // loop over provided chunks
 		VallChunkOP chunk = chunks_->at(i); // For each chunk from a provider...
 		if ( !is_valid_chunk( chunk ) ) continue;
 		tr.Trace << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
@@ -1075,20 +1076,20 @@ void FragmentPicker::pick_candidates() {
 		// cache the new chunk
 		scores_[1]->do_caching(chunk);
 
-		for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-			Size fragment_size = frag_sizes_[iFragSize];
+		for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+			core::Size fragment_size = frag_sizes_[iFragSize];
 			if ( chunk->size() < fragment_size ) continue; // This fragment is too short
 
-			Size maxqpos = size_of_query() - fragment_size + 1;
+			core::Size maxqpos = size_of_query() - fragment_size + 1;
 			CandidatesCollectorOP sink = candidates_sinks_[1][fragment_size];
 			tr.Trace << "Picking fragments of size "<<fragment_size<<
 				" at "<<query_positions_.size()<<" query positions"<<std::endl;
-			for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
-				Size iPos = query_positions_[iqpos];
+			for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
+				core::Size iPos = query_positions_[iqpos];
 				if ( iPos > maxqpos ) continue;
 
 				// split chunk into fragment candidates and score them
-				for ( Size j = 1; j <= chunk->size() - fragment_size + 1; ++j ) {
+				for ( core::Size j = 1; j <= chunk->size() - fragment_size + 1; ++j ) {
 					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
 					if ( scores_[1]->score_fragment_from_cache(f, empty_map) ) {
 						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
@@ -1113,12 +1114,12 @@ void FragmentPicker::pick_candidates() {
 	PROF_STOP( basic::FRAGMENTPICKING );
 }
 
-double FragmentPicker::total_score(scores::FragmentScoreMapOP f, Size index) {
+double FragmentPicker::total_score(scores::FragmentScoreMapOP f, core::Size index) {
 
-	utility::vector1<Real> components = f->get_score_components();
-	utility::vector1<Real> weights = scores_[index]->get_weights();
-	Real total = 0.0;
-	for ( Size i = 1; i <= components.size(); i++ ) {
+	utility::vector1<core::Real> components = f->get_score_components();
+	utility::vector1<core::Real> weights = scores_[index]->get_weights();
+	core::Real total = 0.0;
+	for ( core::Size i = 1; i <= components.size(); i++ ) {
 		total += components.at(i) * weights.at(i);
 	}
 
@@ -1128,7 +1129,7 @@ double FragmentPicker::total_score(scores::FragmentScoreMapOP f, Size index) {
 
 void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) {
 	tr.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
-	for ( Size i = 1; i <= sec_str_input.size(); i += 2 ) {
+	for ( core::Size i = 1; i <= sec_str_input.size(); i += 2 ) {
 		tr.Debug << i / 2 << " " << sec_str_input[i]
 			<< " file will be loaded under \"" << sec_str_input[i+1 ] << "\" name\n";
 		read_ss_file(sec_str_input[i], sec_str_input[i+1 ]);
@@ -1170,7 +1171,7 @@ void FragmentPicker::read_psipred_ss2(std::string const & file_name,
 	ss_profile->read_psipred_ss2(file_name);
 
 	std::string query_ss_as_string;
-	for ( Size i = 1; i <= ss_profile->total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= ss_profile->total_residue(); i++ ) {
 		query_ss_as_string += ss_profile->secstruct(i);
 	}
 
@@ -1185,12 +1186,12 @@ void FragmentPicker::read_talos_ss(std::string const & file_name,
 	ss_profile->read_talos_ss(file_name);
 	//TALOS files can be shortened if there is no data at end of sequence. Fill up with 1/3 1/3 1/3 propensities until end is reached
 	ss_profile->extend(query_profile_->length());
-	for ( Size pos = ss_profile->total_residue()+1; pos <= query_profile_->length(); pos++ ) {
+	for ( core::Size pos = ss_profile->total_residue()+1; pos <= query_profile_->length(); pos++ ) {
 		ss_profile->set_fractions( pos, 1.0/3.0, 1.0/3.0, 1.0/3.0, 0.0 );
 	}
 
 	std::string query_ss_as_string;
-	for ( Size i = 1; i <= ss_profile->total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= ss_profile->total_residue(); i++ ) {
 		query_ss_as_string += ss_profile->secstruct(i);
 	}
 
@@ -1264,7 +1265,7 @@ void FragmentPicker::add_query_ss(std::string query_secondary,
 	core::fragment::SecondaryStructureOP ss_profile( new core::fragment::SecondaryStructure() );
 	ss_profile->extend(query_secondary.length());
 
-	for ( Size i = 1; i <= query_secondary.length(); ++i ) {
+	for ( core::Size i = 1; i <= query_secondary.length(); ++i ) {
 		char ss = query_secondary[i - 1];
 		if ( ss == 'E' ) {
 			ss_profile->set_fractions(i, 0.0, 1.0, 0.0);
@@ -1283,18 +1284,18 @@ void FragmentPicker::save_fragments() {
 	tr.Info << "Saving Fragments..." << std::endl;
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
 	tr.Debug << "skip_merge: " << ( skip_merge ? "true" : "false" ) << std::endl;
-	for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-		Size fragment_size = frag_sizes_[iFragSize];
-		Size maxqpos = size_of_query() - fragment_size + 1;
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+		core::Size fragment_size = frag_sizes_[iFragSize];
+		core::Size maxqpos = size_of_query() - fragment_size + 1;
 
 		utility::vector1<Candidates> final_fragments(maxqpos); // final fragments
 
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
 			tr.Debug << "saving " << fragment_size << "mers for position..." << qPos << std::endl;
 			if ( !skip_merge ) {  // merge candidates
-				for ( Size i=1; i<=candidates_sinks_.size(); ++i ) {
+				for ( core::Size i=1; i<=candidates_sinks_.size(); ++i ) {
 					candidates_sink_[fragment_size]->insert(qPos, candidates_sinks_[i][fragment_size]);
 				}
 			}
@@ -1322,19 +1323,19 @@ void FragmentPicker::save_fragments() {
 void FragmentPicker::save_candidates() {
 	using namespace ObjexxFCL;
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
-	for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-		Size fragment_size = frag_sizes_[iFragSize];
-		Size maxqpos = size_of_query() - fragment_size + 1;
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+		core::Size fragment_size = frag_sizes_[iFragSize];
+		core::Size maxqpos = size_of_query() - fragment_size + 1;
 		std::string out_file_name = prefix_ + "." + string_of(fragment_size)
 			+ "mers";
 		utility::io::ozstream output(out_file_name);
 
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
 
 			if ( !skip_merge ) {  // merge candidates
-				for ( Size i=1; i<=candidates_sinks_.size(); ++i ) {
+				for ( core::Size i=1; i<=candidates_sinks_.size(); ++i ) {
 					candidates_sink_[fragment_size]->insert(qPos, candidates_sinks_[i][fragment_size]);
 				}
 			}
@@ -1347,7 +1348,7 @@ void FragmentPicker::save_candidates() {
 			if ( out.size() == 0 ) continue;
 			output << "position: " << I(12, qPos) << " neighbors:   " << I(10,
 				out.size()) << std::endl << std::endl;
-			for ( Size fi = 1; fi <= out.size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= out.size(); ++fi ) {
 				out[fi].first->print_fragment(output);
 				output << std::endl;
 			}
@@ -1361,12 +1362,12 @@ void FragmentPicker::save_candidates() {
 	}
 }
 
-void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
+void FragmentPicker::pick_candidates(core::Size i_pos,core::Size frag_len) {
 	if ( candidates_sinks_.size() > 1 ) {
-		utility_exit_with_message( "pick_candidates(Size i_pos,Size frag_len) does not support multiple CandidateCollectors" );
+		utility_exit_with_message( "pick_candidates(core::Size i_pos,core::Size frag_len) does not support multiple CandidateCollectors" );
 	}
 	scores::FragmentScoreMapOP empty_map = scores_[1]->create_empty_map();
-	for ( Size i = 1; i <= chunks_->size(); i++ ) { // loop over provided chunks
+	for ( core::Size i = 1; i <= chunks_->size(); i++ ) { // loop over provided chunks
 		VallChunkOP chunk = chunks_->at(i); // For each chunk from a provider...
 		if ( !is_valid_chunk( frag_len, chunk ) ) continue;
 
@@ -1375,7 +1376,7 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 		CandidatesCollectorOP sink = candidates_sinks_[1][frag_len];
 
 		// split chunk into fragment candidates and score them
-		for ( Size j = 1; j <= chunk->size() - frag_len + 1; j++ ) {
+		for ( core::Size j = 1; j <= chunk->size() - frag_len + 1; j++ ) {
 			FragmentCandidateOP f( new FragmentCandidate(i_pos, j,chunk, frag_len) );
 			if ( scores_[1]->score_fragment(f, empty_map) ) {
 				scores::FragmentScoreMapOP new_map = empty_map->clone();
@@ -1489,8 +1490,8 @@ void FragmentPicker::parse_command_line() {
 
 	// -------- fragment sizes
 	if ( option[frags::frag_sizes].user() ) {
-		utility::vector1<Size> frag_sizes_tmp = option[frags::frag_sizes]();
-		for ( Size i = 1; i <= frag_sizes_tmp.size(); ++i ) {
+		utility::vector1<core::Size> frag_sizes_tmp = option[frags::frag_sizes]();
+		for ( core::Size i = 1; i <= frag_sizes_tmp.size(); ++i ) {
 			if ( frag_sizes_tmp[i] > max_frag_size_ ) {
 				max_frag_size_ = frag_sizes_tmp[i];
 			}
@@ -1502,7 +1503,7 @@ void FragmentPicker::parse_command_line() {
 		frag_sizes_.push_back(9);
 	}
 	tr.Info << "Will pick fragments of size:";
-	for ( Size i = 1; i <= frag_sizes_.size(); ++i ) {
+	for ( core::Size i = 1; i <= frag_sizes_.size(); ++i ) {
 		tr.Info << frag_sizes_[i] << " ";
 	}
 	tr.Info << std::endl;
@@ -1511,7 +1512,7 @@ void FragmentPicker::parse_command_line() {
 	tr.Info << "Creating fragment scoring scheme" << std::endl;
 	if ( option[frags::scoring::config].user() ) {
 		// todo:  the create scores method should be improved so the score files aren't read more than once -dk
-		for ( Size i = 1; i <= scores_.size(); ++i ) {
+		for ( core::Size i = 1; i <= scores_.size(); ++i ) {
 			scores_[i]->create_scores(option[frags::scoring::config](), get_self_ptr());
 		}
 	}
@@ -1549,14 +1550,14 @@ void FragmentPicker::parse_command_line() {
 		// This setup is a bit more complicated, when user needs quota. The quota version of this code was moved into a separate method
 	} else {
 		if ( option[frags::keep_all_protocol].user() ) {
-			for ( Size i = 1; i <= frag_sizes_.size(); ++i ) {
+			for ( core::Size i = 1; i <= frag_sizes_.size(); ++i ) {
 				CandidatesCollectorOP collector( new GrabAllCollector(size_of_query()) );
 				set_candidates_collector(frag_sizes_[i], collector);
 				tr.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: GrabAllCollector" << std::endl;
 			}
 		} else {
-			for ( Size i = 1; i <= frag_sizes_.size(); ++i ) {
-				for ( Size j = 0; j <= max_threads_; ++j ) {  // 0 for merged collector
+			for ( core::Size i = 1; i <= frag_sizes_.size(); ++i ) {
+				for ( core::Size j = 0; j <= max_threads_; ++j ) {  // 0 for merged collector
 					CandidatesCollectorOP collector( new BoundedCollector<CompareTotalScore> (size_of_query(), n_candidates_,
 						comparator,get_score_manager()->count_components()) );
 					set_candidates_collector(frag_sizes_[i], collector, j);
@@ -1594,7 +1595,7 @@ void FragmentPicker::parse_command_line() {
 	// frag contacts options
 	contact_types_.clear();
 	utility::vector1<std::string> contact_types = option[ frags::contacts::type ]();
-	for ( Size i = 1; i <= contact_types.size(); ++i ) {
+	for ( core::Size i = 1; i <= contact_types.size(); ++i ) {
 		contact_types_.insert(contact_type(contact_types[i]));
 		if ( contact_type(contact_types[i]) == CEN ) {
 			sidechain_contact_dist_cutoff_ = SidechainContactDistCutoffOP( new SidechainContactDistCutoff( option[ frags::contacts::centroid_distance_scale_factor ]() ) );
@@ -1603,9 +1604,9 @@ void FragmentPicker::parse_command_line() {
 	// sequence separation
 	contacts_min_seq_sep_ = option[ frags::contacts::min_seq_sep ](); // j>=i+contacts_min_seq_sep_
 	// distance cutoffs
-	utility::vector1<Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
-	Real max_dist = 0.0;
-	for ( Size i = 1; i <= dist_cutoffs.size(); ++i ) {
+	utility::vector1<core::Real> dist_cutoffs = option[ frags::contacts::dist_cutoffs ]();
+	core::Real max_dist = 0.0;
+	for ( core::Size i = 1; i <= dist_cutoffs.size(); ++i ) {
 		if ( dist_cutoffs[i] > max_dist ) max_dist = dist_cutoffs[i];
 		contacts_dist_cutoffs_squared_.push_back( dist_cutoffs[i]*dist_cutoffs[i] );
 	}
@@ -1642,10 +1643,10 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	}
 	quota::ABEGO_SS_Config q_config(quota_config_file);
 
-	utility::vector1<Size> components;
-	utility::vector1<Real> weights;
-	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
-	for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
+	utility::vector1<core::Size> components;
+	utility::vector1<core::Real> weights;
+	utility::vector1<core::Real> scoring_weights = scores_[1]->get_weights();
+	for ( core::Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 		ABEGO_SS_ScoreOP s0 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ABEGO_SS_Score > ( scores_[1]->get_component(i) );
 		if ( s0 != nullptr ) {
@@ -1682,23 +1683,23 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	}
 
 	tr.Debug<<"Scoring scheme for ABEGO_SS quota pool sorting is:";
-	for ( Size l=1; l<=weights.size(); l++ ) {
+	for ( core::Size l=1; l<=weights.size(); l++ ) {
 		tr.Debug<<"\n\t"<<components[l]<<"\t"<<weights[l];
 	}
 	tr.Debug<<std::endl;
-	Size buffer_factor = 5;
-	for ( Size f=1; f<=frag_sizes_.size(); f++ ) {
-		for ( Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+	core::Size buffer_factor = 5;
+	for ( core::Size f=1; f<=frag_sizes_.size(); f++ ) {
+		for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
 			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f],collector, j);
 		}
-		Size middle = frag_sizes_[f] / 2 + 1;
+		core::Size middle = frag_sizes_[f] / 2 + 1;
 		assert( size_of_query() == q_config.size() ); // Test if the abego-ss table has the same size as the query sequence
-		for ( Size j=1; j<=size_of_query()-frag_sizes_[f]+1; j++ ) {
+		for ( core::Size j=1; j<=size_of_query()-frag_sizes_[f]+1; j++ ) {
 			tr.Debug<<"Creating "<<q_config.n_columns()<<" quota pools at pos "<<j<<std::endl;
-			for ( Size i=1; i<=q_config.n_columns(); i++ ) {
-				Real prob = q_config.probability(j+middle-1,i);
-				for ( Size k = 0; k <= max_threads_; ++k ) {  // 0 for the merged collector
+			for ( core::Size i=1; i<=q_config.n_columns(); i++ ) {
+				core::Real prob = q_config.probability(j+middle-1,i);
+				for ( core::Size k = 0; k <= max_threads_; ++k ) {  // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], k);
 					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
 					quota::QuotaPoolOP p( new quota::ABEGO_SS_Pool(n_candidates_,q_config.get_pool_name(i),
@@ -1717,14 +1718,14 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 	}
 	quota::QuotaConfig q_config(quota_config_file);
 
-	utility::vector1<Size> components;
-	utility::vector1<Real> weights;
+	utility::vector1<core::Size> components;
+	utility::vector1<core::Real> weights;
 	components.push_back( 0 );  // the free entry in the vector is for secondary structure score (only one for each pool)
 	weights.push_back( 0.0 );  // score weight for SecondarySimilarity; will be changed later
 	components.push_back( 0 );  // this free entry in the vector is for RamaScore
 	weights.push_back( 0.0 );  // score weight for RamaScore; will be changed later
-	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
-	for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
+	utility::vector1<core::Real> scoring_weights = scores_[1]->get_weights();
+	for ( core::Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 		ProfileScoreL1OP s1 =
 			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ProfileScoreL1 > ( scores_[1]->get_component(i) );
 		if ( s1 != nullptr ) {
@@ -1761,23 +1762,23 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 	}
 
 	utility::vector1<core::fragment::SecondaryStructureOP> predictions;
-	utility::vector1<Real> ss_weights;
+	utility::vector1<core::Real> ss_weights;
 	std::map<std::string, core::fragment::SecondaryStructureOP>::iterator it, end = query_ss_profile_.end();
-	Real weight = 1.0 / ((Real) query_ss_profile_.size());
+	core::Real weight = 1.0 / ((core::Real) query_ss_profile_.size());
 	for ( it=query_ss_profile_.begin() ; it != end; ++it ) {
 		predictions.push_back((*it).second);
 		ss_weights.push_back(weight);
 	}
 	// core::fragment::SecondaryStructureOP avg_ss = new core::fragment::SecondaryStructure(predictions,ss_weights);
 
-	for ( Size f=1; f<=frag_sizes_.size(); f++ ) {
-		for ( Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+	for ( core::Size f=1; f<=frag_sizes_.size(); f++ ) {
+		for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
 			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f], collector, j);
 		}
 		// --------- This part puts RamaScore into quota scoring; each Rama is based on a certain SS prediction and this part of the code
 		// --------- dispatches each Rama into a proper pool
-		for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
+		for ( core::Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 			RamaScoreOP sr = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::RamaScore > ( scores_[1]->get_component(i) );
 			if ( sr != nullptr ) {
 				std::string & name = sr->get_prediction_name();
@@ -1792,7 +1793,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 		// ---------- end of RamaScore dispatch
 
 		// Create secondary structure pools (if any)
-		for ( Size i = 1; i <= scores_[1]->count_components(); ++i ) {
+		for ( core::Size i = 1; i <= scores_[1]->count_components(); ++i ) {
 			SecondarySimilarityOP ss = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::SecondarySimilarity > ( scores_[1]->get_component(i) );
 
 			//PartialSecondarySimilarity is a variant of SecondarySimilarity, this means they're not compatible
@@ -1807,14 +1808,14 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 				if ( ! q_config.is_valid_quota_pool_name( name ) ) continue;
 				components[1] = i;
 				weights[1] = scoring_weights[ss->get_id()];
-				Size size = (Size)(q_config.get_fraction( name ) * n_candidates_);
+				core::Size size = (core::Size)(q_config.get_fraction( name ) * n_candidates_);
 				if ( size == 0 ) {
 					tr.Warning<<"Config file couldn't provide quota fraction for the pool named "
 						<<name<<". Skipping the pool"<<std::endl;
 					continue;
 				}
 
-				for ( Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+				for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], j);
 					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
 
@@ -1850,22 +1851,22 @@ void FragmentPicker::read_vall( std::string const & fn ) {
 	chunks_->vallChunksFromLibrary(fn);
 }
 
-void FragmentPicker::set_picked_positions(Size from,Size to) {
+void FragmentPicker::set_picked_positions(core::Size from,core::Size to) {
 	query_positions_.clear();
-	for ( Size i=from; i<=to; i++ ) {
+	for ( core::Size i=from; i<=to; i++ ) {
 		query_positions_.push_back( i );
 	}
 }
 
-void FragmentPicker::set_picked_positions(utility::vector1<Size> q_positions) {
+void FragmentPicker::set_picked_positions(utility::vector1<core::Size> q_positions) {
 	query_positions_.clear();
-	for ( Size i=1; i<=q_positions.size(); i++ ) {
+	for ( core::Size i=1; i<=q_positions.size(); i++ ) {
 		query_positions_.push_back( q_positions[i] );
 	}
 }
 
 
-Size QuotaDebug::max_pools() {
+core::Size QuotaDebug::max_pools() {
 	return tags_.size();
 }
 
@@ -1877,9 +1878,9 @@ void QuotaDebug::write_summary() {
 	this->str("");
 }
 
-void QuotaDebug::log(Size frag_len,Size q_pos,utility::vector1<Real> data) {
+void QuotaDebug::log(core::Size frag_len,core::Size q_pos,utility::vector1<core::Real> data) {
 	*this  << std::setw(4)<<q_pos<< std::setw(4)<<frag_len;
-	for ( Size i=1; i<=data.size(); i++ ) {
+	for ( core::Size i=1; i<=data.size(); i++ ) {
 		if ( data[i]<1000000 ) {
 			*this  << std::setw(10)<<std::setprecision(3)<<data[i];
 		} else {
@@ -1893,9 +1894,9 @@ void QuotaDebug::setup_summary(
 	quota::QuotaCollector const & collector
 )
 {
-	Size last_tag = 0;
-	for ( Size i=1; i<=collector.query_length(); ++i ) {
-		for ( Size j=1; j<=collector.count_pools(i); ++j ) {
+	core::Size last_tag = 0;
+	for ( core::Size i=1; i<=collector.query_length(); ++i ) {
+		for ( core::Size j=1; j<=collector.count_pools(i); ++j ) {
 			if ( tag_map_.find(collector.get_pool(i,j)->get_pool_name())==tag_map_.end() ) {
 				tags_.push_back(collector.get_pool(i,j)->get_pool_name());
 				last_tag++;
@@ -1905,7 +1906,7 @@ void QuotaDebug::setup_summary(
 	}
 
 	*this <<"\n#len pos ";
-	for ( Size i=1; i<=tags_.size(); i++ ) {
+	for ( core::Size i=1; i<=tags_.size(); i++ ) {
 		*this << std::setw(10)<<tags_[i];
 	}
 	*this<<std::endl;
@@ -1917,13 +1918,13 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 	utility::vector1<ConstantLengthFragSetOP> result;
 
 	// Loop over various sizes of fragments
-	for ( Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) {
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) {
 
 		ConstantLengthFragSetOP myFragSet( new ConstantLengthFragSet() );
 
-		Size fragment_size = frag_sizes_[iFragSize];
+		core::Size fragment_size = frag_sizes_[iFragSize];
 		CandidatesCollectorOP storage = get_candidates_collector(fragment_size);
-		for ( Size qPos = 1; qPos <= size_of_query(); ++qPos ) {
+		for ( core::Size qPos = 1; qPos <= size_of_query(); ++qPos ) {
 			if ( storage->get_candidates(qPos).size() == 0 ) continue;
 
 			Candidates out;
@@ -1941,20 +1942,20 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 			*/
 			FrameOP frame( new Frame(residueInPose_++) );
 
-			for ( Size fi = 1; fi <= out.size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= out.size(); ++fi ) {
 
 				FragDataOP current_fragment( nullptr );
 
-				for ( Size i = 1; i <= out[1].first->get_length(); ++i ) {
+				for ( core::Size i = 1; i <= out[1].first->get_length(); ++i ) {
 					VallResidueOP r   =  out[fi].first->get_residue(i);
 					std::string pdbid = out[fi].first->get_pdb_id();
 					//char chainid      = out[fi].first->get_chain_id();
-					Size index        = r->resi();
+					core::Size index        = r->resi();
 					char aa           = toupper(r->aa());
 					char ss           = r->ss();
-					Real phi          = r->phi();
-					Real psi          = r->psi();
-					Real omega        = r->omega();
+					core::Real phi          = r->phi();
+					core::Real psi          = r->psi();
+					core::Real omega        = r->omega();
 
 					if ( i == 1 ) {
 						current_fragment = FragDataOP( new AnnotatedFragData( pdbid, index ) );
@@ -1999,7 +2000,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 
 bool FragmentPicker::is_valid_chunk( VallChunkOP chunk ) {
 	bool flag = true;
-	for ( Size iFilter = 1; iFilter <= filters_.size(); iFilter++ ) {
+	for ( core::Size iFilter = 1; iFilter <= filters_.size(); iFilter++ ) {
 		if ( (flag = filters_[iFilter]->test_chunk(chunk)) == false ) {
 			tr.Debug << "Chunk: " << chunk->get_pdb_id()
 				<< " didn't pass a filter" << std::endl;
@@ -2009,13 +2010,13 @@ bool FragmentPicker::is_valid_chunk( VallChunkOP chunk ) {
 	return flag;
 }
 
-bool FragmentPicker::is_valid_chunk( Size const frag_len, VallChunkOP chunk ) {
+bool FragmentPicker::is_valid_chunk( core::Size const frag_len, VallChunkOP chunk ) {
 	if ( chunk->size() < frag_len ) return false; // This fragment is too short
 	return is_valid_chunk( chunk );
 }
 
 // Output fragments
-void FragmentPicker::output_fragments( Size const fragment_size, utility::vector1<Candidates> const & final_fragments ) {
+void FragmentPicker::output_fragments( core::Size const fragment_size, utility::vector1<Candidates> const & final_fragments ) {
 	using namespace ObjexxFCL;
 
 	// find and output nonlocal pairs
@@ -2038,13 +2039,13 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 	}
 
 	FragmentScoreManagerOP ms = get_score_manager();
-	Size maxqpos = size_of_query() - fragment_size + 1;
-	for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-		Size qPos = query_positions_[iqpos];
+	core::Size maxqpos = size_of_query() - fragment_size + 1;
+	for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+		core::Size qPos = query_positions_[iqpos];
 		if ( qPos > maxqpos ) continue;
 		output_file << "position: " << I(12, qPos) << " neighbors:   " << I(10, final_fragments[qPos].size()) << std::endl << std::endl;
 
-		for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+		for ( core::Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
 			if ( option[frags::write_sequence_only]() ) {
 				final_fragments[qPos][fi].first->print_fragment_seq(output_file);
 			} else {
@@ -2058,7 +2059,7 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 		}
 		if ( ms->if_late_scoring_for_zeros() )  {
 			//   std::cerr << "h3" << std::endl;
-			for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
 				if ( !final_fragments[qPos][fi].first || !final_fragments[qPos][fi].second ) {
 					tr.Warning << "final_frag candidate " << fi << " at position " << qPos << " is corrupted. skipping... " << std::endl;
 					continue;
@@ -2080,12 +2081,12 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 		utility::io::ozstream index_output_file(index_out_file_name);
 
 		// print vall info
-		std::map<Size,bool> vall_index_database_exists;
-		for ( Size i=1; i<=final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_count(); ++i ) {
+		std::map<core::Size,bool> vall_index_database_exists;
+		for ( core::Size i=1; i<=final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_count(); ++i ) {
 			std::string vallfilename = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_by_key(i);
-			Size vallstartline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_start_line_by_key(i);
-			Size vallendline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_end_line_by_key(i);
-			Size valllastresiduekey = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_last_residue_key_by_key(i);
+			core::Size vallstartline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_start_line_by_key(i);
+			core::Size vallendline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_end_line_by_key(i);
+			core::Size valllastresiduekey = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_last_residue_key_by_key(i);
 			utility::file::FileName vallfile(vallfilename);
 			if ( utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions")) ||
 					utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions.gz")) ) {
@@ -2097,10 +2098,10 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 				vall_index_database_exists[i] = false;
 			}
 		}
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
-			for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
 				final_fragments[qPos][fi].first->print_fragment_index(index_output_file, vall_index_database_exists[final_fragments[qPos][fi].first->get_chunk()->vall_key()]);
 			}
 			index_output_file << std::endl;
@@ -2112,11 +2113,11 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 	if ( option[frags::output_silent]() || option[frags::score_output_silent]() ) {
 		std::string silent_out_file_name = out_file_name + ".out";
 		core::io::silent::SilentFileData sfd;
-		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-			Size qPos = query_positions_[iqpos];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			core::Size qPos = query_positions_[iqpos];
 			if ( qPos > maxqpos ) continue;
 			std::string const & sequence = get_query_seq_string().substr(qPos-1,fragment_size);
-			for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+			for ( core::Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
 				std::string tag = "frag_" + ObjexxFCL::lead_zero_string_of(qPos,6) + "_" + ObjexxFCL::lead_zero_string_of(fi,6);
 				final_fragments[qPos][fi].first->output_silent( sfd, sequence, silent_out_file_name, tag, final_fragments[qPos][fi].second, ms );
 			}

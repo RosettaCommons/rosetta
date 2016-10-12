@@ -60,7 +60,7 @@ static THREAD_LOCAL basic::Tracer trDMEScore(
 
 FragmentDME::~FragmentDME() {}
 
-FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value,
+FragmentDME::FragmentDME(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentDME") {
 	reference_pose_ = reference_pose;
@@ -70,8 +70,8 @@ FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value,
 	weights_.redimension(reference_pose_->size(), 1.0);
 }
 
-FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value, bool use_lowest,
-	utility::vector1< utility::vector1<Real> > xyz)  :
+FragmentDME::FragmentDME(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+	utility::vector1< utility::vector1<core::Real> > xyz)  :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentDME") {
 
 	n_atoms_ = xyz.size();
@@ -88,15 +88,15 @@ FragmentDME::FragmentDME(Size priority, Real lowest_acceptable_value, bool use_l
 }
 
 void FragmentDME::fill_CA_coords(core::pose::Pose const& pose,
-	FArray2_double& coords, Size n_atoms) {
+	FArray2_double& coords, core::Size n_atoms) {
 
 	trDMEScore.Debug << "Copying coordinates from ... The first residues are: "
 		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
 		<< pose.residue(3).name3() << std::endl;
 
 	for ( core::Size i = 1; i <= n_atoms; i++ ) {
-		id::NamedAtomID idCA("CA", i);
-		PointPosition const& xyz = pose.xyz(idCA);
+		core::id::NamedAtomID idCA("CA", i);
+		core::PointPosition const& xyz = pose.xyz(idCA);
 		for ( core::Size d = 1; d <= 3; ++d ) {
 			coords(d, i) = xyz[d - 1];
 		}
@@ -106,28 +106,28 @@ void FragmentDME::fill_CA_coords(core::pose::Pose const& pose,
 bool FragmentDME::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 	PROF_START( basic::CA_DME_EVALUATION );
-	Real dme=0.0;
-	Real dme_native =99.0;
-	Size tot_pair=0;
-	for ( Size i = 1; i<=f->get_length(); ++i ) {
+	core::Real dme=0.0;
+	core::Real dme_native =99.0;
+	core::Size tot_pair=0;
+	for ( core::Size i = 1; i<=f->get_length(); ++i ) {
 		tot_pair = tot_pair+i;
 	}
 	if ( tot_pair > 0 ) {
 		VallChunkOP chunk = f->get_chunk();
-		for ( Size i = 1; i<=f->get_length(); ++i ) {
+		for ( core::Size i = 1; i<=f->get_length(); ++i ) {
 			VallResidueOP ri = chunk->at( f->get_first_index_in_vall() + i - 1 );
-			Size qindexi = i + f->get_first_index_in_query() - 1;
-			for ( Size j = i+1; j<=f->get_length(); ++j ) {
+			core::Size qindexi = i + f->get_first_index_in_query() - 1;
+			for ( core::Size j = i+1; j<=f->get_length(); ++j ) {
 				VallResidueOP rj = chunk->at( f->get_first_index_in_vall() + j - 1 );
-				Real xdiff = ri->x()-rj->x();
-				Real ydiff = ri->y()-rj->y();
-				Real zdiff = ri->z()-rj->z();
-				Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
-				Size qindexj = j + f->get_first_index_in_query() - 1;
-				Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
-				Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
-				Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
-				Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
+				core::Real xdiff = ri->x()-rj->x();
+				core::Real ydiff = ri->y()-rj->y();
+				core::Real zdiff = ri->z()-rj->z();
+				core::Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
+				core::Size qindexj = j + f->get_first_index_in_query() - 1;
+				core::Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
+				core::Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
+				core::Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
+				core::Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
 				dme += (sqrt(dist1)-sqrt(dist2))*(sqrt(dist1)-sqrt(dist2));
 			}
 		}
@@ -164,27 +164,27 @@ bool FragmentDME::cached_score(FragmentCandidateOP fragment,
 
 	PROF_START( basic::CA_DME_EVALUATION );
 
-	Real dme=0.0;
-	Real dme_native =99.0;
-	Size tot_pair=0;
-	for ( Size i = 1; i<=fragment->get_length(); ++i ) {
+	core::Real dme=0.0;
+	core::Real dme_native =99.0;
+	core::Size tot_pair=0;
+	for ( core::Size i = 1; i<=fragment->get_length(); ++i ) {
 		tot_pair = tot_pair+i;
 	}
 	if ( tot_pair > 0 ) {
-		for ( Size i = 1; i<=fragment->get_length(); ++i ) {
-			Size qindexi = i + fragment->get_first_index_in_query() - 1;
-			Size vindexi = i + fragment->get_first_index_in_vall() - 1;
-			for ( Size j = i+1; j<=fragment->get_length(); ++j ) {
-				Size qindexj = j + fragment->get_first_index_in_query() - 1;
-				Size vindexj = j + fragment->get_first_index_in_vall() - 1;
-				Real xdiff = chunk_coordinates_(1, vindexi)-chunk_coordinates_(1, vindexj);
-				Real ydiff = chunk_coordinates_(2, vindexi)-chunk_coordinates_(2, vindexj);
-				Real zdiff = chunk_coordinates_(3, vindexi)-chunk_coordinates_(3, vindexj);
-				Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
-				Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
-				Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
-				Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
-				Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
+		for ( core::Size i = 1; i<=fragment->get_length(); ++i ) {
+			core::Size qindexi = i + fragment->get_first_index_in_query() - 1;
+			core::Size vindexi = i + fragment->get_first_index_in_vall() - 1;
+			for ( core::Size j = i+1; j<=fragment->get_length(); ++j ) {
+				core::Size qindexj = j + fragment->get_first_index_in_query() - 1;
+				core::Size vindexj = j + fragment->get_first_index_in_vall() - 1;
+				core::Real xdiff = chunk_coordinates_(1, vindexi)-chunk_coordinates_(1, vindexj);
+				core::Real ydiff = chunk_coordinates_(2, vindexi)-chunk_coordinates_(2, vindexj);
+				core::Real zdiff = chunk_coordinates_(3, vindexi)-chunk_coordinates_(3, vindexj);
+				core::Real dist1 = xdiff*xdiff + ydiff*ydiff + zdiff*zdiff;
+				core::Real xrdiff = reference_coordinates_(1, qindexi)-reference_coordinates_(1, qindexj);
+				core::Real yrdiff = reference_coordinates_(2, qindexi)-reference_coordinates_(2, qindexj);
+				core::Real zrdiff = reference_coordinates_(3, qindexi)-reference_coordinates_(3, qindexj);
+				core::Real dist2 = xrdiff*xrdiff + yrdiff*yrdiff + zrdiff*zrdiff;
 				dme += (sqrt(dist1)-sqrt(dist2))*(sqrt(dist1)-sqrt(dist2));
 			}
 		}
@@ -203,8 +203,8 @@ bool FragmentDME::cached_score(FragmentCandidateOP fragment,
 void FragmentDME::clean_up() {
 }
 
-FragmentScoringMethodOP MakeFragmentDME::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeFragmentDME::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string) {
 
 	if ( option[in::file::native].user() ) {
@@ -233,7 +233,7 @@ FragmentScoringMethodOP MakeFragmentDME::make(Size priority,
 			<< "Reference structure to score fragments by DME loaded from: "
 			<< option[in::file::xyz]().c_str() << std::endl;
 		std::string line;
-		utility::vector1< utility::vector1< Real > > xyz;
+		utility::vector1< utility::vector1< core::Real > > xyz;
 		// std::istream & input = utility::io::izstream( option[ in::file::xyz ]().c_str() );
 		std::ifstream input( option[ in::file::xyz ]().c_str() );
 
@@ -241,8 +241,8 @@ FragmentScoringMethodOP MakeFragmentDME::make(Size priority,
 			trDMEScore.Warning << line<<std::endl;
 			if ( line.substr(0,1) == "#" ) continue;
 			std::istringstream line_stream( line );
-			utility::vector1<Real> row;
-			Real x,y,z;
+			utility::vector1<core::Real> row;
+			core::Real x,y,z;
 			line_stream >> x >> y >> z;
 			row.push_back(x);
 			row.push_back(y);

@@ -24,16 +24,13 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
-typedef utility::vector1< utility::vector1 < Real > > Matrix;
+typedef utility::vector1< utility::vector1 < core::Real > > Matrix;
 
 
-void do_one_line(Size start_i,Size start_j,Matrix & small_scores,Size frag_len,Matrix & frag_scores);
-void rolling_score(Matrix & small_scores,Size frag_len,Matrix & frag_scores);
-void create_cache(utility::vector1<Size> & frag_sizes,Size query_len,Size longest_vall_chunk,utility::vector1<Matrix> & cache);
-void allocate_matrix(Size i_size,Size j_size,Matrix & dst);
+void do_one_line(core::Size start_i,core::Size start_j,Matrix & small_scores,core::Size frag_len,Matrix & frag_scores);
+void rolling_score(Matrix & small_scores,core::Size frag_len,Matrix & frag_scores);
+void create_cache(utility::vector1<core::Size> & frag_sizes,core::Size query_len,core::Size longest_vall_chunk,utility::vector1<Matrix> & cache);
+void allocate_matrix(core::Size i_size,core::Size j_size,Matrix & dst);
 
 
 } // scores

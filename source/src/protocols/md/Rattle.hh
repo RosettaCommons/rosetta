@@ -30,15 +30,11 @@
 namespace protocols {
 namespace md {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::optimization;
-
 struct Constraint
 {
-	Real k;
-	Size a;
-	Size b;
+	core::Real k;
+	core::Size a;
+	core::Size b;
 };
 
 class Rattle
@@ -47,10 +43,10 @@ public:
 
 	Rattle(){}
 
-	Rattle( pose::Pose const &pose,
-		CartesianMinimizerMap const & min_map )
+	Rattle( core::pose::Pose const &pose,
+		core::optimization::CartesianMinimizerMap const & min_map )
 	{
-		Size const &natm( min_map.natoms() );
+		core::Size const &natm( min_map.natoms() );
 
 		sor_ = 1.25;
 		maxiter_ = 100;
@@ -63,25 +59,25 @@ public:
 
 	~Rattle()= default;
 
-	Size
+	core::Size
 	ncst(){ return cst_.size(); }
 
 	inline
 	void
-	run_rattle1( Real const &dt,
-		Multivec &xyz,
-		Multivec &vel,
-		Multivec const &mass )
+	run_rattle1( core::Real const &dt,
+		core::optimization::Multivec &xyz,
+		core::optimization::Multivec &vel,
+		core::optimization::Multivec const &mass )
 	{
 		//std::cout << "run_rattle1" << std::endl;
-		Real eps ( 1.0e-6 );
-		Multivec const xyz_old( xyz );
-		Multivec const vel0( vel );
+		core::Real eps ( 1.0e-6 );
+		core::optimization::Multivec const xyz_old( xyz );
+		core::optimization::Multivec const vel0( vel );
 
 		//std::cout << "1" << std::endl;
 		// initialize the lists of atoms previously corrected
 
-		for ( Size i = 1; i <= use_.size(); ++i ) {
+		for ( core::Size i = 1; i <= use_.size(); ++i ) {
 			if ( use_[i] ) {
 				moved_[i] = true;
 			} else {
@@ -91,20 +87,20 @@ public:
 		}
 
 		// apply rattle to distances and half-step velocity values
-		Size niter = 0;
+		core::Size niter = 0;
 		bool done = false;
-		utility::vector1< Real > dxyz1( 3, 0.0 );
-		utility::vector1< Real > dxyz2( 3, 0.0 );
+		utility::vector1< core::Real > dxyz1( 3, 0.0 );
+		utility::vector1< core::Real > dxyz2( 3, 0.0 );
 
 		while ( ! done && niter <= maxiter_ ) {
 			niter ++;
 			done = true;
 			//std::cout << "2, iter: " << niter << std::endl;
 
-			for ( Size i = 1; i<=cst_.size(); ++i ) {
+			for ( core::Size i = 1; i<=cst_.size(); ++i ) {
 				Constraint const &cst = cst_[i];
-				Size const &ia (cst.a);
-				Size const &ib (cst.b);
+				core::Size const &ia (cst.a);
+				core::Size const &ib (cst.b);
 
 				if ( !(moved_[ia] || moved_[ib] ) ) continue;
 
@@ -112,9 +108,9 @@ public:
 				dxyz1[2] = xyz[3*ib-1]-xyz[3*ia-1];
 				dxyz1[3] = xyz[3*ib  ]-xyz[3*ia  ];
 
-				Real dist2 = dxyz1[1]*dxyz1[1] + dxyz1[2]*dxyz1[2] + dxyz1[3]*dxyz1[3];
+				core::Real dist2 = dxyz1[1]*dxyz1[1] + dxyz1[2]*dxyz1[2] + dxyz1[3]*dxyz1[3];
 
-				Real delta = (cst.k)*(cst.k) - dist2;
+				core::Real delta = (cst.k)*(cst.k) - dist2;
 
 				/*
 				std::cout << "rattle1, cst i/a/b: " << std::setw(4) << i;
@@ -133,15 +129,15 @@ public:
 					dxyz2[2] = xyz_old[3*ib-1]-xyz[3*ia-1];
 					dxyz2[3] = xyz_old[3*ib  ]-xyz[3*ia  ];
 
-					Real const dot = dxyz1[1]*dxyz2[1] + dxyz1[2]*dxyz2[2] + dxyz1[3]*dxyz2[3];
+					core::Real const dot = dxyz1[1]*dxyz2[1] + dxyz1[2]*dxyz2[2] + dxyz1[3]*dxyz2[3];
 
-					Real const rma = 1.0 / mass[ia];
-					Real const rmb = 1.0 / mass[ib];
-					Real const term = sor_ * delta / (2.0 * (rma+rmb) * dot);
+					core::Real const rma = 1.0 / mass[ia];
+					core::Real const rmb = 1.0 / mass[ib];
+					core::Real const term = sor_ * delta / (2.0 * (rma+rmb) * dot);
 
-					for ( Size k = 1; k <= 3; ++k ) {
-						Size const dof_a = 3*ia-3+k;
-						Size const dof_b = 3*ib-3+k;
+					for ( core::Size k = 1; k <= 3; ++k ) {
+						core::Size const dof_a = 3*ia-3+k;
+						core::Size const dof_b = 3*ib-3+k;
 
 						xyz[dof_a] -= dxyz2[k]*term*rma;
 						xyz[dof_b] += dxyz2[k]*term*rmb;
@@ -152,7 +148,7 @@ public:
 				} // iter over Rattle ID
 			} // iter
 
-			for ( Size i = 1; i <= use_.size(); ++i ) {
+			for ( core::Size i = 1; i <= use_.size(); ++i ) {
 				moved_[i] = update_[i];
 				update_[i] = false;
 			}
@@ -160,7 +156,7 @@ public:
 
 		//std::cout << " Rattle1 finished after " << niter << std::endl;
 
-		/* for( Size i = 1; i <= cst_.size(); i++ ){
+		/* for( core::Size i = 1; i <= cst_.size(); i++ ){
 		Constraint &cst = cst_[i];
 
 		std::cout << "Rattle1a " << i << " " << ia;
@@ -194,16 +190,16 @@ public:
 
 	inline
 	void
-	run_rattle2( Real const &dt,
-		Multivec &xyz,
-		Multivec &vel,
-		Multivec const &mass ) {
+	run_rattle2( core::Real const &dt,
+		core::optimization::Multivec &xyz,
+		core::optimization::Multivec &vel,
+		core::optimization::Multivec const &mass ) {
 
 		//std::cout << "run_rattle2" << std::endl;
-		Real eps ( 1.0e-6 / dt );
-		Multivec vel0( vel );
+		core::Real eps ( 1.0e-6 / dt );
+		core::optimization::Multivec vel0( vel );
 
-		for ( Size i = 1; i <= use_.size(); i++ ) {
+		for ( core::Size i = 1; i <= use_.size(); i++ ) {
 			if ( use_[i] ) {
 				moved_[i] = true;
 			} else {
@@ -213,21 +209,21 @@ public:
 		}
 
 		// set the iteration counter, termination and tolerance
-		Size niter ( 0 );
+		core::Size niter ( 0 );
 		bool done ( false );
 
-		utility::vector1< Real > dxyz( 3, 0.0 );
-		utility::vector1< Real > dvel( 3, 0.0 );
+		utility::vector1< core::Real > dxyz( 3, 0.0 );
+		utility::vector1< core::Real > dvel( 3, 0.0 );
 
 		// apply the rattle algorithm to correct the velocities
 		while ( !done && niter<=maxiter_ ) {
 			niter++;
 			done = true;
 
-			for ( Size i = 1; i <= cst_.size(); i++ ) {
+			for ( core::Size i = 1; i <= cst_.size(); i++ ) {
 				Constraint &cst = cst_[i];
-				Size const ia (cst.a);
-				Size const ib (cst.b);
+				core::Size const ia (cst.a);
+				core::Size const ib (cst.b);
 
 				if ( !(moved_[ia] || moved_[ib] ) ) continue;
 
@@ -238,11 +234,11 @@ public:
 				dvel[2] = vel[3*ib-1]-vel[3*ia-1];
 				dvel[3] = vel[3*ib  ]-vel[3*ia  ];
 
-				Real dot = dxyz[1]*dvel[1] + dxyz[2]*dvel[2] + dxyz[3]*dvel[3];
+				core::Real dot = dxyz[1]*dvel[1] + dxyz[2]*dvel[2] + dxyz[3]*dvel[3];
 
-				Real const rma ( 1.0 / mass[ia] );
-				Real const rmb ( 1.0 / mass[ib] );
-				Real term ( -dot * sor_ / ((rma+rmb) *(cst.k)*(cst.k)) );
+				core::Real const rma ( 1.0 / mass[ia] );
+				core::Real const rmb ( 1.0 / mass[ib] );
+				core::Real term ( -dot * sor_ / ((rma+rmb) *(cst.k)*(cst.k)) );
 
 				if ( std::abs(term) >= eps ) {
 					done = false;
@@ -250,9 +246,9 @@ public:
 					update_[ib] = true;
 					//term = sor_ * term;
 
-					for ( Size k = 1; k <= 3; ++k ) {
-						Size const dof_a ( 3*ia-3+k );
-						Size const dof_b ( 3*ib-3+k );
+					for ( core::Size k = 1; k <= 3; ++k ) {
+						core::Size const dof_a ( 3*ia-3+k );
+						core::Size const dof_b ( 3*ib-3+k );
 
 						vel[dof_a] -= dxyz[k] * term *rma;
 						vel[dof_b] += dxyz[k] * term *rmb;
@@ -260,7 +256,7 @@ public:
 				}
 			}
 
-			for ( Size i = 1; i <= use_.size(); ++i ) {
+			for ( core::Size i = 1; i <= use_.size(); ++i ) {
 				moved_[i] = update_[i];
 				update_[i] = false;
 			}
@@ -275,23 +271,25 @@ private:
 
 	inline
 	void
-	setup_constraint( pose::Pose const & pose,
-		CartesianMinimizerMap const & min_map ){
+	setup_constraint( core::pose::Pose const & pose,
+		core::optimization::CartesianMinimizerMap const & min_map ){
+
+		using namespace core;
 
 		cst_.resize( 0 );
 
-		for ( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ) {
+		for ( core::Size iatm = 1; iatm <= (core::Size)(min_map.natoms()); ++iatm ) {
 			use_[iatm] = true;
 
 			id::AtomID AtomID = min_map.get_atom( iatm );
-			Size resno = AtomID.rsd();
-			Size atmno = AtomID.atomno();
+			core::Size resno = AtomID.rsd();
+			core::Size atmno = AtomID.atomno();
 
 			conformation::Residue const &rsd( pose.residue( resno ) );
 
 			if ( rsd.atom_is_hydrogen( atmno ) ) {
 
-				Size const &atmno_base( rsd.atom_base( atmno ) );
+				core::Size const &atmno_base( rsd.atom_base( atmno ) );
 
 				id::AtomID BaseID( atmno_base, resno );
 
@@ -308,8 +306,8 @@ private:
 
 private:
 	// Parameters: Max iteration and tolerance
-	Size maxiter_;
-	Real sor_;
+	core::Size maxiter_;
+	core::Real sor_;
 
 	// Rattle Constraint Structures
 	utility::vector1< Constraint > cst_;

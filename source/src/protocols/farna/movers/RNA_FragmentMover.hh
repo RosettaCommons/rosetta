@@ -38,9 +38,6 @@
 #include <vector>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::fragments;
-
 namespace protocols {
 namespace farna {
 namespace movers {
@@ -51,7 +48,7 @@ class RNA_FragmentMover: public protocols::moves::Mover {
 public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
-	RNA_FragmentMover( RNA_Fragments const & all_rna_fragments,
+	RNA_FragmentMover( protocols::farna::fragments::RNA_Fragments const & all_rna_fragments,
 		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 	/// @brief Copy constructor
@@ -82,7 +79,7 @@ private:
 	void
 	update_insert_map( core::pose::Pose const & pose );
 
-	RNA_Fragments const & rna_fragments_;
+	protocols::farna::fragments::RNA_Fragments const & rna_fragments_;
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
 
 	std::map < Size, Size > insert_map_;

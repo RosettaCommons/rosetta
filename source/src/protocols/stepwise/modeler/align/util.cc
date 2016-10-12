@@ -29,6 +29,7 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.align.util" );
 
+using namespace core;
 using namespace core::pose;
 
 namespace protocols {

@@ -107,7 +107,6 @@ namespace core {
 namespace io {
 namespace silent {
 
-using namespace ObjexxFCL;
 static THREAD_LOCAL basic::Tracer pss_tr( "core.io.silent" );
 
 //explciit instantiation
@@ -189,6 +188,7 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 	utility::vector1< std::string > const & lines,
 	SilentFileData & container
 ) {
+	using namespace ObjexxFCL;
 	bool success( false );
 
 	utility::vector1< std::string > energy_names;
@@ -584,6 +584,7 @@ void ProteinSilentStruct_Template<T>::print_conformation( std::ostream & output 
 
 template <class T>
 Real ProteinSilentStruct_Template<T>::get_debug_rmsd() {
+	using namespace ObjexxFCL;
 	pose::Pose temp_pose;
 	FArray2D< Real > rebuilt_coords (3, coords_.size() ), original_coords( 3, coords_.size() );
 	static std::string atom_name = "CA";
@@ -605,6 +606,7 @@ Real ProteinSilentStruct_Template<T>::get_debug_rmsd() {
 template <class T>
 ObjexxFCL::FArray2D< Real >
 ProteinSilentStruct_Template<T>::get_CA_xyz() const {
+	using namespace ObjexxFCL;
 	core::Size n_residues = nres();
 	FArray2D< Real > my_coords( 3, n_residues );
 	for ( Size i = 1; i <= n_residues; ++i ) { // i = n_residues
@@ -618,6 +620,7 @@ ProteinSilentStruct_Template<T>::get_CA_xyz() const {
 
 template <class T>
 Real ProteinSilentStruct_Template<T>::CA_rmsd( ProteinSilentStruct_Template<T> other_pss ) {
+	using namespace ObjexxFCL;
 	FArray2D< Real > my_coords    = get_CA_xyz();
 	FArray2D< Real > other_coords = other_pss.get_CA_xyz();
 	Real rmsd = numeric::model_quality::rms_wrapper( nres(), my_coords, other_coords );
@@ -711,6 +714,7 @@ void ProteinSilentStruct_Template<T>::add_chain_ending( Size const seqpos ) {
 
 template <class T>
 Real ProteinSilentStruct_Template<T>::chi( Size const seqpos, Size const chi_num ) const {
+	using namespace ObjexxFCL;
 	// error checking.
 	if ( chi_num > max_chi() ) {
 		std::string const msg(
@@ -733,6 +737,7 @@ Real ProteinSilentStruct_Template<T>::chi( Size const seqpos, Size const chi_num
 
 template <class T>
 void ProteinSilentStruct_Template<T>::chi( Size const seqpos, Size const chi_num, Real const chi ) {
+	using namespace ObjexxFCL;
 	// error checking.
 	if ( chi_num > max_chi() ) {
 		std::string const msg(

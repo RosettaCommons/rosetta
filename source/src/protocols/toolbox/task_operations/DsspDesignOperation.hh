@@ -39,9 +39,6 @@
 #include <string>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::pack::task;
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
@@ -113,7 +110,7 @@ public:
 	void parse_tag( TagCOP tag , DataMap & );
 
 	/// @brief apply
-	virtual void apply( Pose const & pose, PackerTask & task ) const;
+	virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 };
 

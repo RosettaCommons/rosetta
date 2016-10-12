@@ -28,9 +28,6 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
-using numeric::Real;
-using utility::vector1;
-
 class SimpleInterpolator;
 typedef utility::pointer::shared_ptr< SimpleInterpolator > SimpleInterpolatorOP;
 typedef utility::pointer::shared_ptr< SimpleInterpolator const > SimpleInterpolatorCOP;

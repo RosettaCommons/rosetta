@@ -47,11 +47,6 @@
 namespace protocols {
 namespace hybridization {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::moves;
-using namespace protocols::loops;
-
 enum AlignOption { all_chunks, random_chunk };
 
 class ChunkTrialMover: public protocols::moves::Mover
@@ -87,7 +82,7 @@ public:
 
 private:
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
-	utility::vector1 < Loops > template_chunks_;
+	utility::vector1 < protocols::loops::Loops > template_chunks_;
 
 	bool random_template_, has_valid_moves_;
 

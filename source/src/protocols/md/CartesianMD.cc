@@ -80,8 +80,6 @@
 #include <sys/time.h>
 #endif
 
-using namespace ObjexxFCL::format;
-
 namespace protocols {
 namespace md {
 
@@ -89,6 +87,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.md.Cartesian" );
 
 using namespace devel::md;
 using namespace core::optimization;
+using namespace core;
+using namespace ObjexxFCL::format;
 
 // creator
 std::string
@@ -236,7 +236,7 @@ std::string CartesianMD::get_name() const
 	return "CartesianMD";
 }
 
-void CartesianMD::get_native_info( pose::Pose const &pose )
+void CartesianMD::get_native_info( core::pose::Pose const &pose )
 {
 
 	native_given_ = true;
@@ -298,7 +298,7 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 	for ( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ) {
-		id::AtomID AtomID = min_map.get_atom( iatm );
+		core::id::AtomID AtomID = min_map.get_atom( iatm );
 		Size resno = AtomID.rsd();
 		Size atmno = AtomID.atomno();
 
@@ -325,7 +325,7 @@ void CartesianMD::use_rattle( bool const value )
 }
 
 void
-CartesianMD::update_restraint( pose::Pose & pose,
+CartesianMD::update_restraint( core::pose::Pose & pose,
 	CartesianMinimizerMap const &min_map )
 {
 
@@ -358,9 +358,10 @@ CartesianMD::get_current_eqxyz() const
 }
 
 void
-CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
+CartesianMD::cst_on_pose_simple( core::pose::Pose &pose ) const
 {
 	using namespace core::scoring::constraints;
+	using namespace core;
 
 	// Remove all the constraints first
 	//pose.remove_constraints(); // fpd ... move this below!
@@ -403,7 +404,7 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 }
 
 void
-CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
+CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 	Multivec const &ref_xyz,
 	Multivec const &curr_eqxyz,
 	Multivec &prv_eqxyz,
@@ -442,7 +443,7 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 		core::Size nrsr_dof( 0 );
 		//for ( Size i_res = 1; i_res <= pose.size(); ++i_res ) {
 		for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
-			id::AtomID atomID = min_map.get_atom( i_atm );
+			core::id::AtomID atomID = min_map.get_atom( i_atm );
 			Size resno = atomID.rsd();
 			Size atmno = atomID.atomno();
 
@@ -482,7 +483,7 @@ CartesianMD::cst_on_pose_dynamic( pose::Pose &pose,
 			core::Real sdev( cst_sdev_ );
 			//if ( dist_res ) sdev *=
 
-			scoring::func::FuncOP fx( new scoring::func::HarmonicFunc( 0.0,  sdev ) );
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0,  sdev ) );
 			pose.add_constraint( ConstraintCOP( ConstraintOP(
 				new CoordinateConstraint( atomID, atomID, xyzmix, fx )
 				)));
@@ -605,11 +606,11 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 	CartesianMinimizer minimizer;
 
 	if ( show_energy ) {
-		Real score_before = scorefxn_->score( pose );
+		core::Real score_before = scorefxn_->score( pose );
 
 		minimizer.run( pose, *movemap(), *scorefxn_, options );
 
-		Real score_after = scorefxn_->score( pose );
+		core::Real score_after = scorefxn_->score( pose );
 		TR << "Energy before/after Min: " << score_before << " " << score_after << std::endl;
 
 	} else {
@@ -618,8 +619,8 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 }
 
 void CartesianMD::do_MD( core::pose::Pose & pose,
-	Size const &nstep,
-	Real const &temp0,
+	core::Size const &nstep,
+	core::Real const &temp0,
 	bool const &initialize )
 {
 	if ( initialize ) {
@@ -710,12 +711,12 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 
 }
 
-void CartesianMD::VelocityVerlet_Integrator( pose::Pose &pose,
+void CartesianMD::VelocityVerlet_Integrator( core::pose::Pose &pose,
 	CartesianMinimizerMap &min_map,
 	md::Rattle &rattle,
 	bool const update_score )
 {
-	Real dt2_2 = dt()*dt()*0.5;
+	core::Real dt2_2 = dt()*dt()*0.5;
 
 	// Use previous acceleration here
 	// and integrate first half of the velociy

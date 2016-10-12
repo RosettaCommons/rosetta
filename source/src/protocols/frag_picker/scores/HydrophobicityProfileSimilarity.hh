@@ -38,8 +38,8 @@ class HydrophobicityProfileSimilarity: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a hydrophobicity-based scoring function.
-	HydrophobicityProfileSimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
-		std::string & fastaQuerySequence, sequence::SequenceProfileOP query_profile) :
+	HydrophobicityProfileSimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+		std::string & fastaQuerySequence, core::sequence::SequenceProfileOP query_profile) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 		"HydrophobicityProfileSimilarity"),  query_(fastaQuerySequence) {
 		if ( query_profile->size() != query_profile->length() ) {
@@ -105,7 +105,7 @@ public:
 private:
 	std::string cached_scores_id_;
 	std::string & query_;
-	sequence::SequenceProfileOP query_profile_;
+	core::sequence::SequenceProfileOP query_profile_;
 	static std::map<char,bool> is_hydrophobic_;
 };
 
@@ -117,7 +117,7 @@ public:
 		MakeFragmentScoringMethod("HydrophobicityProfileSimilarity") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new HydrophobicityProfileSimilarity(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_seq()) );

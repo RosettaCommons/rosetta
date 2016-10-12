@@ -40,9 +40,9 @@ static THREAD_LOCAL basic::Tracer trSecondarySimilarity(
 
 bool SecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	Real totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
-		Real ss_weight(0.0);
+	core::Real totalScore = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
+		core::Real ss_weight(0.0);
 		VallChunkOP chunk = f->get_chunk();
 
 		char s(chunk->at(f->get_first_index_in_vall() + i - 1)->ss());
@@ -58,7 +58,7 @@ bool SecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 
 		totalScore += ss_weight;
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -76,7 +76,7 @@ void SecondarySimilarity::do_caching(VallChunkOP chunk) {
 	cached_scores_id_ = tmp;
 
 	do_caching_simple(chunk);
-	for ( Size fl=1; fl<=cache_.size(); fl++ ) {
+	for ( core::Size fl=1; fl<=cache_.size(); fl++ ) {
 		if ( cache_[fl].size() != 0 ) {
 			trSecondarySimilarity.Trace << "caching secondary score for " << chunk->get_pdb_id()
 				<< " of size " << chunk->size() << " for fragment size "<<fl<<std::endl;
@@ -88,16 +88,16 @@ void SecondarySimilarity::do_caching(VallChunkOP chunk) {
 void SecondarySimilarity::do_caching_simple(VallChunkOP chunk) {
 
 	assert(query_ss_);
-	utility::vector1<Size> chunk_ss_id( chunk->size() );
-	for ( Size j = 1; j <= chunk->size(); ++j ) {
+	utility::vector1<core::Size> chunk_ss_id( chunk->size() );
+	for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 		char s(chunk->at(j)->ss());
 		if ( s == 'H' ) chunk_ss_id[j] = 1;
 		if ( s == 'E' ) chunk_ss_id[j] = 2;
 		if ( s == 'L' ) chunk_ss_id[j] = 3;
 	}
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			scores_[i][j] = raw_probs_[i][chunk_ss_id[j]];
 		}
 	}
@@ -114,9 +114,9 @@ bool SecondarySimilarity::cached_score(FragmentCandidateOP f,
 	if (tmp.compare(cached_scores_id_) != 0)
 	do_caching(f->get_chunk());
 	*/
-	Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
+	core::Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
 
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -125,9 +125,9 @@ bool SecondarySimilarity::cached_score(FragmentCandidateOP f,
 	return true;
 }
 
-SecondarySimilarity::SecondarySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+SecondarySimilarity::SecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-	Size sequence_length, utility::vector1<Size> & frag_sizes, Size longest_vall_chunk) :
+	core::Size sequence_length, utility::vector1<core::Size> & frag_sizes, core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"SecondarySimilarity") , prediction_name_(prediction_name) {
 
@@ -136,10 +136,10 @@ SecondarySimilarity::SecondarySimilarity(Size priority, Real lowest_acceptable_v
 
 	runtime_assert( query_prediction->total_residue() == query_len_ );
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
-		utility::vector1<Real> prow(3);
+		utility::vector1<core::Real> prow(3);
 		prow[1] = 1 - query_prediction->helix_fraction(i);
 		prow[2] = 1 - query_prediction->strand_fraction(i);
 		prow[3] = 1 - query_prediction->loop_fraction(i);

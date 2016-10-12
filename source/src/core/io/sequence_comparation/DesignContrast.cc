@@ -136,7 +136,7 @@ void DesignContrast::setNames () {
 	if ( option[ in::file::l ].active() ) {
 		list_file_names_ = option[ in::file::l ]().vector(); // make the copy of list file
 	}
-	for ( vector1< FileName >::iterator i = list_file_names_.begin(), i_end = list_file_names_.end(); i != i_end; ++i ) {
+	for ( vector1< utility::file::FileName >::iterator i = list_file_names_.begin(), i_end = list_file_names_.end(); i != i_end; ++i ) {
 		std::string listname( i->name() );
 		utility::io::izstream data( listname.c_str() );
 		if ( !data.good() ) {
@@ -150,19 +150,19 @@ void DesignContrast::setNames () {
 	}
 }
 
-vector1<FileName> & DesignContrast::getPdbNames(){
+vector1<utility::file::FileName> & DesignContrast::getPdbNames(){
 	return pdb_file_names_;
 }
 
-vector1<FileName> const & DesignContrast::getPdbNames() const {
+vector1<utility::file::FileName> const & DesignContrast::getPdbNames() const {
 	return pdb_file_names_;
 }
 
-vector1<FileName> & DesignContrast::getListNames() {
+vector1<utility::file::FileName> & DesignContrast::getListNames() {
 	return list_file_names_;
 }
 
-vector1<FileName> const & DesignContrast::getListNames() const {
+vector1<utility::file::FileName> const & DesignContrast::getListNames() const {
 	return list_file_names_;
 }
 

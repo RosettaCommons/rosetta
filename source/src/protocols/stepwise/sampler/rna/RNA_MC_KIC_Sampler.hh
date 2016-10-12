@@ -41,8 +41,6 @@
 #include <numeric/random/random.fwd.hh>
 #include <core/pose/Pose.hh>
 
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -127,12 +125,12 @@ public:
 		set_and_reinit( torsion_screen_, setting );
 	}
 
-	void set_pucker_state( PuckerState const setting ) {
+	void set_pucker_state( core::chemical::rna::PuckerState const setting ) {
 		set_and_reinit( init_pucker_, setting );
 		//set_and_reinit( pucker_state_, setting );
 	}
 
-	void set_base_state( ChiState const setting ) {
+	void set_base_state( core::chemical::rna::ChiState const setting ) {
 		set_and_reinit( base_state_, setting );
 	}
 
@@ -172,7 +170,7 @@ private:
 	core::chemical::rna::PuckerState init_pucker_;
 	core::Real pucker_flip_rate_;
 	core::Real gaussian_stdev_, sum_;
-	ChiState base_state_;
+	core::chemical::rna::ChiState base_state_;
 	core::Size sample_nucleoside_;
 	core::Size max_tries_;
 	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,

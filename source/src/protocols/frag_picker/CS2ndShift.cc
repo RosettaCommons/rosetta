@@ -48,17 +48,17 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.SecondaryShiftCalcu
 
 CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	//Change to database files!
-	std::map<char,std::map<std::string,Real> > rcprev(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcprev.tab") );
-	std::map<char,std::map<std::string,Real> > rcnext(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcnext.tab") );
-	std::map<char,std::map<std::string,Real> > rcadj(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcadj.tab") );
-	std::map<char,std::map<std::string,Real> > randcoil(CS2ndShift::read_adjust_table("external/SPARTA+/tab/randcoil.tab") );
+	std::map<char,std::map<std::string,core::Real> > rcprev(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcprev.tab") );
+	std::map<char,std::map<std::string,core::Real> > rcnext(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcnext.tab") );
+	std::map<char,std::map<std::string,core::Real> > rcadj(CS2ndShift::read_adjust_table("external/SPARTA+/tab/rcadj.tab") );
+	std::map<char,std::map<std::string,core::Real> > randcoil(CS2ndShift::read_adjust_table("external/SPARTA+/tab/randcoil.tab") );
 
-	std::map<char,std::map<std::string,std::pair< Real, Real > > >  sslimit(CS2ndShift::read_sslimit_table("external/SPARTA+/tab/sslimit.tab") );
+	std::map<char,std::map<std::string,std::pair< core::Real, core::Real > > >  sslimit(CS2ndShift::read_sslimit_table("external/SPARTA+/tab/sslimit.tab") );
 
 	//Recalculate Values:
 	std::string const sequence( also_check_fix_disulf( input_data.get_sequence() ) );
 
-	utility::vector1< std::pair< Size, std::string > > shift_types;
+	utility::vector1< std::pair< core::Size, std::string > > shift_types;
 
 	shift_types.push_back(std::make_pair(1,"N"));//N
 	shift_types.push_back(std::make_pair(2,"HA"));//HA but HA3 for Gly
@@ -67,27 +67,27 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	shift_types.push_back(std::make_pair(5,"CB"));//CB but HA2 for Gly
 	shift_types.push_back(std::make_pair(6,"HN"));//HN
 
-	//utility::vector1< utility::vector1< std::pair< Size, Real > > > secondary_shifts_;//( utility::vector1< Real > ( 0, 0 ) );
+	//utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > secondary_shifts_;//( utility::vector1< core::Real > ( 0, 0 ) );
 
 
-	for ( Size seqpos = 0; seqpos < sequence.length(); seqpos++ ) {
+	for ( core::Size seqpos = 0; seqpos < sequence.length(); seqpos++ ) {
 		//tr << "CALC_SECONDARY " << seqpos << " ";
-		utility::vector1< std::pair< Size, Real > > res_shifts;
+		utility::vector1< std::pair< core::Size, core::Real > > res_shifts;
 
-		for ( Size st_i = 1; st_i <= shift_types.size(); st_i++ ) {
+		for ( core::Size st_i = 1; st_i <= shift_types.size(); st_i++ ) {
 
-			Real offset(0);
+			core::Real offset(0);
 
-			std::pair<Size,std::string> shift_type(shift_types[st_i]);
+			std::pair<core::Size,std::string> shift_type(shift_types[st_i]);
 
-			std::pair< Size, Real > shift;
+			std::pair< core::Size, core::Real > shift;
 			//static_cast< std::string > ( "HA" );
 			static std::string const HA( "HA" );
 			static std::string const CB( "CB" );
 			static std::string const HA2( "HA2" );
 			static std::string const HA3( "HA3" );
 
-			Real shift_value(9999);
+			core::Real shift_value(9999);
 			bool has_shift(false);
 
 			if ( (( shift_type.second == HA ) || ( shift_type.second == CB)) && (sequence[seqpos] == 'G') ) {
@@ -141,13 +141,13 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 			if ( has_shift == true ) {
 				if ( sslimit.count(sequence[seqpos]) == 1 ) {
-					std::map<char,std::map<std::string,std::pair< Real, Real > > >::const_iterator sslimit_at_seqpos( sslimit.find(sequence[seqpos]) );
+					std::map<char,std::map<std::string,std::pair< core::Real, core::Real > > >::const_iterator sslimit_at_seqpos( sslimit.find(sequence[seqpos]) );
 					debug_assert( sslimit_at_seqpos != sslimit.end() );
 					if ( sslimit_at_seqpos->second.count(shift_type.second) == 1 ) {
 						auto shift_type_itr( sslimit_at_seqpos->second.find(shift_type.second) );
 						debug_assert( shift_type_itr != sslimit_at_seqpos->second.end() );
-						Real min( shift_type_itr->second.first );
-						Real max( shift_type_itr->second.second );
+						core::Real min( shift_type_itr->second.first );
+						core::Real max( shift_type_itr->second.second );
 
 						// If use_sslimit == false, always accept
 						if ( ((shift_value >= min) && ( shift_value <= max )) || ( !use_sslimit) ) {
@@ -172,10 +172,10 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	}
 }
 
-std::map< char, std::map<std::string,Real> >
+std::map< char, std::map<std::string,core::Real> >
 CS2ndShift::read_adjust_table(std::string const & file_name) {
 
-	std::map< char, std::map<std::string,Real> > file_data_map;
+	std::map< char, std::map<std::string,core::Real> > file_data_map;
 	utility::vector1<std::string> column_names_;
 
 
@@ -228,9 +228,9 @@ CS2ndShift::read_adjust_table(std::string const & file_name) {
 
 		line_stream >> junk >> aa;
 
-		std::map< std::string ,Real > linemap;
-		for ( Size i = 1; i <= column_names_.size(); i++ ) {
-			Real offset(0.0);
+		std::map< std::string ,core::Real > linemap;
+		for ( core::Size i = 1; i <= column_names_.size(); i++ ) {
+			core::Real offset(0.0);
 			line_stream >> offset;
 			linemap.insert(std::make_pair(column_names_[i], offset));
 		}
@@ -274,14 +274,14 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 			line_stream >> junk >> junk >> entry >> junk;
 
 			while ( !line_stream.eof() ) {
-				Size mid = entry.find_first_of('_');
+				core::Size mid = entry.find_first_of('_');
 				sub_entry = entry.substr(0,mid);
 				column_names_.push_back(sub_entry);
 
 				line_stream >> entry >> junk;
 			}
 
-			Size mid = entry.find_first_of('_');
+			core::Size mid = entry.find_first_of('_');
 			sub_entry = entry.substr(0,mid);
 			column_names_.push_back(sub_entry);
 		}
@@ -300,9 +300,9 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 
 		line_stream >> junk >> aa;
 
-		std::map< std::string , std::pair< Real, Real> > linemap;
-		for ( Size i = 1; i <= column_names_.size(); i++ ) {
-			Real min(0.0), max(0.0);
+		std::map< std::string , std::pair< core::Real, core::Real> > linemap;
+		for ( core::Size i = 1; i <= column_names_.size(); i++ ) {
+			core::Real min(0.0), max(0.0);
 			line_stream >> min >> max;
 
 			if ( (min < 1000) && (max < 1000) ) {
@@ -325,14 +325,14 @@ CS2ndShift::also_check_fix_disulf( std::string instring ) {
 
 		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
 
-		utility::vector1< std::pair<Size,Size> > disulfides_in_file;
+		utility::vector1< std::pair<core::Size,core::Size> > disulfides_in_file;
 
 		ds_file.disulfides(disulfides_in_file);
 
-		for ( Size i = 1; i <= disulfides_in_file.size(); ++i ) {
+		for ( core::Size i = 1; i <= disulfides_in_file.size(); ++i ) {
 
-			Size l = disulfides_in_file[i].first;
-			Size u = disulfides_in_file[i].second;
+			core::Size l = disulfides_in_file[i].first;
+			core::Size u = disulfides_in_file[i].second;
 
 			if ( u <= l ) {
 				utility_exit_with_message("[ERROR] Disulfide File Format: res2 must be > res1");

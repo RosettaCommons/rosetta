@@ -38,14 +38,14 @@ static THREAD_LOCAL basic::Tracer trAtomBasedConstraintsScore(
 /// @param constrainable_atoms - a vector of strings providing names of constrained atoms.
 /// On every do_cahing() event these and only these atoms will be cached from a chunk's pose
 /// @param score_name - name assigned to this scoring term; this string must show up in scores config file if the score is to be evaluated during picking
-AtomBasedConstraintsScore::AtomBasedConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, Size query_size, utility::vector1<
+AtomBasedConstraintsScore::AtomBasedConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, core::Size query_size, utility::vector1<
 	std::string> constrainable_atoms, std::string score_name) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, score_name) {
 
 	query_size_ = query_size;
-	for ( Size i = 1; i < constrainable_atoms.size(); ++i ) {
-		constrainable_atoms_.insert(std::pair<std::string, Size>(
+	for ( core::Size i = 1; i < constrainable_atoms.size(); ++i ) {
+		constrainable_atoms_.insert(std::pair<std::string, core::Size>(
 			constrainable_atoms[i], i));
 	}
 }
@@ -55,26 +55,26 @@ AtomBasedConstraintsScore::AtomBasedConstraintsScore(Size priority,
 /// @param lowest_acceptable_value - a fragment for which this score is below a certain threshold will be discarded
 /// @param query_size - the number of residues in the query sequence
 /// @param score_name - name assigned to this scoring term; this string must show up in scores config file if the score is to be evaluated during picking
-AtomBasedConstraintsScore::AtomBasedConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, Size query_size, std::string score_name) :
+AtomBasedConstraintsScore::AtomBasedConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, core::Size query_size, std::string score_name) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, score_name) {
 
 	query_size_ = query_size;
-	constrainable_atoms_.insert(std::pair<std::string, Size>("N", 1));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("CA", 2));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("C", 3));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("O", 4));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("CB", 5));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("H", 6));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("HA", 7));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("HB", 8));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("1HB", 9));
-	constrainable_atoms_.insert(std::pair<std::string, Size>("2HB", 10));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("N", 1));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("CA", 2));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("C", 3));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("O", 4));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("CB", 5));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("H", 6));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("HA", 7));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("HB", 8));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("1HB", 9));
+	constrainable_atoms_.insert(std::pair<std::string, core::Size>("2HB", 10));
 }
 
-std::string AtomBasedConstraintsScore::get_constrained_atom_name(Size atom_id) {
+std::string AtomBasedConstraintsScore::get_constrained_atom_name(core::Size atom_id) {
 
-	std::map<std::string, Size>::iterator it, end ;
+	std::map<std::string, core::Size>::iterator it, end ;
 	for ( it=constrainable_atoms_.begin(), end = constrainable_atoms_.end(); it != end; ++it ) {
 		if ( (it)->second == atom_id ) {
 			return (it)->first;
@@ -92,27 +92,27 @@ void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 
 	//  pose->dump_pdb("dump-"+chunk->get_pdb_id()+".pdb");
 
-	numeric::xyzVector<Real> empty_one;
-	for ( Size i = 1; i <= chunk->size(); ++i ) {
+	numeric::xyzVector<core::Real> empty_one;
+	for ( core::Size i = 1; i <= chunk->size(); ++i ) {
 		utility::vector1<bool> flag_row(constrainable_atoms_.size());
-		utility::vector1<numeric::xyzVector<Real> > row(
+		utility::vector1<numeric::xyzVector<core::Real> > row(
 			constrainable_atoms_.size());
-		for ( Size j = 1; j < constrainable_atoms_.size(); ++j ) {
+		for ( core::Size j = 1; j < constrainable_atoms_.size(); ++j ) {
 			flag_row[j] = false;
 			row[j] = empty_one;
 		}
 		chunk_atoms_xyz_.push_back(row);
 		atom_flags_.push_back(flag_row);
 
-		std::map<std::string, Size>::iterator it;
-		chemical::ResidueType const & ith_res_type = pose->residue_type(i);
+		std::map<std::string, core::Size>::iterator it;
+		core::chemical::ResidueType const & ith_res_type = pose->residue_type(i);
 		for ( it = constrainable_atoms_.begin(); it
 				!= constrainable_atoms_.end(); ++it ) {
 			if ( ! ith_res_type.has( it->first ) ) {
 				continue;
 			}
-			id::NamedAtomID idAtom(it->first, i);
-			numeric::xyzVector<Real> xyz = pose->xyz(idAtom);
+			core::id::NamedAtomID idAtom(it->first, i);
+			numeric::xyzVector<core::Real> xyz = pose->xyz(idAtom);
 			chunk_atoms_xyz_[i][it->second] = xyz;
 			atom_flags_[i][it->second] = true;
 		}

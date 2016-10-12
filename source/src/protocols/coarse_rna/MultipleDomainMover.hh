@@ -36,10 +36,6 @@
 //// C++ headers
 #include <string>
 
-
-using core::Size;
-using core::Real;
-
 namespace protocols {
 namespace farna {
 
@@ -60,11 +56,11 @@ public:
 
 	std::string get_name() const override;
 
-	Size
+	core::Size
 	apply_and_return_jump( core::pose::Pose & pose );
 
-	Size
-	apply_at_domain( core::pose::Pose & pose, Size const & n );
+	core::Size
+	apply_at_domain( core::pose::Pose & pose, core::Size const & n );
 
 	void
 	randomize_pose_rigid_bodies( core::pose::Pose & pose );
@@ -72,11 +68,11 @@ public:
 	void
 	slide_back_to_origin( core::pose::Pose & pose );
 
-	Size
+	core::Size
 	num_domains(){ return num_domains_;}
 
 	void
-	update_rot_trans_mag( Real const & rot_mag, Real const & trans_mag );
+	update_rot_trans_mag( core::Real const & rot_mag, core::Real const & trans_mag );
 
 
 private:
@@ -107,9 +103,9 @@ private:
 private:
 
 	bool verbose_;
-	Real rot_mag_;
-	Real trans_mag_;
-	Size num_domains_;
+	core::Real rot_mag_;
+	core::Real trans_mag_;
+	core::Size num_domains_;
 	protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer_; //Later can make this a "general" loop closer.
 	utility::vector1< int > jump_numbers_;
 	utility::vector1< protocols::rigid::Partner > partner_;

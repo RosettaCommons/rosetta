@@ -82,6 +82,10 @@ namespace protocols {
 namespace farna {
 namespace thermal_sampling {
 
+using namespace core::chemical::rna;
+using namespace core;
+using namespace core::pose;
+
 /// @brief at least in the helix-strand case, will successfully distinguish a bad bond length
 /// from actual breaks
 Size find_likely_first_chain_ending( Pose const & pose ) {

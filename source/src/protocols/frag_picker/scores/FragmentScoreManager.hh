@@ -43,11 +43,11 @@ public:
 	virtual ~FragmentScoreManager();
 
 	/// @brief precision used to display the total score for each fragment
-	static const Size TOTAL_PRECISION = 3;
+	static const core::Size TOTAL_PRECISION = 3;
 	/// @brief default width used to print a score value, equal to 6
-	Size default_width_;
+	core::Size default_width_;
 	/// @brief default precision used to print a score value, equal to 1
-	Size default_precision_;
+	core::Size default_precision_;
 
 	/// @brief creates an empty manager
 	FragmentScoreManager();
@@ -57,22 +57,22 @@ public:
 
 	/// @brief registers a new scoring method in this manager
 	void add_scoring_method(
-		FragmentScoringMethodOP, Real);
+		FragmentScoringMethodOP, core::Real);
 
 	/// @brief says how many scoring methods have already been registered
-	inline Size count_components() {
+	inline core::Size count_components() {
 		return scores_.size();
 	}
 
 	/// @brief Returns a desired scoring method
 	/// @details Allowed index values are [1,count_components()]
 	inline FragmentScoringMethodOP get_component(
-		Size index) {
+		core::Size index) {
 		return scores_[index];
 	}
 
 	/// @brief returns a vector of weights that are used to compute the total score
-	utility::vector1<Real> get_weights() {
+	utility::vector1<core::Real> get_weights() {
 		return score_weights_;
 	}
 
@@ -81,7 +81,7 @@ public:
 	void show_scoring_methods(std::ostream& out);
 
 	/// @brief calculates the total score
-	Real total_score(FragmentScoreMapOP);
+	core::Real total_score(FragmentScoreMapOP);
 
 	/// @brief calculates all the small scores for a given fragment
 	/// @brief results are properly stored inside a FragmentScoreMap object
@@ -118,7 +118,7 @@ public:
 	void register_score_maker(MakeFragmentScoringMethodOP);
 
 	/// @brief creates a new scoring method object
-	void create_scoring_method(std::string const &, Size, Real, Real, bool,
+	void create_scoring_method(std::string const &, core::Size, core::Real, core::Real, bool,
 		FragmentPickerOP, std::string);
 
 	/// @brief reads a config file and creates scoring methods
@@ -133,12 +133,12 @@ public:
 	void clean_up();
 
 	/// @brief sets up a new number of characters spend to print fragment score value
-	void set_width(FragmentScoringMethodOP which_score, Size width) {
+	void set_width(FragmentScoringMethodOP which_score, core::Size width) {
 		width_[which_score] = width;
 	}
 
 	/// @brief sets up a new precision used to print fragment score value
-	void set_precision(FragmentScoringMethodOP which_score, Size precision) {
+	void set_precision(FragmentScoringMethodOP which_score, core::Size precision) {
 		precision_[which_score] = precision;
 	}
 
@@ -148,10 +148,10 @@ public:
 
 protected:
 	utility::vector1<FragmentScoringMethodOP> scores_;
-	std::map<FragmentScoringMethodOP, Size> width_;
-	std::map<FragmentScoringMethodOP, Size> precision_;
+	std::map<FragmentScoringMethodOP, core::Size> width_;
+	std::map<FragmentScoringMethodOP, core::Size> precision_;
 private:
-	utility::vector1<Real> score_weights_;
+	utility::vector1<core::Real> score_weights_;
 	std::map<std::string, MakeFragmentScoringMethodOP> registered_makers_;
 	bool zeros_score_later_;
 };

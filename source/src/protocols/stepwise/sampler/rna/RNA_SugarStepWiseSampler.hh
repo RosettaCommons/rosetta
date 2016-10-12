@@ -22,9 +22,6 @@
 #include <core/chemical/rna/util.hh>
 #include <core/id/DOF_ID_Map.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -34,7 +31,7 @@ class RNA_SugarStepWiseSampler : public StepWiseSamplerSized {
 public:
 	RNA_SugarStepWiseSampler(
 		core::Size const rsd_id,
-		PuckerState const pucker_state
+		core::chemical::rna::PuckerState const pucker_state
 	);
 
 	/// @brief Initialization
@@ -53,13 +50,13 @@ public:
 	void set_rsd_id( core::Size const setting ) { rsd_id_ = setting; }
 
 	/// @brief Get the current pucker state.
-	PuckerState pucker() const {
+	core::chemical::rna::PuckerState pucker() const {
 		runtime_assert( is_init() );
 		return pucker_states_[id()];
 	}
 
 	/// @brief Set the pucker_state (WHATEVER / NORTH / SOUTH)
-	void set_pucker_state( PuckerState const setting ) {
+	void set_pucker_state( core::chemical::rna::PuckerState const setting ) {
 		set_and_reinit( pucker_state_, setting );
 	}
 
@@ -81,10 +78,10 @@ public:
 	virtual std::string get_name() const;
 
 private:
-	utility::vector1<PuckerState> pucker_states_;
+	utility::vector1<core::chemical::rna::PuckerState> pucker_states_;
 
 	core::Size rsd_id_;
-	PuckerState pucker_state_;
+	core::chemical::rna::PuckerState pucker_state_;
 
 	bool skip_same_pucker_, idealize_coord_;
 

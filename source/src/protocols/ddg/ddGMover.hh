@@ -37,10 +37,6 @@
 namespace protocols {
 namespace ddg {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace scoring;
-
 typedef std::vector<double> ddGs;
 
 class ddGMover: public moves::Mover{
@@ -98,7 +94,7 @@ public:
 		core::scoring::ScoreFunctionOP sfxn,
 		utility::vector1<std::string> & components
 	);
-	std::string mutation_label(pose::Pose const & pose) const;
+	std::string mutation_label(core::pose::Pose const & pose) const;
 	double get_wt_averaged_totals();
 	double get_wt_min_totals();
 	double get_mutant_averaged_totals();
@@ -108,7 +104,7 @@ public:
 	std::string get_name() const override;
 	bool is_wt_calc_complete();
 	bool is_mutant_calc_complete();
-	bool is_properly_initialized(pose::Pose & pose);
+	bool is_properly_initialized(core::pose::Pose & pose);
 	bool get_min_cst();
 	bool use_mean();
 	bool use_min();
@@ -144,8 +140,8 @@ private:
 	ObjexxFCL::FArray2D<double> wt_unbound_components_; //ek interface ddg capabilities;
 	ObjexxFCL::FArray2D<double> mutant_components_;
 	ObjexxFCL::FArray2D<double> mutant_unbound_components_; //ek interface ddg capabilities;
-	utility::vector1<pose::Pose> natives_;
-	utility::vector1<pose::Pose> mutants_;
+	utility::vector1<core::pose::Pose> natives_;
+	utility::vector1<core::pose::Pose> mutants_;
 
 	utility::vector1<int>
 	find_nbrs(
@@ -200,7 +196,7 @@ private:
 	);
 
 	void setup_constraints(
-		pose::Pose & pose,
+		core::pose::Pose & pose,
 		core::scoring::ScoreFunctionOP sfxn,
 		float const cst_tol,
 		bool all_but_mut_site,
@@ -208,14 +204,14 @@ private:
 	);
 
 	void minimize_with_constraints(
-		pose::Pose & pose,
+		core::pose::Pose & pose,
 		core::scoring::ScoreFunctionOP s,
 		core::pack::task::PackerTaskOP pt
 	);
 
 	void print_verbose_ddgs(
-		utility::vector1<pose::Pose> mut,
-		utility::vector1<pose::Pose> wt,
+		utility::vector1<core::pose::Pose> mut,
+		utility::vector1<core::pose::Pose> wt,
 		core::scoring::ScoreFunctionOP sfxn,
 		bool mean,
 		bool min,

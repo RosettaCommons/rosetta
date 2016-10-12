@@ -22,9 +22,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
+#include <core/types.hh>
 
 namespace protocols {
 namespace stepwise {
@@ -39,12 +37,12 @@ public:
 
 	//constructor
 	VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
-		pose::Pose & screening_pose,
-		Size const moving_res );
+		core::pose::Pose & screening_pose,
+		core::Size const moving_res );
 
 	VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
-		pose::Pose & screening_pose,
-		Size const moving_res,
+		core::pose::Pose & screening_pose,
+		core::Size const moving_res,
 		core::conformation::ResidueCOP screening_moving_rsd_at_origin,
 		core::kinematics::Stub const & moving_res_base_stub );
 
@@ -68,8 +66,8 @@ public:
 private:
 
 	modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker_;
-	pose::Pose & screening_pose_;
-	Size const moving_res_;
+	core::pose::Pose & screening_pose_;
+	core::Size const moving_res_;
 
 	bool const using_stub_;
 	core::conformation::ResidueCOP screening_moving_rsd_at_origin_;

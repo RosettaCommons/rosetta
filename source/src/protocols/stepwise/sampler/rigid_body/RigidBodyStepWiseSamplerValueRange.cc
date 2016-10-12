@@ -17,6 +17,8 @@
 #include <basic/Tracer.hh>
 #include <numeric/NumericTraits.hh>
 
+using namespace core;
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerValueRange" );
 static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
 

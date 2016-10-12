@@ -30,6 +30,8 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
+using namespace core;
+
 //Constructor
 RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( Size const five_prime_chain_break_res, Size const gap_size ):
 	five_prime_chain_break_res_( five_prime_chain_break_res ),

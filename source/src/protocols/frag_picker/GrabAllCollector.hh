@@ -44,10 +44,10 @@ class GrabAllCollector: public CandidatesCollector {
 public:
 
 	/// @brief create a collector for a given size of a query sequence
-	GrabAllCollector(Size query_size)
+	GrabAllCollector(core::Size query_size)
 	{
 		storage_.resize(query_size);
-		for ( Size i = 1; i <= query_size; i++ ) {
+		for ( core::Size i = 1; i <= query_size; i++ ) {
 			utility::vector1<std::pair<FragmentCandidateOP,
 				scores::FragmentScoreMapOP> > vec;
 			storage_[i] = vec;
@@ -64,7 +64,7 @@ public:
 
 	inline void clear() override
 	{
-		for ( Size i=1; i<storage_.size(); ++i ) {
+		for ( core::Size i=1; i<storage_.size(); ++i ) {
 			storage_[i].clear();
 		}
 	}
@@ -74,8 +74,10 @@ public:
 		std::ostream & output,
 		scores::FragmentScoreManagerOP
 	) const override {
+		using namespace ObjexxFCL::format;
+
 		output << "\n pos  | count |  pos  | count | pos  | count |\n";
-		for ( Size i = 1; i <= storage_.size(); ++i ) {
+		for ( core::Size i = 1; i <= storage_.size(); ++i ) {
 			output << I(5, i) << " |" << I(6, storage_[i].size()) << " |";
 			if ( i % 3 == 0 ) {
 				output << '\n';
@@ -84,15 +86,15 @@ public:
 	}
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	inline Size count_candidates(Size seq_pos) const override {
+	inline core::Size count_candidates(core::Size seq_pos) const override {
 		return storage_[seq_pos].size();
 	}
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	inline Size count_candidates() const override {
+	inline core::Size count_candidates() const override {
 
-		Size response = 0;
-		for ( Size i=1; i<=storage_.size(); ++i ) {
+		core::Size response = 0;
+		for ( core::Size i=1; i<=storage_.size(); ++i ) {
 			response += storage_[i].size();
 		}
 		return response;
@@ -101,24 +103,24 @@ public:
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be able to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	inline Size query_length() const override {
+	inline core::Size query_length() const override {
 		return storage_.size();
 	}
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
-	inline void insert(Size pos, CandidatesCollectorOP collector) override {
+	inline void insert(core::Size pos, CandidatesCollectorOP collector) override {
 		GrabAllCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::GrabAllCollector > ( collector );
 		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to GrabAllCollector.");
 		}
-		for ( Size j=1; j<=storage_[pos].size(); ++j ) {
+		for ( core::Size j=1; j<=storage_[pos].size(); ++j ) {
 			ScoredCandidatesVector1 & content = c->get_candidates(pos);
-			for ( Size l=1; l<=content.size(); l++ ) storage_[pos].push_back( content[l] );
+			for ( core::Size l=1; l<=content.size(); l++ ) storage_[pos].push_back( content[l] );
 		}
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline ScoredCandidatesVector1 & get_candidates(Size position_in_query) override {
+	inline ScoredCandidatesVector1 & get_candidates(core::Size position_in_query) override {
 		return storage_.at(position_in_query);
 	}
 

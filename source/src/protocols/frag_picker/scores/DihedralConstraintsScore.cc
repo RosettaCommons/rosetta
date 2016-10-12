@@ -46,9 +46,9 @@ namespace scores {
 static THREAD_LOCAL basic::Tracer trDihedralConstraintsScore(
 	"fragment.picking.scores.DihedralConstraintsScore");
 
-DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size, utility::vector1<std::string> constrainable_atoms) :
+DihedralConstraintsScore::DihedralConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size, utility::vector1<std::string> constrainable_atoms) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	constrainable_atoms, "DihedralConstraintsScore") {
 
@@ -60,9 +60,9 @@ DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
 	read_constraints(constraints_file_name);
 }
 
-DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size) :
+DihedralConstraintsScore::DihedralConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	"DihedralConstraintsScore") {
 
@@ -78,15 +78,15 @@ bool DihedralConstraintsScore::cached_score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
 	PROF_START( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
-	Size frag_len = fragment->get_length();
-	Size vi = fragment->get_first_index_in_vall();
-	Size qi = fragment->get_first_index_in_query();
+	core::Size frag_len = fragment->get_length();
+	core::Size vi = fragment->get_first_index_in_vall();
+	core::Size qi = fragment->get_first_index_in_query();
 
-	Real total_score = 0;
-	for ( Size i = 0; i < frag_len; ++i ) {
-		for ( Size c = 1; c <= data_[i + qi].size(); ++c ) {
-			Size firstQueryResidueIndex = qi + i;
-			Size firstVallResidueIndex = vi + i;
+	core::Real total_score = 0;
+	for ( core::Size i = 0; i < frag_len; ++i ) {
+		for ( core::Size c = 1; c <= data_[i + qi].size(); ++c ) {
+			core::Size firstQueryResidueIndex = qi + i;
+			core::Size firstVallResidueIndex = vi + i;
 			FourAtomsConstraintDataOP r = data_[firstQueryResidueIndex][c];
 			if ( r->get_second_offset() >= frag_len - i ) {
 				continue;
@@ -97,11 +97,11 @@ bool DihedralConstraintsScore::cached_score(FragmentCandidateOP fragment,
 			if ( r->get_fourth_offset() >= frag_len - i ) {
 				continue;
 			}
-			Size secondVallResidueIndex = firstVallResidueIndex
+			core::Size secondVallResidueIndex = firstVallResidueIndex
 				+ r->get_second_offset();
-			Size thirdVallResidueIndex = firstVallResidueIndex
+			core::Size thirdVallResidueIndex = firstVallResidueIndex
 				+ r->get_third_offset();
-			Size fourthVallResidueIndex = firstVallResidueIndex
+			core::Size fourthVallResidueIndex = firstVallResidueIndex
 				+ r->get_fourth_offset();
 			if ( !has_atom(firstVallResidueIndex, r->get_first_atom()) ) {
 				continue;
@@ -116,20 +116,20 @@ bool DihedralConstraintsScore::cached_score(FragmentCandidateOP fragment,
 				continue;
 			}
 
-			numeric::xyzVector<Real> v1 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v1 = get_atom_coordinates(
 				firstVallResidueIndex, r->get_first_atom());
-			numeric::xyzVector<Real> v2 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v2 = get_atom_coordinates(
 				secondVallResidueIndex, r->get_second_atom());
-			numeric::xyzVector<Real> v3 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v3 = get_atom_coordinates(
 				thirdVallResidueIndex, r->get_third_atom());
-			numeric::xyzVector<Real> v4 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v4 = get_atom_coordinates(
 				fourthVallResidueIndex, r->get_fourth_atom());
 
 			double torsion = dihedral_degrees(v1, v2, v3, v4);
 			total_score += r->get_function()->func(torsion);
 		}
 	}
-	total_score /= (Real) frag_len;
+	total_score /= (core::Real) frag_len;
 	scores->set_score_component(total_score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
 
@@ -156,7 +156,7 @@ void DihedralConstraintsScore::read_constraints(
 	std::string line;
 	getline(data, line); // header line
 	std::string tag;
-	Size n_constr = 0;
+	core::Size n_constr = 0;
 	while ( !data.fail() ) {
 		char c = data.peek();
 		if ( c == '#' || c == '\n' ) {
@@ -170,7 +170,7 @@ void DihedralConstraintsScore::read_constraints(
 			break;
 		}
 		if ( tag == "Dihedral" ) {
-			Size res1, res2, res3, res4;
+			core::Size res1, res2, res3, res4;
 			std::string name1, name2, name3, name4;
 			std::string func_type;
 			//std::string type;
@@ -185,16 +185,16 @@ void DihedralConstraintsScore::read_constraints(
 			core::scoring::func::FuncOP func = factory_.new_func(
 				func_type);
 			func->read_data(data);
-			std::map<std::string, Size> constr_atoms =
+			std::map<std::string, core::Size> constr_atoms =
 				get_constrainable_atoms_map();
-			std::map<std::string, Size>::iterator it = constr_atoms.find(name1);
+			std::map<std::string, core::Size>::iterator it = constr_atoms.find(name1);
 			if ( it == constr_atoms.end() ) {
 				trDihedralConstraintsScore.Warning << "Unknown atom: " << name1
 					<< "\nThe following constraint will NOT be used:\n"
 					<< line << std::endl;
 				continue;
 			}
-			Size a1 = it->second;
+			core::Size a1 = it->second;
 			it = constr_atoms.find(name2);
 			if ( it == constr_atoms.end() ) {
 				trDihedralConstraintsScore.Warning << "Unknown  atom: "
@@ -203,7 +203,7 @@ void DihedralConstraintsScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a2 = it->second;
+			core::Size a2 = it->second;
 			it = constr_atoms.find(name3);
 			if ( it == constr_atoms.end() ) {
 				trDihedralConstraintsScore.Warning << "Unknown atom: " << name3
@@ -211,7 +211,7 @@ void DihedralConstraintsScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a3 = it->second;
+			core::Size a3 = it->second;
 			it = constr_atoms.find(name4);
 			if ( it == constr_atoms.end() ) {
 				trDihedralConstraintsScore.Warning << "Unknown  atom: "
@@ -220,10 +220,10 @@ void DihedralConstraintsScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a4 = it->second;
-			Size o2 = res2 - res1;
-			Size o3 = res3 - res1;
-			Size o4 = res4 - res1;
+			core::Size a4 = it->second;
+			core::Size o2 = res2 - res1;
+			core::Size o3 = res3 - res1;
+			core::Size o4 = res4 - res1;
 			if ( (res2 < res1) || (res3 < res1) || (res4 < res1) ) {
 				trDihedralConstraintsScore.Warning
 					<< "The residue of the first constrained atoms must precede all the other three.\n\t\t"
@@ -250,8 +250,8 @@ void DihedralConstraintsScore::read_constraints(
 		<< std::endl;
 }
 
-FragmentScoringMethodOP MakeDihedralConstraintsScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeDihedralConstraintsScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

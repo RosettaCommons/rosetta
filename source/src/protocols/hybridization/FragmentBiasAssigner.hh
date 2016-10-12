@@ -52,21 +52,18 @@
 namespace protocols {
 namespace hybridization {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class FragmentBiasAssigner : public utility::pointer::ReferenceCount
 {
 public:
 	// constructor
 	//FragmentBiasAssigner();
-	FragmentBiasAssigner( pose::Pose &pose );
+	FragmentBiasAssigner( core::pose::Pose &pose );
 
-	void init( pose::Pose &pose );
+	void init( core::pose::Pose &pose );
 
 	// everytime when you call these function the probability is going to be additive to the frag_bias_ container
 	void compute_frag_bias( utility::vector1<numeric::random::WeightedSampler> &frag_bias, // output
-		pose::Pose &pose,
+		core::pose::Pose &pose,
 		utility::vector1<core::fragment::FragSetOP> fragments );
 
 	void include_residues( std::set< core::Size > residues_to_include );
@@ -78,11 +75,11 @@ public:
 
 	////////////////////////////////////
 	// ray's protocol to select residues to refine
-	void automode( pose::Pose &pose,
-		Real score_cut );
+	void automode( core::pose::Pose &pose,
+		core::Real score_cut );
 
-	void automode_scores( pose::Pose &pose,
-		utility::vector1<Real> &scores );
+	void automode_scores( core::pose::Pose &pose,
+		utility::vector1<core::Real> &scores );
 
 	/////////////////////////////////////////////////////////////
 	void user( std::set<core::Size> user_pos,
@@ -91,33 +88,33 @@ public:
 	////////////////////////////////////
 	// individual method
 
-	void density_nbr( pose::Pose &pose );
+	void density_nbr( core::pose::Pose &pose );
 
-	void rama( pose::Pose &pose,
+	void rama( core::pose::Pose &pose,
 		core::Real weight=0.2 );
 
-	void geometry( pose::Pose &pose,
+	void geometry( core::pose::Pose &pose,
 		core::Real weight=1.0 );
 
-	void density( pose::Pose &pose );
+	void density( core::pose::Pose &pose );
 
 	////////////////////////////////
-	void old_rama( pose::Pose &pose );
-	void chainbreak( pose::Pose &pose );
-	void bfactors( pose::Pose &pose );
-	void fragbias_reporter( pose::Pose &pose );
+	void old_rama( core::pose::Pose &pose );
+	void chainbreak( core::pose::Pose &pose );
+	void bfactors( core::pose::Pose &pose );
+	void fragbias_reporter( core::pose::Pose &pose );
 	void cumulate_probability(){ cumulative_=true; }
 
 	void set_rsd_wdw_to_assign_prob( int wdw=0 ){ rsd_wdw_size_=wdw; }
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
-	void set_score_threshold( Real threshold ){ score_threshold_=threshold; }
+	void set_score_threshold( core::Real threshold ){ score_threshold_=threshold; }
 
 private:
 	// functions
-	void cal_perrsd_score( pose::Pose &pose,
+	void cal_perrsd_score( core::pose::Pose &pose,
 		core::scoring::ScoreType const &score_type,
 		utility::vector1<core::Real> &perrsd_score,
-		Real weight );
+		core::Real weight );
 
 	void cal_zscore( utility::vector1<core::Real> const &input_v,
 		utility::vector1<core::Real> &zscore_v,
@@ -125,7 +122,7 @@ private:
 
 	// This function calls assign_prob_with_rsd_wdw(rsn) to assign probability to the residue with a window controlled by "rsd_wdw_size_".
 	void assign_fragprobs( utility::vector1<core::Real> const &perrsd_score,
-		Real threshold );
+		core::Real threshold );
 
 	void assign_prob_with_rsd_wdw( int rsn );
 
@@ -134,7 +131,7 @@ private:
 	core::Size nres_, n_symm_subunit_;
 	int wdw_to_freeze_;
 	int rsd_wdw_size_; // to assign prob
-	Real score_threshold_; // to assign prob
+	core::Real score_threshold_; // to assign prob
 	bool cumulative_;
 	bool fragProbs_assigned_;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo_;

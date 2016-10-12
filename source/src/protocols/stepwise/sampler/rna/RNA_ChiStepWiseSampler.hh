@@ -24,9 +24,6 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -36,8 +33,8 @@ class RNA_ChiStepWiseSampler : public StepWiseSamplerOneTorsion {
 public:
 	RNA_ChiStepWiseSampler(
 		core::Size const rsd_id,
-		PuckerState const pucker_state,
-		ChiState const base_state
+		core::chemical::rna::PuckerState const pucker_state,
+		core::chemical::rna::ChiState const base_state
 	);
 
 	/// @brief Initialization
@@ -49,18 +46,18 @@ public:
 	}
 
 	/// @brief Get the pucker state (NORTH / SOUTH)
-	PuckerState pucker_state() { return pucker_state_; }
+	core::chemical::rna::PuckerState pucker_state() { return pucker_state_; }
 
 	/// @brief Set the pucker state (NORTH / SOUTH)
-	void set_pucker_state( PuckerState const setting ) {
+	void set_pucker_state( core::chemical::rna::PuckerState const setting ) {
 		set_and_reinit( pucker_state_, setting );
 	}
 
 	/// @brief Get the base state (WHATEVER / ANTI / SYN)
-	ChiState base_state() { return base_state_; }
+	core::chemical::rna::ChiState base_state() { return base_state_; }
 
 	/// @brief Set the base state (WHATEVER / ANTI / SYN)
-	void set_base_state( ChiState const setting ) {
+	void set_base_state( core::chemical::rna::ChiState const setting ) {
 		set_and_reinit( base_state_, setting );
 	}
 
@@ -91,8 +88,8 @@ public:
 
 private:
 	core::Size rsd_id_;
-	ChiState base_state_;
-	PuckerState pucker_state_;
+	core::chemical::rna::ChiState base_state_;
+	core::chemical::rna::PuckerState pucker_state_;
 	core::Real bin_size_, max_range_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// bool extra_chi_;

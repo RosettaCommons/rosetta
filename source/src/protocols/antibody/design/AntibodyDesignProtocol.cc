@@ -77,6 +77,7 @@ using namespace protocols::antibody::clusters;
 
 using core::pose::Pose;
 using std::string;
+using utility::vector1;
 
 AntibodyDesignProtocol::AntibodyDesignProtocol() : protocols::moves::Mover(),
 	graft_designer_(/* NULL */),

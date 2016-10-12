@@ -205,7 +205,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 {
 	set_procs_per_hierarchy_level( src.procs_per_hierarchy_level_ );
 	assign_level_children_and_parent();
-	if(src.native_) native_ = src.native_->clone();	
+	if(src.native_) native_ = src.native_->clone();
 	if(src.scorefxn_) scorefxn_ = src.scorefxn_->clone();
 
 	runtime_assert( hierarchy_level_ == src.hierarchy_level_ );
@@ -244,7 +244,7 @@ SimpleCycpepPredictApplication_MPI::run() {
 /// ------------- Public Methods ---------------------
 
 /// @brief Set the sort type, by string.
-///	
+///
 void
 SimpleCycpepPredictApplication_MPI::set_sort_type(
 	std::string const &sort_type
@@ -266,7 +266,7 @@ SimpleCycpepPredictApplication_MPI::set_sort_type(
 }
 
 /// @brief Set the sort type, by enum.
-///	
+///
 void
 SimpleCycpepPredictApplication_MPI::set_sort_type(
 	SIMPLE_CYCPEP_PREDICT_MPI_SORT_TYPE const sort_type
@@ -479,7 +479,7 @@ SimpleCycpepPredictApplication_MPI::get_native() {
 		TR << "Emperor reading native pose " << natfile << " from disk." << std::endl;
 		core::pose::PoseOP native( new core::pose::Pose );
 		core::import_pose::pose_from_file(*native, natfile, core::import_pose::PDB_file);
-		core::io::silent::SilentStructOP native_ss( io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" ) );
+		core::io::silent::SilentStructOP native_ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" ) );
 		native_ss->fill_struct(*native, "native");
 
 		emperor_broadcast_silent_struct( native_ss );
@@ -608,7 +608,7 @@ SimpleCycpepPredictApplication_MPI::broadcast_res_list(
 	} else {  //Everyone else receives the string and converts it into a map.
 		res_list.clear();
 		std::string conversion_string( "" );
-		broadcast_string_from_emperor( conversion_string );		
+		broadcast_string_from_emperor( conversion_string );
 		if(TR.Debug.visible()) TR.Debug << "Reslist string received by proc " << MPI_rank_ << ":\n" << conversion_string << std::endl;
 		std::stringstream received_string( conversion_string );
 
@@ -865,7 +865,7 @@ SimpleCycpepPredictApplication_MPI::receive_and_sort_job_summaries(
 		int nodelist_size(0);
 		MPI_Recv( &nodelist_size, 1, MPI_INT, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status );
 
-		if(nodelist_size != 0) {		
+		if(nodelist_size != 0) {
 			int * nodelist( new int[ nodelist_size ] );
 			MPI_Recv( nodelist, nodelist_size, MPI_INT, originating_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD, &status );
 			for( core::Size j=1; j<=static_cast<core::Size>(nodelist_size); ++j ) {
@@ -926,7 +926,7 @@ SimpleCycpepPredictApplication_MPI::send_job_summaries(
 	MPI_Send( cispepbondbuf, sizebuf, MPI_UNSIGNED_LONG, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD ); //Send the cis-peptide bond counts.
 
 	//Send the message history lists (MPI_ranks_handling_message()):
-	for(core::Size i=1, imax=summary_list.size(); i<=imax; ++i) {	
+	for(core::Size i=1, imax=summary_list.size(); i<=imax; ++i) {
 		int nodelist_size(summary_list[i]->MPI_ranks_handling_message().size());
 		MPI_Send( &nodelist_size, 1, MPI_INT, target_node, static_cast<int>(RESULTS_SUMMARY_UPWARD), MPI_COMM_WORLD );
 		if(nodelist_size == 0) continue;
@@ -950,7 +950,7 @@ SimpleCycpepPredictApplication_MPI::send_job_summaries(
 /// @brief Given a short list of job summaries, split the list by the index of the node that I'd have to send the request to, and send requests for full poses down the hierarchy.
 /// @details Throws an error if any of the jobs in the list cannot be reached by sending a request by way of my_children_.  To be used with receive_pose_requests_from_above().
 /// @param[in] summary_shortlist The list of job summaries to split up and send downard.
-/// @param[out] children_receiving_nonzero_requests The number of children receiving a request for at least one pose. 
+/// @param[out] children_receiving_nonzero_requests The number of children receiving a request for at least one pose.
 void
 SimpleCycpepPredictApplication_MPI::request_poses_from_below(
 	utility::vector1< SimpleCycpepPredictApplication_MPI_JobResultsSummaryOP > const &summary_shortlist,
@@ -1063,7 +1063,7 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 			case 	OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD:
 				receive_jobs_attempted_count( total_jobs_attempted_by_children, requesting_node );
 				++children_reporting_job_counts;
-			break;		
+			break;
 			case REQUEST_NEW_JOBS_BATCH_UPWARD:
 				if( halt_after_timeout && halting_condition(start_time, timeout) ) {
 					halt_signal_fired = true;
@@ -1116,14 +1116,14 @@ SimpleCycpepPredictApplication_MPI::run_emperor() const {
 					break;
 				default:
 					break;
-			}		
+			}
 		} while( children_that_sent_poses < children_receiving_nonzero_requests );
 	}
 
 	if(TR.visible()) TR << "Emperor is writing final structures to disk." << std::endl;
 	emperor_write_to_disk( results_collected_from_below );
 
-	if(TR.Debug.visible()) TR.Debug << "Emperor (proc " << MPI_rank_ << ") reached end of run_emperor() function." << std::endl;	
+	if(TR.Debug.visible()) TR.Debug << "Emperor (proc " << MPI_rank_ << ") reached end of run_emperor() function." << std::endl;
 	stop_signal(); //Wait for signal to everyone that it's time to stop.
 	clock_t end_time( clock() );
 
@@ -1310,7 +1310,7 @@ SimpleCycpepPredictApplication_MPI::run_intermediate_master() const {
 				if( children_reporting_job_counts == n_children ) {
 					//Offer the total number of jobs attempted upward:
 					send_request( my_parent_, OFFER_NEW_JOBS_ATTEMPTED_COUNT_UPWARD);
-					send_jobs_attempted_count( total_jobs_attempted_by_children,	my_parent_);	
+					send_jobs_attempted_count( total_jobs_attempted_by_children,	my_parent_);
 					if(TR.Debug.visible()) TR.Debug << "Intermediate master process " << MPI_rank_ << " reported to its parent that its children attempted " << total_jobs_attempted_by_children << " jobs." << std::endl;
 				}
 			break;
@@ -1386,7 +1386,7 @@ SimpleCycpepPredictApplication_MPI::run_intermediate_master() const {
 					break;
 				default:
 					break;
-			}		
+			}
 		} while( children_that_sent_poses < children_receiving_nonzero_requests );
 	}
 

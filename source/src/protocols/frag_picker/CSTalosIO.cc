@@ -37,18 +37,18 @@ using namespace core;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.TalosReader" );
 
-utility::vector1<utility::vector1<std::pair<Size, Real> > > CSTalosIO::repack_to_matrix() {
+utility::vector1<utility::vector1<std::pair<core::Size, core::Real> > > CSTalosIO::repack_to_matrix() {
 
-	Size len = get_sequence().length();
+	core::Size len = get_sequence().length();
 
-	utility::vector1<utility::vector1<std::pair<Size, Real> > > data(len);
-	for ( Size i = 1; i <= entries_.size(); ++i ) {
-		// Size res_id = entries_[i].get<0> ();
+	utility::vector1<utility::vector1<std::pair<core::Size, core::Real> > > data(len);
+	for ( core::Size i = 1; i <= entries_.size(); ++i ) {
+		// core::Size res_id = entries_[i].get<0> ();
 		std::string& at_name = entries_[i].get<2> ();
-		Real shift = entries_[i].get<3> ();
-		Size atom_id = order_of_atoms_.find(at_name)->second;
+		core::Real shift = entries_[i].get<3> ();
+		core::Size atom_id = order_of_atoms_.find(at_name)->second;
 
-		data[i].push_back(std::pair<Size, Real>(atom_id, shift));
+		data[i].push_back(std::pair<core::Size, core::Real>(atom_id, shift));
 	}
 
 	return data;
@@ -108,10 +108,10 @@ void CSTalosIO::read(std::string const & file_name) {
 	while ( getline(data, line) ) {
 		if ( line.length() > 7 ) {
 			std::istringstream line_stream(line);
-			Size ires;
+			core::Size ires;
 			char aa;
 			std::string atom_name;
-			Real shift;
+			core::Real shift;
 			line_stream >> ires >> aa >> atom_name >> shift;
 
 			if ( atom_name == "H" ) {
@@ -120,13 +120,13 @@ void CSTalosIO::read(std::string const & file_name) {
 
 			//std::cout << "READ_SHIFTS " << ires << " " << aa << " " << atom_name << " " << shift << std::endl;
 
-			boost::tuple<Size, char, std::string, Real> t(ires, aa, atom_name,
+			boost::tuple<core::Size, char, std::string, core::Real> t(ires, aa, atom_name,
 				shift);
 			entries_.push_back(t);
 		}
 	}
 
-	for ( Size i = 1; i <= entries_.size(); i++ ) {
+	for ( core::Size i = 1; i <= entries_.size(); i++ ) {
 		//std::cout << "ENTRIES: " << entries_[i].get<0>() << " " << entries_[i].get<1>() << " " << entries_[i].get<2>() << std::endl;
 		resids_to_entries_map_.insert(std::make_pair(entries_[i].get<0> (), i));
 	}
@@ -137,14 +137,14 @@ void CSTalosIO::write(std::ostream& out) {
 	out << "DATA FIRST_RESID " << first_residue_index_ << std::endl;
 	out << "DATA SEQUENCE " << sequence_ << std::endl;
 	out << "VARS";
-	for ( Size i = 1; i <= column_names_.size(); i++ ) {
+	for ( core::Size i = 1; i <= column_names_.size(); i++ ) {
 		out << " " << column_names_[i];
 	}
 	out << std::endl << "FORMAT " << data_format_ << std::endl << std::endl;
 	char buffer[50];
 	char c1[2];
 	c1[1] = 0;
-	for ( Size i = 1; i <= entries_.size(); i++ ) {
+	for ( core::Size i = 1; i <= entries_.size(); i++ ) {
 		c1[0] = entries_[i].get<1> ();
 		sprintf(buffer, data_format_.c_str(), entries_[i].get<0> (), c1,
 			entries_[i].get<2> ().c_str(), entries_[i].get<3> ());
@@ -152,8 +152,8 @@ void CSTalosIO::write(std::ostream& out) {
 	}
 }
 
-void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
-	char, std::string, Real> > results) {
+void CSTalosIO::get_tuples(core::Size residue_id, utility::vector1<boost::tuple<core::Size,
+	char, std::string, core::Real> > results) {
 
 	auto iter = resids_to_entries_map_.find(
 		residue_id);
@@ -165,8 +165,8 @@ void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 	}
 }
 
-void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
-	char, std::string, Real> > & results) const {
+void CSTalosIO::get_tuples(core::Size residue_id, utility::vector1<boost::tuple<core::Size,
+	char, std::string, core::Real> > & results) const {
 
 	auto iter =
 		resids_to_entries_map_.find(residue_id);
@@ -179,7 +179,7 @@ void CSTalosIO::get_tuples(Size residue_id, utility::vector1<boost::tuple<Size,
 	}
 }
 
-bool CSTalosIO::has_atom(Size residue_id, std::string const & atom_name) const {
+bool CSTalosIO::has_atom(core::Size residue_id, std::string const & atom_name) const {
 
 	auto iterat =
 		resids_to_entries_map_.find(residue_id);
@@ -187,11 +187,11 @@ bool CSTalosIO::has_atom(Size residue_id, std::string const & atom_name) const {
 		return false;
 	}
 
-	utility::vector1<boost::tuple<Size, char, std::string, Real> >
+	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> >
 		used_for_searching_;
 
 	get_tuples(residue_id, used_for_searching_);
-	for ( Size i = 1; i <= used_for_searching_.size(); i++ ) {
+	for ( core::Size i = 1; i <= used_for_searching_.size(); i++ ) {
 		//std::cout << "FROMTUPLE " << residue_id << " " << used_for_searching_[i].get<0>() << " " << used_for_searching_[i].get<2>() << " " << used_for_searching_[i].get<1>() << std::endl;
 
 		//Seriously, get_tuples(residue_id,...) also fetches tuples for OTHER residue IDs.
@@ -206,7 +206,7 @@ bool CSTalosIO::has_atom(Size residue_id, std::string const & atom_name) const {
 	return false;
 }
 
-Real CSTalosIO::get_shift(Size residue_id, std::string const & atom_name) const {
+core::Real CSTalosIO::get_shift(core::Size residue_id, std::string const & atom_name) const {
 
 	auto iterat =
 		resids_to_entries_map_.find(residue_id);
@@ -214,17 +214,17 @@ Real CSTalosIO::get_shift(Size residue_id, std::string const & atom_name) const 
 		return false;
 	}
 
-	utility::vector1<boost::tuple<Size, char, std::string, Real> >
+	utility::vector1<boost::tuple<core::Size, char, std::string, core::Real> >
 		used_for_searching_;
 
 	get_tuples(residue_id, used_for_searching_);
-	for ( Size i = 1; i <= used_for_searching_.size(); i++ ) {
+	for ( core::Size i = 1; i <= used_for_searching_.size(); i++ ) {
 		//std::cout << "GET_SHIFT " << residue_id << " " << atom_name << " " << used_for_searching_[i].get<2>() << std::endl;
 
 		//Seriously, get_tuples(residue_id,...) also fetches tuples for OTHER residue IDs.
 		//I have no idea why.
 		if ( (used_for_searching_[i].get<0>() == residue_id) && (used_for_searching_[i].get<2> () == atom_name) ) {
-			Real ret = used_for_searching_[i].get<3> ();
+			core::Real ret = used_for_searching_[i].get<3> ();
 			used_for_searching_.clear();
 			return ret;
 		}
@@ -238,15 +238,15 @@ Real CSTalosIO::get_shift(Size residue_id, std::string const & atom_name) const 
 
 void CSTalosIO::set_up_atom_order() {
 
-	order_of_atoms_.insert(std::pair<std::string, Size>("N", 1));
-	order_of_atoms_.insert(std::pair<std::string, Size>("HA", 2));
-	order_of_atoms_.insert(std::pair<std::string, Size>("HA2", 5));
-	order_of_atoms_.insert(std::pair<std::string, Size>("HA3", 2));
-	order_of_atoms_.insert(std::pair<std::string, Size>("C", 3));
-	order_of_atoms_.insert(std::pair<std::string, Size>("CA", 4));
-	order_of_atoms_.insert(std::pair<std::string, Size>("CB", 5));
-	order_of_atoms_.insert(std::pair<std::string, Size>("HN", 6));
-	order_of_atoms_.insert(std::pair<std::string, Size>("H", 6));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("N", 1));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("HA", 2));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("HA2", 5));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("HA3", 2));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("C", 3));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("CA", 4));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("CB", 5));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("HN", 6));
+	order_of_atoms_.insert(std::pair<std::string, core::Size>("H", 6));
 }
 
 } // frag_picker

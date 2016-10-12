@@ -34,7 +34,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by its crmsd to the given reference structure
 class GunnCostScore: public CachingScoringMethod {
@@ -42,7 +42,7 @@ public:
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	GunnCostScore(Size, Real, bool, core::pose::PoseOP,utility::vector1<Size>,Size);
+	GunnCostScore(core::Size, core::Real, bool, core::pose::PoseOP,utility::vector1<core::Size>,core::Size);
 
 	~GunnCostScore();
 
@@ -51,13 +51,13 @@ public:
 	bool score(FragmentCandidateOP, FragmentScoreMapOP);
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 
-	void computeGunnTuples(core::pose::Pose &,Size,utility::vector1<GunnTuple> &);
+	void computeGunnTuples(core::pose::Pose &,core::Size,utility::vector1<GunnTuple> &);
 
 private:
-	Size n_atoms_;
-	pose::PoseOP reference_pose_;
-	utility::vector1<Size> frag_sizes_;
-	Size max_chunk_size_;
+	core::Size n_atoms_;
+	core::pose::PoseOP reference_pose_;
+	utility::vector1<core::Size> frag_sizes_;
+	core::Size max_chunk_size_;
 	utility::vector1<utility::vector1<GunnTuple> > ref_gunn_data_;
 	utility::vector1<utility::vector1<GunnTuple> > chunk_gunn_data_;
 	GunnCost gunn_cost_;
@@ -71,7 +71,7 @@ public:
 		MakeFragmentScoringMethod("GunnCostScore") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

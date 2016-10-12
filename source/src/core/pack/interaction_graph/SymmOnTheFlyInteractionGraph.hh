@@ -52,11 +52,6 @@
 
 // Utility headers
 
-//Auto using namespaces
-//namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-
 namespace core {
 namespace pack {
 namespace interaction_graph {

@@ -23,9 +23,6 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -43,7 +40,7 @@ public:
 	//destructor
 	~VirtualSugarSamplerFromStringList();
 
-	virtual void apply( pose::Pose & pose_to_visualize );
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
 
@@ -66,16 +63,16 @@ public:
 private:
 
 	utility::vector1< SugarModeling >
-	setup_sugar_modeling_list( pose::Pose const & pose ) const;
+	setup_sugar_modeling_list( core::pose::Pose const & pose ) const;
 
 	bool
 	empty_sugar_modeling_list( utility::vector1< SugarModeling > const &  sugar_modeling_list );
 
 	bool
-	empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ) ;
+	empty_pose_data_list( utility::vector1< core::pose::PoseOP > const & pose_list, core::Size const n, std::string tag ) ;
 
 	void
-	output_pose_data_list( utility::vector1< pose::PoseOP > & pose_data_list );
+	output_pose_data_list( utility::vector1< core::pose::PoseOP > & pose_data_list );
 
 private:
 

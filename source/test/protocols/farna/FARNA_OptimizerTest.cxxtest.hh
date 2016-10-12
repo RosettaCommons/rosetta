@@ -79,12 +79,14 @@ public:
 		/////////////////////////////////////////////////////
 		// Following is 'standard' setup from stepwise.cc
 
+		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace core::id;
 		using namespace protocols::farna;
+		using namespace protocols::farna::libraries;
 		using namespace protocols::toolbox;
 		using namespace protocols::stepwise::setup;
 

@@ -38,6 +38,9 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.util" );
 
+using namespace core;
+using namespace core::pose;
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

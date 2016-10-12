@@ -33,6 +33,8 @@
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/copydofs/CopyDofs.hh>
+
 
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
@@ -41,6 +43,10 @@
 
 static THREAD_LOCAL basic::Tracer TR("RNA_DeNovoProtocolTest");
 
+using namespace core;
+using namespace protocols::farna::options;
+using namespace protocols::farna::movers;
+using namespace protocols::farna::libraries;
 
 class RNA_DeNovoProtocolTest : public CxxTest::TestSuite {
 	//Define Variables
@@ -152,8 +158,8 @@ public:
 		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " C1'",19 ), pose ), 1 );
 
 		atom_level_domain_map.show( TR );
-		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " P  ", 1 ), pose ), FIXED_DOMAIN );
-		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " H5'", 1 ), pose ), FIXED_DOMAIN );
+		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " P  ", 1 ), pose ), core::pose::copydofs::FIXED_DOMAIN );
+		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " H5'", 1 ), pose ), core::pose::copydofs::FIXED_DOMAIN );
 
 		bool found_cutpoint_closed_in_fixed_domain ( false );
 		bool found_cutpoint_closed_in_moving_domain( false );
@@ -253,8 +259,8 @@ public:
 		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " C1'",19 ), pose ), ROSETTA_LIBRARY_DOMAIN );
 
 		atom_level_domain_map.show( TR );
-		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " P  ", 1 ), pose ), FIXED_DOMAIN );
-		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " H5'", 1 ), pose ), FIXED_DOMAIN );
+		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " P  ", 1 ), pose ), core::pose::copydofs::FIXED_DOMAIN );
+		TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( " H5'", 1 ), pose ), core::pose::copydofs::FIXED_DOMAIN );
 
 		bool found_cutpoint_closed_in_fixed_domain ( false );
 		bool found_cutpoint_closed_in_moving_domain( false );

@@ -40,19 +40,15 @@ namespace protocols {
 namespace frag_picker {
 namespace nonlocal {
 
-typedef std::pair<Size,Size> PosPair;
+typedef std::pair<core::Size,core::Size> PosPair;
 typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> Candidate;
-
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace protocols::frag_picker;
 
 /// @brief  represents a nonlocal fragment pair.
 /// @details NonlocalPair contains query start positions for each fragment of pair i and j, and their corresponding fragment candidate
 class NonlocalPair: public utility::pointer::ReferenceCount {
 public:
-	NonlocalPair( Size query_pos_i, Size query_pos_j, Candidate candidate_i, Candidate candidate_j,
-		Size candidate_i_rank, Size candidate_j_rank, utility::vector1<ContactOP> & contacts ) {
+	NonlocalPair( core::Size query_pos_i, core::Size query_pos_j, Candidate candidate_i, Candidate candidate_j,
+		core::Size candidate_i_rank, core::Size candidate_j_rank, utility::vector1<ContactOP> & contacts ) {
 		query_position_i_ = query_pos_i;
 		query_position_j_ = query_pos_j;
 		candidate_i_ = candidate_i;
@@ -76,19 +72,19 @@ public:
 		return candidate_j_;
 	}
 
-	Size get_candidate_i_rank() {
+	core::Size get_candidate_i_rank() {
 		return candidate_i_rank_;
 	}
 
-	Size get_candidate_j_rank() {
+	core::Size get_candidate_j_rank() {
 		return candidate_j_rank_;
 	}
 
-	Size get_query_pos_i() {
+	core::Size get_query_pos_i() {
 		return query_position_i_;
 	}
 
-	Size get_query_pos_j() {
+	core::Size get_query_pos_j() {
 		return query_position_j_;
 	}
 
@@ -96,9 +92,9 @@ public:
 		out << "pair: " << query_position_i_ << " " << query_position_j_  << " " <<
 			candidate_i_.first->get_residue(1)->resi() << " " << candidate_j_.first->get_residue(1)->resi() <<
 			" " << candidate_i_rank_ << " " << candidate_j_rank_;
-		std::map<ContactType, Size> contact_type_cnt;
-		std::map<ContactType, Size>::iterator iter;
-		for ( Size i=1; i<=contacts_.size(); ++i ) contact_type_cnt[contacts_[i]->type()]++;
+		std::map<ContactType, core::Size> contact_type_cnt;
+		std::map<ContactType, core::Size>::iterator iter;
+		for ( core::Size i=1; i<=contacts_.size(); ++i ) contact_type_cnt[contacts_[i]->type()]++;
 		for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ ) {
 			out << " " << contact_name(iter->first) << " " << iter->second;
 		}
@@ -110,12 +106,12 @@ public:
 	}
 
 private:
-	Size query_position_i_;
-	Size query_position_j_;
+	core::Size query_position_i_;
+	core::Size query_position_j_;
 	Candidate candidate_i_;
 	Candidate candidate_j_;
-	Size candidate_i_rank_;
-	Size candidate_j_rank_;
+	core::Size candidate_i_rank_;
+	core::Size candidate_j_rank_;
 	utility::vector1<ContactOP> contacts_;
 };
 

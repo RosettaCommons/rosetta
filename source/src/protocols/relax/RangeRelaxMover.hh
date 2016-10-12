@@ -47,14 +47,6 @@
 namespace protocols {
 namespace relax {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-using namespace core::scoring;
-using namespace core::kinematics;
-using namespace core::optimization;
-
 class RangeRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -128,10 +120,10 @@ public:
 	void set_nmoves( std::string nmoves );
 
 	/// @brief Use scorefunction
-	void set_scorefunction( ScoreFunctionOP sfxn );
+	void set_scorefunction( core::scoring::ScoreFunctionOP sfxn );
 
 	/// @brief Set native
-	void set_native( PoseOP pose );
+	void set_native( core::pose::PoseOP pose );
 
 private: // methods
 
@@ -155,22 +147,22 @@ private: // methods
 	void constrain_to_reference( Pose & pose, Pose & ref_pose );
 
 	/// @brief Repack in a sequence window
-	void repack_sequence_window( Pose & pose, MonteCarloOP mc );
+	void repack_sequence_window( Pose & pose, protocols::moves::MonteCarloOP mc );
 
 	/// @brief Initialize from commandline
 	utility::vector1< bool > get_window_repack_residues( Pose & pose, core::SSize center1, core::SSize center2, core::SSize halfrange );
 
 	/// @brief Repack in spherical range
-	void repack_spherical_range( Pose & pose, MonteCarloOP mc );
+	void repack_spherical_range( Pose & pose, protocols::moves::MonteCarloOP mc );
 
 	/// @brief Initialize from commandline
 	utility::vector1< bool > get_spherical_repack_residues( Pose & pose, core::Real inner_radius, core::Real outer_radius );
 
 	/// @brief Repack all residues again
-	void repack_all( Pose & pose, MonteCarloOP mc );
+	void repack_all( Pose & pose, protocols::moves::MonteCarloOP mc );
 
 	/// @brief Idealize pose
-	void idealize_pose( Pose & pose, MinimizerOptions minopts, AtomTreeMinimizer atm );
+	void idealize_pose( Pose & pose, core::optimization::MinimizerOptions minopts, core::optimization::AtomTreeMinimizer atm );
 
 	/// @brief Print score to cout
 	void print_score( Pose & pose );
@@ -178,28 +170,28 @@ private: // methods
 private: // data
 
 	/// @brief Native
-	PoseOP native_;
+	core::pose::PoseOP native_;
 
 	/// @brief Center residue number
 	core::Size center_resnumber_;
 
 	/// @brief Maximum allowed dihedral angle change for Small and ShearMover
-	Real angle_max_;
+	core::Real angle_max_;
 
 	/// @brief Number of moves Small and ShearMover can make
 	/// @details moves_ is a string and can take 'nres' as well as a number
 	///    nmoves_ is the actual number that is taken after conversion
 	std::string moves_;
-	Size nmoves_;
+	core::Size nmoves_;
 
 	/// @brief Movemap for Small and ShearMover
-	MoveMapOP movemap_;
+	core::kinematics::MoveMapOP movemap_;
 
 	/// @brief Scorefxn for scoring
-	ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 	/// @brief Scorefunction without constraints
-	ScoreFunctionOP sfxn_nocst_;
+	core::scoring::ScoreFunctionOP sfxn_nocst_;
 
 	/// @brief constraint filename
 	std::string cst_file_;

@@ -21,9 +21,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -35,20 +32,20 @@ class ProteinAtrRepChecker: public utility::pointer::ReferenceCount {
 public:
 
 	//Constructor
-	ProteinAtrRepChecker( pose::Pose const & pose,
-		utility::vector1< Size > const & moving_res_list );
+	ProteinAtrRepChecker( core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & moving_res_list );
 
 	~ProteinAtrRepChecker();
 
-	Real delta_atr_score() const{ return delta_atr_score_; }
-	Real delta_rep_score() const{ return delta_rep_score_; }
-	Real base_atr_score() const{ return base_atr_score_; }
-	Real base_rep_score() const{ return base_rep_score_; }
+	core::Real delta_atr_score() const{ return delta_atr_score_; }
+	core::Real delta_rep_score() const{ return delta_rep_score_; }
+	core::Real base_atr_score() const{ return base_atr_score_; }
+	core::Real base_rep_score() const{ return base_rep_score_; }
 
 public:
 
 	bool
-	check_screen( pose::Pose & current_pose_screen );
+	check_screen( core::pose::Pose & current_pose_screen );
 
 private:
 
@@ -60,13 +57,13 @@ private:
 
 private:
 
-	utility::vector1< Size > const moving_res_list_;
+	utility::vector1< core::Size > const moving_res_list_;
 
-	Real rep_cutoff_, atr_cutoff_;
-	Real base_atr_score_;
-	Real base_rep_score_;
-	Real delta_atr_score_;
-	Real delta_rep_score_;
+	core::Real rep_cutoff_, atr_cutoff_;
+	core::Real base_atr_score_;
+	core::Real base_rep_score_;
+	core::Real delta_atr_score_;
+	core::Real delta_rep_score_;
 
 	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 

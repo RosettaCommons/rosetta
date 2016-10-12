@@ -30,31 +30,23 @@
 namespace protocols {
 namespace ss_prediction {
 
-using std::string;
-using core::Real;
-using core::Size;
-using core::SSize;
-using utility::vector1;
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace utility::libsvm;
-
 class SS_predictor : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Reads in models for SS prediction etc.
-	SS_predictor(string type);
+	SS_predictor(std::string type);
 	~SS_predictor() override;
-	vector1<vector1 <Real> > predict_ss(string fasta);
+	utility::vector1< utility::vector1 <core::Real> > predict_ss(std::string fasta);
 
 private:
-	Svm_rosettaOP rd1_model;
-	Svm_rosettaOP rd2_model;
-	string ss_type;
-	void load_models(string rd1_model_fl, string rd2_model_fl);
-	string get_window_aa(string fasta,SSize position);
-	vector1 <Real> predict_pos_rd1(string window_aa);
-	vector1 <Real> predict_pos_rd2(vector1< vector1 <Real> > rd1_preds,SSize position,string fasta);
-	vector1< vector1<Real> > predict_rd1(string fasta);
-	vector1< vector1<Real> > predict_rd2(vector1<vector1<Real> > rd1_preds, string fasta);
+	utility::libsvm::Svm_rosettaOP rd1_model;
+	utility::libsvm::Svm_rosettaOP rd2_model;
+	std::string ss_type;
+	void load_models(std::string rd1_model_fl, std::string rd2_model_fl);
+	std::string get_window_aa(std::string fasta,core::SSize position);
+	utility::vector1 <core::Real> predict_pos_rd1(std::string window_aa);
+	utility::vector1 <core::Real> predict_pos_rd2(utility::vector1< utility::vector1 <core::Real> > rd1_preds, core::SSize position, std::string fasta);
+	utility::vector1< utility::vector1<core::Real> > predict_rd1(std::string fasta);
+	utility::vector1< utility::vector1<core::Real> > predict_rd2(utility::vector1< utility::vector1<core::Real> > rd1_preds, std::string fasta);
 	static const Size WINDOW_SIZE = 15;
 }; // class SS_predictor
 

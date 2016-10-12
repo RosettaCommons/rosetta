@@ -51,6 +51,7 @@ namespace libraries {
 
 using namespace core;
 using namespace ObjexxFCL;
+using namespace protocols::farna::base_pairs;
 
 using core::Size;
 using core::Real;

@@ -27,7 +27,7 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-PackScreener::PackScreener( pose::Pose & pose,
+PackScreener::PackScreener( core::pose::Pose & pose,
 	modeler::packer::StepWisePackerOP stepwise_packer ):
 	SampleApplier( pose ),
 	stepwise_packer_( stepwise_packer )

@@ -43,111 +43,111 @@ namespace modeler {
 
 typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
-Size
-make_cut_at_moving_suite( core::pose::Pose & pose, Size const & moving_suite );
+core::Size
+make_cut_at_moving_suite( core::pose::Pose & pose, core::Size const & moving_suite );
 
-Size
-make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, Size const & moving_suite );
+core::Size
+make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, core::Size const & moving_suite );
 
-Size
-find_jump_number_at_suite( core::kinematics::FoldTree const & fold_tree, Size const & moving_suite );
+core::Size
+find_jump_number_at_suite( core::kinematics::FoldTree const & fold_tree, core::Size const & moving_suite );
 
-Size
-look_for_unique_jump_to_moving_res( core::kinematics::FoldTree const & fold_tree, Size const & i );
+core::Size
+look_for_unique_jump_to_moving_res( core::kinematics::FoldTree const & fold_tree, core::Size const & i );
 
 bool
-is_cutpoint_closed( core::pose::Pose const & pose, Size const seq_num );
+is_cutpoint_closed( core::pose::Pose const & pose, core::Size const seq_num );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 get_cutpoint_closed( core::pose::Pose const & pose );
 
-utility::vector1< Size >
-merge_vectors( utility::vector1< Size > const & vec1,
-	utility::vector1< Size > const & vec2 );
+utility::vector1< core::Size >
+merge_vectors( utility::vector1< core::Size > const & vec1,
+	utility::vector1< core::Size > const & vec2 );
 
 void
-merge_in_other_pose_by_bond( core::pose::Pose & pose, core::pose::Pose const & pose2, Size const merge_res );
+merge_in_other_pose_by_bond( core::pose::Pose & pose, core::pose::Pose const & pose2, core::Size const merge_res );
 
 void
 merge_in_other_pose_by_jump( core::pose::Pose & pose, core::pose::Pose const & pose2,
-	Size const lower_merge_res, Size const upper_merge_res );
+	core::Size const lower_merge_res, core::Size const upper_merge_res );
 
 void
 merge_in_other_pose( core::pose::Pose & pose, core::pose::Pose const & pose2,
-	Size const lower_merge_res, Size const upper_merge_res,
+	core::Size const lower_merge_res, core::Size const upper_merge_res,
 	bool const connect_residues_by_bond );
 
-utility::vector1< Size >
-merge_two_poses_using_full_model_info( pose::Pose & pose,
+utility::vector1< core::Size >
+merge_two_poses_using_full_model_info( core::pose::Pose & pose,
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2,
-	Size const lower_merge_res,
-	Size const upper_merge_res,
+	core::Size const lower_merge_res,
+	core::Size const upper_merge_res,
 	bool const connect_residues_by_bond );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 merge_two_poses( core::pose::Pose & pose,
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2,
-	utility::vector1< Size > const & working_res1,
-	utility::vector1< Size > const & working_res2,
-	Size const lower_merge_res,
-	Size const upper_merge_res,
+	utility::vector1< core::Size > const & working_res1,
+	utility::vector1< core::Size > const & working_res2,
+	core::Size const lower_merge_res,
+	core::Size const upper_merge_res,
 	bool const connect_residues_by_bond,
 	bool const fix_first_pose = true );
 
 void
 slice( core::pose::Pose & sliced_out_pose,
 	core::pose::Pose const & pose,
-	utility::vector1< Size > const & slice_res );
+	utility::vector1< core::Size > const & slice_res );
 
 void
-slice_out_pose( pose::Pose & pose,
+slice_out_pose( core::pose::Pose & pose,
 	core::pose::Pose & sliced_out_pose,
-	utility::vector1< Size > const & residues_to_delete );
+	utility::vector1< core::Size > const & residues_to_delete );
 
-Size
-check_jump_to_previous_residue_in_chain( core::pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element );
+core::Size
+check_jump_to_previous_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element );
 
-Size
-check_jump_to_previous_residue_in_chain( core::pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element,
+core::Size
+check_jump_to_previous_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element,
 	core::pose::full_model_info::FullModelInfo const & full_model_info );
 
-Size
-check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element,
-	utility::vector1< Size > const & res_list,
-	utility::vector1< Size > const & chains_in_full_model );
+core::Size
+check_jump_to_previous_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element,
+	utility::vector1< core::Size > const & res_list,
+	utility::vector1< core::Size > const & chains_in_full_model );
 
-Size
-check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element );
+core::Size
+check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element );
 
-Size
-check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element,
+core::Size
+check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element,
 	core::pose::full_model_info::FullModelInfo const & full_model_info );
 
-Size
-check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, Size const i,
-	utility::vector1< Size > const & current_element,
-	utility::vector1< Size > const & res_list,
-	utility::vector1< Size > const & chains_in_full_model );
+core::Size
+check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, core::Size const i,
+	utility::vector1< core::Size > const & current_element,
+	utility::vector1< core::Size > const & res_list,
+	utility::vector1< core::Size > const & chains_in_full_model );
 
 void
-fix_up_residue_type_variants_at_strand_beginning( core::pose::Pose & pose, Size const res );
+fix_up_residue_type_variants_at_strand_beginning( core::pose::Pose & pose, core::Size const res );
 
 void
-fix_up_residue_type_variants_at_strand_end( core::pose::Pose & pose, Size const res );
+fix_up_residue_type_variants_at_strand_end( core::pose::Pose & pose, core::Size const res );
 
 void
 fix_up_residue_type_variants( core::pose::Pose & pose );
 
 void
 switch_focus_to_other_pose( core::pose::Pose & pose,
-	Size const & focus_pose_idx,
+	core::Size const & focus_pose_idx,
 	core::scoring::ScoreFunctionCOP scorefxn = 0 );
 
 bool
@@ -155,109 +155,109 @@ switch_focus_among_poses_randomly( core::pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP scorefxn = 0,
 	bool force_switch = false );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_chain_break_res( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );
 
 bool
 check_for_input_domain( core::pose::Pose const & pose,
-	utility::vector1< Size> const & partition_res );
+	utility::vector1< core::Size > const & partition_res );
 
 bool
-check_for_input_domain( pose::Pose const & pose );
+check_for_input_domain( core::pose::Pose const & pose );
 
 void make_variants_match(
 	core::pose::Pose & pose,
 	core::pose::Pose const & reference_pose,
-	Size const n,
+	core::Size const n,
 	core::chemical::VariantType const variant_type );
 
 bool
-definite_terminal_root( core::pose::Pose const & pose, Size const i );
+definite_terminal_root( core::pose::Pose const & pose, core::Size const i );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_cutpoints_closed( core::pose::Pose const & pose,
-	utility::vector1< Size > const & moving_partition_res );
+	utility::vector1< core::Size > const & moving_partition_res );
 
-utility::vector1< Size >
-figure_out_moving_cutpoints_closed_from_moving_res( core::pose::Pose const & pose, Size const moving_res );
+utility::vector1< core::Size >
+figure_out_moving_cutpoints_closed_from_moving_res( core::pose::Pose const & pose, core::Size const moving_res );
 
-utility::vector1< Size >
-figure_out_moving_cutpoints_closed_from_moving_res( core::pose::Pose const & pose, utility::vector1< Size > const & moving_res_list );
+utility::vector1< core::Size >
+figure_out_moving_cutpoints_closed_from_moving_res( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res_list );
 
 void
 figure_out_moving_chain_breaks( core::pose::Pose const & pose,
-	utility::vector1< Size > const & moving_partition_res,
-	utility::vector1< Size > & cutpoints_closed,
-	utility::vector1< Size > & five_prime_chain_breaks,
-	utility::vector1< Size > & three_prime_chain_breaks,
-	utility::vector1< Size > & chain_break_gap_sizes );
+	utility::vector1< core::Size > const & moving_partition_res,
+	utility::vector1< core::Size > & cutpoints_closed,
+	utility::vector1< core::Size > & five_prime_chain_breaks,
+	utility::vector1< core::Size > & three_prime_chain_breaks,
+	utility::vector1< core::Size > & chain_break_gap_sizes );
 
-Size
-figure_out_reference_res_for_suite( core::pose::Pose const & pose, Size const moving_res );
-
-utility::vector1< bool >
-get_partition_definition( core::pose::Pose const & pose, Size const & moving_suite );
+core::Size
+figure_out_reference_res_for_suite( core::pose::Pose const & pose, core::Size const moving_res );
 
 utility::vector1< bool >
-get_partition_definition_by_jump( core::pose::Pose const & pose, Size const & jump_nr /*jump_number*/ );
+get_partition_definition( core::pose::Pose const & pose, core::Size const & moving_suite );
+
+utility::vector1< bool >
+get_partition_definition_by_jump( core::pose::Pose const & pose, core::Size const & jump_nr /*jump_number*/ );
 
 void
 reroot_based_on_full_model_info( core::pose::Pose & pose );
 
 void
 reroot_based_on_full_model_info( core::pose::Pose & pose,
-	utility::vector1< Size > const & root_partition_res );
+	utility::vector1< core::Size > const & root_partition_res );
 void
 reroot( core::pose::Pose & pose,
-	utility::vector1< Size > const & root_partition_res /* should not be empty */,
-	utility::vector1< Size > const & res_list,
-	utility::vector1< Size > const & preferred_root_res /* can be empty */,
-	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
-	utility::vector1< Size > const & cutpoint_open_in_full_model,
-	utility::vector1< Size > const & working_res );
+	utility::vector1< core::Size > const & root_partition_res /* should not be empty */,
+	utility::vector1< core::Size > const & res_list,
+	utility::vector1< core::Size > const & preferred_root_res /* can be empty */,
+	utility::vector1< core::Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< core::Size > const & cutpoint_open_in_full_model,
+	utility::vector1< core::Size > const & working_res );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_partition_res_for_suite( core::pose::Pose const & pose,
-	Size const moving_res,
-	Size const reference_res );
+	core::Size const moving_res,
+	core::Size const reference_res );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_partition_res_for_jump( core::pose::Pose const & pose,
-	Size const jump_nr );
+	core::Size const jump_nr );
 
 void
-figure_out_root_and_moving_partition_res( core::pose::Pose const & pose, Size const moving_res,
-	utility::vector1< Size > & root_partition_res,
-	utility::vector1< Size > & moving_partition_res );
+figure_out_root_and_moving_partition_res( core::pose::Pose const & pose, core::Size const moving_res,
+	utility::vector1< core::Size > & root_partition_res,
+	utility::vector1< core::Size > & moving_partition_res );
 
-utility::vector1< Size >
-figure_out_moving_partition_res( pose::Pose const & pose,
-	Size const moving_res );
-
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_partition_res( core::pose::Pose const & pose,
-	utility::vector1< Size > const & moving_res_list );
+	core::Size const moving_res );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
+figure_out_moving_partition_res( core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & moving_res_list );
+
+utility::vector1< core::Size >
 figure_out_root_partition_res( core::pose::Pose const & pose,
-	utility::vector1< Size > const & moving_res_list );
+	utility::vector1< core::Size > const & moving_res_list );
 
 bool
-revise_root_and_moving_res( core::pose::Pose & pose, Size & moving_res /* note that this can change too*/ );
+revise_root_and_moving_res( core::pose::Pose & pose, core::Size & moving_res /* note that this can change too*/ );
 
 bool
 revise_root_and_moving_res_list( core::pose::Pose & pose,
-	utility::vector1< Size > & moving_res_list /* note that this can change too*/ );
+	utility::vector1< core::Size > & moving_res_list /* note that this can change too*/ );
 
-Size
+core::Size
 find_downstream_connection_res( core::pose::Pose const & pose,
-	utility::vector1< Size > const & moving_partition_res );
+	utility::vector1< core::Size > const & moving_partition_res );
 
-Size
-split_pose( core::pose::Pose & pose, Size const moving_res, Size const reference_res );
+core::Size
+split_pose( core::pose::Pose & pose, core::Size const moving_res, core::Size const reference_res );
 
 void
-split_pose( core::pose::Pose & pose, utility::vector1< Size > const & moving_res_list );
+split_pose( core::pose::Pose & pose, utility::vector1< core::Size > const & moving_res_list );
 
 void
 fix_up_jump_atoms( core::pose::Pose & pose );
@@ -266,14 +266,14 @@ void
 fix_up_jump_atoms_and_residue_type_variants( core::pose::Pose & pose_to_fix );
 
 void
-fix_protein_jump_atom( core::pose::Pose & pose, Size const res, std::string const & atom_name );
+fix_protein_jump_atom( core::pose::Pose & pose, core::Size const res, std::string const & atom_name );
 
 void
 add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, core::pose::Pose const & pose, std::string const & pose_tag );
 
 // deprecate soon -- after protein/RNA unification
 bool
-is_protein( core::pose::Pose const & pose, utility::vector1< Size > const & moving_res_list );
+is_protein( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res_list );
 
 utility::vector1< core::Size >
 get_domain_boundary_suites( core::pose::Pose const & pose );
@@ -284,25 +284,25 @@ get_domain_boundary_res( core::pose::Pose const & pose );
 utility::vector1< core::Size >
 get_moving_res_including_domain_boundaries( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res_list );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 get_all_working_moving_res( working_parameters::StepWiseWorkingParametersCOP working_parameters);
 
 void
 virtualize_side_chains( core::pose::Pose & pose );
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 get_all_residues( core::pose::Pose const & pose );
 
-Size
-get_unique_connection_res( core::pose::Pose const & pose, utility::vector1< Size > const & moving_partition_res );
+core::Size
+get_unique_connection_res( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_partition_res );
 
 bool
-stepwise_addable_pose_residue( Size const n /*in pose numbering*/,
-	pose::Pose const & pose );
+stepwise_addable_pose_residue( core::Size const n /*in pose numbering*/,
+	core::pose::Pose const & pose );
 
 bool
-stepwise_addable_residue( Size const n /*in full model numbering*/,
-	std::map< Size, std::string > const & non_standard_residue_map );
+stepwise_addable_residue( core::Size const n /*in full model numbering*/,
+	std::map< core::Size, std::string > const & non_standard_residue_map );
 
 } //modeler
 } //stepwise

@@ -64,14 +64,6 @@
 #include <numeric/xyz.serialization.hh>
 #endif // SERIALIZATION
 
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
-
 namespace core {
 namespace scoring {
 namespace packstat {
@@ -84,7 +76,10 @@ typedef std::pair< numeric::xyzMatrix<PackstatReal>, numeric::xyzMatrix<Packstat
 using utility::vector1;
 using core::Real;
 using core::Size;
+using core::pose::Pose;
 using numeric::xyzVector;
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 
 namespace old {
 

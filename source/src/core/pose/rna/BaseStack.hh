@@ -21,9 +21,6 @@
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
@@ -54,18 +51,18 @@ public:
 	void set_res2( core::Size const & setting ){ res2_ = setting; }
 	core::Size res2() const { return res2_; }
 
-	void set_orientation( BaseDoubletOrientation const & setting ){ orientation_ = setting; }
-	BaseDoubletOrientation orientation() const { return orientation_; }
+	void set_orientation( core::chemical::rna::BaseDoubletOrientation const & setting ){ orientation_ = setting; }
+	core::chemical::rna::BaseDoubletOrientation orientation() const { return orientation_; }
 
-	void set_which_side( BaseStackWhichSide const & setting ){ which_side_ = setting; }
-	BaseStackWhichSide which_side() const { return which_side_; }
+	void set_which_side( core::chemical::rna::BaseStackWhichSide const & setting ){ which_side_ = setting; }
+	core::chemical::rna::BaseStackWhichSide which_side() const { return which_side_; }
 
 private:
 
 	Size res1_;
 	Size res2_;
-	BaseDoubletOrientation orientation_; // 1 = antiparallel; 2 = parallel
-	BaseStackWhichSide which_side_;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
+	core::chemical::rna::BaseDoubletOrientation orientation_; // 1 = antiparallel; 2 = parallel
+	core::chemical::rna::BaseStackWhichSide which_side_;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
 
 #ifdef    SERIALIZATION
 public:

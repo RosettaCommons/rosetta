@@ -20,9 +20,6 @@
 namespace protocols {
 namespace ddg {
 
-using namespace core;
-using namespace scoring;
-
 class ddGMover;
 
 typedef utility::pointer::shared_ptr< ddGMover > ddGMoverOP;

@@ -21,6 +21,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <core/types.hh>
+
 #include <string>
 #include <map>
 
@@ -36,29 +38,29 @@ public:
 
 	~ContactCounts() override = default;
 
-	void iterate_neighbor( std::pair<Size,Size> & query_pair, std::pair<Size,Size> & neighbor_pair ) {
+	void iterate_neighbor( std::pair<core::Size,core::Size> & query_pair, std::pair<core::Size,core::Size> & neighbor_pair ) {
 		neighbor_counts_[query_pair][neighbor_pair]++;
 	}
 
-	void iterate( std::pair<Size,Size> & query_pair ) {
+	void iterate( std::pair<core::Size,core::Size> & query_pair ) {
 		counts_[query_pair]++;
 	}
 
-	std::map<std::pair<Size,Size>, Size> & counts() {
+	std::map<std::pair<core::Size,core::Size>, core::Size> & counts() {
 		return counts_;
 	}
 
-	bool neighbor_counts_exist( std::pair<Size,Size> & query_pair ) {
+	bool neighbor_counts_exist( std::pair<core::Size,core::Size> & query_pair ) {
 		return (neighbor_counts_.find( query_pair ) != neighbor_counts_.end()) ? true : false;
 	}
 
-	std::map<std::pair<Size,Size>, Size> & neighbor_counts( std::pair<Size,Size> & query_pair ) {
+	std::map<std::pair<core::Size,core::Size>, core::Size> & neighbor_counts( std::pair<core::Size,core::Size> & query_pair ) {
 		return neighbor_counts_[query_pair];
 	}
 
 private:
-	std::map<std::pair<Size,Size>, Size> counts_;
-	std::map<std::pair<Size,Size>, std::map<std::pair<Size,Size>, Size> > neighbor_counts_;
+	std::map<std::pair<core::Size,core::Size>, core::Size> counts_;
+	std::map<std::pair<core::Size,core::Size>, std::map<std::pair<core::Size,core::Size>, core::Size> > neighbor_counts_;
 };
 
 

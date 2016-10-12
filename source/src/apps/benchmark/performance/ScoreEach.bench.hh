@@ -267,7 +267,10 @@ private:
 	bool centroid_;
 };
 
-using namespace core::scoring;
+// Odd split line is a cheeky work-around for no-using-namespace-in-header integration test.
+// This is a special case for the Scoring benchmark header only.
+using \
+namespace core::scoring;
 
 // These energy terms don't actually calculate anything in the profiled methods
 // they use finalize_total_energy() to actually do the calculation

@@ -29,14 +29,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <ctime>
 
-/*
-using namespace core;
-
-Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
-by our coding convention due to problems it create on modern compilers and because of the name clashing.
-For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
-*/
-
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -94,12 +86,12 @@ private:
 	void do_main_loop( core::pose::Pose & pose );
 
 	void
-	output_movie( core::pose::Pose const & pose, Size const k, std::string const & tag, std::string const & movie_file );
+	output_movie( core::pose::Pose const & pose, core::Size const k, std::string const & tag, std::string const & movie_file );
 
-	Real
-	display_progress( core::pose::Pose & pose, Size const cycle_num );
+	core::Real
+	display_progress( core::pose::Pose & pose, core::Size const cycle_num );
 
-	Real show_scores( core::pose::Pose & pose, std::string const & tag );
+	core::Real show_scores( core::pose::Pose & pose, std::string const & tag );
 
 	void
 	anneal_missing( protocols::moves::MonteCarloOP monte_carlo );

@@ -39,11 +39,6 @@
 #include <string>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::stepwise::modeler;
-using namespace protocols::stepwise::modeler::protein;
-
-
 namespace protocols {
 namespace stepwise {
 namespace legacy {
@@ -58,7 +53,7 @@ public:
 	//constructor!
 	StepWiseProteinPoseSetup( utility::vector1< core::Size > const & moving_res_list,
 		std::string const & desired_sequence,
-		utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
+		utility::vector1< protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
 		utility::vector1< core::Size > const & cutpoint_open,
 		utility::vector1< core::Size > const & cutpoint_closed );
 
@@ -143,7 +138,7 @@ public:
 private:
 
 	void
-	Import_pose( core::pose::Pose & import_pose, InputStreamWithResidueInfoOP & stream );
+	Import_pose( core::pose::Pose & import_pose, protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP & stream );
 
 
 	void
@@ -286,7 +281,7 @@ private:
 	std::string const desired_sequence_;
 	core::chemical::ResidueTypeSetCAP rsd_set_;
 
-	utility::vector1< InputStreamWithResidueInfoOP > input_streams_with_residue_info_;
+	utility::vector1< protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP > input_streams_with_residue_info_;
 
 	utility::vector1< Size > const cutpoint_open_;
 	utility::vector1< Size > const cutpoint_closed_;

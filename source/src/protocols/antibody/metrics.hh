@@ -67,7 +67,7 @@ struct ParatopeMetric {
 		paratope_light(0)
 	{}
 
-	vector1< T > cdr;
+	utility::vector1< T > cdr;
 	T paratope;
 	T paratope_heavy;
 	T paratope_light;

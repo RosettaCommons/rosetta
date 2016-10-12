@@ -28,9 +28,9 @@ class SugarInstantiator: public SampleApplier {
 public:
 
 	//constructor
-	SugarInstantiator( pose::Pose & screening_pose,
-		Size const moving_res,
-		Distance const o2prime_instantiation_distance_cutoff = 6.0 );
+	SugarInstantiator( core::pose::Pose & screening_pose,
+		core::Size const moving_res,
+		core::Distance const o2prime_instantiation_distance_cutoff = 6.0 );
 
 	//destructor
 	~SugarInstantiator();
@@ -55,13 +55,13 @@ public:
 
 private:
 
-	bool check_moving_sugar( pose::Pose & pose, Size const moving_res );
+	bool check_moving_sugar( core::pose::Pose & pose, core::Size const moving_res );
 
 private:
 
-	pose::Pose & screening_pose_;
-	Size const moving_res_;
-	Distance const o2prime_instantiation_distance_cutoff_;
+	core::pose::Pose & screening_pose_;
+	core::Size const moving_res_;
+	core::Distance const o2prime_instantiation_distance_cutoff_;
 
 	bool instantiate_sugar_;
 };

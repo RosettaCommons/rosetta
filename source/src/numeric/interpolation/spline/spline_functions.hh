@@ -24,8 +24,6 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
-using numeric::Real;
-
 
 utility::vector1<Real>
 spline_second_derivative(

@@ -64,13 +64,13 @@ void ScoreEValuator::clean_up() {
 
 bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	Real totalScore = 0;
-	Real mean = 0;
-	Real stdev = 0;
+	core::Real totalScore = 0;
+	core::Real mean = 0;
+	core::Real stdev = 0;
 
-	utility::vector1<Size> columnsQ;
-	utility::vector1<Size> columnsV;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	utility::vector1<core::Size> columnsQ;
+	utility::vector1<core::Size> columnsV;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 		assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
@@ -81,18 +81,18 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 		columnsV.push_back(f->get_first_index_in_vall() + i - 1);
 	}
 
-	for ( Size i_rand = 1; i_rand <= max_rand_; ++i_rand ) {
+	for ( core::Size i_rand = 1; i_rand <= max_rand_; ++i_rand ) {
 		numeric::random::random_permutation(columnsQ.begin(), columnsQ.end(), numeric::random::rg());
 		numeric::random::random_permutation(columnsV.begin(), columnsV.end(), numeric::random::rg());
-		Real s = 0;
-		for ( Size i = 1; i <= columnsQ.size(); i++ ) {
+		core::Real s = 0;
+		for ( core::Size i = 1; i <= columnsQ.size(); i++ ) {
 			s = scores_[columnsQ[i]][columnsV[i]];
 			mean += s;
 			stdev += s * s;
 		}
 	}
-	mean /= ((Real) max_rand_);
-	stdev /= ((Real) max_rand_);
+	mean /= ((core::Real) max_rand_);
+	stdev /= ((core::Real) max_rand_);
 	stdev = sqrt(stdev - mean * mean);
 
 	totalScore = (totalScore - mean) / stdev;
@@ -104,14 +104,14 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 	return true;
 }
 
-FragmentScoringMethodOP MakeScoreEValuator::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker) {
+FragmentScoringMethodOP MakeScoreEValuator::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker) {
 
 	if ( option[frags::scoring::profile_score].user() ) {
 		core::sequence::ScoringSchemeFactory ssf;
 		core::sequence::ScoringSchemeOP ss(ssf.get_scoring_scheme(
 			option[frags::scoring::profile_score]()));
-		Size len = picker->get_vall()->get_largest_chunk_size();
+		core::Size len = picker->get_vall()->get_largest_chunk_size();
 		trProfScore << "Profile scoring method is: "
 			<< option[frags::scoring::profile_score]() << std::endl;
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ScoreEValuator(priority,

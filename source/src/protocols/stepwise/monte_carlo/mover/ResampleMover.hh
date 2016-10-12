@@ -26,9 +26,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -49,19 +46,19 @@ public:
 	using moves::Mover::apply;
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( pose::Pose & pose_to_visualize );
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
 	bool
-	apply( pose::Pose & pose,
+	apply( core::pose::Pose & pose,
 		std::string & move_type );
 
 	bool
-	apply( pose::Pose & pose,
+	apply( core::pose::Pose & pose,
 		StepWiseMove const & swa_move );
 
 	bool
-	apply( pose::Pose & pose,
+	apply( core::pose::Pose & pose,
 		StepWiseMove const & swa_move,
 		std::string & move_type );
 
@@ -72,10 +69,10 @@ public:
 	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
 
 	Size
-	get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
+	get_remodel_res( StepWiseMove const & swa_move, core::pose::Pose const & pose ) const;
 
 	void
-	slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const;
+	slide_jump_randomly( core::pose::Pose & pose, core::Size & remodel_res ) const;
 
 private:
 

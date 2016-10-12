@@ -52,20 +52,20 @@ public:
 
 	/// @brief Vall reader
 	/// THe defaults should ensure that the file is fully read if startline and endline ar not specified. endline = 0 means read to the end.
-	Size vallChunksFromLibrary(std::string const & filename, Size startline = 1, Size endline = 0 );
+	core::Size vallChunksFromLibrary(std::string const & filename, core::Size startline = 1, core::Size endline = 0 );
 
-	Size vallChunksFromLibraries( utility::vector1< std::string > const & fns );
+	core::Size vallChunksFromLibraries( utility::vector1< std::string > const & fns );
 
 	/// @brief Runs through the Vall and stores number of lines
-	Size vallNumLines(std::string const & filename);
+	core::Size vallNumLines(std::string const & filename);
 
 	/// @brief says how many chunks do we have
-	inline Size size() {
+	inline core::Size size() {
 		return chunks_.size();
 	}
 
 	/// @brief returns a certain chunk (starts from 1)
-	inline VallChunkOP at(Size index) {
+	inline VallChunkOP at(core::Size index) {
 		return chunks_.at(index);
 	}
 
@@ -76,34 +76,34 @@ public:
 
 	/// @brief says what is the length of the largest chunk known to this
 	/// provider
-	inline Size get_largest_chunk_size() {
+	inline core::Size get_largest_chunk_size() {
 		return largest_chunk_size_;
 	}
 
-	inline Size get_vall_count() {
+	inline core::Size get_vall_count() {
 		return vall_keys_.size();
 	}
 
-	inline std::string get_vall_by_key(Size index) {
+	inline std::string get_vall_by_key(core::Size index) {
 		return vall_keys_.at(index);
 	}
 
-	inline Size get_vall_start_line_by_key(Size index) {
+	inline core::Size get_vall_start_line_by_key(core::Size index) {
 		return vall_start_line_.at(index);
 	}
 
-	inline Size get_vall_end_line_by_key(Size index) {
+	inline core::Size get_vall_end_line_by_key(core::Size index) {
 		return vall_end_line_.at(index);
 	}
 
-	inline Size get_vall_last_residue_key_by_key(Size index) {
+	inline core::Size get_vall_last_residue_key_by_key(core::Size index) {
 		return vall_last_residue_key_.at(index);
 	}
 
 	/// @brief tries to find a chunk defined by PDB id, chain id and a residue
 	/// sequence id @details If this VallProvider does not contain a desired
 	/// chunk, 0 is returned.
-	VallChunkOP find_chunk(std::string, char, Size);
+	VallChunkOP find_chunk(std::string, char, core::Size);
 
 	/// @brief cache a sequence profile for a given chunk
 	core::sequence::SequenceProfileOP cache_profile(VallChunkOP source_chunk);
@@ -114,10 +114,10 @@ public:
 private:
 	utility::vector1<VallChunkOP> chunks_;
 	utility::vector1<std::string> vall_keys_;
-	utility::vector1<Size> vall_start_line_;
-	utility::vector1<Size> vall_end_line_;
-	utility::vector1<Size> vall_last_residue_key_;
-	Size largest_chunk_size_;
+	utility::vector1<core::Size> vall_start_line_;
+	utility::vector1<core::Size> vall_end_line_;
+	utility::vector1<core::Size> vall_last_residue_key_;
+	core::Size largest_chunk_size_;
 	std::string cached_profile_id_;
 	core::sequence::SequenceProfileOP cached_profile_;
 	core::pose::PoseOP cached_pose_;

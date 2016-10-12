@@ -39,8 +39,8 @@ typedef utility::pointer::shared_ptr< ProfileScoreL1 const > ProfileScoreL1COP;
 class ProfileScoreL1: public CachingScoringMethod {
 public:
 
-	ProfileScoreL1(Size, Real , bool,
-		sequence::SequenceProfileOP, utility::vector1<Size> &,Size);
+	ProfileScoreL1(core::Size, core::Real , bool,
+		core::sequence::SequenceProfileOP, utility::vector1<core::Size> &,core::Size);
 	~ProfileScoreL1();
 
 	void do_caching_simple(VallChunkOP);
@@ -55,7 +55,7 @@ protected:
 	utility::vector1< Matrix > cache_;
 
 private:
-	sequence::SequenceProfileOP query_profile_;
+	core::sequence::SequenceProfileOP query_profile_;
 	std::string cached_scores_id_;
 	void clear();
 };
@@ -67,7 +67,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreL1") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

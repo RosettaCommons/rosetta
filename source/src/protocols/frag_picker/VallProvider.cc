@@ -56,9 +56,9 @@ using namespace core;
 
 VallProvider::~VallProvider() = default;
 
-VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, Size residue_id) {
+VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, core::Size residue_id) {
 
-	for ( Size i = 1; i <= chunks_.size(); ++i ) {
+	for ( core::Size i = 1; i <= chunks_.size(); ++i ) {
 		VallChunkOP c = chunks_[i];
 		if ( c->get_pdb_id().compare(pdb_id) != 0 ) {
 			continue;
@@ -66,7 +66,7 @@ VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, Size res
 		if ( c->get_chain_id() != chain_id ) {
 			continue;
 		}
-		for ( Size j = 1; j < c->size(); ++j ) {
+		for ( core::Size j = 1; j < c->size(); ++j ) {
 			if ( c->at(j)->resi() == residue_id ) {
 				return c;
 			}
@@ -92,7 +92,7 @@ core::pose::PoseOP VallProvider::cache_pose(VallChunkOP source_chunk) {
 		<< cached_pose_id_ << "<  (" << key.compare(cached_pose_id_)
 		<< ")... ";
 
-	for ( Size i = 1; i <= source_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= source_chunk->size(); ++i ) {
 		VallResidueOP r = source_chunk->at(i);
 		cached_pose_->set_phi(i, r->phi());
 		cached_pose_->set_psi(i, r->psi());
@@ -120,7 +120,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 		<< key.compare(cached_pose_id_) << ")... ";
 
 	utility::vector1<utility::vector1<core::Real> > prof;
-	for ( Size i = 1; i <= source_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= source_chunk->size(); ++i ) {
 		prof.push_back(source_chunk->at(i)->profile());
 	}
 	cached_profile_id_.clear();
@@ -138,7 +138,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 	return cached_profile_;
 }
 
-Size VallProvider::vallChunksFromLibraries(utility::vector1< std::string > const & fns) {
+core::Size VallProvider::vallChunksFromLibraries(utility::vector1< std::string > const & fns) {
 
 	using std::string;
 	using utility::vector1;
@@ -149,8 +149,8 @@ Size VallProvider::vallChunksFromLibraries(utility::vector1< std::string > const
 
 	return 0;
 }
-Size VallProvider::vallNumLines(std::string const & filename) {
-	Size num_lines;
+core::Size VallProvider::vallNumLines(std::string const & filename) {
+	core::Size num_lines;
 	utility::io::izstream stream(filename);
 	if ( !stream ) {
 		utility_exit_with_message( "can't open file: " + filename );
@@ -167,7 +167,7 @@ Size VallProvider::vallNumLines(std::string const & filename) {
 	return num_lines;
 }
 
-Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Size startline, core::Size endline) {
+core::Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Size startline, core::Size endline) {
 
 	TR.Info << "vallChunksFromLibrary" << std::endl;
 
@@ -180,14 +180,14 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	vall_keys_.push_back(filename);
 
 	// statistics
-	Size n_lines = 0;
+	core::Size n_lines = 0;
 
 	TR.Info << "Reading Vall library from " << filename << " ... startline: " << startline << "  endline: " << endline << std::endl;
 
 	time_t time_start = time(nullptr);
 
 	// get last residue key
-	Size last_key = 0;
+	core::Size last_key = 0;
 	if ( chunks_.size() > 0 ) {
 		VallChunkOP last_chunk = chunks_[ chunks_.size() ];
 		last_key = last_chunk->at( last_chunk->size() )->key();
@@ -195,7 +195,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	vall_last_residue_key_.push_back(last_key);
 
 	std::string prior_id = "";
-	Size prior_resi = 0;
+	core::Size prior_resi = 0;
 	VallChunkOP current_section( new VallChunk(get_self_weak_ptr()) );
 	current_section->vall_key(vall_keys_.size());
 
@@ -234,7 +234,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	}
 
 	// parse Vall from file
-	Size end_line = 0;
+	core::Size end_line = 0;
 	while ( getline(stream, line) ) {
 		if ( line[0] == '#' ) continue;
 		++n_lines;
@@ -262,7 +262,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 		if ( (current_residue->resi() != prior_resi + 1)
 				|| (current_residue->id() != prior_id) ) {
 			push_back(current_section);
-			Size t = current_section->size();
+			core::Size t = current_section->size();
 			if ( t > largest_chunk_size_ ) {
 				largest_chunk_size_ = t;
 			}
@@ -291,7 +291,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	TR.Debug << "Created a new chunk for : " << current_section->get_pdb_id()
 		<< " having " << current_section->size() << " residues "
 		<< " at index " << size() << std::endl;
-	Size t = current_section->size();
+	core::Size t = current_section->size();
 	if ( t > largest_chunk_size_ ) largest_chunk_size_ = t;
 
 	time_t time_end = time(nullptr);
@@ -309,7 +309,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	TR.Info << "Largest chunk: " << largest_chunk_size_ << " aa" << std::endl;
 
 	// create cached pose
-	for ( Size i = 1; i <= largest_chunk_size_; i++ ) poly_A_seq_ += "A";
+	for ( core::Size i = 1; i <= largest_chunk_size_; i++ ) poly_A_seq_ += "A";
 	cached_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 	core::pose::make_pose_from_sequence(*cached_pose_, poly_A_seq_,
 		*(chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")));

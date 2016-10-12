@@ -34,7 +34,9 @@ static basic::Tracer TR( "protocols.farna.movers.RNA_JumpMover" );
 
 using namespace core;
 using namespace core::pose::rna;
+using namespace core::chemical::rna;
 using namespace ObjexxFCL::format;
+using namespace protocols::farna::libraries;
 
 namespace protocols {
 namespace farna {

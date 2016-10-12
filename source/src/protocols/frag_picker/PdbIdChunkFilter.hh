@@ -19,6 +19,7 @@
 #include <protocols/frag_picker/VallChunkFilter.hh>
 #include <protocols/frag_picker/PdbIdChunkFilter.fwd.hh>
 
+#include <core/types.hh>
 
 #include <map>
 
@@ -49,7 +50,7 @@ public:
 	/// @brief Adds a bunch of pdb ids to the filter
 	void add_pdb_ids(utility::vector1<std::string> list_of_pdb_ids) {
 
-		for ( Size i = 1; i <= list_of_pdb_ids.size(); i++ ) {
+		for ( core::Size i = 1; i <= list_of_pdb_ids.size(); i++ ) {
 			pdb_hash_[list_of_pdb_ids[i]] = true;
 			std::string & pdb_ids = list_of_pdb_ids[i];
 			if ( pdb_ids.size() > 4 ) {

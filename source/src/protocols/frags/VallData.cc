@@ -42,6 +42,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.frags.VallData" );
 namespace protocols {
 namespace frags {
 
+using core::Size;
+using core::Real;
+
 ///////////////////////////////////////////////////////////////////////////////
 ///\brief read from vall database file "filename"
 ///

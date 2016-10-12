@@ -27,12 +27,8 @@
 namespace protocols {
 namespace ncbb {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::optimization;
-
 /// @brief class for fitting a length of secondary structure keeping the same dihedrals
-class SecStructMinimizeMultiFunc : public Multifunc
+class SecStructMinimizeMultiFunc : public core::optimization::Multifunc
 {
 public: // Creation
 
@@ -55,29 +51,29 @@ public: // Methods
 	/// @brief Calculate function value (rms squared)
 	///
 
-	Real
-	operator ()( Multivec const & vars ) const override;
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	/// @brief Calculate function value derivatives
 	///
 
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	/// @brief give short set of torsions from full dofs
-	Multivec
-	dofs_to_vars( Multivec const & dofs ) const;
+	core::optimization::Multivec
+	dofs_to_vars( core::optimization::Multivec const & dofs ) const;
 
 	/// @brief give full dofs from short set of torsions
-	Multivec
-	vars_to_dofs( Multivec const & vars ) const;
+	core::optimization::Multivec
+	vars_to_dofs( core::optimization::Multivec const & vars ) const;
 
 
 	/// @brief Error state reached -- derivative does not match gradient
 	///
 
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const override;
+	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const override;
 
 private:
 
@@ -87,17 +83,17 @@ private:
 
 	void get_dofs_for_pose0( );
 	void get_dofs_map( );
-	Real dofs_for_pose0( Size const i_dof ) const { return dofs_for_pose0_[i_dof]; }
-	Multivec
-	dEddofs_to_dEdvars( Multivec const & dEdtors ) const;
+	core::Real dofs_for_pose0( core::Size const i_dof ) const { return dofs_for_pose0_[i_dof]; }
+	core::optimization::Multivec
+	dEddofs_to_dEdvars( core::optimization::Multivec const & dEdtors ) const;
 
 	// Map between BB torsionID <-> min_map DOF_ID
-	// Ah! and I need a map to a vector of Size for bb to dof...
-	std::map< Size, utility::vector1< Size > > map_BB_to_DOF_;
-	std::map< Size, Size > map_DOF_to_BB_;
+	// Ah! and I need a map to a vector of core::Size for bb to dof...
+	std::map< core::Size, utility::vector1< core::Size > > map_BB_to_DOF_;
+	std::map< core::Size, core::Size > map_DOF_to_BB_;
 
 	void
-	setup_minimization_graph( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
+	setup_minimization_graph( core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, core::optimization::MinimizerMap const & min_map ) const;
 
 	bool uniq_refers_to_beta( char const uniq ) const;
 
@@ -108,16 +104,16 @@ private:
 	core::optimization::MinimizerMap & min_map_;
 
 	// Reference pose during minimization( set as initial structure )
-	pose::Pose & pose0_;
-	Multivec dofs_for_pose0_;
+	core::pose::Pose & pose0_;
+	core::optimization::Multivec dofs_for_pose0_;
 
 	std::string alpha_beta_pattern_;
 
 	/// @brief The pattern at which dihedrals are applied
 	///
 	std::string dihedral_pattern_;
-	std::map< Size, utility::vector1< core::id::TorsionID > > vars_index_to_torsion_id_;
-	Size nvar_;
+	std::map< core::Size, utility::vector1< core::id::TorsionID > > vars_index_to_torsion_id_;
+	core::Size nvar_;
 
 
 }; // SecStructMinimizeMultiFunc

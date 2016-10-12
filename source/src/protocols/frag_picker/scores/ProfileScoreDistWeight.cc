@@ -55,29 +55,29 @@ void ProfileScoreDistWeight::do_caching(VallChunkOP chunk) {
 		return;
 	}
 	cached_scores_id_ = tmp;
-	//Size size_q = query_profile_->length();
+	//core::Size size_q = query_profile_->length();
 
 	trProfScoreDistWeight.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
 	PROF_START( basic::FRAGMENTPICKING_PROFILE_CAHING );
-	//for (Size i = 1; i <= size_q; ++i) {
+	//for (core::Size i = 1; i <= size_q; ++i) {
 	//std::cout << "A " << query_sequence_ << " " << query_sequence_.length() << std::endl;
-	for ( Size i = 0; i < query_sequence_.length(); ++i ) {
+	for ( core::Size i = 0; i < query_sequence_.length(); ++i ) {
 		//std::cout << "B" << chunk->size() << std::endl;
-		//utility::vector1<Real> query_prof_row = query_profile_->prof_row(i);
-		Size seqpos_res_id(aa_order_map_.find(query_sequence_[i])->second);
+		//utility::vector1<core::Real> query_prof_row = query_profile_->prof_row(i);
+		core::Size seqpos_res_id(aa_order_map_.find(query_sequence_[i])->second);
 
 
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			//std::cout << "C" << chunk->size() << std::endl;
 
-			//utility::vector1<Real> tmplt_prof_row = chunk->at(j)->profile();
-			Real score(0.0);
+			//utility::vector1<core::Real> tmplt_prof_row = chunk->at(j)->profile();
+			core::Real score(0.0);
 
-			Size tmplt_res_id (aa_order_map_.find(chunk->at(j)->aa())->second);
+			core::Size tmplt_res_id (aa_order_map_.find(chunk->at(j)->aa())->second);
 
-			for ( Size s = 1; s <= 3; s++ ) {
-				Real ss_weight(0.0);
+			for ( core::Size s = 1; s <= 3; s++ ) {
+				core::Real ss_weight(0.0);
 				if ( s == 1 ) {
 					ss_weight = query_ss_->helix_fraction(i+1);
 				}
@@ -88,14 +88,14 @@ void ProfileScoreDistWeight::do_caching(VallChunkOP chunk) {
 					ss_weight = query_ss_->loop_fraction(i+1);
 				}
 
-				//for (Size v = 1; v <= 20; v++) {
-				// Real distance_weight(0.0);
+				//for (core::Size v = 1; v <= 20; v++) {
+				// core::Real distance_weight(0.0);
 				//
 				// distance_weight = distance_weights_[s][seqpos_res_id][v];
 				// score += tmplt_prof_row[v]*ss_weight*distance_weight;
 				//}
 
-				Real distance_weight(0.0);
+				core::Real distance_weight(0.0);
 
 				distance_weight = distance_weights_[s][seqpos_res_id][tmplt_res_id];
 				score += ss_weight*distance_weight;
@@ -126,16 +126,16 @@ bool ProfileScoreDistWeight::cached_score(FragmentCandidateOP f, FragmentScoreMa
 		do_caching(f->get_chunk());
 	}
 
-	Real totalScore = 0.0;//f->get_length() * 20.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0.0;//f->get_length() * 20.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 		assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
 		totalScore += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 		//std::cout << "TOTALSCORE " << totalScore << " " << scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1] << " " <<  f->get_first_index_in_query() + i - 1 << " " << f->get_first_index_in_vall() + i - 1 << std::endl;
 	}
-	totalScore *= (Real) 100.0;
-	totalScore /= (Real) f->get_length();
+	totalScore *= (core::Real) 100.0;
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore < lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -143,20 +143,20 @@ bool ProfileScoreDistWeight::cached_score(FragmentCandidateOP f, FragmentScoreMa
 	return true;
 }
 
-FragmentScoringMethodOP MakeProfileScoreDistWeight::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
+FragmentScoringMethodOP MakeProfileScoreDistWeight::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
 
 	//query_sequence_ = picker->get_query_seq_string();
 
 	//std::cout << "QUERY_SEQUENCE " << query_sequence_ << std::endl;
 
-	Size len = picker->get_vall()->get_largest_chunk_size();
+	core::Size len = picker->get_vall()->get_largest_chunk_size();
 
 	//std::istringstream line_stream(config_line);
 	//std::string score_name;
-	//Size p;
-	//Real weight;
-	//Real lowest;
+	//core::Size p;
+	//core::Real weight;
+	//core::Real lowest;
 	//std::string prediction_id;
 	//line_stream >> score_name >> p >> weight >> lowest >> prediction_id;
 

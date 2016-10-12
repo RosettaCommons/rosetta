@@ -38,8 +38,8 @@ public:
 
 	/// @brief  creates a Calpha distance based scoring function.
 	/// @details Scores distance matches for short range disulfides (ie: within fragment)
-	DisulfideDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
-		utility::vector1< Size > disulfide_data, Size largest_fragment);
+	DisulfideDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+		utility::vector1< core::Size > disulfide_data, core::Size largest_fragment);
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -47,13 +47,13 @@ public:
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 
 private:
-	Size n_res_;
+	core::Size n_res_;
 	std::string cached_scores_id_;
 
 	ObjexxFCL::FArray2D_double chunk_ca_distances_;
 
-	utility::vector1< Size > disulfide_data_;
-	Size largest_fragment_;
+	utility::vector1< core::Size > disulfide_data_;
+	core::Size largest_fragment_;
 };
 
 /// @brief  Matker class that produces a new DisulfideDistance object
@@ -64,7 +64,7 @@ public:
 		MakeFragmentScoringMethod("DisulfideDistance") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

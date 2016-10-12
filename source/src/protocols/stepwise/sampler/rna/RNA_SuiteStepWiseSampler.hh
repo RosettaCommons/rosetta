@@ -24,9 +24,6 @@
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -38,10 +35,10 @@ public:
 
 	RNA_SuiteStepWiseSampler(
 		core::Size const rsd_id,
-		PuckerState const pucker_state_lower, //WHATEVER, NORTH, SOUTH
-		PuckerState const pucker_state_upper,
-		ChiState const base_state_lower, //WHATEVER, ANTI, SYN, NONE
-		ChiState const base_state_upper
+		core::chemical::rna::PuckerState const pucker_state_lower, //WHATEVER, NORTH, SOUTH
+		core::chemical::rna::PuckerState const pucker_state_upper,
+		core::chemical::rna::ChiState const base_state_lower, //WHATEVER, ANTI, SYN, NONE
+		core::chemical::rna::ChiState const base_state_upper
 	);
 
 	/// @brief Initialization wrapper
@@ -103,7 +100,7 @@ private:
 		const & params );
 
 	core::Size const rsd_id_;
-	ChiState base_state_lower_, base_state_upper_;
+	core::chemical::rna::ChiState base_state_lower_, base_state_upper_;
 
 	bool sample_nucleoside_lower_, sample_nucleoside_upper_,
 		extra_epsilon_, extra_beta_, extra_chi_,
@@ -111,7 +108,7 @@ private:
 
 	core::Real bin_size_;
 
-	utility::vector1<PuckerState> pucker_states_lower_, pucker_states_upper_;
+	utility::vector1<core::chemical::rna::PuckerState> pucker_states_lower_, pucker_states_upper_;
 };
 
 } //rna

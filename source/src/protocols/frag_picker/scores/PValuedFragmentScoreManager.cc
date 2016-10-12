@@ -43,8 +43,8 @@ void PValuedFragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 	out << RJ(10, "vall_pos ");
 	out << RJ(6, "pdbid");
 	out << " c ss ";
-	utility::vector1<Size> w(scores_.size()*2+2);
-	for ( Size i = 1; i <= scores_.size(); i++ ) {
+	utility::vector1<core::Size> w(scores_.size()*2+2);
+	for ( core::Size i = 1; i <= scores_.size(); i++ ) {
 		w[i*2 - 1] = width_.find(scores_[i])->second;
 		out << " " << scores_[i]->get_score_name();
 		if ( scores_[i]->get_score_name().length() > w[i*2 - 1] ) {
@@ -60,7 +60,7 @@ void PValuedFragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 	w[scores_.size()*2+2] = 7; // 7 characters for the total p-value
 	out << "  TOTAL    p-TOTAL  FRAG_ID"<<std::endl;
 
-	for ( Size iF = 1; iF <= pairs.size(); ++iF ) {
+	for ( core::Size iF = 1; iF <= pairs.size(); ++iF ) {
 
 		FragmentCandidateOP fr = pairs[iF].first;
 		FragmentScoreMapOP sc = pairs[iF].second;
@@ -70,9 +70,9 @@ void PValuedFragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		out << " " << RJ(5, fr->get_pdb_id());
 		out << " " << fr->get_chain_id();
 		out << " " << fr->get_middle_ss();
-		Real p_val_sum = 0.0;
-		for ( Size i = 1; i <= scores_.size(); i++ ) {
-			Size p = precision_.find(scores_[i])->second;
+		core::Real p_val_sum = 0.0;
+		for ( core::Size i = 1; i <= scores_.size(); i++ ) {
+			core::Size p = precision_.find(scores_[i])->second;
 			out << " " << F(w[i*2-1], p, sc->get_score_components()[i]);
 			out << " " << F(w[i*2], 3, statistics_[fr->get_first_index_in_query()][i]->p_value(sc->get_score_components()[i]));
 			p_val_sum += statistics_[fr->get_first_index_in_query()][i]->p_value(sc->get_score_components()[i]);
@@ -90,17 +90,17 @@ bool PValuedFragmentScoreManager::score_fragment(FragmentCandidateOP candidate,
 
 	FragmentScoreManager::score_fragment(candidate,empty_map);
 
-	Size pos = candidate->get_first_index_in_query();
+	core::Size pos = candidate->get_first_index_in_query();
 	if ( statistics_.size() < pos ) {
-		Size size_is = statistics_.size();
+		core::Size size_is = statistics_.size();
 		statistics_.resize( pos );
-		for ( Size k=size_is+1; k<=pos; k++ ) {
-			for ( Size l=1; l<=scores_.size(); l++ ) {
+		for ( core::Size k=size_is+1; k<=pos; k++ ) {
+			for ( core::Size l=1; l<=scores_.size(); l++ ) {
 				statistics_[k].push_back(protocols::frag_picker::scores::AdaptiveScoreHistogramOP( new AdaptiveScoreHistogram(0.01,1) ));
 			}
 		}
 	}
-	for ( Size iScore = 1; iScore <= empty_map->size(); iScore++ ) {
+	for ( core::Size iScore = 1; iScore <= empty_map->size(); iScore++ ) {
 		statistics_[pos][iScore]->insert( empty_map->at(iScore) );
 	}
 
@@ -112,18 +112,18 @@ bool PValuedFragmentScoreManager::score_fragment_from_cache(FragmentCandidateOP 
 
 	FragmentScoreManager::score_fragment_from_cache(candidate,empty_map);
 
-	Size pos = candidate->get_first_index_in_query();
+	core::Size pos = candidate->get_first_index_in_query();
 	if ( statistics_.size() < pos ) {
-		Size size_is = statistics_.size();
+		core::Size size_is = statistics_.size();
 		statistics_.resize( pos );
-		for ( Size k=size_is+1; k<=pos; k++ ) {
-			for ( Size l=1; l<=scores_.size(); l++ ) {
+		for ( core::Size k=size_is+1; k<=pos; k++ ) {
+			for ( core::Size l=1; l<=scores_.size(); l++ ) {
 				statistics_[k].push_back(protocols::frag_picker::scores::AdaptiveScoreHistogramOP( new AdaptiveScoreHistogram(0.01,1) ));
 			}
 		}
 	}
 
-	for ( Size iScore = 1; iScore <= empty_map->size(); iScore++ ) {
+	for ( core::Size iScore = 1; iScore <= empty_map->size(); iScore++ ) {
 		statistics_[pos][iScore]->insert( empty_map->at(iScore) );
 	}
 

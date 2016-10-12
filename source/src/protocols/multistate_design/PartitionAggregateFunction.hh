@@ -77,7 +77,7 @@ utility::vector1<core::Real> const & single_state_fitnesses,
 MultiStateFitnessFunction<T> & fitness_function
 ) const
 {
-using namespace ObjexxFCL::format;
+//using namespace ObjexxFCL::format;
 
 utility::vector1<SingleStateCOP> single_states(fitness_function.const_states());
 runtime_assert(single_state_fitnesses.size() == single_states.size());

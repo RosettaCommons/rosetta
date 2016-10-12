@@ -58,25 +58,25 @@ public:
 	}
 
 	/// @brief  returns integer key of this chunk, which is the key of this chunk's first residue
-	inline Size key() const {
+	inline core::Size key() const {
 		return at(1)->key();
 	}
 
 	/// @brief  returns the size of this chunk i.e. the number of residues stored in there
-	inline Size size() const {
+	inline core::Size size() const {
 		return residues_.size();
 	}
 
-	inline Size vall_key() const {
+	inline core::Size vall_key() const {
 		return vall_key_;
 	}
 
-	void vall_key(Size key) {
+	void vall_key(core::Size key) {
 		vall_key_ = key;
 	}
 
 	/// @brief  returns i-th residue form this chunk. The first residue has index 1
-	inline VallResidueOP at(Size index) const {
+	inline VallResidueOP at(core::Size index) const {
 		runtime_assert( index <= residues_.size() );
 		runtime_assert( index >= 1 );
 		return residues_.at(index);
@@ -115,7 +115,7 @@ private:
 	std::string sequence_;
 	VallProviderAP my_provider_;
 	std::string chunk_key_;
-	Size vall_key_;
+	core::Size vall_key_;
 	bool has_key_;
 
 	void create_key();

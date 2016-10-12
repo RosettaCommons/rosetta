@@ -25,9 +25,6 @@
 #include <core/types.hh>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace simple_moves {
 
@@ -36,7 +33,7 @@ class CopyDofMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > res_map );
+	CopyDofMover( core::pose::Pose const & template_pose, std::map< Size, Size > res_map );
 
 	//destructor
 	~CopyDofMover() override;
@@ -46,32 +43,32 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override { return "CopyDofMover"; }
 
-	pose::copydofs::CopyDofsInfo const & copy_dofs_info( pose::Pose const & pose ) const;
+	core::pose::copydofs::CopyDofsInfo const & copy_dofs_info( core::pose::Pose const & pose ) const;
 
 	void
 	set_copy_dofs_info(
-		pose::Pose const & pose,
-		pose::copydofs::CopyDofsInfo const & copy_dofs_info );
+		core::pose::Pose const & pose,
+		core::pose::copydofs::CopyDofsInfo const & copy_dofs_info );
 
 private:
 
 	std::string
 	pose_string(
-		pose::Pose const & pose,
+		core::pose::Pose const & pose,
 		utility::vector1< Size > const & res_list ) const;
 
 	std::string
 	pose_string(
-		pose::Pose const & pose
+		core::pose::Pose const & pose
 	) const;
 
 	bool
-	check_for_precomputed_copy_dofs_info( pose::Pose const & pose ) const;
+	check_for_precomputed_copy_dofs_info( core::pose::Pose const & pose ) const;
 
 private:
 
-	pose::Pose const & template_pose_;
-	pose::MiniPose const template_mini_pose_;
+	core::pose::Pose const & template_pose_;
+	core::pose::MiniPose const template_mini_pose_;
 	std::map< Size, Size > res_map_;
 	bool backbone_only_;
 	bool side_chain_only_;
@@ -79,7 +76,7 @@ private:
 
 	bool use_hash_;
 	std::string pose_string_; // for precomputation. probably should hash to int.
-	std::map< std::string, pose::copydofs::CopyDofsInfo > copy_dofs_info_;
+	std::map< std::string, core::pose::copydofs::CopyDofsInfo > copy_dofs_info_;
 };
 
 } //simple_moves

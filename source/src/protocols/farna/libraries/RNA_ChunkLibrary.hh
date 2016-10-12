@@ -58,8 +58,6 @@ extern core::Size const ROSETTA_LIBRARY_DOMAIN;
 //  basically one at every junction.
 //
 //
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::base_pairs;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +138,7 @@ public:
 
 	void
 	setup_base_pair_step_chunks( core::pose::Pose const & pose,
-		utility::vector1< BasePairStep > const & base_pair_steps,
+		utility::vector1< protocols::farna::base_pairs::BasePairStep > const & base_pair_steps,
 		BasePairStepLibrary const & base_pair_step_library );
 
 	void

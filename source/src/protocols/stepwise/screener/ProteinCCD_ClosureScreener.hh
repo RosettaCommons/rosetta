@@ -30,7 +30,7 @@ public:
 
 	//constructor
 	ProteinCCD_ClosureScreener( modeler::protein::loop_close::StepWiseProteinCCD_CloserOP ccd_closer,
-		pose::Pose & screening_pose );
+		core::pose::Pose & screening_pose );
 
 	//destructor
 	~ProteinCCD_ClosureScreener();

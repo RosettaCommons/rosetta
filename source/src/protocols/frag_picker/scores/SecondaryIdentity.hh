@@ -41,7 +41,7 @@ public:
 	/// @brief will be added if the two residues are NOT in the same secondary structure
 	static const int PENALTY = 1;
 
-	SecondaryIdentity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	SecondaryIdentity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		std::string& query_secondary_structure,std::string prediction_name) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest,
 		"SecondaryIdentity"), query_(query_secondary_structure),prediction_name_(prediction_name) {
@@ -68,7 +68,7 @@ public:
 		MakeFragmentScoringMethod("SecondaryIdentity") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value,
 		bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new SecondaryIdentity(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_ss_string(

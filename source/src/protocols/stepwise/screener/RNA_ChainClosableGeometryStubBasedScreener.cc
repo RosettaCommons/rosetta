@@ -29,6 +29,7 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryStubBasedScreener" );
 
 using namespace core;
+using namespace protocols::stepwise::sampler::copy_dofs;
 
 namespace protocols {
 namespace stepwise {

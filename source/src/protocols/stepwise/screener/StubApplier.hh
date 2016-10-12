@@ -20,9 +20,6 @@
 #include <protocols/stepwise/screener/StubApplier.fwd.hh>
 #include <core/kinematics/Stub.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -32,7 +29,7 @@ class StubApplier: public StepWiseScreener {
 public:
 
 	//constructor
-	StubApplier( kinematics::Stub & stub );
+	StubApplier( core::kinematics::Stub & stub );
 
 	//destructor
 	~StubApplier();
@@ -53,7 +50,7 @@ public:
 
 private:
 
-	kinematics::Stub & stub_;
+	core::kinematics::Stub & stub_;
 };
 
 } //screener

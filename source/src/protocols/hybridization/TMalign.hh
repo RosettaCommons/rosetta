@@ -23,8 +23,6 @@
 namespace protocols {
 namespace hybridization {
 
-using core::Size;
-
 class TMalign {
 
 public:
@@ -63,7 +61,7 @@ public:
 	//     one layer of the matrix. This code was exploited in TM-align
 	//     because it is about 1.5 times faster than a complete N-W code
 	//     and does not influence much the final structure alignment result.
-	void NWDP_TM(Size const len1, Size const len2, double const gap_open, std::vector < int > & j2i);
+	void NWDP_TM(core::Size const len1, core::Size const len2, double const gap_open, std::vector < int > & j2i);
 
 	void NWDP_TM(
 		std::vector < numeric::xyzVector<core::Real> > const & x,
@@ -351,7 +349,7 @@ public:
 
 	void parameter_set4scale(int len, double d_s);
 
-	core::Real TMscore(Size length);
+	core::Real TMscore(core::Size length);
 
 	int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2);
 

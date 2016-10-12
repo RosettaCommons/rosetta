@@ -36,14 +36,11 @@
 namespace protocols {
 namespace md {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 struct MDscheduleData
 {
 	std::string type;
-	Size nstep;
-	Real temp0;
+	core::Size nstep;
+	core::Real temp0;
 };
 
 class MDBase : public protocols::moves::Mover
@@ -51,7 +48,7 @@ class MDBase : public protocols::moves::Mover
 public:
 
 	typedef protocols::moves::Mover parent;
-	typedef utility::vector1<Real> Multivec;
+	typedef utility::vector1<core::Real> Multivec;
 
 	MDBase();
 
@@ -85,11 +82,11 @@ public:
 	core::kinematics::MoveMapOP movemap() const = 0;
 
 	// Accessors
-	Real dt() const { return dt_; }
+	core::Real dt() const { return dt_; }
 	void set_dt( core::Real const value ){ dt_ = value; }
 
-	Size n_dof() const { return n_dof_; }
-	Real cummulative_time() const { return cummulative_time_; }
+	core::Size n_dof() const { return n_dof_; }
+	core::Real cummulative_time() const { return cummulative_time_; }
 
 	void set_nstep( core::Size const nstep ){ nstep_ = nstep; }
 	void set_temperature( core::Real const temp0 ){ temp0_ = temp0; }
@@ -99,9 +96,9 @@ public:
 
 	void set_scorefxn_obj( core::scoring::ScoreFunctionCOP sfxn ){ scorefxn_obj_ = sfxn->clone(); }
 	void set_selectmode( std::string const selectmode_in ){ selectmode_ = selectmode_in; }
-	void set_context_update_step( Size const value ){ context_update_step_ = value; }
+	void set_context_update_step( core::Size const value ){ context_update_step_ = value; }
 
-	void set_premin( Size const value ){ ncyc_premin_ = value; }
+	void set_premin( core::Size const value ){ ncyc_premin_ = value; }
 	void set_report_scorecomp( bool const value ){ report_scorecomp_ = value; }
 
 	void parse_schfile( std::string const schfile );
@@ -109,12 +106,12 @@ public:
 	core::Size nstep() const { return nstep_; }
 	core::Real temp0() const { return temp0_; }
 
-	void set_constraint( Real const sdev );
+	void set_constraint( core::Real const sdev );
 
 	void set_store_trj( bool const value ){ store_trj_ = value; }
 	bool store_trj() const { return store_trj_; }
 
-	void report_silent( pose::Pose &pose,
+	void report_silent( core::pose::Pose &pose,
 		core::Real rmsd = -1.0, core::Real gdttm = -1.0, core::Real gdtha = -1.0 );
 	void report_as_silent( std::string const filename,
 		bool const scoreonly );
@@ -139,22 +136,22 @@ protected:
 	std::string selectmode_;
 	core::scoring::ScoreFunctionOP scorefxn_obj_;
 	core::pose::Pose pose_minobj_;
-	Real Emin_obj_;
-	Real time_minobj_;
+	core::Real Emin_obj_;
+	core::Real time_minobj_;
 
 	// Persistent
-	Size n_dof_;
-	Size n_dof_temp_;
-	Real dt_;
+	core::Size n_dof_;
+	core::Size n_dof_temp_;
+	core::Real dt_;
 	Multivec mass_;
-	Real cummulative_time_;
-	Size md_report_stepsize_; // for trajectory
-	Size md_energy_report_stepsize_; // for energy
-	Size md_rsr_update_stepsize_; // for adaptive restraint update
+	core::Real cummulative_time_;
+	core::Size md_report_stepsize_; // for trajectory
+	core::Size md_energy_report_stepsize_; // for energy
+	core::Size md_rsr_update_stepsize_; // for adaptive restraint update
 	core::pose::Pose pose0_;
 	bool report_scorecomp_;
 	core::Size context_update_step_;
-	Size ncyc_premin_, ncyc_postmin_;
+	core::Size ncyc_premin_, ncyc_postmin_;
 
 	// Schedule
 	bool scheduled_;
@@ -162,16 +159,16 @@ protected:
 
 	// Constrained MD
 	bool uniform_coord_constrained_;
-	Real cst_sdev_;
+	core::Real cst_sdev_;
 
 	// Assigned variables
-	Real temp0_;
-	Size nstep_;
+	core::Real temp0_;
+	core::Size nstep_;
 
 	// Dynamic variables
-	Real temperature_;
-	Real kinetic_energy_;
-	Real potential_energy_;
+	core::Real temperature_;
+	core::Real kinetic_energy_;
+	core::Real potential_energy_;
 
 	Multivec xyz_;
 	Multivec vel_;
@@ -187,7 +184,7 @@ protected:
 	// Adaptive restraints
 	utility::vector1< Multivec > trj_scratch_;
 	Multivec ref_xyz_, prv_eqxyz_; // Init xyz, avrg over prv trj_scratch_
-	Real Kappa_, Gamma_;
+	core::Real Kappa_, Gamma_;
 	bool write_dynamic_rsr_;
 	std::string rsrfilename_;
 };

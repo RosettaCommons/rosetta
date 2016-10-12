@@ -43,12 +43,6 @@ namespace protocols {
 namespace docking {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 class QuickRelaxPartnersSeparately : public protocols::moves::Mover {
 
 public:
@@ -124,9 +118,9 @@ private: // data
 	utility::vector1< int > jumps_;
 
 	// SpanningTopology objects
-	SpanningTopologyOP topo_;   // full pose
-	SpanningTopologyOP topo_up_; // upstream partner
-	SpanningTopologyOP topo_down_;  // downstream partner
+	core::conformation::membrane::SpanningTopologyOP topo_;   // full pose
+	core::conformation::membrane::SpanningTopologyOP topo_up_; // upstream partner
+	core::conformation::membrane::SpanningTopologyOP topo_down_;  // downstream partner
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP sfxn_;

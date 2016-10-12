@@ -34,7 +34,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by its crmsd to the given reference structure
 class FragmentAllAtomCrmsd: public FragmentScoringMethod {
@@ -42,11 +42,11 @@ public:
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	FragmentAllAtomCrmsd(Size, Real, bool, std::string, core::pose::PoseOP);
+	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string, core::pose::PoseOP);
 
 	/// @brief  creates a crmsd-based scoring function.
 	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
-	FragmentAllAtomCrmsd(Size, Real, bool, std::string, utility::vector1< utility::vector1<Real> >);
+	FragmentAllAtomCrmsd(core::Size, core::Real, bool, std::string, utility::vector1< utility::vector1<core::Real> >);
 
 	~FragmentAllAtomCrmsd();
 
@@ -57,19 +57,19 @@ public:
 
 private:
 	std::string cached_scores_id_;
-	Size total_ref_resids_;
+	core::Size total_ref_resids_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Size frag_resids_;
+	// core::Size frag_resids_;
 	std::string query_sequence_;
-	pose::PoseOP reference_pose_;
-	pose::PoseOP fragment_pose_;
+	core::pose::PoseOP reference_pose_;
+	core::pose::PoseOP fragment_pose_;
 	ObjexxFCL::FArray2D_double reference_coordinates_;
 	ObjexxFCL::FArray2D_double chunk_coordinates_;
 	ObjexxFCL::FArray2D_double fragment_coordinates_;
 	ObjexxFCL::FArray2D_double frag_pos_coordinates_;
 	ObjexxFCL::FArray1D_double weights_;
 
-	void fill_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, Size, std::string);
+	void fill_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, core::Size, std::string);
 };
 
 /// @brief  Maker class that produces a new FragmentAllAtomCrmsd object
@@ -80,7 +80,7 @@ public:
 		MakeFragmentScoringMethod("FragmentAllAtomCrmsd") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

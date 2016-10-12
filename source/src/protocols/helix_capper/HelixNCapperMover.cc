@@ -71,7 +71,7 @@ void HelixNCapperMover::dump_pdb_to_file( core::pose::Pose & posey, std::string 
 
 void HelixNCapperMover::setup_svm() {
 
-	string ncap_svm_filename = basic::database::full_name( "external/svm_models/helix_cap/Ncap_svm_model" );
+	std::string ncap_svm_filename = basic::database::full_name( "external/svm_models/helix_cap/Ncap_svm_model" );
 	utility::io::izstream is( ncap_svm_filename );
 	if ( !is.good() ) {
 		utility_exit_with_message("Error: missing svm model for ncap classification in database!");

@@ -24,23 +24,18 @@
 namespace protocols {
 namespace md {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::optimization;
-using namespace protocols::md;
-
 class Thermostat {
 
 public:
 
-	Thermostat( Real const &temperature0, Size const ndof ){
+	Thermostat( core::Real const &temperature0, core::Size const ndof ){
 		temp0_ = temperature0*Boltzmann;
 		tau_ = 0.015;
 		nstep_per_update_ = 10;
 		ndof_ = ndof;
 	}
 
-	Thermostat( Real const &temperature0, Real const &tau, Size const ndof ){
+	Thermostat( core::Real const &temperature0, core::Real const &tau, core::Size const ndof ){
 		temp0_ = temperature0*Boltzmann;
 		tau_ = tau;
 		nstep_per_update_ = 10;
@@ -50,23 +45,23 @@ public:
 	~Thermostat()= default;
 
 	void
-	rescale( Multivec &vel, Real const& dt, Multivec const &mass ){
-		Real curr_temperature = get_temperature( vel, mass );
+	rescale( core::optimization::Multivec &vel, core::Real const& dt, core::optimization::Multivec const &mass ){
+		core::Real curr_temperature = get_temperature( vel, mass );
 
-		Real delta  = (temp0_/Boltzmann)/curr_temperature;
-		Real lambda = std::sqrt(1.0 + dt/tau_*(delta-1.0));
+		core::Real delta  = (temp0_/Boltzmann)/curr_temperature;
+		core::Real lambda = std::sqrt(1.0 + dt/tau_*(delta-1.0));
 
-		for ( Size i_dof = 1; i_dof <= vel.size(); ++i_dof ) {
+		for ( core::Size i_dof = 1; i_dof <= vel.size(); ++i_dof ) {
 			vel[i_dof] *= lambda;
 		}
 	}
 
-	Real
-	get_temperature( Multivec const &vel, Multivec const &mass)
+	core::Real
+	get_temperature( core::optimization::Multivec const &vel, core::optimization::Multivec const &mass)
 	{
-		Real temperature = 0.0;
+		core::Real temperature = 0.0;
 
-		for ( Size i_dof = 1; i_dof<=vel.size(); ++i_dof ) {
+		for ( core::Size i_dof = 1; i_dof<=vel.size(); ++i_dof ) {
 			int i_atm = (i_dof+2)/3;
 			// pass Virtual atoms
 			if ( mass[i_atm] < 1e-3 ) continue;
@@ -77,14 +72,14 @@ public:
 		return temperature;
 	}
 
-	Size
+	core::Size
 	nstep_per_update(){ return nstep_per_update_; }
 
 private:
-	Real temp0_;
-	Real tau_;
-	Size nstep_per_update_;
-	Size ndof_;
+	core::Real temp0_;
+	core::Real tau_;
+	core::Size nstep_per_update_;
+	core::Size ndof_;
 };
 }
 }

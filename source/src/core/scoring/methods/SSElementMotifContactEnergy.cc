@@ -83,7 +83,7 @@ SSElementMotifContactEnergy::SSElementMotifContactEnergy():
 
 
 /// @brief get ss_elements
-vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(const Pose & pose) const{
+vector1<std::pair<Size,Size> > SSElementMotifContactEnergy::get_ss_elements(const core::pose::Pose & pose) const{
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
@@ -136,7 +136,7 @@ Size SSElementMotifContactEnergy::get_ssElements_in_contact_w_threshold(std::mul
 }
 
 
-Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const Pose & pose) const{
+Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const core::pose::Pose & pose) const{
 	using core::kinematics::FoldTree;
 	set<Size> ssElements_in_contact;
 	core::scoring::dssp::Dssp dssp( pose );

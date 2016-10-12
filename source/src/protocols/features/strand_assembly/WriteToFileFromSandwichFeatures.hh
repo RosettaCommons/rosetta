@@ -25,7 +25,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vector_of_loop_AA_distribution(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,

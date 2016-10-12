@@ -25,9 +25,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -62,10 +59,10 @@ public:
 	core::Size bulge_res;
 	core::Size bulge_suite;
 	core::Size five_prime_chain_break;
-	PuckerState moving_res_pucker_state;
-	PuckerState bulge_res_pucker_state;
-	ChiState moving_res_base_state;
-	ChiState bulge_res_base_state;
+	core::chemical::rna::PuckerState moving_res_pucker_state;
+	core::chemical::rna::PuckerState bulge_res_pucker_state;
+	core::chemical::rna::ChiState moving_res_base_state;
+	core::chemical::rna::ChiState bulge_res_base_state;
 	utility::vector1< core::pose::PoseOP > pose_list; //pose_data_list of possible sugar conformations.
 
 };

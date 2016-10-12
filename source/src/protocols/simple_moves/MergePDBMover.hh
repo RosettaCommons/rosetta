@@ -29,8 +29,6 @@
 namespace protocols {
 namespace simple_moves {
 
-using utility::vector1;
-
 class MergePDBMover : public moves::Mover {
 
 public:
@@ -51,8 +49,8 @@ public:
 	};
 	MergePDBMover();
 	utility::vector1<Overlap> determine_overlap(Pose const pose);
-	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, vector1<MergePDBMover::Overlap> overlaps);
-	utility::vector1<core::pose::PoseOP> pack_and_minimize(vector1<core::pose::PoseOP> poses, vector1<MergePDBMover::Overlap> overlaps,core::Real baseline_score);
+	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, utility::vector1<MergePDBMover::Overlap> overlaps);
+	utility::vector1<core::pose::PoseOP> pack_and_minimize(utility::vector1<core::pose::PoseOP> poses, utility::vector1<MergePDBMover::Overlap> overlaps,core::Real baseline_score);
 	core::pose::PoseOP get_additional_output();
 
 	virtual void apply( core::pose::Pose & pose );
@@ -69,8 +67,8 @@ public:
 		core::pose::Pose const & pose );
 
 private:
-	vector1<core::pose::PoseOP> outputPoses_;
-	vector1<bool> outputYet_;
+	utility::vector1<core::pose::PoseOP> outputPoses_;
+	utility::vector1<bool> outputYet_;
 	core::pose::PoseOP xml_input_pose_;
 	std::string overlap_location_pose_;
 	core::Real overlap_max_rmsd_;

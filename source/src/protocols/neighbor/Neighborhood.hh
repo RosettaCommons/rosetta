@@ -21,15 +21,10 @@
 namespace protocols {
 namespace neighbor {
 
-using core::pose::Pose;
-using core::conformation::Residue;
-using utility::vector1;
-using core::Size;
-
 /// @brief type of functions that determine whether two residues are neighbor
 ///  of one another
-typedef bool (*NGB_FUN_PTR)(Residue const& r1, Residue const& r2,
-	Pose const& ps);
+typedef bool (*NGB_FUN_PTR)(core::conformation::Residue const& r1, core::conformation::Residue const& r2,
+	core::pose::Pose const& ps);
 
 /// @brief A class to determine the neighborhood of a set of residues within a
 ///  pose
@@ -40,21 +35,21 @@ class Neighborhood : public utility::pointer::ReferenceCount {
 	// neighbor mask: the ith element is true iff the ith residue in the pose is
 	// a neighbor of the residue set (i=1,...,N, where N is the size of the
 	// pose).
-	vector1<bool> ngb_mask;
+	utility::vector1<bool> ngb_mask;
 
 	// set of neighbors
-	vector1<Size> ngbs;
+	utility::vector1<Size> ngbs;
 
 	void print_ngb_mask() const;
 
 public:
-	Neighborhood(vector1<Size> const& set, Pose const& ps, NGB_FUN_PTR ngb_fun);
-	vector1<Size> const& get() const {return ngbs;}
+	Neighborhood(utility::vector1<Size> const& set, core::pose::Pose const& ps, NGB_FUN_PTR ngb_fun);
+	utility::vector1<Size> const& get() const {return ngbs;}
 };
 
 // pairwise neighborhood functions
-bool in_nrg_graph(Residue const& r1, Residue const& r2, Pose const& ps);
-bool in_ngbat_sphere(Residue const& r1, Residue const& r2, Pose const& ps);
+bool in_nrg_graph(core::conformation::Residue const& r1, core::conformation::Residue const& r2, core::pose::Pose const& ps);
+bool in_ngbat_sphere(core::conformation::Residue const& r1, core::conformation::Residue const& r2, core::pose::Pose const& ps);
 
 } // neighbor
 } // protocols

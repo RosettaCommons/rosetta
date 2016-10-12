@@ -40,8 +40,6 @@ namespace core {
 namespace scoring {
 namespace dssp {
 
-using core::Size;
-
 class Pairing {
 public:
 	Pairing() :

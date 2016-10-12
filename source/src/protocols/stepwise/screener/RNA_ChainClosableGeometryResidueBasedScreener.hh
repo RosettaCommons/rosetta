@@ -21,9 +21,6 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/conformation/Residue.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -56,7 +53,7 @@ private:
 
 	modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_;
 	//  core::conformation::ResidueCOP rsd1_, rsd2_;
-	Vector five_prime_xyz_, three_prime_xyz_;
+	core::Vector five_prime_xyz_, three_prime_xyz_;
 };
 
 } //screener

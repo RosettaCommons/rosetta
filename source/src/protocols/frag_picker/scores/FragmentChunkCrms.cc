@@ -63,13 +63,14 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
+using namespace core;
 
 static THREAD_LOCAL basic::Tracer trTmScore(
 	"protocols.frag_picker.scores.FragmentChunkCrms");
 
 FragmentChunkCrms::~FragmentChunkCrms() {}
 
-FragmentChunkCrms::FragmentChunkCrms(Size priority, Real lowest_acceptable_value,
+FragmentChunkCrms::FragmentChunkCrms(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose, FArray1D_int& seqmapping) :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentChunkCrms") {
 	reference_pose_ = reference_pose;
@@ -84,7 +85,7 @@ FragmentChunkCrms::FragmentChunkCrms(Size priority, Real lowest_acceptable_value
 	//seqmapping_.redimension(query_sequence.length(), 0);
 }
 
-void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_double& coords, Size n_atoms) {
+void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_double& coords, core::Size n_atoms) {
 
 	trTmScore.Debug << "Copying coordinates from ... The first residues are: "
 		<< pose.residue(1).name3() << " " << pose.residue(2).name3() << " "
@@ -162,11 +163,11 @@ void FragmentChunkCrms::fill_bb_coords(core::pose::Pose const& pose, FArray2_dou
 
 bool FragmentChunkCrms::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	if ( (Size) fragment_coordinates_.size2() < n_atoms_*4 ) {
+	if ( (core::Size) fragment_coordinates_.size2() < n_atoms_*4 ) {
 		fragment_coordinates_.redimension(3, n_atoms_*4, 0.0);
 	}
 
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		fragment_pose_->set_phi( i, f->get_residue(i)->phi() );
 		fragment_pose_->set_psi( i, f->get_residue(i)->psi() );
 		fragment_pose_->set_omega( i, f->get_residue(i)->omega() );
@@ -174,7 +175,7 @@ bool FragmentChunkCrms::score(FragmentCandidateOP f, FragmentScoreMapOP empty_ma
 
 	fill_bb_coords(*fragment_pose_, fragment_coordinates_, seqmapping_);
 
-	Real chunkrms = numeric::model_quality::rms_wrapper(4*n_atoms_, fragment_coordinates_, reference_coordinates_);
+	core::Real chunkrms = numeric::model_quality::rms_wrapper(4*n_atoms_, fragment_coordinates_, reference_coordinates_);
 
 	empty_map->set_score_component(chunkrms, id_);
 	if ( (chunkrms > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -215,8 +216,8 @@ void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP s
 
 }
 
-FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
+FragmentScoringMethodOP MakeFragmentChunkCrms::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
 	, std::string) {
 
 	//trTmScore << "QUERY_SEQUENCE " << picker->get_query_seq_string() << std::endl;

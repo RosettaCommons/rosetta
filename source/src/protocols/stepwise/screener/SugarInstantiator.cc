@@ -24,6 +24,7 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.SugarInstantiator" );
 
 using namespace protocols::stepwise::modeler::rna::sugar;
+using namespace core;
 
 namespace protocols {
 namespace stepwise {

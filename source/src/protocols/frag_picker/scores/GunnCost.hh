@@ -34,9 +34,6 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 struct GunnTuple {
 public:
 	GunnTuple() {
@@ -61,7 +58,7 @@ public:
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Real cutoff_;
+	// core::Real cutoff_;
 	// utility::vector1< core::pose::PoseOP > various_length_poses_;
 };
 

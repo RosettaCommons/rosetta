@@ -80,7 +80,7 @@ using namespace protocols::toolbox::task_operations;
 using namespace protocols::antibody::clusters;
 using core::Size;
 using std::string;
-
+using utility::vector1;
 
 GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
 	utility::pointer::ReferenceCount(),

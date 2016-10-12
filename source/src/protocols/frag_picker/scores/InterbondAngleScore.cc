@@ -48,14 +48,14 @@ namespace scores {
 static THREAD_LOCAL basic::Tracer trInterbondAngleScore(
 	"fragment.picking.scores.InterbondAngleScore");
 
-InterbondAngleScore::InterbondAngleScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size, utility::vector1<std::string> constrainable_atoms) :
+InterbondAngleScore::InterbondAngleScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size, utility::vector1<std::string> constrainable_atoms) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	constrainable_atoms, "InterbondAngleScore") {
 
-	utility::vector1<Real> x0(2);
-	utility::vector1<Real> sd(2);
+	utility::vector1<core::Real> x0(2);
+	utility::vector1<core::Real> sd(2);
 	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
 		x0,sd) ));
@@ -64,14 +64,14 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 	read_constraints(constraints_file_name);
 }
 
-InterbondAngleScore::InterbondAngleScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size) :
+InterbondAngleScore::InterbondAngleScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	"InterbondAngleScore") {
 
-	utility::vector1<Real> x0(2);
-	utility::vector1<Real> sd(2);
+	utility::vector1<core::Real> x0(2);
+	utility::vector1<core::Real> sd(2);
 	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
 		x0,sd) ));
@@ -84,15 +84,15 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
 	PROF_START( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
-	Size frag_len = fragment->get_length();
-	Size vi = fragment->get_first_index_in_vall();
-	Size qi = fragment->get_first_index_in_query();
+	core::Size frag_len = fragment->get_length();
+	core::Size vi = fragment->get_first_index_in_vall();
+	core::Size qi = fragment->get_first_index_in_query();
 
-	Real total_score = 0;
-	for ( Size i = 0; i < frag_len; ++i ) {
-		for ( Size c = 1; c <= data_[i + qi].size(); ++c ) {
-			Size firstQueryResidueIndex = qi + i;
-			Size firstVallResidueIndex = vi + i;
+	core::Real total_score = 0;
+	for ( core::Size i = 0; i < frag_len; ++i ) {
+		for ( core::Size c = 1; c <= data_[i + qi].size(); ++c ) {
+			core::Size firstQueryResidueIndex = qi + i;
+			core::Size firstVallResidueIndex = vi + i;
 			FourAtomsConstraintDataOP r = data_[firstQueryResidueIndex][c];
 			if ( r->get_second_offset() >= frag_len - i ) {
 				continue;
@@ -103,11 +103,11 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 			if ( r->get_fourth_offset() >= frag_len - i ) {
 				continue;
 			}
-			Size secondVallResidueIndex = firstVallResidueIndex
+			core::Size secondVallResidueIndex = firstVallResidueIndex
 				+ r->get_second_offset();
-			Size thirdVallResidueIndex = firstVallResidueIndex
+			core::Size thirdVallResidueIndex = firstVallResidueIndex
 				+ r->get_third_offset();
-			Size fourthVallResidueIndex = firstVallResidueIndex
+			core::Size fourthVallResidueIndex = firstVallResidueIndex
 				+ r->get_fourth_offset();
 			if ( !has_atom(firstVallResidueIndex, r->get_first_atom()) ) {
 				continue;
@@ -121,20 +121,20 @@ bool InterbondAngleScore::cached_score(FragmentCandidateOP fragment,
 			if ( !has_atom(fourthVallResidueIndex, r->get_fourth_atom()) ) {
 				continue;
 			}
-			numeric::xyzVector<Real> v1(
+			numeric::xyzVector<core::Real> v1(
 				get_atom_coordinates(secondVallResidueIndex, r->get_second_atom()) -
 				get_atom_coordinates(firstVallResidueIndex, r->get_first_atom())
 			);
-			numeric::xyzVector<Real> v2(
+			numeric::xyzVector<core::Real> v2(
 				get_atom_coordinates(fourthVallResidueIndex, r->get_fourth_atom()) -
 				get_atom_coordinates(thirdVallResidueIndex, r->get_third_atom())
 			);
 
-			double angle = angle_of(v1, v2)*180.0/numeric::NumericTraits<Real>::pi();
+			double angle = angle_of(v1, v2)*180.0/numeric::NumericTraits<core::Real>::pi();
 			total_score += r->get_function()->func(angle);
 		}
 	}
-	total_score /= (Real) frag_len;
+	total_score /= (core::Real) frag_len;
 	scores->set_score_component(total_score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_DIHEDRALCONSTR_SCORE );
 
@@ -161,7 +161,7 @@ void InterbondAngleScore::read_constraints(
 	std::string line;
 	getline(data, line); // header line
 	std::string tag;
-	Size n_constr = 0;
+	core::Size n_constr = 0;
 	while ( !data.fail() ) {
 		char c = data.peek();
 		if ( c == '#' || c == '\n' ) {
@@ -175,7 +175,7 @@ void InterbondAngleScore::read_constraints(
 			break;
 		}
 		if ( tag == "InterbondAngleScore" ) {
-			Size res1, res2, res3, res4;
+			core::Size res1, res2, res3, res4;
 			std::string name1, name2, name3, name4;
 			std::string func_type;
 			//std::string type;
@@ -190,16 +190,16 @@ void InterbondAngleScore::read_constraints(
 			core::scoring::func::FuncOP func = factory_.new_func(
 				func_type);
 			func->read_data(data);
-			std::map<std::string, Size> constr_atoms =
+			std::map<std::string, core::Size> constr_atoms =
 				get_constrainable_atoms_map();
-			std::map<std::string, Size>::iterator it = constr_atoms.find(name1);
+			std::map<std::string, core::Size>::iterator it = constr_atoms.find(name1);
 			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown atom: " << name1
 					<< "\nThe following constraint will NOT be used:\n"
 					<< line << std::endl;
 				continue;
 			}
-			Size a1 = it->second;
+			core::Size a1 = it->second;
 			it = constr_atoms.find(name2);
 			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown  atom: "
@@ -208,7 +208,7 @@ void InterbondAngleScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a2 = it->second;
+			core::Size a2 = it->second;
 			it = constr_atoms.find(name3);
 			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown atom: " << name3
@@ -216,7 +216,7 @@ void InterbondAngleScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a3 = it->second;
+			core::Size a3 = it->second;
 			it = constr_atoms.find(name4);
 			if ( it == constr_atoms.end() ) {
 				trInterbondAngleScore.Warning << "Unknown  atom: "
@@ -225,10 +225,10 @@ void InterbondAngleScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a4 = it->second;
-			Size o2 = res2 - res1;
-			Size o3 = res3 - res1;
-			Size o4 = res4 - res1;
+			core::Size a4 = it->second;
+			core::Size o2 = res2 - res1;
+			core::Size o3 = res3 - res1;
+			core::Size o4 = res4 - res1;
 			if ( (res2 < res1) || (res3 < res1) || (res4 < res1) ) {
 				trInterbondAngleScore.Warning
 					<< "The residue of the first constrained atoms must precede all the other three.\n\t\t"
@@ -255,8 +255,8 @@ void InterbondAngleScore::read_constraints(
 		<< std::endl;
 }
 
-FragmentScoringMethodOP MakeInterbondAngleScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeInterbondAngleScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

@@ -24,6 +24,8 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
+using namespace core;
+
 //Constructor
 ResidueContactScreener::ResidueContactScreener(  pose::Pose & screening_pose,
 	Size const last_append_res,

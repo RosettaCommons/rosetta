@@ -34,6 +34,7 @@
 #include <map>
 
 using namespace protocols::toolbox::task_operations;
+using namespace core::pack::task;
 
 class DsspDesignOperationTests : public CxxTest::TestSuite {
 

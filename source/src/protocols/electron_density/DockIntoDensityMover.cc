@@ -419,9 +419,11 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 
 void
 DockIntoDensityMover::poseSphericalSamples(
-	pose::Pose const &pose,
-	ObjexxFCL::FArray3D< double > &sigR)
+	core::pose::Pose const &pose,
+	ObjexxFCL::FArray3D< double > & sigR)
 {
+	using namespace core;
+
 	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
 
 	core::Size B=B_;
@@ -688,7 +690,7 @@ DockIntoDensityMover::do_refinement (
 	packer->task_factory( tf );
 	packer->score_function( scorefxn_refine );
 
-	protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
 
 	// do refinement
 	core::Size ntotal=results_in.size();

@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 class SecondarySimilarity;
 typedef utility::pointer::shared_ptr< SecondarySimilarity > SecondarySimilarityOP;
@@ -48,9 +48,9 @@ typedef utility::pointer::shared_ptr< SecondarySimilarity const > SecondarySimil
 class SecondarySimilarity: public CachingScoringMethod {
 public:
 
-	SecondarySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	SecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-		Size sequence_length, utility::vector1<Size> & frag_sizes, Size longest_vall_chunk);
+		core::Size sequence_length, utility::vector1<core::Size> & frag_sizes, core::Size longest_vall_chunk);
 
 	~SecondarySimilarity() {}
 
@@ -72,8 +72,8 @@ protected:
 private:
 	std::string prediction_name_;
 	core::fragment::SecondaryStructureOP query_ss_;
-	utility::vector1< utility::vector1< Real > > raw_probs_;
-	Size query_len_;
+	utility::vector1< utility::vector1< core::Real > > raw_probs_;
+	core::Size query_len_;
 
 	std::string cached_scores_id_;
 };
@@ -86,11 +86,11 @@ public:
 		MakeFragmentScoringMethod("SecondarySimilarity") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string prediction_id) {
 
-		Size sequence_length = picker->get_query_seq()->length();
-		Size vall_max_len = picker->get_vall()->get_largest_chunk_size();
+		core::Size sequence_length = picker->get_query_seq()->length();
+		core::Size vall_max_len = picker->get_vall()->get_largest_chunk_size();
 
 		core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
 		if ( ! query_prediction ) {

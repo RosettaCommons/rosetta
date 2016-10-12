@@ -59,12 +59,12 @@ void TorsionBinIO::read(
 		tracer.Debug << "line " << line << std::endl;
 
 		char aa;
-		Size resi;
-		vector1< Real > per_residue_probs( bin_names_.size(), 0.0 );
+		core::Size resi;
+		vector1< core::Real > per_residue_probs( bin_names_.size(), 0.0 );
 		line_stream >> resi;
 		line_stream >> aa;
 		sequence_ += aa;
-		for ( Size ii = 1, n_bins = bin_names_.size(); ii <= n_bins; ++ii ) {
+		for ( core::Size ii = 1, n_bins = bin_names_.size(); ii <= n_bins; ++ii ) {
 			line_stream >> per_residue_probs[ii];
 		}
 		if ( line_stream.fail() ) {
@@ -88,8 +88,8 @@ void TorsionBinIO::write( std::ostream & output ) {
 	}
 	output << std::endl;
 
-	Size seq_idx(1);
-	for ( vector1< vector1< Real > >::const_iterator row_it = probs_.begin(),
+	core::Size seq_idx(1);
+	for ( vector1< vector1< core::Real > >::const_iterator row_it = probs_.begin(),
 			row_end = probs_.end(); row_it != row_end; ++row_it
 			) {
 		output << seq_idx << ' ' << sequence_[seq_idx-1] << ' ';
@@ -105,7 +105,7 @@ void TorsionBinIO::write( std::ostream & output ) {
 }
 
 utility::vector1< core::Real > const &
-TorsionBinIO::prof_row( Size const idx ) const {
+TorsionBinIO::prof_row( core::Size const idx ) const {
 	runtime_assert( idx <= probs_.size() );
 	return probs_[ idx ];
 }
@@ -114,7 +114,7 @@ utility::vector1< utility::vector1< core::Real > > const & TorsionBinIO::matrix(
 	return probs_;
 }
 
-Size TorsionBinIO::nrows() const {
+core::Size TorsionBinIO::nrows() const {
 	return probs_.size();
 }
 

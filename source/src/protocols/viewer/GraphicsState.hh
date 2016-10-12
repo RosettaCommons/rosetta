@@ -48,17 +48,15 @@ const std::size_t Num_ShowHState = 2;
 enum ShowHState { SHOW_NO_H, SHOW_H };
 
 }
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace graphics_states_param;
 
 //lin define the graphics state
 class GraphicsState {
 public:
-	BBdisplayState BBdisplay_state;
-	SCdisplayState SCdisplay_state;
-	ColorMode Color_mode;
-	TrajectoryState Trajectory_state;
-	ShowHState show_H_state;
+	graphics_states_param::BBdisplayState BBdisplay_state;
+	graphics_states_param::SCdisplayState SCdisplay_state;
+	graphics_states_param::ColorMode Color_mode;
+	graphics_states_param::TrajectoryState Trajectory_state;
+	graphics_states_param::ShowHState show_H_state;
 	core::Vector previous_vertex1, previous_vertex2, previous_width_vector;
 
 	core::Real density_sigma;  // contour level of density
@@ -66,22 +64,22 @@ public:
 	std::size_t nres_for_graphics;
 
 	GraphicsState() :
-		BBdisplay_state (SHOW_CARTOON),//default
-		SCdisplay_state (SHOW_STICK),//default
-		Color_mode (RAINBOW_COLOR),//default
-		Trajectory_state (SHOW_ALL_TRIALS),//default
-		show_H_state (SHOW_NO_H), //default
+		BBdisplay_state (graphics_states_param::SHOW_CARTOON),//default
+		SCdisplay_state (graphics_states_param::SHOW_STICK),//default
+		Color_mode (graphics_states_param::RAINBOW_COLOR),//default
+		Trajectory_state (graphics_states_param::SHOW_ALL_TRIALS),//default
+		show_H_state (graphics_states_param::SHOW_NO_H), //default
 		previous_vertex1( 0.0 ), previous_vertex2( 0.0 ), previous_width_vector( 0.0 ),
 		density_sigma( 2.0 ), density_redraw(true),  //default
 		nres_for_graphics( 0 )
 	{}
 
 	GraphicsState(
-		BBdisplayState BBdisplay_state_in,
-		SCdisplayState SCdisplay_state_in,
-		ColorMode Color_mode_in,
-		TrajectoryState Trajectory_state_in,
-		ShowHState show_H_state_in
+		graphics_states_param::BBdisplayState BBdisplay_state_in,
+		graphics_states_param::SCdisplayState SCdisplay_state_in,
+		graphics_states_param::ColorMode Color_mode_in,
+		graphics_states_param::TrajectoryState Trajectory_state_in,
+		graphics_states_param::ShowHState show_H_state_in
 	) :
 		BBdisplay_state (BBdisplay_state_in),
 		SCdisplay_state (SCdisplay_state_in),

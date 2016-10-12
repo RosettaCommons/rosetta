@@ -50,6 +50,9 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
+using core::Size;
+using core::Real;
+
 bool TMalign_poses(core::pose::Pose & aligned_pose,
 	core::pose::Pose const & ref_pose,
 	std::list <Size> const & residue_list,

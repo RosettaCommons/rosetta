@@ -80,6 +80,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.ThermalMinimizer" );
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

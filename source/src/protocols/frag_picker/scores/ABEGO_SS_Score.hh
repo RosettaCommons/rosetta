@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 class ABEGO_SS_Score;
 typedef utility::pointer::shared_ptr< ABEGO_SS_Score > ABEGO_SS_ScoreOP;
@@ -41,26 +41,26 @@ typedef utility::pointer::shared_ptr< ABEGO_SS_Score const > ABEGO_SS_ScoreCOP;
 class ABEGO_SS_Score: public CachingScoringMethod {
 public:
 
-	ABEGO_SS_Score(Size priority, Real lowest_acceptable_value, bool use_lowest,
-		std::string prediction_file_name,Size longest_vall_chunk) :
+	ABEGO_SS_Score(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+		std::string prediction_file_name,core::Size longest_vall_chunk) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 		"ABEGO_SS_Score") {
 
 		quota::ABEGO_SS_Config prediction_file(prediction_file_name);
 		query_len_ = prediction_file.size();
 		n_classes_ = prediction_file.n_columns();
-		for ( Size i = 1; i <= query_len_; ++i ) {
-			utility::vector1<Real> row(longest_vall_chunk);
+		for ( core::Size i = 1; i <= query_len_; ++i ) {
+			utility::vector1<core::Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
-		for ( Size iseq=1; iseq<=query_len_; iseq++ ) {
-			utility::vector1<Real> row;
-			for ( Size ibin=1; ibin<=n_classes_; ibin++ ) {
+		for ( core::Size iseq=1; iseq<=query_len_; iseq++ ) {
+			utility::vector1<core::Real> row;
+			for ( core::Size ibin=1; ibin<=n_classes_; ibin++ ) {
 				row.push_back(prediction_file.probability(iseq,ibin));
 			}
 			ratios_.push_back( row );
 		}
-		for ( Size ibin=1; ibin<=n_classes_; ibin++ ) {
+		for ( core::Size ibin=1; ibin<=n_classes_; ibin++ ) {
 			maps_.push_back( utility::pointer::shared_ptr<class protocols::frag_picker::quota::ABEGO_SS_Map>( new quota::ABEGO_SS_Map(prediction_file.get_pool_bins(ibin)) ) );
 		}
 	}
@@ -75,10 +75,10 @@ public:
 	virtual bool score(FragmentCandidateOP, FragmentScoreMapOP);
 
 private:
-	Size query_len_;
-	Size n_classes_;
+	core::Size query_len_;
+	core::Size n_classes_;
 	utility::vector1<quota::ABEGO_SS_MapOP> maps_;
-	utility::vector1< utility::vector1<Real> > ratios_;
+	utility::vector1< utility::vector1<core::Real> > ratios_;
 	std::string cached_scores_id_;
 	Matrix scores_;
 };
@@ -91,7 +91,7 @@ public:
 		MakeFragmentScoringMethod("ABEGO_SS_Score") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool,
+	FragmentScoringMethodOP make(core::Size, core::Real, bool,
 		FragmentPickerOP, std::string);
 };
 

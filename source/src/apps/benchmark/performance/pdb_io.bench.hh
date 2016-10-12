@@ -21,13 +21,10 @@
 
 #include <utility/vector1.hh>
 
-
-using namespace core;
-
 class PDB_IOBenchmark : public PerformanceBenchmark
 {
 public:
-	pose::Pose pose;
+	core::pose::Pose pose;
 
 	PDB_IOBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
@@ -36,7 +33,7 @@ public:
 		std::ifstream pdb("test_in.pdb");
 
 		pdb.seekg(0, std::ios::end);
-		Size length = pdb.tellg();
+		core::Size length = pdb.tellg();
 		pdb.seekg(0, std::ios::beg);
 
 		pdb_string_.resize(length);

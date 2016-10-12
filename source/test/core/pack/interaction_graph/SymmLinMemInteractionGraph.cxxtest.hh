@@ -53,6 +53,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+using namespace core;
 
 class SymmLinMemInteractionGraphTests : public CxxTest::TestSuite {
 public:

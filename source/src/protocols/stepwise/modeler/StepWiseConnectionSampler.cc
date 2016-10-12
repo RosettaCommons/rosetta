@@ -95,7 +95,13 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.StepWiseConnectionSampler" );
+
+using namespace core;
 using namespace protocols::stepwise::modeler::rna;
+using namespace protocols::stepwise::modeler::rna::rigid_body;
+using namespace protocols::stepwise::sampler::copy_dofs;
+
+using core::pose::PoseOP;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

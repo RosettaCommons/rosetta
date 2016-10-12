@@ -47,13 +47,6 @@ namespace protocols {
 namespace docking {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::scoring;
-using namespace protocols::moves;
-
 class MPFindInterfaceMover : public protocols::moves::Mover {
 
 public:
@@ -99,7 +92,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Sampling protein-protein interface in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -114,19 +107,19 @@ private: // methods
 	void init_from_cmd();
 
 	/// @brief Finalize setup
-	void finalize_setup( Pose & pose );
+	void finalize_setup( core::pose::Pose & pose );
 
 	/// @brief Superimpose upstream partner
 	/// @details Superimpose upstream partner of the pose with the native
-	void superimpose_upstream_partner( Pose & pose );
+	void superimpose_upstream_partner( core::pose::Pose & pose );
 
 	/// @brief Calculate interface SASA
 	/// @details Calculate SASA buried in the interface
-	core::Real calculate_interface_SASA( Pose & pose, Interface & interface );
+	core::Real calculate_interface_SASA( core::pose::Pose & pose, protocols::scoring::Interface & interface );
 
 	/// @brief Calculate fraction of small residues in interface
 	/// details See Andrew Bordner, 2009, BMC Bioinformatics
-	std::pair< core::Real, core::Real > fractions_small_residues( Pose & pose, Interface & interface);
+	std::pair< core::Real, core::Real > fractions_small_residues( core::pose::Pose & pose, protocols::scoring::Interface & interface);
 
 private: // data
 
@@ -144,9 +137,9 @@ private: // data
 	utility::vector1< int > jumps_;
 
 	/// @brief SpanningTopology objects
-	SpanningTopologyOP topo_;   // full pose
-	SpanningTopologyOP topo_up_; // upstream partner
-	SpanningTopologyOP topo_down_;  // downstream partner
+	core::conformation::membrane::SpanningTopologyOP topo_;   // full pose
+	core::conformation::membrane::SpanningTopologyOP topo_up_; // upstream partner
+	core::conformation::membrane::SpanningTopologyOP topo_down_;  // downstream partner
 
 	/// @brief scorefunction
 	core::scoring::ScoreFunctionOP sfxn_lowres_;

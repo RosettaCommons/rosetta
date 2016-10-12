@@ -41,8 +41,6 @@ typedef std::map< std::string, SheetList > MapByLengths;
 typedef std::map< std::string, MapByLengths > MapByOrientations;
 typedef std::map< core::Size, MapByOrientations > MapByStrands;
 
-using namespace protocols::denovo_design::architects;
-
 /// @brief class used to create/manipulate a database of sheets using a list of pdb files
 class SheetDB : public utility::pointer::ReferenceCount {
 public:
@@ -51,15 +49,15 @@ public:
 
 	/// @brief query the database for a sheet and retrieve the list -- if not found, tries to read from disk
 	SheetList
-	sheet_list( Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts );
+	sheet_list( architects::Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts );
 
 	/// @brief query the database for a sheet and retrieve the list -- if not found, tries to read from disk
 	SheetList
-	sheet_list_const( Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts ) const;
+	sheet_list_const( architects::Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts ) const;
 
 	/// @brief query the database, returns whether data exists
 	bool
-	has_data( Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts ) const;
+	has_data( architects::Lengths const & lengths, StrandOrientations const & orientations, RegisterShifts const & shifts ) const;
 
 	/// @brief set location of sheet database files
 	inline void set_db_path( std::string const & db_path ) { db_path_ = db_path; }
@@ -153,7 +151,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose );
 
 /// @brief creates a string key for lengths/shifts based on the given vectors for strand lengths and register shifts
 std::string
-make_strand_info_str( Lengths const & lengths, RegisterShifts const & shifts );
+make_strand_info_str( architects::Lengths const & lengths, RegisterShifts const & shifts );
 
 core::pose::PoseOP
 reverse_chains( core::pose::Pose const & pose );

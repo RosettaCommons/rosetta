@@ -30,6 +30,7 @@ namespace modeler {
 namespace packer {
 
 using namespace core::conformation;
+using namespace core;
 
 //Constructor
 SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,

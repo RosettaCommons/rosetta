@@ -23,9 +23,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -37,13 +34,13 @@ class MultiPhosphateSampler: public protocols::moves::Mover {
 public:
 
 	//constructor
-	MultiPhosphateSampler( pose::Pose const & reference_pose );
+	MultiPhosphateSampler( core::pose::Pose const & reference_pose );
 
 
 	//constructor
 	// deprecated: prepacks pose (after temporary splitting into partitions)
-	MultiPhosphateSampler( pose::Pose & pose_to_prepack,
-		Size const moving_res /*sets partition*/ );
+	MultiPhosphateSampler( core::pose::Pose & pose_to_prepack,
+		core::Size const moving_res /*sets partition*/ );
 
 	//destructor
 	~MultiPhosphateSampler();
@@ -66,10 +63,10 @@ public:
 	sample_phosphates();
 
 	void
-	sample_phosphates( pose::PoseOP & viewer_pose_op );
+	sample_phosphates( core::pose::PoseOP & viewer_pose_op );
 
 	void
-	copy_phosphates( pose::Pose & mod_pose ) const;
+	copy_phosphates( core::pose::Pose & mod_pose ) const;
 
 	void reset_to_original_pose();
 
@@ -78,14 +75,14 @@ public:
 
 	bool instantiated_some_phosphate() const{ return instantiated_some_phosphate_; }
 
-	void set_moving_partition_res( utility::vector1< Size > const & setting ){ moving_partition_res_  = setting; }
-	void set_five_prime_phosphate_res( utility::vector1< Size > const & setting ){ five_prime_phosphate_res_input_ = setting; }
-	void set_three_prime_phosphate_res( utility::vector1< Size > const & setting ){ three_prime_phosphate_res_input_ = setting; }
+	void set_moving_partition_res( utility::vector1< core::Size > const & setting ){ moving_partition_res_  = setting; }
+	void set_five_prime_phosphate_res( utility::vector1< core::Size > const & setting ){ five_prime_phosphate_res_input_ = setting; }
+	void set_three_prime_phosphate_res( utility::vector1< core::Size > const & setting ){ three_prime_phosphate_res_input_ = setting; }
 
 	void set_force_phosphate_instantiation( bool const & setting ){ force_phosphate_instantiation_ = setting; }
 	bool force_phosphate_instantiation() const { return force_phosphate_instantiation_; }
 
-	pose::Pose & pose();
+	core::pose::Pose & pose();
 
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP get_scorefxn() { return scorefxn_; }
@@ -93,21 +90,21 @@ public:
 	utility::vector1< PhosphateMove> phosphate_move_list() const { return phosphate_move_list_; }
 	void set_phosphate_move_list( utility::vector1< PhosphateMove> const & setting ) { phosphate_move_list_ = setting; }
 
-	utility::vector1< Size > const & moving_partition_res(){ return moving_partition_res_; }
+	utility::vector1< core::Size > const & moving_partition_res(){ return moving_partition_res_; }
 
 	void
-	reset( pose::Pose const & pose );
+	reset( core::pose::Pose const & pose );
 
 	void
-	initialize_by_prepack( pose::Pose & pose, Size const moving_res );
+	initialize_by_prepack( core::pose::Pose & pose, core::Size const moving_res );
 
 	void
-	initialize_by_prepack( pose::Pose & pose,
-		utility::vector1< Size > const & moving_res_list );
+	initialize_by_prepack( core::pose::Pose & pose,
+		utility::vector1< core::Size > const & moving_res_list );
 
 	void
-	do_prepack( pose::Pose & pose,
-		utility::vector1< Size > const & moving_res_list );
+	do_prepack( core::pose::Pose & pose,
+		utility::vector1< core::Size > const & moving_res_list );
 
 
 private:
@@ -115,41 +112,41 @@ private:
 	void initialize_parameters();
 
 	utility::vector1< PhosphateMove >
-	initialize_phosphate_move_list( pose::Pose & pose );
+	initialize_phosphate_move_list( core::pose::Pose & pose );
 
 	utility::vector1< PhosphateMove >
 	check_moved( utility::vector1< PhosphateMove > phosphate_move_list,
-		pose::Pose const & pose ) const;
+		core::pose::Pose const & pose ) const;
 
 	void
-	find_uninstantiated_phosphates( pose::Pose const & pose,
+	find_uninstantiated_phosphates( core::pose::Pose const & pose,
 		utility::vector1< PhosphateMove > const & phosphate_move_list,
 		utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const;
 
 	void
-	find_phosphate_contacts_other_partition( utility::vector1< Size > const & partition_res1,
-		utility::vector1< Size > const & partition_res2,
-		pose::Pose const & pose,
+	find_phosphate_contacts_other_partition( utility::vector1< core::Size > const & partition_res1,
+		utility::vector1< core::Size > const & partition_res2,
+		core::pose::Pose const & pose,
 		utility::vector1< PhosphateMove > const & phosphate_move_list,
 		utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const;
 
 	bool
-	check_other_partition_for_contact( pose::Pose const & pose,
-		utility::vector1< Size > const & other_partition_res,
-		Vector const & takeoff_xyz ) const;
+	check_other_partition_for_contact( core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & other_partition_res,
+		core::Vector const & takeoff_xyz ) const;
 
 private:
 
-	pose::PoseCOP pose_with_original_phosphates_;
-	pose::PoseOP phosphate_sample_pose_;
+	core::pose::PoseCOP pose_with_original_phosphates_;
+	core::pose::PoseOP phosphate_sample_pose_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	Real phosphate_takeoff_donor_distance_cutoff2_;
+	core::Real phosphate_takeoff_donor_distance_cutoff2_;
 	bool screen_all_;
 	bool force_phosphate_instantiation_;
 
-	utility::vector1< Size > moving_partition_res_;
-	utility::vector1 < Size > five_prime_phosphate_res_input_;
-	utility::vector1 < Size > three_prime_phosphate_res_input_;
+	utility::vector1< core::Size > moving_partition_res_;
+	utility::vector1 < core::Size > five_prime_phosphate_res_input_;
+	utility::vector1 < core::Size > three_prime_phosphate_res_input_;
 
 	utility::vector1< PhosphateMove> phosphate_move_list_;
 	utility::vector1< PhosphateMove> actual_phosphate_move_list_;

@@ -26,7 +26,7 @@ namespace frag_picker {
 template<class T, class StrictWeakOrdering>
 class LazySortedVector1 : public utility::pointer::ReferenceCount {
 public:
-	LazySortedVector1(StrictWeakOrdering cmp, Size sorted_capacity,Size max_capacity) :
+	LazySortedVector1(StrictWeakOrdering cmp, core::Size sorted_capacity,core::Size max_capacity) :
 		comp(cmp) {
 		max_capacity_ = max_capacity;
 		sorted_ = false;
@@ -43,7 +43,7 @@ public:
 		//     std::cerr<<n_inserts_<<" "<<n_denied_<<" "<<n_sorts_<<'\n';
 	}
 
-	void resize(Size sorted_capacity,Size max_capacity) {
+	void resize(core::Size sorted_capacity,core::Size max_capacity) {
 
 		max_capacity_ = max_capacity;
 		sorted_capacity_ = sorted_capacity;
@@ -82,29 +82,29 @@ public:
 	inline T peek_back() const { return data_[sorted_capacity_]; }
 	inline T peek_front() const { return data_[1]; }
 
-	inline Size count_inserted() const { return data_.size(); }
+	inline core::Size count_inserted() const { return data_.size(); }
 
 
 	/// @brief sets new capacity for the container
-	inline void set_boundary(Size sorted_capacity) {
+	inline void set_boundary(core::Size sorted_capacity) {
 		sorted_capacity_ = sorted_capacity;
 	}
 
-	inline T& at(Size index) {
+	inline T& at(core::Size index) {
 		if ( !sorted_ ) {
 			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
 		}
 		return data_.at(index);
 	}
 
-	inline T& operator[](Size index) {
+	inline T& operator[](core::Size index) {
 		if ( !sorted_ ) {
 			std::sort(data_.begin(), data_.begin() + last_ - 1, comp);
 		}
 		return data_[index];
 	}
 
-	inline Size size() const {
+	inline core::Size size() const {
 		return std::min(sorted_capacity_,last_);
 	}
 
@@ -120,7 +120,7 @@ public:
 		}
 
 		//  std::copy(data_.begin(), data_.begin() + size() - 1, good_data_.begin() );
-		for ( Size i=1; i<=size(); i++ ) {
+		for ( core::Size i=1; i<=size(); i++ ) {
 			good_data_.push_back(data_[i]);
 		}
 
@@ -131,18 +131,18 @@ public:
 		data_.clear();
 	}
 private:
-	Size last_;
+	core::Size last_;
 	T worst_;
 	StrictWeakOrdering comp;
 	bool sorted_;
-	Size max_capacity_;
-	Size sorted_capacity_;
+	core::Size max_capacity_;
+	core::Size sorted_capacity_;
 	utility::vector1<T> data_;
 	utility::vector1<T> good_data_;
 	// debug info:
-	Size n_inserts_;
-	Size n_denied_;
-	Size n_sorts_;
+	core::Size n_inserts_;
+	core::Size n_denied_;
+	core::Size n_sorts_;
 };
 
 } // frag_picker

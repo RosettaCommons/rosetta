@@ -39,6 +39,7 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MonteCarloReset" );
 
 using namespace core;
+using namespace protocols::moves;
 
 namespace protocols {
 namespace simple_moves {

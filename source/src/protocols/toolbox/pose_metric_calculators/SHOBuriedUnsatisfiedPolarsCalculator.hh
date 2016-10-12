@@ -35,10 +35,6 @@ namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
-using core::Size;
-using core::Real;
-using core::id::AtomID;
-
 class SHOBuriedUnsatisfiedPolarsCalculator :
 	public core::pose::metrics::StructureDependentCalculator {
 
@@ -46,11 +42,11 @@ public:
 
 	/// @brief constructs the calculator for a target atom in residues of a target
 	///  amino acid type
-	SHOBuriedUnsatisfiedPolarsCalculator(Real sho_cutoff, std::string tgt_amino,
+	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff, std::string tgt_amino,
 		std::string tgt_atom, core::scoring::ScoreFunctionCOP sfxn);
 
 	/// @brief constructs the calculator for a target residue
-	SHOBuriedUnsatisfiedPolarsCalculator(Real sho_cutoff,
+	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff,
 		utility::vector1<Size> const& tgt_res_idxs,
 		core::scoring::ScoreFunctionCOP sfxn);
 
@@ -58,16 +54,16 @@ public:
 	core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	/// @brief returns the set of target atoms classified as "buried unsatisfied"
-	utility::vector1<AtomID> const& burunsat_atoms() {return burunsat_atoms_;}
+	utility::vector1<core::id::AtomID> const& burunsat_atoms() {return burunsat_atoms_;}
 
 	/// @brief returns the set of target atoms classified as "other"
-	utility::vector1<AtomID> const& other_atoms() {return other_atoms_;}
+	utility::vector1<core::id::AtomID> const& other_atoms() {return other_atoms_;}
 
 	/// @brief prints all information in this calculator
 	void print_all_info(core::pose::Pose const& ps) const;
 
 	/// @brief returns the total H-bond energy of an atom
-	Real hbond_energy(AtomID aid, core::pose::Pose const& ps) const;
+	core::Real hbond_energy(core::id::AtomID aid, core::pose::Pose const& ps) const;
 
 	/// @brief recomputes all data from scratch and prints it to screen
 	void recompute_and_print(core::pose::Pose const& ps);
@@ -102,26 +98,26 @@ private:
 
 	/// @brief assigns an atom to either the "buried unsatisfied" class or the
 	///  "other" class
-	void assign_atom(AtomID aid);
+	void assign_atom(core::id::AtomID aid);
 
 	/// @brief is aid buried?
-	bool is_buried(AtomID aid);
+	bool is_buried(core::id::AtomID aid);
 
 	/// @brief is aid unsatisfied?
-	bool is_unsat(AtomID aid) const;
+	bool is_unsat(core::id::AtomID aid) const;
 
 	/// @brief prints info on a subset of atoms
 	void print_atom_subset(
-		utility::vector1<AtomID> const& subset,
+		utility::vector1<core::id::AtomID> const& subset,
 		core::pose::Pose const& ps) const;
 
 	/// @brief returns the average SHO energy of a subset of atoms
-	Real get_average_energy(
-		utility::vector1<AtomID> const& subset,
-		std::map<AtomID, Real> & sho_energies) const;
+	core::Real get_average_energy(
+		utility::vector1<core::id::AtomID> const& subset,
+		std::map<core::id::AtomID, core::Real> & sho_energies) const;
 
 	/// @brief prints an atom's identifier on screen
-	void print_atom_info(AtomID aid, core::pose::Pose const& ps) const;
+	void print_atom_info(core::id::AtomID aid, core::pose::Pose const& ps) const;
 
 	/// @brief selected type of search
 	SearchTyp search_typ_;
@@ -146,16 +142,16 @@ private:
 	core::scoring::hbonds::HBondSetCOP hbond_set_;
 
 	/// @brief stores the SHO energies of all polar atoms in the pose
-	std::map<AtomID, Real> sho_energies_;
+	std::map<core::id::AtomID, core::Real> sho_energies_;
 
 	/// @brief set of buried unsatisfied atoms
-	utility::vector1<AtomID> burunsat_atoms_;
+	utility::vector1<core::id::AtomID> burunsat_atoms_;
 
 	/// @brief number of buried unsatisfied atoms
 	Size num_burunsat_atoms_;
 
 	/// @brief set of atoms that are NOT buried unsatisfied
-	utility::vector1<AtomID> other_atoms_;
+	utility::vector1<core::id::AtomID> other_atoms_;
 
 	/// @brief number of atoms that are NOT buried unsatisfied
 	Size num_other_atoms_;
@@ -175,7 +171,7 @@ public:
 };
 
 /// @brief extracts the pose indexes of a selected subset of residues
-void residue_subset(std::string setf, utility::vector1<Size>& rset,
+void residue_subset(std::string setf, utility::vector1<core::Size>& rset,
 	core::pose::Pose &ps);
 
 } // pose_metric_calculators

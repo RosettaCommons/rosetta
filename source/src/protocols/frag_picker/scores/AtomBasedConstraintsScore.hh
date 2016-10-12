@@ -41,13 +41,13 @@ public:
 	/// @brief Prepare an atom-based score that utilizes some user-defined atoms
 	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
-	AtomBasedConstraintsScore(Size, Real, bool, Size, utility::vector1<
+	AtomBasedConstraintsScore(core::Size, core::Real, bool, core::Size, utility::vector1<
 		std::string>, std::string);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
 	/// @details These atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
-	AtomBasedConstraintsScore(Size, Real, bool, Size, std::string);
+	AtomBasedConstraintsScore(core::Size, core::Real, bool, core::Size, std::string);
 
 	/// @brief In this case caching means copying coordinates of relevant atoms from a chunk's pose
 	void do_caching(VallChunkOP);
@@ -59,7 +59,7 @@ public:
 	/// @param residue_id the residue order number. The first is 1,
 	///    the last one depends on the size of a pose i.e. the size of the current chunk
 	/// @param atom_id the residue order number, the first is 1
-	inline bool has_atom(Size residue_id, Size atom_id) {
+	inline bool has_atom(core::Size residue_id, core::Size atom_id) {
 		assert(residue_id<=atom_flags_.size());
 		assert(atom_id<=atom_flags_[residue_id].size());
 		return atom_flags_[residue_id][atom_id];
@@ -69,8 +69,8 @@ public:
 	/// @param residue_id the residue order number. The first is 1,
 	///    the last one depends on the size of a pose i.e. the size of the current chunk
 	/// @param atom_id the residue order number, the first is 1
-	inline numeric::xyzVector<Real> get_atom_coordinates(Size residue_id,
-		Size atom_id) {
+	inline numeric::xyzVector<core::Real> get_atom_coordinates(core::Size residue_id,
+		core::Size atom_id) {
 		assert(residue_id<=chunk_atoms_xyz_.size());
 		assert(atom_id<=chunk_atoms_xyz_[residue_id].size());
 		return chunk_atoms_xyz_[residue_id][atom_id];
@@ -79,32 +79,32 @@ public:
 	/// @brief Returns a map that defines all constrained atoms used by this scoring method
 	/// @details Returned map defines the order of atoms as they are stored inside this object.
 	/// Indexes defined y this map can be used as arguments for has_atom() and get_atom_coordinates() methods.
-	inline std::map<std::string, Size> get_constrainable_atoms_map() {
+	inline std::map<std::string, core::Size> get_constrainable_atoms_map() {
 		return constrainable_atoms_;
 	}
 
 	/// @brief returns an internal ID assigned to a given atom name
 	/// @details this ID remains the same for all residues
-	inline Size get_constrained_atom_id(std::string atom_name) {
+	inline core::Size get_constrained_atom_id(std::string atom_name) {
 		return constrainable_atoms_.find(atom_name)->second;
 	}
 
 	/// @brief returns a name of a constrained atom when its internal ID is known
 	/// @details this is the oposite to get_constrained_atom_id(std::string)
-	std::string get_constrained_atom_name(Size atom_id);
+	std::string get_constrained_atom_name(core::Size atom_id);
 
 	/// @brief provides an access to the size of the length of a query sequence
-	inline Size get_query_size() {
+	inline core::Size get_query_size() {
 		return query_size_;
 	}
 
 private:
-	Size query_size_;
-	utility::vector1<utility::vector1<numeric::xyzVector<Real> > >
+	core::Size query_size_;
+	utility::vector1<utility::vector1<numeric::xyzVector<core::Real> > >
 		chunk_atoms_xyz_;
 	utility::vector1<utility::vector1<bool> > atom_flags_;
-	Size get_atom_type(std::string atom_name);
-	std::map<std::string, Size> constrainable_atoms_;
+	core::Size get_atom_type(std::string atom_name);
+	std::map<std::string, core::Size> constrainable_atoms_;
 };
 
 } // scores

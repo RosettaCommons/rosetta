@@ -47,16 +47,16 @@ void PartialSecondarySimilarity::do_caching(VallChunkOP chunk) {
 	cached_scores_id_ = tmp;
 
 	//assert(query_ss_);
-	utility::vector1<Size> chunk_ss_id( chunk->size() );
-	for ( Size j = 1; j <= chunk->size(); ++j ) {
+	utility::vector1<core::Size> chunk_ss_id( chunk->size() );
+	for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 		char s(chunk->at(j)->ss());
 		if ( s == 'H' ) chunk_ss_id[j] = 1;
 		if ( s == 'E' ) chunk_ss_id[j] = 2;
 		if ( s == 'L' ) chunk_ss_id[j] = 3;
 	}
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			scores_[i][j] = raw_probs_[i][chunk_ss_id[j]];
 		}
 	}
@@ -66,10 +66,10 @@ void PartialSecondarySimilarity::do_caching(VallChunkOP chunk) {
 
 bool PartialSecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	utility::vector1< Real > values;
+	utility::vector1< core::Real > values;
 	values.resize(f->get_length());
 
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		values[i] = 0.0;
 		VallChunkOP chunk = f->get_chunk();
 
@@ -88,25 +88,25 @@ bool PartialSecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP
 	}
 
 	std::sort( values.begin(), values.end() );
-	Real totalScore = 0.0;
+	core::Real totalScore = 0.0;
 
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		//~1 at 1, ~0.05 at f->get_length, 0.5 at 0.7*f->get_length()
-		Real sigmoid_weight( 1 / ( 1 + exp( (10*( (Real) i ) / f->get_length()) - 7 ) ) );
+		core::Real sigmoid_weight( 1 / ( 1 + exp( (10*( (core::Real) i ) / f->get_length()) - 7 ) ) );
 
 		totalScore += sigmoid_weight*values[i];
 	}
 
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 
-	// Real best80 = ( static_cast< Real > ( f->get_length() ) ) * 0.8;
-	//  Size best80i =  static_cast< Size > ( best80 );
+	// core::Real best80 = ( static_cast< core::Real > ( f->get_length() ) ) * 0.8;
+	//  core::Size best80i =  static_cast< core::Size > ( best80 );
 
-	//  Real totalScore = 0.0;
-	//  for (Size i = 1; i<= best80i; i++) {
+	//  core::Real totalScore = 0.0;
+	//  for (core::Size i = 1; i<= best80i; i++) {
 	//   totalScore += values[i];
 	//  }
-	//  totalScore /= (Real) best80i;
+	//  totalScore /= (core::Real) best80i;
 
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -128,9 +128,9 @@ bool PartialSecondarySimilarity::cached_score(FragmentCandidateOP f,
 	//   do_caching(f->get_chunk());
 	//  }
 
-	//  Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
+	//  core::Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
 
-	//  totalScore /= (Real) f->get_length();
+	//  totalScore /= (core::Real) f->get_length();
 
 	//  empty_map->set_score_component(totalScore, id_);
 	//  if ((totalScore > lowest_acceptable_value_) && (use_lowest_ == true))
@@ -138,9 +138,9 @@ bool PartialSecondarySimilarity::cached_score(FragmentCandidateOP f,
 	//  return true;
 }
 
-PartialSecondarySimilarity::PartialSecondarySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PartialSecondarySimilarity::PartialSecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-	Size sequence_length, Size longest_vall_chunk) :
+	core::Size sequence_length, core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"PartialSecondarySimilarity") , prediction_name_(prediction_name) {
 	query_len_ = sequence_length;
@@ -151,8 +151,8 @@ PartialSecondarySimilarity::PartialSecondarySimilarity(Size priority, Real lowes
 	norm_query_H_.resize(query_len_);
 	norm_query_E_.resize(query_len_);
 	norm_query_L_.resize(query_len_);
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		Real highest_ss_pred(query_prediction->helix_fraction(i));
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		core::Real highest_ss_pred(query_prediction->helix_fraction(i));
 
 		if ( highest_ss_pred < query_prediction->strand_fraction(i) ) {
 			highest_ss_pred = query_prediction->strand_fraction(i);
@@ -169,10 +169,10 @@ PartialSecondarySimilarity::PartialSecondarySimilarity(Size priority, Real lowes
 
 	//scores_ vector = query_size x vall_size for per residue scores
 	//prow vector = query_size x 3, used to store 1->0 scores for the 0->1 probabilities
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
-		utility::vector1<Real> prow(3);
+		utility::vector1<core::Real> prow(3);
 		prow[1] = 1 - norm_query_H_[i];
 		prow[2] = 1 - norm_query_E_[i];
 		prow[3] = 1 - norm_query_L_[i];

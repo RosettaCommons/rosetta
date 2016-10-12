@@ -29,10 +29,6 @@
 namespace protocols {
 namespace trajectory {
 
-using core::Size;
-using core::Real;
-using core::pose::Pose;
-
 class DbTrajectoryReader
 	: public utility::pointer::ReferenceCount, private boost::noncopyable {
 
@@ -42,26 +38,26 @@ public:
 	DbTrajectoryReader();
 
 	/// @brief Constructor which accepts a job id.
-	DbTrajectoryReader(Size job_id);
+	DbTrajectoryReader(core::Size job_id);
 
 	/// @brief Set the job id.  This controls which records are selected.
-	void set_job_id(Size job_id);
+	void set_job_id(core::Size job_id);
 
 	/// @brief Return the number of iterations that were recorded for this job.
-	Size get_num_iterations() const;
+	core::Size get_num_iterations() const;
 
 	/// @brief Return a vector listing every iteration recorded for this job.
-	utility::vector1<Size> get_iterations() const;
+	utility::vector1<core::Size> get_iterations() const;
 
 	/// @brief Return the pose recorded for the given iteration.
-	Pose get_pose(Size iteration) const;
+	core::pose::Pose get_pose(core::Size iteration) const;
 
 	/// @brief Return all the poses contained in this trajectory.
-	utility::vector1<Pose> get_poses() const;
+	utility::vector1<core::pose::Pose> get_poses() const;
 
 private:
 	utility::sql_database::sessionOP db_session_;
-	Size job_id_;
+	core::Size job_id_;
 
 };
 

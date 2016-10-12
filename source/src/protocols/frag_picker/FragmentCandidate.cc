@@ -66,6 +66,9 @@
 namespace protocols {
 namespace frag_picker {
 
+using namespace ObjexxFCL::format;
+using namespace core;
+
 static THREAD_LOCAL basic::Tracer trFragmentCandidate(
 	"protocols.frag_picker.FragmentCandidate");
 
@@ -73,7 +76,7 @@ const std::string FragmentCandidate::unknown_pool_name_ = "UNKNOWN_POOL_NAME";
 
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(
-	std::string file_name, VallProviderOP chunk_owner, Size max_nfrags_per_pos) {
+	std::string file_name, VallProviderOP chunk_owner, core::Size max_nfrags_per_pos) {
 
 	utility::vector1<FragmentCandidateOP> candidates;
 
@@ -88,20 +91,20 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 
 	std::string pdb_id = "";
 	char chain_id;
-	Size res_id = 0, qpos = 1, n_res = 0;
+	core::Size res_id = 0, qpos = 1, n_res = 0;
 	std::string line;
 	std::string tmp;
-	Size n_frags = 0;
+	core::Size n_frags = 0;
 	while ( data ) {
 		getline(data, line);
-		Size found = line.find_first_not_of(" \t");
+		core::Size found = line.find_first_not_of(" \t");
 		if ( found == std::string::npos ) { // the line is empty!
 			if ( n_res > 0 ) {
-				Size vpos = 0;
+				core::Size vpos = 0;
 				VallChunkOP chunk = chunk_owner->find_chunk(pdb_id, chain_id,
 					res_id);
 				if ( chunk != nullptr ) {
-					for ( Size j = 1; j <= chunk->size(); ++j ) {
+					for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 						if ( chunk->at(j)->resi() == res_id ) {
 							vpos = j;
 							if ( vpos > 99999 ) {
@@ -177,7 +180,7 @@ void FragmentCandidate::print_fragment_index(std::ostream& out, bool vall_index_
 		out << r->key() << " " << fragmentLength_ << std::endl;
 	} else {
 		out << "0 " << fragmentLength_ << std::endl;
-		for ( Size i = 1; i <= fragmentLength_; ++i ) {
+		for ( core::Size i = 1; i <= fragmentLength_; ++i ) {
 			VallResidueOP r = get_residue(i);
 			out << r->aa() << " " << r->ss() << " " << utility::trim(F(9, 3, r->phi())) << " " << F(9, 3, r->psi()) << " " << F(9, 3, r->omega()) << std::endl;
 		}
@@ -199,7 +202,7 @@ void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreM
 	if ( option[frags::write_scores].user() && option[frags::write_scores]() && sc && ms ) {
 		out << "# score " << F(9,3, ms->total_score(sc)) << std::endl;
 	}
-	for ( Size i = 1; i <= fragmentLength_; ++i ) {
+	for ( core::Size i = 1; i <= fragmentLength_; ++i ) {
 		//  std::cerr << "pf 4 " << i << std::endl;
 		VallResidueOP r = get_residue(i);
 		if ( !r ) continue;
@@ -221,7 +224,7 @@ ConstantLengthFragSet FragmentCandidate::create_frag_set(utility::vector1<std::p
 FragmentCandidateOP, scores::FragmentScoreMapOP> >& selected_fragments) {
 
 std::stringstream s;
-for (Size fi = 1; fi <= out.size(); ++fi) {
+for (core::Size fi = 1; fi <= out.size(); ++fi) {
 selected_fragments[i].first->print_fragment(output);
 s << std::endl;
 }
@@ -235,7 +238,7 @@ void FragmentCandidate::print_fragment_seq(std::ostream& out) {
 	out << " " << get_pdb_id() << " " << get_chain_id();
 	VallResidueOP r1 = get_residue(1);
 	out << " " << I(5,r1->resi()) << " ";
-	for ( Size i = 1; i <= fragmentLength_; ++i ) {
+	for ( core::Size i = 1; i <= fragmentLength_; ++i ) {
 		VallResidueOP r = get_residue(i);
 		char aa_upper( toupper(r->aa()) );
 		out << aa_upper;
@@ -290,7 +293,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 		mm_min->set_chi( true );
 		mzr.run( relax_pose, *mm_min, *sfxn, options );
 
-		Real sc_min_score = (*sfxn)( relax_pose );
+		core::Real sc_min_score = (*sfxn)( relax_pose );
 		core::pose::setPoseExtraScore( pose, "sc_min_score", sc_min_score );
 
 		// RELAX fragment
@@ -300,8 +303,8 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 		sub_pose_relax_protocol->apply( relax_pose );
 
 		// check relaxed pose
-		Real relaxed_rmsd = scoring::CA_rmsd( relax_pose, pose );
-		Real relaxed_score = (*sfxn)( relax_pose );
+		core::Real relaxed_rmsd = scoring::CA_rmsd( relax_pose, pose );
+		core::Real relaxed_score = (*sfxn)( relax_pose );
 
 		core::pose::setPoseExtraScore( pose, "rlx_rms", relaxed_rmsd );
 		core::pose::setPoseExtraScore( pose, "rlx_score", relaxed_score );
@@ -318,7 +321,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, st
 	bool if_quota = false;
 	if ( sc->get_quota_score() < 999.98 ) if_quota = true;
 
-	for ( Size i = 1; i <= sc->size(); i++ ) {
+	for ( core::Size i = 1; i <= sc->size(); i++ ) {
 		scores::FragmentScoringMethodOP ms_i = ms->get_component(i);
 		core::pose::setPoseExtraScore( pose, ms_i->get_score_name(), sc->at(i) );
 	}

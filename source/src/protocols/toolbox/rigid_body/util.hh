@@ -24,60 +24,57 @@
 #include <numeric/xyzMatrix.hh>
 #include <string>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-
-typedef  numeric::xyzMatrix< Real > Matrix;
 
 namespace protocols {
 namespace toolbox {
 namespace rigid_body {
 
-void
-get_atom_coordinates( utility::vector1< std::pair < id::AtomID, numeric::xyzVector< Real > > > & xyz_list,
-	Size const & seq_num,
-	conformation::Residue const & rsd_at_origin,
-	kinematics::Stub const & moving_res_base_stub );
+typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 void
-get_specific_atom_coordinate( Vector & atom_pos,
-	kinematics::Stub const & moving_res_base_stub );
+get_atom_coordinates( utility::vector1< std::pair < core::id::AtomID, numeric::xyzVector< core::Real > > > & xyz_list,
+	core::Size const & seq_num,
+	core::conformation::Residue const & rsd_at_origin,
+	core::kinematics::Stub const & moving_res_base_stub );
 
 void
-get_specific_atom_coordinate( Size const atom_index,
-	Vector & atom_pos,
-	conformation::Residue const & rsd_at_origin,
-	kinematics::Stub const & moving_res_base_stub );
+get_specific_atom_coordinate( core::Vector & atom_pos,
+	core::kinematics::Stub const & moving_res_base_stub );
+
+void
+get_specific_atom_coordinate( core::Size const atom_index,
+	core::Vector & atom_pos,
+	core::conformation::Residue const & rsd_at_origin,
+	core::kinematics::Stub const & moving_res_base_stub );
 
 
 void
 get_specific_atom_coordinate( std::string const & atom_name,
-	Vector & atom_pos,
-	conformation::Residue const & rsd_at_origin,
-	kinematics::Stub const & moving_res_base_stub );
+	core::Vector & atom_pos,
+	core::conformation::Residue const & rsd_at_origin,
+	core::kinematics::Stub const & moving_res_base_stub );
 
 
 /////////////////////////////////////////////////////////////
 // following functions are helpers for RigidBodyStepWiseSampler
-Size
-figure_out_reference_res_for_jump( pose::Pose const & pose,
-	Size const moving_res );
+core::Size
+figure_out_reference_res_for_jump( core::pose::Pose const & pose,
+	core::Size const moving_res );
 
-utility::vector1< Size >
-figure_out_moving_partition_res( pose::Pose const & pose,
-	Size const moving_res, Size const reference_res );
+utility::vector1< core::Size >
+figure_out_moving_partition_res( core::pose::Pose const & pose,
+	core::Size const moving_res, core::Size const reference_res );
 
 void
-set_to_origin( pose::Pose & pose, Size const seq_num, bool verbose );
+set_to_origin( core::pose::Pose & pose, core::Size const seq_num, bool verbose );
 
-kinematics::Stub
-initialize_stub( conformation::Residue const & rsd );
+core::kinematics::Stub
+initialize_stub( core::conformation::Residue const & rsd );
 
-PoseCOP
-transform_moving_partition_to_origin( pose::Pose const & pose_start,
-	Size const moving_res,
-	utility::vector1< Size > const & moving_partition_res_ );
+core::pose::PoseCOP
+transform_moving_partition_to_origin( core::pose::Pose const & pose_start,
+	core::Size const moving_res,
+	utility::vector1< core::Size > const & moving_partition_res_ );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Following were developed for a rigid-body rotation enumeration framework for
@@ -85,50 +82,50 @@ transform_moving_partition_to_origin( pose::Pose const & pose_start,
 // longer in use. However, could be very useful in lo-res sampling, so I didn't
 // remove. If these are not in use by 2016, delete!
 void
-get_euler_angles( Real & alpha, Real & beta, Real & gamma, Matrix M1, Matrix M2, bool const verbose = true );
+get_euler_angles( core::Real & alpha, core::Real & beta, core::Real & gamma, Matrix M1, Matrix M2, bool const verbose = true );
 
 void
 create_euler_rotation(
 	Matrix & M,
-	Real const & alpha,
-	Real const & beta,
-	Real const & gamma,
-	Vector const & /* axis1 not actually used*/,
-	Vector const & axis2,
-	Vector const & axis3
+	core::Real const & alpha,
+	core::Real const & beta,
+	core::Real const & gamma,
+	core::Vector const & /* axis1 not actually used*/,
+	core::Vector const & axis2,
+	core::Vector const & axis3
 );
 
 void
 create_euler_rotation(
 	Matrix & M,
-	Real const & alpha,
-	Real const & beta,
-	Real const & gamma );
+	core::Real const & alpha,
+	core::Real const & beta,
+	core::Real const & gamma );
 
 void
-translate( pose::Pose & pose, Vector const & shift,
-	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res );
+translate( core::pose::Pose & pose, core::Vector const & shift,
+	core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & moving_res );
 
 void
-rotate( pose::Pose & pose, Matrix const & M,
-	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res,
-	Vector const & centroid );
+rotate( core::pose::Pose & pose, Matrix const & M,
+	core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & moving_res,
+	core::Vector const & centroid );
 
 void
-rotate( pose::Pose & pose, Matrix const & M,
-	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res );
+rotate( core::pose::Pose & pose, Matrix const & M,
+	core::pose::Pose const & ref_pose,
+	utility::vector1< core::Size > const & moving_res );
 
 void
-get_base_centroid_and_rotation_matrix( pose::Pose const & pose, Size const i, Vector & centroid, Matrix & M );
+get_base_centroid_and_rotation_matrix( core::pose::Pose const & pose, core::Size const i, core::Vector & centroid, Matrix & M );
 
 void
-translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i, utility::vector1< Size > const & moving_res, bool const do_not_rotate = false );
+translate_and_rotate_residue_to_origin( core::pose::Pose & pose, core::Size const i, utility::vector1< core::Size > const & moving_res, bool const do_not_rotate = false );
 
 void
-translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i );
+translate_and_rotate_residue_to_origin( core::pose::Pose & pose, core::Size const i );
 
 
 } //rigid_body

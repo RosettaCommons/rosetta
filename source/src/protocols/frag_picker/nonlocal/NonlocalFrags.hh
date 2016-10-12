@@ -71,16 +71,16 @@ private:
 	bool single_chain_;
 	bool relax_input_;
 	bool relax_input_with_coordinate_constraints_;
-	Size relax_frags_repeats_;
+	core::Size relax_frags_repeats_;
 
 	std::string checkpointfile_;
 	std::map< std::string, std::string > checkpoints_map_;
 
-	utility::vector1<Size> frag_sizes_;
+	utility::vector1<core::Size> frag_sizes_;
 
-	Size min_seq_sep_;
+	core::Size min_seq_sep_;
 	core::Real ca_dist_squared_;
-	Size min_contacts_per_res_;
+	core::Size min_contacts_per_res_;
 	core::Real max_rmsd_after_relax_;
 	core::Real max_ddg_score_;
 

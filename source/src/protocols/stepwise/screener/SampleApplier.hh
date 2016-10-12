@@ -21,9 +21,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -36,7 +33,7 @@ public:
 	SampleApplier();
 
 	//constructor
-	SampleApplier( pose::Pose & pose,
+	SampleApplier( core::pose::Pose & pose,
 		bool const apply_residue_alternative_sampler = true );
 
 	//destructor
@@ -63,13 +60,13 @@ public:
 	void
 	apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j );
 
-	pose::Pose & pose(){ return pose_; }
+	core::pose::Pose & pose(){ return pose_; }
 
 	void set_apply_residue_alternative_sampler_( bool const setting ){ apply_residue_alternative_sampler_ = setting; }
 
 protected:
 
-	pose::Pose & pose_;
+	core::pose::Pose & pose_;
 
 	core::conformation::ResidueOP moving_rsd_at_origin; // only in use for rigid-body modeler.
 	utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list; // only in use for rigid-body modeler.

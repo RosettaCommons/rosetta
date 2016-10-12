@@ -24,9 +24,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/pose/Pose.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -38,30 +35,30 @@ class RNA_AtrRepChecker: public utility::pointer::ReferenceCount {
 public:
 
 	//Constructor
-	RNA_AtrRepChecker( pose::Pose const & pose,
+	RNA_AtrRepChecker( core::pose::Pose const & pose,
 		working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 		bool const loose_rep_cutoff = false,
 		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
 
-	RNA_AtrRepChecker( pose::Pose const & pose,
-		Size const moving_res,
-		Size const reference_res,
-		Size const gap_size,
+	RNA_AtrRepChecker( core::pose::Pose const & pose,
+		core::Size const moving_res,
+		core::Size const reference_res,
+		core::Size const gap_size,
 		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
 	);
 
 	//destructor
 	~RNA_AtrRepChecker();
 
-	Real delta_atr_score() const{ return delta_atr_score_; }
-	Real delta_rep_score() const{ return delta_rep_score_; }
-	Real base_atr_score() const{ return base_atr_score_; }
-	Real base_rep_score() const{ return base_rep_score_; }
+	core::Real delta_atr_score() const{ return delta_atr_score_; }
+	core::Real delta_rep_score() const{ return delta_rep_score_; }
+	core::Real base_atr_score() const{ return base_atr_score_; }
+	core::Real base_rep_score() const{ return base_rep_score_; }
 
 public:
 
 	bool
-	check_screen( pose::Pose & current_pose_screen );
+	check_screen( core::pose::Pose & current_pose_screen );
 
 	void
 	set_loose_rep_cutoff( bool const & setting ) { loose_rep_cutoff_ = setting; }
@@ -88,19 +85,19 @@ private:
 
 private:
 
-	Size const moving_res_;
-	Size const reference_res_;
-	Size const gap_size_;
+	core::Size const moving_res_;
+	core::Size const reference_res_;
+	core::Size const gap_size_;
 	bool const is_prepend_;
 	bool const is_internal_;
 	bool const sample_both_sugar_base_rotamer_;
 	bool const separate_moving_residue_to_estimate_baseline_;
 
-	Real rep_cutoff_;
-	Real base_atr_score_;
-	Real base_rep_score_;
-	Real delta_atr_score_;
-	Real delta_rep_score_;
+	core::Real rep_cutoff_;
+	core::Real base_atr_score_;
+	core::Real base_rep_score_;
+	core::Real delta_atr_score_;
+	core::Real delta_rep_score_;
 	bool output_pdb_;
 	bool verbose_;
 	bool loose_rep_cutoff_;

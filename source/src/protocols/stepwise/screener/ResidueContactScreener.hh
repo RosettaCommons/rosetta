@@ -21,9 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -36,10 +33,10 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  ResidueContactScreener();
 
 	//constructor
-	ResidueContactScreener(  pose::Pose & screening_pose,
-		Size const last_append_res,
-		Size const last_prepend_res,
-		Distance const atom_atom_overlap_dist_cutoff );
+	ResidueContactScreener(  core::pose::Pose & screening_pose,
+		core::Size const last_append_res,
+		core::Size const last_prepend_res,
+		core::Distance const atom_atom_overlap_dist_cutoff );
 
 	//destructor
 	~ResidueContactScreener();
@@ -57,10 +54,10 @@ public:
 
 private:
 
-	pose::Pose & screening_pose_;
-	Size const last_append_res_;
-	Size const last_prepend_res_;
-	Distance const atom_atom_overlap_dist_cutoff_;
+	core::pose::Pose & screening_pose_;
+	core::Size const last_append_res_;
+	core::Size const last_prepend_res_;
+	core::Distance const atom_atom_overlap_dist_cutoff_;
 
 };
 

@@ -23,9 +23,6 @@ namespace protocols {
 namespace forge {
 namespace remodel {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace utility::tag;
-
 class RemodelRotamerLinks : public core::pack::task::operation::TaskOperation
 {
 public:
@@ -39,7 +36,7 @@ public:
 	virtual ~RemodelRotamerLinks();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const & pose, PackerTask & ptask ) const;
-	virtual void parse_tag( TagCOP, DataMap & );
+	virtual void parse_tag( utility::tag::TagCOP, DataMap & );
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RemodelRotamerLinks"; }
 

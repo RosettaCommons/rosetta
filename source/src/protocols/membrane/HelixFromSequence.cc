@@ -84,6 +84,7 @@ void
 HelixFromSequence::apply( core::pose::Pose & pose ){
 
 	using namespace core::scoring;
+	using namespace core::pose;
 	using namespace core::conformation::membrane;
 	using namespace protocols::relax;
 	using namespace protocols::relax::membrane;

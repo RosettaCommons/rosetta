@@ -53,7 +53,7 @@ static THREAD_LOCAL basic::Tracer trAmbigCSScore(
 // The Talos file reader is passed in as an object, and secondary shifts are calculated during AmbigCSScore construction
 // (Secondary shifts are shift deviations from random coil, where random coil values are defined according to
 // the combination of atom type, residue type, previous residue type, and next residue type.
-AmbigCSScore::AmbigCSScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
+AmbigCSScore::AmbigCSScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	CSTalosIO& readerA, CSTalosIO& readerB) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "AmbigCSScore")
 {
@@ -77,7 +77,7 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 	//ONLY USED IN THE OLD VERSION OF THE SCORE
 	//clip_factor is used to define the maximum shift difference
 	//larger differences are adjusted down to clip_factor*v_shift
-	//Real const clip_factor(3.0);
+	//core::Real const clip_factor(3.0);
 
 	//bool vall_data(false);
 	trAmbigCSScore << "caching CS score for " << current_chunk->get_pdb_id()
@@ -91,38 +91,38 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 	cached_scores_id_ = tmp;
 
 	//Initialize empty 2D table, vall-length x target-length
-	Size query_sequence_length = target_Ashifts_.size();
+	core::Size query_sequence_length = target_Ashifts_.size();
 	runtime_assert(query_sequence_length == target_Bshifts_.size());
-	std::pair< Real, Real > empty(0,0);
-	utility::vector1< utility::vector1< std::pair< Real, Real> > > temp( current_chunk->size(),
-		utility::vector1<std::pair< Real, Real> > (query_sequence_length, empty ) );
+	std::pair< core::Real, core::Real > empty(0,0);
+	utility::vector1< utility::vector1< std::pair< core::Real, core::Real> > > temp( current_chunk->size(),
+		utility::vector1<std::pair< core::Real, core::Real> > (query_sequence_length, empty ) );
 	runtime_assert( target_Ashifts_.size() > 0 );
 
 	//SIGMOID CONSTANTS - Should be set in constructor, not command line flags
-	Real a( option[frags::sigmoid_cs_A]() ); // default = 4
-	Real b( option[frags::sigmoid_cs_B]() ); // default = 5
+	core::Real a( option[frags::sigmoid_cs_A]() ); // default = 4
+	core::Real b( option[frags::sigmoid_cs_B]() ); // default = 5
 
 	//Loop logic is "For each target x vall residue comparison, sum up total of
 	//all shift differences"
-	for ( Size r = 1; r <= target_Ashifts_.size(); ++r ) {
-		utility::vector1< std::pair< Size, Real > > query_residue_shiftsA(target_Ashifts_[r]);
-		utility::vector1< std::pair< Size, Real > > query_residue_shiftsB(target_Bshifts_[r]);
+	for ( core::Size r = 1; r <= target_Ashifts_.size(); ++r ) {
+		utility::vector1< std::pair< core::Size, core::Real > > query_residue_shiftsA(target_Ashifts_[r]);
+		utility::vector1< std::pair< core::Size, core::Real > > query_residue_shiftsB(target_Bshifts_[r]);
 
 		if ( query_residue_shiftsA.size() != query_residue_shiftsB.size() ) {
 			utility_exit_with_message("ERROR: -in::file::ambig_talos_cs_A file does not have the same number of shifts as -in::file::ambig_talos_cs_B file, check your formatting, aside from the shifts themselves the files must be identical");
 		}
 
-		for ( Size i = 1; i <= current_chunk->size(); ++i ) {
-			Real tmp = 0.0;
-			Real count = 0.0;
-			for ( Size d = 1; d <= query_residue_shiftsA.size(); ++d ) {
+		for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
+			core::Real tmp = 0.0;
+			core::Real count = 0.0;
+			for ( core::Size d = 1; d <= query_residue_shiftsA.size(); ++d ) {
 
 				//q_shift_type is target atom type, q_shift is that atom's secondary shift
-				Size q_shift_typeA(query_residue_shiftsA[d].first);
-				Real q_shiftA(query_residue_shiftsA[d].second);
+				core::Size q_shift_typeA(query_residue_shiftsA[d].first);
+				core::Real q_shiftA(query_residue_shiftsA[d].second);
 
-				Size q_shift_typeB(query_residue_shiftsB[d].first);
-				Real q_shiftB(query_residue_shiftsB[d].second);
+				core::Size q_shift_typeB(query_residue_shiftsB[d].first);
+				core::Real q_shiftB(query_residue_shiftsB[d].second);
 
 				if ( q_shift_typeA != q_shift_typeB ) {
 					utility_exit_with_message("ERROR: -in::file::ambig_talos_cs_A file does not match -in::file::ambig_talos_cs_B file, check your formatting, aside from the shifts themselves the files must be identical, even the order matters");
@@ -132,21 +132,21 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 				//on v_shifts for that type of atom at the vall residue's specific phi/psi location
 				// (Think of v_shift as a phi/psi dependent and atom type dependent weight constant)
 				VallResidueOP res = current_chunk->at(i);
-				Real v_shift(res->secondary_shifts()[(q_shift_typeA*2)-1]);
-				Real v_sigma(res->secondary_shifts()[ q_shift_typeA*2 ]);
+				core::Real v_shift(res->secondary_shifts()[(q_shift_typeA*2)-1]);
+				core::Real v_sigma(res->secondary_shifts()[ q_shift_typeA*2 ]);
 
 				//v_sigma is only 0.0 for atoms that don't exist in the vall. CB on glycine, for example.
 				if ( v_sigma > 0.0 ) {
 
-					Real sig_diffA(std::abs((q_shiftA - v_shift) / v_sigma ));
-					Real sig_diffB(std::abs((q_shiftB - v_shift) / v_sigma ));
+					core::Real sig_diffA(std::abs((q_shiftA - v_shift) / v_sigma ));
+					core::Real sig_diffB(std::abs((q_shiftB - v_shift) / v_sigma ));
 
 					//Always use the lowest diff of the two.
 					if ( sig_diffB < sig_diffA ) {
 						sig_diffA = sig_diffB;
 					}
 
-					Real sigmoid_diff( 1 / ( 1 + exp((-a*sig_diffA)+b) ) );
+					core::Real sigmoid_diff( 1 / ( 1 + exp((-a*sig_diffA)+b) ) );
 
 
 					tmp += sigmoid_diff;
@@ -155,11 +155,11 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 
 
 					//THIS IS WHAT THE ORIGINAL CSROSETTA CS SCORE FUNCTION LOOKED LIKE:
-					//Real c1_weight(1.0); //Reweight hydrogen and nitrogen values by 0.9
+					//core::Real c1_weight(1.0); //Reweight hydrogen and nitrogen values by 0.9
 					//if ((q_shift_type == 1) || (q_shift_type == 6)) {// or (q_shift_type == 3)) {
 					// c1_weight = 0.9;
 					//}
-					//Real diff(q_shift - v_shift);
+					//core::Real diff(q_shift - v_shift);
 					//if ( std::abs(diff) > (clip_factor*v_sigma) ) {
 					// diff = clip_factor*v_sigma;
 					//}
@@ -208,18 +208,18 @@ bool AmbigCSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP
 		cached_scores_id_ = tmp;
 	}
 
-	//Size offset_q = fragment->get_first_index_in_query() - 1;
-	//Size offset_v = fragment->get_first_index_in_vall() - 1;
+	//core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	//core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	Real totalScore = 0.0;
-	Real totalCount = 0.0;
+	core::Real totalScore = 0.0;
+	core::Real totalCount = 0.0;
 
-	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= fragment->get_length(); i++ ) {
 		runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
 		runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
 
 
-		std::pair< Real, Real> tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
+		std::pair< core::Real, core::Real> tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
 			[fragment->get_first_index_in_query() + i - 1];
 
 		//tmp.first is the score for that residue comparison
@@ -242,8 +242,8 @@ bool AmbigCSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP
 void AmbigCSScore::clean_up() {
 }
 
-FragmentScoringMethodOP MakeAmbigCSScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeAmbigCSScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string // line
 ) {
 

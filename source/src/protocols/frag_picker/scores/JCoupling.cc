@@ -48,7 +48,7 @@ using namespace basic::options::OptionKeys;
 static THREAD_LOCAL basic::Tracer trJCoupling(
 	"protocols.frag_picker.scores.JCoupling");
 
-JCoupling::JCoupling(Size priority, Real lowest_acceptable_value, bool use_lowest,
+JCoupling::JCoupling(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	JCouplingIO& reader) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "JCoupling"), data_(reader) {
 
@@ -79,14 +79,14 @@ bool JCoupling::cached_score(FragmentCandidateOP fragment,
 	//  }
 
 	//  PROF_START( basic::FRAGMENTPICKING_PHIPSI_SCORE );
-	//  Size offset_q = fragment->get_first_index_in_query() - 1;
-	//  Size offset_v = fragment->get_first_index_in_vall() - 1;
-	//  Real score = 0.0;
-	//  Real tmp = 0.0;
-	//  for (Size i = 1; i < fragment->get_length(); ++i) {
+	//  core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	//  core::Size offset_v = fragment->get_first_index_in_vall() - 1;
+	//  core::Real score = 0.0;
+	//  core::Real tmp = 0.0;
+	//  for (core::Size i = 1; i < fragment->get_length(); ++i) {
 	//   if (!existing_data_[i + offset_q])
 	//    continue;
-	//   Real d = 0.0;
+	//   core::Real d = 0.0;
 
 	//   tmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
 
@@ -115,7 +115,7 @@ bool JCoupling::cached_score(FragmentCandidateOP fragment,
 	//   score += std::sqrt(d);
 	//  }
 
-	//  score = score / ((Real) fragment->get_length());
+	//  score = score / ((core::Real) fragment->get_length());
 	//  PROF_STOP( basic::FRAGMENTPICKING_PHIPSI_SCORE );
 
 	//  scores->set_score_component(score, id_);
@@ -129,29 +129,29 @@ bool JCoupling::cached_score(FragmentCandidateOP fragment,
 bool JCoupling::score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
-	Size offset_q = fragment->get_first_index_in_query();
-	Size offset_v = fragment->get_first_index_in_vall();
+	core::Size offset_q = fragment->get_first_index_in_query();
+	core::Size offset_v = fragment->get_first_index_in_vall();
 
 	VallChunkOP chunk = fragment->get_chunk();
-	Real score = 0.0;
+	core::Real score = 0.0;
 
-	for ( Size i = 1; i <= fragment->get_length(); ++i ) {
+	for ( core::Size i = 1; i <= fragment->get_length(); ++i ) {
 
-		Size query_res = offset_q + i - 1;
-		Size vall_res = offset_v + i - 1;
+		core::Size query_res = offset_q + i - 1;
+		core::Size vall_res = offset_v + i - 1;
 
 		VallResidueOP r = chunk->at( vall_res );
-		Real cos_phi( cos( numeric::conversions::radians(r->phi()) + THETA_ ) );
+		core::Real cos_phi( cos( numeric::conversions::radians(r->phi()) + THETA_ ) );
 
 		bool has_data(false);
 
-		std::pair< Real, Real > datum( data_.get_data( query_res, has_data ) );
+		std::pair< core::Real, core::Real > datum( data_.get_data( query_res, has_data ) );
 
 		if ( has_data ) {
-			Real val = datum.first;
-			Real dev = datum.second;
+			core::Real val = datum.first;
+			core::Real dev = datum.second;
 
-			Real tmp((val -  (A_ * cos_phi * cos_phi + B_ * cos_phi + C_)) / dev);
+			core::Real tmp((val -  (A_ * cos_phi * cos_phi + B_ * cos_phi + C_)) / dev);
 
 			//   std::cout << "COMPUTE " << query_res << " " << val << " " << dev << " " << A_ << " " << B_ << " " << C_ << " " << THETA_ << " " << r->phi() << " " << r->psi() << " " << tmp << " " << (numeric::conversions::radians(r->phi()) + THETA_) << " " << cos( numeric::conversions::radians(r->phi()) + THETA_ ) << std::endl;
 
@@ -163,7 +163,7 @@ bool JCoupling::score(FragmentCandidateOP fragment,
 
 	}
 
-	score = score / ((Real) fragment->get_length());
+	score = score / ((core::Real) fragment->get_length());
 
 	scores->set_score_component(score, id_);
 	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -187,8 +187,8 @@ void JCoupling::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakeJCoupling::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeJCoupling::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string input_file) {
 
 	if ( input_file != "" ) {

@@ -37,10 +37,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::options;
-using namespace protocols::farna::setup;
-
 namespace protocols {
 namespace farna {
 
@@ -50,8 +46,8 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options = nullptr,
-		RNA_DeNovoParametersCOP params = nullptr);
+	RNA_DeNovoProtocol( options::RNA_DeNovoProtocolOptionsCOP options = nullptr,
+		setup::RNA_DeNovoParametersCOP params = nullptr);
 
 	~RNA_DeNovoProtocol() override;
 
@@ -75,7 +71,7 @@ public:
 	void
 	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) { refine_pose_list_ = setting; };
 
-	RNA_DeNovoProtocolOptionsCOP options() const { return options_; }
+	options::RNA_DeNovoProtocolOptionsCOP options() const { return options_; }
 
 	RNA_FragmentMonteCarloCOP rna_fragment_monte_carlo() const { return rna_fragment_monte_carlo_; }
 
@@ -118,8 +114,8 @@ private:
 
 private:
 
-	RNA_DeNovoProtocolOptionsCOP options_;
-	RNA_DeNovoParametersCOP rna_params_;
+	options::RNA_DeNovoProtocolOptionsCOP options_;
+	setup::RNA_DeNovoParametersCOP rna_params_;
 	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_grid_;
 
 	std::string lores_silent_file_;

@@ -38,7 +38,7 @@ void BestTotalScoreSelector::select_fragments(
 	ScoredCandidatesVector1& output_selection )
 {
 
-	Size n = frags_per_pos();
+	core::Size n = frags_per_pos();
 	trBestTotalScoreSelector.Debug << "Selecting " << n << "fragments from "
 		<< input_candidates.size() << " candidates" << std::endl;
 

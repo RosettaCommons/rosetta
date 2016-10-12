@@ -23,8 +23,6 @@
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/id/AtomID.hh>
 
-using core::scoring::func::FuncOP;
-
 namespace core {
 namespace scoring {
 namespace loop_graph {
@@ -53,8 +51,8 @@ public:
 	void set_current_distance( core::Real const & setting ){ current_distance_ = setting; }
 	core::Real current_distance() const{ return current_distance_; }
 
-	void set_func( FuncOP const & setting );
-	FuncOP func() const;
+	void set_func( core::scoring::func::FuncOP const & setting );
+	core::scoring::func::FuncOP func() const;
 
 private:
 
@@ -63,7 +61,7 @@ private:
 	id::AtomID landing_atom_;
 	core::Real current_distance_;
 
-	FuncOP func_;
+	core::scoring::func::FuncOP func_;
 
 };
 

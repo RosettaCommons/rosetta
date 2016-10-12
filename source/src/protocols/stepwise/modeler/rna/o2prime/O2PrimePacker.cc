@@ -33,6 +33,8 @@ namespace modeler {
 namespace rna {
 namespace o2prime {
 
+using namespace core;
+
 //Constructor
 O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP const & scorefxn,

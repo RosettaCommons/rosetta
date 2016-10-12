@@ -32,16 +32,6 @@
 
 namespace protocols {
 namespace relax {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::scoring;
-using namespace protocols::simple_moves;
-using namespace core::kinematics;
-using namespace core::pack::task;
-using core::Size;
-using std::string;
-using core::Real;
-using core::pose::Pose;
-using utility::vector1;
 
 /// @brief Relax a pose using Frank Dimaio's smooth centroid statistics.
 ///Currently under optimization.
@@ -57,13 +47,13 @@ using utility::vector1;
 class CentroidRelax : public RelaxProtocolBase {
 public:
 	CentroidRelax();
-	CentroidRelax(MoveMapOP mm);
-	CentroidRelax(MoveMapOP mm, ScoreFunctionOP cen_scorefxn_in);
+	CentroidRelax(core::kinematics::MoveMapOP mm);
+	CentroidRelax(core::kinematics::MoveMapOP mm, core::scoring::ScoreFunctionOP cen_scorefxn_in);
 
 	//Specific functions for Mover...
 	~CentroidRelax() override;
 
-	string get_name() const override;
+	std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 
@@ -84,13 +74,13 @@ public:
 	void set_ramp_vdw(bool use);
 
 	/// @brief Sets main scorefunction used for centroid minimization.
-	void set_score_function(ScoreFunctionOP cen_score);
+	void set_score_function(core::scoring::ScoreFunctionOP cen_score);
 
 	/// @brief Sets fullatom scorefunction - only used for scoring the full atom pose before and after protocol.
-	void set_fa_score_function(ScoreFunctionOP fa_score);
+	void set_fa_score_function(core::scoring::ScoreFunctionOP fa_score);
 
 	/// @brief Sets the minimizer type.
-	void set_min_type(string min);
+	void set_min_type(std::string min);
 
 	/// @brief Sets to use the cartesian minimizer.
 	void set_cartesian(bool cart);
@@ -102,7 +92,7 @@ public:
 	///
 	/// @details Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol
 	/// which is rounds of the centroid minmover
-	void apply( Pose & pose ) override;
+	void apply( core::pose::Pose & pose ) override;
 
 private:
 
@@ -118,20 +108,20 @@ private:
 	bool use_increased_vdw_radii_;
 	bool ramp_rama_;
 	bool ramp_vdw_;
-	Size rounds_;
+	core::Size rounds_;
 	bool cartesian_mode_;
 	bool repack_sc_;
-	ScoreFunctionOP cen_scorefxn_;
-	ScoreFunctionOP fa_scorefxn_;
-	MoveMapOP movemap_;
-	ScoreType rama_type_;
+	core::scoring::ScoreFunctionOP cen_scorefxn_;
+	core::scoring::ScoreFunctionOP fa_scorefxn_;
+	core::kinematics::MoveMapOP movemap_;
+	core::scoring::ScoreType rama_type_;
 
 	/// @brief Container for ramp settings
 	struct parameters{
-		vector1< Real > vdw_params;
-		vector1< Real > rama_params;
-		vector1< Real > min_params;
-		vector1< Real > cst_params;
+		utility::vector1< core::Real > vdw_params;
+		utility::vector1< core::Real > rama_params;
+		utility::vector1< core::Real > min_params;
+		utility::vector1< core::Real > cst_params;
 	};
 
 	parameters def_parameters;

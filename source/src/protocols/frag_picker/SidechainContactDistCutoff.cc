@@ -47,7 +47,7 @@ SidechainContactDistCutoff::SidechainContactDistCutoff() {
 	SidechainContactDistCutoff(1.0);
 }
 
-SidechainContactDistCutoff::SidechainContactDistCutoff(Real scale_factor) {
+SidechainContactDistCutoff::SidechainContactDistCutoff(core::Real scale_factor) {
 	scale_factor_ = scale_factor;
 	initialize();
 }
@@ -79,12 +79,12 @@ void SidechainContactDistCutoff::initialize() {
 	aa_map_[20] = 'W';
 
 	// set aa to index mapping
-	for ( Size i=1; i<=aa_map_.size(); ++i ) {
+	for ( core::Size i=1; i<=aa_map_.size(); ++i ) {
 		aa_to_index_map_[aa_map_[i]] = i;
 	}
 
-	utility::vector1<utility::vector1<Real> >  mean_dist;
-	utility::vector1<utility::vector1<Real> >  stddev_dist;
+	utility::vector1<utility::vector1<core::Real> >  mean_dist;
+	utility::vector1<utility::vector1<core::Real> >  stddev_dist;
 
 	// read distance tables
 	// first table is the mean and the second is the standard deviation
@@ -95,19 +95,19 @@ void SidechainContactDistCutoff::initialize() {
 	}
 
 	std::string line;
-	Size tablecnt = 0;
+	core::Size tablecnt = 0;
 	while ( getline(data, line) ) {
 		if ( line.size() > 3 && line.substr(0,3) == "GLY" ) { // tables start with GLY
 			tablecnt++;
-			Size rowcnt = 1;
-			utility::vector1<Real> col(20);
+			core::Size rowcnt = 1;
+			utility::vector1<core::Real> col(20);
 			std::istringstream line_stream( line );
 			std::string col1;
 			line_stream >> col1;
 			if ( core::chemical::oneletter_code_from_aa(core::chemical::aa_from_name(col1)) != aa_map_[rowcnt] ) {
 				utility_exit_with_message( "Error in sidechain name mapping in sidechain_contact.txt!" );
 			}
-			for ( Size i=1; i<=col.size(); ++i ) line_stream >> col[i];
+			for ( core::Size i=1; i<=col.size(); ++i ) line_stream >> col[i];
 			if ( line_stream.fail() ) {
 				utility_exit_with_message( "Error reading in SidechainContactDistCutoff()!" );
 			}
@@ -116,7 +116,7 @@ void SidechainContactDistCutoff::initialize() {
 			} else if ( tablecnt == 2 ) {
 				stddev_dist.push_back(col);
 			}
-			for ( Size j=1; j<=19; ++j ) { // read the remaining table rows
+			for ( core::Size j=1; j<=19; ++j ) { // read the remaining table rows
 				getline(data, line);
 				rowcnt++;
 				std::istringstream line_stream_next(line);
@@ -124,7 +124,7 @@ void SidechainContactDistCutoff::initialize() {
 				if ( core::chemical::oneletter_code_from_aa(core::chemical::aa_from_name(col1)) != aa_map_[rowcnt] ) {
 					utility_exit_with_message( "Error in sidechain name mapping in sidechain_contact.txt!" );
 				}
-				for ( Size i=1; i<=col.size(); ++i ) line_stream_next >> col[i];
+				for ( core::Size i=1; i<=col.size(); ++i ) line_stream_next >> col[i];
 				if ( line_stream_next.fail() ) {
 					utility_exit_with_message( "Error reading in SidechainContactDistCutoff()!" );
 				}
@@ -142,8 +142,8 @@ void SidechainContactDistCutoff::initialize() {
 	// from I-TASSER paper
 	cutoff_.resize(20);
 	cutoff_squared_.resize(20);
-	for ( Size i=1; i<=mean_dist.size(); ++i ) {
-		for ( Size j=1; j<=mean_dist[i].size(); ++j ) {
+	for ( core::Size i=1; i<=mean_dist.size(); ++i ) {
+		for ( core::Size j=1; j<=mean_dist[i].size(); ++j ) {
 			cutoff_[i].push_back( scale_factor_*(mean_dist[i][j] + 2.5*stddev_dist[i][j]) );
 			cutoff_squared_[i].push_back( cutoff_[i][j]*cutoff_[i][j] );
 			TR.Debug << "cutoff_squared: " << i << " " << j << " " << cutoff_squared_[i][j] << std::endl;
@@ -151,15 +151,15 @@ void SidechainContactDistCutoff::initialize() {
 	}
 }
 
-Real SidechainContactDistCutoff::get_cutoff( char aa_i, char aa_j ) {
+core::Real SidechainContactDistCutoff::get_cutoff( char aa_i, char aa_j ) {
 	return cutoff_[aa_to_index_map_[aa_i]][aa_to_index_map_[aa_j]];
 }
 
-Real SidechainContactDistCutoff::get_cutoff_squared( char aa_i, char aa_j ) {
+core::Real SidechainContactDistCutoff::get_cutoff_squared( char aa_i, char aa_j ) {
 	return cutoff_squared_[aa_to_index_map_[aa_i]][aa_to_index_map_[aa_j]];
 }
 
-Real SidechainContactDistCutoff::scale_factor() {
+core::Real SidechainContactDistCutoff::scale_factor() {
 	return scale_factor_;
 }
 

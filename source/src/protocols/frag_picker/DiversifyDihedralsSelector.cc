@@ -38,7 +38,7 @@ void DiversifyDihedralsSelector::select_fragments(
 
 	if ( in.size()==0 ) return;
 
-	Size len = in[1].first->get_length();
+	core::Size len = in[1].first->get_length();
 
 	if ( phi_.size() < len ) {
 		phi_.resize(len);
@@ -46,11 +46,11 @@ void DiversifyDihedralsSelector::select_fragments(
 	}
 
 	out.push_back( in[1] );
-	for ( Size i=2; i<=in.size(); i++ ) {
+	for ( core::Size i=2; i<=in.size(); i++ ) {
 		if ( out.size() >= frags_per_pos() ) break;
 		bool is_ok = true;
-		for ( Size j=1; j<=out.size(); j++ ) {
-			Real rms = dihedral_rmsd(in[i].first, out[j].first);
+		for ( core::Size j=1; j<=out.size(); j++ ) {
+			core::Real rms = dihedral_rmsd(in[i].first, out[j].first);
 			if ( rms<cutoff_ ) {
 				is_ok = false;
 				trDiversifyDihedralsSelector.Trace<<"Phi-Psi rmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;
@@ -66,12 +66,12 @@ void DiversifyDihedralsSelector::select_fragments(
 		<< in[1].first->get_first_index_in_query()<<std::endl;
 }
 
-Real DiversifyDihedralsSelector::dihedral_rmsd(FragmentCandidateOP f1,FragmentCandidateOP f2) {
+core::Real DiversifyDihedralsSelector::dihedral_rmsd(FragmentCandidateOP f1,FragmentCandidateOP f2) {
 
-	Real rms = 0.0;
+	core::Real rms = 0.0;
 	debug_assert ( f1->get_length() == f2->get_length() );
-	for ( Size k=1; k<=f1->get_length(); k++ ) {
-		Real d = f1->get_residue(k)->phi() - f2->get_residue(k)->phi();
+	for ( core::Size k=1; k<=f1->get_length(); k++ ) {
+		core::Real d = f1->get_residue(k)->phi() - f2->get_residue(k)->phi();
 		rms += d*d;
 		d = f1->get_residue(k)->psi() - f2->get_residue(k)->psi();
 		rms += d*d;

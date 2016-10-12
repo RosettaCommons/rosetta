@@ -27,6 +27,9 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.libraries.BasePairStepLibrary" );
 
+using namespace protocols::farna::base_pairs;
+using namespace core;
+
 namespace protocols {
 namespace farna {
 namespace libraries {

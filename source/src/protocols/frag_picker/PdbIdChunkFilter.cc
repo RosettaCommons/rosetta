@@ -59,7 +59,7 @@ void PdbIdChunkFilter::load_pdb_id_from_file(std::string file_name) {
 
 void PdbIdChunkFilter::show_pdb_ids(std::ostream& out) {
 
-	Size cnt = 0;
+	core::Size cnt = 0;
 	std::map<std::string, bool>::iterator iter;
 	out << '\n';
 	for ( iter = pdb_hash_.begin(); iter != pdb_hash_.end(); ++iter ) {

@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by the root mean square deviation of Phi and Psi angles.
 class PhiPsiSquareWell: public CachingScoringMethod {
@@ -40,9 +40,9 @@ public:
 
 	/// @brief  creates a Phi-Psi-based scoring function.
 	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
-	PhiPsiSquareWell(Size, Real, bool, PhiPsiTalosIO&);
+	PhiPsiSquareWell(core::Size, core::Real, bool, PhiPsiTalosIO&);
 
-	PhiPsiSquareWell(Size, Real, bool, core::pose::PoseOP);
+	PhiPsiSquareWell(core::Size, core::Real, bool, core::pose::PoseOP);
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -59,7 +59,7 @@ private:
 	ObjexxFCL::FArray1D_double query_d_psi_;
 	ObjexxFCL::FArray1D_double query_dist_;
 	ObjexxFCL::FArray1D_double query_s2_;
-	utility::vector1<Size> query_cnt_;
+	utility::vector1<core::Size> query_cnt_;
 	utility::vector1<std::string> query_class_;
 	utility::vector1<bool> existing_data_;
 };
@@ -72,7 +72,7 @@ public:
 		MakeFragmentScoringMethod("PhiPsiSquareWell") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

@@ -42,7 +42,6 @@ namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
-using utility::vector1;
 
 class SasaCalculator2 : public core::pose::metrics::StructureDependentCalculator {
 
@@ -69,16 +68,16 @@ private:
 	core::Real total_rel_hsasa_;
 
 	core::id::AtomID_Map<core::Real > atom_sasa_;
-	vector1< core::Real > residue_sasa_;
-	vector1< core::Real > residue_hsasa_;
-	vector1< core::Real > residue_rel_hsasa_;
+	utility::vector1< core::Real > residue_sasa_;
+	utility::vector1< core::Real > residue_hsasa_;
+	utility::vector1< core::Real > residue_rel_hsasa_;
 
 	//Sc/BB calculated during sasacalc, so why not have it accessible here
 	core::Real total_sasa_sc_;
 	core::Real total_hsasa_sc_; //pretty much small, but here for completeness
 
-	vector1< core::Real > residue_sasa_sc_;
-	vector1< core::Real > residue_hsasa_sc_;
+	utility::vector1< core::Real > residue_sasa_sc_;
+	utility::vector1< core::Real > residue_hsasa_sc_;
 
 #ifdef    SERIALIZATION
 public:

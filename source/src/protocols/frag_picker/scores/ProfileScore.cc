@@ -45,6 +45,7 @@ namespace scores {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer trProfScore(
 	"protocols.frag_picker.scores.ProfileScore");
@@ -58,14 +59,14 @@ void ProfileScore::do_caching(VallChunkOP chunk) {
 		return;
 	}
 	cached_scores_id_ = tmp;
-	Size size_q = query_profile_->length();
+	core::Size size_q = query_profile_->length();
 	core::sequence::SequenceProfileOP chunk_profile = chunk->get_profile();
 	assert( chunk_profile->length() !=0 );
 	trProfScore.Debug << "caching profile score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
 	assert( chunk->size() == chunk_profile->length() );
-	for ( Size i = 1; i <= size_q; ++i ) {
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+	for ( core::Size i = 1; i <= size_q; ++i ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			scores_[i][j] = profile_scoring_->score(query_profile_,
 				chunk_profile, i, j);
 		}
@@ -82,8 +83,8 @@ bool ProfileScore::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 	do_caching(f->get_chunk());
 	*/
 
-	Real totalScore = 0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		assert(f->get_first_index_in_query() + i - 1 <= scores_.size());
 		assert(f->get_first_index_in_vall()
 			+ i - 1<= scores_[1].size());
@@ -91,7 +92,7 @@ bool ProfileScore::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 			+= scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall()
 			+ i - 1];
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -102,11 +103,11 @@ bool ProfileScore::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 bool ProfileScore::describe_score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map, std::ostream& out) {
 
-	Real totalScore = 0;
+	core::Real totalScore = 0;
 	core::sequence::SequenceProfileOP chunk_profile =
 		f->get_chunk()->get_profile();
-	Size firstQ = f->get_first_index_in_query();
-	Size firstV = f->get_first_index_in_vall();
+	core::Size firstQ = f->get_first_index_in_query();
+	core::Size firstV = f->get_first_index_in_vall();
 
 	/*
 #ifndef WIN32
@@ -121,15 +122,15 @@ bool ProfileScore::describe_score(FragmentCandidateOP f,
 		f->get_first_index_in_query()) << "\n";
 	// #endif
 
-	for ( Size i = 1; i <= f->get_length(); ++i ) {
+	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
 		out << "V row: " << F(5, 3, chunk_profile->prof_row(firstV + i - 1)[1]);
-		for ( Size j = 2; j <= 20; ++j ) {
+		for ( core::Size j = 2; j <= 20; ++j ) {
 			out << " " << F(5, 3, chunk_profile->prof_row(firstV + i - 1)[j]);
 		}
 		out << "\n";
 		out << "Q row: "
 			<< F(5, 3, query_profile_->prof_row(firstQ + i - 1)[1]);
-		for ( Size j = 2; j <= 20; ++j ) {
+		for ( core::Size j = 2; j <= 20; ++j ) {
 			out << " " << F(5, 3, query_profile_->prof_row(firstQ + i - 1)[j]);
 		}
 		out << "\n";
@@ -146,7 +147,7 @@ bool ProfileScore::describe_score(FragmentCandidateOP f,
 		out << "Total score " << F(5, 3, totalScore) << " REJECTED"
 			<< std::endl;
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -154,11 +155,11 @@ bool ProfileScore::describe_score(FragmentCandidateOP f,
 	return true;
 }
 
-FragmentScoringMethodOP MakeProfileScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeProfileScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	if ( option[frags::scoring::profile_score].user() ) {
-		Size len = picker->get_vall()->get_largest_chunk_size();
+		core::Size len = picker->get_vall()->get_largest_chunk_size();
 		core::sequence::ScoringSchemeFactory ssf;
 		core::sequence::ScoringSchemeOP ss(ssf.get_scoring_scheme(
 			option[frags::scoring::profile_score]()));

@@ -60,6 +60,7 @@ using namespace core::scoring;
 using namespace protocols::simple_moves;
 using namespace core::pack::task;
 using namespace protocols::moves;
+using namespace core::kinematics;
 using core::pose::Pose;
 using core::Real;
 using std::string;

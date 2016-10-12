@@ -40,8 +40,8 @@ QuotaConfig::QuotaConfig(std::string file_name) {
 			+ file_name);
 	}
 	std::string line;
-	Size pool_id;
-	Real fraction;
+	core::Size pool_id;
+	core::Real fraction;
 	std::string pool_name;
 	while ( data ) {
 		getline(data, line);

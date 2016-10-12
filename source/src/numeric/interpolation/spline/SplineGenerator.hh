@@ -26,9 +26,6 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
-using numeric::Real;
-using utility::vector1;
-
 struct Point {
 	Point( Real xin, Real yin            ) : x(xin), y(yin), dy(-12345.0), has_dy(false) {}
 	Point( Real xin, Real yin, Real dyin ) : x(xin), y(yin), dy(  dyin  ), has_dy(true ) {}
@@ -107,7 +104,7 @@ private:
 
 	Real lbx_,lby_,lbdy_,ubx_,uby_,ubdy_;
 
-	vector1<Point> points_;
+	utility::vector1<Point> points_;
 
 	std::map<std::string,LinearFunction> boundary_functions_;
 

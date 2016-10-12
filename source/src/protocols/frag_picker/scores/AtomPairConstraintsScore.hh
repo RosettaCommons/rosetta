@@ -39,10 +39,10 @@ namespace scores {
 class AtomPairConstraintsScore: public AtomBasedConstraintsScore {
 public:
 
-	AtomPairConstraintsScore(Size, Real, bool, std::string, Size, utility::vector1<
+	AtomPairConstraintsScore(core::Size, core::Real, bool, std::string, core::Size, utility::vector1<
 		std::string>);
 
-	AtomPairConstraintsScore(Size, Real, bool, std::string, Size);
+	AtomPairConstraintsScore(core::Size, core::Real, bool, std::string, core::Size);
 
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 
@@ -50,7 +50,7 @@ private:
 	utility::vector1<utility::vector1<AtomPairConstraintsDataOP> > data_;
 	core::scoring::func::FuncFactory factory_;
 	void read_constraints(std::string);
-	Size get_atom_type(std::string atom_name);
+	core::Size get_atom_type(std::string atom_name);
 };
 
 /// @brief Holds data about a single distance constraint in the form AtomPairConstraintsScore needs
@@ -60,7 +60,7 @@ public:
 
 	/// @brief makes a new object
 	AtomPairConstraintsData(core::scoring::func::FuncOP function,
-		Size offset, Size first_atom, Size second_atom) {
+		core::Size offset, core::Size first_atom, core::Size second_atom) {
 		offset_ = offset;
 		func_ = function;
 		first_atom_ = first_atom;
@@ -69,15 +69,15 @@ public:
 
 	virtual ~AtomPairConstraintsData() ; // auto-removing definition from header{}
 
-	inline Size get_offset() {
+	inline core::Size get_offset() {
 		return offset_;
 	}
 
-	inline Size get_first_atom() {
+	inline core::Size get_first_atom() {
 		return first_atom_;
 	}
 
-	inline Size get_second_atom() {
+	inline core::Size get_second_atom() {
 		return second_atom_;
 	}
 
@@ -86,10 +86,10 @@ public:
 	}
 
 private:
-	Size offset_;
+	core::Size offset_;
 	core::scoring::func::FuncOP func_;
-	Size first_atom_;
-	Size second_atom_;
+	core::Size first_atom_;
+	core::Size second_atom_;
 };
 
 /// @brief  Maker class that produces a new AtomPairConstraintsScore object
@@ -100,7 +100,7 @@ public:
 		MakeFragmentScoringMethod("AtomPairConstraintsScore") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 } // scores
 } // frag_picker

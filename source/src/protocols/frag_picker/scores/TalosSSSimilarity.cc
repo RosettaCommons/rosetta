@@ -48,17 +48,17 @@ static THREAD_LOCAL basic::Tracer trTalosSSSimilarity(
 
 bool TalosSSSimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-	utility::vector1< Real > values;
+	utility::vector1< core::Real > values;
 	values.resize(f->get_length());
 
-	Real totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		//mjo commenting out 'ss_weight' because it is unused and causes a warning
-		//Real ss_weight(0.0);
+		//core::Real ss_weight(0.0);
 		VallChunkOP chunk = f->get_chunk();
 
 		char s(chunk->at(f->get_first_index_in_vall() + i - 1)->ss());
-		Size ss_id(3);
+		core::Size ss_id(3);
 		if ( s == 'H' ) ss_id = 1;
 		if ( s == 'E' ) ss_id = 2;
 		if ( s == 'L' ) ss_id = 3;
@@ -71,14 +71,14 @@ bool TalosSSSimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_ma
 	//H
 	std::sort( values.begin(), values.end() );
 	totalScore = 0.0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		//~1 at 1, ~0.05 at f->get_length, 0.5 at 0.7*f->get_length()
-		Real sigmoid_weight( 1 / ( 1 + exp( (10*( (Real) i ) / f->get_length()) - 7 ) ) );
+		core::Real sigmoid_weight( 1 / ( 1 + exp( (10*( (core::Real) i ) / f->get_length()) - 7 ) ) );
 		totalScore += sigmoid_weight*values[i];
 	}//H
 
 
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -96,7 +96,7 @@ void TalosSSSimilarity::do_caching(VallChunkOP chunk) {
 	cached_scores_id_ = tmp;
 
 	do_caching_simple(chunk);
-	for ( Size fl=1; fl<=cache_.size(); fl++ ) {
+	for ( core::Size fl=1; fl<=cache_.size(); fl++ ) {
 		if ( cache_[fl].size() != 0 ) {
 			trTalosSSSimilarity.Trace << "caching secondary score for " << chunk->get_pdb_id()
 				<< " of size " << chunk->size() << " for fragment size "<<fl<<std::endl;
@@ -108,16 +108,16 @@ void TalosSSSimilarity::do_caching(VallChunkOP chunk) {
 void TalosSSSimilarity::do_caching_simple(VallChunkOP chunk) {
 
 	assert(query_ss_);
-	utility::vector1<Size> chunk_ss_id( chunk->size() );
-	for ( Size j = 1; j <= chunk->size(); ++j ) {
+	utility::vector1<core::Size> chunk_ss_id( chunk->size() );
+	for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 		char s(chunk->at(j)->ss());
 		if ( s == 'H' ) chunk_ss_id[j] = 1;
 		if ( s == 'E' ) chunk_ss_id[j] = 2;
 		if ( s == 'L' ) chunk_ss_id[j] = 3;
 	}
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
 			scores_[i][j] = raw_probs_[i][chunk_ss_id[j]];
 		}
 	}
@@ -138,9 +138,9 @@ bool TalosSSSimilarity::cached_score(FragmentCandidateOP f,
 	*/
 
 
-	Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
+	core::Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];
 
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -149,9 +149,9 @@ bool TalosSSSimilarity::cached_score(FragmentCandidateOP f,
 	return true;
 }
 
-TalosSSSimilarity::TalosSSSimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+TalosSSSimilarity::TalosSSSimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-	Size sequence_length, utility::vector1<Size> & frag_sizes, Size longest_vall_chunk) :
+	core::Size sequence_length, utility::vector1<core::Size> & frag_sizes, core::Size longest_vall_chunk) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 	"TalosSSSimilarity") , prediction_name_(prediction_name) {
 	query_len_ = sequence_length;
@@ -161,18 +161,18 @@ TalosSSSimilarity::TalosSSSimilarity(Size priority, Real lowest_acceptable_value
 	E_mult_ = option[frags::seqsim_E](); // Default is 1.0
 	L_mult_ = option[frags::seqsim_L](); // Default is 1.0
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		utility::vector1<Real> row(longest_vall_chunk);
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		utility::vector1<core::Real> row(longest_vall_chunk);
 		scores_.push_back(row);
-		utility::vector1<Real> prow(3);
+		utility::vector1<core::Real> prow(3);
 		//prow[1] = 1 - H_mult_*query_prediction->helix_fraction(i);
 		//prow[2] = 1 - E_mult_*query_prediction->strand_fraction(i);
 		//prow[3] = 1 - L_mult_*query_prediction->loop_fraction(i);
 
-		Real hf;
-		Real sf;
-		Real lf;
-		Real confidence;
+		core::Real hf;
+		core::Real sf;
+		core::Real lf;
+		core::Real confidence;
 		if ( i<=query_prediction->total_residue() ) {
 			hf = query_prediction->helix_fraction(i);
 			sf = query_prediction->strand_fraction(i);
@@ -183,10 +183,10 @@ TalosSSSimilarity::TalosSSSimilarity(Size priority, Real lowest_acceptable_value
 			confidence = 0.0;
 		}
 
-		Real average( (hf+sf+lf)/ 3.0 );
-		Real sdev( sqrt( (pow(hf-average,2) + pow(sf-average,2) + pow(lf-average,2))/3.0 ) );
+		core::Real average( (hf+sf+lf)/ 3.0 );
+		core::Real sdev( sqrt( (pow(hf-average,2) + pow(sf-average,2) + pow(lf-average,2))/3.0 ) );
 
-		// Real highest_ss_pred(query_prediction->helix_fraction(i));
+		// core::Real highest_ss_pred(query_prediction->helix_fraction(i));
 
 		//    if (highest_ss_pred < query_prediction->strand_fraction(i)) {
 		//     highest_ss_pred = query_prediction->strand_fraction(i);

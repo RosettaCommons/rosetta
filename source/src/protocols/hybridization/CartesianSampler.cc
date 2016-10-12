@@ -148,6 +148,8 @@
 namespace protocols {
 namespace hybridization {
 
+using namespace core;
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
 
 /////////////

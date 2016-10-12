@@ -30,6 +30,7 @@
 static basic::Tracer TR( "protocols.farna.libraries.ChunkSet" );
 
 using namespace core::pose;
+using namespace core;
 
 namespace protocols {
 namespace farna {

@@ -21,9 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -33,11 +30,11 @@ class TagDefinition: public StepWiseScreener {
 public:
 
 	//constructor
-	TagDefinition( pose::Pose & pose,
+	TagDefinition( core::pose::Pose & pose,
 		StepWiseScreenerOP first_sampler,
 		bool const sampler_include_torsion_value_in_tag_ = false,
-		Size const moving_res = 0,
-		Size const reference_res = 0,
+		core::Size const moving_res = 0,
+		core::Size const reference_res = 0,
 		std::string const & extra_tag = "" );
 
 	//destructor
@@ -61,10 +58,10 @@ public:
 
 private:
 
-	pose::Pose & pose_;
+	core::pose::Pose & pose_;
 	StepWiseScreenerOP first_sampler_;
 	bool const sampler_include_torsion_value_in_tag_;
-	Size const moving_res_, reference_res_;
+	core::Size const moving_res_, reference_res_;
 	std::string const extra_tag_;
 	std::string tag_;
 

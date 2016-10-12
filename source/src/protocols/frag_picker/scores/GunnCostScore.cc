@@ -43,15 +43,15 @@ static THREAD_LOCAL basic::Tracer trGunnScore(
 
 GunnCostScore::~GunnCostScore() {}
 
-GunnCostScore::GunnCostScore(Size priority, Real lowest_acceptable_value,
+GunnCostScore::GunnCostScore(core::Size priority, core::Real lowest_acceptable_value,
 	bool use_lowest, core::pose::PoseOP reference_pose,
-	utility::vector1<Size> frag_sizes,Size max_chunk_size) :
+	utility::vector1<core::Size> frag_sizes,core::Size max_chunk_size) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "GunnCostScore") , gunn_cost_( -0.01 ) {
 	reference_pose_ = reference_pose;
 	n_atoms_ = reference_pose_->size();
 	max_chunk_size_ = max_chunk_size;
 
-	for ( Size j=1; j<=frag_sizes.size(); j++ ) {
+	for ( core::Size j=1; j<=frag_sizes.size(); j++ ) {
 		frag_sizes_.push_back(frag_sizes[j]);
 		trGunnScore << "Preparing Gunn score for fragments size: "<<frag_sizes[j]<<std::endl;
 
@@ -73,14 +73,14 @@ bool GunnCostScore::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 	core::pose::PoseOP pose = f->get_chunk()->get_pose();
 
-	Size iv = f->get_first_index_in_vall();
-	Size iq = f->get_first_index_in_query();
+	core::Size iv = f->get_first_index_in_vall();
+	core::Size iq = f->get_first_index_in_query();
 	GunnTuple t1;
 	GunnTuple t2;
 	gunn_cost_.compute_gunn( *pose, iv, iv + f->get_length() -1, t1);
 	gunn_cost_.compute_gunn( *reference_pose_, iq, iq + f->get_length() -1, t2);
 
-	Real score = gunn_cost_.score_tuple(t1,t2);
+	core::Real score = gunn_cost_.score_tuple(t1,t2);
 	empty_map->set_score_component(score, id_);
 	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -93,17 +93,17 @@ bool GunnCostScore::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 void GunnCostScore::do_caching(VallChunkOP current_chunk) {
 
 	core::pose::PoseOP pose = current_chunk->get_pose();
-	for ( Size j=1; j<=frag_sizes_.size(); j++ ) {
+	for ( core::Size j=1; j<=frag_sizes_.size(); j++ ) {
 		trGunnScore.Debug <<"Caching "<<frag_sizes_[j]<<" buffer size: "<<chunk_gunn_data_[j].size()<<std::endl;
 		computeGunnTuples(*pose,frag_sizes_[j],chunk_gunn_data_[j]);
 	}
 }
 
-void GunnCostScore::computeGunnTuples(core::pose::Pose & pose,Size frag_size,utility::vector1<GunnTuple> & result) {
+void GunnCostScore::computeGunnTuples(core::pose::Pose & pose,core::Size frag_size,utility::vector1<GunnTuple> & result) {
 
 	trGunnScore.Debug << "Computing Gunn tuples for the vall structure of size: "
 		<<pose.size()<<", results buffer size is: "<<result.size()<<std::endl;
-	for ( Size i=1; i<=pose.size()-frag_size + 1; i++ ) {
+	for ( core::Size i=1; i<=pose.size()-frag_size + 1; i++ ) {
 		gunn_cost_.compute_gunn( pose, i, i+frag_size-1, result[i]);
 	}
 }
@@ -112,8 +112,8 @@ void GunnCostScore::computeGunnTuples(core::pose::Pose & pose,Size frag_size,uti
 bool GunnCostScore::cached_score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
-	Size frag_len = fragment->get_length();
-	Size ifr = 1;
+	core::Size frag_len = fragment->get_length();
+	core::Size ifr = 1;
 	//bool if_found = false;
 	for ( ifr=1; ifr<=frag_sizes_.size(); ifr++ ) {
 		if ( frag_sizes_[ifr] == frag_len ) {
@@ -127,10 +127,10 @@ bool GunnCostScore::cached_score(FragmentCandidateOP fragment,
 	//     prepare_chunk_tuples(frag_len);
 	// }
 
-	Size iv = fragment->get_first_index_in_vall();
-	Size iq = fragment->get_first_index_in_query();
+	core::Size iv = fragment->get_first_index_in_vall();
+	core::Size iq = fragment->get_first_index_in_query();
 
-	Real score = gunn_cost_.score_tuple(chunk_gunn_data_[ifr][iv],ref_gunn_data_[ifr][iq]);
+	core::Real score = gunn_cost_.score_tuple(chunk_gunn_data_[ifr][iv],ref_gunn_data_[ifr][iq]);
 	GunnTuple & t = ref_gunn_data_[ifr][iq];
 	trGunnScore.Trace<<t.q1<<" ";
 	trGunnScore.Trace<<t.q2<<" ";
@@ -158,14 +158,14 @@ bool GunnCostScore::cached_score(FragmentCandidateOP fragment,
 void GunnCostScore::clean_up() {
 }
 
-FragmentScoringMethodOP MakeGunnCostScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
+FragmentScoringMethodOP MakeGunnCostScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
 	, std::string) {
 
 
-	Size longest_chunk = picker->get_vall()->get_largest_chunk_size();
+	core::Size longest_chunk = picker->get_vall()->get_largest_chunk_size();
 
-	utility::vector1<Size> frag_sizes_tmp;
+	utility::vector1<core::Size> frag_sizes_tmp;
 	if ( option[frags::frag_sizes].user() ) {
 		frag_sizes_tmp = option[frags::frag_sizes]();
 	} else {

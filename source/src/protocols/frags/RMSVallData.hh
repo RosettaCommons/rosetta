@@ -34,24 +34,15 @@
 // C++ Headers
 #include <string>
 
-//Auto using namespaces
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-
 namespace protocols {
 namespace frags {
-
-using core::Real;
-using core::Size;
 
 class RMSVallData {
 public:
 	/// default constructor
 	RMSVallData ()
 	{
-		Size const big_size( 100000 ); // rough guess
+		core::Size const big_size( 100000 ); // rough guess
 		sequence_.reserve( big_size );
 		secstruct_.reserve( big_size );
 		phi_.reserve( big_size );
@@ -65,7 +56,7 @@ public:
 	/// constructor from input vall database file
 	RMSVallData ( std::string const & filename )
 	{
-		Size const big_size( 100000 ); // rough guess
+		core::Size const big_size( 100000 ); // rough guess
 		// prevent lots of redimensioning as we read file? does this even matter?
 		sequence_.reserve( big_size );
 		secstruct_.reserve( big_size );
@@ -138,12 +129,12 @@ public:
 	/// read in one more line from Vall input file
 	void
 	add_line( const char sq, const char ss,
-		const Real x,  const Real y,  const Real z,
-		const Real ph, const Real ps, const Real om ) {
+		const core::Real x,  const core::Real y,  const core::Real z,
+		const core::Real ph, const core::Real ps, const core::Real om ) {
 		sequence_.push_back( sq );
 		secstruct_.push_back( ss );
 
-		X_.push_back( numeric::xyzVector<Real>( x, y, z ) );
+		X_.push_back( numeric::xyzVector<core::Real>( x, y, z ) );
 
 		phi_.push_back( ph );
 		psi_.push_back( ps );
@@ -153,11 +144,11 @@ public:
 	utility::vector1< char > const & sequence () const { return sequence_;  }
 	utility::vector1< char > const & secstruct() const { return secstruct_; }
 
-	utility::vector1< numeric::xyzVector< Real > > const & X() const {return X_;}
+	utility::vector1< numeric::xyzVector< core::Real > > const & X() const {return X_;}
 
-	utility::vector1< Real > const & phi  () const {return phi_;}
-	utility::vector1< Real > const & psi  () const {return psi_;}
-	utility::vector1< Real > const & omega() const {return omega_;}
+	utility::vector1< core::Real > const & phi  () const {return phi_;}
+	utility::vector1< core::Real > const & psi  () const {return psi_;}
+	utility::vector1< core::Real > const & omega() const {return omega_;}
 
 	/// number of lines in Vall database
 	int size() const { return sequence_.size(); }
@@ -165,7 +156,7 @@ public:
 	// pick fragments for a single residue position from vall database
 	void
 	get_frags(
-		Size const nfrags,
+		core::Size const nfrags,
 		utility::vector1< numeric::xyzVector< core::Real > > const & templ,  // CA coords we wish to align to
 		std::string const &pref_seq,
 		char const force_ss,
@@ -173,15 +164,15 @@ public:
 		core::Real randomness = 0.0,
 		core::Real oversample = 5.0
 	) const {
-		Size const frag_size( templ.size() );
+		core::Size const frag_size( templ.size() );
 		assert( frag_size == pref_seq.length() );
 
 		// reset heaps
-		Size const my_size( size() );
-		Size bucket1_size( (Size)std::ceil(oversample*nfrags) );
+		core::Size const my_size( size() );
+		core::Size bucket1_size( (core::Size)std::ceil(oversample*nfrags) );
 		if ( oversample<=0 ) { bucket1_size =  my_size - frag_size + 1; }
-		FArray1D_int heap( bucket1_size + 2 );
-		FArray1D_float coheap( bucket1_size + 2 );
+		ObjexxFCL::FArray1D_int heap( bucket1_size + 2 );
+		ObjexxFCL::FArray1D_float coheap( bucket1_size + 2 );
 		protocols::frags::heap_init( heap, coheap, bucket1_size );
 
 		// center template
@@ -198,23 +189,23 @@ public:
 		}
 
 		// set up other tmp store data
-		ObjexxFCL::FArray1D< numeric::Real > ww( frag_size, 1.0 );
-		//ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
-		//numeric::Real ctx;
+		ObjexxFCL::FArray1D< core::Real > ww( frag_size, 1.0 );
+		//ObjexxFCL::FArray2D< numeric::core::Real > uu( 3, 3, 0.0 );
+		//numeric::core::Real ctx;
 
-		for ( Size vall_pos=1; vall_pos <= my_size - frag_size + 1; ++vall_pos ) {
+		for ( core::Size vall_pos=1; vall_pos <= my_size - frag_size + 1; ++vall_pos ) {
 			// score this position
 
 			bool bad_frag( false );
 
-			Real score(0.0); // bigger is worse
+			core::Real score(0.0); // bigger is worse
 			numeric::xyzVector< core::Real > tgt_com(0,0,0);
 			int seq_score = 0;
 
-			for ( Size k=0; k< frag_size; ++k ) {
-				Real const phi  ( phi_      [ vall_pos+k ] );
-				Real const psi  ( psi_      [ vall_pos+k ] );
-				Real const omega( omega_    [ vall_pos+k ] );
+			for ( core::Size k=0; k< frag_size; ++k ) {
+				core::Real const phi  ( phi_      [ vall_pos+k ] );
+				core::Real const psi  ( psi_      [ vall_pos+k ] );
+				core::Real const omega( omega_    [ vall_pos+k ] );
 				char const seq  ( sequence_ [ vall_pos+k ] );
 				char const ss   ( secstruct_[ vall_pos+k ] );
 				if ( ( std::abs( phi ) < 0.01 ) ||
@@ -255,14 +246,14 @@ public:
 		}
 
 		// from the top 5*N in terms of seq score, chose best N from these using RMS
-		FArray1D_int rmsheap( nfrags + 2 );
-		FArray1D_float rmscoheap( nfrags + 2 );
+		ObjexxFCL::FArray1D_int rmsheap( nfrags + 2 );
+		ObjexxFCL::FArray1D_float rmscoheap( nfrags + 2 );
 		protocols::frags::heap_init( rmsheap, rmscoheap, nfrags );  // ?? out-of-date
 
-		Size exact_matches(0);
-		Real worst_score(999), best_score(999);
+		core::Size exact_matches(0);
+		core::Real worst_score(999), best_score(999);
 
-		for ( Size nn = bucket1_size; nn >=1; --nn ) {
+		for ( core::Size nn = bucket1_size; nn >=1; --nn ) {
 			bool err;
 			int vall_pos;
 			float score;// heaps use float!!!
@@ -274,7 +265,7 @@ public:
 
 			// grab XYZs
 			numeric::xyzVector< core::Real > tgt_com(0,0,0);
-			for ( Size k=0; k< frag_size; ++k ) {
+			for ( core::Size k=0; k< frag_size; ++k ) {
 				numeric::xyzVector< core::Real > const &xx( X_[ vall_pos+k ] );
 				tgt_com += xx;
 				for ( int j = 0; j < 3; ++j ) tgt_pos(j+1,k+1) = xx[j];
@@ -297,7 +288,7 @@ public:
 		}
 
 
-		for ( Size nn = nfrags; nn >=1; --nn ) {
+		for ( core::Size nn = nfrags; nn >=1; --nn ) {
 			bool err;
 			int vall_pos;
 			float score;// heaps use float!!!
@@ -309,7 +300,7 @@ public:
 			else if ( nn == 1 ) best_score = -score;
 
 			core::fragment::FragDataOP current_fragment( new core::fragment::FragData );
-			for ( Size k=0; k< frag_size; ++k ) {
+			for ( core::Size k=0; k< frag_size; ++k ) {
 				core::fragment::BBTorsionSRFDOP res_torsions( new core::fragment::BBTorsionSRFD( 3 ,secstruct_[ vall_pos + k ], sequence_ [ vall_pos+k ] ) ); // 3 protein torsions
 				res_torsions->set_torsion   ( 1, phi_   [ vall_pos + k ]  ); // ugly numbers 1-3, but pose.set_phi also uses explicit numbers
 				res_torsions->set_torsion   ( 2, psi_   [ vall_pos + k ]  );
@@ -341,10 +332,10 @@ private:
 	utility::vector1< char > sequence_;
 	utility::vector1< char > secstruct_;
 
-	utility::vector1< numeric::xyzVector< Real > > X_;
-	utility::vector1< Real > phi_;
-	utility::vector1< Real > psi_;
-	utility::vector1< Real > omega_;
+	utility::vector1< numeric::xyzVector< core::Real > > X_;
+	utility::vector1< core::Real > phi_;
+	utility::vector1< core::Real > psi_;
+	utility::vector1< core::Real > omega_;
 
 	bool exclude_gly;
 	bool exclude_pro;

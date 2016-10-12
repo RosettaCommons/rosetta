@@ -30,14 +30,14 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  a fragment candidate
 class ProfileScoreBlosum62: public CachingScoringMethod {
 public:
 
-	ProfileScoreBlosum62(Size priority, Real lowest_acceptable_value, bool use_lowest,
-		sequence::SequenceProfileOP query_profile, Size longest_vall_chunk);
+	ProfileScoreBlosum62(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+		core::sequence::SequenceProfileOP query_profile, core::Size longest_vall_chunk);
 
 	~ProfileScoreBlosum62();
 
@@ -51,8 +51,8 @@ protected:
 	Matrix scores_;
 
 private:
-	sequence::SequenceProfileOP query_profile_;
-	utility::vector1< utility::vector1< Real > > blosum_matrix_;
+	core::sequence::SequenceProfileOP query_profile_;
+	utility::vector1< utility::vector1< core::Real > > blosum_matrix_;
 	std::string cached_scores_id_;
 	void clear();
 };
@@ -64,7 +64,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreBlosum62") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

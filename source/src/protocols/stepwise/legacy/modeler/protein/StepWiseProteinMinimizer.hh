@@ -40,7 +40,7 @@ namespace protein {
 class StepWiseProteinMinimizer: public protocols::moves::Mover {
 public:
 
-	StepWiseProteinMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
+	StepWiseProteinMinimizer( utility::vector1< core::pose::PoseOP > const & pose_list,
 		utility::vector1< Size > const & moving_residues );
 
 	//destructor -- necessary?
@@ -79,7 +79,7 @@ public:
 	void set_use_coordinate_constraints( bool const & setting ){ use_coordinate_constraints_ = setting; }
 	bool use_coordinate_constraints() const{ return use_coordinate_constraints_; }
 
-	utility::vector1< pose::PoseOP >
+	utility::vector1< core::pose::PoseOP >
 	pose_list() const { return pose_list_; }
 
 private:
@@ -105,7 +105,7 @@ private:
 
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
-	utility::vector1< pose::PoseOP > pose_list_;
+	utility::vector1< core::pose::PoseOP > pose_list_;
 
 	std::string min_type_;
 	core::Real min_tolerance_;

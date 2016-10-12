@@ -38,6 +38,8 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
+using core::Real;
+
 //Constructor
 EulerAngles::EulerAngles():
 	alpha_( 0.0 ),

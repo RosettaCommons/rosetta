@@ -375,7 +375,7 @@ WorkUnit_MD::run()
 		core::pose::Pose pose_out( poses_out[i] );
 		if ( pose_out.is_centroid() ) tofa->apply( pose_out );
 
-		store_to_decoys( start_struct, pose_out, "_"+string_of( i ) );
+		store_to_decoys( start_struct, pose_out, "_"+ObjexxFCL::string_of( i ) );
 
 		if ( decoys().store().size() >= get_nstruct() ) break;
 	}

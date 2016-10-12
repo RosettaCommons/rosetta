@@ -33,34 +33,21 @@
 #include <string>
 #include <sstream>
 
-//The original author used a lot of using declarations here.  This is a stylistic choice.
-// Namespaces
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace core::scoring;
-using namespace protocols::moves;
-using namespace protocols::simple_moves;
-using namespace core::id;
-using basic::T;
-using basic::Error;
-using basic::Warning;
-
 namespace protocols {
 namespace ncbb {
 
 void
-count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs );
+count_uniq_char( std::string pattern, core::Size & num, utility::vector1<char> & uniqs );
 
-Size
+core::Size
 give_dihedral_index(
-	Size n,
+	core::Size n,
 	utility::vector1< char > uniqs,
 	std::string dihedral_pattern,
 	std::string alpha_beta_pattern
 );
 
-Size
+core::Size
 get_number_dihedrals(
 	utility::vector1< char > uniqs,
 	std::string const & dihedral_pattern,
@@ -68,7 +55,18 @@ get_number_dihedrals(
 );
 
 void
-ncbb_design_main_loop( Size loop_num, Size pert_num, Pose pose, TrialMoverOP pert_trial, utility::vector1<Size> designable_positions, Size pep_start, Size pep_end, TaskAwareMinMoverOP desn_ta_min, ScoreFunctionOP score_fxn, MonteCarloOP mc );
+ncbb_design_main_loop(
+	core::Size loop_num,
+	core::Size pert_num,
+	core::pose::Pose pose,
+	protocols::moves::TrialMoverOP pert_trial,
+	utility::vector1<core::Size> designable_positions,
+	core::Size pep_start,
+	core::Size pep_end,
+	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min,
+	core::scoring::ScoreFunctionOP score_fxn,
+	protocols::moves::MonteCarloOP mc
+);
 
 void
 calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, core::scoring::ScoreFunctionOP score_fxn  );
@@ -80,10 +78,35 @@ void
 setup_filter_stats();
 
 void
-init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, ScoreFunctionOP score_fxn_, Real & mc_temp_, Real & pert_mc_temp_, Real & pert_dock_rot_mag_, Real & pert_dock_trans_mag_, Real & pert_pep_small_temp_, Real & pert_pep_small_H_, Real & pert_pep_small_L_, Real & pert_pep_small_E_, Real & pert_pep_shear_temp_, Real & pert_pep_shear_H_, Real & pert_pep_shear_L_, Real & pert_pep_shear_E_, Size & pert_pep_num_rep_, Size & pert_num_, Size & dock_design_loop_num_, bool & no_design_, bool & final_design_min_, bool & use_soft_rep_, bool & mc_initial_pose_, bool & pymol_, bool & keep_history_ );
+init_common_options(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	core::scoring::ScoreFunctionOP score_fxn_,
+	core::Real & mc_temp_,
+	core::Real & pert_mc_temp_,
+	core::Real & pert_dock_rot_mag_,
+	core::Real & pert_dock_trans_mag_,
+	core::Real & pert_pep_small_temp_,
+	core::Real & pert_pep_small_H_,
+	core::Real & pert_pep_small_L_,
+	core::Real & pert_pep_small_E_,
+	core::Real & pert_pep_shear_temp_,
+	core::Real & pert_pep_shear_H_,
+	core::Real & pert_pep_shear_L_,
+	core::Real & pert_pep_shear_E_,
+	core::Size & pert_pep_num_rep_,
+	core::Size & pert_num_,
+	core::Size & dock_design_loop_num_,
+	bool & no_design_,
+	bool & final_design_min_,
+	bool & use_soft_rep_,
+	bool & mc_initial_pose_,
+	bool & pymol_,
+	bool & keep_history_
+);
 
 void
-final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pack::task::TaskFactoryOP desn_tf );
+final_design_min( core::pose::Pose & pose, core::scoring::ScoreFunctionOP score_fxn_, core::pack::task::TaskFactoryOP desn_tf );
 
 }
 }

@@ -31,9 +31,6 @@
 namespace protocols {
 namespace frag_picker {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief defines sidechain contact distance cutoffs.
 /// @details provides amino acid pair specific distance cutoffs.
 class SidechainContactDistCutoff: public utility::pointer::ReferenceCount {
@@ -41,15 +38,15 @@ public:
 
 	SidechainContactDistCutoff();
 
-	SidechainContactDistCutoff(Real scale_factor);
+	SidechainContactDistCutoff(core::Real scale_factor);
 
 	~SidechainContactDistCutoff() override; // auto-removing definition from header{};
 
-	Real get_cutoff(char aa_i, char aa_j);
+	core::Real get_cutoff(char aa_i, char aa_j);
 
-	Real get_cutoff_squared(char aa_i, char aa_j);
+	core::Real get_cutoff_squared(char aa_i, char aa_j);
 
-	Real scale_factor();
+	core::Real scale_factor();
 
 private:
 
@@ -57,10 +54,10 @@ private:
 
 private:
 	utility::vector1<char> aa_map_;
-	std::map<char,Size> aa_to_index_map_;
-	utility::vector1<utility::vector1<Real> >  cutoff_;
-	utility::vector1<utility::vector1<Real> >  cutoff_squared_;
-	Real scale_factor_;
+	std::map<char,core::Size> aa_to_index_map_;
+	utility::vector1<utility::vector1<core::Real> >  cutoff_;
+	utility::vector1<utility::vector1<core::Real> >  cutoff_squared_;
+	core::Real scale_factor_;
 };
 
 } // frag_picker

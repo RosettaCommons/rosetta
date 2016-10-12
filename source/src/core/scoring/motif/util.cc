@@ -85,6 +85,18 @@ namespace scoring {
 namespace motif {
 
 using numeric::Xforms;
+using core::id::AtomID;
+using core::pose::Pose;
+using core::pose::PoseCOP;
+using core::pose::PoseCAP;
+using core::Real;
+using core::scoring::ScoreFunctionOP;
+using core::Size;
+using std::string;
+using utility::vector1;
+using numeric::geometry::hashing::Real3;
+using core::pose::xyzStripeHashPose;
+using core::pose::xyzStripeHashPoseCAP;
 
 
 /************************************************* types ************************************************/
@@ -124,7 +136,6 @@ using utility::file_basename;
 using utility::vector1;
 using std::endl;
 using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
 using core::pose::xyzStripeHashPoseCOP;
 using core::pose::initialize_atomid_map;
 using core::pose::motif::get_nterminal_peptide_bond_reference_frame;

@@ -21,9 +21,6 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerValueRange.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -44,14 +41,14 @@ public:
 	void init();
 
 	void
-	set_sampler_values( Real const & val_min, Real const & val_max, Real const & val_bin, ValueList & values );
+	set_sampler_values( core::Real const & val_min, core::Real const & val_max, core::Real const & val_bin, ValueList & values );
 
-	void set_x_values( Real const centroid_x_min, Real const centroid_x_max, Real const centroid_x_bin );
-	void set_y_values( Real const centroid_y_min, Real const centroid_y_max, Real const centroid_y_bin );
-	void set_z_values( Real const centroid_z_min, Real const centroid_z_max, Real const centroid_z_bin );
-	void set_euler_alpha_values( Real const centroid_euler_alpha_min, Real const centroid_euler_alpha_max, Real const centroid_euler_alpha_bin );
-	void set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin );
-	void set_euler_gamma_values( Real const centroid_euler_gamma_min, Real const centroid_euler_gamma_max, Real const centroid_euler_gamma_bin );
+	void set_x_values( core::Real const centroid_x_min, core::Real const centroid_x_max, core::Real const centroid_x_bin );
+	void set_y_values( core::Real const centroid_y_min, core::Real const centroid_y_max, core::Real const centroid_y_bin );
+	void set_z_values( core::Real const centroid_z_min, core::Real const centroid_z_max, core::Real const centroid_z_bin );
+	void set_euler_alpha_values( core::Real const centroid_euler_alpha_min, core::Real const centroid_euler_alpha_max, core::Real const centroid_euler_alpha_bin );
+	void set_euler_z_values( core::Real const centroid_euler_z_min, core::Real const centroid_euler_z_max, core::Real const centroid_euler_z_bin );
+	void set_euler_gamma_values( core::Real const centroid_euler_gamma_min, core::Real const centroid_euler_gamma_max, core::Real const centroid_euler_gamma_bin );
 
 	void set_x_values( ValueList const & setting ){ x_values_ = setting; }
 	ValueList x_values() const{ return x_values_; }

@@ -29,20 +29,7 @@ namespace motif {
 
 //types
 
-using core::id::AtomID;
-using core::pose::Pose;
-using core::pose::PoseCOP;
-using core::pose::PoseCAP;
-using core::Real;
-using core::scoring::ScoreFunctionOP;
-using core::Size;
-using std::string;
-using utility::vector1;
-using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
-using core::pose::xyzStripeHashPose;
-using core::pose::xyzStripeHashPoseCAP;
-
+using numeric::geometry::hashing::Real6; //deliberate transclusion into core::scoring::motif namespace
 typedef utility::vector1<Real> Reals;
 typedef utility::vector1<Size> Sizes;
 typedef utility::vector1<int>  Ints;
@@ -77,16 +64,16 @@ public:
 	void chi2(Real chi2);
 	void chi3(Real chi3);
 	void chi4(Real chi4);
-	void place_sidechain_in_pose(Pose & pose, int ir) const;
+	void place_sidechain_in_pose(core::pose::Pose & pose, int ir) const;
 	friend std::ostream & operator << (std::ostream & out, Xfres const & x);
 };
 std::ostream & operator << (std::ostream & out, Xfres const & x);
 std::istream & operator >> (std::istream & in , Xfres       & x);
-bool read_xfres_binary (        string const & fname , vector1<Xfres>       & Xfres);
-bool read_xfres_binary (  std::istream        & in    , vector1<Xfres>       & Xfres);
-bool write_xfres_binary(  std::ostream        & out   , vector1<Xfres> const & Xfres);
-bool write_xfres_binary(        string const & fname , vector1<Xfres> const & Xfres);
-bool read_xfres_binary (vector1<string> const & fnames, vector1<Xfres>       & Xfres);
+bool read_xfres_binary (     std::string const & fname , utility::vector1<Xfres>       & Xfres);
+bool read_xfres_binary (  std::istream        & in    , utility::vector1<Xfres>       & Xfres);
+bool write_xfres_binary(  std::ostream        & out   , utility::vector1<Xfres> const & Xfres);
+bool write_xfres_binary(     std::string const & fname , utility::vector1<Xfres> const & Xfres);
+bool read_xfres_binary (utility::vector1<std::string> const & fnames, utility::vector1<Xfres>       & Xfres);
 
 class Xfrag {
 	/* 12 */ utility::fixedsizearray1<uint16_t,6> rt6_;
@@ -117,22 +104,22 @@ public:
 	void    ex2     (Real    _ex2     );
 	void    ex3     (Real    _ex3     );
 	void    ex4     (Real    _ex4     );
-	void insert(Pose & pose,  vector1<Xfres> const & xfres, int lowres, int highres) const;
+	void insert(core::pose::Pose & pose,  utility::vector1<Xfres> const & xfres, int lowres, int highres) const;
 };
 std::ostream & operator << (std::ostream & out, Xfrag const & x);
 std::istream & operator >> (std::istream & in , Xfrag       & x);
-bool read_xfrag_binary (        string const & fname , vector1<Xfrag>       & xfrag);
-bool read_xfrag_binary (  std::istream        & in    , vector1<Xfrag>       & xfrag);
-bool write_xfrag_binary(  std::ostream        & out   , vector1<Xfrag> const & xfrag);
-bool write_xfrag_binary(        string const & fname , vector1<Xfrag> const & xfrag);
-bool read_xfrag_binary (vector1<string> const & fnames, vector1<Xfrag>       & xfrag);
+bool read_xfrag_binary (    std::string const & fname , utility::vector1<Xfrag>       & xfrag);
+bool read_xfrag_binary (  std::istream        & in    , utility::vector1<Xfrag>       & xfrag);
+bool write_xfrag_binary(  std::ostream        & out   , utility::vector1<Xfrag> const & xfrag);
+bool write_xfrag_binary(    std::string const & fname , utility::vector1<Xfrag> const & xfrag);
+bool read_xfrag_binary (utility::vector1<std::string> const & fnames, utility::vector1<Xfrag>       & xfrag);
 
 
-bool read_xfrag_binary (        string const & fname , vector1<Xfrag>       & xfrag, vector1<Xfres>       & xfres);
-bool read_xfrag_binary (  std::istream        & in    , vector1<Xfrag>       & xfrag, vector1<Xfres>       & xfres);
-bool write_xfrag_binary(  std::ostream        & out   , vector1<Xfrag> const & xfrag, vector1<Xfres> const & xfres);
-bool write_xfrag_binary(        string const & fname , vector1<Xfrag> const & xfrag, vector1<Xfres> const & xfres);
-bool read_xfrag_binary (vector1<string> const & fnames, vector1<Xfrag>       & xfrag, vector1<Xfres>       & xfres);
+bool read_xfrag_binary (   std::string const & fname , utility::vector1<Xfrag>       & xfrag, utility::vector1<Xfres>       & xfres);
+bool read_xfrag_binary (  std::istream        & in   , utility::vector1<Xfrag>       & xfrag, utility::vector1<Xfres>       & xfres);
+bool write_xfrag_binary(  std::ostream        & out  , utility::vector1<Xfrag> const & xfrag, utility::vector1<Xfres> const & xfres);
+bool write_xfrag_binary(   std::string const & fname , utility::vector1<Xfrag> const & xfrag, utility::vector1<Xfres> const & xfres);
+bool read_xfrag_binary (utility::vector1<std::string> const & fnames, utility::vector1<Xfrag>       & xfrag, utility::vector1<Xfres>       & xfres);
 
 class XfragSet : public utility::pointer::ReferenceCount {
 	typedef boost::uint64_t Key;

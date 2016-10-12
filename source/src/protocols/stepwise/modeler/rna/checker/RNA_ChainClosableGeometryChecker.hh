@@ -23,8 +23,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -36,9 +34,9 @@ class RNA_ChainClosableGeometryChecker: public utility::pointer::ReferenceCount 
 public:
 
 	//constructor
-	RNA_ChainClosableGeometryChecker( Size const five_prime_chain_break_res, Size const gap_size );
+	RNA_ChainClosableGeometryChecker( core::Size const five_prime_chain_break_res, core::Size const gap_size );
 
-	RNA_ChainClosableGeometryChecker( Size const five_prime_chain_break_res, Size const three_prime_chain_break_res, Size const gap_size );
+	RNA_ChainClosableGeometryChecker( core::Size const five_prime_chain_break_res, core::Size const three_prime_chain_break_res, core::Size const gap_size );
 
 	//destructor
 	~RNA_ChainClosableGeometryChecker();
@@ -46,26 +44,26 @@ public:
 public:
 
 	bool
-	check_screen( pose::Pose const & pose,
+	check_screen( core::pose::Pose const & pose,
 		bool const strict = false ) const;
 
 	bool
-	check_screen( pose::Pose const & moving_pose,
-		pose::Pose const & reference_pose,
+	check_screen( core::pose::Pose const & moving_pose,
+		core::pose::Pose const & reference_pose,
 		bool const is_prepend,
 		bool const strict = false ) const;
 
 	bool
-	check_screen(  pose::Pose const & pose,
+	check_screen(  core::pose::Pose const & pose,
 		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 		core::kinematics::Stub const & moving_res_base_stub,
-		Size const & reference_res ) const;
+		core::Size const & reference_res ) const;
 
 	bool
 	check_screen(  utility::vector1< core::pose::PoseOP > const & pose_data_list,
 		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 		core::kinematics::Stub const & moving_res_base_stub,
-		Size const & reference_res ) const;
+		core::Size const & reference_res ) const;
 
 	bool
 	check_chain_closable_geometry( numeric::xyzVector< core::Real > const & xyz_1, numeric::xyzVector< core::Real > const & xyz_2 ) const;
@@ -74,19 +72,19 @@ public:
 	check_chain_closable_geometry( core::conformation::Residue const & five_prime_residue,
 		core::conformation::Residue const & three_prime_residue ) const;
 
-	Size const & five_prime_chain_break_res() const { return five_prime_chain_break_res_; }
-	Size const & three_prime_chain_break_res() const { return three_prime_chain_break_res_; }
+	core::Size const & five_prime_chain_break_res() const { return five_prime_chain_break_res_; }
+	core::Size const & three_prime_chain_break_res() const { return three_prime_chain_break_res_; }
 
-	Real const & dist_squared() const { return dist_squared_; }
-	Real const & max_dist_squared() const { return max_dist_squared_; }
+	core::Real const & dist_squared() const { return dist_squared_; }
+	core::Real const & max_dist_squared() const { return max_dist_squared_; }
 
 private:
 
 	bool
-	check_chain_closable_geometry( pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose ) const;
+	check_chain_closable_geometry( core::pose::Pose const & five_prime_pose, core::pose::Pose const & three_prime_pose ) const;
 
 	bool
-	check_chain_closable_geometry( pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose, bool const strict ) const;
+	check_chain_closable_geometry( core::pose::Pose const & five_prime_pose, core::pose::Pose const & three_prime_pose, bool const strict ) const;
 
 	bool
 	check_chain_closable_geometry( core::Size const & reference_res,
@@ -102,25 +100,25 @@ private:
 		bool const is_prepend ) const;
 
 	bool
-	check_chain_closable_geometry_strict( pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose ) const;
+	check_chain_closable_geometry_strict( core::pose::Pose const & five_prime_pose, core::pose::Pose const & three_prime_pose ) const;
 
 	void
-	get_C4_C3_distance_range( conformation::Residue const & five_prime_rsd,
-		conformation::Residue const & three_prime_rsd,
-		Distance & C4_C3_dist_min,
-		Distance & C4_C3_dist_max ) const;
+	get_C4_C3_distance_range( core::conformation::Residue const & five_prime_rsd,
+		core::conformation::Residue const & three_prime_rsd,
+		core::Distance & C4_C3_dist_min,
+		core::Distance & C4_C3_dist_max ) const;
 
 	void
 	initialize_distance_range();
 
 private:
 
-	Size const five_prime_chain_break_res_;
-	Size const three_prime_chain_break_res_;
-	Size const gap_size_;
-	Real min_dist_squared_;
-	Real max_dist_squared_;
-	mutable Real dist_squared_;
+	core::Size const five_prime_chain_break_res_;
+	core::Size const three_prime_chain_break_res_;
+	core::Size const gap_size_;
+	core::Real min_dist_squared_;
+	core::Real max_dist_squared_;
+	mutable core::Real dist_squared_;
 
 };
 

@@ -24,6 +24,8 @@
 
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
+#include <core/types.hh>
+
 #ifdef PYROSETTA
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
@@ -49,20 +51,20 @@ public:
 
 	/// @brief inserts candidates from another collector
 	/// Candidates may or may not get inserted depending on the candidate and type of storage
-	virtual void insert( Size, CandidatesCollectorOP ) = 0;
+	virtual void insert( core::Size, CandidatesCollectorOP ) = 0;
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	virtual Size count_candidates(Size) const = 0;
+	virtual core::Size count_candidates(core::Size) const = 0;
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	virtual Size count_candidates() const = 0;
+	virtual core::Size count_candidates() const = 0;
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be ale to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	virtual Size query_length() const =0;
+	virtual core::Size query_length() const =0;
 
-	virtual ScoredCandidatesVector1 & get_candidates( Size position_in_query) = 0;
+	virtual ScoredCandidatesVector1 & get_candidates( core::Size position_in_query) = 0;
 
 	/// @brief Describes what has been collected
 	virtual void print_report(

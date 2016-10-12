@@ -77,6 +77,7 @@
 
 
 using namespace core;
+using namespace core::chemical::rna;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using basic::T;

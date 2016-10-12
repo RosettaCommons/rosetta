@@ -30,9 +30,6 @@
 namespace protocols {
 namespace frag_picker {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class PhiPsiTalosIO {
 public:
 
@@ -45,11 +42,11 @@ public:
 		read(file_name);
 	}
 
-	Size get_first_residue_id() const {
+	core::Size get_first_residue_id() const {
 		return first_residue_index_;
 	}
 
-	Size get_last_residue_id() const {
+	core::Size get_last_residue_id() const {
 		return first_residue_index_ + sequence_.length() - 1;
 	}
 
@@ -61,42 +58,42 @@ public:
 
 	inline
 	bool
-	has_entry(Size residue_id) const {
+	has_entry(core::Size residue_id) const {
 		if ( entries_.find(residue_id) != entries_.end() ) {
 			return true;
 		}
 		return false;
 	}
 
-	inline const boost::tuple<Size, char, Real, Real, Real, Real, Real, Real,
-	Size, std::string> get_entry(const Size res_id) {
+	inline const boost::tuple<core::Size, char, core::Real, core::Real, core::Real, core::Real, core::Real, core::Real,
+	core::Size, std::string> get_entry(const core::Size res_id) {
 		return entries_.find(res_id)->second;
 	}
-	inline Real phi(Size res_id) {
+	inline core::Real phi(core::Size res_id) {
 		return entries_.find(res_id)->second.get<2> ();
 	}
 
-	inline Real psi(Size res_id) {
+	inline core::Real psi(core::Size res_id) {
 		return entries_.find(res_id)->second.get<3> ();
 	}
 
-	inline Real d_phi(Size res_id) {
+	inline core::Real d_phi(core::Size res_id) {
 		return entries_.find(res_id)->second.get<4> ();
 	}
 
-	inline Real d_psi(Size res_id) {
+	inline core::Real d_psi(core::Size res_id) {
 		return entries_.find(res_id)->second.get<5> ();
 	}
 
-	inline Real dist(Size res_id) {
+	inline core::Real dist(core::Size res_id) {
 		return entries_.find(res_id)->second.get<6> ();
 	}
 
-	inline Real s2(Size res_id) {
+	inline core::Real s2(core::Size res_id) {
 		return entries_.find(res_id)->second.get<7> ();
 	}
 
-	inline std::string quality(Size res_id) {
+	inline std::string quality(core::Size res_id) {
 		return entries_.find(res_id)->second.get<9> ();
 	}
 
@@ -107,10 +104,10 @@ private:
 	std::string data_format_;
 	std::string sequence_;
 	utility::vector1<std::string> column_names_;
-	Size first_residue_index_;
-	Size last_residue_index_;
-	std::map<Size, boost::tuple<Size, char, Real, Real, Real, Real, Real, Real,
-		Size, std::string> > entries_;
+	core::Size first_residue_index_;
+	core::Size last_residue_index_;
+	std::map<core::Size, boost::tuple<core::Size, char, core::Real, core::Real, core::Real, core::Real, core::Real, core::Real,
+		core::Size, std::string> > entries_;
 	void print_sequence(std::string const &, std::ostream &) const;
 };
 

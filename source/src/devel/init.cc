@@ -142,7 +142,7 @@ static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilte
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
 // Energy methods
-static core::scoring::methods::EnergyMethodRegistrator< scoring::methods::SideChainNeighborsEnergyCreator > reg_SideChainNeighborsEnergyCreator;
+static core::scoring::methods::EnergyMethodRegistrator< core::scoring::methods::SideChainNeighborsEnergyCreator > reg_SideChainNeighborsEnergyCreator;
 
 void init( int argc, char * argv [] )
 {

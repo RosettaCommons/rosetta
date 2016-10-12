@@ -40,14 +40,6 @@
 #include <core/types.hh>
 #include <ObjexxFCL/format.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::fragments;
-using namespace protocols::farna::movers;
-using namespace protocols::farna::options;
-using namespace protocols::farna::base_pairs;
-using namespace protocols::farna::setup;
-using namespace protocols::farna::libraries;
-
 namespace protocols {
 namespace farna {
 
@@ -56,7 +48,7 @@ class RNA_FragmentMonteCarlo: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP = nullptr );
+	RNA_FragmentMonteCarlo( options::RNA_FragmentMonteCarloOptionsCOP = nullptr );
 
 	//destructor
 	~RNA_FragmentMonteCarlo() override;
@@ -96,17 +88,17 @@ public:
 	core::Real lores_score_final() const { return lores_score_final_; }
 
 	void
-	set_rna_base_pair_handler( RNA_BasePairHandlerCOP setting ) { rna_base_pair_handler_ = setting; }
+	set_rna_base_pair_handler( base_pairs::RNA_BasePairHandlerCOP setting ) { rna_base_pair_handler_ = setting; }
 
-	RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
-
-	void
-	set_rna_de_novo_pose_initializer( RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_initializer_ = setting; }
+	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
 
 	void
-	set_user_input_chunk_library( RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
+	set_rna_de_novo_pose_initializer( setup::RNA_DeNovoPoseInitializerCOP setting ) { rna_de_novo_pose_initializer_ = setting; }
 
-	RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
+	void
+	set_user_input_chunk_library( libraries::RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
+
+	libraries::RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
 
 	void show(std::ostream & output) const override;
 
@@ -121,7 +113,7 @@ public:
 
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
 
-	RNA_LoopCloserCOP rna_loop_closer() const { return rna_loop_closer_; }
+	movers::RNA_LoopCloserCOP rna_loop_closer() const { return rna_loop_closer_; }
 
 	bool
 	loop_modeling() const;
@@ -150,16 +142,16 @@ private:
 	randomize_rigid_body_orientations( core::pose::Pose & pose );
 
 	void
-	update_denovo_scorefxn_weights( Size const r );
+	update_denovo_scorefxn_weights( core::Size const r );
 
-	Size
-	figure_out_constraint_separation_cutoff( Size const r, Size const  max_dist );
-
-	void
-	update_pose_constraints( Size const r, core::pose::Pose & pose );
+	core::Size
+	figure_out_constraint_separation_cutoff( core::Size const r, core::Size const  max_dist );
 
 	void
-	update_frag_size( Size const r );
+	update_pose_constraints( core::Size const r, core::pose::Pose & pose );
+
+	void
+	update_frag_size( core::Size const r );
 
 	void
 	random_fragment_trial( core::pose::Pose & pose );
@@ -197,19 +189,19 @@ private:
 private:
 
 	// The parameters in this OptionsCOP should not change:
-	RNA_FragmentMonteCarloOptionsCOP options_;
+	options::RNA_FragmentMonteCarloOptionsCOP options_;
 	std::string out_file_tag_;
 
 	// Movers (currently must be set up outside, but should write auto-setup code)
-	RNA_BasePairHandlerCOP rna_base_pair_handler_;
-	RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
-	RNA_ChunkLibraryOP rna_chunk_library_;
-	RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
-	RNA_FragmentMoverOP rna_fragment_mover_;
-	RNA_JumpMoverOP rna_jump_mover_;
-	RNA_LoopCloserOP rna_loop_closer_;
-	RNA_MinimizerOP rna_minimizer_;
-	RNA_RelaxerOP rna_relaxer_;
+	base_pairs::RNA_BasePairHandlerCOP rna_base_pair_handler_;
+	libraries::RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
+	libraries::RNA_ChunkLibraryOP rna_chunk_library_;
+	setup::RNA_DeNovoPoseInitializerCOP rna_de_novo_pose_initializer_;
+	movers::RNA_FragmentMoverOP rna_fragment_mover_;
+	movers::RNA_JumpMoverOP rna_jump_mover_;
+	movers::RNA_LoopCloserOP rna_loop_closer_;
+	movers::RNA_MinimizerOP rna_minimizer_;
+	movers::RNA_RelaxerOP rna_relaxer_;
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
 
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
@@ -224,10 +216,10 @@ private:
 
 	// Parameters that change during run:
 	protocols::moves::MonteCarloOP monte_carlo_;
-	Size const monte_carlo_cycles_max_default_;
-	Size monte_carlo_cycles_;
-	Size rounds_;
-	Size frag_size_;
+	core::Size const monte_carlo_cycles_max_default_;
+	core::Size monte_carlo_cycles_;
+	core::Size rounds_;
+	core::Size frag_size_;
 	bool do_close_loops_;
 	bool refine_pose_;
 	core::Real jump_change_frequency_;

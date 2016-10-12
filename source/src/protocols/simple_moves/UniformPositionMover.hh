@@ -35,9 +35,6 @@
 namespace protocols {
 namespace simple_moves {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief Uniform Rotation Mover
 class UniformRotationMover : public protocols::moves::Mover {
 
@@ -51,8 +48,8 @@ public:
 	/// @details Specify a new normal to rotate membranes to
 	/// to move this position to
 	UniformRotationMover(
-		Real alpha,
-		Vector axis,
+		core::Real alpha,
+		core::Vector axis,
 		core::SSize rb_jump
 	);
 
@@ -87,8 +84,8 @@ private: // methods
 private:
 
 	// Store new normal axis
-	Real alpha_;
-	Vector axis_;
+	core::Real alpha_;
+	core::Vector axis_;
 
 	// Store jump num
 	core::SSize rb_jump_;
@@ -107,8 +104,8 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
 	UniformTranslationMover(
-		Vector new_position_,
-		SSize rb_jump
+		core::Vector new_position_,
+		core::SSize rb_jump
 	);
 
 	/// @brief Copy Constructor
@@ -142,7 +139,7 @@ private:
 private:
 
 	// Store new center
-	Vector new_position_;
+	core::Vector new_position_;
 
 	// Store jump num
 	core::SSize rb_jump_;

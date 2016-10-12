@@ -25,8 +25,6 @@
 
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 namespace protocols {
 namespace docking {
 
@@ -69,25 +67,25 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Defines geometry required for docking move.
-	std::pair< numeric::xyzMatrix< core::Real >, Vector > calculate_geometry( core::pose::Pose & );
+	std::pair< numeric::xyzMatrix< core::Real >, core::Vector > calculate_geometry( core::pose::Pose & );
 
 	/// @brief Calculates ellipsoid axes from atomic coordinates.
 	numeric::xyzMatrix< core::Real > calculate_axes( core::pose::Pose & );
 
 	/// @brief Returns a sample from a beta distribution.
-	Real single_beta_sample( double, double );
+	core::Real single_beta_sample( double, double );
 
 	/// @brief Selects a random point on ellipsoid surface.
-	Vector point_on_ellipsoid( numeric::xyzMatrix< core::Real > );
+	core::Vector point_on_ellipsoid( numeric::xyzMatrix< core::Real > );
 
 	/// @brief Calculates 3rd coordinate of a point on ellipsoid surface given first 2 coordinates.
-	Real recalculate_z_coordinate( Vector );
+	core::Real recalculate_z_coordinate( core::Vector );
 
 	/// @brief Calculates normal vector to a point on ellipsoid.
-	Vector normal_to_ellipsoid( Vector );
+	core::Vector normal_to_ellipsoid( core::Vector );
 
 	/// @brief Calculates a rotation matrix to superimpose source vector to target vector.
-	numeric::xyzMatrix< core::Real > get_rotation_matrix( Vector, Vector );
+	numeric::xyzMatrix< core::Real > get_rotation_matrix( core::Vector, core::Vector );
 
 	/// @brief Identifies first and last residues of a docking partner.
 	utility::vector1< core::Size > get_partner_residue_start_stop( core::pose::Pose &, bool );
@@ -99,10 +97,10 @@ public:
 	utility::vector1< bool > get_interface_residues( core::pose::Pose &, core::Real );
 
 	/// @brief Calculates two vectors defining a plane at the docking interface.
-	utility::vector1< Vector > calculate_plane_axes( core::pose::Pose & );
+	utility::vector1< core::Vector > calculate_plane_axes( core::pose::Pose & );
 
 	/// @brief Calculates normal vector from a plane at the docking interface.
-	Vector inward_normal_to_plane( utility::vector1< Vector > );
+	core::Vector inward_normal_to_plane( utility::vector1< core::Vector > );
 
 	/// @brief Copies data members from one object to another.
 	void copy_data( EllipsoidalRandomizationMover object_to_copy_to, EllipsoidalRandomizationMover object_to_copy_from );
@@ -111,38 +109,38 @@ public:
 	void set_partners( std::string const & );
 
 	/// @brief Get the axis for sliding partners into contact.
-	Vector get_slide_axis() const;
+	core::Vector get_slide_axis() const;
 
 	/// @brief Get the point about which to spin the docking partner.
-	Vector get_spin_center() const;
+	core::Vector get_spin_center() const;
 
 	//For unit tests
-	Vector get_c_alpha_centroid() const;
-	Vector get_c_alpha_non_ellipsoid_centroid() const;
+	core::Vector get_c_alpha_centroid() const;
+	core::Vector get_c_alpha_non_ellipsoid_centroid() const;
 	core::Real get_a_axis() const;
 	core::Real get_b_axis() const;
 	core::Real get_c_axis() const;
-	Vector get_random_point_on_ellipsoid() const;
-	Vector get_normal_to_plane() const;
+	core::Vector get_random_point_on_ellipsoid() const;
+	core::Vector get_normal_to_plane() const;
 
 private:
 
 	//Centroid of all ellipsoid c-alpha coordinates
-	Vector c_alpha_centroid_;
+	core::Vector c_alpha_centroid_;
 	//Centroid of non-ellipsoid interface residue c-alpha coordinates
-	Vector c_alpha_plane_centroid_;
+	core::Vector c_alpha_plane_centroid_;
 	//Centroid of all non-ellipsoid c-alpha coordinates
-	Vector c_alpha_non_ellipsoid_centroid_;
+	core::Vector c_alpha_non_ellipsoid_centroid_;
 
-	Vector slide_axis_;
+	core::Vector slide_axis_;
 
 	//Ellipsoid axes; c > a > b
 	core::Real a_axis_;
 	core::Real b_axis_;
 	core::Real c_axis_;
 
-	Vector random_point_on_ellipsoid_;
-	Vector normal_to_plane_;
+	core::Vector random_point_on_ellipsoid_;
+	core::Vector normal_to_plane_;
 
 	core::Size rb_jump_;
 

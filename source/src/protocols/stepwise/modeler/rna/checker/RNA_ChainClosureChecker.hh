@@ -22,9 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -36,7 +33,7 @@ class RNA_ChainClosureChecker: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_ChainClosureChecker( pose::Pose const & pose, Size const five_prime_res );
+	RNA_ChainClosureChecker( core::pose::Pose const & pose, core::Size const five_prime_res );
 
 
 	//destructor
@@ -53,37 +50,37 @@ public:
 	set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; };
 
 	//void
-	//add_harmonic_chain_break_constraint( Size const five_prime_res );
+	//add_harmonic_chain_break_constraint( core::Size const five_prime_res );
 
 	void
-	copy_CCD_torsions( pose::Pose & pose ) const;
+	copy_CCD_torsions( core::pose::Pose & pose ) const;
 
 	void
-	copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const;
+	copy_CCD_torsions_general( core::pose::Pose & pose, core::Size const five_prime_res, core::Size const three_prime_res ) const;
 
 	bool
-	check_loop_closed( pose::Pose const & pose );
+	check_loop_closed( core::pose::Pose const & pose );
 
 	bool
-	chain_break_screening_general( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
+	chain_break_screening_general( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, core::Size const five_ );
 
 	//bool
-	//chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
+	//chain_break_screening( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
 
 	bool
 	check_screen();
 
 	bool
-	check_screen( pose::Pose & pose );
+	check_screen( core::pose::Pose & pose );
 
-	pose::Pose & pose(){ return chain_break_screening_pose_; }
+	core::pose::Pose & pose(){ return chain_break_screening_pose_; }
 
-	Size const & five_prime_res() const{ return five_prime_res_;}
+	core::Size const & five_prime_res() const{ return five_prime_res_;}
 
 private:
 
-	pose::Pose chain_break_screening_pose_;
-	Size const five_prime_res_;
+	core::pose::Pose chain_break_screening_pose_;
+	core::Size const five_prime_res_;
 	bool reinitialize_CCD_torsions_;
 	bool verbose_;
 

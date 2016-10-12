@@ -29,40 +29,37 @@
 namespace protocols {
 namespace simple_moves {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class CombinePoseMover : public protocols::moves::Mover
 
 {
 public:
 	//constructor
 	CombinePoseMover( core::scoring::ScoreFunctionCOP sfxn,
-		pose::Pose const &pose_ref );
+		core::pose::Pose const &pose_ref );
 
 	~CombinePoseMover() override;
 
 
-	void apply( pose::Pose &pose2 ) override;
+	void apply( core::pose::Pose &pose2 ) override;
 
 
 	std::string get_name() const override { return "CombinePoseMover"; }
 
 	void set_default();
 
-	void set_max_struct( Size const n ){ max_struct_ = n; }
-	void set_max_try( Size const n ){ max_struct_try_ = n; }
-	void set_minfrac_crossover( Real const value ){ minfrac_crossover_ = value; }
-	void set_maxfrac_crossover( Real const value ){ maxfrac_crossover_ = value; }
+	void set_max_struct( core::Size const n ){ max_struct_ = n; }
+	void set_max_try( core::Size const n ){ max_struct_try_ = n; }
+	void set_minfrac_crossover( core::Real const value ){ minfrac_crossover_ = value; }
+	void set_maxfrac_crossover( core::Real const value ){ maxfrac_crossover_ = value; }
 	void set_nonideal( bool const setting ){ nonideal_ = setting; }
 	void set_minimize( bool const setting ){ do_minimize_ = setting; }
 	void set_cartesian( bool const setting ){ cartesian_crossover_ = setting; }
-	void set_rmsdcut( Real const setting ){ rmsdcut_ = setting; }
+	void set_rmsdcut( core::Real const setting ){ rmsdcut_ = setting; }
 
-	Size max_struct() const { return max_struct_; }
-	Size max_struct_try() const { return max_struct_try_; }
+	core::Size max_struct() const { return max_struct_; }
+	core::Size max_struct_try() const { return max_struct_try_; }
 
-	pose::Pose const pose_ref() const { return pose_ref_; }
+	core::pose::Pose const pose_ref() const { return pose_ref_; }
 
 	std::string pose_tag() const { return pose_tag_; }
 	void set_pose_tag( std::string const value ) { pose_tag_ = value; }
@@ -74,20 +71,20 @@ public:
 	return_silent() const { return sampled_structures_; }
 
 	void clear_combine_history() { combine_history_.resize( 0 ); }
-	void append_combine_history( std::vector< Size > const v )
+	void append_combine_history( std::vector< core::Size > const v )
 	{ combine_history_.push_back( v ); }
 
-	std::vector< std::vector< Size > >
+	std::vector< std::vector< core::Size > >
 	return_combine_history() const { return combine_history_; }
 
 private:
-	pose::Pose pose_ref_;
+	core::pose::Pose pose_ref_;
 
 	// Parameters/options
-	Size max_struct_;
-	Size max_struct_try_;
-	Real minfrac_crossover_;
-	Real maxfrac_crossover_;
+	core::Size max_struct_;
+	core::Size max_struct_try_;
+	core::Real minfrac_crossover_;
+	core::Real maxfrac_crossover_;
 	bool cartesian_crossover_;
 	bool nonideal_;
 	bool store_silents_;
@@ -101,11 +98,11 @@ private:
 
 	// Simple filter for clash
 	core::scoring::ScoreFunctionCOP sfxn0_;
-	Real vdwcut_;
-	Real rmsdcut_;
+	core::Real vdwcut_;
+	core::Real rmsdcut_;
 
 	// structure storage
-	std::vector< std::vector< Size > > combine_history_;
+	std::vector< std::vector< core::Size > > combine_history_;
 	std::vector< core::io::silent::SilentStructOP > sampled_structures_;
 
 };

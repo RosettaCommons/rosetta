@@ -30,15 +30,6 @@
 #include <utility/vector1.hh>
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 
-/*
-Commented out because “using namespace X” in header files outside of class declaration is explicitly forbidden
-by our coding convention due to problems it create on modern compilers and because of the name clashing.
-For more information please see: https://wiki.rosettacommons.org/index.php/Coding_conventions#Using
-
-using namespace core;
-using namespace core::pose;
-*/
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {

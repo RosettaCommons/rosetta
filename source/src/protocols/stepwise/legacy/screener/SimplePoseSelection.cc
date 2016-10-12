@@ -21,6 +21,8 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.screener.SimplePoseSelection" );
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace legacy {

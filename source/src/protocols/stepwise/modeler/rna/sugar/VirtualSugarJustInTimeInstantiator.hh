@@ -26,9 +26,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -45,7 +42,7 @@ public:
 	//destructor
 	~VirtualSugarJustInTimeInstantiator();
 
-	virtual void apply( pose::Pose & pose_to_visualize );
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
 
@@ -60,13 +57,13 @@ public:
 	modeler_sugar_at_chain_break() const;
 
 	void
-	prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose,
-		utility::vector1< pose::PoseOP > & starting_pose_data_list,
+	prepare_from_prior_sampled_sugar_jobs( core::pose::Pose const & pose,
+		utility::vector1< core::pose::PoseOP > & starting_pose_data_list,
 		bool const pose_explosion_legacy /* = false */ ) const;
 
 	void
-	prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose::Pose const & pose,
-		utility::vector1< pose::PoseOP > & starting_pose_data_list ) const;
+	prepare_from_prior_sampled_sugar_jobs_for_chain_break( core::pose::Pose const & pose,
+		utility::vector1< core::pose::PoseOP > & starting_pose_data_list ) const;
 
 	void
 	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
@@ -79,53 +76,53 @@ public:
 	void
 	set_options( options::StepWiseModelerOptionsCOP options );
 
-	Size
+	core::Size
 	num_sets() const { return sugar_modeling_sets_.size(); }
 
 	sampler::copy_dofs::ResidueAlternativeSet const &
-	residue_alternative_set( Size const n );
+	residue_alternative_set( core::Size const n );
 
 	//legacy:
 	SugarModeling const &
 	anchor_sugar_modeling();
 
 	void
-	instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const;
+	instantiate_sugars_at_cutpoint_closed( core::pose::Pose & pose ) const;
 
 private:
 
-	Size
-	sampled_sugar_index( Size const i );
+	core::Size
+	sampled_sugar_index( core::Size const i );
 
 	bool
-	do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const & name );
+	do_sugar_sampling( core::pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const & name );
 
 	bool
-	setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling );
+	setup_sugar_modeling( core::pose::Pose const & pose, core::Size const moving_res, SugarModeling & sugar_modeling );
 
 	bool
-	get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i );
+	get_sugar_modeling_set( core::pose::Pose & viewer_pose, core::Size const i );
 
 	utility::vector1< SugarModelingOP > get_sugar_modeling_sets_for_chainbreak() const;
 
 	void
-	instantiate_sugar( pose::Pose & pose, SugarModeling const & sugar_modeling, Size const sugar_ID ) const;
+	instantiate_sugar( core::pose::Pose & pose, SugarModeling const & sugar_modeling, core::Size const sugar_ID ) const;
 
 	void
-	instantiate_sugars_recursively(  pose::Pose const & pose,
-		utility::vector1< pose::PoseOP > & pose_data_list,
+	instantiate_sugars_recursively(  core::pose::Pose const & pose,
+		utility::vector1< core::pose::PoseOP > & pose_data_list,
 		utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
-		utility::vector1< Size > const & sugar_modeling_set_indices ) const;
+		utility::vector1< core::Size > const & sugar_modeling_set_indices ) const;
 
 	void
-	minimize_sugar_sets_legacy( pose::Pose const & pose,
-		utility::vector1< pose::PoseOP > & pose_data_list ) const;
+	minimize_sugar_sets_legacy( core::pose::Pose const & pose,
+		utility::vector1< core::pose::PoseOP > & pose_data_list ) const;
 
 
 private:
 
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
-	Size const moving_res_;
+	core::Size const moving_res_;
 	bool const rebuild_bulge_mode_;
 
 	utility::vector1< SugarModelingOP > sugar_modeling_sets_;

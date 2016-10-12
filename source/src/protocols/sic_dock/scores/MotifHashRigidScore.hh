@@ -30,19 +30,17 @@ namespace protocols {
 namespace sic_dock {
 namespace scores {
 
-using core::pose::Pose;
-
 class MotifHashRigidScore : public RigidScore {
 	typedef std::map<std::string,Real> Stats;
 	typedef std::pair<int,int> intint;
 	typedef std::pair<numeric::xyzVector<float>,int> VecIR;
 public:
-	MotifHashRigidScore(Pose const & pose1, Pose const & pose2);
+	MotifHashRigidScore(core::pose::Pose const & pose1, core::pose::Pose const & pose2);
 	virtual ~MotifHashRigidScore();
 	core::Real score     ( Xforms const & x1, Xforms const & x2 ) const;
 	core::Real score_meta( Xforms const & x1, Xforms const & x2, int & nsheet, Real & rawscore, Real & sselem_score , Real & coverage , Real & res_score, Real & sheetsc, int & nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const;
 
-	int dump_matching_motifs( Pose   const & pose1, Pose   const & pose2, std::ostream & out, int & count, core::pose::xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
+	int dump_matching_motifs( core::pose::Pose   const & pose1, core::pose::Pose   const & pose2, std::ostream & out, int & count, core::pose::xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
 	int dump_matching_motifs( Xforms const & x1s  , Xforms const & x2s  , std::ostream & out, core::pose::xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
 
 	std::string type() const { return "MotifHash"; }
@@ -58,7 +56,7 @@ public:
 private:
 	MotifHashRigidScore(){}
 
-	Pose pose1_,pose2_;
+	core::pose::Pose pose1_,pose2_;
 	numeric::Xforms bbx1_,bbx2_;
 	mutable core::scoring::motif::MotifHashCOP mh_;
 	core::scoring::motif::XformScoreCOP xs_, xsee_, xseh_, xshe_, xshh_, xspp_;

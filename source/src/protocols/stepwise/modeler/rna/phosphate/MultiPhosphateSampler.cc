@@ -32,6 +32,7 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.MultiPhosphateSampler" );
 using utility::tools::make_vector1;
 
+using namespace core;
 using namespace core::pose;
 
 namespace protocols {

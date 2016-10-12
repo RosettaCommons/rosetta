@@ -181,7 +181,7 @@ private:
 	protocols::analysis::InterfaceData interface_data_;
 	std::pair<ParatopeMetric< core::Real >, ParatopeMetric<core::Real> > paratope_sasa_;
 	ParatopeMetric< core::SSize>paratope_charge_;
-	vector1<core::Size> ag_ab_atomic_contacts_;
+	utility::vector1<core::Size> ag_ab_atomic_contacts_;
 
 	bool include_proto_cdr4_;
 

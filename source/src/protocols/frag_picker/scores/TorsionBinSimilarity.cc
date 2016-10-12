@@ -46,11 +46,11 @@ void TorsionBinSimilarity::do_caching( VallChunkOP chunk ) {
 	tr.Debug << "caching score for " << chunk->get_pdb_id()
 		<< " of size " << chunk->size() << std::endl;
 
-	for ( Size i = 1; i <= query_len_; ++i ) {
-		for ( Size j = 1; j <= chunk->size(); ++j ) {
-			Real const phi  ( chunk->at(j)->phi()   );
-			Real const psi  ( chunk->at(j)->psi()   );
-			Real const omega( chunk->at(j)->omega() );
+	for ( core::Size i = 1; i <= query_len_; ++i ) {
+		for ( core::Size j = 1; j <= chunk->size(); ++j ) {
+			core::Real const phi  ( chunk->at(j)->phi()   );
+			core::Real const psi  ( chunk->at(j)->psi()   );
+			core::Real const omega( chunk->at(j)->omega() );
 			char const torsion_bin( torsion2big_bin_( phi, psi, omega ) );
 			//scores_[i][j] = std::log( query_bin_probs_[i][bin_index_(torsion_bin)] );
 			scores_[i][j] = 1 - query_bin_probs_[i][bin_index_(torsion_bin)];
@@ -72,15 +72,15 @@ bool TorsionBinSimilarity::cached_score(
 		do_caching(f->get_chunk());
 	}
 
-	Real total_score = 0;
-	for ( Size i = 1; i <= f->get_length(); ++i ) {
+	core::Real total_score = 0;
+	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
 		assert( f->get_first_index_in_query() + i - 1 <= scores_.size()    );
 		assert( f->get_first_index_in_vall() + i - 1 <= scores_[1].size() );
 		total_score += scores_[f->get_first_index_in_query() + i - 1][f->get_first_index_in_vall() + i - 1];
 	}
 	//std::cout << "total_score = " << total_score << std::endl;
 
-	total_score /= (Real) f->get_length();
+	total_score /= (core::Real) f->get_length();
 
 	empty_map->set_score_component(total_score, id_);
 	if ( (total_score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -132,8 +132,8 @@ TorsionBinSimilarity::bin_index_( char const bin_name ) const
 }
 
 FragmentScoringMethodOP MakeTorsionBinSimilarity::make(
-	Size priority,
-	Real lowest_acceptable_value,
+	core::Size priority,
+	core::Real lowest_acceptable_value,
 	bool use_lowest,
 	FragmentPickerOP picker,
 	std::string /* prediction_id */
@@ -153,8 +153,8 @@ FragmentScoringMethodOP MakeTorsionBinSimilarity::make(
 	if ( reader.nrows() == 0 ) {
 		utility_exit_with_message( "Error: didn't read any torsions!" );
 	}
-	Size const sequence_length( reader.nrows() );
-	Size const vall_max_len( picker->get_vall()->get_largest_chunk_size() );
+	core::Size const sequence_length( reader.nrows() );
+	core::Size const vall_max_len( picker->get_vall()->get_largest_chunk_size() );
 
 	utility::vector1< utility::vector1< core::Real > > probs = reader.matrix();
 

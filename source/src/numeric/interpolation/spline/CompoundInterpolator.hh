@@ -34,8 +34,6 @@ class CompoundInterpolator;
 typedef utility::pointer::shared_ptr< CompoundInterpolator > CompoundInterpolatorOP;
 typedef utility::pointer::shared_ptr< CompoundInterpolator const > CompoundInterpolatorCOP;
 
-using numeric::Real;
-
 struct interp_range {
 	Real lb;
 	Real ub;

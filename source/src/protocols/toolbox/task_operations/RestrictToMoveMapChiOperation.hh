@@ -33,13 +33,6 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::pack::task::operation;
-using core::kinematics::MoveMapCOP;
-using core::pose::Pose;
-using core::pack::task::PackerTask;
-
-
 /// @brief A TaskOperation that accepts a movemap and restricts chi that are false to either packing or design.
 /// Does not turn anything on, just like the rest of the RestrictTo operations.
 class RestrictToMoveMapChiOperation : public core::pack::task::operation::TaskOperation {
@@ -52,7 +45,7 @@ public:
 
 	RestrictToMoveMapChiOperation();
 
-	RestrictToMoveMapChiOperation( MoveMapCOP movemap );
+	RestrictToMoveMapChiOperation( core::kinematics::MoveMapCOP movemap );
 
 	virtual ~RestrictToMoveMapChiOperation();
 
@@ -61,7 +54,7 @@ public:
 public:
 
 	void
-	set_movemap( MoveMapCOP movemap );
+	set_movemap( core::kinematics::MoveMapCOP movemap );
 
 	/// @brief Set residues from movemap to designable.  Default false.
 	void
@@ -81,11 +74,11 @@ public:
 	//@brief.  Yes, I don't know wtf I'm doing with RosettaScripts yet.
 	//virtual void parse_tag( TagCOP, basic::datacache::DataMap & data, core);
 
-	virtual TaskOperationOP clone() const;
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	virtual
 	void
-	apply( Pose const & pose, PackerTask & task ) const;
+	apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "RestrictToMoveMapChiOperation"; }
@@ -99,7 +92,7 @@ private:
 	void
 	init_for_equal_operator_and_copy_constructor( RestrictToMoveMapChiOperation & lhs, RestrictToMoveMapChiOperation const & rhs);
 
-	MoveMapCOP movemap_;
+	core::kinematics::MoveMapCOP movemap_;
 	bool design_;
 	bool include_neighbors_;
 	bool movemap_set_; //Since I can't assign a COP to null it seems.

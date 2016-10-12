@@ -26,6 +26,8 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
+using namespace core;
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // used by StepWiseResiduePairScreener, and also ChainClosureScreener.
 void

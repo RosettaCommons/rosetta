@@ -41,10 +41,6 @@
 
 namespace protocols {
 namespace pose_length_moves {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using utility::vector1;
-
 
 
 class InsertResMover : public protocols::moves::Mover {
@@ -58,8 +54,8 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::pose::PoseOP get_additional_output() override;
 private:
-	vector1<core::pose::PoseOP> posesToOutput_;
-	vector1<bool> posesOutputed_;
+	utility::vector1<core::pose::PoseOP> posesToOutput_;
+	utility::vector1<bool> posesOutputed_;
 	std::string chain_;
 	Size residue_;
 	bool grow_toward_Nterm_;
@@ -68,9 +64,9 @@ private:
 	Size highAddRes_;
 	std::string resType_;
 	bool useInputAngles_;
-	Real phi_;
-	Real psi_;
-	Real omega_;
+	core::Real phi_;
+	core::Real psi_;
+	core::Real omega_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	Size steal_angles_from_res_;
 };

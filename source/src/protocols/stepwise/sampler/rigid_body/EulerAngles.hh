@@ -21,9 +21,6 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -51,21 +48,21 @@ public:
 	convert_to_rotation_matrix( numeric::xyzMatrix< core::Real > & rotation_matrix );
 
 	void
-	set_alpha( Real const setting ){ alpha_ = setting; }
+	set_alpha( core::Real const setting ){ alpha_ = setting; }
 
 	void
-	set_beta( Real const setting );
+	set_beta( core::Real const setting );
 
 	void
-	set_z( Real const setting );
+	set_z( core::Real const setting );
 
 	void
-	set_gamma( Real const setting ){ gamma_ = setting; }
+	set_gamma( core::Real const setting ){ gamma_ = setting; }
 
-	Real const & alpha() const { return alpha_; }
-	Real const & beta() const { return beta_; }
-	Real const & gamma() const { return gamma_; }
-	Real const & z() const { return z_; }
+	core::Real const & alpha() const { return alpha_; }
+	core::Real const & beta() const { return beta_; }
+	core::Real const & gamma() const { return gamma_; }
+	core::Real const & z() const { return z_; }
 
 private:
 

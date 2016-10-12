@@ -25,6 +25,7 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.VaryLoopLengthMover" );
 
+using namespace core;
 
 namespace protocols {
 namespace stepwise {

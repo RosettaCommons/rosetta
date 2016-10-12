@@ -23,10 +23,6 @@
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -38,7 +34,7 @@ class O2PrimePacker: public protocols::moves::Mover {
 public:
 
 	//constructor
-	O2PrimePacker( pose::Pose const & pose,
+	O2PrimePacker( core::pose::Pose const & pose,
 		core::scoring::ScoreFunctionCOP const & scorefxn,
 		utility::vector1< core::Size > moving_res ,
 		bool const pack_virtual_o2prime_hydrogen = false );
@@ -49,7 +45,7 @@ public:
 	void
 	sample_o2prime_hydrogen();
 
-	pose::Pose & pose();
+	core::pose::Pose & pose();
 
 	void
 	apply( core::pose::Pose & pose ){ copy_all_o2prime_torsions( pose ); }
@@ -75,7 +71,7 @@ private:
 private:
 
 	Pose const pose_with_original_HO2prime_torsion_;
-	utility::vector1< Size > const moving_res_;
+	utility::vector1< core::Size > const moving_res_;
 	Pose o2prime_pack_pose_;
 	bool const pack_virtual_o2prime_hydrogen_;
 	bool use_green_packer_;

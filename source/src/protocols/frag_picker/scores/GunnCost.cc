@@ -118,23 +118,23 @@ void GunnCost::compute_gunn( core::pose::Pose const& pose, core::Size begin, cor
 
 }
 
-Real GunnCost::score_tuple( GunnTuple const& g1, GunnTuple const& g2 ) {
+core::Real GunnCost::score_tuple( GunnTuple const& g1, GunnTuple const& g2 ) {
 	using numeric::constants::d::pi_over_2;
 	using numeric::constants::d::pi;
-	Real c1,c2,c3,c4;
+	core::Real c1,c2,c3,c4;
 	c1 = 2.035; //magic weights
 	c2 = 0.346;
 	c3 = 5.72;
 	c4 = 3.84;
 
-	Real d3 ( std::abs( g1.q3 - g2.q3 ) );
+	core::Real d3 ( std::abs( g1.q3 - g2.q3 ) );
 	if ( d3 > pi_over_2 ) d3 = pi - d3;
-	Real d4 ( std::abs( g1.q4 - g2.q4 ) );
+	core::Real d4 ( std::abs( g1.q4 - g2.q4 ) );
 	if ( d4 > pi_over_2 ) d4 = pi - d4;
-	Real d5 ( std::abs( g1.q5 - g2.q5 ) );
+	core::Real d5 ( std::abs( g1.q5 - g2.q5 ) );
 	if ( d5 > pi_over_2 ) d5 = pi - d5;
 
-	Real cost = 2.92 +
+	core::Real cost = 2.92 +
 		c3 * log( 1.0 + ( std::abs( g1.q1 - g2.q1 ) + std::abs( g1.q2 - g2.q2 ) ) ) +
 		c2 * log( 1.0 + std::abs( g1.q6 - g2.q6 ) ) +
 		c1 * log( 1.0 + d3 ) +

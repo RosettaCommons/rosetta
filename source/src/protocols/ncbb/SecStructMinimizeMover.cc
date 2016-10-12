@@ -46,6 +46,7 @@
 static basic::Tracer TR( "protocols.ncbb.SecStructMinimizeMover" );
 
 using namespace core;
+using namespace core::id;
 
 namespace protocols {
 namespace ncbb {

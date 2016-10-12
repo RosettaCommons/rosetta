@@ -28,9 +28,6 @@
 #endif
 
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -89,8 +86,8 @@ public:
 	void set_cart_min( bool const & setting ){ cart_min_ = setting; }
 	bool cart_min() const{ return cart_min_; }
 
-	void set_n_sample( Size const & setting ){ n_sample_ = setting; }
-	Size n_sample() const{ return n_sample_; }
+	void set_n_sample( core::Size const & setting ){ n_sample_ = setting; }
+	core::Size n_sample() const{ return n_sample_; }
 
 	void set_filter_native_big_bins( bool const & setting ){ filter_native_big_bins_ = setting; }
 	bool filter_native_big_bins() const{ return filter_native_big_bins_; }
@@ -107,14 +104,14 @@ public:
 	void set_centroid_screen( bool const & setting ){ centroid_screen_ = setting; }
 	bool centroid_screen() const{ return centroid_screen_; }
 
-	void set_centroid_score_diff_cut( Real const & setting ){ centroid_score_diff_cut_ = setting; }
-	Real centroid_score_diff_cut() const{ return centroid_score_diff_cut_; }
+	void set_centroid_score_diff_cut( core::Real const & setting ){ centroid_score_diff_cut_ = setting; }
+	core::Real centroid_score_diff_cut() const{ return centroid_score_diff_cut_; }
 
 	void set_centroid_weights( std::string const & setting ){ centroid_weights_ = setting; }
 	std::string centroid_weights() const{ return centroid_weights_; }
 
-	void set_nstruct_centroid( Size const & setting ){ nstruct_centroid_ = setting; }
-	Size nstruct_centroid() const{ return nstruct_centroid_; }
+	void set_nstruct_centroid( core::Size const & setting ){ nstruct_centroid_ = setting; }
+	core::Size nstruct_centroid() const{ return nstruct_centroid_; }
 
 	void set_ghost_loops( bool const & setting ){ ghost_loops_ = setting; }
 	bool ghost_loops() const{ return ghost_loops_; }
@@ -137,8 +134,8 @@ public:
 	void set_frag_files( utility::vector1< std::string > const & setting ){ frag_files_ = setting; }
 	utility::vector1< std::string > frag_files() const { return frag_files_; }
 
-	void set_bridge_res( utility::vector1< Size > const & setting ){ bridge_res_ = setting; }
-	utility::vector1< Size > bridge_res() const { return bridge_res_; }
+	void set_bridge_res( utility::vector1< core::Size > const & setting ){ bridge_res_ = setting; }
+	utility::vector1< core::Size > bridge_res() const { return bridge_res_; }
 
 protected:
 
@@ -152,7 +149,7 @@ private:
 	bool move_jumps_between_chains_;
 	bool disable_sampling_of_loop_takeoff_;
 	bool cart_min_;
-	Size n_sample_;
+	core::Size n_sample_;
 
 	bool filter_native_big_bins_;
 	bool allow_virtual_side_chains_;
@@ -160,9 +157,9 @@ private:
 
 	bool centroid_output_;
 	bool centroid_screen_;
-	Real centroid_score_diff_cut_;
+	core::Real centroid_score_diff_cut_;
 	std::string centroid_weights_;
-	Size nstruct_centroid_;
+	core::Size nstruct_centroid_;
 	bool ghost_loops_;
 
 	bool ccd_close_; // should this be in here, or in job parameters?
@@ -173,7 +170,7 @@ private:
 	bool expand_loop_takeoff_;
 	bool skip_coord_constraints_;
 	utility::vector1< std::string > frag_files_;
-	utility::vector1< Size > bridge_res_;
+	utility::vector1< core::Size > bridge_res_;
 
 };
 

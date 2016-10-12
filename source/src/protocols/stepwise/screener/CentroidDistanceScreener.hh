@@ -21,9 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace screener {
@@ -33,9 +30,9 @@ class CentroidDistanceScreener: public StepWiseScreener {
 public:
 
 	//constructor
-	CentroidDistanceScreener(  pose::Pose & screening_pose,
-		Size const moving_res,
-		Vector const & reference_centroid,
+	CentroidDistanceScreener(  core::pose::Pose & screening_pose,
+		core::Size const moving_res,
+		core::Vector const & reference_centroid,
 		core::Real const max_distance_squared );
 	//destructor
 	~CentroidDistanceScreener();
@@ -59,9 +56,9 @@ public:
 
 private:
 
-	pose::Pose & screening_pose_;
-	Size const moving_res_;
-	Vector const & reference_centroid_;
+	core::pose::Pose & screening_pose_;
+	core::Size const moving_res_;
+	core::Vector const & reference_centroid_;
 	core::Real const max_distance_squared_;
 
 };

@@ -160,6 +160,7 @@
 
 using namespace core;
 using namespace core::pose::rna;
+using namespace core::chemical::rna;
 using namespace basic;
 using namespace protocols;
 using namespace ObjexxFCL;

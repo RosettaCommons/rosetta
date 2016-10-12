@@ -72,6 +72,7 @@
 #include <string>
 #include <list>
 
+using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

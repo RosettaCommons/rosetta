@@ -190,10 +190,6 @@ get_orientation(
 } // end namespace old
 
 
-using core::pose::Pose;
-using core::Real;
-using utility::vector1;
-
 struct SasaResult : public utility::pointer::ReferenceCount {
 	SasaResult(std::size_t Nprobes, std::size_t Nspheres);
 	ObjexxFCL::FArray2D<PackstatReal> sphere_sasa;
@@ -306,7 +302,7 @@ compute_packing_score(
 
 core::Real
 compute_packing_score(
-	Pose const & pose,
+	core::pose::Pose const & pose,
 	core::Size oversample = 0
 );
 
@@ -318,7 +314,7 @@ compute_residue_packing_scores(
 
 utility::vector1<core::Real>
 compute_residue_packing_scores(
-	Pose const & pose,
+	core::pose::Pose const & pose,
 	core::Size oversample = 0
 );
 
@@ -331,7 +327,7 @@ compute_residue_packing_score(
 
 core::Real
 compute_residue_packing_score(
-	Pose const & pose,
+	core::pose::Pose const & pose,
 	int const seqpos,
 	core::Size oversample = 0
 );
@@ -356,7 +352,7 @@ compute_atom_packing_scores(
 
 core::id::AtomID_Map<core::Real>
 compute_atom_packing_scores(
-	Pose const & pose,
+	core::pose::Pose const & pose,
 	core::Size oversample = 0
 );
 

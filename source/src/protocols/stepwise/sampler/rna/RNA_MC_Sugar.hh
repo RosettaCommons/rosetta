@@ -22,9 +22,6 @@
 #include <protocols/stepwise/sampler/MC_StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SugarStepWiseSampler.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -36,7 +33,7 @@ public:
 	RNA_MC_Sugar(
 		core::Size const rsd_id,
 		core::Real const flip_rate = 0.1,
-		PuckerState const init_pucker = NORTH
+		core::chemical::rna::PuckerState const init_pucker = core::chemical::rna::NORTH
 	);
 
 	/// @brief Initialization
@@ -73,7 +70,7 @@ public:
 	virtual StepWiseSamplerType type() const { return RNA_MC_SUGAR; }
 
 private:
-	PuckerState stored_pucker_state_, active_pucker_state_;
+	core::chemical::rna::PuckerState stored_pucker_state_, active_pucker_state_;
 	core::Real flip_rate_;
 	RNA_SugarStepWiseSamplerOP sugar_rotamer_;
 };

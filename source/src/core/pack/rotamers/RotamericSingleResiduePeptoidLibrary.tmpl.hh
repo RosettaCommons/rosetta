@@ -112,7 +112,6 @@
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResiduePeptoidLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
@@ -243,8 +242,6 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-using namespace core::pack::dunbrack;
-
 /// DOUG DOUG DOUG This use to be PHIPSI_BINRANGE
 template < Size T, Size N >
 Real const RotamericSingleResiduePeptoidLibrary< T, N >::OMG_BINRANGE = 10.0;
@@ -280,7 +277,7 @@ template < Size T, Size N >
 Real
 RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
+	dunbrack::RotamerLibraryScratchSpace & scratch
 ) const
 {
 	return eval_rotameric_energy_deriv( rsd, scratch, false );
@@ -291,9 +288,11 @@ template < Size T, Size N >
 Real
 RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
+	dunbrack::RotamerLibraryScratchSpace & scratch
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	/// most of the work is done in this call
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
@@ -338,7 +337,7 @@ template < Size T, Size N >
 Real
 RotamericSingleResiduePeptoidLibrary< T, N >::eval_rotameric_energy_deriv(
 	conformation::Residue const & /*rsd*/,
-	RotamerLibraryScratchSpace & /*scratch*/,
+	dunbrack::RotamerLibraryScratchSpace & /*scratch*/,
 	bool /*eval_deriv*/
 ) const
 {
@@ -434,8 +433,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::eval_rotameric_energy_deriv(
 	if ( ! eval_deriv ) return score;
 
 
-	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0.0;
-	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0.0;
+	dchidevpen_dbb[ dunbrack::RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0.0;
+	dchidevpen_dbb[ dunbrack::RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0.0;
 	for ( Size ii = 1; ii <= T; ++ii ) {
 
 	/// Backbone derivatives for chi-dev penalty.
@@ -450,9 +449,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::eval_rotameric_energy_deriv(
 	Real const gprime = 4*chisd[ ii ];
 	Real const invgg  = 1 / (g*g);
 
-	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
+	dchidevpen_dbb[ dunbrack::RotamerLibraryScratchSpace::AA_PHI_INDEX  ] +=
 	( g*fprime*dchimean_dphi[ ii ] - f*gprime*dchisd_dphi[ ii ] ) * invgg;
-	dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
+	dchidevpen_dbb[ dunbrack::RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
 	( g*fprime*dchimean_dpsi[ ii ] - f*gprime*dchisd_dpsi[ ii ] ) * invgg;
 
 	dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
@@ -468,9 +467,9 @@ void
 RotamericSingleResiduePeptoidLibrary< T, N >::assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
+	dunbrack::RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
-	ChiVector & new_chi_angles,
+	dunbrack::ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center
 ) const
 {
@@ -484,13 +483,15 @@ void
 RotamericSingleResiduePeptoidLibrary< T, N >::assign_random_rotamer(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
+	dunbrack::RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
-	ChiVector & new_chi_angles,
+	dunbrack::ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center,
 	Size & packed_rotno
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	Real random_prob = RG.uniform();
 
 	/// DOUG DOUG DOUG BROKEN
@@ -531,10 +532,10 @@ RotamericSingleResiduePeptoidLibrary< T, N >::assign_random_rotamer(
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::assign_chi_for_interpolated_rotamer(
-	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
+	dunbrack::PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 	conformation::Residue const & rsd,
 	numeric::random::RandomGenerator & RG,
-	ChiVector & new_chi_angles,
+	dunbrack::ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center
 ) const
 {
@@ -573,9 +574,11 @@ template < Size T, Size N >
 Size
 RotamericSingleResiduePeptoidLibrary< T, N >::find_another_representative_for_unlikely_rotamer(
 	conformation::Residue const & rsd,
-	Size4 & rotwell
+	dunbrack::Size4 & rotwell
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	/// Start from the furthest chi and work inwards trying to find another rotamer that could work
 	for ( Size ii = T; ii >= 1; --ii ) {
 		Size ii_orig_value = rotwell[ ii ];
@@ -616,16 +619,16 @@ template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::correct_termini_derivatives(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
+	dunbrack::RotamerLibraryScratchSpace & scratch
 ) const
 {
 	// mt: for the termini, these derivatives are 0, because these "pseudo"
 	// mt: torsions are kept fixed.
 	if ( rsd.is_lower_terminus() ) {
-		scratch.dE_dbb()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
+		scratch.dE_dbb()[ dunbrack::RotamerLibraryScratchSpace::AA_PHI_INDEX ] = 0;
 	}
 	if ( rsd.is_upper_terminus() ) {
-		scratch.dE_dbb()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
+		scratch.dE_dbb()[ dunbrack::RotamerLibraryScratchSpace::AA_PSI_INDEX ] = 0;
 	}
 
 
@@ -640,7 +643,7 @@ Real
 RotamericSingleResiduePeptoidLibrary< T, N >::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	bool /*curr_rotamer_only*/,
-	RotamerLibraryScratchSpace & /*scratch*/
+	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
 	utility_exit_with_message( "ERROR:: rotameric single residue peptoid library::best_rotamer_energy stubbed out!");
@@ -787,11 +790,13 @@ void
 RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
+	dunbrack::RotamerLibraryScratchSpace & scratch,
 	Size const packed_rotno,
-	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+	dunbrack::PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	Real omg( get_omg_from_rsd( rsd, pose ) );
 	Real phi( get_phi_from_rsd( rsd, pose ) );
 	Real psi( get_psi_from_rsd( rsd, pose ) );
@@ -815,9 +820,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers,
+	typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > const & rotamers,
 	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno,
-	RotamerLibraryScratchSpace & scratch,
+	dunbrack::RotamerLibraryScratchSpace & scratch,
 	Size const packed_rotno,
 	Size const omgbin,
 	Size const phibin,
@@ -828,9 +833,10 @@ RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 	Real const omg_alpha,
 	Real const phi_alpha,
 	Real const psi_alpha,
-	PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+	dunbrack::PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 ) const
 {
+	using namespace core::pack::dunbrack;
 	using namespace basic;
 
 	interpolated_rotamer.packed_rotno() = packed_rotno;
@@ -866,9 +872,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::interpolate_rotamers(
 		static_cast< Real >  ( rot111.rotamer_probability()),
 		omg_alpha, phi_alpha, psi_alpha, PHI_BINRANGE, false /*treat_as_angles*/,
 		scratch.rotprob(),
-		scratch.drotprob_dbb()[ RotamerLibraryScratchSpace::AA_OMG_INDEX ],
-		scratch.drotprob_dbb()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ],
-		scratch.drotprob_dbb()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ]
+		scratch.drotprob_dbb()[ dunbrack::RotamerLibraryScratchSpace::AA_OMG_INDEX ],
+		scratch.drotprob_dbb()[ dunbrack::RotamerLibraryScratchSpace::AA_PHI_INDEX ],
+		scratch.drotprob_dbb()[ dunbrack::RotamerLibraryScratchSpace::AA_PSI_INDEX ]
 	);
 
 	interpolated_rotamer.rotamer_probability() = scratch.rotprob();
@@ -1066,7 +1072,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::fill_rotamer_vector(
 	RotamerVector & rotamers
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
+	using namespace core::pack::dunbrack;
+
+	dunbrack::RotamerLibraryScratchSpace scratch;
 
 	// DEBUG DEBUG DEBUG handel for getting type info since gdb has a hard time with RT-CAPS
 	core::chemical::ResidueType existing_type( *concrete_residue );
@@ -1127,14 +1135,16 @@ RotamericSingleResiduePeptoidLibrary< T, N >::fill_rotamer_vector(
 }
 
 template < Size T, Size N >
-utility::vector1< DunbrackRotamerSampleData >
+utility::vector1< dunbrack::DunbrackRotamerSampleData >
 RotamericSingleResiduePeptoidLibrary< T, N >::get_all_rotamer_samples(
 	Real omg,
 	Real phi,
 	Real psi
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
+	using namespace core::pack::dunbrack;
+
+	dunbrack::RotamerLibraryScratchSpace scratch;
 
 	Size omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next;
 	Real omg_alpha, phi_alpha, psi_alpha;
@@ -1183,6 +1193,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_probability_for_rotamer(
 	Size rot_ind
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	Size omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next;
 	Real omg_alpha, phi_alpha, psi_alpha;
 	get_omgphipsi_bins( omg, phi, psi, omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
@@ -1229,7 +1241,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_probability_for_rotamer(
 }
 
 template < Size T, Size N >
-DunbrackRotamerSampleData
+dunbrack::DunbrackRotamerSampleData
 RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer(
 	Real omg,
 	Real phi,
@@ -1237,7 +1249,9 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer(
 	Size rot_ind
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
+	using namespace core::pack::dunbrack;
+
+	dunbrack::RotamerLibraryScratchSpace scratch;
 
 	Size omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next;
 	Real omg_alpha, phi_alpha, psi_alpha;
@@ -1303,9 +1317,11 @@ RotamericSingleResiduePeptoidLibrary< T, N >::build_rotamers(
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
 	RotamerVector & rotamers,
-	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
+	dunbrack::PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	DunbrackRotamer< T, N, Real > interpolated_rot( packed_rotamer_2_regular_rotamer( interpolated_rotamer ));
 	RotamericData< T, N > rotameric_rotamer_building_data( interpolated_rot );
 
@@ -1367,11 +1383,13 @@ RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 	utility::graph::GraphCOP packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
-	utility::vector1< ChiSetOP > const & chi_set_vector,
+	utility::vector1< dunbrack::ChiSetOP > const & chi_set_vector,
 	RotamerVector & rotamers
 ) const
 {
+	using namespace core::pack::dunbrack;
 	using namespace utility;
+
 	pack::task::ResidueLevelTask const & rtask( task.residue_task( existing_residue.seqpos() ) );
 
 	// construct real rotamers
@@ -1395,11 +1413,13 @@ RotamericSingleResiduePeptoidLibrary< T, N >::create_rotamers_from_chisets(
 
 template< Size T, Size N >
 template< class P >
-DunbrackRotamer< T, N, P >
+dunbrack::DunbrackRotamer< T, N, P >
 RotamericSingleResiduePeptoidLibrary< T, N >::packed_rotamer_2_regular_rotamer(
-	PackedDunbrackRotamer< T, N, P > const & packedrot
+	dunbrack::PackedDunbrackRotamer< T, N, P > const & packedrot
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	DunbrackRotamer< T, N, P > dunrot;
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		dunrot.chi_mean( ii ) = packedrot.chi_mean( ii );
@@ -1418,14 +1438,15 @@ RotamericSingleResiduePeptoidLibrary< T, N >::enumerate_chi_sets(
 	pack::task::PackerTask const & task,
 	Size const seqpos,
 	bool buried,
-	RotamericData< T, N > const & rotamer_data,
+	dunbrack::RotamericData< T, N > const & rotamer_data,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-	utility::vector1< ChiSetOP > & chi_set_vector
+	utility::vector1< dunbrack::ChiSetOP > & chi_set_vector
 ) const
 {
-	Real const base_probability( rotamer_data.rotamer().rotamer_probability() );
-
 	using namespace utility;
+	using namespace core::pack::dunbrack;
+
+	Real const base_probability( rotamer_data.rotamer().rotamer_probability() );
 
 	Size const nchi( rsd_type.nchi() );
 
@@ -1492,7 +1513,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::chisamples_for_rotamer_and_chi(
 	pack::task::ResidueLevelTask const & rtask,
 	bool buried,
 	Size const chi_index,
-	RotamericData< T, N > const & rotamer_data,
+	dunbrack::RotamericData< T, N > const & rotamer_data,
 	utility::vector1< Real > const & extra_steps,
 	utility::vector1< Real > & total_chi,
 	utility::vector1< int  > & total_rot,
@@ -1500,6 +1521,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::chisamples_for_rotamer_and_chi(
 	utility::vector1< Real > & chisample_prob
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	//debug_assert( dynamic_cast< RotamericData const & > ( rotamer_data ) );
 	//RotamericData const & rotameric_data( static_cast< RotamericData const & > ( rotamer_data ) );
 
@@ -1807,6 +1830,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::read_from_file(
 	utility::io::izstream & infile
 )
 {
+	using namespace core::pack::dunbrack;
+
 	std::string const my_name( chemical::name_from_aa( aa() ) );
 	std::string next_name; // empty string to start
 
@@ -1989,6 +2014,8 @@ Size RotamericSingleResiduePeptoidLibrary< T, N >::memory_usage_static() const
 template < Size T, Size N >
 Size RotamericSingleResiduePeptoidLibrary< T, N >::memory_usage_dynamic() const
 {
+	using namespace core::pack::dunbrack;
+
 	Size total = parent::memory_usage_dynamic(); // recurse to parent.
 	total += trans_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > );
 	total += cis_rotamers_.size() * sizeof( PackedDunbrackRotamer< T, N > );
@@ -2008,10 +2035,12 @@ Size RotamericSingleResiduePeptoidLibrary< T, N >::memory_usage_dynamic() const
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi(
-	ChiVector const & chi,
-	RotVector & rot
+	dunbrack::ChiVector const & chi,
+	dunbrack::RotVector & rot
 ) const
 {
+	using namespace core::pack::dunbrack;
+
 	Size4 rot4;
 	get_rotamer_from_chi_static( chi, rot4 );
 	rot.resize( chi.size() );
@@ -2022,11 +2051,11 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi(
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
-	ChiVector const & chi,
-	Size4 & rot
+	dunbrack::ChiVector const & chi,
+	dunbrack::Size4 & rot
 ) const
 {
-	Real4 chi4;
+	dunbrack::Real4 chi4;
 	for ( Size ii = 1; ii <= T; ++ii ) chi4[ ii ] = chi[ ii ];
 	get_rotamer_from_chi_static( chi4, rot );
 }
@@ -2034,11 +2063,11 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
-	Real4 const & chi,
-	Size4 & rot
+	dunbrack::Real4 const & chi,
+	dunbrack::Size4 & rot
 ) const
 {
-	if ( dun02() ) { rotamer_from_chi_02( chi, aa(), T, rot ); return; }
+	if ( dun02() ) { dunbrack::rotamer_from_chi_02( chi, aa(), T, rot ); return; }
 
 	debug_assert( chi.size() >= T );
 
@@ -2049,7 +2078,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_rotamer_from_chi_static(
 }
 
 template < Size T, Size N >
-typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const &
+typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > const &
 RotamericSingleResiduePeptoidLibrary< T, N >::rotamers( Real omg_angle ) const {
 	if ( is_trans_omg( omg_angle) ) return trans_rotamers_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_rotamers_;
@@ -2058,7 +2087,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::rotamers( Real omg_angle ) const {
 }
 
 template < Size T, Size N >
-typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > &
+typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > &
 RotamericSingleResiduePeptoidLibrary< T, N >::rotamers( Real omg_angle ) {
 	if ( is_trans_omg( omg_angle) ) return trans_rotamers_;
 	else if ( is_cis_omg( omg_angle ) ) return cis_rotamers_;

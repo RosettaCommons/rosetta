@@ -47,14 +47,14 @@ public:
 
 public:
 
-	pose::PoseOP
+	core::pose::PoseOP
 	create_new_submotif( SequenceMapping const & sequence_mapping,
 		PoseTag const & submotif_tag,
-		pose::Pose const & pose,
+		core::pose::Pose const & pose,
 		bool const & seed = false ) const;
 
 	utility::vector1< monte_carlo::mover::StepWiseMove >
-	get_submotif_moves( pose::Pose const & pose ) const;
+	get_submotif_moves( core::pose::Pose const & pose ) const;
 
 private:
 
@@ -68,18 +68,18 @@ private:
 	initialize_from_jump_library();
 
 	SubMotifSequenceSet
-	get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences = true ) const;
+	get_submotif_sequence_set( core::pose::Pose const & pose, bool sort_sequences = true ) const;
 
 	void
-	save_pose_as_submotif( pose::PoseOP pose, std::string const & tag );
+	save_pose_as_submotif( core::pose::PoseOP pose, std::string const & tag );
 
 	utility::vector1< SequenceMapping >
 	get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
-		pose::Pose const & pose,
+		core::pose::Pose const & pose,
 		bool const use_full_model_info = true ) const;
 
 	void
-	get_moves_for_one_submotif( pose::PoseCOP submotif_pose, pose::Pose const & pose ) const;
+	get_moves_for_one_submotif( core::pose::PoseCOP submotif_pose, core::pose::Pose const & pose ) const;
 
 	void
 	get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,

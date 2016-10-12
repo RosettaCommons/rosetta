@@ -27,9 +27,6 @@
 namespace protocols {
 namespace frag_picker {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class JCouplingIO {
 public:
 
@@ -41,18 +38,18 @@ public:
 
 	void read(std::string const&);
 
-	std::pair< Real, Real > get_data( Size const res_num, bool & has_data );
+	std::pair< core::Real, core::Real > get_data( core::Size const res_num, bool & has_data );
 
-	utility::vector1< Real > get_parameters();
+	utility::vector1< core::Real > get_parameters();
 
-	Size get_length() {
+	core::Size get_length() {
 		return sequence_length_;
 	}
 
 private:
-	utility::vector1< utility::vector1< Real > > data_;
-	Real A_, B_, C_, THETA_;
-	Size sequence_length_;
+	utility::vector1< utility::vector1< core::Real > > data_;
+	core::Real A_, B_, C_, THETA_;
+	core::Size sequence_length_;
 
 };
 

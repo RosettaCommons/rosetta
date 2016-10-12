@@ -33,15 +33,12 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief  scores a fragment by its predicted phi similarity
 class Phi: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a predicted phi-based scoring function.
-	Phi(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	Phi(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		std::string & fastaQuerySequence, utility::vector1<core::Real> & query_phi_prediction,
 		utility::vector1<core::Real> & query_phi_prediction_conf) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
@@ -65,8 +62,8 @@ public:
 private:
 	std::string cached_scores_id_;
 	std::string & query_;
-	utility::vector1<Real> query_phi_prediction_;
-	utility::vector1<Real> query_phi_prediction_conf_;
+	utility::vector1<core::Real> query_phi_prediction_;
+	utility::vector1<core::Real> query_phi_prediction_conf_;
 };
 
 /// @brief  Maker class that produces a new Phi object
@@ -77,7 +74,7 @@ public:
 		MakeFragmentScoringMethod("Phi") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new Phi(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_phi_prediction(),

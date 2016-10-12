@@ -39,7 +39,7 @@ public:
 	/// here as you can always rescale the score by a weight provided in a score configuration file
 	static const int CONST_SCORE = 1;
 
-	ConstScore(Size priority, Real lowest_acceptable_value, bool use_lowest) :
+	ConstScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest) :
 		FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest,"ConstScore") {
 	}
 
@@ -49,7 +49,7 @@ public:
 	/// doesn't make any sense in this case.
 	virtual bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
-		empty_map->set_score_component((Real) f->get_length() * CONST_SCORE, id_);
+		empty_map->set_score_component((core::Real) f->get_length() * CONST_SCORE, id_);
 		return true;
 	}
 };
@@ -62,7 +62,7 @@ public:
 		MakeFragmentScoringMethod("ConstScore") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value,
 		bool use_lowest, FragmentPickerOP, std::string /* params */) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ConstScore(priority,
 			lowest_acceptable_value, use_lowest) );

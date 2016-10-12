@@ -41,10 +41,10 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-PCS_FragDistance::PCS_FragDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PCS_FragDistance::PCS_FragDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	ObjexxFCL::FArray2D_double target_ca_dev,
-	ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment,
-	Size max_length) :
+	ObjexxFCL::FArray2D_double target_ca_dist, core::Size largest_fragment,
+	core::Size max_length) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PCS_FragDistance"),
 	target_ca_dev_(target_ca_dev),
 	target_ca_dist_(target_ca_dist),
@@ -58,15 +58,15 @@ void PCS_FragDistance::do_caching(VallChunkOP current_chunk) {
 	n_res_ = current_chunk->size();
 
 	chunk_ca_distances_.redimension(n_res_, n_res_, 0.0);
-	for ( Size x = 1; x <= n_res_; ++x ) {
+	for ( core::Size x = 1; x <= n_res_; ++x ) {
 		VallResidueOP xr = current_chunk->at(x);
 
-		for ( Size y = x - largest_fragment_; (y <= x + largest_fragment_) && (y <= n_res_); ++y ) {
-			//for (Size y = 1; y <= n_res_; ++y) {
+		for ( core::Size y = x - largest_fragment_; (y <= x + largest_fragment_) && (y <= n_res_); ++y ) {
+			//for (core::Size y = 1; y <= n_res_; ++y) {
 			if ( y > 0 ) {
 				VallResidueOP yr = current_chunk->at(y);
 
-				Real distance = sqrt( pow( xr->x() - yr->x(), 2) + pow( xr->y() - yr->y(), 2) + pow( xr->z() - yr->z(), 2) );
+				core::Real distance = sqrt( pow( xr->x() - yr->x(), 2) + pow( xr->y() - yr->y(), 2) + pow( xr->z() - yr->z(), 2) );
 				chunk_ca_distances_(x,y) = distance;
 			}
 		}
@@ -85,25 +85,25 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 		cached_scores_id_ = tmp;
 	}
 
-	//Size offset_q = fragment->get_first_index_in_query() - 1;
-	//Size offset_v = fragment->get_first_index_in_vall() - 1;
+	//core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	//core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
 	//Goes from first res - 2 to last res + 2
-	Size offset_q = fragment->get_first_index_in_query() - 1;
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
-	Real score = 0.0;
+	core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Real score = 0.0;
 
-	//for (Size ix = 1; ix < fragment->get_length(); ++ix) {
-	// for (Size iy = ix+1; iy < fragment->get_length(); ++iy) {
+	//for (core::Size ix = 1; ix < fragment->get_length(); ++ix) {
+	// for (core::Size iy = ix+1; iy < fragment->get_length(); ++iy) {
 
-	for ( Size ix = 1; ix <= fragment->get_length()+3; ++ix ) {
-		for ( Size iy = ix+1; iy <= fragment->get_length()+4; ++iy ) {
+	for ( core::Size ix = 1; ix <= fragment->get_length()+3; ++ix ) {
+		for ( core::Size iy = ix+1; iy <= fragment->get_length()+4; ++iy ) {
 
-			Size res1 = ix+offset_q;
-			Size res2 = iy+offset_q;
+			core::Size res1 = ix+offset_q;
+			core::Size res2 = iy+offset_q;
 
-			Size v1 = ix+offset_v;
-			Size v2 = iy+offset_v;
+			core::Size v1 = ix+offset_v;
+			core::Size v2 = iy+offset_v;
 
 			if ( ( res1 >= 3) && (res2 <= max_length_ + 2) &&
 					( v1 >= 3) && (v2 <= n_res_ + 2) ) {
@@ -117,10 +117,10 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 
 				if ( !((target_ca_dist_(res1,res2) == 0.0) && (target_ca_dev_(res1,res2) == 0.0)) ) {
 
-					Real dev(target_ca_dev_(res1,res2));
-					Real diff( std::abs(target_ca_dist_(res1,res2) - chunk_ca_distances_(v1,v2)));
+					core::Real dev(target_ca_dev_(res1,res2));
+					core::Real diff( std::abs(target_ca_dist_(res1,res2) - chunk_ca_distances_(v1,v2)));
 
-					Real sig_function = ( 1 / ( 1 + exp(-2*(diff/dev) + 5 )));// + (1 / ( 1 + exp(+2*(diff/dev) + 5 )));
+					core::Real sig_function = ( 1 / ( 1 + exp(-2*(diff/dev) + 5 )));// + (1 / ( 1 + exp(+2*(diff/dev) + 5 )));
 
 					//std::cout << "HEYO " << res1 << " " << res2 << " " << target_ca_dev_(res1,res2) << " " << target_ca_dev_(res1,res2) << " " << chunk_ca_distances_(v1,v2) << " " << diff << " " << dev << " " << sig_function << std::endl;
 
@@ -130,7 +130,7 @@ bool PCS_FragDistance::cached_score(FragmentCandidateOP fragment, FragmentScoreM
 		}
 	}
 
-	score /= (Real) fragment->get_length();
+	score /= (core::Real) fragment->get_length();
 
 	scores->set_score_component(score, id_);
 	//PROF_STOP( core::util::FRAGMENTPICKING_PHIPSI_SCORE );
@@ -158,14 +158,14 @@ void PCS_FragDistance::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
+FragmentScoringMethodOP MakePCS_FragDistance::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
 	, std::string )
 {
 
 	std::string target( picker->get_query_seq_string());
 
-	Size max_length = target.length();
+	core::Size max_length = target.length();
 
 	ObjexxFCL::FArray2D_double target_ca_dev;
 	ObjexxFCL::FArray2D_double target_ca_dist;
@@ -179,14 +179,14 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 		utility::io::izstream data( option[ in::file::PCS_frag_cst ]() );
 
 		// mjo commenting out 'max_data_res' because it is not used and casuses a warning
-		//Size max_data_res(0);
+		//core::Size max_data_res(0);
 		std::string line;
 		while ( !data.eof() ) {
 			getline(data, line);
 			std::istringstream line_stream(line);
 
-			Size resX, resY;
-			Real dist, dev;
+			core::Size resX, resY;
+			core::Real dist, dev;
 
 			line_stream >> resX >> resY >> dist >> dev;
 
@@ -201,8 +201,8 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 			target_ca_dev(resX,resY) = dev;
 		}
 
-		Size largest_fragment(0);
-		for ( Size i = 1; i <= picker->frag_sizes_.size(); ++i ) {
+		core::Size largest_fragment(0);
+		for ( core::Size i = 1; i <= picker->frag_sizes_.size(); ++i ) {
 			if ( picker->frag_sizes_[i] > largest_fragment ) largest_fragment = picker->frag_sizes_[i];
 		}
 

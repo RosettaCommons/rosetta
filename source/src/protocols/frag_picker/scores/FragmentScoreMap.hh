@@ -27,9 +27,6 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief holds all small scores (score components) for a given fragment
 /// @details each scoring method puts its own result into the map. The total score
 /// is a dot product of the vector from this map and a vector of weights
@@ -39,7 +36,7 @@ public:
 
 	/// @brief creates a new map for a given number of components
 	/// @details usually the new map should be created by FragmentScoreManager::create_empty_map()
-	inline FragmentScoreMap(Size n_componens) {
+	inline FragmentScoreMap(core::Size n_componens) {
 		small_scores_.resize(n_componens);
 		was_modified_ = false;
 		recent_total_ = 0.0;
@@ -49,7 +46,7 @@ public:
 	/// @brief creates a new deep copy of this map
 	FragmentScoreMapOP clone() const {
 		FragmentScoreMapOP f( new FragmentScoreMap(small_scores_.size()) );
-		for ( Size i = 1; i <= small_scores_.size(); i++ ) {
+		for ( core::Size i = 1; i <= small_scores_.size(); i++ ) {
 			f->small_scores_[i] = small_scores_[i];
 		}
 		f->was_modified_ = was_modified_;
@@ -58,17 +55,17 @@ public:
 		return f;
 	}
 
-	inline Size size() const { return small_scores_.size(); }
+	inline core::Size size() const { return small_scores_.size(); }
 
-	inline Real at(Size score_index) const { return small_scores_[score_index]; };
+	inline core::Real at(core::Size score_index) const { return small_scores_[score_index]; };
 
 	/// @brief returns the vector of score components
-	inline utility::vector1<Real>& get_score_components() const {
-		return const_cast<utility::vector1<Real> &> (small_scores_);
+	inline utility::vector1<core::Real>& get_score_components() const {
+		return const_cast<utility::vector1<core::Real> &> (small_scores_);
 	}
 
 	/// @brief sets a new score value for a given component
-	inline void set_score_component(Real score_value, Size component_id) {
+	inline void set_score_component(core::Real score_value, core::Size component_id) {
 		small_scores_[component_id] = score_value;
 		was_modified_ = true;
 	}
@@ -76,7 +73,7 @@ public:
 	/// @brief returns the total score that has been evaluated recently
 	/// @details the method does not compute anything. You must check if the map has been
 	/// modified after the last total score calculation. If so, you must recompute the total again
-	inline Real get_most_recent_total_score() {
+	inline core::Real get_most_recent_total_score() {
 		return recent_total_;
 	}
 
@@ -85,14 +82,14 @@ public:
 		return was_modified_;
 	}
 
-	inline Real get_quota_score() { return recent_quota_score_; }
+	inline core::Real get_quota_score() { return recent_quota_score_; }
 
-	inline void set_quota_score(Real quota_score) { recent_quota_score_ = quota_score; }
+	inline void set_quota_score(core::Real quota_score) { recent_quota_score_ = quota_score; }
 
 private:
-	utility::vector1<Real> small_scores_;
-	Real recent_total_;
-	Real recent_quota_score_;
+	utility::vector1<core::Real> small_scores_;
+	core::Real recent_total_;
+	core::Real recent_quota_score_;
 	bool was_modified_;
 	friend class FragmentScoreManager;
 };

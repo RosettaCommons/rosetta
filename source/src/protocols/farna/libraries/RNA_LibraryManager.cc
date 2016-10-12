@@ -23,6 +23,7 @@
 static basic::Tracer TR( "protocols.farna.libraries.RNA_LibraryManager" );
 
 using namespace protocols::farna::options;
+using namespace protocols::farna::fragments;
 
 namespace protocols {
 namespace farna {

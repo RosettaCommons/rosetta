@@ -42,7 +42,7 @@ class QuotaSelector: public FragmentSelectingRule {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments.
-	QuotaSelector(Size,Size,QuotaCollectorOP);
+	QuotaSelector(core::Size,core::Size,QuotaCollectorOP);
 
 	virtual ~QuotaSelector() {
 	}
@@ -57,20 +57,20 @@ public:
 
 protected:
 	QuotaCollectorOP collector_;
-	Size q_pos_;
-	inline Size round(Real x) { return Size(x > 0.0 ? x + 0.5 : x - 0.5); }
+	core::Size q_pos_;
+	inline core::Size round(core::Real x) { return core::Size(x > 0.0 ? x + 0.5 : x - 0.5); }
 
-	Size next_from_pool(
+	core::Size next_from_pool(
 		ScoredCandidatesVector1 const&,
-		Size recently_taken,
-		std::set<Size> & in_use
+		core::Size recently_taken,
+		std::set<core::Size> & in_use
 	);
 
-	void push_the_limits(utility::vector1<Size> & q_limits,Size target_total);
+	void push_the_limits(utility::vector1<core::Size> & q_limits,core::Size target_total);
 
-	void push_the_limits_to_the_winner(utility::vector1<Size> & q_limits,Size target_total);
+	void push_the_limits_to_the_winner(utility::vector1<core::Size> & q_limits,core::Size target_total);
 
-	void push_the_limits(utility::vector1<Size> &,Size,utility::vector1<Real> &);
+	void push_the_limits(utility::vector1<core::Size> &,core::Size,utility::vector1<core::Real> &);
 
 	virtual void select_fragments_200(
 		ScoredCandidatesVector1 const& in,
@@ -81,7 +81,7 @@ protected:
 		ScoredCandidatesVector1 & out);
 private:
 	utility::vector1<std::string> tags_;
-	std::map<std::string,Size> tag_map_;
+	std::map<std::string,core::Size> tag_map_;
 };
 
 } // quota

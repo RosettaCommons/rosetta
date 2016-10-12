@@ -41,10 +41,6 @@
 
 //Auto Headers
 #include <core/pose/Pose.hh>
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace frag_picker {
@@ -52,11 +48,12 @@ namespace scores {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer trPhiPsiRmsd(
 	"protocols.frag_picker.scores.PhiPsiRmsd");
 
-PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PhiPsiRmsd::PhiPsiRmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiRmsd") {
 
@@ -64,14 +61,14 @@ PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_low
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	existing_data_.resize(n_atoms_);
-	for ( Size i = 1; i <= n_atoms_; ++i ) {
+	for ( core::Size i = 1; i <= n_atoms_; ++i ) {
 		query_phi_(i) = reference_pose->phi(i);
 		query_psi_(i) = reference_pose->psi(i);
 		existing_data_[i] = true;
 	}
 }
 
-PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PhiPsiRmsd::PhiPsiRmsd(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	PhiPsiTalosIO& reader) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiRmsd") {
 
@@ -79,14 +76,14 @@ PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_low
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	existing_data_.resize(n_atoms_);
-	for ( Size i = 1; i <= n_atoms_; ++i ) {
+	for ( core::Size i = 1; i <= n_atoms_; ++i ) {
 		if ( !reader.has_entry(i) ) {
 			existing_data_[i] = false;
 			trPhiPsiRmsd.Warning << "Lack of data for position " << i
 				<< std::endl;
 			continue;
 		}
-		boost::tuple<Size, char, Real, Real, Real, Real, Real, Real, Size,
+		boost::tuple<core::Size, char, core::Real, core::Real, core::Real, core::Real, core::Real, core::Real, core::Size,
 			std::string> entry = reader.get_entry(i);
 		if ( (entry.get<2> () > 181) || (entry.get<2> () < -181)
 				|| (entry.get<3> () > 181) || (entry.get<3> () < -181) ) {
@@ -106,7 +103,7 @@ void PhiPsiRmsd::do_caching(VallChunkOP current_chunk) {
 
 	chunk_phi_.redimension(current_chunk->size());
 	chunk_psi_.redimension(current_chunk->size());
-	for ( Size i = 1; i <= current_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_phi_(i) = r->phi();
 		chunk_psi_(i) = r->psi();
@@ -126,11 +123,11 @@ bool PhiPsiRmsd::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP s
 	}
 
 	PROF_START( basic::FRAGMENTPICKING_PHIPSI_SCORE );
-	Size offset_q = fragment->get_first_index_in_query() - 1;
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
-	Real score = 0.0;
-	Real stmp = 0.0;
-	for ( Size i = 1; i <= fragment->get_length(); ++i ) {
+	core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Real score = 0.0;
+	core::Real stmp = 0.0;
+	for ( core::Size i = 1; i <= fragment->get_length(); ++i ) {
 		if ( !existing_data_[i + offset_q] ) {
 			continue;
 		}
@@ -142,8 +139,8 @@ bool PhiPsiRmsd::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP s
 		score += stmp * stmp;
 	}
 
-	score = sqrt(score) / ((Real) fragment->get_length());
-	score /= (Real) fragment->get_length();
+	score = sqrt(score) / ((core::Real) fragment->get_length());
+	score /= (core::Real) fragment->get_length();
 	scores->set_score_component(score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_PHIPSI_SCORE );
 	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -156,28 +153,28 @@ bool PhiPsiRmsd::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP s
 bool PhiPsiRmsd::describe_score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map, std::ostream& out) {
 
-	Real totalScore = 0;
+	core::Real totalScore = 0;
 
 	out << f->get_chunk()->get_pdb_id() << " " << I(5,
 		f->get_first_index_in_vall()) << " ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << "   " << f->get_residue(i)->aa() << "   ";
 	}
 	out << std::endl << "            ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << F(6, 1, chunk_phi_(f->get_first_index_in_vall() + i - 1)) << " ";
 	}
 	out << std::endl << "query " << I(5, f->get_first_index_in_query()) << " ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << F(6, 1, query_phi_(f->get_first_index_in_query() + i - 1))
 			<< " ";
 	}
 
-	Size offset_q = f->get_first_index_in_query() - 1;
-	Size offset_v = f->get_first_index_in_vall() - 1;
-	Real score = 0.0;
-	Real stmp = 0.0;
-	for ( Size i = 1; i <= f->get_length(); ++i ) {
+	core::Size offset_q = f->get_first_index_in_query() - 1;
+	core::Size offset_v = f->get_first_index_in_vall() - 1;
+	core::Real score = 0.0;
+	core::Real stmp = 0.0;
+	for ( core::Size i = 1; i <= f->get_length(); ++i ) {
 		stmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
 		score += stmp * stmp;
 		if ( stmp > 180.0 ) stmp = std::abs(360.0 - stmp);
@@ -186,14 +183,14 @@ bool PhiPsiRmsd::describe_score(FragmentCandidateOP f,
 		score += stmp * stmp;
 	}
 
-	score = sqrt(score) / ((Real) f->get_length());
+	score = sqrt(score) / ((core::Real) f->get_length());
 
 	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		out << "\nTotal score " << F(5, 3, score) << " REJECTED" << std::endl;
 	} else {
 		out << "\nTotal score " << F(5, 3, score) << " ACCEPTED" << std::endl;
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -218,21 +215,21 @@ void PhiPsiRmsd::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakePhiPsiRmsd::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakePhiPsiRmsd::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string input_file) {
 
 	//std::istringstream line_stream(config_line);
 	//std::string score_name;
-	//Size p;
-	//Real weight;
-	//Real lowest;
+	//core::Size p;
+	//core::Real weight;
+	//core::Real lowest;
 	//std::string input_file;
 	//line_stream >> score_name >> p >> weight >> lowest;
 	//if (!line_stream.eof()) {
 	if ( input_file != "" ) {
 		//line_stream >> input_file;
-		Size pos = input_file.find(".pdb");
+		core::Size pos = input_file.find(".pdb");
 		if ( pos != std::string::npos ) {
 			core::pose::PoseOP nativePose( new core::pose::Pose );
 			core::import_pose::pose_from_file(*nativePose, input_file, core::import_pose::PDB_file);

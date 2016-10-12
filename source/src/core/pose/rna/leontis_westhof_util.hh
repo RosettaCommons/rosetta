@@ -18,20 +18,25 @@
 
 #include <core/chemical/rna/util.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace core {
 namespace pose {
 namespace rna {
 
-LW_BaseDoubletOrientation
-get_LW_orientation( BaseEdge const & edge1, BaseEdge const & edge2, BaseDoubletOrientation const & orientation );
+core::chemical::rna::LW_BaseDoubletOrientation
+get_LW_orientation(
+	core::chemical::rna::BaseEdge const & edge1,
+	core::chemical::rna::BaseEdge const & edge2,
+	core::chemical::rna::BaseDoubletOrientation const & orientation
+);
 
-BaseDoubletOrientation
-get_base_doublet_orientation_from_LW( BaseEdge const & edge1, BaseEdge const & edge2, LW_BaseDoubletOrientation const & lw_orientation );
+core::chemical::rna::BaseDoubletOrientation
+get_base_doublet_orientation_from_LW(
+	core::chemical::rna::BaseEdge const & edge1,
+	core::chemical::rna::BaseEdge const & edge2,
+	core::chemical::rna::LW_BaseDoubletOrientation const & lw_orientation
+);
 
-typedef std::map< std::pair< BaseEdge, BaseEdge >, std::map< BaseDoubletOrientation, LW_BaseDoubletOrientation > > LW_Table;
+typedef std::map< std::pair< core::chemical::rna::BaseEdge, core::chemical::rna::BaseEdge >, std::map< core::chemical::rna::BaseDoubletOrientation, core::chemical::rna::LW_BaseDoubletOrientation > > LW_Table;
 
 LW_Table const &
 get_leontis_westhof_table();

@@ -24,9 +24,6 @@
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -41,7 +38,7 @@ public:
 	//destructor
 	~RNA_TorsionMover();
 
-	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_torsion, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
+	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, core::Size const res_to_torsion, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	using protocols::moves::Mover::apply;
@@ -49,70 +46,70 @@ public:
 	virtual std::string get_name() const;
 
 	void
-	apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range );
+	apply( core::pose::Pose & pose, std::string & move_type, core::Real const & sample_range );
 
 	void
-	random_torsion_move( pose::Pose & pose,
-		utility::vector1< Size > const & moving_res_list,
+	random_torsion_move( core::pose::Pose & pose,
+		utility::vector1< core::Size > const & moving_res_list,
 		std::string & move_type,
-		Real const & sample_range );
+		core::Real const & sample_range );
 
 	void
-	sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev);
+	sample_near_suite_torsion(utility::vector1< core::Real > & torsion_list, core::Real const stddev);
 
 	void
-	sample_near_nucleoside_torsion(utility::vector1< Real > & torsion_list, Real const stddev);
+	sample_near_nucleoside_torsion(utility::vector1< core::Real > & torsion_list, core::Real const stddev);
 
 	void
-	apply_random_nucleoside_torsion( pose::Pose & pose,
-		Size const moving_res );
+	apply_random_nucleoside_torsion( core::pose::Pose & pose,
+		core::Size const moving_res );
 
 	void
-	apply_random_suite_torsion( pose::Pose & pose,
-		Size const moving_suite );
+	apply_random_suite_torsion( core::pose::Pose & pose,
+		core::Size const moving_suite );
 
 	void
 	apply_nucleoside_torsion_Aform(
-		pose::Pose & pose,
-		Size const moving_res );
+		core::pose::Pose & pose,
+		core::Size const moving_res );
 
 	void
 	apply_suite_torsion_Aform(
-		pose::Pose & pose,
-		Size const moving_suite );
+		core::pose::Pose & pose,
+		core::Size const moving_suite );
 
 	void
-	sample_near_suite_torsion( pose::Pose & pose, Size const moving_suite, Real const sample_range);
+	sample_near_suite_torsion( core::pose::Pose & pose, core::Size const moving_suite, core::Real const sample_range);
 
 	void
-	sample_near_nucleoside_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range);
+	sample_near_nucleoside_torsion( core::pose::Pose & pose, core::Size const moving_res, core::Real const sample_range);
 
 	void
-	crankshaft_alpha_gamma( pose::Pose & pose, Size const moving_suite, Real const sample_range);
+	crankshaft_alpha_gamma( core::pose::Pose & pose, core::Size const moving_suite, core::Real const sample_range);
 
 
 private:
 
 	void
-	apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
-		pose::Pose & pose,
-		Size const moving_res);
+	apply_nucleoside_torsion( utility::vector1< core::Real > const & torsion_set,
+		core::pose::Pose & pose,
+		core::Size const moving_res);
 
 
 	void
-	apply_suite_torsion( utility::vector1< Real > const & torsion_set,
-		pose::Pose & pose,
-		Size const moving_suite );
+	apply_suite_torsion( utility::vector1< core::Real > const & torsion_set,
+		core::pose::Pose & pose,
+		core::Size const moving_suite );
 
-	utility::vector1< Real>
-	get_suite_torsion( pose::Pose const & pose, Size const moving_suite );
+	utility::vector1< core::Real>
+	get_suite_torsion( core::pose::Pose const & pose, core::Size const moving_suite );
 
-	utility::vector1< Real>
-	get_nucleoside_torsion( pose::Pose const & pose, Size const moving_nucleoside );
+	utility::vector1< core::Real>
+	get_nucleoside_torsion( core::pose::Pose const & pose, core::Size const moving_nucleoside );
 
 private:
 
-	Size default_sample_range_;
+	core::Size default_sample_range_;
 	core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info_;
 
 };

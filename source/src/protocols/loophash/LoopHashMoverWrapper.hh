@@ -31,10 +31,6 @@
 namespace protocols {
 namespace loophash {
 
-using core::Real;
-using core::Size;
-using std::string;
-
 class LoopHashMoverWrapper : public protocols::moves::Mover
 {
 public:
@@ -53,21 +49,21 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopHashMoverWrapper ); }
 	~LoopHashMoverWrapper() override;
 
-	Real min_bbrms() const;
-	void min_bbrms( Real const min_bbrms );
-	Real max_bbrms() const;
-	void max_bbrms( Real const max_bbrms );
+	core::Real min_bbrms() const;
+	void min_bbrms( core::Real const min_bbrms );
+	core::Real max_bbrms() const;
+	void max_bbrms( core::Real const max_bbrms );
 
-	Real min_rms() const;
-	void min_rms( Real const min_rms );
-	Real max_rms() const;
-	void max_rms( Real const max_rms );
+	core::Real min_rms() const;
+	void min_rms( core::Real const min_rms );
+	core::Real max_rms() const;
+	void max_rms( core::Real const max_rms );
 
-	Size max_nstruct() const;
-	void max_nstruct( Size const max_nstruct );
+	core::Size max_nstruct() const;
+	void max_nstruct( core::Size const max_nstruct );
 
-	utility::vector1< Size > loop_sizes() const;
-	void add_loop_size( Size const loop_size );
+	utility::vector1< core::Size > loop_sizes() const;
+	void add_loop_size( core::Size const loop_size );
 
 	void cenfilter( protocols::filters::FilterOP cenfilter );
 	void fafilter( protocols::filters::FilterOP fafilter );
@@ -78,16 +74,16 @@ public:
 
 private:
 	// loopsampler
-	utility::vector1< Size > loop_sizes_;
+	utility::vector1< core::Size > loop_sizes_;
 	LoopHashLibraryOP library_;
 	protocols::relax::FastRelaxOP fastrelax_;         // the relax mover (will be applied in batches)
 
 	// params
-	Real min_bbrms_, max_bbrms_, min_rms_, max_rms_;  // loophash centroid generation params
-	Size start_res_, stop_res_, max_struct_, max_radius_, max_struct_per_radius_;                       // residues to loophash over
-	Size max_nstruct_;                                // maximum number of residues per position to generate
-	Size ncentroid_, nfullatom_;                      // number of structures to carry over to subsequent stages
-	Size batch_size_;                                 // batch relax batch size
+	core::Real min_bbrms_, max_bbrms_, min_rms_, max_rms_;  // loophash centroid generation params
+	core::Size start_res_, stop_res_, max_struct_, max_radius_, max_struct_per_radius_;                       // residues to loophash over
+	core::Size max_nstruct_;                                // maximum number of residues per position to generate
+	core::Size ncentroid_, nfullatom_;                      // number of structures to carry over to subsequent stages
+	core::Size batch_size_;                                 // batch relax batch size
 	protocols::filters::FilterOP cenfilter_, ranking_cenfilter_, fafilter_, ranking_fafilter_; // cen/fafilter actually prune decoys based on the filter's apply function. ranking_fa_filter uses the filter's report_sm method to rank and report the best decoys
 
 	// prefiltering
@@ -96,7 +92,7 @@ private:
 
 	// structure store
 	bool ideal_, filter_by_phipsi_;  // should we save space and assume structure is ideal?
-	std::vector< std::pair< Real, core::io::silent::SilentStructOP > > all_structs_;
+	std::vector< std::pair< core::Real, core::io::silent::SilentStructOP > > all_structs_;
 	core::Real sample_weight_const_; //dflt 1.0 ; sets the same sample weight throughout the pose
 };
 

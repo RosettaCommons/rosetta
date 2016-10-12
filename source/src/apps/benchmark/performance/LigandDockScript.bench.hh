@@ -68,20 +68,19 @@ make_scorefxn(std::string weights_tag){
 
 }
 
-using namespace protocols::ligand_docking;
-
 class LigandDockBench : public protocols::moves::Mover {
 private:
-	StartFrom start_from_;
-	Translate_info translate_info_;
-	Rotate_info rotate_info_;
-	SlideTogether slide_together_;
-	HighResDocker high_res_docker_;
-	FinalMinimizer final_minimizer_;
+	protocols::ligand_docking::StartFrom start_from_;
+	protocols::ligand_docking::Translate_info translate_info_;
+	protocols::ligand_docking::Rotate_info rotate_info_;
+	protocols::ligand_docking::SlideTogether slide_together_;
+	protocols::ligand_docking::HighResDocker high_res_docker_;
+	protocols::ligand_docking::FinalMinimizer final_minimizer_;
 
 public:
 
 	void setup(){
+		using namespace protocols::ligand_docking;
 		start_from_.chain("X");
 		start_from_.add_coords(core::Vector(-1.731,32.589,-5.039), "default");
 		translate_info_.distribution= get_distribution("uniform");
@@ -148,6 +147,7 @@ public:
 	virtual std::string get_name() const{ return "LigandDockBench";}
 
 	virtual void apply( core::pose::Pose & pose ){
+		using namespace protocols::ligand_docking;
 		start_from_.apply(pose);
 		translate_info_.chain_id = core::pose::get_chain_id_from_chain("X", pose);
 		translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);

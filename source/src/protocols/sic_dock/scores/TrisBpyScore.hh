@@ -29,11 +29,9 @@ namespace protocols {
 namespace sic_dock {
 namespace scores {
 
-using core::pose::Pose;
-
 class TrisBpyScore : public RigidScore {
 public:
-	TrisBpyScore(Pose const & pose, Real const & tolerance=0.3, Real const & min_bpy_contacts_=15);
+	TrisBpyScore(core::pose::Pose const & pose, Real const & tolerance=0.3, Real const & min_bpy_contacts_=15);
 	virtual ~TrisBpyScore();
 	core::Real score      ( Xforms const & x1s, Xforms const & x2s ) const;
 	core::Real score_extra( Xforms const & x1s, Xforms const & x2s, Real&cbc,Real&err,int&chirl ,Xform&xbpy) const;
@@ -42,7 +40,7 @@ public:
 	void show(std::ostream & out, Xforms const & x1s, Xforms const & x2s, int width=10) const;
 	std::string type() const { return "TrisBpy"; }
 private:
-	Pose const & pose_;
+	core::pose::Pose const & pose_;
 	numeric::Xforms bbx_;
 	core::pose::xyzStripeHashPoseCOP cc_;
 	Vecs cb_;

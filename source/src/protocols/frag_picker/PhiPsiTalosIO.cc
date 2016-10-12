@@ -64,7 +64,7 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 		tr.Trace << "token: " << strs.size() << " in line " << line << std::endl;
 		if ( strs[1] == "DATA" ) {
 			if ( strs[2] == "SEQUENCE" ) {
-				for ( Size i = 3; i <= strs.size(); ++i ) {
+				for ( core::Size i = 3; i <= strs.size(); ++i ) {
 					sequence_ += strs[i];
 				}
 			} else if ( strs[2] == "FIRST_RESID" ) {
@@ -77,7 +77,7 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 			}
 		}
 		if ( strs[1] == "VARS" ) {
-			for ( Size i = 2; i <= strs.size(); ++i ) {
+			for ( core::Size i = 2; i <= strs.size(); ++i ) {
 				vars.push_back(strs[i]);
 			}
 			if ( ( vars.size()!=10 && vars.size()!=11 ) || vars[1]!="RESID" || vars[2]!="RESNAME" || vars[9]!="COUNT" || vars.back()!="CLASS" ) {
@@ -86,7 +86,7 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 					+" or      VARS  RESID RESNAME PHI PSI DPHI DPSI DIST S2 COUNT CLASS\n "
 					+" found instead: ";
 				tr.Warning << vars.size() << " VARS: ";
-				for ( Size i=1; i<=vars.size(); ++i ) {
+				for ( core::Size i=1; i<=vars.size(); ++i ) {
 					tr.Warning << vars[i] << " ";
 				}
 				tr.Warning << " LAST VAR: ->" << vars.back() << ":";
@@ -100,23 +100,23 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 		if ( (strs.size() == vars.size()) && (strs[1] != "REMARK") ) {
 			char aa;
 			std::istringstream line_stream(line);
-			Real phi, psi, d_phi, d_psi, dist, s2;
-			Size res_id, count;
+			core::Real phi, psi, d_phi, d_psi, dist, s2;
+			core::Size res_id, count;
 			std::string cls;
 			if ( vars.size()==10 ) {
 				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
 					>> s2 >> count >> cls;
 			} else {
-				Size cs_count;
+				core::Size cs_count;
 				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
 					>> s2 >> count >> cs_count >> cls;
 			}
 			data_format_ = " %4d %s %8.3f %8.3f %8.3f %8.3f %8.3f %5.3f %2d %s";
 			//this adds sequence twice  sequence_ += aa;
-			typedef boost::tuple<Size, char, Real,Real, Real, Real, Real, Real, Size, std::string> PhiPsiTalosLineEntry;
+			typedef boost::tuple<core::Size, char, core::Real,core::Real, core::Real, core::Real, core::Real, core::Real, core::Size, std::string> PhiPsiTalosLineEntry;
 			PhiPsiTalosLineEntry  t(res_id, aa, phi, psi, d_phi, d_psi, dist,
 				s2, count, cls);
-			entries_.insert(std::pair<Size, PhiPsiTalosLineEntry > ( res_id, t) );
+			entries_.insert(std::pair<core::Size, PhiPsiTalosLineEntry > ( res_id, t) );
 			if ( last_residue_index_ < res_id ) {
 				last_residue_index_ = res_id;
 			}
@@ -129,7 +129,7 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 			<< std::endl;
 	}
 	if ( sequence_.length() == 0 ) {
-		for ( Size i = first_residue_index_; i <= last_residue_index_; ++i ) {
+		for ( core::Size i = first_residue_index_; i <= last_residue_index_; ++i ) {
 			if ( has_entry(i) ) {
 				sequence_ += entries_.find(i)->second.get<1> ();
 			} else {
@@ -148,14 +148,14 @@ void PhiPsiTalosIO::write(std::ostream& out) {
 	out << "DATA FIRST_RESID " << first_residue_index_ << "\n";
 	out << "DATA SEQUENCE " << sequence_ << "\n";
 	out << "VARS";
-	for ( Size i = 1; i <= column_names_.size(); i++ ) {
+	for ( core::Size i = 1; i <= column_names_.size(); i++ ) {
 		out << " " << column_names_[i];
 	}
 	out << "\n" << "FORMAT " << data_format_ << std::endl << "\n";
 	char buffer[100];
 	char c1[2];
 	c1[1] = 0;
-	for ( Size i = 1; i <= entries_.size(); i++ ) {
+	for ( core::Size i = 1; i <= entries_.size(); i++ ) {
 		c1[0] = entries_[i].get<1> ();
 		sprintf(buffer, data_format_.c_str(), entries_[i].get<0> (), c1,
 			entries_[i].get<2> (), entries_[i].get<3> (),

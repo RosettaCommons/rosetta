@@ -27,9 +27,6 @@
 #include <utility/vector1.hh>
 #include <string>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -41,21 +38,21 @@ class StepWisePacker: public protocols::moves::Mover {
 public:
 
 	//constructor!
-	StepWisePacker( utility::vector1< Size > const & working_moving_residues );
+	StepWisePacker( utility::vector1< core::Size > const & working_moving_residues );
 
 	//destructor -- necessary?
 	~StepWisePacker();
 
 	/// @brief Apply the minimizer to one pose
-	virtual void apply( pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	virtual std::string get_name() const;
 
 	void
-	do_packing( pose::Pose & pose );
+	do_packing( core::pose::Pose & pose );
 
 	void
-	reset( pose::Pose const & pose );
+	reset( core::pose::Pose const & pose );
 
 	void
 	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
@@ -64,7 +61,7 @@ public:
 	set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 
 	void
-	do_prepack( pose::Pose & pose );
+	do_prepack( core::pose::Pose & pose );
 
 	void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
 	bool allow_virtual_side_chains() const{ return allow_virtual_side_chains_; }
@@ -80,31 +77,31 @@ public:
 
 	bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
 
-	void set_working_pack_res( utility::vector1< Size > const & setting ) { working_pack_res_ = setting; }
-	utility::vector1< Size > const & working_pack_res() const { return working_pack_res_; }
-	utility::vector1< Size > const & previous_working_pack_res() const { return previous_working_pack_res_; }
+	void set_working_pack_res( utility::vector1< core::Size > const & setting ) { working_pack_res_ = setting; }
+	utility::vector1< core::Size > const & working_pack_res() const { return working_pack_res_; }
+	utility::vector1< core::Size > const & previous_working_pack_res() const { return previous_working_pack_res_; }
 
 	void
-	figure_out_neighbors( pose::Pose & pose );
+	figure_out_neighbors( core::pose::Pose & pose );
 
 private:
 
 	void
-	reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose );
+	reinstate_side_chain_angles( core::pose::Pose & pose, core::pose::Pose const & src_pose );
 
 	void
-	setup_pack_task( pose::Pose const & pose );
+	setup_pack_task( core::pose::Pose const & pose );
 
 private:
 
-	utility::vector1< Size > const working_moving_res_list_;
+	utility::vector1< core::Size > const working_moving_res_list_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	bool use_packer_instead_of_rotamer_trials_;
 	bool allow_virtual_side_chains_;
 	bool allow_virtual_o2prime_hydrogens_;
 	bool pack_o2prime_hydrogens_;
-	pack::task::PackerTaskOP pack_task_;
-	pose::PoseOP pose_init_;
+	core::pack::task::PackerTaskOP pack_task_;
+	core::pose::PoseOP pose_init_;
 
 	utility::vector1< core::Size > working_pack_res_; // set this from outside, or packer will figure it out from working_moving_res
 	utility::vector1< core::Size > previous_working_pack_res_; // cached of residues packed last time, used for reinstating side chains.

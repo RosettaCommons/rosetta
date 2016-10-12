@@ -41,14 +41,14 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-MidPsiOut::MidPsiOut(Size priority, Real lowest_acceptable_value, bool use_lowest) :
+MidPsiOut::MidPsiOut(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "MidPsiOut") {
 }
 
 void MidPsiOut::do_caching(VallChunkOP current_chunk) {
 
 	chunk_psi_.redimension(current_chunk->size());
-	for ( Size i = 1; i <= current_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_psi_(i) = r->psi();
 		//chunk_psi_(i) = r->psi();
@@ -68,13 +68,13 @@ bool MidPsiOut::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP sc
 		cached_scores_id_ = tmp;
 	}
 
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
-	Real r_psi = static_cast< Real > ( fragment->get_length() );
+	core::Real r_psi = static_cast< core::Real > ( fragment->get_length() );
 	r_psi = (r_psi/2)+0.5+offset_v;
-	Size i_psi = static_cast< Size > ( r_psi );
+	core::Size i_psi = static_cast< core::Size > ( r_psi );
 
-	Real psi = chunk_psi_(i_psi);
+	core::Real psi = chunk_psi_(i_psi);
 
 	scores->set_score_component( psi, id_);
 
@@ -98,8 +98,8 @@ void MidPsiOut::clean_up() {
 ///   trying in::file::talos_psi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Psi && Psi
 ///  - a TALOS file with Psi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakeMidPsiOut::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakeMidPsiOut::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string) {
 
 	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new MidPsiOut(priority,

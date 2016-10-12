@@ -32,12 +32,8 @@
 namespace protocols {
 namespace normalmode {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::optimization;
-
 /// @brief Atom tree multifunction class
-class NormalModeMultifunc : public Multifunc
+class NormalModeMultifunc : public core::optimization::Multifunc
 {
 public: // Creation
 
@@ -46,8 +42,8 @@ public: // Creation
 
 	// c-tor
 	NormalModeMultifunc(
-		pose::Pose & pose_in,
-		MinimizerMap & min_map_in,
+		core::pose::Pose & pose_in,
+		core::optimization::MinimizerMap & min_map_in,
 		core::scoring::ScoreFunction const & scorefxn_in,
 		protocols::normalmode::NormalMode const & normalmode_in,
 		bool const use_omega = true,
@@ -59,32 +55,32 @@ public: // Methods
 
 	// func
 
-	Real
-	operator ()( Multivec const & vars ) const override;
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	// dfunc
 
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
-	void set_deriv_check_result( NumericalDerivCheckResultOP deriv_check_result );
+	void set_deriv_check_result( core::optimization::NumericalDerivCheckResultOP deriv_check_result );
 
 	/// @brief Error state reached -- derivative does not match gradient
 
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const override;
+	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const override;
 
-	void set_modes( utility::vector1< Size > );
+	void set_modes( utility::vector1< core::Size > );
 
-	Multivec
-	dofs_to_vars( Multivec const & dofs ) const;
+	core::optimization::Multivec
+	dofs_to_vars( core::optimization::Multivec const & dofs ) const;
 
-	Multivec
-	vars_to_dofs( Multivec const & vars ) const;
+	core::optimization::Multivec
+	vars_to_dofs( core::optimization::Multivec const & vars ) const;
 
-	Size nmodes() const { return modes_using_.size(); }
+	core::Size nmodes() const { return modes_using_.size(); }
 
-	Size nvar() const { return nvar_; }
+	core::Size nvar() const { return nvar_; }
 
 private:
 
@@ -93,64 +89,64 @@ private:
 
 	void set_default_modes();
 
-	Real dofs_for_pose0( Size const i_dof ) const { return dofs_for_pose0_[i_dof]; }
+	core::Real dofs_for_pose0( core::Size const i_dof ) const { return dofs_for_pose0_[i_dof]; }
 
-	Multivec
-	dEddofs_to_dEdvars( Multivec const & dEdtors ) const;
+	core::optimization::Multivec
+	dEddofs_to_dEdvars( core::optimization::Multivec const & dEdtors ) const;
 
-	Real get_modescale( Size const modeno ) const;
+	core::Real get_modescale( core::Size const modeno ) const;
 
 protected: // accessors for subclasses
 	/// non-const since pose_ is modified by calls to operator()
-	pose::Pose & pose() const;
+	core::pose::Pose & pose() const;
 
-	MinimizerMap const & min_map() const;
+	core::optimization::MinimizerMap const & min_map() const;
 
 	core::scoring::ScoreFunction const & score_function() const;
 
 private: // data
 
 	// non-const since pose_ is modified by calls to operator()
-	pose::Pose & pose_;
+	core::pose::Pose & pose_;
 
 	// non-const since min_map_ is modified by calls to dfunc()
-	MinimizerMap & min_map_;
+	core::optimization::MinimizerMap & min_map_;
 
 	core::scoring::ScoreFunction const & score_function_;
 
 	// Number of variables
-	Size nvar_;
+	core::Size nvar_;
 
 	// Whether to use omega as variable?
 	bool use_omega_;
 
 	// Dampening factor for normal modes
-	Real k_dampen_;
+	core::Real k_dampen_;
 
 	// Reference pose during minimization( set as initial structure )
-	pose::Pose & pose0_;
-	Multivec dofs_for_pose0_;
+	core::pose::Pose & pose0_;
+	core::optimization::Multivec dofs_for_pose0_;
 
 	// Normalmode
 	protocols::normalmode::NormalMode const NM_;
-	utility::vector1< Size > modes_using_;
+	utility::vector1< core::Size > modes_using_;
 
 	// Map between NM torsionID <-> min_map DOF_ID
-	std::map< Size, Size > map_NM_to_DOF_;
-	std::map< Size, Size > map_DOF_to_NM_;
+	std::map< core::Size, core::Size > map_NM_to_DOF_;
+	std::map< core::Size, core::Size > map_DOF_to_NM_;
 
 	// Map between vars ID <-> min_map DOF_ID
-	std::map< Size, Size > map_var_to_DOF_;
+	std::map< core::Size, core::Size > map_var_to_DOF_;
 
 	// Map between vars ID <-> NormalMode number
-	std::map< Size, Size > map_var_to_modeno_;
+	std::map< core::Size, core::Size > map_var_to_modeno_;
 
 	// vars type
 	utility::vector1< std::string > var_type_;
 
 	bool deriv_check_;
 	bool deriv_check_verbose_;
-	NumericalDerivCheckResultOP deriv_check_result_;
+	core::optimization::NumericalDerivCheckResultOP deriv_check_result_;
 
 }; // NormalModeMultifunc
 

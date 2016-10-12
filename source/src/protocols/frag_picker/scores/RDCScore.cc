@@ -48,8 +48,8 @@ static THREAD_LOCAL basic::Tracer trRDCScore(
 
 
 RDCScore::RDCScore(
-	Size priority,
-	Real lowest_acceptable_value,
+	core::Size priority,
+	core::Real lowest_acceptable_value,
 	bool use_lowest
 ) :
 	CachingScoringMethod(
@@ -87,8 +87,8 @@ bool RDCScore::score(
 	//
 	// make a frag_pose
 	//
-	Size offset_query = fragment->get_first_index_in_query(); //index of the 1st rsd in a query sequence covered by this fragment
-	Size offset_vall  = fragment->get_first_index_in_vall();  //index of the 1st rsd in a vall chunk covered by this fragment
+	core::Size offset_query = fragment->get_first_index_in_query(); //index of the 1st rsd in a query sequence covered by this fragment
+	core::Size offset_vall  = fragment->get_first_index_in_vall();  //index of the 1st rsd in a vall chunk covered by this fragment
 
 	core::pose::Pose frag_pose;
 	core::chemical::ResidueTypeSetCOP rsd_set
@@ -100,8 +100,8 @@ bool RDCScore::score(
 	std::string fragment_seq ( fragment->get_length(), 'A' );
 	core::pose::make_pose_from_sequence( frag_pose, fragment_seq, *rsd_set);
 
-	for ( Size i = 1; i <= fragment->get_length(); ++i ) {
-		Size vall_rsd_num  = offset_vall  + i - 1;
+	for ( core::Size i = 1; i <= fragment->get_length(); ++i ) {
+		core::Size vall_rsd_num  = offset_vall  + i - 1;
 
 		VallResidueOP vall_rsd = chunk->at( vall_rsd_num );
 
@@ -135,8 +135,8 @@ bool RDCScore::score(
 	//
 	// scoring the frag_pose using RDC in range
 	//
-	//Real rdc_score = 0.0;
-	Real rdc_score = rdc_data_given_fragment->compute_dipscore( frag_pose );
+	//core::Real rdc_score = 0.0;
+	core::Real rdc_score = rdc_data_given_fragment->compute_dipscore( frag_pose );
 
 	empty_map->set_score_component( rdc_score, id_ );
 	if ( ( rdc_score > lowest_acceptable_value_ ) && ( use_lowest_ == true ) ) {
@@ -147,8 +147,8 @@ bool RDCScore::score(
 
 
 FragmentScoringMethodOP MakeRDCScore::make(
-	Size priority,
-	Real lowest_acceptable_value,
+	core::Size priority,
+	core::Real lowest_acceptable_value,
 	bool use_lowest,
 	FragmentPickerOP, //picker,
 	std::string

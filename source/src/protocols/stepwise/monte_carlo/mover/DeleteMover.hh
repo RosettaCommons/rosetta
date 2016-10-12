@@ -47,17 +47,17 @@ public:
 	using protocols::moves::Mover::apply;
 
 	void
-	apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering );
+	apply( core::pose::Pose & pose, core::Size const res_to_delete_in_full_model_numbering );
 
 	void
-	apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering );
+	apply( core::pose::Pose & pose, utility::vector1< core::Size > const & residues_to_delete_in_full_model_numbering );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
 	bool
-	decide_to_keep_pose( pose::Pose const & pose ) const;
+	decide_to_keep_pose( core::pose::Pose const & pose ) const;
 
 	void
 	remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
@@ -81,7 +81,7 @@ private:
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options_;
 	bool minimize_after_delete_;
-	utility::vector1< Size > interface_res_;
+	utility::vector1< core::Size > interface_res_;
 
 };
 

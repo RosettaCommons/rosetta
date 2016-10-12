@@ -55,20 +55,20 @@ public:
 
 	/// @brief create a collector for a given size of a query sequence
 	BoundedCollector(
-		Size query_size,
-		Size max_frags_per_pos,
+		core::Size query_size,
+		core::Size max_frags_per_pos,
 		StrictWeakOrdering fragment_comparator,
-		Size n_score_terms,
-		Size buffer_factor = 5
+		core::Size n_score_terms,
+		core::Size buffer_factor = 5
 	) {
 
 		FragmentCandidateOP worst_f( new FragmentCandidate(1,1,nullptr,1) );
 		scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_score_terms) );
-		for ( Size i=1; i<=n_score_terms; i++ ) {
+		for ( core::Size i=1; i<=n_score_terms; i++ ) {
 			worst_s->set_score_component(99999.9999,i);
 		}
 
-		for ( Size i = 1; i <= query_size; i++ ) {
+		for ( core::Size i = 1; i <= query_size; i++ ) {
 			LazySortedVector1< std::pair< FragmentCandidateOP,
 				scores::FragmentScoreMapOP >, StrictWeakOrdering > queue(
 				fragment_comparator, max_frags_per_pos,max_frags_per_pos*buffer_factor);
@@ -87,16 +87,16 @@ public:
 
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// APL Note: you cannot have inlined virtual functions
-	inline Size count_candidates(Size seq_pos) const override {
+	inline core::Size count_candidates(core::Size seq_pos) const override {
 		return storage_[seq_pos].size();
 	}
 
 	/// @brief  Check how many candidates have been already collected for all positions
 	/// APL Note: you cannot have inlined virtual functions
-	inline Size count_candidates() const override {
+	inline core::Size count_candidates() const override {
 
-		Size response = 0;
-		for ( Size i=1; i<=storage_.size(); ++i ) {
+		core::Size response = 0;
+		for ( core::Size i=1; i<=storage_.size(); ++i ) {
 			response += storage_[i].size();
 		}
 		return response;
@@ -105,29 +105,29 @@ public:
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be able to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	inline Size query_length() const override {
+	inline core::Size query_length() const override {
 		return storage_.size();
 	}
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
-	void insert(Size pos, CandidatesCollectorOP collector) override {
+	void insert(core::Size pos, CandidatesCollectorOP collector) override {
 		BoundedCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::BoundedCollector<class protocols::frag_picker::CompareTotalScore> > ( collector );
 		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
 		}
 		ScoredCandidatesVector1 & content = c->get_candidates(pos);
-		for ( Size l=1; l<=content.size(); l++ ) storage_.at(pos).push( content[l] );
+		for ( core::Size l=1; l<=content.size(); l++ ) storage_.at(pos).push( content[l] );
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline  ScoredCandidatesVector1 & get_candidates( Size position_in_query ) override {
+	inline  ScoredCandidatesVector1 & get_candidates( core::Size position_in_query ) override {
 		return storage_.at(position_in_query).expose_data();
 	}
 
 	inline void clear() override {
 
-		for ( Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
+		for ( core::Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
 			storage_[i_pos].clear();
 		}
 	}
@@ -137,8 +137,8 @@ public:
 		using namespace ObjexxFCL::format;
 		out
 			<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";
-		Size cnt = 0;
-		for ( Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
+		core::Size cnt = 0;
+		for ( core::Size i_pos = 1; i_pos <= storage_.size(); ++i_pos ) {
 
 			if ( storage_[i_pos].size() <= 1 ) {
 				out << I(4, i_pos) << "      0                   |";
@@ -166,7 +166,7 @@ private:
 class BoundedCollector_CompareTotalScore : public BoundedCollector<CompareTotalScore>
 {
 public:
-	BoundedCollector_CompareTotalScore(Size query_size, Size max_frags_per_pos, CompareTotalScore fragment_comparator,Size n_score_terms,Size buffer_factor = 5)
+	BoundedCollector_CompareTotalScore(core::Size query_size, core::Size max_frags_per_pos, CompareTotalScore fragment_comparator,core::Size n_score_terms,core::Size buffer_factor = 5)
 	: BoundedCollector<CompareTotalScore>(query_size, max_frags_per_pos, fragment_comparator, n_score_terms, buffer_factor) {};
 };
 

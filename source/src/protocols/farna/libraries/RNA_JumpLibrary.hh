@@ -21,9 +21,6 @@
 
 #include <utility/vector1.hh>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::chemical::rna;
-
 namespace protocols {
 namespace farna {
 namespace libraries {
@@ -33,13 +30,13 @@ class BasePairType{
 public:
 	char aa1;
 	char aa2;
-	BaseEdge edge1;
-	BaseEdge edge2;
-	BaseDoubletOrientation orientation;
+	core::chemical::rna::BaseEdge edge1;
+	core::chemical::rna::BaseEdge edge2;
+	core::chemical::rna::BaseDoubletOrientation orientation;
 
 	BasePairType( char const aa1_in, char const aa2_in,
-		BaseEdge const edge1_in, BaseEdge const edge2_in,
-		BaseDoubletOrientation const orientation_in){
+		core::chemical::rna::BaseEdge const edge1_in, core::chemical::rna::BaseEdge const edge2_in,
+		core::chemical::rna::BaseDoubletOrientation const orientation_in){
 		aa1 = aa1_in;  aa2 = aa2_in;
 		edge1 = edge1_in;  edge2 = edge2_in;
 		orientation = orientation_in;
@@ -136,9 +133,9 @@ public:
 	get_random_base_pair_jump(
 		char const aa1,
 		char const aa2,
-		BaseEdge const edge1,
-		BaseEdge const edge2,
-		BaseDoubletOrientation const orientation,
+		core::chemical::rna::BaseEdge const edge1,
+		core::chemical::rna::BaseEdge const edge2,
+		core::chemical::rna::BaseDoubletOrientation const orientation,
 		std::string & atom_name1,
 		std::string & atom_name2,
 		bool & success,

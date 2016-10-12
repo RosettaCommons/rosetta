@@ -36,11 +36,6 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-using utility::vector1;
-using core::Size;
-using core::Real;
-using std::set;
-
 class SSElementMotifContactEnergy : public WholeStructureEnergy  {
 public:
 	typedef WholeStructureEnergy parent;
@@ -54,12 +49,12 @@ public:
 		return EnergyMethodOP( new SSElementMotifContactEnergy );
 	}
 
-	vector1<std::pair<Size,Size> > get_ss_elements(const pose::Pose & pose) const;
+	utility::vector1<std::pair<Size,Size> > get_ss_elements(const pose::Pose & pose) const;
 
-	Size which_ssElement(Size res,vector1<std::pair<Size,Size> > ssElements) const;
+	Size which_ssElement(Size res,utility::vector1<std::pair<Size,Size> > ssElements) const;
 
 	Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
-	Size get_SSelements_in_contact(Size element,vector1<std::pair<Size,Size> > ssElements, const pose::Pose & pose) const;
+	Size get_SSelements_in_contact(Size element,utility::vector1<std::pair<Size,Size> > ssElements, const pose::Pose & pose) const;
 
 
 	/// @brief Called at the end of the energy evaluation.

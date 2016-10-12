@@ -21,6 +21,9 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueAlternatives" );
 
+using namespace protocols::stepwise::sampler::copy_dofs;
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace sampler {

@@ -51,8 +51,6 @@
 namespace protocols {
 namespace simple_moves {
 
-using namespace protocols::moves;
-
 /// @brief Trigger API definition
 typedef boost::function<bool(core::Size,
 	core::Size,

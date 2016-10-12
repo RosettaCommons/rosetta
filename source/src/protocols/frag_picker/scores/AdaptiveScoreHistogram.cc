@@ -24,21 +24,24 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+using core::Real;
+using core::Size;
+
 static THREAD_LOCAL basic::Tracer trAdaptiveScoreHistogram(
 	"fragment.picking.scores.AdaptiveScoreHistogram");
 
-AdaptiveScoreHistogram::AdaptiveScoreHistogram(Real bin_size,Real initial_max_score) {
+AdaptiveScoreHistogram::AdaptiveScoreHistogram(core::Real bin_size,core::Real initial_max_score) {
 	bin_size_ = bin_size;
 	is_up_to_date_ = true;
-	Size new_size = (Size)(initial_max_score / bin_size_);
+	core::Size new_size = (core::Size)(initial_max_score / bin_size_);
 	data_.resize(new_size);
 }
 
 AdaptiveScoreHistogram::~AdaptiveScoreHistogram() {}
 
-void AdaptiveScoreHistogram::insert(Real score) {
+void AdaptiveScoreHistogram::insert(core::Real score) {
 
-	Size bin_id = (Size)(score / bin_size_);
+	core::Size bin_id = (core::Size)(score / bin_size_);
 	if ( data_.size() <= bin_id ) {
 		data_.resize(bin_id+1);
 	}
@@ -46,17 +49,17 @@ void AdaptiveScoreHistogram::insert(Real score) {
 	is_up_to_date_ = false;
 }
 
-Size AdaptiveScoreHistogram::sum() {
+core::Size AdaptiveScoreHistogram::sum() {
 
-	Size sum = 0;
-	for ( Size i=1; i<=data_.size(); i++ ) {
+	core::Size sum = 0;
+	for ( core::Size i=1; i<=data_.size(); i++ ) {
 		sum += data_[i];
 	}
 
 	return sum;
 }
 
-Real AdaptiveScoreHistogram::p_value(Real score) {
+core::Real AdaptiveScoreHistogram::p_value(core::Real score) {
 
 	if ( cumulative_sums_.size() < data_.size() ) {
 		cumulative_sums_.resize( data_.size() );
@@ -65,16 +68,16 @@ Real AdaptiveScoreHistogram::p_value(Real score) {
 
 	if ( !is_up_to_date_ ) {
 		cumulative_sums_[1] = data_[1];
-		for ( Size i=2; i<=data_.size(); i++ ) {
+		for ( core::Size i=2; i<=data_.size(); i++ ) {
 			cumulative_sums_[i] = cumulative_sums_[i-1] + data_[i];
 		}
 	}
 
-	Size bin_id = (Size)(score / bin_size_);
+	core::Size bin_id = (core::Size)(score / bin_size_);
 	if ( bin_id >= cumulative_sums_.size() ) {
 		return 0.0;
 	} else {
-		return log(cumulative_sums_[bin_id + 1] / (Real) cumulative_sums_[cumulative_sums_.size()]);
+		return log(cumulative_sums_[bin_id + 1] / (core::Real) cumulative_sums_[cumulative_sums_.size()]);
 	}
 }
 

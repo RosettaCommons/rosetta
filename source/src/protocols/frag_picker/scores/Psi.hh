@@ -33,15 +33,12 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 /// @brief  scores a fragment by its predicted psi similarity
 class Psi: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a predicted psi-based scoring function.
-	Psi(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	Psi(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		std::string & fastaQuerySequence, utility::vector1<core::Real> & query_psi_prediction,
 		utility::vector1<core::Real> & query_psi_prediction_conf) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
@@ -66,9 +63,9 @@ public:
 private:
 	std::string cached_scores_id_;
 	std::string & query_;
-	Size query_len_;
-	utility::vector1<Real> query_psi_prediction_;
-	utility::vector1<Real> query_psi_prediction_conf_;
+	core::Size query_len_;
+	utility::vector1<core::Real> query_psi_prediction_;
+	utility::vector1<core::Real> query_psi_prediction_conf_;
 };
 
 /// @brief  Maker class that produces a new Psi object
@@ -79,7 +76,7 @@ public:
 		MakeFragmentScoringMethod("Psi") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new Psi(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_psi_prediction(),

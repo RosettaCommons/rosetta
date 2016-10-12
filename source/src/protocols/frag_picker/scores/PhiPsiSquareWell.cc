@@ -54,17 +54,17 @@ using namespace basic::options::OptionKeys;
 static THREAD_LOCAL basic::Tracer tr(
 	"protocols.frag_picker.scores.PhiPsiSquareWell");
 
-PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PhiPsiSquareWell::PhiPsiSquareWell(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	core::pose::PoseOP reference_pose) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiSquareWell") {
 
-	Size n_atoms_ = reference_pose->size();
+	core::Size n_atoms_ = reference_pose->size();
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	query_d_phi_.redimension(n_atoms_);
 	query_d_psi_.redimension(n_atoms_);
 	existing_data_.resize(n_atoms_);
-	for ( Size i = 1; i <= n_atoms_; ++i ) {
+	for ( core::Size i = 1; i <= n_atoms_; ++i ) {
 		query_phi_(i) = reference_pose->phi(i);
 		query_psi_(i) = reference_pose->psi(i);
 		query_d_phi_(i) = 0.0;
@@ -73,11 +73,11 @@ PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, 
 	}
 }
 
-PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, bool use_lowest,
+PhiPsiSquareWell::PhiPsiSquareWell(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 	PhiPsiTalosIO& reader) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "PhiPsiSquareWell") {
 
-	Size n_atoms_ = reader.get_sequence().length();
+	core::Size n_atoms_ = reader.get_sequence().length();
 	query_phi_.redimension(n_atoms_);
 	query_psi_.redimension(n_atoms_);
 	query_d_phi_.redimension(n_atoms_);
@@ -87,7 +87,7 @@ PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, 
 	query_cnt_.resize(n_atoms_);
 	query_class_.resize(n_atoms_);
 	existing_data_.resize(n_atoms_);
-	for ( Size i = 1; i <= n_atoms_; ++i ) {
+	for ( core::Size i = 1; i <= n_atoms_; ++i ) {
 
 		if ( !reader.has_entry(i) ) {
 			existing_data_[i] = false;
@@ -105,7 +105,7 @@ PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, 
 			continue;
 		}
 
-		//boost::tuple<Size, char, Real, Real, Real, Real, Real, Real, Size,
+		//boost::tuple<core::Size, char, core::Real, core::Real, core::Real, core::Real, core::Real, core::Real, core::Size,
 		//  std::string> entry = reader.get_entry(i);
 		if ( (reader.phi(i) > 181) || (reader.phi(i) < -181)
 				|| (reader.psi(i) > 181) || (reader.psi(i) < -181) ) {
@@ -128,7 +128,7 @@ void PhiPsiSquareWell::do_caching(VallChunkOP current_chunk) {
 
 	chunk_phi_.redimension(current_chunk->size());
 	chunk_psi_.redimension(current_chunk->size());
-	for ( Size i = 1; i <= current_chunk->size(); ++i ) {
+	for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
 		VallResidueOP r = current_chunk->at(i);
 		chunk_phi_(i) = r->phi();
 		chunk_psi_(i) = r->psi();
@@ -147,14 +147,14 @@ bool PhiPsiSquareWell::cached_score(FragmentCandidateOP fragment,
 	//  }
 
 	//  PROF_START( basic::FRAGMENTPICKING_PHIPSI_SCORE );
-	//  Size offset_q = fragment->get_first_index_in_query() - 1;
-	//  Size offset_v = fragment->get_first_index_in_vall() - 1;
-	//  Real score = 0.0;
-	//  Real tmp = 0.0;
-	//  for (Size i = 1; i < fragment->get_length(); ++i) {
+	//  core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	//  core::Size offset_v = fragment->get_first_index_in_vall() - 1;
+	//  core::Real score = 0.0;
+	//  core::Real tmp = 0.0;
+	//  for (core::Size i = 1; i < fragment->get_length(); ++i) {
 	//   if (!existing_data_[i + offset_q])
 	//    continue;
-	//   Real d = 0.0;
+	//   core::Real d = 0.0;
 
 	//   tmp = std::abs(chunk_phi_(i + offset_v) - query_phi_(i + offset_q));
 
@@ -183,7 +183,7 @@ bool PhiPsiSquareWell::cached_score(FragmentCandidateOP fragment,
 	//   score += std::sqrt(d);
 	//  }
 
-	//  score = score / ((Real) fragment->get_length());
+	//  score = score / ((core::Real) fragment->get_length());
 	//  PROF_STOP( basic::FRAGMENTPICKING_PHIPSI_SCORE );
 
 	//  scores->set_score_component(score, id_);
@@ -198,17 +198,17 @@ bool PhiPsiSquareWell::score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
 	PROF_START( basic::FRAGMENTPICKING_PHIPSI_SCORE );
-	Size offset_q = fragment->get_first_index_in_query() - 1;
-	Size offset_v = fragment->get_first_index_in_vall() - 1;
+	core::Size offset_q = fragment->get_first_index_in_query() - 1;
+	core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 	VallChunkOP chunk = fragment->get_chunk();
-	Real score = 0.0;
-	Real tmp = 0.0;
+	core::Real score = 0.0;
+	core::Real tmp = 0.0;
 
-	utility::vector1< Real > values;
+	utility::vector1< core::Real > values;
 	values.resize(fragment->get_length());
 
-	for ( Size i = 1; i < fragment->get_length(); ++i ) {
-		Real d = 0.0;
+	for ( core::Size i = 1; i < fragment->get_length(); ++i ) {
+		core::Real d = 0.0;
 		VallResidueOP r = chunk->at(i + offset_v);
 
 		values[i] = 0;
@@ -251,15 +251,15 @@ bool PhiPsiSquareWell::score(FragmentCandidateOP fragment,
 	std::sort( values.begin(), values.end() );
 
 	score = 0.0;
-	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= fragment->get_length(); i++ ) {
 		//~1 at 1, ~0.05 at f->get_length, 0.5 at 0.7*f->get_length()
-		Real sigmoid_weight( 1 / ( 1 + exp( (10*( (Real) i ) / fragment->get_length()) - 7 ) ) );
+		core::Real sigmoid_weight( 1 / ( 1 + exp( (10*( (core::Real) i ) / fragment->get_length()) - 7 ) ) );
 
 		score += sigmoid_weight*values[i];
 	}
 
 
-	score = score / ((Real) fragment->get_length());
+	score = score / ((core::Real) fragment->get_length());
 	PROF_STOP( basic::FRAGMENTPICKING_PHIPSI_SCORE );
 
 	scores->set_score_component(score, id_);
@@ -284,12 +284,12 @@ void PhiPsiSquareWell::clean_up() {
 ///   trying in::file::talos_phi_psi flag. If fails, will try to use a pose from in::file::s
 ///  - a pdb file, pdb extension is necessary. This will create a pose && steal Phi && Psi
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
-FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
+FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 	, std::string input_file) {
 
 	if ( input_file != "" ) {
-		Size pos = input_file.find(".pdb");
+		core::Size pos = input_file.find(".pdb");
 		if ( pos != std::string::npos ) {
 			core::pose::PoseOP nativePose( new core::pose::Pose );
 			core::import_pose::pose_from_file(*nativePose, input_file, core::import_pose::PDB_file);

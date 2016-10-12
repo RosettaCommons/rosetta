@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by the root mean square deviation of Psi and Psi angles.
 class MidPsiOut: public CachingScoringMethod {
@@ -40,7 +40,7 @@ public:
 
 	/// @brief  creates a Psi-Psi-based scoring function.
 	/// @details Psi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
-	MidPsiOut(Size priority, Real lowest_acceptable_value, bool use_lowest);
+	MidPsiOut(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest);
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -61,7 +61,7 @@ public:
 		MakeFragmentScoringMethod("MidPsiOut") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

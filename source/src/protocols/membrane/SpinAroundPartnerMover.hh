@@ -41,11 +41,6 @@
 namespace protocols {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-
 class SpinAroundPartnerMover : public protocols::moves::Mover {
 
 public:

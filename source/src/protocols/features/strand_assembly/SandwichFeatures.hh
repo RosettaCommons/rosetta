@@ -47,9 +47,6 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class SandwichFeatures : public protocols::features::FeaturesReporter
 {
 
@@ -94,10 +91,10 @@ public:
 
 private:
 
-	Real
+	core::Real
 		allowed_deviation_for_turn_type_id_;
 
-	Real
+	core::Real
 		CB_b_factor_cutoff_for_electrostatic_interactions_;
 
 	bool
@@ -109,13 +106,13 @@ private:
 	// 3) CBs: preceding_E's CB to following_E's CB vector
 
 
-	Real
+	core::Real
 		check_canonicalness_cutoff_;
 
 	bool
 		count_AA_with_direction_;
 
-	Real
+	core::Real
 		distance_cutoff_for_electrostatic_interactions_;
 
 	bool
@@ -158,14 +155,14 @@ private:
 	generate_scorefxn( bool fullatom = false );
 
 
-	Real
+	core::Real
 		inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_;
 
 
-	Real
+	core::Real
 		min_CA_CA_dis_;
 
-	Real
+	core::Real
 		max_CA_CA_dis_;
 
 	Size
@@ -177,37 +174,37 @@ private:
 	Size
 		min_res_in_strand_;
 
-	Real
+	core::Real
 		min_C_O_N_angle_;
 
-	Real
+	core::Real
 		min_sheet_dis_;
 
-	Real
+	core::Real
 		max_sheet_dis_;
 
-	Real
+	core::Real
 		max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_;
 
-	Real
+	core::Real
 		min_sheet_angle_by_four_term_cen_res_;
 
-	Real
+	core::Real
 		max_sheet_angle_by_four_term_cen_res_;
 
-	Real
+	core::Real
 		min_sheet_torsion_cen_res_;
 
-	Real
+	core::Real
 		max_sheet_torsion_cen_res_;
 
 	Size
 		min_num_strands_in_sheet_; //  definition: a sheet with < 3 strands will be ignored
 
-	Real
+	core::Real
 		min_inter_sheet_dis_CA_CA_;
 
-	Real
+	core::Real
 		max_inter_sheet_dis_CA_CA_;
 
 
@@ -217,10 +214,10 @@ private:
 	Size
 		max_E_in_extracted_sw_loop_; // definition: maximum allowable number of E residues in extracted sandwich loop
 
-	Real
+	core::Real
 		max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_;
 
-	Real
+	core::Real
 		max_inter_strand_angle_to_not_be_same_direction_strands_;
 
 	Size
@@ -232,10 +229,10 @@ private:
 	Size
 		max_num_sw_per_pdb_;
 
-	Real
+	core::Real
 		min_N_O_dis_between_two_sheets_;
 
-	Real
+	core::Real
 		min_N_H_O_angle_between_two_sheets_;
 
 	Size
@@ -259,13 +256,13 @@ private:
 	bool
 		unit_test_pass_identifier;
 
-	Real
+	core::Real
 		wt_for_pro_in_starting_loop_;
 
-	Real
+	core::Real
 		wt_for_pro_in_1st_inter_sheet_loop_;
 
-	Real
+	core::Real
 		wt_for_pro_in_3rd_inter_sheet_loop_;
 
 

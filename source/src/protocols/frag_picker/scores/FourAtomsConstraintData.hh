@@ -34,35 +34,35 @@ public:
 
 	/// @brief makes a new object
 	FourAtomsConstraintData(core::scoring::func::FuncOP function,
-		Size first_atom, Size second_offset, Size second_atom,
-		Size third_offset, Size third_atom, Size fourth_offset,
-		Size fourth_atom);
+		core::Size first_atom, core::Size second_offset, core::Size second_atom,
+		core::Size third_offset, core::Size third_atom, core::Size fourth_offset,
+		core::Size fourth_atom);
 
-	inline Size get_first_atom() {
+	inline core::Size get_first_atom() {
 		return first_atom_;
 	}
 
-	inline Size get_second_atom() {
+	inline core::Size get_second_atom() {
 		return second_atom_;
 	}
 
-	inline Size get_third_atom() {
+	inline core::Size get_third_atom() {
 		return third_atom_;
 	}
 
-	inline Size get_fourth_atom() {
+	inline core::Size get_fourth_atom() {
 		return fourth_atom_;
 	}
 
-	inline Size get_second_offset() {
+	inline core::Size get_second_offset() {
 		return second_offset_;
 	}
 
-	inline Size get_third_offset() {
+	inline core::Size get_third_offset() {
 		return third_offset_;
 	}
 
-	inline Size get_fourth_offset() {
+	inline core::Size get_fourth_offset() {
 		return fourth_offset_;
 	}
 	inline core::scoring::func::FuncOP get_function() {
@@ -72,13 +72,13 @@ public:
 	virtual ~FourAtomsConstraintData();
 private:
 	core::scoring::func::FuncOP func_;
-	Size first_atom_;
-	Size second_atom_;
-	Size third_atom_;
-	Size fourth_atom_;
-	Size second_offset_;
-	Size third_offset_;
-	Size fourth_offset_;
+	core::Size first_atom_;
+	core::Size second_atom_;
+	core::Size third_atom_;
+	core::Size fourth_atom_;
+	core::Size second_offset_;
+	core::Size third_offset_;
+	core::Size fourth_offset_;
 };
 
 } // scores

@@ -67,6 +67,10 @@
 using namespace ObjexxFCL; // AUTO USING NS
 using namespace ObjexxFCL::format; // AUTO USING NS
 using namespace protocols::farna::secstruct;
+using namespace core;
+using namespace core::chemical::rna;
+using namespace protocols::farna::movers;
+using namespace protocols::farna::base_pairs;
 
 namespace protocols {
 namespace farna {
@@ -194,7 +198,7 @@ RNA_DeNovoPoseInitializer::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMo
 
 	Size const num_jump( pose.num_jump() );
 
-	for ( Size i = 1; i <= num_jump; i++ ) {
+	for ( core::Size i = 1; i <= num_jump; i++ ) {
 
 		// Check that we can actually insert here. At least one of the jump partners
 		// should allow moves. (I guess the other one can stay fixed).
@@ -230,6 +234,8 @@ void
 RNA_DeNovoPoseInitializer::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose ) const
 {
 	using namespace protocols::toolbox;
+	using namespace protocols::farna::libraries;
+
 	AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
 	RNA_JumpMover const rna_jump_mover( RNA_LibraryManager::get_instance()->rna_jump_library_cop(), atom_level_domain_map );
 	setup_fold_tree_and_jumps_and_variants( pose, rna_jump_mover, atom_level_domain_map );

@@ -34,9 +34,9 @@ namespace frag_picker {
 namespace quota {
 
 
-Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real const omega);
-Size abego_index(char);
-Size ss_index(char);
+core::Size torsion2big_bin_id(core::Real const phi,  core::Real const psi,  core::Real const omega);
+core::Size abego_index(char);
+core::Size ss_index(char);
 
 /// @brief represents a single pool used by quota selector
 class ABEGO_SS_Map : public utility::pointer::ReferenceCount {
@@ -44,34 +44,34 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ABEGO_SS_Map();
 
-	ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> >);
+	ABEGO_SS_Map(utility::vector1< std::pair<core::Size,core::Size> >);
 
 	inline bool check_status(char ss_type,char abego_type) const {
 
 		return ss_abego_types_[ss_index(ss_type)][abego_index(abego_type)];
 	}
 
-	inline bool check_status(char ss_type,Size abego_type) const {
+	inline bool check_status(char ss_type,core::Size abego_type) const {
 
 		return ss_abego_types_[ss_index(ss_type)][abego_type];
 	}
 
-	inline bool check_status(Size ss_type,char abego_type) const {
+	inline bool check_status(core::Size ss_type,char abego_type) const {
 
 		return ss_abego_types_[ss_type][abego_index(abego_type)];
 	}
 
-	inline bool check_status(std::pair<Size,Size> bin_index) const {
+	inline bool check_status(std::pair<core::Size,core::Size> bin_index) const {
 		return ss_abego_types_[bin_index.first][bin_index.second];
 	}
 
-	inline void set_status(std::pair<Size,Size> bin_index,bool new_status) {
+	inline void set_status(std::pair<core::Size,core::Size> bin_index,bool new_status) {
 		ss_abego_types_[bin_index.first][bin_index.second] = new_status;
 	}
 
 	std::string show_valid();
 
-	char abego_char(Size abego_bin) { return all_abego_[abego_bin]; }
+	char abego_char(core::Size abego_bin) { return all_abego_[abego_bin]; }
 
 private:
 	static char all_abego_[];

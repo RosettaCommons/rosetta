@@ -168,7 +168,7 @@ WorkUnit_CombinePose::run()
 	// Note that this should go to batchrelax so no minimization/repack will be called here
 	for ( core::Size istruct = 0; istruct < decoys_out.size(); ++ istruct ) {
 		SilentStructOP ss = decoys_out[istruct];
-		std::string tag = "comb_" + tag1 + "_" + tag2 + "_" + string_of( istruct );
+		std::string tag = "comb_" + tag1 + "_" + tag2 + "_" + ObjexxFCL::string_of( istruct );
 		store_to_decoys( start_struct, ss, tag );
 	}
 

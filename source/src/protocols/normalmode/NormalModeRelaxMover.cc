@@ -70,6 +70,7 @@ namespace protocols {
 namespace normalmode {
 
 using namespace ObjexxFCL::format;
+using namespace core;
 
 // Creator stuffs first
 protocols::moves::MoverOP
@@ -112,7 +113,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	core::scoring::ScoreFunctionCOP sfxn,
 	bool const cartesian )
 {
-	kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( true );
 	mm->set_chi( true );
 	mm->set_jump( true );
@@ -126,7 +127,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	bool cartesian,
 	core::kinematics::MoveMapCOP mm,
 	std::string const relaxmode,
-	Real const distcut
+	core::Real const distcut
 ):
 	nmodes_( 5 ),
 	mix_modes_( false ),

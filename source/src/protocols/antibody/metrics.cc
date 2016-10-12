@@ -50,6 +50,7 @@
 
 static THREAD_LOCAL basic::Tracer TR( "antibody.metrics" );
 using namespace core;
+using utility::vector1;
 
 namespace protocols {
 namespace antibody {

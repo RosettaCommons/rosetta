@@ -25,6 +25,7 @@
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.StepWiseMove" );
 
 using utility::make_tag_with_dashes;
+using namespace core;
 
 namespace protocols {
 namespace stepwise {

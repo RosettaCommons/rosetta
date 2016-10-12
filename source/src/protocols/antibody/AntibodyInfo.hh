@@ -42,8 +42,8 @@ namespace antibody {
 
 
 struct FrameWork {
-	Size    start;
-	Size    stop;
+	core::Size    start;
+	core::Size    stop;
 	std::string chain_name;
 };
 
@@ -198,7 +198,7 @@ public:
 	get_H3_kink_type_name() const ;
 
 	/// @brief get residues used to calculate VL/VH packing angle
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	get_PackingAngleResidues() const {
 		return packing_angle_residues_;
 	}
@@ -254,7 +254,7 @@ public:
 	}
 
 	/// @brief return pose residue number of the kink 'cation' (typically Arg/Lys) residue in the kink bulge HBond
-	Size
+	core::Size
 	kink_cation_residue(core::pose::Pose const & pose) const {
 		return get_CDR_loop(h3, pose, Aroop).start() - 1;
 	}
@@ -354,22 +354,22 @@ public:
 	///  Deprecated in favor of on the fly sequence.
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
-		Size left_stem = 0,
-		Size right_stem = 0) const;
+		core::Size left_stem = 0,
+		core::Size right_stem = 0) const;
 
 	///@brief On-The-Fly CDR sequence
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
 		core::pose::Pose const & pose,
-		Size left_stem = 0,
-		Size right_stem = 0) const;
-	
+		core::Size left_stem = 0,
+		core::Size right_stem = 0) const;
+
 	///@brief On-The-Fly CDR sequence
 	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const cdr_name,
 		core::pose::Pose const & pose,
-		Size left_stem,
-		Size right_stem,
+		core::Size left_stem,
+		core::Size right_stem,
 		CDRDefinitionEnum const & transform) const;
 
 	/// @brief return the antibody sequence of LH or just H for camelid
@@ -426,8 +426,8 @@ public:
 	// FoldTrees //TODO: find a way to remove setup_simple_fold_tree
 	core::kinematics::FoldTreeCOP
 	setup_simple_fold_tree(core::Size const & jumppoint1,
-		Size const & cutpoint,
-		Size const & jumppoint2,
+		core::Size const & cutpoint,
+		core::Size const & jumppoint2,
 		core::pose::Pose const & pose ) const;
 
 	core::kinematics::FoldTreeCOP

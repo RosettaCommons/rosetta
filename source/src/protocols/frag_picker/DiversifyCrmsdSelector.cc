@@ -36,8 +36,8 @@ static THREAD_LOCAL basic::Tracer trDiversifyCrmsdSelector(
 void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst) {
 
 	pose::PoseOP pose = src->get_chunk()->get_pose();
-	Size len = src->get_length();
-	Size offset = src->get_first_index_in_vall() - 1;
+	core::Size len = src->get_length();
+	core::Size offset = src->get_first_index_in_vall() - 1;
 
 	for ( core::Size i = 1; i <= len; i++ ) {
 		id::NamedAtomID idCA("CA", i+offset);
@@ -57,21 +57,21 @@ void DiversifyCrmsdSelector::select_fragments(
 
 	if ( in.size()==0 ) return;
 
-	Size len = in[1].first->get_length();
+	core::Size len = in[1].first->get_length();
 
-	if ( (Size) fi_.size2() < len ) {
+	if ( (core::Size) fi_.size2() < len ) {
 		fj_.redimension(3, len, 0.0);
 		fi_.redimension(3, len, 0.0);
 	}
 
 	out.push_back( in[1] );
-	for ( Size i=2; i<=in.size(); i++ ) {
+	for ( core::Size i=2; i<=in.size(); i++ ) {
 		if ( out.size() >= frags_per_pos() ) break;
 		bool is_ok = true;
 		copy_coordinates(in[i].first,fi_);
-		for ( Size j=1; j<=out.size(); j++ ) {
+		for ( core::Size j=1; j<=out.size(); j++ ) {
 			copy_coordinates(out[j].first,fj_);
-			Real rms = numeric::model_quality::rms_wrapper(len,fi_,fj_);
+			core::Real rms = numeric::model_quality::rms_wrapper(len,fi_,fj_);
 			if ( rms<cutoff_ ) {
 				is_ok = false;
 				trDiversifyCrmsdSelector.Trace<<"Crmsd is "<<rms<<" fragment "<< *in[i].first<<" denied"<<std::endl;

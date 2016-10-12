@@ -40,27 +40,23 @@
 
 namespace protocols {
 namespace pose_length_moves {
-using namespace core;
-using namespace std;
-using utility::vector1;
-
 
 
 class AnalyzeLoopModeling : public protocols::moves::Mover {
 public:
 	AnalyzeLoopModeling();
-	Real rmsd_between_coordinates(std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates,std::vector< numeric::xyzVector<numeric::Real> > coordinates);
-	Real get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose designed_pose, Size loopStart, Size loopEnd);
-	Size get_valid_resid(int resid,core::pose::Pose const pose);
-	Real generate_lookback_rmsd(core::pose::Pose pose, Size position);
+	core::Real rmsd_between_coordinates(std::vector< numeric::xyzVector<core::Real> > fragCoordinates,std::vector< numeric::xyzVector<core::Real> > coordinates);
+	core::Real get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose designed_pose, core::Size loopStart, core::Size loopEnd);
+	core::Size get_valid_resid(int resid,core::pose::Pose const pose);
+	core::Real generate_lookback_rmsd(core::pose::Pose pose, core::Size position);
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 	moves::MoverOP clone() const { return moves::MoverOP( new AnalyzeLoopModeling( *this ) ); }
 	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	protocols::loops::Loops get_loops(core::pose::Pose const & pose);
-	Size loopLengthRangeLow_;
-	Size loopLengthRangeHigh_;
+	core::Size loopLengthRangeLow_;
+	core::Size loopLengthRangeHigh_;
 
 	core::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
 };

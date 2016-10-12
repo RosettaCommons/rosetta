@@ -60,6 +60,7 @@ public:
 	{
 		using namespace core::chemical;
 		using namespace core::pose::full_model_info;
+		using namespace core::kinematics;
 		using namespace protocols::stepwise::setup;
 		using namespace protocols::stepwise::monte_carlo;
 		using namespace protocols::stepwise::monte_carlo::mover;

@@ -41,9 +41,9 @@ typedef utility::pointer::shared_ptr< RamaScore const > RamaScoreCOP;
 class RamaScore: public CachingScoringMethod {
 public:
 
-	RamaScore(Size, Real, bool, std::string&,std::string);
+	RamaScore(core::Size, core::Real, bool, std::string&,std::string);
 
-	RamaScore(Size, Real, bool, std::string&, core::fragment::SecondaryStructureOP,std::string);
+	RamaScore(core::Size, core::Real, bool, std::string&, core::fragment::SecondaryStructureOP,std::string);
 
 	void SetupRamaTables();
 
@@ -62,17 +62,17 @@ public:
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Real minScoreAllowed_;
+	// core::Real minScoreAllowed_;
 	std::string& query_;
 	core::fragment::SecondaryStructureOP query_ss_;
 	std::string prediction_name_;
 
 	std::string cached_scores_id_;
 
-	utility::vector1< utility::vector1< Real > > scores_;
+	utility::vector1< utility::vector1< core::Real > > scores_;
 
 	//Sequence Specific Ramachandran Surfaces (keep only one copy of this so we don't have to keep reading it from the database for each instance)
-	static utility::vector1< utility::vector1< utility::vector1< Real > > > sequence_rama_tables_;
+	static utility::vector1< utility::vector1< utility::vector1< core::Real > > > sequence_rama_tables_;
 
 };
 
@@ -84,14 +84,14 @@ public:
 		MakeFragmentScoringMethod("RamaScore") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string prediction_id ) {
 
 		if ( prediction_id == "" ) {
 			core::fragment::SecondaryStructureOP default_ss( new core::fragment::SecondaryStructure );
-			Size query_len = picker->get_query_seq_string().size();
+			core::Size query_len = picker->get_query_seq_string().size();
 			default_ss->extend( query_len );
-			for ( Size i = 1; i <= query_len; ++i ) {
+			for ( core::Size i = 1; i <= query_len; ++i ) {
 				default_ss->set_fractions(i, 0.333, 0.333, 0.334);
 			}
 

@@ -29,13 +29,9 @@
 namespace protocols {
 namespace helical_bundle {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::optimization;
-
 /// @brief Multifunction class for fitting a simple (straight) helix to the Crick parameters.
 ///
-class FitSimpleHelixMultiFunc : public Multifunc
+class FitSimpleHelixMultiFunc : public core::optimization::Multifunc
 {
 public: // Creation
 
@@ -61,20 +57,20 @@ public: // Methods
 	/// @brief Calculate function value (rms squared)
 	///
 
-	Real
-	operator ()( Multivec const & vars ) const override;
+	core::Real
+	operator ()( core::optimization::Multivec const & vars ) const override;
 
 	/// @brief Calculate function value derivatives
 	///
 
 	void
-	dfunc( Multivec const & vars, Multivec & dE_dvars ) const override;
+	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const override;
 
 	/// @brief Error state reached -- derivative does not match gradient
 	///
 
 	void
-	dump( Multivec const & vars, Multivec const & vars2 ) const override;
+	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const & vars2 ) const override;
 
 private:
 
@@ -124,11 +120,11 @@ private:
 
 	/// @brief Convert the vars Multivec to the Crick parameters.
 	///
-	void vars_to_params( Multivec const &vars, core::Real &r1, core::Real &omega1, core::Real &dz1, core::Real &delta_omega1, core::Real &delta_z1 ) const;
+	void vars_to_params( core::optimization::Multivec const &vars, core::Real &r1, core::Real &omega1, core::Real &dz1, core::Real &delta_omega1, core::Real &delta_z1 ) const;
 
 	/// @brief Convert the Crick parameter derivatives to the derivative Multivec.
 	///
-	void params_derivs_to_vars( Multivec &deriv_vars, core::Real const &dE_dr1, core::Real const &dE_domega1, core::Real const &dE_ddz1, core::Real const &dE_ddelta_omega1, core::Real const &dE_ddelta_z1 ) const;
+	void params_derivs_to_vars( core::optimization::Multivec &deriv_vars, core::Real const &dE_dr1, core::Real const &dE_domega1, core::Real const &dE_ddz1, core::Real const &dE_ddelta_omega1, core::Real const &dE_ddelta_z1 ) const;
 
 
 }; // FitSimpleHelixMultiFunc

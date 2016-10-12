@@ -39,7 +39,7 @@ void CustomScoreSelector::select_fragments(
 	ScoredCandidatesVector1 const& input_canditates,
 	ScoredCandidatesVector1& output_selection )
 {
-	Size n = frags_per_pos();
+	core::Size n = frags_per_pos();
 	if ( n > input_canditates.size() ) {
 		n = input_canditates.size();
 	}
@@ -47,7 +47,7 @@ void CustomScoreSelector::select_fragments(
 		<< input_canditates.size() << " candidates" << std::endl;
 	ExtraScoreVector tmp;
 	scores::FragmentScoreMapOP map = scoring_scheme_->create_empty_map();
-	for ( Size i=1; i<=input_canditates.size(); i++ ) {
+	for ( core::Size i=1; i<=input_canditates.size(); i++ ) {
 		scoring_scheme_->do_caching(input_canditates[i].first->get_chunk());
 		scoring_scheme_->score_fragment( input_canditates[i].first, map );
 		core::Real v = scoring_scheme_->total_score( map );
@@ -57,7 +57,7 @@ void CustomScoreSelector::select_fragments(
 	}
 
 	std::sort(tmp.begin(), tmp.end(), sort_function);
-	for ( Size i = 1; i <= n; i++ ) {
+	for ( core::Size i = 1; i <= n; i++ ) {
 		output_selection.push_back( tmp[i].first );
 	}
 }

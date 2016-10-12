@@ -79,6 +79,7 @@
 
 
 using namespace core; /////////////////////////////////////////// DANGER
+using namespace protocols::viewer::graphics_states_param;
 
 namespace protocols {
 namespace viewer {

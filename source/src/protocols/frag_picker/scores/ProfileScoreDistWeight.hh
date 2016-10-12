@@ -37,19 +37,19 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  a fragment candidate
 class ProfileScoreDistWeight: public CachingScoringMethod {
 public:
 
 	ProfileScoreDistWeight(
-		Size priority,
-		Real lowest_acceptable_value,
+		core::Size priority,
+		core::Real lowest_acceptable_value,
 		bool use_lowest,
-		sequence::SequenceProfileOP query_profile,
+		core::sequence::SequenceProfileOP query_profile,
 		core::fragment::SecondaryStructureOP query_ss_prediction,
-		std::string query_sequence, Size longest_vall_chunk
+		std::string query_sequence, core::Size longest_vall_chunk
 	) :
 		CachingScoringMethod(
 		priority, lowest_acceptable_value, use_lowest, "ProfileScoreDistWeight" ),
@@ -57,15 +57,15 @@ public:
 		query_profile_(query_profile),
 		query_ss_(query_ss_prediction)
 	{
-		for ( Size i = 1; i <= query_profile->length(); ++i ) {
-			utility::vector1<Real> row(longest_vall_chunk);
+		for ( core::Size i = 1; i <= query_profile->length(); ++i ) {
+			utility::vector1<core::Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
 
 
-		utility::vector1< utility::vector1< utility::vector1 <Real> > > temp(
-			3, utility::vector1< utility::vector1 <Real> > (
-			20, utility::vector1<Real> (
+		utility::vector1< utility::vector1< utility::vector1 <core::Real> > > temp(
+			3, utility::vector1< utility::vector1 <core::Real> > (
+			20, utility::vector1<core::Real> (
 			20, 0.0
 			)
 			)
@@ -83,16 +83,16 @@ public:
 		char res2;
 		char ss1;
 		char ss2;
-		Real dist;
+		core::Real dist;
 
-		std::map<char,Size> ss_type_temp;
+		std::map<char,core::Size> ss_type_temp;
 		ss_type_temp.insert(std::make_pair('H',1));
 		ss_type_temp.insert(std::make_pair('E',2));
 		ss_type_temp.insert(std::make_pair('L',3));
 
 		ss_type_map_ = ss_type_temp;
 
-		std::map<char,Size> aa_order_tmp;
+		std::map<char,core::Size> aa_order_tmp;
 		aa_order_tmp.insert(std::make_pair('A',1));
 		aa_order_tmp.insert(std::make_pair('C',2));
 		aa_order_tmp.insert(std::make_pair('D',3));
@@ -121,7 +121,7 @@ public:
 			line_stream >> res1 >> ss1 >> res2 >> ss2 >> dist;
 
 
-			Size res_type( 0 );
+			core::Size res_type( 0 );
 			if ( ss1 == ss2 ) {
 				res_type = ss_type_map_.find(ss1)->second;
 			}
@@ -131,7 +131,7 @@ public:
 			if ( res_type != 0 ) {
 
 
-				Size i_res1, i_res2;
+				core::Size i_res1, i_res2;
 
 				i_res1 = aa_order_map_.find(res1)->second;
 				i_res2 = aa_order_map_.find(res2)->second;
@@ -152,14 +152,14 @@ protected:
 	Matrix scores_;
 
 private:
-	utility::vector1< utility::vector1< utility::vector1 <Real> > > distance_weights_;
+	utility::vector1< utility::vector1< utility::vector1 <core::Real> > > distance_weights_;
 
 	std::string query_sequence_;
 
-	std::map<char,Size> ss_type_map_;
-	std::map<char,Size> aa_order_map_;
+	std::map<char,core::Size> ss_type_map_;
+	std::map<char,core::Size> aa_order_map_;
 
-	sequence::SequenceProfileOP query_profile_;
+	core::sequence::SequenceProfileOP query_profile_;
 	core::fragment::SecondaryStructureOP query_ss_;
 	std::string cached_scores_id_;
 	void clear();
@@ -172,7 +172,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScoreDistWeight") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

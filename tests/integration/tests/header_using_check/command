@@ -1,0 +1,27 @@
+
+cd %(workdir)s
+
+touch using_namespace.log
+touch usings.log
+
+cd %(bin)s/../
+# Find top-level usings in headers, but ignore those in devel and apps/pilot
+egrep '^using' src/ -R --include '*.hh' | egrep -v '^src/devel/' | egrep -v '^src/apps/pilot/' > %(workdir)s/all_usings.txt
+cd %(workdir)s
+
+grep 'using namespace' all_usings.txt | sed "s/^/[`date`] /" > using_namespace.log 
+
+grep -v -F -f known_usings.txt all_usings.txt | sed "s/^/[`date`] /" > usings.log
+
+rm -f all_usings.txt
+
+if [ -s using_namespace.log ]; then
+   echo ">>> Illegal 'using namespace' in headers detected!"
+   exit -1;
+fi
+
+if [ -s usings.log ]; then
+   echo ">>> New using declarations in headers detected!"
+   echo ">>> (Remove, or adjust the integration test's known_usings.txt if this is deliberate instead of just convenience.)"
+   exit -1
+fi

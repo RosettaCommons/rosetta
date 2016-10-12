@@ -29,6 +29,8 @@ namespace stepwise {
 namespace modeler {
 namespace working_parameters {
 
+using namespace core;
+
 //Constructor
 StepWiseWorkingParameters::StepWiseWorkingParameters():
 	// RNA

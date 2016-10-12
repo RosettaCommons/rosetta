@@ -60,6 +60,8 @@
 namespace protocols {
 namespace simple_filters {
 
+using namespace core;
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueDepthFilter" );
 
 bool

@@ -663,7 +663,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 
 		if ( sim_origin().find( sim_pos ) != sim_origin().end() ) {
 			Size const templ_pos = sim_origin().at( sim_pos );
-			Residue const templ_res = templ().residue( templ_pos );
+			core::conformation::Residue const templ_res = templ().residue( templ_pos );
 
 			try {
 				tr.Trace << "Replacing simulation " << pose.residue( sim_pos ).name3() << sim_pos

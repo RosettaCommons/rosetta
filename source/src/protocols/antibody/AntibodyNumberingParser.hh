@@ -21,20 +21,17 @@
 
 namespace protocols {
 namespace antibody {
-using utility::vector1;
-using core::Size;
 
-typedef vector1< vector1< Size > > Vector2DSize;
-
+typedef utility::vector1< utility::vector1< core::Size > > Vector2DSize;
 
 struct AntibodyNumbering {
 	AntibodyNumberingSchemeEnum numbering_scheme;
 	CDRDefinitionEnum cdr_definition;
 
-	vector1< vector1< PDBLandmarkOP > > cdr_numbering;
-	std::map< CDRDefinitionEnum , vector1< vector1< PDBLandmarkOP > > > cdr_definition_transform;
+	utility::vector1< utility::vector1< PDBLandmarkOP > > cdr_numbering;
+	std::map< CDRDefinitionEnum , utility::vector1< utility::vector1< PDBLandmarkOP > > > cdr_definition_transform;
 
-	std::map< AntibodyNumberingSchemeEnum, vector1< PDBLandmarkOP > > numbering_scheme_transform;
+	std::map< AntibodyNumberingSchemeEnum, utility::vector1< PDBLandmarkOP > > numbering_scheme_transform;
 
 };
 
@@ -65,18 +62,18 @@ private:
 
 	/// @brief Reads lines defining start/end of each CDR and the relative transforms to the numbering schemes defined by the TRANSFORM line.
 	void
-	read_cdr_definition_numbering_line(vector1< std::string> const & lineSP, AntibodyNumbering & numbering) const;
+	read_cdr_definition_numbering_line(utility::vector1< std::string> const & lineSP, AntibodyNumbering & numbering) const;
 
 	/// @brief Reads line corresponding to TRANSFORM, which lists columns for which the transform to another numbering scheme is defined.
 	void
-	read_cdr_definition_transform_line(vector1< std::string> const & lineSP, AntibodyNumbering & numbering);
+	read_cdr_definition_transform_line(utility::vector1< std::string> const & lineSP, AntibodyNumbering & numbering);
 
 
 	void
-	read_scheme_numbering_line(vector1< std::string > const & lineSP, AntibodyNumbering & numbering) const;
+	read_scheme_numbering_line(utility::vector1< std::string > const & lineSP, AntibodyNumbering & numbering) const;
 
 	void
-	read_scheme_defines_line(vector1< std::string > const & lineSP);
+	read_scheme_defines_line(utility::vector1< std::string > const & lineSP);
 
 
 	/// @brief Check to make sure the path to the numbering scheme file is good.
@@ -103,10 +100,10 @@ private:
 	std::string scheme_file_;
 	std::string cdr_definition_file_;
 
-	vector1< CDRDefinitionEnum  > cdr_definitions_defined_; //A cdr definition needs a scheme to define it in.
-	vector1< AntibodyNumberingSchemeEnum >cdr_definitions_defined_using_;
+	utility::vector1< CDRDefinitionEnum  > cdr_definitions_defined_; //A cdr definition needs a scheme to define it in.
+	utility::vector1< AntibodyNumberingSchemeEnum >cdr_definitions_defined_using_;
 
-	vector1< AntibodyNumberingSchemeEnum > schemes_defined_;
+	utility::vector1< AntibodyNumberingSchemeEnum > schemes_defined_;
 
 };
 

@@ -61,9 +61,6 @@
 
 // Utility Headers
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::pack::task;
-
 namespace protocols {
 namespace flxbb {
 
@@ -366,7 +363,7 @@ class CombinedTaskOperation : public core::pack::task::operation::TaskOperation 
 public:
 	CombinedTaskOperation(VecTaskOP ops);
 	/// @brief apply
-	void apply( Pose const & pose, PackerTask & task ) const override;
+	void apply( Pose const & pose, core::pack::task::PackerTask & task ) const override;
 	/// @brief make clone
 	TaskOperationOP clone() const override { return TaskOperationOP( new CombinedTaskOperation( *this ) ); }
 

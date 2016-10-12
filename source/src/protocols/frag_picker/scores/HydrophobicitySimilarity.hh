@@ -38,7 +38,7 @@ class HydrophobicitySimilarity: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a hydrophobicity-based scoring function.
-	HydrophobicitySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	HydrophobicitySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		std::string & fastaQuerySequence) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 		"HydrophobicitySimilarity"),  query_(fastaQuerySequence) {
@@ -111,7 +111,7 @@ public:
 		MakeFragmentScoringMethod("HydrophobicitySimilarity") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string) {
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new HydrophobicitySimilarity(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );

@@ -27,9 +27,8 @@
 #include <utility/vector1.hh>
 
 
-using namespace core;
-
-bool is_deletable(chemical::ResidueType const& rsd, Size atom_id){
+bool is_deletable(core::chemical::ResidueType const& rsd, core::Size atom_id){
+	using namespace core;
 	chemical::AtomIndices const & mainchain_atoms = rsd.mainchain_atoms(); // Can't delete mainchain atoms.
 	chemical::AtomIndices::const_iterator const found = find( mainchain_atoms.begin(), mainchain_atoms.end(), atom_id);
 	if( found != mainchain_atoms.end() ) return false;
@@ -62,18 +61,19 @@ bool is_deletable(chemical::ResidueType const& rsd, Size atom_id){
 class ResidueTypeBenchmark : public PerformanceBenchmark
 {
 public:
-	chemical::ChemicalManager * cm_;
-	chemical::ResidueTypeSetCAP residue_types_;
+	core::chemical::ChemicalManager * cm_;
+	core::chemical::ResidueTypeSetCAP residue_types_;
 
 	ResidueTypeBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		cm_ = chemical::ChemicalManager::get_instance();
+		cm_ = core::chemical::ChemicalManager::get_instance();
 		residue_types_ = cm_->residue_type_set("fa_standard");
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		chemical::ResidueTypeCOPs types = chemical::ResidueTypeFinder( *residue_types_ ).get_all_possible_residue_types();
+		using namespace core;
+		chemical::ResidueTypeCOPs types = chemical::ResidueTypeFinder( *residue_types_.lock() ).get_all_possible_residue_types();
 		chemical::ResidueTypeCOPs::const_iterator const begin = types.begin();
 		chemical::ResidueTypeCOPs::const_iterator const end = types.end();
 		core::Size local_scale_factor = 2 * scaleFactor;

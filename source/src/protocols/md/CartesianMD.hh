@@ -73,16 +73,16 @@ public:
 	void use_rattle( bool const value );
 
 	Multivec get_current_eqxyz() const;
-	void update_restraint( pose::Pose & pose,
-		CartesianMinimizerMap const &min_map );
+	void update_restraint( core::pose::Pose & pose,
+		core::optimization::CartesianMinimizerMap const &min_map );
 
-	void cst_on_pose_simple( pose::Pose &pose ) const;
+	void cst_on_pose_simple( core::pose::Pose &pose ) const;
 
-	void cst_on_pose_dynamic( pose::Pose &pose,
-		Multivec const &ref_xyz,
-		Multivec const &curr_eqxyz,
-		Multivec &prv_eqxyz,
-		CartesianMinimizerMap const &min_map ) const;
+	void cst_on_pose_dynamic( core::pose::Pose &pose,
+		core::optimization::Multivec const &ref_xyz,
+		core::optimization::Multivec const &curr_eqxyz,
+		core::optimization::Multivec &prv_eqxyz,
+		core::optimization::CartesianMinimizerMap const &min_map ) const;
 
 
 	void parse_my_tag(
@@ -108,11 +108,11 @@ public:
 		//protocols::moves::Movers_map const &,
 		Pose const & pose );
 
-	utility::vector1< pose::Pose >
-	dump_poses( pose::Pose const &pose_ref ) const;
+	utility::vector1< core::pose::Pose >
+	dump_poses( core::pose::Pose const &pose_ref ) const;
 
 private:
-	void get_native_info( pose::Pose const &pose );
+	void get_native_info( core::pose::Pose const &pose );
 
 	void do_initialize( core::pose::Pose &pose );
 
@@ -125,7 +125,7 @@ private:
 		md::Rattle & rattle,
 		bool const update_score = false );
 
-	void do_minimize( pose::Pose &pose,
+	void do_minimize( core::pose::Pose &pose,
 		core::optimization::MinimizerOptions const &options,
 		bool const &show_energy );
 
@@ -137,7 +137,7 @@ private:
 	void initialize_velocity( core::Real const &temperature );
 
 	void report_MD( core::pose::Pose &pose,
-		CartesianMinimizerMap const &min_map,
+		core::optimization::CartesianMinimizerMap const &min_map,
 		bool const report_trj );
 
 private:

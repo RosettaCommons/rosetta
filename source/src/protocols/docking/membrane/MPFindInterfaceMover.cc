@@ -101,6 +101,7 @@ using namespace protocols::moves;
 using namespace protocols::docking;
 using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
+using namespace protocols::scoring;
 
 /////////////////////
 /// Constructors  ///

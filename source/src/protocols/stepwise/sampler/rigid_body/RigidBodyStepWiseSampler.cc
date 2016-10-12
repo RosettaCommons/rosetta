@@ -47,10 +47,11 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSampler" );
 
+using namespace protocols::toolbox::rigid_body;
+using namespace core;
+
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
-
-using namespace protocols::toolbox::rigid_body;
 
 namespace protocols {
 namespace stepwise {

@@ -51,16 +51,12 @@ namespace protocols {
 namespace topology_broker {
 namespace weights {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace basic::options;
-using namespace basic::options::OptionKeys;
-
 class SmallFragWeight : public AbinitioMoverWeight {
 public:
 	SmallFragWeight( core::Real weight = 1.0 ) : weight_( weight ) {};
 	virtual core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const {
-		if ( option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].user() && stageID == 1 ) {
-			return option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].value();
+		if ( basic::options::option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].user() && stageID == 1 ) {
+			return basic::options::option[basic::options::OptionKeys::broker::small_frag_mover_stage1_weight].value();
 		}
 
 		if ( stageID < abinitio::STAGE_4 ) return 0.0;

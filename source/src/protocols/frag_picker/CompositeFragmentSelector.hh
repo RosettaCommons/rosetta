@@ -34,7 +34,7 @@ class CompositeFragmentSelector: public FragmentSelectingRule {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments.
-	CompositeFragmentSelector(Size frags_per_pos) : FragmentSelectingRule(frags_per_pos) {
+	CompositeFragmentSelector(core::Size frags_per_pos) : FragmentSelectingRule(frags_per_pos) {
 	}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates

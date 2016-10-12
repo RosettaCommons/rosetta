@@ -95,6 +95,8 @@ using namespace core::pose;
 using namespace protocols::moves;
 using namespace protocols::membrane;
 using namespace core::optimization;
+using namespace core::kinematics;
+using namespace core::scoring;
 
 /////////////////////
 /// Constructors  ///

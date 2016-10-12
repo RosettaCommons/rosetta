@@ -40,14 +40,14 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, std::string prediction_name ) :
+RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, std::string prediction_name ) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery),prediction_name_(prediction_name) {
 
 	core::fragment::SecondaryStructureOP default_ss;
 	std::cout << "QUERY" << fastaQuery << " " << query_.size() << std::endl;
 	default_ss->extend(query_.size());
 
-	for ( Size i = 1; i <= query_.size(); ++i ) {
+	for ( core::Size i = 1; i <= query_.size(); ++i ) {
 		default_ss->set_fractions(i, 1.0, 1.0, 1.0 );
 	}
 
@@ -57,7 +57,7 @@ RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowes
 }
 
 
-RamaScore::RamaScore(Size priority, Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name ) :
+RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name ) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery), query_ss_(query_prediction), prediction_name_(prediction_name)
 {
 	SetupRamaTables();
@@ -72,7 +72,7 @@ RamaScore::SetupRamaTables()
 
 	utility::vector1< utility::vector1< utility::vector1< float > > > temp( query_.size(), utility::vector1< utility::vector1< float > > ( 37, utility::vector1< float > ( 37, 0 ) ) );
 
-	for ( Size i = 2; i <= query_.size() -1; ++i ) {
+	for ( core::Size i = 2; i <= query_.size() -1; ++i ) {
 		std::string curr_aa, next_aa, aa_type;//, ss_type;
 		utility::vector1< core::Real > ss_weight( 3, 0 );
 		utility::vector1< std::string > ss_types( 3, "" );
@@ -114,7 +114,7 @@ RamaScore::SetupRamaTables()
 		//However secondary structure is at this point just a weighted probability, so first we have to combine the
 		//sequence specific H, E & L counts to create a secondary structure weighted ramachandran table.
 		//(note: the counts here were extracted from the vall and have been gaussian smoothed to blur out the noise)
-		for ( Size s = 1; s <= 3; ++s ) {
+		for ( core::Size s = 1; s <= 3; ++s ) {
 			if ( ss_weight[s] > 0.0 ) {
 				//std::string db_location("/work/rvernon/fragpicking_tests/vall/final/"+ss_types[s]+"_"+aa_type+".counts");
 				std::string db_location("sampling/fragpicker_rama_tables/"+ss_types[s]+"_"+aa_type+".counts");
@@ -127,7 +127,7 @@ RamaScore::SetupRamaTables()
 				while ( getline(table_file, line) ) {
 					if ( line.length() != 0 ) {
 						std::istringstream line_stream(line);
-						Size x, y;
+						core::Size x, y;
 						float count;
 
 						line_stream >> x >> y >> count;
@@ -148,15 +148,15 @@ RamaScore::SetupRamaTables()
 		//If zero then don't bother normalizing, just use raw counts
 		float const A( option[frags::rama_norm] );
 		if ( A > 0.0 ) {
-			Real total(0.0);
-			for ( Size x = 1; x <= 37; ++x ) {
-				for ( Size y = 1; y <= 37; ++y ) {
+			core::Real total(0.0);
+			for ( core::Size x = 1; x <= 37; ++x ) {
+				for ( core::Size y = 1; y <= 37; ++y ) {
 					total += temp[i][x][y];
 				}
 			}
 			runtime_assert( total != 0.0 );
-			for ( Size x = 1; x <= 37; ++x ) {
-				for ( Size y = 1; y <= 37; ++y ) {
+			for ( core::Size x = 1; x <= 37; ++x ) {
+				for ( core::Size y = 1; y <= 37; ++y ) {
 					temp[i][x][y] = (temp[i][x][y] / total) * A;
 				}
 			}
@@ -167,8 +167,8 @@ RamaScore::SetupRamaTables()
 		//Now we convert the count tables into sigmoid function score tables. The score goes from 1 (no counts) to
 		//0 (many counts). Because this is a sigmoid there is a sharp transition between 1 and 0, this transition
 		//takes place at an arbitrary point defined by me. It can be changed by adding in a constant to the final exp.
-		for ( Size x = 1; x <= 37; ++x ) {
-			for ( Size y = 1; y <= 37; ++y ) {
+		for ( core::Size x = 1; x <= 37; ++x ) {
+			for ( core::Size y = 1; y <= 37; ++y ) {
 				temp[i][x][y] += 0.000000000000000000000000001;
 				temp[i][x][y] = std::log(temp[i][x][y]);
 				temp[i][x][y] = 1.0 / ( 1 + std::exp( C + B*temp[i][x][y] ) );
@@ -196,20 +196,20 @@ void RamaScore::do_caching(VallChunkOP current_chunk) {
 	}
 	cached_scores_id_ = tmp;
 
-	Size query_sequence_length = query_.size();
+	core::Size query_sequence_length = query_.size();
 
-	utility::vector1< utility::vector1< Real > > temp( current_chunk->size(),
-		utility::vector1< Real > (query_sequence_length, 0 ) );
+	utility::vector1< utility::vector1< core::Real > > temp( current_chunk->size(),
+		utility::vector1< core::Real > (query_sequence_length, 0 ) );
 
 	runtime_assert( query_sequence_length > 0 );
 
-	for ( Size r = 2; r <= query_sequence_length - 1; ++r ) {
+	for ( core::Size r = 2; r <= query_sequence_length - 1; ++r ) {
 
-		for ( Size i = 1; i <= current_chunk->size(); ++i ) {
+		for ( core::Size i = 1; i <= current_chunk->size(); ++i ) {
 			VallResidueOP res = current_chunk->at(i);
 
-			Real phi = res->phi();
-			Real psi = res->psi();
+			core::Real phi = res->phi();
+			core::Real psi = res->psi();
 
 			//Frigging vall...
 			if ( phi > 180 ) phi = -180 + (phi - 180);
@@ -217,8 +217,8 @@ void RamaScore::do_caching(VallChunkOP current_chunk) {
 			if ( phi < -180 ) phi = 180 + (phi + 180);
 			if ( psi < -180 ) psi = 180 + (psi + 180);
 
-			Size i_phi = static_cast< Size > (((phi + 180)/10)+1);
-			Size i_psi = static_cast< Size > (((psi + 180)/10)+1);
+			core::Size i_phi = static_cast< core::Size > (((phi + 180)/10)+1);
+			core::Size i_psi = static_cast< core::Size > (((psi + 180)/10)+1);
 
 			runtime_assert( (i_phi >= 1) && (i_phi <= 37) );
 			runtime_assert( (i_psi >= 1) && (i_psi <= 37) );
@@ -247,19 +247,19 @@ bool RamaScore::cached_score(FragmentCandidateOP fragment,
 	}
 
 
-	Real totalScore = 0.0;
+	core::Real totalScore = 0.0;
 
-	for ( Size i = 1; i <= fragment->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= fragment->get_length(); i++ ) {
 		//  runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
 		//  runtime_assert(fragment->get_first_index_in_query() + i - 1 <= scores_[1].size());
 
-		Real tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
+		core::Real tmp = scores_[fragment->get_first_index_in_vall() + i - 1]
 			[fragment->get_first_index_in_query() + i - 1];
 		totalScore += tmp;
 	}
 
-	//std::cout << "TOTALSCORE " << totalCount << " " << totalScore << " " << totalScore / (Real) fragment->get_length();
-	totalScore /= (Real) fragment->get_length();
+	//std::cout << "TOTALSCORE " << totalCount << " " << totalScore << " " << totalScore / (core::Real) fragment->get_length();
+	totalScore /= (core::Real) fragment->get_length();
 
 	scores->set_score_component(totalScore, id_);
 	if ( (totalScore < lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -285,7 +285,7 @@ bool RamaScore::describe_score(FragmentCandidateOP,
 //}
 
 
-utility::vector1< utility::vector1< utility::vector1< Real > > > RamaScore::sequence_rama_tables_;
+utility::vector1< utility::vector1< utility::vector1< core::Real > > > RamaScore::sequence_rama_tables_;
 
 } // scores
 } // frag_picker

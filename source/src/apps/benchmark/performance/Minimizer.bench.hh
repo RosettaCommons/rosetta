@@ -26,23 +26,21 @@
 
 #include <utility/vector1.hh>
 
-using namespace core;
-
 enum  ScoreFnType {SFT_dfpmin, SFT_dfpmin_armijo, SFT_dfpmin_armijo_nonmonotone};
 
 template  <ScoreFnType sft, int TScale>
 class MinimizerBenchmark : public PerformanceBenchmark
 {
 public:
-	pose::PoseOP start_pose;
-	kinematics::MoveMap mm;
+	core::pose::PoseOP start_pose;
+	core::kinematics::MoveMap mm;
 	core::scoring::ScoreFunctionOP scorefxn;
 	core::optimization::AtomTreeMinimizer minimizer;
 
 	MinimizerBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		start_pose = pose::PoseOP( new pose::Pose() );
+		start_pose = core::pose::PoseOP( new core::pose::Pose() );
 		// Use smaller PDB to test minimizer
 		core::import_pose::pose_from_file(*start_pose, "test_in2.pdb", core::import_pose::PDB_file);
 

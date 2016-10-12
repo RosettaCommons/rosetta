@@ -35,7 +35,7 @@
 //Req'd on WIN32
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
-
+using namespace core;
 using namespace protocols::stepwise::modeler;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );

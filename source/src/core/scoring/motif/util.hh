@@ -28,20 +28,7 @@ namespace motif {
 
 //types
 
-using core::id::AtomID;
-using core::pose::Pose;
-using core::pose::PoseCOP;
-using core::pose::PoseCAP;
-using core::Real;
-using core::scoring::ScoreFunctionOP;
-using core::Size;
-using std::string;
-using utility::vector1;
-using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
-using core::pose::xyzStripeHashPose;
-using core::pose::xyzStripeHashPoseCAP;
-
+using numeric::geometry::hashing::Real6; //deliberate transclusion into core::scoring::motif namespace
 typedef utility::vector1<Real> Reals;
 typedef utility::vector1<Size> Sizes;
 typedef utility::vector1<int>  Ints;
@@ -56,17 +43,17 @@ std::ostream & operator<<(std::ostream & out, Real6 const & r6);
 RM_Type rpm_type1(RPM_Type const & type);
 RM_Type rpm_type2(RPM_Type const & type);
 
-Reals get_sasa(Pose const & pose, Real const & probesize);
-Reals get_nbrs(Pose const & pose);
+Reals get_sasa(core::pose::Pose const & pose, Real const & probesize);
+Reals get_nbrs(core::pose::Pose const & pose);
 
-// Real get_sc_sasa(Pose const & pose, Size const & ir);
-// Real get_sc_sasa(Pose const & pose, Size const & ir, Size const & jr);
-// Real get_sc_sasa_2rsd(Pose const & pose, Size ir, Size jr);
+// Real get_sc_sasa(core::pose::Pose const & pose, Size const & ir);
+// Real get_sc_sasa(core::pose::Pose const & pose, Size const & ir, Size const & jr);
+// Real get_sc_sasa_2rsd(core::pose::Pose const & pose, Size ir, Size jr);
 
 void xform_pose( core::pose::Pose & pose, Xform const & s, Size sres=1, Size eres=0 );
 Mat random_rotation();
 
-std::string tag_from_pdb_fname(string const & fname0);
+std::string tag_from_pdb_fname(std::string const & fname0);
 
 // Real rt6_rt6_bb_dis2_explicit_stupid(
 //  Real6 const & x1,
@@ -79,25 +66,25 @@ Real6 inverse_rt6(Real6 const & rt);
 // Real6 rt_to_real6(core::kinematics::RT const & rt);
 // core::kinematics::RT real6_to_rt(Real6 const & rt6);
 
-Xform get_residue_pair_xform(Pose const & pose1, Size ir, Pose const & pose2, Size jr, RPM_Type const & type=BB_BB);
-Real6 get_residue_pair_rt6  (Pose const & pose1, Size ir, Pose const & pose2, Size jr, RPM_Type const & type=BB_BB);
-Xform get_residue_pair_xform(Pose const & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
-Real6 get_residue_pair_rt6  (Pose const & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
+Xform get_residue_pair_xform(core::pose::Pose const & pose1, Size ir, core::pose::Pose const & pose2, Size jr, RPM_Type const & type=BB_BB);
+Real6 get_residue_pair_rt6  (core::pose::Pose const & pose1, Size ir, core::pose::Pose const & pose2, Size jr, RPM_Type const & type=BB_BB);
+Xform get_residue_pair_xform(core::pose::Pose const & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
+Real6 get_residue_pair_rt6  (core::pose::Pose const & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
 
-void set_residue_pair_xform(Xform const & x, Pose & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
+void set_residue_pair_xform(Xform const & x, core::pose::Pose & pose , Size ir, Size jr, RPM_Type const & type=BB_BB);
 
-Real align_motif_pose              ( Pose & pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type );
-// Real align_motif_pose_NCAC_super   ( Pose & pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type );
-Real align_motif_pose_break        ( Pose & pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type );
-Real align_motif_pose_by_one_frame ( Pose & pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type );
-Real align_motif_pose_super        ( Pose & pose, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, RPM_Type const & type );
+Real align_motif_pose              ( core::pose::Pose & pose, core::pose::Pose const & paln1, Size const & ir, core::pose::Pose const & paln2, Size const & jr, RPM_Type const & type );
+// Real align_motif_pose_NCAC_super   ( core::pose::Pose & pose, core::pose::Pose const & paln1, Size const & ir, core::pose::Pose const & paln2, Size const & jr, RPM_Type const & type );
+Real align_motif_pose_break        ( core::pose::Pose & pose, core::pose::Pose const & paln1, Size const & ir, core::pose::Pose const & paln2, Size const & jr, RPM_Type const & type );
+Real align_motif_pose_by_one_frame ( core::pose::Pose & pose, core::pose::Pose const & paln1, Size const & ir, core::pose::Pose const & paln2, Size const & jr, RPM_Type const & type );
+Real align_motif_pose_super        ( core::pose::Pose & pose, core::pose::Pose const & paln1, Size const & ir, core::pose::Pose const & paln2, Size const & jr, RPM_Type const & type );
 
 Real6 get_bins(Real c, Real a);
 
-core::id::AtomID_Mask get_motif_atom_mask( Pose const & motif_pose, RPM_Type const & type, bool with_Hpol=false );
+core::id::AtomID_Mask get_motif_atom_mask( core::pose::Pose const & motif_pose, RPM_Type const & type, bool with_Hpol=false );
 
-void HACK_dump_helix(Pose const & pose, string fname, int beg, int end);
-int HACK_dump_helices(Pose const & pose, string tag, int nres, int minlen=10);
+void HACK_dump_helix(core::pose::Pose const & pose, std::string fname, int beg, int end);
+int HACK_dump_helices(core::pose::Pose const & pose, std::string tag, int nres, int minlen=10);
 
 inline Real angle_distance(Real const & a, Real const & b){
 	return numeric::min( fabs(a-b), fabs(fabs(a-b)-360.0) );

@@ -32,8 +32,6 @@
 namespace basic {
 namespace resource_manager {
 
-using std::stringstream;
-
 template< class ResourceType >
 utility::pointer::shared_ptr< ResourceType >
 get_resource(
@@ -43,7 +41,7 @@ get_resource(
 		utility::pointer::dynamic_pointer_cast< ResourceType > ( ResourceManager::get_instance()->get_resource(resource_description) ));
 
 	if ( !resource ) {
-		stringstream err_msg;
+		std::stringstream err_msg;
 		err_msg
 			<< "The '" << resource_description << "' "
 			<< "cannot be cast to the given type.";

@@ -32,25 +32,11 @@ extern const uint64_t MOTIF_VERSION;
 
 //types
 
-using core::id::AtomID;
-using core::pose::Pose;
-using core::pose::PoseCOP;
-using core::pose::PoseCOP;
-using core::Real;
-using core::scoring::ScoreFunctionOP;
-using core::Size;
-using std::string;
-using utility::vector1;
-using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
-// using numeric::geometry::hashing::xyzStripeHash;
-// using numeric::geometry::hashing::xyzStripeHashCOP;
-// using numeric::geometry::hashing::xyzStripeHashCOP;
-
 class ResPairMotif;
 class MotifHit;
 class MotifHits;
 class MotifRotamerSetOperation;
+using numeric::geometry::hashing::Real6; //deliberate transclusion into core::scoring::motif namespace
 typedef utility::pointer::shared_ptr<MotifRotamerSetOperation      > MotifRotamerSetOperationOP;
 typedef utility::pointer::shared_ptr<MotifRotamerSetOperation const> MotifRotamerSetOperationCOP;
 typedef utility::vector1<Real> Reals;
@@ -87,9 +73,9 @@ public:
 	Score score_of_bin(Key const & key) const;
 	Real  score_of_bin_normalized(Real6 const & xform) const;
 	bool write_binary(std::ostream & out) const;
-	bool write_binary(string const & fname) const;
+	bool write_binary(std::string const & fname) const;
 	static bool read_binary(XformScoreOP & xs, std::istream & in, bool clearme=true, Real const & wt=1.0);
-	static bool read_binary(XformScoreOP & xs, string const & fname, bool clearme=true,Real const & wt=1.0);
+	static bool read_binary(XformScoreOP & xs, std::string const & fname, bool clearme=true,Real const & wt=1.0);
 	static bool read_binary(XformScoreOP & xs, utility::vector1<std::string> const & fnames,Real const & wt=1.0);
 	Size num_bins() const;
 	Size num_possible_bins() const;
@@ -184,8 +170,8 @@ private:
 public:
 	ResPairMotif();
 	ResPairMotif(
-		string const & tag,
-		Pose const & pose,
+		std::string const & tag,
+		core::pose::Pose const & pose,
 		Real6 const & rt6,
 		Size const & resi1,
 		Size const & resi2,
@@ -272,16 +258,16 @@ public:
 
 	/*TODO;*/
 	void dump_pdb(std::ostream & out, numeric::xyzTransform<Real> const & xform=Xform::identity(), std::string tag="1") const;
-	void dump_pdb(string const & fname="", string const & tag="1") const;
-	Real dump_aligned_motif(std::ostream     & out, Pose const & pose1, Size const & ir, Pose const & pose2, Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::ostream     & out, Pose const & pose , Size const & ir              , Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::string const & fn, Pose const & pose1, Size const & ir, Pose const & pose2, Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::string const & fn, Pose const & pose , Size const & ir              , Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::ostream     & out, Pose const & pose1, Size const & ir, Pose const & pose2, Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::ostream     & out, Pose const & pose , Size const & ir              , Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::string const & fn, Pose const & pose1, Size const & ir, Pose const & pose2, Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	Real dump_aligned_motif(std::string const & fn, Pose const & pose , Size const & ir              , Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
-	void fill_pose_with_motif(Pose & pose, int const & ir=1, int const & jr=2) const;
+	void dump_pdb(std::string const & fname="", std::string const & tag="1") const;
+	Real dump_aligned_motif(std::ostream     & out, core::pose::Pose const & pose1, Size const & ir, core::pose::Pose const & pose2, Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::ostream     & out, core::pose::Pose const & pose , Size const & ir                                , Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::string const & fn, core::pose::Pose const & pose1, Size const & ir, core::pose::Pose const & pose2, Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::string const & fn, core::pose::Pose const & pose , Size const & ir                                , Size const & jr, Size & aotmno, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::ostream     & out, core::pose::Pose const & pose1, Size const & ir, core::pose::Pose const & pose2, Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::ostream     & out, core::pose::Pose const & pose , Size const & ir                                , Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::string const & fn, core::pose::Pose const & pose1, Size const & ir, core::pose::Pose const & pose2, Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	Real dump_aligned_motif(std::string const & fn, core::pose::Pose const & pose , Size const & ir                                , Size const & jr, int const & num=1, numeric::Xforms const & xforms=XsI) const;
+	void fill_pose_with_motif(core::pose::Pose & pose, int const & ir=1, int const & jr=2) const;
 	core::pose::Pose get_pose(int const & ir=1, int const & jr=2) const;
 	// io
 	friend std::ostream & operator << (std::ostream & out, ResPairMotif const & x);
@@ -323,11 +309,11 @@ public:
 typedef std::map<std::string,ResPairMotifs> ResPairMotifsStringMap;
 typedef boost::unordered_map<ResPairMotifMetaBinner::Key,ResPairMotifs> ResPairMotifsMap;
 
-bool read_motifs_binary (               string const & fname , ResPairMotifs       & motifs);
+bool read_motifs_binary (    std::string const & fname , ResPairMotifs       & motifs);
 bool read_motifs_binary (  std::istream        & in    , ResPairMotifs       & motifs);
-bool read_motifs_binary (vector1<string> const & fnames, ResPairMotifs       & motifs);
+bool read_motifs_binary (utility::vector1<std::string> const & fnames, ResPairMotifs       & motifs);
 bool write_motifs_binary(  std::ostream        & out   , ResPairMotifs const & motifs);
-bool write_motifs_binary(        string const &        fname , ResPairMotifs const & motifs);
+bool write_motifs_binary(    std::string const &        fname , ResPairMotifs const & motifs);
 
 void filter_motifs( ResPairMotifs const & motifs_in, ResPairMotifs & motifs_out );
 void filter_motifs( ResPairMotifs & motifs );
@@ -340,8 +326,8 @@ public:
 	float score1,score2,rms,chi_rmsd_;
 	ResPairMotif motif;
 	MotifHit():residue1(0),residue2(0),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9) {}
-	MotifHit(PoseCOP _pose1, PoseCOP _pose2, int res1, int res2, ResPairMotif const & sm)
-	: pose1_(_pose1),pose2_(_pose2),mpose_(core::pose::PoseOP( new Pose )),residue1(res1),residue2(res2),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9),motif(sm) {}
+	MotifHit(core::pose::PoseCOP _pose1, core::pose::PoseCOP _pose2, int res1, int res2, ResPairMotif const & sm)
+	: pose1_(_pose1),pose2_(_pose2),mpose_(core::pose::PoseOP( new core::pose::Pose )),residue1(res1),residue2(res2),score1(0),score2(0),rms(9e9),chi_rmsd_(9e9),motif(sm) {}
 	bool operator< (MotifHit const & other) const;
 	bool operator==(MotifHit const & other) const;
 	core::pose::Pose       & mpose()       { return *mpose_; }
@@ -368,16 +354,16 @@ public:
 	void filter_redundant();
 	void sort_by_rms_and_energy();
 	void dump_motifs_pdb( std::ostream & out, int & count,   Size & atomno, numeric::Xforms const & xforms=XsI ) const;
-	void dump_motifs_pdb( string const & fname    ,                Size & atomno, numeric::Xforms const & xforms=XsI ) const;
-	void dump_motifs_pdb( string const & fname, Pose const & pose, Size & atomno, numeric::Xforms const & xforms=XsI ) const;
+	void dump_motifs_pdb( std::string const & fname    ,                Size & atomno, numeric::Xforms const & xforms=XsI ) const;
+	void dump_motifs_pdb( std::string const & fname, core::pose::Pose const & pose, Size & atomno, numeric::Xforms const & xforms=XsI ) const;
 	void dump_motifs_pdb( std::ostream & out, int & count,   numeric::Xforms const & xforms=XsI ) const { Size tmp=0; dump_motifs_pdb(out,count,tmp,xforms); }
-	void dump_motifs_pdb( string const & fname    ,                numeric::Xforms const & xforms=XsI ) const { Size tmp=0; dump_motifs_pdb(fname,tmp,xforms); }
-	void dump_motifs_pdb( string const & fname, Pose const & pose, numeric::Xforms const & xforms=XsI ) const { Size tmp=0; dump_motifs_pdb(fname,pose,tmp,xforms); }
+	void dump_motifs_pdb( std::string const & fname    ,                numeric::Xforms const & xforms=XsI ) const { Size tmp=0; dump_motifs_pdb(fname,tmp,xforms); }
+	void dump_motifs_pdb( std::string const & fname, core::pose::Pose const & pose, numeric::Xforms const & xforms=XsI ) const { Size tmp=0; dump_motifs_pdb(fname,pose,tmp,xforms); }
 	void dump_motifs_pdb( std::ostream & out, numeric::Xforms const & xforms=XsI ) const { int d(0); Size tmp=0; dump_motifs_pdb(out,d,tmp,xforms); }
 	// int print_motifs( std::ostream & out) const; commented out because failing in the python build
 	int stat_motifs( MotifHitStats & stat) const;
-	string get_resfile(bool restrict=false) const;
-	string get_resfile(bool restrict, std::set<core::Size> & resi_in_resfile) const;
+	std::string get_resfile(bool restrict=false) const;
+	std::string get_resfile(bool restrict, std::set<core::Size> & resi_in_resfile) const;
 	void dump_resfile(std::string fn) const;
 	void push_back(MotifHit const & h);
 	void push_back_raw(MotifHit const & h);
@@ -400,7 +386,7 @@ enum MotifMatchOverlapReq {
 };
 class ResPairMotifQuery {
 	friend class MotifHash;
-	PoseCOP pose1_,pose2_;
+	core::pose::PoseCOP pose1_,pose2_;
 	numeric::geometry::hashing::xyzStripeHash const *inter_clash1_;
 	numeric::geometry::hashing::xyzStripeHash const *inter_clash2_;
 	Xform inter_clash1_xform_,inter_clash2_xform_;
@@ -408,13 +394,13 @@ class ResPairMotifQuery {
 	bool auto_clash_,interface_only_,match_ss1_,match_aa1_,match_ss2_,match_aa2_,clash_check_;
 	Real match_radius_,max_ca_dis2_,match_chi_rmsd_;
 	Bools useres1_,useres2_,useres1_ph_,useres2_ph_,useres1_po_,useres2_po_;
-	void init(Pose const & pose1, Pose const & pose2);
+	void init(core::pose::Pose const & pose1, core::pose::Pose const & pose2);
 	ResPairMotifQuery(){}
 public:
-	ResPairMotifQuery( Pose const & pose1                     ) : clash_check_(true) { init(pose1,pose1); }
-	ResPairMotifQuery( Pose const & pose1, Pose const & pose2 ) : clash_check_(true) { init(pose1,pose2); }
-	PoseCOP pose1() const { return pose1_; }
-	PoseCOP pose2() const { return pose2_; }
+	ResPairMotifQuery( core::pose::Pose const & pose1                     ) : clash_check_(true) { init(pose1,pose1); }
+	ResPairMotifQuery( core::pose::Pose const & pose1, core::pose::Pose const & pose2 ) : clash_check_(true) { init(pose1,pose2); }
+	core::pose::PoseCOP pose1() const { return pose1_; }
+	core::pose::PoseCOP pose2() const { return pose2_; }
 	// numeric::geometry::hashing::xyzStripeHash const * intra_clash1() const { return intra_clash1_; }
 	// numeric::geometry::hashing::xyzStripeHash const * intra_clash2() const { return intra_clash2_; }
 	numeric::geometry::hashing::xyzStripeHash const * inter_clash1() const { return inter_clash1_; }
@@ -497,7 +483,7 @@ public:
 	void find_motifs(Real6 const & rt, ResPairMotifs & results ) const;
 	Size count_motifs(Real6 const & rt) const ;
 	Size count_motifs(Key const & k) const;
-	void find_motifs_with_radius(Real6 const & rt, Real radius, vector1<Motif> & results) const;
+	void find_motifs_with_radius(Real6 const & rt, Real radius, utility::vector1<Motif> & results) const;
 	Size num_motifs() { return motif_umap_.size(); }
 	// Undefined, commenting out to fix PyRosetta build  Key key_of(Motif const & d) const;
 	Real cart_size() const { return cart_size_; }
@@ -576,8 +562,8 @@ private:
 
 void preload_motif_data(MotifHashManager & mman);
 
-void load_motifs(vector1<string> const & fnames, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
-void load_motifs(string const & fname, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
+void load_motifs(utility::vector1<std::string> const & fnames, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
+void load_motifs(std::string const & fname, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
 
 
 }

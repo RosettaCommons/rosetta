@@ -90,7 +90,7 @@ namespace antibody {
 
 using namespace core;
 using namespace protocols::antibody::clusters;
-
+using utility::vector1;
 
 utility::vector1<bool>
 get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool include_cdr4 /* false */){

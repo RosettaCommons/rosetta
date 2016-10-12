@@ -52,9 +52,9 @@ static THREAD_LOCAL basic::Tracer trAtomPairConstraintsScore(
 /// @param query_size - the number of residues in the query sequence
 /// @param constrainable_atoms - a vector of strings providing names of constrained atoms.
 /// On every do_cahing() event these && only these atoms will be cached from a chunk's pose
-AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size, utility::vector1<std::string> constrainable_atoms) :
+AtomPairConstraintsScore::AtomPairConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size, utility::vector1<std::string> constrainable_atoms) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	constrainable_atoms, "AtomPairConstraintsScore") {
 
@@ -70,9 +70,9 @@ AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
 /// @param lowest_acceptable_value - a fragment for which this score is below a certain threshold will be discarded
 /// @param constraints_file_name - from this file AtomPair constraints will be obtained
 /// @param query_size - the number of residues in the query sequence
-AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
-	Size query_size) :
+AtomPairConstraintsScore::AtomPairConstraintsScore(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, std::string constraints_file_name,
+	core::Size query_size) :
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 	"AtomPairConstraintsScore") {
 
@@ -89,20 +89,20 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 
 	PROF_START( basic::FRAGMENTPICKING_ATOMPAIR_SCORE );
 
-	Size frag_len = fragment->get_length();
-	Size vi = fragment->get_first_index_in_vall();
-	Size qi = fragment->get_first_index_in_query();
+	core::Size frag_len = fragment->get_length();
+	core::Size vi = fragment->get_first_index_in_vall();
+	core::Size qi = fragment->get_first_index_in_query();
 
-	Real total_score = 0;
-	for ( Size i = 0; i < frag_len; ++i ) {
-		for ( Size c = 1; c <= data_[i + qi].size(); ++c ) {
-			Size firstQueryResidueIndex = qi + i;
+	core::Real total_score = 0;
+	for ( core::Size i = 0; i < frag_len; ++i ) {
+		for ( core::Size c = 1; c <= data_[i + qi].size(); ++c ) {
+			core::Size firstQueryResidueIndex = qi + i;
 			AtomPairConstraintsDataOP r = data_[firstQueryResidueIndex][c];
 			if ( r->get_offset() >= frag_len - i ) {
 				continue;
 			}
-			Size firstVallResidueIndex = vi + i;
-			Size secondVallResidueIndex = firstVallResidueIndex
+			core::Size firstVallResidueIndex = vi + i;
+			core::Size secondVallResidueIndex = firstVallResidueIndex
 				+ r->get_offset();
 			if ( !has_atom(firstVallResidueIndex, r->get_first_atom()) ) {
 				continue;
@@ -113,15 +113,15 @@ bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,
 
 			debug_assert (fragment->get_chunk()->size() >=secondVallResidueIndex);
 
-			numeric::xyzVector<Real> v1 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v1 = get_atom_coordinates(
 				firstVallResidueIndex, r->get_first_atom());
-			numeric::xyzVector<Real> v2 = get_atom_coordinates(
+			numeric::xyzVector<core::Real> v2 = get_atom_coordinates(
 				secondVallResidueIndex, r->get_second_atom());
-			Real d = v1.distance(v2);
+			core::Real d = v1.distance(v2);
 			total_score += r->get_function()->func(d);
 		}
 	}
-	total_score /= (Real) frag_len;
+	total_score /= (core::Real) frag_len;
 	scores->set_score_component(total_score, id_);
 	PROF_STOP( basic::FRAGMENTPICKING_ATOMPAIR_SCORE );
 	if ( (total_score > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -147,7 +147,7 @@ void AtomPairConstraintsScore::read_constraints(
 	std::string line;
 	getline(data, line); // header line
 	std::string tag;
-	Size n_constr = 0;
+	core::Size n_constr = 0;
 	while ( !data.fail() ) {
 		char c = data.peek();
 		if ( c == '#' || c == '\n' ) {
@@ -162,7 +162,7 @@ void AtomPairConstraintsScore::read_constraints(
 		}
 		if ( tag == "AtomPair" ) {
 			std::string name1, name2, func_type;
-			Size id1, id2;
+			core::Size id1, id2;
 			data >> name1 >> id1 >> name2 >> id2 >> func_type;
 			trAtomPairConstraintsScore.Debug << "read: " << name1 << " " << id1
 				<< " " << name2 << " " << id2 << " func: " << func_type
@@ -170,9 +170,9 @@ void AtomPairConstraintsScore::read_constraints(
 			core::scoring::func::FuncOP func = factory_.new_func(
 				func_type);
 			func->read_data(data);
-			std::map<std::string, Size> constr_atoms =
+			std::map<std::string, core::Size> constr_atoms =
 				get_constrainable_atoms_map();
-			std::map<std::string, Size>::iterator it = constr_atoms.find(name1);
+			std::map<std::string, core::Size>::iterator it = constr_atoms.find(name1);
 			if ( it == constr_atoms.end() ) {
 				trAtomPairConstraintsScore.Warning << "Unknown backbone atom: "
 					<< name1
@@ -180,7 +180,7 @@ void AtomPairConstraintsScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a1 = it->second;
+			core::Size a1 = it->second;
 			it = constr_atoms.find(name2);
 			if ( it == constr_atoms.end() ) {
 				trAtomPairConstraintsScore.Warning << "Unknown backbone atom: "
@@ -189,7 +189,7 @@ void AtomPairConstraintsScore::read_constraints(
 					<< line << std::endl;
 				continue;
 			}
-			Size a2 = it->second;
+			core::Size a2 = it->second;
 			AtomPairConstraintsDataOP dat;
 			if ( id2 > id1 ) {
 				if ( id2 > get_query_size() ) {
@@ -218,8 +218,8 @@ void AtomPairConstraintsScore::read_constraints(
 		<< std::endl;
 }
 
-FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(Size priority,
-	Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(core::Size priority,
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

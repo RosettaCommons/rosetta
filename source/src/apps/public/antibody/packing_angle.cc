@@ -38,6 +38,7 @@
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
 
+using utility::vector1;
 
 class PackingAngle : public protocols::moves::Mover {
 public:

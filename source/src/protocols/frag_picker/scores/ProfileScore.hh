@@ -33,15 +33,15 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  a fragment candidate
 class ProfileScore: public CachingScoringMethod {
 public:
 
-	ProfileScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
-		sequence::SequenceProfileOP query_profile,
-		sequence::ScoringSchemeOP profile_scoring, Size longest_vall_chunk) :
+	ProfileScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
+		core::sequence::SequenceProfileOP query_profile,
+		core::sequence::ScoringSchemeOP profile_scoring, core::Size longest_vall_chunk) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "ProfileScore") {
 		if ( query_profile->size() != query_profile->length() ) {
 			utility_exit_with_message("ProfileScore needs a valid sequence profile.");
@@ -49,8 +49,8 @@ public:
 		query_profile_ = query_profile;
 		profile_scoring_ = profile_scoring;
 
-		for ( Size i = 1; i <= query_profile->length(); ++i ) {
-			utility::vector1<Real> row(longest_vall_chunk);
+		for ( core::Size i = 1; i <= query_profile->length(); ++i ) {
+			utility::vector1<core::Real> row(longest_vall_chunk);
 			scores_.push_back(row);
 		}
 	}
@@ -68,8 +68,8 @@ protected:
 	Matrix scores_;
 
 private:
-	sequence::SequenceProfileOP query_profile_;
-	sequence::ScoringSchemeOP profile_scoring_;
+	core::sequence::SequenceProfileOP query_profile_;
+	core::sequence::ScoringSchemeOP profile_scoring_;
 	std::string cached_scores_id_;
 	void clear();
 };
@@ -81,7 +81,7 @@ public:
 		MakeFragmentScoringMethod("ProfileScore") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

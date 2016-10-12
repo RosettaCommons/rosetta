@@ -27,6 +27,8 @@ namespace stepwise {
 namespace legacy {
 namespace screener {
 
+using namespace core;
+
 //Constructor
 SimpleRMSD_Screener::SimpleRMSD_Screener( pose::Pose const & pose,
 	utility::vector1< Size > const & calc_rms_res,

@@ -39,8 +39,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
-//static numeric::random::RandomGenerator RG(8713093);  // <- Magic number, do not change it!
+using namespace core::optimization;
 
 namespace protocols {
 namespace helical_bundle {

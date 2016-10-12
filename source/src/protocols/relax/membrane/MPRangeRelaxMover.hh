@@ -42,12 +42,6 @@ namespace protocols {
 namespace relax {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace core::scoring;
-using namespace protocols::moves;
-
 class MPRangeRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -118,10 +112,10 @@ private: // methods
 private: // data
 
 	/// @brief Native
-	PoseOP native_;
+	core::pose::PoseOP native_;
 
 	/// @brief Scorefxn
-	ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 	/// @brief Center residue number
 	core::Size center_resnumber_;

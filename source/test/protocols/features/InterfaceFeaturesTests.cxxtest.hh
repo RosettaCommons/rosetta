@@ -53,6 +53,7 @@
 static basic::Tracer TR("protocols.features.InterfaceFeaturesTests.cxxtest");
 
 using namespace protocols::features;
+using utility::vector1;
 
 class InterfaceFeaturesTests : public CxxTest::TestSuite {
 

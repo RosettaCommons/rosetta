@@ -111,6 +111,8 @@ namespace canonical_sampling {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.CanonicalSamplingMover" );
 
+using namespace core;
+
 bool protocols::canonical_sampling::CanonicalSamplingMover::options_registered_( false );
 
 void CanonicalSamplingMover::register_options() {

@@ -48,8 +48,6 @@ class VallResidue: public utility::pointer::ReferenceCount {
 public:
 	// typedefs
 
-	typedef core::Size Size;
-	typedef core::Real Real;
 	typedef std::string String;
 
 	typedef core::fragment::BBTorsionSRFD BBTorsionSRFD;
@@ -85,10 +83,10 @@ public:
 	}
 
 	/// @brief sets the key id
-	void key(Size key) { key_ = key; }
+	void key(core::Size key) { key_ = key; }
 
 	/// @brief sets the key id
-	Size key() { return key_; }
+	core::Size key() { return key_; }
 
 	/// @brief one letter amino acid code
 	inline
@@ -109,127 +107,127 @@ public:
 	}
 
 	/// @brief residue sequence number in source
-	inline Size resi() const {
+	inline core::Size resi() const {
 		return resi_;
 	}
 
 	/// @brief x-coordinate of C-alpha
-	inline Real x() const {
+	inline core::Real x() const {
 		return x_;
 	}
 
 	/// @brief y-coordinate of C-alpha
-	inline Real y() const {
+	inline core::Real y() const {
 		return y_;
 	}
 
 	/// @brief z-coordinate of C-alpha
-	inline Real z() const {
+	inline core::Real z() const {
 		return z_;
 	}
 
 	/// @brief x-coordinate of C-beta
-	inline Real cbx() const {
+	inline core::Real cbx() const {
 		return cbx_;
 	}
 
 	/// @brief y-coordinate of C-beta
-	inline Real cby() const {
+	inline core::Real cby() const {
 		return cby_;
 	}
 
 	/// @brief z-coordinate of C-beta
-	inline Real cbz() const {
+	inline core::Real cbz() const {
 		return cbz_;
 	}
 
 	/// @brief x-coordinate of centroid
-	inline Real cenx() const {
+	inline core::Real cenx() const {
 		return cenx_;
 	}
 
 	/// @brief y-coordinate of centroid
-	inline Real ceny() const {
+	inline core::Real ceny() const {
 		return ceny_;
 	}
 
 	/// @brief z-coordinate of centroid
-	inline Real cenz() const {
+	inline core::Real cenz() const {
 		return cenz_;
 	}
 
 	/// @brief solvent accessible area
-	inline Real sa() const {
+	inline core::Real sa() const {
 		return sa_;
 	}
 
 	/// @brief solvent accessible area normalized
-	inline Real sa_norm() const {
+	inline core::Real sa_norm() const {
 		return sa_norm_;
 	}
 
 	/// @brief phi backbone torsion in degrees from DSSP
-	inline Real dssp_phi() const {
+	inline core::Real dssp_phi() const {
 		return dssp_phi_;
 	}
 
 	/// @brief psi backbone torsion in degrees from DSSP
-	inline Real dssp_psi() const {
+	inline core::Real dssp_psi() const {
 		return dssp_psi_;
 	}
 
 	/// @brief all-atom residue depth
-	inline Real depth() const {
+	inline core::Real depth() const {
 		return all_atom_residue_depth_;
 	}
 
 	/// @brief number of alignments
-	inline Size nali() const {
+	inline core::Size nali() const {
 		return nali_;
 	}
 
 	/// @brief phi backbone torsion in degrees
-	inline Real phi() const {
+	inline core::Real phi() const {
 		return phi_;
 	}
 
 	/// @brief psi backbone torsion in degrees
-	inline Real psi() const {
+	inline core::Real psi() const {
 		return psi_;
 	}
 
 	/// @brief omega backbone torsion in degrees
-	inline Real omega() const {
+	inline core::Real omega() const {
 		return omega_;
 	}
 
 	/// @brief b factor average for backbone
-	inline Real bF() const {
+	inline core::Real bF() const {
 		return bF_;
 	}
 
 	/// @brief per amino acid profile data
-	inline utility::vector1<Real> const & profile() const {
+	inline utility::vector1<core::Real> const & profile() const {
 		return profile_;
 	}
 
 	/// @brief per amino acid structure profile data
-	inline utility::vector1<Real> const & profile_struct() const {
+	inline utility::vector1<core::Real> const & profile_struct() const {
 		return profile_struct_;
 	}
 
 	/// @brief secondary chemical shifts
-	inline utility::vector1<Real> const & secondary_shifts() {
+	inline utility::vector1<core::Real> const & secondary_shifts() {
 		return sec_shift_data_;
 	}
 
 	/// @brief per amino acid profile data
-	inline void profile(utility::vector1<Real> const & v) {
+	inline void profile(utility::vector1<core::Real> const & v) {
 		profile_ = v;
 	}
 
 	/// @brief per amino acid structure profile data
-	inline void profile_struct(utility::vector1<Real> const & v) {
+	inline void profile_struct(utility::vector1<core::Real> const & v) {
 		profile_struct_ = v;
 	}
 
@@ -301,105 +299,105 @@ public:
 
 	/// @brief residue sequence number in source
 	inline
-	void resi(Size const i) {
+	void resi(core::Size const i) {
 		resi_ = i;
 	}
 
 	/// @brief x-coordinate of C-alpha
 	inline
-	void x(Real const val) {
+	void x(core::Real const val) {
 		x_ = val;
 	}
 
 	/// @brief y-coordinate of C-alpha
 	inline
-	void y(Real const val) {
+	void y(core::Real const val) {
 		y_ = val;
 	}
 
 	/// @brief z-coordinate of C-alpha
 	inline
-	void z(Real const val) {
+	void z(core::Real const val) {
 		z_ = val;
 	}
 
 
 	/// @brief x-coordinate of C-beta
 	inline
-	void cbx(Real const val) {
+	void cbx(core::Real const val) {
 		cbx_ = val;
 	}
 
 	/// @brief y-coordinate of C-beta
 	inline
-	void cby(Real const val) {
+	void cby(core::Real const val) {
 		cby_ = val;
 	}
 
 	/// @brief z-coordinate of C-beta
 	inline
-	void cbz(Real const val) {
+	void cbz(core::Real const val) {
 		cbz_ = val;
 	}
 
 	/// @brief x-coordinate of centroid
 	inline
-	void cenx(Real const val) {
+	void cenx(core::Real const val) {
 		cenx_ = val;
 	}
 
 	/// @brief y-coordinate of centroid
 	inline
-	void ceny(Real const val) {
+	void ceny(core::Real const val) {
 		ceny_ = val;
 	}
 
 	/// @brief z-coordinate of centroid
 	inline
-	void cenz(Real const val) {
+	void cenz(core::Real const val) {
 		cenz_ = val;
 	}
 
 
 	/// @brief solvent accessible area
 	inline
-	void sa(Real const val) {
+	void sa(core::Real const val) {
 		sa_ = val;
 	}
 
 	/// @brief number of alignments
 	inline
-	void nali(Size const val) {
+	void nali(core::Size const val) {
 		nali_ = val;
 	}
 
 	/// @brief all-atom residue depth
 	inline
-	void depth(Real const depth) {
+	void depth(core::Real const depth) {
 		all_atom_residue_depth_ = depth;
 	}
 
 	/// @brief phi backbone torsion in degrees
 	inline
-	void phi(Real const val) {
+	void phi(core::Real const val) {
 		phi_ = val;
 	}
 
 	/// @brief psi backbone torsion in degrees
 	inline
-	void psi(Real const val) {
+	void psi(core::Real const val) {
 		psi_ = val;
 	}
 
 	/// @brief omega backbone torsion in degrees
 	inline
-	void omega(Real const val) {
+	void omega(core::Real const val) {
 		omega_ = val;
 	}
 
 	/// @brief b factor average for backbone
 	inline
-	void bF(Real const val) {
+	void bF(core::Real const val) {
 		bF_ = val;
 	}
 
@@ -437,13 +435,13 @@ public:
 
 	void fill_from_string_residue_depth_version1(String const & line);
 
-	Real distance_squared( VallResidueCOP r );
+	core::Real distance_squared( VallResidueCOP r );
 
-	Real distance_squared_cb( VallResidueCOP r );
+	core::Real distance_squared_cb( VallResidueCOP r );
 
-	Real distance_squared_cen( VallResidueCOP r );
+	core::Real distance_squared_cen( VallResidueCOP r );
 
-	Real distance_squared( VallResidueCOP r, ContactType const & type );
+	core::Real distance_squared( VallResidueCOP r, ContactType const & type );
 
 private:
 	// static methods
@@ -474,7 +472,7 @@ private:
 	// data
 
 	/// @brief integer key for a residue is simply the line number in a vall file
-	Size key_;
+	core::Size key_;
 
 	/// @brief id of fragment source (e.g. pdb name)
 	String id_;
@@ -489,71 +487,71 @@ private:
 	char ss_str_;
 
 	/// @brief residue sequence number in source
-	Size resi_;
+	core::Size resi_;
 
 	/// @brief b factor average for backbone
-	Real bF_;
+	core::Real bF_;
 
 	/// @brief x-coordinate of C-alpha
-	Real x_;
+	core::Real x_;
 
 	/// @brief y-coordinate of C-alpha
-	Real y_;
+	core::Real y_;
 
 	/// @brief z-coordinate of C-alpha
-	Real z_;
+	core::Real z_;
 
 	/// @brief x-coordinate of C-beta
-	Real cbx_;
+	core::Real cbx_;
 
 	/// @brief y-coordinate of C-beta
-	Real cby_;
+	core::Real cby_;
 
 	/// @brief z-coordinate of C-beta
-	Real cbz_;
+	core::Real cbz_;
 
 	/// @brief x-coordinate of centroid
-	Real cenx_;
+	core::Real cenx_;
 
 	/// @brief y-coordinate of centroid
-	Real ceny_;
+	core::Real ceny_;
 
 	/// @brief z-coordinate of centroid
-	Real cenz_;
+	core::Real cenz_;
 
 	/// @brief phi backbone torsion in degrees
-	Real phi_;
+	core::Real phi_;
 
 	/// @brief psi backbone torsion in degrees
-	Real psi_;
+	core::Real psi_;
 
 	/// @brief omega backbone torsion in degrees
-	Real omega_;
+	core::Real omega_;
 
 	/// @brief solvent accessible area
-	Real sa_;
+	core::Real sa_;
 
 	/// @brief normalized solvent accessible area
-	Real sa_norm_;
+	core::Real sa_norm_;
 
 	/// @brief phi backbone torsion in degrees from DSSP program
-	Real dssp_phi_;
+	core::Real dssp_phi_;
 
 	/// @brief psi backbone torsion in degrees from DSSP program
-	Real dssp_psi_;
+	core::Real dssp_psi_;
 
 	/// @brief number of alignments used for profile
-	Size nali_;
+	core::Size nali_;
 
 	/// @brief per amino acid profile data
-	utility::vector1<Real> profile_;
+	utility::vector1<core::Real> profile_;
 
 	/// @brief per amino acid structure profile data
-	utility::vector1<Real> profile_struct_;
+	utility::vector1<core::Real> profile_struct_;
 
-	utility::vector1<Real> sec_shift_data_;
+	utility::vector1<core::Real> sec_shift_data_;
 
-	Real all_atom_residue_depth_;
+	core::Real all_atom_residue_depth_;
 
 private:
 	// static data

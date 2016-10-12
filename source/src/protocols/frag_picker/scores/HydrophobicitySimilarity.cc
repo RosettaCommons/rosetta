@@ -44,8 +44,8 @@ bool HydrophobicitySimilarity::cached_score(FragmentCandidateOP fragment,
 
 bool HydrophobicitySimilarity::score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
-	Real totalScore = 0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		// scoring based on SEGMER hydrophobicity energy term
 		if ( is_hydrophobic_[r->aa()] && is_hydrophobic_[query_[i + f->get_first_index_in_query() - 2]] ) {
@@ -60,7 +60,7 @@ bool HydrophobicitySimilarity::score(FragmentCandidateOP f,
 			totalScore += 1.0; // penalty if different and not hydrophobic
 		}
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;

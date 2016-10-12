@@ -73,8 +73,8 @@ public:
 
 private:
 
-	utility::vector1< Size >
-	figure_out_actual_sample_res( pose::Pose const & pose ) const;
+	utility::vector1< core::Size >
+	figure_out_actual_sample_res( core::pose::Pose const & pose ) const;
 
 private:
 

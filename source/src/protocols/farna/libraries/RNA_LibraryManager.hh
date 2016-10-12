@@ -24,9 +24,6 @@
 #include <map>
 #include <string>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace protocols::farna::fragments;
-
 namespace protocols {
 namespace farna {
 namespace libraries {
@@ -53,7 +50,7 @@ private:
 
 public:
 
-	RNA_Fragments const &
+	protocols::farna::fragments::RNA_Fragments const &
 	rna_fragment_library( std::string const & tag );
 
 	RNA_JumpLibrary const &
@@ -73,7 +70,7 @@ public:
 
 private:
 
-	std::map< std::string, RNA_FragmentsCOP > rna_fragment_libraries_;
+	std::map< std::string, protocols::farna::fragments::RNA_FragmentsCOP > rna_fragment_libraries_;
 	std::map< std::string, RNA_JumpLibraryCOP > rna_jump_libraries_;
 	BasePairStepLibraryCOP canonical_base_pair_step_library_;
 	BasePairStepLibraryCOP general_base_pair_step_library_;

@@ -38,9 +38,6 @@
 namespace numeric {
 namespace interpolation {
 
-using numeric::Real;
-using numeric::Size;
-
 template< Size N >
 class InterpolatedPotential {
 
@@ -52,7 +49,7 @@ public:
 		for ( auto & p : periodic_ ) { p = false; }
 	}
 
-	~InterpolatedPotential() { delete[] gridpoints_; }
+	~InterpolatedPotential() { delete gridpoints_; }
 
 public:
 	void dimension( utility::fixedsizearray1< Size, N > const & dims ) {

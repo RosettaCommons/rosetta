@@ -27,9 +27,6 @@
 #include <utility/options/StringVectorOption.fwd.hh>
 #include <map>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -42,11 +39,11 @@ void
 initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
 	utility::vector1< std::string > const & pdb_tags,
 	utility::vector1< std::string > const & silent_files_in,
-	utility::vector1< Size > const & input_res,
-	utility::vector1< Size > const & input_res2
+	utility::vector1< core::Size > const & input_res,
+	utility::vector1< core::Size > const & input_res2
 );
 
-import_pose::pose_stream::PoseInputStreamOP
+core::import_pose::pose_stream::PoseInputStreamOP
 setup_pose_input_stream(
 	utility::options::StringVectorOption const & option_s1,
 	utility::options::StringVectorOption const & option_silent1,
@@ -58,23 +55,23 @@ setup_pose_input_stream(
 class InputStreamWithResidueInfo:public utility::pointer::ReferenceCount {
 public:
 
-	InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-		utility::vector1< Size > const & input_res,
-		utility::vector1< Size > const & slice_res );
+	InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+		utility::vector1< core::Size > const & input_res,
+		utility::vector1< core::Size > const & slice_res );
 
-	InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-		utility::vector1< Size > const & input_res);
+	InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
+		utility::vector1< core::Size > const & input_res);
 
 	~InputStreamWithResidueInfo();
 
-	import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
-	utility::vector1< Size > const & input_res();
-	utility::vector1< Size > const & slice_res();
-	std::map< Size, Size > & full_to_sub();
+	core::import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
+	utility::vector1< core::Size > const & input_res();
+	utility::vector1< core::Size > const & slice_res();
+	std::map< core::Size, core::Size > & full_to_sub();
 
-	void set_slice_res(  utility::vector1< Size > const & slice_res );
-	void set_full_to_sub( std::map< Size, Size > const & full_to_sub );
-	void set_rsd_set( chemical::ResidueTypeSetCAP & rsd_set );
+	void set_slice_res(  utility::vector1< core::Size > const & slice_res );
+	void set_full_to_sub( std::map< core::Size, core::Size > const & full_to_sub );
+	void set_rsd_set( core::chemical::ResidueTypeSetCAP & rsd_set );
 
 	void reset();
 
@@ -83,45 +80,45 @@ public:
 	void
 	advance_to_next_pose_segment();
 
-	void copy_next_pose_segment( pose::Pose & pose );
+	void copy_next_pose_segment( core::pose::Pose & pose );
 
-	void copy_next_pose_segment( pose::Pose & pose,
-		pose::Pose & import_pose,
+	void copy_next_pose_segment( core::pose::Pose & pose,
+		core::pose::Pose & import_pose,
 		bool const check_sequence_matches,
 		bool const align_pose_to_import_pose = false );
 
 	void
-	apply_current_pose_segment( pose::Pose & pose );
+	apply_current_pose_segment( core::pose::Pose & pose );
 
 	void
-	apply_current_pose_segment( pose::Pose & pose,
-		pose::Pose & import_pose,
+	apply_current_pose_segment( core::pose::Pose & pose,
+		core::pose::Pose & import_pose,
 		bool const check_sequence_matches,
 		bool const align_pose_to_import_pose = false );
 
 	void set_backbone_only( bool const setting );
 
-	Size compute_size();
+	core::Size compute_size();
 
 private:
 
 	void
 	initialize_defaults();
 
-	void cleanup_pose( pose::Pose & import_pose ) const;
+	void cleanup_pose( core::pose::Pose & import_pose ) const;
 
-	void check_sequence( pose::Pose const & pose, pose::Pose const & import_pose );
+	void check_sequence( core::pose::Pose const & pose, core::pose::Pose const & import_pose );
 
 private:
 
-	import_pose::pose_stream::PoseInputStreamOP pose_input_stream_;
-	utility::vector1< Size > input_res_;
-	utility::vector1< Size > slice_res_;
-	std::map< Size, Size > full_to_sub_;
-	chemical::ResidueTypeSetCAP rsd_set_;
+	core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream_;
+	utility::vector1< core::Size > input_res_;
+	utility::vector1< core::Size > slice_res_;
+	std::map< core::Size, core::Size > full_to_sub_;
+	core::chemical::ResidueTypeSetCAP rsd_set_;
 	bool backbone_only_;
 
-	pose::PoseOP import_pose_;
+	core::pose::PoseOP import_pose_;
 };
 
 

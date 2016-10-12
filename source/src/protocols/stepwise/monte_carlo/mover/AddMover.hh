@@ -48,7 +48,7 @@ public:
 	using protocols::moves::Mover::apply;
 
 	void
-	apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
+	apply( core::pose::Pose & pose, core::Size const res_to_add_in_full_model_numbering, core::Size const res_to_build_off_in_full_model_numbering );
 
 	void
 	apply( core::pose::Pose & pose, StepWiseMove const & swa_move );
@@ -63,21 +63,21 @@ public:
 
 	void set_sample_range_large( core::Real const setting ){ sample_range_large_ = setting; }
 
-	void set_internal_cycles( Size const setting ){ internal_cycles_ = setting; }
+	void set_internal_cycles( core::Size const setting ){ internal_cycles_ = setting; }
 
-	void set_presample_added_residue( Size const setting ){ presample_added_residue_ = setting; }
+	void set_presample_added_residue( core::Size const setting ){ presample_added_residue_ = setting; }
 
-	void set_presample_by_swa( Size const setting ){ presample_by_swa_ = setting; }
+	void set_presample_by_swa( core::Size const setting ){ presample_by_swa_ = setting; }
 
-	void set_start_added_residue_in_aform( Size const setting ){ start_added_residue_in_aform_ = setting; }
+	void set_start_added_residue_in_aform( core::Size const setting ){ start_added_residue_in_aform_ = setting; }
 
-	void set_minimize_single_res( Size const setting ){ minimize_single_res_ = setting; }
+	void set_minimize_single_res( core::Size const setting ){ minimize_single_res_ = setting; }
 
 	void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
 private:
 
-	void sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
+	void sample_by_swa( core::pose::Pose & pose, core::Size const res_to_add  ) const;
 
 	void sample_by_monte_carlo_internal( core::pose::Pose & pose ) const;
 
@@ -88,36 +88,36 @@ private:
 	do_prepend( core::pose::Pose & pose );
 
 	void
-	append_other_pose( pose::Pose & pose, Size const offset,
-		Size const other_pose_idx );
+	append_other_pose( core::pose::Pose & pose, core::Size const offset,
+		core::Size const other_pose_idx );
 
 	void
-	prepend_other_pose( pose::Pose & pose, Size const offset,
-		Size const other_pose_idx );
+	prepend_other_pose( core::pose::Pose & pose, core::Size const offset,
+		core::Size const other_pose_idx );
 
 	void
-	append_residue( pose::Pose & pose, Size const offset );
+	append_residue( core::pose::Pose & pose, core::Size const offset );
 
 	void
-	prepend_residue( pose::Pose & pose, Size const offset );
+	prepend_residue( core::pose::Pose & pose, core::Size const offset );
 
 	bool
-	check_same_chain( pose::Pose const & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
+	check_same_chain( core::pose::Pose const & pose, core::Size const res_to_add_in_full_model_numbering, core::Size const res_to_build_off_in_full_model_numbering );
 
 	bool
-	check_same_chain( pose::Pose const & pose );
+	check_same_chain( core::pose::Pose const & pose );
 
 	void
-	setup_initial_torsions( pose::Pose & pose );
+	setup_initial_torsions( core::pose::Pose & pose );
 
-	Size
-	get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
+	core::Size
+	get_add_res( StepWiseMove const & swa_move, core::pose::Pose const & pose ) const;
 
 	void
 	setup_initial_jump( core::pose::Pose & pose );
 
 	core::conformation::ResidueOP
-  create_residue_to_add( pose::Pose const & pose );
+	create_residue_to_add( core::pose::Pose const & pose );
 
 private:
 
@@ -127,7 +127,7 @@ private:
 	bool presample_by_swa_;
 	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
-	Size internal_cycles_;
+	core::Size internal_cycles_;
 
 	rna::RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;
@@ -136,8 +136,8 @@ private:
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 
-	Size suite_num_, nucleoside_num_;
-	Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
+	core::Size suite_num_, nucleoside_num_;
+	core::Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
 	StepWiseMove swa_move_;
 
 };

@@ -35,37 +35,28 @@
 namespace protocols {
 namespace comparative_modeling {
 
-using utility::vector1;
-using core::Size;
-using core::Real;
-using std::string;
-using std::map;
-using core::pose::Pose;
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core::sequence;
-
 class AlignmentCluster : public utility::pointer::ReferenceCount {
 private:
-	vector1<SequenceAlignment> alns;
+	utility::vector1<core::sequence::SequenceAlignment> alns;
 public:
-	AlignmentCluster(SequenceAlignment & aln_in);
+	AlignmentCluster(core::sequence::SequenceAlignment & aln_in);
 	~AlignmentCluster() override;
-	void add_aln(SequenceAlignment & aln_in);
-	SequenceAlignment get_aln(Size index);
-	Real size();
-	SequenceAlignment get_clusterCenter();
+	void add_aln(core::sequence::SequenceAlignment & aln_in);
+	core::sequence::SequenceAlignment get_aln(core::Size index);
+	core::Real size();
+	core::sequence::SequenceAlignment get_clusterCenter();
 	void output(std::ostream & alignment_out);
 	void merge(AlignmentClusterOP cluster_in);
-	Real overlap(AlignmentClusterOP cluster_in);
+	core::Real overlap(AlignmentClusterOP cluster_in);
 };
 class AlignmentClustering : public utility::pointer::ReferenceCount {
 public:
 	AlignmentClustering();
 	~AlignmentClustering() override;
 private:
-	vector1<AlignmentClusterOP> cluster(vector1< vector1< Real > > & gdtmms, vector1<SequenceAlignment> & rankedAlignments, Real threshold_gdt);
-	map< string, Pose > poses_from_cmd_line(utility::vector1< std::string > const & fn_list);
-	vector1< SequenceAlignment > generateRankedAlignments(map <string,SequenceAlignment> & alns, Real THRESHOLD_FOR_E_VAL);
+	utility::vector1<AlignmentClusterOP> cluster(utility::vector1< utility::vector1< core::Real > > & gdtmms, utility::vector1<core::sequence::SequenceAlignment> & rankedAlignments, core::Real threshold_gdt);
+	std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< std::string > const & fn_list);
+	utility::vector1< core::sequence::SequenceAlignment > generateRankedAlignments(std::map <std::string,core::sequence::SequenceAlignment> & alns, core::Real THRESHOLD_FOR_E_VAL);
 };
 } // comparative_modeling
 } // protocols

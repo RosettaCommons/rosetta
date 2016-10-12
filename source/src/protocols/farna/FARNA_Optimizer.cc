@@ -27,6 +27,7 @@
 static basic::Tracer TR( "protocols.farna.FARNA_Optimizer" );
 
 using namespace core;
+using namespace protocols::farna::options;
 
 namespace protocols {
 namespace farna {

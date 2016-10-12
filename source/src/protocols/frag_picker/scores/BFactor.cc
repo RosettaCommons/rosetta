@@ -28,17 +28,21 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+using core::Real;
+using core::Size;
+using namespace ObjexxFCL::format;
+
 bool BFactor::score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
 
 	// describe_score(f, empty_map, std::cerr);
 
-	Real totalScore = 0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		totalScore += r->bF();
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -49,11 +53,11 @@ bool BFactor::score(FragmentCandidateOP f,
 bool BFactor::describe_score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map, std::ostream& out) {
 
-	Real totalScore = 0;
+	core::Real totalScore = 0;
 
 	out << f->get_chunk()->get_pdb_id() << "  " << I(5,
 		f->get_first_index_in_vall()) << " ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << f->get_residue(i)->bF();
 	}
 	out << std::endl;

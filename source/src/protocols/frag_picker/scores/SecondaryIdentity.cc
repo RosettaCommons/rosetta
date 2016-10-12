@@ -28,11 +28,13 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+using namespace ObjexxFCL::format;
+
 bool SecondaryIdentity::score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
 
-	Real totalScore = 0;
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	core::Real totalScore = 0;
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		if ( r->ss() == query_[i + f->get_first_index_in_query() - 2] ) {
 			totalScore += REWARD;
@@ -40,7 +42,7 @@ bool SecondaryIdentity::score(FragmentCandidateOP f,
 			totalScore += PENALTY;
 		}
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;
@@ -51,15 +53,15 @@ bool SecondaryIdentity::score(FragmentCandidateOP f,
 bool SecondaryIdentity::describe_score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map, std::ostream& out) {
 
-	Real totalScore = 0;
+	core::Real totalScore = 0;
 
 	out << f->get_chunk()->get_pdb_id() << " " << I(5,
 		f->get_first_index_in_vall()) << " ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << f->get_residue(i)->ss();
 	}
 	out << std::endl << "            ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		VallResidueOP r = f->get_residue(i);
 		if ( r->ss() == query_[i + f->get_first_index_in_query() - 2] ) {
 			totalScore += REWARD;
@@ -70,7 +72,7 @@ bool SecondaryIdentity::describe_score(FragmentCandidateOP f,
 		}
 	}
 	out << "\nquery " << I(5, f->get_first_index_in_query()) << " ";
-	for ( Size i = 1; i <= f->get_length(); i++ ) {
+	for ( core::Size i = 1; i <= f->get_length(); i++ ) {
 		out << query_[i + f->get_first_index_in_query() - 2];
 	}
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
@@ -80,7 +82,7 @@ bool SecondaryIdentity::describe_score(FragmentCandidateOP f,
 		out << "\nTotal score " << F(5, 3, totalScore) << " REJECTED"
 			<< std::endl;
 	}
-	totalScore /= (Real) f->get_length();
+	totalScore /= (core::Real) f->get_length();
 	empty_map->set_score_component(totalScore, id_);
 	if ( (totalScore > lowest_acceptable_value_) && (use_lowest_ == true) ) {
 		return false;

@@ -20,8 +20,6 @@
 #include <string>
 #include <sstream>
 
-using namespace core;
-
 class XMLParseBenchmark : public PerformanceBenchmark
 {
 public:

@@ -33,8 +33,6 @@
 
 namespace protocols {
 namespace simple_filters {
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
 
 class RepeatParameterFilter : public filters::Filter
 {
@@ -44,12 +42,12 @@ public:
 	//Real score( core::pose::Pose & pose);
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out,const core::pose::Pose & pose ) const override;
-	void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
+	void calculate_helical_parameters( core::pose::Pose const & pose, std::string & handedness, core::Real & rise_out, core::Real & radius_out, core::Real & omega_out) const;
 	//void align_to_frame(core::pose::Pose & pose) const; //This seems to have been prototyped but never used.  Removing -- VKM, 19 March 2015.
 	void apply_transformation(core::pose::Pose & mod_pose, std::list <core::Size> const & residue_list, numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT) const;
 	void matrix3f_to_xyzMatrix( Eigen::Matrix3f const & Re, numeric::xyzMatrix< core::Real> & R  ) const;
 	void identity_matrix( numeric::xyzMatrix< core::Real> & R ) const;
-	void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, Real & rise_out, Real & radius_out, Real & omega_out) const;
+	void calculate_helical_parameters_helper( core::pose::Pose const & pose, std::string & handedness, core::Real & rise_out, core::Real & radius_out, core::Real & omega_out) const;
 	filters::FilterOP clone() const override {
 		return filters::FilterOP( new RepeatParameterFilter( *this ) );
 	}
@@ -64,8 +62,8 @@ private:
 	Size numb_repeats_;
 	Size startAtRepeat_;
 	std::string param_type_;
-	Real min_;
-	Real max_;
+	core::Real min_;
+	core::Real max_;
 	bool r_handed_;
 	bool filter_;
 };

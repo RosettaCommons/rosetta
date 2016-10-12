@@ -33,10 +33,6 @@
 #include <sstream>
 #include <cmath>
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace utility;
-
 namespace protocols {
 namespace ncbb {
 
@@ -46,13 +42,13 @@ public:
 	SecStructFinder();
 	SecStructFinder(
 		std::string residue,
-		Size min_length = 5,
-		Size max_length = 5,
-		Real bin_size = 10,
-		Real dissimilarity = 10,
-		Real dihedral_min = -180,
-		Real dihedral_max = 180,
-		Real dump_threshold = -10000,
+		core::Size min_length = 5,
+		core::Size max_length = 5,
+		core::Real bin_size = 10,
+		core::Real dissimilarity = 10,
+		core::Real dihedral_min = -180,
+		core::Real dihedral_max = 180,
+		core::Real dump_threshold = -10000,
 		std::string dihedral_pattern = "A",
 		std::string alpha_beta_pattern = "A",
 		bool min_everything = false,
@@ -60,8 +56,8 @@ public:
 		bool constrain = false
 	);
 
-	~SecStructFinder() override= default;
-	void apply( Pose & pose ) override;
+	~SecStructFinder() = default;
+	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override { return "SecStructFinder"; }
 	protocols::moves::MoverOP fresh_instance() const override { return SecStructFinderOP( new SecStructFinder ); }
 	protocols::moves::MoverOP clone() const override;
@@ -70,26 +66,26 @@ public:
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	std::string residue_;
-	Size min_length_;
-	Size max_length_;
-	Real bin_size_;
-	Real dump_threshold_;
-	Real dihedral_min_;
-	Real dihedral_max_;
+	core::Size min_length_;
+	core::Size max_length_;
+	core::Real bin_size_;
+	core::Real dump_threshold_;
+	core::Real dihedral_min_;
+	core::Real dihedral_max_;
 	std::string dihedral_pattern_;
 	std::string alpha_beta_pattern_;
 	bool min_everything_;
 	bool cart_;
 	bool constrain_;
-	Real dissimilarity_;
+	core::Real dissimilarity_;
 
 	std::string alpha_to_beta( std::string alpha );
-	std::string expand_pattern_to_fit( std::string pattern, Size length );
+	std::string expand_pattern_to_fit( std::string pattern, core::Size length );
 	bool uniq_refers_to_beta ( char uniq );
 	void initialize_rtype_vector( utility::vector1< core::chemical::ResidueType > & restypes );
-	std::string make_filename ( Size number_dihedrals, utility::vector1< Real > dihedrals );
-	bool too_similar( Size i, Size j, utility::vector1< Real > dihedrals );
-	void show_current_dihedrals( Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals );
+	std::string make_filename ( core::Size number_dihedrals, utility::vector1< core::Real > dihedrals );
+	bool too_similar( core::Size i, core::Size j, utility::vector1< core::Real > dihedrals );
+	void show_current_dihedrals( core::Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< core::Real > dihedrals );
 };
 
 }

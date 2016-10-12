@@ -38,13 +38,9 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-using protocols::filters::Filter;
-using protocols::filters::FilterOP;
-using protocols::filters::Filters_map;
-
 /// @brief returns true if the number of hbonding partners to a particular residue exceeds a certain value
 /// This filter is useful in conjunction with DesignMinimizeHbonds class
-class HbondsToAtomFilter : public Filter
+class HbondsToAtomFilter : public protocols::filters::Filter
 {
 public:
 	typedef core::Real Real;
@@ -59,19 +55,19 @@ public :
 		runtime_assert( partners_ );
 		runtime_assert( energy_cutoff_ <= 0 );
 	}
-	bool apply( core::pose::Pose const & pose ) const;
-	FilterOP clone() const {
-		return FilterOP( new HbondsToAtomFilter( *this ) );
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
+		return protocols::filters::FilterOP( new HbondsToAtomFilter( *this ) );
 	}
-	FilterOP fresh_instance() const{
-		return FilterOP( new HbondsToAtomFilter() );
+	protocols::filters::FilterOP fresh_instance() const override {
+		return protocols::filters::FilterOP( new HbondsToAtomFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~HbondsToAtomFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 private:
 	Size resnum_, partners_;
 	Real energy_cutoff_;

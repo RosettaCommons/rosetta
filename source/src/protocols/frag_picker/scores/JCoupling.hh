@@ -38,7 +38,7 @@ public:
 
 	/// @brief  creates a
 	/// @details
-	JCoupling(Size, Real, bool, JCouplingIO&);
+	JCoupling(core::Size, core::Real, bool, JCouplingIO&);
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -48,8 +48,8 @@ public:
 private:
 	//std::string cached_scores_id_; // cache is not yet built
 	JCouplingIO data_;
-	Size len_;
-	Real A_, B_, C_, THETA_;
+	core::Size len_;
+	core::Real A_, B_, C_, THETA_;
 };
 
 /// @brief  Matker class that produces a new JCoupling object
@@ -60,7 +60,7 @@ public:
 		MakeFragmentScoringMethod("JCoupling") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

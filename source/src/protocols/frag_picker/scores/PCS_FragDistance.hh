@@ -38,9 +38,9 @@ public:
 
 	/// @brief  creates a Calpha distance based scoring function.
 	/// @details Scores distance matches for short range disulfides (ie: within fragment)
-	PCS_FragDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	PCS_FragDistance(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		ObjexxFCL::FArray2D_double target_ca_dev,
-		ObjexxFCL::FArray2D_double target_ca_dist, Size largest_fragment, Size max_length);
+		ObjexxFCL::FArray2D_double target_ca_dist, core::Size largest_fragment, core::Size max_length);
 
 	void do_caching(VallChunkOP);
 	void clean_up();
@@ -48,15 +48,15 @@ public:
 	bool cached_score(FragmentCandidateOP, FragmentScoreMapOP);
 
 private:
-	Size n_res_;
+	core::Size n_res_;
 	std::string cached_scores_id_;
 
 	ObjexxFCL::FArray2D_double chunk_ca_distances_;
 	ObjexxFCL::FArray2D_double target_ca_dev_;
 	ObjexxFCL::FArray2D_double target_ca_dist_;
 
-	Size largest_fragment_;
-	Size max_length_;
+	core::Size largest_fragment_;
+	core::Size max_length_;
 };
 
 /// @brief  Matker class that produces a new PCS_FragDistance object
@@ -67,7 +67,7 @@ public:
 		MakeFragmentScoringMethod("PCS_FragDistance") {
 	}
 
-	FragmentScoringMethodOP make(Size, Real, bool, FragmentPickerOP, std::string);
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string);
 };
 
 } // scores

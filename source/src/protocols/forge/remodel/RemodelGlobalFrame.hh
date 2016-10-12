@@ -26,8 +26,6 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <Eigen/Dense>
 
-using Eigen::MatrixXd;
-
 namespace protocols {
 namespace forge {
 namespace remodel {

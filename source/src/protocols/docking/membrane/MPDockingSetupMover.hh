@@ -46,11 +46,6 @@ namespace protocols {
 namespace docking {
 namespace membrane {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-
 /// @brief Setup for MPDocking
 /// @details Reads in 2 poses and 2 spanfiles, concatenates the poses and
 ///    spanfiles and prints them out
@@ -75,10 +70,10 @@ public:
 public: // methods
 
 	/// @brief Create a Clone of this mover
-	virtual MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual MoverOP fresh_instance() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -112,12 +107,12 @@ private: // methods
 	void init_from_cmd();
 
 	// transform pose into membrane
-	void transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner );
+	void transform_pose_into_membrane( core::pose::Pose & pose, core::Vector center, core::Vector normal, std::string spanfile, core::Size partner );
 
 private: // data
 
 	// vector of poses and spanfiles that are used as input to create final pose and spanfile
-	utility::vector1< PoseOP > poses_;
+	utility::vector1< core::pose::PoseOP > poses_;
 	utility::vector1< std::string > spanfiles_;
 
 	// should the position of partner 1 or 2 be optimized in the membrane?

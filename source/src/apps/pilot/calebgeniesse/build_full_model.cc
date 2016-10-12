@@ -72,9 +72,13 @@
 #include <iostream>
 #include <string>
 
+using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace protocols::farna::options;
+using namespace protocols::farna::setup;
+
 
 OPT_KEY( Boolean, virtualize_built )
 OPT_KEY( Boolean, show_scores )

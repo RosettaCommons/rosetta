@@ -26,9 +26,6 @@
 namespace protocols {
 namespace mpi_refinement {
 
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-
 class StructAvrgMover : public protocols::moves::Mover
 {
 public:
@@ -71,7 +68,7 @@ private:
 	weighted_average( utility::vector1< core::pose::Pose > &poses,
 		core::scoring::ScoreFunctionCOP sfxn,
 		core::pose::Pose const &pose_ref,
-		utility::vector1< Real > const, //CAvar,
+		utility::vector1< core::Real > const, //CAvar,
 		bool const weighted = true
 	);
 

@@ -34,8 +34,8 @@ struct ClusterData{
 	core::Size length;
 	std::string cis_trans_conf;
 
-	vector1< core::Real > phis;
-	vector1< core::Real > psis;
+	utility::vector1< core::Real > phis;
+	utility::vector1< core::Real > psis;
 };
 
 
@@ -77,7 +77,7 @@ private:
 	void
 	load_center_data();
 
-	std::map< std::string, vector1< core::Real > >
+	std::map< std::string, utility::vector1< core::Real > >
 	get_pose_angles(core::pose::Pose const & pose, core::Size const start, core::Size const end) const;
 
 
@@ -85,7 +85,7 @@ private:
 private:
 
 	std::string center_cluster_db_path_;
-	vector1< ClusterData > cluster_data_;
+	utility::vector1< ClusterData > cluster_data_;
 
 	/// @brief skip first grouping Cis and Trans for clusters in which a Cis/Trans designation currently does not exist.
 	bool allow_rama_mismatches_;

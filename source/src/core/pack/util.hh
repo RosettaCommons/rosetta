@@ -22,24 +22,18 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace pack {
 
-
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-using namespace core;
-using namespace core::pose;
-
 /// @brief Percentage of residues which have same rotamers
-core::Real residue_rotamer_recovery( Pose & pose, Pose & ref_pose, core::Real difference=10.0 );
+core::Real residue_rotamer_recovery( core::pose::Pose & pose, core::pose::Pose & ref_pose, core::Real difference=10.0 );
 
 /// @brief Percentage of rotamers recovered
-core::Real rotamer_recovery( Pose & pose, Pose & ref_pose, core::Real difference=10.0 );
+core::Real rotamer_recovery( core::pose::Pose & pose, core::pose::Pose & ref_pose, core::Real difference=10.0 );
 
 /// @brief Get rotamer angle differences
 /// @details Outer vector is pose length, inner vector is different chi's
-utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( Pose & pose, Pose & ref_pose );
+utility::vector1< utility::vector1< Real > > get_rotamer_angle_diffs( core::pose::Pose & pose, core::pose::Pose & ref_pose );
 
 
 

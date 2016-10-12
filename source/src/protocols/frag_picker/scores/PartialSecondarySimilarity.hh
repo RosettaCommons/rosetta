@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-typedef utility::vector1<utility::vector1<Real> > Matrix;
+typedef utility::vector1<utility::vector1<core::Real> > Matrix;
 
 /// @brief  scores a fragment by secondary structure similarity
 /// @detail The score for each position is P(H), P(L) or P(E) if
@@ -45,9 +45,9 @@ typedef utility::vector1<utility::vector1<Real> > Matrix;
 class PartialSecondarySimilarity: public CachingScoringMethod {
 public:
 
-	PartialSecondarySimilarity(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	PartialSecondarySimilarity(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		core::fragment::SecondaryStructureOP query_prediction, std::string prediction_name,
-		Size sequence_length, Size longest_vall_chunk);
+		core::Size sequence_length, core::Size longest_vall_chunk);
 
 	~PartialSecondarySimilarity() {}
 
@@ -67,12 +67,12 @@ protected:
 private:
 	std::string prediction_name_;
 
-	utility::vector1< Real > norm_query_H_;
-	utility::vector1< Real > norm_query_E_;
-	utility::vector1< Real > norm_query_L_;
+	utility::vector1< core::Real > norm_query_H_;
+	utility::vector1< core::Real > norm_query_E_;
+	utility::vector1< core::Real > norm_query_L_;
 
-	utility::vector1< utility::vector1< Real > > raw_probs_;
-	Size query_len_;
+	utility::vector1< utility::vector1< core::Real > > raw_probs_;
+	core::Size query_len_;
 
 	std::string cached_scores_id_;
 };
@@ -85,11 +85,11 @@ public:
 		MakeFragmentScoringMethod("PartialSecondarySimilarity") {
 	}
 
-	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
+	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
 		FragmentPickerOP picker, std::string prediction_id) {
 
-		Size sequence_length = picker->get_query_seq()->length();
-		Size vall_max_len = picker->get_vall()->get_largest_chunk_size();
+		core::Size sequence_length = picker->get_query_seq()->length();
+		core::Size vall_max_len = picker->get_vall()->get_largest_chunk_size();
 
 		core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
 		if ( ! query_prediction ) {

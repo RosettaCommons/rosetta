@@ -34,25 +34,25 @@ public:
 	/// @brief  Constructor reads a config file
 	ABEGO_SS_Config(std::string & config_file_name);
 
-	Size n_columns() { return bin_probs_[1].size(); }
+	core::Size n_columns() { return bin_probs_[1].size(); }
 
-	Size n_rows() { return bin_probs_.size(); }
+	core::Size n_rows() { return bin_probs_.size(); }
 
-	Size size() { return bin_probs_.size(); }
+	core::Size size() { return bin_probs_.size(); }
 
 	std::string & source_file_name() { return source_file_name_; }
 
-	Real probability(Size seq_pos,Size bin) { return bin_probs_[seq_pos][bin]; }
+	core::Real probability(core::Size seq_pos,core::Size bin) { return bin_probs_[seq_pos][bin]; }
 
-	Real highest_probability(Size);
+	core::Real highest_probability(core::Size);
 
-	Size most_probable_bin(Size);
+	core::Size most_probable_bin(core::Size);
 
-	utility::vector1< std::pair<Size,Size> > get_pool_bins(Size pool_id) { return pool_defs_[pool_id]; }
+	utility::vector1< std::pair<core::Size,core::Size> > get_pool_bins(core::Size pool_id) { return pool_defs_[pool_id]; }
 private:
 	std::string source_file_name_;
-	utility::vector1< utility::vector1< std::pair<Size,Size> > > pool_defs_;
-	utility::vector1< utility::vector1<Real> > bin_probs_;
+	utility::vector1< utility::vector1< std::pair<core::Size,core::Size> > > pool_defs_;
+	utility::vector1< utility::vector1<core::Real> > bin_probs_;
 };
 
 } // quota

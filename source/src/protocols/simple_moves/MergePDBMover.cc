@@ -61,6 +61,7 @@ namespace simple_moves {
 
 using namespace core;
 using core::pose::Pose;
+using utility::vector1;
 
 std::string MergePDBMoverCreator::keyname() const
 {
