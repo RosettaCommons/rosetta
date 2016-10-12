@@ -101,11 +101,11 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 	}
 
 	CHIEnergyFunction const & sugar_bb =
-			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
+		ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
 
 	// Get linkage type.
 	CHIEnergyFunctionLinkageType linkage_type =
-			get_CHI_energy_function_linkage_type_for_residue_in_pose( torsion_type_, pose, resnum );
+		get_CHI_energy_function_linkage_type_for_residue_in_pose( torsion_type_, pose, resnum );
 
 	if ( linkage_type == LINKAGE_NA ) {
 		std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";

@@ -60,15 +60,15 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 		// Test oligosaccharide with multiple branches off a single residue.
 		make_pose_from_saccharide_sequence( bisected_man_,
-				"a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-[b-d-GlcpNAc-(1->4)]-b-D-Manp" );
+			"a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-[b-d-GlcpNAc-(1->4)]-b-D-Manp" );
 
 		// Test exocyclic carbon in linkage.
 		pose_from_file( exo_test_,
-				"core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", PDB_file);
+			"core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", PDB_file);
 		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , PDB_file);
 
 		std::string const man9_s( "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
-				"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
 		man9_op_ = pose_from_saccharide_sequence( man9_s, "fa_standard", true, false ); //No need to idealize.
 		TR << *man9_op_ << std::endl;
 	}
@@ -467,9 +467,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, CHI, 6 ) ), 4 );
 
 		TS_ASSERT_EQUALS(
-				get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 1 ) ), 3 );
+			get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 1 ) ), 3 );
 		TS_ASSERT_EQUALS(
-				get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 2 ) ), 4 );
+			get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, BRANCH, 2 ) ), 4 );
 
 		TS_ASSERT_EQUALS( get_downstream_residue_that_this_torsion_moves( bisected_man_, TorsionID( 1, NU, 1 ) ), 0 );
 	}

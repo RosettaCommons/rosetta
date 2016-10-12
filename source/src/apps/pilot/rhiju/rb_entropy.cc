@@ -192,15 +192,15 @@ rb_entropy_test()
 			// 2D rotations, just for testing...
 			M = rotation_matrix( Vector( 0.0, 0.0, 1.0 ), 2 * numeric::constants::d::pi * rg().uniform() );
 		} else {
-		// 3D rotation -- thank you will sheffler & quaternions
+			// 3D rotation -- thank you will sheffler & quaternions
 			M = numeric::random::random_rotation();
 		}
 		jump.rotation_by_matrix( upstream_stub, start_base_centroid, M );
 
 		// translation
 		Vector random_translation( 2.0 * rg().uniform() - 1.0,
-															 2.0 * rg().uniform() - 1.0,
-															 2.0 * rg().uniform() - 1.0 );
+			2.0 * rg().uniform() - 1.0,
+			2.0 * rg().uniform() - 1.0 );
 		random_translation *= box_size;
 		jump.set_translation( jump.get_translation() +  random_translation );
 
@@ -218,8 +218,8 @@ rb_entropy_test()
 		out << rmsd << std::endl;
 
 		// tests that base_centroid is in same place:
-		//	base_centroid = get_rna_base_centroid( pose.residue( 1 ) );
-		//	TR << "new centroid:     " << base_centroid.x() << " " << base_centroid.y() << " " << base_centroid.z() << std::endl;
+		// base_centroid = get_rna_base_centroid( pose.residue( 1 ) );
+		// TR << "new centroid:     " << base_centroid.x() << " " << base_centroid.y() << " " << base_centroid.z() << std::endl;
 
 		if ( n <= 10 ) pose.dump_pdb( std::string( option[ out::path::path]() ) + "/test"+ObjexxFCL::lead_zero_string_of( n, 4 )+".pdb" );
 

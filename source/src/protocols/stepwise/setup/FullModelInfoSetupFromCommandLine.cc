@@ -553,11 +553,11 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
 	if ( option[ edensity::mapfile ].user() ) {
-		preferred_root_res = full_model_parameters->conventional_to_full( 
-			std::make_pair( 
-				utility::tools::make_vector1< int >(1), 
-				utility::tools::make_vector1< char >('z')
-			) 
+		preferred_root_res = full_model_parameters->conventional_to_full(
+			std::make_pair(
+			utility::tools::make_vector1< int >(1),
+			utility::tools::make_vector1< char >('z')
+			)
 		);
 	}
 
@@ -586,12 +586,12 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	// calebgeniesse: hacky way of making sure virt root is not included in terminal_res/extra_minimize_res
 	if ( desired_sequence[desired_sequence.size()-1] == 'X' ) {
-		if ( terminal_res.has_value( desired_sequence.size() ) ){
+		if ( terminal_res.has_value( desired_sequence.size() ) ) {
 			terminal_res.erase( std::remove(terminal_res.begin(), terminal_res.end(), desired_sequence.size()), terminal_res.end());
 		}
-		if ( extra_minimize_res.has_value( desired_sequence.size() ) ){
+		if ( extra_minimize_res.has_value( desired_sequence.size() ) ) {
 			extra_minimize_res.erase( std::remove(extra_minimize_res.begin(), extra_minimize_res.end(), desired_sequence.size()), extra_minimize_res.end());
-		}  
+		}
 	}
 
 	// everything that is not fixed is sampleable (unless -sample_res explicitly specified).
@@ -1345,8 +1345,8 @@ just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
 void
 setup_for_density_scoring( core::pose::Pose & pose ) {
 	// add virtual root for density scoring
-  TR << "Adding virtual residue as root" << std::endl;
-  pose::addVirtualResAsRoot( pose );
+	TR << "Adding virtual residue as root" << std::endl;
+	pose::addVirtualResAsRoot( pose );
 }
 
 } //setup

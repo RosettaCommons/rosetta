@@ -30,10 +30,10 @@
 #ifndef INCLUDED_numeric_interpolation_spline_PolycubicSpline_hh
 #define INCLUDED_numeric_interpolation_spline_PolycubicSpline_hh
 
-#include <numeric/types.hh>
 #include <numeric/interpolation/spline/PolycubicSpline.fwd.hh>
+#include <numeric/types.hh>
 #include <numeric/interpolation/spline/PolycubicSplineBase.hh>
-#include <numeric/interpolation/spline/Cubic_spline.fwd.hh> //For BorderFlag enum definition.
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh> //For BorderFlag enum definition.
 #include <numeric/MathNTensor.hh>
 
 #include <utility>
@@ -125,7 +125,16 @@ public:
 	/// @return value and derivative at (x, y)
 	//void FdF( utility::vector1< Real > xs, Real & val, utility::vector1< Real > & dvaldxs ) const;
 
-	/// train PolycubicSpline
+	/// @brief Train PolycubicSpline.
+	/// @details This initializes the PolycubicSpline, given a MathNTensor of data and various other objects
+	/// that provide some setup information.  This is necessary before using the PolycubicSpline for interpolation.
+	/// @param[in] BORDER A vector of enums specifying whether each dimension terminates or wraps around.  See numeric/interpolation/spline/CubicSpline.fwd.hh for the enum options.
+	/// @param[in] START The start values -- i.e. the coordinates of the first point, used to specify an offset from 0 if the grid points aren't aligned to {0,0,0...,0}.
+	/// @param[in] DELTA The dimensions of each bin.
+	/// @param[in] RESULTS The training data, as an N-dimensional tensor (where N >= 3).
+	/// @param[in] LINCONT A vector of booleans that determines what should happen if coordinates are outside of the range of RESULTS.  If true, a dimension is extrapolated linearly.
+	/// @param[in] FIRSTBE In the case of non-periodic first-derivative-smoothed ends to the range, the first derivatives for each dimension at the edges can be specified as a vector
+	/// of pairs of Reals.  Pass a vector of pairs of {0, 0} if unused.
 	void train
 	(
 		utility::fixedsizearray1< BorderFlag, N > const & BORDER,//[3],
@@ -336,7 +345,19 @@ private:
 	utility::fixedsizearray1< bool, 2 > LinCont_;
 };
 
+/// @brief Dummy function, never to be called.  This is only here to ensure that the compiler creates
+/// PolycubicSpline<3> through PolycubicSpline<9> classes.
 void hokey_template_workaround();
+
+/// @brief Given a PolycubicSplineBase and a set of coordinates, call PolycubicSpline<N>::F and return the value.
+/// @details Convenience function to hide the switch/case logic.  Only works for PolycubicSplines of dimensionality 3 through 9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real get_PolycubicSpline_F( PolycubicSplineBaseCOP splinebase, utility::vector1< Real > const &coords );
+
+/// @brief Given a PolycubicSplineBase and a set of coordinates, call PolycubicSpline<N>::dFdall and return the value.
+/// @details Convenience function to hide the switch/case logic.  Only works for PolycubicSplines of dimensionality 3 through 9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void get_PolycubicSpline_gradient( PolycubicSplineBaseCOP splinebase, utility::vector1< Real > const &coords, utility::vector1< Real > &gradient_out );
 
 }//end namespace spline
 }//end namespace interpolation

@@ -56,14 +56,14 @@
 /////////////////////////////////////////////////////////////////////////
 
 
-#ifndef INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
-#define INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
+#ifndef INCLUDED_numeric_interpolation_spline_CubicSpline_hh
+#define INCLUDED_numeric_interpolation_spline_CubicSpline_hh
 
 #include <numeric/types.hh>
 #include <numeric/MathVector.hh>
 
 
-#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 
 namespace numeric {
 namespace interpolation {

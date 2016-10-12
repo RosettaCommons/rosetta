@@ -89,7 +89,7 @@ methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 void
 ElecDensAtomwiseEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const & 
+	ScoreFunction const &
 ) const {
 	using namespace methods;
 

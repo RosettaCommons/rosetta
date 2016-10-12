@@ -245,24 +245,24 @@ SecondaryStructureFilter::correct_for_incomplete_strand_pairings(
 std::string
 SecondaryStructureFilter::get_strand_pairings( core::pose::Pose const & pose ) const
 {
-	using protocols::denovo_design::components::SegmentPairing;
-	using protocols::denovo_design::components::StructureData;
-	using protocols::denovo_design::components::StructureDataFactory;
+using protocols::denovo_design::components::SegmentPairing;
+using protocols::denovo_design::components::StructureData;
+using protocols::denovo_design::components::StructureDataFactory;
 
-	if ( !strand_pairings_.empty() ) return strand_pairings_;
+if ( !strand_pairings_.empty() ) return strand_pairings_;
 
-	StructureDataFactory const & factory = *StructureDataFactory::get_instance();
-	if ( factory.has_cached_data( pose ) ) {
-		StructureData const & sd = factory.get_from_const_pose( pose );
-		std::string const strand_pairings = SegmentPairing::get_strand_pairings( sd );
-		tr.Debug << "Found StrandPairings in the cached StructureData: " << strand_pairings << std::endl;
-		return strand_pairings;
-	}
+StructureDataFactory const & factory = *StructureDataFactory::get_instance();
+if ( factory.has_cached_data( pose ) ) {
+StructureData const & sd = factory.get_from_const_pose( pose );
+std::string const strand_pairings = SegmentPairing::get_strand_pairings( sd );
+tr.Debug << "Found StrandPairings in the cached StructureData: " << strand_pairings << std::endl;
+return strand_pairings;
+}
 
-	tr.Debug << "Could not get strand pairings to use in the filter. If there are strand pairings, "
-		<< "make sure the strand_pairings option is set OR there is a StructureData object cached in the pose."
-		<< std::endl;
-	return "";
+tr.Debug << "Could not get strand pairings to use in the filter. If there are strand pairings, "
+<< "make sure the strand_pairings option is set OR there is a StructureData object cached in the pose."
+<< std::endl;
+return "";
 }
 */
 

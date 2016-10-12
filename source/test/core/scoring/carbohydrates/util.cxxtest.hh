@@ -44,8 +44,8 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 		// This is a completely unnatural sugar, created solely to stretch and test the system.
 		make_pose_from_saccharide_sequence( test_sugar_, "b-D-Glcp-(1->8)-[a-D-Glcp-(1->4)]-a-Neup-(2->"
-				"4)-[a-D-Glcp-(1->6)]-b-D-Fruf-(2->6)-a-D-Galp-(1->6)-b-D-Manp-(1->"
-				"4)-[a-D-Glcp-(1->3)]-b-L-Gulp-(1->4)-b-D-Galp-(1->3)-a-D-Glcp-(1->4)-D-Glcp" );
+			"4)-[a-D-Glcp-(1->6)]-b-D-Fruf-(2->6)-a-D-Galp-(1->6)-b-D-Manp-(1->"
+			"4)-[a-D-Glcp-(1->3)]-b-L-Gulp-(1->4)-b-D-Galp-(1->3)-a-D-Glcp-(1->4)-D-Glcp" );
 	}
 
 	// Destruction
@@ -69,93 +69,93 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		// b-D-Glcp-(1->8)-Neup (Fruf is not a pyranose.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 9 ), BETA_LINKS );
+			phi_dihedral, test_sugar_, 9 ), BETA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 9 ), BETA6_LINKS );  // (really, for beta-anything-exocyclic)
+			psi_dihedral, test_sugar_, 9 ), BETA6_LINKS );  // (really, for beta-anything-exocyclic)
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 9 ), PREFERENCE_NA );
 
 		// a-Neup-(2->4)-D-Fruf (Fruf is not a pyranose.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 8 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 8 ), ALPHA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 8 ), LINKAGE_NA );
+			psi_dihedral, test_sugar_, 8 ), LINKAGE_NA );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 8 ), PREFERENCE_NA );
 
 		// b-D-Fruf-(2->6)-D-Galp (Fruf is not a pyranose; D-Galp's O4 is axial in 4C1.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 7 ), LINKAGE_NA );
+			phi_dihedral, test_sugar_, 7 ), LINKAGE_NA );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 7 ), LINKAGE_NA );
+			psi_dihedral, test_sugar_, 7 ), LINKAGE_NA );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 7 ), ANTI );
 
 		// a-D-Galp-(1->6)-D-Manp (D-Manp's O4 is equatorial in 4C1.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 6 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 6 ), ALPHA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 6 ), ALPHA6_LINKS );
+			psi_dihedral, test_sugar_, 6 ), ALPHA6_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 6 ), GAUCHE_EFFECT );
 
 		// b-D-Manp-(1->4)-L-Gulp (L-Gulp's O4 is axial in 1C4.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 5 ), BETA_LINKS );
+			phi_dihedral, test_sugar_, 5 ), BETA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 5 ), _2AX_3EQ_4AX_LINKS );
+			psi_dihedral, test_sugar_, 5 ), _2AX_3EQ_4AX_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 5 ), PREFERENCE_NA );
 
 		// b-L-Gulp-(1->4)-D-Galp (D-Galp's O4 is axial in 4C1.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 4 ), BETA_LINKS );
+			phi_dihedral, test_sugar_, 4 ), BETA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 4 ), _2AX_3EQ_4AX_LINKS );
+			psi_dihedral, test_sugar_, 4 ), _2AX_3EQ_4AX_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 4 ), PREFERENCE_NA );
 
 		// b-D-Galp-(1->3)-D-Glcp (All of D-Glcp's substituents are equatorial in 4C1.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 3 ), BETA_LINKS );
+			phi_dihedral, test_sugar_, 3 ), BETA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 3 ), _2AX_3EQ_4AX_LINKS );
+			psi_dihedral, test_sugar_, 3 ), _2AX_3EQ_4AX_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 3 ), PREFERENCE_NA );
-				
+
 		// a-D-Glcp-(1->4)-D-Glcp (All of D-Glcp's substituents are equatorial in 4C1.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 2 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 2 ), ALPHA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 2 ), _2EQ_3AX_4EQ_LINKS );
+			psi_dihedral, test_sugar_, 2 ), _2EQ_3AX_4EQ_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 2 ), PREFERENCE_NA );
-				
+
 		// The reducing end has no phi, psi, or omega.
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 1 ), LINKAGE_NA );
+			phi_dihedral, test_sugar_, 1 ), LINKAGE_NA );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 1 ), LINKAGE_NA );
+			psi_dihedral, test_sugar_, 1 ), LINKAGE_NA );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 1 ), PREFERENCE_NA );
 
 		// The test sugar branches:
 		// Branch from Gul4: [a-D-Glcp-(1->3)]-
-		
+
 		// a-D-Glcp-(1->3)-L-Gulp (L-Gulp's O3 is axial in 1C4.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 10 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 10 ), ALPHA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 10 ), _2EQ_3AX_4EQ_LINKS );
+			psi_dihedral, test_sugar_, 10 ), _2EQ_3AX_4EQ_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 10 ), PREFERENCE_NA );
-		
+
 		// Branch from Fru7: [a-D-Glcp-(1->6)]-
-		
+
 		// a-D-Glcp-(1->6)-D-Fruf (Fruf is not a pyranose.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 11 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 11 ), ALPHA_LINKS );
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				psi_dihedral, test_sugar_, 11 ), ALPHA6_LINKS );
+			psi_dihedral, test_sugar_, 11 ), ALPHA6_LINKS );
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 11 ), PREFERENCE_NA );
 
 		// Branch from Neup8: [a-D-Glcp-(1->4)]-
 
 		// a-D-Glcp-(1->4)-Neup (Neup is a 2-ketose, so its numbers need to be shifted for psi linkage types.)
 		TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-				phi_dihedral, test_sugar_, 12 ), ALPHA_LINKS );
+			phi_dihedral, test_sugar_, 12 ), ALPHA_LINKS );
 		//TS_ASSERT_EQUALS( get_CHI_energy_function_linkage_type_for_residue_in_pose(
-		//		psi_dihedral, test_sugar_, 12 ), _2AX_3EQ_4AX_LINKS );  // TODO: FIX
+		//  psi_dihedral, test_sugar_, 12 ), _2AX_3EQ_4AX_LINKS );  // TODO: FIX
 		TS_ASSERT_EQUALS( get_omega_preference_for_residue_in_pose( test_sugar_, 12 ), PREFERENCE_NA );
 	}
 

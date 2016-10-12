@@ -203,7 +203,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 
 	// do it
 	TR << "Score for the start pose: " << (*score_fxn_)( pose ) << std::endl;
-	//	score_fxn_->show( pose );
+	// score_fxn_->show( pose );
 
 	//Size const total_len( pose.size() );
 	//bool const sample_near_a_form( false );
@@ -233,7 +233,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		if ( kic_sampling_ && ( !mm_ || mm_compatible_with_kic( mm_, ii ) ) ) continue;
 		core::id::TorsionID tid;
 		// skip if movemap exists but dof off
-	  if ( !pose.residue_type(ii).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
+		if ( !pose.residue_type(ii).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
 			//  the virtual phosphate check should really be in movemap setup (figure_out_stepwise_movemap) but apparently there
 			//  was an edge case when phosphate became "un"-virtualized during packing.
 			tid = core::id::TorsionID( ii, id::BB, 1 );
@@ -372,9 +372,9 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	}
 
 	TR << "Score for the end pose: " << (*score_fxn_)( pose ) << std::endl;
-	//	score_fxn_->show( pose );
+	// score_fxn_->show( pose );
 	TR << "Score for the min pose: " << (*score_fxn_)( min_pose ) << std::endl;
-	//	score_fxn_->show( min_pose );
+	// score_fxn_->show( min_pose );
 
 	TR << "n_cycles: " << n_cycle_ << std::endl;
 	TR << "Total accept rate: " << double( n_accept_total ) / n_cycle_ << std::endl;

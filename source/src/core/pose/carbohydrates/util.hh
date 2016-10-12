@@ -44,18 +44,18 @@ core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue cons
 
 /// @brief  Use a saccharide residue's connections to find the residue following it from a given linkage position.
 core::uint find_seqpos_of_saccharides_child_residue_at( conformation::Residue const & residue,
-		core::uint linkage_position );
+	core::uint linkage_position );
 
 /// @brief  Return pointers to the two residues of the glycosidic bond.
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP > get_glycosidic_bond_residues( Pose const & pose,
-		uint const sequence_position );
+	uint const sequence_position );
 
 
 /// @brief  Use a saccharide residue's connections to find its linkage number on the previous residue.
 core::uint get_linkage_position_of_saccharide_residue( Pose const & pose, uint const seqpos );
 
 core::uint get_linkage_position_of_saccharide_residue( conformation::Residue const & rsd,
-		conformation::Residue const & parent_rsd);
+	conformation::Residue const & parent_rsd);
 
 /// @brief Get whether the glycosidic linkage between the residue and previous residue (parent residue) has an exocyclic
 /// carbon.
@@ -79,8 +79,8 @@ utility::vector1< id::AtomID > get_reference_atoms_for_2nd_omega( Pose const & p
 
 /// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
 utility::vector1< id::AtomID > get_reference_atoms( uint const torsion_id,
-		Pose const & pose,
-		uint const sequence_position );
+	Pose const & pose,
+	uint const sequence_position );
 
 
 // Virtual Atom Alignment /////////////////////////////////////////////////////
@@ -119,10 +119,10 @@ core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, ui
 // Setters
 /// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
 void set_glycosidic_torsion(
-		uint const torsion_id,
-		Pose & pose,
-		uint const sequence_position,
-		core::Angle const setting );
+	uint const torsion_id,
+	Pose & pose,
+	uint const sequence_position,
+	core::Angle const setting );
 
 
 // Glycosylation //////////////////////////////////////////////////////////////
@@ -131,42 +131,42 @@ void idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added );
 
 /// @brief  Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
 void glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using an IUPAC sequence.
 void glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & filename,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & filename,
+	bool const idealize_linkages = true );
 
 /// @brief  Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
 void glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & filename,
-		bool const idealize_linkages = true );
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & filename,
+	bool const idealize_linkages = true );
 
 
 /// @brief  Set the dihedral angles involved in a glycosidic linkage based on statistical data.
 void
 set_dihedrals_from_linkage_conformer_data( Pose & pose,
-		uint const upper_residue,
-		core::chemical::carbohydrates::LinkageConformerData const & conformer,
-		bool idealize = true,
-		bool use_prob_for_sd = false );
+	uint const upper_residue,
+	core::chemical::carbohydrates::LinkageConformerData const & conformer,
+	bool idealize = true,
+	bool use_prob_for_sd = false );
 
 
 // Branch Deletion ////////////////////////////////////////////////////////////
@@ -185,8 +185,8 @@ void delete_carbohydrate_branch( Pose & pose, uint const delete_to );
 ///  Returns pair of all_upstream_residues, tips.
 ///  Tips are the ends of linear glycan branches.
 std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > get_carbohydrate_residues_upstream(
-		Pose const & pose,
-		uint const starting_position );
+	Pose const & pose,
+	uint const starting_position );
 
 
 /// @brief  Recursive function to get branches of a set of residues, etc.
@@ -199,11 +199,11 @@ std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > get_
 ///  See Also: get_carbohydrate_residues_upstream
 ///            trim_carbohydrate_branch_from_X
 void get_branching_residues(
-		Pose const & pose,
-		Size parent_residue,
-		utility::vector1< Size > & children_residues,
-		utility::vector1< Size > & list_of_residues,
-		utility::vector1< Size > & tips );
+	Pose const & pose,
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips );
 
 /// @brief  Find all children residues, list of residues, and any found tips from a given residue not including parent
 ///
@@ -214,12 +214,12 @@ void get_branching_residues(
 ///  See Also: get_carbohydrate_residues_upstream
 ///            trim_carbohydrate_branch_from_X
 void fill_upstream_children_res_and_tips(
-		Pose const & pose,
-		Size res,
-		Size parent_residue,
-		utility::vector1< Size > & children_residues,
-		utility::vector1< Size > & list_of_residues,
-		utility::vector1< Size > & tips );
+	Pose const & pose,
+	Size res,
+	Size parent_residue,
+	utility::vector1< Size > & children_residues,
+	utility::vector1< Size > & list_of_residues,
+	utility::vector1< Size > & tips );
 
 
 /// @brief Get all residue numbers in order from the tip to (and not including) stop_at_residue or a branch point.

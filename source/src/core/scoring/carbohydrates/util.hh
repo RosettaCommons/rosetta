@@ -34,24 +34,24 @@ namespace carbohydrates {
 
 /// @brief Get the CHI Energy Function linkage type for phi for a particular residue.
 CHIEnergyFunctionLinkageType get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose(
-		pose::Pose const & pose,
-		core::uint rsd_num );
+	pose::Pose const & pose,
+	core::uint rsd_num );
 
 /// @brief Get the CHI Energy Function linkage type for phi for a particular residue.
 CHIEnergyFunctionLinkageType get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose(
-		pose::Pose const & pose,
-		core::uint rsd_num );
+	pose::Pose const & pose,
+	core::uint rsd_num );
 
 /// @brief Get the omega preference for a particular residue.
 OmegaPreferenceType get_omega_preference_for_residue_in_pose(
-		pose::Pose const & pose,
-		core::uint rsd_num );
+	pose::Pose const & pose,
+	core::uint rsd_num );
 
 /// @brief Get the CHI Energy Function linkage type for the given torsion angle of a particular residue.
 CHIEnergyFunctionLinkageType get_CHI_energy_function_linkage_type_for_residue_in_pose(
-		id::MainchainTorsionType torsion,
-		pose::Pose const & pose,
-		core::uint rsd_num );
+	id::MainchainTorsionType torsion,
+	pose::Pose const & pose,
+	core::uint rsd_num );
 
 
 utility::vector1< CHIEnergyFunctionLinkageType > get_linkage_types_for_dihedral( core::uint torsion_id );

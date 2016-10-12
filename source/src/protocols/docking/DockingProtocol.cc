@@ -1052,12 +1052,12 @@ DockingProtocol::apply( pose::Pose & pose )
 	} else {
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	}
-	
+
 	// Check if pose is NOT full atom AND if the user wants full atom output, then do the right thing.
 	if ( ! pose.is_fullatom() && basic::options::option[ basic::options::OptionKeys::out::file::fullatom ]() ) {
-			// Convert pose to high resolution and recover sidechains
-			// This is actually a sequnce mover that repacks after adding side chains -- do we always want that?
-			to_all_atom_->apply( pose );
+		// Convert pose to high resolution and recover sidechains
+		// This is actually a sequnce mover that repacks after adding side chains -- do we always want that?
+		to_all_atom_->apply( pose );
 	}
 
 	basic::prof_show();

@@ -39,8 +39,8 @@ public:  // Standard Methods //////////////////////////////////////////////////
 	OmegaPreferencesFunction();
 
 	virtual ~OmegaPreferencesFunction();
-	
-	
+
+
 public:  // Other Public Methods //////////////////////////////////////////////
 	Energy operator()( OmegaPreferenceType preference, Angle x ) const;
 
@@ -49,7 +49,7 @@ public:  // Other Public Methods //////////////////////////////////////////////
 
 private:  // Private methods //////////////////////////////////////////////////
 	void set_parameters( OmegaPreferenceType preference, Angle x ) const;
-	
+
 	Energy evaluate_function( OmegaPreferenceType preference, Angle x ) const;
 
 	void init();

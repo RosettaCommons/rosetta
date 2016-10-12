@@ -1931,6 +1931,16 @@ public:
 	rotamers::RotamerLibrarySpecificationCOP
 	rotamer_library_specification() const;
 
+	/// @brief Nonconst access to the RotamerLibrarySpecification.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	rotamers::RotamerLibrarySpecificationOP
+	rotamer_library_specification_nonconst();
+
+	/// @brief Remove any rotamer library specifications attached to this ResidueType.
+	/// @details After this operation, the rotamer_library_specification() method returns a NULL pointer.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void strip_rotamer_library_specification();
+
 	////////////////////////////////////////////////////////////////////////////
 	/// dihedral methods
 public:
@@ -2103,6 +2113,44 @@ public:
 		return rings_and_their_edges_;
 	}
 
+	/// @brief Get the key name for the mainchain torsion potential used by the RamaPrePro score term.
+	/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+	/// residue types (in which case this function returns the string stored in the base ResidueType), though this can be overridden.
+	/// @note Different maps are used for preproline positions and non-preproline positions.  The boolean determines which map
+	/// we're interested in.
+	std::string const & get_rama_prepro_mainchain_torsion_potential_name( bool const pre_proline_position ) const;
+
+	/// @brief Set the key name for the mainchain torsion potential used by the RamaPrePro score term.
+	/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+	/// residue types (pointing the function to the base type), though this can be overridden using this function.
+	/// @note Different maps are used for preproline positions and non-preproline positions.  The boolean determines which map
+	/// we're interested in.
+	void set_rama_prepro_mainchain_torsion_potential_name( std::string const &name_in, bool const pre_proline_position);
+
+	/// @brief Get the file name for the mainchain torsion potential used by the RamaPrePro score term.
+	/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+	/// residue types (in which case this function returns the string stored in the base ResidueType), though this can be overridden.
+	/// @note Different maps are used for preproline positions and non-preproline positions.  The boolean determines which map
+	/// we're interested in.
+	std::string const & get_rama_prepro_map_file_name(bool const pre_proline_position) const;
+
+	/// @brief Set the file name for the mainchain torsion potential used by the RamaPrePro score term.
+	/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
+	/// residue types (pointing the function to the base type), though this can be overridden using this function.
+	/// @note Different maps are used for preproline positions and non-preproline positions.  The boolean determines which map
+	/// we're interested in.
+	void set_rama_prepro_map_file_name( std::string const &filename_in, bool const pre_proline_position );
+
+	/// @brief Returns true if and only if (a) this is not a base type, AND (b) there is a rama_prepro_mainchain_torsion_map_file_name_
+	/// defined for this ResidueType (which is presumably different from that of the base type).
+	/// @details If pre_proline_position is true, checks rama_prepro_mainchain_torsion_map_file_name_beforeproline_ instead of
+	/// rama_prepro_mainchain_torsion_potential_name_.
+	bool defines_custom_rama_prepro_map( bool const pre_proline_position ) const;
+
+	/// @brief Set the names of the mainchain torsion potential maps to use to "".
+	/// @details Also resets the mainchain torsion potential filename strings.
+	void reset_mainchain_torsion_potential_names();
+
 	/// @brief  Generate string representation of ResidueType for debugging purposes.
 	void show( std::ostream & output=std::cout, bool output_atomic_details=false ) const;
 
@@ -2125,6 +2173,7 @@ public:
 
 	void
 	report_adducts();
+
 
 	////////////////////////////////////////////////////////////////////////////
 	// private methods
@@ -2620,6 +2669,26 @@ private:
 	utility::vector1< AtomIndices > cut_bond_neighbor_indices_;
 	/// @brief Index version of atom_shadowed_ -- Derived
 	utility::vector1< Size > atom_shadowed_indices_;
+
+	/// @brief The name of the mainchain torsion potential used by this ResidueType for the RamaPrePro score term.
+	/// @details If blank, the base type's mainchain torsion potential is used.
+	/// @note This one is for maps used if this residue is not immediately before a proline.
+	std::string rama_prepro_mainchain_torsion_potential_name_;
+
+	/// @brief The name of the mainchain torsion potential used by this ResidueType for the RamaPrePro score term.
+	/// @details If blank, the base type's mainchain torsion potential is used.
+	/// @note This one is for maps used if this residue occurs before a proline.
+	std::string rama_prepro_mainchain_torsion_potential_name_beforeproline_;
+
+	/// @brief The filename of the mainchain torsion potential used by this ResidueType for the RamaPrePro score term.
+	/// @details If blank, the base type's file is used.  If that's blank too, then this ResidueType isn't scored by RamaPrePro.
+	/// @note This one is for maps used if this residue is not immediately before a proline.
+	std::string rama_prepro_map_file_name_;
+
+	/// @brief The filename of the mainchain torsion potential used by this ResidueType for the RamaPrePro score term.
+	/// @details If blank, the base type's file is used.  If that's blank too, then this ResidueType isn't scored by RamaPrePro.
+	/// @note This one is for maps used if this residue occurs before a proline.
+	std::string rama_prepro_map_file_name_beforeproline_;
 
 	////////////////
 	/// @brief Is all the derived data appropriately updated?

@@ -55,7 +55,7 @@ namespace sugar {
 //  reminimized.
 //
 void
-minimize_all_sampled_floating_bases( 
+minimize_all_sampled_floating_bases(
 #ifdef GL_GRAPHICS
 	core::pose::Pose & viewer_pose,
 #else
@@ -77,7 +77,7 @@ minimize_all_sampled_floating_bases(
 
 	output_title_text( "Enter minimize_all_sampled_floating_bases", TR.Debug );
 
-#ifdef GL_GRAPHICS 
+#ifdef GL_GRAPHICS
 	pose::Pose const viewer_pose_copy = viewer_pose;
 #endif
 	if ( modeling_list.size() == 0 ) return;
@@ -122,7 +122,7 @@ minimize_all_sampled_floating_bases(
 #ifdef GL_GRAPHICS
 		viewer_pose = ( *pose_data_list[n] );
 #else
-#	define viewer_pose ( *pose_data_list[n] )
+		# define viewer_pose ( *pose_data_list[n] )
 #endif
 
 		utility::vector1 < core::Size > const & working_moving_partition_res = working_parameters_->working_moving_partition_res();
@@ -159,7 +159,7 @@ minimize_all_sampled_floating_bases(
 #ifdef GL_GRAPHICS
 		( *pose_data_list[n] ) = viewer_pose;
 #else
-#	undef viewer_pose
+		# undef viewer_pose
 #endif
 	}
 #ifdef GL_GRAPHICS

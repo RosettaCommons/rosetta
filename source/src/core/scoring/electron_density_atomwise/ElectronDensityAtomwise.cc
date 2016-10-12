@@ -860,7 +860,7 @@ ElectronDensityAtomwise::trilinear_gradient(
 core::Real
 ElectronDensityAtomwise::spline_interpolation(
 	ObjexxFCL::FArray3D< double > & coeffs ,
-	numeric::xyzVector< core::Real > const & idxX 
+	numeric::xyzVector< core::Real > const & idxX
 ) const {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = {idxX[2], idxX[1], idxX[0]};

@@ -64,7 +64,7 @@ TransientCutpointHandler::~TransientCutpointHandler()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void
-TransientCutpointHandler::put_in_cutpoints( 
+TransientCutpointHandler::put_in_cutpoints(
 #ifdef GL_GRAPHICS
 	core::pose::Pose & viewer_pose
 #else
@@ -133,7 +133,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void
-TransientCutpointHandler::take_out_cutpoints( 
+TransientCutpointHandler::take_out_cutpoints(
 #ifdef GL_GRAPHICS
 	core::pose::Pose & viewer_pose 
 #else

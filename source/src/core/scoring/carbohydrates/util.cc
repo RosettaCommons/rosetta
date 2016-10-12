@@ -70,7 +70,7 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 	if ( rsd.is_carbohydrate() && rsd.seqpos() != 1 ) {
 		// For psi, we need to get information from the previous residue.
 		Residue const & prev_rsd( pose.residue(
-				pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
 		// If this is not a saccharide residue, do nothing.
 		if ( ! prev_rsd.is_carbohydrate() ) { return LINKAGE_NA; }
 
@@ -93,22 +93,22 @@ get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose::Pose con
 
 				// Finally, check if it's axial or equatorial and call the appropriate function.
 				switch ( is_atom_axial_or_equatorial_to_ring( prev_rsd, connect_atom, ring_atoms ) ) {
-					case AXIAL :
-						if ( position % 2 == 0 ) {  // even
-							return _2AX_3EQ_4AX_LINKS;
-						} else /* odd */ {
-							return _2EQ_3AX_4EQ_LINKS;
-						}
-						break;
-					case EQUATORIAL :
-						if ( position % 2 == 0 ) {  // even
-							return _2EQ_3AX_4EQ_LINKS;
-						} else /* odd */ {
-							return _2AX_3EQ_4AX_LINKS;
-						}
-						break;
-					case NEITHER :
-						return LINKAGE_NA;
+				case AXIAL :
+					if ( position % 2 == 0 ) {  // even
+						return _2AX_3EQ_4AX_LINKS;
+					} else /* odd */ {
+						return _2EQ_3AX_4EQ_LINKS;
+					}
+					break;
+				case EQUATORIAL :
+					if ( position % 2 == 0 ) {  // even
+						return _2EQ_3AX_4EQ_LINKS;
+					} else /* odd */ {
+						return _2AX_3EQ_4AX_LINKS;
+					}
+					break;
+				case NEITHER :
+					return LINKAGE_NA;
 				}
 			}
 		}  // prev_rsd.type().is_cyclic()
@@ -139,7 +139,7 @@ get_omega_preference_for_residue_in_pose( pose::Pose const & pose, core::uint rs
 	if ( rsd.is_carbohydrate() && rsd.seqpos() != 1 ) {
 		// For omega, we need to get information from the previous residue.
 		Residue const & prev_rsd( pose.residue(
-				pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
 
 		// If this is not a saccharide residue, do nothing.
 		if ( ! prev_rsd.is_carbohydrate() ) { return PREFERENCE_NA; }
@@ -156,12 +156,12 @@ get_omega_preference_for_residue_in_pose( pose::Pose const & pose, core::uint rs
 			uint const O4( prev_rsd.atom_index( "O4" ) );
 
 			switch ( is_atom_axial_or_equatorial_to_ring( prev_rsd, O4, ring_atoms ) ) {
-				case AXIAL :
-					return ANTI;
-				case EQUATORIAL :
-					return GAUCHE_EFFECT;
-				case NEITHER :
-					return ANTI;  // This is an assumption on my part.  ~Labonte
+			case AXIAL :
+				return ANTI;
+			case EQUATORIAL :
+				return GAUCHE_EFFECT;
+			case NEITHER :
+				return ANTI;  // This is an assumption on my part.  ~Labonte
 			}
 		}
 	}
@@ -172,9 +172,9 @@ get_omega_preference_for_residue_in_pose( pose::Pose const & pose, core::uint rs
 /// the given glycosidic linkage, or LINKAGE_NA if the CHI Energy Function is not applicable to this torsion.
 CHIEnergyFunctionLinkageType
 get_CHI_energy_function_linkage_type_for_residue_in_pose(
-		id::MainchainTorsionType torsion,
-		pose::Pose const & pose,
-		core::uint rsd_num )
+	id::MainchainTorsionType torsion,
+	pose::Pose const & pose,
+	core::uint rsd_num )
 {
 	if ( torsion == id::phi_dihedral ) {
 		return get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, rsd_num );

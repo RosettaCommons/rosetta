@@ -92,9 +92,9 @@ StrandArchitect::design( core::pose::Pose const &, core::Real & random ) const
 /// @param[in] abego     Abego for the new segment, without bulges placed
 StrandArchitect::StructureDataOP
 StrandArchitect::create_motif(
-		StrandBulges const & bulges,
-		std::string const & secstruct,
-		std::string const & abego ) const
+	StrandBulges const & bulges,
+	std::string const & secstruct,
+	std::string const & abego ) const
 {
 	StructureDataOP sd( new StructureData( id() ) );
 	std::string abego_str = abego;

@@ -165,11 +165,11 @@ SheetTopologyFilter::compute( Pose const & pose ) const
 	/*
 	utility::vector1< std::string > const abego = get_abego( pose );
 	if ( abego.size() != pose.total_residue() ) {
-		std::stringstream msg;
-		msg << "SheetTopologyFilter::compute(): Length of desired abego ("
-			<< ss << "; " << abego.size() << ") does not match pose length ("
-			<< pose.total_residue() << ")" << std::endl;
-		utility_exit_with_message( msg.str() );
+	std::stringstream msg;
+	msg << "SheetTopologyFilter::compute(): Length of desired abego ("
+	<< ss << "; " << abego.size() << ") does not match pose length ("
+	<< pose.total_residue() << ")" << std::endl;
+	utility_exit_with_message( msg.str() );
 	}
 	*/
 
@@ -496,7 +496,7 @@ SheetTopologyFilter::replace_register_shifts(
 			continue;
 		}
 		topology::StrandPairingOP new_pair( new topology::StrandPairing(
-				pose_pair->s1(), pose_pair->s2(), 99, pose_pair->orient() ) );
+			pose_pair->s1(), pose_pair->s2(), 99, pose_pair->orient() ) );
 		new_pairset.push_back( new_pair );
 	}
 	spairset = new_pairset;

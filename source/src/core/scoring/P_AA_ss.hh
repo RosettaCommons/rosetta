@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
 
 namespace core {
 namespace scoring {

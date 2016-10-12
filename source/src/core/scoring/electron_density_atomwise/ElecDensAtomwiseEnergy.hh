@@ -45,7 +45,7 @@ public:
 	PoseSequence() = default;
 
 	std::string const & pose_sequence() const { return pose_sequence_; }
-	
+
 	~PoseSequence() = default;
 
 	PoseSequenceOP

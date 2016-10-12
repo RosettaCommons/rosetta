@@ -65,11 +65,11 @@ H3CterInsert::~H3CterInsert() = default;
 
 void H3CterInsert::init(core::pose::Pose const & pose) {
 	Mover::type( "H3CterInsert" );
-	
-	if (! ab_info_ ){
+
+	if ( ! ab_info_ ) {
 		ab_info_ = AntibodyInfoOP( new AntibodyInfo( pose ));
 	}
-	
+
 	set_default();
 	read_H3_cter_fragment( pose ) ;
 

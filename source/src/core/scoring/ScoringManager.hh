@@ -106,6 +106,9 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
+#include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+
 
 // C++ headers
 #include <map>
@@ -254,8 +257,8 @@ public:
 	get_DisulfideMatchingPotential() const;
 
 	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction(
-			bool setup_sampling_data = false,
-			Real sampling_step_size = 0.1 ) const;
+		bool setup_sampling_data = false,
+		Real sampling_step_size = 0.1 ) const;
 
 	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction() const;
 
@@ -307,6 +310,18 @@ public:
 	/// @details If this vector has not yet been populated, this loads the data from disk (lazy loading).  NOT THREADSAFE.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > get_cloned_aa_comp_setup_helpers( core::scoring::methods::EnergyMethodOptions const &options ) const;
+
+	/// @brief Get a particular MainchainScoreTable for the rama_prepro score term, for a particular residue type.
+	/// @details If this has not yet been populated, loads the data from disk (lazy loading).  NOT THREADSAFE.
+	/// @note Each restype stores separate tables for general and pre-proline scoring.  The prepro_table parameter determines
+	/// whether we're loading the default scoring table or the version for residues occurring before a proline.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::chemical::mainchain_potential::MainchainScoreTableCOP
+	get_rama_prepro_mainchain_torsion_potential(
+		core::chemical::ResidueTypeCOP restype,
+		bool const use_polycubic_interpolation,
+		bool const prepro_table
+	) const;
 
 private:
 
@@ -390,7 +405,19 @@ private:
 	mutable core::scoring::elec::CPRepMapTypeOP cp_rep_map_byname_;
 
 	/// @brief Cached data used by the AACompositionEnergy.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	mutable utility::vector1< core::scoring::aa_composition_energy::AACompositionEnergySetupOP > aa_composition_setup_helpers_;
+
+	/// @brief Cached mainchain torsion potentials, used by rama_prepro.
+	/// @details This one is for potentials for residues NOT occurring before proline.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	mutable std::map< std::string, core::chemical::mainchain_potential::MainchainScoreTableOP > rama_prepro_mainchain_potentials_;
+
+	/// @brief Cached mainchain torsion potentials, used by rama_prepro.
+	/// @details This one is for potentials for residues occurring before proline.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	mutable std::map< std::string, core::chemical::mainchain_potential::MainchainScoreTableOP > rama_prepro_mainchain_potentials_beforeproline_;
+
 
 	utility::vector1< methods::EnergyMethodCreatorOP > method_creator_map_;
 

@@ -55,9 +55,9 @@ namespace carbohydrates {
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
 SugarBackboneEnergy::SugarBackboneEnergy() :
-		ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP( new SugarBackboneEnergyCreator ) ),
-		E_cef_( ScoringManager::get_instance()->get_CHIEnergyFunction() ),
-		E_opf_( ScoringManager::get_instance()->get_OmegaPreferencesFunction() )
+	ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP( new SugarBackboneEnergyCreator ) ),
+	E_cef_( ScoringManager::get_instance()->get_CHIEnergyFunction() ),
+	E_opf_( ScoringManager::get_instance()->get_OmegaPreferencesFunction() )
 {}
 
 
@@ -73,9 +73,9 @@ SugarBackboneEnergy::clone() const
 // Evaluate the one-body carbohydrate backbone energies for a particular residue.
 void
 SugarBackboneEnergy::residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		EnergyMap & emap ) const
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	EnergyMap & emap ) const
 {
 	using namespace numeric;
 	using namespace chemical::carbohydrates;
@@ -155,13 +155,13 @@ SugarBackboneEnergy::residue_energy(
 // Evaluate the DoF derivative for a particular residue.
 core::Real
 SugarBackboneEnergy::eval_residue_dof_derivative(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /* min_data */,
-		id::DOF_ID const & /* dof_id */,
-		id::TorsionID const & torsion_id,
-		pose::Pose const & pose,
-		ScoreFunction const & /* sf */,
-		EnergyMap const & weights ) const
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & /* min_data */,
+	id::DOF_ID const & /* dof_id */,
+	id::TorsionID const & torsion_id,
+	pose::Pose const & pose,
+	ScoreFunction const & /* sf */,
+	EnergyMap const & weights ) const
 {
 	using namespace std;
 	using namespace numeric;
@@ -204,7 +204,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Finally, we can evaluate.
 		deriv = E_cef_.evaluate_derivative(
-				get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, next_rsd ), phi );
+			get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, next_rsd ), phi );
 
 		if ( info->is_L_sugar() ) {
 			deriv = -deriv;
@@ -241,7 +241,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Finally, evaluate.
 		deriv = E_cef_.evaluate_derivative(
-				get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, next_rsd ), psi );
+			get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, next_rsd ), psi );
 
 		// ...and deal with L-sugars again.
 		if ( ! is_exocyclic_bond ) {

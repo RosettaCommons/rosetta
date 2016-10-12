@@ -167,7 +167,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_DELTA( E.evaluate_derivative( ALPHA6_LINKS, x ), -0.0636112, 0.002 );
 		TS_ASSERT_DELTA( E.evaluate_derivative( BETA6_LINKS, x ), 0.0381025, 0.002 );
 	}
-	
+
 	void test_CHI_sampling_data()
 	{
 		using core::scoring::ScoringManager;

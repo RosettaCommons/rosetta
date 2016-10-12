@@ -108,11 +108,11 @@ CHIEnergyFunction::init()
 		{ _2EQ_3AX_4EQ_LINKS, "CHI_energy_function_for_2eq_3ax_4eq_linkages.params" },
 		{ ALPHA6_LINKS, "CHI_energy_function_for_alpha6_linkages.params" },
 		{ BETA6_LINKS, "CHI_energy_function_for_beta6_linkages.params" }
-	};
+		};
 
 	for ( CHIEnergyFunctionLinkageType type( FIRST_LINK_TYPE ); type <= N_LINK_TYPES; ++type ) {
 		map< char, vector1< Real > > params( read_Gaussian_parameters_from_database_file(
-				basic::database::full_name( filepath + filenames.at( type ) ) ) );
+			basic::database::full_name( filepath + filenames.at( type ) ) ) );
 		a_[ type ] = params[ 'a' ];
 		b_[ type ] = params[ 'b' ];
 		c_[ type ] = params[ 'c' ];

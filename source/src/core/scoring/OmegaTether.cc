@@ -26,7 +26,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
 #include <numeric/MathMatrix.hh>
-#include <numeric/interpolation/spline/Cubic_spline.hh>
+#include <numeric/interpolation/spline/CubicSpline.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

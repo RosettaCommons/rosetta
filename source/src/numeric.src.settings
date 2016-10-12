@@ -52,9 +52,9 @@ sources = {
 		"Histogram.srlz",
 	],
 	"numeric/interpolation/spline": [
-		"Bicubic_spline",
+		"BicubicSpline",
 		"CompoundInterpolator",
-		"Cubic_spline",
+		"CubicSpline",
 		"Interpolator",
 		"SimpleInterpolator",
 		"spline_functions",

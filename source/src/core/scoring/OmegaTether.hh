@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
 
 namespace core {
 namespace scoring {

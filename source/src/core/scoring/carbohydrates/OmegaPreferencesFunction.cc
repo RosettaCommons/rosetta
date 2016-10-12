@@ -81,26 +81,26 @@ OmegaPreferencesFunction::set_parameters( OmegaPreferenceType preference, Angle 
 	// Note: I am only using private variables here for ease of conversion to another function in the future.  ~Labonte
 
 	switch ( preference ) {
-		case ANTI:
-			if ( x <= 120 ) {
-				theta_ = 60; b_ = 0.0;
-			} else if ( x > 240 ) {
-				theta_ = 300; b_ = 1.0;
-			} else /* 120 < x <= 240 */ {
-				theta_ = 180; b_ = 0.3;
-			}
-			break;
-		case GAUCHE_EFFECT:
-			if ( x <= 120 ) {
-				theta_ = 60; b_ = 0.21;
-			} else if ( x > 240 ) {
-				theta_ = 300; b_ = 0.0;
-			} else /* 120 < x <= 240 */ {
-				theta_ = 180; b_ = 1.39;
-			}
-			break;
-		case PREFERENCE_NA:
-			;
+	case ANTI :
+		if ( x <= 120 ) {
+			theta_ = 60; b_ = 0.0;
+		} else if ( x > 240 ) {
+			theta_ = 300; b_ = 1.0;
+		} else /* 120 < x <= 240 */ {
+			theta_ = 180; b_ = 0.3;
+		}
+		break;
+	case GAUCHE_EFFECT :
+		if ( x <= 120 ) {
+			theta_ = 60; b_ = 0.21;
+		} else if ( x > 240 ) {
+			theta_ = 300; b_ = 0.0;
+		} else /* 120 < x <= 240 */ {
+			theta_ = 180; b_ = 1.39;
+		}
+		break;
+	case PREFERENCE_NA :
+		;
 	}
 }
 

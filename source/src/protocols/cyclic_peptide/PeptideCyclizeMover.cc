@@ -258,7 +258,7 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 	protocols::cyclic_peptide::CreateTorsionConstraintOP torsion(new protocols::cyclic_peptide::CreateTorsionConstraint);
 	torsion->set(res1_torsion_,atom1_torsion_,res2_torsion_,atom2_torsion_,res3_torsion_,atom3_torsion_,res4_torsion_,atom4_torsion_,cst_func_torsion_);
 	torsion->apply(pose);
-	
+
 	std::cout << "we are setting the torsion function " << cst_func_torsion_ << " between " << res1_torsion_ << atom1_torsion_ << " and " << res2_torsion_ << atom2_torsion_ << " and " << res3_torsion_ << atom3_torsion_ << " and " << res4_torsion_ << atom4_torsion_ << std::endl;
 
 	if ( !bond_assigned_ ) {

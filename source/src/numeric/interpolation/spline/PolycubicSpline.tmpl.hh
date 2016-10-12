@@ -33,8 +33,8 @@
 
 // Package headers
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/Cubic_spline.hh>
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathNTensor.hh>

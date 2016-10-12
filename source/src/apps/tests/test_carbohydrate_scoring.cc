@@ -60,7 +60,7 @@ output_score( Pose & sugar, core::uint res_num, ScoreFunction const & sf, bool s
 	if ( ! silently ) {
 		if ( has_exocyclic_glycosidic_linkage( sugar, res_num ) ) {
 			cout << " Phi/Psi/Omega: " <<
-					sugar.phi( res_num ) << '/' << sugar.psi( res_num ) << '/' << sugar.omega( res_num );
+				sugar.phi( res_num ) << '/' << sugar.psi( res_num ) << '/' << sugar.omega( res_num );
 		} else {
 			cout << " Phi/Psi: " << sugar.phi( res_num ) << '/' << sugar.psi( res_num );
 		}
@@ -293,7 +293,7 @@ main( int argc, char *argv[] )
 		cout << "(D-alpha1->3eq main-chain linkage and D-beta1->4eq and D-alpha1->6 branch linkages):" << endl << endl;
 
 		make_pose_from_saccharide_sequence( bisected_man,
-				"a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-[b-d-GlcpNAc-(1->4)]-b-D-Manp" );
+			"a-D-Manp-(1->3)-[a-D-Manp-(1->6)]-[b-d-GlcpNAc-(1->4)]-b-D-Manp" );
 
 		cout << "Setting bisected oligosaccharide's bonds on slope toward minimum..." << endl;
 		bisected_man.set_phi( 2, 30.0 );

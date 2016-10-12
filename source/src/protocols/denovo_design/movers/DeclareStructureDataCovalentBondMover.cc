@@ -35,9 +35,9 @@ namespace protocols {
 namespace denovo_design {
 namespace movers {
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 DeclareStructureDataCovalentBondMover::DeclareStructureDataCovalentBondMover():
@@ -53,8 +53,8 @@ DeclareStructureDataCovalentBondMover::DeclareStructureDataCovalentBondMover():
 DeclareStructureDataCovalentBondMover::~DeclareStructureDataCovalentBondMover(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 /// @brief Apply the mover
 void
@@ -134,8 +134,8 @@ operator<<( std::ostream & os, DeclareStructureDataCovalentBondMover const & mov
 
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Scripts Support ///
-	///////////////////////////////
+/// Rosetta Scripts Support ///
+///////////////////////////////
 
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
@@ -185,8 +185,8 @@ DeclareStructureDataCovalentBondMover::class_name()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Creator ///
-	///////////////
+/// Creator ///
+///////////////
 
 /////////////// Creator ///////////////
 
@@ -203,8 +203,8 @@ DeclareStructureDataCovalentBondMoverCreator::keyname() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// private methods ///
-	///////////////////////
+/// private methods ///
+///////////////////////
 
 } //protocols
 } //denovo_design

@@ -44,7 +44,7 @@ public:
 	DeclareStructureDataCovalentBondMover();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-//	DeclareStructureDataCovalentBondMover( DeclareStructureDataCovalentBondMover const & src );
+	// DeclareStructureDataCovalentBondMover( DeclareStructureDataCovalentBondMover const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~DeclareStructureDataCovalentBondMover();

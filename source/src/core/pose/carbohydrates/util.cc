@@ -403,7 +403,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
 		TR.Warning << "Omega is undefined for residue " << sequence_position <<
-				" because the glycosidic linkage is not exocyclic." << endl;
+			" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
 
@@ -456,7 +456,7 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
 		TR.Warning << "Omega2 is undefined for residue " << sequence_position <<
-				" because the glycosidic linkage is not exocyclic." << endl;
+			" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
 
@@ -657,26 +657,26 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case  BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
-					}
+		case  BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
 				}
-				break;
-			case BRANCH :
-				if ( torsion_id.torsion() <= residue.n_non_polymeric_residue_connections() ) {
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
-					}
+			}
+			break;
+		case BRANCH :
+			if ( torsion_id.torsion() <= residue.n_non_polymeric_residue_connections() ) {
+				Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
 				}
-				break;
-			default :
-				break;
+			}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;
@@ -699,32 +699,32 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
-					}
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
 				}
-				break;
-			case CHI :
-				{
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					// A psi angle will always have the third atom of its definition be a connect atom.
-					uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
-					Size const n_branches( residue.n_non_polymeric_residue_connections() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-						if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == third_atom ) ) {
-							return true;
-						}
-					}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// A psi angle will always have the third atom of its definition be a connect atom.
+			uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == third_atom ) ) {
+					return true;
 				}
-				break;
-			default :
-				break;
+			}
+		}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;
@@ -748,35 +748,35 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-						if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
-							return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
-						}
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+					if ( info->has_exocyclic_linkage_to_child_mainchain() ) {
+						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
 					}
 				}
-				break;
-			case CHI :
-				{
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					// An omega angle will always have the fourth atom of its definition be a connect atom.
-					uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
-					Size const n_branches( residue.n_non_polymeric_residue_connections() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-						if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == fourth_atom ) ) {
-							return true;
-						}
-					}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// An omega angle will always have the fourth atom of its definition be a connect atom.
+			uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+				if ( ( next_rsd.is_carbohydrate() ) && ( residue.connect_atom( next_rsd ) == fourth_atom ) ) {
+					return true;
 				}
-				break;
-			default :
-				break;
+			}
+		}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;
@@ -968,11 +968,11 @@ idealize_last_n_glycans_in_pose( Pose & pose, Size const n_glycans_added )
 /// Also, I've not written this to handle creation of glycolipids yet.
 void
 glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace utility;
@@ -1074,17 +1074,17 @@ glycosylate_pose(
 
 	//TR << "InitialNRES: " << initial_sizes << " NRES: "<< pose.size() << " PDBINFO: "<< pose.pdb_info()->nres() << std::endl;
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
-			pose.residue( sequence_position ).name3() << sequence_position << endl;
+		pose.residue( sequence_position ).name3() << sequence_position << endl;
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & iupac_sequence,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & iupac_sequence,
+	bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -1097,8 +1097,8 @@ glycosylate_pose(
 		glycosylate_pose( pose, sequence_position, "CD1", iupac_sequence, idealize_linkages );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
-				"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
+			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
+			"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
 	}
 }
 
@@ -1106,11 +1106,11 @@ glycosylate_pose(
 // Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void
 glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & filename,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & filename,
+	bool const idealize_linkages /*true*/ )
 {
 	using namespace std;
 	using namespace io::carbohydrates;
@@ -1129,10 +1129,10 @@ glycosylate_pose_by_file(
 /// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
 void
 glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & filename,
-		bool const idealize_linkages /*true*/ )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & filename,
+	bool const idealize_linkages /*true*/ )
 {
 	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
 	if ( glycosylation_site == "ASN" ) {
@@ -1145,8 +1145,8 @@ glycosylate_pose_by_file(
 		glycosylate_pose_by_file( pose, sequence_position, "CD1", filename, idealize_linkages );
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
-				"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
+			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
+			"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
 	}
 }
 

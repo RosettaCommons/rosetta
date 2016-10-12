@@ -21,12 +21,13 @@
 
 // Package headers
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/Cubic_spline.hh>
-#include <numeric/interpolation/spline/Bicubic_spline.hh>
+#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathNTensor.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/vector1.hh>
 
 namespace numeric {
 namespace interpolation {
@@ -39,29 +40,10 @@ inline double pow(Size x, Size y)
 }
 #endif
 
+/// @brief Dummy function, never to be called.  This is only here to ensure that the compiler creates
+/// PolycubicSpline<3> through PolycubicSpline<9> classes.
 void hokey_template_workaround() {
 	using numeric::interpolation::spline::BorderFlag;
-
-	/*
-	Use cubic and bicubic for these.
-	numeric::interpolation::spline::PolycubicSpline< 1 > pcs1;
-	pcs1.train( utility::fixedsizearray1< BorderFlag, 1 >(),
-	utility::fixedsizearray1< double, 1 >(),
-	utility::fixedsizearray1< double, 1 >(),
-	numeric::MathNTensor< Real, 1 >(),
-	utility::fixedsizearray1< bool, 1 >(),
-	utility::fixedsizearray1< std::pair< Real, Real >, 1 >( std::pair< Real, Real >( 0,0 ) ) );
-
-	numeric::interpolation::spline::PolycubicSpline< 2 > pcs2;
-	pcs2.train( utility::fixedsizearray1< BorderFlag, 2 >(),
-	utility::fixedsizearray1< double, 2 >(),
-	utility::fixedsizearray1< double, 2 >(),
-	numeric::MathNTensor< Real, 2 >(),
-	utility::fixedsizearray1< bool, 2 >(),
-	utility::fixedsizearray1< std::pair< Real, Real >, 2 >( std::pair< Real, Real >( 0,0 ) ) );
-	*/
-
-	//Not strictly necessary... except maybe?
 
 	numeric::interpolation::spline::PolycubicSpline< 3 > pcs3;
 	pcs3.train( utility::fixedsizearray1< BorderFlag, 3 >(),
@@ -103,13 +85,216 @@ void hokey_template_workaround() {
 	pcs6.F( utility::fixedsizearray1< Real, 6 >() );
 	pcs6.dFdxi( 1, utility::fixedsizearray1< Real, 6 >() );
 
-	//numeric::interpolation::spline::PolycubicSpline< 7 > pcs7;
-	//numeric::interpolation::spline::PolycubicSpline< 8 > pcs8;
-	//numeric::interpolation::spline::PolycubicSpline< 9 > pcs9;
-	//numeric::interpolation::spline::PolycubicSpline< 10 > pcs10;
-	//numeric::interpolation::spline::PolycubicSpline< 11 > pcs11;
-	//numeric::interpolation::spline::PolycubicSpline< 12 > pcs12;
+	numeric::interpolation::spline::PolycubicSpline< 7 > pcs7;
+	pcs7.train( utility::fixedsizearray1< BorderFlag, 7 >(),
+		utility::fixedsizearray1< double, 7 >(),
+		utility::fixedsizearray1< double, 7 >(),
+		numeric::MathNTensor< Real, 7 >(),
+		utility::fixedsizearray1< bool, 7 >(),
+		utility::fixedsizearray1< std::pair< Real, Real >, 7 >( std::pair< Real, Real >( 0,0 ) ) );
+	pcs7.F( utility::fixedsizearray1< Real, 7 >() );
+	pcs7.dFdxi( 1, utility::fixedsizearray1< Real, 7 >() );
+
+	numeric::interpolation::spline::PolycubicSpline< 8 > pcs8;
+	pcs8.train( utility::fixedsizearray1< BorderFlag, 8 >(),
+		utility::fixedsizearray1< double, 8 >(),
+		utility::fixedsizearray1< double, 8 >(),
+		numeric::MathNTensor< Real, 8 >(),
+		utility::fixedsizearray1< bool, 8 >(),
+		utility::fixedsizearray1< std::pair< Real, Real >, 8 >( std::pair< Real, Real >( 0,0 ) ) );
+	pcs8.F( utility::fixedsizearray1< Real, 8 >() );
+	pcs8.dFdxi( 1, utility::fixedsizearray1< Real, 8 >() );
+
+	numeric::interpolation::spline::PolycubicSpline< 9 > pcs9;
+	pcs9.train( utility::fixedsizearray1< BorderFlag, 9 >(),
+		utility::fixedsizearray1< double, 9 >(),
+		utility::fixedsizearray1< double, 9 >(),
+		numeric::MathNTensor< Real, 9 >(),
+		utility::fixedsizearray1< bool, 9 >(),
+		utility::fixedsizearray1< std::pair< Real, Real >, 9 >( std::pair< Real, Real >( 0,0 ) ) );
+	pcs9.F( utility::fixedsizearray1< Real, 9 >() );
+	pcs9.dFdxi( 1, utility::fixedsizearray1< Real, 9 >() );
+
 }
+
+/// @brief Given a PolycubicSplineBase and a set of coordinates, call PolycubicSpline<N>::F and return the value.
+/// @details Convenience function to hide the switch/case logic.  Only works for PolycubicSplines of dimensionality 3 through 9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+Real
+get_PolycubicSpline_F(
+	PolycubicSplineBaseCOP splinebase,
+	utility::vector1< Real > const &coords
+) {
+	runtime_assert( splinebase );
+	Size const dim( splinebase->dimensionality() );
+	switch( dim ) {
+	case 3 :
+		{
+		PolycubicSplineCOP<3> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<3> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 3 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 4 :
+		{
+		PolycubicSplineCOP<4> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<4> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 4 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 5 :
+		{
+		PolycubicSplineCOP<5> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<5> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 5 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 6 :
+		{
+		PolycubicSplineCOP<6> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<6> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 6 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 7 :
+		{
+		PolycubicSplineCOP<7> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<7> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 7 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 8 :
+		{
+		PolycubicSplineCOP<8> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<8> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 8 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	case 9 :
+		{
+		PolycubicSplineCOP<9> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<9> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 9 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		return spline->F(fixedcoords);
+	}
+		break;
+	default :
+		utility_exit_with_message( "Error in numeric::interpolation::spline::get_PolycubicSpline_F(): The provided spline dimensionality must be between 3 and 9, inclusive." );
+		break;
+	}
+
+	return 0.0; //This line is never reached, and is only here to keep compilers happy.
+}
+
+/// @brief Given a PolycubicSplineBase and a set of coordinates, call PolycubicSpline<N>::dFdall and return the value.
+/// @details Convenience function to hide the switch/case logic.  Only works for PolycubicSplines of dimensionality 3 through 9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+get_PolycubicSpline_gradient(
+	PolycubicSplineBaseCOP splinebase,
+	utility::vector1< Real > const &coords,
+	utility::vector1< Real > &gradient_out
+) {
+	runtime_assert( splinebase );
+	Size const dim( splinebase->dimensionality() );
+	switch( dim ) {
+	case 3 :
+		{
+		PolycubicSplineCOP<3> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<3> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 3 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 3 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 4 :
+		{
+		PolycubicSplineCOP<4> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<4> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 4 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 4 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 5 :
+		{
+		PolycubicSplineCOP<5> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<5> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 5 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 5 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 6 :
+		{
+		PolycubicSplineCOP<6> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<6> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 6 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 6 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 7 :
+		{
+		PolycubicSplineCOP<7> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<7> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 7 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 7 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 8 :
+		{
+		PolycubicSplineCOP<8> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<8> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 8 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 8 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	case 9 :
+		{
+		PolycubicSplineCOP<9> spline( utility::pointer::dynamic_pointer_cast<PolycubicSpline<9> const>( splinebase ) );
+		runtime_assert(spline);
+		utility::fixedsizearray1< Real, 9 > fixedcoords;
+		for ( Size i=1; i<=dim; ++i ) fixedcoords[i] = coords[i];
+		utility::fixedsizearray1< Real, 9 > const result ( spline->dFdall(fixedcoords) );
+		gradient_out.resize(dim);
+		for ( Size i=1; i<=dim; ++i ) gradient_out[i] = result[i];
+	}
+		break;
+	default :
+		utility_exit_with_message( "Error in numeric::interpolation::spline::get_PolycubicSpline_gradient(): The provided spline dimensionality must be between 3 and 9, inclusive." );
+		break;
+	}
+}
+
+
 
 }//end namespace spline
 }//end namespace interpolation

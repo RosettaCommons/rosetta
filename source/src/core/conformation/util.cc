@@ -2240,9 +2240,9 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 /// @author  Labonte <JWLabonte@jhu.edu>
 core::uint
 position_of_atom_on_ring(
-		Residue const & residue,
-		core::uint query_atom,
-		utility::vector1< core::uint > const & ring_atoms )
+	Residue const & residue,
+	core::uint query_atom,
+	utility::vector1< core::uint > const & ring_atoms )
 {
 	utility::vector1< uint > const bonded_heavy_atoms( residue.get_adjacent_heavy_atoms( query_atom ) );
 	Size const n_ring_atoms( ring_atoms.size() );
@@ -2266,9 +2266,9 @@ position_of_atom_on_ring(
 /// @author  Labonte <JWLabonte@jhu.edu>
 chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-		Residue const & residue,
-		core::uint query_atom,
-		utility::vector1< core::uint > const & ring_atoms )
+	Residue const & residue,
+	core::uint query_atom,
+	utility::vector1< core::uint > const & ring_atoms )
 {
 	using namespace utility;
 	using namespace numeric;
@@ -2287,7 +2287,7 @@ is_atom_axial_or_equatorial_to_ring(
 			ring_atom_coords[ j ] = residue.xyz( ring_atoms[ j ] );
 		}
 		return chemical::rings::is_atom_axial_or_equatorial_to_ring(
-				query_atom_coords, attachment_atom_coords, ring_atom_coords );
+			query_atom_coords, attachment_atom_coords, ring_atom_coords );
 	}
 	TR.Debug << "The attachment point for the query atom is not found in the ring; ";
 	TR.Debug << "an axial/equatorial designation is meaningless." << std::endl;

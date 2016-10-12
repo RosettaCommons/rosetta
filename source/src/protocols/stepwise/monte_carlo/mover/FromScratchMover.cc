@@ -80,9 +80,9 @@ FromScratchMover::apply( core::pose::Pose & pose,
 		char newrestype = full_sequence[ resnum[n]-1 ];
 		modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 		new_sequence += newrestype;
-    if ( nc_res_map.find( resnum[n] ) != nc_res_map.end() ) {
+		if ( nc_res_map.find( resnum[n] ) != nc_res_map.end() ) {
 			new_sequence += "[" + nc_res_map.at( resnum[n] ) + "]";
-    }
+		}
 	}
 
 	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

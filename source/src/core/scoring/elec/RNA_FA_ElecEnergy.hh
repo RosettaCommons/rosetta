@@ -68,7 +68,7 @@ public:
 		ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	) const;
-	
+
 	virtual
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
@@ -84,7 +84,7 @@ public:
 		ScoreFunction const &,
 		EnergyMap & totals
 	) const;
-	
+
 	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
@@ -129,7 +129,7 @@ public:
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData & pair_data
 	) const;
-	
+
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
@@ -139,7 +139,7 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
-	
+
 	/// @brief Returns "true" because this energy method has not been updated to
 	/// use the new derivative evaluation machinery.  Note that this class requires
 	/// the definition of this method because it's parent class, FA_ElecEnergy,
@@ -190,7 +190,7 @@ public:
 		Real const cpweight,
 		Real & d2
 	) const;
-	
+
 	virtual
 	void
 	backbone_backbone_energy(
@@ -241,7 +241,7 @@ public:
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
-	
+
 	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
@@ -251,13 +251,13 @@ public:
 
 	bool
 	requires_a_setup_for_minimizing_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
-	
+
 	//bool
 	//requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
-	
+
 	//bool
 	//requires_a_setup_for_scoring_for_residue_pair_opportunity( pose::Pose const & ) const { return true; }
-	
+
 public:
 
 	Real

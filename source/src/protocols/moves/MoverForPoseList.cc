@@ -60,7 +60,7 @@ MoverForPoseList::apply(
 void
 MoverForPoseList::apply(
 	utility::vector1< core::pose::PoseOP > & pose_list,
-	core::pose::Pose & 
+	core::pose::Pose &
 ) {
 	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
 		apply( *pose_list[n] );

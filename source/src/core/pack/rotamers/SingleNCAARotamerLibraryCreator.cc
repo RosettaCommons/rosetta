@@ -92,7 +92,8 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 
 	// trust the params file to correctly name the rotamer library even if it's densities format
 	std::string file_name = ncaa_libspec->ncaa_rotlib_path();
-	std::string full_path;
+	std::string dir_name, full_path;
+	bool tried(false);
 	if ( ! file_name.size() ) {
 		utility_exit_with_message("Unspecified NCAA rotlib path with residue type " + restype.name() );
 	}
@@ -101,39 +102,68 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 	utility::options::PathVectorOption & priorityvec = option[ in::file::override_rot_lib_path ];
 	Size pveci(1);
 	utility::io::izstream rotlib_in;
-	while ( !rotlib_in && pveci <= priorityvec.size() ) {
-		full_path = priorityvec[ pveci ].name() + file_name;
+	while ( pveci <= priorityvec.size() ) {
+		tried=true;
+		dir_name = priorityvec[ pveci ].name();
+		full_path = dir_name + file_name;
 		rotlib_in.open( full_path );
 
-		if ( rotlib_in ) break;
+		if ( rotlib_in.good() ) break;
 
 		// Try flat hierarchy too
-		full_path = priorityvec[ pveci ].name() + file_name.substr( file_name.find_last_of( "/\\" )+1 );
+		full_path = dir_name + file_name.substr( file_name.find_last_of( "/\\" )+1 );
 		rotlib_in.open( full_path );
+		if ( rotlib_in.good() ) break;
 
 		pveci++;
 	}
 
-	// create izstream from path
-	std::string dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
-	full_path = dir_name + file_name;
-	rotlib_in.open( full_path );
-
-	// if we cannot open in regular path, try alternate paths
-	utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
-	pveci = 1;
-	while ( !rotlib_in && pveci <= pvec.size() ) {
-		full_path = pvec[ pveci ].name() + file_name;
+	if ( !rotlib_in.good() || !tried ) {
+		// if the priority paths don't yield a hit, try the relative file name.
+		tried=true;
+		dir_name = "";
+		full_path = file_name;
 		rotlib_in.open( full_path );
-
-		if ( rotlib_in ) break;
-
-		// Try flat hierarchy too
-		full_path = pvec[ pveci ].name() + file_name.substr( file_name.find_last_of( "/\\" )+1 );
-		rotlib_in.open( full_path );
-
-		pveci++;
 	}
+
+	if ( !rotlib_in.good() || !tried ) {
+		tried=true;
+		// if that doesn't work, try the relative file name in the database.
+		dir_name = basic::database::full_name( "" );
+		full_path = dir_name + file_name;
+		rotlib_in.open( full_path );
+	}
+
+	if ( !rotlib_in.good() || !tried ) {
+		tried=true;
+		// next try the ncaa_rotlibs directory in the database.
+		dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
+		full_path = dir_name + file_name;
+		rotlib_in.open( full_path );
+	}
+
+	if ( !rotlib_in.good() || !tried ) {
+		// if we cannot open in regular path, try alternate paths
+		utility::options::PathVectorOption & pvec = option[ in::file::extra_rot_lib_path ];
+		pveci = 1;
+		while ( pveci <= pvec.size() ) {
+			tried=true;
+			dir_name = pvec[ pveci ].name();
+			full_path = dir_name + file_name;
+			rotlib_in.open( full_path );
+
+			if ( rotlib_in.good() ) break;
+
+			// Try flat hierarchy too
+			full_path = dir_name + file_name.substr( file_name.find_last_of( "/\\" )+1 );
+			rotlib_in.open( full_path );
+			if ( rotlib_in.good() ) break;
+
+			pveci++;
+		}
+	}
+
+	runtime_assert_string_msg( rotlib_in.good(), "Error!  Could not open file " + file_name + " for read." );
 
 	TR << "Reading in rot lib " << full_path << "..." << std::endl;
 
