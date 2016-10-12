@@ -1,0 +1,36 @@
+# The Talaris2013 score function combines several improvements to the previous
+# default score function, score12: the 2010 Dunbrack Rotamer Library,
+# the sp2 hydrogen bond potential, an explicit electrostatics term with a
+# distance dependent dielectric (and a removal of the previous knowledge-
+# based electrostatic potential, fa_pair), an adjustment to the LK_DGFREE
+# parameters for four atom types, the 05.2009 ideal coordinates for
+# the amino acids, an expansion of hydroxyl sampling for serine and
+# threonine, the use of bicubic-spline interpolation in our knowledge-
+# based potentials, an improved disulfide potential, and an analytic
+# evaluation of our Lennard-Jones and EEF1 potentials.
+#
+# This set of defaults was elected at the energy function meeting at the
+# Talaris conference center in Seattle in May 2013.
+#
+# Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
+# set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
+# set of reference energies with the highest sequence recovery (39.4%) was
+# chosen.
+#
+METHOD_WEIGHTS ref 126 162 108 135 241 103 175 207 196 207 216 103 205 132 156 108 137 181 256 207
+fa_atr 0.0
+fa_rep 0.0
+fa_sol 0.0
+fa_intra_rep 0.0
+fa_elec 0.0
+pro_close 0
+hbond_sr_bb 0
+hbond_lr_bb 0
+hbond_bb_sc 0
+hbond_sc 0
+dslf_fa13 0
+rama 0.0
+omega 0.0
+fa_dun 0.0
+p_aa_pp 0.0
+ref 1

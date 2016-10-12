@@ -1,0 +1,5 @@
+-in:file:s inputs/input.pdb
+-parser:protocol inputs/input.xml
+-mute protocols.flxbb.LayerDesignOperation core.kinematics.AtomTree
+-rama_prepro_steep
+-beta
