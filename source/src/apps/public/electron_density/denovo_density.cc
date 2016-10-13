@@ -554,10 +554,6 @@ void DockFragmentsMover::run() {
 		dock.setOutputSilent( silent_fn );
 	}
 
-	if ( option[ point_radius ].user() != 0 ) {
-		dock.setCenterOnMiddleCA(true);
-	}
-
 	// read CA positions (if specified)
 	if ( option[ ca_positions ].user() ) {
 		utility::vector1< numeric::xyzVector<core::Real> > cas;

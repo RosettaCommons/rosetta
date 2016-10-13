@@ -114,7 +114,8 @@ public:
 	mapSphericalSamples(
 		ObjexxFCL::FArray3D< double > &mapShellR,
 		core::Size nRsteps, core::Real delR, core::Size B,
-		numeric::xyzVector< core::Real > center
+		numeric::xyzVector< core::Real > center,
+		core::Real laplacian_offset
 	);
 
 	/// @brief Quickly matches a centroid pose into a low-resolution density map

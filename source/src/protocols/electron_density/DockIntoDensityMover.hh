@@ -174,8 +174,8 @@ class DockIntoDensityMover : public protocols::moves::Mover {
 public:
 	DockIntoDensityMover() :
 		topNtrans_(5000), topNfilter_(1000), topNfinal_(50), delR_(2),
-		dens_wt_(20.0), cluster_radius_(2.0),point_radius_(0),fragDens_(0.7), mindist_(3), B_(16), nRsteps_(0), gridStep_(2),
-		center_on_middle_ca_(false), points_defined_(false), cluster_oversample_(2), max_rot_per_trans_(3),
+		dens_wt_(20.0), cluster_radius_(2.0),point_radius_(3),fragDens_(0.7), mindist_(3), laplacian_offset_(0), B_(16), nRsteps_(0), gridStep_(2),
+		center_on_middle_ca_(false), points_defined_(false), convolute_single_residue_(false), cluster_oversample_(2), max_rot_per_trans_(3),
 		do_refine_(true), min_backbone_(true), ncyc_(1), normscores_(false), passthrough_(false), native_com_(0,0,0) {}
 
 	// set options
@@ -202,6 +202,9 @@ public:
 	void setClusterOversamp( core::Size cluster_oversample ) { cluster_oversample_=cluster_oversample; }
 	void setMaxRotPerTrans( core::Size max_rot_per_trans ) { max_rot_per_trans_=max_rot_per_trans; }
 	void setSymminfo( DensitySymmInfo const & symminfo ) { symminfo_=symminfo; }
+	void setConvoluteSingleR( bool convolute_single_residue ) { convolute_single_residue_ = convolute_single_residue; } // how to make default true?
+	void setLaplacianOffset( core::Real laplacian_offset ) { laplacian_offset_ = laplacian_offset; }
+
 
 	// predefine search locations
 	void predefine_search( utility::vector1< numeric::xyzVector<core::Real> > &pts_in );
@@ -296,10 +299,10 @@ private:
 	core::Size topNfinal_;
 
 	// params of search
-	core::Real delR_, dens_wt_, cluster_radius_, point_radius_, fragDens_, mindist_;
+	core::Real delR_, dens_wt_, cluster_radius_, point_radius_, fragDens_, mindist_, laplacian_offset_;
 	core::Size B_;
 	core::Size nRsteps_,gridStep_;
-	bool center_on_middle_ca_, points_defined_;
+	bool center_on_middle_ca_, points_defined_, convolute_single_residue_;
 
 	// symmetry
 	DensitySymmInfo symminfo_;

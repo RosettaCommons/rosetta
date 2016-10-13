@@ -15,7 +15,6 @@
 #include <protocols/electron_density/DockIntoDensityMover.hh>
 #include <protocols/electron_density/util.hh>
 
-
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -81,9 +80,7 @@
 
 #include <basic/options/option.hh>
 
-// option key includes
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-
 #include <basic/Tracer.hh>
 
 
@@ -137,6 +134,7 @@ core::Real get_rot_angle( numeric::xyzMatrix<core::Real> R ) {
 	return acos( std::min( std::max(0.5* (trace-1),-1.0), 1.0) );
 }
 
+
 void
 DockIntoDensityMover::print_best_rms( core::pose::Pose const &pose, RBfitResultDB const &results ) {
 	core::Real bestrms=1e4;
@@ -154,7 +152,6 @@ DockIntoDensityMover::print_best_rms( core::pose::Pose const &pose, RBfitResultD
 	}
 	TR << "Best RMS = " << bestrms << " at rank " << bestrank << std::endl;
 }
-
 
 
 
@@ -234,6 +231,7 @@ DockIntoDensityMover::apply_transform (
 	pose.batch_set_xyz( ids, positions );
 }
 
+
 void
 DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vector1< core::Real > &pose_1dspec ) {
 	numeric::xyzVector< core::Real > com(0.0,0.0,0.0);
@@ -243,16 +241,44 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	core::Size ngrid = (core::Size) std::ceil( extent / delR_ + 2);
 	pose_1dspec.clear();
 	pose_1dspec.resize(ngrid, 0.0);
+	utility::vector1< core::Real > pose_1dspec_for_nrsteps = pose_1dspec;
 
 	core::Real massSum=0.0;
-	Size resstart = 1;
-	Size resend = pose.size();
-	if ( point_radius_ != 0 ) {
+	// for fine point selection... generate pose_1dspec based on the middle residue of the pose.
+	if ( convolute_single_residue_ == true ) { 
 		Size midres = (pose.size()+1)/2;
-		resstart = midres;
-		resend = midres;
+		while ( pose.residue(midres).is_virtual_residue() ) {
+			++midres;
+		}
+		core::conformation::Residue const & rsd( pose.residue(midres) );
+		core::conformation::Atom const & residue_CA( rsd.atom(2) );
+		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			core::conformation::Atom const & atom( rsd.atom(j) );
+			core::Real binnum = ( atom.xyz()-residue_CA.xyz() ).length() / delR_ + 1.0;
+			core::Real fpart = binnum - std::floor(binnum);
+			core::Size binint = (core::Size) std::floor(binnum);
+			pose_1dspec[binint] += (1-fpart);
+			pose_1dspec[binint+1] += (fpart);
+		}
 	}
-	for ( core::Size i=resstart; i<=resend; ++i ) {
+	// for coarse point selection... generate pose_1dspec based on whole pose
+	else {
+		for ( core::Size i=1; i<=pose.size(); ++i) {
+			core::conformation::Residue const & rsd( pose.residue(i) );
+			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
+			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+				core::conformation::Atom const & atom( rsd.atom(j) );
+				core::Real binnum = ( atom.xyz()-com ).length() / delR_ + 1.0;
+				core::Real fpart = binnum - std::floor(binnum);
+				core::Size binint = (core::Size) std::floor(binnum);
+				pose_1dspec[binint] += (1-fpart);
+				pose_1dspec[binint+1] += (fpart);
+			}
+		}
+	}
+
+	// this is to calculate massSum via full pose for nRsteps_
+	for ( core::Size i=1; i<=pose.size(); ++i) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -260,17 +286,17 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 			core::Real binnum = ( atom.xyz()-com ).length() / delR_ + 1.0;
 			core::Real fpart = binnum - std::floor(binnum);
 			core::Size binint = (core::Size) std::floor(binnum);
-			pose_1dspec[binint] += (1-fpart);
-			pose_1dspec[binint+1] += (fpart);
-			massSum += 1.0;
+			pose_1dspec_for_nrsteps[binint] += (1-fpart);
+			pose_1dspec_for_nrsteps[binint+1] += (fpart);
+			massSum += 1;
 		}
 	}
 
-	// set nRsteps!
+	// now setting nRsteps_
 	core::Real const fracDens=fragDens_; // choose radius covering this fraction of density mass
 	core::Real running_total=0.0;
 	for ( int i=1; i<=(int)ngrid; ++i ) {
-		running_total += pose_1dspec[i] / massSum;
+		running_total += pose_1dspec_for_nrsteps[i] / massSum;
 		if ( running_total > fracDens ) {
 			nRsteps_ = i;
 			break;
@@ -315,6 +341,7 @@ DockIntoDensityMover::map_from_spectrum( utility::vector1< core::Real > const& p
 	}
 }
 
+
 void
 DockIntoDensityMover::predefine_search( utility::vector1< numeric::xyzVector<core::Real> > &pts_in ) {
 	points_defined_ = true;
@@ -327,6 +354,7 @@ DockIntoDensityMover::predefine_search( utility::vector1< numeric::xyzVector<cor
 		points_to_search_.push_back( x_idx );
 	}
 }
+
 
 void
 DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
@@ -430,6 +458,7 @@ DockIntoDensityMover::poseSphericalSamples(
 	core::Real delRsteps=delR_;
 	core::Size nRsteps=nRsteps_;
 
+	numeric::xyzVector< Real > reference_atm;
 	utility::vector1< numeric::xyzVector< Real > > atmList;
 	utility::vector1< Real > all_K, all_C;
 
@@ -486,7 +515,9 @@ DockIntoDensityMover::poseSphericalSamples(
 	// 2. interpolate this calculated density in cencentric spherical shells
 	// (extending out to D Ang in 1 Ang steps)
 	//////////////////
-
+	if (laplacian_offset_ != 0) {
+		TR << "Applying laplacian filter with offset of: " << laplacian_offset_ << " A" << std::endl;
+	}
 	sigR.dimension( 2*B, 2*B, nRsteps );
 	sigR = 0.0;
 
@@ -522,16 +553,67 @@ DockIntoDensityMover::poseSphericalSamples(
 		core::Real ct1 = cos(beta);
 		core::Real cg1 = cos(gamma);
 
-		for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
-			core::Real shellR = ridx * delRsteps;
-			for ( Size t=1; t<=2*B; ++t ) {
-				core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
-				if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-				for ( Size p=1; p<=2*B; ++p ) {
-					core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
-					if ( atomD < ATOM_MASK*ATOM_MASK ) {
-						core::Real atomH = C * exp(-k*atomD);
-						sigR(p,t,ridx) += atomH;
+
+		if (laplacian_offset_ != 0) {
+			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+				core::Real shellR = ridx * delRsteps;
+				for ( Size t=1; t<=2*B; ++t ) {
+					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
+					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue; // this just loops back to 2xB so we still get to sigR
+					for ( Size p=1; p<=2*B; ++p ) {
+						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
+						if ( atomD < ATOM_MASK*ATOM_MASK ) {
+							core::Real atomH = C * exp(-k*atomD);
+							sigR(p,t,ridx) += (-6 * atomH);
+
+						}
+					}
+				}
+			}
+			// compute laplacian for surrounding coordinates
+			for (int xyz = 0; xyz < 3; ++xyz){
+				for (int lapl = 0; lapl < 2; ++lapl){
+					reference_atm = atmList[i];
+					atmList[i][xyz] = atmList[i][xyz] + ( ( (lapl==0) ? 1.0 : -1.0 ) * laplacian_offset_ );
+					atomR = atmList[i].length();
+					core::Real beta = acos( atmList[i][2] / atomR ); 
+					core::Real gamma = atan2( atmList[i][0] , atmList[i][1] );   // x and y switched from usual convention
+					core::Real st1 = sin(beta);
+					core::Real sg1 = sin(gamma);
+					core::Real ct1 = cos(beta);
+					core::Real cg1 = cos(gamma);
+					// residue index
+					for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+						core::Real shellR = ridx * delRsteps;
+						for ( Size t=1; t<=2*B; ++t ) {
+							core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
+							if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue; 
+							for ( Size p=1; p<=2*B; ++p ) {
+								core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
+								if ( atomD < ATOM_MASK*ATOM_MASK ) {
+									core::Real atomH = C * exp(-k*atomD);
+									sigR(p,t,ridx) += atomH;
+								}
+							}
+						}
+					}
+					// set atm back to original value
+					atmList[i] = reference_atm;
+				}
+			}
+
+		} else {
+			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+				core::Real shellR = ridx * delRsteps;
+				for ( Size t=1; t<=2*B; ++t ) {
+					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
+					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
+					for ( Size p=1; p<=2*B; ++p ) {
+						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
+						if ( atomD < ATOM_MASK*ATOM_MASK ) {
+							core::Real atomH = C * exp(-k*atomD);
+							sigR(p,t,ridx) += atomH;
+						}
 					}
 				}
 			}
@@ -542,7 +624,6 @@ DockIntoDensityMover::poseSphericalSamples(
 		core::scoring::electron_density::ElectronDensity(sigR, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigR.mrc" );
 	}
 }
-
 
 
 // do the main search over the map
@@ -562,6 +643,7 @@ DockIntoDensityMover::density_grid_search (
 	numeric::xyzMatrix<core::Real> rot;
 	numeric::xyzVector<core::Real> pretrans, posttrans;
 	get_radius( pose, pretrans );
+
 	pretrans=-1.0*pretrans;
 
 	runtime_assert( points_to_search_.size() >= 1 ); // sanity check
@@ -577,7 +659,7 @@ DockIntoDensityMover::density_grid_search (
 		// get cartesian coords of ths point
 		density.idx2cart( points_to_search_[i], posttrans );
 
-		density.mapSphericalSamples( mapSig, nRsteps_, delR_, B_, points_to_search_[i] );
+		density.mapSphericalSamples( mapSig, nRsteps_, delR_, B_, points_to_search_[i], laplacian_offset_ );
 		SOFT.sharm_transform( mapSig, mapCoefR, mapCoefI );
 		SOFT.sph_standardize( mapCoefR, mapCoefI );
 

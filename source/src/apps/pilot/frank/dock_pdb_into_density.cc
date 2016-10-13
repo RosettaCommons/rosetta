@@ -92,6 +92,9 @@ OPT_KEY( Real, clust_radius )
 OPT_KEY( Real, frag_dens )
 OPT_KEY( Boolean, min_bb )
 OPT_KEY( Boolean, min )
+OPT_KEY( Real, point_radius ) // min distance between points
+OPT_KEY( Boolean, convolute_single_residue) // convolute pose on middle ca, results in fine point selection
+OPT_KEY( Real, laplacian_offset ) // min distance between points
 
 using namespace ObjexxFCL::format;
 
@@ -112,6 +115,9 @@ try {
 	NEW_OPT( frag_dens, "Fragment density", 0.9 );
 	NEW_OPT( min_bb, "minimize backbone?", false );
 	NEW_OPT( min, "rb min?", true );
+	NEW_OPT( point_radius, "minimum translation point to point radius", 5 );
+	NEW_OPT( convolute_single_residue, "Convolute only on middle reside", false);
+	NEW_OPT( laplacian_offset, "Activates laplacian scoring, and sets laplacian filter offset distance ", 0 );
 
 	devel::init(argc, argv);
 
@@ -129,6 +135,10 @@ try {
 	dock->setMinBackbone(option[ min_bb ]());
 	dock->setDoRefine(option[ min ]());
 	dock->setMaxRotPerTrans( 10 );
+	dock->setPointRadius(option[ point_radius ]());
+	dock->setConvoluteSingleR( option[ convolute_single_residue ]());
+	dock->setLaplacianOffset( option[ laplacian_offset ]());
+
 
 	if( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );

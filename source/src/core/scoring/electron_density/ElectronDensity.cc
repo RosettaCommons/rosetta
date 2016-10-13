@@ -356,7 +356,8 @@ numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
 void ElectronDensity::mapSphericalSamples (
 	ObjexxFCL::FArray3D< double > &mapShellR,
 	core::Size nRsteps, core::Real delR, core::Size B,
-	numeric::xyzVector< core::Real > center
+	numeric::xyzVector< core::Real > center,
+	core::Real laplacian_offset
 ) {
 
 	// make sure map is loaded
@@ -365,7 +366,7 @@ void ElectronDensity::mapSphericalSamples (
 		utility_exit();
 	}
 
-	numeric::xyzVector< core::Real > cartOffset, idxX;
+	numeric::xyzVector< core::Real > cartOffset, idxX, laplacian_cartOffset;
 	core::Real theta, phi, r;
 	if ( coeffs_density_.u1()*coeffs_density_.u2()*coeffs_density_.u3() == 0 ) {
 		spline_coeffs( density , coeffs_density_ );
@@ -380,27 +381,71 @@ void ElectronDensity::mapSphericalSamples (
 		center[2] + origin[2] - 1 );
 
 	// resample
-	for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx ) {
-		r = (core::Real) delR*(r_idx);
+	// if laplacian
+	if (laplacian_offset != 0) {
+		for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx ) {
+			r = (core::Real) delR*(r_idx);
 
-		for ( Size th_idx=1; th_idx<=2*B; ++th_idx ) {
-			theta = (2.0*th_idx - 1.0) * M_PI / (4.0*B);
+			for ( Size th_idx=1; th_idx<=2*B; ++th_idx ) {
+				theta = (2.0*th_idx - 1.0) * M_PI / (4.0*B);
 
-			for ( Size phi_idx=1; phi_idx<=2*B; ++phi_idx ) {
-				phi = (2.0*phi_idx - 2.0) * M_PI / (2.0*B);
-				// reverse X/Y -- needed for spharm xform
-				cartOffset[1] = r*cos(phi)*sin(theta);
-				cartOffset[0] = r*sin(phi)*sin(theta);
-				cartOffset[2] = r*cos(theta);
+				for ( Size phi_idx=1; phi_idx<=2*B; ++phi_idx ) {
+					phi = (2.0*phi_idx - 2.0) * M_PI / (2.0*B);
+					// reverse X/Y -- needed for spharm xform
+					cartOffset[1] = r*cos(phi)*sin(theta);
+					cartOffset[0] = r*sin(phi)*sin(theta);
+					cartOffset[2] = r*cos(theta);
+					laplacian_cartOffset = cartOffset;
 
-				numeric::xyzVector<core::Real> fracX = c2f*cartOffset;
-				idxX = numeric::xyzVector<core::Real>( fracX[0]*grid[0],
-					fracX[1]*grid[1],
-					fracX[2]*grid[2] );
+					// apply laplacian filtering 
+					core::Real ilaplsplinesum = 0;
+					for (int i = 0; i < 3; i++) {
+						for (int j = 0; j < 2; j++) {
+							laplacian_cartOffset[i] = cartOffset[i] + ( ( (j==0) ? 1.0 : -1.0) * laplacian_offset );
+							numeric::xyzVector<core::Real> fracX = c2f*laplacian_cartOffset;
+							idxX = numeric::xyzVector< core::Real >( fracX[0]*grid[0],
+								fracX[1]*grid[1],
+								fracX[2]*grid[2] );
+							idxX = idxX + idx_com1;  // DAN!! is this right??
+							ilaplsplinesum = ilaplsplinesum + interp_spline(coeffs_density_, idxX);
+						}
+					}
 
-				idxX = idxX + idx_com1;
+					// result of current point
+					numeric::xyzVector<core::Real> fracX = c2f*cartOffset;
+					idxX = numeric::xyzVector< core::Real >( fracX[0]*grid[0],
+						fracX[1]*grid[1],
+						fracX[2]*grid[2] );
+					idxX = idxX + idx_com1;
 
-				mapShellR(phi_idx, th_idx, r_idx) = interp_spline( coeffs_density_ , idxX );
+					// laplacian is -6 * current_point + sum of the +-1 of surrounding axes
+					mapShellR(phi_idx, th_idx, r_idx) = (-6 * interp_spline( coeffs_density_ , idxX ) ) + ilaplsplinesum;
+				}
+			}
+		}
+	} else {
+		for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx ) {
+			r = (core::Real) delR*(r_idx);
+
+			for ( Size th_idx=1; th_idx<=2*B; ++th_idx ) {
+				theta = (2.0*th_idx - 1.0) * M_PI / (4.0*B);
+
+				for ( Size phi_idx=1; phi_idx<=2*B; ++phi_idx ) {
+					phi = (2.0*phi_idx - 2.0) * M_PI / (2.0*B);
+					// reverse X/Y -- needed for spharm xform
+					cartOffset[1] = r*cos(phi)*sin(theta);
+					cartOffset[0] = r*sin(phi)*sin(theta);
+					cartOffset[2] = r*cos(theta);
+
+					numeric::xyzVector<core::Real> fracX = c2f*cartOffset;
+					idxX = numeric::xyzVector<core::Real>( fracX[0]*grid[0],
+						fracX[1]*grid[1],
+						fracX[2]*grid[2] );
+
+					idxX = idxX + idx_com1;
+
+					mapShellR(phi_idx, th_idx, r_idx) = interp_spline( coeffs_density_ , idxX );
+				}
 			}
 		}
 	}
