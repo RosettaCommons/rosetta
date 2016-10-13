@@ -212,6 +212,20 @@ public:
 		return z0_offset_[index];
 	}
 
+	/// @brief Access the epsilon_ BundleOptions object, by index.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsOP epsilon( core::Size const index ) {
+		runtime_assert_string_msg(index>0 && index<=epsilon_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::epsilon() out of range.");
+		return epsilon_[index];
+	}
+
+	/// @brief Access the epsilon_ BundleOptions object, by index.  This provides const access.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsCOP epsilon( core::Size const index ) const {
+		runtime_assert_string_msg(index>0 && index<=epsilon_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::epsilon() out of range.");
+		return epsilon_[index];
+	}
+
 	/// @brief Access the default_r0_ BundleOptions object.
 	///
 	PerturbBundleOptionsOP default_r0() { return default_r0_; }
@@ -267,6 +281,14 @@ public:
 	/// @brief Access the default_z0_offset_ BundleOptions object (const-access).
 	///
 	PerturbBundleOptionsCOP default_z0_offset() const { return default_z0_offset_; }
+
+	/// @brief Access the default_epsilon_ BundleOptions object.
+	///
+	PerturbBundleOptionsOP default_epsilon() { return default_epsilon_; }
+
+	/// @brief Access the default_epsilon_ BundleOptions object (const-access).
+	///
+	PerturbBundleOptionsCOP default_epsilon() const { return default_epsilon_; }
 
 	/// @brief Add options for a new helix
 	/// @details Return value is the current total number of helices after the addition.
@@ -341,6 +363,14 @@ private:
 	/// @brief Helix-by-helix options for perturbing z0_offset.
 	///
 	PerturbBundleOptionsOPs z0_offset_;
+
+	/// @brief Default options for perturbing epsilon.
+	/// @details May be overridden on a helix-by-helix basis.
+	PerturbBundleOptionsOP default_epsilon_;
+
+	/// @brief Helix-by-helix options for perturbing epsilon.
+	///
+	PerturbBundleOptionsOPs epsilon_;
 
 	/// @brief Which set of bundle parameters (if there exists more than one) should the mover alter?
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.

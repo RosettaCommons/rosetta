@@ -310,6 +310,7 @@ void generate_atom_positions(
 	core::Real const &delta_t,
 	core::Real const &z1_offset,
 	core::Real const &z0_offset,
+	core::Real const &epsilon,
 	bool const invert_helix,
 	utility::vector1 < core::Real > const &r1,
 	core::Real const &omega1,
@@ -385,6 +386,7 @@ void generate_atom_positions(
 				t, r0, omega0,
 				( invert_helix ? numeric::constants::d::pi - delta_omega0 : delta_omega0 ),
 				r1[curatom_in_repeating_unit], omega1-omega0, z1, delta_omega1[curatom_in_repeating_unit]+delta_omega1_all_prime, delta_z1[curatom_in_repeating_unit],
+				epsilon,
 				failed )
 			);
 			if ( invert_helix ) {

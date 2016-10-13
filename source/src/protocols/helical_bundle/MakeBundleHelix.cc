@@ -164,7 +164,7 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	if ( TR.Debug.visible() ) TR.Debug << "Generating atom positions." << std::endl;
 	bool failed=false;
 	generate_atom_positions(atom_positions, helixpose, helix_start, helix_end, r0(),
-		omega0(), delta_omega0(), delta_t(), z1_offset(), z0_offset(), invert_helix(), r1_vect(), omega1(), z1(),
+		omega0(), delta_omega0(), delta_t(), z1_offset(), z0_offset(), epsilon(), invert_helix(), r1_vect(), omega1(), z1(),
 		delta_omega1_vect(), delta_omega1_all(), delta_z1_vect(), residues_per_repeat(), atoms_per_residue(), repeating_unit_offset(),
 		failed );
 

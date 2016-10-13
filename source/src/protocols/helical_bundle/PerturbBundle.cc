@@ -89,6 +89,8 @@ PerturbBundle::PerturbBundle():
 	z1_offset_(),
 	default_z0_offset_( new PerturbBundleOptions ),
 	z0_offset_(),
+	default_epsilon_( new PerturbBundleOptions ),
+	epsilon_(),
 	bundleparametersset_index_(1),
 	use_degrees_(false)
 {}
@@ -111,6 +113,8 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	z1_offset_(),
 	default_z0_offset_( src.default_z0_offset_->clone() ),
 	z0_offset_(),
+	default_epsilon_( src.default_epsilon_->clone() ),
+	epsilon_(),
 	bundleparametersset_index_(src.bundleparametersset_index_),
 	use_degrees_( src.use_degrees_ )
 {
@@ -121,6 +125,7 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	delta_t_.clear();
 	z1_offset_.clear();
 	z0_offset_.clear();
+	epsilon_.clear();
 	for ( core::Size i=1,imax=src.r0_.size(); i<=imax; ++i ) r0_.push_back( src.r0_[i]->clone() );
 	for ( core::Size i=1,imax=src.omega0_.size(); i<=imax; ++i ) omega0_.push_back( src.omega0_[i]->clone() );
 	for ( core::Size i=1,imax=src.delta_omega0_.size(); i<=imax; ++i ) delta_omega0_.push_back( src.delta_omega0_[i]->clone() );
@@ -128,6 +133,7 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	for ( core::Size i=1,imax=src.delta_t_.size(); i<=imax; ++i ) delta_t_.push_back( src.delta_t_[i]->clone() );
 	for ( core::Size i=1,imax=src.z1_offset_.size(); i<=imax; ++i ) z1_offset_.push_back( src.z1_offset_[i]->clone() );
 	for ( core::Size i=1,imax=src.z0_offset_.size(); i<=imax; ++i ) z0_offset_.push_back( src.z0_offset_[i]->clone() );
+	for ( core::Size i=1,imax=src.epsilon_.size(); i<=imax; ++i ) epsilon_.push_back( src.epsilon_[i]->clone() );
 }
 
 
@@ -253,6 +259,7 @@ PerturbBundle::parse_my_tag(
 			default_delta_t()->set_perturbation_type(pt_gaussian);
 			default_z1_offset()->set_perturbation_type(pt_gaussian);
 			default_z0_offset()->set_perturbation_type(pt_gaussian);
+			default_epsilon()->set_perturbation_type(pt_gaussian);
 			if ( TR.visible() ) TR << "Setting default perturbation type to GAUSSIAN." << std::endl;
 		} else if ( perttype == "uniform" ) {
 			default_r0()->set_perturbation_type(pt_uniform);
@@ -262,6 +269,7 @@ PerturbBundle::parse_my_tag(
 			default_delta_t()->set_perturbation_type(pt_uniform);
 			default_z1_offset()->set_perturbation_type(pt_uniform);
 			default_z0_offset()->set_perturbation_type(pt_uniform);
+			default_epsilon()->set_perturbation_type(pt_uniform);
 			if ( TR.visible() ) TR << "Setting default perturbation type to UNIFORM." << std::endl;
 		}
 	}
@@ -390,6 +398,24 @@ PerturbBundle::parse_my_tag(
 			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The z0_offset_perturbation_type option was specified, but without an z0_offset_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
 		}
 	}
+	if ( tag->hasOption("epsilon_perturbation") ) {
+		core::Real epsilonpert( tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
+		default_epsilon()->set_perturbation_magnitude(epsilonpert);
+		if ( TR.visible() ) TR << "Set epsilon perturbation magnitude to " << epsilonpert << std::endl;
+	}
+	if ( tag->hasOption("epsilon_perturbation_type") ) {
+		if ( default_epsilon()->is_perturbable() ) {
+			std::string perttype( tag->getOption<std::string>("epsilon_perturbation_type", "") );
+			runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
+				"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
+			if ( perttype=="gaussian" ) default_epsilon()->set_perturbation_type(pt_gaussian);
+			else if ( perttype=="uniform" ) default_epsilon()->set_perturbation_type(pt_uniform);
+			if ( TR.visible() ) TR << "Set epsilon perturbation type to " << perttype << "." << std::endl;
+		} else {
+			if ( TR.Warning.visible() ) TR.Warning << "Warning!  The epsilon_perturbation_type option was specified, but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+		}
+	}
+
 
 
 	//Parse options for specific helices:
@@ -627,6 +653,37 @@ PerturbBundle::parse_my_tag(
 				}
 			}
 
+			if ( branch_tag->hasOption("epsilon_copies_helix") ) {
+				core::Size copyhelix( branch_tag->getOption<core::Size>("epsilon_copies_helix", 0) );
+				runtime_assert_string_msg( copyhelix>0, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was set to 0.  Please specify a sensible helix index for the target that is to be copied." );
+				runtime_assert_string_msg( copyhelix!=helix_index, "In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: a helix was set to copy another, but the target index was the same as the copy helix index.  Please specify a sensible helix index for the target that is to be copied." );
+				epsilon(this_helix)->set_helix_to_copy( copyhelix );
+				TR << "Set helix " << helix_index << "'s epsilon value to copy that of helix " << copyhelix << std::endl;
+				has_perturbable_dofs=true;
+			} else {
+				if ( branch_tag->hasOption("epsilon_perturbation") ) {
+					core::Real epsilonpert( branch_tag->getOption<core::Real>("epsilon_perturbation", 0.0) );
+					epsilon(this_helix)->set_perturbation_magnitude(epsilonpert);
+					if ( TR.visible() ) TR << "Set epsilon perturbation magnitude to " << epsilonpert << std::endl;
+					has_perturbable_dofs=true;
+				}
+				if ( branch_tag->hasOption("epsilon_perturbation_type") ) {
+					if ( epsilon(this_helix)->is_perturbable() ) {
+						std::string perttype( branch_tag->getOption<std::string>("epsilon_perturbation_type", "") );
+						runtime_assert_string_msg( perttype=="gaussian" || perttype=="uniform",
+							"In protocols::helical_bundle::PerturbBundle::parse_my_tag() function: allowed perturbation types are \"gaussian\" and \"uniform\"." );
+						if ( perttype=="gaussian" ) epsilon(this_helix)->set_perturbation_type(pt_gaussian);
+						else if ( perttype=="uniform" ) epsilon(this_helix)->set_perturbation_type(pt_uniform);
+						if ( TR.visible() ) TR << "Set epsilon perturbation type for helix " << helix_index << "to " << perttype << "." << std::endl;
+					} else {
+						if ( TR.Warning.visible() ) {
+							TR.Warning << "Warning!  The epsilon_perturbation_type option was specified for helix " << helix_index << ", but without an epsilon_perturbation option to set perturbation magnitude, it will be ignored." << std::endl;
+						}
+					}
+				}
+			}
+
+
 
 			if ( !has_perturbable_dofs && TR.visible() ) {
 				TR << "No perturbable parameters have been defined for helix " << helix_index << ".  This helix will remain fixed while others are perturbed." << std::endl;
@@ -662,10 +719,12 @@ core::Size PerturbBundle::add_helix( core::Size const helix_index ) {
 	z1_offset(z1_offset_.size())->set_helix_index(helix_index);
 	z0_offset_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
 	z0_offset(z0_offset_.size())->set_helix_index(helix_index);
+	epsilon_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
+	epsilon(epsilon_.size())->set_helix_index(helix_index);
 
 	core::Size const nhelices(r0_.size());
 
-	runtime_assert_string_msg( omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices && z1_offset_.size()==nhelices && z0_offset_.size()==nhelices,
+	runtime_assert_string_msg( omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices && z1_offset_.size()==nhelices && z0_offset_.size()==nhelices && epsilon_.size()==nhelices,
 		"In protocols::helical_bundle::PerturbBundle::add_helix() function: somehow, vector indices are out of sync.  I can't determine how many helices have been defined." );
 
 	return nhelices;
@@ -697,6 +756,7 @@ bool PerturbBundle::helix_not_defined( core::Size const helix_index) const {
 	core::Size delta_tsize=delta_t_.size();
 	core::Size z1_offsetsize=z1_offset_.size();
 	core::Size z0_offsetsize=z0_offset_.size();
+	core::Size epsilonsize=epsilon_.size();
 
 	if ( r0size>0 ) {
 		for ( core::Size i=1; i<=r0size; ++i ) if ( r0(i)->helix_index() == helix_index ) return false;
@@ -719,6 +779,10 @@ bool PerturbBundle::helix_not_defined( core::Size const helix_index) const {
 	if ( z0_offsetsize>0 ) {
 		for ( core::Size i=1; i<=z0_offsetsize; ++i ) if ( z0_offset(i)->helix_index() == helix_index ) return false;
 	}
+	if ( epsilonsize>0 ) {
+		for ( core::Size i=1; i<=epsilonsize; ++i ) if ( epsilon(i)->helix_index() == helix_index ) return false;
+	}
+
 
 	return true;
 }
@@ -752,6 +816,7 @@ bool PerturbBundle::perturb_values( BundleParametersSetOP params_set) const {
 	utility::vector1 < core::Size > helices_processed_delta_t;
 	utility::vector1 < core::Size > helices_processed_z1_offset;
 	utility::vector1 < core::Size > helices_processed_z0_offset;
+	utility::vector1 < core::Size > helices_processed_epsilon;
 
 	bool loopthrough_failed(false); //Used to break from the nested loops.
 	for ( core::Size isym=1; isym<=symmetry_copies; ++isym ) { //Loop through all of the symmetry copies.
@@ -802,6 +867,11 @@ bool PerturbBundle::perturb_values( BundleParametersSetOP params_set) const {
 						params->set_z0_offset( params->z0_offset() + default_z0_offset()->delta() );
 					}
 					if ( !is_in_list(helix_index, helices_processed_z0_offset) ) helices_processed_z0_offset.push_back(helix_index);
+
+					if ( default_epsilon()->is_perturbable() && !is_in_list(helix_index, helices_processed_epsilon) ) {
+						params->set_epsilon( params->epsilon() + default_epsilon()->delta() );
+					}
+					if ( !is_in_list(helix_index, helices_processed_epsilon) ) helices_processed_epsilon.push_back(helix_index);
 
 					if ( TR.visible() ) TR << "Completed default perturbation of helix " << helix_index << "." << std::endl;
 
@@ -1032,12 +1102,38 @@ bool PerturbBundle::perturb_values( BundleParametersSetOP params_set) const {
 						helices_processed_z0_offset.push_back( helix_index );
 					}
 
+					//Perturbing epsilon:
+					//Case 1: this helix perturbation is from defaults:
+					if ( epsilon(custom_properties_index)->use_defaults() ) {
+						if ( default_epsilon()->is_perturbable() && !is_in_list(helix_index, helices_processed_epsilon) ) {
+							params->set_epsilon( params->epsilon() + default_epsilon()->delta() );
+						}
+						if ( !is_in_list(helix_index, helices_processed_epsilon) ) helices_processed_epsilon.push_back(helix_index);
+						//Case 2: this helix perturbation is based on another helix:
+					} else if ( epsilon(custom_properties_index)->is_copy() ) {
+						//Find the index of the helix that this is a copy of:
+						core::Size master_index( epsilon( custom_properties_index )->other_helix() );
+						//For now, require that this helix already be processed:
+						runtime_assert_string_msg( is_in_list(master_index, helices_processed_epsilon ),
+							"In protocols::helical_bundle::PerturbBundle::perturb_values() function: A helix was set to copy another, but the helix that it copies has a higher index. (Helices can only copy lower-index helices, currently.  This might change in a future release.  Note that this message might also result if the helix DoF being copied is never perturbed.)" );
+						//Get an owning pointer to the params of the master helix that this one is copying:
+						BundleParametersOP master_params( utility::pointer::dynamic_pointer_cast<BundleParameters>( params_set->parameters(master_index) ) );
+						params->set_epsilon( master_params->epsilon() ); //Copy the epsilon parameter.
+						helices_processed_epsilon.push_back( helix_index );
+						//Case 3: this helix perturbation is independent:
+					} else if ( epsilon(custom_properties_index)->is_perturbable()  && !is_in_list(helix_index, helices_processed_epsilon) ) {
+						params->set_epsilon( params->epsilon() + epsilon(custom_properties_index)->delta() );
+						helices_processed_epsilon.push_back( helix_index );
+					} else {
+						helices_processed_epsilon.push_back( helix_index );
+					}
+
 				}
 			} else { //If this is part of a later symmetry repeat, just copy the values from the first symmetry repeat.
 				BundleParametersOP ref_params( utility::pointer::dynamic_pointer_cast< BundleParameters >( params_set->parameters(ihelix) ) );
 				runtime_assert_string_msg( ref_params,
 					"In protocols::helical_bundle::PerturbBundle::perturb_values() function: unable to get an owning pointer for the reference BundleParameters object.  This is odd -- it should not happen." );
-				// Copy the r0, omega0, delta_omega0, delta_omega1, delta_t, z1_offset, and z0_offset parameters:
+				// Copy the r0, omega0, delta_omega0, delta_omega1, delta_t, z1_offset, z0_offset, and epsilon parameters:
 				params->set_r0( ref_params->r0() );
 				params->set_omega0( ref_params->omega0() );
 				params->set_delta_omega0( ref_params->delta_omega0() + static_cast<core::Real>(isym-1)/static_cast<core::Real>(symmetry)*numeric::constants::d::pi_2 );
@@ -1045,6 +1141,7 @@ bool PerturbBundle::perturb_values( BundleParametersSetOP params_set) const {
 				params->set_delta_t( ref_params->delta_t() );
 				params->set_z1_offset( ref_params->z1_offset() );
 				params->set_z0_offset( ref_params->z0_offset() );
+				params->set_epsilon( ref_params->epsilon() );
 			}
 
 		}
@@ -1113,6 +1210,7 @@ void PerturbBundle::write_report(
 		TR << "     delta_t: " << params->delta_t() << std::endl;
 		TR << "     z1_offset: " << params->z1_offset() << std::endl;
 		TR << "     z0_offset: " << params->z0_offset() << std::endl;
+		TR << "     epsilon: " << params->epsilon() << std::endl;
 	}
 
 	TR << "*** END SUMMARY ***" << std::endl;

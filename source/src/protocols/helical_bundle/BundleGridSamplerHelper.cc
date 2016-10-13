@@ -187,6 +187,7 @@ std::string BundleGridSamplerHelper::DoF_name( DoFType const &type ) const
 	else if ( type == bgsh_delta_t ) return "delta_t";
 	else if ( type == bgsh_z1_offset ) return "z1_offset";
 	else if ( type == bgsh_z0_offset ) return "z0_offset";
+	else if ( type == bgsh_epsilon ) return "epsilon";
 
 	return "UNKNOWN";
 }

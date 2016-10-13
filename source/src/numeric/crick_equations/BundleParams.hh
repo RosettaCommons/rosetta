@@ -37,6 +37,8 @@ Real P_omega0 (
 	Real const &r0,
 	Real const &omega0,
 	Real const &z1,
+	bool const epsilon_equals_one,
+	Real const &dr0_dt,
 	bool &failed
 );
 
@@ -81,6 +83,8 @@ Real X_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 );
 
@@ -98,6 +102,8 @@ Real Y_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 );
 
@@ -115,6 +121,8 @@ Real Z_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 );
 
@@ -135,6 +143,7 @@ xyzVector <Real> XYZ_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
 	bool &failed
 );
 

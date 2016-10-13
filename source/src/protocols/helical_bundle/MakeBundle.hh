@@ -329,6 +329,18 @@ public:
 	///
 	core::Real default_z0_offset() const;
 
+	/// @brief Set the default epsilon value (bundle lateral squash).
+	///
+	void set_default_epsilon(core::Real const &val) { default_epsilon_=val; default_epsilon_set_=true; }
+
+	/// @brief Returns true if and only if the default epsilon value (bundle lateral squash) has been set.
+	///
+	bool default_epsilon_set() const { return default_epsilon_set_; }
+
+	/// @brief Returns the default epsilon value (bundle lateral squash).
+	///
+	core::Real default_epsilon() const;
+
 	/// @brief Set the default invert value (should the helix be flipped?)
 	///
 	void set_default_invert(bool const &val) { default_invert_=val; default_invert_set_=true; }
@@ -529,6 +541,14 @@ private:
 	/// @brief Has the default z0_offset value (helix offset along the major helix axis) been specified?
 	///
 	core::Real default_z0_offset_set_;
+
+	/// @brief Default epsilon value (bundle lateral squish).
+	///
+	core::Real default_epsilon_;
+
+	/// @brief Has the default epsilon value (bundle lateral squish) been specified?
+	///
+	core::Real default_epsilon_set_;
 
 	/// @brief Default invert value (should the helix be flipped?)
 	///

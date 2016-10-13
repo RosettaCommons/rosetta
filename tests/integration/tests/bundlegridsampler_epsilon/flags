@@ -1,0 +1,10 @@
+-parser:protocol inputs/test.xml
+-in:file:fasta inputs/dummy.fasta
+-nstruct 1
+-mute all
+-unmute protocols.helical_bundle
+-inout:write_all_connect_info
+-inout:connect_info_cutoff 0.0
+##### these are general flags
+-score:weights talaris2014
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

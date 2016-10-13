@@ -217,6 +217,10 @@ public:
 	///
 	core::Real z0_offset() const { return bundle_parameters_->z0_offset(); }
 
+	/// @brief Get the epsilon parameter value (the lateral squash of the bundle).
+	///
+	core::Real epsilon() const { return bundle_parameters_->epsilon(); }
+
 	/// @brief Get the delta_t value.
 	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
 
@@ -257,6 +261,10 @@ public:
 	/// @brief Set z0_offset, the offset along the major helix axis for the whole helix.
 	///
 	void set_z0_offset ( core::Real const &val ) { bundle_parameters_->set_z0_offset(val); return; }
+
+	/// @brief Set epsilon, the lateral squish of the bundle.
+	///
+	void set_epsilon ( core::Real const &val ) { bundle_parameters_->set_epsilon(val); return; }
 
 	/// @brief Set delta_t
 	///

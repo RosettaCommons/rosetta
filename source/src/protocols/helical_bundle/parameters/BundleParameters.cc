@@ -67,6 +67,7 @@ BundleParameters::BundleParameters() :
 	delta_z1_(),
 	z1_offset_(0.0),
 	z0_offset_(0.0),
+	epsilon_(1.0),
 	invert_helix_(false),
 	delta_t_(0.0),
 	allow_dihedrals_(true),
@@ -91,6 +92,7 @@ BundleParameters::BundleParameters( BundleParameters const & src ) :
 	delta_z1_(src.delta_z1_),
 	z1_offset_(src.z1_offset_),
 	z0_offset_(src.z0_offset_),
+	epsilon_(src.epsilon_),
 	invert_helix_(src.invert_helix()),
 	delta_t_(src.delta_t()),
 	allow_dihedrals_(src.allow_dihedrals()),
@@ -120,6 +122,7 @@ void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
 	remark << "   Twist (omega0,radians/residue): " << omega0() << std::endl;
 	remark << "   Rotational offset (delta_omega0,radians): " << delta_omega0() << std::endl;
 	remark << "   Axial offset (z0_offset,Angstroms): " << z0_offset() << std::endl;
+	remark << "   Lateral squash factor (epsilon,dimensionless): " << epsilon() << std::endl;
 	remark << "   Invert helix: " << (invert_helix() ? "true" : "false") << std::endl;
 	remark << "   Dihedrals set by generator: " << (allow_dihedrals() ? "true" : "false") << std::endl;
 	remark << "   Bond angles set by generator: " << (allow_bondangles() ? "true" : "false") << std::endl;
@@ -170,6 +173,7 @@ protocols::helical_bundle::parameters::BundleParameters::save( Archive & arc ) c
 	arc( CEREAL_NVP( delta_z1_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( z1_offset_ ) ); // core::Real
 	arc( CEREAL_NVP( z0_offset_ ) ); // core::Real
+	arc( CEREAL_NVP( epsilon_ ) ); // core::Real
 	arc( CEREAL_NVP( invert_helix_ ) ); // _Bool
 	arc( CEREAL_NVP( delta_t_ ) ); // core::Real
 	arc( CEREAL_NVP( allow_dihedrals_ ) ); // _Bool
@@ -196,6 +200,7 @@ protocols::helical_bundle::parameters::BundleParameters::load( Archive & arc ) {
 	arc( delta_z1_ ); // utility::vector1<core::Real>
 	arc( z1_offset_ ); // core::Real
 	arc( z0_offset_ ); // core::Real
+	arc( epsilon_ ); // core::Real
 	arc( invert_helix_ ); // _Bool
 	arc( delta_t_ ); // core::Real
 	arc( allow_dihedrals_ ); // _Bool

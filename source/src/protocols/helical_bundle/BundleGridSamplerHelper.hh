@@ -49,6 +49,7 @@ enum DoFType {
 	bgsh_delta_t,
 	bgsh_z1_offset,
 	bgsh_z0_offset,
+	bgsh_epsilon,
 	bgsh_undefined_dof //keep this last
 };
 

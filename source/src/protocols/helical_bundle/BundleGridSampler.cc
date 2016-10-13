@@ -108,6 +108,8 @@ BundleGridSampler::BundleGridSampler():
 	z1_offset_(),
 	default_z0_offset_( new PerturbBundleOptions ),
 	z0_offset_(),
+	default_epsilon_( new PerturbBundleOptions ),
+	epsilon_(),
 	make_bundle_( new MakeBundle ),
 	pre_selection_mover_(),
 	pre_selection_mover_exists_(false),
@@ -117,7 +119,9 @@ BundleGridSampler::BundleGridSampler():
 	pdb_prefix_("bgs_out"),
 	sfxn_set_(false),
 	sfxn_()
-{}
+{
+	default_epsilon_->set_default_value(1.0);
+}
 
 
 /// @brief Copy constructor for BundleGridSampler mover.
@@ -143,6 +147,8 @@ BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 	z1_offset_(),
 	default_z0_offset_(src.default_z0_offset_->clone()),
 	z0_offset_(),
+	default_epsilon_(src.default_epsilon_->clone()),
+	epsilon_(),
 	make_bundle_(  utility::pointer::dynamic_pointer_cast< MakeBundle >(src.make_bundle_->clone()) ),
 	pre_selection_mover_( src.pre_selection_mover_ ), //NOTE that we're not cloning this mover, but using it straight
 	pre_selection_mover_exists_(src.pre_selection_mover_exists_),
@@ -160,6 +166,7 @@ BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 	delta_t_.clear();
 	z1_offset_.clear();
 	z0_offset_.clear();
+	epsilon_.clear();
 	for ( core::Size i=1,imax=src.r0_.size(); i<=imax; ++i ) r0_.push_back( src.r0_[i]->clone() );
 	for ( core::Size i=1,imax=src.omega0_.size(); i<=imax; ++i ) omega0_.push_back( src.omega0_[i]->clone() );
 	for ( core::Size i=1,imax=src.delta_omega0_.size(); i<=imax; ++i ) delta_omega0_.push_back( src.delta_omega0_[i]->clone() );
@@ -167,6 +174,7 @@ BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 	for ( core::Size i=1,imax=src.delta_t_.size(); i<=imax; ++i ) delta_t_.push_back( src.delta_t_[i]->clone() );
 	for ( core::Size i=1,imax=src.z1_offset_.size(); i<=imax; ++i ) z1_offset_.push_back( src.z1_offset_[i]->clone() );
 	for ( core::Size i=1,imax=src.z0_offset_.size(); i<=imax; ++i ) z0_offset_.push_back( src.z0_offset_[i]->clone() );
+	for ( core::Size i=1,imax=src.epsilon_.size(); i<=imax; ++i ) epsilon_.push_back( src.epsilon_[i]->clone() );
 }
 
 
@@ -276,6 +284,15 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 			sampler_helper->add_DoF( bgsh_z0_offset, ihelix, z0_offset(ihelix)->samples(), z0_offset(ihelix)->lower_value(), z0_offset(ihelix)->upper_value() );
 		}
 	}
+	for ( core::Size ihelix=1; ihelix<=nhelices; ++ihelix ) { //Loop through all defined helices.
+		if ( epsilon(ihelix)->use_defaults() ) {
+			if ( default_epsilon()->is_perturbable() ) {
+				sampler_helper->add_DoF( bgsh_epsilon, ihelix, default_epsilon()->samples(), default_epsilon()->lower_value(), default_epsilon()->upper_value() );
+			}
+		} else if ( epsilon(ihelix)->is_perturbable() ) {
+			sampler_helper->add_DoF( bgsh_epsilon, ihelix, epsilon(ihelix)->samples(), epsilon(ihelix)->lower_value(), epsilon(ihelix)->upper_value() );
+		}
+	}
 
 	//Initialize the BundleGridSamplerHelper object (i.e. perform the internal calculation that pre-generates all of the values to be sampled).
 	sampler_helper->initialize_samples();
@@ -340,6 +357,7 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 			else if ( sampler_helper->DoF_type(j) == bgsh_delta_t ) curhelix->set_delta_t( sampler_helper->DoF_sample_value(j) );
 			else if ( sampler_helper->DoF_type(j) == bgsh_z1_offset ) curhelix->set_z1_offset( sampler_helper->DoF_sample_value(j) );
 			else if ( sampler_helper->DoF_type(j) == bgsh_z0_offset ) curhelix->set_z0_offset( sampler_helper->DoF_sample_value(j) );
+			else if ( sampler_helper->DoF_type(j) == bgsh_epsilon ) curhelix->set_epsilon( sampler_helper->DoF_sample_value(j) );
 		}
 
 		//Set the parameters that are copying other parameters:
@@ -412,6 +430,11 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 				runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
 				curhelix->set_z0_offset( makebundle_copy->helix_cop(otherhelix)->z0_offset() );
 			}
+			if ( epsilon(j)->is_copy() ) {
+				core::Size const otherhelix( epsilon(j)->other_helix() );
+				runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
+				curhelix->set_epsilon( makebundle_copy->helix_cop(otherhelix)->epsilon() );
+			}
 
 		}
 		if ( loopthrough_failed ) {
@@ -426,12 +449,12 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 		if ( TR.visible() ) {
 			char outchar [1024];
 			TR << "Grid point " << i << ": attempting to build a helical bundle with the following parameters:" << std::endl;
-			sprintf(outchar, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset");
+			sprintf(outchar, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset\tepsilon");
 			TR << outchar << std::endl;
 			for ( core::Size j=1, jmax=n_helices(); j<=jmax; ++j ) {
 				MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 				runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-				sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset());
+				sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset(), curhelix->epsilon());
 				TR << outchar << std::endl;
 			}
 			TR << std::endl;
@@ -504,12 +527,12 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 				final_report << "Parameters yielding the ";
 				if ( selection_low() ) final_report << "lowest"; else final_report << "highest";
 				final_report << "-energy bundle:" << std::endl;
-				sprintf(outstring, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset");
+				sprintf(outstring, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset\tepsilon");
 				final_report << outstring << std::endl;
 				for ( core::Size j=1, jmax=n_helices(); j<=jmax; ++j ) {
 					MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 					runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-					sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset() );
+					sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset(), curhelix->epsilon() );
 					final_report << outstring << std::endl;
 				}
 				final_report << std::endl;
@@ -882,6 +905,39 @@ BundleGridSampler::parse_my_tag(
 	} else if ( tag->hasOption("z0_offset_max") ) {
 		runtime_assert_string_msg(tag->hasOption("z0_offset_min"),
 			"When parsing options for the BundleGridSampler mover, found z0_offset_max but no z0_offset_min.  This does not make sense.");
+	}
+
+	if ( tag->hasOption("epsilon") ) {
+		runtime_assert_string_msg(!tag->hasOption("epsilon_min") && !tag->hasOption("epsilon_max"),
+			"When parsing options for the BundleGridSampler mover, found epsilon defined alongside epsilon_min or epsilon_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+		core::Real const val( tag->getOption<core::Real>("epsilon", 1.0) );
+		if ( TR.visible() ) TR << "Setting default epsilon value to " << val << "." << std::endl;
+		default_epsilon()->set_default_value(val);
+		default_epsilon()->set_perturbable(false);
+		make_bundle_->set_default_epsilon(val);
+	} else if ( tag->hasOption("epsilon_min") ) {
+		runtime_assert_string_msg(!tag->hasOption("epsilon"),
+			"When parsing options for the BundleGridSampler mover, found epsilon defined alongside epsilon_min or epsilon_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+		runtime_assert_string_msg(tag->hasOption("epsilon_max"),
+			"When parsing options for the BundleGridSampler mover, found epsilon_min but no epsilon_max.  This does not make sense.");
+		core::Real const val1( tag->getOption<core::Real>("epsilon_min", 1.0) );
+		core::Real const val2( tag->getOption<core::Real>("epsilon_max", 1.0) );
+		runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an epsilon_max value less than or equal to the epsilon_min value.");
+		if ( TR.visible() ) TR << "Setting default epsilon_min and epsilon_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
+		default_epsilon()->set_lower_value(val1);
+		default_epsilon()->set_upper_value(val2);
+		default_epsilon()->set_perturbable(true);
+		make_bundle_->set_default_epsilon(val1);
+		runtime_assert_string_msg( tag->hasOption("epsilon_samples"),
+			"When parsing options for the BundleGridSampler mover, found epsilon_min and epsilon_max options, but no epsilon_samples option.  The number of epsilon samples must be specified." );
+		core::Size const val3( tag->getOption<core::Size>( "epsilon_samples", 0 ) );
+		runtime_assert_string_msg( val3 > 1,
+			"The number of epsilon samples must be greater than 1." );
+		if ( TR.visible() ) TR << "Setting default epsilon samples to " << val3 << "." << std::endl;
+		default_epsilon()->set_samples(val3);
+	} else if ( tag->hasOption("epsilon_max") ) {
+		runtime_assert_string_msg(tag->hasOption("epsilon_min"),
+			"When parsing options for the BundleGridSampler mover, found epsilon_max but no epsilon_min.  This does not make sense.");
 	}
 
 	//Check that at least one helix is defined:
@@ -1258,6 +1314,53 @@ BundleGridSampler::parse_my_tag(
 				z0_offset(helix_index)->set_helix_to_copy(val);
 			}
 
+			if ( branch_tag->hasOption("epsilon") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("epsilon_copies_helix"),
+					"When parsing options for the BundleGridSampler mover, found epsilon defined alongside an epsilon_copies_helix statement.  This does not makes sense: either epsilon is fixed, or its value copies the epsilon value of another helix (not both).");
+				runtime_assert_string_msg(!branch_tag->hasOption("epsilon_min") && !branch_tag->hasOption("epsilon_max"),
+					"When parsing options for the BundleGridSampler mover, found epsilon defined alongside epsilon_min or epsilon_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				core::Real const val( branch_tag->getOption<core::Real>("epsilon", 1.0) );
+				if ( TR.visible() ) TR << "Setting the epsilon value for helix " << helix_index << " to " << val << "." << std::endl;
+				epsilon(helix_index)->set_default_value(val);
+				epsilon(helix_index)->set_perturbable(false);
+				epsilon(helix_index)->set_use_defaults(false);
+				make_bundle_->helix(helix_index)->set_epsilon(val);
+			} else if ( branch_tag->hasOption("epsilon_min") ) {
+				runtime_assert_string_msg(!branch_tag->hasOption("epsilon_copies_helix"),
+					"When parsing options for the BundleGridSampler mover, found epsilon_min defined alongside an epsilon_copies_helix statement.  This does not makes sense: either epsilon is sampled, or its value copies the epsilon value of another helix (not both).");
+				runtime_assert_string_msg(!branch_tag->hasOption("epsilon"),
+					"When parsing options for the BundleGridSampler mover, found epsilon defined alongside epsilon_min or epsilon_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				runtime_assert_string_msg(branch_tag->hasOption("epsilon_max"),
+					"When parsing options for the BundleGridSampler mover, found epsilon_min but no epsilon_max.  This does not make sense.");
+				core::Real const val1( branch_tag->getOption<core::Real>("epsilon_min", 1.0) );
+				core::Real const val2( branch_tag->getOption<core::Real>("epsilon_max", 1.0) );
+				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an epsilon_max value less than or equal to the epsilon_min value.");
+				if ( TR.visible() ) TR << "Setting epsilon_min and epsilon_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
+				epsilon(helix_index)->set_lower_value(val1);
+				epsilon(helix_index)->set_upper_value(val2);
+				epsilon(helix_index)->set_perturbable(true);
+				epsilon(helix_index)->set_use_defaults(false);
+				make_bundle_->helix(helix_index)->set_epsilon(val1);
+				runtime_assert_string_msg( branch_tag->hasOption("epsilon_samples"),
+					"When parsing options for the BundleGridSampler mover, found epsilon_min and epsilon_max options, but no epsilon_samples option.  The number of epsilon samples must be specified." );
+				core::Size const val3( branch_tag->getOption<core::Size>( "epsilon_samples", 0 ) );
+				runtime_assert_string_msg( val3 > 1,
+					"The number of epsilon samples must be greater than 1." );
+				if ( TR.visible() ) TR << "Setting epsilon samples for helix " << helix_index << " to " << val3 << "." << std::endl;
+				epsilon(helix_index)->set_samples(val3);
+			} else if ( branch_tag->hasOption("epsilon_max") ) {
+				runtime_assert_string_msg(branch_tag->hasOption("epsilon_min"),
+					"When parsing options for the BundleGridSampler mover, found epsilon_max but no epsilon_min.  This does not make sense.");
+			} else if ( branch_tag->hasOption("epsilon_copies_helix") ) {
+				core::Size const val( branch_tag->getOption<core::Size>("epsilon_copies_helix", 0) );
+				runtime_assert_string_msg(val > 0 && val < helix_index,
+					"When parsing options for the BundleGridSampler mover, found an epsilon_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
+				if ( TR.visible() ) TR << "Setting epsilon for helix " << helix_index << " to copy the epsilon value for helix " << val << "." << std::endl;
+				epsilon(helix_index)->set_perturbable(false);
+				epsilon(helix_index)->set_use_defaults(false);
+				epsilon(helix_index)->set_helix_to_copy(val);
+			}
+
 		} //if ( (*tag_it)->getName() == "Helix" )
 	}
 	runtime_assert_string_msg(at_least_one_helix, "When parsing options for the BundleGridSampler mover, found no helices!  Define at least one helix with a <Helix...> sub-tag.");
@@ -1292,8 +1395,10 @@ core::Size BundleGridSampler::add_helix( ) {
 	z1_offset(nhelices)->set_helix_index(nhelices);
 	z0_offset_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
 	z0_offset(nhelices)->set_helix_index(nhelices);
+	epsilon_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
+	epsilon(nhelices)->set_helix_index(nhelices);
 
-	runtime_assert_string_msg( r0_.size()==nhelices && omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices && z1_offset_.size()==nhelices && z0_offset_.size()==nhelices,
+	runtime_assert_string_msg( r0_.size()==nhelices && omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices && z1_offset_.size()==nhelices && z0_offset_.size()==nhelices && epsilon_.size()==nhelices,
 		"In protocols::helical_bundle::BundleGridSampler::add_helix() function: somehow, vector indices are out of sync.  I can't determine how many helices have been defined." );
 
 	//Update the MakeBundle mover, too:
@@ -1354,6 +1459,7 @@ core::Size BundleGridSampler::calculate_total_samples() const {
 	assert( delta_t_.size()==helixcount );
 	assert( z1_offset_.size()==helixcount );
 	assert( z0_offset_.size()==helixcount );
+	assert( epsilon_.size()==helixcount );
 	for ( core::Size i=1, imax=helixcount; i<=imax; ++i ) {
 		if ( r0(i)->is_perturbable() && !r0(i)->use_defaults() && r0(i)->other_helix()==0 && r0(i)->samples()!=0  ) total_samples *= r0(i)->samples();
 		else if ( r0(i)->use_defaults() && default_r0()->is_perturbable() && default_r0()->samples()!=0 ) total_samples *= default_r0()->samples();
@@ -1375,6 +1481,9 @@ core::Size BundleGridSampler::calculate_total_samples() const {
 
 		if ( z0_offset(i)->is_perturbable() && !z0_offset(i)->use_defaults() && z0_offset(i)->other_helix()==0 && z0_offset(i)->samples()!=0  ) total_samples *= z0_offset(i)->samples();
 		else if ( z0_offset(i)->use_defaults() && default_z0_offset()->is_perturbable() && default_z0_offset()->samples()!=0 ) total_samples *= default_z0_offset()->samples();
+
+		if ( epsilon(i)->is_perturbable() && !epsilon(i)->use_defaults() && epsilon(i)->other_helix()==0 && epsilon(i)->samples()!=0  ) total_samples *= epsilon(i)->samples();
+		else if ( epsilon(i)->use_defaults() && default_epsilon()->is_perturbable() && default_epsilon()->samples()!=0 ) total_samples *= default_epsilon()->samples();
 	}
 
 	return total_samples;

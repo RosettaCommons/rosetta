@@ -50,9 +50,16 @@ Real P_omega0 (
 	Real const &r0,
 	Real const &omega0,
 	Real const &z1,
+	bool const epsilon_equals_one,
+	Real const &dr0_dt,
 	bool &failed
 ) {
-	Real const val = pow(z1,2) - pow(r0*omega0,2) ;
+	Real val;
+	if ( epsilon_equals_one ) {
+		val = pow(z1,2) - pow(r0*omega0,2);
+	} else {
+		val = pow(z1, 2) - pow(r0*omega0,2) - pow(dr0_dt,2);
+	}
 	if ( val < 0 ) {
 		failed = true;
 		return 0.0;
@@ -111,10 +118,12 @@ Real X_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 ) {
 	//Real const P = PP(r0,omega0,z1, failed);
-	Real const Pomega0 = P_omega0(r0,omega0,z1,failed);
+	Real const Pomega0 = P_omega0(r0,omega0,z1,epsilon==1.0,dr0prime_dt,failed);
 	if ( failed ) return 0.0;
 	Real const alpha=ALPHA(r0,omega0,Pomega0);
 	Real const c0 = COSFXN( t, omega0, delta_omega0 );
@@ -138,10 +147,12 @@ Real Y_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 ) {
 	//Real const P = PP(r0,omega0,z1,failed);
-	Real const Pomega0 = P_omega0(r0,omega0,z1,failed);
+	Real const Pomega0 = P_omega0(r0,omega0,z1,epsilon==1.0,dr0prime_dt,failed);
 	if ( failed ) return 0.0;
 	Real const alpha=ALPHA(r0,omega0,Pomega0);
 	Real const c0 = COSFXN( t, omega0, delta_omega0 );
@@ -165,10 +176,12 @@ Real Z_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
+	Real const &dr0prime_dt,
 	bool &failed
 ) {
 	//Real const P = PP(r0,omega0,z1,failed);
-	Real const Pomega0 = P_omega0(r0,omega0,z1,failed);
+	Real const Pomega0 = P_omega0(r0,omega0,z1,epsilon==1.0,dr0prime_dt,failed);
 	if ( failed ) return 0.0;
 	Real const alpha=ALPHA(r0,omega0,Pomega0);
 	Real const c0 = COSFXN( t, omega0, delta_omega0 );
@@ -195,13 +208,23 @@ xyzVector <Real> XYZ_BUNDLE (
 	Real const &z1,
 	Real const &delta_omega1,
 	Real const &delta_z1,
+	Real const &epsilon,
 	bool &failed
 ) {
 	bool failedx=false, failedy=false, failedz=false;
 	xyzVector < Real > returnvector(0,0,0);
-	returnvector.x( X_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, failedx ) );
-	returnvector.y( Y_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, failedy ) );
-	returnvector.z( Z_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, failedz ) );
+
+	if ( epsilon == 1.0 ) { //Skip a calculation if we can.
+		returnvector.x( X_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, 0.0, failedx ) );
+		returnvector.y( Y_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, 0.0, failedy ) );
+		returnvector.z( Z_BUNDLE( t, r0, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, 0.0, failedz ) );
+	} else { //If we're squashing the bundle laterally.
+		Real const r0prime( r0*( (1.0-epsilon)/2.0*(cos(2.0*(omega0*t+delta_omega0)) + 1.0) + epsilon ) );
+		Real const dr0prime_dt( -2*omega0*r0*(1.0-epsilon)/2.0*sin(2.0*(omega0*t+delta_omega0)) );
+		returnvector.x( X_BUNDLE( t, r0prime, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, dr0prime_dt, failedx ) );
+		returnvector.y( Y_BUNDLE( t, r0prime, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, dr0prime_dt, failedy ) );
+		returnvector.z( Z_BUNDLE( t, r0prime, omega0, delta_omega0, r1, omega1, z1, delta_omega1, delta_z1, epsilon, dr0prime_dt, failedz ) );
+	}
 	failed=failedx||failedy||failedz;
 	if ( failed ) returnvector.assign(0,0,0);
 	return returnvector;

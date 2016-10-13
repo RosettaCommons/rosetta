@@ -99,6 +99,8 @@ MakeBundle::MakeBundle():
 	default_z1_offset_set_(false),
 	default_z0_offset_(0),
 	default_z0_offset_set_(false),
+	default_epsilon_(1.0),
+	default_epsilon_set_(false),
 	default_invert_(false),
 	default_invert_set_(false),
 	default_helix_length_(0),
@@ -147,6 +149,8 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 	default_z1_offset_set_(src.default_z1_offset_set_),
 	default_z0_offset_(src.default_z0_offset_),
 	default_z0_offset_set_(src.default_z0_offset_set_),
+	default_epsilon_(src.default_epsilon_),
+	default_epsilon_set_(src.default_epsilon_set_),
 	default_invert_(src.default_invert_),
 	default_invert_set_(src.default_invert_set_),
 	default_helix_length_(src.default_helix_length_),
@@ -339,6 +343,10 @@ MakeBundle::parse_my_tag(
 		set_default_z0_offset( tag->getOption<core::Real>("z0_offset", 0) );
 		if ( TR.visible() ) TR << "Default z0 offset (helix offset along the major helix axis) set to " << default_z0_offset() << "." << std::endl;
 	}
+	if ( tag->hasOption("epsilon") ) {
+		set_default_epsilon( tag->getOption<core::Real>("epsilon", 1.0) );
+		if ( TR.visible() ) TR << "Default epsilon (bundle lateral squash factor) set to " << default_epsilon() << "." << std::endl;
+	}
 	set_other_defaults_from_tag( tag );
 
 	//Check that at least one helix is defined:
@@ -393,6 +401,11 @@ MakeBundle::parse_my_tag(
 				core::Real const z0_offsetval( branch_tag->getOption<core::Real>("z0_offset", 0) );
 				helix(helix_index)->set_z0_offset(z0_offsetval);
 				if ( TR.visible() ) TR << "\tSet z0 offset value (helix offset along the major helix axis) to " << z0_offsetval << "." << std::endl;
+			}
+			if ( branch_tag->hasOption( "epsilon" ) ) {
+				core::Real const epsilonval( branch_tag->getOption<core::Real>("epsilon", 1.0) );
+				helix(helix_index)->set_epsilon(epsilonval);
+				if ( TR.visible() ) TR << "\tSet epsilon value (bundle lateral squash factor) to " << epsilonval << "." << std::endl;
 			}
 
 		}
@@ -632,6 +645,7 @@ void MakeBundle::add_helix() {
 	if ( default_delta_t_set() ) helix(newindex)->set_delta_t( default_delta_t() );
 	if ( default_z1_offset_set() ) helix(newindex)->set_z1_offset( default_z1_offset() );
 	if ( default_z0_offset_set() ) helix(newindex)->set_z0_offset( default_z0_offset() );
+	if ( default_epsilon_set() ) helix(newindex)->set_epsilon( default_epsilon() );
 	if ( default_invert_set() ) helix(newindex)->set_invert_helix( default_invert() );
 	if ( default_helix_length_set() ) helix(newindex)->set_helix_length( default_helix_length() );
 	return;
@@ -728,6 +742,13 @@ core::Real MakeBundle::default_z1_offset() const {
 core::Real MakeBundle::default_z0_offset() const {
 	runtime_assert_string_msg( default_z0_offset_set(), "In protocols::helical_bundle::MakeBundle::default_z0_offset(): The default z0_offset value has not been set!" );
 	return default_z0_offset_;
+}
+
+/// @brief Returns the default epsilon value (helix offset along the major helix axis).
+///
+core::Real MakeBundle::default_epsilon() const {
+	runtime_assert_string_msg( default_epsilon_set(), "In protocols::helical_bundle::MakeBundle::default_epsilon(): The default epsilon value has not been set!" );
+	return default_epsilon_;
 }
 
 /// @brief Returns the default invert value (should the helix be flipped?)

@@ -220,6 +220,11 @@ public:
 	///
 	void set_z0_offset( core::Real const &val ) { z0_offset_=val; return; }
 
+	/// @brief Sets the bundle lateral squash factor, defined on a per-helix basis.
+	/// @details A value of 0.5 means that the bundle's minor axis, in the y direction, will be half as long as the bundle's
+	/// major axis, in the x direction.  (The helices curl around the z-axis).
+	void set_epsilon( core::Real const &val ) { epsilon_=val; return; }
+
 	/// @brief Set whether the helix direction be reversed.
 	///
 	void set_invert_helix( bool const val) { invert_helix_=val; return; }
@@ -325,6 +330,11 @@ public:
 	///
 	inline core::Real z0_offset() const { return z0_offset_; }
 
+	/// @brief Returns the bundle lateral squash factor, defined on a per-helix basis.
+	/// @details A value of 0.5 means that the bundle's minor axis, in the y direction, will be half as long as the bundle's
+	/// major axis, in the x direction.  (The helices curl around the z-axis).
+	inline core::Real epsilon() const { return epsilon_; }
+
 	/// @brief Const-access to the whole delta_z1 vector.
 	utility::vector1 < core::Real > const & delta_z1_vect() const { return delta_z1_; }
 
@@ -425,6 +435,10 @@ private:
 	/// @brief Major helix offset along the major helix axis, defined on a per-helix basis.
 	/// @details In Angstroms.
 	core::Real z0_offset_;
+
+	/// @brief Bundle lateral squash factor.
+	/// @details Dimensionless.
+	core::Real epsilon_;
 
 	///////////////////
 	//Other data:

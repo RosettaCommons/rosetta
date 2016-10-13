@@ -105,6 +105,7 @@ void generate_atom_positions(
 	core::Real const &delta_t,
 	core::Real const &z1_offset,
 	core::Real const &z0_offset,
+	core::Real const &epsilon,
 	bool const invert_helix,
 	utility::vector1 < core::Real > const &r1,
 	core::Real const &omega1,

@@ -67,6 +67,8 @@ OPT_KEY (RealVector, delta_t)
 OPT_KEY (RealVector, delta_t_end)
 OPT_KEY (RealVector, z0_offset)
 OPT_KEY (RealVector, z0_offset_end)
+OPT_KEY (RealVector, epsilon)
+OPT_KEY (RealVector, epsilon_end)
 OPT_KEY (RealVector, z1_offset)
 OPT_KEY (RealVector, z1_offset_end)
 OPT_KEY (String, minor_helix_params)
@@ -106,6 +108,7 @@ void register_options()
 	utility::vector1 < bool > invert_default; invert_default.push_back(false);
 	utility::vector1 < core::Real > delta_t_default; delta_t_default.push_back(0.0);
 	utility::vector1 < core::Real > z0_offset_default; z0_offset_default.push_back(0.0);
+	utility::vector1 < core::Real > epsilon_default; epsilon_default.push_back(1.0);
 	utility::vector1 < core::Real > z1_offset_default; z1_offset_default.push_back(0.0);
 
 	NEW_OPT( animation_frames, "The number of frames of animation to produce.  If not specified (or set to 0 or 1), then no animation is generated.", 0 );
@@ -133,11 +136,13 @@ void register_options()
 	NEW_OPT( delta_t_end, "The offset for the value of t (the residue index) at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( z0_offset, "An offset in the z-direction along the major helix axis.  One value per helix.  Default 0.", z0_offset_default);
 	NEW_OPT( z0_offset_end, "The offset in the z-direction along the major helix axis at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
+	NEW_OPT( epsilon, "Lateral squash factor for the bundle.  One value per helix.  Default 0.", epsilon_default);
+	NEW_OPT( epsilon_end, "The lateral squash factor for the bundle at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( z1_offset, "An offset in the z-direction along the minor helix axis.  One value per helix.  Default 0.", z1_offset_default);
 	NEW_OPT( z1_offset_end, "The offset in the z-direction along the minor helix axis at the end of the animation.  Default unused.  One value for each helix.  If not specified, this property is not animated.", empty_vector);
 	NEW_OPT( minor_helix_params, "The .crick_params file specifying the minor helix params for the type of backbone and secondary structure that one wants to use.  If this option is used, all minor helix params set with other flags are ignored.  Default unused.", "");
-	NEW_OPT( set_bondlengths, "Should the generator set mainchain bond lengths?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", false);
-	NEW_OPT( set_bondangles, "Should the generator set mainchain bond angles?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", false);
+	NEW_OPT( set_bondlengths, "Should the generator set mainchain bond lengths?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", true);
+	NEW_OPT( set_bondangles, "Should the generator set mainchain bond angles?  If true, non-ideal geometry results, but a more perfect helix of helices is possible.  Default false.", true);
 	NEW_OPT( set_dihedrals, "Should the generator set mainchain dihedrals?  Default true.", true);
 
 	return;
@@ -169,6 +174,7 @@ main( int argc, char * argv [] )
 		if(option[delta_omega1_end].user()) runtime_assert_string_msg( option[delta_omega1_end]().size() >= helixcount, "A value must be provided with the -delta_omega1_end flag for EACH helix if this flag is used." );
 		if(option[delta_t_end].user()) runtime_assert_string_msg( option[delta_t_end]().size() >= helixcount, "A value must be provided with the -delta_t_end flag for EACH helix if this flag is used." );
 		if(option[z0_offset_end].user()) runtime_assert_string_msg( option[z0_offset_end]().size() >= helixcount, "A value must be provided with the -z0_offset_end flag for EACH helix if this flag is used." );
+		if(option[epsilon_end].user()) runtime_assert_string_msg( option[epsilon_end]().size() >= helixcount, "A value must be provided with the -epsilon_end flag for EACH helix if this flag is used." );
 		if(option[z1_offset_end].user()) runtime_assert_string_msg( option[z1_offset_end]().size() >= helixcount, "A value must be provided with the -z1_offset_end flag for EACH helix if this flag is used." );
 		runtime_assert_string_msg( option[omega0]().size() >= helixcount, "A value must be provided with the -omega0 flag for EACH helix." );
 		if(option[omega0_end].user()) runtime_assert_string_msg( option[omega0_end]().size() >= helixcount, "A value must be provided with the -omega0_end flag for EACH helix if this flag is used." );
@@ -177,6 +183,7 @@ main( int argc, char * argv [] )
 		runtime_assert_string_msg( option[delta_t]().size() >= helixcount, "A value must be provided with the -delta_t flag for EACH helix." );
 		runtime_assert_string_msg( option[delta_omega1]().size() >= helixcount, "A value must be provided with the -delta_omega1 flag for EACH helix." );
 		runtime_assert_string_msg( option[z0_offset]().size() >= helixcount, "A value must be provided with the -z0_offset flag for EACH helix." );
+		runtime_assert_string_msg( option[epsilon]().size() >= helixcount, "A value must be provided with the -epsilon flag for EACH helix." );
 		runtime_assert_string_msg( option[z1_offset]().size() >= helixcount, "A value must be provided with the -z1_offset flag for EACH helix." );
 		if(option[animation_cyclic].user()) runtime_assert_string_msg( option[animation_frames]() >= 2, "If the -animation_cyclic flag is used, the animation must be at least 2 frames long." );
 
@@ -210,6 +217,8 @@ main( int argc, char * argv [] )
 				if(option[animation_frames]()>2 && option[delta_t_end].user()) deltatval = (1.0-cur_frame_time)*option[delta_t]()[ihelix] + cur_frame_time*option[delta_t_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z0offsetval = option[z0_offset]()[ihelix];
 				if(option[animation_frames]()>2 && option[z0_offset_end].user()) z0offsetval = (1.0-cur_frame_time)*option[z0_offset]()[ihelix] + cur_frame_time*option[z0_offset_end]()[ihelix]; //Linearly interpolate start and end values.
+				core::Real epsilonval = option[epsilon]()[ihelix];
+				if(option[animation_frames]()>2 && option[epsilon_end].user()) epsilonval = (1.0-cur_frame_time)*option[epsilon]()[ihelix] + cur_frame_time*option[epsilon_end]()[ihelix]; //Linearly interpolate start and end values.
 				core::Real z1offsetval = option[z1_offset]()[ihelix];
 				if(option[animation_frames]()>2 && option[z1_offset_end].user()) z1offsetval = (1.0-cur_frame_time)*option[z1_offset]()[ihelix] + cur_frame_time*option[z1_offset_end]()[ihelix]; //Linearly interpolate start and end values.
 
@@ -223,6 +232,7 @@ main( int argc, char * argv [] )
 				makebundle.helix(ihelix)->set_invert_helix( option[invert_helix]()[ihelix] );
 				makebundle.helix(ihelix)->set_delta_t( deltatval );
 				makebundle.helix(ihelix)->set_z0_offset( z0offsetval );
+				makebundle.helix(ihelix)->set_epsilon( epsilonval );
 				makebundle.helix(ihelix)->set_z1_offset( z1offsetval );
 
 				utility::vector1 < core::Real > r1vals = option[r1]();
