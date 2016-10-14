@@ -168,5 +168,5 @@ glycosylate_pose(peptide, 2, 'Glcp')
 pm.apply(peptide)
 
 peptide = pose_from_sequence('ASA')
-glycosylate_pose_by_file(peptide, 2, '../database/chemical/carbohydrates/common_glycans/core_5_O-glycan.iupac')
+glycosylate_pose_by_file(peptide, 2, 'core_5_O-glycan.iupac')
 pm.apply(peptide)
