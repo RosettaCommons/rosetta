@@ -1036,6 +1036,7 @@ sources = {
 	],
 	"pilot/vmullig" : [
 		#"bettercluster",
+		"cycpep_analysis",
 		#"design_cycpeptide_MPI",
 		"fit_helixparams",
 		#"simple_cycpep_predict",
