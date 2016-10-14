@@ -5,15 +5,19 @@ touch using_namespace.log
 touch usings.log
 
 cd %(bin)s/../
-# Find top-level usings in headers, but ignore those in devel and apps/pilot
-egrep '^using' src/ -R --include '*.hh' | egrep -v '^src/devel/' | egrep -v '^src/apps/pilot/' > %(workdir)s/all_usings.txt
+#Find headers with top-level usings, and sort for run-to-run consistency
+egrep '^using' src -R --include '*.hh' | sort > %(workdir)s/all_usings.txt
 cd %(workdir)s
 
-grep 'using namespace' all_usings.txt | sed "s/^/[`date`] /" > using_namespace.log 
+# ignore those in devel and apps/pilot
+cat all_usings.txt | egrep -v '^src/devel/' | egrep -v '^src/apps/pilot/' > clean_usings.txt
 
-grep -v -F -f known_usings.txt all_usings.txt | sed "s/^/[`date`] /" > usings.log
+grep 'using namespace' clean_usings.txt | sed "s/^/[`date`] /" > using_namespace.log 
 
-rm -f all_usings.txt
+grep -v -F -f known_usings.txt clean_usings.txt | sed "s/^/[`date`] /" > usings.log
+
+# Changes in all_usings.txt will show up the first time, but shouldn't change after that.
+#rm -f all_usings.txt
 
 if [ -s using_namespace.log ]; then
    echo ">>> Illegal 'using namespace' in headers detected!"
