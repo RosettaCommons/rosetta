@@ -104,7 +104,7 @@ bool ClosureSolution::apply_if_reasonable( // {{{1
 
 	apply(pose);
 
-	Real const scale_factor = be_lenient ? 0.40 : 0.49;
+	Real const scale_factor = be_lenient ? 0.25 : 0.36;
 
 	if ( bump_on && ! check_overlap(pose, scale_factor) ) {
 		problem_->restore(pose);

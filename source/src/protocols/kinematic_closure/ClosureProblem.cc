@@ -516,15 +516,14 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// Set the torsion angles in the solution pose.  Note that in torsion_angles,
 	// index x refers to the angle between atoms x-1 and x+2.
 
-	for ( Size index = 4; index <= num_atoms() - 4; index++ ) {
-		ids[0] = id_from_index(index - 1);
-		ids[1] = id_from_index(index + 0);
-		ids[2] = id_from_index(index + 1);
-		ids[3] = id_from_index(index + 2);
-
-		conformation.set_torsion_angle(                            //quiet
-			ids[0], ids[1], ids[2], ids[3], torsion_angles[index], true);
+	using numeric::conversions::degrees;
+	for ( Size index = 4, cur_res = first_residue(); cur_res <= last_residue(); ++cur_res){
+		pose.set_phi(cur_res, degrees(torsion_angles[index++]));
+		pose.set_psi(cur_res, degrees(torsion_angles[index++]));
+		if(cur_res < last_residue()) pose.set_omega(cur_res, degrees(torsion_angles[index++]));
 	}
+
+	pose.update_residue_neighbors();
 }
 
 void ClosureProblem::frame_lower_pivot( // {{{1

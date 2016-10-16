@@ -373,7 +373,7 @@ void LoopModeler::setup_kic_config() { // {{{1
 	fullatom_stage_->set_rama_term_ramping(true);
 	fullatom_stage_->set_repulsive_term_ramping(true);
 	fullatom_stage_->add_mover(LoopMoverOP( new KicMover ));
-	fullatom_stage_->add_refiner(LoopMoverOP( new RepackingRefiner(20) ));
+	fullatom_stage_->add_refiner(LoopMoverOP( new RepackingRefiner(40) ));
 	fullatom_stage_->add_refiner(LoopMoverOP( new RotamerTrialsRefiner ));
 	fullatom_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
 	fullatom_stage_->mark_as_default();

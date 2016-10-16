@@ -308,6 +308,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 	basic::Tracer TR( "protocols.looprelax" );
 
+	TR.Warning << "Warning! The LoopRelaxMover is no longer maintained. Please use the LoopModeler mover as replacement." << std::endl;
+
 	TR << "==== Loop protocol: ================================================="
 		<< std::endl;
 	TR << " remodel        " << remodel()        << std::endl;

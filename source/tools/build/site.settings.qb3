@@ -23,20 +23,35 @@ qb3_path = os.environ["PATH"].split(":")
 # scl enable devtoolset-4 'echo $LD_LIBRARY_PATH'
 qb3_ld_library_path = os.environ["LD_LIBRARY_PATH"].split(":") + ["/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib"]
 
+
 settings = {
     "site" : {
         "prepends" : {
-            # Take path from scltools environment
-            "program_path" : qb3_path,
-
-            "include_path" : [],
-
-            # scltools path + MySQL
-            "library_path" : qb3_ld_library_path,
-
-            # "ENV" : {
-            #     "LD_LIBRARY_PATH": ["/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib"],
-            # }
+            # Location of standard and system binaries
+            "program_path" : [
+                # Path to GCC compiler if not in the os rule
+                # Path to Intel C++ compiler if not in the os rule
+                  "/opt/rh/devtoolset-4/root/usr/bin",
+                	qb3_path,
+                ],
+            # Location of standard and system header files if not in the os rule
+            "include_path" : [
+                #
+                ],
+            # Location of standard and system libraries if not in the os rule.
+            "library_path" : [
+                "/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib",
+								qb3_ld_library_path,
+								],
+            "ENV" : {
+                "LD_LIBRARY_PATH": [
+                    "/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib",
+                    ],
+                "PATH" : [
+                        "/opt/rh/devtoolset-4/root/usr/bin",
+                    ]
+                }
+            },
         },
         "appends" : {
             "flags" : {

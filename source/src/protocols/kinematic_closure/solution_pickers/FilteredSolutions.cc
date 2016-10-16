@@ -17,6 +17,7 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <boost/foreach.hpp>
 
 // C++ headers
@@ -41,10 +42,22 @@ FilteredSolutions::FilteredSolutions(
 bool FilteredSolutions::pick_and_apply(
 	Pose & pose, SolutionList const & solutions) {
 
-	BOOST_FOREACH ( ClosureSolutionCOP solution, solutions ) {
+	core::Size nsol = solutions.size();
+
+	// Permute the solutions randomly before choosing one,
+	// since the first one encountered that passes the filters is accepted.
+
+	utility::vector1<core::Size> pos(nsol);
+	for(core::Size i=1; i<= nsol; ++i){
+		pos[i] = i;
+	}
+
+	numeric::random::random_permutation(pos.begin(), pos.end(), numeric::random::rg());
+
+	for(core::Size i=1; i <= nsol; ++i){
 		bool reasonable_solution =
-			solution->apply_if_reasonable(
-			pose, check_rama_, check_overlap_, be_lenient_);
+			solutions[pos[i]]->apply_if_reasonable(
+					pose, check_rama_, check_overlap_, be_lenient_);
 
 		if ( reasonable_solution ) return true;
 	}

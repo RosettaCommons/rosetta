@@ -17,6 +17,7 @@
 #include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship.
 
 // Core headers
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -108,6 +109,12 @@ protected:
 	/// @brief Attempt to find a reasonable loop conformation without using any
 	/// information from the original coordinates.
 	bool do_apply(Pose & pose, Loop const & loop) override;
+
+private:
+
+	/// @brief Idealize the loop with a give fold tree
+	/// @detail The fold tree of the pose is restored after the idealization
+	void idealize_loop(Pose & pose, Loop const & loop, core::kinematics::FoldTree &ft) const;
 
 private:
 

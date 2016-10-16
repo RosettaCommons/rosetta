@@ -225,6 +225,7 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 
 	// Prepare the score function.
 
+	ScoreFunctionOP standard_sfxn = core::scoring::get_score_function();
 	ScoreFunctionOP scorefxn = get_score_function();
 
 	protocols::loops::add_cutpoint_variants(pose);
@@ -239,9 +240,11 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 			monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
 			pose, *scorefxn, initial_temp_) );
 
+		// Use the rama2b scoring term instead of the rama term
+
 		original_repulsive_weight_ = scorefxn->get_weight(fa_rep);
-		original_rama_weight_ = scorefxn->get_weight(rama);
-		original_rama2b_weight_ = scorefxn->get_weight(rama2b);
+		original_rama_weight_ = 0;
+		original_rama2b_weight_ = standard_sfxn->get_weight(rama);
 
 		// Describe the protocol to the user.
 
@@ -262,8 +265,8 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 		}
 	}
 
-	void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
-		using core::scoring::fa_rep;
+void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
+	using core::scoring::fa_rep;
 	using core::scoring::rama;
 	using core::scoring::rama2b;
 	using core::scoring::chainbreak;
