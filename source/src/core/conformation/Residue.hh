@@ -1621,7 +1621,9 @@ public:
 
 
 	/// @brief  Return the current RingConformer of this residue's nth ring.
-	chemical::rings::RingConformer const & ring_conformer( core::uint const ring_num) const;
+	chemical::rings::RingConformer const & ring_conformer(
+		core::uint const ring_num,
+		core::Real limit=90.0) const;
 
 
 	/// @brief Returns the sequence position of this residue

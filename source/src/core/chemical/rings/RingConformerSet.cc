@@ -265,7 +265,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 /// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
 /// subsets.
 RingConformer const &
-RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const & angles ) const
+RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const & angles, core::Real limit /*=90.0*/ ) const
 {
 	using namespace std;
 	using namespace numeric;
@@ -299,7 +299,7 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 		TR.Debug << "..." << endl;
 	}
 	Size const n_conformers( size() );
-	Angle best_match_score( 90.0 * n_angles );  // the highest possible sum of angle deviations halved
+	Angle best_match_score( limit * n_angles );  // the highest possible sum of angle deviations halved
 	uint best_conformer( 0 );
 	for ( uint i( 1 ); i <= n_conformers; ++i ) {
 		RingConformer const & conformer( nondegenerate_conformers_[ i ] );

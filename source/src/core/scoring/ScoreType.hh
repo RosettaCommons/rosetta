@@ -45,6 +45,9 @@ enum ScoreType {
 	fa_intra_atr_xover4, // crossover 4: intra between torsion-connected atoms not computed
 	fa_intra_rep_xover4,
 	fa_intra_sol_xover4,
+	fa_intra_atr_nonprotein, // also crossover 4: intra etable terms only applied to non-protein residues
+	fa_intra_rep_nonprotein,
+	fa_intra_sol_nonprotein,
 	fa_intra_RNA_base_phos_atr, //RNA specific score term -- to be deprecated in late 2015
 	fa_intra_RNA_base_phos_rep, //RNA specific score term -- to be deprecated in late 2015
 	fa_intra_RNA_base_phos_sol, //RNA specific score term -- to be deprecated in late 2015
@@ -491,6 +494,7 @@ enum ScoreType {
 	cart_bonded,  // cartesian bonded potential
 	cart_bonded_angle,  // cartesian bonded potential
 	cart_bonded_length,  // cartesian bonded potential
+	cart_bonded_ring,  // cartesian bonded potential
 	cart_bonded_torsion, // cartesian bonded, proper + improper
 	cart_bonded_proper,   // cartesian bonded proper torsion
 	cart_bonded_improper, // cartesian bonded improper torsion

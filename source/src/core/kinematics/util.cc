@@ -622,13 +622,15 @@ visualize_fold_tree(
 		}
 		nodemap[ dn ]->setparent( nodemap[ up ] );
 	}
-	// sanity check: make sure tree is connected
-	for ( std::map< std::string,NodeOP >::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i ) {
-		std::string rootname0 = nodemap.begin()->second->root().name;
-		if ( rootname0 != i->second->root().name ) utility_exit_with_message( "Nodes not connected!!!" );
-		// std::cerr << "=========================== " << i->second->name << " ===========================" << std::endl;
-		// std::cerr << i->second->str() << std::endl;
-		// std::cerr << "========================================================================" << std::endl;
+	// sanity check: make sure tree is connected. This only works if the fold tree has no chemical edges
+	if(ft.get_chemical_edges().size() == 0){
+		for ( std::map< std::string,NodeOP >::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i ) {
+			std::string rootname0 = nodemap.begin()->second->root().name;
+			if ( rootname0 != i->second->root().name ) utility_exit_with_message( "Nodes not connected!!!" );
+			// std::cerr << "=========================== " << i->second->name << " ===========================" << std::endl;
+			// std::cerr << i->second->str() << std::endl;
+			// std::cerr << "========================================================================" << std::endl;
+		}
 	}
 	return nodemap.begin()->second->root().str();
 }

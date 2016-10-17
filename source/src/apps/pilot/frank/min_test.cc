@@ -345,6 +345,8 @@ public:
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		kinematics::MoveMap mm;
 		mm.set_bb  ( true );
+		mm.set_branches( true );
+		mm.set_nu  ( true );
 		mm.set_chi ( true );
 		mm.set_jump( true );
 		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
