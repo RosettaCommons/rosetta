@@ -21,8 +21,11 @@ import os
 qb3_path = os.environ["PATH"].split(":")
 
 # scl enable devtoolset-4 'echo $LD_LIBRARY_PATH'
-qb3_ld_library_path = os.environ["LD_LIBRARY_PATH"].split(":") + ["/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib"]
-
+qb3_ld_library_path = ["/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib"]
+try:
+	qb3_ld_library_path = os.environ["LD_LIBRARY_PATH"].split(":") + qb3_ld_library_path 
+except:
+	pass
 
 settings = {
     "site" : {
@@ -52,7 +55,6 @@ settings = {
                     ]
                 }
             },
-        },
         "appends" : {
             "flags" : {
                 "compile" : [
