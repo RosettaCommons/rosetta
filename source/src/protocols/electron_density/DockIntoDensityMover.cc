@@ -245,7 +245,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 
 	core::Real massSum=0.0;
 	// for fine point selection... generate pose_1dspec based on the middle residue of the pose.
-	if ( convolute_single_residue_ == true ) { 
+	if ( convolute_single_residue_ == true ) {
 		Size midres = (pose.size()+1)/2;
 		while ( pose.residue(midres).is_virtual_residue() ) {
 			++midres;
@@ -260,10 +260,9 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 			pose_1dspec[binint] += (1-fpart);
 			pose_1dspec[binint+1] += (fpart);
 		}
-	}
-	// for coarse point selection... generate pose_1dspec based on whole pose
-	else {
-		for ( core::Size i=1; i<=pose.size(); ++i) {
+	} else {
+		// for coarse point selection... generate pose_1dspec based on whole pose
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			core::conformation::Residue const & rsd( pose.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -278,7 +277,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	}
 
 	// this is to calculate massSum via full pose for nRsteps_
-	for ( core::Size i=1; i<=pose.size(); ++i) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
@@ -515,7 +514,7 @@ DockIntoDensityMover::poseSphericalSamples(
 	// 2. interpolate this calculated density in cencentric spherical shells
 	// (extending out to D Ang in 1 Ang steps)
 	//////////////////
-	if (laplacian_offset_ != 0) {
+	if ( laplacian_offset_ != 0 ) {
 		TR << "Applying laplacian filter with offset of: " << laplacian_offset_ << " A" << std::endl;
 	}
 	sigR.dimension( 2*B, 2*B, nRsteps );
@@ -554,7 +553,7 @@ DockIntoDensityMover::poseSphericalSamples(
 		core::Real cg1 = cos(gamma);
 
 
-		if (laplacian_offset_ != 0) {
+		if ( laplacian_offset_ != 0 ) {
 			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
 				core::Real shellR = ridx * delRsteps;
 				for ( Size t=1; t<=2*B; ++t ) {
@@ -571,12 +570,12 @@ DockIntoDensityMover::poseSphericalSamples(
 				}
 			}
 			// compute laplacian for surrounding coordinates
-			for (int xyz = 0; xyz < 3; ++xyz){
-				for (int lapl = 0; lapl < 2; ++lapl){
+			for ( int xyz = 0; xyz < 3; ++xyz ) {
+				for ( int lapl = 0; lapl < 2; ++lapl ) {
 					reference_atm = atmList[i];
 					atmList[i][xyz] = atmList[i][xyz] + ( ( (lapl==0) ? 1.0 : -1.0 ) * laplacian_offset_ );
 					atomR = atmList[i].length();
-					core::Real beta = acos( atmList[i][2] / atomR ); 
+					core::Real beta = acos( atmList[i][2] / atomR );
 					core::Real gamma = atan2( atmList[i][0] , atmList[i][1] );   // x and y switched from usual convention
 					core::Real st1 = sin(beta);
 					core::Real sg1 = sin(gamma);
@@ -587,7 +586,7 @@ DockIntoDensityMover::poseSphericalSamples(
 						core::Real shellR = ridx * delRsteps;
 						for ( Size t=1; t<=2*B; ++t ) {
 							core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
-							if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue; 
+							if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
 							for ( Size p=1; p<=2*B; ++p ) {
 								core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
 								if ( atomD < ATOM_MASK*ATOM_MASK ) {

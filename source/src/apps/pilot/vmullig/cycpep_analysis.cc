@@ -67,7 +67,7 @@ ensure_cyclic(
 	core::Size const count
 ) {
 	core::Size const nres( pose->total_residue() );
-	if( pose->residue(1).has_lower_connect() && pose->residue(nres).has_upper_connect() && pose->residue(1).is_polymer_bonded(nres) ) {
+	if ( pose->residue(1).has_lower_connect() && pose->residue(nres).has_upper_connect() && pose->residue(1).is_polymer_bonded(nres) ) {
 		TR << "Pose " << count << " is already cyclic." << std::endl;
 	} else {
 		protocols::cyclic_peptide::DeclareBond cyclize;
@@ -81,9 +81,9 @@ bool
 has_cis_bonds(
 	core::pose::PoseCOP pose
 ) {
-	for(core::Size i=1, imax=pose->total_residue(); i<=imax; ++i) {
+	for ( core::Size i=1, imax=pose->total_residue(); i<=imax; ++i ) {
 		core::Real const omval( numeric::principal_angle_degrees( pose->omega(i) ) );
-		if( omval > -90 && omval <= 90 ) return true;
+		if ( omval > -90 && omval <= 90 ) return true;
 	}
 	return false;
 }
@@ -98,30 +98,30 @@ count_bins(
 	core::Size &Ocount,
 	core::Size &Zcount
 ) {
-	for(core::Size i=1, imax=pose->total_residue(); i<=imax; ++i) {
+	for ( core::Size i=1, imax=pose->total_residue(); i<=imax; ++i ) {
 		core::Real const phival( numeric::principal_angle_degrees( pose->phi(i) ) );
 		core::Real const psival( numeric::principal_angle_degrees( pose->psi(i) ) );
 		core::Real const omegaval( numeric::principal_angle_degrees( pose->omega(i) ) );
-		
-		if( omegaval > -90 && omegaval <= 90 ) { //Cis peptide bond.
-			if( phival <= 0 ) { ++Ocount; }
+
+		if ( omegaval > -90 && omegaval <= 90 ) { //Cis peptide bond.
+			if ( phival <= 0 ) { ++Ocount; }
 			else { ++Zcount; }
 		} else { //Trans peptide bond.
-			if( phival <= 0 ) { //Negative phi
-				if( psival <= -125 || psival > 50 ) {
+			if ( phival <= 0 ) { //Negative phi
+				if ( psival <= -125 || psival > 50 ) {
 					++Bcount;
 				} else {
 					++Acount;
 				}
 			} else { //Positive phi
-				if( psival <= -50 || psival > 125 ) {
+				if ( psival <= -50 || psival > 125 ) {
 					++Ycount;
 				} else {
 					++Xcount;
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -130,25 +130,25 @@ do_cycpep_analysis()
 {
 	core::import_pose::pose_stream::MetaPoseInputStream input( core::import_pose::pose_stream::streams_from_cmd_line() );
 	core::Size total_count(0), valid_count(0), Acount(0), Xcount(0), Bcount(0), Ycount(0), Ocount(0), Zcount(0);
-	
-	while( input.has_another_pose() ) {
+
+	while ( input.has_another_pose() ) {
 		++total_count;
 
 		core::pose::PoseOP pose( new core::pose::Pose ); //Create storage for the pose.
 		input.fill_pose( *pose ); //Import the pose
 		ensure_cyclic( pose, total_count );
-		
+
 		//Skip poses with cis peptide bonds
-		if( has_cis_bonds( pose ) ) {
+		if ( has_cis_bonds( pose ) ) {
 			TR << "Pose " << total_count << " contains cis bonds.  Skipping." << std::endl;
 			continue;
 		}
-		
+
 		++valid_count;
-		
+
 		count_bins( pose, Acount, Xcount, Bcount, Ycount, Ocount, Zcount );
 	}
-	
+
 	TR << "\nSUMMARY:\nA:\t" << Acount << "\nB:\t" << Bcount << "\nX:\t" << Xcount << "\nY:\t" << Ycount << "\nO:\t" << Ocount << "\nZ:\t" << Zcount << "\nTotal poses processed:\t" << total_count << "\nTotal poses valid:\t" << valid_count << "\n" << std::endl;
 }
 

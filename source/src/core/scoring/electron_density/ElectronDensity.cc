@@ -382,7 +382,7 @@ void ElectronDensity::mapSphericalSamples (
 
 	// resample
 	// if laplacian
-	if (laplacian_offset != 0) {
+	if ( laplacian_offset != 0 ) {
 		for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx ) {
 			r = (core::Real) delR*(r_idx);
 
@@ -397,10 +397,10 @@ void ElectronDensity::mapSphericalSamples (
 					cartOffset[2] = r*cos(theta);
 					laplacian_cartOffset = cartOffset;
 
-					// apply laplacian filtering 
+					// apply laplacian filtering
 					core::Real ilaplsplinesum = 0;
-					for (int i = 0; i < 3; i++) {
-						for (int j = 0; j < 2; j++) {
+					for ( int i = 0; i < 3; i++ ) {
+						for ( int j = 0; j < 2; j++ ) {
 							laplacian_cartOffset[i] = cartOffset[i] + ( ( (j==0) ? 1.0 : -1.0) * laplacian_offset );
 							numeric::xyzVector<core::Real> fracX = c2f*laplacian_cartOffset;
 							idxX = numeric::xyzVector< core::Real >( fracX[0]*grid[0],
