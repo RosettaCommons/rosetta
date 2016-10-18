@@ -17,6 +17,7 @@ Note: The current version deletes all numbers from the line before comparison to
 
 import sys
 import string
+import codecs
 
 if len(sys.argv) != 5:
     print __doc__
@@ -25,10 +26,10 @@ if len(sys.argv) != 5:
 def remove_numbers( s ):
     return s.translate(None, string.digits)
 
-with open(sys.argv[2]) as f:
+with codecs.open(sys.argv[2], encoding='utf-8', errors='replace') as f:
     ref_lines = set( remove_numbers( line ) for line in f.readlines() )
 
-with open(sys.argv[1]) as f:
+with codecs.open(sys.argv[1], encoding='utf-8', errors='replace') as f:
     source_lines = f.readlines()
 
 match = []

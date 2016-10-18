@@ -17,6 +17,7 @@
 import os, os.path, shutil, re, commands, fnmatch
 from collections import defaultdict
 import json
+import codecs
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -372,7 +373,7 @@ def gather_pass_fail_results(files_path):
             log_files.sort(key=sort_natural)
             out_log = ""
             for log in log_files:
-                FILE = open(log, 'r')
+                FILE = codecs.open(log, 'r', encoding='utf-8', errors='replace') # Be robust to unicode in the log file
                 lines = FILE.readlines()
                 if lines:
                     out_log += "\n\nLogFile "+os.path.basename(log)+"\n"
