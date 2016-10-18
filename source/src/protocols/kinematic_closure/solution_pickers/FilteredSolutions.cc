@@ -48,16 +48,16 @@ bool FilteredSolutions::pick_and_apply(
 	// since the first one encountered that passes the filters is accepted.
 
 	utility::vector1<core::Size> pos(nsol);
-	for(core::Size i=1; i<= nsol; ++i){
+	for ( core::Size i=1; i<= nsol; ++i ) {
 		pos[i] = i;
 	}
 
 	numeric::random::random_permutation(pos.begin(), pos.end(), numeric::random::rg());
 
-	for(core::Size i=1; i <= nsol; ++i){
+	for ( core::Size i=1; i <= nsol; ++i ) {
 		bool reasonable_solution =
 			solutions[pos[i]]->apply_if_reasonable(
-					pose, check_rama_, check_overlap_, be_lenient_);
+			pose, check_rama_, check_overlap_, be_lenient_);
 
 		if ( reasonable_solution ) return true;
 	}

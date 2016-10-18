@@ -377,6 +377,7 @@ static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearC
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< simple_moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
 static MoverRegistrator< simple_moves::ContingentAcceptMoverCreator > reg_ContingentAcceptMoverCreator;
+static MoverRegistrator< simple_moves::CopyRotamerMoverCreator > reg_CopyRotamerMoverCreator;
 static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;

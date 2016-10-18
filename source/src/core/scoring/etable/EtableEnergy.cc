@@ -216,7 +216,7 @@ TableLookupEtableEnergy::eval_intrares_energy(
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
 	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
 
-	if (!res.is_protein()) {
+	if ( !res.is_protein() ) {
 		nonprot_intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
 		emap[ nonprot_intrares_evaluator_.st_atr() ] = tbemap[ nonprot_intrares_evaluator_.st_atr() ];
 		emap[ nonprot_intrares_evaluator_.st_rep() ] = tbemap[ nonprot_intrares_evaluator_.st_rep() ];
@@ -348,7 +348,7 @@ AnalyticEtableEnergy::eval_intrares_energy(
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
 	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
 
-	if (!res.is_protein()) {
+	if ( !res.is_protein() ) {
 		nonprot_intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
 		emap[ nonprot_intrares_evaluator_.st_atr() ] = tbemap[ nonprot_intrares_evaluator_.st_atr() ];
 		emap[ nonprot_intrares_evaluator_.st_rep() ] = tbemap[ nonprot_intrares_evaluator_.st_rep() ];

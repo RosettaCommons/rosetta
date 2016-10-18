@@ -634,6 +634,7 @@ sources = {
 		"ConstraintSetMover",
 		"ContingentAcceptMover",
 		"CopyDofMover",
+		"CopyRotamerMover",
 		"CoupledMover",
 		"CutChainMover",
  		"CyclizationMover",

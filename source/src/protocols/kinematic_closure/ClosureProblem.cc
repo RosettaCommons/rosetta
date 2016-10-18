@@ -517,10 +517,10 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// index x refers to the angle between atoms x-1 and x+2.
 
 	using numeric::conversions::degrees;
-	for ( Size index = 4, cur_res = first_residue(); cur_res <= last_residue(); ++cur_res){
+	for ( Size index = 4, cur_res = first_residue(); cur_res <= last_residue(); ++cur_res ) {
 		pose.set_phi(cur_res, degrees(torsion_angles[index++]));
 		pose.set_psi(cur_res, degrees(torsion_angles[index++]));
-		if(cur_res < last_residue()) pose.set_omega(cur_res, degrees(torsion_angles[index++]));
+		if ( cur_res < last_residue() ) pose.set_omega(cur_res, degrees(torsion_angles[index++]));
 	}
 
 	pose.update_residue_neighbors();

@@ -265,8 +265,8 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 		}
 	}
 
-void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
-	using core::scoring::fa_rep;
+	void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
+		using core::scoring::fa_rep;
 	using core::scoring::rama;
 	using core::scoring::rama2b;
 	using core::scoring::chainbreak;

@@ -157,8 +157,8 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	minimizer_->set_loop(loop);
 
 	// Idealize the loop. The fold tree is changed temporarily
-	// to preserve the positions of the start and stop residues.  
-	
+	// to preserve the positions of the start and stop residues.
+
 	core::kinematics::FoldTree new_ft;
 	new_ft.add_edge(1, loop.stop() - 1, core::kinematics::Edge::PEPTIDE);
 	new_ft.add_edge(loop.start() - 1, loop.stop() + 1, 1);
@@ -177,12 +177,12 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	if ( ! kic_mover_->was_successful() ) return false;
 
 	// Idealize loop again to correct the bond angles of O and H
-	
+
 	core::kinematics::FoldTree new_ft2(pose.size());
 	idealize_loop(pose, loop, new_ft2);
-	
+
 	// Minimize the loop if it was successfully built.
-	
+
 	minimizer_->apply(pose);
 	return minimizer_->was_successful();
 }
@@ -203,12 +203,12 @@ ScoreFunctionOP LoopBuilder::get_score_function() { // {{{1
 void LoopBuilder::set_score_function(ScoreFunctionOP score_function) { // {{{1
 	set_tool(ToolboxKeys::SCOREFXN, score_function);
 }
-	
+
 void LoopBuilder::idealize_loop(Pose & pose, Loop const & loop, core::kinematics::FoldTree &ft) const{
 	core::kinematics::FoldTree original_ft(pose.fold_tree());
 	pose.fold_tree(ft);
 	loops::idealize_loop(pose, loop);
-	pose.fold_tree(original_ft);	
+	pose.fold_tree(original_ft);
 }
 // }}}1
 

@@ -67,12 +67,6 @@ void
 	protocols::moves::Mover::show(output);
 }
 
-/// @brief Get the name of the Mover
-std::string
---class--::get_name() const {
-	return "--class--";
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 	/// Rosetta Scripts Support ///
 	///////////////////////////////
@@ -104,12 +98,7 @@ protocols::moves::MoverOP
 	return protocols::moves::MoverOP( new --class--( *this ) );
 }
 
-protocols::moves::MoverOP
---class--::fresh_instance() const
-{
-	return protocols::moves::MoverOP( new --class-- );
-}
-
+/// @brief Get the name of the Mover
 std::string
 --class--::get_name() const
 {
@@ -122,25 +111,12 @@ std::string
 	return "--class--";
 }
 
-void
---class--::show( std::ostream & output ) const
-{
-	protocols::moves::Mover::show( output );
-}
 
 std::ostream &
 operator<<( std::ostream & os, --class-- const & mover )
 {
 	mover.show(os);
 	return os;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-	/// Creator ///
-	///////////////
-void
---class--::apply( core::pose::Pose & )
-{
 }
 
 /////////////// Creator ///////////////

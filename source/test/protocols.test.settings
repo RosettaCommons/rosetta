@@ -457,6 +457,7 @@ sources = {
 	],
 
 	"simple_moves" : [
+		"CopyRotamerMover",
 		"ddG",
 		"DisulfideInsertionMoverTests",
 		"FavorSequenceProfile",

@@ -1803,9 +1803,9 @@ CartesianBondedEnergy::residue_pair_energy(
 	bool res1first = rsd2.seqpos() > rsd1.seqpos();
 
 	// override ordering if one residue has an upper connection to another (cyclic)
-	if (rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos()) {
+	if ( rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos() ) {
 		res1first = true;
-	} else if (rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos()) {
+	} else if ( rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos() ) {
 		res1first = false;
 	}
 
@@ -1911,9 +1911,9 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	bool res1first = rsd2.seqpos() > rsd1.seqpos();
 
 	// override ordering if one residue has an upper connection to another (cyclic)
-	if (rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos()) {
+	if ( rsd1.has_upper_connect() && rsd1.connected_residue_at_resconn( rsd1.type().upper_connect_id() ) == rsd2.seqpos() ) {
 		res1first = true;
-	} else if (rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos()) {
+	} else if ( rsd2.has_upper_connect() && rsd2.connected_residue_at_resconn( rsd2.type().upper_connect_id() ) == rsd1.seqpos() ) {
 		res1first = false;
 	}
 
@@ -2229,7 +2229,7 @@ CartesianBondedEnergy::eval_singleres_energy(
 		std::cout << "caught exception " << e.msg() << std::endl;
 		exit(0);
 	}
-	//eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
+//eval_singleres_ring_energies( rsd, pose, emap );//removed resparams
 }
 
 void
@@ -2253,7 +2253,7 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 		// now constrain each element of the ring
 		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
 
-		for (core::Size ii=1; ii<=atms.size(); ++ii) {
+		for ( core::Size ii=1; ii<=atms.size(); ++ii ) {
 			core::Size atm1 = atms[(ii+atms.size()-2)%atms.size()+1];
 			core::Size atm2 = atms[ii];
 			core::Size atm3 = atms[ii%atms.size()+1];
@@ -2427,11 +2427,11 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 		bool skip_this_angle=false;
 		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
 			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) ) {
+					&& rsd.type().is_ring_atom( i, atids[2] ) ) {
 				skip_this_angle=true;
 			}
 		}
-		if (skip_this_angle) continue;
+		if ( skip_this_angle ) continue;
 
 		Real Ktheta = ang_params.K(phi,psi);
 		Real theta0 = ang_params.mu(phi,psi);
@@ -2871,7 +2871,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
 	// exit if this is not a backbone connection
-	if ( rsd1.is_upper_terminus() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos()) return;
+	if ( rsd1.is_upper_terminus() || rsd1.residue_connection_partner( rsd1.upper_connect().index() ) != rsd2.seqpos() ) return;
 
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
@@ -3075,7 +3075,7 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 		// now constrain each element of the ring
 		utility::vector1< core::Size > atms = rsd.type().ring_atoms( jj );
 
-		for (core::Size ii=1; ii<=atms.size(); ++ii) {
+		for ( core::Size ii=1; ii<=atms.size(); ++ii ) {
 			core::Size rt1 = atms[(ii+atms.size()-2)%atms.size()+1];
 			core::Size rt2 = atms[ii];
 			core::Size rt3 = atms[ii%atms.size()+1];
@@ -3175,11 +3175,11 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 		bool skip_this_angle=false;
 		for ( core::uint i( 1 ); i <= n_rings && !skip_this_angle; ++i ) {
 			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) ) {
+					&& rsd.type().is_ring_atom( i, atids[2] ) ) {
 				skip_this_angle=true;
 			}
 		}
-		if (skip_this_angle) continue;
+		if ( skip_this_angle ) continue;
 
 		Real Ktheta = ang_params.K(phi,psi);
 		Real theta0 = ang_params.mu(phi,psi);
@@ -3340,11 +3340,11 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		bool skip_this_torsion=false;
 		for ( core::uint i( 1 ); i <= n_rings && !skip_this_torsion; ++i ) {
 			if ( rsd.type().is_ring_atom( i, atids[1] ) && rsd.type().is_ring_atom( i, atids[2] )
-				&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
+					&& rsd.type().is_ring_atom( i, atids[2] ) && rsd.type().is_ring_atom( i, atids[3] ) ) {
 				skip_this_torsion=true;
 			}
 		}
-		if (skip_this_torsion) continue;
+		if ( skip_this_torsion ) continue;
 
 		Real Kphi = tor_params.K(0,0);
 		Real phi0 = d_multiplier * tor_params.mu(0,0);

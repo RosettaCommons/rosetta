@@ -1770,13 +1770,13 @@ FoldTree::renumber_jumps_ordered()
 	int highest_label(0);
 	core::Size edgecounter = 0;
 	utility::vector1< int > jump_labels;
-	for (iterator it = edge_list_.begin(), it_end = edge_list_.end();
-			it != it_end; ++it ){
-			edgecounter++;
-		if ( it->is_jump() ){
-				jump_labels.push_back(it->label());
-				++counter;
-				if( it->label() > highest_label ) highest_label = it->label();
+	for ( iterator it = edge_list_.begin(), it_end = edge_list_.end();
+			it != it_end; ++it ) {
+		edgecounter++;
+		if ( it->is_jump() ) {
+			jump_labels.push_back(it->label());
+			++counter;
+			if ( it->label() > highest_label ) highest_label = it->label();
 		}
 	}
 
@@ -1785,11 +1785,11 @@ FoldTree::renumber_jumps_ordered()
 		if ( it->is_jump() ) {
 			//determine the number of jumps with lower labels to account for missing
 			int lower_count = 0;
-			for( Size i=1; i<=jump_labels.size(); i++){
-					if( jump_labels[i] <= it->label()) lower_count +=1;
+			for ( Size i=1; i<=jump_labels.size(); i++ ) {
+				if ( jump_labels[i] <= it->label() ) lower_count +=1;
 			}
 			//TR << "renumber jumps:: from,to " << it->label() << ' ' <<
-			//	it->label()-(it->label()-lower_count) << std::endl;
+			// it->label()-(it->label()-lower_count) << std::endl;
 			it->label() = it->label()-(it->label()-lower_count);
 		}
 	}

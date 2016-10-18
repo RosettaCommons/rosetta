@@ -259,7 +259,7 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for (it p = range.first; p != range.second; ++p) {
+	for ( it p = range.first; p != range.second; ++p ) {
 		neighbors.push_back(p->second);
 	}
 
@@ -277,9 +277,9 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) c
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for (it p = range.first; p != range.second; ++p) {
+	for ( it p = range.first; p != range.second; ++p ) {
 		// use residue ordering to decide lower vs upper
-		if ((int)p->second > resid) {
+		if ( (int)p->second > resid ) {
 			neighbors.push_back(p->second);
 		}
 	}
@@ -299,7 +299,7 @@ PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for (it p = range.first; p != range.second; ++p) {
+	for ( it p = range.first; p != range.second; ++p ) {
 		neighbors.push_back(p->second);
 	}
 
@@ -318,9 +318,9 @@ PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for (it p = range.first; p != range.second; ++p) {
+	for ( it p = range.first; p != range.second; ++p ) {
 		// use residue ordering to decide lower vs upper
-		if ((int)p->second > resid) {
+		if ( (int)p->second > resid ) {
 			neighbors.push_back(p->second);
 		}
 	}
@@ -365,10 +365,11 @@ PolymerBondedEnergyContainer::is_valid(
 			bool connect_found = false;
 			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
 
-			for (it p = range.first; p != range.second && !connect_found; ++p)
-					if (p->second == connect_i) connect_found = true;
+			for ( it p = range.first; p != range.second && !connect_found; ++p ) {
+				if ( p->second == connect_i ) connect_found = true;
+			}
 
-			if (!connect_found) {
+			if ( !connect_found ) {
 				return false;
 			}
 			connect_count++;
@@ -399,7 +400,7 @@ PolymerBondedEnergyContainer::initialize_peptide_bonded_pair_indices(
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
 			std::pair<core::Size,core::Size> edge = std::make_pair(ir,rsd.residue_connection_partner( ic ));
 			chemical_edges_.insert(edge);
-			if (edge.first < edge.second) {
+			if ( edge.first < edge.second ) {
 				tables_[edge] = utility::vector1<core::Real>(score_types_.size(),0.0);
 				computed_[edge] = false;
 			}

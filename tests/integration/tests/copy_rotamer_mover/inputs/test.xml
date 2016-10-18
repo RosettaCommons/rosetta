@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<CopyRotamer name="cp1" template_res_index="32" target_res_index="33" />
+		<CopyRotamer name="cp2" template_res_index="32" target_res_index="34" copy_identity="true" copy_torsions="true" />
+		<CopyRotamer name="cp3" template_res_index="32" target_res_index="35" copy_identity="true" copy_torsions="false" />
+		<CopyRotamer name="cp4" template_res_index="32" target_res_index="36" copy_identity="false" copy_torsions="true" />
+		<CopyRotamer name="cp5" template_res_index="32" target_res_index="37" copy_identity="false" copy_torsions="true" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="cp1" />
+		<Add mover="cp2" />
+		<Add mover="cp3" />
+		<Add mover="cp4" />
+		<Add mover="cp5" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

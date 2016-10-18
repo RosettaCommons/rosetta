@@ -557,19 +557,19 @@ set_fold_tree_from_symm_data(
 
 		// Now create foldtree
 		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts );
-		
+
 		//Replace the chemical edges into the fold tree before reordering
-		for (Size i=0; i < subunits; i++){
-				for (Size j=1; j<=edges_subunit.size(); j++){
-						core::kinematics::Edge subunit_edge = edges_subunit[j];
-						Size start = i*num_res_subunit + edges_subunit[j].start();
-						Size stop = i*num_res_subunit + edges_subunit[j].stop();
-						int jump_label = f.edge_label(start,stop);
-						core::kinematics::Edge current_edge = f.jump_edge(jump_label);
-						core::kinematics::Edge future_edge( start, stop, -2, subunit_edge.start_atom(), subunit_edge.stop_atom(), subunit_edge.keep_stub_in_residue());
-						f.replace_edge(current_edge,future_edge);
-						f.renumber_jumps_ordered();
-				}
+		for ( Size i=0; i < subunits; i++ ) {
+			for ( Size j=1; j<=edges_subunit.size(); j++ ) {
+				core::kinematics::Edge subunit_edge = edges_subunit[j];
+				Size start = i*num_res_subunit + edges_subunit[j].start();
+				Size stop = i*num_res_subunit + edges_subunit[j].stop();
+				int jump_label = f.edge_label(start,stop);
+				core::kinematics::Edge current_edge = f.jump_edge(jump_label);
+				core::kinematics::Edge future_edge( start, stop, -2, subunit_edge.start_atom(), subunit_edge.stop_atom(), subunit_edge.keep_stub_in_residue());
+				f.replace_edge(current_edge,future_edge);
+				f.renumber_jumps_ordered();
+			}
 		}
 
 		f.reorder( num_res_real + 1 );
