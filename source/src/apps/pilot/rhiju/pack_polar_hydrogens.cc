@@ -80,7 +80,7 @@ my_main( void* )
 	clock_t const my_main_time_start( clock() );
 	pack_polar_hydrogens();
 	protocols::viewer::clear_conformation_viewers();
-	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	std::cout << "Total time to run " << static_cast<core::Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
   exit( 0 );
 }
 
