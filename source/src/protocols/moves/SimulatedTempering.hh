@@ -62,6 +62,9 @@ public:
 	/// @brief Sets cutoff of repusion filter, use 0 to turn it off
 	void set_rep_cutoff( core::Real const setting ) { rep_cutoff_ = setting; }
 
+	/// @brief Sets the next boltzmann() call to automatically reject
+	void force_next_move_reject() { force_next_move_reject_ = true; }
+
 	/// @brief Returns the MonteCarlo ScoreFunction
 	core::scoring::ScoreFunctionOP score_function() const;
 
@@ -70,6 +73,8 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_, rep_scorefxn_;
 	core::Size temp_id_;
 	core::Real cached_score_, rep_cutoff_;
+	bool force_next_move_reject_;
+
 };
 
 } // moves

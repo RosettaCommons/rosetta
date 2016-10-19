@@ -50,7 +50,8 @@ SimulatedTempering::SimulatedTempering(
 	rep_scorefxn_( core::scoring::ScoreFunctionOP( new ScoreFunction ) ),
 	temp_id_( 1 ),
 	cached_score_( ( *scorefxn )( pose ) ),
-	rep_cutoff_( 0 )
+	rep_cutoff_( 0 ),
+	force_next_move_reject_( false )
 {
 	runtime_assert( temperatures.size() == weights.size() );
 	rep_scorefxn_->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
@@ -59,6 +60,11 @@ SimulatedTempering::SimulatedTempering(
 
 bool SimulatedTempering::boltzmann( Pose & pose ) {
 	Real new_score( 0 );
+
+	if ( force_next_move_reject_ ) {
+		force_next_move_reject_ = false;
+		return false;
+	}
 
 	if ( rep_cutoff_ > 0 ) {
 		// If the repulsion score surpass the cutoff, just skip the full scoring

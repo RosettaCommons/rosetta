@@ -67,6 +67,7 @@ stepwise_lores_test()
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::setup;
 	using namespace protocols::farna;
+	using namespace protocols::farna::options;
 	using namespace utility::file;
 
 	// Following is 'standard' setup from stepwise.cc
@@ -74,7 +75,7 @@ stepwise_lores_test()
 	PoseOP native_pose, align_pose;
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
-	pose::Pose & pose = *pose_op;
+	Pose & pose = *pose_op;
 
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
@@ -100,7 +101,7 @@ my_main( void* )
 	clock_t const my_main_time_start( clock() );
 	stepwise_lores_test();
 	protocols::viewer::clear_conformation_viewers();
-	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	std::cout << "Total time to run " << static_cast<core::Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	exit( 0 );
 }
 
