@@ -861,7 +861,11 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		core::Real rama_phi=0;
 		core::Real rama_psi=0;
 		if ( custom_rama_table() == core::scoring::unknown_ramatable_type ) {
-			rama.random_phipsi_from_rama(loop_pose_copy.aa(loopindex), rama_phi, rama_psi);
+			if ( loop_pose_copy.residue(loopindex).backbone_aa() != core::chemical::aa_unk ) {
+				rama.random_phipsi_from_rama(loop_pose_copy.residue(loopindex).backbone_aa(), rama_phi, rama_psi);
+			} else {
+				rama.random_phipsi_from_rama(loop_pose_copy.aa(loopindex), rama_phi, rama_psi);
+			}
 		} else {
 			rama.draw_random_phi_psi_from_extra_cdf(custom_rama_table(), rama_phi, rama_psi);
 		}

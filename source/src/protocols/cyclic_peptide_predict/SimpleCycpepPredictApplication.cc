@@ -1365,6 +1365,8 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->size() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
 				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
+			} else if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {
+				rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), phi, psi);
 			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
 				rama.draw_random_phi_psi_from_extra_cdf( default_rama_table_type(), phi, psi);
 			} else {
