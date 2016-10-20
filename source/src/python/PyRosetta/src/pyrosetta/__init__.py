@@ -323,8 +323,11 @@ def standard_packer_task(pose):
 
 
 # for backward-compatibility
-#def pose_from_pdb(filename):
-#    return pose_from_file(filename)
+# This needs to be here because of all the people using the Workshops and
+# because otherwise, it wrecks a lot of people's scripts.  ~Labonte
+def pose_from_pdb(filename):
+    return pose_from_file(filename)
+
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """
