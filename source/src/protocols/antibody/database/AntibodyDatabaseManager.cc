@@ -650,7 +650,7 @@ AntibodyDatabaseManager::load_cdr_design_data_for_cdrs(
 		cppdb::result prob_result(basic::database::safely_read_from_database(select_statement));
 
 
-		core::Size total_seq;
+		core::Size total_seq(0);
 		while ( prob_result.next() ) {
 
 			if ( prob_result.empty() ) {

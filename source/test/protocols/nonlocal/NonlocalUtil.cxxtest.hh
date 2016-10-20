@@ -71,7 +71,7 @@ public:
 
 		core::sequence::read_all_alignments("grishin",
 			filenames,
-			&alignments_);
+			alignments_);
 	}
 
 	void test_limit_chunk_size() {
@@ -110,7 +110,7 @@ public:
 		builder.set_up(chunks, &pose);
 
 		Size num_residues_before = pose.size();
-		core::pose::remove_virtual_residues(&pose);
+		core::pose::remove_virtual_residues(pose);
 		Size num_residues_after = pose.size();
 		TS_ASSERT_DIFFERS(num_residues_before, num_residues_after);
 	}
@@ -122,7 +122,7 @@ public:
 		Pose model = *core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
 
 		unordered_map<Size, Real> rmsds;
-		core::scoring::compute_jump_rmsd(model, model, &rmsds);
+		core::scoring::compute_jump_rmsd(model, model, rmsds);
 		TS_ASSERT_EQUALS(0, rmsds.size());
 	}
 
@@ -141,7 +141,7 @@ public:
 		builder.set_up(chunks, &model);
 
 		unordered_map<Size, Real> rmsds;
-		core::scoring::compute_jump_rmsd(native, model, &rmsds);
+		core::scoring::compute_jump_rmsd(native, model, rmsds);
 
 		for ( unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i ) {
 			TS_ASSERT_DELTA(0, i->second, 0.0025);

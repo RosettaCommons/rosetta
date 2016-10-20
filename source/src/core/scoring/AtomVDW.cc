@@ -161,23 +161,24 @@ AtomVDW::setup_approximate_vdw_radii(
 
 		utility::vector1< Real > new_R( R );
 		// calculate deviations
-		Real total_dev( 0.0 );
+		//Real total_dev( 0.0 ); //unused
 
 		for ( Size i=1; i<= natoms; ++i ) {
 			Size const ii( atom_type_index[i] );
 
-			Real dev(0.0), abs_dev(0.0);
+			Real dev(0.0);
+			//Real abs_dev(0.0); //unused
 			for ( Size j=1; j<= natoms; ++j ) {
 				Size const jj( atom_type_index[j] );
 
 				Real const actual( std::sqrt( atom_vdw_[ii][jj] ) );
 				Real const expected( R[ii] + R[jj] );
 				dev += actual - expected;
-				total_dev += ( actual - expected ) * ( actual - expected );
-				abs_dev += ( actual - expected ) * ( actual - expected );
+				//total_dev += ( actual - expected ) * ( actual - expected ); //unused
+				//abs_dev += ( actual - expected ) * ( actual - expected ); //unused
 			}
 			dev /= natoms;
-			abs_dev = std::sqrt( abs_dev / natoms );
+			//abs_dev = std::sqrt( abs_dev / natoms ); //unused
 			new_R[ii] = R[ii] + dev/2;
 			//std::cout << "R " << I(4,i) << F(9,3,R[ii]) <<F(9,3,dev) << F(9,3,abs_dev ) << std::endl;
 		}

@@ -87,7 +87,7 @@ core::Real gdtha(const core::pose::Pose& ref,
 /// storing the results in a map keyed by jump_id.
 void compute_jump_rmsd(const core::pose::Pose& reference,
 	const core::pose::Pose& model,
-	boost::unordered_map<core::Size, core::Real>* rmsds);
+	boost::unordered_map<core::Size, core::Real> & rmsds);
 
 /// @brief RMSD between residues, accounting for automorphisms
 /// (symmetries).  For example if you have something like a tyrosine,

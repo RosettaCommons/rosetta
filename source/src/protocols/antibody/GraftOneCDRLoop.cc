@@ -142,8 +142,13 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	}
 
 	Size correction ;
-	if ( preprocessing_script_version_ == "R2_Perl" ) correction = 1;
-	if ( preprocessing_script_version_ == "R3_Python" ) correction = 0;
+	if ( preprocessing_script_version_ == "R2_Perl" ) {
+		correction = 1;
+	} else if ( preprocessing_script_version_ == "R3_Python" ) {
+		correction = 0;
+	} else {
+		utility_exit_with_message("Unknown value of '"+preprocessing_script_version_+"' for preprocessing script version.");
+	}
 
 	for ( Size start_stem = 1+correction; start_stem <= flank_size_; ++start_stem ) {
 		/// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb

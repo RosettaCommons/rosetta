@@ -577,7 +577,7 @@ MoveMap::show( std::ostream & out ) const
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB4)) <<' '<< A(8,( get(id::RB4) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB5)) <<' '<< A(8,( get(id::RB5) ? "TRUE":"FALSE"))<< "\n";
 	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB6)) <<' '<< A(8,( get(id::RB6) ? "TRUE":"FALSE"))<< "\n";
-	prev_resnum = 0;
+	//prev_resnum = 0;
 	for ( auto it = dof_id_begin(), it_end = dof_id_end();
 			it != it_end; ++it ) {
 		DOF_ID const & dofID = it->first;

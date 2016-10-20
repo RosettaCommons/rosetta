@@ -293,7 +293,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 
 	apply_helper( "apply", pose, use_all_residues );
 
-	bool pass;
+	bool pass(true); // empty pose, or pose without any valid residues doesn't have any residue which exceed the threshold
 	core::Real energy=0;
 
 	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
@@ -307,8 +307,6 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 			if ( energy > threshold_ ) {
 				pass=false;
 				break;
-			} else {
-				pass=true;
 			}
 		}
 	}

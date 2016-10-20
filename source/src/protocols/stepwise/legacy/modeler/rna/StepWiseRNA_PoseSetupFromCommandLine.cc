@@ -941,7 +941,9 @@ ensure_directory_for_out_silent_file_exists(){
 			TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
 		}
 		// AMW cppcheck: deleting outdir if we're not on win32
-		delete[] outdir;
+		// Actually, dirname() returns a pointer to shared memory
+		//delete[] outdir;
+		free(outfile_char); // free pairs with strdup
 #endif
 	} else {
 		outstream.close();

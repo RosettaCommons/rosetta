@@ -186,7 +186,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 		// b2) average over all selected assignments ( calibration phase --> sum_dist_filt )
 		// c) cache distance in dist_buf to compute Dk in the end..
 
-		Real dist_buf[ 2000 ];//some cheap memory buffer for distances
+		utility::vector1< Real > dist_buf( (*it)->assignments().size(), 0 ); //some cheap memory buffer for distances
 		runtime_assert( (*it)->n_assigned() < 2000 );
 		if ( (*it)->n_assigned() == 0 ) continue;
 		Size ct_assignments( 1 );

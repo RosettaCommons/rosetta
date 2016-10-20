@@ -349,9 +349,8 @@ HeaderInformation::store_keywords(string const & keywords){
 	}
 
 	size_t i(keywords.find_first_not_of(' '));
-	size_t j(i);
 	while ( i != std::string::npos ) {
-		j = keywords.find(',', i);
+		size_t j( keywords.find(',', i) );
 		if ( keyword_in_progress_ ) {
 			keywords_.back().append(
 				" " + rstripped_whitespace(keywords.substr(i, j-i)));

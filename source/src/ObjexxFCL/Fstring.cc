@@ -40,7 +40,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memcpy( str_, s.str_, len_ );
+		if ( len_ > 0 ) {
+			std::memcpy( str_, s.str_, len_ );
+		}
 	}
 
 
@@ -62,7 +64,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memcpy( str_, s, len_ );
+		if ( len_ > 0 ) {
+			std::memcpy( str_, s, len_ );
+		}
 	}
 
 
@@ -73,7 +77,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 
@@ -84,7 +90,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 
@@ -95,7 +103,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 
@@ -106,7 +116,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 
@@ -117,7 +129,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 
@@ -128,7 +142,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 	Fstring::Fstring( unsigned long long const len_a ) :
@@ -137,7 +153,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 	}
 
 	/// @brief Length + Fstring Constructor
@@ -198,7 +216,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, c, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, c, len_ );
+		}
 	}
 
 
@@ -209,7 +229,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		c_str_( 0 ),
 		sub_( false )
 	{
-		std::memset( str_, SPACE, len_ );
+		if ( len_ > 0 ) {
+			std::memset( str_, SPACE, len_ );
+		}
 		init( *this );
 	}
 
@@ -249,7 +271,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 			} else if ( ( ! str_ ) && ( ! sub_ ) ) { // Uninitialized
 				len_ = s.len_;
 				str_ = ( len_ > 0 ? new char[ len_ ] : 0 );
-				std::memcpy( str_, s.str_, len_ );
+				if ( len_ > 0 ) {
+					std::memcpy( str_, s.str_, len_ );
+				}
 			}
 		}
 		return *this;
@@ -288,7 +312,9 @@ std::string const WHITESPACE( " \t\0", 3 );
 		} else if ( ( ! str_ ) && ( ! sub_ ) ) { // Uninitialized
 			len_ = s_len;
 			str_ = ( len_ > 0 ? new char[ len_ ] : 0 );
-			std::memcpy( str_, s, len_ );
+			if ( len_ > 0 ) {
+				std::memcpy( str_, s, len_ );
+			}
 		}
 		return *this;
 	}

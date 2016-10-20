@@ -387,7 +387,7 @@ bool CheckPointer::recover_checkpoint(
 	// attach boinc graphics pose observer
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
-	if ( utility::file::file_exists( checkpoint_id + ".mc_last.pdb" ) ) {
+	if ( mc != nullptr && utility::file::file_exists( checkpoint_id + ".mc_last.pdb" ) ) {
 		pose::Pose recovered_mc_last =  mc->last_accepted_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_last, fullatom );
 		mc->set_last_accepted_pose( recovered_mc_last );
@@ -397,7 +397,7 @@ bool CheckPointer::recover_checkpoint(
 			core::io::pdb::dump_pdb( mc->last_accepted_pose(), checkpoint_id + ".mc_last.debug.pdb"  );
 		}
 	}
-	if ( utility::file::file_exists( checkpoint_id + ".mc_low.pdb" ) ) {
+	if ( mc != nullptr && utility::file::file_exists( checkpoint_id + ".mc_low.pdb" ) ) {
 		pose::Pose recovered_mc_low =  mc->lowest_score_pose();
 		pose_from_binary_silent_file( checkpoint_id + ".out", checkpoint_id, recovered_mc_low, fullatom );
 		mc->set_lowest_score_pose( recovered_mc_low );

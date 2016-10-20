@@ -558,12 +558,12 @@ struct TreeVizBuilder {
 	utility::vector1<std::string>
 	get_res_nodenames( std::map< Size, std::string > node_labels_partial ) {
 		using ObjexxFCL::format::I;
-		int npad = 1;
-		if ( ft.nres() >    9 ) npad = 2;
-		if ( ft.nres() >   99 ) npad = 3;
-		if ( ft.nres() >  999 ) npad = 4;
-		if ( ft.nres() > 9999 ) npad = 5;
-		npad = 0;
+		//int npad = 1;
+		//if ( ft.nres() >    9 ) npad = 2;
+		//if ( ft.nres() >   99 ) npad = 3;
+		//if ( ft.nres() >  999 ) npad = 4;
+		//if ( ft.nres() > 9999 ) npad = 5;
+		int npad = 0;
 		utility::vector1<std::string> names(ft.nres(),"ERROR_this_name_was_not_set");
 		for ( Size i = 1; i <= ft.nres(); ++i ) {
 			Size lb, ub;

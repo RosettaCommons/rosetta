@@ -75,16 +75,16 @@ append_subpose_to_pose(
 
 /// @brief Retrieves jump information from <pose>, storing the result in <jumps>.
 /// Jumps are keyed by their jump id.
-void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps);
+void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps);
 
 /// @brief Removes all virtual residues from <pose>
-void remove_virtual_residues(core::pose::Pose* pose);
+void remove_virtual_residues(core::pose::Pose & pose);
 
 /// @brief Updates the rigid-body transform of the specified jump in <pose>
-void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose);
+void swap_transform(Size jump_num, kinematics::RT const & xform, Pose & pose);
 
 /// @brief Returns true if <residue> is positionally conserved, false otherwise
-bool is_position_conserved_residue(const Pose& pose, core::Size residue);
+bool is_position_conserved_residue(Pose const & pose, core::Size residue);
 
 /// @brief Create a subpose of the src pose.  PDBInfo is set as NULL.
 void

@@ -138,12 +138,13 @@ match_main()
 	mtask->initialize_from_command_line();
 	//task->consolidate_matches( false );
 
-	time_t matcher_start_time = time(NULL), find_hits_end_time( time( NULL ) );
+	time_t matcher_start_time = time(NULL);
 	long processing_time(0);
 	MatcherOP matcher( new Matcher );
 	matcher->initialize_from_task( *mtask );
 	MatchProcessorOP processor = ProcessorFactory::create_processor( matcher, mtask );
 
+	time_t find_hits_end_time;
 	if ( matcher->find_hits() ) {
 		find_hits_end_time = time(NULL);
 		time_t process_start_time( time(NULL) );

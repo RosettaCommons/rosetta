@@ -783,54 +783,70 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 				s >> num_score_multiply;
 				num_score_multiply_set=true;
 			} else if ( tag == "BB_CLONES" ) {
+				if ( ! num_bb_indep_set ) { utility_exit_with_message("Must have BB_CLONES_SIZE before BB_CLONES in silent file."); }
 				comma_strings_to_vector_map( s,   num_bb_indep,  symminfo.bb_clones_, "" );
 				bb_clones_set=true;
 			} else if ( tag == "CHI_CLONES" ) {
+				if ( ! num_chi_indep_set ) { utility_exit_with_message("Must have CHI_CLONES_SIZE before CHI_CLONES in silent file."); }
 				comma_strings_to_vector_map( s,  num_chi_indep,  symminfo.chi_clones_, "" );
 				chi_clones_set=true;
 			} else if ( tag == "JUMP_CLONES" ) {
+				if ( ! num_jump_indep_set ) { utility_exit_with_message("Must have JUMP_CLONES_SIZE before JUMP_CLONES in silent file."); }
 				comma_strings_to_vector_map( s, num_jump_indep,  symminfo.jump_clones_, "" );
 				jump_clones_set=true;
 			} else if ( tag == "JUMP_CLONE_WEIGHTS" ) {
+				if ( ! num_jump_dep_set || ! num_jump_indep_set ) { utility_exit_with_message("Must have JUMP_CLONES_SIZE and JUMP_FOLLOWS_SIZE before JUMP_CLONE_WEIGHTS in silent file."); }
 				comma_strings_to_map( s, num_jump_dep-num_jump_indep,  symminfo.jump_clone_wts_, "" );
 				jump_clone_wts_set=true;
 			} else if ( tag == "BB_FOLLOWS" ) {
+				if ( ! num_bb_dep_set ) { utility_exit_with_message("Must have BB_FOLLOWS_SIZE before BB_FOLLOWS in silent file."); }
 				comma_strings_to_map( s,   num_bb_dep,  symminfo.bb_follows_, "" );
 				bb_follows_set=true;
 			} else if ( tag == "CHI_FOLLOWS" ) {
+				if ( ! num_chi_dep_set ) { utility_exit_with_message("Must have CHI_FOLLOWS_SIZE before CHI_FOLLOWS in silent file."); }
 				comma_strings_to_map( s,  num_chi_dep,  symminfo.chi_follows_, "" );
 				chi_follows_set=true;
 			} else if ( tag == "JUMP_FOLLOWS" ) {
+				if ( ! num_jump_dep_set ) { utility_exit_with_message("Must have JUMP_FOLLOWS_SIZE before JUMP_FOLLOWS in silent file."); }
 				comma_strings_to_map( s, num_jump_dep,  symminfo.jump_follows_, "" );
 				jump_follows_set=true;
 			} else if ( tag == "DOFS" ) {
+				if ( ! num_dof_set ) { utility_exit_with_message("Must have DOFS_SIZE before DOFS in silent file."); }
 				comma_strings_to_map( s, num_dof,  symminfo.dofs_, "" );
 				dofs_set=true;
 			} else if ( tag == "SCORE_MULTIPLY" ) {
+				if ( ! num_score_multiply_set ) { utility_exit_with_message("Must have SCORE_MULTIPLY_SIZE before SCORE_MULTIPLY in silent file."); }
 				comma_strings_to_vector( s, num_score_multiply,  symminfo.score_multiply_, "" );
 				score_multiply_set = true;
 			} else if ( tag == "N_COMPONENTS" ) {
 				s >> symminfo.num_components_;
 				num_components_set = true;
 			} else if ( tag == "JUMP2DOFNAME" ) {
+				if ( ! nnamed_jumps_set ) { utility_exit_with_message("Must have N_NAMED_JUMPS before JUMP2DOFNAME in silent file."); }
 				comma_strings_to_map( s, nnamed_jumps, symminfo.jnum2dofname_, "" );
 				jnum2dofname_set = true;
 			} else if ( tag == "DOFNAME2JUMP" ) {
+				if ( ! nnamed_jumps_set ) { utility_exit_with_message("Must have N_NAMED_JUMPS before DOFNAME2JUMP in silent file."); }
 				comma_strings_to_map( s, nnamed_jumps, symminfo.dofname2jnum_, "" );
 				dofname2jnum_set = true;
 			} else if ( tag == "COMPONENTS" ) {
+				if ( ! num_components_set ) { utility_exit_with_message("Must have N_COMPONENTS before COMPONENTS in silent file."); }
 				comma_strings_to_vector( s, symminfo.num_components_,  symminfo.components_, "" );
 				//components_set = true;
 			} else if ( tag == "COMPONENT_BOUNDS" ) {
+				if ( ! num_components_set ) { utility_exit_with_message("Must have N_COMPONENTS before COMPONENT_BOUNDS in silent file."); }
 				comma_strings_to_pair_map( s, symminfo.num_components_,  symminfo.component_bounds_, "" );
 				//component_bounds_set = true;
 			} else if ( tag == "NAME2COMPONENT" ) {
+				if ( ! num_components_set ) { utility_exit_with_message("Must have N_COMPONENTS before NAME2COMPONENT in silent file."); }
 				comma_strings_to_map( s, symminfo.num_components_,  symminfo.name2component_, "" );
 				//name2component_set = true;
 			} else if ( tag == "JNAME2COMPS" ) {
+				if ( ! nnamed_jumps_set ) { utility_exit_with_message("Must have N_NAMED_JUMPS before JNAME2COMPS in silent file."); }
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2components_, "" );
 				//jname2components_set = true;
 			} else if ( tag == "JNAME2SUBS" ) {
+				if ( ! nnamed_jumps_set ) { utility_exit_with_message("Must have N_NAMED_JUMPS before JNAME2SUBS in silent file."); }
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2subunits_, "" );
 				//jname2subunits_set = true;
 			} else {

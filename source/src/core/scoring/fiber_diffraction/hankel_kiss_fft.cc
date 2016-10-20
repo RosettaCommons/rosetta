@@ -165,6 +165,9 @@ void hankel_make_snn (
 	core::Real *snn;
 	core::Real factor;
 	core::Real pre;
+	if ( p_hankel->n == 0 ) {
+		utility_exit_with_message( "Empty malloc in hankel_copy" );
+	}
 	snn = p_hankel->snn = ( core::Real * ) malloc( p_hankel->n *
 		sizeof( core::Real ) );
 	if ( p_hankel->snn == NULL ) {
@@ -210,7 +213,9 @@ void hankel_make_j (
 	core::Real *j;
 	core::Real factor;
 	core::Real arg;
-	debug_assert(p_hankel->n != 0 );
+	if ( p_hankel->n == 0 ) {
+		utility_exit_with_message( "Empty malloc in hankel_copy" );
+	}
 	j = p_hankel->j = ( core::Real * ) malloc( 4 * p_hankel->n *
 		sizeof( core::Real ) );
 	if ( p_hankel->j == NULL ) {

@@ -138,7 +138,7 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model, const std::s
 	// Compute RMSD of jump residues (jump point +/- 1 residue)
 	unordered_map<Size, Real> rmsds;
 	Pose native = *core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
-	core::scoring::compute_jump_rmsd(native, *model, &rmsds);
+	core::scoring::compute_jump_rmsd(native, *model, rmsds);
 
 	// Write results to <model> as comments
 	for ( unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i ) {

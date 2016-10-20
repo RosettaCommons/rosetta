@@ -1012,7 +1012,7 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	select_statement_start_res.bind(2,start_res);
 	result res_start_res(basic::database::safely_read_from_database(select_statement_start_res));
 
-	Size other_end_of_start_res;
+	Size other_end_of_start_res(0);
 	while ( res_start_res.next() )
 			{
 		res_start_res >> other_end_of_start_res;
@@ -1034,7 +1034,7 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	select_statement.bind(2,next_start_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size other_end_of_next_start_res;
+	Size other_end_of_next_start_res(0);
 	while ( res.next() )
 			{
 		res >> other_end_of_next_start_res;
@@ -1248,7 +1248,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size starting_res_num, ending_res_num;
+	Size starting_res_num(0), ending_res_num(0);
 	while ( res.next() )
 			{
 		res >> starting_res_num >> ending_res_num;
@@ -2608,7 +2608,7 @@ get_next_starting_res_for_connecting_strands(
 	select_statement.bind(3,former_ending_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size next_starting_res_for_connecting_strands;
+	Size next_starting_res_for_connecting_strands(0);
 	while ( res.next() )
 			{
 		res >> next_starting_res_for_connecting_strands;
@@ -2656,7 +2656,7 @@ get_num_of_distinct_sheet_id(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_distinct_sheet_id;
+	Size num_distinct_sheet_id(0);
 	while ( res.next() )
 			{
 		res >> num_distinct_sheet_id;
@@ -2686,7 +2686,7 @@ get_num_of_sheets_that_surround_this_sheet(
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_of_sheets_that_surround_this_sheet;
+	Size num_of_sheets_that_surround_this_sheet(0);
 	while ( res.next() )
 			{
 		res >> num_of_sheets_that_surround_this_sheet;
@@ -2728,7 +2728,7 @@ get_max_sheet_id(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size max_sheet_id;
+	Size max_sheet_id(0);
 	while ( res.next() )
 			{
 		res >> max_sheet_id;
@@ -2759,7 +2759,7 @@ get_num_strands_in_this_sheet(
 	select_statement.bind(2,sheet_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_strands;
+	Size num_strands(0);
 	while ( res.next() )
 			{
 		res >> num_strands;
@@ -2820,7 +2820,7 @@ get_segment_id(
 	select_statement.bind(1,struct_id);
 	select_statement.bind(2,all_strands_index);
 	result res(basic::database::safely_read_from_database(select_statement));
-	Size segment_id;
+	Size segment_id(0);
 	while ( res.next() )
 			{
 		res >> segment_id;
@@ -2865,7 +2865,7 @@ get_size_sandwich_PK_id(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size size_of_sandwich_PK_id;
+	Size size_of_sandwich_PK_id(0);
 	while ( res.next() )
 			{
 		res >> size_of_sandwich_PK_id;
@@ -3197,7 +3197,7 @@ identify_sheet_id_by_residue_end(
 	select_statement.bind(2,residue_end);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size sheet_id;
+	Size sheet_id(0);
 	while ( res.next() )
 			{
 		res >> sheet_id;

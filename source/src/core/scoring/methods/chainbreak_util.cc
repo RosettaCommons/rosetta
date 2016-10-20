@@ -56,16 +56,15 @@ bool is_upper_cutpoint(
 }
 
 void find_cutpoint_variants(
-	const core::pose::Pose& pose,
-	const core::kinematics::FoldTree&,
-	utility::vector1<int>* cutpoints
+	core::pose::Pose const & pose,
+	core::kinematics::FoldTree const &,
+	utility::vector1<int> & cutpoints
 ) {
 	using core::Size;
 	using boost::unordered_set;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	debug_assert(cutpoints);
 	unordered_set<int> unique_cutpoints;
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
@@ -75,9 +74,9 @@ void find_cutpoint_variants(
 	// Update output parameter
 	std::copy(unique_cutpoints.begin(),
 		unique_cutpoints.end(),
-		std::back_inserter(*cutpoints));
+		std::back_inserter(cutpoints));
 
-	std::sort(cutpoints->begin(), cutpoints->end());
+	std::sort(cutpoints.begin(), cutpoints.end());
 }
 
 } // namespace methods

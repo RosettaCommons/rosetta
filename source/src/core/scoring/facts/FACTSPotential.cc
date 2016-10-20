@@ -878,7 +878,8 @@ void FACTSPotential::calculate_GBpair_fast(
 			// In all case, self pair should use the exact formula
 			if ( !self_pair && tmp3 < dis2 ) {
 				fully_exposed = true;
-				tmp1 = 0.0; tmp2 = 0.0; tmp3 = dis2;
+				//tmp1 = 0.0; tmp2 = 0.0;
+				tmp3 = dis2;
 			}
 
 			Real const arg = MultiplicitiveFactor()*q1*q2;
@@ -1651,7 +1652,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			Real tmp3 = dis2 + BRij*tmp2 - dshift2;
 
 			if ( !self_pair && tmp3 < dis2 ) {
-				tmp1 = 0.0; tmp2 = 0.0; tmp3 = dis2;
+				//tmp1 = 0.0; tmp2 = 0.0; tmp3 = dis2;
 				if ( dis > 1.0 ) {
 					fsolv = 1.0/dis;
 				} else {

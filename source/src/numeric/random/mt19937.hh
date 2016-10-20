@@ -503,7 +503,6 @@ protected:
 		r += key_length;
 		psformat32[sformat_idxof((mid + lag) % size)] += r;
 		psformat32[sformat_idxof(0)] = r;
-		i = 1;
 		count--;
 		for ( i = 1, j = 0; (j < count) && (j < key_length); j++ ) {
 			r = ini_func1(psformat32[sformat_idxof(i)]

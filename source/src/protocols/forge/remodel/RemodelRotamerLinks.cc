@@ -88,21 +88,23 @@ RemodelRotamerLinks::apply(
 	PackerTask & ptask
 ) const
 {
-	Size nres_asymm;
+	Size nres;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-		nres_asymm = symm_info->num_independent_residues();
+		nres = symm_info->num_independent_residues();
 	} else {
-		nres_asymm = pose.size();
+		nres = pose.size();
 	}
 
-	Size const nres( nres_asymm );
+	if ( nres == 0 ) { utility_exit_with_message("Unable to setup RemodelRotamerLinks on an empty pose."); }
+
 	// setup residue couplings
 	RotamerLinksOP links( new RotamerLinks );
 	links->resize( nres );
 
 	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 	Size segment_length = nres / repeat_number;
+	if ( segment_length == 0 ) { utility_exit_with_message("Unable to setup RemodelRotamerLinks with zero-length segments."); }
 
 	utility::vector1< utility::vector1< Size > > equiv_pos;
 

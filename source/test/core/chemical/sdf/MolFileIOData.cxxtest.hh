@@ -610,7 +610,6 @@ bool match_restype( ResidueType const & rsd1, ResidueType const & rsd2 ) {
 	boost::vf2_subgraph_mono( rsd1.graph(), rsd2.graph(), callback, small_order,  boost::vertices_equivalent( vertices_equivalent ).edges_equivalent( edges_equivalent) );
 	//TR << "$$$ DONE FINDING SUBGRAPHS" << std::endl;
 	TR << "Found " << mappings.size() << " subgraph mappings between " << rsd1.name() << " and " << rsd2.name() << std::endl;
-	bool one_matches( false );
 	for ( core::Size n(1); n <= mappings.size(); ++n ) {
 		VDVDmap & map( mappings[n] );
 		for ( VDVDmap::const_iterator itr( map.begin() ); itr != map.end(); ++itr ) {
@@ -618,14 +617,13 @@ bool match_restype( ResidueType const & rsd1, ResidueType const & rsd2 ) {
 		}
 		TR.Debug << std::endl;
 		if ( compare_residues_mapping( rsd1, rsd2, map ) ) {
-			one_matches=true;
 			TR << "Mapping " << n << " Passes" << std::endl;
 			return true;
 		} else {
 			TR << "Mapping " << n << " Failed" << std::endl;
 		}
 	}
-	return one_matches;
+	return false;
 }
 
 

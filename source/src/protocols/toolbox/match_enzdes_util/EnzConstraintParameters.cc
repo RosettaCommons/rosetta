@@ -468,6 +468,8 @@ EnzConstraintParameters::generate_active_pose_constraints(
 					//atoms it contains, in the context of where these atoms are saved in the EnzCstTemplateRes object
 					Size best_resA_At(0);
 					Size best_resB_At(0);
+
+					if ( ambig_resA == 0 ) { utility_exit_with_message("Unable to generate active pose constraints with ambig_resA==0"); } // div by zero check
 					Size n_mod_ambigA = n_best_constraint % ambig_resA;
 					if ( n_mod_ambigA == 0 ) {
 						best_resA_At =  ambig_resA - 1;

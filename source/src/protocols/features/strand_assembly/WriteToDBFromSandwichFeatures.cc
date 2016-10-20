@@ -269,7 +269,7 @@ WriteToDB_ending_loop (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size ending_res_of_any_strand;
+	Size ending_res_of_any_strand(0);
 	while ( res.next() )
 			{
 		res >> ending_res_of_any_strand;
@@ -579,7 +579,7 @@ WriteToDB_hydrophobic_ratio_net_charge (
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	int number_of_hydrophobic_res, number_of_hydrophilic_res, number_of_CGP, number_of_RK_in_sw, number_of_DE_in_sw;
+	int number_of_hydrophobic_res(0), number_of_hydrophilic_res(0), number_of_CGP(0), number_of_RK_in_sw(0), number_of_DE_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_hydrophobic_res >> number_of_hydrophilic_res >> number_of_CGP >> number_of_RK_in_sw >> number_of_DE_in_sw;
@@ -606,6 +606,9 @@ WriteToDB_hydrophobic_ratio_net_charge (
 	insert_stmt.bind(1, number_of_hydrophobic_res);
 	insert_stmt.bind(2, number_of_hydrophilic_res);
 	insert_stmt.bind(3, number_of_CGP);
+	if ( number_of_hydrophobic_res+number_of_hydrophilic_res == 0 ) {
+		utility_exit_with_message("Number of hydrophobic + hydrophilic residues is zero - unable to calculate hydrophobic percentage.");
+	}
 	Real ratio_hydrophobic_philic_of_sw_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
 	insert_stmt.bind(4, ratio_hydrophobic_philic_of_sw_in_percent);
 	insert_stmt.bind(5, number_of_RK_in_sw);
@@ -729,7 +732,7 @@ WriteToDB_number_of_edge_strands_in_each_sw (
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_edge_strands_in_each_sw;
+	Size num_edge_strands_in_each_sw(0);
 	while ( res.next() )
 			{
 		res >> num_edge_strands_in_each_sw;
@@ -820,9 +823,9 @@ WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_L_in_core_strands_in_sw;
-	Size number_of_core_heading_W_in_core_strands_in_sw;
-	Size number_of_core_heading_Y_in_core_strands_in_sw;
+	Size number_of_core_heading_L_in_core_strands_in_sw(0);
+	Size number_of_core_heading_W_in_core_strands_in_sw(0);
+	Size number_of_core_heading_Y_in_core_strands_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_L_in_core_strands_in_sw >> number_of_core_heading_W_in_core_strands_in_sw >> number_of_core_heading_Y_in_core_strands_in_sw;
@@ -870,7 +873,7 @@ WriteToDB_number_of_core_heading_FWY_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_FWY_in_sw;
+	Size number_of_core_heading_FWY_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_FWY_in_sw;
@@ -913,7 +916,7 @@ WriteToDB_number_of_core_heading_W_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_W_in_sw;
+	Size number_of_core_heading_W_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_W_in_sw;
@@ -962,7 +965,7 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (
 	select_statement.bind(4, closest_bs_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands;
+	Size number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ;
@@ -1020,7 +1023,7 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands (
 	select_statement.bind(4,closest_bs_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands;
+	Size number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ;
@@ -1098,7 +1101,7 @@ WriteToDB_number_strands_in_each_sw // it includes even 'short_edge_strands'
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_strands_in_each_sw;
+	Size num_strands_in_each_sw(0);
 	while ( res.next() )
 			{
 		res >> num_strands_in_each_sw;
@@ -1149,7 +1152,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	select_statement.bind(3, "starting_loop");
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_pro_in_starting_loop;
+	Size number_of_pro_in_starting_loop(0);
 	while ( res.next() )
 			{
 		res >> number_of_pro_in_starting_loop;
@@ -1173,7 +1176,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	select_statement_pro2.bind(3, "loop_connecting_two_sheets");
 	result res_pro2(basic::database::safely_read_from_database(select_statement_pro2));
 
-	Size number_of_pro_in_1st_inter_sheet_loop;
+	Size number_of_pro_in_1st_inter_sheet_loop(0);
 	while ( res_pro2.next() )
 			{
 		res_pro2 >> number_of_pro_in_1st_inter_sheet_loop;
@@ -1257,7 +1260,7 @@ WriteToDB_ratio_of_core_heading_FWY_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_FWY_in_sw;
+	Size number_of_core_heading_FWY_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_FWY_in_sw;
@@ -1570,7 +1573,7 @@ WriteToDB_starting_loop (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	int starting_res_of_any_strand;
+	int starting_res_of_any_strand(0);
 	while ( res.next() )
 			{
 		res >> starting_res_of_any_strand;
@@ -1633,8 +1636,8 @@ WriteToDB_sw_res_size (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size starting_res_of_sw;
-	Size ending_res_of_sw;
+	Size starting_res_of_sw(0);
+	Size ending_res_of_sw(0);
 	while ( res.next() )
 			{
 		res >> starting_res_of_sw >> ending_res_of_sw;

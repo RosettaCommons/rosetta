@@ -203,8 +203,6 @@ BrentLineMinimization::BRENT(
 {
 	Real const brent_abs_tolerance( _abs_tolerance );
 
-	Real BRENT; // Return value
-
 	Real A, B, E,TOL1,TOL2;
 	Real V,W,X,FX,FV,FW,XM,R,Q,P,ETEMP,D,U,FU;
 
@@ -221,7 +219,6 @@ BrentLineMinimization::BRENT(
 	E = 0.0;
 	//     these two initializations added to remove warnings
 	D = 0.0; // D will be set first time through loop, when if (E>tol) is false
-	BRENT = -999.9;
 
 	//********************************************
 	FX = FB;
@@ -333,9 +330,8 @@ BrentLineMinimization::BRENT(
 
 
 	_last_accepted_step = X;
-	BRENT = FX;
 
-	return BRENT;
+	return FX;
 }
 
 /////////////////////////////////////////////////////////////////////////////

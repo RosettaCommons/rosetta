@@ -334,7 +334,7 @@ int main( int argc, char * argv [] )
 					// locals
 					core::Real ljE, d_ljE/*, x1, x2*/;
 					core::Real dis;
-					core::Real inv_dis,inv_dis2,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
+					core::Real inv_dis,inv_dis2,inv_dis6/*,inv_dis7*/,inv_dis12/*,inv_dis13*/;
 					core::Real dis2sigma;
 
 					// include after local variables to allow data statements to initialize
@@ -367,15 +367,15 @@ int main( int argc, char * argv [] )
 					} else {
 						//  ctsa - calc regular lennard-jones
 						inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
-						inv_dis7  = inv_dis6 * inv_dis;
+						//inv_dis7  = inv_dis6 * inv_dis; // unused
 						inv_dis12 = inv_dis6 * inv_dis6;
-						inv_dis13 = inv_dis12 * inv_dis;
+						//inv_dis13 = inv_dis12 * inv_dis; //unused
 
 						ljE = lj_r12_coeff[atypid] * inv_dis12 +
 							lj_r6_coeff[atypid] * inv_dis6;
 
-						d_ljE = -12.*lj_r12_coeff[atypid] * inv_dis13-6. *
-							lj_r6_coeff[atypid] * inv_dis7;
+						//d_ljE = -12.*lj_r12_coeff[atypid] * inv_dis13-6. *
+						//	lj_r6_coeff[atypid] * inv_dis7;
 					}
 
 					if ( ljE < 0. ) {

@@ -42,9 +42,9 @@ extern utility::vector1< char > spacers;
 /// @brief Populates the non-null vector <alignments> with all of the sequence
 /// alignments found in <files>. Each alignment is required to have
 /// format <format>.
-void read_all_alignments(const std::string& format,
-	const utility::vector1<std::string>& files,
-	utility::vector1<SequenceAlignment>* alignments);
+void read_all_alignments(std::string const & format,
+	utility::vector1<std::string> const & files,
+	utility::vector1<SequenceAlignment> & alignments);
 
 /// @brief helper function for reading a SequenceMapping from an alignment
 /// file.

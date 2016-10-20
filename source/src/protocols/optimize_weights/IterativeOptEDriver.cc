@@ -333,6 +333,7 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 			sfd = new core::io::silent::SilentFileData();
 			sfd->read_file( path + "/" + filename );
 		}
+		if ( ! sfd ) { utility_exit_with_message("Error loading SilentFileData in IterativeOptEDriver"); }
 		(*sfd)[ tag ]->fill_pose( pose );
 	} else {
 		if ( option[ in::file::centroid_input ] && !ignore_centroid_input_flag ) {

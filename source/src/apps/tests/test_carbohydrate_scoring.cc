@@ -89,7 +89,7 @@ sample_torsions( Pose & pose, core::uint res_num, ScoreFunction const & sf )
 	cout << "Sampling glycosidic bonds for residue " << res_num << "..." << endl;
 
 	Real worst_score( 0.0 ), best_score( 9999.0 );  // arbitrarily large number
-	Angle worst_phi, worst_psi, worst_omega, best_phi, best_psi, best_omega;
+	Angle worst_phi(-999), worst_psi(-999), worst_omega(-999), best_phi(-999), best_psi(-999), best_omega(-999);
 	bool const sample_omega( has_exocyclic_glycosidic_linkage( pose, res_num ) );
 
 	for ( Angle phi( -180.0 ); phi <= 180.0; phi += 15.0 ) {

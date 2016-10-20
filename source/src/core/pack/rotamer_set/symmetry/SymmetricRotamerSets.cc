@@ -404,7 +404,7 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 			if ( jj_resid_master < ii_resid_master ) {
 				Size temp;
 				temp = ii_master; ii_master = jj_master; jj_master = temp;
-				temp = ii_resid_master; ii_resid_master =jj_resid_master; jj_resid_master = temp;
+				//temp = ii_resid_master; ii_resid_master =jj_resid_master; jj_resid_master = temp; // swapped values are unused
 				swap = true;
 			}
 			//std::cout << "OK we have a winner: " << ii_master << " " << jj_master << " from " << ii_resid << " " << jj_resid << std::endl;
@@ -570,7 +570,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			if ( jj_resid_master < ii_resid_master ) {
 				Size temp;
 				temp = ii_master; ii_master = jj_master; jj_master = temp;
-				temp = ii_resid_master; ii_resid_master = jj_resid_master; jj_resid_master = temp;
+				//temp = ii_resid_master; ii_resid_master = jj_resid_master; jj_resid_master = temp; // swapped values are never used
 				temp = ii_subunit; ii_subunit = jj_subunit; jj_subunit = temp;
 				//swap = true;  // set but never used ~Labonte
 			}

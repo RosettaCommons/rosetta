@@ -212,7 +212,7 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 				deferred.pop_back();
 			}
 			if ( ! deferred.size() ) {
-				curres = 0;
+				//curres = 0;
 				break;
 			}
 			output += " (";
@@ -220,7 +220,7 @@ formatted_icoord_tree( core::chemical::ResidueType const & restype )
 			deferred.pop_back();
 		} else {
 			output += ") ";
-			curres = 0;
+			//curres = 0;
 			break;
 		}
 	} while( curres != 0 );

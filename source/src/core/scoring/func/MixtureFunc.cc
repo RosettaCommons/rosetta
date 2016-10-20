@@ -131,7 +131,7 @@ Real
 MixtureFunc::func( Real const x ) const {
 	Real local_x = x;
 
-	Real score = func_(local_x);
+	Real score; // = func_(local_x);
 	if ( local_x < rmax_ ) {
 		score = func_(local_x);
 	} else {

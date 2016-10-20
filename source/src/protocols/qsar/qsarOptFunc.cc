@@ -120,6 +120,8 @@ qsarOptData qsarOptFunc::get_struct_data(core::Size const & struct_id )
 	cppdb::result tag_activity_result(basic::database::safely_read_from_database(tag_activity_selection_));
 	if ( tag_activity_result.next() ) {
 		tag_activity_result >> tag >> activity;
+	} else {
+		utility_exit_with_message("Unable to read tag and activity from database.");
 	}
 
 	score_selection_.bind(2,struct_id);

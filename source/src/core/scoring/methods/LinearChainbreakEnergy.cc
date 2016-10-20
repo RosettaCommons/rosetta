@@ -175,7 +175,7 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 	// Identify all cutpoint variants defined by the caller
 	vector1< int > cutpoints;
 	const FoldTree& tree = pose.fold_tree();
-	find_cutpoint_variants( pose, tree, &cutpoints );
+	find_cutpoint_variants( pose, tree, cutpoints );
 
 	//fpd  why is this energy turned on by default in score_jd2??????
 

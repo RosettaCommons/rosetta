@@ -1743,10 +1743,9 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 /// rmsds[10] = rmsd(residues 9-11 in reference, residues 9-11 in model)
 void compute_jump_rmsd(const core::pose::Pose& reference,
 	const core::pose::Pose& model,
-	boost::unordered_map<core::Size, core::Real>* rmsds) {
+	boost::unordered_map<core::Size, core::Real> & rmsds) {
 	using core::Size;
 	using core::kinematics::FoldTree;
-	debug_assert(rmsds);
 
 	// Identify jump residues
 	const FoldTree& tree = model.fold_tree();
@@ -1760,7 +1759,7 @@ void compute_jump_rmsd(const core::pose::Pose& reference,
 			continue;
 		}
 
-		(*rmsds)[i] = CA_rmsd(reference, model, i - 1, i + 1);
+		rmsds[i] = CA_rmsd(reference, model, i - 1, i + 1);
 	}
 }
 

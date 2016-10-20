@@ -367,7 +367,7 @@ MultiCoolAnnealer::run_constant_temp_rotamer_substitutions(
 )
 {
 
-	core::PackerEnergy currentenergy = ig_->get_energy_current_state_assignment();
+	// core::PackerEnergy currentenergy = ig_->get_energy_current_state_assignment();
 	int substitutions_without_a_commit = 0;
 
 	core::PackerEnergy threshold_for_deltaE_inaccuracy = std::sqrt( get_temperature() );
@@ -396,7 +396,7 @@ MultiCoolAnnealer::run_constant_temp_rotamer_substitutions(
 		//bk rotamer to be tried at this position automatically accept it.
 		if ( (prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy) ) {
 			substitutions_without_a_commit = 0;
-			currentenergy = ig_->commit_considered_substitution();
+			core::PackerEnergy currentenergy = ig_->commit_considered_substitution();
 			state_on_node(moltenres_id) = rotamer_state_on_moltenres;
 			if ( (prevrotamer_state == 0)||(currentenergy < best_energy) ) {
 				if ( ! ig_->any_vertex_state_unassigned() ) {

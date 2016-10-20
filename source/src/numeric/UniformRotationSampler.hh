@@ -59,7 +59,7 @@ urs_R2ang(numeric::xyzMatrix<Real> R) {
 		q2 *= sign(R(3,2) + R(2,3));
 	}
 	Real r = urs_norm4(q0, q1, q2, q3);
-	q0 /= r; q1 /= r; q2 /= r; q3 /= r;
+	q0 /= r; // q1 /= r; q2 /= r; q3 /= r;
 	Real angle = 2*conversions::degrees( std::fabs(acos(q0)) );
 
 	return (angle);

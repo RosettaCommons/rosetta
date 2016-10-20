@@ -61,16 +61,15 @@ static THREAD_LOCAL basic::Tracer tr( "core.sequence" );
 // any of these are OK as strand separators
 vector1< char > spacers = utility::tools::make_vector1( '+','*',' ',',' );
 
-void read_all_alignments(const std::string& format,
-	const utility::vector1<std::string>& files,
-	utility::vector1<SequenceAlignment>* alignments) {
+void read_all_alignments(std::string const & format,
+	utility::vector1<std::string> const & files,
+	utility::vector1<SequenceAlignment> & alignments) {
 	using std::string;
 	using utility::vector1;
 
-	debug_assert(alignments);
 	for ( auto const & file : files ) {
 		vector1<SequenceAlignment> current = read_aln(format, file);
-		std::copy(current.begin(), current.end(), std::back_inserter(*alignments));
+		std::copy(current.begin(), current.end(), std::back_inserter(alignments));
 	}
 }
 

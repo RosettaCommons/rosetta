@@ -52,12 +52,10 @@ enum FileType{
 
 typedef std::string String;
 
-/// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
-/// extern basic::Tracer TR_dump_pdb_dummy;
 void
 read_all_poses(
-	const utility::vector1<std::string>& filenames,
-	utility::vector1<core::pose::Pose>* poses
+	utility::vector1< std::string > const & filenames,
+	utility::vector1< core::pose::PoseOP > &  poses
 );
 
 void

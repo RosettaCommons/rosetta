@@ -275,7 +275,7 @@ BackboneStubLinearConstraint::fill_f1_f2(
 	}
 
 	// return a value between superposition_bonus_ (-ve) and zero
-	core::Real cst_val(0.);
+	//core::Real cst_val(0.);
 	//core::Real cst_val(superposition_bonus_);
 	//debug_assert( cst_val < 0. );
 	//TR << " cst_val1: "<< cst_val << std::endl;
@@ -289,24 +289,24 @@ BackboneStubLinearConstraint::fill_f1_f2(
 
 	// apply a harmonic constraint on the CB's
 	core::Vector const CB_curr( curr_rsd.xyz("CB") );
-	core::Real const CB_d2 = CB_curr.distance_squared( CB_target_ );
-	core::Real const CB_pos_term = CB_force_constant_ * CB_d2;
-	cst_val += CB_pos_term;
+	//core::Real const CB_d2 = CB_curr.distance_squared( CB_target_ );
+	//core::Real const CB_pos_term = CB_force_constant_ * CB_d2;
+	//cst_val += CB_pos_term;
 
 	core::Vector const CA_curr( curr_rsd.xyz("CA") );
-	core::Real const CA_d2 = CA_curr.distance_squared( CA_target_ );
-	core::Real const CA_pos_term = CA_d2;
-	cst_val += CA_pos_term;
+	//core::Real const CA_d2 = CA_curr.distance_squared( CA_target_ );
+	//core::Real const CA_pos_term = CA_d2;
+	//cst_val += CA_pos_term;
 
 	core::Vector const C_curr( curr_rsd.xyz("C") );
-	core::Real const C_d2 = C_curr.distance_squared( C_target_ );
-	core::Real const C_pos_term = CB_force_constant_ * C_d2;
-	cst_val += C_pos_term;
+	//core::Real const C_d2 = C_curr.distance_squared( C_target_ );
+	//core::Real const C_pos_term = CB_force_constant_ * C_d2;
+	//cst_val += C_pos_term;
 
 	core::Vector const N_curr( curr_rsd.xyz("N") );
-	core::Real const N_d2 = N_curr.distance_squared( N_target_ );
-	core::Real const N_pos_term = N_d2;
-	cst_val += N_pos_term;
+	//core::Real const N_d2 = N_curr.distance_squared( N_target_ );
+	//core::Real const N_pos_term = N_d2;
+	//cst_val += N_pos_term;
 
 
 	//derivatives

@@ -137,32 +137,29 @@ append_subpose_to_pose(
 	}
 }
 
-void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
-	debug_assert(jumps);
+void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps) {
 	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
-		jumps->insert(i);
+		jumps.insert(i);
 	}
 }
 
-void remove_virtual_residues(core::pose::Pose* pose) {
-	debug_assert(pose);
-	for ( core::Size i = 1; i <= pose->size(); ++i ) {
-		if ( pose->residue_type(i).name() == "VRT" ) {
-			pose->conformation().delete_residue_slow(i);
+void remove_virtual_residues(core::pose::Pose & pose) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue_type(i).name() == "VRT" ) {
+			pose.conformation().delete_residue_slow(i);
 		}
 	}
 }
 
-void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
-	debug_assert(pose);
-	debug_assert(jump_num <= pose->num_jump());
+void swap_transform(Size jump_num, kinematics::RT const & xform, Pose & pose) {
+	debug_assert(jump_num <= pose.num_jump());
 
-	const kinematics::FoldTree & tree = pose->fold_tree();
+	kinematics::FoldTree const & tree = pose.fold_tree();
 
 	int upstream = tree.upstream_jump_residue(jump_num);
 	int downstream = tree.downstream_jump_residue(jump_num);
-	const conformation::Residue& upstream_res = pose->residue(upstream);
-	const conformation::Residue& downstream_res = pose->residue(downstream);
+	conformation::Residue const & upstream_res = pose.residue(upstream);
+	conformation::Residue const & downstream_res = pose.residue(downstream);
 
 	if ( upstream_res.natoms() < 3 || downstream_res.natoms() < 3 ) {
 		TR.Warning << "Insufficient number of atoms for stub creation on one or more"
@@ -184,13 +181,13 @@ void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
 	debug_assert(upstream_stub.valid());
 	debug_assert(downstream_stub.valid());
 
-	pose->conformation().set_stub_transform(
+	pose.conformation().set_stub_transform(
 		upstream_stub,
 		downstream_stub,
 		xform);
 }
 
-bool is_position_conserved_residue(const Pose& pose, core::Size residue) {
+bool is_position_conserved_residue(Pose const & pose, core::Size residue) {
 	using basic::datacache::BasicDataCache;
 	using core::pose::datacache::PositionConservedResiduesStore;
 	using core::pose::datacache::PositionConservedResiduesStoreCOP;
@@ -198,7 +195,7 @@ bool is_position_conserved_residue(const Pose& pose, core::Size residue) {
 	debug_assert(residue > 0);
 	debug_assert(residue <= pose.size());
 
-	const BasicDataCache& cache = pose.data();
+	BasicDataCache const & cache = pose.data();
 	if ( !cache.has(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES) ) {
 		return false;
 	}

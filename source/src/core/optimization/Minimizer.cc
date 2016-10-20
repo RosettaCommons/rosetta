@@ -654,9 +654,9 @@ Minimizer::lbfgs(
 	Real invdnorm = 0.0;
 	for ( int i = 1; i <= N; ++i ) {
 		D[i] = -G[i];
-		invdnorm += D[i]*D[i];
+		//invdnorm += D[i]*D[i]; // Not used
 	}
-	invdnorm = 1.0/sqrt( invdnorm );
+	//invdnorm = 1.0/sqrt( invdnorm ); // Not used
 
 	if ( line_min->nonmonotone() ) line_min->_last_accepted_step = 0.005;
 
@@ -674,15 +674,15 @@ Minimizer::lbfgs(
 		// line min
 		line_min->_deriv_sum = 0.0;
 		Real Gmax = 0.0;
-		Real Gnorm = 0.0;
+		//Real Gnorm = 0.0;
 		for ( int i = 1; i <= N; ++i ) {
 			line_min->_deriv_sum += D[i]*G[i];
-			Gnorm += G[i]*G[i];
+			//Gnorm += G[i]*G[i]; //unused
 			if ( std::abs( G[i] ) > Gmax ) {
 				Gmax=std::abs( G[i] );
 			}
 		}
-		Gnorm = std::sqrt(Gnorm);
+		//Gnorm = std::sqrt(Gnorm); //unused
 
 		line_min->_func_to_beat = pf[ 1 ];
 		for ( int i = 2 ; i <= func_memory_filled ; ++i ) {
@@ -699,12 +699,12 @@ Minimizer::lbfgs(
 				if ( D[i]*G[i] >= 0 ) D[i] = -D[i];
 
 				line_min->_deriv_sum += D[i]*G[i];
-				Gnorm += G[i]*G[i];
+				//Gnorm += G[i]*G[i]; //unused
 				if ( std::abs( G[i] ) > Gmax ) {
 					Gmax=std::abs( G[i] );
 				}
 			}
-			Gnorm = std::sqrt(Gnorm);
+			//Gnorm = std::sqrt(Gnorm); // unused
 		}
 
 		// check 2: if derivative still positive, reset Hessian
@@ -717,7 +717,7 @@ Minimizer::lbfgs(
 			}
 
 			if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
-				invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
+				//invdnorm = 1.0/sqrt( -line_min->_deriv_sum ); //unused
 				//line_min->_last_accepted_step = invdnorm;  // keep prev stepsize
 				func_memory_filled = 1;
 				line_min->_func_to_beat = pf[1] = prior_func_value = FRET;

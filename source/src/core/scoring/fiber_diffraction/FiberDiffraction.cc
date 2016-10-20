@@ -167,7 +167,6 @@ bool FiberDiffraction::loadFiberDiffractionData(
 	core::Real const & res_cutoff_high,
 	core::Real const & res_cutoff_low ) {
 
-	core::Size lmax_, Rmax_;
 	original_layer_lines_I.resize(80);
 	original_layer_lines_R.resize(80);
 
@@ -183,8 +182,7 @@ bool FiberDiffraction::loadFiberDiffractionData(
 	Size nlines(0);
 	core::Real R,I;
 	core::Size l(0), l_prev (0);
-	Rmax_ = 0;
-	lmax_ = 0;
+	core::Size lmax_ = 0;
 	core::Size nlines_max(0);
 	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == "#" ) continue;
@@ -217,7 +215,7 @@ bool FiberDiffraction::loadFiberDiffractionData(
 			nlines_max=nlines;
 		}
 	}
-	Rmax_ = nlines_max;
+	core::Size Rmax_ = nlines_max;
 
 	//Writing to class values
 	lmax = lmax_;

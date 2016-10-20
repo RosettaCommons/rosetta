@@ -289,15 +289,14 @@ find_num_scattering_atoms(
 {
 	nscatterers = 0;
 	// Are we symmetric?
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
-			pose.conformation()).Symmetry_Info().get();
+		symminfo = core::pose::symmetry::symmetry_info(pose);
 	}
 
 	int nres = pose.size();
 	for ( int i=1 ; i<=nres; ++i ) {
-		if ( ! symminfo->bb_is_independent( i ) ) continue;
+		if ( symminfo && ! symminfo->bb_is_independent( i ) ) continue;
 		conformation::Residue const &rsd_i (pose.residue(i));
 		// skip vrts & masked reses
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;

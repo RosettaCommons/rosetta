@@ -85,19 +85,18 @@ using utility::vector1;
 
 void
 read_all_poses(
-	const utility::vector1<std::string>& filenames,
-	utility::vector1<core::pose::Pose>* poses
+	utility::vector1< std::string > const & filenames,
+	utility::vector1< core::pose::PoseOP > & poses
 )
 {
 	using core::pose::Pose;
 	using std::string;
 	using utility::vector1;
-	debug_assert(poses);
 
 	for ( auto const & filename : filenames ) {
-		Pose pose;
-		pose_from_file(pose, filename, core::import_pose::PDB_file);
-		poses->push_back(pose);
+		core::pose::PoseOP pose( new Pose );
+		pose_from_file(*pose, filename, core::import_pose::PDB_file);
+		poses.push_back(pose);
 	}
 }
 

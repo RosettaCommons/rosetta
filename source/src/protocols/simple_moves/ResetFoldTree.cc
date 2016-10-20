@@ -56,7 +56,7 @@ ResetFoldTree::apply( Pose & pose )
 	FoldTree ft;
 	ft = pose.fold_tree();
 	ft.clear();
-	remove_virtual_residues(&pose);
+	remove_virtual_residues(pose);
 	ft.add_edge(1,pose.total_residue(),core::kinematics::Edge::PEPTIDE);
 	pose.fold_tree(ft);
 

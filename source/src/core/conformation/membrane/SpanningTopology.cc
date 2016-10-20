@@ -609,7 +609,7 @@ SpanningTopology::create_from_structure(
 		// set new start position for each chain
 		if ( j > 1 && chainID[ j ] != chainID[ j-1 ] ) {
 			TR.Debug << "setting new start position: " << j << std::endl;
-			end = j-1;
+			//end = j-1; // Never used
 			start = j;
 		}
 	}

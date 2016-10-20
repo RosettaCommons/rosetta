@@ -203,7 +203,7 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 		tr.Error << "file empty ? " << std::endl;
 		throw( utility::excn::EXCN_BadInput(" no valid RDCs found in file " + filename + "\n" ));
 	}
-	lines_previously_read = All_RDC_lines_.size();
+	//lines_previously_read = All_RDC_lines_.size(); //unused
 }
 
 void ResidualDipolarCoupling::read_RDC_file() {
@@ -861,14 +861,12 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	utility::vector1<core::scoring::RDC>::const_iterator it;
 	bool const correct_NH( basic::options::option[basic::options::OptionKeys::rdc::correct_NH_length]);
 	core::Size nrow(0);
-	core::Size id(0);
 	core::Real obs(0.0);
 
 	//initialize the cnt
-	for ( id = 0; id < nex_+1; id++ ) {
+	for ( core::Size id = 0; id < nex_+1; id++ ) {
 		lenex_[id]=0;
 	}
-	id=0;
 
 	core::Real scale_to_NH = COMMON_DENOMINATOR;
 
@@ -901,7 +899,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		}
 
 		//check the -1 if it is correct
-		id = All_RDC_lines_[nrow].expid();
+		core::Size id = All_RDC_lines_[nrow].expid();
 		obs = All_RDC_lines_[nrow].Jdipolar()*(scale_to_NH)/pfac;
 
 		r0_[nrow-1] = r.normalized().x();

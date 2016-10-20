@@ -87,7 +87,7 @@ SequenceAlignment MCAligner::align(
 			//Real const rand_prob( numeric::random::uniform() );
 			u_gap_prob /= partition;
 			l_gap_prob /= partition;
-			mm_prob    /= partition;
+			//mm_prob    /= partition; //unused
 
 			// think of rand_prob as a dart that hits one of three places:
 			// (0,u_gap_prob)          => align with u_gap

@@ -190,8 +190,8 @@ SecondaryStructureSegmentFeatures::report_features(
 	// used to determine if segement should be reported based on relevant_residues
 	utility::vector1<Size> current_residues;
 
-	core::Size prev_resNum=0;
-	core::Size resNum;
+	core::Size prev_resNum(0);
+	core::Size resNum(0);
 	std::string residue_secondary;
 	while ( res.next() ) {
 

@@ -330,7 +330,6 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 		return query_loops;
 	}
 
-	Size loop_stop ( *unaligned_residues.begin() );
 	Size loop_start( *unaligned_residues.begin() );
 
 	for ( auto it = unaligned_residues.begin(),
@@ -341,7 +340,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 		tr.Debug << "residue " << *it << " is unaligned." << std::endl;
 		if ( *next - *it > 1 ) {
 			// add loop
-			loop_stop = *it;
+			Size loop_stop = *it;
 			while ( (loop_stop - loop_start + 1) < min_loop_size ) {
 				if ( loop_stop < nres ) {
 					++loop_stop;
@@ -359,7 +358,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 		}
 	}
 
-	loop_stop = ( *(unaligned_residues.end() - 1) );
+	Size loop_stop = ( *(unaligned_residues.end() - 1) );
 
 	while ( (loop_stop - loop_start + 1) < min_loop_size ) {
 		if ( loop_stop < nres ) ++loop_stop;

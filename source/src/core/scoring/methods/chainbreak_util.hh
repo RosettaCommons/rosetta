@@ -36,9 +36,9 @@ bool is_upper_cutpoint(
 );
 
 void find_cutpoint_variants(
-	const core::pose::Pose& pose,
-	const core::kinematics::FoldTree& tree,
-	utility::vector1<int>* cutpoints
+	core::pose::Pose const & pose,
+	core::kinematics::FoldTree const & tree,
+	utility::vector1<int> & cutpoints
 );
 
 } // namespace methods

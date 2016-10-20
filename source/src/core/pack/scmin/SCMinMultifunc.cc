@@ -281,7 +281,7 @@ SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, M
 	Multivec vars( start_vars );
 
 	for ( Size ii=1; ii<=ndofs; ++ii ) {
-		Real deriv_dev = 10000.0;
+		//Real deriv_dev = 10000.0; //unused
 
 		vars[ii] = start_vars[ii] + factor;
 		Real const f11 = (*this)( vars );
@@ -290,7 +290,7 @@ SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, M
 		Real const deriv = ( f11 - f22 ) / ( factor * 2 );
 
 		dE_dvars_numeric[ii] = deriv;
-		deriv_dev = std::min( deriv_dev, std::abs( deriv  - dE_dvars[ii] ) );
+		//deriv_dev = std::min( deriv_dev, std::abs( deriv  - dE_dvars[ii] ) ); //unused
 		vars[ii] = start_vars[ii];
 
 		Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 : deriv / dE_dvars[ii] );
