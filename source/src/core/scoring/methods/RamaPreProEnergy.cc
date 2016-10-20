@@ -158,7 +158,7 @@ RamaPreProEnergy::residue_pair_energy(
 	for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(i) );
 	Real rama_score;
 	utility::vector1 < core::Real > gradient; //Dummy argument for below.
-	potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.aa(), mainchain_torsions, rama_score, gradient, false /*Don't return gradient*/ );
+	potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.type().get_self_ptr(), mainchain_torsions, rama_score, gradient, false /*Don't return gradient*/ );
 
 	emap[ rama_prepro ] += rama_score;
 }
@@ -193,7 +193,7 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 		for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = nonnegative_principal_angle_degrees( res_lo.mainchain_torsion(i) );
 		Real rama_score; //Dummy argument to below.
 		utility::vector1 < core::Real > gradient; //Dummy argument for below.
-		potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.aa(), mainchain_torsions, rama_score, gradient, true /*Do return gradient*/ );
+		potential_.eval_rpp_rama_score( res_lo.type().get_self_ptr(), res_hi.type().get_self_ptr(), mainchain_torsions, rama_score, gradient, true /*Do return gradient*/ );
 
 		debug_assert( gradient.size() == res_lo.type().mainchain_atoms().size() - 1 );
 		deriv = gradient[tor_id.torsion()];

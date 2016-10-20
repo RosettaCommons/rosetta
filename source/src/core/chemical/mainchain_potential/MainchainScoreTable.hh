@@ -56,6 +56,7 @@ public:
 public: //Read functions:
 
 	/// @brief Parse a Shapovalov-style rama database file and set up this MainchainScoreTable.
+	/// @details Sets initialized_ to true.
 	/// @param[in] filename The name of the file that was read.  (Just used for output messages -- this function does not file read).
 	/// @param[in] file_contents The slurped contents of the file to parse.
 	/// @param[in] res_type_name The name of the ResidueType for which we're reading data.  Data lines for other residue types will be
@@ -69,6 +70,10 @@ public: //Read functions:
 	);
 
 public: //Accessor functions:
+
+	/// @brief Has this MainchainScoreTable been initialized?
+	/// @details False if no score table has been read yet; true otherwise.
+	inline bool initialized() const { return initialized_; }
 
 	/// @brief Access values in this MainchainScoreTable.
 	/// @details Note that the vector is deliberately not passed by reference.  The function copies the vector and ensures
@@ -88,7 +93,36 @@ public: //Accessor functions:
 	///
 	inline bool symmetrize_gly() const { return symmetrize_gly_; }
 
+	/// @brief Given the cumulative distribution function (pre-calculated), draw a random set of mainchain torsion values
+	/// biased by the probability distribution.
+	void draw_random_mainchain_torsion_values( utility::vector1 < core::Real > &torsions ) const;
+
 private: //Private functions:
+
+	/// @brief Sets the state of this MainchainScoreTable object to "initialized".
+	/// @details Double-checks that it's not already initialized, and throws an error if it is.
+	void set_initialized();
+
+	/// @brief Set up the cumulative distribution function.
+	/// @details The CDF is used for drawing random mainchain torsion values biased by the relative probabilities of mainchain torsion values.
+	/// @note Each bin stores the probability of being in the current bin or an earlier bin (so the final bin should store a probability of 1).
+	/// This differs from the convention used in Ramachandran.cc, but allows for a simpler drawing algorithm: I pick a uniformly-distributed random
+	/// number from 0 to 1, loop through my bins, and stop when I get to a bin with a value greater than the value that I have drawn.
+	/// @param[in] probs Tensor of probabilities.  Need not be normalized (sum to 1).
+	/// @param[out] cdf Tensor for the cumulative distribution function.
+	void set_up_cumulative_distribution_function( numeric::MathNTensorBaseCOP< core::Real > probs, numeric::MathNTensorBaseOP< core::Real > cdf  ) const;
+
+	/// @brief Given a probabilities tensor, calculate the energies.
+	/// @details Tensors must be the same size.  Contents of the probabilities tensor are overwritten.
+	/// @param[out] energies Tensor of energies.
+	/// @param[in] probs Tensor of probabilities.
+	/// @param[in] kbt Boltzmann temperature (k_B*T), in Rosetta energy units.
+	void
+	energies_from_probs(
+		numeric::MathNTensorBaseOP< core::Real > energies,
+		numeric::MathNTensorBaseCOP< core::Real > probs,
+		core::Real const &kbt
+	) const;
 
 	/// @brief Check that the stringstream doesn't have bad or eof status, and throw an error message if it does.
 	///
@@ -122,14 +156,16 @@ private: //Private functions:
 	);
 
 	/// @brief Given a tensor, symmetrize it.
-	/// @details Assumes that tensor stores probabilities; updates entropy in the process.
+	/// @details Assumes that tensor stores probabilities; normalizes tensor in the process.
 	void symmetrize_tensor(
-		numeric::MathNTensorBaseOP< core::Real > tensor,
-		core::Real &entropy,
-		core::Real const &minusLogProb
+		numeric::MathNTensorBaseOP< core::Real > tensor
 	) const;
 
 private: //Private variables:
+
+	/// @brief Has this object been initialized?
+	///
+	bool initialized_;
 
 	/// @brief Dimensionality of this MainchainScoreTable.
 	/// @details Minimum 1, maximum 9.  A value of 0 indicates that it is uninitialized.
@@ -142,6 +178,11 @@ private: //Private variables:
 	/// @brief N-dimensional tensor for storing probabilities data.
 	///
 	numeric::MathNTensorBaseOP< core::Real > probabilities_;
+
+	/// @brief N-dimensional tensor for storing the cumulative distribution function.
+	/// @details This is used for drawing random mainchain torsion values biased by the relative
+	/// probabilities of having a set of mainchain torsion values.
+	numeric::MathNTensorBaseOP< core::Real > cdf_;
 
 	/// @brief Is this MainchainScoreTable set up with polycubic interpolation?
 	/// @details Default true.  If false, interpolation is linear.

@@ -31,6 +31,7 @@
 #include <numeric/MathNTensorBase.hh>
 #include <numeric/MathNTensor.hh>
 #include <numeric/util.hh>
+#include <numeric/random/random.hh>
 #include <numeric/interpolation/spline/PolycubicSplineBase.hh>
 #include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/interpolation/spline/PolycubicSpline.hh>
@@ -46,9 +47,11 @@ static basic::Tracer TR("core.chemical.mainchain_potential.MainchainScoreTable")
 /// @brief Default constructor.
 ///
 MainchainScoreTable::MainchainScoreTable():
+	initialized_(false), //Will be set to true when tables are read.
 	dimension_(0), //Zero indicates uninitialized.
 	energies_(), //Initializes to null pointer.
 	probabilities_(),  //Initializes to null pointer.
+	cdf_(), //Initializes to null pointer.
 	use_polycubic_interpolation_(true),
 	energies_spline_1D_(), //NULL by default
 	energies_spline_2D_(), //NULL by default
@@ -59,6 +62,7 @@ MainchainScoreTable::MainchainScoreTable():
 }
 
 /// @brief Parse a Shapovalov-style rama database file and set up this MainchainScoreTable.
+/// @details Sets initialized_ to true.
 /// @param[in] filename The name of the file that was read.  (Just used for output messages -- this function does not file read).
 /// @param[in] file_contents The slurped contents of the file to parse.
 /// @param[in] res_type_name The name of the ResidueType for which we're reading data.  Data lines for other residue types will be
@@ -71,6 +75,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 	std::string const &res_type_name,
 	bool const use_polycubic_interpolation
 ) {
+	runtime_assert_string_msg( !initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The MainchainScoreTable has already been initialized." );
 
 	//Store whether we're using polycubic interpolatoin:
 	use_polycubic_interpolation_ = use_polycubic_interpolation;
@@ -195,15 +200,15 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 
 	// Symmetrize the gly table, if we should:
 	if ( symmetrize_gly_ && res_type_name == "GLY" ) {
-		symmetrize_tensor( energies_, entropy, minusLogProb );
-		symmetrize_tensor( probabilities_, entropy, minusLogProb );
+		symmetrize_tensor( probabilities_ );
+		energies_from_probs( energies_, probabilities_, 1.0 );
 		for ( core::Size i=1, imax=offsets.size(); i<=imax; ++i ) {
 			offsets[i] = 180.0/static_cast<core::Real>(dimensions[i]); //Need 5 degree offsets for symmetric gly scoring.
 		}
+	} else {
+		//Entropy correction and conversion to energy units:
+		iteratively_correct_energy_tensor( entropy );
 	}
-
-	//Entropy correction and conversion to energy units:
-	iteratively_correct_energy_tensor( entropy );
 
 	if ( use_polycubic_interpolation_ ) {
 		set_up_polycubic_interpolation( offsets, dimensions );
@@ -211,57 +216,11 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 		//TODO -- write a linear interpolation setup function.
 	}
 
-	//TODO: clean up the following.
+	//Calculate the cumulative distribution function used for drawing random phi/psi values (or random mainchain torsion values):
+	set_up_cumulative_distribution_function( probabilities_, cdf_ );
 
-	/*char line[256];
-
-	int i; // aa index
-	int j, k; //phi and psi indices
-	char aa[4];
-	std::string aaStr;
-	double phi, psi, prob, minusLogProb;
-	utility::vector1< core::Real > entropy(20,0);
-
-	// read the file
-	do {
-	iunit.getline( line, 255 );
-
-	if ( iunit.eof() ) break;
-	if ( line[0]=='#' || line[0]=='\n' || line[0]=='\r' ) continue;
-
-	std::sscanf( line, "%3s%lf%lf%lf%lf", aa, &phi, &psi, &prob, &minusLogProb );
-	std::string prevAAStr = aaStr;
-	//std::cout << line << " :: " << aaStr << std::endl;
-	aaStr = std::string(aa);
-	boost::to_upper(aaStr);
-	i = core::chemical::aa_from_name(aaStr);
-
-	if ( phi < 0 ) phi += 360;
-	if ( psi < 0 ) psi += 360;
-
-	j = static_cast<int>( ceil(phi / 10.0 - 0.5) + 1 );
-	k = static_cast<int>( ceil(psi / 10.0 - 0.5) + 1 );
-
-	data[i](j,k) = prob;
-	entropy[i] += prob * (-minusLogProb);
-	} while (true);
-
-	// Symmetrize the gly table, if we should:
-	if ( symmetrize_gly ) {
-	symmetrize_gly_table( data[static_cast<int>(core::chemical::aa_gly)], entropy[static_cast<int>(core::chemical::aa_gly)] );
-	}
-
-	// correct
-	for ( int i=1; i<=20; ++i ) { //loop through all amino acids
-	for ( int j=1; j<=36; ++j ) {
-	for ( int k=1; k<=36; ++k ) {
-	data[i](j,k) = -std::log( data[i](j,k) ) + entropy[i];
-	}
-	}
-	}*/
-
-	//TODO -- set up polycubic interpolation.
-	//TODO -- set up linear interpolation
+	//OK, we're now fully initialized.
+	set_initialized();
 }
 
 /// @brief Access values in this MainchainScoreTable.
@@ -272,6 +231,8 @@ MainchainScoreTable::energy(
 ) const {
 	using namespace numeric;
 	using namespace numeric::interpolation::spline;
+
+	runtime_assert_string_msg( initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The MainchainScoreTable has not yet been initialized!" );
 
 	runtime_assert_string_msg( coords.size() == dimension_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
 	runtime_assert_string_msg( coords.size() > 0, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energy(): The dimensionality of the coordinates vector must be greater than 0." );
@@ -314,6 +275,8 @@ MainchainScoreTable::gradient(
 	using namespace numeric;
 	using namespace numeric::interpolation::spline;
 
+	runtime_assert_string_msg( initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The MainchainScoreTable has not yet been initialized!" );
+
 	runtime_assert_string_msg( coords_in.size() == dimension_, "Error in core::chemical::mainchain_potential::MainchainScoreTable::gradient(): The dimensionality of the MainchainScoreTable and the coordinates vector must match." );
 
 	for ( core::Size i=1, imax=coords_in.size(); i<=imax; ++i ) coords_in[i] = numeric::nonnegative_principal_angle_degrees( coords_in[i] );
@@ -354,10 +317,106 @@ MainchainScoreTable::set_symmetrize_gly(
 	symmetrize_gly_ = setting_in;
 }
 
+/// @brief Given the cumulative distribution function (pre-calculated), draw a random set of mainchain torsion values
+/// biased by the probability distribution.
+/// @details output is in the range (-180, 180].
+void
+MainchainScoreTable::draw_random_mainchain_torsion_values(
+	utility::vector1 < core::Real > &torsions
+) const {
+	runtime_assert_string_msg( initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::draw_random_mainchain_torsion_values(): The MainchainScoreTable is not initialized."  );
+
+	//Draw a random number, uniformly-distributed on the interval [0,1]
+	core::Real const randval( numeric::random::rg().uniform() );
+
+	//Loop through the cumulative distribution function to find the bin greater than that value.
+	//Note that the CDF is set up so that each bin stores the probability of being in that bin or an earlier bin.
+	//So the algorithm is to draw a random number, then loop through to find the bin where the value is equal or greater.
+	core::Size const dims( cdf_->dimensionality() );
+	utility::vector1 < core::Size > coords( dims, 0 );
+	do {
+		if ( numeric::const_access_Real_MathNTensor( cdf_, coords ) >= randval ) break;
+	} while( increment_coords(coords, cdf_) );
+
+	//scoring_grid_indices[i] = static_cast< core::Size >( std::round( scoring_grid_torsion_values[i] / 360.0 * static_cast<core::Real>(dimensions[i] ) - offsets[i] ) /*+ 1*/ ); //Note that MathNTensors are 0-based.
+
+	//Now we've found coordinates for the bin from which we want to draw random mainchain torsions.  We need to figure out to which torsion
+	//value ranges this bin corresponds, then draw uniform random numbers in those ranges.
+	torsions.resize( dims );
+	for ( core::Size i=1; i<=dims; ++i ) { //Loop through the coordinates
+		core::Size const nbins( numeric::get_Real_MathNTensor_dimension_size( cdf_, i ) ); //Get the number of bins in the ith dimension.
+		core::Real const binwidth( 360.0 / static_cast< core::Real >(nbins) ); //Calculate the width of a bin.
+		torsions[i] = numeric::principal_angle_degrees( numeric::random::rg().uniform() * binwidth + binwidth * static_cast<core::Real>(coords[i]) );
+	}
+}
+
 
 /********************
 PRIVATE FUNCTIONS
 ********************/
+
+/// @brief Sets the state of this MainchainScoreTable object to "initialized".
+/// @details Double-checks that it's not already initialized, and throws an error if it is.
+void
+MainchainScoreTable::set_initialized() {
+	runtime_assert_string_msg( !initialized(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::set_initialized(): The MainchainScoreTable is already initialized." );
+	initialized_ = true;
+}
+
+/// @brief Set up the cumulative distribution function.
+/// @details The CDF is used for drawing random mainchain torsion values biased by the relative probabilities of mainchain torsion values.
+/// @note Each bin stores the probability of being in the current bin or an earlier bin (so the final bin should store a probability of 1).
+/// This differs from the convention used in Ramachandran.cc, but allows for a simpler drawing algorithm: I pick a uniformly-distributed random
+/// number from 0 to 1, loop through my bins, and stop when I get to a bin with a value greater than the value that I have drawn.
+/// @param[in] probs Tensor of probabilities.  Need not be normalized (sum to 1).
+/// @param[out] cdf Tensor for the cumulative distribution function.
+void
+MainchainScoreTable::set_up_cumulative_distribution_function(
+	numeric::MathNTensorBaseCOP< core::Real > probs,
+	numeric::MathNTensorBaseOP< core::Real > cdf
+) const {
+	core::Size const dims( probs->dimensionality() );
+	runtime_assert_string_msg( cdf->dimensionality() == dims, "Error in core::chemical::mainchain_potential::MainchainScoreTable::set_up_cumulative_distribution_function():  The cdf tensor has different dimensionality than the probabilities tensor." );
+
+	utility::vector1< core::Size > coords( dims, 0 );
+
+	core::Real accumulator(0.0);
+
+	do {
+		accumulator += numeric::const_access_Real_MathNTensor( probs, coords );
+		numeric::access_Real_MathNTensor( cdf, coords ) = accumulator;
+	} while ( increment_coords(coords, probs) );
+
+	runtime_assert( accumulator > 1e-15 ); //Should be true.
+
+	//Now, we need to normalize:
+	utility::vector1< core::Size > coords2( dims, 0 );
+	do {
+		numeric::access_Real_MathNTensor( cdf, coords2 ) /= accumulator;
+	} while( increment_coords(coords2, cdf) );
+}
+
+/// @brief Given a probabilities tensor, calculate the energies.
+/// @details Tensors must be the same size.  Contents of the probabilities tensor are overwritten.
+/// @param[out] energies Tensor of energies.
+/// @param[in] probs Tensor of probabilities.
+/// @param[in] kbt Boltzmann temperature (k_B*T), in Rosetta energy units.
+void
+MainchainScoreTable::energies_from_probs(
+	numeric::MathNTensorBaseOP< core::Real > energies,
+	numeric::MathNTensorBaseCOP< core::Real > probs,
+	core::Real const &kbt
+) const {
+	core::Size const dims( probs->dimensionality() );
+	runtime_assert_string_msg( energies->dimensionality() == dims, "Error in core::chemical::mainchain_potential::MainchainScoreTable::energies_from_probs(): The energies and probabilities tensors have diffent dimensionality.");
+
+	utility::vector1< core::Size > coords( dims, 0 );
+
+	do {
+		numeric::access_Real_MathNTensor( energies, coords ) = -1.0*kbt*log( numeric::const_access_Real_MathNTensor( probs, coords ) );
+	} while ( increment_coords(coords, energies) );
+
+}
 
 void
 MainchainScoreTable::check_linestream(
@@ -387,6 +446,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 1 >(dimensions, 0.0) );
 		energies_spline_1D_ = CubicSplineOP( new CubicSpline );
 	}
 		break;
@@ -396,6 +456,7 @@ MainchainScoreTable::initialize_tensors(
 		dimensions[1] = dimensions_vector[1]; dimensions[2] = dimensions_vector[2];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 2 >(dimensions, 0.0) );
 		energies_spline_2D_ = BicubicSplineOP( new BicubicSpline );
 	}
 		break;
@@ -405,6 +466,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 3 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<3> );
 	}
 		break;
@@ -414,6 +476,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 4 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<4> );
 	}
 		break;
@@ -423,6 +486,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 5 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<5> );
 	}
 		break;
@@ -432,6 +496,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 6 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<6> );
 	}
 		break;
@@ -441,6 +506,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 7 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<7> );
 	}
 		break;
@@ -450,6 +516,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 8 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<8> );
 	}
 		break;
@@ -459,6 +526,7 @@ MainchainScoreTable::initialize_tensors(
 		for ( core::Size i=1; i<=dimension_; ++i ) dimensions[i] = dimensions_vector[i];
 		energies_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
 		probabilities_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
+		cdf_ = MathNTensorBaseOP< core::Real >( new MathNTensor< core::Real, 9 >(dimensions, 0.0) );
 		energies_spline_ND_ = PolycubicSplineBaseOP( new PolycubicSpline<9> );
 	}
 		break;
@@ -736,15 +804,13 @@ MainchainScoreTable::set_up_polycubic_interpolation(
 }
 
 /// @brief Given a tensor, symmetrize it.
-/// @details Assumes that tensor stores probabilities; updates entropy in the process.
+/// @details Assumes that tensor stores probabilities; normalizes tensor in the process.
 void
 MainchainScoreTable::symmetrize_tensor(
-	numeric::MathNTensorBaseOP< core::Real > tensor,
-	core::Real &entropy,
-	core::Real const &minusLogProb
+	numeric::MathNTensorBaseOP< core::Real > tensor
 ) const {
 	TR << "Symmetrizing tensor for glycine." << std::endl;
-	entropy = 0;
+	core::Real accumulator( 0.0 );
 	utility::vector1 < core::Size > coord( tensor->dimensionality(), 0 );
 	utility::vector1 < core::Size > opposite_coord( tensor->dimensionality(), 0 );
 
@@ -753,7 +819,13 @@ MainchainScoreTable::symmetrize_tensor(
 		core::Real const val ( ( numeric::access_Real_MathNTensor( tensor, coord ) + numeric::access_Real_MathNTensor( tensor, opposite_coord ) ) / 2.0 );
 		numeric::access_Real_MathNTensor( tensor, coord ) = val;
 		numeric::access_Real_MathNTensor( tensor, opposite_coord ) = val;
-		entropy -= val * minusLogProb;
+		accumulator += val;
+	} while( increment_coords( coord, tensor ) );
+
+	//Normalize:
+	for ( core::Size i=1, imax=coord.size(); i<=imax; ++i ) { coord[i] = 0; }
+	do {
+		numeric::access_Real_MathNTensor( tensor, coord ) /= accumulator;
 	} while( increment_coords( coord, tensor ) );
 
 }

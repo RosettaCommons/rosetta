@@ -865,6 +865,56 @@ public:
 
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set the filenames for RamaPrePro scoring tables.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+class RamaPreproFilename : public PatchOperation {
+public:
+
+	/// @brief Constructor.
+	///
+	RamaPreproFilename( std::string const &non_prepro_file, std::string const &prepro_file );
+
+	/// @brief Set the RamaPrepro library paths in the residue type.
+	///
+	bool
+	apply( ResidueType & rsd ) const override;
+
+private:
+
+	/// @brief The rama table file to use for scoring residues that do NOT precede proline.
+	///
+	std::string non_prepro_file_;
+
+	/// @brief The rama table file to use for scoring residues that DO precede proline.
+	///
+	std::string prepro_file_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set the residue name for RamaPrePro scoring tables.
+/// @details This is the name in the scoring table AND the reference string used to look up the table.  Should be
+/// unique.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+class RamaPreproResname : public PatchOperation {
+public:
+
+	/// @brief Constructor.
+	///
+	RamaPreproResname( std::string const &resname_in );
+
+	/// @brief Set the RamaPrepro reference string in the residue type.
+	///
+	bool
+	apply( ResidueType & rsd ) const override;
+
+private:
+
+	/// @brief The name listed for the amino acid type in the scoring table.
+	/// @details Must be unique.
+	std::string resname_;
+
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set the path to a rotamer library for an NCAA that is not in dunbrack

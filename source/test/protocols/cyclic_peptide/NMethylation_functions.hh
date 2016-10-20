@@ -80,8 +80,7 @@ public:
 		FastRelaxOP frlx( new FastRelax( scorefxn, 2 ) );
 		frlx->apply(*mypose);
 	
-	
-		mypose->dump_pdb( "vtemp_nmethyl.pdb" ); //DELETE ME
+		//mypose->dump_pdb( "vtemp_nmethyl.pdb" ); //DELETE ME
 	
 	}
 

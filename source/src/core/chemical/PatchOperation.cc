@@ -911,6 +911,48 @@ RemoveRotamerSpecifications::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+/// @brief Constructor.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+RamaPreproFilename::RamaPreproFilename(
+	std::string const &non_prepro_file,
+	std::string const &prepro_file
+) :
+	non_prepro_file_( non_prepro_file ),
+	prepro_file_( prepro_file )
+{}
+
+/// @brief Set the RamaPrepro library paths in the residue type.
+/// @return Success ("false" -- i.e. no error thrown) or failure ("true").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+RamaPreproFilename::apply(
+	ResidueType & rsd
+) const {
+	rsd.set_rama_prepro_map_file_name( non_prepro_file_, false);
+	rsd.set_rama_prepro_map_file_name( prepro_file_, true);
+	return false;
+}
+
+/// @brief Constructor.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+RamaPreproResname::RamaPreproResname(
+	std::string const &resname_in
+) :
+	resname_( resname_in )
+{}
+
+/// @brief Set the RamaPrepro reference string in the residue type.
+/// @return Success ("false" -- i.e. no error thrown) or failure ("true").
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+RamaPreproResname::apply(
+	ResidueType & rsd
+) const {
+	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, false );
+	rsd.set_rama_prepro_mainchain_torsion_potential_name( resname_, true );
+	return false;
+}
+
 NCAARotLibPath::NCAARotLibPath( std::string const & path_in ) :
 	path_( path_in )
 {}
@@ -2128,13 +2170,13 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "SET_ATOM_TYPE" ) {
 		l >> atom_name >> atom_type_name;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetAtomType( atom_name, atom_type_name ) );
 
 	} else if ( tag == "SET_MM_ATOM_TYPE" ) {
 		runtime_assert( l.good() );
 		l >> atom_name >> mm_atom_type_name;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetMMAtomType( atom_name, mm_atom_type_name ) );
 
 	} else if ( tag == "SET_FORMAL_CHARGE" ) {
@@ -2156,19 +2198,19 @@ patch_operation_from_patch_file_line(
 		}
 
 
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetAtomicCharge( atom_name, charge ) );
 
 	} else if ( tag == "SET_POLYMER_CONNECT" ) {
 		l >> tag >> atom_name; // tag should be "UPPER" or "LOWER"
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetPolymerConnectAtom( atom_name, tag ) );
 
 	} else if ( tag == "SET_ICOOR" ) {
 		Real phi,theta,d;
 		std::string stub1, stub2, stub3;
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 ) );
 	} else if ( tag == "SET_ANCESTOR" ) {
 		std::string atom_name, which_anc, anc_atom_name;
@@ -2196,52 +2238,64 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new PrependMainchainAtom( atom_name ) );
 
 	} else if ( tag == "APPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new AppendMainchainAtom( atom_name ) );
 
 	}  else if ( tag == "REPLACE_MAINCHAIN_ATOM" ) {
 		std::string target, new_atom;
 		l >> target >> new_atom;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceMainchainAtom( target, new_atom ) );
+	} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
+		std::string file1, file2;
+		l >> file1;
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		l >> file2;
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		return PatchOperationOP( new RamaPreproFilename( file1, file2 ) );
+	} else if ( tag == "RAMA_PREPRO_RESNAME" ) {
+		std::string name;
+		l >> name;
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
+		return PatchOperationOP( new RamaPreproResname( name ) );
 	} else if ( tag == "REMOVE_ROTAMER_SPECIFICATIONS" ) {
 		return PatchOperationOP( new RemoveRotamerSpecifications() );
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new NCAARotLibPath( path ) );
 	} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
 		core::Size n_rots(0);
 		utility::vector1<core::Size> n_bins_per_rot;
 		l >> n_rots;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		n_bins_per_rot.resize( n_rots );
 		for ( Size i = 1; i <= n_rots; ++i ) {
 			Size bin_size(0);
 			l >> bin_size;
-			if ( l.fail() ) utility_exit_with_message( line );
+			if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 			n_bins_per_rot[i] = bin_size;
 		}
 		return PatchOperationOP( new NCAARotLibNumRotamerBins( n_bins_per_rot ) );
 	} else if ( tag == "SET_NBR_ATOM" ) {
 		l >> atom_name;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new SetNbrAtom( atom_name ) );
 
 	} else if ( tag == "SET_NBR_RADIUS" ) {
 		l >> radius;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message("bad line in patchfile: " + line );
 		return PatchOperationOP( new SetNbrRadius( radius ) );
 
 	} else if ( tag == "SET_ORIENT_ATOM" ) {
 		l >> tag;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message("bad line in patchfile: " +  line );
 		if ( tag == "NBR" ) {
 			return PatchOperationOP( new SetOrientAtom(true) );
 		} else if ( tag == "DEFAULT" ) {
@@ -2256,51 +2310,51 @@ patch_operation_from_patch_file_line(
 		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
 	} else if ( tag == "REPLACE_PROTON_WITH_CHLORINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithChlorine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_FLUORINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithFluorine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_BROMINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithBromine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_IODINE" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithIodine( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithMethyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_TRIFLUOROMETHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithTrifluoromethyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_HYDROXYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithHydroxyl( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_METHOXY" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithMethoxy( atom1 ) );
 	} else if ( tag == "REPLACE_PROTON_WITH_ETHYL" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new ReplaceProtonWithEthyl( atom1 ) );
 	} else if ( tag == "ADD_CONNECT_AND_DELETE_CHILD_PROTON" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new AddConnectDeleteChildProton( atom1 ) );
 	} else if ( tag == "DELETE_CHILD_PROTON" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new DeleteChildProton( atom1 ) );
 	} else if ( tag == "ADD_CONNECT_AND_TRACKING_VIRT" ) {
 		l >> atom1;
-		if ( l.fail() ) utility_exit_with_message( line );
+		if ( l.fail() ) utility_exit_with_message( "bad line in patchfile: " + line );
 		return PatchOperationOP( new AddConnectAndTrackingVirt( atom1 ) );
 	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {
 		return PatchOperationOP( new ChiralFlipNaming );//( atom1, atom2 ) );

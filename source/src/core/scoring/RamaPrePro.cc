@@ -64,7 +64,7 @@ RamaPrePro::RamaPrePro() :
 	read_canonical_rpp_tables( );
 }
 
-/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res_aa2).
+/// @brief Evaluate the rama score for this residue (res1) given the identity of the next (res2).
 /// @details This version only works for noncanonical or canonical residues with any number of mainchain
 /// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.  Note:
 /// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
@@ -73,7 +73,7 @@ RamaPrePro::RamaPrePro() :
 void
 RamaPrePro::eval_rpp_rama_score(
 	core::chemical::ResidueTypeCOP res1,
-	AA const res_aa2,
+	core::chemical::ResidueTypeCOP res2,
 	utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
 	Real & score_rama,
 	utility::vector1 < core::Real > &gradient,
@@ -81,11 +81,11 @@ RamaPrePro::eval_rpp_rama_score(
 ) const {
 	core::chemical::AA const res_aa1( res1->backbone_aa() );
 	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
-			!res1->defines_custom_rama_prepro_map( is_pro( res_aa2 ) )
+			!res1->defines_custom_rama_prepro_map( is_N_substituted( res2 ) )
 			) {
 		debug_assert( mainchain_torsions.size() == 2 );
 		core::Real denergy_dphi, denergy_dpsi;
-		eval_rpp_rama_score( res_aa1, res_aa2, mainchain_torsions[1], mainchain_torsions[2], score_rama, denergy_dphi, denergy_dpsi, return_derivs ); //Call the version that uses fast enum-based lookups of scoring tables.
+		eval_rpp_rama_score( res_aa1, res2, mainchain_torsions[1], mainchain_torsions[2], score_rama, denergy_dphi, denergy_dpsi, return_derivs ); //Call the version that uses fast enum-based lookups of scoring tables.
 		if ( return_derivs ) {
 			gradient.resize(2);
 			gradient[1] = denergy_dphi; gradient[2] = denergy_dpsi;
@@ -105,7 +105,7 @@ RamaPrePro::eval_rpp_rama_score(
 
 	ScoringManager* manager( ScoringManager::get_instance() );
 
-	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_pro( res_aa2 ) ) );
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table( manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_N_substituted( res2 ) ) );
 	if ( !cur_table ) { //No scoring table defined for this residue type.
 		if ( return_derivs ) {
 			gradient.resize( res1->mainchain_atoms().size() - 1 );
@@ -131,7 +131,7 @@ RamaPrePro::eval_rpp_rama_score(
 	}
 }
 
-/// @brief Evaluate the rama score for this residue (res_aa1) given the identity of the next (res_aa2).
+/// @brief Evaluate the rama score for this residue (res_aa1) given the identity of the next (res2).
 /// @details This version only works for canonical L-amino acids, canonical D-amino acids, or glycine.  If the next
 /// residue's identity is pro or d-pro, a different score table is used.  Note:
 /// if return_derivs is true, the gradient vector is populated only.  If it is false, then only the
@@ -140,7 +140,7 @@ RamaPrePro::eval_rpp_rama_score(
 void
 RamaPrePro::eval_rpp_rama_score(
 	AA const res_aa1,
-	AA const res_aa2,
+	core::chemical::ResidueTypeCOP res2,
 	Real const phi,
 	Real const psi,
 	Real & score_rama,
@@ -179,7 +179,7 @@ RamaPrePro::eval_rpp_rama_score(
 		phipsi[2] = d_multiplier * psi;
 		utility::vector1 < core::Real > derivs(2);
 		core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table;
-		if ( is_pro( res_aa2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
+		if ( is_N_substituted( res2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
 			cur_table =  canonical_prepro_score_tables_.at(res_aa1_copy);
 		} else {
 			cur_table =  canonical_score_tables_.at(res_aa1_copy);
@@ -194,6 +194,94 @@ RamaPrePro::eval_rpp_rama_score(
 		}
 	}
 }
+
+/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
+/// residue, biased by the Ramachandran probabilities for its type.
+/// @details This version is general, usable for canonicals or noncanonicals.
+/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
+/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+/// @param[out] torsions A vector of mainchain torsions for the current residue.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+RamaPrePro::random_mainchain_torsions(
+	core::chemical::ResidueTypeCOP res1,
+	core::chemical::ResidueTypeCOP res2,
+	utility::vector1 < core::Real > &torsions
+) const {
+	core::chemical::AA const res_aa1( res1->backbone_aa() );
+
+	if ( (core::chemical::is_canonical_L_aa(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly ) &&
+			!res1->defines_custom_rama_prepro_map( is_N_substituted( res2 ) )
+			) { //This is canonical.
+		random_mainchain_torsions( res_aa1, res2, torsions );
+		return;
+	}
+
+	//Otherwise, this is a noncanonical, and the logic becomes more complicated.
+	//First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
+	bool const is_d( res1->is_d_aa() );
+
+	//Get the L-equivalent type:
+	core::chemical::ResidueTypeCOP ltype( is_d ? res1->residue_type_set()->get_mirrored_type( res1 )  : res1 );
+
+	//Get an instance of the ScoringManager, and the proper MainchainScoreTable:
+	ScoringManager* manager( ScoringManager::get_instance() );
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table(
+		manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_N_substituted( res2 ) )
+	);
+	runtime_assert_string_msg( cur_table, "Error in core::scoring::RamaPrePro::random_mainchain_torsions(): No mainchain score table for residue type " + res1->name() + " exists." );
+
+	//Draw torsions:
+	cur_table->draw_random_mainchain_torsion_values( torsions );
+
+	//Correct chirality, if necessary:
+	if ( is_d ) {
+		for ( core::Size i=1, imax=torsions.size(); i<=imax; ++i ) {
+			torsions[i] *= -1.0;
+		}
+	}
+}
+
+/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
+/// residue, biased by the Ramachandran probabilities for its type.
+/// @details This version is for canonical residues only.
+/// @param[in] res_aa1 The AA enum for a canonical residue type.
+/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+/// @param[out] torsions A vector of mainchain torsions for the current residue.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+RamaPrePro::random_mainchain_torsions(
+	core::chemical::AA const res_aa1,
+	core::chemical::ResidueTypeCOP res2,
+	utility::vector1 < core::Real > &torsions
+) const {
+
+	//Determine whether this is a D-amino acid, and get the L-equivalent if it is:
+	bool const is_d( core::chemical::is_canonical_D_aa(res_aa1) );
+	core::chemical::AA const res_aa1_copy( is_d ? core::chemical::get_L_equivalent(res_aa1) : res_aa1 );
+	runtime_assert_string_msg( res_aa1_copy <= core::chemical::num_canonical_aas,
+		"Error in core::scoring::RamaPrePro::random_mainchain_torsions(): The canonical version of this function was called on a non-canonical amino acid." );
+
+	//Get the appropriate MainchainScoreTable:
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table;
+	if ( is_N_substituted( res2 ) ) { //VKM -- crude approximation: this residue is considered "pre-pro" if it precedes an L- or D-proline.  (The N and CD are achiral).
+		cur_table = canonical_prepro_score_tables_.at(res_aa1_copy);
+	} else {
+		cur_table = canonical_score_tables_.at(res_aa1_copy);
+	}
+	debug_assert(cur_table);
+
+	//Call the random torsion generator:
+	cur_table->draw_random_mainchain_torsion_values( torsions );
+
+	//Correct chirality, if necessary:
+	debug_assert( torsions.size() == 2 );
+	if ( is_d ) {
+		torsions[1] *= -1.0;
+		torsions[2] *= -1.0;
+	}
+}
+
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing
 /// pointers to them in a map of AA enum -> MainchainScoreTableCOP.
@@ -223,12 +311,14 @@ RamaPrePro::read_canonical_rpp_tables( ) {
 }
 
 /// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
+/// @details Also returns true for an N-methyl amino acid or peptoid.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 bool
-RamaPrePro::is_pro(
-	core::chemical::AA const &aa
+RamaPrePro::is_N_substituted(
+	core::chemical::ResidueTypeCOP restype
 ) const {
-	return (aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr );
+	core::chemical::AA const aa( restype->aa() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || restype->is_n_methylated() || restype->is_peptoid() );
 }
 
 } //namespace scoring

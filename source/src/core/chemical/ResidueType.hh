@@ -1602,6 +1602,10 @@ public:
 	/// @brief is this an l-amino acid?
 	bool is_l_aa() const;
 
+	/// @brief Is this residue N-methylated?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_n_methylated() const;
+
 	/// @brief is this an achiral backbone?
 	bool is_achiral_backbone() const;
 
@@ -2119,6 +2123,10 @@ public:
 	/// @note Different maps are used for preproline positions and non-preproline positions.  The boolean determines which map
 	/// we're interested in.
 	std::string const & get_rama_prepro_mainchain_torsion_potential_name( bool const pre_proline_position ) const;
+
+	/// @brief Do the rama_prepro mainchain torsion potentials of this residue match another?
+	///
+	bool mainchain_potentials_match( ResidueType const &other ) const;
 
 	/// @brief Set the key name for the mainchain torsion potential used by the RamaPrePro score term.
 	/// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived

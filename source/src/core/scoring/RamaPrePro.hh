@@ -60,7 +60,7 @@ public:
 	void
 	eval_rpp_rama_score(
 		core::chemical::ResidueTypeCOP res1,
-		AA const res_aa2,
+		core::chemical::ResidueTypeCOP res2,
 		utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
 		Real & score_rama,
 		utility::vector1 < core::Real > &gradient,
@@ -77,13 +77,41 @@ public:
 	void
 	eval_rpp_rama_score(
 		AA const res_aa1,
-		AA const res_aa2,
+		core::chemical::ResidueTypeCOP res2,
 		Real const phi,
 		Real const psi,
 		Real & score_rama,
 		Real & denergy_dphi,
 		Real & denergy_dpsi,
 		bool const return_derivs
+	) const;
+
+	/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
+	/// residue, biased by the Ramachandran probabilities for its type.
+	/// @details This version is general, usable for canonicals or noncanonicals.
+	/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
+	/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+	/// @param[out] torsions A vector of mainchain torsions for the current residue.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	random_mainchain_torsions(
+		core::chemical::ResidueTypeCOP res1,
+		core::chemical::ResidueTypeCOP res2,
+		utility::vector1 < core::Real > &torsions
+	) const;
+
+	/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
+	/// residue, biased by the Ramachandran probabilities for its type.
+	/// @details This version is for canonical residues only.
+	/// @param[in] res_aa1 The AA enum for a canonical residue type.
+	/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+	/// @param[out] torsions A vector of mainchain torsions for the current residue.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	random_mainchain_torsions(
+		core::chemical::AA const res_aa1,
+		core::chemical::ResidueTypeCOP res2,
+		utility::vector1 < core::Real > &torsions
 	) const;
 
 
@@ -95,8 +123,9 @@ private: //Private methods.
 	void read_canonical_rpp_tables();
 
 	/// @brief Returns true if this aa is aa_pro or aa_dpr, false otherwise.
-	///
-	bool is_pro( core::chemical::AA const &aa) const;
+	/// @details Also returns true for an N-methyl amino acid or peptoid.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool is_N_substituted( core::chemical::ResidueTypeCOP restype ) const;
 
 private: //Private member variables.
 

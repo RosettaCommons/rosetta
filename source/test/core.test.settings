@@ -240,6 +240,8 @@ sources = {
 		"Ramachandran",
 		"Ramachandran_power",
 		"Ramachandran2B",
+		"RamaPrePro",
+		"RamaPrePro_symmgly",
 		"rms_util",
 		"sasa",
 		"sc",

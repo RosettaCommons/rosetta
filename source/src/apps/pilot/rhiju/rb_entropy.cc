@@ -151,7 +151,7 @@ print_base_centroid_atoms( core::conformation::Residue const & rsd, std::string 
 	utility::io::ozstream out_xyz;
 	out_xyz.open( filename_xyz );
 	for ( Size i = rsd.first_sidechain_atom() + 1; i <= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
-		//		TR << rsd.atom_name( i ) << std::endl;
+		//  TR << rsd.atom_name( i ) << std::endl;
 		if ( rsd.is_virtual( i ) ) continue;
 		out_xyz << rsd.xyz(i).x() << " " << rsd.xyz(i).y() << " " << rsd.xyz(i).z() << std::endl;
 	}
@@ -324,7 +324,7 @@ MC_run () {
 	// Simulated Tempering setup
 	SimulatedTempering tempering( pose, scorefxn, temps_, weights_ );
 	// tempering.set_rep_cutoff( 100 );
-	//	set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
+	// set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
 
 	// Setup for data saving for output
 	Size curr_counts( 1 );
@@ -387,8 +387,8 @@ MC_run () {
 		// later, may need to create 'ghost' rsd at ideal location, or use local2global stuff.
 		// (for speed, could also use moment-of-inertia-based short cut)
 		Real rmsd( calc_base_centroid_rmsd( pose.residue(moving_rsd), start_pose.residue(moving_rsd) ) );
-		//		TR << "RMSD: " << rmsd << " SCORE: " << (*scorefxn)( pose ) << std::endl;
-		if ( rmsd > base_centroid_rmsd_cutoff) tempering.force_next_move_reject(); // artificial "wall"
+		//  TR << "RMSD: " << rmsd << " SCORE: " << (*scorefxn)( pose ) << std::endl;
+		if ( rmsd > base_centroid_rmsd_cutoff ) tempering.force_next_move_reject(); // artificial "wall"
 
 		if ( ( tempering.boltzmann( pose ) ) || n == n_cycle_ ) {
 			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
@@ -419,7 +419,7 @@ MC_run () {
 			if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
 			hist_list[temp_id].add( scores[1], curr_counts );
 			curr_counts = 1;
-			//			set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
+			//   set_gaussian_stdev( sampler, tempering, bp_rsd, dangling_rsd );
 			temp_id = tempering.temp_id();
 		}
 	}
@@ -486,7 +486,7 @@ void*
 my_main( void* )
 {
 
-	if ( option[ recces ]() )	{
+	if ( option[ recces ]() ) {
 		MC_run();
 	} else {
 		rb_entropy_test();
@@ -520,11 +520,11 @@ main( int argc, char * argv [] )
 		NEW_OPT( st_weights, "Simulated tempering weights", null_real_vector );
 		NEW_OPT( out_prefix, "prefix for the out file", "turner" );
 		NEW_OPT( save_score_terms,
-						 "Save scores and individual score terms"
-						 " of all sampled conformers", false );
+			"Save scores and individual score terms"
+			" of all sampled conformers", false );
 		NEW_OPT( dump_pdb, "Dump pdb files", false );
 		NEW_OPT( n_intermediate_dump,
-						 "Number of intermediate conformations to be dumped", 0 );
+			"Number of intermediate conformations to be dumped", 0 );
 		NEW_OPT( block_stack, "add block stack pseudoatoms to block stacking", false );
 
 		////////////////////////////////////////////////////////////////////////////

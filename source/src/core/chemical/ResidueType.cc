@@ -2149,6 +2149,13 @@ ResidueType::is_l_aa() const
 	return properties_->has_property( L_AA );
 }
 
+/// @brief Is this residue N-methylated?
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+bool
+ResidueType::is_n_methylated() const {
+	return properties_->has_property( N_METHYLATED );
+}
+
 bool
 ResidueType::is_achiral_backbone() const
 {
@@ -3400,10 +3407,10 @@ ResidueType::update_derived_data()
 
 	// Set the RamaPrePro potential name to be this residue's name.
 	if ( is_base_type() ) {
-		if ( !rama_prepro_map_file_name_.empty() ) {
+		if ( !rama_prepro_map_file_name_.empty() && rama_prepro_mainchain_torsion_potential_name_.empty() ) {
 			set_rama_prepro_mainchain_torsion_potential_name( name(), false );
 		}
-		if ( !rama_prepro_map_file_name_beforeproline_.empty() ) {
+		if ( !rama_prepro_map_file_name_beforeproline_.empty() && rama_prepro_mainchain_torsion_potential_name_beforeproline_.empty() ) {
 			set_rama_prepro_mainchain_torsion_potential_name( name(), true );
 		}
 	}
@@ -4319,6 +4326,21 @@ ResidueType::get_rama_prepro_mainchain_torsion_potential_name( bool const pre_pr
 	return rama_prepro_mainchain_torsion_potential_name_; //Returns an empty string if this is empty AND the base type is empty.
 }
 
+/// @brief Do the rama_prepro mainchain torsion potentials of this residue match another?
+///
+bool
+ResidueType::mainchain_potentials_match(
+	ResidueType const &other
+) const {
+	return
+		rama_prepro_mainchain_torsion_potential_name_.compare( other.rama_prepro_mainchain_torsion_potential_name_ ) == 0 &&
+		rama_prepro_mainchain_torsion_potential_name_beforeproline_.compare( other.rama_prepro_mainchain_torsion_potential_name_beforeproline_ ) == 0 &&
+		rama_prepro_map_file_name_.compare( other.rama_prepro_map_file_name_ ) == 0 &&
+		rama_prepro_map_file_name_beforeproline_.compare( other.rama_prepro_map_file_name_beforeproline_ ) == 0
+		;
+}
+
+
 /// @brief Set the key name for the mainchain torsion potential.
 /// @details Stored internally as a string for base residue types.  Empty string is stored by default for derived
 /// residue types (pointing the function to the base type), though this can be overridden using this function.
@@ -4385,7 +4407,7 @@ ResidueType::defines_custom_rama_prepro_map( bool const pre_proline_position ) c
 	if ( pre_proline_position ) {
 		return ( !rama_prepro_map_file_name_beforeproline_.empty() );
 	}
-	return !rama_prepro_map_file_name_beforeproline_.empty();
+	return !rama_prepro_map_file_name_.empty();
 }
 
 /// @brief Set the names of the mainchain torsion potential maps to use to "".

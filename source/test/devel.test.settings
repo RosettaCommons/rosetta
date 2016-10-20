@@ -63,9 +63,11 @@ libraries    = ["devel",
 ]
 subprojects  = []
 testinputfiles = [
-		"denovo_design/cat_residues.pdb",
-		"denovo_design/test_foldability.pdb",
-		"denovo_design/C5_Z.sym",
+    "denovo_design/cat_residues.pdb",
+    "denovo_design/D2I.params",
+    "denovo_design/test_foldability.pdb",
+    "denovo_design/test_input.pdb",
+    "denovo_design/C5_Z.sym",
     "znhash/1EER_A.pdb",
     "znhash/1EER_cn4_0043.pdb",
     "znhash/match_cst_pairs.txt",

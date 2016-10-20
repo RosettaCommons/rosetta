@@ -585,7 +585,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		//Set the pointer to the base type:
 		if ( rsd_base.get_base_type_cop() ) {
 			rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
-			if ( rsd_base.is_base_type() ) { //If we're making a copy of a base type...
+			if ( rsd_base.is_base_type() && rsd_base.mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type and the mainchain potentials match...
 				rsd_instantiated->reset_mainchain_torsion_potential_names();
 			}
 		} else {
@@ -624,7 +624,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			//Set the pointer to the base type:
 			if ( rsd_base.get_base_type_cop() ) {
 				rsd_instantiated->set_base_type_cop( rsd_base.get_base_type_cop() );
-				if ( rsd_base.is_base_type() ) { //If we're making a copy of a base type...
+				if ( rsd_base.is_base_type() && rsd_base.mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type...
 					rsd_instantiated->reset_mainchain_torsion_potential_names();
 				}
 			} else {
