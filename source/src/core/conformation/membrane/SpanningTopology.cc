@@ -461,8 +461,8 @@ SpanningTopology::create_from_spanfile( std::string spanfile, std::map< std::str
 			}
 
 			// check for insertion code
-			if ( isdigit( start_tag[ -1 ] )
-					|| isdigit( end_tag[ -1 ] ) ) {
+			if ( isdigit( start_tag.back() )
+					|| isdigit( end_tag.back() ) ) {
 				utility_exit_with_message( "Cannot read span input. Should either be in pose numbering (renumbered to start with 1 without gaps) without alphabetic characters or in PDB numbering with the format A15C for chain A, residue 15, and insertion code C. If insertion code is empty, use a dot. Seems like your insertion code is incorrect." );
 			}
 
