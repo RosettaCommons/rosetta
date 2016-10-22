@@ -150,6 +150,8 @@ static MoverRegistrator< enzdes::PackRotamersMoverPartGreedyCreator > reg_PackRo
 static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPerturbMoverCreator;
 static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzdesHeaderMoverCreator;
 
+static MoverRegistrator< hbnet::HBNetCreator > reg_HBNetCreator;
+static MoverRegistrator< hbnet::HBNetStapleInterfaceCreator > reg_HBNetStapleInterfaceCreator;
 static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
 static MoverRegistrator< farna::thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;

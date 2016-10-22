@@ -37,6 +37,8 @@ static TaskOperationRegistrator< protocols::flxbb::LayerDesignOperationCreator >
 
 static TaskOperationRegistrator< protocols::forge::remodel::RemodelRotamerLinksCreator > RemodelRotamerLinksCreator_registrator;
 
+static TaskOperationRegistrator< protocols::hbnet::ConstrainHBondNetworkCreator > ConstrainHBondNetworkCreator_registrator;
+
 static TaskOperationRegistrator< protocols::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 
 static TaskOperationRegistrator< protocols::sewing::ReadNativeRotamersFileCreator > reg_ReadNativeRotamersFileCreator;

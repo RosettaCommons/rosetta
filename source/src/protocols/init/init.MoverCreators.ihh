@@ -121,6 +121,8 @@
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
+#include <protocols/hbnet/HBNetCreator.hh>
+#include <protocols/hbnet/HBNetStapleInterfaceCreator.hh>
 #include <protocols/farna/ErraserMinimizerMoverCreator.hh>
 #include <protocols/farna/thermal_sampling/ThermalSamplingMoverCreator.hh>
 #include <protocols/farna/RNAIdealizeMoverCreator.hh>

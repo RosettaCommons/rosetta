@@ -130,6 +130,12 @@ sources = {
 		"SecondaryMatchProtocol",
 		"RemoveLigandFilter",
 	],
+	"protocols/hbnet": [
+                "HBNet",
+                "HBNetStapleInterface",
+                "HBNetTaskOperations",
+		"HBNet_util",
+        ],
 	"protocols/hotspot_hashing": [
 		"HotspotStub",
 		"HotspotStubSet",

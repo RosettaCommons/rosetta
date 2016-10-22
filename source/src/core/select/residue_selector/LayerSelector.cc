@@ -44,7 +44,10 @@ LayerSelector::LayerSelector() :
 	cache_selection_( false ),
 	srbl_( new core::select::util::SelectResiduesByLayer )
 	//TODO -- initialize here
-{}
+{
+	set_use_sc_neighbors(true);
+	set_cutoffs((use_sc_neighbors() ? 5.2 : 20.0 ),(use_sc_neighbors() ? 2.0 : 40.0 ));
+}
 
 /// @brief Copy constructor.
 ///
