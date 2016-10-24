@@ -154,9 +154,9 @@ output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const &
 			all_rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose_op, heavy_map, calc_rms_res );
 		}
 
-		if ( !utility::is_nan( rmsd ) ) s.add_energy( "rms", rmsd );
+		if ( !utility::isnan( rmsd ) ) s.add_energy( "rms", rmsd );
 		s.add_energy( "all_rms", all_rmsd );
-		if ( !utility::is_nan( backbone_rmsd ) ) s.add_energy( "backbone_rms", backbone_rmsd );
+		if ( !utility::isnan( backbone_rmsd ) ) s.add_energy( "backbone_rms", backbone_rmsd );
 	}
 
 	static const SilentFileData silent_file_data;

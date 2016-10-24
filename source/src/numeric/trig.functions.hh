@@ -119,7 +119,7 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 #endif
 #ifdef USEMPI
 		std::string const warning( "NANs occured in sin_cos_range!" );
-  	throw( utility::excn::EXCN_Msg_Exception( warning ) );
+		throw( utility::excn::EXCN_Msg_Exception( warning ) );
 #endif
 		utility_exit();
 		return T( 0.0 ); // Keep compiler happy

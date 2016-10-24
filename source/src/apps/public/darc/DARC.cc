@@ -45,6 +45,7 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <utility/numbers.hh>
 
 using namespace std;
 using namespace core;
@@ -406,7 +407,7 @@ int main( int argc, char * argv [] ) {
 					std::cout<< "SCORES : " << tag <<"\t"<< "Conformer " << ii << " has DARC Score : " << fit_best <<std::endl;
 
 					//exit if DARC score returns 'NaN' values
-					if ( fit_best != fit_best ) {
+					if ( utility::isnan( fit_best ) ) {
 						std::cout<<"ERROR! : DARC returns NaN values! Check the inputs"<<std::endl;
 						exit(1);
 					}

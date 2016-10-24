@@ -193,7 +193,7 @@ cmplx errf(cmplx z, double relerr)
 			} else if ( fabs(mIm_z2) < 5e-3 && x > -5e-3 ) {
 				goto taylor_erfi;
 			}
-		} else if ( utility::is_nan(x) ) {
+		} else if ( utility::isnan(x) ) {
 			return C(NaN, y == 0 ? 0 : NaN);
 		}
 		// don't use complex exp function, since that will produce spurious NaN
@@ -343,7 +343,7 @@ cmplx Dawson(cmplx z, double relerr) {
 			} else if ( fabs(mIm_z2) < 5e-3 ) {
 				goto taylor_realaxis;
 			}
-		} else if ( utility::is_nan(y) ) {
+		} else if ( utility::isnan(y) ) {
 			return C(x == 0 ? 0 : NaN, NaN);
 		}
 		cmplx res = w(-z, relerr) - cexp(mz2);
@@ -513,8 +513,8 @@ cmplx w(cmplx z, double relerr) {
 					double yax = ya / xs;
 					double denom = ispi / (xs + yax*ya);
 					ret = C(denom*yax, denom);
-				} else if ( utility::is_inf(ya) ) {
-					return ((utility::is_nan(x) || y < 0) ? C(NaN,NaN) : C(0,0));
+				} else if ( utility::isinf(ya) ) {
+					return ((utility::isnan(x) || y < 0) ? C(NaN,NaN) : C(0,0));
 				} else {
 					double xya = xs / ya;
 					double denom = ispi / (xya*xs + ya);
@@ -564,7 +564,7 @@ cmplx w(cmplx z, double relerr) {
 		double prod2ax = 1, prodm2ax = 1;
 		double expx2;
 
-		if ( utility::is_nan(y) ) {
+		if ( utility::isnan(y) ) {
 			return C(y,y);
 		}
 
@@ -664,10 +664,10 @@ cmplx w(cmplx z, double relerr) {
 				coef2 * sinc(2*xs*y, sin2xy) - coef1 * sin2xy);
 		}
 	} else { // x large: only sum3 & sum5 contribute (see above note)
-		if ( utility::is_nan(x) ) {
+		if ( utility::isnan(x) ) {
 			return C(x,x);
 		}
-		if ( utility::is_nan(y) ) {
+		if ( utility::isnan(y) ) {
 			return C(y,y);
 		}
 

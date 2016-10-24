@@ -38,6 +38,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/numbers.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -188,7 +189,7 @@ main( int argc, char * argv [] )
 						score_min = temp_score;
 					}
 
-					if ( std::isinf( temp_score ) ) {
+					if ( utility::isinf( temp_score ) ) {
 						std::cout << "found an infinite value at " << r << std::endl;
 					}
 				} // for ( Real r = 2; r <= 16; r = r + 0.1 )

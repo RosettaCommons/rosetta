@@ -36,7 +36,7 @@
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
-
+#include <utility/numbers.hh>
 
 namespace core {
 namespace scoring {
@@ -72,8 +72,7 @@ struct AreaAccumulator : public Accumulator {
 	AreaAccumulator() : total_area(0.0), buried_area(0.0) {}
 	virtual void accumulate_area( core::id::AtomID, core::Real area, bool buried ) {
 		// std::cerr << "accumulate_area " << area << std::endl;
-		// isnan is not a standard function (not known in VC) - use the function used in hbonding for nan detection instead.
-		//debug_assert( !std::isnan(area) );
+		debug_assert( !utility::isnan(area) );
 		total_area += area;
 		if ( buried ) buried_area += area;
 	}
@@ -257,9 +256,8 @@ struct Event {
 		if ( kind == ISECT ) {
 			cw_angle  = acos(std::max(-1.0,std::min(1.0,(x-circle->x)/circle->r)));
 			ccw_angle = acos(std::max(-1.0,std::min(1.0,(x-ccw->x)/ccw->r)));
-			// isnan is not a standard function (not known in VC) - use the function used in hbonding for nan detection instead.
-			//debug_assert( !std::isnan(cw_angle) );
-			//debug_assert( !std::isnan(ccw_angle) );
+			debug_assert( !utility::isnan(cw_angle) );
+			debug_assert( !utility::isnan(ccw_angle) );
 			if ( y > circle->y )  cw_angle = 2.0*numeric::constants::d::pi-cw_angle;
 			if ( y >    ccw->y ) ccw_angle = 2.0*numeric::constants::d::pi-ccw_angle;
 		}

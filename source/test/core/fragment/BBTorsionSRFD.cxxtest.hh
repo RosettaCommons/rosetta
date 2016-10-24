@@ -38,7 +38,7 @@
 //Auto Headers
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <utility/vector1.hh>
-
+#include <utility/numbers.hh>
 
 using namespace core::fragment;
 using namespace std;
@@ -122,12 +122,10 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 				// we're not testing against known values here so much as illustrating the use
 				// of the API and ensuring that the desired semantics have not been affected
 				// through some other change to the source code. the assertions below simply
-				// check that the floating point values are not NaN. According to the IEEE
-				// standard, NaN values have the property that comparisons involving them are
-				// always false.
-				TS_ASSERT(x == x);
-				TS_ASSERT(y == y);
-				TS_ASSERT(z == z);
+				// check that the floating point values are not NaN.
+				TS_ASSERT( ! utility::isnan( x ) );
+				TS_ASSERT( ! utility::isnan( y ) );
+				TS_ASSERT( ! utility::isnan( z ) );
 			}
 		}
 	}

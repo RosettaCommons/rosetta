@@ -25,6 +25,8 @@ src/numeric/interpolation/spline/PolycubicSpline.fwd.hh:using PolycubicSplineCOP
 src/numeric/interpolation/spline/PolycubicSpline.fwd.hh:using PolycubicSplineOP
 src/numeric/numeric.functions.hh:using std::max;
 src/numeric/numeric.functions.hh:using std::min;
+src/numeric/util.hh:using utility::isinf;
+src/numeric/util.hh:using utility::isnan;
 src/core/kinematics/types.hh:using id::BB;
 src/core/kinematics/types.hh:using id::CHI;
 src/core/kinematics/types.hh:using id::D;

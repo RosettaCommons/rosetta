@@ -38,6 +38,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/numbers.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/format.hh> // F
@@ -175,14 +176,10 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 		Real const s = (*itr)->get_score( component_weights_, local_vars, dummy,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
 			fixed_terms_, score_list_, fixed_score_list_ );
-#ifndef WIN32
 		bool bad = false;
-		if (      std::isinf(s) ) { std::cerr << "Introduced INF score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
-		else if ( std::isnan(s) ) { std::cerr << "Introduced NAN score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
-		else
-#endif
-		score += s;
-#ifndef WIN32
+		if (      utility::isinf(s) ) { std::cerr << "Introduced INF score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
+		else if ( utility::isnan(s) ) { std::cerr << "Introduced NAN score with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl; bad=true; }
+		else score += s;
 		if ( bad ) {
 			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() ) {     //NaN and inf errors can accumulate into the gigabytes if optE is left unattended
 				static Size count = 0;
@@ -198,7 +195,6 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 			}
 			std::cerr << std::endl;
 		}
-#endif
 	}
 
 	if ( distribute_over_mpi_ && mpi_rank_ == 0 ) {
@@ -256,10 +252,8 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
 			fixed_terms_, score_list_, fixed_score_list_ );
 		for ( Size ii = 1 ; ii <= local_dE_dvars.size() ; ++ii ) {
-#ifndef WIN32
-			if (      std::isinf(local_dE_dvars[ ii ]) ) std::cerr << "Introduced INF deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
-			else if ( std::isnan(local_dE_dvars[ ii ]) ) std::cerr << "Introduced NAN deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
-#endif
+			if (      utility::isinf(local_dE_dvars[ ii ]) ) std::cerr << "Introduced INF deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
+			else if ( utility::isnan(local_dE_dvars[ ii ]) ) std::cerr << "Introduced NAN deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
 		}
 	}
 

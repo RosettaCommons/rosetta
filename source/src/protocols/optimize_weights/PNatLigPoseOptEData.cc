@@ -32,6 +32,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/numbers.hh>
 
 using basic::T;
 using basic::Error;
@@ -123,14 +124,14 @@ PNatLigPoseOptEData::do_score(
 		// This prevents numerator ~ 0, which causes NANs and INFs in the derivatives.
 		// It also limits the "force" that any one structure can exert on the minimization.
 		Real const exp_term = std::max( 1e-6, std::exp( neginv_kT * native_energies[ ii ] ) );
-		//if( exp_term > 1 || exp_term < 0 || std::isinf(exp_term) || std::isnan(exp_term) ) std::cout << "[" << tag() << "] native exp_term = " << exp_term << std::endl;
+		//if( exp_term > 1 || exp_term < 0 || utility::isinf(exp_term) || utility::isnan(exp_term) ) std::cout << "[" << tag() << "] native exp_term = " << exp_term << std::endl;
 		numerator += exp_term;
 		partition += exp_term;
 
 		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * natives_[ ii ]->free_data()[ e_dof ] * exp_term );
-			//if( std::isinf(e_dof_deriv) || std::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] native e_dof_deriv = " << e_dof_deriv << "; Eterm = " << natives_[ ii ]->free_data()[ e_dof ]<< std::endl;
+			//if( utility::isinf(e_dof_deriv) || utility::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] native e_dof_deriv = " << e_dof_deriv << "; Eterm = " << natives_[ ii ]->free_data()[ e_dof ]<< std::endl;
 			dnumerator[ e_dof ] += e_dof_deriv;
 			dpartition[ e_dof ] += e_dof_deriv;
 		}
@@ -139,14 +140,14 @@ PNatLigPoseOptEData::do_score(
 
 		// Because partition >= numerator in all cases, there is no minimum value for this term:
 		Real const exp_term( std::exp( neginv_kT * decoy_energies[ ii ] ) );
-		//if( exp_term > 1 || exp_term < 0 || std::isinf(exp_term) || std::isnan(exp_term) ) std::cout << "[" << tag() << "] decoy exp_term = " << exp_term << std::endl;
+		//if( exp_term > 1 || exp_term < 0 || utility::isinf(exp_term) || utility::isnan(exp_term) ) std::cout << "[" << tag() << "] decoy exp_term = " << exp_term << std::endl;
 		partition += exp_term;
 
 		// partitions for energy derivatives
 		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * decoys_[ ii ]->free_data()[ e_dof ] * exp_term );
-			//if( std::isinf(e_dof_deriv) || std::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] decoy e_dof_deriv = " << e_dof_deriv << "; Eterm = " << decoys_[ ii ]->free_data()[ e_dof ]<< std::endl;
+			//if( utility::isinf(e_dof_deriv) || utility::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] decoy e_dof_deriv = " << e_dof_deriv << "; Eterm = " << decoys_[ ii ]->free_data()[ e_dof ]<< std::endl;
 			dpartition[ e_dof ] += e_dof_deriv;
 		}
 	}
@@ -166,12 +167,9 @@ PNatLigPoseOptEData::do_score(
 			Real const dN_N = dnumerator[ dof ] / numerator;
 			Real const dE_dvar = multiplier_ * (dP_P - dN_N);
 			// This error *should* never occur, thanks to the minimum value for numerator (above).
-#ifndef WIN32
-			// std::isinf and std::isnan seem to give Visual Studio problems for some reason.
-			if ( std::isinf(dE_dvar) || std::isnan(dE_dvar) ) std::cout << "[" << tag() << "," << dof << "] final deriv = " << dE_dvar << "; " << dpartition[ dof ] << "/" << partition << " - " << dnumerator[ dof ] << "/" << numerator << std::endl;
+			if ( utility::isinf(dE_dvar) || utility::isnan(dE_dvar) ) std::cout << "[" << tag() << "," << dof << "] final deriv = " << dE_dvar << "; " << dpartition[ dof ] << "/" << partition << " - " << dnumerator[ dof ] << "/" << numerator << std::endl;
 			else dE_dvars[ dof ] += component_weights[ type() ] * dE_dvar;
 			//std::cout << " " << vars[ dof ] << "(" << dE_dvar << ")";
-#endif
 		}
 	}
 

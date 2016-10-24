@@ -79,9 +79,8 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-// 21-05-2013 PG
 #include <utility/excn/Exceptions.hh>
-
+#include <utility/numbers.hh>
 
 using namespace core;
 using namespace core::scoring;
@@ -663,15 +662,8 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		TR<< std::endl;
 
 		core::Real rmsd( core::scoring::rmsd_no_super_subset( pose, rnl_pose, rms_seqpos, core::scoring::is_protein_sidechain_heavyatom ) );
-		// PG 21-05-2013
-#ifdef WIN32
-		if ( _isnan(rmsd) ) {
-#else
-		if ( std::isnan(rmsd) ) {
-			runtime_assert(!std::isnan(rmsd));
-#endif
+		if ( utility::isnan(rmsd) ) {
 			utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
-
 		}
 
 		TR<<"Total rms of requested region is: "<< rmsd <<std::endl;

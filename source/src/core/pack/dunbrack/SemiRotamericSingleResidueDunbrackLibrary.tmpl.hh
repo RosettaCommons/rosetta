@@ -50,6 +50,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/options/BooleanOption.hh>
+#include <utility/numbers.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -235,7 +236,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
 	nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dbb ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
 
-	if ( nrchi_score != nrchi_score ) { //NaN check
+	if ( utility::isnan( nrchi_score ) ) {
 		nrchi_score = 0;
 		std::cerr << "NaN in SemiRot: " << rsd.seqpos() << " " << rsd.name() << std::endl;
 	}

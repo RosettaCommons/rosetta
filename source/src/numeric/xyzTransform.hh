@@ -304,7 +304,7 @@ public:
 	// }
 
 	xyzTransform & rt6(T6 const & rt6){
-		if ( utility::is_nan(rt6[1]) ) { *this = BAD_XFORM(); return *this; }
+		if ( utility::isnan(rt6[1]) ) { *this = BAD_XFORM(); return *this; }
 		px() = rt6[1];
 		py() = rt6[2];
 		pz() = rt6[3];
@@ -313,7 +313,7 @@ public:
 	}
 
 	xyzTransform & rt6(T const & i, T const & j, T const & k, T const & l, T const & m, T const & n){
-		if ( utility::is_nan(i) ) { *this = BAD_XFORM(); return *this; }
+		if ( utility::isnan(i) ) { *this = BAD_XFORM(); return *this; }
 		px() = i;
 		py() = j;
 		pz() = k;
@@ -483,15 +483,14 @@ public:
 		return sqrt(t.distance_squared(o.t) + ang*ang*lever*lever);
 	}
 
-	// NaN are never equal, so this is a (quiet) NaN check
 	bool bad() const {
-		return utility::is_nan(px()) || utility::is_nan(py()) || utility::is_nan(pz()) ||
-			utility::is_nan(xx()) || utility::is_nan(xy()) || utility::is_nan(xz()) ||
-			utility::is_nan(yx()) || utility::is_nan(yy()) || utility::is_nan(yz()) ||
-			utility::is_nan(zx()) || utility::is_nan(zy()) || utility::is_nan(zz()) ;
+		return utility::isnan(px()) || utility::isnan(py()) || utility::isnan(pz()) ||
+			utility::isnan(xx()) || utility::isnan(xy()) || utility::isnan(xz()) ||
+			utility::isnan(yx()) || utility::isnan(yy()) || utility::isnan(yz()) ||
+			utility::isnan(zx()) || utility::isnan(zy()) || utility::isnan(zz()) ;
 	}
 	bool badfast() const {
-		return utility::is_nan(px()) || utility::is_nan(xx());
+		return utility::isnan(px()) || utility::isnan(xx());
 	}
 
 };

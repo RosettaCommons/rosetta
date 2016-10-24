@@ -326,7 +326,7 @@ public:
 			rot_matrix[8] = a2 - x2 - y2 + z2;
 		}
 
-		if ( utility::is_nan(mxEigenV) ) {
+		if ( utility::isnan(mxEigenV) ) {
 			return 0.0;
 		} else {
 			return sqrt(fabs(2.0 * (E0 - mxEigenV)/number_of_atoms));

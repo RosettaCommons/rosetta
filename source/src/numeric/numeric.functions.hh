@@ -18,12 +18,14 @@
 
 #include <numeric/types.hh>
 
+#include <utility/assert.hh>
+#include <utility/numbers.hh>
+
 // Platform headers
 #include <platform/types.hh>
 
 // C++ headers
 #include <algorithm>
-#include <utility/assert.hh>
 #include <cmath>
 #include <limits>
 
@@ -714,6 +716,7 @@ gt_tol( T const & x, T const & y, T const & r_tol, T const & a_tol )
 inline
 bool
 is_a_finitenumber( double s, double  a, double b ){
+	if ( utility::isnan(s) || utility::isinf(s) ) return false;
 	if ( (a*s) != (s*cos(b)) )       return false; //  NAN!
 	if ( s * 100.0 == s * 1000.00 ) return false; //  INF!
 	return true;

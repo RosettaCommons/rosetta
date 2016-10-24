@@ -32,7 +32,7 @@
 #include <map>
 
 #include <utility/vector1.hh>
-
+#include <utility/numbers.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
@@ -144,11 +144,7 @@ bool PeakCalibrator::interpolate_on_statistics() {
 				average_target = median;
 				accumulated_target_[ type ] = median * accumulated_count_[ type ];
 			}
-#ifdef _WIN32
-			if ( _isnan(average_target) || !_finite( average_target) ) continue;  // REQUIRED FOR WINDOWS
-#else
-			if ( std::isnan(average_target) || std::isinf( average_target) ) continue;
-#endif
+			if ( utility::isnan(average_target) || utility::isinf(average_target) ) continue;
 			if ( target_sign_* ( average_target - target_) < -tolerance_ ) {
 				interpolate_too_small( type );
 				finished = false;

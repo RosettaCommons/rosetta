@@ -60,6 +60,8 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
+#include <utility/numbers.hh>
+
 // C++ headers
 #include <iostream>
 
@@ -309,12 +311,12 @@ MMLJEnergyInter::residue_pair_energy(
 			Real rep(0), atr(0);
 			potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 
-			if ( rep != rep ) {
+			if ( utility::isnan(rep) ) {
 				std::cout << "REP NAN REP NAN REP NAN" << std::endl;
 				rep = 0;
 				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 			}
-			if ( atr != atr ) {
+			if ( utility::isnan(atr) ) {
 				std::cout << "ATR NAN ATR NAN ATR NAN" << std::endl;
 				atr = 0;
 				potential_.score( rsd1type.atom( i ).mm_atom_type_index(), rsd2type.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );

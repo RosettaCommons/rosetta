@@ -46,6 +46,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/LexicographicalIterator.hh>
+#include <utility/numbers.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -296,7 +297,7 @@ RotamericSingleResiduePeptoidLibrary< T, N >::rotamer_energy_deriv(
 	/// most of the work is done in this call
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
-	if ( score != score ) { // NaN check
+	if ( utility::isnan( score ) ) {
 		score = 0;
 		std::cerr << "NaN at residue rsd: " << rsd.seqpos() << " " << rsd.name() << std::endl;
 	}

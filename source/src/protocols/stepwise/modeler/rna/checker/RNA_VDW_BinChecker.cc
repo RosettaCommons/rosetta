@@ -54,6 +54,7 @@
 
 #include <numeric/conversions.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/numbers.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -327,7 +328,7 @@ RNA_VDW_BinChecker::get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose co
 
 			//fast screen. (O(n^2))
 			Real const dist2 = ( working_rsd.xyz( working_first_sc_at ) - VDW_rep_rsd.xyz( VDW_rep_first_sc_at ) ).length_squared();
-			runtime_assert( !( dist2 != dist2 ) ); // nan check
+			runtime_assert( ! utility::isnan( dist2 ) );
 			if ( dist2 > dist_cutoff*dist_cutoff ) continue;
 
 			//Consistency TEST: through screen ensure that every atoms is at the same position. (O(n)*O(m))///////////////////

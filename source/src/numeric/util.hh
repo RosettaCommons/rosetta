@@ -17,6 +17,7 @@
 #include <numeric/types.hh>
 #include <numeric/numeric.functions.hh>
 #include <utility/vector1.hh>
+#include <utility/numbers.hh>
 
 #include <numeric/MathNTensorBase.fwd.hh>
 
@@ -44,17 +45,8 @@ inline double log(double x, double base) {
 	return std::log10(x) / std::log10(base);
 }
 
-/// @brief portable check to see if a value is NaN.
-template < typename T >
-inline bool isnan( T value ) {
-	return value != value;
-}
-
-template < typename T >
-inline bool isinf( T value ) {
-	return std::numeric_limits< T >::has_infinity &&
-		value == std::numeric_limits< T >::infinity();
-}
+using utility::isnan;
+using utility::isinf;
 
 /// @brief are two Real values are equal up to some epsilon
 ///

@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
-
+#include <utility/numbers.hh>
 
 #ifndef WIN32
 #ifndef  __native_client__
@@ -114,7 +114,7 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 				std::string val;
 				iss >> ialpha >> index >> val;
 				Real rval = atof(val.c_str());
-				if ( boost::math::isnan(rval) ) rval = 0.0;
+				if ( utility::isnan(rval) ) rval = 0.0;
 				//TR << "DAlphaBall output index " << ialpha << " " << a << "   " << index << " " << i << std::endl;
 				if ( i != index || a != ialpha ) {
 					TR << "DAlphaBall output index mismatch " << ialpha << " " << a << "   " << index << " " << i << std::endl;

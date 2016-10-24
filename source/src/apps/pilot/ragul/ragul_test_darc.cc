@@ -49,7 +49,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunction.hh>
-
+#include <utility/numbers.hh>
 
 using namespace std;
 using namespace core;
@@ -359,7 +359,7 @@ int main( int argc, char * argv [] ) {
 				core::Real fit_best = -(parti.fitness_pbest());
 				//std::cout<< "SCORES : " << tag <<"	"<< "Conformer " << ii << " has DARC Score : " << fit_best <<std::endl;
 				//exit if DARC score returns 'NaN' values
-				if (fit_best != fit_best) {
+				if ( utility::isnan( fit_best ) ) {
 					std::cout<<"ERROR! : DARC returns NaN values! Check the inputs"<<std::endl;
 					exit(1);
 				}

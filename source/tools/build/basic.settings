@@ -315,6 +315,7 @@ settings = {
                 "compile" : [
                     "O3",
                     "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
@@ -337,6 +338,7 @@ settings = {
                 "compile" : [
                     "O3",
                     "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
@@ -375,6 +377,7 @@ settings = {
                 "compile" : [
                     "O3",
                     "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
@@ -398,6 +401,7 @@ settings = {
                 "compile"  : [
                     "O3",
                     "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000"
@@ -431,6 +435,7 @@ settings = {
                 "compile" : [
                     "O3",
                     "ffast-math",
+                    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
@@ -458,6 +463,7 @@ settings = {
                 #"compile" : [
                 #    "O3",
                 #    "ffast-math",
+                #    "fno-finite-math-only", # Needed with -ffast-math for proper handling of NaN and Inf
                 #    "funroll-loops",
                 #    "finline-functions",
                 #    "finline-limit=20000",
@@ -1271,7 +1277,7 @@ settings = {
     #        "flags" : {
     #            "mode" : [
     #                "O3",
-    #                "fp:fast",
+    #                #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
     #                "Qprec-div-",
     #                "Qip",
     #            ],
@@ -1287,7 +1293,7 @@ settings = {
     #                "Zi",
     #                "Oy",
     #                "O3",
-    #                "fp:fast",
+    #                #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
     #                "Qprec-div-",
     #                "Qip",
     #            ],
@@ -1480,13 +1486,13 @@ settings = {
             "defines" : [ "NDEBUG"],
             "flags" : {
                 "compile" : [
-                    "fp:fast",
+                    #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
                     "O2",
                     "Ob2",
                     "MT",
                 ],
                 "link"      : [
-                    #"fp:fast",
+                    #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
                     #"O2",
                     #"LTCG",
                     #'NODEFAULTLIB:msvcrt',
@@ -1502,12 +1508,12 @@ settings = {
             "flags" : {
                 "compile" : [
                     "Zi",
-                    "fp:fast",
+                    #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
                     "O2",
                 ],
                 "link"      : [
                     "Zi",
-                    "fp:fast",
+                    #"fp:fast", # /fp:fast doesn't handle NaN/Inf properly
                     "O2",
                     "fixed:no",
                 ],

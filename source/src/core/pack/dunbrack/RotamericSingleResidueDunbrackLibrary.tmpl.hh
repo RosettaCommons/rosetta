@@ -97,6 +97,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/options/BooleanOption.hh>
+#include <utility/numbers.hh>
 
 #include <numeric/types.hh>
 #include <numeric/random/random.hh>
@@ -181,7 +182,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	//Multiplier for D-amino acids:
 	const core::Real d_multiplier = rsd.type().is_d_aa() ? -1.0 : 1.0;
 
-	if ( score != score ) { // NaN check
+	if ( utility::isnan( score ) ) {
 		score = 0;
 		std::cerr << "NaN at residue rsd: " << rsd.seqpos() << " " << rsd.name() << std::endl;
 	}

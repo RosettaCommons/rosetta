@@ -24,6 +24,7 @@
 #if defined(WIN32)  &&  !defined(__CYGWIN__)
 #include <float.h>
 namespace std {
+// C++11 compliant compilers should already have std::isnan & std::isinf ...
 inline int isnan(double x) { return _isnan(x); }
 inline int isinf(double x) { return !_finite(x); }
 }
@@ -48,22 +49,27 @@ bool is_undefined( platform::Size const & val) {
 /// @brief Get a numeric value for Real that represents an "undefined" value
 inline
 platform::Real get_undefined_real() {
-	return std::numeric_limits< platform::Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
+	if( std::numeric_limits< platform::Real >::has_quiet_NaN ) {
+		return std::numeric_limits< platform::Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
+	} else {
+		return std::numeric_limits< platform::Real >::max(); // Fall back
+	}
 }
 
 /// @brief Check if a Real is undefined (i.e has the same value as utility::get_undefined_real() )
 inline
 bool is_undefined( platform::Real const & val) {
-	return std::isnan( val ) || std::isinf( val );
+	// Can't just check for equality, as NaN doesn't compare equal to itself.
+	return std::isnan( val ) || std::isinf( val ) || val == get_undefined_real();
 }
 
 inline
-bool is_nan( platform::Real const & val) {
+bool isnan( platform::Real const & val) {
 	return std::isnan( val );
 }
 
 inline
-bool is_inf( platform::Real const & val) {
+bool isinf( platform::Real const & val) {
 	return std::isinf( val );
 }
 
