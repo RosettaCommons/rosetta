@@ -1,7 +1,12 @@
+-parser:protocol ligand_docking.xml
+-scorefile output/dock.sc
+-multiple_processes_writing_to_one_directory
 -in
     -ignore_unrecognized_res
     -file
-        -s '../../input/protein.pdb ../../output/trigger-00000.molfile_to_params/LG.pdb'
+        -s 'protein.pdb LG.pdb'
+-out
+ -prefix output/
 -run
     -ignore_zero_occupancy false
 -chemical
@@ -10,7 +15,7 @@
     -max_grid_cache_size 1
 -jd2
     -delete_old_poses
--nstruct 1
+-nstruct 25
 -out
     -pdb
 -mistakes
@@ -18,4 +23,4 @@
 -score:analytic_etable_evaluation true
 -ex1
 -ex2
--extra_res_fa ../../output/trigger-00000.molfile_to_params/LG.params
+-extra_res_fa LG.params
