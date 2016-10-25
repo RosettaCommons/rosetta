@@ -104,7 +104,10 @@ bool ClosureSolution::apply_if_reasonable( // {{{1
 
 	apply(pose);
 
-	Real const scale_factor = be_lenient ? 0.25 : 0.36;
+	// The default scale factor is 0.36. According to benchmarks with the 'KIC benchmark set'
+	// that contains 45 structures, using smaller scale factor can improve the performace.
+
+	Real const scale_factor = be_lenient ? 0.06 : 0.09;
 
 	if ( bump_on && ! check_overlap(pose, scale_factor) ) {
 		problem_->restore(pose);
