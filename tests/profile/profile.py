@@ -196,8 +196,7 @@ def main(argv):
     if len(args) > 0:
         tests = args
     else:
-        tests = [ d for d in os.listdir("tests") if not d.startswith(".") and os.path.isdir(os.path.join("tests", d)) ]
-
+        tests = [ d for d in os.listdir("tests") if not d.startswith(".") and os.path.isdir(os.path.join("tests", d)) and  os.path.isfile(os.path.join("tests", d+'/command'))]
 
     tests_results = {}
     # Now actually running the tests...
