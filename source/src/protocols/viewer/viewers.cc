@@ -996,7 +996,8 @@ void get_normal( Vector & normal, const int n, utility::vector1< core::conformat
 #ifdef BOINC
 	if (normal.length_squared() > 0.00001) normal.normalize();
 #else
-	if ( normal.length_squared() > 0.00001 ) normal.normalize(15);
+	// changing normalize(15) to normalize(), otherwise the width of cartoon sheets/helices is messed up!
+	if ( normal.length_squared() > 0.00001 ) normal.normalize();
 #endif
 }
 
