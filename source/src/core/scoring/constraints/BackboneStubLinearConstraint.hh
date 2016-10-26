@@ -69,9 +69,18 @@ public:
 
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual
 	void
 	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+
+	/// @details "Distance" for BackboneStubLinearConstraint isn't all that simple
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
 
 	virtual
 	void

@@ -86,11 +86,17 @@ public:
 
 	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const override;
 
-
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
 
 	void
 	score( core::scoring::func::XYZ_Func const & xyz,
 		core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const override;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 	// do some pre-scoring calculations
 	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz,

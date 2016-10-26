@@ -42,8 +42,6 @@ namespace constraints {
 /// constraint on dihedral angle formed by 4 points
 
 class DihedralPairConstraint : public Constraint {
-public:
-	using Constraint::score;
 
 public:
 
@@ -64,6 +62,10 @@ public:
 	virtual bool operator == ( Constraint const & rhs ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	Real
 	score(
 		Vector const & X1, Vector const & X2, Vector const & X3, Vector const & X4,
@@ -75,6 +77,16 @@ public:
 
 	Real
 	score( conformation::Conformation const & conformation  ) const;
+
+	Real
+	dihedral_diff(
+		Vector const & X1, Vector const & X2, Vector const & X3, Vector const & X4,
+		Vector const & Y1, Vector const & Y2, Vector const & Y3, Vector const & Y4
+	) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	void

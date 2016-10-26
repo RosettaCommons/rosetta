@@ -52,8 +52,17 @@ public: //Constructor, destructor, copy, clone:
 
 public: //Functions that all Constraints must implement, but which aren't really applicable for a seqeunce constraint:
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
 	virtual void score( core::scoring::func::XYZ_Func const &, EnergyMap const &, EnergyMap & ) const { return; }
+
+	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const { return 0; };
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
 	virtual void fill_f1_f2( core::id::AtomID const &, core::scoring::func::XYZ_Func const &, Vector &, Vector &, EnergyMap const & ) const { return; }

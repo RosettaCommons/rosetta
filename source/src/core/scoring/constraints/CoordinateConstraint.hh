@@ -111,10 +111,17 @@ public:
 		Vector const & xyz
 	) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
 
 	virtual
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	virtual
@@ -140,10 +147,6 @@ public:
 	atom( Size const n ) const;
 
 	// UNDEFIUNED, commenting out to fix PyRosetta build  void set_atom( Size const index, AtomID const atom_id );
-
-	Real
-	dist( pose::Pose const & pose ) const;
-
 
 	virtual Size show_violations(
 		std::ostream& out,

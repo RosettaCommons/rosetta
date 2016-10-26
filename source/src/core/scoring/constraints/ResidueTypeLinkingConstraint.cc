@@ -180,6 +180,10 @@ ResidueTypeLinkingConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap 
 	}// no match, don't adjust score
 }
 
+core::Real
+ResidueTypeLinkingConstraint::dist( core::scoring::func::XYZ_Func const & xyz_func ) const {
+	return xyz_func.residue(seqpos1_).aa() != xyz_func.residue(seqpos2_).aa();
+}
 
 void
 ResidueTypeLinkingConstraint::fill_f1_f2(

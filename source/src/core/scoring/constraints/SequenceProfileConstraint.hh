@@ -17,7 +17,7 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-
+#include <core/chemical/AA.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
@@ -107,12 +107,23 @@ public:
 	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
 	virtual ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
 		EnergyMap &
 	) const;
+
+	core::Real
+	dist( core::chemical::AA aa ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual void
 	fill_f1_f2(

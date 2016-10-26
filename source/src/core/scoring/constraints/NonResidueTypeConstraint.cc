@@ -135,6 +135,11 @@ NonResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap cons
 	// no match, don't adjust score
 }
 
+core::Real
+NonResidueTypeConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	conformation::Residue const & rsd( xyz.residue(seqpos_) );
+	return rsd.type().name3() == rsd_type_name3_;
+}
 
 void
 NonResidueTypeConstraint::fill_f1_f2(

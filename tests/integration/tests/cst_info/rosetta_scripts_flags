@@ -1,0 +1,3 @@
+-parser:protocol cst_info.xml
+-in:file:s inputs/1a19.pdb
+-out:file:scorefile rosetta_scripts.sc

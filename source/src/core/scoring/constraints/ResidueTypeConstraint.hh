@@ -98,9 +98,18 @@ public:
 		id::SequenceMappingCOP map = NULL
 	) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual
 	void
 	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+
+	/// @details Return 1.0 if constraint will get a bonus, 0.0 if not
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual
 	void

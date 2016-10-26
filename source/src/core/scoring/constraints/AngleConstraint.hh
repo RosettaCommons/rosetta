@@ -82,7 +82,9 @@ public:
 		id::SequenceMappingCOP map = NULL
 	) const;
 
+	// Needed to get the base class overloads
 	using Constraint::score;
+	using Constraint::dist;
 
 	/// @brief compute score
 	Real
@@ -93,8 +95,25 @@ public:
 	) const;
 
 	/// @brief compute score
+	virtual
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	virtual
+	core::Real
+	score( conformation::Conformation const & ) const;
+
+	/// @brief compute
+	Real
+	angle(
+		Vector const & xyz1,
+		Vector const & xyz2,
+		Vector const & xyz3
+	) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
 

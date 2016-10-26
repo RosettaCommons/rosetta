@@ -64,6 +64,7 @@ sources = {
 	"public/analysis": [
 		"batch_distances",
 		"contactMap",
+		"cst_info",
                 "ensemble_analysis",
                 "fast_clustering",
 		"InterfaceAnalyzer",

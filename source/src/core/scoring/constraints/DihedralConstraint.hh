@@ -45,16 +45,6 @@ namespace constraints {
 class DihedralConstraint : public Constraint {
 public:
 
-	using Constraint::score; // for virtual Real score( Pose const & );
-
-	Real
-	score(
-		Vector const & xyz1,
-		Vector const & xyz2,
-		Vector const & xyz3,
-		Vector const & xyz4
-	) const;
-
 	virtual std::string type() const {
 		return "Dihedral";
 	}
@@ -75,11 +65,27 @@ public:
 	virtual bool operator == ( Constraint const & other ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
+	Real
+	score(
+		Vector const & xyz1,
+		Vector const & xyz2,
+		Vector const & xyz3,
+		Vector const & xyz4
+	) const;
+
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real
 	score( conformation::Conformation const & conformation  ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	void

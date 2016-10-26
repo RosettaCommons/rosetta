@@ -91,14 +91,17 @@ public:
 	///returns AtomPairConstraint or AmbigousNMRDistanceConstraint (e.g. for GLY HA1-HA2 ... )
 	ConstraintOP map_to_CEN( pose::Pose const& src, pose::Pose const& centroid, core::Size& nr_mapped, std::string const& map_atom ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
 
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
-
 	core::Real
 	inv_dist6( func::XYZ_Func const & xyz ) const;
 
+	Real dist( func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	virtual void
@@ -157,19 +160,6 @@ public:
 
 	void show( std::ostream& out ) const;
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
-
-	Real dist( pose::Pose const & pose ) const;
-	Real dist( func::XYZ_Func const & xyz ) const;
-
-
-	//Real inv_dist6( conformation::Conformation const& pose ) const;
-	// ^^^^ Undefined, commenting out to make PyRosetta compile.
-
-	using Constraint::score;
-
-	virtual Real score( pose::Pose const& pose ) const {
-		return func_->func( dist( pose ) );
-	}
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 

@@ -204,9 +204,15 @@ DistancePairConstraint::score(
 	);
 }
 
-
 Real
 DistancePairConstraint::score(
+	Vector const & p1, Vector const & p2, Vector const & p3, Vector const & p4
+) const {
+	return func( distance_diff( p1, p2, p3, p4 ) );
+}
+
+Real
+DistancePairConstraint::distance_diff(
 	Vector const & p1, Vector const & p2, Vector const & p3, Vector const & p4
 ) const {
 	core::Real dis1 = p1.distance(p2) ;
@@ -214,9 +220,16 @@ DistancePairConstraint::score(
 	core::Real difference = dis2 - dis1 ;
 
 	TR.Debug << "difference of " << difference << " Angstroms" << std::endl;
-	return func(difference);
+	return difference;
 }
 
+core::Real
+DistancePairConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return distance_diff(
+		xyz( atomA1_ ), xyz( atomA2_ ),
+		xyz( atomB1_ ), xyz( atomB2_ )
+	);
+}
 
 void
 DistancePairConstraint::fill_f1_f2(

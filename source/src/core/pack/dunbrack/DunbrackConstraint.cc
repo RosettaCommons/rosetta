@@ -22,6 +22,7 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 
@@ -122,13 +123,23 @@ DunbrackConstraint::score(
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
 
+	if ( bin_matches( rsd ) ) {
+		emap[ this->score_type() ] += bonus_;
+	}
+}
+
+bool
+DunbrackConstraint::bin_matches( core::conformation::Residue const & rsd ) const {
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
 	// don't try to restrain angles that don't exist
-	if ( rot.size() > rot_vec_pos_ ) return;
-	if ( rot[ rot_vec_pos_ ] == rot_bin_ ) {
-		emap[ this->score_type() ] += bonus_;
-	}
+	if ( rot.size() > rot_vec_pos_ ) return false;
+	return rot[ rot_vec_pos_ ] == rot_bin_;
+}
+
+core::Real
+DunbrackConstraint::dist( core::scoring::func::XYZ_Func const & xyz_func ) const {
+	return bin_matches( xyz_func.residue(seqpos_) );
 }
 
 void

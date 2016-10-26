@@ -101,14 +101,23 @@ public:
 
 	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
 
-	void
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
+	virtual void
 	score(
 		XYZ_Func const &,
 		EnergyMap const &,
 		EnergyMap &
 	) const override;
 
-	void
+	/// @details "Distance" for SequenceCouplingConstraint isn't all that simple
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
+
+	virtual void
 	fill_f1_f2(
 		AtomID const &,
 		XYZ_Func const &,

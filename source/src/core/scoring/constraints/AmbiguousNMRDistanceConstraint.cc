@@ -871,11 +871,6 @@ ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CEN( pose::Pose const& fa_po
 }
 
 Real
-AmbiguousNMRDistanceConstraint::dist( pose::Pose const & pose ) const {
-	return dist( func::ConformationXYZ( pose.conformation() ) );
-}
-
-Real
 AmbiguousNMRDistanceConstraint::dist(
 	func::XYZ_Func const & xyz
 ) const

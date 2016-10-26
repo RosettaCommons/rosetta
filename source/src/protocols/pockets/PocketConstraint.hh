@@ -63,10 +63,19 @@ public:
 	void show_def( std::ostream& out, core::pose::Pose const & pose ) const override;
 	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
 
+	virtual
 	void score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const override;
 
+	/// @details PocketConstraints don't have a single distance
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
+	virtual
 	void
 	fill_f1_f2(
 		core::id::AtomID const & ,

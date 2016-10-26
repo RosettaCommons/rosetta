@@ -96,6 +96,10 @@ public:
 	AtomID const &
 	atom( Size const index ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual
 	void
 	score(
@@ -103,6 +107,11 @@ public:
 		scoring::EnergyMap const & weights,
 		scoring::EnergyMap & emap
 	) const;
+
+	/// @details Is ithere a "distance" that we can give for RotamerConstraints?
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const { return 0; }
 
 	virtual
 	void

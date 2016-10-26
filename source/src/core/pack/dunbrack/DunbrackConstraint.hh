@@ -18,6 +18,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -54,11 +55,23 @@ public:
 	AtomID const &
 	atom( Size const index ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual void score(
 		scoring::func::XYZ_Func const & xyz_func,
 		scoring::EnergyMap const & weights,
 		scoring::EnergyMap & emap
 	) const;
+
+	bool
+	bin_matches( core::conformation::Residue const & resi ) const;
+
+	/// @details Will return 1.0 if the bonus will be added, 0.0 otherwise
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual
 	void

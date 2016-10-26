@@ -67,14 +67,14 @@ bool ConstantConstraint::same_type_as_me( Constraint const & other ) const {
 	return dynamic_cast< ConstantConstraint const * > (&other);
 }
 
+std::string ConstantConstraint::type() const {
+	return "Constant";
+}
+
 /// @brief compute score
 Real
 ConstantConstraint::score() const {
 	return func_->func(0);
-}
-
-std::string ConstantConstraint::type() const {
-	return "Constant";
 }
 
 /// @brief compute score
@@ -82,6 +82,12 @@ void
 ConstantConstraint::score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const
 {
 	emap[ this->score_type() ] += score();
+}
+
+/// @details In this case, 0 is literally what's being passed to the func
+core::Real
+ConstantConstraint::dist( core::scoring::func::XYZ_Func const & ) const {
+	return 0;
 }
 
 /// @brief compute atom deriv

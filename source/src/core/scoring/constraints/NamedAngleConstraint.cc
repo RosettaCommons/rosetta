@@ -196,6 +196,24 @@ NamedAngleConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunct
 }
 
 void
+NamedAngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+{
+	emap[ this->score_type() ] += AngleConstraint::score(
+		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
+		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
+		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ) );
+}
+
+core::Real
+NamedAngleConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return angle(
+		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
+		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
+		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() )
+	);
+}
+
+void
 NamedAngleConstraint::show_def( std::ostream & out, pose::Pose const & ) const
 {
 	show_def_nopose( out );

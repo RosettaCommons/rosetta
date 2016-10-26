@@ -452,17 +452,6 @@ DihedralConstraint::read_def(
 
 
 /////////////////////////////////////////////////////////////////////////////
-Real
-DihedralConstraint::score(
-	Vector const & p1,
-	Vector const & p2,
-	Vector const & p3,
-	Vector const & p4
-) const
-{
-	return func( dihedral_radians( p1, p2, p3, p4 ) );
-}
-
 
 bool
 DihedralConstraint::operator == ( Constraint const & other_cst ) const
@@ -487,6 +476,19 @@ DihedralConstraint::same_type_as_me( Constraint const & other ) const
 	return dynamic_cast< DihedralConstraint const * > ( &other );
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+Real
+DihedralConstraint::score(
+	Vector const & p1,
+	Vector const & p2,
+	Vector const & p3,
+	Vector const & p4
+) const
+{
+	return func( dihedral_radians( p1, p2, p3, p4 ) );
+}
+
 void
 DihedralConstraint::score(
 	func::XYZ_Func const & xyz,
@@ -497,6 +499,13 @@ DihedralConstraint::score(
 		xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ), xyz( atom4_ )
 	);
 }
+
+core::Real
+DihedralConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return dihedral_radians( xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ), xyz( atom4_ ) );
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 void DihedralConstraint::show( std::ostream & out ) const {
 	out << "DihedralConstraint";

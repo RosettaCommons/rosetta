@@ -231,7 +231,8 @@ DihedralPairConstraint::score(
 		conformation.xyz( atomA1_ ), conformation.xyz( atomA2_ ),
 		conformation.xyz( atomA3_ ), conformation.xyz( atomA4_ ),
 		conformation.xyz( atomB1_ ), conformation.xyz( atomB2_ ),
-		conformation.xyz( atomB3_ ), conformation.xyz( atomB4_ ));
+		conformation.xyz( atomB3_ ), conformation.xyz( atomB4_ )
+	);
 }
 
 void
@@ -252,13 +253,29 @@ DihedralPairConstraint::score(
 	Vector const & p1, Vector const & p2, Vector const & p3, Vector const & p4,
 	Vector const & p5, Vector const & p6, Vector const & p7, Vector const & p8
 ) const {
+	return func( dihedral_diff(p1,p2,p3,p4,p5,p6,p7,p8) );
+}
+
+
+Real
+DihedralPairConstraint::dihedral_diff(
+	Vector const & p1, Vector const & p2, Vector const & p3, Vector const & p4,
+	Vector const & p5, Vector const & p6, Vector const & p7, Vector const & p8
+) const {
 	core::Real difference =  dihedral_degrees( p1, p2, p3, p4 ) - dihedral_degrees( p5, p6, p7, p8 ) ;
 	if ( difference > 180 )  difference -=360;
 	if ( difference < -180 ) difference +=360;
 	TR.Debug << "difference of " << difference << " degrees" << std::endl;
-	return func(difference);
+	return difference;
 }
 
+core::Real
+DihedralPairConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return dihedral_diff(
+		xyz( atomA1_ ), xyz( atomA2_ ), xyz( atomA3_ ), xyz( atomA4_ ),
+		xyz( atomB1_ ), xyz( atomB2_ ), xyz( atomB3_ ), xyz( atomB4_ )
+	);
+}
 
 void
 DihedralPairConstraint::fill_f1_f2(

@@ -96,10 +96,10 @@ AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, Energy
 	emap[ this->score_type() ] += score_val;
 }
 
-Real AtomPairConstraint::score( pose::Pose const& pose ) const {
+Real
+AtomPairConstraint::score( pose::Pose const& pose ) const {
 	return func_->func( dist( pose ) );
 }
-
 
 Real
 AtomPairConstraint::score(
@@ -109,6 +109,74 @@ AtomPairConstraint::score(
 {
 	// std::cout << "score " <<  atom1_ << ' ' << atom2_ << ' ' << xyz1.distance( xyz2 ) << " --> " << func( xyz1.distance( xyz2 ) ) << std::endl;;
 	return func( xyz1.distance( xyz2 ) );
+}
+
+Real
+AtomPairConstraint::dist( pose::Pose const & pose ) const {
+	conformation::Residue const& res1( pose.residue( atom1_.rsd() ) );
+	conformation::Residue const& res2( pose.residue( atom2_.rsd() ) );
+#ifndef NDEBUG
+	bool fail( false );
+#endif
+	if ( atom1_.atomno() == 0 || atom1_.atomno() > res1.natoms() ) {
+		std::cerr << "AtomPairConstraint: atom1 out of bounds" << atom1_ << std::endl;
+#ifndef NDEBUG
+		fail = true;
+#endif
+	}
+	if ( atom2_.atomno() == 0 || atom2_.atomno() > res2.natoms() ) {
+		std::cerr << "AtomPairConstraint: atom2 out of bounds" << atom2_ << std::endl;
+#ifndef NDEBUG
+		fail = true;
+#endif
+	}
+	debug_assert( pose.atom_tree().has( atom1_ ) );
+	debug_assert( pose.atom_tree().has( atom2_ ) );
+	if ( !pose.atom_tree().has( atom1_ ) ) {
+		std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
+	}
+	if ( !pose.atom_tree().has( atom2_ ) ) {
+		std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
+	}
+	debug_assert( !fail );
+	Vector const & xyz1( pose.xyz( atom1_ ) ), xyz2( pose.xyz( atom2_ ) );
+	Vector const f2( xyz1 - xyz2 );
+	Real const dist( f2.length() );
+	return dist;
+}
+
+Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
+	debug_assert( atom1_.atomno() );
+	debug_assert( atom2_.atomno() );
+	return xyz( atom1_ ).distance( xyz( atom2_ ) );
+}
+
+func::Func const & AtomPairConstraint::get_func() const {
+	return *func_;
+}
+
+Size AtomPairConstraint::show_violations(
+	std::ostream& out,
+	pose::Pose const& pose,
+	Size verbose_level,
+	Real threshold
+) const {
+
+	if ( verbose_level > 80 ) {
+		out << "AtomPairConstraint ("
+			<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":"
+			<< atom1_.atomno() << "," << atom1_.rsd() << "-"
+			<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":"
+			<< atom2_.atomno() << "," << atom2_.rsd() << ") ";
+	}
+	if ( verbose_level > 120 ) { //don't ask but I had a really weird bug to track down!
+		conformation::Conformation const & conformation( pose.conformation() );
+		Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
+		out << "\ncoords1: " << xyz1[ 1 ] << " " << xyz1[ 2 ] << " " << xyz1[ 3 ] << " --- ";
+		out << "coords1: " << xyz2[ 1 ] << " " << xyz2[ 2 ] << " " << xyz2[ 3 ] << "\n";
+	}
+
+	return func_->show_violations( out, dist( pose ), verbose_level, threshold );
 }
 
 /// @brief Copies the data from this Constraint into a new object and returns an OP
@@ -166,78 +234,6 @@ void AtomPairConstraint::show( std::ostream& out ) const {
 void AtomPairConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
 	out << type() << " " << atom_id_to_named_atom_id( atom1_, pose ) << " " << atom_id_to_named_atom_id( atom2_, pose ) << " ";
 	func_->show_definition( out );
-}
-
-Real
-AtomPairConstraint::dist( pose::Pose const & pose ) const {
-	return dist( pose.conformation() );
-}
-
-Real AtomPairConstraint::dist( conformation::Conformation  const& conformation ) const {
-	conformation::Residue const& res1( conformation.residue( atom1_.rsd() ) );
-	conformation::Residue const& res2( conformation.residue( atom2_.rsd() ) );
-#ifndef NDEBUG
-	bool fail( false );
-#endif
-	if ( atom1_.atomno() == 0 || atom1_.atomno() > res1.natoms() ) {
-		std::cerr << "AtomPairConstraint: atom1 out of bounds" << atom1_ << std::endl;
-#ifndef NDEBUG
-		fail = true;
-#endif
-	}
-	if ( atom2_.atomno() == 0 || atom2_.atomno() > res2.natoms() ) {
-		std::cerr << "AtomPairConstraint: atom2 out of bounds" << atom2_ << std::endl;
-#ifndef NDEBUG
-		fail = true;
-#endif
-	}
-	debug_assert( conformation.atom_tree().has( atom1_ ) );
-	debug_assert( conformation.atom_tree().has( atom2_ ) );
-	if ( !conformation.atom_tree().has( atom1_ ) ) {
-		std::cerr << "AtomPairConstraint: cannot find atom " << atom1_ << std::endl;
-	}
-	if ( !conformation.atom_tree().has( atom2_ ) ) {
-		std::cerr << "AtomPairConstraint: cannot find atom " << atom2_ << std::endl;
-	}
-	debug_assert( !fail );
-	Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
-	Vector const f2( xyz1 - xyz2 );
-	Real const dist( f2.length() );
-	return dist;
-}
-
-Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
-	debug_assert( atom1_.atomno() );
-	debug_assert( atom2_.atomno() );
-	return xyz( atom1_ ).distance( xyz( atom2_ ) );
-}
-
-func::Func const & AtomPairConstraint::get_func() const {
-	return *func_;
-}
-
-Size AtomPairConstraint::show_violations(
-	std::ostream& out,
-	pose::Pose const& pose,
-	Size verbose_level,
-	Real threshold
-) const {
-
-	if ( verbose_level > 80 ) {
-		out << "AtomPairConstraint ("
-			<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":"
-			<< atom1_.atomno() << "," << atom1_.rsd() << "-"
-			<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":"
-			<< atom2_.atomno() << "," << atom2_.rsd() << ") ";
-	}
-	if ( verbose_level > 120 ) { //don't ask but I had a really weird bug to track down!
-		conformation::Conformation const & conformation( pose.conformation() );
-		Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );
-		out << "\ncoords1: " << xyz1[ 1 ] << " " << xyz1[ 2 ] << " " << xyz1[ 3 ] << " --- ";
-		out << "coords1: " << xyz2[ 1 ] << " " << xyz2[ 2 ] << " " << xyz2[ 3 ] << "\n";
-	}
-
-	return func_->show_violations( out, dist( pose ), verbose_level, threshold );
 }
 
 // atom deriv

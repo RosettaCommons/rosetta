@@ -436,12 +436,20 @@ public:
 	core::id::AtomID const &
 	atom( Size const index ) const override;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
 
+	virtual
 	void
 	score(
 		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
 		core::scoring::EnergyMap & emap ) const override;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & ) const override { return 0; }
 
 	/// @brief Fill the f1 and f2 vectors, necessary for considering the
 	/// derivative this constraint during minimization. (someone please reference

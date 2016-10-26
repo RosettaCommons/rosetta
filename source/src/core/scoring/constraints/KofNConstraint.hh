@@ -98,6 +98,9 @@ public:
 
 	void show( std::ostream& out) const;
 
+	virtual
+	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+
 	utility::vector1<ConstraintCOP> active_constraints() const;
 
 	// void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const& func_factory );

@@ -52,7 +52,6 @@ typedef utility::pointer::shared_ptr< LocalCoordinateConstraint const > LocalCoo
 
 class LocalCoordinateConstraint : public Constraint {
 public:
-
 	LocalCoordinateConstraint();
 
 	///c-tor
@@ -99,8 +98,9 @@ public:
 	///
 	virtual void steal_def( pose::Pose const& );
 
+	// Needed to get the base class overloads
 	using Constraint::score;
-
+	using Constraint::dist;
 
 	Real
 	score(
@@ -112,6 +112,10 @@ public:
 
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	void
@@ -129,9 +133,6 @@ public:
 
 	AtomID const &
 	atom( Size const n ) const;
-
-	Real
-	dist( pose::Pose const & pose ) const;
 
 	virtual Size show_violations(
 		std::ostream& out,

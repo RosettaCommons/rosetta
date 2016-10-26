@@ -43,9 +43,6 @@ namespace constraints {
 
 class DistancePairConstraint : public Constraint {
 public:
-	using Constraint::score;
-
-public:
 	virtual std::string type() const;
 	virtual ConstraintOP clone() const;
 
@@ -63,11 +60,25 @@ public:
 		Vector const & Y1, Vector const & Y2
 	) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real
 	score( conformation::Conformation const & conformation  ) const;
+
+	Real
+	distance_diff(
+		Vector const & X1, Vector const & X2,
+		Vector const & Y1, Vector const & Y2
+	) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	void

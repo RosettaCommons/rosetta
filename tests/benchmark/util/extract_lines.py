@@ -24,7 +24,8 @@ if len(sys.argv) != 5:
     exit()
 
 def remove_numbers( s ):
-    return s.translate(None, string.digits)
+    # return s.translate(None, string.digits) # This doesn't work if s is unicode
+    return ''.join([ c for c in s if not c.isdigit() ])
 
 with codecs.open(sys.argv[2], encoding='utf-8', errors='replace') as f:
     ref_lines = set( remove_numbers( line ) for line in f.readlines() )

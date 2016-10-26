@@ -308,26 +308,39 @@ SequenceProfileConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
+
+	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
+	emap[ this->score_type() ] += weight() * dist( aa );
+
+}
+
+core::Real
+SequenceProfileConstraint::dist( chemical::AA aa ) const {
 	runtime_assert( sequence_profile_ != 0 );
 
 	core::Size profile_pos( seqpos_ );
 	if ( mapping_ ) {
 		profile_pos = (*mapping_)[seqpos_];
-		if ( profile_pos == 0 ) return; // safety/relevance check
+		if ( profile_pos == 0 ) return 0.0; // safety/relevance check
 	}
-	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
 	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile_->profile() );
-	if ( profile_pos > profile.size() ) return; // safety/relevance check
+	if ( profile_pos > profile.size() ) return 0.0; // safety/relevance check
 	utility::vector1< Real > const & position_profile( profile[ profile_pos ] );
-	if ( size_t(aa) > position_profile.size() ) return; // safety/relevance check
+	if ( size_t(aa) > position_profile.size() ) return 0.0; // safety/relevance check
 	Real const score( position_profile[aa] );
 	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << weight() * score << std::endl;
-
 	if ( sequence_profile_->negative_better() ) {
-		emap[ this->score_type() ] += weight() * score;
+		return score;
 	} else {
-		emap[ this->score_type() ] -= weight() * score;
+		return -score;
 	}
+}
+
+
+core::Real
+SequenceProfileConstraint::dist( core::scoring::func::XYZ_Func const & xyz_func ) const {
+	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
+	return dist( aa );
 }
 
 void

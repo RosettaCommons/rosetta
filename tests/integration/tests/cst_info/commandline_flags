@@ -1,0 +1,4 @@
+-in:file:silent inputs/1.out
+-constraints:cst_file inputs/file1.cst
+-constraints:cst_fa_file inputs/file2.cst
+-out:file:scorefile commandline.sc

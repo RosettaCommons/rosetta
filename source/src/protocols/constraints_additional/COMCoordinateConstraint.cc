@@ -110,6 +110,20 @@ COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 	scoring::EnergyMap const &,
 	scoring::EnergyMap & emap ) const
 {
+	Real dist_val = dist(xyz);
+
+	Real score_val = -1;
+	if ( dist_val < interval_ ) score_val = 0;
+	else score_val = pow( (dist_val - interval_)/stdv_ , 2 ) ;
+
+	tr.Debug << "HARMONIC-func std("<<stdv_<<") interval("<<interval_<<") dist: "<<dist_val<<" constaint_score: "<<score_val<<std::endl;
+	//std::cout << "HARMONIC-func std("<<stdv_<<") interval("<<interval_<<") dist^2: "<<dist2<<" constaint_score: "<<score_val<<std::endl;
+
+	emap[ this->score_type() ] += score_val;
+}
+
+core::Real
+COMCoordinateConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
 	Vector COM_pose( 0.0, 0.0, 0.0 );
 	for ( Size i=1; i<=(Size)atms_.size(); ++i ) {
 		COM_pose += xyz(atms_[i]);
@@ -118,15 +132,7 @@ COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 	COM_pose /= atms_.size();
 	dCOM_ = COM_pose - COM_target_ ; // Save this for derivative evaluation
 	Real dist2 = dCOM_.dot_product( dCOM_ );
-	Real dist = sqrt( dist2 );
-	Real score_val = -1;
-	if ( dist < interval_ ) score_val = 0;
-	else score_val = pow( (dist - interval_)/stdv_ , 2 ) ;
-
-	tr.Debug << "HARMONIC-func std("<<stdv_<<") interval("<<interval_<<") dist: "<<dist<<" constaint_score: "<<score_val<<std::endl;
-	//std::cout << "HARMONIC-func std("<<stdv_<<") interval("<<interval_<<") dist^2: "<<dist2<<" constaint_score: "<<score_val<<std::endl;
-
-	emap[ this->score_type() ] += score_val;
+	return sqrt( dist2 );
 }
 
 void

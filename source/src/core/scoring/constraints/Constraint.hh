@@ -157,25 +157,35 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const & /*seqmap*/ ) const;
 
-	virtual
-	Real score( pose::Pose const& ) const;
-
-	/// @brief return the raw "distance" before that distance is handed to the FUNC object
-	virtual
-	core::Real
-	dist( core::pose::Pose const & /*pose*/ ) const;
-
-	virtual
-	core::Real
-	dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const;
-
 	/// @brief Calculates a score for this constraint using XYZ_Func, and puts
 	/// the UNWEIGHTED score into emap. Although the current set of weights
 	/// currently is provided, Constraint objects should put unweighted scores
 	/// into emap because the ScoreFunction will do the weighting itself.
 	virtual
 	void
-	score( core::scoring::func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const = 0;
+
+	/// @brief Returns the unweighted score of this constraint computed over the given pose.
+	virtual
+	Real
+	score( pose::Pose const& pose ) const;
+
+	/// @brief Returns the weighted score of this constraint computed over the given pose.
+	virtual
+	Real
+	score( pose::Pose const& pose,  EnergyMap const & weights ) const;
+
+	/// @brief return the raw "distance" before that distance is handed to the FUNC object
+	/// @details - If such a distance doesn't make sense for this constraint, just return 0
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const = 0;
+
+	/// @brief return the raw "distance" before that distance is handed to the FUNC object
+	/// @details - If such a distance doesn't make sense for this constraint, just return 0
+	virtual
+	Real
+	dist( core::pose::Pose const & /*pose*/ ) const;
 
 	/// @brief Returns a unique string identified for this constraint. Used in several
 	/// places, including the ConstraintIO class.
@@ -187,14 +197,6 @@ public:
 
 	// call the setup_for_derivatives for each constraint -- does nothing by default
 	virtual void setup_for_derivatives( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const;
-
-	/// @brief Returns the score of this constraint computed over the given conformation.
-	/// Not necessarily implemented in all derived classes, as it's redundant with
-	/// the score( XYZ_Func, EnergyMap, EnergyMap )  method defined above. Returns
-	/// 0.0 if not implemented.
-	virtual
-	Real
-	score( conformation::Conformation const & ) const;
 
 	/// @brief Fill the f1 and f2 vectors, necessary for considering the
 	/// derivative this constraint during minimization. (someone please reference

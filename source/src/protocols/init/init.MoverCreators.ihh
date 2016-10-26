@@ -360,6 +360,7 @@
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/CopyRotamerMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
+#include <protocols/simple_moves/CstInfoMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>

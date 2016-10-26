@@ -67,7 +67,6 @@ CircularHarmonicFunc::read_data( std::istream & in ) {
 
 void CircularHarmonicFunc::show_definition( std::ostream & out ) const
 {
-	//out << "CircularHarmonicFunc " << x0_ << ' ' << sd_;
 	out << "CIRCULARHARMONIC " << x0_ << ' ' << sd_ << std::endl;
 }
 

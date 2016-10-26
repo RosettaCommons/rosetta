@@ -37,10 +37,10 @@
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/xyz.functions.hh>
+
 //Auto Headers
 #include <core/id/types.hh>
-
-static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedDihedralConstraint" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -52,10 +52,11 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedDihedralCon
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
+
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedDihedralConstraint" );
 
 NamedDihedralConstraint::NamedDihedralConstraint(
 	id::NamedAtomID const & a1,
@@ -166,6 +167,16 @@ NamedDihedralConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, E
 		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
 		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ),
 		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ) );
+}
+
+core::Real
+NamedDihedralConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return dihedral_radians(
+		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
+		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
+		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ),
+		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() )
+	);
 }
 
 void

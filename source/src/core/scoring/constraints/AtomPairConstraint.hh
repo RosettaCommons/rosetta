@@ -80,8 +80,9 @@ public:
 	virtual bool operator == ( Constraint const & other ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	// Needed to get the base class overloads
 	using Constraint::score;
-
+	using Constraint::dist;
 
 	Real
 	score(
@@ -89,11 +90,17 @@ public:
 		Vector const & xyz2
 	) const;
 
-
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
+	virtual
 	Real score( pose::Pose const& pose ) const;
+
+	virtual
+	Real dist( pose::Pose const& pose ) const;
+
+	virtual
+	Real dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	// atom deriv
 	virtual
@@ -145,13 +152,6 @@ public:
 	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const & func_factory );
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
-	virtual
-	Real dist( pose::Pose const& pose ) const;
-
-	Real dist( core::conformation::Conformation const& conformation ) const;
-
-	virtual
-	Real dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 

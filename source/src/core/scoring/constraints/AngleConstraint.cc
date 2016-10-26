@@ -52,7 +52,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static THREAD_LOCAL basic::Tracer TRACER( "core.io.constraints" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.constraints.AngleConstraint" );
 
 AngleConstraint::AngleConstraint(
 	AtomID const & a1,
@@ -122,7 +122,7 @@ void AngleConstraint::show_def( std::ostream& out, pose::Pose const& pose ) cons
 		out << ' ' <<  atom_id_to_named_atom_id( id, pose );
 	}
 	out << ' ';
-	func_->show_definition(out);
+	func_->show_definition( out );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -150,11 +150,11 @@ AngleConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres2, res2 );
 	ConstraintIO::parse_residue( pose, tempres3, res3 );
 
-	TRACER.Debug  << "read: " << name1 << " " << name2 << " " << name3 << " "
+	TR.Debug  << "read: " << name1 << " " << name2 << " " << name3 << " "
 		<< res1 << " " << res2 << " " << res3 << " func: " << func_type
 		<< std::endl;
 	if ( res1 > pose.size() || res2 > pose.size() || res3 > pose.size() ) {
-		TRACER.Warning  << "ignored constraint (no such atom in pose!)"
+		TR.Warning  << "ignored constraint (no such atom in pose!)"
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
@@ -164,7 +164,7 @@ AngleConstraint::read_def(
 	atom2_ = id::AtomID( pose.residue(res2).atom_index(name2), res2 );
 	atom3_ = id::AtomID( pose.residue(res3).atom_index(name3), res3 );
 	if ( atom1_.atomno() == 0 || atom2_.atomno() == 0 || atom3_.atomno() == 0 ) {
-		TRACER.Warning << "Error reading atoms: read in atom names("
+		TR.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "," << name3 << "), "
 			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << "," << atom3_ << ")"
 			<< std::endl;
@@ -178,7 +178,7 @@ AngleConstraint::read_def(
 	//chu skip the rest of line since this is a single line defintion.
 	while ( data.good() && (data.get() != '\n') ) {}
 
-	if ( TRACER.Debug.visible() ) {
+	if ( TR.Debug.visible() ) {
 		func_->show_definition( std::cout );
 		std::cout << std::endl;
 	}
@@ -220,23 +220,46 @@ AngleConstraint::score(
 	Vector const & p3
 ) const
 {
+	return func( angle( p1, p2, p3 ) );
+}
+
+void
+AngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+{
+	emap[ this->score_type() ] += score( xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ) );
+}
+
+core::Real
+AngleConstraint::score( conformation::Conformation const & conf ) const {
+	return score( conf.xyz( atom1_ ), conf.xyz( atom2_ ), conf.xyz( atom3_ ) );
+}
+
+/// @brief compute
+Real
+AngleConstraint::angle(
+	Vector const & p1,
+	Vector const & p2,
+	Vector const & p3
+) const {
 	Vector u1( p1 - p2 );
 	Vector u2( p3 - p2 );
 	Real const n1( u1.length() );
 	Real const n2( u2.length() );
 	if ( n1 > 1e-12 && n2 > 1e-12 ) {
-		Real const theta = numeric::arccos( dot( u1,u2 ) / ( n1 * n2 ) );
-		return func( theta );
+		return numeric::arccos( dot( u1,u2 ) / ( n1 * n2 ) );
 	}
-	std::cout << "AngleConstraint::score: warning: 0-length bonds!" << std::endl;
+	TR.Error << "AngleConstraint::score: warning: 0-length bonds!" << std::endl;
 	runtime_assert( false ); //die but hopfully get stack trace
 	return 0.0;
 }
 
+core::Real
+AngleConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return angle( xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ) );
+}
+
 void
 AngleConstraint::setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const {} //Do nothing.
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // accumulate F1, F2 contributions from terms that look like
@@ -459,12 +482,6 @@ AngleConstraint::p2_deriv(
 	F2 += -1.0f * dE_dtheta * f2;
 }
 
-
-void
-AngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
-{
-	emap[ this->score_type() ] += score( xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ) );
-}
 
 /////////////////////////////////////////////////////////////////////////////
 void

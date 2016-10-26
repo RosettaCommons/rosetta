@@ -42,7 +42,6 @@ namespace constraints {
 /// @brief A Constant Constraint.
 class ConstantConstraint : public Constraint {
 public:
-	using Constraint::score;
 
 	/// @brief Constructor
 	ConstantConstraint(
@@ -57,17 +56,23 @@ public:
 	virtual bool operator == ( Constraint const & other ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	virtual std::string type() const;
+
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	/// @brief compute score
 	Real
 	score() const;
-
-	virtual std::string type() const;
 
 	/// @brief compute score
 	void
 	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const;
 
-	//Real score( pose::Pose const & ) const;
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	/// @brief compute atom deriv
 	void

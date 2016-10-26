@@ -51,9 +51,9 @@ public:
 		func::FuncOP func,
 		ScoreType scoretype = angle_constraint );
 
-	virtual std::string type() const;
+	virtual std::string type() const override;
 
-	virtual ConstraintOP clone() const;
+	virtual ConstraintOP clone() const override;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
@@ -62,27 +62,36 @@ public:
 	virtual ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
-		id::SequenceMappingCOP map = NULL ) const;
+		id::SequenceMappingCOP map = NULL ) const override;
 
 	/// @brief This overrride updates the sequence numbering but not the atom names.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const;
+	virtual ConstraintOP remap_resid( core::id::SequenceMapping const &seqmap ) const override;
 
-	virtual bool operator == ( Constraint const & rhs ) const;
-	virtual bool same_type_as_me( Constraint const & other ) const;
+	virtual bool operator == ( Constraint const & rhs ) const override;
+	virtual bool same_type_as_me( Constraint const & other ) const override;
 
-	virtual void show_def( std::ostream & out, pose::Pose const & pose ) const;
+	virtual void show_def( std::ostream & out, pose::Pose const & pose ) const override;
 	void show_def_nopose( std::ostream & out ) const;
 
 	virtual void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
-		func::FuncFactory const & func_factory );
+		func::FuncFactory const & func_factory ) override;
+
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
+	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const override;
 
 	//fpd use the same machinery as NamedAtomPairConstraint where names are mapped to indices here
-	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const override;
 
-	//virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const override;
 
 protected:
 	NamedAngleConstraint( NamedAngleConstraint const & src );

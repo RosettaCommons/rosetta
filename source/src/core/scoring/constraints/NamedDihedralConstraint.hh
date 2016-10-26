@@ -80,7 +80,15 @@ public:
 		pose::Pose const & pose,
 		func::FuncFactory const & func_factory );
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	virtual
+	core::Real
+	dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 protected:
 	NamedDihedralConstraint( NamedDihedralConstraint const & src );

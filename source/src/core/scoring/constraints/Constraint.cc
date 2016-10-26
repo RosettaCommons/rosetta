@@ -12,10 +12,13 @@
 
 // Unit Headers
 #include <core/scoring/constraints/Constraint.hh>
+#include <core/pose/Pose.hh>
 
 // Package Headers
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 
 // Project Headers
 
@@ -86,26 +89,32 @@ Constraint::remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const
 	return NULL;
 }
 
-Real Constraint::score( pose::Pose const& ) const {
-	unimplemented_method_error( std::string( "score" ) );
-	return -1.0;
+/// @brief Returns the unweighted score of this constraint computed over the given pose.
+Real
+Constraint::score( pose::Pose const& pose ) const {
+	// Just set every weight to 1.0, to capture all results
+	EnergyMap weights;
+	for( Size st(1); st <= Size(n_score_types); ++st ) {
+		weights[ ScoreType(st) ] = 1.0;
+	}
+
+	return score( pose, weights );
 }
 
-core::Real
-Constraint::dist( core::pose::Pose const & /*pose*/ ) const {
-	unimplemented_method_error( std::string( "dist" ) );
-	return -1.0;
+/// @brief Returns the weighted score of this constraint computed over the given pose.
+Real
+Constraint::score( pose::Pose const& pose,  EnergyMap const & weights ) const {
+	func::ConformationXYZ xyz_func( pose.conformation() );
+	EnergyMap emap;
+	score( xyz_func, weights, emap );
+	return emap.dot( weights );
 }
 
-core::Real
-Constraint::dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const {
-	unimplemented_method_error( std::string( "dist" ) );
-	return -1.0;
-}
-
-void
-Constraint::score( core::scoring::func::XYZ_Func const &, EnergyMap const &, EnergyMap & ) const {
-	unimplemented_method_error( std::string( "score( XYZ_Func, EnergyMap, EnergyMap )" ) );
+/// @brief return the raw "distance" before that distance is handed to the FUNC object
+Real
+Constraint::dist( core::pose::Pose const & pose ) const {
+	func::ConformationXYZ xyz_func( pose.conformation() );
+	return dist( xyz_func );
 }
 
 std::string Constraint::type() const {
@@ -115,9 +124,6 @@ std::string Constraint::type() const {
 void Constraint::setup_for_scoring( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
 
 void Constraint::setup_for_derivatives( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
-
-Real
-Constraint::score( conformation::Conformation const & ) const { return 0.0; }
 
 void Constraint::show( std::ostream & /*out*/ ) const {
 	unimplemented_method_error( std::string( "show" ) );

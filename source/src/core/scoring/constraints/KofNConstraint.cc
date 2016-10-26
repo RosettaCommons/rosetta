@@ -43,6 +43,9 @@
 #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
+
+#include <basic/Tracer.hh>
+
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>
@@ -87,6 +90,8 @@
 namespace core {
 namespace scoring {
 namespace constraints {
+
+static THREAD_LOCAL basic::Tracer TR("core.scoring.constraints.KofNConstraint");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
@@ -153,7 +158,7 @@ std::string KofNConstraint::type() const {
 /// @brief ScoreFunction, scores all member constraints; reports the lowest k
 void
 KofNConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
-	//std::cout << "scoring K of N constraint..." << std::endl;
+	//TR << "scoring K of N constraint..." << std::endl;
 
 	if ( K_ == 0 ) {
 		return; // ? warning msg here?
@@ -265,6 +270,15 @@ KofNConstraint::active_constraints() const {
 	return active_constraints_;
 }
 
+void
+KofNConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
+	out << type() << " " << K_ << std::endl;
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
+		(*cst_it)->show_def( out, pose );
+	}
+	out << "End_"<< type() << std::endl;
+}
+
 Size
 KofNConstraint::show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold ) const {
 	if ( K_ == 0 ) { return 0; }
@@ -289,7 +303,7 @@ KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func:
 	while ( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != 0 ) {
 		add_individual_constraint(constr);
 	}
-	std::cout << "Read K of N constraints! K = " << K_ << " N = " << member_constraints().size() << std::endl;
+	TR << "Read K of N constraints! K = " << K_ << " N = " << member_constraints().size() << std::endl;
 }
 
 bool KofNConstraint::operator == ( Constraint const & rhs ) const

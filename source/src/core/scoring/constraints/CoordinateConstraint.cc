@@ -187,6 +187,11 @@ CoordinateConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, Ener
 	emap[ this->score_type() ] += non_virtual_score( xyz( atom_ ) );
 }
 
+core::Real
+CoordinateConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
+	return xyz( atom_ ).distance( xyz_target_ );
+}
+
 // atom deriv
 void
 CoordinateConstraint::fill_f1_f2(
@@ -235,13 +240,6 @@ CoordinateConstraint::atom( Size const n ) const
 	return atom_;
 }
 
-
-Real
-CoordinateConstraint::dist( pose::Pose const & pose ) const {
-	conformation::Conformation const & conformation( pose.conformation() );
-	Vector const & xyz( conformation.xyz( atom_ ) );
-	return xyz.distance( xyz_target_ );
-}
 
 ConstraintOP
 CoordinateConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const

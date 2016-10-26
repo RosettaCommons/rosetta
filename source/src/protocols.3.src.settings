@@ -636,6 +636,7 @@ sources = {
 		"CopyDofMover",
 		"CopyRotamerMover",
 		"CoupledMover",
+ 		"CstInfoMover",
 		"CutChainMover",
  		"CyclizationMover",
 		"ddG",

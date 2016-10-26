@@ -283,6 +283,15 @@ LocalCoordinateConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &,
 	);
 }
 
+Real
+LocalCoordinateConstraint::dist( func::XYZ_Func const & xyz ) const {
+	kinematics::Stub my_stub( xyz( fixed_stub_.atom( 1 ) ),
+		xyz( fixed_stub_.atom( 2 ) ),
+		xyz( fixed_stub_.atom( 3 ) )
+	);
+	return xyz_target_.distance( my_stub.global2local( xyz( atom_ ) ) );
+}
+
 // atom deriv
 void
 LocalCoordinateConstraint::fill_f1_f2(
@@ -333,14 +342,6 @@ LocalCoordinateConstraint::atom( Size const n ) const
 	return atom_;
 }
 
-
-Real
-LocalCoordinateConstraint::dist( pose::Pose const & pose ) const {
-	conformation::Conformation const & conformation( pose.conformation() );
-	Vector const & xyz( conformation.xyz( atom_ ) );
-	kinematics::Stub my_stub( conformation.stub_from_id( fixed_stub_ ) );
-	return xyz_target_.distance( my_stub.global2local( xyz ) );
-}
 
 Size
 LocalCoordinateConstraint::show_violations(

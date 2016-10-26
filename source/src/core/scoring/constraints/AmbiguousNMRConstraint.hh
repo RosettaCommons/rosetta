@@ -70,15 +70,14 @@ public:
 	virtual bool operator == ( Constraint const & other ) const;
 	virtual bool same_type_as_me( Constraint const & other ) const;
 
+	// Needed to get the base class overloads
+	using Constraint::score;
+	using Constraint::dist;
+
 	/// @brief compute score
 	virtual
 	void
 	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
-
-
-	virtual
-	core::Real
-	dist( core::pose::Pose const & pose ) const;
 
 	virtual
 	core::Real
@@ -107,8 +106,6 @@ public:
 	/// @brief Returns the func::Func object associated with this Constraint object.
 	virtual
 	func::Func const & get_func() const;
-
-	virtual Real score( pose::Pose const& pose ) const;
 
 	//  virtual
 	//  void show( std::ostream& out ) const;

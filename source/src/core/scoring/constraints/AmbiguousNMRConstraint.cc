@@ -110,37 +110,8 @@ bool AmbiguousNMRConstraint::same_type_as_me( Constraint const & other ) const
 void
 AmbiguousNMRConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & /*weights*/, EnergyMap & emap ) const
 {
-
-	core::Real cum_invdist6 = 0;
-
-	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
-		AmbiguousNMRDistanceConstraintCOP cst_in_casted;
-		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRDistanceConstraint const >( *member_it );
-		if ( cst_in_casted ) cum_invdist6 += cst_in_casted->inv_dist6( xyz_func );
-		if ( !cst_in_casted ) {
-			AtomPairConstraintCOP cst_in_casted;
-			cst_in_casted = utility::pointer::dynamic_pointer_cast< AtomPairConstraint const >( *member_it );
-			if ( cst_in_casted ) {
-				Real dist = cst_in_casted->dist( xyz_func );
-				Real inv_dist = 1.0/dist;
-				Real inv_dist2 = inv_dist*inv_dist;
-				cum_invdist6 += inv_dist2*inv_dist2*inv_dist2;
-			} else {
-				runtime_assert( 0 == 1 );
-			}
-		}
-	}
-	//add lowest score to the actual emap
-	Real eff_dist = pow( cum_invdist6, -1.0/6 );
-	emap[ score_type() ] +=  get_func().func( eff_dist );
+	emap[ score_type() ] +=  get_func().func( dist( xyz_func ) );
 } //score
-
-
-core::Real
-AmbiguousNMRConstraint::dist( core::pose::Pose const& pose ) const
-{
-	return dist( func::ConformationXYZ( pose.conformation() ) );
-}
 
 core::Real
 AmbiguousNMRConstraint::dist( func::XYZ_Func const & xyz ) const
@@ -235,12 +206,6 @@ func::Func const & AmbiguousNMRConstraint::get_func() const {
 	runtime_assert( func_ != 0 );
 	return *func_;
 }
-
-
-Real AmbiguousNMRConstraint::score( pose::Pose const& pose ) const {
-	return func_->func( dist( pose ) );
-}
-
 
 // void
 // AmbiguousNMRConstraint::show( std::ostream& out) const
