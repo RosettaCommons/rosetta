@@ -179,23 +179,12 @@ ddGMover::find_nbrs(
 	utility::vector1<int> nbrs;
 	for ( core::Size i = 1; i <= mutation_position.size(); ++i ) {
 		numeric::xyzVector<double> i_pos;
-		// assumption: all mutated residues are protein residues
-		if ( p.residue(mutation_position[i]).name1() == 'G' ) {
-			i_pos = p.residue(mutation_position[i]).xyz(" CA ");
-		} else {
-			i_pos = p.residue(mutation_position[i]).xyz(" CB ");
-		}
+		// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
+		i_pos = p.residue(mutation_position[i]).xyz( p.residue(mutation_position[i]).nbr_atom() );
 		for ( core::Size j = 1; j <= p.size(); j++ ) {
 			numeric::xyzVector<double> j_pos;
-			if ( p.residue(j).is_protein() ) {
-				if ( p.residue(j).name1() == 'G' ) {
-					j_pos = p.residue(j).xyz(" CA ");
-				} else {
-					j_pos = p.residue(j).xyz(" CB ");
-				}
-			} else { // assumption (not particularly failsafe): the residue has a C and we can access it
-				j_pos = p.residue(j).xyz(" C  "); // AS debug: make sure this doesn't crash horribly
-			}
+			// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
+			j_pos = p.residue(j).xyz( p.residue(j).nbr_atom() );
 			if ( i_pos.distance(j_pos) <= radii ) {
 				nbrs.push_back(j);
 			}
@@ -443,6 +432,8 @@ ddGMover::setup_constraints(
 			if ( pose.residue(i).is_protein() ) {
 				Vector const CA_i( pose.residue(i).xyz(" CA "));
 				for ( int j = 1; j < i; j++ ) {
+					// Do we only want to constrain protein residues here? Could we do the neighbor atoms on non-protein
+					// (That's what we're doing now on the minimize_with_cst prep application.)
 					if ( pose.residue(j).is_protein() ) {
 						Vector const CA_j(pose.residue(j).xyz(" CA "));
 						Real const CA_dist = (CA_i - CA_j).length();
@@ -1332,31 +1323,17 @@ ddGMover::neighborhood_of_mutations(
 	for ( core::Size  ii = 1; ii <= mutations.size(); ++ii ) {
 		Size iiresid = mutations[ ii ];
 		core::Vector ii_pos;
-		if ( pose.residue(iiresid).name1() == 'G' ) { // assumption: all mutated residues are protein and thus have CA/CB
-			ii_pos = pose.residue(iiresid).xyz(" CA ");
-		} else {
-			ii_pos = pose.residue(iiresid).xyz(" CB ");
-		}
+		// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
+		ii_pos = pose.residue(iiresid).xyz( pose.residue(iiresid).nbr_atom() );
 		for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 			if ( neighbors[ jj ] ) continue;
 			core::Vector jj_pos;
-			/// Gee -- this will crash if we're dealing with something other than a protein
-			// AS: getting rid of that crash
-			if ( pose.residue(jj).is_protein() ) {
-				if ( pose.residue(jj).name1() == 'G' ) {
-					jj_pos = pose.residue(jj).xyz(" CA ");
-				} else {
-					jj_pos = pose.residue(jj).xyz(" CB ");
-				}
-				// AS debug: for now, just set the movemap for protein residue
-				// -- need to deal with the rest later!
-				// -- it might be the best to set the movemap for all non-protein residues to false anyway (or is that already the default we have here?)
-
-				//if c-beta is within x angstrom, set movemap(i) true
-				if ( ii_pos.distance_squared(jj_pos) <= rad2 ) {
-					neighbors[ jj ] = true;
-				}
-			} // for all protein residues
+			// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
+			jj_pos = pose.residue(jj).xyz( pose.residue(jj).nbr_atom() );
+			//if c-beta is within x angstrom, set movemap(i) true
+			if ( ii_pos.distance_squared(jj_pos) <= rad2 ) {
+				neighbors[ jj ] = true;
+			}
 		}//for all jj
 	} // for all mutation positions
 
