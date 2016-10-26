@@ -65,8 +65,8 @@ public:
 	void read_from_binary_file( std::ifstream & infile ) override;
 
 #ifdef USEMPI
-		virtual void send_to_node( int const destination_node, int const tag ) const;
-		virtual void receive_from_node( int const source_node, int const tag );
+		virtual void send_to_node( int const destination_node, int const tag ) const override;
+		virtual void receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 	void set_unfolded_energy_emap_vector( utility::vector1< EnergyMap > emap_vector ) { unfolded_energy_emap_vector_ = emap_vector; }
@@ -155,8 +155,8 @@ public:
 	Size memory_use() const override;
 
 #ifdef USEMPI
-	virtual void send_to_node( int const destination_node, int const tag ) const;
-	virtual void receive_from_node( int const source_node, int const tag );
+	virtual void send_to_node( int const destination_node, int const tag ) const override;
+	virtual void receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 	//void set_wt_aa( AA wt_aa );

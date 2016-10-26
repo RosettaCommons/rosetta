@@ -411,11 +411,11 @@ public:
 
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 
 #endif
 
@@ -569,11 +569,11 @@ public:
 #ifdef USEMPI
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 private:
@@ -677,11 +677,11 @@ public:
 #ifdef USEMPI
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 	void
@@ -844,11 +844,11 @@ public:
 #ifdef USEMPI
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 	void
@@ -1003,11 +1003,11 @@ public:
 #ifdef USEMPI
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 #endif
 
 	void
@@ -1137,11 +1137,11 @@ public:
 
 	virtual
 	void
-	send_to_node( int const destination_node, int const tag ) const;
+	send_to_node( int const destination_node, int const tag ) const override;
 
 	virtual
 	void
-	receive_from_node( int const source_node, int const tag );
+	receive_from_node( int const source_node, int const tag ) override;
 
 #endif
 
