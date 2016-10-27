@@ -285,10 +285,20 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	protocols::rosetta_scripts::RosettaScriptsParser parser;
 
 	// rosetta_scripts_tag_ has been pre-parsed in parse_my_tag() so no parsing exception should be thrown here
-	protocols::moves::MoverOP mover( parser.parse_protocol_tag( pose, rosetta_scripts_tag_ ) );
-	if ( !mover ) {
-		TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
-		return false;
+	// No longer true, in fact, as the original parse_my_tag call has been removed, since the Pose needed for that
+	// call is not present until we get to the MPM's apply call.
+	protocols::moves::MoverOP mover;
+	try {
+		rosetta_scripts_tag_->reset_accessed_options();
+		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_ );
+		if ( !mover ) {
+			TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
+			return false;
+		}
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::ostringstream oss;
+		oss << "MultiplePoseMover could not create the inner parsed protocol; error message generated from parser.parse_protocol_tag:\n" << e.msg();
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
 	}
 
 	mover->apply(pose);
@@ -306,6 +316,27 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	}
 
 	return true;
+}
+
+/// @brief Recurse through the tree of Tags and for each one, read each option, so that every option is set as "read"
+///
+/// @details As a safety check to make sure that no options are misspelled, at the conclusion of parsing, all options
+/// contained in all tags are examined to determine if they have been accessed or not. If an option has not been
+/// accessed, then an error message is written to the screen, and the program exits. However, it is not possible
+/// to parse all movers in the absence of the Pose that is going to be used, and that Pose isn't available to the MPM
+/// until execution. So we work around this issue by accessing each of the options in the input tag and all of its
+/// children
+
+void
+recursively_access_all_attributes( utility::tag::TagCOP tag )
+{
+	auto const & options = tag->getOptions();
+	for ( auto option_iter : options ) {
+		tag->getOption< std::string >( option_iter.first );
+	}
+	for ( auto child : tag->getTags() ) {
+		recursively_access_all_attributes( child );
+	}
 }
 
 /// @brief Parse settings in tag
@@ -331,10 +362,12 @@ void MultiplePoseMover::parse_my_tag(
 
 		// ROSETTASCRIPTS tag (optional)
 		if ( tag->hasTag("ROSETTASCRIPTS") ) {
-			set_rosetta_scripts_tag( tag->getTag("ROSETTASCRIPTS") );
+			utility::tag::TagCOP rs_tag = tag->getTag("ROSETTASCRIPTS");
+			set_rosetta_scripts_tag( rs_tag );
 			// Try parsing the ROSETTASCRIPTS block to avoid tripping die_for_unaccessed_options()
-			protocols::rosetta_scripts::RosettaScriptsParser parser;
-			protocols::moves::MoverOP mover( parser.parse_protocol_tag( rosetta_scripts_tag_ ) );
+			// protocols::rosetta_scripts::RosettaScriptsParser parser;
+			// protocols::moves::MoverOP mover( parser.parse_protocol_tag( rosetta_scripts_tag_ ) );
+			recursively_access_all_attributes( rs_tag );
 		}
 
 		// SELECT tag (optional)
@@ -389,6 +422,12 @@ void MultiplePoseMover::parse_my_tag(
 		TR << "Pose input caching enabled" << std::endl;
 	}
 }
+
+/// @brief Used by RosettaScripts to set the previous mover to pull poses from
+void MultiplePoseMover::set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
+
+/// @brief sets rosettascripts tag
+void MultiplePoseMover::set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
 
 } //rosetta_scripts
 } //protocols

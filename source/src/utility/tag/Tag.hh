@@ -146,6 +146,10 @@ public:
 	Tag &
 	operator=(Tag const &other);
 
+	/// @brief Recursively reset that accessed_options_ variable so that a re-parsing of the tag
+	/// can identify options that have been given but that have not been read.
+	void reset_accessed_options() const;
+
 	void die_for_unaccessed_options() const;
 	void die_for_unaccessed_options_recursively() const;
 

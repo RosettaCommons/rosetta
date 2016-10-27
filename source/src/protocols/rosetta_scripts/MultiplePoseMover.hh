@@ -67,10 +67,10 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
-	void set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
+	void set_previous_mover( protocols::moves::MoverOP const m );
 
 	/// @brief sets rosettascripts tag
-	void set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
+	void set_rosetta_scripts_tag( utility::tag::TagCOP tag );
 
 protected:
 	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );

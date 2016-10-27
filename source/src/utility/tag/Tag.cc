@@ -152,6 +152,14 @@ Tag::operator=(Tag const &other) {
 	return *this;
 }
 
+void Tag::reset_accessed_options() const
+{
+	accessed_options_.clear();
+	for ( auto child : vTags_ ) {
+		child->reset_accessed_options();
+	}
+}
+
 void Tag::die_for_unaccessed_options() const {
 	auto option= mOptions_.begin();
 	for ( ; option != mOptions_.end(); ++option ) {
