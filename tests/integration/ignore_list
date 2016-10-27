@@ -22,6 +22,7 @@ core.pack.dunbrack.RotamerLibrary: Random tempname will be:
 core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected
 core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file
 core.pack.dunbrack.RotamerLibrary: Dunbrack.*library took [0-9.]+ seconds to load from binary
+core.pack.dunbrack.RotamerLibrary: Moving temporary file 
 basic.io.database: Using '.*' as the cached file.
 Processing time: .+sec
 : TIME_STAMP:[ ]
