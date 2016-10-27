@@ -98,6 +98,7 @@ trytry_ofstream_open(
 	std::ios_base::openmode open_mode
 );
 
+/// @brief generate sorted file listing for given directory, return non-zero value on error
 int list_dir (std::string dir, utility::vector1<std::string> & files);
 
 FileName combine_names(utility::vector1<std::string> file_name_strings);

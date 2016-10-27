@@ -39,6 +39,7 @@
 
 // C++ headers
 #include <iostream>
+#include <algorithm>
 
 // Platforms headers
 #include <sys/stat.h>
@@ -79,7 +80,6 @@
 #ifndef S_ISDIR
 #define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
 #endif
-
 
 namespace utility {
 namespace file {
@@ -451,7 +451,8 @@ trytry_ofstream_open(
 	return false;
 }
 
-int list_dir (std::string dir, utility::vector1<std::string> & files)
+/// @brief generate sorted file listing for given directory, return non-zero value on error
+int list_dir(std::string dir, utility::vector1<std::string> & files)
 {
 	//#ifndef WIN_PYROSETTA
 #if (defined WIN32) //&& (!defined PYROSETTA)
@@ -483,6 +484,8 @@ int list_dir (std::string dir, utility::vector1<std::string> & files)
 			closedir(dp);
 #endif
 	//#endif
+
+	std::sort(files.begin(), files.end());
 	return 0;
 }
 
