@@ -105,21 +105,12 @@ public:
 	friend class JobDistributorFactory;  //singleton management
 
 private:
-	/// @brief ctor helper function splits up job list
-	void
-	determine_job_ids_to_run();
 
 	/// @brief total number of processing elements
 	core::Size npes_;
 
 	/// @brief rank of the "local" instance
 	core::Size rank_;
-
-	//@brief start of Jobs vector slice
-	core::Size job_id_start_;
-
-	//@brief end of Jobs vector slice
-	core::Size job_id_end_;
 
 	core::Size next_job_to_try_assigning_;
 };

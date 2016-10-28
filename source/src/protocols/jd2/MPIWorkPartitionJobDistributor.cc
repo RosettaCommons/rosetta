@@ -56,9 +56,7 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 	JobDistributor(),
 	npes_( 1 ),
 	rank_( 0 ),
-	job_id_start_( 0 ),
-	job_id_end_( 0 ),
-	next_job_to_try_assigning_( 0 )
+	next_job_to_try_assigning_( 1 )
 {
 	// set npes and rank based on whether we are using MPI or not
 
@@ -67,21 +65,13 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 	npes_ = option[ OptionKeys::run::nproc ](); //make this same as in "queue"-command in condor script
 	rank_ = option[ OptionKeys::run::proc_id ](); //use this as -jd2:condor_rank $(PROCESS)
 #ifdef USEMPI
-  //npes_ = MPI::COMM_WORLD.Get_size();
-  //rank_ = MPI::COMM_WORLD.Get_rank();
-	int int_npes, int_rank;																	//don't cast pointers - copy it over instead
-	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
-	MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
-	rank_ = int_rank;
-	npes_ = int_npes;
+  npes_ = MPI::COMM_WORLD.Get_size();
+  rank_ = MPI::COMM_WORLD.Get_rank();
 #endif
 
-	determine_job_ids_to_run();
-	next_job_to_try_assigning_ = job_id_start_;
+	next_job_to_try_assigning_ = rank_ + 1;
 
-	JobsContainer const & jobs( get_jobs() );
-	TR << "RANK: " << rank_ << " NUM_PROCS: " << npes_ << " NUM_JOBS: " << jobs.size()
-		<< " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
+	TR << "RANK: " << rank_ << " NUM_PROCS: " << npes_ << " NUM_JOBS: " << get_jobs().size() << std::endl;
 }
 
 /// @brief dtor
@@ -89,59 +79,14 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor() = default;
 
-/// @details All processors will get the same Jobs object; this function determines which slice belongs to a particular
-///processor determined solely by its mpi rank and the number of processors, no communication needed
-/// EXAMPLE CASE: 18 jobs, 4 processors
-/// processor rank   number of jobs   assigned range in Jobs vector
-/// 0                5               1-5
-/// 1                5               6-10
-/// 2                4               11-14
-/// 3                4               15-18
-void
-MPIWorkPartitionJobDistributor::determine_job_ids_to_run()
-{
-	JobsContainer const & jobs( get_jobs() );
-
-	core::Size num_jobs( 0 );
-	core::Size jobs_mod_procs( jobs.size() % npes_ );
-	core::Real jobs_div_procs( core::Real( jobs.size() ) / core::Real( npes_ ) );
-
-	// calculate number of jobs to run and what id to start at
-
-	// if jobs_mod_procs == 0 (evenly divisible), an equal number of jobs go to each processor. +1 is because rank_ is
-	// 0-indexed but Jobs is 1-indexed
-	if ( jobs_mod_procs == 0 ) {
-		num_jobs =  core::Size( jobs_div_procs );
-		job_id_start_ = rank_ * num_jobs + 1;
-	} else if ( rank_ < jobs_mod_procs ) {
-		// if the rank is less than jobs%procs, the number of jobs per processor is the ceiling of jobs/processors; take that
-		// many jobs.  +1 is because rank_ is 0-indexed but Jobs is 1-indexed
-		num_jobs = (core::Size) std::ceil( jobs_div_procs );
-		job_id_start_ = rank_ * num_jobs + 1;
-	} else if ( rank_ >= jobs_mod_procs ) {
-		// if the rank is more than or equal to jobs%procs, the number of jobs per processor is the floor of jobs/processors;
-		// take that many jobs. rank * num jobs accounts for bulk of earlier jobs.  jobs_mod_procs accounts for all processors
-		// with rank < jobs_mod_procs getting an extra job because they use ceiling instead of floor in num_jobs.  +1 is
-		// because rank_ is 0-indexed but Jobs is 1-indexed
-		num_jobs = (core::Size) std::floor( jobs_div_procs );
-		job_id_start_ = rank_ * num_jobs + jobs_mod_procs + 1;
-	} else {
-		utility_exit_with_message("ERROR: Problem determining job ids to run");
-	}
-
-	// calculate job_id_end
-	job_id_end_ = job_id_start_ + num_jobs - 1;
-}
 
 void
 MPIWorkPartitionJobDistributor::go( protocols::moves::MoverOP mover )
 {
 	go_main( mover );
 #ifdef USEMPI
-	//MPI::COMM_WORLD.Barrier();
-	//MPI::Finalize();
-	MPI_Barrier( MPI_COMM_WORLD );
-	MPI_Finalize();
+	MPI::COMM_WORLD.Barrier();
+	MPI::Finalize();
 #endif
 }
 
@@ -152,30 +97,28 @@ MPIWorkPartitionJobDistributor::get_new_job_id()
 	JobsContainer const & jobs( get_jobs() );
 	JobOutputterOP outputter = job_outputter();
 
-	while ( next_job_to_try_assigning_ <= job_id_end_ ) {
-		if ( outputter->job_has_completed( jobs[ next_job_to_try_assigning_ ] ) &&
-				!basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
-			++next_job_to_try_assigning_;
-		} else {
-			break;
+	// if the overwrite flag is false, advance to the next jobs we should work on
+	if ( !basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ){
+		while ( next_job_to_try_assigning_ <= jobs.size() && outputter->job_has_completed( jobs[ next_job_to_try_assigning_ ] ) ) {
+			next_job_to_try_assigning_ += npes_;
 		}
 	}
 
-	if ( next_job_to_try_assigning_ <= job_id_end_ ) {
-		core::Size job_to_assign = next_job_to_try_assigning_;
-		++next_job_to_try_assigning_;
+	if ( next_job_to_try_assigning_ <= jobs.size() ) {
+		core::Size job_to_assign( next_job_to_try_assigning_ );
+		next_job_to_try_assigning_ += npes_;
 		return job_to_assign;
 	}
 
-	// indicate that no jobs remain
+	// no more jobs left
 	return 0;
 }
 
 void
 MPIWorkPartitionJobDistributor::mark_current_job_id_for_repetition()
 {
-	runtime_assert( current_job_id() == next_job_to_try_assigning_ - 1 );
-	--next_job_to_try_assigning_;
+	runtime_assert( current_job_id() == next_job_to_try_assigning_ - npes_ );
+	next_job_to_try_assigning_ -= npes_;
 	clear_current_job_output();
 }
 
@@ -193,11 +136,11 @@ MPIWorkPartitionJobDistributor::remove_bad_inputs_from_job_list()
 
 	JobsContainer const & jobs( get_jobs() );
 
-	while ( next_job_to_try_assigning_ <= job_id_end_ && //MUST BE FIRST for c++ shortcut logical evaluation
+	while ( next_job_to_try_assigning_ <= jobs.size() && //MUST BE FIRST for c++ shortcut logical evaluation
 			jobs[next_job_to_try_assigning_]->input_tag() == current_input_tag ) {
 		TR << "job canceled without trying due to previous bad input: "
 			<< job_outputter()->output_name( jobs[next_job_to_try_assigning_] ) << std::endl;
-		++next_job_to_try_assigning_;
+		next_job_to_try_assigning_ += npes_;
 	}
 }
 
