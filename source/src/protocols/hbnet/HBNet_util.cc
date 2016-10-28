@@ -66,11 +66,15 @@ print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bo
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/ )
 {
 	std::stringstream ret_str;
+    Size count(0);
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
+        if ( count > 0 )
+            ret_str << ",";
 		if ( chainid ) {
 			ret_str << (*res)->chainid << "_";
 		}
-		ret_str << (*res)->aa  << "_" << (*res)->resnum << ", ";
+		ret_str << (*res)->aa  << "_" << (*res)->resnum << ",";
+        count++;
 	}
 	if ( term_w_bb ) {
 		ret_str << "backbone, ";
@@ -96,16 +100,20 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 	//            total = symm_info->num_independent_residues();
 	//        }
 	std::stringstream ret_str;
+    Size count(0);
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
-		if ( chainid ) {
+		if ( count > 0 )
+            ret_str << ",";
+        if ( chainid ) {
 			ret_str << (*res)->chainid << "_";
 		}
 		ret_str << (*res)->aa << "_";
 		if ( use_pdb_numbering && ( (*res)->resnum <= total ) && pose.pdb_info() ) {
-			ret_str << pose.pdb_info()->number((*res)->resnum) << ", "; //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
+			ret_str << pose.pdb_info()->number((*res)->resnum); //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
 		} else {
-			ret_str << (*res)->resnum << ", ";
+			ret_str << (*res)->resnum;
 		}
+        count++;
 	}
 	if ( term_w_bb ) {
 		ret_str << "backbone, ";
@@ -122,30 +130,34 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 //BETTER TO PASS REFERENCES THAT OP's HERE SINCE WE ARE OUTSIDE OF ANY CLASS
 std::string
 print_network( hbond_net_struct & i, bool chainid /* true */ )
-//print_network( HBNet::HBondNetStructOP & i, bool symmetric, bool chainid /* true */ )
 {
 	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
 	//utility::vector1< HBondResStructCOP > const residues( i.residues );
-	std::stringstream output;
-	output << "Network " << i.id << " " << print_list_to_string( residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+    std::string net_prefix("");
+    if ( i.is_native ) net_prefix = "native";
+    else if ( i.is_extended ) net_prefix = "extended";
+    std::stringstream output;
+    output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
 
 std::string
 print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bool chainid /* true */ )
-//print_network( HBNet::HBondNetStructOP & i, bool symmetric, bool chainid /* true */ )
 {
 	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
 	//utility::vector1< HBondResStructCOP > const & residues( (i.residues ) );
-	std::stringstream output;
-	output << "Network " << i.id << " " << print_list_to_string( pose, residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+    std::string net_prefix("");
+    if ( i.is_native ) net_prefix = "native";
+    else if ( i.is_extended ) net_prefix = "extended";
+    std::stringstream output;
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
 
 std::string
 print_headers()
 {
-	return " # \t Residues \t Size \t score \t num_hbonds \t connectivity \t num_unsat \t";
+	return "HBNet_rank \t residues \t size \t score \t num_hbonds \t connectivity \t num_unsat \t";
 }
 
 utility::vector1< HBondResStructCOP >::const_iterator

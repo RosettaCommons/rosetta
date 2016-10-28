@@ -32,79 +32,31 @@
 #include <core/id/AtomID.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-// Unit headers
-
-//Utility Headers
-
-// C++ Headers
-
 namespace protocols {
 namespace hbnet {
 
-using namespace core;
-using namespace core::pose;
-
 std::string print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false );
-std::string print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > const & residues, bool chainid=true, bool term_w_start=false,
+
+std::string print_list_to_string( core::pose::Pose const & pose, utility::vector1< HBondResStructCOP > const & residues, bool chainid=true, bool term_w_start=false,
 	bool term_w_cycle=false, bool term_w_bb=false, bool use_pdb_numbering=true );
 
-//std::string print_network( hbond_net_struct & i, Size net_id, bool chainid=true );
 std::string print_network( hbond_net_struct & i, bool chainid=true );
 std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, hbond_net_struct const & i, bool chainid /* true */ );
-//void print_network( hbond_net_struct & i, Size net_id, std::ostream & out, bool chainid=true );
 
 std::string print_headers();
 
-utility::vector1< HBondResStructCOP >::const_iterator find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, Size resnum );
+utility::vector1< HBondResStructCOP >::const_iterator find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, core::Size resnum );
 
-//Size get_intermolecular_hbonds( hbond_net_struct & i );
-
-//Size get_total_hbonds( hbond_net_struct & i );
-
-///@brief return all of the hbonds in the network
-//utility::vector1<core::scoring::hbonds::HBondCOP> get_hbond_atom_pairs( utility::vector1< HBondResStructCOP > const & residues, core::pose::Pose & pose, bool bb_exlcusion=false, core::Real hb_e_cutoff=HB_E_CUTOFF );
-//void get_hbond_atom_pairs( hbond_net_struct & network, core::pose::Pose & pose, bool bb_exlcusion=false, core::Real hb_e_cutoff=HB_E_CUTOFF );
 void get_hbond_atom_pairs( hbond_net_struct & network, core::pose::Pose & pose, bool bb_exlcusion=false );
 
 bool hbond_exists_in_vector( utility::vector1<core::scoring::hbonds::HBondCOP> const & hbond_vec, core::scoring::hbonds::HBondCOP h2 );
 
-//utility::vector1<core::scoring::hbonds::HBondCOP> get_hbond_atom_pairs( utility::vector1< HBondResStructCOP > const & residues, core::pose::Pose & pose, core::Real hb_e_cutoff=HB_E_CUTOFF, bool bb_sc=true );
-//utility::vector1<core::scoring::hbonds::HBondCOP> get_hbond_atom_pairs( utility::vector1< HBondResStructCOP > const & residues, core::pose::Pose & pose, core::graph::GraphOP packer_neighbor_graph, core::Real hb_e_cutoff=HB_E_CUTOFF, bool bb_sc=true );
+void add_reslabels_to_pose( core::pose::Pose & pose, hbond_net_struct & i, std::string label="HBNet" );
 
-//utility::vector1<core::scoring::hbonds::HBondCOP> get_hbond_atom_pairs( utility::vector1< HBondResStructCOP > const & residues, core::pose::Pose & pose, bool bb_sc, core::scoring::hbonds::HBondDatabaseCOP & hb_database );
+core::Size get_num_protein_sc_sc_hbonds( core::pose::Pose & pose, hbond_net_struct & i );
 
-void add_reslabels_to_pose( Pose & pose, hbond_net_struct & i, std::string label="HBNet" );
-
-//ObjexxFCL::FArray2D_int get_path_dists( core::pose::Pose & pose, hbond_net_struct & i );
-
-Size get_num_protein_sc_sc_hbonds( core::pose::Pose & pose, hbond_net_struct & i );
-
-Size get_num_edges_for_res( Size const res, ObjexxFCL::FArray2D_int & path_dists );
-
-//void make_network_assymmetric( core::pose::Pose & pose, hbond_net_struct & i );
-
-//void remove_res_from_hbond_vec( hbond_net_struct & i, Size resnum );
-
-//bool is_donorH_satisfied( core::pose::Pose const & pose, core::graph::GraphOP packer_neighbor_graph, Size resnum, Size datm_ind, Size hatm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//bool is_donor_satisfied( core::pose::Pose const & pose, core::graph::GraphOP packer_neighbor_graph, Size resnum, Size datm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//bool is_acc_satisfied( core::pose::Pose const & pose, core::graph::GraphOP packer_neighbor_graph, Size resnum, Size aatm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//bool is_donorH_satisfied( core::pose::Pose const & pose, Size resnum, Size datm_ind, Size hatm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//bool is_donor_satisfied( core::pose::Pose const & pose, Size resnum, Size datm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//bool is_acc_satisfied( core::pose::Pose const & pose, Size resnum, Size aatm_ind,
-//	core::scoring::hbonds::HBondDatabaseCOP & hb_database );
-
-//void update_sasa( core::pose::Pose & pose, core::id::AtomID_Map< core::Real > & atom_sasa, Real pore_radius );
+core::Size get_num_edges_for_res( core::Size const res, ObjexxFCL::FArray2D_int & path_dists );
 
 void hbnet_symm_one_body_energies(
 	core::pose::Pose const & pose,

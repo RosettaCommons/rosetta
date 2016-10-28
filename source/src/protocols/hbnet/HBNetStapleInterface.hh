@@ -67,7 +67,11 @@ public:
 		core::Real hb_threshold=-0.5,
 		core::Size max_network_size=15,
 		std::string des_residues="STRKHYWNQDE",
-		bool only_native=false
+		bool find_native=false,
+        bool only_native=false,
+        bool keep_existing=false,
+        bool extend_existing=false,
+        bool only_extend=false
 	);
 
 	virtual std::string get_name() const { return "HBNetStapleInterface"; }
@@ -93,9 +97,10 @@ public:
 	bool interhelical_contact(utility::vector1< std::pair<core::Size,core::Size> > helix_boundaries, core::Size r1, core::Size r2, core::pose::Pose & pose);
 	core::Size get_helix_id( core::Size r1 );
 
-	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
-
-	bool network_spans_all_helices( hbond_net_struct & i );
+	//void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
+    void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< core::Size > net_ids, core::Size staple_count );
+	
+    bool network_spans_all_helices( hbond_net_struct & i );
 	core::Size num_helices_w_hbond( hbond_net_struct & i );
 	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues );
 	bool has_pH_His( core::pose::Pose & pose, hbond_net_struct & i );
@@ -112,8 +117,8 @@ private:
 	bool pH_His_;
 	bool boundary_his_must_to_hbond_pos_charge_;
 	core::Size runcount_;
-	core::Size min_staples_per_interface_;
-	core::Size max_staples_per_interface_;
+	core::Size min_networks_per_pose_;
+	core::Size max_networks_per_pose_;
 	core::Size combos_;
 	core::Size min_intermolecular_hbonds_;
 	core::Size min_helices_contacted_by_network_;

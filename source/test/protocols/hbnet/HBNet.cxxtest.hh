@@ -70,7 +70,7 @@ public:
 		TR << "Intializing mover" << std::endl;
     //std::set< Size > const start{46};
     //hbnet_mover.set_start_resnums( start );
-		hbnet_mover.set_only_native(true);
+		hbnet_mover.set_find_only_native(true);
     hbnet_mover.set_min_networks_size( 4 );
     hbnet_mover.set_max_unsat( 3 );
 
@@ -80,7 +80,7 @@ public:
 		
 		//checks
 		//check that we found netowrks and mover was applied correctly
-		TS_ASSERT( hbnet_mover.get_networks().size() > 0 );
+		TS_ASSERT( hbnet_mover.get_native_vec().size() > 0 );
 
 		TR << "End Test" << std::endl;
 	}

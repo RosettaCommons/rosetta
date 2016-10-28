@@ -52,7 +52,6 @@
         	   </SELECT>
         	   <ROSETTASCRIPTS>
         		<SCOREFXNS>
-          			<soft_symm weights="/inputs/soft_rep_trp_ala" symmetric=1/>
           			<hard_symm weights=talaris2013_cst symmetric=1>
               				<Reweight scoretype=coordinate_constraint weight=0.5 />
           			</hard_symm>
@@ -86,9 +85,6 @@
 	  			<ConstrainHBondNetwork name=hbnet_task />
 			</TASKOPERATIONS>
 			<MOVERS>
-          			<SymPackRotamersMover name=softpack_core scorefxn=soft_symm task_operations=init,all_layers,select_core,current,arochi,hbnet_task/>
-          			<SymPackRotamersMover name=softpack_boundary scorefxn=soft_symm task_operations=init,all_layers,select_boundary,current,arochi,hbnet_task/>
-				<SymPackRotamersMover name=softpack_surface scorefxn=soft_symm task_operations=init,all_layers,select_surface,current,arochi,hbnet_task/>
           			<SymPackRotamersMover name=hardpack_core scorefxn=hard_symm task_operations=init,all_layers,select_core,current,arochi,ex1_ex2,hbnet_task/>
           			<SymPackRotamersMover name=hardpack_boundary  scorefxn=hard_symm task_operations=init,all_layers,select_boundary,current,arochi,ex1_ex2,hbnet_task/>
           			<SymPackRotamersMover name=hardpack_surface scorefxn=up_ele task_operations=init,all_layers,select_surface,current,arochi,ex1,hbnet_task/>
@@ -97,10 +93,6 @@
         		<APPLY_TO_POSE>
         		</APPLY_TO_POSE>
         		<PROTOCOLS>
-          			<Add mover=softpack_core/>
-	  			<Add mover=softpack_boundary/>
-	  			<Add mover=softpack_surface/>
-          			<Add mover=hardmin_sconly/>
           			<Add mover=hardpack_core/>
           			<Add mover=hardpack_boundary/>
           			<Add mover=hardpack_surface/>

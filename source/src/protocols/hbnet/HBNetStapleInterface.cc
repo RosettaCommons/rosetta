@@ -155,8 +155,10 @@ HBNetStapleInterface::HBNetStapleInterface( ) :
 	pH_His_(0),
 	boundary_his_must_to_hbond_pos_charge_(0),
 	runcount_(0),
-	min_staples_per_interface_(1),
-	max_staples_per_interface_(1),
+	//min_staples_per_interface_(1),
+    min_networks_per_pose_(1),
+	//max_staples_per_interface_(1),
+    max_networks_per_pose_(1),
 	combos_(1),
 	min_intermolecular_hbonds_(1),
 	min_helices_contacted_by_network_(0),
@@ -175,8 +177,10 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 	pH_His_(0),
 	boundary_his_must_to_hbond_pos_charge_(0),
 	runcount_(0),
-	min_staples_per_interface_(1),
-	max_staples_per_interface_(1),
+    //min_staples_per_interface_(1),
+    min_networks_per_pose_(1),
+    //max_staples_per_interface_(1),
+    max_networks_per_pose_(1),
 	combos_(1),
 	min_intermolecular_hbonds_(1),
 	min_helices_contacted_by_network_(0),
@@ -192,9 +196,13 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	Real hb_threshold, /* -0.75 */
 	Size max_network_size, /* 15 */
 	std::string des_residues, /* "STRKHYWNQDE" */
-	bool only_native /*false*/
+	bool find_native, /*false*/
+    bool only_native, /*false*/
+    bool keep_existing, /*false*/
+    bool extend_existing, /*false*/
+    bool only_extend /*false*/
 ) :
-	HBNet( scorefxn, max_unsat, min_network_size, hb_threshold, max_network_size, des_residues, only_native ),
+	HBNet( scorefxn, max_unsat, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
 	all_helices_(0),
 	span_all_helices_(0),
 	only_symm_interfaces_(0),
@@ -203,8 +211,8 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	pH_His_(0),
 	boundary_his_must_to_hbond_pos_charge_(0),
 	runcount_(0),
-	min_staples_per_interface_(1),
-	max_staples_per_interface_(1),
+	min_networks_per_pose_(1),
+	max_networks_per_pose_(1),
 	combos_(1),
 	min_intermolecular_hbonds_(1),
 	min_helices_contacted_by_network_(0),
@@ -228,12 +236,13 @@ HBNetStapleInterface::fresh_instance() const {
 
 void
 HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &fmap, protocols::moves::Movers_map const &mmap, core::pose::Pose const & pose ){
-
 	//TR << "verbose_ = " << verbose_ << std::endl;
 	HBNet::parse_my_tag( tag, data, fmap, mmap, pose);
 
-	max_staples_per_interface_ = tag->getOption<Size>("max_staples_per_interface",1);
-	min_staples_per_interface_ = tag->getOption<Size>("min_staples_per_interface",1);
+	max_networks_per_pose_ = tag->getOption<Size>("max_staples_per_interface",1); //legacy, should be deprecated
+    max_networks_per_pose_ = tag->getOption<Size>("max_networks_per_pose",1);
+	min_networks_per_pose_ = tag->getOption<Size>("min_staples_per_interface",1); //legacy, should be deprecated
+    min_networks_per_pose_ = tag->getOption<Size>("min_networks_per_pose",1);
 	combos_ = tag->getOption<Size>("combos",1);
 	min_intermolecular_hbonds_ = tag->getOption<Size>("min_intermolecular_hbonds",1);
 	min_helices_contacted_by_network_ = tag->getOption<Size>("min_helices_contacted_by_network",0);
@@ -648,17 +657,19 @@ HBNetStapleInterface::pair_meets_starting_criteria( core::Size const res1, core:
 void
 HBNetStapleInterface::prepare_output()
 {
-	output_networks((min_staples_per_interface_ == 1)); //will add single networks to output vector
-
-	if ( max_staples_per_interface_ > 1 ) { //add multiple network sets to output vector
+	output_networks((min_networks_per_pose_ == 1)); //will add single networks to output vector
+    if ( get_extend_existing_networks() ) std::sort( get_net_vec().begin(), get_net_vec().end(), compare_net_vec() ); //sort all networks to put extended first
+	if ( max_networks_per_pose_ > 1 ) { //add multiple network sets to output vector
 		//use_jd2_out_num_=0;
 		for ( std::vector< HBondNetStructOP >::const_iterator netit = get_net_vec().begin(); netit != get_net_vec().end(); ++netit ) {
-			Size net_index1 = netit - get_net_vec().begin();
 			std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), (*netit)->residues) ) : (print_list_to_string( (*netit)->residues) ) );
-			if ( TR.visible() ) TR << "combining networks " << (net_index1+1) << ": " << network;
+			if ( TR.visible() ) TR << "combining networks " << (*netit)->id << ": " << network;
 
 			HBondNetStructOP new_network = *netit;
-			rec_add_staple(netit, new_network, 1);
+			//rec_add_staple(netit, new_network, 1);
+            std::vector< Size > net_ids(0);
+            net_ids.push_back( new_network->id );
+            rec_add_staple( netit, net_ids, 1 );
 		}
 	}
 }
@@ -698,38 +709,55 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 }
 
 void
-HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, Size staple_count )
+//HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, Size staple_count )
+HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< Size > net_ids, Size staple_count )
 {
+    //runtime_assert( get_network_by_id(new_network_id) != nullptr );
 	//numeric::xyzVector<core::Real> const & first_begin_coordinates = (*netit)->rotlist.front()->atom("CA").xyz();
 	//numeric::xyzVector<core::Real> const & first_end_coordinates = (*netit)->rotlist.back()->atom("CA").xyz();
 	Size combo_count(1);
 	std::vector< HBondNetStructOP >::const_iterator next_netit(netit);
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
-			{ //number of combinations of multiple networks to try (default = 1)
-		bool branch(false);
-		if ( !(is_sub_residues(new_network->residues, (*next_netit)->residues, branch )) && !branch && !(net_clash( *new_network, **next_netit )) ) {
-			Size net_index1 = next_netit - get_net_vec().begin();
-			std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), (*next_netit)->residues) ) : (print_list_to_string( (*next_netit)->residues) ) );
-			if ( TR.visible() ) TR << "; and " << (net_index1+1) << ": " << network;
-
-			HBondNetStructOP merged_nets( new hbond_net_struct() );
-			merge_2_networks( *new_network, **next_netit, merged_nets );
-			merged_nets->score = (new_network->score + (*next_netit)->score)/2;
-			//Size net_index2 = next_netit - network_vector_.begin();
-			HBondNetStructOP new_out_struct( new hbond_net_struct(*merged_nets) );
-
-			staple_count++;
-
-			if ( staple_count >= min_staples_per_interface_ ) {
-				get_output_net_vec().push_back( new_out_struct );
-			}
-
-			if ( staple_count < max_staples_per_interface_ ) {
-				rec_add_staple(next_netit, merged_nets, staple_count);
-				staple_count--;
-			}
-			combo_count++;
-		}
+    { //number of combinations of multiple networks to try (default = 1)
+        bool compatible( true );
+        for ( auto net_id = net_ids.begin(); net_id != net_ids.end(); ++ net_id ){
+            runtime_assert( get_network_by_id(*net_id) != nullptr );
+            bool branch(false);
+//            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
+//                && !branch && !(net_clash( *(get_network_by_id(*net_id)), **next_netit )) ) {
+            if ( is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch )
+                || branch || net_clash( *(get_network_by_id(*net_id)), **next_netit ) ) {
+                compatible = false;
+                break;
+            }
+        }
+        if (compatible ){
+            //Size net_index1 = next_netit - get_net_vec().begin();
+            std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), (*next_netit)->residues) ) : (print_list_to_string( (*next_netit)->residues) ) );
+            if ( TR.visible() ) TR << "; and " << (*next_netit)->id << ": " << network;
+            net_ids.push_back( (*next_netit)->id );
+            std::vector< Size > new_net_ids( net_ids );
+            
+            //			HBondNetStructOP merged_nets( new hbond_net_struct() );
+            //            //TODO NEED BETTER SOLUTION FOR COMBINING NETWORKS THAN MERGING INTO SINGLE NETWORK
+            //			merge_2_networks( *new_network, **next_netit, merged_nets );
+            //			merged_nets->score = (new_network->score + (*next_netit)->score)/2;
+            //			//Size net_index2 = next_netit - network_vector_.begin();
+            //			HBondNetStructOP new_out_struct( new hbond_net_struct(*merged_nets) );
+            
+            staple_count++;
+            
+            if ( staple_count >= min_networks_per_pose_ ) {
+                //get_output_net_vec().push_back( new_out_struct );
+                get_output_vector().push_back( new_net_ids );
+            }
+            
+            if ( staple_count < max_networks_per_pose_ ) {
+                rec_add_staple(next_netit, net_ids, staple_count);
+                staple_count--;
+            }
+            combo_count++;
+        }
 	}
 	TR.flush();
 }
@@ -802,9 +830,6 @@ Size
 HBNetStapleInterface::num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose )
 {
 	if ( i.hbond_vec.empty() ) {
-		//i.hbond_vec = ( native_ ) ? get_hbond_atom_pairs( i.residues, pose ) : get_hbond_atom_pairs( i.residues, pose, get_packer_graph() );
-		//i.hbond_vec = get_hbond_atom_pairs( i.residues, pose, get_packer_graph() );
-		//i.hbond_vec = get_hbond_atom_pairs( i.residues, pose );
 		get_hbond_atom_pairs( i, pose );
 		i.total_hbonds = i.hbond_vec.size();
 	}
@@ -818,9 +843,6 @@ HBNetStapleInterface::num_intermolecular_hbonds( hbond_net_struct & i, core::pos
 			num_intermol_hbs++;
 		}
 	}
-	//    if ( symmetric() && !( i.asymm_residues.empty() ) ){
-	//        num_intermol_hbs *= get_symm_info()->num_bb_clones() + 1.0;
-	//    }
 	return num_intermol_hbs;
 }
 
