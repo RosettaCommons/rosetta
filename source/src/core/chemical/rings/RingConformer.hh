@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/rings/RingConformer.hh
 /// @brief   Definitions for RingConformer.
-/// @author  Labonte <JWLabonte@jhu.edu
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 
 #ifndef INCLUDED_core_chemical_rings_RingConformer_HH

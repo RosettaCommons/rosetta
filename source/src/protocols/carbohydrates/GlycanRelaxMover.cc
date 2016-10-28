@@ -19,6 +19,7 @@
 
 
 
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/selection.hh>

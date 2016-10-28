@@ -98,14 +98,14 @@ sources = {
 	],
 
 	"environment" : [
-		 "CoMTrack",
-		 "EnvironmentJump",
-		 "EnvironmentTorsion",
-		 "ProtectedConf",
+		"CoMTrack",
+		"EnvironmentJump",
+		"EnvironmentTorsion",
+		"ProtectedConf",
 	],
 
 	"environment/claims" : [
-		 "ClaimTests",
+		"ClaimTests",
 	],
 
 	"enzdes" : [
@@ -116,6 +116,10 @@ sources = {
 		"ResfileAutoRemap",
 	],
 
+	"enzymatic_movers" : [
+		"GlycosyltransferaseMover",
+	],
+	
 	"farna" : [
 		"FARNA_OptimizerTest",
 		"RNA_DeNovoProtocolTest",

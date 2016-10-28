@@ -74,6 +74,10 @@ sources = {
 	"environment" : [
 		"FoldTreeSketch",
 	],
+	"enzymes" : [
+		"consensus_sequence_parsers",
+		"database_io",
+	],
 	"fragment" : [
 		"BBTorsionSRFD",
 		"ConstantLengthFragments",
@@ -706,6 +710,7 @@ testinputfiles = [
 	"conformation/test_in.pdb",
 	"conformation/test_simple_conformation.u",
 	"database_location.txt",
+	"enzymes/rosettase",
 	"fragment/aat049603_05.200_v1_3.gz",
 	"fragment/picking/vall/vall_test.dat",
 	"grid/1dwc_3.gridbb.gz",

@@ -73,9 +73,7 @@ read_record_definitions_from_file(
 		}
 	}
 
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Read " << record_defs.size() << " PDB record definitions from " << filename << '.' << endl;
-	}
+	TR.Debug << "Read " << record_defs.size() << " PDB record definitions from " << filename << '.' << endl;
 
 	return record_defs;
 }

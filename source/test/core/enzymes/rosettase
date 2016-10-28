@@ -1,0 +1,15 @@
+# THIS IS JUST A DUMMY FILE FOR UNIT TESTING!
+# Actual data for virtual enzymes are found in the various subdirectories of
+# database/virtual_enzymes/
+# If you edit this file, you must also edit core/enzymes/database_io.cxxtest.hh.
+
+# Consensus  Sequence  Residue of    Atom
+# Sequence   Type      CS to Modify  To Modify  Efficiency
+  TARGET     AA        4             CA         1.00        # Rosettase perfectly appends a glycine in the target sequence with a branch.
+
+# Co-substrates
+ARROW
+BULLET
+BOLT
+KNIFE
+PROTONTORPEDO

@@ -26,11 +26,10 @@
 #include <core/id/types.hh>
 #include <core/id/TorsionID.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/carbohydrates/util.hh>
-
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
 

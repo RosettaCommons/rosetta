@@ -114,6 +114,10 @@ sources = {
 		"util",
 		"VoxelSpacingRefinementMover",
 	],
+	"protocols/enzymatic_movers": [
+		"EnzymaticMover",
+		"GlycosyltransferaseMover",
+	],
 	"protocols/fibril": [
 		"fibril_util",
 		"SetupForFibrilMover",

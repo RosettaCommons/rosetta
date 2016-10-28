@@ -568,6 +568,7 @@ sources = {
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
 		"dock_glycans",
+		"glycosyltransferase",
 		"load_crazy_sugars",
 		"test_glycan_linkages",
 		"test_ResidueProperties",

@@ -10,6 +10,11 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"core/enzymes": [
+		"consensus_sequence_parsers",
+		"database_io",
+		"EnzymeManager",
+	],
 	"core/fragment": [
 		"BBTorsionAndAnglesSRFD",
 		"BBTorsionSRFD",

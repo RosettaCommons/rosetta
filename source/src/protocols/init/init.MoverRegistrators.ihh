@@ -14,14 +14,27 @@
 ///         This is for MoverRegistrators ONLY.
 /// @author Steven Lewis smlewi@gmail.com
 
+
+// KEEP THINGS IN ALPHABETICAL ORDER!
+
+
 namespace protocols {
 
 using protocols::moves::MoverRegistrator;
 
+// A //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< aa_composition::AddCompositionConstraintMoverCreator > reg_AddCompositionConstraintMoverCreator;
 static MoverRegistrator< aa_composition::ClearCompositionConstraintsMoverCreator > reg_ClearCompositionConstraintsMoverCreator;
 
 static MoverRegistrator< abinitio::DomainAssemblyCreator > reg_DomainAssemblyCreator;
+
+static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;
+static MoverRegistrator< abinitio::abscript::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
+static MoverRegistrator< abinitio::abscript::FragmentCMCreator > reg_FragmentCMCreator;
+static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
+static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_AbscriptLoopCloserCMCreator;
+static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
+static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
 
 static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
 static MoverRegistrator< analysis::LoopAnalyzerMoverCreator > reg_LoopAnalyzerMoverCreator;
@@ -36,10 +49,12 @@ static MoverRegistrator< antibody::constraints::ParatopeSiteConstraintMoverCreat
 static MoverRegistrator< antibody::design::AntibodyDesignMoverCreator > reg_AntibodyDesignMoverCreator;
 static MoverRegistrator< antibody::design::AntibodyDesignProtocolCreator > reg_AntibodyDesignProtocolCreator;
 
+// B //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< backrub::BackrubMoverCreator > reg_BackrubMoverCreator;
 static MoverRegistrator< backrub::BackrubProtocolCreator > reg_BackrubProtocolCreator;
 static MoverRegistrator< backrub::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;
 
+// C //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< canonical_sampling::MetricRecorderCreator > reg_MetricRecorderCreator;
 static MoverRegistrator< canonical_sampling::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
 static MoverRegistrator< canonical_sampling::ParallelTemperingCreator > reg_ParallelTemperingCreator;
@@ -56,6 +71,10 @@ static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_Linka
 static MoverRegistrator< carbohydrates::GlycanRelaxMoverCreator > reg_GlycanRelaxMoverCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
 
+static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
+
+static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
+
 static MoverRegistrator< cryst::ReportGradientsMoverCreator > reg_ReportGradientsMoverCreator;
 static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;
 static MoverRegistrator< cryst::RecomputeDensityMapMoverCreator > reg_RecomputeDensityMapMoverCreator;
@@ -69,15 +88,6 @@ static MoverRegistrator< cryst::DockLatticeMoverCreator > reg_DockLatticeMoverCr
 static MoverRegistrator< cryst::MakeLatticeMoverCreator > reg_MakeLatticeMoverCreator;
 static MoverRegistrator< cryst::MakeLayerMoverCreator > reg_MakeLayerMoverCreator;
 
-static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
-static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
-static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianSamplerCreator;
-//static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
-//static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
-//static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
-static MoverRegistrator< hybridization::BackboneTorsionSamplerCreator > reg_BackboneTorsionSamplerCreator;
-static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg_BackboneTorsionPerturbationCreator;
-
 static MoverRegistrator< cyclic_peptide::CreateAngleConstraintCreator > reg_CreateAngleConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_CreateDistanceConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
@@ -87,10 +97,7 @@ static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideSt
 static MoverRegistrator< cyclic_peptide::TryDisulfPermutationsCreator > reg_TryDisulfPermutationsCreator;
 static MoverRegistrator< cyclic_peptide::FlipChiralityMoverCreator > reg_FlipChiralityMoverCreator;
 
-static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
-
-//static MoverRegistrator< denovo_design::connection::StapleChainsCreator > reg_StapleChainsCreator;
-//static MoverRegistrator< denovo_design::connection::ConnectTerminiWithDisulfideCreator > reg_ConnectTerminiWithDisulfideCreator;
+// D //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
 static MoverRegistrator< denovo_design::movers::AddSegmentDataMoverCreator > reg_AddSegmentDataMoverCreator;
 static MoverRegistrator< denovo_design::movers::AlignResiduesMoverCreator > reg_AlignResiduesMoverCreator;
@@ -117,31 +124,19 @@ static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreato
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_DockingInitialPerturbationCreator;
 
-static MoverRegistrator< generalized_kinematic_closure::GeneralizedKICCreator > reg_GeneralizedKICCreator;
+static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
+static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
 
-static MoverRegistrator< helical_bundle::BackboneGridSamplerCreator > reg_BackboneGridSamplerCreator;
-static MoverRegistrator< helical_bundle::BundleGridSamplerCreator > reg_BundleGridSamplerCreator;
-static MoverRegistrator< helical_bundle::FitSimpleHelixCreator > reg_FitSimpleHelixCreator;
-static MoverRegistrator< helical_bundle::MakeBundleCreator > reg_MakeBundleCreator;
-static MoverRegistrator< helical_bundle::MakeBundleHelixCreator > reg_MakeBundleHelixCreator;
-static MoverRegistrator< helical_bundle::PerturbBundleCreator > reg_PerturbBundleCreator;
-static MoverRegistrator< helical_bundle::PerturbBundleHelixCreator > reg_PerturbBundleHelixCreator;
-
-static MoverRegistrator< ncbb::SecStructMinimizeMoverCreator > reg_SecStructMinimizeMoverCreator;
-static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
-static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
-static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
-
-static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
-static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;
-static MoverRegistrator< symmetric_docking::SymFoldandDockSlideTrialMoverCreator > SymFoldandDockSlideTrialMoverCreator;
-static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > SymFoldandDockRbTrialMoverCreator;
-
+// E //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
 static MoverRegistrator< electron_density::BfactorFittingMoverCreator > reg_BfactorFittingMoverCreator;
 static MoverRegistrator< electron_density::ScaleMapIntensitiesCreator > reg_ScaleMapIntensitiesCreator;
 static MoverRegistrator< electron_density::VoxelSpacingRefinementMoverCreator > reg_VoxelSpacingRefinementCreator;
 static MoverRegistrator< electron_density::ReportFSCCreator > reg_ReportFSCCreator;
+
+static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
+static MoverRegistrator< environment::CoMTrackerCMCreator > reg_CoMTrackerCMCreator;
+static MoverRegistrator< environment::ScriptCMCreator > reg_ScriptCMCreator;
 
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;
 static MoverRegistrator< enzdes::BackboneSamplerCreator > reg_BackboneSamplerCreator;
@@ -150,8 +145,9 @@ static MoverRegistrator< enzdes::PackRotamersMoverPartGreedyCreator > reg_PackRo
 static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPerturbMoverCreator;
 static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzdesHeaderMoverCreator;
 
-static MoverRegistrator< hbnet::HBNetCreator > reg_HBNetCreator;
-static MoverRegistrator< hbnet::HBNetStapleInterfaceCreator > reg_HBNetStapleInterfaceCreator;
+static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg_GlycosyltransferaseMoverCreator;
+
+// F //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< farna::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
 static MoverRegistrator< farna::thermal_sampling::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< farna::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
@@ -161,8 +157,8 @@ static MoverRegistrator< features::TrajectoryReportToDBCreator > reg_TrajectoryR
 
 static MoverRegistrator< fldsgn::BluePrintBDRCreator > reg_BluePrintBDRCreator;
 static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermutationCreator;
-static MoverRegistrator< protocols::fldsgn::MatchResiduesMoverCreator > reg_MatchResiduesMoverCreator;
-static MoverRegistrator< protocols::fldsgn::SheetRemodelConstraintGeneratorCreator > reg_SheetRemodelConstraintGeneratorCreator;
+static MoverRegistrator< fldsgn::MatchResiduesMoverCreator > reg_MatchResiduesMoverCreator;
+static MoverRegistrator< fldsgn::SheetRemodelConstraintGeneratorCreator > reg_SheetRemodelConstraintGeneratorCreator;
 
 static MoverRegistrator< fldsgn::potentials::SetAACompositionPotentialCreator > reg_AACompositionPotentialCreator;
 static MoverRegistrator< fldsgn::potentials::SetSecStructEnergiesCreator > reg_SetSecStructEnergiesCreator;
@@ -180,6 +176,9 @@ static MoverRegistrator< forge::constraints::RemoveRemodelCstsCreator > reg_Remo
 static MoverRegistrator< forge::remodel::ResidueVicinityCstGeneratorCreator > reg_ResidueVicinityCstGeneratorCreator;
 static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverCreator;
 
+// G //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< generalized_kinematic_closure::GeneralizedKICCreator > reg_GeneralizedKICCreator;
+
 static MoverRegistrator< grafting::AnchoredGraftMoverCreator > reg_AnchoredGraftMoverCreator;
 static MoverRegistrator< grafting::CCDEndsGraftMoverCreator > reg_CCDEndsGraftMoverCreator;
 static MoverRegistrator< grafting::simple_movers::DeleteRegionMoverCreator > reg_DeleteRegionMoverCreator;
@@ -187,12 +186,35 @@ static MoverRegistrator< grafting::simple_movers::InsertPoseIntoPoseMoverCreator
 static MoverRegistrator< grafting::simple_movers::ReplaceRegionMoverCreator > reg_ReplaceRegionMoverCreator;
 static MoverRegistrator< grafting::simple_movers::KeepRegionMoverCreator > reg_KeepRegionMoverCreator;
 
-static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;
+// H //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< hbnet::HBNetCreator > reg_HBNetCreator;
+static MoverRegistrator< hbnet::HBNetStapleInterfaceCreator > reg_HBNetStapleInterfaceCreator;
+
+static MoverRegistrator< helical_bundle::BackboneGridSamplerCreator > reg_BackboneGridSamplerCreator;
+static MoverRegistrator< helical_bundle::BundleGridSamplerCreator > reg_BundleGridSamplerCreator;
+static MoverRegistrator< helical_bundle::FitSimpleHelixCreator > reg_FitSimpleHelixCreator;
+static MoverRegistrator< helical_bundle::MakeBundleCreator > reg_MakeBundleCreator;
+static MoverRegistrator< helical_bundle::MakeBundleHelixCreator > reg_MakeBundleHelixCreator;
+static MoverRegistrator< helical_bundle::PerturbBundleCreator > reg_PerturbBundleCreator;
+static MoverRegistrator< helical_bundle::PerturbBundleHelixCreator > reg_PerturbBundleHelixCreator;
 
 static MoverRegistrator< hotspot_hashing::movers::PlaceSurfaceProbeCreator> reg_PlaceSurfaceProbeCreator;
 
+static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
+static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianSamplerCreator;
+//static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
+//static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
+//static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
+static MoverRegistrator< hybridization::BackboneTorsionSamplerCreator > reg_BackboneTorsionSamplerCreator;
+static MoverRegistrator< hybridization::BackboneTorsionPerturbationCreator > reg_BackboneTorsionPerturbationCreator;
+
+// I //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< idealize::IdealizeMoverCreator > reg_IdealizeMoverCreator;
+
+// K //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< kinematic_closure::KicMoverCreator > reg_KicMoverCreator;
 
+// L //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;
 static MoverRegistrator< ligand_docking::CompoundTranslateCreator > reg_CompoundTranslateCreator;
 static MoverRegistrator< ligand_docking::ComputeLigandRDFCreator >  reg_ComputeLigandRDFCreator;
@@ -243,6 +265,7 @@ static MoverRegistrator< loops::loop_mover::refine::ShearMinCCDTrialCreator > re
 static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > reg_SmallMinCCDTrial;
 static MoverRegistrator< loops::loop_mover::LoopCMCreator > reg_LoopCM;
 
+// M //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 
 static MoverRegistrator< matdes::ExtractSubposeMoverCreator > reg_ExtractSubposeMoverCreator;
@@ -251,8 +274,21 @@ static MoverRegistrator< matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
 static MoverRegistrator< matdes::SchemePlaceMotifsMoverCreator > reg_SchemePlaceMotifsMoverCreator;
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
-static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
-static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
+
+static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
+static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
+static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
+static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
+static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
+static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
+
+static MoverRegistrator< membrane::benchmark::SampleTiltAnglesCreator > reg_SampleTiltAnglesCreator;
+static MoverRegistrator< membrane::benchmark::MakeCanonicalHelixCreator > reg_MakeCanonicalHelixCreator;
+
+static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
+
+static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
+static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
@@ -266,17 +302,18 @@ static MoverRegistrator< moves::PyMolMoverCreator > reg_PyMolMoverCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 static MoverRegistrator< moves::FilterReportAsPoseExtraScoresMoverCreator > reg_FilterReportAsPoseExtraScoresMoverCreator;
 
-static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
-static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
-static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
-static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
-static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleThreadingMoverCreator;
+// N //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< ncbb::SecStructMinimizeMoverCreator > reg_SecStructMinimizeMoverCreator;
+static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
+static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
+static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 
 static MoverRegistrator< normalmode::NormalModeRelaxMoverCreator > reg_NormalModeRelaxMoverCreator;
 static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalModeMinimizerCreator;
 
+// P //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
 static MoverRegistrator< pose_length_moves::AnalyzeLoopModelingCreator > reg_AnalyzeLoopModelingCreator;
@@ -293,7 +330,6 @@ static MoverRegistrator< protein_interface_design::movers::BuildAlaPoseCreator >
 static MoverRegistrator< protein_interface_design::movers::DesignMinimizeHbondsCreator > reg_DesignMinimizeHbondsCreator;
 static MoverRegistrator< protein_interface_design::movers::DisulfideMoverCreator > reg_DisulfideMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::DockAndRetrieveSidechainsCreator > reg_DockAndRetrieveSidechainsCreator;
-static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< protein_interface_design::movers::FavorNativeResiduePreCycleCreator > reg_FavorNativeResiduePreCycleCreator;
 static MoverRegistrator< protein_interface_design::movers::FavorNonNativeResiduePreCycleCreator > reg_FavorNonNativeResiduePreCycleCreator;
 static MoverRegistrator< protein_interface_design::movers::HotspotDisjointedFoldTreeMoverCreator > reg_HotsotDisjointedFoldTreeMoverCreator;
@@ -321,7 +357,6 @@ static MoverRegistrator< protein_interface_design::movers::SaveAndRetrieveSidech
 static MoverRegistrator< protein_interface_design::movers::SetAtomTreeCreator > reg_SetAtomTreeCreator;
 static MoverRegistrator< protein_interface_design::movers::SetTemperatureFactorCreator > reg_SetTemperatureFactorCreator;
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsMoverCreator > reg_SetupHotspotConstraintsMoverCreator;
-
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsLoopsMoverCreator > reg_SetupHotspotConstraintsLoopsMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
 //static MoverRegistrator< protein_interface_design::movers::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
@@ -333,9 +368,11 @@ static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBC
 static MoverRegistrator< protein_interface_design::movers::DockWithHotspotMoverCreator > reg_DockWithHotspotMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCreator> reg_TopologyBrokerMoverCreator;
 
+// Q //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
 static MoverRegistrator< qsar::scoring_grid::GridInitMoverCreator >  reg_GridInitMoverCreator;
 
+// R //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;
 static MoverRegistrator< rbsegment_relax::OptimizeThreadingMoverCreator > reg_OptimizeThreadingMoverCreator;
 static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_IdealizeHelicesMoverCreator;
@@ -343,6 +380,8 @@ static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_Idea
 static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
+
+static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreator;
 
 static MoverRegistrator< residue_selectors::StoreResidueSubsetMoverCreator> reg_StoreResidueSubsetMoverCreator;
 
@@ -360,6 +399,7 @@ static MoverRegistrator< rosetta_scripts::MultipleOutputWrapperCreator > Multipl
 
 static MoverRegistrator< rotamer_recovery::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
 
+// S //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< seeded_abinitio::CAcstGeneratorCreator > CAcstGeneratorCreator;
 static MoverRegistrator< seeded_abinitio::CloseFoldCreator > CloseFoldCreator;
 static MoverRegistrator< seeded_abinitio::CoordinateCstCreator > CoordinateCstCreator;
@@ -370,10 +410,21 @@ static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMover
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybridizerCreator;
 
-static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
+static MoverRegistrator< sewing::AppendAssemblyMoverCreator > reg_AppendAssemblyMoverCreator;
+static MoverRegistrator< sewing::GivenPathAssemblyMoverCreator > reg_GivenPathAssemblyMoverCreator;
+static MoverRegistrator< sewing::GreedyAssemblyMoverCreator > reg_GreedyAssemblyMoverCreator;
+static MoverRegistrator< sewing::MonteCarloAssemblyMoverCreator > reg_MonteCarloAssemblyMoverCreator;
+static MoverRegistrator< sewing::AssemblyConstraintsMoverCreator > reg_AssemblyConstraintsMoverCreator;
+static MoverRegistrator< sewing::AddStartnodeFragmentsCreator > reg_AddStartnodeFragmentsCreator;
+static MoverRegistrator< sewing::RepeatAssemblyMoverCreator > reg_RepeatAssemblyMoverCreator;
+static MoverRegistrator< sewing::EnumerateAssemblyMoverCreator > reg_EnumerateAssemblyMoverCreator;
+
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
+static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
+static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;
+static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
 static MoverRegistrator< simple_moves::BoltzmannRotamerMoverCreator > reg_BoltzmannRotamerMoverCreator;
 static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
@@ -386,6 +437,7 @@ static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainM
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;
 static MoverRegistrator< simple_moves::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_DisulfideInsertionMoverCreator;
+static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
@@ -403,35 +455,40 @@ static MoverRegistrator< simple_moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< simple_moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< simple_moves::ModifyVariantTypeMoverCreator > reg_ModifyVariantTypeMoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
+static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
 static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< simple_moves::MSDMoverCreator > reg_MSDMoverCreator;
 static MoverRegistrator< simple_moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< simple_moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
+static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
+static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
 static MoverRegistrator< simple_moves::PSSM2BfactorMoverCreator > reg_PSSM2BfactorMoverCreator;
+static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
+static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;
 static MoverRegistrator< simple_moves::RepeatPropagationMoverCreator > reg_RepeatPropagationMoverCreator;
+static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
+static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
 static MoverRegistrator< simple_moves::ResetFoldTreeCreator > ResetFoldTreeCreator;
 static MoverRegistrator< simple_moves::ResidueTypeConstraintMoverCreator > ResidueTypeConstraintMoverCreator;
-static MoverRegistrator< simple_moves::ReportEffectivePKACreator > ReportEffectivePKACreator;
+static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< simple_moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
-static MoverRegistrator< simple_moves::RandomTorsionMoverCreator > reg_RandomTorsionMoverCreator;
-static MoverRegistrator< simple_moves::RandomOmegaFlipMoverCreator > reg_RandomOmegaFlipMoverCreator;
 static MoverRegistrator< simple_moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
 static MoverRegistrator< simple_moves::SetTorsionCreator > reg_SetTorsionCreator;
 static MoverRegistrator< simple_moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< simple_moves::ShortBackrubMoverCreator > reg_ShortBackrubMoverCreator;
-static MoverRegistrator< simple_moves::StorePoseSnapshotCreator > reg_StorePoseSnapshotCreator;
+static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleThreadingMoverCreator;
 static MoverRegistrator< simple_moves::SmallMoverCreator > reg_SmallMoverCreator;
+static MoverRegistrator< simple_moves::StorePoseSnapshotCreator > reg_StorePoseSnapshotCreator;
 static MoverRegistrator< simple_moves::StructProfileMoverCreator > reg_StructProfileMoverCreator;
 static MoverRegistrator< simple_moves::SuperimposeMoverCreator > reg_SuperimposeMoverCreator;
-static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
-static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
 static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
+static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
 
 static MoverRegistrator< simple_moves::bin_transitions::InitializeByBinsCreator > reg_InitializeByBinsCreator;
 static MoverRegistrator< simple_moves::bin_transitions::PerturbByBinsCreator > reg_PerturbByBinsCreator;
@@ -455,51 +512,16 @@ static MoverRegistrator< simple_moves::symmetry::TaskAwareSymMinMoverCreator > r
 
 static MoverRegistrator< stepwise::modeler::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;
 
-static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
-static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
-static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
-
-static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
-static MoverRegistrator< environment::CoMTrackerCMCreator > reg_CoMTrackerCMCreator;
-static MoverRegistrator< environment::ScriptCMCreator > reg_ScriptCMCreator;
-
-static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;
-static MoverRegistrator< abinitio::abscript::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
-static MoverRegistrator< abinitio::abscript::FragmentCMCreator > reg_FragmentCMCreator;
-static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
-static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_AbscriptLoopCloserCMCreator;
-static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
-static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
-
-static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
-static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
-static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
-static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
-static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
-
-static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
-
-static MoverRegistrator< membrane::benchmark::SampleTiltAnglesCreator > reg_SampleTiltAnglesCreator;
-static MoverRegistrator< membrane::benchmark::MakeCanonicalHelixCreator > reg_MakeCanonicalHelixCreator;
-
-static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
-static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
-
-static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
-static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
-
-static protocols::moves::MoverRegistrator< sewing::AppendAssemblyMoverCreator > reg_AppendAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::GivenPathAssemblyMoverCreator > reg_GivenPathAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::GreedyAssemblyMoverCreator > reg_GreedyAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::MonteCarloAssemblyMoverCreator > reg_MonteCarloAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::AssemblyConstraintsMoverCreator > reg_AssemblyConstraintsMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::AddStartnodeFragmentsCreator > reg_AddStartnodeFragmentsCreator;
-static protocols::moves::MoverRegistrator< sewing::RepeatAssemblyMoverCreator > reg_RepeatAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::EnumerateAssemblyMoverCreator > reg_EnumerateAssemblyMoverCreator;
+static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockSlideTrialMoverCreator > SymFoldandDockSlideTrialMoverCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > SymFoldandDockRbTrialMoverCreator;
 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
-static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
-static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreator;
+// T //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< toolbox::task_operations::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
+static MoverRegistrator< toolbox::task_operations::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
+static MoverRegistrator< toolbox::task_operations::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 
 } //namespace protocols

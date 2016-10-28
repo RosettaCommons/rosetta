@@ -40,7 +40,7 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
-/// @details  This class is a singleton and manages CarbohydratesInfo data that should only be read from the database
+/// @details  This class is a singleton and manages CarbohydrateInfo data that should only be read from the database
 /// one time and shared among all instances of CarbohydrateInfo.
 class CarbohydrateInfoManager : public utility::SingletonBase< CarbohydrateInfoManager > {
 public:  // Declare friends ///////////////////////////////////////////////////
@@ -153,8 +153,8 @@ private:  // Private data /////////////////////////////////////////////////////
 
 	// Glycan Relax
 	std::map< std::pair< std::string, std::string >, utility::vector1< LinkageConformerData > >
-		linkage_conformers_map_;
-};
+			linkage_conformers_map_;
+};  // class CarbohydrateInfoManager
 
 
 // Helper function ////////////////////////////////////////////////////////////

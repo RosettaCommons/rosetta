@@ -1,0 +1,10 @@
+-include_sugars
+-write_pdb_link_records
+-mute all
+-unmute core.enzymes
+-unmute protocols.enzymatic_movers
+-s input/NPC1_luminal_domain_C.pdb
+-overwrite
+-nstruct 10
+-out:prefix output/
+-out:pdb
