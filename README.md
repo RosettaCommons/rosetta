@@ -12,3 +12,4 @@ Rosetta/main contains the Rosetta source code, database, unit tests and integrat
 $ cd Rosetta/main/source
 $ ./scons.py -j<NumOfJobs> mode=[debug/release] [bin]
 ```
+
