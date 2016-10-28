@@ -53,8 +53,6 @@ if ($#ARGV < 0) {
 	print STDERR "    -i <char>   : the chain ID of a chain in -a's point symmetry group\n";
 	print STDERR "    -t <real>   : [default 4] the number of subunits to generate along the -b direction\n";
 	print STDERR "    -o          : [default false] make a fold-and-dock compatible symmdef file\n";
-	print STDERR "    -c <char>   : (EXPERIMENTAL) the chain ID of the symm chain perpindicular to the -b chain (simple 2D symmetry)\n";
-	print STDERR "    -u <real>   : (EXPERIMENTAL) [default 1] the number of repeats to generate along the -c direction\n";
 	print STDERR "    -e          : [default false] allow rigid body minimization of complete system\n";
 	print STDERR "\n";
 	print STDERR "PSEUDO-specific options: \n";
@@ -80,8 +78,6 @@ my @cell_offset;
 my $spacegp_new;
 my $modestring = "NCS";
 my $nturns = 4;
-my $perp_chain = '';
-my $nperp_repeats = 1;
 my $quietMode = 0;
 my $restrictCrystTrans = 0;
 
@@ -129,22 +125,14 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 	}
 	elsif ($suboptions[$i] eq "-s " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$spacegp_new = $suboptions[++$i];
-	}
-	# helix/ncs
-	elsif ($suboptions[$i] eq "-t " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
+	} elsif ($suboptions[$i] eq "-t " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$nturns = ( $suboptions[++$i] );
-	}
-	elsif ($suboptions[$i] eq "-u " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
-		$nperp_repeats = ( $suboptions[++$i] );
 	} elsif ($suboptions[$i] eq "-a " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$primary_chain = $suboptions[++$i];
 		$primary_chain =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] eq "-b " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$helical_chain = $suboptions[++$i];
 		$helical_chain =~ s/\s*(\S+)\s*/$1/;
-	} elsif ($suboptions[$i] eq "-c " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
-		$perp_chain = $suboptions[++$i];
-		$perp_chain =~ s/\s*(\S+)\s*/$1/;
 	} elsif ($suboptions[$i] eq "-i " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		@secondary_chains = split /[, ]/,$suboptions[++$i];
 	} elsif ($suboptions[$i] eq "-d " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
@@ -1319,30 +1307,11 @@ if ($helix_mode == 1) {
 			$X=0; $Y=0; $Z=1;
 		}
 
-		# if we have 2D lattice symmetry only allow 1 or 2 subunits per turn
-		if ( $perp_chain ne '' ) {
-			my $omega = acos($W);
-			$subunits_per_turn = int(PI/$omega + 0.5);
-
-			if ($subunits_per_turn == 1) {
-				($X,$Y,$Z,$W) = ($del_COM->[0],$del_COM->[1],$del_COM->[2],1);
-				$R = [ [1,0,0] , [0,1,0] , [0,0,1] ];
-			} elsif ($subunits_per_turn == 2) {
-				$W = cos( PI/$subunits_per_turn );
-				my $newW = -$Wmult * $W;
-				my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
-				$R = quat2R( $X*$S , $Y*$S, $Z*$S, $newW );
-			} else {
-				print STDERR "If lattice symm op defined, helix must have 1 or 2 subunits per turn (found ".$subunits_per_turn.")\n";
-			}
-		} else {
-			my $omega = acos($W);
-			$subunits_per_turn = (PI/$omega);
-			my $newW = -$Wmult * $W;
-			my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
-			$R = quat2R( $X*$S , $Y*$S, $Z*$S, $newW );
-		}
-
+		my $omega = acos($W);
+		$subunits_per_turn = (PI/$omega);
+		my $newW = -$Wmult * $W;
+		my $S = sqrt ( (1-$newW*$newW)/($X*$X+$Y*$Y+$Z*$Z) );
+		$R = quat2R( $X*$S , $Y*$S, $Z*$S, $newW );
 	}
 
 	# project $del_COM to helical axis
@@ -1397,44 +1366,6 @@ if ($helix_mode == 1) {
 	print STDERR "   helix_center = ".$helix_center->[0]." , ".$helix_center->[1]." , ".$helix_center->[2]."\n";
 	print STDERR "   helix_axis = ".$helical_axis->[0]." , ".$helical_axis->[1]." , ".$helical_axis->[2]."\n";
 
-	###############################
-	## expand perpendicular (2D lattice) symmetry
-	## CA check
-	my $del_COM_perp = [0,0,0];
-	if ( $perp_chain ne '' ) {
-		if (scalar( @{ $chains{ $primary_chain } } ) != scalar( @{ $chains{ $perp_chain } } ) ) {
-			print STDERR "ERROR! chains '$primary_chain' and '$helical_chain' have different residue counts! (".
-						 scalar( @{ $chains{ $primary_chain } } )." vs ".scalar( @{ $chains{ $perp_chain } } ).")\n";
-			die "Chain length mismatch!\n";
-		}
-
-		# get superposition
-		my ($R_perp,$rmsd_perp, $COM_i_perp, $COM_ij_perp) = rms_align( $chains{ $primary_chain } , $chains{ $perp_chain } );
-		$del_COM_perp = vsub ($COM_i_perp, $COM_0);
-
-		# this must always be a translation only
-		if ( !is_identity( $R_perp , 0.01 ) ) {
-			print STDERR "Trasformation to chain $perp_chain must be a translation only!\n";
-			print STDERR "   >> R = [".$R->[0][0].",".$R->[0][1].",".$R->[0][2]." ; ".
-									   $R->[1][0].",".$R->[1][1].",".$R->[1][2]." ; ".
-									   $R->[2][0].",".$R->[2][1].",".$R->[2][2]." ]\n";
-			exit(1);
-		}
-
-		# project $del_COM_perp normal to $helical_axis (already normalized)
-		my $del_COM_perp_fix = vsub( $del_COM_perp , vscale(dot($del_COM_perp,$helical_axis),$helical_axis) );
-
-		#print STDERR "W_orig = $Worig\nW = $W\nomega = $omega\n";
-		print STDERR "Found perpendicular symmetry at chain ".$perp_chain."\n";
-		print STDERR "   shift    = ".vnorm($del_COM_perp_fix)."\n";
-		print STDERR "   [error1] = ".vnorm(vsub($del_COM_perp,$del_COM_perp_fix))."\n";
-
-		$del_COM_perp = $del_COM_perp_fix;
-	} else {
-		$nperp_repeats = 0;
-	}
-
-	##
 	# next expand point symmetry (Cn point group as each helical subunit)
 	# TO DO: nonpolar helical symmetry! (that is, Dn point group as each helical subunit)
 	#
@@ -1481,14 +1412,18 @@ if ($helix_mode == 1) {
 		}
 		print STDERR "Found ".$sym_order_ncs."-fold (".(PI/$omega_ncs).") symmetric complex at chain ".$ncs_chain."\n";
 
-		# if we have a 2D lattice only allow C1/C2 symmetry
-		if ( $perp_chain ne '' && $sym_order_ncs > 2) {
-			print STDERR "If lattice symm op defined, pt symm must have 1 or 2 subunits (found ".$sym_order_ncs.")\n";
-			exit (1);
-		}
 
 		# make perfectly symmetrical version of superposition
 		# adjust rotation axis to be parallel to helical axis
+		#  - if omega is close to 0, defer to the  point group center/axis
+		#  - otherwise, defer to the helix center/axis
+		if ($omega < 0.1 || $omega > PI-0.1) {
+			$helical_axis = [$X_ncs,$Y_ncs,$Z_ncs];
+			normalize( $helical_axis );
+			print STDERR "NEW helical_axis = ".$helical_axis->[0]." , ".$helical_axis->[1]." , ".$helical_axis->[2]."\n";
+			$del_COM_inplane    = vsub( $del_COM , vscale(dot($del_COM,$helical_axis),$helical_axis) );
+			$del_COM_alonghelix = vsub( $del_COM , $del_COM_inplane );
+		}
 		my $newW = -$Wmult_ncs *cos( PI/$sym_order_ncs );
 		my $newS = sqrt ( (1-$newW*$newW) );
 		my $newQ = [ $helical_axis->[0]*$newS , $helical_axis->[1]*$newS, $helical_axis->[2]*$newS, $newW];
@@ -1520,12 +1455,18 @@ if ($helix_mode == 1) {
 		$CoM_cplx = vscale (1/$sym_order_ncs, $CoM_cplx) ;
 		$CoM_cplx = vadd ($COM_0, $CoM_cplx) ;
 
-		# transform pt group center to helical Center
-		$global_T = vsub ( $helix_center, $CoM_cplx );
-		print STDERR "com_complex  = ".$CoM_cplx->[0].",".$CoM_cplx->[1].",".$CoM_cplx->[2]."\n";
-		print STDERR "global_T     = ".$global_T->[0].",".$global_T->[1].",".$global_T->[2]."\n";
-		my $COM_0 = vadd( $global_T, $COM_0);
-		print STDERR "COM_0_new    = ".$COM_0->[0].",".$COM_0->[1].",".$COM_0->[2]."\n";
+		if ($omega < 0.1 || $omega > PI-0.1) {
+			$helix_center = $CoM_cplx;
+			print STDERR "NEW helix_center = ".$helix_center->[0]." , ".$helix_center->[1]." , ".$helix_center->[2]."\n";
+			my $new_helix_R = vnorm( vsub( $COM_0, $helix_center ) );
+			$omega = ($helix_R / $new_helix_R) * $omega;
+			print STDERR "NEW omega = ".$omega."\n";
+		} else {
+			$global_T = vsub ( $helix_center, $CoM_cplx );
+			print STDERR "T_global     = ".$global_T->[0].",".$global_T->[1].",".$global_T->[2]."\n";
+			my $COM_0 = vadd( $global_T, $COM_0);
+			print STDERR "NEW COM_0    = ".$COM_0->[0].",".$COM_0->[1].",".$COM_0->[2]."\n";
+		}
 	}
 
 	#print STDERR "Radius (to CoM) = ".vnorm( vsub( $helix_center, vadd( $global_T, $COM_0) ) )."\n";
@@ -1541,75 +1482,69 @@ if ($helix_mode == 1) {
 	my $Rs = {};
 	my $Ts = {};
 
-	my $T_sec;
 	my $R_helix;
 	my $T_helix;
 	my $Rinv_helix;
 	my $Tinv_helix;
 
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		$T_sec = vscale( $sec_shift , $del_COM_perp );
+	#transform to helical frame (+ direction)
+	$R_helix = [[1,0,0],[0,1,0],[0,0,1]];
+	$T_helix = [0,0,0];
 
-		#transform to helical frame (+ direction)
-		$R_helix = [[1,0,0],[0,1,0],[0,0,1]];
-		$T_helix = [0,0,0];
+	#transfrom to helical frame (- direction)
+	$Rinv_helix = [[1,0,0],[0,1,0],[0,0,1]];
+	$Tinv_helix = [0,0,0];
 
-		#transfrom to helical frame (- direction)
-		$Rinv_helix = [[1,0,0],[0,1,0],[0,0,1]];
-		$Tinv_helix = [0,0,0];
+	###
+	my $Rinv = minv($R);
+	my $T = $del_COM_inplane;    # points from n->(n+1)
+	my $Tinv = vscale( -1, mapply( $Rinv, $T ));  # points from n->(n-1)
 
-		###
-		my $Rinv = minv($R);
-		my $T = $del_COM_inplane;    # points from n->(n+1)
-		my $Tinv = vscale( -1, mapply( $Rinv, $T ));  # points from n->(n-1)
+	print STDERR "Generating [-".$nsubunits_to_gen." to +".$nsubunits_to_gen."]\n";
+	foreach my $subunit (0 .. $nsubunits_to_gen) {
+		# gen in + direction
+		my $R_i = [[1,0,0],[0,1,0],[0,0,1]];
+		my $T_i = [0,0,0];
+		foreach my $i (0..$sym_order_ncs-1) {
+			# rotate about helical axis then translate to the new CoM
+			my $R_helix_i = mmult( $R_i, $R_helix  );
+			my $T_helix_i = vadd( $T_helix, mapply( $R_helix, $T_i) );
 
-		print STDERR "Generating [-".$nsubunits_to_gen." to +".$nsubunits_to_gen."] at offset $sec_shift\n";
-		foreach my $subunit (0 .. $nsubunits_to_gen) {
-			# gen in + direction
-			my $R_i = [[1,0,0],[0,1,0],[0,0,1]];
+			my $R_global_T = mapply( $R_helix, $global_T );
+
+			$Rs->{ "0_".$subunit."_".$i } = $R_helix_i;
+			$Ts->{ "0_".$subunit."_".$i } =
+				vadd( $R_global_T, vadd( $COM_0, vadd( $T_helix_i, vscale( $subunit, $del_COM_alonghelix ) ) ) );
+
+			$T_i = vadd( $T_i , mapply( $R_i, $T_ncs ) );
+			$R_i = mmult( $R_ncs , $R_i );
+		}
+
+		# gen in - direction
+		if ($subunit != 0) {
+			$R_i = [[1,0,0],[0,1,0],[0,0,1]];
 			my $T_i = [0,0,0];
 			foreach my $i (0..$sym_order_ncs-1) {
 				# rotate about helical axis then translate to the new CoM
-				my $R_helix_i = mmult( $R_i, $R_helix  );
-				my $T_helix_i = vadd( $T_helix, mapply( $R_helix, $T_i) );
+				my $R_helix_i = mmult( $R_i, $Rinv_helix );
+				my $T_helix_i = vadd( $Tinv_helix, mapply( $Rinv_helix, $T_i) );
 
-				my $R_global_T = mapply( $R_helix, $global_T );
+				my $R_global_T = mapply( $Rinv_helix, $global_T );
 
-				$Rs->{ $sec_shift."_".$subunit."_".$i } = $R_helix_i;
-				$Ts->{ $sec_shift."_".$subunit."_".$i } =
-					vadd( $T_sec, vadd( $R_global_T, vadd( $COM_0, vadd( $T_helix_i, vscale( $subunit, $del_COM_alonghelix ) ) ) ) );
+				$Rs->{ "0_".-$subunit."_".$i } = $R_helix_i;
+				$Ts->{ "0_".-$subunit."_".$i } =
+					vadd( $R_global_T, vadd( $COM_0, vadd( $T_helix_i, vscale( -$subunit, $del_COM_alonghelix ) ) ) );
 
 				$T_i = vadd( $T_i , mapply( $R_i, $T_ncs ) );
 				$R_i = mmult( $R_ncs , $R_i );
 			}
-
-			# gen in - direction
-			if ($subunit != 0) {
-				$R_i = [[1,0,0],[0,1,0],[0,0,1]];
-				my $T_i = [0,0,0];
-				foreach my $i (0..$sym_order_ncs-1) {
-					# rotate about helical axis then translate to the new CoM
-					my $R_helix_i = mmult( $R_i, $Rinv_helix );
-					my $T_helix_i = vadd( $Tinv_helix, mapply( $Rinv_helix, $T_i) );
-
-					my $R_global_T = mapply( $Rinv_helix, $global_T );
-
-					$Rs->{ $sec_shift."_".-$subunit."_".$i } = $R_helix_i;
-					$Ts->{ $sec_shift."_".-$subunit."_".$i } =
-						vadd( $T_sec, vadd( $R_global_T, vadd( $COM_0, vadd( $T_helix_i, vscale( -$subunit, $del_COM_alonghelix ) ) ) ) );
-
-					$T_i = vadd( $T_i , mapply( $R_i, $T_ncs ) );
-					$R_i = mmult( $R_ncs , $R_i );
-				}
-			}
-
-			# update the transform to the 1st subunit in next helical layer
-			$T_helix = vadd( $T_helix, mapply( $R_helix, $T ) );
-			$Tinv_helix = vadd( $Tinv_helix, mapply( $Rinv_helix, $Tinv ) );
-			$R_helix = mmult( $R, $R_helix );
-			$Rinv_helix = mmult( $Rinv, $Rinv_helix );
 		}
 
+		# update the transform to the 1st subunit in next helical layer
+		$T_helix = vadd( $T_helix, mapply( $R_helix, $T ) );
+		$Tinv_helix = vadd( $Tinv_helix, mapply( $Rinv_helix, $Tinv ) );
+		$R_helix = mmult( $R, $R_helix );
+		$Rinv_helix = mmult( $Rinv, $Rinv_helix );
 	}
 
 
@@ -1621,52 +1556,48 @@ if ($helix_mode == 1) {
 		my $X_i = [0,0,0];
 		my $Y_i = [0,0,0];
 
-		foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-			foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-			#foreach my $subunit (0 .. $nsubunits_to_gen) {
-				foreach my $i (0..$sym_order_ncs-1) {
-					my $id = $sec_shift."_".$subunit."_".$i;
-					next if (defined $symminterface{ $id });
+		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
+		#foreach my $subunit (0 .. $nsubunits_to_gen) {
+			foreach my $i (0..$sym_order_ncs-1) {
+				my $id = "0_".$subunit."_".$i;
+				next if (defined $symminterface{ $id });
 
-					#   x_i = R_i * (x_0 - COM_0) + COM_i
-					#   The rms function already ofsets x_0 by -COM_0
-					my $rX_i = vadd( $X_i , $COM_0 );
-					#my $rX_i = $X_i;
-					my $rY_j = vadd( mapply($Rs->{ $id }, $Y_i) , $Ts->{ $id } );
-					my $delXY = vsub( $rY_j,$rX_i );
-					my $dist2XY = vnorm2( $delXY );
+				#   x_i = R_i * (x_0 - COM_0) + COM_i
+				#   The rms function already ofsets x_0 by -COM_0
+				my $rX_i = vadd( $X_i , $COM_0 );
+				#my $rX_i = $X_i;
+				my $rY_j = vadd( mapply($Rs->{ $id }, $Y_i) , $Ts->{ $id } );
+				my $delXY = vsub( $rY_j,$rX_i );
+				my $dist2XY = vnorm2( $delXY );
 
-					if ( sqrt($dist2XY) <= 2*$monomerRadius + $interact_dist ) {
-						# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
-						print STDERR " Adding interface '".$id."'\n";
-						$symminterface{ $id } = $counter++;
-					}
+				if ( sqrt($dist2XY) <= 2*$monomerRadius + $interact_dist ) {
+					# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
+					print STDERR " Adding interface '".$id."'\n";
+					$symminterface{ $id } = $counter++;
 				}
 			}
 		}
 	} else {
 		foreach my $X_i ( @{ $chains{ $primary_chain } } ) {
 			foreach my $Y_i (  @{ $chains{ $primary_chain } } ) {
-				foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-					foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-					#foreach my $subunit (0 .. $nsubunits_to_gen) {
-						foreach my $i (0..$sym_order_ncs-1) {
-							my $id = $sec_shift."_".$subunit."_".$i;
-							next if (defined $symminterface{ $id });
+				foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
+				#foreach my $subunit (0 .. $nsubunits_to_gen) {
+					foreach my $i (0..$sym_order_ncs-1) {
+						my $id = "0_".$subunit."_".$i;
+						next if (defined $symminterface{ $id });
 
-							#   x_i = R_i * (x_0 - COM_0) + COM_i
-							#   The rms function already ofsets x_0 by -COM_0
-							my $rX_i = vadd( $X_i , $COM_0 );
-							#my $rX_i = $X_i;
-							my $rY_j = vadd( mapply($Rs->{ $id }, $Y_i) , $Ts->{ $id } );
-							my $delXY = vsub( $rY_j,$rX_i );
-							my $dist2XY = vnorm2( $delXY );
+						#   x_i = R_i * (x_0 - COM_0) + COM_i
+						#   The rms function already ofsets x_0 by -COM_0
+						my $rX_i = vadd( $X_i , $COM_0 );
+						#my $rX_i = $X_i;
+						my $rY_j = vadd( mapply($Rs->{ $id }, $Y_i) , $Ts->{ $id } );
+						my $delXY = vsub( $rY_j,$rX_i );
+						my $dist2XY = vnorm2( $delXY );
 
-							if ($dist2XY < $interact_dist*$interact_dist) {
-								# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
-								print STDERR " Adding interface '".$id."'\n";
-								$symminterface{ $id } = $counter++;
-							}
+						if ($dist2XY < $interact_dist*$interact_dist) {
+							# we have a hit! tag NCS copy $j_symm as a non-symmetic interface
+							print STDERR " Adding interface '".$id."'\n";
+							$symminterface{ $id } = $counter++;
 						}
 					}
 				}
@@ -1690,15 +1621,14 @@ if ($helix_mode == 1) {
 		my ($sec_shift,$subunit,$i) = split '_', $complex;
 
 		# ($subunit , $i) symmetric with (-$subunit , -$i)
-		next if ($sec_shift < 0);
-		next if ($sec_shift == 0 && $subunit < 0);
-		next if ($sec_shift == 0 && $subunit == 0 && $i > $sym_order_ncs/2);
-		next if ($sec_shift == 0 && $subunit == 0 && $i == 0);
+		next if ($subunit < 0);
+		next if ($subunit == 0 && $i > $sym_order_ncs/2);
+		next if ($subunit == 0 && $i == 0);
 
 		my $cplx_string = $complex;
 		$cplx_string =~ s/_-(\d)/_n\1/g;
 
-		if ($sec_shift==0 && $subunit == 0 && $i == $sym_order_ncs/2) {
+		if ($subunit == 0 && $i == $sym_order_ncs/2) {
 			print " + 1*(VRT_0_0_0_base:VRT_".$cplx_string."_base)";
 		} else {
 			print " + 2*(VRT_0_0_0_base:VRT_".$cplx_string."_base)";
@@ -1723,34 +1653,42 @@ if ($helix_mode == 1) {
 		print "$xyzline\n";
 	}
 
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-
-		my $helix_shifted  = vadd( $helix_center , vscale( $sec_shift , $del_COM_perp ) );
-
+	foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
 		#####
-		# controlling vrts along 2ary axis
+		# controlling vrts on the helical axis
 		#####
-		if ($nperp_repeats > 0) {
-			my $subunit = -$nsubunits_to_gen;
-			#my $subunit = 0;
-			my $i = 0;
+		my $T_about    = vscale( $subunit, $del_COM_alonghelix );
 
-			my $T_about    = vadd( $helix_shifted , vscale( $subunit, $del_COM_alonghelix ) );
+		foreach my $i (0..$sym_order_ncs-1) {
+			my $id = "0_".$subunit."_".$i;
 
-			my $id = $sec_shift."_".$subunit."_".$i;
+			my $xyzline = "xyz VRT_".$id;
 
-			my $xyzline = "xyz VRT_intra_".$id;
+			if ($fndCompatible == 1) {
+				$xyzline = "xyz VRT_".$id."_base";
+			}
 			$xyzline =~ s/_-(\d)/_n\1/g;
 
-			# X points to along 2ary axis
-			my $myX = vscale( -1 , deep_copy($del_COM_perp) );
+			# X --> points towards the subunit
+			my $myX = vsub( $T_about,  $Ts->{ $id } );
+
+			if ( vnorm($myX) < 1e-6 ) {
+				# just pick any direction perpendicular to helical axis
+				if ( $del_COM_alonghelix->[1] == 0 && $del_COM_alonghelix->[2] == 0) {
+					$myX = [0,1,0];
+				} else {
+					$myX = [ 0, -$del_COM_alonghelix->[2], $del_COM_alonghelix->[1]];
+				}
+			}
 			normalize( $myX );
 
-			# Y points up helical axis
-			my $myY = vscale( -1 , deep_copy($del_COM_alonghelix) );
-			normalize( $myY );
 			my $string = sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2]);
 			$xyzline = $xyzline." ".$string;
+			# Y --> Z points along helical axis
+			my $myZ = vscale( -1, deep_copy($del_COM_alonghelix) );
+			normalize( $myZ );
+			my $myY = cross( $myZ, $myX );
+			normalize( $myY );
 			$string = sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2]);
 			$xyzline = $xyzline." ".$string;
 
@@ -1760,37 +1698,31 @@ if ($helix_mode == 1) {
 			$xyzline = $xyzline." ".$string;
 			print "$xyzline\n";
 
-			my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z   1     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,
+
+			my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
 								 $origin->[0], $origin->[1], $origin->[2];
-			my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z   2     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,
+			my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
 								 $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-			my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z   3     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,
+			my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
 								 $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
 			push @fakepdblines, $fakePDBline1;
 			push @fakepdblines, $fakePDBline2;
 			push @fakepdblines, $fakePDBline3;
 		}
 
-		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-		#foreach my $subunit (0 .. $nsubunits_to_gen) {
-			#####
-			# controlling vrts on the helical axis
-			#####
-			my $T_about    = vadd( $helix_shifted , vscale( $subunit, $del_COM_alonghelix ) );
 
+		#####
+		# COM vrts
+		#####
+		if ($fndCompatible == 0) {
 			foreach my $i (0..$sym_order_ncs-1) {
-				my $id = $sec_shift."_".$subunit."_".$i;
+				my $id = "0_".$subunit."_".$i;
 
-				my $xyzline = "xyz VRT_".$id;
-
-				if ($fndCompatible == 1) {
-					$xyzline = "xyz VRT_".$id."_base";
-				}
+				my $xyzline = "xyz VRT_".$id."_base";
 				$xyzline =~ s/_-(\d)/_n\1/g;
 
 				# X --> points towards the subunit
 				my $myX = vsub( $T_about,  $Ts->{ $id } );
-
 				if ( vnorm($myX) < 1e-6 ) {
 					# just pick any direction perpendicular to helical axis
 					if ( $del_COM_alonghelix->[1] == 0 && $del_COM_alonghelix->[2] == 0) {
@@ -1811,75 +1743,23 @@ if ($helix_mode == 1) {
 				$string = sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2]);
 				$xyzline = $xyzline." ".$string;
 
+
 				# orig
-				my $origin  = $T_about;
+				#my $origin  = $T_about;
+				my $origin  =  $Ts->{ $id } ;
 				$string = sprintf("%.6f,%.6f,%.6f", $origin->[0], $origin->[1], $origin->[2]);
 				$xyzline = $xyzline." ".$string;
 				print "$xyzline\n";
 
-
-				my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
+				my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
 									 $origin->[0], $origin->[1], $origin->[2];
-				my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
+				my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
 									 $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-				my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Z %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
+				my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
 									 $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
 				push @fakepdblines, $fakePDBline1;
 				push @fakepdblines, $fakePDBline2;
 				push @fakepdblines, $fakePDBline3;
-			}
-
-
-			#####
-			# COM vrts
-			#####
-			if ($fndCompatible == 0) {
-				foreach my $i (0..$sym_order_ncs-1) {
-					my $id = $sec_shift."_".$subunit."_".$i;
-
-					my $xyzline = "xyz VRT_".$id."_base";
-					$xyzline =~ s/_-(\d)/_n\1/g;
-
-					# X --> points towards the subunit
-					my $myX = vsub( $T_about,  $Ts->{ $id } );
-					if ( vnorm($myX) < 1e-6 ) {
-						# just pick any direction perpendicular to helical axis
-						if ( $del_COM_alonghelix->[1] == 0 && $del_COM_alonghelix->[2] == 0) {
-							$myX = [0,1,0];
-						} else {
-							$myX = [ 0, -$del_COM_alonghelix->[2], $del_COM_alonghelix->[1]];
-						}
-					}
-					normalize( $myX );
-
-					my $string = sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2]);
-					$xyzline = $xyzline." ".$string;
-					# Y --> Z points along helical axis
-					my $myZ = vscale( -1, deep_copy($del_COM_alonghelix) );
-					normalize( $myZ );
-					my $myY = cross( $myZ, $myX );
-					normalize( $myY );
-					$string = sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2]);
-					$xyzline = $xyzline." ".$string;
-
-
-					# orig
-					#my $origin  = $T_about;
-					my $origin  =  $Ts->{ $id } ;
-					$string = sprintf("%.6f,%.6f,%.6f", $origin->[0], $origin->[1], $origin->[2]);
-					$xyzline = $xyzline." ".$string;
-					print "$xyzline\n";
-
-					my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
-										 $origin->[0], $origin->[1], $origin->[2];
-					my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
-										 $origin->[0]+$myX->[0], $origin->[1]+$myX->[1], $origin->[2]+$myX->[2];
-					my $fakePDBline3 = sprintf "ATOM    %3d  C   Y   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 3,$subunit,
-										 $origin->[0]+$myY->[0], $origin->[1]+$myY->[1], $origin->[2]+$myY->[2];
-					push @fakepdblines, $fakePDBline1;
-					push @fakepdblines, $fakePDBline2;
-					push @fakepdblines, $fakePDBline3;
-				}
 			}
 		}
 	}
@@ -1891,76 +1771,55 @@ if ($helix_mode == 1) {
 	# (1) connect bottoms of helices
 	my $subunit = -$nsubunits_to_gen;
 	#my $subunit = 0;
-	if ($nperp_repeats > 0) {
-		foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-			my $id1 = ($sec_shift-1)."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-			my $id2 = $sec_shift."_".$subunit."_0"; $id2 =~ s/-(\d)/n\1/g;
-			if ($sec_shift == -$nperp_repeats) {
-				print "connect_virtual JUMP_0 VRT_0 VRT_intra_$id2\n";
-			} else {
-				print "connect_virtual JUMP_intra_$id1 VRT_intra_$id1 VRT_intra_$id2\n";
-			}
-			print "connect_virtual JUMP_to_helix_$id1 VRT_intra_$id2 VRT_$id2\n";
-		}
-	} else {
-		my $id2 = "0_".$subunit."_0"; $id2 =~ s/-(\d)/n\1/g;
-		if ($fndCompatible == 0) {
-			print "connect_virtual JUMP_0 VRT_0 VRT_$id2\n";
-		}
+	my $id2 = "0_".$subunit."_0"; $id2 =~ s/-(\d)/n\1/g;
+	if ($fndCompatible == 0) {
+		print "connect_virtual JUMP_0 VRT_0 VRT_$id2\n";
 	}
 
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		foreach my $subunit (-$nsubunits_to_gen+1 .. $nsubunits_to_gen) {
-		#foreach my $subunit (1 .. $nsubunits_to_gen) {
-			my $id1 = $sec_shift."_".($subunit-1)."_0"; $id1 =~ s/-(\d)/n\1/g;
-			my $id2 = $sec_shift."_".$subunit."_0"; $id2 =~ s/-(\d)/n\1/g;
-			if ($fndCompatible == 0) {
-				print "connect_virtual JUMP_$id1 VRT_$id1 VRT_$id2\n";
-			} else {
-				print "connect_virtual JUMP_$id1 VRT_".$id1."_base VRT_".$id2."_base\n";
-			}
+	foreach my $subunit (-$nsubunits_to_gen+1 .. $nsubunits_to_gen) {
+	#foreach my $subunit (1 .. $nsubunits_to_gen) {
+		my $id1 = "0_".($subunit-1)."_0"; $id1 =~ s/-(\d)/n\1/g;
+		my $id2 = "0_".$subunit."_0"; $id2 =~ s/-(\d)/n\1/g;
+		if ($fndCompatible == 0) {
+			print "connect_virtual JUMP_$id1 VRT_$id1 VRT_$id2\n";
+		} else {
+			print "connect_virtual JUMP_$id1 VRT_".$id1."_base VRT_".$id2."_base\n";
 		}
 	}
 
 	# if point symm, jump to each of pt symm groups
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-		#foreach my $subunit (0 .. $nsubunits_to_gen) {
-			my $id1 = $sec_shift."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-			foreach my $i (1..$sym_order_ncs-1) {
-				my $id2 = $sec_shift."_".$subunit."_".$i; $id2 =~ s/-(\d)/n\1/g;
-				if ($fndCompatible == 1) {
-					print "connect_virtual JUMP_pt_$id2 VRT_".$id1."_base VRT_".$id2."_base\n";
-				} else {
-					print "connect_virtual JUMP_pt_$id2 VRT_$id1 VRT_$id2\n";
-				}
+	foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
+	#foreach my $subunit (0 .. $nsubunits_to_gen) {
+		my $id1 = "0_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
+		foreach my $i (1..$sym_order_ncs-1) {
+			my $id2 = "0_".$subunit."_".$i; $id2 =~ s/-(\d)/n\1/g;
+			if ($fndCompatible == 1) {
+				print "connect_virtual JUMP_pt_$id2 VRT_".$id1."_base VRT_".$id2."_base\n";
+			} else {
+				print "connect_virtual JUMP_pt_$id2 VRT_$id1 VRT_$id2\n";
 			}
 		}
 	}
 
 	#jump from helical axis to com
 	if ($fndCompatible == 0) {
-		foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-			foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-			#foreach my $subunit (0 .. $nsubunits_to_gen) {
-				foreach my $i (0..$sym_order_ncs-1) {
-					my $id = $sec_shift."_".$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
-					print "connect_virtual JUMP_".$id."_to_com VRT_".$id." VRT_".$id."_base\n";
-				}
+		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
+		#foreach my $subunit (0 .. $nsubunits_to_gen) {
+			foreach my $i (0..$sym_order_ncs-1) {
+				my $id = "0_".$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
+				print "connect_virtual JUMP_".$id."_to_com VRT_".$id." VRT_".$id."_base\n";
 			}
 		}
 	}
 
 	#jump from com to subunit
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-		#foreach my $subunit (0 .. $nsubunits_to_gen) {
-			foreach my $i (0..$sym_order_ncs) {
-				my $id = $sec_shift."_".$subunit."_".$i;
-				if (defined $symminterface{ $id }) {
-					$id =~ s/-(\d)/n\1/g;
-					print "connect_virtual JUMP_".$id."_to_subunit VRT_".$id."_base SUBUNIT\n";
-				}
+	foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
+	#foreach my $subunit (0 .. $nsubunits_to_gen) {
+		foreach my $i (0..$sym_order_ncs) {
+			my $id = "0_".$subunit."_".$i;
+			if (defined $symminterface{ $id }) {
+				$id =~ s/-(\d)/n\1/g;
+				print "connect_virtual JUMP_".$id."_to_subunit VRT_".$id."_base SUBUNIT\n";
 			}
 		}
 	}
@@ -1974,22 +1833,13 @@ if ($helix_mode == 1) {
 	}
 
 	# jumps between helical bases
-	my $sec_shift = 0; #-$nperp_repeats;
 	my $subunit = -$nsubunits_to_gen;
-	my $id1 = $sec_shift."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-	if ($nperp_repeats > 0) {
-		print "set_dof JUMP_intra_$id1 x(".vnorm($del_COM_perp).")\n";
-	}
+	my $id1 = "0_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
 
 	# jumps up the helical axis
-	$sec_shift = 0;
 	$subunit = 0;
-	$id1 = $sec_shift."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-	if ($nperp_repeats > 0) {
-		print "set_dof JUMP_$id1 z(".vnorm($del_COM_alonghelix).")\n";
-	} else {
-		print "set_dof JUMP_$id1 z(".vnorm($del_COM_alonghelix).") angle_z\n";
-	}
+	$id1 = "0_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
+	print "set_dof JUMP_$id1 z(".vnorm($del_COM_alonghelix).") angle_z\n";
 
 	#jump from helical axis to com (not in the case of fiber symmetry)
 	if ($fndCompatible == 0) {
@@ -2007,34 +1857,17 @@ if ($helix_mode == 1) {
 		}
 	}
 
-	#define jumpgroups
-	if ($nperp_repeats > 0) {
-		print "set_jump_group JUMPGROUP0";
-		foreach my $sec_shift ( -$nperp_repeats+1..$nperp_repeats ) {
-			my $id1 = ($sec_shift-1)."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-			print "  JUMP_intra_$id1";
-
-			# weight
-			if ($sec_shift > 0) { print ":".($sec_shift); }
-		}
-		print "\n";
-	}
-
 	# jumps up the helical axis
 	print "set_jump_group JUMPGROUP1";
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		foreach my $subunit (0 .. $nsubunits_to_gen) {
-			my $id1 = $sec_shift."_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-			if ($subunit != $nsubunits_to_gen) {
-				print "  JUMP_$id1";
-				# weight
-				if ($sec_shift >= 0) { print ":".($subunit+1); }
-			}
+	foreach my $subunit (0 .. $nsubunits_to_gen) {
+		my $id1 = "0_".$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
+		if ($subunit != $nsubunits_to_gen) {
+			print "  JUMP_$id1";
+		}
 
-			if ($subunit != 0) {
-				$id1 = $sec_shift."_".-$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
-				print "  JUMP_$id1";
-			}
+		if ($subunit != 0) {
+			$id1 = "0_".-$subunit."_0"; $id1 =~ s/-(\d)/n\1/g;
+			print "  JUMP_$id1";
 		}
 	}
 	print "\n";
@@ -2042,16 +1875,14 @@ if ($helix_mode == 1) {
 	#jump from helical axis to coms
 	if ($fndCompatible == 0) {
 		print "set_jump_group JUMPGROUP2";
-		foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-			foreach my $subunit (0 .. $nsubunits_to_gen) {
-				foreach my $i (0..$sym_order_ncs-1) {
-					my $id = $sec_shift."_".$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
-					print " JUMP_".$id."_to_com";
+		foreach my $subunit (0 .. $nsubunits_to_gen) {
+			foreach my $i (0..$sym_order_ncs-1) {
+				my $id = "0_".$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
+				print " JUMP_".$id."_to_com";
 
-					if ($subunit != 0) {
-						$id = $sec_shift."_".-$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
-						print "  JUMP_".$id."_to_com";
-					}
+				if ($subunit != 0) {
+					$id = "0_".-$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
+					print "  JUMP_".$id."_to_com";
 				}
 			}
 		}
@@ -2060,23 +1891,19 @@ if ($helix_mode == 1) {
 
 	#jump from com to subunits
 	print "set_jump_group JUMPGROUP3";
-	#foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-	my @repeat_order = (0..$nperp_repeats,-$nperp_repeats..-1);
-	foreach my $sec_shift ( @repeat_order ) {
-		foreach my $subunit (0 .. $nsubunits_to_gen) {
-			foreach my $i (0..$sym_order_ncs) {
-				my $id = $sec_shift."_".$subunit."_".$i;
+	foreach my $subunit (0 .. $nsubunits_to_gen) {
+		foreach my $i (0..$sym_order_ncs) {
+			my $id = "0_".$subunit."_".$i;
+			if (defined $symminterface{ $id }) {
+				$id =~ s/-(\d)/n\1/g;
+				print " JUMP_".$id."_to_subunit";
+			}
+
+			if ($subunit != 0) {
+				$id = "0_".-$subunit."_".$i;
 				if (defined $symminterface{ $id }) {
 					$id =~ s/-(\d)/n\1/g;
 					print " JUMP_".$id."_to_subunit";
-				}
-
-				if ($subunit != 0) {
-					$id = $sec_shift."_".-$subunit."_".$i;
-					if (defined $symminterface{ $id }) {
-						$id =~ s/-(\d)/n\1/g;
-						print " JUMP_".$id."_to_subunit";
-					}
 				}
 			}
 		}
@@ -2093,7 +1920,7 @@ if ($helix_mode == 1) {
 	my $outmon = $pdbfile;
 	my $outmdl = $pdbfile;
 
-	my $suffix = "_model_$primary_chain"."$helical_chain"."$perp_chain"."$ncs_chain";
+	my $suffix = "_model_$primary_chain"."$helical_chain"."$ncs_chain";
 	$suffix =~ s/://g;
 
 	if ($outpdb =~ /\.pdb$/) {
@@ -2112,59 +1939,56 @@ if ($helix_mode == 1) {
 	my $chnidx = 0;
 	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
 
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
-		foreach my $subunit (0 .. $nsubunits_to_gen) {
-			foreach my $i (0..$sym_order_ncs-1) {
-				my $id =  $sec_shift."_".$subunit."_".$i;
+	foreach my $subunit (0 .. $nsubunits_to_gen) {
+		foreach my $i (0..$sym_order_ncs-1) {
+			my $id =  "0_".$subunit."_".$i;
 
-				foreach my $line (@filebuf) {
-					my $linecopy = $line;
+			foreach my $line (@filebuf) {
+				my $linecopy = $line;
 
-					my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-					my $X_0 = vsub($X,$COM_0);
-					my $rX = vadd( mapply($Rs->{ $id }, $X_0) ,$Ts->{ $id } );
+				my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+				my $X_0 = vsub($X,$COM_0);
+				my $rX = vadd( mapply($Rs->{ $id }, $X_0) ,$Ts->{ $id } );
 
-					substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
-					substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
-					substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
-					substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+				substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
+				substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
+				substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
+				substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
 
-					print OUTPDB $linecopy."\n";
+				print OUTPDB $linecopy."\n";
 
-					if (defined $symminterface{ $id }) {
-						print OUTMDL $linecopy."\n";
-					}
+				if (defined $symminterface{ $id }) {
+					print OUTMDL $linecopy."\n";
 				}
-				print OUTPDB "TER   \n";
-				$chnidx++;
 			}
-			next if ($subunit == 0);
-
-			foreach my $i (0..$sym_order_ncs-1) {
-				my $id = $sec_shift."_".-$subunit."_".$i;
-				foreach my $line (@filebuf) {
-					my $linecopy = $line;
-
-					my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
-					my $X_0 = vsub($X,$COM_0);
-					my $rX = vadd( mapply($Rs->{ $id }, $X_0) ,$Ts->{ $id } );
-
-					substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
-					substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
-					substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
-					substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
-
-					print OUTPDB $linecopy."\n";
-
-					if (defined $symminterface{ $id }) {
-						print OUTMDL $linecopy."\n";
-					}
-				}
-				print OUTPDB "TER   \n";
-				$chnidx++;
-			}
+			print OUTPDB "TER   \n";
+			$chnidx++;
 		}
+		next if ($subunit == 0);
 
+		foreach my $i (0..$sym_order_ncs-1) {
+			my $id = "0_".-$subunit."_".$i;
+			foreach my $line (@filebuf) {
+				my $linecopy = $line;
+
+				my $X = [substr ($line, 30, 8),substr ($line, 38, 8),substr ($line, 46, 8)];
+				my $X_0 = vsub($X,$COM_0);
+				my $rX = vadd( mapply($Rs->{ $id }, $X_0) ,$Ts->{ $id } );
+
+				substr ($linecopy, 30, 8) = sprintf ("%8.3f", $rX->[0]);
+				substr ($linecopy, 38, 8) = sprintf ("%8.3f", $rX->[1]);
+				substr ($linecopy, 46, 8) = sprintf ("%8.3f", $rX->[2]);
+				substr ($linecopy, 21, 1) = substr ($chains, $chnidx, 1);
+
+				print OUTPDB $linecopy."\n";
+
+				if (defined $symminterface{ $id }) {
+					print OUTMDL $linecopy."\n";
+				}
+			}
+			print OUTPDB "TER   \n";
+			$chnidx++;
+		}
 	}
 	foreach my $debug_line (@fakepdblines) {
 		print OUTPDB $debug_line;
