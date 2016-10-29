@@ -1,0 +1,45 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into user.settings:
+#
+#   cp user.settings.template user.settings
+#
+# and customize to fit your site's environment
+# DO NOT make changes to this template
+# DO NOT try and check in user.settings
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+
+# Settings here are added to the combined build settings, after all basic
+# and site settings, to allow you to override anything you need to.
+# They can in turn be overriden by the project settings.
+
+# To use this file, symlink tools/build/site.settings to this file (or copy to that location)
+
+# BDW 10/29/2016:
+# These are settings for the digs and hyak at UW.
+
+import os
+settings = {
+    "user" : {
+        "prepends" : {
+        },
+        "appends" : {
+            # Let SCons find ICC (assuming it's on your PATH already)
+            # This is necessary on the digs and hyak,but has the unfortunate 
+            # consequence that any change whatsoever to the PATH variable (or its
+            # contents) will force a complete recompile.
+            "program_path"  : os.environ["PATH"].split(":"),
+        },
+        "overrides" : {
+	           # import the full operating system environment.
+            "ENV" : os.environ,
+        },
+        "removes" : {
+        },
+    }
+}
