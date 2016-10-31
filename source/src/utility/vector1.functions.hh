@@ -201,6 +201,48 @@ arg_least_several(
 //}
 
 
+/// @brief Find the index into the input range array such that
+/// range_array[ index ] <= query < range_array[ index + 1 ] or if
+/// index+1 would be off the end of the array, then simply the last
+/// index in the array (for which range_array[ index ] <= query holds).
+/// Each entry in range_array represents the lower boundry (inclusive)
+/// for a range, so that range i is defined by
+/// ( range_array[ i ], range_array[i+1] - 1 ) except for the last
+/// range, which is from range_array[ range_array.size() ] to infinity.
+/// T must be a discrete type.
+/// range_array must be sorted. range_array[ 1 ] must be as small as
+/// the smallest possible query.
+template < typename T >
+platform::Size
+binary_search_ranges(
+	utility::vector1< T > const & range_array,
+	T query
+)
+{
+	platform::Size lower( 1 ), upper( range_array.size() );
+	platform::Size guess( 0 );
+
+	while ( true ) {
+
+		guess = ( upper + lower ) / 2;
+		if ( guess == upper ) return upper;
+
+		T guess_val = range_array[ guess ];
+		T next_val = range_array[ guess+1 ];
+		if ( guess_val <= query && query < next_val ) {
+			// found it!
+			break;
+		}
+		if ( guess_val <= query ) {
+			lower = guess+1;
+		} else {
+			upper = guess-1;
+		}
+	}
+
+	return guess;
+
+}
 
 
 

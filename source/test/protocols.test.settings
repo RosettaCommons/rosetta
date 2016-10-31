@@ -235,7 +235,7 @@ sources = {
 	"grafting" : [
 		"GraftingTest",
 	],
-	
+
 	"hbnet" : [
                 "HBNet"
         ],
@@ -264,6 +264,7 @@ sources = {
 		"BluePrint",
 	],
 	"jd3" : [
+            	"JobGeneologist",
             	"StandardJobQueen",
 	#	"validate_w_xsd",
 	],

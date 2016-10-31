@@ -52,7 +52,7 @@ public:
 
 	/// @brief Return whether a particular value is contained by any of the ranges
 	/// in the subtree rooted at this node.
-	bool member( Value val ) {
+	bool member( Value val ) const {
 		if ( val < lower_ ) {
 			if ( left_ ) return left_->member( val );
 			return false;
@@ -102,13 +102,15 @@ public:
 			if ( tup.extrema + 1 == new_lower ) {
 				if ( tup.parent.get() == this ) {
 					lower_ = left_->lower_;
-					left_ = 0;
+					left_ = left_->left_;
 				} else {
 					// remove the pointer to tup.parent's right child
 					// and merge this child into the range covered by this node
 					lower_ = tup.parent->right_->lower_;
 					tup.parent->right_ = 0;
 				}
+			} else {
+				lower_ = new_lower;
 			}
 		}
 	}
@@ -124,14 +126,18 @@ public:
 			split_tuple tup = right_->split_min( this->shared_from_this() );
 			if ( tup.extrema == new_upper + 1 ) {
 				if ( tup.parent.get() == this ) {
+					// merge the right node into this node; the right node then
+					// disappears
 					upper_ = right_->upper_;
-					right_ = 0;
+					right_ = right_->right_;
 				} else {
 					// remove the pointer to tup.parent's left child
 					// and merge this child into the range covered by this node
 					upper_ = tup.parent->left_->upper_;
 					tup.parent->left_ = 0;
 				}
+			} else {
+				upper_ = new_upper;
 			}
 		}
 	}
@@ -162,19 +168,19 @@ public:
 	}
 
 	int
-	size() {
+	size() const {
 		return 1 + ( left_ ? left_->size() : 0 ) + ( right_ ? right_->size() : 0 );
 	}
 
 	void
-	inorder_range_list( RangeList & ranges ) {
+	inorder_range_list( RangeList & ranges ) const {
 		if ( left_ ) left_->inorder_range_list( ranges );
 		ranges.push_back( std::make_pair( lower_, upper_ ) );
 		if ( right_ ) right_->inorder_range_list( ranges );
 	}
 
 	bool
-	correct( RangeList & ranges )  {
+	correct( RangeList & ranges ) const {
 		if ( left_ ) {
 			if ( ! left_->correct( ranges ) ) {
 				return false;
@@ -214,7 +220,7 @@ public:
 public:
 
 	bool
-	member( Value val ) {
+	member( Value val ) const {
 		if ( ! root_ ) return false;
 		return root_->member( val );
 	}
@@ -226,19 +232,19 @@ public:
 	}
 
 	int
-	size() {
+	size() const {
 		return root_ ? root_->size() : 0;
 	}
 
 	RangeList
-	ranges() {
+	ranges() const {
 		RangeList ranges;
 		if ( root_ ) { root_->inorder_range_list( ranges ); }
 		return ranges;
 	}
 
 	bool
-	correct() {
+	correct() const {
 		if ( root_ ) {
 			RangeList ranges;
 			return root_->correct( ranges );

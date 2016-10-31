@@ -164,6 +164,27 @@ public:
 		TS_ASSERT_EQUALS( range_vector[ 4 ].second, 12 );
 	}
 
+	void test_diet_with_insertion_order_from_jd3() {
+		Diet diet;
+		std::list< platform::Size > insert_order = {
+			2, 3, 4, 6, 7, 8, 9,
+			11, 13, 14, 15, 16, 17, 18, 19, 20,	21, 22, 24, 25, 26,
+			27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+			10, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+		  51, 52, 53, 54, 56, 57, 58, 59, 60,
+			12 };
+		for ( auto ii : insert_order ) {
+			diet.insert( ii );
+		}
+
+		Diet::RangeList range_list = diet.ranges();
+		for ( auto range : range_list ) {
+			std::cout << "range: " << range.first << ", " << range.second << std::endl;
+		}
+
+		TS_ASSERT( diet.member( 12 ) );
+	}
+
 };
 
 
