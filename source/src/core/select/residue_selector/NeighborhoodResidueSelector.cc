@@ -234,14 +234,26 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
+		
 		// go through each residue of the pose and check if it's near anything in the focus set
 		for ( Size ii = 1; ii < pose.size() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
 
-			for ( core::Size focus_res = 1; focus_res <= focus_residues.size(); ++focus_res ) {
+			for ( core::Size focus_res : focus_residues ) {
+				
+				if (focus_res == ii){
+					if (include_focus_in_subset_ && ! subset[focus_res]){
+						subset[focus_res] = true;
+					}
+					else {
+						continue;
+					}
+				}
+
 				conformation::Residue const & r2( pose.residue( focus_res ) );
 				Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
+
 				if ( d_sq <= dst_squared ) {
 					subset[ ii ] = true;
 				}

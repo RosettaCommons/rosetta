@@ -56,7 +56,16 @@ get_neighbor_residues(
 
 	if ( neighbor_dis <= 10.0 ) {
 		fill_neighbor_residues(pose, selection_and_neighbors);
+		
+		//Make sure to turn off subset residues!
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i){
+			if (residue_positions[i]){
+				selection_and_neighbors[i] = false;
+			}
+		}
+		
 		return selection_and_neighbors;
+		
 	} else {
 		utility_exit_with_message("get_neighbor_residues only currently works for neighbor distances of 10A or less!  Please use NeighborhoodResidueSelector instead");
 	}
