@@ -2238,11 +2238,20 @@ RotamerLibrary::validate_dunbrack_binary() {
 #endif
 
 	std::string const binary_name( get_binary_name() ); // Handles Dun10/Dun02 decision internally
+
 	// If the existing rotamer library wasn't loaded from binary, we don't need to validate it.
 	if ( ! decide_read_from_binary() ) {
 		TR.Warning << "Existing Dunbrack binary file '" << binary_name << "' either doesn't exist, or is known to be invalid. Skipping reloading check." << std::endl;
 		return true; // Because any reads against it will get the valid ASCII-parsed version
 	}
+
+	// Print SHA1 of the existing binary
+	std::ifstream binary_file( binary_name );
+	std::string binary_contents;
+	utility::slurp( binary_file, binary_contents );
+	binary_file.close();
+	std::string sha1( utility::string_to_sha1(binary_contents) );
+	TR.Warning << "SHA1 of the existing Dunbrack Binary is " << sha1 << std::endl;
 
 	// We need to offload the existing rotamer libraries, and then reload them from ASCII
 	// Entries in libraries_ and aa_libraries_ will be over-written on reload
