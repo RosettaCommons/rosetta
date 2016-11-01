@@ -25,9 +25,9 @@
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockingLowResEnsemble.hh>
-#include <protocols/docking/DockMinMover.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/docking/DockingHighResLegacy.hh>
+#include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/DockingHighResFactory.hh>
+#include <protocols/docking/DockingHighResLegacy.hh> // there is some design thing that only this flavor of DHR supports
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingProtocolCreator.hh> // Support the scriptor
 
@@ -296,34 +296,32 @@ void DockingProtocol::sync_objects_with_flags()
 	}
 
 	if ( !low_res_protocol_only_ ) {
+		DHR_Type t = DHR_Type::DockMCMProtocol; // default
 		if ( dock_min_ ) {
-			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = nullptr;
+			t = DHR_Type::DockMinMover;
+			if ( docking_highres_mover_ && docking_highres_mover_->get_name() != "DockMinMover" ) {
+				docking_highres_mover_ = nullptr;
 			}
-			if ( !docking_highres_mover_ ) docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMinMover( movable_jumps_, docking_scorefxn_high_ ) );
 		} else if ( use_legacy_protocol_ ) {
-			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = nullptr;
-			}
-			if ( !docking_highres_mover_ ) {
-				docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ ) );
-				docking_highres_mover_->set_rt_min( rt_min_ );
-				docking_highres_mover_->set_sc_min( sc_min_ );
-				docking_highres_mover_->set_partners( partners_ );
+			t = DHR_Type::DockingHighResLegacy;
+			if ( docking_highres_mover_ && docking_highres_mover_->get_name() != "DockingHighResLegacy" ) {
+				docking_highres_mover_ = nullptr;
 			}
 		} else {
-			if ( docking_highres_mover_ ) {
-				if ( docking_highres_mover_->get_name() != "DockMCMProtocol" ) docking_highres_mover_ = nullptr;
+			if ( docking_highres_mover_ && docking_highres_mover_->get_name() != "DockMCMProtocol" ) {
+				docking_highres_mover_ = nullptr;
 			}
-			if ( !docking_highres_mover_ ) {
-				// uses docking_scorefxn_output because three scorefunction still exist
-				// After move to new protocol is complete, docking_scorefxn_output will be the same as docking_scorefxn_high
-				// docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_output_, docking_scorefxn_pack_ ); //JQX commented this out, see the line below
-				docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMCMProtocol( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ ) );  //JQX added this line to match the Legacy code
-				docking_highres_mover_->set_rt_min( rt_min_ );
-				docking_highres_mover_->set_sc_min( sc_min_ );
-				docking_highres_mover_->set_partners( partners_ );
-			}
+		}
+		// TODO: Add support for SnugDock here.
+		// create and configure the appropriate flavor of DockingHighRes
+		if ( ! docking_highres_mover_ ) {
+			docking_highres_mover_ = DockingHighResFactory::get_instance()->create_docking_high_res_mover( t );
+			docking_highres_mover_->set_movable_jumps( movable_jumps_ );
+			docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
+			docking_highres_mover_->set_scorefxn_pack( docking_scorefxn_pack_ );
+			docking_highres_mover_->set_rt_min( rt_min_ );
+			docking_highres_mover_->set_sc_min( sc_min_ );
+			docking_highres_mover_->set_partners( partners_ );
 		}
 		if ( !no_filters_ && !highres_filter_ ) {
 			highres_filter_ = protocols::docking::DockingHighResFilterOP( new protocols::docking::DockingHighResFilter() );
@@ -568,6 +566,10 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
+			// TODO: Why are we still relying on DockingHighResLegacy for ANYTHING let alone for design?
+			// We gotta find a way to move this functionality into the DockingHighRes base class (which would require some testing)
+			
+			// FIXME: This one line is the reason we have to #include the DockingHighResLegacy header >:O
 			DockingHighResLegacyOP legacy_mover = utility::pointer::dynamic_pointer_cast< protocols::docking::DockingHighResLegacy > ( docking_highres_mover_ );
 			legacy_mover->design( design_ );
 		}

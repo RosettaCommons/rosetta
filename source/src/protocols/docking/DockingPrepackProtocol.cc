@@ -14,6 +14,7 @@
 
 // Unit Headers
 #include <protocols/docking/DockingPrepackProtocol.hh>
+#include <protocols/docking/DockingPrepackProtocolCreator.hh>
 
 // Package headers
 #include <protocols/docking/util.hh>
@@ -284,6 +285,25 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 std::string DockingPrepackProtocol::get_name() const {
 	return "DockingPrepackProtocol";
 }
+
+// creator methods
+std::string
+DockingPrepackProtocolCreator::keyname() const
+{
+	return DockingPrepackProtocolCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DockingPrepackProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockingPrepackProtocol() );
+}
+
+std::string
+DockingPrepackProtocolCreator::mover_name()
+{
+	return "DockingPrepackProtocol";
+}
+
 
 }
 }

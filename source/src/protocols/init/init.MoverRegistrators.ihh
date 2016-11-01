@@ -49,6 +49,8 @@ static MoverRegistrator< antibody::constraints::ParatopeSiteConstraintMoverCreat
 static MoverRegistrator< antibody::design::AntibodyDesignMoverCreator > reg_AntibodyDesignMoverCreator;
 static MoverRegistrator< antibody::design::AntibodyDesignProtocolCreator > reg_AntibodyDesignProtocolCreator;
 
+static MoverRegistrator< antibody::snugdock::SnugDockCreator > reg_SnugDockCreator;
+
 // B //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< backrub::BackrubMoverCreator > reg_BackrubMoverCreator;
 static MoverRegistrator< backrub::BackrubProtocolCreator > reg_BackrubProtocolCreator;
@@ -120,9 +122,13 @@ static MoverRegistrator< dna::DnaInterfacePackerCreator > reg_DnaInterfacePacker
 static MoverRegistrator< dna::SeparateDnaFromNonDnaCreator > reg_SeparateDnaFromNonDnaCreator;
 
 static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwitchMoverCreator;
+static MoverRegistrator< docking::DockingPrepackProtocolCreator > DockingPrepackProtocolCreator;
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
-static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
+static MoverRegistrator< docking::DockingHighResLegacyCreator > reg_DockingHighResLegacyCreator;
 static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_DockingInitialPerturbationCreator;
+static MoverRegistrator< docking::DockMCMProtocolCreator > DockMCMProtocolCreator;
+static MoverRegistrator< docking::DockMinMoverCreator > reg_DockMinMoverCreator;
+static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 
 static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
 static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;

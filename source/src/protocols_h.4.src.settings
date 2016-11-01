@@ -16,6 +16,7 @@ sources = {
 		"DockingEnsemble",
 		"DockingEnsemblePrepackProtocol",
 		"DockingHighRes",
+		"DockingHighResFactory",
 		"DockingHighResLegacy",
 		"DockingInitialPerturbation",
 		"DockingLowRes",
@@ -38,7 +39,7 @@ sources = {
 		"MPDockingMover",
 		"MPDockingSetupMover",
 		"MPFindInterfaceMover",
-		"QuickRelaxPartnersSeparately",	
+		"QuickRelaxPartnersSeparately",
 	],
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",

@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/docking/DockMinMover.hh>
+#include <protocols/docking/DockMinMoverCreator.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
@@ -138,9 +139,28 @@ void DockMinMover::apply( core::pose::Pose & pose ) {
 	minimize_trial_->apply( pose );
 }
 
+// creator methods
 std::string DockMinMover::get_name() const {
 	return "DockMinMover";
 }
+
+std::string
+DockMinMoverCreator::keyname() const
+{
+	return DockMinMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DockMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockMinMover() );
+}
+
+std::string
+DockMinMoverCreator::mover_name()
+{
+	return "DockMinMover";
+}
+
 
 }
 }

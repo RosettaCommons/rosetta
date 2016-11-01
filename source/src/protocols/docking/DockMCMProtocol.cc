@@ -21,6 +21,7 @@
 
 // Unit Headers
 #include <protocols/docking/DockMCMProtocol.hh>
+#include <protocols/docking/DockMCMProtocolCreator.hh>
 
 // Package Headers
 #include <protocols/docking/DockFilters.hh>
@@ -298,6 +299,25 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 	else { out << "none"; }
 	return out;
 }
+
+// creator methods
+std::string
+DockMCMProtocolCreator::keyname() const
+{
+	return DockMCMProtocolCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DockMCMProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockMCMProtocol() );
+}
+
+std::string
+DockMCMProtocolCreator::mover_name()
+{
+	return "DockMCMProtocol";
+}
+
 
 } // namespace docking
 } // namespace protocols

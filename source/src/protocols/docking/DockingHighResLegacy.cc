@@ -20,6 +20,7 @@
 /// @author Modified by Jacob Corn
 
 #include <protocols/docking/DockingHighResLegacy.hh>
+#include <protocols/docking/DockingHighResLegacyCreator.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 
 // Rosetta Headers
@@ -700,6 +701,24 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 std::string
 DockingHighResLegacy::get_name() const {
+	return "DockingHighResLegacy";
+}
+
+// creator methods
+std::string
+DockingHighResLegacyCreator::keyname() const
+{
+	return DockingHighResLegacyCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DockingHighResLegacyCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockingHighResLegacy() );
+}
+
+std::string
+DockingHighResLegacyCreator::mover_name()
+{
 	return "DockingHighResLegacy";
 }
 

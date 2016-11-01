@@ -44,6 +44,8 @@
 #include <protocols/antibody/design/AntibodyDesignMoverCreator.hh>
 #include <protocols/antibody/design/AntibodyDesignProtocolCreator.hh>
 
+#include <protocols/antibody/snugdock/SnugDockCreator.hh>
+
 // B //////////////////////////////////////////////////////////////////////////
 #include <protocols/backrub/BackrubMoverCreator.hh>
 #include <protocols/backrub/BackrubProtocolCreator.hh>
@@ -103,9 +105,14 @@
 #include <protocols/dna/SeparateDnaFromNonDnaCreator.hh>
 
 #include <protocols/docking/ConformerSwitchMoverCreator.hh>
+#include <protocols/docking/DockingPrepackProtocolCreator.hh>
 #include <protocols/docking/DockingProtocolCreator.hh>
-#include <protocols/docking/DockSetupMoverCreator.hh>
+#include <protocols/docking/DockingHighResLegacyCreator.hh>
 #include <protocols/docking/DockingInitialPerturbationCreator.hh>
+#include <protocols/docking/DockMCMProtocolCreator.hh>
+#include <protocols/docking/DockMinMoverCreator.hh>
+#include <protocols/docking/DockSetupMoverCreator.hh>
+
 
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>

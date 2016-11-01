@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDock.hh>
+#include <protocols/antibody/snugdock/SnugDockCreator.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -359,6 +360,24 @@ std::ostream & operator<<(std::ostream& out, SnugDock const & ) {
 	out << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	return out;
+}
+
+// creator methods
+std::string
+SnugDockCreator::keyname() const
+{
+	return SnugDockCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SnugDockCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SnugDock() );
+}
+
+std::string
+SnugDockCreator::mover_name()
+{
+	return "SnugDock";
 }
 
 } // namespace snugdock
