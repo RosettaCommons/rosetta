@@ -31,7 +31,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 

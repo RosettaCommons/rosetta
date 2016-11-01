@@ -89,7 +89,7 @@ sources = {
 	],
 
 	"core/chemical/rna": [
-		"RNA_ResidueType",
+		"RNA_Info",
 		"RNA_FittedTorsionInfo",
 		"RNA_SamplerUtil",
 		"util",

@@ -16,7 +16,7 @@
 #include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/NamedAtomID.hh>

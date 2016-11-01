@@ -19,7 +19,7 @@
 
 // Package Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>

@@ -465,8 +465,8 @@ PDBInfo::chain(
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
-	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, res );
-	pdb2pose_.insert( chain_id, rr.resSeq, rr.iCode, res );
+	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, rr.segmentID, res );
+	pdb2pose_.insert( chain_id, rr.resSeq, rr.iCode, rr.segmentID, res );
 
 	// set new residue info
 	rr.chainID = chain_id;
@@ -483,8 +483,8 @@ PDBInfo::number(
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
-	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, res );
-	pdb2pose_.insert( rr.chainID, pdb_res, rr.iCode, res );
+	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, rr.segmentID, res );
+	pdb2pose_.insert( rr.chainID, pdb_res, rr.iCode, rr.segmentID, res );
 
 	// set new residue info
 	rr.resSeq = pdb_res;
@@ -501,8 +501,8 @@ PDBInfo::icode(
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
-	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, res );
-	pdb2pose_.insert( rr.chainID, rr.resSeq, ins_code, res );
+	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, rr.segmentID, res );
+	pdb2pose_.insert( rr.chainID, rr.resSeq, ins_code, rr.segmentID, res );
 
 	// set new residue info
 	rr.iCode = ins_code;
@@ -580,19 +580,21 @@ PDBInfo::set_resinfo(
 	Size const res,
 	char const chain_id,
 	int const pdb_res,
-	char const ins_code
+	char const ins_code,
+	std::string const & segmentID
 )
 {
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
-	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, res );
-	pdb2pose_.insert( chain_id, pdb_res, ins_code, res );
+	pdb2pose_.conditional_erase( rr.chainID, rr.resSeq, rr.iCode, rr.segmentID, res );
+	pdb2pose_.insert( chain_id, pdb_res, ins_code, segmentID, res );
 
 	// set new residue info
 	rr.chainID = chain_id;
 	rr.resSeq = pdb_res;
 	rr.iCode = ins_code;
+	rr.segmentID = segmentID;
 	rr.label.clear();
 }
 
@@ -660,7 +662,7 @@ PDBInfo::copy(
 	ResidueRecords::const_iterator const begin = residue_rec_.begin() + ( start_from - 1 );
 	ResidueRecords::const_iterator const end = begin + ( copy_to - copy_from + 1 );
 	for ( ResidueRecords::const_iterator i = begin; i < end; ++i, ++idx ) {
-		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode );
+		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode, i->segmentID );
 	}
 
 	// do the copy
@@ -673,7 +675,7 @@ PDBInfo::copy(
 	// add new data to map
 	Size count = start_from;
 	for ( ResidueRecords::const_iterator i = begin; i < end; ++i, ++count ) {
-		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, count );
+		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, i->segmentID, count );
 	}
 }
 
@@ -697,7 +699,7 @@ PDBInfo::append_res(
 	Size count = res + 2;
 	ResidueRecords::const_iterator i = residue_rec_.begin() + ( res + 1 );
 	for ( ResidueRecords::const_iterator ie = residue_rec_.end(); i < ie; ++i, ++count ) {
-		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, count );
+		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, i->segmentID, count );
 	}
 }
 
@@ -721,7 +723,7 @@ PDBInfo::prepend_res(
 	Size count = res + 1;
 	ResidueRecords::const_iterator i = residue_rec_.begin() + res;
 	for ( ResidueRecords::const_iterator ie = residue_rec_.end(); i < ie; ++i, ++count ) {
-		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, count );
+		pdb2pose_.insert( i->chainID, i->resSeq, i->iCode, i->segmentID, count );
 	}
 }
 
@@ -818,7 +820,7 @@ PDBInfo::delete_res(
 	// sync map first (force erase)
 	Size idx = res;
 	for ( auto i = start, ie = start + n; i < ie; ++i, ++idx ) {
-		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode );
+		pdb2pose_.erase( i->chainID, i->resSeq, i->iCode, i->segmentID );
 	}
 
 	// delete residue records
@@ -827,7 +829,7 @@ PDBInfo::delete_res(
 	// sync map -- renumber existing records
 	for ( Size i = res, ie = residue_rec_.size(); i <= ie; ++i ) {
 		ResidueRecord const & rr = residue_rec_[ i ];
-		pdb2pose_.insert( rr.chainID, rr.resSeq, rr.iCode, i );
+		pdb2pose_.insert( rr.chainID, rr.resSeq, rr.iCode, rr.segmentID, i );
 	}
 }
 

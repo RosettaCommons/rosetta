@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
@@ -311,10 +311,10 @@ prepare_scratch_residue(
 	}
 
 	//Yup, hard-wired...
-	// AMW: changing to grab this from the RNA_ResidueType
+	// AMW: changing to grab this from the RNA_Info
 	// reasoning: if we do any artful stuff making these indices refer to other named atoms, it should go through only one point
 	// (i.e. perhaps for a TNA there's an equivalent for one or more of these?)
-	// AMW TODO: shouldn't RNA_ResidueType have members for C3' and C5' as well?
+	// AMW TODO: shouldn't RNA_Info have members for C3' and C5' as well?
 	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( scratch_rsd->type().RNA_type().c4prime_atom_index() ), scratch_rsd->xyz( " C5'" ) );
 
 	for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
@@ -415,7 +415,7 @@ initialize_atoms_for_which_we_need_new_dofs(
 	// ... perhaps this will be figured out in the Cartesian Fragment class?
 	//
 	ResidueType const & rsd( pose.residue_type( i ) );
-	RNA_ResidueType const & rna_type( rsd.RNA_type() );
+	RNA_Info const & rna_type( rsd.RNA_type() );
 
 	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rna_type.c1prime_atom_index(), i ) ).get_self_ptr() );
 	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rna_type.o2prime_index(), i ) ).get_self_ptr() );

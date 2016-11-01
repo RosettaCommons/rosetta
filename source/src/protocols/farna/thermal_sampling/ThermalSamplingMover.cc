@@ -98,7 +98,6 @@ Size find_likely_first_chain_ending( Pose const & pose ) {
 	return pose.size();
 }
 
-
 /////////////////////
 /// Constructors ///
 /////////////////////
@@ -108,6 +107,7 @@ ThermalSamplingMover::ThermalSamplingMover():
 	protocols::moves::Mover( ThermalSamplingMover::class_name() ),
 	residues_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::sample_residues ]() ),
 	free_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::free_residues ]() ),
+	loop_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::loop_residues ]() ),
 	n_cycle_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ] ),
 	dump_pdb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::dump_pdb ]() ),
 	dump_silent_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::dump_silent ]() ),
@@ -197,9 +197,17 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	//Assign "free" residues (get bigger gaussian stdev)
 	for ( Size i = 1; i <= residues_.size(); ++i ) {
-		if ( std::find( free_rsd_.begin(), free_rsd_.end(), residues_[i]) != free_rsd_.end() ) {
+		if ( std::find( free_rsd_.begin(), free_rsd_.end(), residues_[i] ) != free_rsd_.end() ) {
 			is_free.push_back( true );
 		} else is_free.push_back( false );
+	}
+
+	//Assign "loop" residues (get bigger bb torsion range)
+	utility::vector1<bool> is_loop;
+	for ( Size i = 1; i <= residues_.size(); ++i ) {
+		if ( std::find( loop_rsd_.begin(), loop_rsd_.end(), residues_[i] ) != loop_rsd_.end() ) {
+			is_loop.push_back( true );
+		} else is_loop.push_back( false );
 	}
 
 	utility::vector1<RNA_MC_KIC_SamplerOP> sampler;
@@ -207,14 +215,15 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	utility::vector1<core::id::TorsionID> chi_torsion_ids;
 	if ( !recces_turner_mode_ ) {
 		//Set up the internal move samplers
-		for ( Size const seqpos : residues_ ) {
+		for ( Size i = 1; i <= residues_.size(); ++i ) {
+			Size const seqpos = residues_[ i ];
 			// AMW TODO: make it so the MC_KIC_Sampler can handle terminal residue?
 			if ( seqpos == pose.size() ) continue; // we need one torsion from i+1
 			if ( seqpos == 1 ) continue; // no seqpos - 1
 
 			RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, seqpos-1, seqpos ) );
 			suite_sampler->init();
-			suite_sampler->set_angle_range_from_init_torsions( angle_range_bb_ );
+			suite_sampler->set_angle_range_from_init_torsions( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
 			sampler.push_back( suite_sampler );
 		}
 
@@ -275,8 +284,6 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				//create samplers for [i]-1 and [i]
 
 				// Can't just have a continue condition because we might want to set up the second sampler
-				// AMW 9/23: The BB will never have it. Trust residues_...
-				//if ( !mm_ || ( mm_ && mm_->get_bb( residues_[i] - 1 ) ) ) {
 				TR << "Going to attempt to sample " << residues_[i] - 1 << " with a RNA_MC_Suite and pose size is " << pose.size() << std::endl;
 				RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues_[i] - 1 ) );
 				suite_sampler_1->set_init_from_pose( pose );
@@ -285,16 +292,16 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				suite_sampler_1->set_sample_upper_nucleoside( false );
 				suite_sampler_1->set_pucker_flip_rate( 0 );
 				suite_sampler_1->set_sample_near_a_form( sample_near_a_form );
-				suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
+				// We don't consider the possibility that this is a loop residue that deserves aggressive sampling, because 
+				// if it were, it would be getting added as a sampler in the clause below!
+				//suite_sampler_1->set_angle_range_from_init( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
+				//suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
 				standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
 			}
-			//}
 
-			// AMW TODO: not 100% sure which bbs should be involved here, do please look into this
-			// probably by looking at definitions of these samplers.
 			// can't do this!
 			if ( residues_[i] == pose.size() ) continue;
-			//if ( mm_ && !mm_->get_bb( residues_[i] ) ) continue;
+
 			TR << "Going to attempt to sample " << residues_[i] << " with a RNA_MC_Suite\tand pose size is " << pose.size() << std::endl;
 			RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( residues_[i] ) );
 			suite_sampler->set_init_from_pose( pose );
@@ -303,7 +310,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			suite_sampler->set_sample_upper_nucleoside( false );
 			suite_sampler->set_pucker_flip_rate( 0 );
 			suite_sampler->set_sample_near_a_form( sample_near_a_form );
-			suite_sampler->set_angle_range_from_init( angle_range_bb_ );
+			//suite_sampler->set_angle_range_from_init( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
 			standard_sampler.add_external_loop_rotamer( suite_sampler );
 		}
 	}
@@ -377,6 +384,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	// Vector center_vector = Vector( 0.0 );
 	// protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 700, 700, false, false , center_vector );
 
+	//debug_assert( sampler.size() );
+
 	// Main sampling cycle
 	// AMW: Had to change the structure of the main loop so that all conditional
 	// references to "index" were together
@@ -387,12 +396,12 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			++pct;
 			std::cout << pct << "% complete." << std::endl;
 		}
-
+		
 		did_move = true;
 		// Sampler updates
 		bool boltz = false;
-		if ( (n % 10) == 0 ) {
-			// We need to update the torsions in case they were updated by the other samplers
+		
+		if ( recces_turner_mode_ ) {
 			standard_sampler.set_angle( pose );
 			++standard_sampler;
 			standard_sampler.apply( pose );
@@ -404,26 +413,39 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				if ( n == n_cycle_ ) break;
 				boltz = true;
 			}
-		} else if ( (n % 2) == 0 && ! recces_turner_mode_ && sampler.size() > 0 ) {
-			// Pick from among samplers
-			index = numeric::random::rg().random_range(1,sampler.size());
-			sampler[index]->next( pose ); //This function also updates the stored torsions
-			sampler[index]->apply( pose );
-			if ( !(sampler[index]->check_moved() ) ) {
-				did_move = false;
-			}
-			if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
-				stored_pose_ = pose;
-				if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
-				hist_list[temp_id].add( scores[1], curr_counts );
-				update_scores( scores, pose, scorefxn );
-				if ( n == n_cycle_ ) break;
-				standard_sampler.update();
-				++n_accept_standard;
-				boltz = true;
-			}
 		} else {
-			if ( ! recces_turner_mode_ && chi_sampler.size() > 0 ) {
+			if ( (n % 10) == 0 ) {
+				// We need to update the torsions in case they were updated by the other samplers
+				standard_sampler.set_angle( pose );
+				++standard_sampler;
+				standard_sampler.apply( pose );
+				if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+					stored_pose_ = pose;
+					if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
+					hist_list[temp_id].add( scores[1], curr_counts );
+					update_scores( scores, pose, scorefxn );
+					if ( n == n_cycle_ ) break;
+					boltz = true;
+				}
+			} else if ( (n % 2) == 0 && sampler.size() > 0 ) {
+				// Pick from among samplers
+				index = numeric::random::rg().random_range(1,sampler.size());
+				sampler[index]->next( pose ); //This function also updates the stored torsions
+				sampler[index]->apply( pose );
+				if ( !(sampler[index]->check_moved() ) ) {
+					did_move = false;
+				}
+				if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+					stored_pose_ = pose;
+					if ( is_save_scores ) fill_data( data[temp_id], curr_counts, scores );
+					hist_list[temp_id].add( scores[1], curr_counts );
+					update_scores( scores, pose, scorefxn );
+					if ( n == n_cycle_ ) break;
+					standard_sampler.update();
+					++n_accept_standard;
+					boltz = true;
+				}
+			} else if ( chi_sampler.size() > 0 ) {
 				// Pick from among samplers
 				index = numeric::random::rg().random_range(1,chi_sampler.size());
 				++(*chi_sampler[index]);
@@ -509,7 +531,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				std::ostringstream oss;
 				oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
 					<< temps_[i] << ".bin.gz";
-				Size const data_dim2( scorefxn->get_nonzero_weighted_scoretypes().size() + 2 );
+				Size const data_dim2( get_scoretypes().size() + 2 );
 				Size const data_dim1( data[i].size() / data_dim2 );
 				vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[i] );
 			}

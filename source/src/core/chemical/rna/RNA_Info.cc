@@ -12,7 +12,7 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 // Unit headers
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <basic/Tracer.hh>
@@ -24,7 +24,7 @@ namespace rna {
 
 using namespace ObjexxFCL;
 
-static THREAD_LOCAL basic::Tracer TR( "core.chemical.rna.RNA_ResidueType" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.rna.RNA_Info" );
 
 ////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ static THREAD_LOCAL basic::Tracer TR( "core.chemical.rna.RNA_ResidueType" );
 //         mainchain_atoms_[6] is o4prime_atom_index_
 
 ////////////////////////////////////////////////////////////////////////
-RNA_ResidueType::RNA_ResidueType():
+RNA_Info::RNA_Info():
 	o2prime_index_( 0 ),
 	ho2prime_index_( 0 ),
 	p_atom_index_( 0 ),
@@ -51,7 +51,9 @@ RNA_ResidueType::RNA_ResidueType():
 	o4prime_index_( 0 ),
 	c1prime_index_( 0 ),
 	c2prime_index_( 0 ),
-	c4prime_index_( 0 )
+	c4prime_index_( 0 ),
+	c3prime_index_( 0 ),
+	c5prime_index_( 0 )
 {
 	base_atom_list_.clear();
 	is_RNA_base_.clear();
@@ -60,13 +62,13 @@ RNA_ResidueType::RNA_ResidueType():
 
 
 ////////////////////////////////////////////////////////////////////////
-RNA_ResidueType::~RNA_ResidueType(){}
+RNA_Info::~RNA_Info(){}
 
 
 ////////////////////////////////////////////////////////////////////////
 
 void
-RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
+RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 
 	residue_type_ = residue_type_in;
 	ResidueTypeCOP residue_type( residue_type_ );
@@ -113,6 +115,8 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	c1prime_index_ = residue_type->atom_index( " C1'" );
 	c2prime_index_ = residue_type->atom_index( " C2'" );
 	c4prime_index_ = residue_type->atom_index( " C4'" );
+	c3prime_index_ = residue_type->atom_index( " C3'" );
+	c5prime_index_ = residue_type->atom_index( " C5'" );
 
 	base_atom_list_.clear();
 
@@ -183,7 +187,7 @@ RNA_ResidueType::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 // ugh, sorry this was hard-coded by Parin.
 // should not be that hard to fill in automatically, though.
 utility::vector1< Size > const
-RNA_ResidueType::figure_out_chi_order() const {
+RNA_Info::figure_out_chi_order() const {
 
 	utility::vector1< Size > chi_order;
 	chi_order.push_back( 4 );  //chi_1 is furthest [nucleosidic chi]
@@ -201,10 +205,10 @@ RNA_ResidueType::figure_out_chi_order() const {
 }
 
 ////////////////////////////////////////////////////////////
-///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_ResidueType object itself since at this point it is not yet updated!
+///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_Info object itself since at this point it is not yet updated!
 ///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
 void
-RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
+RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	utility::vector1< core::Size >  & last_controlling_chi,
 	utility::vector1< Size > const & chi_order ){
 
@@ -241,10 +245,10 @@ RNA_ResidueType::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 
 
 ////////////////////////////////////////////////////////////
-///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_ResidueType object itself since at this point it is not yet updated!
+///WARNING THIS FUNCTION SHOULD NOT ACCESS ANY DATA of the RNA_Info object itself since at this point it is not yet updated!
 ///ALSO SHOULD MAKE THIS FUNCTION A CONST FUNCTION!
 void
-RNA_ResidueType::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
+RNA_Info::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 	utility::vector1< core::Size >  & last_controlling_chi,
 	utility::vector1< AtomIndices > & atoms_last_controlled_by_chi ){
 	residue_type_ = residue_type_in;
@@ -323,34 +327,34 @@ RNA_ResidueType::rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 utility::vector1< bool > const &
-RNA_ResidueType::is_virtual() const
+RNA_Info::is_virtual() const
 {
 	return is_virtual_;
 
 }
 
 bool
-RNA_ResidueType::atom_is_virtual( Size const atomno ) const
+RNA_Info::atom_is_virtual( Size const atomno ) const
 {
 	return ( is_virtual_[ atomno ] );
 }
 
 
 utility::vector1< bool > const &
-RNA_ResidueType::is_phosphate() const
+RNA_Info::is_phosphate() const
 {
 	return is_phosphate_;
 }
 
 bool
-RNA_ResidueType::atom_is_phosphate( Size const atomno ) const
+RNA_Info::atom_is_phosphate( Size const atomno ) const
 {
 	return ( is_phosphate_[ atomno ] );
 
 }
 
 utility::vector1< bool > const &
-RNA_ResidueType::is_RNA_base() const
+RNA_Info::is_RNA_base() const
 {
 	return is_RNA_base_;
 
@@ -358,7 +362,7 @@ RNA_ResidueType::is_RNA_base() const
 
 //True for heavy, hydrogen and virtual atoms as long as it is in the RNA_base!
 bool
-RNA_ResidueType::is_RNA_base_atom( Size const atomno ) const
+RNA_Info::is_RNA_base_atom( Size const atomno ) const
 {
 	return ( is_RNA_base_[ atomno ] );
 }
@@ -366,14 +370,14 @@ RNA_ResidueType::is_RNA_base_atom( Size const atomno ) const
 //Note that this implement return both heavy and hydrogen atoms in the RNA_base.
 //Virtual atoms in the RNA_base atoms are also returned.
 AtomIndices const &
-RNA_ResidueType::RNA_base_atoms() const
+RNA_Info::RNA_base_atoms() const
 {
 	return base_atom_list_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::ho2prime_index() const
+RNA_Info::ho2prime_index() const
 {
 	return ho2prime_index_;
 }
@@ -381,7 +385,7 @@ RNA_ResidueType::ho2prime_index() const
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o2prime_index() const
+RNA_Info::o2prime_index() const
 {
 	return o2prime_index_;
 }
@@ -389,60 +393,60 @@ RNA_ResidueType::o2prime_index() const
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::p_atom_index() const
+RNA_Info::p_atom_index() const
 {
 	return p_atom_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::op2_atom_index() const
+RNA_Info::op2_atom_index() const
 {
 	return op2_atom_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::op1_atom_index() const
+RNA_Info::op1_atom_index() const
 {
 	return op1_atom_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o5prime_atom_index() const
+RNA_Info::o5prime_atom_index() const
 {
 	return o5prime_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o3prime_atom_index() const
+RNA_Info::o3prime_atom_index() const
 {
 	return o3prime_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o4prime_atom_index() const
+RNA_Info::o4prime_atom_index() const
 {
 	return o4prime_index_;
 }
 
 Size
-RNA_ResidueType::c1prime_atom_index() const
+RNA_Info::c1prime_atom_index() const
 {
 	return c1prime_index_;
 }
 
 Size
-RNA_ResidueType::c2prime_atom_index() const
+RNA_Info::c2prime_atom_index() const
 {
 	return c2prime_index_;
 }
 
 Size
-RNA_ResidueType::c4prime_atom_index() const
+RNA_Info::c4prime_atom_index() const
 {
 	return c4prime_index_;
 }

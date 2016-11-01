@@ -108,7 +108,7 @@ ChunkSet::setup_atom_id_mapper_to_vanilla_chunk_pose( core::pose::Pose const & p
 utility::vector1< std::string >
 remove_terminus_variant_types_for_rna( utility::vector1< std::string > const & types, char seq ) {
 	utility::vector1< std::string > types_filtered;
-	for ( Size n = 1; n <= types.size(); n++ ) {
+	for ( core::Size n = 1; n <= types.size(); n++ ) {
 		std::string const & type( types[ n ] );
 		if ( core::chemical::rna::rna_nts.find( seq ) != std::string::npos &&
 				( type == "UPPER_TERMINUS_VARIANT" || type == "LOWER_TERMINUS_VARIANT" ) ) continue;
@@ -178,10 +178,10 @@ ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_po
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-std::map< id::AtomID, id::AtomID >
+std::map< core::id::AtomID, core::id::AtomID >
 ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AtomID_Mapper const & atom_id_mapper_to_target_vanilla_pose ) const{
 
-	std::map< id::AtomID, id::AtomID > atom_id_map = atom_id_mapper_to_target_vanilla_pose.calculate_atom_id_map( pose, res_map_,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map = atom_id_mapper_to_target_vanilla_pose.calculate_atom_id_map( pose, res_map_,
 		mini_pose_list_[1]->fold_tree(),
 		atom_id_mapper_to_vanilla_chunk_pose_  );
 
@@ -227,8 +227,8 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 //////////////////////////////////////////////////////////////////////////////////////////////
 std::map< core::id::AtomID, core::Size >
 ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
-	std::map< id::AtomID, id::AtomID > atom_id_map,
-	pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+	core::pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map,
 	bool do_rosetta_library_domain_check /* = true */ ) const
 {
 	using namespace core::id;
@@ -279,7 +279,7 @@ ChunkSet::mini_pose( Size const idx ) const {
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-ChunkSet::check_fold_tree_OK( pose::Pose const & pose ) const
+ChunkSet::check_fold_tree_OK( core::pose::Pose const & pose ) const
 {
 	// Check where the chunk is mapped to in the big pose.
 	// There should be at least the same number of jumps in the big pose

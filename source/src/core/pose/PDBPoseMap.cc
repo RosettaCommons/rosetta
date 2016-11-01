@@ -88,11 +88,12 @@ PDBPoseMap::insert(
 	char const chain,
 	int const pdb_res,
 	char const ins_code,
+	std::string const & segmentID,
 	Size const pose_res
 )
 {
 	if ( chain != PDBInfo::empty_record() ) {
-		pdb2pose_[ ResidueKey( chain, pdb_res, ins_code ) ] = pose_res;
+		pdb2pose_[ ResidueKey( chain, pdb_res, ins_code, segmentID ) ] = pose_res;
 	}
 }
 
@@ -103,7 +104,7 @@ void
 PDBPoseMap::fill( PDBInfo const & info )
 {
 	for ( Size i = 1; i <= info.nres(); ++i ) {
-		insert( info.chain( i ), info.number( i ), info.icode( i ), i );
+		insert( info.chain( i ), info.number( i ), info.icode( i ), info.segmentID( i ), i );
 	}
 }
 
@@ -121,6 +122,7 @@ core::pose::PDBPoseMap::ResidueKey::save( Archive & arc ) const {
 	arc( CEREAL_NVP( chainID ) ); // char
 	arc( CEREAL_NVP( resSeq ) ); // int
 	arc( CEREAL_NVP( iCode ) ); // char
+	arc( CEREAL_NVP( segmentID ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
@@ -130,6 +132,7 @@ core::pose::PDBPoseMap::ResidueKey::load( Archive & arc ) {
 	arc( chainID ); // char
 	arc( resSeq ); // int
 	arc( iCode ); // char
+	arc( segmentID ); // std::string
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBPoseMap::ResidueKey );

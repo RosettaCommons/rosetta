@@ -152,7 +152,8 @@ def erraser( option ):
                 rosetta2phenix_merge_back(regularized_input_pdb, 'FINAL.pdb', option.out_pdb)
                 os.chdir(base_dir)
                 if not option.kept_temp_folder :
-                    remove(temp_dir)
+					print "who knows"
+                    #remove(temp_dir)
                 total_time=time.time()-start_time
                 print '\n', "DONE!...Total time taken= %f seconds" %(total_time) , '\n'
                 print '###################################'
@@ -182,7 +183,8 @@ def erraser( option ):
     regularize_OP1_OP2('FINAL_merge.pdb', option.out_pdb)
     os.chdir(base_dir)
     if not option.kept_temp_folder :
-        remove(temp_dir)
+        print "who knows"
+        #remove(temp_dir)
 
     total_time=time.time()-start_time
     print '\n', "DONE!...Total time taken= %f seconds" %(total_time) , '\n'
@@ -658,7 +660,6 @@ def seq_rebuild_new( option ) :
     common_cmd += " -stepwise::output_minimized_pose_list false "
     common_cmd += " -stepwise::monte_carlo::minimize_single_res_frequency 1.0 "
     common_cmd += " -stepwise::enumerate true "
-    common_cmd += " -score:pose_sequence_const true "
 
     ### AMW: Things we may need to figure out how to handle in the new, stepwise framework
     ###

@@ -94,7 +94,7 @@ WeightedSampler::random_sample(
 ) const {
 	assert(randnum >= 0);
 	assert(randnum <= 1);
-
+	
 	if  ( !cumulative_distribution_valid_ ) update_cumulative_distribution();
 
 	for ( numeric::Size i = 1; i <= cumulative_distribution_.size(); ++i ) {
@@ -113,15 +113,16 @@ WeightedSampler::random_sample(
 
 void
 WeightedSampler::update_cumulative_distribution() const {
+
 	runtime_assert(weights_.size());
 
 	cumulative_distribution_.resize(weights_.size());
 
 	numeric::Real weight_sum(0);
 
-	for ( numeric::Size i = 1; i <= weights_.size(); ++i ) {
-		assert(weights_[i] >= 0);
-		weight_sum += weights_[i];
+	for ( auto const weight : weights_ ) {
+		assert(weight >= 0);
+		weight_sum += weight;
 	}
 
 	cumulative_distribution_[1] = weights_[1]/weight_sum;

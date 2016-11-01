@@ -995,34 +995,36 @@ def rosetta2std_pdb (input_pdb, out_name, cryst1_line = "") :
     if cryst1_line != "" :
         output.write("%s\n" % cryst1_line)
     for line in open(input_pdb) :
-        if len(line) > 2 and (line[0:3] == 'END' or line[0:3] == 'TER') :
-            output.write(line)
-        elif line[0:4] == 'LINK':
-            output.write(line)
-        elif len(line) > 5 and line[0:6] == 'HETATM' :
-            output.write(line)
-        elif len(line) > 3 and line[0:4] == 'ATOM' :
-            new_line = line.replace("*", "'")
-
-            atom_name = new_line[12:16]
-            if atom_name_convert.has_key(atom_name) :
-                atom_name = atom_name_convert[atom_name]
-
-            res_name = line[17:20]
-            if res_name_convert.has_key(res_name) :
-                res_name = res_name_convert[res_name]
-
-            atom_type = line[13]
-            if line[12] == 'H' :
-                atom_type = 'H'
-
-            new_line_list = list(new_line)
-            new_line_list[12:16] = atom_name
-            new_line_list[17:20] = res_name
-            new_line_list[77] = atom_type
-
-            output_line = string.join(new_line_list, '')
-            output.write(output_line)
+		output.write(line)
+        #if len(line) > 2 and (line[0:3] == 'END' or line[0:3] == 'TER') :
+        #    output.write(line)
+        #elif line[0:4] == 'LINK':
+        #    output.write(line)
+        #elif len(line) > 5 and (line[0:6] == 'HETATM' or line[0:4] == 'ATOM') :
+        #    output.write(line)
+		# AMW: principle -- let Rosetta handle naming
+        #elif len(line) > 3 and line[0:4] == 'ATOM' :
+        #    new_line = line.replace("*", "'")
+        #
+        #    atom_name = new_line[12:16]
+        #    if atom_name_convert.has_key(atom_name) :
+        #        atom_name = atom_name_convert[atom_name]
+        #
+        #    res_name = line[17:20]
+        #    if res_name_convert.has_key(res_name) :
+        #        res_name = res_name_convert[res_name]
+        #
+        #    atom_type = line[13]
+        #    if line[12] == 'H' :
+        #        atom_type = 'H'
+        #
+        #    new_line_list = list(new_line)
+        #    new_line_list[12:16] = atom_name
+        #    new_line_list[17:20] = res_name
+        #    new_line_list[77] = atom_type
+        #
+        #    output_line = string.join(new_line_list, '')
+        #    output.write(output_line)
 
     output.close()
     return True

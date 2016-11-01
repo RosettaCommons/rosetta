@@ -15,13 +15,13 @@
 ////////////////////////////////////////////////////////////////////////
 
 
-#ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_hh
-#define INCLUDED_core_chemical_rna_RNA_ResidueType_hh
+#ifndef INCLUDED_core_chemical_rna_RNA_Info_hh
+#define INCLUDED_core_chemical_rna_RNA_Info_hh
 
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/rna/RNA_ResidueType.fwd.hh>
+#include <core/chemical/rna/RNA_Info.fwd.hh>
 
 // Numeric headers
 
@@ -38,14 +38,14 @@ namespace rna {
 
 
 /////////////////////////////////////Parin S, Dec 23, 2011: RNA stuff//////////////////////////////////////////
-class RNA_ResidueType : public utility::pointer::ReferenceCount {
+class RNA_Info : public utility::pointer::ReferenceCount {
 
 
 public:
 
-	RNA_ResidueType();
+	RNA_Info();
 
-	virtual ~RNA_ResidueType();
+	virtual ~RNA_Info();
 
 	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 private:
@@ -124,6 +124,12 @@ public:
 
 	Size
 	c4prime_atom_index() const;
+	
+	Size
+	c3prime_atom_index() const { return c3prime_index_; }
+	
+	Size
+	c5prime_atom_index() const { return c5prime_index_; }
 
 	Size chi_number_pseudoalpha() const { return chi_number_pseudoalpha_;}
 	Size chi_number_pseudobeta() const { return chi_number_pseudobeta_;}
@@ -151,6 +157,10 @@ public:
 	core::Size c1prime_index_;
 	core::Size c2prime_index_;
 	core::Size c4prime_index_;
+	
+	// AMW: these are ribose atoms not added by default
+	core::Size c3prime_index_;
+	core::Size c5prime_index_;
 
 	AtomIndices base_atom_list_;
 
@@ -159,7 +169,7 @@ public:
 	//For fast look whether atom is VIRTUAL type.
 	utility::vector1< bool > is_virtual_;
 
-	ResidueTypeCAP residue_type_; //Pointer to the main ResidueType object that this RNA_ResidueType object belongs to.
+	ResidueTypeCAP residue_type_; //Pointer to the main ResidueType object that this RNA_Info object belongs to.
 
 	Size chi_number_pseudoalpha_;
 	Size chi_number_pseudobeta_;
@@ -167,11 +177,11 @@ public:
 	Size chi_number_pseudoepsilon_;
 	Size chi_number_pseudozeta_;
 
-}; //RNA_ResidueType
+}; //RNA_Info
 
 
 } // rna
 } // chemical
 } // core
 
-#endif // INCLUDED_core_chemical_rna_RNA_ResidueType_hh
+#endif // INCLUDED_core_chemical_rna_RNA_Info_hh

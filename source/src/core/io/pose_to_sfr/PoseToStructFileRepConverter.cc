@@ -223,6 +223,7 @@ PoseToStructFileRepConverter::init_from_pose(
 		renumber_chains = true;
 	}
 
+	//TR << " WE " << ( renumber_chains ? " are " : " aren't " ) << " renumebring chains" << std::endl;
 	//utility::vector1< bool > res_info_added( pose.size(), false );
 
 	core::Size new_atom_num( 1 );
@@ -230,13 +231,15 @@ PoseToStructFileRepConverter::init_from_pose(
 	for ( Size resnum = 1, resnum_max = pose.size(); resnum <= resnum_max; ++resnum ) {
 		conformation::Residue const & rsd( pose.residue( resnum ) );
 		bool const use_pdb_info( use_pdb_info_for_num( pose, resnum ) );
-
+		//TR << "use pdb info for num ? " << ( use_pdb_info ?  "yes" : "no" ) << std::endl;
 		if ( ( resnum > 1 ) && ( pose.chain( resnum ) != pose.chain( resnum - 1 ) ) ) {
 			++new_tercount;
 		}
 
 		ResidueInformation res_info;
 		get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
+		//TR << "In init_from_pose " << resnum << " " << pose.residue_type( resnum ).name() << " " << pose.pdb_info()->chain( resnum ) << std::endl;
+		//TR << "In init_from_pose " << resnum << " " << res_info.chainID() << std::endl;
 
 		// Add res information only if we havn't done so already.
 		//if ( ! res_info_added[ resnum ] ) {
@@ -284,9 +287,10 @@ PoseToStructFileRepConverter::append_residue_to_sfr(
 	if ( options_.per_chain_renumbering() ) {
 		renumber_chains = true;
 	}
-
+	//TR << " append_residue " << resnum << " " << pose.pdb_info()->segmentID( resnum ) << std::endl;
 	ResidueInformation res_info;
 	get_residue_information( pose, resnum, use_pdb_info, renumber_chains, new_tercount, res_info );
+	//TR << " append_residue " << resnum << " " << res_info.segmentID() << std::endl;
 	append_residue_info_to_sfr( res_info, rsd );
 
 	// Loop through each atom in the residue and generate ATOM or HETATM data.
@@ -443,6 +447,7 @@ PoseToStructFileRepConverter::add_atom_to_sfr(
 bool
 PoseToStructFileRepConverter::use_pdb_info_for_num( pose::Pose const & pose, Size resnum )
 {
+	//TR << "use pdb info? " << resnum << " " << pose.pdb_info()->nres()  << " " << pose.pdb_info()->obsolete() << " " << options_.renumber_pdb() << std::endl;
 	// Setup options.
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	if ( pdb_info
@@ -1189,6 +1194,7 @@ PoseToStructFileRepConverter::get_residue_information(
 		// Fix for >10k residues.
 		res_info.resSeq( res_info.resSeq() % 10000 );
 	}
+	//TR << " res_info chain is " << res_info.chainID() << std::endl;
 }
 
 /* OLDer - DELETE - left for reference

@@ -119,13 +119,15 @@ private: // data
 	utility::vector1< Size > residues_;
 	Size total_sampled_;
 	utility::vector1< Size > free_rsd_;
+	utility::vector1< Size > loop_rsd_;
 	bool recces_turner_mode_ = false;
 	bool dumping_app_ = false;
 	Size n_cycle_;
 	bool dump_pdb_ = false;
 	bool dump_silent_ = false;
-	Real angle_range_chi_;
-	Real angle_range_bb_;
+	Real angle_range_chi_ = 180;
+	Real angle_range_bb_ = 60;
+	Real angle_range_loop_bb_ = 180;
 	utility::vector1< Real > temps_;
 	utility::vector1< Real > st_weights_;
 

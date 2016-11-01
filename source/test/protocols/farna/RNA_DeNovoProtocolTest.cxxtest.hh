@@ -104,6 +104,7 @@ public:
 		//
 		/////////////////////////////////////////////////////
 
+		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::id;
@@ -206,6 +207,7 @@ public:
 		//
 		/////////////////////////////////////////////////////
 
+		using namespace core;
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::id;

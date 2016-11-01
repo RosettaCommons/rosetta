@@ -1,0 +1,14 @@
+NO_HB_ENV_DEP
+fa_atr          0.23
+fa_rep          0.12
+fa_intra_rep    0.0029
+rna_torsion     0.10
+rna_sugar_close 0.7
+hbond_sr_bb_sc  0.62
+hbond_lr_bb_sc  3.4
+hbond_sc        3.4
+lk_ball_wtd      0.62
+ch_bond         0.42
+fa_stack        0.3
+fa_elec_rna_phos_phos 1.05
+atom_pair_constraint 1.0

@@ -17,7 +17,7 @@
 
 // Package Headers
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>

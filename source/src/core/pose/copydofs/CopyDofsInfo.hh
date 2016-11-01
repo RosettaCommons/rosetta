@@ -50,6 +50,12 @@ public:
 	push_back( std::pair< core::id::AtomID, core::kinematics::Jump > const & jumps_info_pair );
 
 	void
+	emplace_back( std::pair< core::id::DOF_ID, core::Real > && dofs_info_pair );
+
+	void
+	emplace_back( std::pair< core::id::AtomID, core::kinematics::Jump > && jumps_info_pair );
+
+	void
 	apply_dofs( core::pose::Pose & pose,
 		core::Real const dof_tolerance = 1.0e-5 ) const;
 

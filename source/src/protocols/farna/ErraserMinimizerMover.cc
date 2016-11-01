@@ -87,6 +87,7 @@
 //////////////////////////////////////////////////
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -101,6 +102,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/file/file_sys_util.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -682,7 +684,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 int
 ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	int nres = pose.size();
-
+	
 	// if already rooted on virtual residue , return
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "add_virtual_res() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
@@ -692,7 +694,12 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	// attach virt res there
 	core::chemical::ResidueTypeSet const & residue_set = *pose.residue_type( 1 ).residue_type_set();
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *( residue_set.get_representative_type_name3( "VRT" ) ) ) );
+	
+	// OK, what we need is to save the PDBInfo, then add it back for every residue.
+	PDBInfo info = *pose.pdb_info();
 	pose.append_residue_by_jump( *new_res , nres );
+	pose.pdb_info()->copy( info, 1, nres, 1 );
+	
 	// make the virt atom the root
 	kinematics::FoldTree newF( pose.fold_tree() );
 	newF.reorder( nres + 1 );
@@ -700,7 +707,9 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 
 	core::pose::full_model_info::FullModelInfoOP full_model_info( new core::pose::full_model_info::FullModelInfo( pose ) );
 	set_full_model_info( pose, full_model_info );
-
+	// This is fine
+	pose.pdb_info()->obsolete( false );
+	
 	return nres + 1;
 }
 
@@ -817,25 +826,20 @@ fill_gaps_and_remove_isolated_res(
 	Size const total_res,
 	std::set< Size > & res_remove
 ) {
-	TR << "Fill gaps and remove isolated res " << std::endl;
 
 	// res_list is sorted
 	if ( *std::next(res_list.begin()) - *res_list.begin() != 1 ) {
 		res_remove.insert( *res_list.begin() );
 	}
-	TR << "Fill gaps and remove isolated res " << std::endl;
 
 	for ( auto it = std::next(res_list.begin()); it != std::prev(res_list.end()); ++it ) {
 		if ( *std::next(it) - *it != 1 && *it - *std::prev(it) != 1 ) {
 			res_remove.insert( *it );
 		}
 	}
-	TR << "Fill gaps and remove isolated res " << std::endl;
 	if ( *std::prev(res_list.end()) - *std::prev(res_list.end(),2) != 1 ) {
 		res_remove.insert( *std::prev(res_list.end()) );
 	}
-
-	TR << "Fill gaps and remove isolated res " << std::endl;
 
 	// remove res in res_remove from res_list
 	remove_set1_elements_from_set2( res_remove, res_list );
@@ -851,8 +855,6 @@ fill_gaps_and_remove_isolated_res(
 			}
 		}
 	}
-
-	TR << "Fill gaps and remove isolated res " << std::endl;
 
 	Size const gap = total_res - *std::prev(res_list.end());
 	if ( gap > 0 && gap <= 4 ) {
@@ -1141,6 +1143,7 @@ ErraserMinimizerMover::apply(
 	pose::Pose const pose_full = pose;
 	Size const nres( pose.size() );
 	Size const nres_moving( nres - fixed_res_list_.size() );
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
@@ -1152,6 +1155,7 @@ ErraserMinimizerMover::apply(
 		pyrimidine_flip_trial( pose );
 	}
 	TR << "Back from a possibly pyrimidine flip trial." << std::endl;
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	TR << "Do we skip minimization?" << std::endl;
 	if ( skip_minimize_ ) return;
@@ -1176,6 +1180,7 @@ ErraserMinimizerMover::apply(
 		}
 		TR << "]" << std::endl;
 	}
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	Size first_chunk = 1;
 	for ( ; first_chunk <= n_chunk; ++first_chunk ) {
@@ -1197,6 +1202,7 @@ ErraserMinimizerMover::apply(
 			break;
 		}
 	}
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	//Set the MoveMap, avoiding moving the virtual residue
 	TR << "Setting up movemap ..." << std::endl;
@@ -1213,6 +1219,7 @@ ErraserMinimizerMover::apply(
 		mm.set_bb(  ii, true );
 		mm.set_chi( ii, true );
 	}
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	kinematics::FoldTree fold_tree( pose.fold_tree() );
 
@@ -1232,6 +1239,7 @@ ErraserMinimizerMover::apply(
 			mm.set_jump( i, true );
 		}
 	}
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	//Fixed res mode
 	if ( fixed_res_list_.size() != 0 ) {
@@ -1262,6 +1270,7 @@ ErraserMinimizerMover::apply(
 		}
 	}
 	TR << std::endl;
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	// Handle phosphate constraints
 	if ( constrain_phosphate_ ) {
@@ -1287,6 +1296,7 @@ ErraserMinimizerMover::apply(
 		pose.constraint_set( cst_set );
 	}
 	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
 		time_t chunk_start = time(0);
@@ -1323,7 +1333,7 @@ ErraserMinimizerMover::apply(
 		float const dummy_tol( 0.00000001 );
 
 		TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
-		MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone", dummy_tol, true, false, false );
+		MinimizerOptions min_options_dfpmin( option[ run::min_type ], dummy_tol, true, false, false );
 		min_options_dfpmin.max_iter( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 		minimizer.run( pose, chunk_mm, *scorefxn_, min_options_dfpmin );
 
@@ -1355,10 +1365,21 @@ ErraserMinimizerMover::apply(
 		out << "DONE!" << std::endl;
 		std::stringstream fn;
 		fn << "debug_chunk_" << chunk_i << ".pdb";
+		pose.pdb_info()->obsolete( false );
+
 		pose.dump_pdb( fn.str() );
 	}
+	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
+	pose.pdb_info()->obsolete( false );
 
 	TR << "Job completed sucessfully." << std::endl;
+	
+	// Remove slice output files
+	for ( Size chunk_i = 1; chunk_i <= n_chunk; ++chunk_i ) {
+		std::stringstream outname;
+		outname << "full_minimize_temp_" << chunk_i << ".out";
+		utility::file::file_delete( outname.str() );
+	}
 }
 
 std::string

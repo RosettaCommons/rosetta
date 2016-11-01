@@ -114,39 +114,38 @@ void RNA_IdealCoord::apply_coords(
 	if ( !res.is_RNA() ) return;
 
 	//Record the torsions in starting pose
-	utility::vector1 < TorsionID > saved_torsion_id;
-	utility::vector1 < Real > saved_torsions;
+	utility::vector1< TorsionID > saved_torsion_id;
+	utility::vector1< Real > saved_torsions;
 	if ( keep_backbone_torsion ) {
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 1       ) ); //CHI
-		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 4       ) ); //O2H
-		saved_torsion_id.push_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
-		saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
-		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
-			bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  BETA    ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::CHI, 1       ) ); //CHI
+		saved_torsion_id.emplace_back( TorsionID( seqpos,   id::CHI, 4       ) ); //O2H
+		saved_torsion_id.emplace_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
+		saved_torsion_id.emplace_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
+		for ( auto const & tid : saved_torsion_id ) {
+			bool const is_exists = is_torsion_exists( pose, tid );
 			if ( is_exists ) {
-				saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
+				saved_torsions.push_back( pose.torsion( tid ) );
 			} else {
 				saved_torsions.push_back( -9999 );
 			}
 		}
 	}
 
-	MiniPoseOP const ref_mini_pose = ref_mini_pose_list_[res_class];
+	MiniPoseOP const & ref_mini_pose = ref_mini_pose_list_[res_class];
 	//Apply ideal dofs
 	if ( ignore_base ) {
-		std::map < core::id::AtomID , core::id::AtomID > atom_id_map;
+		std::map< core::id::AtomID , core::id::AtomID > atom_id_map;
 		utility::vector1< std::string > const & ref_atom_names(
 			ref_mini_pose->atom_names_list()[2] );
 		utility::vector1< std::string > const & non_base_atoms(
 			chemical::rna::non_base_atoms );
 		chemical::ResidueType const & rsd_type1( pose.residue_type( seqpos ) );
-		for ( Size i = 1; i <= non_base_atoms.size(); ++i ) {
-			std::string const & atom_name( non_base_atoms[i] );
+		for ( auto const & atom_name : non_base_atoms ) {
 			Size const index2 =
 				std::find( ref_atom_names.begin(), ref_atom_names.end(), atom_name ) -
 				ref_atom_names.begin() + 1;
@@ -159,14 +158,15 @@ void RNA_IdealCoord::apply_coords(
 					}
 				}
 				if ( index1 != 1 ) {
-					atom_id_map[AtomID( index1, seqpos )] = AtomID( index2, 2 );
+					atom_id_map.emplace(AtomID( index1, seqpos ), AtomID( index2, 2 ) );
 				}
 			}
 		}
 		copy_dofs( pose, *ref_mini_pose, atom_id_map );
 	} else {
-		std::map <Size, Size> res_map;
-		res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
+		std::pair< Size, Size > res_pair( seqpos, 2 );
+		std::map< Size, Size > res_map;
+		res_map.insert( std::pair< Size, Size >( seqpos, 2 ) ); //Only the center res (#2) matters in ref_pose
 		copy_dofs_match_atom_names( pose, *ref_mini_pose, res_map );
 	}
 
@@ -213,6 +213,9 @@ void RNA_IdealCoord::apply(
 	case na_ura :
 		res_class = 7; break;
 	default :
+		// AMW TODO: This strategy is already encoded in ERRASER
+		// we grab coords from a pet Pose, for each ncnt.
+		// Instead of n poses, could we do one pose? who knows.
 		// AMW: until we figure out what to do, just don't try to
 		// apply ideal coords to NCNTs.
 		return;

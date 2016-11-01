@@ -48,22 +48,22 @@ fade_energy(
 
 HBAccChemType
 get_hb_acc_chem_type(
-	int const aatm,
+	Size const aatm,
 	conformation::Residue const & acc_rsd
 );
 
 HBDonChemType
 get_hb_don_chem_type(
-	int const datm,
+	Size const datm,
 	conformation::Residue const & don_rsd
 );
 
 HBEvalTuple
 hbond_evaluation_type(
 	hbtrie::HBAtom const & datm,
-	int const & don_rsd,
+	Size const don_rsd,
 	hbtrie::HBAtom const & aatm,
-	int const & acc_rsd
+	Size const acc_rsd
 );
 
 HBSeqSep
@@ -83,9 +83,9 @@ extern HBondDerivs const ZERO_DERIV2D;
 
 HBEvalTuple
 hbond_evaluation_type(
-	int const datm,
+	Size const datm,
 	conformation::Residue const & don_rsd,
-	int const aatm,
+	Size const aatm,
 	conformation::Residue const & acc_rsd
 );
 

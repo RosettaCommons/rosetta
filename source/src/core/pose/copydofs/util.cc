@@ -169,11 +169,10 @@ setup_atom_id_map(
 {
 	using namespace core::id;
 
-	for ( ResMap::const_iterator
-			it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
+	for ( auto const & elem : res_map ) {
 
-		Size const i = it->first; //Index in big pose.
-		Size const i_scratch_pose = it->second; // Index in the little "chunk" or "scratch" pose
+		Size const i = elem.first; //Index in big pose.
+		Size const i_scratch_pose = elem.second; // Index in the little "chunk" or "scratch" pose
 
 		//  std::cout << "setting up atom_id map " << i << " " << i_scratch_pose << std::endl;
 		chemical::ResidueType const & rsd_type( pose.residue_type( i ) );
@@ -290,7 +289,7 @@ setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 //
 void
 apply_dofs( pose::Pose & pose,
-	CopyDofsInfo  const & copy_dofs_info,
+	CopyDofsInfo const & copy_dofs_info,
 	core::Real const dof_tolerance /* = 1.0e-5*/ ){
 
 	copy_dofs_info.apply_dofs( pose, dof_tolerance );

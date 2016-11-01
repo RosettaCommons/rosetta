@@ -81,15 +81,36 @@ private:
 	utility::vector1<core::Size> hist_;
 };
 
+// score types to be recorded		
+utility::vector1<core::scoring::ScoreType> const & get_scoretypes() {		
+	using namespace core::scoring;		
+	static utility::vector1< ScoreType > scoretypes;		
+	if ( !scoretypes.empty() ) return scoretypes;		
+		
+	// List of score types to be cached		
+	scoretypes.push_back( fa_atr );		
+	scoretypes.push_back( fa_rep );		
+	scoretypes.push_back( fa_intra_rep );		
+	scoretypes.push_back( fa_stack );		
+	scoretypes.push_back( rna_torsion );		
+	scoretypes.push_back( hbond_sc );		
+	scoretypes.push_back( lk_nonpolar );		
+	scoretypes.push_back( geom_sol_fast );		
+	scoretypes.push_back( stack_elec );		
+	scoretypes.push_back( fa_elec_rna_phos_phos );		
+	return scoretypes;		
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void update_scores(
 	utility::vector1<float> & scores,
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP const scorefxn
 ) {
+	using namespace core::scoring;
 	scores.clear();
 	scores.push_back( ( *scorefxn )( pose ) );
-	utility::vector1<core::scoring::ScoreType> const & score_types( scorefxn->get_nonzero_weighted_scoretypes() );
+	utility::vector1< ScoreType > const & score_types = get_scoretypes();
 	for ( core::Size i = 1; i<= score_types.size(); ++i ) {
 		scores.push_back( scorefxn->score_by_scoretype( pose, score_types[i], false /*weighted*/ ) );
 	}

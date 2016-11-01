@@ -18,7 +18,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>

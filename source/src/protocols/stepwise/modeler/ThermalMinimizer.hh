@@ -118,10 +118,10 @@ private: // data
 	Size n_cycle_ = 100;
 	Real angle_range_chi_ = 180;
 	Real angle_range_bb_ = 60;
-	Real temp_ = 1.0;
+	Real temp_ = 0.5;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::kinematics::MoveMapOP mm_;
-	bool kic_sampling_;
+	bool kic_sampling_ = true;
 	bool output_min_pose_;
 };
 

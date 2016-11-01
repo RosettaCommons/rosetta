@@ -28,7 +28,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
@@ -317,7 +317,7 @@ bah_chi_compute_energy_sp3(
 ///////////////////////////////////////////////////////////////////////////////
 HBDonChemType
 get_hb_don_chem_type(
-	int const datm,
+	Size const datm,
 	conformation::Residue const & don_rsd
 )
 {
@@ -483,12 +483,13 @@ get_hb_don_chem_type(
 ///////////////////////////////////////////////////////////////////////////////
 HBAccChemType
 get_hb_acc_chem_type(
-	int const aatm,
+	Size const aatm,
 	conformation::Residue const & acc_rsd
-)
-{
+) {
 	using namespace chemical;
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
+	
+	chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_type();
 
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime
 
@@ -511,14 +512,14 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_DNA;
 			}
 		} else if ( acc_rsd.is_RNA() ) {
-			if ( aname == " OP2" || aname == " OP1" || aname == " O3P" ||
+			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() || aname == " O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
 					aname == "YOP2" || aname == "YOP1" ) {
 				return hbacc_PCA_RNA;
-			} else if ( aname == " O5'" || aname == " O3'" ||
+			} else if ( aatm == rna_type.o5prime_atom_index() || aatm == rna_type.o3prime_atom_index() ||
 					aname == "YO5'" || aname == "XO3'" ) {
 				return hbacc_PES_RNA;
-			} else if ( aname == " O4'" ) {
+			} else if ( aatm == rna_type.o4prime_atom_index() ) {
 				return hbacc_RRI_RNA;
 			}
 		} else {
@@ -773,9 +774,9 @@ get_seq_sep(
 hbonds::HBEvalTuple
 hbond_evaluation_type(
 	hbtrie::HBAtom const & datm,
-	int const & don_rsd,
+	Size const don_rsd,
 	hbtrie::HBAtom const & aatm,
-	int const & acc_rsd
+	Size const acc_rsd
 ){
 
 	HBDonChemType don_chem_type(datm.hb_don_chem_type());
@@ -787,9 +788,9 @@ hbond_evaluation_type(
 
 hbonds::HBEvalTuple
 hbond_evaluation_type(
-	int const datm,
+	Size const datm,
 	conformation::Residue const & don_rsd,
-	int const aatm,
+	Size const aatm,
 	conformation::Residue const & acc_rsd
 ){
 	HBDonChemType don_chem_type(get_hb_don_chem_type(datm, don_rsd));

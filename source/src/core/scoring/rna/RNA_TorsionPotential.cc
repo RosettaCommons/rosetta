@@ -17,7 +17,7 @@
 
 // Package Headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/rna/util.hh>
 
@@ -246,7 +246,7 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 
 	/////////////////////// new 'packable phosphate' variants /////////////////
 	// These were experimental, but are actually not in use -- no longer supported.
-	chemical::rna::RNA_ResidueType const & rna_type = rsd.type().RNA_type();
+	chemical::rna::RNA_Info const & rna_type = rsd.type().RNA_type();
 	if ( rna_type.chi_number_pseudoalpha() > 0 ) {
 		Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
 		Real const pseudoalpha_score = alpha_potential_->func( pseudoalpha );
@@ -578,7 +578,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 
 		/////////////////////// new 'packable phosphate' variants /////////////////
 		if ( seqpos != current_seqpos ) continue;
-		chemical::rna::RNA_ResidueType const & rna_type = pose.residue( current_seqpos ).type().RNA_type();
+		chemical::rna::RNA_Info const & rna_type = pose.residue( current_seqpos ).type().RNA_type();
 		if ( rna_type.chi_number_pseudoalpha() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoalpha() ), pose, id, f1, f2 ) ) {
 			Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
 			Real const dE_dtorsion = alpha_potential_->dfunc( pseudoalpha );

@@ -175,7 +175,11 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 		score_before_min = (*minimize_scorefxn_)( pose );
 		do_minimize( pose, mm );
 
-		close_chainbreaks( pose, mm );
+		// Don't do this if you're thermal sampling -- it'll take care of it for you, I think.
+		// AMW I no longer believe that's true -- another cutpoint desynchrony.
+		//if ( options_->minimizer_mode() != THERMAL_SAMPLER ) {
+			close_chainbreaks( pose, mm );
+		//}
 
 		TR << "Score minimized from " << F(8,3, score_before_min) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << "   [original: " << F(8,3,score_original);
 		if ( hasPoseExtraScore( pose, "cluster_size" ) ) TR << " with cluster_size " << I( 4, getPoseExtraScore( pose, "cluster_size" ) );

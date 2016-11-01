@@ -36,7 +36,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -141,7 +141,7 @@ core::Real get_RNAring_sasa( core::conformation::Residue const & rsd, int rsdno,
 		std::cout<<"Residue is not an RNA base. Cannot calculate RNA base SASA."<<std::endl;
 		exit (1);
 	}
-	core::chemical::rna::RNA_ResidueType const & rsd_type = rsd.RNA_type();
+	core::chemical::rna::RNA_Info const & rsd_type = rsd.RNA_type();
 	core::Real curr_ring_sasa = 0;
 	for ( Size rj = 1, rj_end = rsd.nheavyatoms(); rj <= rj_end; ++rj ) {
 		if ( !rsd_type.is_RNA_base_atom(rj) ) continue;

@@ -46,9 +46,9 @@ public:
 	// ------------- Helper Functions ------------- //
 
 	void fill_map( PDBPoseMap & map ) {
-		map.insert( ' ',  -1, 'C', 1 );
-		map.insert( 'X', 999, ' ', 2 );
-		map.insert( 'A',  10, 'A', 3 );
+		map.insert( ' ',  -1, 'C', "    ", 1 );
+		map.insert( 'X', 999, ' ', "    ", 2 );
+		map.insert( 'A',  10, 'A', "    ", 3 );
 	}
 
 	// --------------- Test Cases --------------- //

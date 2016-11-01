@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -333,7 +334,8 @@ create_rna_vall_torsions( pose::Pose & pose,
 			// x-y-z of coordinates of C2', C1', and O4', in a local coordiante system defined
 			// by C3', C4', and C5' (as "stub" atoms).
 			conformation::Residue rsd = pose.residue( i );
-			kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
+			chemical::rna::RNA_Info rna_type = rsd.type().RNA_type();
+			kinematics::Stub const input_stub( rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c5prime_atom_index() ) );
 
 			torsions_out << " S  " ;
 			for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
@@ -572,8 +574,8 @@ setup_base_pair_constraints(
 		if ( !pose.residue_type(j).is_RNA() ) continue;
 
 		if ( !pose.residue_type(i).is_coarse() ) { //fullatom
-			Size const atom1 = pose.residue_type(i).atom_index( " C1'" ) ;
-			Size const atom2 = pose.residue_type(j).atom_index( " C1'" ) ;
+			Size const atom1 = pose.residue_type(i).RNA_type().c1prime_atom_index();
+			Size const atom2 = pose.residue_type(j).RNA_type().c1prime_atom_index();
 			pose.add_constraint( scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(
 				id::AtomID(atom1,i),
 				id::AtomID(atom2,j),
@@ -796,11 +798,12 @@ compare_RNA_secstruct( char const char1, char const char2 ) {
 Vector
 get_sugar_centroid( core::conformation::Residue const & rsd ){
 	Vector cen( 0.0 );
-	cen += rsd.xyz(  rsd.atom_index( " C1'" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C2'" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C3'" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C4'" ) );
-	cen += rsd.xyz(  rsd.atom_index( " O4'" ) );
+	core::chemical::rna::RNA_Info rna_type = rsd.type().RNA_type();
+	cen += rsd.xyz( rna_type.c1prime_atom_index() );
+	cen += rsd.xyz( rna_type.c2prime_atom_index() );
+	cen += rsd.xyz( rna_type.c3prime_atom_index() );
+	cen += rsd.xyz( rna_type.c4prime_atom_index() );
+	cen += rsd.xyz( rna_type.o4prime_atom_index() );
 	cen /= 5.0;
 	return cen;
 }

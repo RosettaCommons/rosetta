@@ -41,7 +41,7 @@ Size const FIXED_DOMAIN( 999 );
 
 //Constructor
 CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
-	std::map < id::AtomID , id::AtomID > const & atom_id_map,
+	std::map< id::AtomID, id::AtomID > const & atom_id_map,
 	std::map< id::AtomID, Size > const & atom_id_domain_map ):
 	scratch_pose_( template_pose ),
 	atom_id_map_( atom_id_map ),
@@ -49,7 +49,7 @@ CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
 {}
 
 CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
-	std::map < id::AtomID , id::AtomID > const & atom_id_map ):
+	std::map< id::AtomID, id::AtomID > const & atom_id_map ):
 	scratch_pose_( template_pose ),
 	atom_id_map_( atom_id_map )
 {}
@@ -61,10 +61,8 @@ CopyDofs::~CopyDofs()
 ////////////////////////////////////////////////////////
 void
 CopyDofs::apply( pose::Pose & pose ){
-
 	figure_out_dofs( pose );
 	apply_dofs( pose, copy_dofs_info_ );
-
 }
 
 ////////////////////////////////////////////////////////
@@ -77,28 +75,27 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 	copy_dofs_info_.clear();
 
 	//Useful ID's.
-	AtomID current_atom_scratch_atom_id( 1, 1);//( current_atom_scratch_atomno, current_atom_scratch_rsd );
-	AtomID input_stub_atom1_scratch_atom_id( 1, 1);
-	AtomID input_stub_atom2_scratch_atom_id( 1, 1);
-	AtomID input_stub_atom3_scratch_atom_id( 1, 1);
+	AtomID current_atom_scratch_atom_id( 1, 1 );//( current_atom_scratch_atomno, current_atom_scratch_rsd );
+	AtomID input_stub_atom1_scratch_atom_id( 1, 1 );
+	AtomID input_stub_atom2_scratch_atom_id( 1, 1 );
+	AtomID input_stub_atom3_scratch_atom_id( 1, 1 );
 
-	AtomID stub_atom1_scratch_atom_id( 1, 1);
-	AtomID stub_atom2_scratch_atom_id( 1, 1);
-	AtomID stub_atom3_scratch_atom_id( 1, 1);
-	AtomID reference_scratch_atom_id( 1, 1);
-	AtomID dummy_atom_id( 1, 1);
+	AtomID stub_atom1_scratch_atom_id( 1, 1 );
+	AtomID stub_atom2_scratch_atom_id( 1, 1 );
+	AtomID stub_atom3_scratch_atom_id( 1, 1 );
+	AtomID reference_scratch_atom_id( 1, 1 );
+	AtomID dummy_atom_id( 1, 1 );
 
 	pose::Pose const & reference_pose( pose );
 
-	for ( std::map < id::AtomID , id::AtomID >::const_iterator
-			it=atom_id_map_.begin(), it_end = atom_id_map_.end(); it != it_end; ++it ) {
-
+	for ( auto const & aid_pair : atom_id_map_ ) {
 		bool verbose( false );
 
-		Size const i = (it->first).rsd(); //Residue index in big pose.
-		Size const j = (it->first).atomno(); //Atom-number index in big pose.
+		Size const i = aid_pair.first.rsd(); //Residue index in big pose.
+		Size const j = aid_pair.first.atomno(); //Atom-number index in big pose.
 
-		core::kinematics::tree::AtomCOP current_atom = reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr();
+		// We were passing a temporary that should be literally the same as aid_pair: i.e., AtomID( j, i )
+		core::kinematics::tree::AtomCOP current_atom = reference_pose.atom_tree().atom_dont_do_update( aid_pair.first ).get_self_ptr();
 
 		if ( !get_scratch_atom_id( current_atom_scratch_atom_id, atom_id_map_, current_atom ) ) {
 			if ( verbose ) { std::cout << "No current atom id? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}
@@ -185,7 +182,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 			}
 
 			if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
-				copy_dofs_info_.push_back( std::make_pair( AtomID( j, i ), jump ) );
+				copy_dofs_info_.emplace_back( std::make_pair( AtomID( j, i ), jump ) );
 				if ( verbose ) std::cout << "NEW " << pose.jump( AtomID( j, i ) ) << std::endl;
 			}
 
@@ -206,7 +203,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 			Real const d = ( scratch_pose_.xyz( current_atom_scratch_atom_id ) -
 				scratch_pose_.xyz( input_stub_atom1_scratch_atom_id ) ).length();
 
-			copy_dofs_info_.push_back( std::make_pair( DOF_ID( AtomID( j, i), D), d ) );
+			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i), D), d ) );
 
 		} else {
 			if ( verbose ) { std::cout << "D not OK to change? " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
@@ -260,7 +257,6 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 			upstream_atom_ids.push_back( input_stub_atom1->child( n )->id() );
 		}
 
-
 		//if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom2->id() ) ){
 		if ( check_domain_map( atom_id_domain_map_, upstream_atom_ids, downstream_atom_ids ) ) {
 
@@ -269,7 +265,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				scratch_pose_.xyz( input_stub_atom1_scratch_atom_id ),
 				scratch_pose_.xyz( input_stub_atom2_scratch_atom_id ) );
 
-			copy_dofs_info_.push_back( std::make_pair( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta ) );
+			copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta ) );
 
 
 			if ( verbose ) {
@@ -346,9 +342,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				} else {
 					if ( verbose ) { std::cout << "SPECIAL CASE input_stub_atom3 is external granny! " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
 				}
-
 			}
-
 		}
 
 		// What are that atoms whose relative positions would be changed by changing PHI?
@@ -386,7 +380,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 					reference_pose.xyz( input_stub_atom2->id() ),
 					reference_pose.xyz( reference_atom->id() ) );
 
-				copy_dofs_info_.push_back( std::make_pair( DOF_ID( atom_to_move->id(), PHI),  phi - reference_phi + reference_pose.dof( DOF_ID( atom_to_move->id(), PHI ) ) ) );
+				copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( atom_to_move->id(), PHI),  phi - reference_phi + reference_pose.dof( DOF_ID( atom_to_move->id(), PHI ) ) ) );
 
 				if ( verbose ) std::cout << "Good JOB, CHANGED PHI THROUGH OFFSET!  " << pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 
@@ -398,7 +392,7 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 					scratch_pose_.xyz( input_stub_atom2_scratch_atom_id ),
 					scratch_pose_.xyz( input_stub_atom3_scratch_atom_id ) );
 
-				copy_dofs_info_.push_back( std::make_pair( DOF_ID( AtomID( j, i ), PHI),  phi ) );
+				copy_dofs_info_.emplace_back( std::make_pair( DOF_ID( AtomID( j, i ), PHI),  phi ) );
 
 				if ( verbose ) std::cout << "Good JOB, CHANGED PHI!  " << pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 
@@ -422,11 +416,8 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				std::cout << "PHI not OK to change? " << pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 			}
 		}
-
 	} // loop over AtomIDs
-
 	//  pose.dump_pdb( "after_res"+ ObjexxFCL::string_of( i )+".pdb" );
-
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -435,9 +426,7 @@ CopyDofs::get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 	std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
 	core::kinematics::tree::AtomCOP other_atom )
 {
-
 	using namespace core::id;
-
 	if ( !other_atom ) return false;
 
 	std::map< AtomID, AtomID >::const_iterator iter( atom_id_map.find( other_atom->id() ) );
@@ -468,7 +457,6 @@ CopyDofs::check_domain_map(
 	if ( it2 != atom_id_domain_map.end() ) domain2 = it2->second;
 
 	if ( domain1 == 0 )  return true; // domain "0" means OK to change.
-
 	if ( domain2 == 0 )  return true; // domain "0" means OK to change.
 
 	//in different domains is OK.    [The only exception is the evil 999 --> code for a totally fixed atom.]
@@ -477,7 +465,6 @@ CopyDofs::check_domain_map(
 			domain1 != domain2 ) return true;
 
 	return false;
-
 }
 
 

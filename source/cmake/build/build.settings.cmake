@@ -351,8 +351,13 @@ if( EXTRAS )
 	if( APPLE AND ${EXTRAS} STREQUAL "graphics" )
 		#find_package( GLUT REQUIRED )
 		#find_package( OpenGL REQUIRED )
-		include_directories( /usr/X11R6/include )
-		link_directories( /usr/X11R6/lib )
+		if (EXISTS /usr/X11R6/include )
+			include_directories( /usr/X11R6/include )
+			link_directories( /usr/X11R6/lib )
+		else()
+			include_directories( /usr/X11/include )
+			link_directories( /usr/X11/lib )
+		endif()
 		list( APPEND defines
 				-DGL_GRAPHICS
 				-DMAC

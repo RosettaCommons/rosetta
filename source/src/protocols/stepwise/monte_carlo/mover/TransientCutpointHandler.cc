@@ -50,12 +50,13 @@ TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
 {}
 
 //Constructor
-TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Size const cutpoint_suite ):
+TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Size const cutpoint_suite, bool const change_foldtree ):
 	sample_suite_( sample_suite ), //sampled nucleoside
 	cutpoint_suite_( cutpoint_suite ), // suite at which to make cutpoint
 	move_jump_points_away_( false ),
 	jump_start_( 0 ),
-	jump_end_( 0 )
+	jump_end_( 0 ),
+	change_foldtree_( change_foldtree )
 {}
 
 //Destructor
@@ -83,8 +84,9 @@ TransientCutpointHandler::put_in_cutpoints(
 	Real const alpha_ = pose.torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1) );
 
 	// create reasonable fold tree
-	prepare_fold_tree_for_erraser( pose );
+	if ( change_foldtree_ ) prepare_fold_tree_for_erraser( pose );
 
+	// It can't be "cutpoint suite" that would be the cutpoint in the FT... I don't think...
 	pose::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
 	apply_suite_torsion_info( pose, suite_torsion_info );
 
@@ -104,7 +106,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 	using namespace core::chemical::rna;
 
 	FoldTree f = pose.fold_tree();
-
+	
 	//update_fixed_res_and_minimize_res( pose );
 	utility::vector1< Size > sample_res_list = minimize_res_;
 
@@ -116,8 +118,9 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 		while ( jump_start_ > 1 && minimize_res_.has_value( jump_start_ ) && !f.is_cutpoint( jump_start_ - 1 ) )          jump_start_--;
 		while ( jump_end_ < pose.size() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
 	}
-
+	
 	Size const cutpoint = cutpoint_suite_;
+	
 	f.new_jump( jump_start_, jump_end_, cutpoint );
 
 	Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
@@ -146,13 +149,19 @@ TransientCutpointHandler::take_out_cutpoints(
 #endif
 
 	// remove chainbreak variants. along with fold_tree restorer, put into separate function.
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
+	// AMW oct 3: this is wrong; lower variant is on i+1. Note addition in 
+	// correctly_add_cutpoint_variants
+	//remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
+	//remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_ + 1 );
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_     );
 
 	// return to simple fold tree
-	core::kinematics::FoldTree f( pose.fold_tree() );
-	f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
-	pose.fold_tree( f );
+	if ( change_foldtree_ ) {
+		core::kinematics::FoldTree f( pose.fold_tree() );
+		f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
+		pose.fold_tree( f );	
+	}
 
 #ifdef GL_GRAPHICS
 	viewer_pose = pose;

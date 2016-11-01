@@ -46,7 +46,7 @@
 #include <core/chemical/Orbital.fwd.hh>
 #include <core/chemical/ResidueConnection.fwd.hh>
 #endif
-#include <core/chemical/rna/RNA_ResidueType.fwd.hh>
+#include <core/chemical/rna/RNA_Info.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -2083,7 +2083,7 @@ public:
 	}
 
 	///////////////////////////////////////////////////////////////
-	core::chemical::rna::RNA_ResidueType const & RNA_type() const;
+	core::chemical::rna::RNA_Info const & RNA_type() const;
 
 	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
@@ -2643,7 +2643,7 @@ private:
 	utility::vector1<VD> force_bb_;
 
 	/// @brief A container for properties unique to RNA. -- Derived, can be null
-	core::chemical::rna::RNA_ResidueTypeOP rna_residue_type_;
+	core::chemical::rna::RNA_InfoOP rna_residue_type_;
 
 	/// @brief A container for residue properties unique to carbohydrates. -- Derived, can be null
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;

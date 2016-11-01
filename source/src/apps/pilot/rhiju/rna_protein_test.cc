@@ -672,13 +672,13 @@ rna_protein_pdbstats_test(){
 			name_from_aa( chemical::AA(i) ) << std::endl;
 	}
 
-	utility::vector1 < std::string > RNA_backbone_oxygen_atoms;
-	RNA_backbone_oxygen_atoms.push_back( " OP2");
-	RNA_backbone_oxygen_atoms.push_back( " OP1");
-	RNA_backbone_oxygen_atoms.push_back( " O5'");
-	RNA_backbone_oxygen_atoms.push_back( " O4'");
-	RNA_backbone_oxygen_atoms.push_back( " O3'");
-	RNA_backbone_oxygen_atoms.push_back( " O2'");
+	utility::vector1< std::string > RNA_backbone_oxygen_atoms;
+	RNA_backbone_oxygen_atoms.emplace_back( " OP2");
+	RNA_backbone_oxygen_atoms.emplace_back( " OP1");
+	RNA_backbone_oxygen_atoms.emplace_back( " O5'");
+	RNA_backbone_oxygen_atoms.emplace_back( " O4'");
+	RNA_backbone_oxygen_atoms.emplace_back( " O3'");
+	RNA_backbone_oxygen_atoms.emplace_back( " O2'");
 	Size const num_RNA_backbone_oxygen_atoms = RNA_backbone_oxygen_atoms.size();
 
 	//////////////////////////

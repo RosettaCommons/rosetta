@@ -31,6 +31,7 @@
 
 // C++ Headers
 #include <map>
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -71,14 +72,16 @@ private: // structs
 		ResidueKey () :
 			chainID( ' ' ),
 			resSeq( 0 ),
-			iCode( ' ')
+			iCode( ' '),
+			segmentID("    ")
 		{}
 
 		/// @brief value constructor
-		ResidueKey( char const c, int const r, char const i ) :
+		ResidueKey( char const c, int const r, char const i, std::string const & s = "    " ) :
 			chainID( c ),
 			resSeq( r ),
-			iCode( i )
+			iCode( i ),
+			segmentID(s)
 		{}
 
 		/// @brief comparator, lexicographic ordering
@@ -99,6 +102,7 @@ private: // structs
 		int resSeq;
 		/// @brief insertion code
 		char iCode;
+		std::string segmentID = "    ";
 
 
 #ifdef    SERIALIZATION
@@ -152,10 +156,11 @@ public: // methods
 	find(
 		char const chain,
 		int const pdb_res,
-		char const ins_code = ' '
+		char const ins_code = ' ',
+		std::string const & segmentID = "    "
 	) const
 	{
-		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
+		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
 
 		if ( i == pdb2pose_.end() ) { // not found
 			return 0;
@@ -176,6 +181,7 @@ public: // methods
 		char const chain,
 		int const pdb_res,
 		char const ins_code,
+		std::string const & segmentID,
 		Size const pose_res
 	);
 
@@ -191,10 +197,10 @@ public: // methods
 		char const chain,
 		int const pdb_res,
 		char const ins_code,
+		std::string const & segmentID,
 		Size const pose_res
-	)
-	{
-		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code ) );
+	) {
+		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
 		if ( i != pdb2pose_.end() && i->second == pose_res ) {
 			pdb2pose_.erase( i );
 			return true;
@@ -212,10 +218,11 @@ public: // methods
 	erase(
 		char const chain,
 		int const pdb_res,
-		char const ins_code
+		char const ins_code,
+		std::string const & segmentID = "    "
 	)
 	{
-		pdb2pose_.erase( ResidueKey( chain, pdb_res, ins_code ) );
+		pdb2pose_.erase( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
 	}
 
 	/// @brief clear the current mapping data

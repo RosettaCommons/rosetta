@@ -37,7 +37,7 @@
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
 
@@ -3378,7 +3378,7 @@ ResidueType::update_derived_data()
 	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.
 		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
 		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
-		rna_residue_type_ = core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType );
+		rna_residue_type_ = core::chemical::rna::RNA_InfoOP( new core::chemical::rna::RNA_Info );
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residue_type_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
 		rna_residue_type_->update_derived_rna_data( get_self_weak_ptr() );
@@ -4449,7 +4449,7 @@ ResidueType::is_repulsive( Size const & atomno ) const
 
 
 ///////////////////////////////////////////////////////////////
-core::chemical::rna::RNA_ResidueType const &
+core::chemical::rna::RNA_Info const &
 ResidueType::RNA_type() const{
 	return ( *rna_residue_type_ );
 }

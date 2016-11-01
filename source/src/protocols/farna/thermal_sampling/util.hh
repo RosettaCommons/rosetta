@@ -21,6 +21,7 @@
 #include <utility/io/ozstream.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
@@ -82,6 +83,8 @@ private:
 	core::Size n_elem_;
 	utility::vector1<core::Size> hist_;
 };
+
+utility::vector1<core::scoring::ScoreType> const & get_scoretypes();
 
 //////////////////////////////////////////////////////////////////////////////
 void update_scores(

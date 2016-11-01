@@ -18,7 +18,7 @@
 // Package headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 

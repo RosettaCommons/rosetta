@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/core/chemical/rna/RNA_ResidueType.fwd.hh
+/// @file src/core/chemical/rna/RNA_Info.fwd.hh
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
-#ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
-#define INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
+#ifndef INCLUDED_core_chemical_rna_RNA_Info_fwd_hh
+#define INCLUDED_core_chemical_rna_RNA_Info_fwd_hh
 
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -20,12 +20,12 @@ namespace core {
 namespace chemical {
 namespace rna {
 
-class RNA_ResidueType;
+class RNA_Info;
 
-typedef  utility::pointer::weak_ptr< RNA_ResidueType >  RNA_ResidueTypeAP;
-typedef  utility::pointer::weak_ptr< RNA_ResidueType const >  RNA_ResidueTypeCAP;
-typedef  utility::pointer::shared_ptr< RNA_ResidueType >  RNA_ResidueTypeOP;
-typedef  utility::pointer::shared_ptr< RNA_ResidueType const >  RNA_ResidueTypeCOP;
+typedef  utility::pointer::weak_ptr< RNA_Info >  RNA_InfoAP;
+typedef  utility::pointer::weak_ptr< RNA_Info const >  RNA_InfoCAP;
+typedef  utility::pointer::shared_ptr< RNA_Info >  RNA_InfoOP;
+typedef  utility::pointer::shared_ptr< RNA_Info const >  RNA_InfoCOP;
 
 }
 }

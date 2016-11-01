@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -3673,6 +3674,7 @@ output_sugar_geometry_parameters(
 
 	for ( Size i = 1; i <= nres; i++ ) {
 		Residue const & rsd( pose.residue( i ) );
+		RNA_Info const & rna_type( rsd.type().RNA_type() );
 
 		out << rsd.mainchain_torsion( 4 );
 
@@ -3697,9 +3699,9 @@ output_sugar_geometry_parameters(
 		}
 
 		//////////////////////////////////////////////
-		Real const a = (rsd.xyz( " O4'" ) - rsd.xyz( " C4'" )).length();
-		Real const b = (rsd.xyz( " C3'" ) - rsd.xyz( " C4'" )).length();
-		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( " C3'" )).length();
+		Real const a = (rsd.xyz( rna_type.o4prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();
+		Real const b = (rsd.xyz( rna_type.c3prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();
+		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( rna_type.c3prime_atom_index() )).length();
 		Real const theta = numeric::conversions::degrees( std::acos( ( a*a + b*b - c*c )/(2 * a *b ) ) );
 		out << ' ' << theta;
 
@@ -3711,32 +3713,32 @@ output_sugar_geometry_parameters(
 void
 put_it_in_list(
 	utility::vector1< utility::vector1< std::string> > & my_list,
-	std::string const  a1, std::string const  a2 ){
+	std::string const & a1, std::string const & a2 ){
 	utility::vector1< std::string > vec;
-	vec.push_back( a1 );
-	vec.push_back( a2 );
+	vec.emplace_back( a1 );
+	vec.emplace_back( a2 );
 	my_list.push_back( vec );
 }
 void
 put_it_in_list(
 	utility::vector1< utility::vector1< std::string> > & my_list,
-	std::string const  a1, std::string const  a2, std::string const a3 ){
+	std::string const & a1, std::string const & a2, std::string const & a3 ){
 	utility::vector1< std::string > vec;
-	vec.push_back( a1 );
-	vec.push_back( a2 );
-	vec.push_back( a3 );
+	vec.emplace_back( a1 );
+	vec.emplace_back( a2 );
+	vec.emplace_back( a3 );
 	my_list.push_back( vec );
 }
 void
 put_it_in_list(
 	utility::vector1< utility::vector1< std::string> > & my_list,
-	std::string const  a1, std::string const  a2,
-	std::string const  a3, std::string const  a4 ){
+	std::string const & a1, std::string const & a2,
+	std::string const & a3, std::string const & a4 ){
 	utility::vector1< std::string > vec;
-	vec.push_back( a1 );
-	vec.push_back( a2 );
-	vec.push_back( a3 );
-	vec.push_back( a4 );
+	vec.emplace_back( a1 );
+	vec.emplace_back( a2 );
+	vec.emplace_back( a3 );
+	vec.emplace_back( a4 );
 	my_list.push_back( vec );
 }
 
@@ -3744,11 +3746,11 @@ put_it_in_list(
 void
 fill_sugar_atom_list( utility::vector1< std::string> & sugar_atom_list )
 {
-	sugar_atom_list.push_back( " C2'" );
-	sugar_atom_list.push_back( " O2'" );
-	sugar_atom_list.push_back( " C1'" );
-	sugar_atom_list.push_back( " O4'" );
-	sugar_atom_list.push_back( "BASE" );
+	sugar_atom_list.emplace_back( " C2'" );
+	sugar_atom_list.emplace_back( " O2'" );
+	sugar_atom_list.emplace_back( " C1'" );
+	sugar_atom_list.emplace_back( " O4'" );
+	sugar_atom_list.emplace_back( "BASE" );
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -3756,8 +3758,7 @@ void
 fill_bond_atoms(
 	utility::vector1< utility::vector1< std::string> > & bond_length_atoms ,
 	utility::vector1< utility::vector1< std::string> > & bond_angle_atoms
-)
-{
+) {
 	put_it_in_list( bond_length_atoms, " C3'", " C4'" );
 	put_it_in_list( bond_length_atoms, " C2'", " C3'" );
 	put_it_in_list( bond_length_atoms, " C1'", " C2'" );
@@ -3837,15 +3838,16 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 		Residue rsd = pose.residue( i );
-		kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
+		RNA_Info const & rna_type = rsd.type().RNA_type();
+		kinematics::Stub const input_stub( rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c5prime_atom_index() ) );
 
 		Residue rsd_fixed = fixed_pose.residue( i );
-		kinematics::Stub const input_stub_fixed( rsd_fixed.xyz( " C3'" ), rsd_fixed.xyz( " C3'" ), rsd_fixed.xyz( " C4'" ), rsd_fixed.xyz( " C5'" ) );
+		kinematics::Stub const input_stub_fixed( rsd_fixed.xyz( rna_type.c3prime_atom_index() ), rsd_fixed.xyz( rna_type.c3prime_atom_index() ), rsd_fixed.xyz( rna_type.c4prime_atom_index() ), rsd_fixed.xyz( rna_type.c5prime_atom_index() ) );
 
 		utility::vector1< std::string > my_atoms;
-		my_atoms.push_back( " C2'" );
-		my_atoms.push_back( " C1'" );
-		my_atoms.push_back( " O4'" );
+		my_atoms.emplace_back( " C2'" );
+		my_atoms.emplace_back( " C1'" );
+		my_atoms.emplace_back( " O4'" );
 		//my_atoms.push_back( " C4'" );
 
 		utility::vector1< Vector > start_vectors;
@@ -3882,9 +3884,7 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 			fixed_pose.set_dof(  DOF_ID( AtomID( j,i) , id::PHI ), new_dof_sets[n][2] );
 			fixed_pose.set_dof(  DOF_ID( AtomID( j,i) , id::THETA ), new_dof_sets[n][3] );
 		}
-
 	}
-
 }
 
 ////////////////////////////////////////////////////////
@@ -3901,8 +3901,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		Real const delta = rsd.mainchain_torsion( 4 );
 
 		{
-			std::string const atom_name = " C2'";
-			Size const j = rsd.atom_index( atom_name );
+			Size const j = rsd.type().RNA_type().c2prime_atom_index();
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if ( delta < 100.0 ) {
 				theta  = -0.138 * delta + 89.4;
@@ -3914,8 +3913,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 
 
 		{
-			std::string const atom_name = " O4'";
-			Size const j = rsd.atom_index( atom_name );
+			Size const j = rsd.type().RNA_type().o4prime_atom_index();
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if ( delta < 100.0 ) {
 				theta  =  0.132 * delta + 59.5;
@@ -3942,21 +3940,21 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 	for ( Size i = 1; i <= pose.size(); i++ ) {
 
 		core::conformation::Residue const & rsd( pose.residue( i ) );
+		core::chemical::rna::RNA_Info const & rna_type( rsd.type().RNA_type() );
 
-		Real const a = (rsd.xyz( " O4'" ) - rsd.xyz( " C4'" )).length();
-		Real const b = (rsd.xyz( " C3'" ) - rsd.xyz( " C4'" )).length();
-		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( " C3'" )).length();
+		Real const a = (rsd.xyz( rna_type.o4prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();
+		Real const b = (rsd.xyz( rna_type.c3prime_atom_index() ) - rsd.xyz( rna_type.c4prime_atom_index() )).length();
+		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( rna_type.c3prime_atom_index() )).length();
 		Real const theta = std::acos( ( c*c - a*a - b*b )/(2 * a *b ) );
 
 		{
-			kinematics::Stub const input_stub( rsd.xyz( " C4'"), rsd.xyz( " C4'"),
-				rsd.xyz( " C3'"), rsd.xyz( " O4'") );
+			kinematics::Stub const input_stub( rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ),
+				rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ) );
 
-			Vector v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
+			Vector v1 = input_stub.global2local( rsd.xyz( rna_type.o4prime_atom_index() ) );
 			//   std::cout << "VEC " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
-			std::string atom_name = " O4'";
-			Size const j = rsd.atom_index( atom_name );
+			Size const j = rna_type.c3prime_atom_index();
 			pose.set_xyz( id::AtomID(j,i), input_stub.spherical( 0.0, theta, a ) );
 
 			//v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
@@ -3967,14 +3965,13 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 		//  std::cout << "LENGTH_O4'_VO4': " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << ( pose.residue(i).xyz( " O4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << std::endl;
 
 
-		std::string atom_name = " C2'";
-		Size j = rsd.atom_index( atom_name );
+		Size j = rna_type.c2prime_atom_index();
 		{
-			kinematics::Stub const input_stub( rsd.xyz( " C3'"), rsd.xyz( " C3'"),
-				rsd.xyz( " C4'"), rsd.xyz( " C2'") );
+			kinematics::Stub const input_stub( rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c3prime_atom_index() ),
+				rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c2prime_atom_index() ) );
 
 
-			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
+			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( rna_type.o4prime_atom_index() ) );
 			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 			//Real const theta_difference = std::atan2( v2.y(), v2.x() )  - std::atan2( v1.y(), v1.x() ) ;
 
@@ -4001,7 +3998,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 			kinematics::Stub const input_stub( input_stub_atom1->xyz(), input_stub_atom1->xyz(), input_stub_atom2->xyz(), input_stub_atom3->xyz());
 
-			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
+			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( rna_type.o4prime_atom_index() ) );
 			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 			Real const phi_difference = std::atan2( v2.z(), v2.y() )  - std::atan2( v1.z(), v1.y() ) ;
 			//std::cout << "PHI_DIFFERENCE " << phi_difference << std::endl;

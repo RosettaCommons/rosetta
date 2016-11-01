@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/core/chemical/rna/RNA_ResidueType.fwd.hh
+/// @file src/core/chemical/rna/RNA_Info.fwd.hh
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 #ifndef INCLUDED_core_chemical_rna_RNA_FittedTorsionInfo_fwd_HH

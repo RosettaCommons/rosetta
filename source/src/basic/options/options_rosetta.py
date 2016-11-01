@@ -6876,6 +6876,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
           Option( 'out_prefix', 'String', desc="prefix for the out file", default = 'thermal' ),
           Option( 'sample_residues', 'IntegerVector', desc="residues to sample", default=[] ),
           Option( 'free_residues', 'IntegerVector', desc="residues that are 'free,' affects stdev of chi sampler", default=[] ),
+          Option( 'loop_residues', 'IntegerVector', desc="residues that are in loops and merit total BB sampling", default=[] ),
           Option( 'n_cycle', 'Integer', desc="cycle number for Random sampling", default='0' ),
           Option( 'angle_range_bb', 'Real', desc="range bb torsions are allowed to move", default='180' ),
           Option( 'angle_range_chi', 'Real', desc="range chi torsions are allowed to move", default='180' ),

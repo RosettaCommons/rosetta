@@ -13,7 +13,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -205,7 +205,7 @@ pack_phosphates()
 
 		add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
 
-		RNA_ResidueType const & rna_type = pose.residue_type( working_sample_res ).RNA_type();
+		RNA_Info const & rna_type = pose.residue_type( working_sample_res ).RNA_type();
 		TR << rna_type.chi_number_pseudogamma() << " " << rna_type.chi_number_pseudobeta() << " " << rna_type.chi_number_pseudoalpha() << std::endl;
 		pose.set_chi( rna_type.chi_number_pseudogamma(), working_sample_res, pose.residue(working_sample_res).mainchain_torsion(3) );
 		pose.set_chi( rna_type.chi_number_pseudobeta() , working_sample_res, pose.residue(working_sample_res).mainchain_torsion(2) );
@@ -228,7 +228,7 @@ pack_phosphates()
 		Size const sample_res = three_prime_phosphate_pack_res_list[ n ];
 		Size const working_sample_res = get_res_list_from_full_model_info( pose ).index( sample_res );
 		add_variant_type_to_pose_residue( pose, "THREE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
-		RNA_ResidueType const & rna_type =  pose.residue_type( working_sample_res ).RNA_type();
+		RNA_Info const & rna_type =  pose.residue_type( working_sample_res ).RNA_type();
 
 		if ( native_pose ){
 			TR << "Copying in conformation from native" << std::endl;

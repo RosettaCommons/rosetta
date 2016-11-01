@@ -2104,7 +2104,7 @@ public:
 	);
 
 	/// @brief Return the RNA_residueType object. This is RNA specific.
-	core::chemical::rna::RNA_ResidueType const &
+	core::chemical::rna::RNA_Info const &
 	RNA_type() const{
 		return rsd_type_.RNA_type();
 	}

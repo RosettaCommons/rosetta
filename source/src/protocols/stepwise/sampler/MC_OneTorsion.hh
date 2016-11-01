@@ -81,6 +81,11 @@ public:
 	void set_torsion_id( core::id::TorsionID const & setting ) {
 		torsion_id_ = setting;
 	}
+	
+	/// @brief Get the TorsionID of the sampler
+	core::id::TorsionID const & get_torsion_id() const {
+		return torsion_id_;
+	}
 
 	/// @brief Name of the class
 	std::string get_name() const { return "MC_OneTorsion"; }

@@ -16,6 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -88,6 +89,7 @@ OPT_KEY( Boolean, disable_include_current )
 OPT_KEY( Boolean, sample_chi )
 OPT_KEY( Boolean, ss_ds_ts_assign )
 OPT_KEY( Boolean, dump )
+OPT_KEY( Boolean, all_RNA )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -105,7 +107,9 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 	FArray1D_float recovery( nres, 0.0 );
 	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		for ( Size i = 1; i <= nres; i++ ) {
-			if ( (pose_list[n])->residue(i).aa() == pose.residue(i).aa() ) {
+			// For noncanonicals
+			if ( (pose_list[n])->residue(i).name3() == pose.residue(i).name3() ) {
+			//if ( (pose_list[n])->residue(i).aa() == pose.residue(i).aa() ) {
 				recovery( i ) += 1.0;
 			}
 		}
@@ -186,6 +190,12 @@ rna_design_test()
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
 
+	utility::vector1< std::string > names;
+	if ( option[ all_RNA ] ) {
+		auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
+		for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
+	}
+	
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
 	} else {
@@ -194,6 +204,11 @@ rna_design_test()
 			task->nonconst_residue_task( ii ).allow_aa( na_ura );
 			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
 			task->nonconst_residue_task( ii ).allow_aa( na_rcy );
+			if ( option[ all_RNA ] ) {
+				for ( auto const & name : names ) {
+					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);
+				}
+			}
 			assert( task->design_residue(ii) );
 		}
 	}
@@ -317,6 +332,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample",false);
 		NEW_OPT( ss_ds_ts_assign, "Figure out assignment of residues to single-stranded, double-stranded, tertiary contact categories",false);
 		NEW_OPT( dump, "Dump pdb", false );
+		NEW_OPT( all_RNA, "Use all RNA", false );
 
 
 		////////////////////////////////////////////////////////////////////////////

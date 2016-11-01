@@ -661,10 +661,11 @@ public: // single residue accessors
 	pdb2pose(
 		char const chain,
 		int const res,
-		char const icode = ' '
+		char const icode = ' ',
+		std::string const & segmentID = "    "
 	) const
 	{
-		return pdb2pose_.find( chain, res, icode );
+		return pdb2pose_.find( chain, res, icode, segmentID );
 	}
 
 
@@ -779,7 +780,8 @@ public: // single residue mutators
 		Size const res,
 		char const chain_id,
 		int const pdb_res,
-		char const ins_code = ' '
+		char const ins_code = ' ',
+		std::string const & segmentID = "    "
 	);
 
 	/// @brief adds a label associated to a pose resid.

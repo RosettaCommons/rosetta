@@ -30,7 +30,7 @@
 #include <protocols/pockets/GenPharmacophore.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pack/task/TaskFactory.hh>

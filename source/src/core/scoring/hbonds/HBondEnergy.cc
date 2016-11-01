@@ -57,7 +57,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/RotamerSetBase.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>

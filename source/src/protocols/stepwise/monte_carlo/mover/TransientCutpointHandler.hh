@@ -35,7 +35,7 @@ public:
 	TransientCutpointHandler( core::Size const sample_res );
 
 	TransientCutpointHandler( core::Size const sample_suite,
-		core::Size const cutpoint_suite );
+		core::Size const cutpoint_suite, bool const change_foldtree = true );
 
 	//destructor
 	~TransientCutpointHandler();
@@ -62,7 +62,7 @@ private:
 	utility::vector1< core::Size > fixed_res_;
 	utility::vector1< core::Size > minimize_res_;
 	core::Size jump_start_, jump_end_;
-
+	bool change_foldtree_;
 };
 
 } //mover

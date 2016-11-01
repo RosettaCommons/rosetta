@@ -213,20 +213,20 @@ create_pdb_line_from_record( Record const & record )
 	//std::cout << "RECORD: size: " << record.size() << ": ";
 	line.resize( 80, ' ' );  // Unless it's a non-standard record, it will have a length of 80.
 	//std::cout << "How many fields? " << record.size() << std::endl;
-	for ( Record::const_iterator field = record.begin(); field != record.end(); ++field ) {
-		std::string value( field->second.value );
-		if ( field->second.start == 0 ) continue; // Fields that are not properly defined (e.g. UNKNOW's "type" field) should not be written.
+	for ( auto const & field : record ) {
+		std::string value( field.second.value );
+		if ( field.second.start == 0 ) continue; // Fields that are not properly defined (e.g. UNKNOW's "type" field) should not be written.
 		if ( value.length() == 0 ) continue; // Cannot output a value with zero length
 		//std::cout << "value: \"" << value << "\"" << std::endl;
-		if ( field->second.end == 0 ) {  // If this field has no size limit.
+		if ( field.second.end == 0 ) {  // If this field has no size limit.
 			Size len = value.length();
-			if ( field->second.start + len > 80 ) {
-				line.resize( field->second.start + len - 1 );
+			if ( field.second.start + len > 80 ) {
+				line.resize( field.second.start + len - 1 );
 			}
-			line.replace( field->second.start - 1, len, value );
+			line.replace( field.second.start - 1, len, value );
 		} else {
-			value.resize( field->second.end - field->second.start + 1, ' ' );
-			line.replace( field->second.start - 1, field->second.end - field->second.start + 1, value );
+			value.resize( field.second.end - field.second.start + 1, ' ' );
+			line.replace( field.second.start - 1, field.second.end - field.second.start + 1, value );
 		}
 	}
 	return line;
@@ -261,27 +261,24 @@ create_records_from_sfr(
 	R = RecordCollection::record_from_record_type( HETNAM );
 	if ( options->use_pdb_format_HETNAM_records() ) {
 		// TODO: Also have this option output HET, HETSYM, and FORMUL records.
-		for ( std::map< std::string, std::string >::const_iterator iter = sfr.heterogen_names().begin(),
-				end = sfr.heterogen_names().end(); iter != end; ++iter ) {
+		for ( auto const & elem : sfr.heterogen_names() ) {
 			R[ "type" ].value = "HETNAM";
 			R[ "continuation" ].value = "  ";  // TODO: Wrap long text fields.
-			R[ "hetID" ].value = iter->first;
-			R[ "text" ].value = iter->second;
+			R[ "hetID" ].value = elem.first;
+			R[ "text" ].value = elem.second;
 			VR.push_back( R );
 		}
 	} else {  // Use the Rosetta HETNAM format, which specifies base ResidueTypes.
-		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator iter(
-				sfr.residue_type_base_names().begin() ), end = sfr.residue_type_base_names().end();
-				iter != end; ++iter ) {
+		for ( auto const & elem : sfr.residue_type_base_names() ) {
 			// The 6-character resID key for the map has a fixed format.
-			std::string const & chainID( iter->first.substr( 5, 1 ) );  // 6th character
-			std::string const & resSeq( iter->first.substr( 0, 4 ) );  // 1st through 4th characters
-			std::string const & iCode( iter->first.substr( 4, 1 ) );  // 5th character
-			std::string const & base_name( iter->second.second );
+			std::string const & chainID( elem.first.substr( 5, 1 ) );  // 6th character
+			std::string const & resSeq( elem.first.substr( 0, 4 ) );  // 1st through 4th characters
+			std::string const & iCode( elem.first.substr( 4, 1 ) );  // 5th character
+			std::string const & base_name( elem.second.second );
 
 			R[ "type" ].value = "HETNAM";
 			R[ "continuation" ].value = "  ";  // unused
-			R[ "hetID" ].value = iter->second.first;  // 3-letter code
+			R[ "hetID" ].value = elem.second.first;  // 3-letter code
 			R[ "text" ].value = chainID + resSeq + iCode + " " + base_name;
 			VR.push_back( R );
 		}
@@ -289,13 +286,9 @@ create_records_from_sfr(
 
 	// Connectivity Annotation Section ////////////////////////////////////////
 	R = RecordCollection::record_from_record_type( SSBOND );
-	std::map<std::string, utility::vector1<SSBondInformation> >::const_iterator last_first_disulf = sfr.ssbond_map().end();
-	for ( std::map<std::string, utility::vector1<SSBondInformation> >::const_iterator branch_point = sfr.ssbond_map().begin();
-			branch_point != last_first_disulf; ++branch_point ) {
-		utility::vector1<SSBondInformation> ssbonds = branch_point->second;
-		Size n_ssbonds = ssbonds.size();
-		for ( uint i = 1; i <= n_ssbonds; ++i ) {
-			SSBondInformation ssbond = ssbonds[i];
+	for ( auto const & branch_point : sfr.ssbond_map() ) {
+		utility::vector1<SSBondInformation> ssbonds = branch_point.second;
+		for ( SSBondInformation const & ssbond : ssbonds ) {
 			R["type"].value = "SSBOND  ";
 			R["name1"].value = ssbond.name1;
 			R["resName1"].value = ssbond.resName1;
@@ -313,13 +306,9 @@ create_records_from_sfr(
 	}
 
 	R = RecordCollection::record_from_record_type( LINK );
-	std::map<std::string, utility::vector1<LinkInformation> >::const_iterator last_branch_point = sfr.link_map().end();
-	for ( std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = sfr.link_map().begin();
-			branch_point != last_branch_point; ++branch_point ) {
-		utility::vector1<LinkInformation> links = branch_point->second;
-		Size n_links = links.size();
-		for ( uint i = 1; i <= n_links; ++i ) {
-			LinkInformation link = links[i];
+	for ( auto const & branch_point : sfr.link_map() ) {
+		utility::vector1<LinkInformation> links = branch_point.second;
+		for ( LinkInformation const & link : links ) {
 			R["type"].value = "LINK  ";
 			R["name1"].value = link.name1;
 			R["resName1"].value = link.resName1;
@@ -359,6 +348,8 @@ create_records_from_sfr(
 	for ( Size i=0; i<sfr.chains().size(); ++i ) {
 		for ( Size j=0; j<sfr.chains()[i].size(); ++j ) {
 			AtomInformation const & ai( sfr.chains()[i][j] );
+			// WTF CHAIN?
+			//TR << "create records from sfr " << i << " " << j << " " << ai.chainID << std::endl;
 			R["type"].value = ( ai.isHet ? "HETATM" : "ATOM  " );
 			runtime_assert( !serial_to_serial_with_ter.count(ai.serial) );
 			serial_to_serial_with_ter[ai.serial] = ai.serial + (no_chainend_ter ? 0 : ai.terCount); //Reused later during CONECT record dumping.
@@ -545,8 +536,10 @@ dump_pdb(
 	std::string & out,
 	std::string const &filename
 ) {
+	
 	core::io::StructFileRepOptionsOP options=core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
 
+	// OK, what's here?
 	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr( *options );
 	pose_to_sfr.init_from_pose( pose );
 	pose_to_sfr.sfr()->score_table_filename() = filename;

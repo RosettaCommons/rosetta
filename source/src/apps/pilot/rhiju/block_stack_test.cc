@@ -13,7 +13,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

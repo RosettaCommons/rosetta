@@ -18,6 +18,8 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
+#include <core/id/TorsionID.hh>
+
 // Numeric Headers
 #include <numeric/random/random.hh>
 

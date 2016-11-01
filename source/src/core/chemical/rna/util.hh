@@ -45,6 +45,8 @@ Size const NUM_RNA_MAINCHAIN_TORSIONS( 6 );
 Size const NUM_RNA_CHI_TORSIONS( NUM_RNA_TORSIONS - NUM_RNA_MAINCHAIN_TORSIONS  );
 
 ///////////////////////////////////////////////////////////////////////////////
+// AMW: check to ensure, after this branch, that these are used almost never -- since they are 
+// themselves a function of what's in RNA_Info for each rt...
 utility::vector1< std::string > const non_main_chain_sugar_atoms = utility::tools::make_vector1( " C2'", " C1'", " O4'" );
 utility::vector1< std::string > const atoms_involved_in_phosphate_torsion = utility::tools::make_vector1( " P  ", " OP2", " OP1", " O5'", " H5'", "H5''" );
 utility::vector1< std::string > const non_base_atoms = utility::tools::make_vector1(

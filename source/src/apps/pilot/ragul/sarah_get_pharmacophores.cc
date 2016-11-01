@@ -34,7 +34,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -198,7 +198,7 @@ int main( int argc, char * argv [] ){
 		for ( int ic = 1, ic_end = complex_pose.size(); ic<=ic_end; ++ic ) {
 			core::conformation::Residue const & curr_rsd = complex_pose.residue(ic);
 			if ( !curr_rsd.is_RNA() ) continue;
-			core::chemical::rna::RNA_ResidueType const & curr_rsd_type = curr_rsd.RNA_type();
+			core::chemical::rna::RNA_Info const & curr_rsd_type = curr_rsd.RNA_type();
 			core::Real curr_ring_sasa = 0;
 			for ( Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
 				if ( !curr_rsd_type.is_RNA_base_atom(jc) ) continue;
