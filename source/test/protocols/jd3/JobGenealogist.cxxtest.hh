@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   test/protocols/jd3/JobGeneologist.cxxtest.hh
-/// @brief  test suite for the JobGeneologist
+/// @file   test/protocols/jd3/JobGenealogist.cxxtest.hh
+/// @brief  test suite for the JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Test headers
@@ -16,7 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <protocols/jd3/JobGeneologist.hh>
+#include <protocols/jd3/JobGenealogist.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -27,15 +27,15 @@
 
 using namespace protocols::jd3;
 
-class JobGeneologistTests : public CxxTest::TestSuite
+class JobGenealogistTests : public CxxTest::TestSuite
 {
 public:
 
 	void setUp() {
 	}
 
-	void test_geneologist_set_target_num_jobs() {
-		JobGeneologist jg;
+	void test_genealogist_set_target_num_jobs() {
+		JobGenealogist jg;
 		jg.set_num_nodes( 5 );
 		jg.set_target_num_jobs_for_node( 1, 5 );
 		jg.set_target_num_jobs_for_node( 2, 10 );
@@ -58,8 +58,8 @@ public:
 
 	}
 
-	void test_geneologist_append_parents_and_n_replicate_jobs_for_node() {
-		JobGeneologist jg;
+	void test_genealogist_append_parents_and_n_replicate_jobs_for_node() {
+		JobGenealogist jg;
 		jg.set_num_nodes( 3 );
 		jg.set_target_num_jobs_for_node( 1, 10 );
 		jg.set_target_num_jobs_for_node( 2, 30 );
@@ -167,7 +167,7 @@ public:
 	}
 
 	void test_get_next_job_for_node() {
-		JobGeneologist jg;
+		JobGenealogist jg;
 		jg.set_num_nodes( 3 );
 		jg.set_target_num_jobs_for_node( 1, 10 );
 		jg.set_target_num_jobs_for_node( 2, 30 );

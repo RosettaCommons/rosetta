@@ -264,7 +264,7 @@ sources = {
 		"BluePrint",
 	],
 	"jd3" : [
-            	"JobGeneologist",
+            	"JobGenealogist",
             	"StandardJobQueen",
 	#	"validate_w_xsd",
 	],

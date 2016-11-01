@@ -145,7 +145,7 @@ sources = {
 		"JobDigraph",
 		"JobDistributor",
 		"JobDistributorFactory",
-		"JobGeneologist",
+		"JobGenealogist",
 		"JobQueen",
 		"JobResult",
 		"JobSummary",

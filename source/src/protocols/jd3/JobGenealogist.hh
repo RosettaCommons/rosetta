@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd3/JobGeneologist.hh
-/// @brief  class declaration for JobGeneologist
+/// @file   protocols/jd3/JobGenealogist.hh
+/// @brief  class declaration for JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_jd3_JobGeneologist_hh
-#define INCLUDED_protocols_jd3_JobGeneologist_hh
+#ifndef INCLUDED_protocols_jd3_JobGenealogist_hh
+#define INCLUDED_protocols_jd3_JobGenealogist_hh
 
 // Project headers
 #include <core/types.hh>
@@ -32,17 +32,17 @@
 namespace protocols {
 namespace jd3 {
 
-/// @brief The JobGeneologist is meant to manage the annoying / complex / delicate
+/// @brief The JobGenealogist is meant to manage the annoying / complex / delicate
 /// task of keeping track of what jobs belong to which node and what their parents
 /// and whether a job has any undiscarded descendants. This task would otherwise fall
 /// to the JobQueen, and there are already enough tasks for the JobQueen to manage.
 ///
-/// @details The typical usage scenario is that the JobQueen tells the JobGeneologist
+/// @details The typical usage scenario is that the JobQueen tells the JobGenealogist
 /// I have N nodes and for each node, here is an upper bound on the number of jobs
 /// that will be run for this node. It's alright if the JobQueen doesn't have all of
-/// that information to start; she can tell the JobGeneologist about new nodes in
+/// that information to start; she can tell the JobGenealogist about new nodes in
 /// the JobDAG as she gets to them. (The JobQueen does not need to tell the
-/// JobGeneologist about the edges in the JobDAG -- only the nodes). The JG will
+/// JobGenealogist about the edges in the JobDAG -- only the nodes). The JG will
 /// alot job-index ranges for each node based on the upper bounds. These are the
 /// "target ranges."
 ///
@@ -69,26 +69,26 @@ namespace jd3 {
 /// The JobQueen can even ask the JG to keep track of the jobs she has handed out
 /// for each node using the jobs_remain_for_node and get_next_job_for_node functions
 ///
-/// Perhaps the most important functionality of the JobGeneologist is keeping track
+/// Perhaps the most important functionality of the JobGenealogist is keeping track
 /// of ancestries. If you want to keep hold of intermediate structures so that you
 /// can output the structures that led to the most interesting / lowest-energy
 /// structures at the end of protocol, then JG will manage the tricky task of telling
 /// you which intermidiate structures its safe to discard given that they do not
 /// have any descendants that have not been discarded. (If you do go and discard those
-/// jobs, make sure to tell the JobGeneologist about it.) The JG can also track which
+/// jobs, make sure to tell the JobGenealogist about it.) The JG can also track which
 /// jobs have and have not been discarded. It uses a Discrete Interval Encoding Tree (DIET)
 /// to efficiently do so.
-class JobGeneologist
+class JobGenealogist
 {
 public:
 	typedef core::Size Size;
 	typedef utility::vector1< Size > Sizes;
 
 public:
-	JobGeneologist();
-	JobGeneologist( JobGeneologist const & );
-	~JobGeneologist();
-	JobGeneologist & operator = ( JobGeneologist const & rhs );
+	JobGenealogist();
+	JobGenealogist( JobGenealogist const & );
+	~JobGenealogist();
+	JobGenealogist & operator = ( JobGenealogist const & rhs );
 
 	void set_num_nodes( Size num_nodes );
 	void add_node();
@@ -198,4 +198,4 @@ private:
 } // namespace jd3
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd3_JobGeneologist_HH
+#endif //INCLUDED_protocols_jd3_JobGenealogist_HH
