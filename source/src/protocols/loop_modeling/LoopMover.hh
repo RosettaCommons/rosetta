@@ -134,6 +134,11 @@ public:
 	/// @brief Return true if the previous move was successful.
 	bool was_successful() const;
 
+	/// @brief Set the success status of a loop mover
+	void was_successful(bool value){
+		was_successful_ = value;
+	}
+
 	/// @brief Return the loops to be sampled on the next call to apply().
 	LoopsOP get_loops();
 

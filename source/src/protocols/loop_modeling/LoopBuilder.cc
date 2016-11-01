@@ -169,6 +169,7 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 
 	// Make a strong effort to rebuild the loop with KIC.
 
+	kic_mover_->was_successful(false);
 	for ( Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++ ) {
 		tr << "Loop building attempt: " << i << endl;
 		kic_mover_->apply(pose);
