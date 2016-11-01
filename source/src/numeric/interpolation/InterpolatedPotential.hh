@@ -49,7 +49,7 @@ public:
 		for ( auto & p : periodic_ ) { p = false; }
 	}
 
-	~InterpolatedPotential() { delete gridpoints_; }
+	~InterpolatedPotential() { delete [] gridpoints_; }
 
 public:
 	void dimension( utility::fixedsizearray1< Size, N > const & dims ) {
@@ -61,7 +61,7 @@ public:
 
 		Size product = 1;
 		for ( Size const dim : dims ) product *= dim;
-		if ( gridpoints_ ) delete gridpoints_;
+		if ( gridpoints_ ) delete [] gridpoints_;
 		gridpoints_ = new utility::fixedsizearray1< Real, ( 1 << N ) >[ product ];
 		grid_size_ = dims;
 	}

@@ -52,8 +52,7 @@ void print_node(
 	int atom_num,
 	core::conformation::Conformation const & conf,
 	std::string extras = "" //< P for points, color, width/radius, etc.
-)
-{
+) {
 	// atom_num is often 0 in fold tree, means no specific atom.
 	// might as well use the first one:
 	if ( atom_num == 0 ) atom_num = 1;
@@ -69,14 +68,14 @@ void print_node(
 	out << extras;
 	out << " " << atom.xyz().x() << " " << atom.xyz().y() << " " << atom.xyz().z() << "\n";
 }
+
 void print_node(
 	std::ostream & out,
 	int residue_num,
 	std::string atom_name,
 	core::conformation::Conformation const & conf,
 	std::string extras = "" //< P for points, color, width/radius, etc.
-)
-{
+) {
 	// atom_num is often 0 in fold tree, means no specific atom.
 	// might as well use the first one:
 	core::conformation::Residue const & res = conf.residue(residue_num);
@@ -96,8 +95,7 @@ void print_interres_bond(
 	core::conformation::Residue const & rsd1,
 	core::conformation::Residue const & rsd2,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	print_node(out, rsd1.seqpos(), rsd1.connect_atom(rsd2), conf, "P");
 	print_node(out, rsd2.seqpos(), rsd2.connect_atom(rsd1), conf);
 }
@@ -107,8 +105,7 @@ void dump_residue_kinemage(
 	std::ostream & out,
 	core::conformation::Residue const & rsd,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	// intra-residue connections
 	// do residues in different (~random) colors to help distinguish them
 	int const num_colors = 6;
@@ -144,11 +141,10 @@ void dump_residue_kinemage(
 void dump_structure_kinemage(
 	std::ostream & out,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	out << "@subgroup {by residue} dominant\n";
-	for ( core::Size i = 1; i <= conf.size(); ++i ) {
-		dump_residue_kinemage(out, conf.residue(i), conf);
+	for ( auto const & res : conf  ) {
+		dump_residue_kinemage(out, res, conf);
 	}
 }
 
@@ -157,8 +153,7 @@ void dump_foldtree_kinemage(
 	std::ostream & out,
 	core::kinematics::FoldTree const & fold_tree,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	out << "@arrowlist {true} color= gold width=3 radius= 0.6 off\n";
 	auto i = fold_tree.begin(), i_end = fold_tree.end();
 	for ( ; i != i_end; ++i ) {
@@ -190,8 +185,7 @@ void visit_atomtree_node(
 	std::ostream & out,
 	core::kinematics::tree::Atom const & katom,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	// Easier to just do point-line all the time than to try and see if
 	// previous line was drawn to our parent (it rarely will be).
 
@@ -218,8 +212,7 @@ void dump_atomtree_kinemage(
 	std::ostream & out,
 	core::kinematics::AtomTree const & atom_tree,
 	core::conformation::Conformation const & conf
-)
-{
+) {
 	out << "@arrowlist {true} color= orange\n";
 	core::kinematics::tree::Atom const & root = *( atom_tree.root() );
 	visit_atomtree_node(out, root, conf);
@@ -233,8 +226,7 @@ void
 dump_pose_kinemage(
 	std::string const & filename,
 	core::pose::Pose const & pose
-)
-{
+) {
 	std::ofstream out (filename.c_str());
 	if ( !out.good() ) {
 		basic::Error() << "Can't open kinemage file " << filename << std::endl;
