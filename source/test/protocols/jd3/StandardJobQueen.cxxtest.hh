@@ -65,8 +65,14 @@ basic::options::BooleanOptionKey const bool_arg4("dummy_jq:bool_arg4");
 utility::options::IntegerVectorOptionKey const intvect_arg1("intvect_arg1");
 }}}//basic::options::OptionKeys
 
-class DummyJobQueen : public ::StandardJobQueen
+class DummyJobQueen : public StandardJobQueen
 {
+public:
+	typedef StandardJobQueen parent;
+
+	using parent::note_job_completed;
+	
+
 public:
 	DummyJobQueen()
 	{
@@ -129,6 +135,34 @@ public:
 	virtual void note_job_completed( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobStatus /*status*/ ) {}
 
 	virtual void completed_job_result( protocols::jd3::LarvalJobCOP /*job*/, protocols::jd3::JobResultOP /*result*/ ) {}
+
+
+	utility::vector1< core::Size > const &
+	preliminary_job_nodes() const {
+		return parent::preliminary_job_nodes();
+	}
+
+	bool
+	all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const
+	{
+		return parent::all_jobs_assigned_for_preliminary_job_node( node_id );
+	}
+
+	core::Size preliminary_job_node_begin_job_index( core::Size node_id ) const
+	{
+		return parent::preliminary_job_node_begin_job_index( node_id );
+	}
+
+	core::Size preliminary_job_node_end_job_index( core::Size node_id ) const
+	{
+		return parent::preliminary_job_node_end_job_index( node_id );
+	}
+
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & completed_jobs() const { return parent::completed_jobs();}
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & successful_jobs() const { return parent::successful_jobs();}
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const { return parent::failed_jobs();}
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const { return parent::output_jobs();}
+
 
 
 public:
@@ -333,6 +367,127 @@ public:
 		utility::vector1< JobResultOP > empty_vector;
 		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
 		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
+
+	}
+
+	void test_preliminary_job_node_job_index_ranges()
+	{
+
+		std::string jobdef_file =
+			"<JobDefinitionFile>\n"
+			" <Job nstruct=\"5\">\n"
+			"  <Input>\n"
+			"   <PDB filename=\"1ubq.pdb\"/>\n"
+			"  </Input>\n"
+			" </Job>\n"
+			" <Job nstruct=\"11\">\n"
+			"  <Input>\n"
+			"   <PDB filename=\"1ubq.pdb\"/>\n"
+			"  </Input>\n"
+			" </Job>\n"
+			" <Job nstruct=\"3\">\n"
+			"  <Input>\n"
+			"   <PDB filename=\"1ubq.pdb\"/>\n"
+			"  </Input>\n"
+			" </Job>\n"
+			"</JobDefinitionFile>\n";
+
+		core_init(); // all options passed through job-definition file
+
+		DummyJobQueen djq;
+		try {
+			djq.determine_preliminary_job_list_from_xml_file( jobdef_file );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		JobDigraphOP dag = djq.initial_job_dag();
+		TS_ASSERT_EQUALS( dag->num_nodes(), 3 );
+		TS_ASSERT_EQUALS( dag->num_edges(), 0 );
+
+		utility::vector1< core::Size > prelim_nodes( 3 );
+		for ( core::Size ii = 1; ii <= 3; ++ii ) prelim_nodes[ ii ] = ii;
+		TS_ASSERT_EQUALS( djq.preliminary_job_nodes(), prelim_nodes );
+
+		LarvalJobs jobs = djq.determine_job_list( 1, 4 );
+		TS_ASSERT_EQUALS( jobs.size(), 4 );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), false );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+
+		djq.note_job_completed( 1, jd3_job_status_success );
+		djq.note_job_completed( 2, jd3_job_status_success );
+		djq.note_job_completed( 3, jd3_job_status_success );
+		djq.note_job_completed( 4, jd3_job_status_failed_max_retries );
+
+		TS_ASSERT( djq.completed_jobs().member( 1 ) );
+		TS_ASSERT( djq.completed_jobs().member( 2 ) );
+		TS_ASSERT( djq.completed_jobs().member( 3 ) );
+		TS_ASSERT( djq.completed_jobs().member( 4 ) );
+
+		TS_ASSERT(   djq.successful_jobs().member( 1 ) );
+		TS_ASSERT(   djq.successful_jobs().member( 2 ) );
+		TS_ASSERT(   djq.successful_jobs().member( 3 ) );
+		TS_ASSERT( ! djq.successful_jobs().member( 4 ) );
+
+		TS_ASSERT( ! djq.failed_jobs().member( 1 ) );
+		TS_ASSERT( ! djq.failed_jobs().member( 2 ) );
+		TS_ASSERT( ! djq.failed_jobs().member( 3 ) );
+		TS_ASSERT(   djq.failed_jobs().member( 4 ) );
+
+		jobs = djq.determine_job_list( 1, 4 );
+		TS_ASSERT_EQUALS( jobs.size(), 1 );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+
+		jobs = djq.determine_job_list( 2, 6 );
+		TS_ASSERT_EQUALS( jobs.size(), 6 );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), false );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 6 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+
+		jobs = djq.determine_job_list( 2, 6 );
+		TS_ASSERT_EQUALS( jobs.size(), 5 );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), false );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ), 1 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),   5 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ), 6 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),  16 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 0 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   0 );
+
+		jobs = djq.determine_job_list( 3, 6 );
+		TS_ASSERT_EQUALS( jobs.size(), 3 );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 1 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 2 ), true );
+		TS_ASSERT_EQUALS( djq.all_jobs_assigned_for_preliminary_job_node( 3 ), true );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 1 ),  1 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 1 ),    5 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 2 ),  6 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 2 ),   16 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_begin_job_index( 3 ), 17 );
+		TS_ASSERT_EQUALS( djq.preliminary_job_node_end_job_index( 3 ),   19 );
 
 	}
 

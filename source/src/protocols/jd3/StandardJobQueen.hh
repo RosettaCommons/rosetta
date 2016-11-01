@@ -226,6 +226,20 @@ protected:
 	utility::vector1< core::Size > const &
 	preliminary_job_nodes() const;
 
+	/// @brief Returns true if all of the jobs for the given input preliminary-job node have
+	/// been created and returned in a call to determine_job_list. Even if all jobs have been
+	/// created, not all jobs have necessarily been completed.
+	bool
+	all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const;
+
+	/// @brief The index of the first job for a particular preliminary-job node; this function
+	/// returns zero if no jobs for this node have yet been created
+	core::Size preliminary_job_node_begin_job_index( core::Size node_id ) const;
+
+	/// @brief The index of the last job for a particular preliminary-job node; this function
+	/// returns zero if there are some jobs for this node that have not yet been created.
+	core::Size preliminary_job_node_end_job_index( core::Size node_id ) const;
+
 	/////// @brief Allow the derived job queen to specify a node in the JobDAG as being
 	/////// "preliminary" in the sense a) that the %StandardJobQueen is responsible for creating the
 	/////// list of larval jobs for this node, and b) there are no nodes that this node depends
@@ -239,6 +253,22 @@ protected:
 	/// been called.
 	utility::vector1< PreliminaryLarvalJob > const &
 	preliminary_larval_jobs() const;
+
+	/// @brief Read access for which jobs have completed and how; if a job-id is a member
+	/// of this DIET, then it has completed (either in success or failure).
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & completed_jobs() const;
+
+	/// @brief Read access for which jobs have completed and how; if a job-id is a member
+	/// of this DIET, then it completed successfully.
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & successful_jobs() const;
+
+	/// @brief Read access for which jobs have completed and how; if a job-id is a member
+	/// of this DIET, then it completed unsuccessfully.
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & failed_jobs() const;
+
+	/// @brief Read access for which jobs have completed and how; if a job-id is a member
+	/// of this DIET, then the job has already been output.
+	numeric::DiscreteIntervalEncodingTree< core::Size > const & output_jobs() const;
 
 	/// @brief Ask the derived JobQueen to expand / refine a preliminary larval job, by
 	/// possibly reading per-job data out of the Tag associated with each job. If there is
@@ -383,6 +413,11 @@ private:
 		std::string const & secondary_outputter_type
 	);
 
+	/// @brief The SJQ will keep track of all output jobs in the output_jobs_ diet, but requires
+	/// that derived classes who are not calling the SJQ's version of completed_job_result call
+	/// this function.
+	void note_job_result_output( LarvalJobCOP job );
+
 private:
 
 	// ResourceManagerOP resource_manager_;
@@ -413,8 +448,12 @@ private:
 	InnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
 	Size curr_inner_larval_job_index_;
 	Size njobs_made_for_curr_inner_larval_job_;
-	utility::vector1< core::Size > preliminary_job_nodes_complete_;
+	utility::vector1< core::Size > preliminary_job_node_inds_;
+	utility::vector1< core::Size > pjn_job_ind_begin_;
+	utility::vector1< core::Size > pjn_job_ind_end_;
+	utility::vector1< char > preliminary_job_nodes_complete_; // complete == all jobs assigned
 
+	numeric::DiscreteIntervalEncodingTree< core::Size > completed_jobs_;
 	numeric::DiscreteIntervalEncodingTree< core::Size > successful_jobs_;
 	numeric::DiscreteIntervalEncodingTree< core::Size > failed_jobs_;
 	numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;

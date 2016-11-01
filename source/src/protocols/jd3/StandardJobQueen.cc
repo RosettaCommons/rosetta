@@ -419,8 +419,16 @@ JobDigraphOP
 StandardJobQueen::initial_job_dag()
 {
 	determine_preliminary_job_list();
-	preliminary_job_nodes_complete_.resize( preliminary_larval_jobs_.size() );
-	for ( core::Size ii = 1; ii <= preliminary_larval_jobs_.size(); ++ii ) {
+
+	core::Size n_pjns = preliminary_larval_jobs_.size();
+	preliminary_job_node_inds_.resize( n_pjns );
+	preliminary_job_nodes_complete_.resize( n_pjns );
+	pjn_job_ind_begin_.resize( n_pjns );
+	pjn_job_ind_end_.resize( n_pjns );
+
+	for ( core::Size ii = 1; ii <= n_pjns; ++ii ) {
+		preliminary_job_node_inds_[ ii ] = ii;
+		pjn_job_ind_begin_[ ii ] = pjn_job_ind_end_[ ii ] = 0;
 		preliminary_job_nodes_complete_[ ii ] = 0;
 	}
 	// create a DAG with as many nodes in it as there are preliminary larval jobs
@@ -520,6 +528,7 @@ void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status )
 
 void StandardJobQueen::note_job_completed( core::Size job_id, JobStatus status )
 {
+	completed_jobs_.insert( job_id );
 	if ( status == jd3_job_status_success ) {
 		recent_successes_.push_back( job_id );
 		successful_jobs_.insert( job_id );
@@ -549,6 +558,7 @@ StandardJobQueen::job_results_that_should_be_discarded() {
 
 void StandardJobQueen::completed_job_result( LarvalJobCOP job, JobResultOP job_result )
 {
+	note_job_result_output( job );
 	pose_outputters::PoseOutputterOP outputter = pose_outputter_for_job( *job->inner_job() );
 	PoseJobResultOP pose_result = utility::pointer::dynamic_pointer_cast< PoseJobResult >( job_result );
 	if ( ! pose_result ) {
@@ -634,12 +644,32 @@ StandardJobQueen::determine_preliminary_job_list()
 /// is responsible for producing the larval_jobs. They are called "preliminary" jobs because
 /// they do not depend on outputs from any previous node in the graph. (The set of job nodes
 /// that contain no incoming edges, though, could perhaps be different from the set of
-/// preliminary job nodes, so the %StandardJobQueen requires that the deried job queen
+/// preliminary job nodes, so the %StandardJobQueen requires that the derived job queen
 /// inform her of which nodes are the preliminary job nodes.)
 utility::vector1< core::Size > const &
 StandardJobQueen::preliminary_job_nodes() const
 {
-	return preliminary_job_nodes_complete_;
+	return preliminary_job_node_inds_;
+}
+
+bool
+StandardJobQueen::all_jobs_assigned_for_preliminary_job_node( core::Size node_id ) const
+{
+	return preliminary_job_nodes_complete_[ node_id ];
+}
+
+
+/// returns zero if no jobs for this node have yet been created
+core::Size StandardJobQueen::preliminary_job_node_begin_job_index( core::Size node_id ) const
+{
+	return pjn_job_ind_begin_[ node_id ];
+}
+
+/// @brief The index of the last job for a particular preliminary-job node; this function
+/// returns zero if there are some jobs for this node that have not yet been created.
+core::Size StandardJobQueen::preliminary_job_node_end_job_index( core::Size node_id ) const
+{
+	return pjn_job_ind_end_[ node_id ];
 }
 
 /////// @brief Allow the derived job queen to specify a node in the JobDAG as being
@@ -668,6 +698,29 @@ utility::vector1< PreliminaryLarvalJob > const &
 StandardJobQueen::preliminary_larval_jobs() const
 {
 	return preliminary_larval_jobs_;
+}
+
+numeric::DiscreteIntervalEncodingTree< core::Size > const &
+StandardJobQueen::completed_jobs() const
+{
+	return completed_jobs_;
+}
+
+numeric::DiscreteIntervalEncodingTree< core::Size > const &
+StandardJobQueen::successful_jobs() const
+{
+	return successful_jobs_;
+}
+
+numeric::DiscreteIntervalEncodingTree< core::Size > const &
+StandardJobQueen::failed_jobs() const
+{
+	return failed_jobs_;
+}
+
+numeric::DiscreteIntervalEncodingTree< core::Size > const &
+StandardJobQueen::output_jobs() const {
+	return output_jobs_;
 }
 
 /// @details This base class implementation merely returns a one-element list containing the
@@ -1132,8 +1185,6 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 	LarvalJobs jobs;
 	if ( preliminary_job_nodes_complete_[ job_node_index ] ) return jobs;
 
-
-	core::Size njobs_already_made( 0 );
 	while ( true ) {
 		// Each iteration through this loop advances either  curr_inner_larval_job_, or
 		// njobs_made_for_curr_inner_larval_job_ to ensure
@@ -1162,6 +1213,8 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 		if ( curr_inner_larval_job_index_ > inner_larval_jobs_for_curr_prelim_job_.size() ) {
 			// prepare for the next time we call this function for a different job node
 			curr_inner_larval_job_index_ = 0;
+			pjn_job_ind_end_[ job_node_index ] = larval_job_counter_;
+			preliminary_job_nodes_complete_[ job_node_index ] = 1;
 			return jobs;
 		}
 
@@ -1169,18 +1222,30 @@ StandardJobQueen::next_batch_of_larval_jobs_from_prelim( core::Size job_node_ind
 			// create LarvalJobs
 			InnerLarvalJobOP curr_inner_larval_job = inner_larval_jobs_for_curr_prelim_job_[ curr_inner_larval_job_index_ ];
 			core::Size max_to_make = max_njobs;
-			if ( max_njobs > njobs_already_made ) {
-				max_to_make = max_njobs - njobs_already_made;
+
+			if ( max_to_make > curr_inner_larval_job->nstruct_max() - njobs_made_for_curr_inner_larval_job_ ) {
+				max_to_make = curr_inner_larval_job->nstruct_max() - njobs_made_for_curr_inner_larval_job_;
+			}
+
+			if ( pjn_job_ind_begin_[ job_node_index ] == 0 ) {
+				pjn_job_ind_begin_[ job_node_index ] = 1 + larval_job_counter_;
 			}
 			LarvalJobs curr_jobs = expand_job_list( curr_inner_larval_job, max_to_make );
+
 			core::Size n_made = curr_jobs.size();
+			if ( max_njobs >= n_made ) {
+				max_njobs -= n_made;
+			} else {
+				max_njobs = 0;
+				// this should never happen!
+				throw utility::excn::EXCN_Msg_Exception( "expand_job_list returned " + utility::to_string( n_made ) + " jobs when it was given a maximum number of " + utility::to_string( max_to_make ) + " to make (with max_njobs of " + utility::to_string( max_njobs ) + ")\n" );
+			}
+
 			jobs.splice( jobs.end(), curr_jobs );
-			if ( n_made + njobs_made_for_curr_inner_larval_job_ <= curr_inner_larval_job->nstruct_max() ) {
+			if ( n_made + njobs_made_for_curr_inner_larval_job_ < curr_inner_larval_job->nstruct_max() ) {
 				njobs_made_for_curr_inner_larval_job_ += n_made;
-				preliminary_job_nodes_complete_[ job_node_index ] = 1;
 				return jobs;
 			} else {
-				njobs_already_made += n_made;
 				++curr_inner_larval_job_index_;
 				njobs_made_for_curr_inner_larval_job_ = 0;
 			}
@@ -1226,6 +1291,12 @@ StandardJobQueen::secondary_outputter_for_job(
 	secondary_outputter_map_[ std::make_pair( secondary_outputter_type, which_outputter ) ] = outputter;
 	return outputter;
 
+}
+
+void
+StandardJobQueen::note_job_result_output( LarvalJobCOP job )
+{
+	output_jobs_.insert( job->job_index() );
 }
 
 
