@@ -313,7 +313,7 @@ sources = {
 	# F ######################################################################
 	"pilot/fcchou" : [
 	    #"adenosine_sample_around", # /* Fang-Chieh Chou, demos/sample_around */
-		"thermal_sampler",
+		"thermal_sampler_alpha",
 	],
 	"pilot/firas" : [
 		#"check_burial", # /* Firas,Documentation Location,Demo Location */
@@ -524,6 +524,9 @@ sources = {
 	"pilot/jstev" : [
 		#"collect_features",
  	],
+	"pilot/jyesselm": [
+		"thermal_sampler",
+	],
 
 	# K ######################################################################
     "pilot/kblacklock" : [
