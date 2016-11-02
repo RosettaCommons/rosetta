@@ -4,7 +4,7 @@
 NAME 7DA
 IO_STRING 7DA a
 TYPE POLYMER #residue type
-AA RAD
+AA UNP
 ATOM  P   Phos H   1.5
 ATOM  OP2 OOC  H   -0.78
 ATOM  OP1 OOC  H   -0.78
