@@ -15,10 +15,6 @@
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <core/types.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
-
 namespace protocols {
 namespace ligand_docking {
 namespace ligand_options {
@@ -120,7 +116,7 @@ std::string Interface::get_python_string() const{
 	std::stringstream python_stream;
 
 	python_stream<<"interface residues: ";
-	BOOST_FOREACH ( core::Size res_id, get_interface_residues() ) {
+	for ( core::Size const res_id : get_interface_residues() ) {
 		python_stream<< res_id << '+';
 	}
 	python_stream<< std::endl;

@@ -931,12 +931,12 @@ parse_motif_string( std::string const & motif_str, std::string & secstruct, std:
 	for ( auto const & motif : motifs ) {
 		// here, we can accept "3LX" or "3:LX"
 		std::string motif_seg = "";
-		for ( std::string::const_iterator c=motif.begin(); c!=motif.end(); ++c ) {
-			if ( *c == ' ' ) continue;
-			if ( *c == '\t' ) continue;
-			if ( *c == '\n' ) continue;
-			if ( *c == ':' ) continue;
-			motif_seg += *c;
+		for (char c : motif) {
+			if ( c == ' ' ) continue;
+			if ( c == '\t' ) continue;
+			if ( c == '\n' ) continue;
+			if ( c == ':' ) continue;
+			motif_seg += c;
 		}
 
 		if ( motif_seg.empty() ) continue;

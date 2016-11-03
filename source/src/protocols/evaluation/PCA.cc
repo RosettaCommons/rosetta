@@ -317,7 +317,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 
 	/* clear matrix U */
 	for ( auto & i : u ) {
-		for ( int j=0; j<DIM; j++ ) i[j]=0;
+		for (double & j : i) j=0;
 	}
 	/*calculate the matrix U*/
 	for ( n=0; (n<natoms); n++ ) {

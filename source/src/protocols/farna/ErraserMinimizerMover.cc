@@ -1143,7 +1143,6 @@ ErraserMinimizerMover::apply(
 	pose::Pose const pose_full = pose;
 	Size const nres( pose.size() );
 	Size const nres_moving( nres - fixed_res_list_.size() );
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
@@ -1155,7 +1154,6 @@ ErraserMinimizerMover::apply(
 		pyrimidine_flip_trial( pose );
 	}
 	TR << "Back from a possibly pyrimidine flip trial." << std::endl;
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	TR << "Do we skip minimization?" << std::endl;
 	if ( skip_minimize_ ) return;
@@ -1175,12 +1173,11 @@ ErraserMinimizerMover::apply(
 	TR << "Identified " << n_chunk << " chunks" << std::endl;
 	for ( Size ii = 1; ii <= n_chunk; ++ii ) {
 		TR << "[";
-		for ( std::set< Size >::iterator jj = chunks[ii].begin(); jj != chunks[ii].end(); ++jj ) {
-			TR << " " << *jj;
+		for (unsigned long jj : chunks[ii]) {
+			TR << " " << jj;
 		}
 		TR << "]" << std::endl;
 	}
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	Size first_chunk = 1;
 	for ( ; first_chunk <= n_chunk; ++first_chunk ) {
@@ -1202,7 +1199,6 @@ ErraserMinimizerMover::apply(
 			break;
 		}
 	}
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	//Set the MoveMap, avoiding moving the virtual residue
 	TR << "Setting up movemap ..." << std::endl;
@@ -1219,7 +1215,6 @@ ErraserMinimizerMover::apply(
 		mm.set_bb(  ii, true );
 		mm.set_chi( ii, true );
 	}
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	kinematics::FoldTree fold_tree( pose.fold_tree() );
 
@@ -1239,7 +1234,6 @@ ErraserMinimizerMover::apply(
 			mm.set_jump( i, true );
 		}
 	}
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	//Fixed res mode
 	if ( fixed_res_list_.size() != 0 ) {
@@ -1270,7 +1264,6 @@ ErraserMinimizerMover::apply(
 		}
 	}
 	TR << std::endl;
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	// Handle phosphate constraints
 	if ( constrain_phosphate_ ) {
@@ -1296,7 +1289,6 @@ ErraserMinimizerMover::apply(
 		pose.constraint_set( cst_set );
 	}
 	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 
 	for ( Size chunk_i = first_chunk; chunk_i <= n_chunk; ++chunk_i ) {
 		time_t chunk_start = time(0);
@@ -1369,7 +1361,6 @@ ErraserMinimizerMover::apply(
 
 		pose.dump_pdb( fn.str() );
 	}
-	debug_assert( pose.pdb_info()->chain( 1 ) == 'a' );
 	pose.pdb_info()->obsolete( false );
 
 	TR << "Job completed sucessfully." << std::endl;

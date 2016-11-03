@@ -65,7 +65,6 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 
 static basic::Tracer TR("MPI.LHR.util");
 
@@ -116,7 +115,7 @@ get_loop_info_full( core::io::silent::SilentStructOP ss,
 
 	utility::vector1< std::string > const str_residues( utility::string_split( str , ',' ) );
 
-	BOOST_FOREACH ( std::string const res, str_residues ) { // this is from boost, copied from core/pose/selection.cc
+	for ( std::string const & res : str_residues ) { // this is from boost, copied from core/pose/selection.cc
 		if ( res == "" ) continue;
 		if ( res.find('-') != std::string::npos ) {
 			// Handle residue range
@@ -530,8 +529,7 @@ core::Real Zscore_to_library( core::Real const score,
 	core::Real const stdev,
 	core::Real const maxval,
 	core::Real const minval
-)
-{
+) {
 	core::Real Zscore = ( score - mean ) / stdev;
 	assert( minval < maxval );
 
@@ -548,7 +546,7 @@ loopstring_to_loopvector( std::string const & loopstr,
 	utility::vector1< std::string > const str_residues( utility::string_split( loopstr , ',' ) );
 	utility::vector1< core::Size > loopregion;
 
-	BOOST_FOREACH ( std::string const res, str_residues ) { // this is from boost, copied from core/pose/selection.cc
+	for ( std::string const & res : str_residues ) { // this is from boost, copied from core/pose/selection.cc
 		if ( res == "" ) continue;
 		if ( res.find('-') != std::string::npos ) {
 			// Handle residue range
@@ -577,7 +575,7 @@ loopstring_to_loopregions( std::string const & loopstr )
 	utility::vector1< utility::vector1< core::Size > > loopregions;
 
 	//bool contains_loop( false );
-	BOOST_FOREACH ( std::string const res, str_residues ) { // this is from boost, copied from core/pose/selection.cc
+	for ( std::string const & res : str_residues ) { // this is from boost, copied from core/pose/selection.cc
 		if ( res == "" ) continue;
 		if ( res.find('-') != std::string::npos ) {
 			// Handle residue range

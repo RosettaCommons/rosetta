@@ -106,16 +106,16 @@ void FragmentStore::delete_homologs(){
 	//string_groups
 	inline_vector_delete(string_groups["aa"],residues_to_delete);
 	//realVector_groups
-	for ( std::map<std::string, std::vector<std::vector<numeric::Real> > >::iterator itr=realVector_groups.begin(); itr!=realVector_groups.end(); ++itr ) {
-		inline_vector_delete(itr->second,residues_to_delete);
+	for (auto & realVector_group : realVector_groups) {
+		inline_vector_delete(realVector_group.second,residues_to_delete);
 	}
 	//real_groups
-	for ( std::map<std::string, std::vector<numeric::Real> >::iterator itr=real_groups.begin(); itr!=real_groups.end(); ++itr ) {
-		inline_vector_delete(itr->second,residues_to_delete);
+	for (auto & real_group : real_groups) {
+		inline_vector_delete(real_group.second,residues_to_delete);
 	}
 	//int64_groups
-	for ( std::map<std::string, std::vector<numeric::Size> >::iterator itr=int64_groups.begin(); itr!=int64_groups.end(); ++itr ) {
-		inline_vector_delete(itr->second,residues_to_delete);
+	for (auto & int64_group : int64_groups) {
+		inline_vector_delete(int64_group.second,residues_to_delete);
 	}
 	//fragment_threshold_distances
 	inline_vector_delete(fragment_threshold_distances,residues_to_delete);

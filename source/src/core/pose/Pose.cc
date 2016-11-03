@@ -85,7 +85,7 @@ namespace pose {
 
 using namespace core::conformation;
 
-typedef boost::indirect_iterator< const conformation::ResidueOPs::const_iterator, Residue const >const_iterator;
+typedef boost::indirect_iterator< conformation::ResidueOPs::const_iterator, Residue const > const_iterator;
 typedef boost::indirect_iterator< conformation::ResidueOPs::iterator, Residue const > iterator;
 
 iterator       Pose::begin() noexcept { return conformation().begin(); }

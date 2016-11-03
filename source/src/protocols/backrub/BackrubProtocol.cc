@@ -524,7 +524,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			minmover.min_type("dfpmin");
 
 			// first minimize just the side chains
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap_->movemap_torsion_id_begin();
 					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::CHI ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
@@ -533,7 +533,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminchi.pdb");
 
 			// next minimize the side chains and backbone
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap_->movemap_torsion_id_begin();
 					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::BB ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}
@@ -542,7 +542,7 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminbb.pdb");
 
 			// finally minimize everything
-			for ( core::kinematics::MoveMap::MoveMapTorsionID_Map::const_iterator iter = minimize_movemap_->movemap_torsion_id_begin();
+			for ( auto iter = minimize_movemap_->movemap_torsion_id_begin();
 					iter != minimize_movemap_->movemap_torsion_id_end(); ++iter ) {
 				if ( iter->first.second == core::id::JUMP ) minimize_movemap_progressive->set(iter->first, iter->second);
 			}

@@ -21,7 +21,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/foreach.hpp>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
@@ -163,7 +162,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	numeric::random::random_permutation( lib_structs.begin(), lib_structs.end(), numeric::random::rg() );
 
 	std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
-	BOOST_FOREACH ( SilentStructOP structure, lib_structs ) {
+	for ( SilentStructOP structure : lib_structs ) {
 		Pose rpose;
 		structure->fill_pose( rpose );
 
@@ -232,7 +231,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 			fastrelax_->batch_apply( relax_structs );
 
 			// Now save the resulting decoys
-			BOOST_FOREACH ( SilentStructOP structure, relax_structs ) {
+			for ( SilentStructOP structure : relax_structs ) {
 				// inflate ...
 				Pose rpose;
 				structure->fill_pose( rpose );
@@ -329,7 +328,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );
-	BOOST_FOREACH ( string const loop_size, loop_sizes_split ) {
+	for ( string const & loop_size : loop_sizes_split ) {
 		add_loop_size( (Size)std::atoi(loop_size.c_str()) ) ;
 	}
 

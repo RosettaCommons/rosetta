@@ -29,8 +29,6 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
-#include <boost/foreach.hpp>
-
 // C++ headers
 #include <utility/assert.hh>
 
@@ -120,7 +118,7 @@ void EnvLabelSelector::parse_my_tag(
 void EnvLabelSelector::set_local_positions( LocalPositions const& positions_in ){
 	using namespace core::environment;
 
-	BOOST_FOREACH ( LocalPositionOP pos, positions_in ) {
+	for ( LocalPositionOP pos : positions_in ) {
 		positions_.push_back( core::environment::LocalPositionOP( new LocalPosition( *pos ) ) );
 	}
 }

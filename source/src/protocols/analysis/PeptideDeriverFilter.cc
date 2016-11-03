@@ -81,7 +81,6 @@
 
 // External headers
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <cassert>
@@ -107,13 +106,13 @@ void PeptideDeriverOutputterContainer::clear() {
 }
 
 void PeptideDeriverOutputterContainer::begin_structure(core::pose::Pose const & pose, std::string const &name) {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->begin_structure(pose, name);
 	}
 }
 
 void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose const & pose) {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->chain_pair_pose_prepared(pose);
 	}
 }
@@ -121,13 +120,13 @@ void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose
 void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);
 	}
 }
 
 void PeptideDeriverOutputterContainer::peptide_length(core::Size const pep_length) {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->peptide_length(pep_length);
 	}
 }
@@ -135,19 +134,19 @@ void PeptideDeriverOutputterContainer::peptide_length(core::Size const pep_lengt
 
 void PeptideDeriverOutputterContainer::peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 	core::Real const linear_isc, core::Real const binding_contribution_fraction, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->peptide_entry(pose, entry_type, pep_start, linear_isc, binding_contribution_fraction, disulfide_info, was_cyclic_pep_modeled, cyclic_pose, cyclic_isc);
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_receptor_partner_pair() {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->end_receptor_partner_pair();
 	}
 }
 
 void PeptideDeriverOutputterContainer::end_structure() {
-	BOOST_FOREACH ( PeptideDeriverOutputterOP const outputter, list_ ) {
+	for ( PeptideDeriverOutputterOP const outputter : list_ ) {
 		outputter->end_structure();
 	}
 }
@@ -514,13 +513,13 @@ void PeptideDeriverFilter::parse_options() {
 
 	utility::vector1<char> restrict_receptors_to_chains;
 
-	BOOST_FOREACH ( std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
+	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]() ) {
 		assert(chain_string.size() == 1);
 		restrict_receptors_to_chains.push_back(chain_string[0]);
 	}
 
 	utility::vector1<char> restrict_partners_to_chains;
-	BOOST_FOREACH ( std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]() ) {
+	for ( std::string const & chain_string : basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]() ) {
 		assert(chain_string.size() == 1);
 		restrict_partners_to_chains.push_back(chain_string[0]);
 	}
@@ -730,11 +729,11 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	utility::vector1<core::Size> already_done_both_ways;
 
 	// go through all requested chains
-	BOOST_FOREACH ( core::Size const receptor_chain, receptor_chain_indices ) {
+	for ( core::Size const receptor_chain : receptor_chain_indices ) {
 
 		bool is_receptor_also_partner = partner_chain_indices.contains(receptor_chain);
 
-		BOOST_FOREACH ( core::Size const partner_chain, partner_chain_indices ) {
+		for ( core::Size const partner_chain : partner_chain_indices ) {
 			if ( receptor_chain == partner_chain ) {
 				continue;
 			}
@@ -776,7 +775,7 @@ PeptideDeriverFilter::get_chain_indices(core::pose::Pose const & pose, utility::
 			chain_indices.push_back(i);
 		}
 	} else {
-		BOOST_FOREACH ( char const chain_char, restrict_to_chains ) {
+		for ( char const chain_char : restrict_to_chains ) {
 			chain_indices.push_back( core::pose::get_chain_id_from_chain( chain_char, pose ) );
 		}
 	}
@@ -918,7 +917,7 @@ PeptideDeriverFilter::derive_peptide(
 	// TODO : perhaps we want the jump in the movemap that DisulfideInsertionMover uses to be user-defined (command-line option), to prevent the peptide from escaping the binding pocket
 	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(PEPTIDE_CHAIN) );
 
-	BOOST_FOREACH ( core::Size const pep_length, pep_lengths_ ) {
+	for ( core::Size const pep_length : pep_lengths_ ) {
 
 		if ( pep_length > (partner_end - partner_start + 1) ) {
 			tracer << "Skip peptide length " << pep_length << " as it is larger than the chain" << std::endl;

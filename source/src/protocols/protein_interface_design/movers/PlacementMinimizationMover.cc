@@ -48,7 +48,6 @@
 
 // C++ headers
 #include <map>
-#include <boost/foreach.hpp>
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <utility/vector0.hh>
@@ -112,7 +111,7 @@ PlacementMinimizationMover::refresh_bbstub_constraints( core::pose::Pose & pose 
 	if ( host_chain_ == 1 ) fixed_res = pose.size();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 	HotspotStubSetOP all_stubs( new HotspotStubSet );
-	BOOST_FOREACH ( StubSetStubPos const stubset_pos_pair, stub_sets_ ) {
+	for ( StubSetStubPos const & stubset_pos_pair : stub_sets_ ) {
 		all_stubs->add_stub_set( *stubset_pos_pair.first );
 	}
 
@@ -216,7 +215,7 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	/// PlaceSim calls this parse_my_tag with its own tag, and there, cb_force is
 	/// set within a child tag
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 		if ( btag->hasOption( "cb_force" ) ) {
 			cb_force( btag->getOption< core::Real >( "cb_force" ) );
 		}

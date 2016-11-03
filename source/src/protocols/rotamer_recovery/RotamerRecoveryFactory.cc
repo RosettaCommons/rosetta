@@ -37,7 +37,6 @@
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace rotamer_recovery {
@@ -146,7 +145,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_protocol(
 			<< "register a new RRProtocol with the RotamerRecoveryFactory" << endl
 			<< "known RRProtocol types are:" << endl;
 
-		BOOST_FOREACH ( const RRProtocolCreatorMap::value_type& type, protocol_types_ ) {
+		for ( auto const & type : protocol_types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -172,7 +171,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_comparer(
 			<< "register a new RRComparer with the RotamerRecoveryFactory" << endl
 			<< "known RRComparer types are:" << endl;
 
-		BOOST_FOREACH ( const RRComparerCreatorMap::value_type& type, comparer_types_ ) {
+		for ( auto const & type : protocol_types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -198,7 +197,7 @@ RotamerRecoveryFactory::get_rotamer_recovery_reporter(
 			<< "register a new RRReporter with the RotamerRecoveryFactory" << endl
 			<< "known RRReporter types are:" << endl;
 
-		BOOST_FOREACH ( const RRReporterCreatorMap::value_type& type, reporter_types_ ) {
+		for ( auto const & type : protocol_types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

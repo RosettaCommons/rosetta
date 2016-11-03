@@ -35,7 +35,6 @@
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <boost/foreach.hpp>
 
 
 
@@ -83,7 +82,7 @@ RequirementFactory::get_global_requirement(
 			<< "register a new Requirement in the RequirementFactory" << std::endl
 			<< "known Requirement types are:" << std::endl;
 
-		BOOST_FOREACH ( const GlobalRequirementCreatorMap::value_type& type, global_types_ ) {
+		for ( auto const & type : global_types_ ) {
 			error_msg << "\t" << type.first << std::endl;
 		}
 		utility_exit_with_message(error_msg.str());
@@ -109,7 +108,7 @@ RequirementFactory::get_intra_segment_requirement(
 			<< "register a new Requirement in the RequirementFactory" << std::endl
 			<< "known Requirement types are:" << std::endl;
 
-		BOOST_FOREACH ( const IntraSegmentRequirementCreatorMap::value_type& type, intra_segment_types_ ) {
+		for ( auto const & type : intra_segment_types_ ) {
 			error_msg << "\t" << type.first << std::endl;
 		}
 		utility_exit_with_message(error_msg.str());

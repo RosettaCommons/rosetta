@@ -41,7 +41,6 @@
 
 // C++ Headers
 #include <set>
-#include <boost/foreach.hpp>
 
 // ObjexxFCL Headers
 
@@ -59,7 +58,7 @@ Environment::Environment( std::string name ):
 {}
 
 Environment::~Environment() {
-	BOOST_FOREACH ( Conformation * conf, pconfs_ ) {
+	for ( Conformation * conf : pconfs_ ) {
 		ProtectedConformation * pconf = dynamic_cast< ProtectedConformation * >( conf );
 		if ( pconf ) {
 			pconf->env_destruction();
@@ -213,7 +212,7 @@ void Environment::assign_passport( ClientMoverOP mover, core::environment::DofPa
 }
 
 void Environment::cancel_passports(){
-	BOOST_FOREACH ( ClientMoverOP mover, registered_movers_ ) {
+	for ( ClientMoverOP mover : registered_movers_ ) {
 		tr.Info << "stripping passport from " << mover->get_name() << std::endl;
 		if ( mover->has_passport() &&
 				mover->passport()->env_id() == this->id() ) {
@@ -228,8 +227,7 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
 	//reset chainbreak varaints
 	tr.Trace << "Removing chainbreak variants from sequence "
 		<< pose.annotated_sequence() << std::endl;
-	BOOST_FOREACH ( std::set< core::Size >::key_type cut_res,
-			broker()->result().auto_cuts ) {
+	for ( auto const & cut_res : broker()->result().auto_cuts ) {
 		remove_chainbreak_variants( pose, cut_res, cut_res+1 );
 		tr.Trace << "Chainbreak variants @ " << cut_res << "/" << cut_res+1 << " removed:"
 			<< pose.annotated_sequence() << std::endl;
@@ -257,7 +255,7 @@ void Environment::remove_nonpermenant_features( core::pose::Pose& pose ){
 	//  for( DataMap::const_iterator it = broker()->result().cached_data->begin();
 	//       it != broker()->result().cached_data->end(); ++it ){
 	//    if( map->find( it->first ) != map->end() ){
-	//      BOOST_FOREACH( WriteableCacheableDataOP d, it->second ){
+	//      for( WriteableCacheableDataOP d : it->second ){
 	//        map->erase( d );
 	//      }
 	//    }
@@ -299,11 +297,11 @@ core::pose::Pose Environment::broker( core::pose::Pose const & in_pose ){
 	tr.Debug << "Beginning Broking for environment " << this->name() << " with "
 		<< registered_movers_.size() << " registered movers." << std::endl;
 	tr.Debug << "  Registered movers are:" << std::endl;
-	BOOST_FOREACH ( ClientMoverOP mover, registered_movers_ ) { tr.Debug << "    " << mover->get_name() << std::endl; }
+	for ( ClientMoverOP mover : registered_movers_ ) { tr.Debug << "    " << mover->get_name() << std::endl; }
 
 	std::map< ClientMoverOP, core::environment::DofPassportOP > mover_passports;
 
-	BOOST_FOREACH ( ClientMoverOP mover, registered_movers_ ) {
+	for ( ClientMoverOP mover : registered_movers_ ) {
 		assert( mover_passports.find( mover ) == mover_passports.end() );
 		mover_passports[ mover ] = Parent::issue_passport( mover->get_name() );
 		assign_passport( mover, mover_passports[ mover ] );

@@ -78,7 +78,7 @@ private: ///functions
 	);
 
 
-	void grow_from_verteces(
+	void grow_from_vertices(
 		core::pose::Pose & curr_pose,
 		std::string sequence,
 		protocols::loops::Loops & seeds,
@@ -114,7 +114,7 @@ private: /// data
 	core::kinematics::FoldTreeOP seed_foldtree_;
 	/// pointer for the current pose
 	core::pose::PoseOP curr_pose_;
-	std::set< core::Size > verteces_;
+	std::set< core::Size > vertices_;
 	//bool add_chainbreakterm_;
 
 };

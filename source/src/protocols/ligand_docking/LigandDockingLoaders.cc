@@ -27,9 +27,6 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -50,7 +47,7 @@ void InterfaceBuilderLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH ( TagCOP interface_builder_tag, tag->getTags() ) {
+	for ( TagCOP interface_builder_tag : tag->getTags() ) {
 		std::string const name( interface_builder_tag->getName() );
 
 		if ( data.has("interface_builders", name) ) {
@@ -83,7 +80,7 @@ void MoveMapBuilderLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH ( TagCOP movemap_builder_tag, tag->getTags() ) {
+	for ( TagCOP movemap_builder_tag : tag->getTags() ) {
 		std::string const name( movemap_builder_tag->getName() );
 
 		if ( data.has("movemap_builders", name) ) {
@@ -116,7 +113,7 @@ void LigandAreaLoader::load_data(
 {
 	using namespace utility::tag;
 
-	BOOST_FOREACH ( TagCOP ligand_area_tag, tag->getTags() ) {
+	for ( TagCOP ligand_area_tag : tag->getTags() ) {
 		std::string const name( ligand_area_tag->getName() );
 
 		if ( data.has("ligand_areas", name) ) {

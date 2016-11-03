@@ -31,7 +31,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/sort_predicates.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <string>
@@ -97,7 +96,7 @@ void ClusterPoseSelector::parse_my_tag(
 	}
 
 	// Children of tag are reporters
-	BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
@@ -170,7 +169,7 @@ utility::vector1<bool> ClusterPoseSelector::select_poses(
 	core::Size ncluster = 0, nstructure = 0;
 	std::vector < Cluster > const & clusters = clustering->get_cluster_list();
 
-	BOOST_FOREACH ( Cluster cluster, clusters ) {
+	for ( Cluster const & cluster : clusters ) {
 		TR.Debug << "Cluster " << ncluster << std::endl;
 		for ( core::Size i = 0; i < cluster.size() && i < structures_per_cluster_; ++i ) {
 			TR.Debug << "  Selecting pose " << i << " => " << cluster[i]+1 << std::endl;

@@ -74,8 +74,6 @@
 
 	#include <apps/pilot/will/will_util.ihh>
 
-	#include <boost/foreach.hpp>
-
 	// #include <boost/archive/text_oarchive.hpp>
 	// #include <boost/archive/text_iarchive.hpp>
 	// #include <boost/archive/binary_oarchive.hpp>
@@ -200,7 +198,7 @@ void remove_duplicates(){
 	load_motifs( option[mh::remove_duplicates](), motifs );
 
 	std::set<ResPairMotif> s;
-	BOOST_FOREACH( ResPairMotif const & rpm, motifs ) s.insert(rpm);
+	for ( ResPairMotif const & rpm : motifs ) s.insert(rpm);
 
 	cout << motifs.size() << " reduced to " << s.size() << endl;
 
@@ -232,7 +230,7 @@ void merge_motifs(){
 	 }
 
 	TR << "write to disk" << endl;
-	BOOST_FOREACH(ResPairMotifsMap::value_type const & p,mmap){
+	for (ResPairMotifsMap::value_type const & p : mmap){
 		std::string label = binner.hash_to_labal(p.first);
 		write_motifs_binary(option[mh::motif_out_file]()+(label.size()?"_":"")+label,p.second);
 	 }
@@ -273,7 +271,7 @@ void dump_motif_pdbs(){
 	vector1<uint64_t> keys;
 	Real mincount = 9e9;
 	if( option[mh::harvest::min_bin_val].user() ) mincount = option[mh::harvest::min_bin_val]();
-	BOOST_FOREACH(uint64_t key, mh.keys() ){
+	for (uint64_t key : mh.keys() ){
 		uint64_t n = mh.count_motifs(key);
 		if( n >= mincount ){
 			keys.push_back(key);
@@ -284,7 +282,7 @@ void dump_motif_pdbs(){
 		}
 	 }
 	if(keys.size()==0) keys.push_back(mxkey);
-	BOOST_FOREACH(uint64_t key,keys) TR << "key " << key << endl;
+	for (uint64_t key : keys) TR << "key " << key << endl;
 	TR << "dump_motif_pdbs: max motifs in bucket, dumping that one bucket: " << maxnum << " " << (Real)maxnum/(Real)motifs.size() << endl;
 	string tag = string(option[mh::motif_out_file]());
 	if(tag=="") tag = "NOTAG";
@@ -453,7 +451,7 @@ void harvest_scores(){
 				// 	// cout << "RADIAL_BIN_LOOKUP " << lookuprad << " " << shell_tmp.size() << endl;
 
 				// 	 // loop over all cells close to this motif
-				// 	 BOOST_FOREACH(XformScore::Key const & other_key, shell_tmp ){
+				// 	 for (XformScore::Key const & other_key :  shell_tmp ){
 				//  	// runtime_assert_msg(testkeys.find(other_key)==testkeys.end(),"key already seen!");
 				// 	// testkeys.insert(other_key);
 
@@ -477,9 +475,9 @@ void harvest_scores(){
 	#ifdef USE_OPENMP
 	int mergecount=0;
 	XformScoreMap xscoremap_joint;
-	BOOST_FOREACH(XformScoreMap & m,xscoremap){
+	for (XformScoreMap & m : xscoremap){
 		TR << "merge threaded data " << ++mergecount << " / " << xscoremap.size() << endl;
-		BOOST_FOREACH(XformScoreMap::value_type const & v,m){
+		for (XformScoreMap::value_type const & v : m){
 			if(xscoremap_joint.find(v.first)==xscoremap_joint.end())
 				xscoremap_joint[v.first] = new XformScore(option[mh::harvest::hash_cart_resl](),option[mh::harvest::hash_angle_resl]());
 			if(agg_with_max) xscoremap_joint[v.first]->aggregate_max(*v.second);
@@ -493,7 +491,7 @@ void harvest_scores(){
 
 	if(option[mh::harvest::min_bin_val].user()){
 		TR << "prune" << endl;
-		BOOST_FOREACH(XformScoreMap::value_type& v,xscoremap_joint) v.second->prune_small_bins(option[mh::harvest::min_bin_val]());
+		for (XformScoreMap::value_type& v : xscoremap_joint) v.second->prune_small_bins(option[mh::harvest::min_bin_val]());
 	 }
 
 	TR << xscoremap_joint;
@@ -501,7 +499,7 @@ void harvest_scores(){
 	TR << "write to disk" << endl;
 	string PATH = option[mh::motif_out_file]();
 	utility::file::create_directory_recursive(PATH);
-	BOOST_FOREACH(XformScoreMap::value_type const & p,xscoremap_joint){
+	for (XformScoreMap::value_type const & p : xscoremap_joint){
 		std::string label = binner.hash_to_labal(p.first);
 		p.second->write_binary(PATH+"/"+PATH+(label.size()?"_":"")+label+".xh.bin.gz");
 	 }
@@ -567,8 +565,8 @@ Real get_etable_score_for_atoms(
  ){
 	using namespace core::id;
 	Real sc = 0.0;
-	BOOST_FOREACH(AtomID const & aid1, aids1){
-		BOOST_FOREACH(AtomID const & aid2, aids2){
+	for (AtomID const & aid1 : aids1){
+		for (AtomID const & aid2 : aids2){
 			Real lj_atrE,lj_repE,fa_solE,d2;
 			etable.analytic_etable_evaluation(
 				pose1.residue(aid1.rsd()).atom(aid1.atomno()),

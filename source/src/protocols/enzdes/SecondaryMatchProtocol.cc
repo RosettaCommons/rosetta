@@ -432,14 +432,13 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 		//utility::vector1< core::pose::PoseCOP > temp_poses;
 		utility::vector1< PoseFoundResiduesCombinationOP > temp_combos;
 
-		for ( auto res_it = found_resi.begin();
-				res_it != found_resi.end(); ++res_it ) {
+		for (auto & res_it : found_resi) {
 
 			for ( auto & process_combo : process_combos ) {
 				//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
 				//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
 				PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( *process_combo ) );
-				success_combo->add_residue( *res_it );
+				success_combo->add_residue( res_it );
 				temp_combos.push_back( success_combo );
 			}
 

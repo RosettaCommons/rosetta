@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 
 #include <boost/foreach.hpp>
-#define foreach_         BOOST_FOREACH
+#define foreach_ BOOST_FOREACH
 #include <utility>
 
 static THREAD_LOCAL basic::Tracer TR("core.pack.interaction_graph.ResidueArrayAnnealingEvaluator");
@@ -401,7 +401,7 @@ core::PackerEnergy ResidueArrayAnnealingEvaluator::get_energy_current_state_assi
 core::Real ResidueArrayAnnealingEvaluator::calculate_weighted_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) {
 	core::Real result = 0;
 
-	foreach_ ( WeightedMethodPair method, weighted_energy_methods_ ) {
+	for ( WeightedMethodPair const & method : weighted_energy_methods_ ) {
 		result += method.first * method.second->calculate_energy( resvect );
 	}
 

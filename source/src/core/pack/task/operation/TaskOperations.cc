@@ -34,7 +34,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -206,7 +205,7 @@ RestrictAbsentCanonicalAAS::keep_aas( std::string const & keep )
 	using namespace chemical;
 	runtime_assert( keep_aas_.size() == num_canonical_aas );
 	utility::vector1< bool > canonical_aas_to_keep( num_canonical_aas, false );
-	BOOST_FOREACH ( char const c, keep ) {
+	for ( char const c : keep ) {
 		if ( oneletter_code_specifies_aa( c ) ) {
 			//std::cout << "Keeping amino acid " << c << std::endl;
 			canonical_aas_to_keep[ aa_from_oneletter_code( c ) ] = true;

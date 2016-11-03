@@ -26,7 +26,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 #include <core/pose/selection.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 
@@ -230,7 +229,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 	std::set< core::Size > const resnums = compute_resnums( pose );
 
 	tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
-	BOOST_FOREACH ( core::Size const res, resnums ) {
+	for ( core::Size const res : resnums ) {
 		tr << pose.residue_type( res ).name3() << res <<" + ";
 		if ( !(pose.residue_type( res ).name3() == restype_) ) {
 			tr << "Residue " << res << " in pose is of type "<< pose.residue_type( res ).name3() << ". Requested restype3 is "<< restype_<<". Skipping!"<<std::endl;
@@ -249,7 +248,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 		return (0.0);
 	}
 
-	BOOST_FOREACH ( core::Size const res, resnums ) {
+	for ( core::Size const res : resnums ) {
 
 		core::Real res_intE (0.0);
 

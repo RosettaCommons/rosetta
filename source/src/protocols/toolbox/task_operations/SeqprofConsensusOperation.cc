@@ -53,7 +53,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Boost headers
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <string>
@@ -159,7 +158,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		}
 
 		core::Size cst_num( 0 );
-		BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+		for ( ConstraintCOP const c : constraints ) {
 			if ( c->type() == "SequenceProfile" ) {
 				SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 				runtime_assert( seqprof_cst != 0 );
@@ -366,7 +365,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const sub_tag, sub_tags ) {
+	for ( TagCOP const sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "RestrictToAlignedSegments" ) {
 			restrict_to_aligned_segments_ = RestrictToAlignedSegmentsOperationOP( new RestrictToAlignedSegmentsOperation );
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;

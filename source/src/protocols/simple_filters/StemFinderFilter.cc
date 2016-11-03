@@ -26,7 +26,6 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <utility/vector1.hh>
 #include <string>
-#include <boost/foreach.hpp>
 #include <utility/string_util.hh>
 
 namespace protocols {
@@ -71,7 +70,7 @@ StemFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &,
 	filenames_ = utility::string_split( tag->getOption< std::string > ( "filenames" ), ',' );
 
 	TR<<"StemFinder with options: from_res: "<<from_res()<<" to_res: "<<to_res()<<" rmsd: "<<rmsd()<<" stems_on_sse: "<<stems_on_sse();
-	BOOST_FOREACH ( std::string const f, filenames_ ) {
+	for ( std::string const & f : filenames_ ) {
 		TR<<f<<' ';
 	}
 	TR<<std::endl;
@@ -104,7 +103,7 @@ load_poses( utility::vector1< std::string > const & filenames ){
 	utility::vector1< core::pose::PoseOP > poses;
 	poses.clear();
 	TR<<"Loading "<<filenames.size()<<" poses from disk: ";
-	BOOST_FOREACH ( std::string const f, filenames ) {
+	for ( std::string const & f : filenames ) {
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *new_pose, f , core::import_pose::PDB_file);
 		poses.push_back( new_pose );
@@ -156,7 +155,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 	vector1< std::string > poses_dssp;
 	if ( stems_on_sse() ) { // dssp calculations are time consuming
 		poses_dssp.clear();
-		BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
+		for ( core::pose::PoseOP p : poses ) {
 			poses_dssp.push_back( dssp( *p ) );
 		}
 	}
@@ -213,7 +212,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		std::sort( neighbor_idxs.begin(), neighbor_idxs.end() );
 		auto it = std::unique( neighbor_idxs.begin(), neighbor_idxs.end() );
 		neighbor_idxs.resize( std::distance( neighbor_idxs.begin(), it ) );
-		BOOST_FOREACH ( Size const n, neighbor_idxs ) {
+		for ( Size const n : neighbor_idxs ) {
 			TR<<conf.residue( n ).name1()<<n<<' '<<distances[ n ]<<'\n';
 		}
 		TR<<std::endl;
@@ -239,10 +238,10 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		TR<<std::endl;
 		//Find contiguous triplets that cover large segments: A->B->C
 		TR<<"Connected pairs:\n";
-		for ( std::map< Size, Size >::const_iterator mit = stem_pairs.begin(); mit != stem_pairs.end(); ++mit ) {
-			std::map< Size, Size >::const_iterator third_partner( stem_pairs.find( mit->second ) );
+		for ( auto const & stem_pair : stem_pairs ) {
+			auto const third_partner( stem_pairs.find( stem_pair.second ) );
 			if ( third_partner != stem_pairs.end() ) {
-				TR<<"Triplet: "<<conf.residue( mit->first ).name1()<<mit->first<<' '<<conf.residue( mit->second ).name1()<<mit->second<<' '<<conf.residue( third_partner->second ).name1()<<third_partner->second<<'\n';
+				TR<<"Triplet: "<<conf.residue( stem_pair.first ).name1()<<stem_pair.first<<' '<<conf.residue( stem_pair.second ).name1()<<stem_pair.second<<' '<<conf.residue( third_partner->second ).name1()<<third_partner->second<<'\n';
 			}
 		}
 		TR<<std::endl;

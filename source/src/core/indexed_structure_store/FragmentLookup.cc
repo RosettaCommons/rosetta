@@ -21,10 +21,8 @@
 
 #include <vector>
 
-namespace core
-{
-namespace indexed_structure_store
-{
+namespace core {
+namespace indexed_structure_store {
 
 FragmentLookupResult::FragmentLookupResult() :
 	found_match(false),
@@ -83,7 +81,7 @@ std::vector< std::pair< Size, Size > > FragmentLookup::get_fragment_residue_span
 	// Unpack endings into list of valid spans within the pose
 	// where a span runs along [start, end).
 	numeric::Size span_start = 1;
-	BOOST_FOREACH ( SpanBreakValue break_and_start, span_breaks_to_next_start ) {
+	for ( SpanBreakValue const & break_and_start : span_breaks_to_next_start ) {
 		Size next_break = break_and_start.first;
 		Size next_start = break_and_start.second;
 

@@ -200,8 +200,7 @@ namespace ssrbrelax {
 
 		Vector 
 		Z_;
-					 core::pose::Pose & pose
-					 );
+					 core::pose::Pose & pose;					 );
 
 		Vector 
 		Y_axis(	 core::pose::Pose & pose

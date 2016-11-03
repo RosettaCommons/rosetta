@@ -30,7 +30,6 @@
 #include <set>
 
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #ifdef    SERIALIZATION
@@ -107,7 +106,7 @@ LengthEventCollector::copy_length_events(
 	using namespace core::conformation::signals;
 	length_events_.clear();
 
-	BOOST_FOREACH ( LengthEvent event, events ) {
+	for ( LengthEvent const & event : events ) {
 		length_events_.push_back( LengthEvent( event ) );
 	}
 

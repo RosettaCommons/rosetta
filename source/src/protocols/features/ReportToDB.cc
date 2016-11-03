@@ -67,10 +67,6 @@
 // Numeric Headers
 #include <numeric>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
-
 // C++ Headers
 #include <sstream>
 #include <algorithm>
@@ -597,7 +593,7 @@ ReportToDB::parse_my_tag(
 
 	for ( ; begin != end; ++begin ) {
 		TagCOP feature_tag= *begin;
-		// BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
+		// for (TagCOP const & feature_tag : tag->getTags()){
 
 		if ( feature_tag->getName() != "feature" ) {
 			TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
@@ -620,8 +616,7 @@ ReportToDB::check_features_reporter_dependencies(
 	FeaturesReporterOP test_features_reporter
 ) const {
 
-	BOOST_FOREACH ( string const dependency,
-			test_features_reporter->features_reporter_dependencies() ) {
+	for ( string const & dependency : test_features_reporter->features_reporter_dependencies() ) {
 
 		// These are defined by default
 		if ( dependency == "ProtocolFeatures" || dependency == "BatchFeatures" || dependency == "StructureFeatures" ) {
@@ -629,7 +624,7 @@ ReportToDB::check_features_reporter_dependencies(
 		}
 
 		bool exists(false);
-		BOOST_FOREACH ( FeaturesReporterOP features_reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP features_reporter : features_reporters_ ) {
 			if ( features_reporter->type_name() == dependency ) {
 				exists = true;
 				break;
@@ -644,7 +639,7 @@ ReportToDB::check_features_reporter_dependencies(
 				<< "These are the FeaturesReporters that have been defined:" << endl
 				<< "\tProtocolFeatures (included by default)" << endl
 				<< "\tStructureFeatures (included by default)" << endl;
-			BOOST_FOREACH ( FeaturesReporterOP features_reporter, features_reporters_ ) {
+			for ( FeaturesReporterOP features_reporter : features_reporters_ ) {
 				error_msg
 					<< "\t" << features_reporter->type_name() << endl;
 			}
@@ -692,7 +687,7 @@ ReportToDB::initialize_database(){
 		//deferred until after batch_id has been set
 		//  write_linking_tables();
 
-		BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP const & reporter : features_reporters_ ) {
 			reporter->write_schema_to_db(db_session_);
 		}
 

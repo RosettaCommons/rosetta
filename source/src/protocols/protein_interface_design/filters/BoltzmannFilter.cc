@@ -15,7 +15,6 @@
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <boost/foreach.hpp>
 #include <math.h>
 
 #include <utility/vector0.hh>
@@ -145,7 +144,7 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 		}
 	}
 
-	BOOST_FOREACH ( FilterCOP filter, get_negative_filters() ) {
+	for ( FilterCOP filter : get_negative_filters() ) {
 		core::Real filter_val = filter->report_sm( pose );
 		s += F(7,3,filter_val)+" ";
 		if ( filter_val >= triage_threshold() ) {
@@ -203,13 +202,13 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption( "anchors" ) ) {
 		anchors_string = utility::string_split( tag->getOption< std::string >( "anchors"), ',' );
 	}
-	BOOST_FOREACH ( std::string const positive_filter_name, positive_filter_names ) {
+	for ( std::string const & positive_filter_name : positive_filter_names ) {
 		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, filters ) );
 	}
-	BOOST_FOREACH ( std::string const negative_filter_name, negative_filter_names ) {
+	for ( std::string const & negative_filter_name : negative_filter_names ) {
 		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, filters ) );
 	}
-	BOOST_FOREACH ( std::string const anchor_str, anchors_string ) {
+	for ( std::string const & anchor_str : anchors_string ) {
 		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );
 	}
 

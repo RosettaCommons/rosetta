@@ -18,10 +18,7 @@
 #include <protocols/loops/Loop.hh>
 
 // Utility headers
-#include <boost/foreach.hpp>
 #include <utility/vector1.hh>
-
-#define foreach BOOST_FOREACH
 
 using namespace std;
 
@@ -38,7 +35,7 @@ PerturberSet::~PerturberSet() {}
 void PerturberSet::perturb_subset(
 	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach ( PerturberOP perturber, perturbers_ ) {
+	for ( PerturberOP perturber : perturbers_ ) {
 		perturber->perturb_subset(pose, residues, problem);
 	}
 }
@@ -46,7 +43,7 @@ void PerturberSet::perturb_subset(
 void PerturberSet::perturb_subset_with_balance(
 	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach ( PerturberOP perturber, perturbers_ ) {
+	for ( PerturberOP perturber : perturbers_ ) {
 		perturber->perturb_subset_with_balance(pose, residues, problem);
 	}
 }
@@ -67,7 +64,7 @@ void PerturberSet::mark_as_default() {
 void PerturberSet::get_perturber_names(
 	utility::vector1<string> & names, string indent) const {
 
-	foreach ( PerturberOP perturber, perturbers_ ) {
+	for ( PerturberOP perturber : perturbers_ ) {
 		names.push_back(indent + perturber->get_name());
 	}
 }

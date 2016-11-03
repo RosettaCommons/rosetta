@@ -29,7 +29,6 @@
 #include <cppdb/frontend.h>                                    // for statement
 
 #include <boost/algorithm/string/predicate.hpp>                // for istart...
-#include <boost/foreach.hpp>                                   // for auto_a...
 #include <boost/iterator/iterator_facade.hpp>                  // for operat...
 #include <boost/lexical_cast.hpp>                              // for bad_le...
 #include <boost/mpl/bool.hpp>                                  // for bool_
@@ -666,7 +665,7 @@ void write_schema_to_database(
 {
 	boost::char_separator< char > sep(";");
 	boost::tokenizer< boost::char_separator< char > > tokens( schema_str, sep );
-	BOOST_FOREACH ( std::string const & stmt_str, tokens ) {
+	for ( std::string const & stmt_str : tokens ) {
 		string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
 		if ( trimmed_stmt_str.size() ) {
 			try{

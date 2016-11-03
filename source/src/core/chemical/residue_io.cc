@@ -62,7 +62,6 @@
 #include <utility/io/izstream.hh>
 
 // External headers
-#include <boost/foreach.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -1334,7 +1333,7 @@ write_topology_file(
 
 	// then all the bonds
 	for ( Size i=1; i <= rsd.natoms(); ++i ) {
-		BOOST_FOREACH ( Size atom_index, rsd.nbrs(i) ) {// bond_this_atom
+		for ( Size const atom_index : rsd.nbrs(i) ) {// bond_this_atom
 			if ( atom_index > i ) {  //don't write out bonds more than once
 				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << " \n";
 			}

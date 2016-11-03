@@ -25,7 +25,6 @@
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <protocols/loops/loops_main.hh>
-#include <boost/foreach.hpp>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 //#include <core/pose/Pose.hh>
 
@@ -97,7 +96,7 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 	std::set< core::Size > residues_on_target;
 	residues_on_target.clear();
 	core::Size jump( 1 );
-	BOOST_FOREACH ( core::Size const r, get_residues() ) {
+	for ( core::Size const r : get_residues() ) {
 		/// Connect the nearest residues on chain1 to key residues on chain2 leaving breaks in chain2 around each key residue
 		if ( head < r - 1 ) {
 			///connect segments intervening between hot spots
@@ -113,7 +112,7 @@ HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const
 		head = r + 1;
 	}
 	core::Size target_head( pose.conformation().chain_begin( 1 ) );
-	BOOST_FOREACH ( core::Size const r, residues_on_target ) {
+	for ( core::Size const r : residues_on_target ) {
 		/// connect chain1 with no breaks
 		ft->add_edge( target_head, r, Edge::PEPTIDE );
 		target_head = r;
@@ -168,10 +167,10 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 		rbw.repacking_radius( interface_radius() );
 		rbw.task_factory( tf );
 		utility::vector1< core::Size > const ala_scan_res( rbw.first_pass_ala_scan( pose ) );
-		BOOST_FOREACH ( core::Size const r, ala_scan_res ) { add_residue( r ); }
+		for ( core::Size const r : ala_scan_res ) { add_residue( r ); }
 	}// fi ddG_threshold
 	TR<<"Making a disjointed fold tree for residues: ";
-	BOOST_FOREACH ( core::Size const r, get_residues() ) {
+	for ( core::Size const r : get_residues() ) {
 		TR<<r<<" ";
 	}
 	TR<<std::endl;
@@ -191,11 +190,11 @@ HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	interface_radius( tag->getOption< core::Real >( "radius", 8.0 ) );
 	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	BOOST_FOREACH ( core::Size const r, v1 ) { add_residue( r ); }
+	for ( core::Size const r : v1 ) { add_residue( r ); }
 
 	runtime_assert( ddG_threshold() <= 100.0 || get_residues().size() );
 	TR<<"HotspotDisjointedFoldTreeMover with: chain "<<chain()<<" ddG_threshold "<<ddG_threshold()<<" and residues ";
-	BOOST_FOREACH ( core::Size const r, get_residues() ) { TR<<r<<" "; }
+	for ( core::Size const r : get_residues() ) { TR<<r<<" "; }
 	TR<<std::endl;
 }
 

@@ -272,11 +272,11 @@ void Sparta::SpartaLib::init() {
 	for ( auto & Entrie : B62.Entries ) {
 		//int index=it->first;
 		string aa = (Entrie.second)["RESNAME"];
-		for ( GDB::GDB_Entry::iterator itS = (Entrie.second).begin(), endS = (Entrie.second).end(); itS != endS; ++itS ) {
-			if ( itS->first == "RESNAME" ) continue;
-			size_t index( AAlist.find( itS->first ) );
+		for (auto & itS : (Entrie.second)) {
+			if ( itS.first == "RESNAME" ) continue;
+			size_t index( AAlist.find( itS.first ) );
 			runtime_assert( index  != string::npos);
-			BLOSUM_62[aa][ index ] = atof( ( itS->second ).c_str() )/10.0;
+			BLOSUM_62[aa][ index ] = atof( ( itS.second ).c_str() )/10.0;
 		}
 	} // end of assigning sequence homology vector (using blosum62 matrix)
 

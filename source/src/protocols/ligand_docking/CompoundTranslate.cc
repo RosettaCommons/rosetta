@@ -28,7 +28,6 @@
 #include <utility/tag/Tag.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 using basic::T;
@@ -122,33 +121,33 @@ CompoundTranslate::parse_my_tag(
 		} else throw utility::excn::EXCN_RosettaScriptsOption("'allow_overlap' option takes arguments 'true' or 'false'");
 	}
 
-	BOOST_FOREACH ( utility::tag::TagCOP tag, tag->getTags() ) {
-		std::string const name= tag->getName();
+	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
+		std::string const & name = subtag->getName();
 		if ( name == "Translate" ) {
 			TranslateOP translate( new Translate() );
-			translate->parse_my_tag(tag, datamap, filters, movers, pose);
+			translate->parse_my_tag( subtag, datamap, filters, movers, pose);
 			translates_.push_back(translate);
 		} else if ( name == "Translates" ) {
-			if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires chain tag");
-			if ( ! tag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires distribution tag");
-			if ( ! tag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires angstroms tag");
-			if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires cycles tag");
+			if ( ! subtag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires chain tag");
+			if ( ! subtag->hasOption("distribution") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires distribution tag");
+			if ( ! subtag->hasOption("angstroms") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires angstroms tag");
+			if ( ! subtag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translates' mover requires cycles tag");
 
-			std::string const chain = tag->getOption<std::string>("chain");
+			std::string const & chain = subtag->getOption<std::string>("chain");
 			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
 
-			BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+			for ( core::Size const chain_id : chain_ids ) {
 				Translate_info translate_info;
 				translate_info.chain_id= chain_id;
 				translate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
-				std::string distribution_str= tag->getOption<std::string>("distribution");
+				std::string distribution_str= subtag->getOption<std::string>("distribution");
 				translate_info.distribution= get_distribution(distribution_str);
-				translate_info.angstroms = tag->getOption<core::Real>("angstroms");
-				translate_info.cycles = tag->getOption<core::Size>("cycles");
-				if ( tag->hasOption("force") ) {
-					if ( tag->getOption<std::string>("force") == "true" ) {
+				translate_info.angstroms = subtag->getOption<core::Real>("angstroms");
+				translate_info.cycles = subtag->getOption<core::Size>("cycles");
+				if ( subtag->hasOption("force") ) {
+					if ( subtag->getOption<std::string>("force") == "true" ) {
 						translate_info.force= true;
-					} else if ( tag->getOption<std::string>("force") != "false" ) {
+					} else if ( subtag->getOption<std::string>("force") != "false" ) {
 						throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
 					}
 				}
@@ -170,18 +169,18 @@ void CompoundTranslate::apply(core::pose::Pose & pose) {
 	// TranslateOPs::iterator begin= translates_.begin(); // Unused variable causes warning.
 	// TranslateOPs::iterator const end= translates_.end(); // Unused variable causes warning.
 
-	BOOST_FOREACH ( TranslateOP translate, translates_ ) {
+	for ( TranslateOP translate : translates_ ) {
 		core::Size chain_id= translate->get_chain_id(pose);
 		chains_to_translate.insert(chain_id);
 	}
 
 	if ( allow_overlap_ ) {
-		BOOST_FOREACH ( TranslateOP translate, translates_ ) {
+		for ( TranslateOP translate : translates_ ) {
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 		}
 	} else { // remove each chain from the exclusion list so that placed chains are in the grid
-		BOOST_FOREACH ( TranslateOP translate, translates_ ) {
+		for ( TranslateOP translate : translates_ ) {
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 			core::Size chain_id= translate->get_chain_id(pose);

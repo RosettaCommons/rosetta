@@ -41,7 +41,6 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/random/random_permutation.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -101,7 +100,7 @@ GrowLigand::set_fragments(){
 	core::chemical::ResidueTypeCOPs fragment_types = core::chemical::ResidueTypeFinder( *rsd_set ).base_property( core::chemical::FRAGMENT ).get_all_possible_residue_types();
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {
+	for ( core::chemical::ResidueTypeCOP fragment_type : fragment_types ) {
 		fragments_.push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(*fragment_type, true) ) ) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}

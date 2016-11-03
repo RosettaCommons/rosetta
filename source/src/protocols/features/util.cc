@@ -56,8 +56,6 @@
 #include <utility>
 #include <iostream>
 
-// Boost Headers
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace features {
@@ -251,7 +249,7 @@ write_features_reporters_table(
 	column_names.emplace_back("report_name");
 	std::vector< std::string > values;
 
-	BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters ) {
+	for ( FeaturesReporterOP const & reporter : features_reporters ) {
 		string const report_name(reporter->type_name());
 
 		values.clear();
@@ -302,7 +300,7 @@ write_batch_reports_table(
 	string insert_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
 	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
 
-	BOOST_FOREACH ( FeaturesReporterOP const & reporter, features_reporters ) {
+	for ( FeaturesReporterOP const & reporter : features_reporters ) {
 		string const report_name(reporter->type_name());
 		select_stmt.bind(1,batch_id);
 		select_stmt.bind(2,report_name);

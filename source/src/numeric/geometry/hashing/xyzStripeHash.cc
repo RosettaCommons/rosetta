@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 #include <numeric/geometry/hashing/xyzStripeHash.hh>
-#include <boost/foreach.hpp>
 #include <ObjexxFCL/format.hh>
 
 
@@ -56,7 +55,7 @@ xyzStripeHash::init(
 		return;
 	}
 	if ( grid_size_ == 0.0 ) {
-		BOOST_FOREACH ( Ball const & b, balls ) grid_size_ = max(grid_size_,2.0f*b.radius());
+		for ( Ball const & b : balls ) grid_size_ = max(grid_size_,2.0f*b.radius());
 		grid_size2_ = grid_size_*grid_size_;
 	}
 	nballs_ = balls.size();

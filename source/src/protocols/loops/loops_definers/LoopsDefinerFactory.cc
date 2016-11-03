@@ -28,7 +28,6 @@
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <string>
@@ -84,7 +83,7 @@ LoopsDefinerFactory::create_loops_definer(
 			<< "register a new LoopsDefiner with the LoopsDefinerFactory" << endl
 			<< "known LoopsDefiner types are:" << endl;
 
-		BOOST_FOREACH ( const LoopsDefinerCreatorMap::value_type& type, types_ ) {
+		for ( auto const & type : types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

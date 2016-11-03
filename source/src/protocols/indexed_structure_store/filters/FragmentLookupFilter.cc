@@ -32,7 +32,6 @@
 
 #include <iterator>
 
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
@@ -154,7 +153,7 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 
 	Object result_container;
 	core::Size num_failed_matches=0;
-	BOOST_FOREACH ( result_t::value_type &r, cached_lookup_result_ ) {
+	for ( result_t::value_type &r : cached_lookup_result_ ) {
 		Object result_object;
 
 		result_object.push_back(Pair("found_match", r.second.found_match));
@@ -188,7 +187,7 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
 
 	Object result_container;
 	core::Size num_failed_matches=0;
-	BOOST_FOREACH ( result_t::value_type &r, cached_lookup_result_ ) {
+	for ( result_t::value_type & r : cached_lookup_result_ ) {
 		Object result_object;
 
 		result_object.push_back(Pair("found_match", r.second.found_match));

@@ -18,7 +18,6 @@
 #include <vector>
 #include <map>
 #include <limits>
-#include <boost/foreach.hpp>
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -128,7 +127,7 @@ public:
 		std::vector< ResidueSpan > valid_residue_spans = get_fragment_residue_spans(pose);
 
 		// Traverse each residue span, extract fragment atom coordinates and score.
-		BOOST_FOREACH ( ResidueSpan residue_span, valid_residue_spans ) {
+		for ( ResidueSpan const & residue_span : valid_residue_spans ) {
 			// Short-circuit if the span is shorter than the minimum fragment length.
 			if ( residue_span.second - residue_span.first < store_->fragment_specification.fragment_length ) {
 				continue;
@@ -136,7 +135,7 @@ public:
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
 			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
-				BOOST_FOREACH ( std::string atom_name, store_->fragment_specification.fragment_atoms ) {
+				for ( std::string const & atom_name : store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}
@@ -158,7 +157,7 @@ public:
 		std::vector< ResidueSpan > valid_residue_spans = get_fragment_residue_spans(pose);
 
 		// Traverse each residue span, extract fragment atom coordinates and score.
-		BOOST_FOREACH ( ResidueSpan residue_span, valid_residue_spans ) {
+		for ( ResidueSpan const & residue_span : valid_residue_spans ) {
 			// Short-circuit if the span is shorter than the minimum fragment length.
 			if ( residue_span.second - residue_span.first < store_->fragment_specification.fragment_length ) {
 				continue;
@@ -166,7 +165,7 @@ public:
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
 			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
-				BOOST_FOREACH ( std::string atom_name, store_->fragment_specification.fragment_atoms ) {
+				for ( std::string const & atom_name : store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}

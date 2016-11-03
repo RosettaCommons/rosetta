@@ -18,9 +18,6 @@
 
 // Utility headers
 #include <numeric/conversions.hh>
-#include <boost/foreach.hpp>
-
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -31,7 +28,7 @@ using numeric::conversions::DEGREES;
 void IdealizeNonPhiPsi::perturb_subset(
 	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		problem->perturb_omega(residue, IdealParameters::omega_dihedral, DEGREES);
 		problem->perturb_c_n_ca(residue, IdealParameters::c_n_ca_angle, DEGREES);
 		problem->perturb_n_ca_c(residue, IdealParameters::n_ca_c_angle, DEGREES);

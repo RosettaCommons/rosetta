@@ -58,7 +58,6 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
-#include <boost/foreach.hpp>
 
 namespace core {
 namespace io {
@@ -102,22 +101,22 @@ void pose_energies_from_sfr(
 
 	out << "label";
 
-	BOOST_FOREACH ( std::string score_name, score_names ) {
+	for ( std::string const & score_name : score_names ) {
 		out << " " << score_name;
 	}
 	out << "\n";
 	out << "weights";
 	utility::vector1< core::Real > const & score_weights = sfr.score_table_weights();
 
-	BOOST_FOREACH ( core::Real weight, score_weights ) {
+	for ( core::Real const weight : score_weights ) {
 		out << " " << weight;
 	}
 	out << " NA\n";
 
 
-	BOOST_FOREACH ( std::vector<std::string> score_line, score_lines ) {
+	for ( std::vector<std::string> const & score_line : score_lines ) {
 		std::string line = "";
-		BOOST_FOREACH ( std::string column, score_line ) {
+		for ( std::string const & column : score_line ) {
 			line = line+" "+column;
 		}
 		line = utility::strip(line);

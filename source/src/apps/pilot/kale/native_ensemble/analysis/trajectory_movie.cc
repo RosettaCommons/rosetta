@@ -34,7 +34,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // External headers
-#include <boost/foreach.hpp>
 #include <boost/noncopyable.hpp>
 #include <cppdb/frontend.h>
 
@@ -96,8 +95,8 @@ int main(int argc, char **argv) {
 	Size const expected = iterations.size() / frequency;
 	Size visited = 0, recorded = 0;
 	
-	BOOST_FOREACH(Size i, iterations) {
-	cout << 3 << endl;
+	for (Size const i : iterations) {
+		cout << 3 << endl;
 		if (visited++ % frequency != 0) continue;
 		Pose pose = reader.get_pose(i); writer.apply(pose);
 		cout << "\r[" << ++recorded << "/" << expected << "]" << flush;

@@ -149,9 +149,9 @@ Rotate::parse_my_tag(
 	if ( tag->hasOption("tag_along_chains") ) {
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
 		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
-		BOOST_FOREACH ( std::string tag_along_chain_str, tag_along_chain_strs ) {
+		for ( auto const & tag_along_chain_str : tag_along_chain_strs ) {
 			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
-			BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+			for ( core::Size const chain_id : chain_ids ) {
 				rotate_info_.tag_along_chains.push_back(chain_id);
 				rotate_info_.tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
 				core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
@@ -208,7 +208,7 @@ void Rotate::rotate_ligand(
 	{
 		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
 
-		BOOST_FOREACH ( core::conformation::ResidueCOP residue, ligands[jump_choice].residues ) {
+		for ( core::conformation::ResidueCOP residue : ligands[jump_choice].residues ) {
 			pose.replace_residue(chain_begin, *residue, false /*orient backbone*/);// assume rotamers are oriented?
 			++chain_begin;
 		}
@@ -288,7 +288,7 @@ Ligand_info Rotate::create_random_rotation(
 
 	ligand_info.residues = core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
 
-	BOOST_FOREACH ( core::Size chain_id, rotate_info_.tag_along_chains ) {
+	for ( core::Size const chain_id : rotate_info_.tag_along_chains ) {
 		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
 		assert(tag_along_residues.size() == 1);
 		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);
@@ -323,7 +323,7 @@ void apply_rotate(
 
 	mover->freeze();
 
-	BOOST_FOREACH ( core::Size jump_id, tag_along_jumps ) {
+	for ( core::Size const jump_id : tag_along_jumps ) {
 		mover->rb_jump(jump_id);
 		mover->apply(pose);
 	}
@@ -353,7 +353,7 @@ bool check_RMSD(
 
 	core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
 
-	BOOST_FOREACH ( Ligand_info ligand_info, ligands ) { // if ligands is empty we still return true so no need to check for this condition.
+	for ( Ligand_info const & ligand_info : ligands ) { // if ligands is empty we still return true so no need to check for this condition.
 		core::conformation::ResidueCOPs const & compare_residues= ligand_info.get_residues();
 		runtime_assert(these_residues.size() == compare_residues.size());
 

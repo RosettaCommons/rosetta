@@ -98,7 +98,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -163,7 +162,7 @@ bool HotspotStubSet::sc_only() const { return sc_only_; }
 void HotspotStubSet::sc_only( bool const sc_switch ) { sc_only_ = sc_switch; }
 
 void HotspotStubSet::add_stub_set( HotspotStubSet const & stubset ){
-	BOOST_FOREACH ( Hs_data const hs_data, stubset ) add_stub_( hs_data.second.second );
+	for ( Hs_data const & hs_data : stubset ) add_stub_( hs_data.second.second );
 }
 
 void HotspotStubSet::score_threshold( core::Real const threshold ) { score_threshold_ = threshold; }
@@ -176,23 +175,23 @@ HotspotStubSetOP HotspotStubSet::colonyE( ) {
 	if ( pose_ ) nonconstpose = core::pose::PoseOP( new core::pose::Pose( *pose_ ) );
 
 	utility::vector1< std::string > amino_acids;
-	amino_acids.push_back( "ALA" );
-	amino_acids.push_back( "ARG" );
-	amino_acids.push_back( "ASN" );
-	amino_acids.push_back( "ASP" );
-	amino_acids.push_back( "GLU" );
-	amino_acids.push_back( "GLN" );
-	amino_acids.push_back( "HIS" );
-	amino_acids.push_back( "ILE" );
-	amino_acids.push_back( "LEU" );
-	amino_acids.push_back( "LYS" );
-	amino_acids.push_back( "MET" );
-	amino_acids.push_back( "PHE" );
-	amino_acids.push_back( "SER" );
-	amino_acids.push_back( "THR" );
-	amino_acids.push_back( "TRP" );
-	amino_acids.push_back( "TYR" );
-	amino_acids.push_back( "VAL" );
+	amino_acids.emplace_back( "ALA" );
+	amino_acids.emplace_back( "ARG" );
+	amino_acids.emplace_back( "ASN" );
+	amino_acids.emplace_back( "ASP" );
+	amino_acids.emplace_back( "GLU" );
+	amino_acids.emplace_back( "GLN" );
+	amino_acids.emplace_back( "HIS" );
+	amino_acids.emplace_back( "ILE" );
+	amino_acids.emplace_back( "LEU" );
+	amino_acids.emplace_back( "LYS" );
+	amino_acids.emplace_back( "MET" );
+	amino_acids.emplace_back( "PHE" );
+	amino_acids.emplace_back( "SER" );
+	amino_acids.emplace_back( "THR" );
+	amino_acids.emplace_back( "TRP" );
+	amino_acids.emplace_back( "TYR" );
+	amino_acids.emplace_back( "VAL" );
 
 	TR << "Calculating colony energy..." << std::endl;
 	core::Size const nres(1); // number of residues in our "loop" (single residue stub) this is nonsense in our case, but equates to a constant so shouldn't matter
@@ -425,9 +424,9 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
 			Size i = 1;
-			for ( auto stub_iter = ss_iter.second.begin(); stub_iter != ss_iter.second.end(); ++stub_iter ) {
+			for (const auto & stub_iter : ss_iter.second) {
 				if ( i <= n_return ) {
-					new_set->add_stub_( stub_iter->second );
+					new_set->add_stub_( stub_iter.second );
 					++i;
 				}
 			}
@@ -450,10 +449,10 @@ HotspotStubSet::get_best_energy_stub() const {
 	HotspotStubOP ret( nullptr );
 	for ( auto const & hs_map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for ( auto hs_it=hs_map_it.second.begin(); hs_it!=hs_map_it.second.end(); ++hs_it ) {
-			if ( min_energy > hs_it->first ) {
-				min_energy = hs_it->first;
-				ret = HotspotStubOP( new HotspotStub( *hs_it->second ) );
+		for (const auto & hs_it : hs_map_it.second) {
+			if ( min_energy > hs_it.first ) {
+				min_energy = hs_it.first;
+				ret = HotspotStubOP( new HotspotStub( *hs_it.second ) );
 			}
 		}
 	}
@@ -471,13 +470,13 @@ HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const
 	numeric::xyzVector< core::Real > const residue_CA( residue->xyz( "CA" ) );
 	for ( auto const & map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for ( auto stub_it=map_it.second.begin(); stub_it!=map_it.second.end(); ++stub_it ) {
-			numeric::xyzVector< core::Real > const stub_CA( stub_it->second->residue()->xyz( "CA" ) );
+		for (const auto & stub_it : map_it.second) {
+			numeric::xyzVector< core::Real > const stub_CA( stub_it.second->residue()->xyz( "CA" ) );
 
 			core::Real const distance( stub_CA.distance( residue_CA ) );
 			if ( distance <= nearest_distance ) {
 				nearest_distance = distance;
-				nearest_stub = stub_it->second;
+				nearest_stub = stub_it.second;
 			}
 		}
 	}
@@ -624,7 +623,7 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 		stubs_to_remove.push_back( stub_set_vec_[ i ].second.second );
 	}
 
-	BOOST_FOREACH ( HotspotStubOP hs, stubs_to_remove ) {
+	for ( HotspotStubOP hs : stubs_to_remove ) {
 		remove_stub( hs );
 	}
 
@@ -634,23 +633,23 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const n_stubs )
 {
 	utility::vector1< std::string > amino_acids;
-	amino_acids.push_back( "ALA" );
-	amino_acids.push_back( "ARG" );
-	amino_acids.push_back( "ASN" );
-	amino_acids.push_back( "ASP" );
-	amino_acids.push_back( "GLU" );
-	amino_acids.push_back( "GLN" );
-	amino_acids.push_back( "HIS" );
-	amino_acids.push_back( "ILE" );
-	amino_acids.push_back( "LEU" );
-	amino_acids.push_back( "LYS" );
-	amino_acids.push_back( "MET" );
-	amino_acids.push_back( "PHE" );
-	amino_acids.push_back( "SER" );
-	amino_acids.push_back( "THR" );
-	amino_acids.push_back( "TRP" );
-	amino_acids.push_back( "TYR" );
-	amino_acids.push_back( "VAL" );
+	amino_acids.emplace_back( "ALA" );
+	amino_acids.emplace_back( "ARG" );
+	amino_acids.emplace_back( "ASN" );
+	amino_acids.emplace_back( "ASP" );
+	amino_acids.emplace_back( "GLU" );
+	amino_acids.emplace_back( "GLN" );
+	amino_acids.emplace_back( "HIS" );
+	amino_acids.emplace_back( "ILE" );
+	amino_acids.emplace_back( "LEU" );
+	amino_acids.emplace_back( "LYS" );
+	amino_acids.emplace_back( "MET" );
+	amino_acids.emplace_back( "PHE" );
+	amino_acids.emplace_back( "SER" );
+	amino_acids.emplace_back( "THR" );
+	amino_acids.emplace_back( "TRP" );
+	amino_acids.emplace_back( "TYR" );
+	amino_acids.emplace_back( "VAL" );
 	for ( auto & amino_acid : amino_acids ) {
 		fill( pose, scorefxn, amino_acid, n_stubs );
 	}
@@ -874,9 +873,9 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 	Size i = 0;
 	std::string tag( "" );
 	for ( auto const & it : stub_set_ ) {
-		for ( auto stub_it = it.second.begin(); stub_it != it.second.end(); ++stub_it ) {
-			tag = "S_" + stub_it->second->residue()->name3() + "_" + lead_zero_string_of( i, 9 );
-			write_stub( outstream, stub_it->second, tag );
+		for (const auto & stub_it : it.second) {
+			tag = "S_" + stub_it.second->residue()->name3() + "_" + lead_zero_string_of( i, 9 );
+			write_stub( outstream, stub_it.second, tag );
 			++i;
 		}
 	}
@@ -910,11 +909,11 @@ void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Si
 
 	core::pose::PoseOP nonconstpose( new core::pose::Pose( *pose_ ) );
 	for ( auto & set_it : stub_set_ ) {
-		for ( auto stub_it = set_it.second.begin(); stub_it != set_it.second.end(); ++stub_it ) {
+		for (auto & stub_it : set_it.second) {
 			// makes sure contained stubs know their StubSet parent
 			//   stub_it->second.set_stub_parent_( *this );
 			// readies stubs for setting of scaffold_status vector
-			stub_it->second->pair_with_scaffold( nonconstpose, filter_, chain_to_design_ );
+			stub_it.second->pair_with_scaffold( nonconstpose, filter_, chain_to_design_ );
 		}
 	}
 	TR << "Associated stubs with scaffold chain " << partner << std::endl;

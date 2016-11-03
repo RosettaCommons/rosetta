@@ -35,8 +35,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <boost/foreach.hpp>
-
 namespace protocols {
 namespace forge {
 namespace build {
@@ -245,7 +243,7 @@ void BuildInstruction::add_dependency_to( BuildInstructionCAP i ) {
 bool BuildInstruction::dependent_on( BuildInstructionCAP i ) const {
 	// Doesn't work with weak_ptr:
 	// return std::find( dependencies_.begin(), dependencies_.end(), i ) != dependencies_.end();
-	BOOST_FOREACH ( BuildInstructionCAP d, dependencies_ ) {
+	for ( BuildInstructionCAP d : dependencies_ ) {
 		if ( utility::pointer::equal(d, i) ) {
 			return true;
 		}

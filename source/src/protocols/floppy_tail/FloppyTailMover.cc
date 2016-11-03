@@ -306,13 +306,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		}
 
 
-		for ( auto it = com_residues.begin(); it != com_residues.end(); ++it ) {
+		for (unsigned long & com_residue : com_residues) {
 
 			// loop over COM and check that these are not termini
-			runtime_assert_msg( !pose.residue(*it).is_terminus(), "COM cannot be a terminus!" );
+			runtime_assert_msg( !pose.residue(com_residue).is_terminus(), "COM cannot be a terminus!" );
 
 			// check if COM is in a region of mobility?
-			runtime_assert_msg( !movemap_->get_bb(*it), "Warning! The COM is in a flexible region. Was this behavior intended?");
+			runtime_assert_msg( !movemap_->get_bb(com_residue), "Warning! The COM is in a flexible region. Was this behavior intended?");
 
 		}
 

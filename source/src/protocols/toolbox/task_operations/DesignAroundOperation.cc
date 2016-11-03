@@ -35,7 +35,6 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <set>
@@ -107,7 +106,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		bool allow_design_res( false );
 		bool allow_packing( false );
-		BOOST_FOREACH ( core::Size const res, focus_residues ) { // don't change anything for focus residues
+		for ( core::Size const res : focus_residues ) { // don't change anything for focus residues
 			if ( i == res ) {
 				if ( resnums_allow_design() ) allow_design_res = true;
 				break;
@@ -115,7 +114,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		}
 		//check if design res nbr
 		if ( allow_design() && !allow_design_res ) {
-			BOOST_FOREACH ( core::Size const res, focus_residues ) {
+			for ( core::Size const res : focus_residues ) {
 				if ( i == res ) continue; //dont need to check if is nbr of self
 				core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
 				if ( distance <= design_shell() || distance <= 0.0001 /*if design_shell is specified as 0 ensure that focus residues are allowed to design*/ ) {
@@ -125,7 +124,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 			} //foreach res
 		}
 		if ( allow_design_res ) continue;
-		BOOST_FOREACH ( core::Size const res, focus_residues ) {
+		for ( core::Size const res : focus_residues ) {
 			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
 			if ( distance <= repack_shell() ) {
 				allow_packing = true;

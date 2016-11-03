@@ -21,9 +21,6 @@
 // Project Headers
 #include <basic/Tracer.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -44,7 +41,7 @@ FilterCollection::~FilterCollection() = default;
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
 {
-	BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
+	for ( protocols::filters::FilterCOP filter : filters_ ) {
 		if ( ! filter->apply( pose ) ) {
 			return false;
 		}
@@ -56,7 +53,7 @@ FilterCollection::apply( core::pose::Pose const & pose ) const
 void
 FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
+	for ( protocols::filters::FilterCOP filter : filters_ ) {
 		filter->report( out, pose );
 	}
 }

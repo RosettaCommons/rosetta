@@ -59,7 +59,6 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <sstream>
@@ -1030,12 +1029,12 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 		if ( emap_weights[ii] != 0 ) score_types.push_back(ii);
 	}
 
-	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+	for ( core::scoring::ScoreType const & score_type : score_types ) {
 		labels.push_back( name_from_score_type(score_type) );
 	}
 	labels.push_back( "total" );
 
-	BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+	for ( core::scoring::ScoreType const & score_type : score_types ) {
 		weights.push_back( emap_weights[score_type] );
 	}
 
@@ -1044,7 +1043,7 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 	if ( pose.energies().energies_updated() ) {
 		std::vector<std::string> line;
 		line.push_back( "pose" );
-		BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+		for ( core::scoring::ScoreType const & score_type : score_types ) {
 			core::Real score = (emap_weights[score_type] * pose.energies().total_energies()[ score_type ]);
 			line.push_back( restrict_prec(score) );
 			pose_total += score;
@@ -1056,7 +1055,7 @@ PoseToStructFileRepConverter::grab_pose_energies_table(
 			line.clear();
 			core::Real rsd_total = 0.0;
 			line.push_back( pose.residue(j).name() + "_" + to_string( j ) );
-			BOOST_FOREACH ( core::scoring::ScoreType score_type, score_types ) {
+			for ( core::scoring::ScoreType const & score_type : score_types ) {
 				core::Real score = (emap_weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 
 				line.push_back( restrict_prec(score));

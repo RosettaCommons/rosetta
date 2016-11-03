@@ -41,7 +41,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <sstream>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -122,7 +121,7 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 		target_res = protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ );
 	}
 
-	BOOST_FOREACH ( core::Size const i, target_res ) {
+	for ( core::Size const i : target_res ) {
 		core::Size const chain = copy_pose.residue( i ).chain();
 
 		// Skip if current residue is not part of the chain specified.

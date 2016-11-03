@@ -50,9 +50,6 @@
 // C++ Headers
 #include <iostream>
 
-// Boost headers
-#include <boost/foreach.hpp>
-
 #ifdef    SERIALIZATION
 // Package serialization headers
 #include <core/chemical/ResidueType.srlz.hh>
@@ -1757,9 +1754,9 @@ SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( Residue );
 
 void Residue::assign_orbitals() {
 	// Assign orbitals.
-	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
+	for ( core::Size const atom_with_orbitals : rsd_type_.atoms_with_orb_index() ) {
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
+		for ( core::Size const orbital_index : orbital_indices ) {
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));

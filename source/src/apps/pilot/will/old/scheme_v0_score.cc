@@ -9,7 +9,6 @@
 #include <sstream>
 #include <basic/options/option_macros.hh>
 #include <utility/io/izstream.hh>
-#include <boost/foreach.hpp>
 #include <core/scoring/dssp/Dssp.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -334,7 +333,7 @@ void scheme_score(){
 	cout << "scoring total of " << filenames.size() << " files" << endl;
 
 	// Size count = 0;
-	BOOST_FOREACH(std::string const & path, filenames ){
+	for (std::string const & path : filenames ){
 		// cout << "progress: " << ((Real)++count)/(Real)filenames.size() << endl;
 
 

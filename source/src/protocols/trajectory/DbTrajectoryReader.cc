@@ -27,7 +27,6 @@
 #include <basic/Tracer.hh>
 
 // External Headers
-#include <boost/foreach.hpp>
 #include <cppdb/frontend.h>
 
 // C++ Headers
@@ -167,7 +166,7 @@ vector1<Pose> DbTrajectoryReader::get_poses() const { // {{{1
 	vector1<Pose> poses;
 	vector1<Size> iterations = get_iterations();
 
-	BOOST_FOREACH ( Size i, iterations ) {
+	for ( Size const i : iterations ) {
 		Pose pose = get_pose(i);
 		poses.push_back(pose);
 	}

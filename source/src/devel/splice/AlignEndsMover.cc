@@ -24,7 +24,6 @@ static THREAD_LOCAL basic::Tracer TR( "devel.splice.AlignEndsMover" );
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <string>
-#include <boost/foreach.hpp>
 #include <core/import_pose/import_pose.hh>
 #include <devel/splice/FindEndpointsOperation.hh>
 #include <protocols/toolbox/superimpose.hh>
@@ -118,7 +117,7 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 		}  // fi dssp.get_dssp_secstruct(resi)
 	}  // for resi outer loop
 	TR<<"DEBUG: strand positions: ";
-	BOOST_FOREACH ( core::Size const sp, strand_positions ) {
+	for ( core::Size const sp : strand_positions ) {
 		TR<<sp<<'+';
 	}
 	TR<<std::endl;
@@ -134,14 +133,14 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 		odd_strand = !odd_strand;/// flip odd->even->odd...
 	}
 	TR<<"DEBUG: nterminal positions: ";
-	BOOST_FOREACH ( core::Size const resi, strand_ntermini ) {
+	for ( core::Size const resi : strand_ntermini ) {
 		TR<<resi<<'+';
 	}
 	TR<<std::endl;
 	utility::vector1< core::Size > ntermini_w_neighbors;
 	ntermini_w_neighbors.clear();
 	/// In the following we ensure that each of the ntermini has neighbors within the ntermini array. We're looking for tightly packed barrel structures.
-	BOOST_FOREACH ( core::Size const res, strand_ntermini ) { /// strand_ntermini with enough neighbors
+	for ( core::Size const res : strand_ntermini ) { /// strand_ntermini with enough neighbors
 		core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp, sequence_separation() ));
 		if ( resi_neighbors >= neighbors() ) {
 			ntermini_w_neighbors.push_back( res );
@@ -152,7 +151,7 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
 	ntermini_w_close_neighbors.clear();
 	if ( parallel() ) {
-		BOOST_FOREACH ( core::Size const res, ntermini_w_neighbors ) {
+		for ( core::Size const res : ntermini_w_neighbors ) {
 			core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp, sequence_separation() ));
 			if ( close_neighbors >= 2 ) {
 				ntermini_w_close_neighbors.push_back( res );
@@ -177,7 +176,7 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	utility::vector1< core::Size > positions_for_alignment;
 	positions_for_alignment.clear();
 	odd_strand = true;
-	BOOST_FOREACH ( core::Size const res, ntermini_w_close_neighbors ) {
+	for ( core::Size const res : ntermini_w_close_neighbors ) {
 		if ( ( odd_strand && odd() ) || ( !odd_strand && even() ) ) {
 			if ( !odd_strand && !parallel() ) {
 				for ( core::Size count = 0; count < N_terminal_count(); ++count ) {
@@ -199,7 +198,7 @@ Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const p
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
 	coords.clear();
-	BOOST_FOREACH ( core::Size const pos, positions ) {
+	for ( core::Size const pos : positions ) {
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 	}
 	return coords;
@@ -222,12 +221,12 @@ AlignEndsMover::apply( Pose & pose ){
 	}
 
 	TR<<"Aligning positions on template: ";
-	BOOST_FOREACH ( core::Size const p, template_positions ) {
+	for ( core::Size const p : template_positions ) {
 		TR<<p<<'+';
 	}
 	TR<<std::endl;
 	TR<<"To pose positions: ";
-	BOOST_FOREACH ( core::Size const p, pose_positions ) {
+	for ( core::Size const p : pose_positions ) {
 		TR<<p<<'+';
 	}
 	TR<<std::endl;
@@ -290,11 +289,11 @@ AlignEndsMover::parse_my_tag(
 		residues_to_align_on_template_ = utility::string_split(tag->getOption<std::string>("residues_to_align_on_template"),'+',core::Size());
 		runtime_assert( residues_to_align_on_pose_.size() == residues_to_align_on_template_.size() );
 		TR<<"Aligning pose residues: ";
-		BOOST_FOREACH ( core::Size const s, residues_to_align_on_pose_ ) {
+		for ( core::Size const s : residues_to_align_on_pose_ ) {
 			TR<<s<<',';
 		}
 		TR<<"\nwith template residues";
-		BOOST_FOREACH ( core::Size const s, residues_to_align_on_template_ ) {
+		for ( core::Size const s : residues_to_align_on_template_ ) {
 			TR<<s<<',';
 		}
 		TR<<std::endl;

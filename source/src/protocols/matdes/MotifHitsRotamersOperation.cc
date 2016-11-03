@@ -19,7 +19,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -127,9 +126,9 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 		if ( syminfo && syminfo->bb_follows(i) == seqnum ) sym_pos.insert(i) ;
 	}
 	//std::cout <<  " set of matching residues"  ;
-	//BOOST_FOREACH(core::Size i, sym_pos) std::cout << " " << i ;
+	//for (core::Size const i : sym_pos) std::cout << " " << i ;
 	//std::cout << std::endl  ;
-	BOOST_FOREACH ( MotifHit const & hit, motif_hits_ ) {
+	for ( MotifHit const & hit : motif_hits_ ) {
 		core::conformation::ResidueOP res = NULL ;
 		core::Size motif_seqnum = 0   ;
 		bool is_bb_frame=false  ;

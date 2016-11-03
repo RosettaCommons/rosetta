@@ -76,8 +76,6 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <boost/foreach.hpp>
-
 // C++ headers
 #include <algorithm>
 #include <utility/assert.hh>
@@ -1849,10 +1847,9 @@ Conformation::set_noncanonical_connection(
 // Assigns disulfide bonds based on a pre-determined list
 /// @note works in centroid and full-atom modes
 void
-Conformation::fix_disulfides( utility::vector1< std::pair<Size, Size> > disulf_bonds )
+Conformation::fix_disulfides( utility::vector1< std::pair< Size, Size > > const & disulf_bonds )
 {
-	typedef std::pair<Size,Size> SizePair;
-	BOOST_FOREACH ( SizePair disulfide_bond, disulf_bonds ) {
+	for ( auto const & disulfide_bond : disulf_bonds ) {
 		using utility::vector1;
 
 		Size l_index = (disulfide_bond).first; //Lower residue
@@ -2770,9 +2767,9 @@ Conformation::update_orbital_coords( Size resid )
 
 void
 Conformation::update_orbital_coords( Residue & rsd) const{
-	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd.atoms_with_orb_index() ) {
+	for ( core::Size const atom_with_orbitals : rsd.atoms_with_orb_index() ) {
 		utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
+		for ( core::Size const orbital_index : orbital_indices ) {
 			Vector orb_xyz(rsd.build_orbital_xyz(orbital_index));
 			rsd.set_orbital_xyz(orbital_index, orb_xyz );
 		}
@@ -3734,8 +3731,7 @@ Conformation::backbone_torsion_angle_atoms(
 					rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ||
 					rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ||
 					rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ||
-					rsd.is_RNA()
-					) &&
+					rsd.is_RNA() ) &&
 					! ( seqpos == residues_.size() && rsd.has_upper_connect() &&
 					! rsd.connection_incomplete( rsd.type().upper_connect_id() )
 					/*special case -- last residue is connected to something at its upper connection*/ ) &&
@@ -3754,6 +3750,7 @@ Conformation::backbone_torsion_angle_atoms(
 							id4.rsd() = seqpos; id4.atomno() = rsd.atom_index( "OVL2" );
 						}
 					}
+
 				} else if ( rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ) {
 					//ugly.
 					id3.rsd() = seqpos;

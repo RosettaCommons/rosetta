@@ -695,9 +695,9 @@ void Graph::print_vertices() const
 void Graph::output_connectivity(std::ostream & os) const
 {
 	platform::Size counter = 1;
-	for ( EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
-		os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
-			<< " " << (*iter)->get_second_node_ind() << std::endl;
+	for (auto iter : edge_list_) {
+		os << "edge " << counter << " between " << iter->get_first_node_ind()
+			<< " " << iter->get_second_node_ind() << std::endl;
 		counter++;
 	}
 	return;
@@ -712,9 +712,9 @@ void Graph::output_dimacs(std::ostream & os) const
 	platform::Size num_edges = edge_list_.size();
 	os << "DIMACS: " << "p edges " << num_nodes_ << " " ;
 	os << num_edges << std::endl;
-	for ( EdgeListConstIter iter = edge_list_.begin(); iter != edge_list_.end(); ++iter ) {
-		os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
-		os << " " << (*iter)->get_second_node_ind() << std::endl;
+	for (auto iter : edge_list_) {
+		os << "DIMACS: " << "e " << iter->get_first_node_ind();
+		os << " " << iter->get_second_node_ind() << std::endl;
 	}
 
 	return;
@@ -733,12 +733,11 @@ Graph::all_pairs_shortest_paths() const
 	FArray2D_int distance_table( num_nodes_, num_nodes_, inf);
 	for ( platform::Size ii = 1; ii <= num_nodes_; ++ii ) distance_table( ii, ii ) = 0; //nodes are 0 distance from themselves.
 
-	for ( EdgeListConstIter iter = edge_list_.begin();
-			iter != edge_list_.end(); ++iter ) {
-		platform::Size n1 = (*iter)->get_first_node_ind();
-		platform::Size n2 = (*iter)->get_second_node_ind();
+	for (auto iter : edge_list_) {
+		platform::Size n1 = iter->get_first_node_ind();
+		platform::Size n2 = iter->get_second_node_ind();
 
-		if ( ! (*iter)->is_loop() ) {
+		if ( ! iter->is_loop() ) {
 			distance_table( n2, n1 ) = 1;
 			distance_table( n1, n2 ) = 1;
 		}

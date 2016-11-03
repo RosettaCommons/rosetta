@@ -360,7 +360,7 @@ void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose
     testDock.unclosed_pose = chainA_front;
     //put rest of structure back together --------------------------------------
     std::string alphabet = "BCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //A is excluded because of the matching
-    BOOST_FOREACH( char c, alphabet) {
+    for ( char const c : alphabet) {
         Size chain_id = -1;
         try{
             chain_id = get_chain_id_from_chain(c,native_pose);
@@ -542,15 +542,14 @@ core::pose::Pose superimpose_A_to_all(Dock & dock,core::pose::Pose native_pose){
     }
     std::string const & alphabet( utility::LETTERS ); //A is excluded because of the matching
     core::pose::Pose finalPose;
-    BOOST_FOREACH( char c, alphabet) {
-    Size chain_id = -1;
-    try{
-        chain_id = get_chain_id_from_chain(c,native_pose);
-        core::pose::PoseOP tmp_chain_pose = native_pose.split_by_chain(chain_id);
-        superimpose_pose(chainA,*tmp_chain_pose,atom_map);
-        append_pose_to_pose(finalPose,chainA);
-        }
-        catch(utility::excn::EXCN_Base const & e ){
+    for ( char const c : alphabet) {
+    	Size chain_id = -1;
+    	try {
+    	    chain_id = get_chain_id_from_chain(c,native_pose);
+    	    core::pose::PoseOP tmp_chain_pose = native_pose.split_by_chain(chain_id);
+    	    superimpose_pose(chainA,*tmp_chain_pose,atom_map);
+    	    append_pose_to_pose(finalPose,chainA);
+        } catch ( utility::excn::EXCN_Base const & e ) {
             //not a worry. I expect many chains to not exist.
         }
     }

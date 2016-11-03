@@ -35,7 +35,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace simple_filters {
@@ -268,14 +267,14 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 			TR<<"removing extreme values. Considering values: ";
 			std::sort( repeat_values.begin(), repeat_values.end() );
 			std::copy( repeat_values.begin() + 1, repeat_values.end() - 1, non_extreme_vals.begin() );
-			BOOST_FOREACH ( core::Real const val, non_extreme_vals ) {
+			for ( core::Real const val : non_extreme_vals ) {
 				average += val;
 				TR<<val<<", ";
 			}
 			average /= (core::Real) non_extreme_vals.size();
 			TR<<'\n'<<" average value: "<<average<<std::endl;
 		} else { // fi extreme_value_removal
-			BOOST_FOREACH ( core::Real const val, repeat_values ) {
+			for ( core::Real const val : repeat_values ) {
 				average += val;
 				TR<<val<<", ";
 			}

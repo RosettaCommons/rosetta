@@ -88,7 +88,7 @@ show_option_map(
 {
 	if ( option_map.empty() ) return;
 	for (
-			typename map< T, S >::const_iterator
+			auto
 			o = option_map.begin(), oe = option_map.end(); o != oe; ++o ) {
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << option_name
@@ -107,7 +107,7 @@ show_option_vector_map(
 {
 	if ( option_map.empty() ) return;
 	for (
-			typename map< T, vector1< S > >::const_iterator
+			auto
 			o = option_map.begin(), oe = option_map.end();
 			o != oe; ++o ) {
 		out
@@ -115,7 +115,7 @@ show_option_vector_map(
 			<< std::setiosflags(std::ios::left) << setw(16) << o->first.id();
 		bool first(true);
 		for (
-				typename vector1< S >::const_iterator
+				auto
 				k = o->second.begin(), ke = o->second.end(); k != ke; ++k ) {
 			if ( !first ) {
 				out << " ";
@@ -172,7 +172,7 @@ template < class T, class S >
 void
 remove_option_from_map( std::map< T, S > & option_map, T const & key )
 {
-	typename std::map< T, S >::iterator iter = option_map.find( key );
+	auto iter = option_map.find( key );
 	if ( iter != option_map.end() ) {
 		option_map.erase( iter );
 	}
@@ -189,7 +189,7 @@ template < class T, class S >
 S const &
 get_option_from_map( std::map< T, S > const & option_map, T const & key, char const * option_class_name )
 {
-	typename std::map< T, S >::const_iterator iter = option_map.find( key );
+	auto iter = option_map.find( key );
 	if ( iter == option_map.end() ) {
 		throw EXCN_Msg_Exception( std::string( option_class_name ) + "'" + key.identifier() + "' not found in JobOptions");
 	}

@@ -722,7 +722,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
 	void
-	fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
+	fix_disulfides(utility::vector1< std::pair<Size, Size> > const & disulf_bonds);
 
 public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 17 Nov. 2014
 

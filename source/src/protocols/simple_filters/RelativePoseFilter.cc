@@ -28,7 +28,6 @@
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <boost/foreach.hpp>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
@@ -144,7 +143,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		rbtm.apply( *copy_pose );
 	}
 	if ( copy_comments().size() ) { //copy relevant comments to copy_pose
-		BOOST_FOREACH ( std::string const key, copy_comments() ) {
+		for ( std::string const & key : copy_comments() ) {
 			std::string val;
 			bool const success = core::pose::get_comment( p, key, val );
 			if ( success ) {
@@ -177,7 +176,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		if ( baseline() ) {
 			TR<<"baseline: "<<baseline_val()<<std::endl;
 		}
-		BOOST_FOREACH ( core::Size const d, diffs ) {
+		for ( core::Size const d : diffs ) {
 			dao->include_residue( d );
 		}
 		using namespace core::pack::task;
@@ -310,7 +309,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	dump_pose_fname( tag->getOption< std::string >( "dump_pose", "" ) );
 	if ( tag->hasOption( "alignment" ) ) {
 		utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "alignment", "" ), ',' ) );
-		BOOST_FOREACH ( std::string const residue_pair, residue_pairs ) {
+		for ( std::string const & residue_pair : residue_pairs ) {
 			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 			runtime_assert( residues.size() == 2 );
 			char const residues1_cstr( residues[ 1 ].c_str()[ 0 ] ), residues2_cstr( residues[ 2 ].c_str()[ 0 ] ); // these may hold the chain designators

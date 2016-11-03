@@ -30,7 +30,6 @@
 #include <core/import_pose/import_pose.hh>
 //#include <boost/regex.hpp>
 //#include <boost/regex/v4/regex_search.hpp>
-#include <boost/foreach.hpp>
 //#include <boost/xpressive/xpressive.hpp>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -135,7 +134,7 @@ coords( core::pose::Pose const & pose, utility::vector1< core::Size > const posi
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
 	coords.clear();
-	BOOST_FOREACH ( core::Size const pos, positions ) {
+	for ( core::Size const pos : positions ) {
 		coords.push_back( pose.residue( pos ).xyz( "N" ) );
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 		coords.push_back( pose.residue( pos ).xyz( "C" ) );
@@ -224,13 +223,13 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	// vector1< pair< Size, Size > >::iterator it = unique( stems.begin(), stems.end() );
 	// stems.resize( std::distance( stems.begin(), it ) );
 	TR<<"List of potential pairs: ";
-	for ( vector1< pair< Size, Size > >::const_iterator vit = stems.begin(); vit != stems.end(); ++vit ) {
-		TR<<vit->first<<' '<<vit->second<<'\n';
+	for ( auto const & stem : stems ) {
+		TR<< stem.first<<' '<< stem.second<<'\n';
 	}
 	TR<<std::endl;
 
-	for ( vector1< pair< Size, Size > >::const_iterator vit = stems.begin(); vit != stems.end(); ++vit ) {
-		Size const stem1( vit->first ), stem2( vit->second );
+	for ( auto const & stem : stems ) {
+		Size const stem1( stem.first ), stem2( stem.second );
 		TR<<"Testing stems: "<<stem1<<' '<<stem2<<std::endl;
 		//core::conformation::Residue const res_stem2( pose.conformation().residue( stem2 ) );
 		core::pose::Pose copy_pose( pose );

@@ -19,7 +19,6 @@
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
 
 #include <utility/tag/Tag.hh>
-#include <boost/foreach.hpp>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -66,7 +65,7 @@ Ca_coord( core::pose::Pose const & pose, utility::vector1< core::Size > const po
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
 	coords.clear();
-	BOOST_FOREACH ( core::Size const pos, positions ) {
+	for ( core::Size const pos : positions ) {
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 	}
 	return coords;

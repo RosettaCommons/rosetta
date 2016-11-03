@@ -210,7 +210,7 @@ public:
 	get_computed(core::Size res1, core::Size res2) const {
 		std::pair< core::Size, core::Size > edge = std::make_pair(std::min(res1,res2),std::max(res1,res2));
 
-		std::map< std::pair<core::Size, core::Size> , bool >::const_iterator it = computed_.find(edge);
+		auto it = computed_.find(edge);
 		if ( it == computed_.end() ) { return true; }
 		return it->second;
 	}
@@ -225,7 +225,7 @@ public:
 	get_energy(core::Size res1, core::Size res2, core::Size scoreterm) const {
 		std::pair< core::Size, core::Size > edge = std::make_pair(std::min(res1,res2),std::max(res1,res2));
 
-		std::map< std::pair<core::Size, core::Size> , utility::vector1< core::Real > >::const_iterator
+		auto
 			it = tables_.find(edge);
 		if ( it == tables_.end() ) { return 0.0; }
 

@@ -52,7 +52,6 @@
 #endif
 
 // External headers
-#include <boost/foreach.hpp>
 #include <cppdb/frontend.h>
 
 // C++ headers
@@ -510,7 +509,7 @@ void NativeEnsemble::write_stats_to_db( // {{{1
 
 		TrialCounter const & temp_counter = counter->temp_level(temp_level);
 
-		BOOST_FOREACH(string tag, temp_counter.tags()) {
+		for (string const & tag : temp_counter.tags()) {
 			Size num_trials = temp_counter.trial(tag);
 			Size num_accepted = temp_counter.accepted(tag);
 

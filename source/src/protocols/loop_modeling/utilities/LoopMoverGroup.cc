@@ -19,10 +19,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility headers
-#include <boost/foreach.hpp>
 #include <utility/vector1.hh>
-
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace loop_modeling {
@@ -34,7 +31,7 @@ LoopMoverGroup::LoopMoverGroup() // {{{1
 : is_default_(false) {}
 
 bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
-	foreach ( LoopMoverOP child, get_children() ) {
+	for ( LoopMoverOP child : get_children() ) {
 		child->apply(pose);
 		if ( ! child->was_successful() ) return false;
 	}
@@ -44,7 +41,7 @@ bool LoopMoverGroup::do_apply(Pose & pose) { // {{{1
 void LoopMoverGroup::get_children_names( // {{{1
 	utility::vector1<string> & names, string indent) const {
 
-	foreach ( LoopMoverOP mover, get_children() ) {
+	for ( LoopMoverOP mover : get_children() ) {
 		mover->get_children_names(names, indent);
 	}
 }

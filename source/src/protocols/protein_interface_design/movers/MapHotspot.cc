@@ -54,9 +54,6 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-// External headers
-#include <boost/foreach.hpp>
-
 // C++ headers
 #include <algorithm>
 
@@ -148,7 +145,7 @@ copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, cor
 	FoldTree new_ft;
 	new_ft.clear();
 
-	BOOST_FOREACH ( Edge const edge, saved_ft ) {
+	for ( Edge const & edge : saved_ft ) {
 		if ( (core::Size) edge.start() <= src_resi && ( core::Size )edge.stop() <= src_resi ) {
 			new_ft.add_edge( edge );
 		}
@@ -208,7 +205,7 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 	core::Size const hotspot_resnum( start_pose.conformation().chain_begin( jump_number+1 ) );
 	core::pose::Pose const saved_pose_1( curr_pose );
 	TR<<"Allowed residues: "<< allowed_aas_per_jump_[ jump_number ]<<std::endl;
-	BOOST_FOREACH ( char const residue_type1, allowed_aas_per_jump_[ jump_number ] ) {//iterate over residue types
+	for ( char const residue_type1 : allowed_aas_per_jump_[ jump_number ] ) {//iterate over residue types
 		using namespace core::pack::task;
 		using namespace core::pack::rotamer_set;
 		using namespace core::chemical;
@@ -292,12 +289,12 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 	file_name_prefix_ = tag->getOption< std::string >( "file_name_prefix", "map_hs" );
 
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 		std::string const btag_name( btag->getName() );
 		if ( btag_name == "Jumps" ) {
 			utility::vector0< TagCOP > const & jump_tags( btag->getTags() );
 			runtime_assert( jump_tags.size() == pose.num_jump() );
-			BOOST_FOREACH ( TagCOP j_tag, jump_tags ) {
+			for ( TagCOP j_tag : jump_tags ) {
 				core::Size const jump( j_tag->getOption< core::Size >( "jump" ) );
 				bool const jump_fine( jump <= pose.num_jump() );
 				if ( !jump_fine ) TR.Error<<"Jump "<<jump<<" is larger than the number of jumps in pose="<<pose.num_jump()<<std::endl;

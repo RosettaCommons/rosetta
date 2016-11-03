@@ -19,7 +19,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -33,7 +32,7 @@ void WalkingBondAnglePerturber::perturb_subset(Pose const &, IndexList const & r
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		Real angle = problem->n_ca_c(residue, DEGREES) + magnitude_ * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

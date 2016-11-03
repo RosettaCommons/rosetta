@@ -83,7 +83,6 @@
 
 	// #include <apps/pilot/will/will_util.ihh>
 
-	#include <boost/foreach.hpp>
 	#include <boost/iterator/iterator_facade.hpp>
 
 	#include <Eigen/Geometry>
@@ -365,11 +364,11 @@ public:
 		nrots1_ = rotset1_->num_rotamers();
 		nrots2_ = rotset2_->num_rotamers();
 		donor_atoms_ = rtype1.Hpos_polar_sc();
-		BOOST_FOREACH(Size i,donor_atoms_) donor_bases_.push_back( rtype1.atom_base(i) );
+		for (Size i : donor_atoms_) donor_bases_.push_back( rtype1.atom_base(i) );
 		acceptor_atoms_ = rtype2.accpt_pos_sc();
 		acceptor_orbitals_.resize(acceptor_atoms_.size());
 		for(Size iacc = 1; iacc <= acceptor_atoms_.size(); ++iacc){
-			BOOST_FOREACH(Size j,rtype2.bonded_orbitals(acceptor_atoms_[iacc])){
+			for (Size j : rtype2.bonded_orbitals(acceptor_atoms_[iacc])){
 				if(
 					// rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::C_pi_sp2    ||
 				    // rtype2.orbital_type(j).orbital_enum() == core::chemical::orbitals::N_pi_sp2    ||
@@ -502,9 +501,9 @@ int main(int argc, char *argv[]) {
 	utility::io::ozstream allout(option[mh::motif_out_file]()+".rpm.bin.gz");
 
 	Size count = 0, totcount=0;
-	BOOST_FOREACH( std::string resn1, option[mdhb::donres]() ){
+	for ( std::string const & resn1 :  option[mdhb::donres]() ){
 
-		BOOST_FOREACH( std::string resn2, option[mdhb::accres]() ){
+		for ( std::string const & resn2 :  option[mdhb::accres]() ){
 			cout << "motif_denovo_hb " << resn1 << " " << resn2 << endl;
 
 			HBondedPairIterator end;

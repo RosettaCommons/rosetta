@@ -781,14 +781,14 @@ eval_atom_derivatives_for_minnode(
 	EnergyMap const & res_weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) {
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_1benmeths_begin(),
 			iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->eval_residue_derivatives(
 			rsd, min_node.res_min_data(), pose, res_weights, atom_derivs );
 	}
 	/// 1b 2body intraresidue contributions
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_intrares2benmeths_begin(),
 			iter_end = min_node.active_intrares2benmeths_end(); iter != iter_end; ++iter ) {
 		(*iter)->eval_intrares_derivatives(
@@ -805,26 +805,26 @@ eval_res_onebody_energies_for_minnode(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap // accumulated into
 ) {
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_1benmeths_std_begin(),
 			iter_end = min_node.active_1benmeths_std_end();
 			iter != iter_end; ++iter ) {
 		(*iter)->residue_energy( rsd, pose, emap );
 	}
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_1benmeths_ext_begin(),
 			iter_end = min_node.active_1benmeths_ext_end();
 			iter != iter_end; ++iter ) {
 		(*iter)->residue_energy_ext( rsd, min_node.res_min_data(), pose, emap );
 	}
 	/// 1b 2body intraresidue contributions
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_intrares2benmeths_std_begin(),
 			iter_end = min_node.active_intrares2benmeths_std_end();
 			iter != iter_end; ++iter ) {
 		(*iter)->eval_intrares_energy( rsd, pose, sfxn, emap );
 	}
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_intrares2benmeths_ext_begin(),
 			iter_end = min_node.active_intrares2benmeths_ext_end();
 			iter != iter_end; ++iter ) {
@@ -845,7 +845,7 @@ eval_atom_derivatives_for_minedge(
 	utility::vector1< DerivVectorPair > & r1atom_derivs,
 	utility::vector1< DerivVectorPair > & r2atom_derivs
 ) {
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_begin(),
 			iter_end = min_edge.active_2benmeths_end();
 			iter != iter_end; ++iter ) {
@@ -872,7 +872,7 @@ eval_weighted_atom_derivatives_for_minedge(
 	EnergyMap respair_weight_new = respair_weights;
 	respair_weight_new *= min_edge.dweight();
 
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_begin(),
 			iter_end = min_edge.active_2benmeths_end();
 			iter != iter_end; ++iter ) {
@@ -891,14 +891,14 @@ eval_res_pair_energy_for_minedge(
 	ScoreFunction const & sfxn,
 	EnergyMap & emap
 ) {
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_std_begin(),
 			iter_end = min_edge.active_2benmeths_std_end();
 			iter != iter_end; ++iter ) {
 		(*iter)->residue_pair_energy(
 			res1, res2, pose, sfxn, emap );
 	}
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_ext_begin(),
 			iter_end = min_edge.active_2benmeths_ext_end();
 			iter != iter_end; ++iter ) {
@@ -920,14 +920,14 @@ eval_dof_deriv_for_minnode(
 	Real deriv( 0 );
 	/// 1. eval 1 body derivatives
 	/// 1a 1body energy methods
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.dof_deriv_1benmeths_begin(),
 			iter_end = min_node.dof_deriv_1benmeths_end(); iter != iter_end; ++iter ) {
 		deriv += (*iter)->eval_residue_dof_derivative(
 			rsd, min_node.res_min_data(), dof_id, torsion_id, pose, sfxn, weights );
 	}
 
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.dof_deriv_2benmeths_begin(),
 			iter_end = min_node.dof_deriv_2benmeths_end(); iter != iter_end; ++iter ) {
 		deriv += (*iter)->eval_intraresidue_dof_derivative(
@@ -945,7 +945,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 	EnergyMap & emap, // accumulated into
 	EnergyMap & scratch_emap
 ) {
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_1benmeths_std_begin(),
 			iter_end = min_node.active_1benmeths_std_end();
 			iter != iter_end; ++iter ) {
@@ -953,7 +953,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 		emap.accumulate( scratch_emap, (*iter)->score_types(), min_node.weight() );
 		scratch_emap.zero( (*iter)->score_types() );
 	}
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_1benmeths_ext_begin(),
 			iter_end = min_node.active_1benmeths_ext_end();
 			iter != iter_end; ++iter ) {
@@ -962,7 +962,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 		scratch_emap.zero( (*iter)->score_types() );
 	}
 	/// 1b 2body intraresidue contributions
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_intrares2benmeths_std_begin(),
 			iter_end = min_node.active_intrares2benmeths_std_end();
 			iter != iter_end; ++iter ) {
@@ -970,7 +970,7 @@ eval_weighted_res_onebody_energies_for_minnode(
 		emap.accumulate( scratch_emap, (*iter)->score_types(), min_node.weight() );
 		scratch_emap.zero( (*iter)->score_types() );
 	}
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.active_intrares2benmeths_ext_begin(),
 			iter_end = min_node.active_intrares2benmeths_ext_end();
 			iter != iter_end; ++iter ) {
@@ -990,7 +990,7 @@ eval_weighted_res_pair_energy_for_minedge(
 	EnergyMap & emap,
 	EnergyMap & scratch_emap // should be zeros coming in, left zeroed at the end;
 ) {
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_std_begin(),
 			iter_end = min_edge.active_2benmeths_std_end();
 			iter != iter_end; ++iter ) {
@@ -999,7 +999,7 @@ eval_weighted_res_pair_energy_for_minedge(
 		emap.accumulate( scratch_emap, (*iter)->score_types(), min_edge.weight() );
 		scratch_emap.zero( (*iter)->score_types() );
 	}
-	for ( MinimizationEdge::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_edge.active_2benmeths_ext_begin(),
 			iter_end = min_edge.active_2benmeths_ext_end();
 			iter != iter_end; ++iter ) {
@@ -1023,14 +1023,14 @@ eval_weighted_dof_deriv_for_minnode(
 	Real deriv( 0 );
 	/// 1. eval 1 body derivatives
 	/// 1a 1body energy methods
-	for ( MinimizationNode::OneBodyEnergiesIterator
+	for ( auto
 			iter = min_node.dof_deriv_1benmeths_begin(),
 			iter_end = min_node.dof_deriv_1benmeths_end(); iter != iter_end; ++iter ) {
 		deriv += (*iter)->eval_residue_dof_derivative(
 			rsd, min_node.res_min_data(), dof_id, torsion_id, pose, sfxn, weights );
 	}
 
-	for ( MinimizationNode::TwoBodyEnergiesIterator
+	for ( auto
 			iter = min_node.dof_deriv_2benmeths_begin(),
 			iter_end = min_node.dof_deriv_2benmeths_end(); iter != iter_end; ++iter ) {
 		deriv += (*iter)->eval_intraresidue_dof_derivative(

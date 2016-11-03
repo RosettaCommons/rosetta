@@ -43,7 +43,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 
 // ObjexxFCL Headers
@@ -76,22 +75,22 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 	}
 
 	for ( core::Size resi = 1, resimax = pose.total_residue() ; resi <= resimax; ++resi ) {
-		if ( selection[resi] ) {
-			core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
-			core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
+		if ( ! selection[resi] ) continue;
+		
+		core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
+		core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
 
-			BOOST_FOREACH ( std::string remove_type, remove_target_types_ ) {
-				new_rsd_type = rsd_set->get_residue_type_with_variant_removed( *new_rsd_type,
-					core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
-			}
-
-			BOOST_FOREACH ( std::string add_type, add_target_types_ ) {
-				new_rsd_type = rsd_set->get_residue_type_with_variant_added( *new_rsd_type,
-					core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
-			}
-
-			core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );
+		for ( std::string const & remove_type : remove_target_types_ ) {
+			new_rsd_type = rsd_set->get_residue_type_with_variant_removed( *new_rsd_type,
+				core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
 		}
+
+		for ( std::string const & add_type : add_target_types_ ) {
+			new_rsd_type = rsd_set->get_residue_type_with_variant_added( *new_rsd_type,
+				core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
+		}
+
+		core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );
 	}
 }
 

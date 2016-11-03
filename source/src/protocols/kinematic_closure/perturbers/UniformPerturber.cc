@@ -22,7 +22,6 @@
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -35,7 +34,7 @@ void UniformPerturber::perturb_subset(
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH ( Real residue, residues ) {
+	for ( Real const residue : residues ) {
 		problem->perturb_phi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_psi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_omega(residue, 360 * uniform(), DEGREES);

@@ -35,7 +35,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace sic_dock {
@@ -148,8 +147,8 @@ CBScore::score(
 	Xforms const & x2s
 ) const {
 	CBScoreVisitor hash_visitor(clash_dis_,contact_dis_);
-	BOOST_FOREACH ( Xform const & x1,x1s ) {
-		BOOST_FOREACH ( Xform const & x2,x2s ) {
+	for ( Xform const & x1 : x1s ) {
+		for ( Xform const & x2 : x2s ) {
 			Xform const xhp(multstubs(invstub(hash_pose1_?x1:x2),hash_pose1_?x2:x1));
 			auto iwb = weights_.begin();
 			for ( auto i = points_.begin(); i != points_.end(); ++i,++iwb ) {
@@ -204,8 +203,8 @@ LinkerScore::score(
 
 	Real lkscore = 0.0;
 
-	BOOST_FOREACH ( Xform const & x1,x1s ) {
-		BOOST_FOREACH ( Xform const & x2,x2s ) {
+	for ( Xform const & x1 : x1s ) {
+		for ( Xform const & x2 : x2s ) {
 
 			for ( auto const & c1 : lowers1_ ) {
 				for ( auto const & n2 : uppers2_ ) {
@@ -354,8 +353,8 @@ ConstraintSetScore::ConstraintSetScore(
 core::Real ConstraintSetScore::score( Xforms const & x1s, Xforms const & x2s ) const {
 	using namespace core::scoring::constraints;
 	Real s = 0.0;
-	BOOST_FOREACH ( Xform const & x1,x1s ) {
-		BOOST_FOREACH ( Xform const & x2,x2s ) {
+	for ( Xform const & x1 : x1s ) {
+		for ( Xform const & x2 : x2s ) {
 			NoPoseXYX_Func tmp_xyz_func(start_coords_,x1,x2);
 			for ( auto const & i : csts_ ) {
 				Constraint const & cst(*i);

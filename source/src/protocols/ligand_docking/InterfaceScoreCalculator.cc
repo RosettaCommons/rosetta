@@ -38,7 +38,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 
 using basic::T;
@@ -192,7 +191,7 @@ void InterfaceScoreCalculator::add_scores_to_job(
 		if ( score_fxn_->has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 
-	BOOST_FOREACH ( ScoreType score_type, score_types ) {
+	for ( ScoreType const & score_type : score_types ) {
 		std::string const score_term = name_from_score_type(score_type);
 		core::Real const weight = score_fxn_->get_weight(score_type);
 		if ( prefix_ == "" ) {
@@ -217,7 +216,7 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	protocols::jd2::JobOP job
 ) const
 {
-	BOOST_FOREACH ( std::string chain, chains_ ) {
+	for ( std::string const & chain : chains_ ) {
 		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
 		assert( core::pose::has_chain(chain, after));
 		if ( native_ ) {
@@ -227,7 +226,7 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		}
 
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
-		BOOST_FOREACH ( core::Size jump_id, jump_ids ) {
+		for ( core::Size const jump_id : jump_ids ) {
 			if ( normalization_function_ ) {
 				append_interface_deltas(jump_id,job,after,score_fxn_,prefix_,normalization_function_);
 			} else {

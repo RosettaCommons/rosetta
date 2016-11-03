@@ -27,7 +27,6 @@
 #include <core/scoring/func/Func.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Stub.hh>
-#include <boost/foreach.hpp>
 #include <core/chemical/AtomType.hh>
 
 namespace protocols {
@@ -334,8 +333,8 @@ SICFast::slide_into_contact(
 	Vec            ori
 ) const {
 	Real t = -9e9;
-	BOOST_FOREACH ( Xform const & x1,x1s ) {
-		BOOST_FOREACH ( Xform const & x2,x2s ) {
+	for ( Xform const & x1 : x1s ) {
+		for ( Xform const & x2 : x2s ) {
 			Real tmp = slide_into_contact(x1,x2,ori);
 			if ( tmp < 9e8 ) t = max(t,tmp);
 		}

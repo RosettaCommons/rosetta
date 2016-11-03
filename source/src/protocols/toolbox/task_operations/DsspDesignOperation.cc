@@ -34,7 +34,6 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/assign/list_inserter.hpp>
-#include <boost/foreach.hpp>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -101,8 +100,8 @@ DsspDesignOperation::set_restrictions_aa( std::string const & sse, std::string c
 {
 	// handle all SSEs
 	if ( sse == "all" ) {
-		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
-			set_restrictions_aa( it->first, aas );
+		for ( auto const & sse_residue : sse_residues_ ) {
+			set_restrictions_aa( sse_residue.first, aas );
 		}
 		// check that SSE is valid
 	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
@@ -118,8 +117,8 @@ DsspDesignOperation::set_restrictions_append( std::string const & sse, std::stri
 {
 	// handle all SSEs
 	if ( sse == "all" ) {
-		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
-			set_restrictions_append( it->first, aas );
+		for ( auto const & sse_residue : sse_residues_ ) {
+			set_restrictions_append( sse_residue.first, aas );
 		}
 		// check that SSE is valid
 	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
@@ -138,8 +137,8 @@ DsspDesignOperation::set_restrictions_exclude( std::string const & sse, std::str
 {
 	// handle all SSEs
 	if ( sse == "all" ) {
-		for ( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ) {
-			set_restrictions_exclude( it->first, aas );
+		for ( auto const & sse_residue : sse_residues_ ) {
+			set_restrictions_exclude( sse_residue.first, aas );
 		}
 		// check that SSE is valid
 	} else if ( sse_residues_.find( sse ) == sse_residues_.end() ) {
@@ -148,7 +147,7 @@ DsspDesignOperation::set_restrictions_exclude( std::string const & sse, std::str
 	} else {
 		const std::string sse_res = sse_residues_[ sse ];
 		std::set< char > temp_def_res_set( sse_res.begin(), sse_res.end() );
-		BOOST_FOREACH ( char aa, aas ) {  temp_def_res_set.erase( aa ); }
+		for ( char const aa : aas ) {  temp_def_res_set.erase( aa ); }
 		sse_residues_[ sse ] = std::string( temp_def_res_set.begin(), temp_def_res_set.end() );
 	}
 }
@@ -157,7 +156,7 @@ utility::vector1< bool >
 DsspDesignOperation::get_restrictions( std::string const & ss_type ) const
 {
 	utility::vector1< bool > restrict_to_aa( core::chemical::num_canonical_aas, false );
-	BOOST_FOREACH ( char restype, sse_residues_.find( ss_type )->second ) {
+	for ( char const restype : sse_residues_.find( ss_type )->second ) {
 		restrict_to_aa[ core::chemical::aa_from_oneletter_code( restype ) ] = true;
 	}
 
@@ -252,7 +251,7 @@ DsspDesignOperation::parse_tag( TagCOP tag , DataMap & )
 		blueprint_ = BluePrintOP( new BluePrint( tag->getOption< std::string >( "blueprint" ) ) );
 	}
 
-	BOOST_FOREACH ( utility::tag::TagCOP const sse_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP const sse_tag : tag->getTags() ) {
 		const std::string sse = sse_tag->getName(); // Helix, Strand, Loop, HelixCapping, HelixStart, Nterm, Cterm
 
 		// check that SSE is valid

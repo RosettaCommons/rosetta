@@ -63,9 +63,6 @@
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 
-#define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace util {
 

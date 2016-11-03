@@ -47,11 +47,7 @@
 
 #include <cppdb/frontend.h>
 
-
-#include <boost/foreach.hpp>
 #include <algorithm>
-
-#define boost_foreach BOOST_FOREACH
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 
@@ -191,8 +187,7 @@ AntibodyFeatures::report_features(
 
 
 	bool have_interface_data = false;
-	typedef std::map<std::string, std::string> map_type;
-	boost_foreach ( const map_type::value_type& interface_pair, db_interfaces ) {
+	for ( auto const & interface_pair : db_interfaces ) {
 		report_all_interface_features(pose, relevant_residues, struct_id, db_session, interface_pair.first, interface_pair.second);
 
 		if ( interface_pair.second == match_interface_type && ! skip_antigen_reports_ ) {

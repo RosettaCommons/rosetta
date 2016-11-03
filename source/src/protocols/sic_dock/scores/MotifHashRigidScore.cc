@@ -25,11 +25,9 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/xyzStripeHashPose.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace sic_dock {
@@ -141,17 +139,17 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 	std::map<Size,Real> ssp1,ssp2,mres1,mres2;
 	std::set<Size> tres1,tres2;
 	Nhh=0; Neh=0; Nee=0; nres=0;
-	BOOST_FOREACH ( Xform const & x1,x1s ) {
-		BOOST_FOREACH ( Xform const & x2,x2s ) {
+	for ( Xform const & x1 : x1s ) {
+		for ( Xform const & x2 : x2s ) {
 			utility::vector1<intint> pairs;
 			pairs.reserve(64);
 			Xform xHtoL = hash_pose1_? ~x1 * x2 : ~x2 * x1 ;
-			BOOST_FOREACH ( VecIR const & vi,reslist_ ) reshash_->fill_pairs(xHtoL*vi.first,vi.second,pairs);
+			for ( VecIR const & vi : reslist_ ) reshash_->fill_pairs(xHtoL*vi.first,vi.second,pairs);
 
 			if ( option[mh::score::min_contact_pairs]() > pairs.size() ) continue;
 			if ( option[mh::score::max_contact_pairs]() < pairs.size() ) continue;
 
-			BOOST_FOREACH ( intint const & p,pairs ) {
+			for ( intint const & p : pairs ) {
 				Size const & ir(hash_pose1_?p.second:p.first );
 				Size const & jr(hash_pose1_?p.first :p.second);
 				Xform const xb1 = x1 * bbx1_[ir];
@@ -200,19 +198,18 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 		}
 	}
 	Real ssscore = 0;
-	// BOOST_FOREACH(Real s,sselemsc1) ssscore += sqrt(s) + s/15.0;
-	// BOOST_FOREACH(Real s,sselemsc2) ssscore += sqrt(s) + s/15.0;
+	// for(Real s,sselemsc1) ssscore += sqrt(s) + s/15.0;
+	// for(Real s,sselemsc2) ssscore += sqrt(s) + s/15.0;
 
 	nres      = tres1.size()+tres2.size();
 	res_score = tres1.size()+tres2.size();
 	res_score = -res_score * 0.6666;
-	typedef std::map<Size,Real>::value_type  MapVal;
-	BOOST_FOREACH ( MapVal v,mres1 ) res_score += sqrt(v.second);
-	BOOST_FOREACH ( MapVal v,mres2 ) res_score += sqrt(v.second);
+	for ( auto const & v : mres1 ) res_score += sqrt(v.second);
+	for ( auto const & v : mres2 ) res_score += sqrt(v.second);
 
 	Nh=0; Ne=0; Nl=0;
-	BOOST_FOREACH ( Size n,tres1 ) { Nh += 'H'==pose1_.secstruct(n); Ne += 'E'==pose1_.secstruct(n); Nl += 'L'==pose1_.secstruct(n); }
-	BOOST_FOREACH ( Size n,tres2 ) { Nh += 'H'==pose2_.secstruct(n); Ne += 'E'==pose2_.secstruct(n); Nl += 'L'==pose2_.secstruct(n); }
+	for ( Size const n : tres1 ) { Nh += 'H'==pose1_.secstruct(n); Ne += 'E'==pose1_.secstruct(n); Nl += 'L'==pose1_.secstruct(n); }
+	for ( Size const n : tres2 ) { Nh += 'H'==pose2_.secstruct(n); Ne += 'E'==pose2_.secstruct(n); Nl += 'L'==pose2_.secstruct(n); }
 
 	coverage = Real(mres1.size()+mres2.size())/Real(tres1.size()+tres2.size());
 
@@ -246,10 +243,10 @@ int
 MotifHashRigidScore::dump_matching_motifs( Xforms const & /*x1s*/, Xforms const & /*x2s*/, std::ostream & /*out*/, core::pose::xyzStripeHashPoseCOP /*clash_check*/, bool /*print*/ ) const {
 	// if(!mh_) mh_ = core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
 	// int nhit = 0;
-	// BOOST_FOREACH(Xform const & x1,x1s){
+	// for(Xform const & x1,x1s){
 	//  Pose pose1(pose1_);
 	//  xform_pose(pose1,x1);
-	//  BOOST_FOREACH(Xform const & x2,x2s){
+	//  for(Xform const & x2,x2s){
 	//   Pose pose2(pose2_);
 	//   xform_pose(pose2,x2);
 	//   nhit += dump_matching_motifs(pose1,pose2,out,nhit,clash_check,print);
@@ -284,7 +281,7 @@ MotifHashRigidScore::show(
 	// out << " " << ObjexxFCL::format::RJ(5,"P_EE"  );
 	// out << " " << ObjexxFCL::format::RJ(5,"P_EH"  );
 	// out << " " << ObjexxFCL::format::RJ(5,"P_HH"  );
-	// BOOST_FOREACH(Stats::value_type val,stats){
+	// for(Stats::value_type val,stats){
 	//  out << " " << ObjexxFCL::format::RJ(width,val.first);
 	// }
 
@@ -320,8 +317,8 @@ MotifHashRigidScore::show(
 	// out << " " << ObjexxFCL::format::F(5,3,Real(Nhh)/Real(Nee+Neh+Nhh));
 
 	// Stats stats;
-	// BOOST_FOREACH(Xform const & x1,x1s){
-	//  BOOST_FOREACH(Xform const & x2,x2s){
+	// for(Xform const & x1,x1s){
+	//  for(Xform const & x2,x2s){
 	//   Pose pose1(pose1_),pose2(pose2_);
 	//   xform_pose(pose1,x1);
 	//   xform_pose(pose2,x2);
@@ -339,7 +336,7 @@ MotifHashRigidScore::show(
 	// // stats["M_LL"     ] = stats["M_LL"     ]/stats["M_NUM"];
 	// // stats["M_SSPAIR"] = stats["M_SSPAIR"]/stats["M_NUM"];
 
-	// BOOST_FOREACH(Stats::value_type val,stats){
+	// for(Stats::value_type val,stats){
 	//  out << " " << ObjexxFCL::format::F(width,5,val.second);
 	// }
 }

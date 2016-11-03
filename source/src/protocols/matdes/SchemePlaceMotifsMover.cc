@@ -24,7 +24,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <numeric/random/random_xyz.hh>
-#include <boost/foreach.hpp>
 #include <protocols/matdes/MotifHitsRotamersOperation.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -93,7 +92,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	core::scoring::motif::MotifHits hits;
 	if ( motif_sets_.size() ) {
 		TR << "using motif set names from XML" << std::endl;
-		BOOST_FOREACH ( std::string const & msetname, motif_sets_ ) {
+		for ( std::string const & msetname : motif_sets_ ) {
 			core::scoring::motif::MotifHash const & mh( *core::scoring::motif::MotifHashManager::get_instance()->get_motif_hash_by_fname(msetname) );
 			int n = mh.get_matching_motifs(q,hits);
 			TR << n << " new hits from mset: " << msetname << ", total: " << hits.size() << std::endl;
@@ -117,7 +116,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	///////////////////////// remove interface sidechains //////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
 	utility::vector1<bool> has_motif(pose.size(),false) ;
-	BOOST_FOREACH ( core::scoring::motif::MotifHit const & hit, hits ) {
+	for ( core::scoring::motif::MotifHit const & hit : hits ) {
 		if ( hit.motif.type1() == core::scoring::motif::RM_BB ) has_motif[hit.residue1] = true ;
 		if ( hit.motif.type2() == core::scoring::motif::RM_BB )  has_motif[hit.residue2] = true ;
 	}
@@ -137,7 +136,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 		utility::vector1<utility::vector1<bool> >  aas_for_design(pose.size(),dummy)    ;
 		TR << "about to restrict aas to motifs" << std::endl ;
 		if ( allowed_aas_ == "motifs" ) {
-			BOOST_FOREACH ( core::scoring::motif::MotifHit const & hit, hits ) {
+			for ( core::scoring::motif::MotifHit const & hit : hits ) {
 				aas_for_design.at(hit.residue2).at(chemical::aa_from_oneletter_code(hit.motif.aa2())) = true ;
 				aas_for_design.at(hit.residue1).at(chemical::aa_from_oneletter_code(hit.motif.aa1())) = true ;
 			}
@@ -165,10 +164,10 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	fpcinfo = new core::scoring::methods::FloatingPointCloudRestraintEnergyInfo;
 	pose.data().set( core::pose::datacache::CacheableDataType::FLOATING_POINT_CLOUD_INFO, fpcinfo );
 	utility::vector1< core::scoring::methods::FloatingPoints > & clouds = fpcinfo->point_clouds();
-	BOOST_FOREACH( core::scoring::motif::MotifHit const & mh, hits ){
+	for ( core::scoring::motif::MotifHit const & mh : hits ){
 	// numeric::xyzTransform<core::Real> x = numeric::random::gaussian_random_xform(360.0,20.0);
 	core::scoring::methods::FloatingPoints cloud;
-	BOOST_FOREACH(std::string atomname, utility::string_split("N CA C O CB",' ')){
+	for (std::string const & atomname : utility::string_split("N CA C O CB",' ')){
 	if( pose.residue(mh.residue1).has(atomname) && mh.mpose().residue(1).has(atomname) ){
 	cloud.push_back( core::scoring::methods::FloatingPoint(
 	mh.mpose().residue(1).xyz(atomname),
@@ -217,10 +216,10 @@ SchemePlaceMotifsMover::parse_my_tag(
 	halt_on_error_ = tag->getOption<bool>("halt_on_error",false);
 	std::string const motif_sets = tag->getOption< std::string >("motif_sets","");
 	TR << "checking motif sets: " << motif_sets << std::endl;
-	BOOST_FOREACH ( std::string const & mset, utility::string_split(motif_sets,',') ) {
+	for ( std::string const & mset : utility::string_split(motif_sets,',') ) {
 		if ( mset=="" ) continue;
 		if ( !core::scoring::motif::MotifHashManager::get_instance()->have_motif_set_named(mset) ) {
-			BOOST_FOREACH ( std::string s,core::scoring::motif::MotifHashManager::get_instance()->motif_set_names() ) {
+			for ( std::string const & s : core::scoring::motif::MotifHashManager::get_instance()->motif_set_names() ) {
 				std::cout << "candidate: " << s << std::endl;
 			}
 			utility_exit_with_message("MotifResiduesOperation: unknown motif set: "+mset+"\nspecify -mh:path:motifs");

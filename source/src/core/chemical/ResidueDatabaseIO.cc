@@ -33,8 +33,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
 
 namespace core {
 namespace chemical {
@@ -804,7 +802,7 @@ ResidueDatabaseIO::report_residue_type_cut_bond(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for ( Size i=1; i <= res_type.natoms(); ++i ) {
-		BOOST_FOREACH ( core::Size const j, res_type.cut_bond_neighbor(i) ) {
+		for ( core::Size const j : res_type.cut_bond_neighbor(i) ) {
 			if ( i>=j ) continue;
 
 
@@ -917,9 +915,7 @@ ResidueDatabaseIO::report_residue_type_chi_rotamer(
 	std::string statement_string = "INSERT INTO residue_type_chi_rotamer (residue_type_set_name, residue_type_name, chino, mean, sdev) VALUES (?,?,?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for ( Size chi=1; chi <= res_type.nchi(); ++chi ) {
-		std::pair<Real, Real> mean_sdev;
-		BOOST_FOREACH ( mean_sdev, res_type.chi_rotamers(chi) ) {
-
+		for ( auto const & mean_sdev : res_type.chi_rotamers(chi) ) {
 			stmt.bind(1,residue_type_set_name);
 			stmt.bind(2,res_type.name());
 			stmt.bind(3,chi);
@@ -969,7 +965,7 @@ ResidueDatabaseIO::report_residue_type_proton_chi(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for ( Size proton_chi=1; proton_chi <= res_type.n_proton_chi(); ++proton_chi ) {
 		Size const chi(res_type.proton_chi_2_chi(proton_chi));
-		BOOST_FOREACH ( Real const sample, res_type.proton_chi_samples(proton_chi) ) {
+		for ( Real const sample : res_type.proton_chi_samples(proton_chi) ) {
 
 			stmt.bind(1,residue_type_set_name);
 			stmt.bind(2,res_type.name());
@@ -978,7 +974,7 @@ ResidueDatabaseIO::report_residue_type_proton_chi(
 			stmt.bind(5,false);
 			basic::database::safely_write_to_database(stmt);
 
-			BOOST_FOREACH ( Real const extra_sample, res_type.proton_chi_extra_samples(proton_chi) ) {
+			for ( Real const extra_sample : res_type.proton_chi_extra_samples(proton_chi) ) {
 
 				stmt.bind(1,residue_type_set_name);
 				stmt.bind(2,res_type.name());
@@ -1054,7 +1050,7 @@ ResidueDatabaseIO::report_residue_type_properties(
 	ResidueType const & res_type,
 	utility::sql_database::sessionOP db_session
 )  {
-	BOOST_FOREACH ( std::string const & property, res_type.properties().get_list_of_properties() ) {
+	for ( std::string const & property : res_type.properties().get_list_of_properties() ) {
 
 		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_property (residue_type_set_name, residue_type_name, property) VALUES (?,?,?);"
@@ -1097,7 +1093,7 @@ ResidueDatabaseIO::report_residue_type_variant(
 	ResidueType const & res_type,
 	utility::sql_database::sessionOP db_session )
 {
-	BOOST_FOREACH ( std::string const & variant_type, res_type.properties().get_list_of_variants() ) {
+	for ( std::string const & variant_type : res_type.properties().get_list_of_variants() ) {
 		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_variant_type (residue_type_set_name, residue_type_name, variant_type) VALUES (?,?,?);"
 			<< residue_type_set_name

@@ -52,9 +52,6 @@
 // Basic header
 #include <basic/Tracer.hh>
 
-// Boost header
-#include <boost/foreach.hpp>
-
 // C++ header
 #include <fstream>
 
@@ -125,7 +122,7 @@ StartFrom::parse_my_tag(
 	chain( tag->getOption<std::string>("chain") );
 	use_nbr( tag->getOption<bool>("use_nbr", false) );
 
-	BOOST_FOREACH ( utility::tag::TagCOP child_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP child_tag : tag->getTags() ) {
 		std::string name= child_tag->getName();
 		if ( name == "features" || name == "Features" ) {
 			TR << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;
@@ -217,7 +214,7 @@ void StartFrom::apply(core::pose::Pose & pose) {
 	if ( ! starting_positions_.empty() && ! specific_tag_found ) {
 		std::string const job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
 		utility::vector1<std::string> const input_filenames(utility::split(job_tag));
-		BOOST_FOREACH ( std::string filename, input_filenames ) {
+		for ( std::string const & filename : input_filenames ) {
 			position_id = starting_positions_.find(filename);
 			if ( position_id != starting_positions_.end() ) {
 				specific_tag_found = true;

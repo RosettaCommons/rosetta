@@ -28,7 +28,6 @@
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 namespace protocols {
@@ -151,7 +150,7 @@ void ResidueTorsionRestraints::enable( core::pose::Pose & pose )
 	if ( !resid_has_changed ) {
 		// No:  restore constraints exactly as they were
 		ConstraintSetOP new_constraints = pose.constraint_set()->clone(); // deep copy, constraints and their funcs are cloned too
-		BOOST_FOREACH ( core::scoring::constraints::ConstraintCOP constraint, old_constraints_ ) {
+		for ( core::scoring::constraints::ConstraintCOP constraint : old_constraints_ ) {
 			new_constraints->add_constraint( constraint );
 		}
 		pose.constraint_set( new_constraints );

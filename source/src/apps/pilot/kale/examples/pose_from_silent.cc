@@ -10,7 +10,6 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <boost/foreach.hpp>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -36,7 +35,7 @@ int main(int argc, char** argv) {
 
 	silent_file.read_file("silent_from_pose.sil");
 	
-	BOOST_FOREACH(string tag, silent_file.tags()) {
+	for ( string const & tag : silent_file.tags()) {
 		cout << tag << endl;
 		silent_file[tag]->fill_pose(pose);
 	}

@@ -51,7 +51,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 //Numeric Headers
 #include <numeric/random/random.hh>
@@ -61,8 +60,6 @@
 #include <map>
 #include <string>
 #include <algorithm>
-
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -219,7 +216,7 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
-	foreach ( MoverFilterPair mover_pair, movers_ ) {
+	for ( MoverFilterPair const & mover_pair : movers_ ) {
 		if ( mover_pair.report_filter_at_end_ ) {
 			TR_report<<"============Begin report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
 			mover_pair.second->report( TR_report, pose );
@@ -599,7 +596,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
 	if ( report_call_order() ) {
 		TR_call_order << job_name<<" ";
-		foreach ( MoverFilterPair const p, movers_ ) {
+		for ( MoverFilterPair const & p : movers_ ) {
 			TR_call_order<<p.first.second<<" ";
 		}
 		TR_call_order<<std::endl;
@@ -635,7 +632,7 @@ void ParsedProtocol::random_order_protocol(Pose & pose){
 utility::vector1< core::Real >
 ParsedProtocol::apply_probability() {
 	core::Real sum( 0 );
-	foreach ( core::Real const prob, apply_probability_ ) {
+	for ( core::Real const prob : apply_probability_ ) {
 		sum += prob;
 	}
 	runtime_assert( sum >= 0.999 && sum <= 1.001 );
@@ -647,7 +644,7 @@ ParsedProtocol::apply_probability( utility::vector1< core::Real > const & a ){
 	apply_probability_ = a;
 	runtime_assert( apply_probability_.size() == movers_.size() );
 	core::Real sum( 0 );
-	foreach ( core::Real const prob, apply_probability_ ) {
+	for ( core::Real const prob : apply_probability_ ) {
 		sum += prob;
 	}
 	runtime_assert( sum >= 0.999 && sum <= 1.001 );
@@ -657,7 +654,7 @@ void ParsedProtocol::random_single_protocol(Pose & pose){
 	core::Real const random_num( numeric::random::rg().uniform() );
 	core::Real sum( 0.0 );
 	core::Size mover_index( 0 );
-	foreach ( core::Real const probability, apply_probability() ) {
+	for ( core::Real const probability : apply_probability() ) {
 		sum += probability; mover_index++;
 		if ( sum >= random_num ) {
 			break;

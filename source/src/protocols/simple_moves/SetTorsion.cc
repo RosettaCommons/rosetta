@@ -49,7 +49,6 @@
 #include <numeric/conversions.hh>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 
 
 // Utility Headers
@@ -153,7 +152,7 @@ utility::vector1<core::Size> SetTorsion::residue_list(core::Size iset, core::pos
 		}
 	} else {
 		utility::vector1<std::string> buff = utility::string_split( residues_[iset], ',' );
-		BOOST_FOREACH ( std::string field, buff ) {
+		for ( std::string const & field : buff ) {
 			Size const value = std::atoi( field.c_str() );
 			residue_numbers.push_back(value);
 		}

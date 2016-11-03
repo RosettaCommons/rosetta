@@ -28,7 +28,6 @@
 
 // External headers
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <algorithm>
 
@@ -530,8 +529,8 @@ GenericMonteCarloMover::accept( Pose & pose,
 				/*              out << "##Begin comments##" << std::endl;
 				using namespace std;
 				map< string, string > const comments = core::pose::get_all_comments(pose);
-				for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-				out << i->first<<" "<<i->second << std::endl;
+				for( auto const & comment : comments ) {
+				out << comment.first<<" "<<comment.second << std::endl;
 				}
 				out << "##End comments##" << std::endl;
 				*/
@@ -700,7 +699,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 		bool call_reset( false );
 		using namespace protocols::filters;
 		using namespace protocols::simple_filters;
-		BOOST_FOREACH ( FilterOP filter, filters_ ) {
+		for ( FilterOP filter : filters_ ) {
 			if ( filter->get_type() == "Operator" ) {
 				TR<<"Resetting Operator filter's baseline"<<std::endl;
 				OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filter ) );
@@ -799,8 +798,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 			TR<<"SJF DEbug 1"<<std::endl;
 			using namespace std;
 			map< string, string > const comments = core::pose::get_all_comments(pose);
-			for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-			out << i->first<<" "<<i->second << std::endl;
+			for( auto const & comment : comments ) {
+			out << comment.first<<" "<<comment.second << std::endl;
 			TR<<"writing comment "<<i->first<<" "<<i->second<<std::endl;
 			}
 			TR<<"SJF debug 2"<<std::endl;
@@ -833,7 +832,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	if ( adaptive_movers() ) {
 		bool is_single_random = ( mover_pp->mode() == "single_random" );
 		if ( !is_single_random ) { // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
-			BOOST_FOREACH ( ParsedProtocol::MoverFilterPair const mfp, *mover_pp ) {
+			for ( ParsedProtocol::MoverFilterPair const & mfp : *mover_pp ) {
 				ParsedProtocolOP tmp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mfp.first.first ) );
 				if ( tmp && tmp->mode() == "single_random" ) { /// the parsedprotocol mover must be run in mode single_random for the apply_probabilities to be modified
 					mover_pp = tmp;
@@ -856,7 +855,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 			/// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
 			/// each mover is assigned a pseducount of 1, and then any additional accept favors it over others. At the adaptation stage, the total number of accepts (including pseudocounts) is used to normalize the individual movers' number of accepts and the probability is the mover's accepts / by the total accepts
 			core::Size sum_prev_accepts( 0 );
-			BOOST_FOREACH ( core::Size const a, mover_accepts ) {
+			for ( core::Size const a : mover_accepts ) {
 				sum_prev_accepts += a;
 			}
 			utility::vector1< core::Real > new_probabilities;
@@ -1034,10 +1033,10 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	boltz_rank_ = tag->getOption< bool >( "bolz_rank", 0 );
 
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
-			BOOST_FOREACH ( TagCOP const ftag, filters_tags ) {
+			for ( TagCOP const ftag : filters_tags ) {
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {

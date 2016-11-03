@@ -58,7 +58,6 @@ using basic::Warning;
 
 // Boost Headers
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -387,10 +386,10 @@ std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 	std::map<core::Size, core::Size> jumpToAttach;
 	std::map<char, LigandAreaOP> const ligand_areas= interface_builder_->get_ligand_areas();
 	//std::map<char, LigandAreaOP>::const_iterator index = ligand_areas.begin();
-	BOOST_FOREACH ( LigandAreas::value_type ligand_area_pair, ligand_areas ) {
+	for ( LigandAreas::value_type const & ligand_area_pair : ligand_areas ) {
 		//for (; index != ligand_areas.end(); ++index) { // these are just the ligand chains to dock
 		utility::vector1<core::Size> jump_ids = core::pose::get_jump_ids_from_chain(ligand_area_pair.first, pose);
-		BOOST_FOREACH ( core::Size jump_id, jump_ids ) {
+		for ( core::Size const jump_id : jump_ids ) {
 			jumpToAttach[jump_id] = find_attach_pt(jump_id, interface, pose);
 		}
 	}

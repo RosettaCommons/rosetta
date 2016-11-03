@@ -24,9 +24,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector0.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 // C++ Headers
 #include <sstream>
 
@@ -79,7 +76,7 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 			<< "register a new RDF Function in the RDFFunctionFactory" << endl
 			<< "known RDF Function types are:" << endl;
 
-		BOOST_FOREACH ( const RDFFunctionCreatorMap::value_type& type, types_ ) {
+		for ( auto const & type : types_ ) {
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

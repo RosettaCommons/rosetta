@@ -36,7 +36,6 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <set>
@@ -115,7 +114,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	protocols::toolbox::task_operations::DesignAroundOperationOP dao( new protocols::toolbox::task_operations::DesignAroundOperation );
 	dao->design_shell( 0.1 );
 	dao->repack_shell( repack_shell() );
-	BOOST_FOREACH ( core::Size const d, designable ) {
+	for ( core::Size const d : designable ) {
 		dao->include_residue( d );
 	}
 	core::pack::task::TaskFactoryOP dao_tf( new core::pack::task::TaskFactory );
@@ -144,7 +143,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		oocr_repackable.residue_indices( repackable );
 		oocr_repackable.apply( pose, task );
 		TR<<"allowing repacking in: ";
-		BOOST_FOREACH ( core::Size const r, repackable ) {
+		for ( core::Size const r : repackable ) {
 			TR<<r<<' ';
 		}
 		TR<<std::endl;
@@ -153,7 +152,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		oocr_immutable.residue_indices( immutable );
 		oocr_immutable.apply( pose, task );
 		TR<<"no repack in: ";
-		BOOST_FOREACH ( core::Size const i, immutable ) {
+		for ( core::Size const i : immutable ) {
 			TR<<i<<' ';
 		}
 		TR<<std::endl;
@@ -182,7 +181,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, btags ) {
+	for ( TagCOP const btag : btags ) {
 		if ( btag->getName()!="AlignedSegment" ) {
 			utility_exit_with_message( "RestrictToAlignedSegments subtag not recognized: " + btag->getName() );
 		}

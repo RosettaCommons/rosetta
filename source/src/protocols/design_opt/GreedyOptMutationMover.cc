@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <boost/foreach.hpp>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -765,7 +764,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			if ( stop ) break;
 
 			//Optionally reset baseline for Delta Filters (useful so that the mutations are still evaluated on an individual basis, in the context of the current best pose).
-			BOOST_FOREACH ( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ) {
+			for ( protocols::simple_filters::DeltaFilterOP const delta_filter : reset_delta_filters_ ) {
 				std::string const fname( delta_filter->get_user_defined_name() );
 				core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 				delta_filter->baseline( fbaseline );
@@ -846,10 +845,10 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	//load multiple filters from branch tags
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	BOOST_FOREACH ( utility::tag::TagCOP const btag, branch_tags ) {
+	for ( utility::tag::TagCOP const btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
-			BOOST_FOREACH ( utility::tag::TagCOP const ftag, filters_tags ) {
+			for ( utility::tag::TagCOP const ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
@@ -884,7 +883,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	delta_filter_names.clear();
 	if ( tag->hasOption( "reset_delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
-		BOOST_FOREACH ( std::string const fname, delta_filter_names ) {
+		for ( std::string const  &fname : delta_filter_names ) {
 			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}

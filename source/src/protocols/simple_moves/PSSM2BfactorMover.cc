@@ -25,7 +25,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover"
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -87,55 +86,54 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	core::pose::add_comment(pose,"PSSMSTYLE residueNo", " A C D E F G H I K L M N P Q R S T V W Y");
 
-	BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
-		if ( c->type() == "SequenceProfile" ) {
-			SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
-			runtime_assert( seqprof_cst != nullptr );
-			runtime_assert( seqprof_cst->profile_mapping() != nullptr );
-			core::Size const seqpos( seqprof_cst->seqpos() );
-			TR<<"sepos="<<seqpos<<std::endl;
-			core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();
-			core::id::SequenceMapping tempSM = *SM;
-			if ( SM==nullptr ) {
-				TR << "asdfasd" << std::endl;
-			}
-			TR<<"seqpos_mapping:"<<tempSM[seqpos]<<std::endl;
-			SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
-			TR<<"the size of seqprof: "<<seqprof_pos->size()<<std::endl;
-			core::Real const PSSM_score( seqprof_pos->prof_row( tempSM[seqpos] )[ order[ pose.residue( seqpos ).name1() ] ] );
-			//Jun13 Gideon Lapidoth and Chris Norn added this so user can choose cut off PSSM values
+	for ( ConstraintCOP const c : constraints ) {
+		if ( c->type() != "SequenceProfile" ) continue;
+		
+		SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
+		runtime_assert( seqprof_cst != nullptr );
+		runtime_assert( seqprof_cst->profile_mapping() != nullptr );
+		core::Size const seqpos( seqprof_cst->seqpos() );
+		TR<<"sepos="<<seqpos<<std::endl;
+		core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();
+		core::id::SequenceMapping tempSM = *SM;
+		if ( SM==nullptr ) {
+			TR << "asdfasd" << std::endl;
+		}
+		TR<<"seqpos_mapping:"<<tempSM[seqpos]<<std::endl;
+		SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
+		TR<<"the size of seqprof: "<<seqprof_pos->size()<<std::endl;
+		core::Real const PSSM_score( seqprof_pos->prof_row( tempSM[seqpos] )[ order[ pose.residue( seqpos ).name1() ] ] );
+		//Jun13 Gideon Lapidoth and Chris Norn added this so user can choose cut off PSSM values
 
-			core::Real min = 0.0 ;// Minimum Bfactor level used for pymol coloring
-			core::Real max = 50.0 ;// Maximum Bfactor level used for pymol coloring
-			core::Real alpha = ( min - max ) / ( max_value_ -  min_value_ );
-			core::Real beta = ( min * min_value_ - max * max_value_ ) / ( min_value_ - max_value_ ) ;
+		core::Real min = 0.0 ;// Minimum Bfactor level used for pymol coloring
+		core::Real max = 50.0 ;// Maximum Bfactor level used for pymol coloring
+		core::Real alpha = ( min - max ) / ( max_value_ -  min_value_ );
+		core::Real beta = ( min * min_value_ - max * max_value_ ) / ( min_value_ - max_value_ ) ;
 
-			core::Real tmpscore = PSSM_score;
-			if ( tmpscore >= max_value_ ) {
-				TR<<tmpscore<<" greater than "<<max_value_<<std::endl;
-				tmpscore = max_value_;
-			} else if ( tmpscore <= min_value_ ) {
-				tmpscore = min_value_;
-			}
+		core::Real tmpscore = PSSM_score;
+		if ( tmpscore >= max_value_ ) {
+			TR<<tmpscore<<" greater than "<<max_value_<<std::endl;
+			tmpscore = max_value_;
+		} else if ( tmpscore <= min_value_ ) {
+			tmpscore = min_value_;
+		}
 
-			core::Real const transformed_score( tmpscore * alpha + beta );
-			TR<<"Position: "<<seqpos<<" pssm_val: "<<PSSM_score<<" min val: "<<min_value_<<" max val: "<<max_value_<<" tmpscore: "<<tmpscore<<" transformed score: "<<transformed_score<<" alpha: "<<alpha<<" beta: "<<beta<<std::endl;
+		core::Real const transformed_score( tmpscore * alpha + beta );
+		TR<<"Position: "<<seqpos<<" pssm_val: "<<PSSM_score<<" min val: "<<min_value_<<" max val: "<<max_value_<<" tmpscore: "<<tmpscore<<" transformed score: "<<transformed_score<<" alpha: "<<alpha<<" beta: "<<beta<<std::endl;
 
-			std::ostringstream residuesSpecificPSSMScores;
-			for ( int i = 1; i<=20; ++i ) {
-				residuesSpecificPSSMScores << seqprof_pos->prof_row( tempSM[seqpos] )[i] << " ";
-			}
+		std::ostringstream residuesSpecificPSSMScores;
+		for ( int i = 1; i<=20; ++i ) {
+			residuesSpecificPSSMScores << seqprof_pos->prof_row( tempSM[seqpos] )[i] << " ";
+		}
 
-			std::ostringstream PSSM_resNo;
-			PSSM_resNo << "PSSM " << seqpos << " ";
-			core::pose::add_comment(pose,PSSM_resNo.str(),residuesSpecificPSSMScores.str());
+		std::ostringstream PSSM_resNo;
+		PSSM_resNo << "PSSM " << seqpos << " ";
+		core::pose::add_comment(pose,PSSM_resNo.str(),residuesSpecificPSSMScores.str());
 
-
-			for ( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ) {
-				pose.pdb_info()->temperature( seqpos, idx, transformed_score );
-			}
-			cst_num++;
-		}//fi c->type()=="sequenceprofile"
+		for ( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ) {
+			pose.pdb_info()->temperature( seqpos, idx, transformed_score );
+		}
+		cst_num++;
 	}//foreach
 	TR<<"Read "<<cst_num<<" sequence constraints"<<std::endl;
 }

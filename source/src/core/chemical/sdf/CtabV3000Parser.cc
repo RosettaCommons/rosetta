@@ -23,10 +23,6 @@
 #include <string>
 #include <istream>
 
-//// Boost Headers
-//#include <boost/foreach.hpp>
-//#define foreach BOOST_FOREACH
-
 namespace core {
 namespace chemical {
 namespace sdf {

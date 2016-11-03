@@ -17,9 +17,6 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 //#include <basic/Tracer.hh>
 
-#include <boost/foreach.hpp>
-
-
 namespace numeric {
 namespace geometry {
 namespace hashing {
@@ -250,32 +247,32 @@ std::vector< SBin6D > SixDOffsetTree::lookup( Size radius, Bin6D const & center,
 	} else {
 		Bin6D idx ( 0 );
 		SBin6D depth ( 0 );
-		BOOST_FOREACH ( map_itr i, data_[radius][0] ) {
+		for ( map_itr i : data_[radius][0] ) {
 			idx[1] = i.second;
 			depth[1] = i.first;
 			if ( depth[1] + center[1] >= bounds[1] ) continue;
 
-			BOOST_FOREACH ( map_itr j, data_[radius][idx[1]] ) {
+			for ( map_itr j : data_[radius][idx[1]] ) {
 				idx[2] = j.second;
 				depth[2] = j.first;
 				if ( depth[2] + center[2] >= bounds[2] ) continue;
 
-				BOOST_FOREACH ( map_itr k, data_[radius][idx[2]] ) {
+				for ( map_itr k : data_[radius][idx[2]] ) {
 					idx[3] = k.second;
 					depth[3] = k.first;
 					if ( depth[3] + center[3] >= bounds[3] ) continue;
 
-					BOOST_FOREACH ( map_itr m, data_[radius][idx[3]] ) {
+					for ( map_itr m : data_[radius][idx[3]] ) {
 						idx[4] = m.second;
 						depth[4] = m.first;
 						if ( depth[4] + center[4] >= bounds[4] ) continue;
 
-						BOOST_FOREACH ( map_itr n, data_[radius][idx[4]] ) {
+						for ( map_itr n : data_[radius][idx[4]] ) {
 							idx[5] = n.second;
 							depth[5] = n.first;
 							if ( depth[5] + center[5] >= bounds[5] ) continue;
 
-							BOOST_FOREACH ( map_itr p, data_[radius][idx[5]] ) {
+							for ( map_itr p : data_[radius][idx[5]] ) {
 								idx[6] = p.second;
 								depth[6] = p.first;
 								if ( idx[6] == 1 && depth[6]+center[6] < bounds[6] ) offset_list.push_back(depth);

@@ -97,8 +97,7 @@
 #include <basic/database/open.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <boost/foreach.hpp>
-#define foreach_ BOOST_FOREACH
+#define foreach_ for
 
 // option includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>

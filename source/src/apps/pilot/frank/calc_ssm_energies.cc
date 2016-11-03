@@ -101,9 +101,6 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 
-#include <boost/foreach.hpp>
-#define foreach_ BOOST_FOREACH
-
 // option includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>

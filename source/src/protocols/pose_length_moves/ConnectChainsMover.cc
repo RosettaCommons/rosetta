@@ -90,9 +90,9 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 			}
 		}
 	}
-	for ( set<std::string>::iterator iter=tmp_chains_set.begin(); iter!=tmp_chains_set.end(); iter++ ) {
-		individual_chains.push_back(*iter);
-		TR << "chains" << *iter << std::endl;
+	for (const auto & iter : tmp_chains_set) {
+		individual_chains.push_back(iter);
+		TR << "chains" << iter << std::endl;
 	}
 
 	std::sort(individual_chains.begin(),individual_chains.end(),chain_lt());

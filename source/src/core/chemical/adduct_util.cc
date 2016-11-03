@@ -33,9 +33,6 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/options/StringVectorOption.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.adduct_util" );
 
@@ -250,7 +247,7 @@ create_adduct_combinations(
 		//  std::cout << "Making an adduct" << std::endl;
 
 		auto add_iter = rsd.defined_adducts().begin() ;
-		BOOST_FOREACH ( bool make, add_mask ) {
+		for ( bool const make : add_mask ) {
 			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
 			++add_iter;
 		}

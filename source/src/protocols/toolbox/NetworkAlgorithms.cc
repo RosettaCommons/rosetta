@@ -71,8 +71,8 @@ ResidueNetwork::average_shortest_path_length() const
 	core::Real total_path_length = 0.0;
 
 	//iterate over all starting notes
-	for ( auto it = nodes_.begin(); it != nodes_.end(); ++it ) {
-		dijkstras ((*it)->resi);
+	for (const auto & it : nodes_) {
+		dijkstras (it->resi);
 
 		//add the paths from resi it to all other residues
 		for ( auto const & node : nodes_ ) {

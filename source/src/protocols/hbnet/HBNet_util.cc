@@ -67,13 +67,13 @@ print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bo
 {
 	std::stringstream ret_str;
     Size count(0);
-	for ( utility::vector1< HBondResStructCOP >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
+	for (const auto & residue : residues) {
         if ( count > 0 )
             ret_str << ",";
 		if ( chainid ) {
-			ret_str << (*res)->chainid << "_";
+			ret_str << residue->chainid << "_";
 		}
-		ret_str << (*res)->aa  << "_" << (*res)->resnum << ",";
+		ret_str << residue->aa  << "_" << residue->resnum << ",";
         count++;
 	}
 	if ( term_w_bb ) {
@@ -101,17 +101,17 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 	//        }
 	std::stringstream ret_str;
     Size count(0);
-	for ( utility::vector1< HBondResStructCOP >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
+	for (const auto & residue : residues) {
 		if ( count > 0 )
             ret_str << ",";
         if ( chainid ) {
-			ret_str << (*res)->chainid << "_";
+			ret_str << residue->chainid << "_";
 		}
-		ret_str << (*res)->aa << "_";
-		if ( use_pdb_numbering && ( (*res)->resnum <= total ) && pose.pdb_info() ) {
-			ret_str << pose.pdb_info()->number((*res)->resnum); //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
+		ret_str << residue->aa << "_";
+		if ( use_pdb_numbering && ( residue->resnum <= total ) && pose.pdb_info() ) {
+			ret_str << pose.pdb_info()->number(residue->resnum); //ASSUMING RESNUMS DON"T CHANGE...COULD BE TRICKY WITH WATER
 		} else {
-			ret_str << (*res)->resnum;
+			ret_str << residue->resnum;
 		}
         count++;
 	}
@@ -163,7 +163,7 @@ print_headers()
 utility::vector1< HBondResStructCOP >::const_iterator
 find_hbond_res_struct( utility::vector1< HBondResStructCOP > const & residues, Size resnum )
 {
-	utility::vector1< HBondResStructCOP >::const_iterator r = residues.begin();
+	auto r = residues.begin();
 	for ( ; r != residues.end(); ++r ) {
 		if ( resnum == (*r)->resnum ) {
 			return r;
@@ -198,7 +198,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 
 		//std::cout << "getting hbonds for residue " << res_i;
 		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(res_i, false) );
-		for ( utility::vector1<HBondCOP>::iterator ih = hbonds_for_res_i.begin(); ih != hbonds_for_res_i.end(); ++ih ) {
+		for (auto & ih : hbonds_for_res_i) {
 			//std::cout << ": arsd = " << (*ih)->acc_res() << "; drsd = " << (*ih)->don_res();
 			// NEED TO FIX; may need to uncomment
 			//if ( ((*ih)->acc_atm_is_protein_backbone() && (*ih)->acc_res() == res_i) || ((*ih)->don_hatm_is_protein_backbone() && (*ih)->don_res() == res_i) ) {
@@ -207,8 +207,8 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 			//   if ( (*ih)->energy() <= hb_e_cutoff && !( hbond_exists_in_vector( hbond_vec, *ih ) ) ) { //unweighted h-bond energy
 			//    hbond_vec.push_back( *ih );
 			//std::cout << "stored" << std::endl;
-			if ( !( hbond_exists_in_vector( hbond_vec, *ih )) ) { //unweighted h-bond energy
-				hbond_vec.push_back( *ih );
+			if ( !( hbond_exists_in_vector( hbond_vec, ih )) ) { //unweighted h-bond energy
+				hbond_vec.push_back( ih );
 			}
 		}
 	}
@@ -235,8 +235,8 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 bool
 hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP h2 )
 {
-	for ( utility::vector1<HBondCOP>::const_iterator h1 = hbond_vec.begin(); h1 != hbond_vec.end(); ++h1 ) {
-		if ( (*h1)->acc_res() == h2->acc_res() && (*h1)->don_res() == h2->don_res() && (*h1)->acc_atm() == h2->acc_atm() && (*h1)->don_hatm() == h2->don_hatm() ) {
+	for (const auto & h1 : hbond_vec) {
+		if ( h1->acc_res() == h2->acc_res() && h1->don_res() == h2->don_res() && h1->acc_atm() == h2->acc_atm() && h1->don_hatm() == h2->don_hatm() ) {
 			return true;
 		}
 	}
@@ -365,7 +365,7 @@ hbnet_symm_one_body_energies(
 				// place rotamer set at neighbor position
 				//RotamerSetOP sym_rotset(core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner( pose, sym_rsd, neighbor_id, one_rotamer_set ) );
 				core::pack::rotamer_set::RotamerSetOP sym_rotset = rsf.create_rotamer_set( *sym_rsd );
-				for ( core::pack::rotamer_set::Rotamers::const_iterator rot = one_rotamer_set->begin(), rot_end = one_rotamer_set->end(); rot != rot_end; ++rot ) {
+				for ( auto rot = one_rotamer_set->begin(), rot_end = one_rotamer_set->end(); rot != rot_end; ++rot ) {
 					core::conformation::Residue target_rsd( *sym_rsd );
 					target_rsd.orient_onto_residue( pose.residue( neighbor_id ) );
 					target_rsd.copy_residue_connections_from( pose.residue( neighbor_id ) );
@@ -395,8 +395,8 @@ network_contains_aa( char aa_one_letter, hbond_net_struct const & i )
 bool
 network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > const & residues )
 {
-	for ( utility::vector1< HBondResStructCOP >::const_iterator res = residues.begin(); res != residues.end(); ++res ) {
-		if ( (*res)->aa == aa_one_letter ) {
+	for (const auto & residue : residues) {
+		if ( residue->aa == aa_one_letter ) {
 			return true;
 		}
 	}

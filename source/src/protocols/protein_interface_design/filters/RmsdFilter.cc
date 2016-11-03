@@ -17,6 +17,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
@@ -517,11 +518,9 @@ core::Real res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, uti
 	return rmsd;
 }
 
-utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions ){
+utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const & positions ){
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
-
-	coords.clear();
-	BOOST_FOREACH ( core::Size const pos, positions ) {
+	for ( core::Size const pos : positions ) {
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 	}
 	return coords;

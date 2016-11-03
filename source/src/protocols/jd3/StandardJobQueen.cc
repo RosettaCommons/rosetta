@@ -1134,9 +1134,8 @@ StandardJobQueen::load_job_definition_file(
 
 	// look for the Common block, if there is one
 	Tag::tags_t const & subtags = job_definition_file_tags_->getTags();
-	for ( Tag::tags_t::const_iterator iter = subtags.begin(); iter != subtags.end(); ++iter ) {
-		TagCOP subtag = *iter;
-		if ( subtag->getName() == "Common" ) {
+	for (auto subtag : subtags) {
+			if ( subtag->getName() == "Common" ) {
 			common_block_tags_ = subtag;
 			return;
 		}

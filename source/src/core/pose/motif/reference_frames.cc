@@ -20,10 +20,6 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace pose {
 namespace motif {
@@ -52,11 +48,11 @@ AIDs get_AIDs(
 	utility::vector1<std::string> const & anames
 ){
 	AIDs aids;
-	BOOST_FOREACH ( std::string const& aname,anames ) {
-		if ( pose.residue(ir).has(aname) ) {
-			aids.push_back( AtomID(pose.residue(ir).atom_index(aname),ir) );
+	for ( std::string const & aname : anames ) {
+		if ( pose.residue_type(ir).has(aname) ) {
+			aids.push_back( AtomID(pose.residue_type(ir).atom_index(aname),ir) );
 		} else {
-			std::cout << "WARNING! get_sidechain_reference_frame_downstream_atoms: res "<<ir<<" "<< pose.residue(ir).name() << " has no atom named '" << aname<<"'!" << std::endl;
+			std::cout << "WARNING! get_sidechain_reference_frame_downstream_atoms: res "<<ir<<" "<< pose.residue_type(ir).name() << " has no atom named '" << aname<<"'!" << std::endl;
 			aids.push_back( core::id::BOGUS_ATOM_ID );
 			utility_exit_with_message("atom name mismatch somewhere!!!");
 		}

@@ -75,7 +75,6 @@
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
@@ -392,7 +391,7 @@ loops_from_string( std::string const & loop_str, core::pose::Pose const & pose )
 	// if cut is not set then it's taken to be 0. Residue numbering can follow the
 	// pdb numbering
 	LoopsOP loops_from_tag( new Loops() );
-	BOOST_FOREACH ( std::string const residue_pair, loops_vec ) {
+	for ( std::string const & residue_pair : loops_vec ) {
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 		if ( residues.size() != 2 && residues.size() != 3 ) {
 			utility_exit_with_message(

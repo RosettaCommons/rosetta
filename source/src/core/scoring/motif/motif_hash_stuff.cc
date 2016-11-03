@@ -595,7 +595,7 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	Real const motif_align_rms = align_motif_pose(pose,paln1,ir,paln2,jr,type());
 	core::id::AtomID_Mask const mask = get_motif_atom_mask(pose,type(),/*with_Hpol=*/true);
 	utility::vector1<Size> resnums(pose.size(),tag);
-	BOOST_FOREACH ( Xform const & x,xforms ) {
+	for ( Xform const & x : xforms ) {
 		xform_pose(pose,x);
 		//core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
 		out<<"MODEL"<<endl ;
@@ -834,7 +834,7 @@ bool read_motifs_binary(vector1<string> const & fnames, ResPairMotifs & motifs){
 }
 void load_motifs(vector1<string> const & fnames, ResPairMotifs & motifs, ResPairMotifsStringMap * map){
 	motifs.clear();
-	BOOST_FOREACH ( std::string const & fname,fnames ) {
+	for ( std::string const & fname : fnames ) {
 		ResPairMotifs raw_motifs,filt_motifs;
 		if ( !read_motifs_binary(fname,raw_motifs) ) utility_exit_with_message("error reading motif files");
 		TR << "read " << ((Real)raw_motifs.size())/1000000.0 << " million binary motifs from " << fname << endl;
@@ -877,14 +877,14 @@ typedef boost::unordered_set<ResPairMotif,MyHash,MyPred> MotifSet;
 void ResPairMotifs::filter_structurally_identical_motifs(){
 	utility_exit_with_message("not impl");
 	MotifSet motifset;
-	BOOST_FOREACH ( ResPairMotif const & rpm, *this ) {
+	for ( ResPairMotif const & rpm : *this ) {
 		ResPairMotif m(rpm);
 		if ( m.is_reversible() && m.resi1()>m.resi2() ) m.reverse_in_place();
 		motifset.insert(m);
 	}
 	clear();
 	reserve(motifset.size());
-	BOOST_FOREACH ( ResPairMotif const & rpm, motifset ) push_back(rpm);
+	for ( ResPairMotif const & rpm : motifset ) push_back(rpm);
 }
 void ResPairMotifs::filter_structurally_similar_motifs(Real /*cart_size*/, Real /*cart_resl*/, Real /*ang_resl*/){
 	utility_exit_with_message("not impl");
@@ -893,13 +893,13 @@ void ResPairMotifs::filter_structurally_similar_motifs(Real /*cart_size*/, Real 
 	//  if(iofst>0){ shift[1]=uniform(); shift[2]=uniform(); shift[3]=uniform(); shift[4]=uniform(); shift[5]=uniform(); shift[6]=0; }
 	//  MotifHash mh(cart_size + (iofst? cart_resl/2.0 : 0.0)  ,cart_resl,ang_resl);
 	//  ResPairMotifs all_keepers;
-	//  BOOST_FOREACH(ResPairMotif const & rpm, *this) mh.add_motif_shift(rpm,shift);
+	//  for (ResPairMotif const & rpm : *this) mh.add_motif_shift(rpm,shift);
 	//  for(MotifHash::KeySet::const_iterator i = mh.begin(); i != mh.end(); ++i){
 	//   ResPairMotifs this_bin,keepers;
 	//   mh.find_motifs(*i,this_bin);
-	//   BOOST_FOREACH(ResPairMotif const & m, this_bin){
+	//   for (ResPairMotif const & m : this_bin){
 	//    bool seenit = false;
-	//    BOOST_FOREACH(ResPairMotif & n, keepers){
+	//    for (ResPairMotif & n : keepers){
 	//     bool seenthis = ( m.aa1()==n.aa1() && m.aa2()==n.aa2() && m.ss1()==n.ss1() && m.ss2()==n.ss2() );
 	//     if( min(std::fabs(m.chi11()-n.chi11()),360.0-std::fabs(m.chi11()-n.chi11())) > ang_resl*1.5 ) seenthis = false;
 	//     if( min(std::fabs(m.chi21()-n.chi21()),360.0-std::fabs(m.chi21()-n.chi21())) > ang_resl*1.5 ) seenthis = false;
@@ -927,7 +927,7 @@ void ResPairMotifs::add_reverse_motifs(){
 	this->reserve(2*this->size());
 	ResPairMotifs rev;
 	rev.reserve(this->size());
-	BOOST_FOREACH ( ResPairMotif const & m,*this ) {
+	for ( ResPairMotif const & m : *this ) {
 		if ( m.type1()==m.type2() && !m.check_lig_code("frg") ) {
 			rev.push_back( m.reversed() );
 		}
@@ -984,7 +984,7 @@ std::string ResPairMotifMetaBinner::hash_to_labal(ResPairMotifMetaBinner::Key co
 ResPairMotifMetaBinner::Key
 ResPairMotifMetaBinner::bin0_of_real(Real val, Reals const & breaks) const {
 	Key k=0;
-	BOOST_FOREACH ( Real const & b, breaks ) {
+	for ( Real const & b : breaks ) {
 		if ( val < b ) break;
 		++k;
 	}
@@ -993,7 +993,7 @@ ResPairMotifMetaBinner::bin0_of_real(Real val, Reals const & breaks) const {
 std::ostream & operator<<(std::ostream & out, XformScoreMap const & x){
 	out << "      LAB XformScore  hcsize  hcresl  haresl   Npossible     tot_sc   num_bins  scPb    qt1   qt2   qt3   qt4   qt5   qt6   qt7   qt8   qt9  qt10  qt11  qt12  qt13  qt14  qt15  qt16  qt17  qt18  qt19  qt20" << endl;
 	ResPairMotifMetaBinner binner;
-	BOOST_FOREACH ( XformScoreMap::value_type const & p,x ) {
+	for ( XformScoreMap::value_type const & p : x ) {
 		out << RJ(9,binner.hash_to_labal(p.first)) << " " << *p.second << endl;
 	}
 	return out;
@@ -1049,21 +1049,21 @@ void MotifHits::dump_motifs_pdb( string const & fn, Size & atomno, Xforms const 
 	out.close();
 }
 void MotifHits::dump_motifs_pdb( ostream & out, int & count, Size & atomno, Xforms const & xforms ) const {
-	// BOOST_FOREACH(MotifHit const & hit,*this){
+	// for (MotifHit const & hit : *this){
 	//  hit.motif.dump_aligned_motif(out,*hit.pose1,hit.residue1,*hit.pose2,hit.residue2,++count);
 	// }
 	// return;
 	typedef boost::unordered_map<uint64_t,MotifHits> HitResMap;
 	HitResMap byres;
-	BOOST_FOREACH ( MotifHit const & hit,*this ) {
+	for ( MotifHit const & hit : *this ) {
 		byres[((uint64_t)(hit.residue1))    ].push_back_raw(hit);
 		byres[((uint64_t)(hit.residue2))<<32].push_back_raw(hit);
 	}
 	boost::unordered_set<int> dumpedit;
-	BOOST_FOREACH ( HitResMap::value_type & v, byres ) {
+	for ( HitResMap::value_type & v : byres ) {
 		v.second.sort_by_rms_and_energy();
 		int rescount=0;
-		BOOST_FOREACH ( MotifHit const & hit,v.second ) {
+		for ( MotifHit const & hit : v.second ) {
 			if ( ++rescount > option[mh::dump::max_per_res]() ) if ( hit.motif.type()!=BB_PH && hit.motif.type()!=BB_PO ) continue;
 			if ( hit.rms    > option[mh::dump::max_rms    ]() ) continue;
 			if ( dumpedit.find(hit.index)!=dumpedit.end() ) continue;
@@ -1129,7 +1129,7 @@ int MotifHits::stat_motifs( MotifHitStats & stats) const {
 	map<int,Real> resscores;
 	////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	MotifHits const & hits(*this);
-	BOOST_FOREACH ( MotifHit const & hit,hits ) {
+	for ( MotifHit const & hit : hits ) {
 		Size ir = hit.residue1;
 		Size jr = hit.residue2;
 		Pose const & pose1(hit.pose1());
@@ -1203,7 +1203,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 	if ( core::pose::symmetry::is_symmetric(pose2) ) nres2 = core::pose::symmetry::symmetry_info(pose2)->num_independent_residues();
 	bool sameseq = pose1.annotated_sequence()==pose2.annotated_sequence();
 	vector1<std::map<char,float> > resdat1(nres1),resdat2(nres2);
-	BOOST_FOREACH ( MotifHit const & hit,hits ) {
+	for ( MotifHit const & hit : hits ) {
 		PoseCOP thispose1op((hit.pose1ptr()));
 		PoseCOP thispose2op((hit.pose2ptr()));
 		Pose const &  thispose1  ((hit.pose1()));
@@ -1243,7 +1243,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 	for ( Size ir = 1; ir <= nres1; ++ir ) {
 		char const chain1 = utility::UPPERCASE_ALPHANUMERICS[(pose1.chain(ir)-1)%36];
 		string aas;
-		BOOST_FOREACH ( PCF const & p,resdat1[ir] ) {
+		for ( PCF const & p : resdat1[ir] ) {
 			if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {
 				aas += string_of(p.first);
 			}
@@ -1258,7 +1258,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 		for ( Size jr = 1; jr <= nres2; ++jr ) {
 			char const chain2 = utility::UPPERCASE_ALPHANUMERICS[(pose1.conformation().num_chains()+pose2.chain(jr)-1)%36];
 			string aas;
-			BOOST_FOREACH ( PCF const & p,resdat2[jr] ) {
+			for ( PCF const & p : resdat2[jr] ) {
 				if ( p.second >= option[mh::dump::resfile_min_tot_score]() ) {
 					aas += string_of(p.first);
 				}
@@ -1288,8 +1288,8 @@ ostream & operator<<(ostream & out, MotifHit  const & h){
 ostream & operator<<(ostream & out, MotifHits const & h){
 	h.compute_metrics();
 	out << "MotifHits" << " score: " << h.total_score  << ", num: " << h.size() << ", rescover: " << h.rescover << ", paircover: " << h.paircover;
-	for ( MotifHits::const_iterator i = h.begin(); i != h.end(); ++i ) {
-		out << endl << "    HIT " << *i;
+	for ( auto const &  hit : h )  {
+		out << endl << "    HIT " << hit;
 	}
 	return out;
 }
@@ -1350,8 +1350,8 @@ MotifHash::MotifHash( ResPairMotifs const & motifs ):
 	),
 	type_(RPM_Type_NONE)
 {
-	for ( ResPairMotifs::const_iterator i = motifs.begin(); i != motifs.end(); ++i ) {
-		add_motif(*i);
+	for ( auto const & motif : motifs ) {
+		add_motif( motif );
 	}
 	sanity_check();
 }
@@ -1516,13 +1516,13 @@ ostream & operator << (ostream & out, MotifHash const & x){
 
 void ResPairMotifQuery::init( Pose const & pose1_in, Pose const & pose2_in){
 	core::pose::PoseOP pose1op( new Pose(pose1_in) );
-	bool dssp1=true; BOOST_FOREACH ( char ss,pose1_in.secstruct() ) dssp1 &= ss=='L'; // dssp iff all L
+	bool dssp1=true; for ( char const ss : pose1_in.secstruct() ) dssp1 &= ss=='L'; // dssp iff all L
 	if ( dssp1 ) core::scoring::dssp::Dssp(*pose1op).insert_ss_into_pose(*pose1op,false);
 	pose1_ = pose1op;
 	pose2_ = NULL;
 	if ( &pose1_in != &pose2_in ) {
 		core::pose::PoseOP pose2op( new Pose(pose2_in) );
-		bool dssp2=true; BOOST_FOREACH ( char ss,pose2_in.secstruct() ) dssp2 &= ss=='L'; // dssp iff all L
+		bool dssp2=true; for ( char const ss : pose2_in.secstruct() ) dssp2 &= ss=='L'; // dssp iff all L
 		if ( dssp2 ) core::scoring::dssp::Dssp(*pose2op).insert_ss_into_pose(*pose2op,false);
 		pose2_ = pose2op;
 	}
@@ -1644,11 +1644,11 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 			if ( sym_dof_names(pose1).size() != 2 ) {
 				cout << "WARNING: more than two symdofname, you better know what you're doing..." << endl;
 			}
-			// BOOST_FOREACH(std::string const & s,sym_dof_names(pose1)) cout << s << endl;
+			// for(std::string const & s : sym_dof_names(pose1)) cout << s << endl;
 			intra_subs1 = get_jump_name_to_subunits(pose1,sym_dof_names(pose1)[1]);
 			intra_subs2 = get_jump_name_to_subunits(pose1,sym_dof_names(pose1)[2]);
-			// BOOST_FOREACH(Size i,intra_subs1) cout << "intra_subs1 " << i << endl;
-			// BOOST_FOREACH(Size i,intra_subs2) cout << "intra_subs2 " << i << endl;
+			// for(Size const i : intra_subs1) cout << "intra_subs1 " << i << endl;
+			// for(Size const i : intra_subs2) cout << "intra_subs2 " << i << endl;
 			// cout << opt.interface_only() << endl;
 		}
 	}
@@ -1810,7 +1810,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 	// here do intra if one in pair is at interface
 
 	// if(newhits.size()==0) TR << "no hits, maybe you want -mh:pack:interface_only false?" << endl;
-	BOOST_FOREACH ( MotifHit const & h,newhits ) hits.push_back(h);
+	for ( MotifHit const & h : newhits ) hits.push_back(h);
 	return newhits.size();
 }
 
@@ -1869,7 +1869,7 @@ void XformScore::clear() {
 Size XformScore::num_bins() const { return scores_.size(); }
 XformScore::Score XformScore::tot_score() const {
 	Score tot=0;
-	BOOST_FOREACH ( ScoreMap::value_type const & v, scores_ ) {
+	for ( ScoreMap::value_type const & v: scores_ ) {
 		tot += v.second;
 	}
 	return tot;
@@ -1881,7 +1881,7 @@ Size XformScore::num_possible_bins() const {
 
 void XformScore::prune_small_bins(XformScore::Score thresh){
 	ScoreMap n;
-	BOOST_FOREACH ( ScoreMap::value_type const & v, scores_ ) if ( v.second>=thresh ) n.insert(v);
+	for ( ScoreMap::value_type const & v : scores_ ) if ( v.second>=thresh ) n.insert(v);
 	scores_ = n;
 }
 void XformScore::print_quantiles(ostream & out, int num) const {
@@ -1930,13 +1930,13 @@ void XformScore::max_score(Key const & key, Score const & count){
 }
 
 void XformScore::aggregate_add(XformScore const & other){
-	BOOST_FOREACH ( ScoreMap::value_type const & v,other.scores_ ) {
+	for ( ScoreMap::value_type const & v : other.scores_ ) {
 		add_score(v.first,v.second);
 	}
 }
 
 void XformScore::aggregate_max(XformScore const & other){
-	BOOST_FOREACH ( ScoreMap::value_type const & v,other.scores_ ) {
+	for ( ScoreMap::value_type const & v : other.scores_ ) {
 		max_score(v.first,v.second);
 	}
 }
@@ -2093,7 +2093,7 @@ ostream & operator<<(ostream & out, XformScore const & xh){
 	return out;
 }
 ostream & operator<<(ostream & out, XformScoreSringMap const & x){
-	BOOST_FOREACH ( XformScoreSringMap::value_type const & p,x ) {
+	for ( XformScoreSringMap::value_type const & p : x ) {
 		out << p.first << " " << p.second << endl;
 	}
 	return out;
@@ -2141,7 +2141,7 @@ void preload_motif_data(MotifHashManager & mman){
 		MotifHashManager* mman = MotifHashManager::get_instance();
 		mman->motif_hash_BB_PH_ =  MotifHashOP(new MotifHash(motifs));
 		// /*kill me!*/mman->motif_hash_BB_PH_->hasher().tree_init(5);
-		BOOST_FOREACH ( string const & fn,option[basic::options::OptionKeys::mh::path::motifs_BB_PH]() ) cout << "  ...loaded " << fn << endl;
+		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_PH]() ) cout << "  ...loaded " << fn << endl;
 	}
 	if ( option[basic::options::OptionKeys::mh::path::motifs_BB_PO]().size() > 0 ) {
 		ResPairMotifs motifs;
@@ -2149,7 +2149,7 @@ void preload_motif_data(MotifHashManager & mman){
 		MotifHashManager* mman = MotifHashManager::get_instance();
 		mman->motif_hash_BB_PO_ = MotifHashOP(new MotifHash(motifs));
 		// /*kill me!*/mman->motif_hash_BB_PO_->hasher().tree_init(5);
-		BOOST_FOREACH ( string const & fn,option[basic::options::OptionKeys::mh::path::motifs_BB_PO]() ) cout << "  ...loaded " << fn << endl;
+		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_PO]() ) cout << "  ...loaded " << fn << endl;
 	}
 	if ( option[basic::options::OptionKeys::mh::path::motifs_BB_BB]().size() > 0 ) {
 		ResPairMotifs motifs;
@@ -2157,14 +2157,14 @@ void preload_motif_data(MotifHashManager & mman){
 		MotifHashManager* mman = MotifHashManager::get_instance();
 		mman->motif_hash_BB_BB_ = MotifHashOP(new MotifHash(motifs));
 		// /*kill me!*/mman->motif_hash_BB_BB_->hasher().tree_init(5);
-		BOOST_FOREACH ( string const & fn,option[basic::options::OptionKeys::mh::path::motifs_BB_BB]() ) cout << "  ...loaded " << fn << endl;
+		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_BB_BB]() ) cout << "  ...loaded " << fn << endl;
 	}
 	if ( option[basic::options::OptionKeys::mh::path::motifs]().size() > 0 ) {
 		ResPairMotifs motifs;
 		load_motifs( option[basic::options::OptionKeys::mh::path::motifs](), motifs, &tmp_map );
 		// MotifHashManager* mman = MotifHashManager::get_instance();
 		cout << "WARNING: using -motifs is depricated" << endl;
-		BOOST_FOREACH ( string const & fn,option[basic::options::OptionKeys::mh::path::motifs]() ) cout << "  ...loaded " << fn << endl;
+		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs]() ) cout << "  ...loaded " << fn << endl;
 	}
 	if ( option[basic::options::OptionKeys::mh::path::motifs_SC_BB]().size() > 0 ) {
 		ResPairMotifs motifs;
@@ -2172,9 +2172,9 @@ void preload_motif_data(MotifHashManager & mman){
 		MotifHashManager* mman = MotifHashManager::get_instance();
 		mman->motif_hash_SC_BB_ = MotifHashOP(new MotifHash(motifs));
 		// /*kill me!*/mman->motif_hash_SC_BB_->hasher().tree_init(5);
-		BOOST_FOREACH ( string const & fn,option[basic::options::OptionKeys::mh::path::motifs_SC_BB]() ) cout << "  ...loaded " << fn << endl;
+		for ( string const & fn : option[basic::options::OptionKeys::mh::path::motifs_SC_BB]() ) cout << "  ...loaded " << fn << endl;
 	}
-	BOOST_FOREACH ( ResPairMotifsStringMap::value_type const & v, tmp_map ) {
+	for ( ResPairMotifsStringMap::value_type const & v : tmp_map ) {
 		string tag = utility::file_basename(v.first);
 		if ( tag.size()>=11 && tag.substr(tag.size()-11)==".rpm.bin.gz" ) tag = tag.substr(0,tag.size()-11);
 		TR << "adding to motifs_by_fname " << tag << endl;
@@ -2218,10 +2218,10 @@ void MotifHashManager::init(){
 		const char * SS1 = option[mh::score::use_ss1]()? "EHL" : " ";
 		const char * SS2 = option[mh::score::use_ss2]()? "EHL" : " ";
 		bool allnull = true;
-		BOOST_FOREACH ( char const & ss1,SS1 ) {
-			BOOST_FOREACH ( char const & ss2,SS2 ) {
-				BOOST_FOREACH ( char const & aa1,AA1 ) {
-					BOOST_FOREACH ( char const & aa2,AA2 ) {
+		BOOST_FOREACH ( char const ss1, SS1 ) {
+			BOOST_FOREACH ( char const ss2, SS2 ) {
+				BOOST_FOREACH ( char const aa1, AA1 ) {
+					BOOST_FOREACH ( char const aa2, AA2 ) {
 						Key k = key_mask_BB_BB_ & ((Key)ss1 | ((Key)ss2<<8) | ((Key)aa1<<16) | ((Key)aa2<<24));
 						xform_scores_BB_BB_[k] = NULL;
 						// cout << ss1 << " " << ss2 << " " << aa1 << " " << aa2 << " " << k << endl;
@@ -2229,7 +2229,7 @@ void MotifHashManager::init(){
 						string ss2s = ss2!=' ' ?     string_of(ss2) : "";
 						string aa1s = aa1!=' ' ?     string_of(aa1) : "";
 						string aa2s = aa2!=' ' ?     string_of(aa2) : "";
-						BOOST_FOREACH ( string const & fname_base, option[mh::path::scores_BB_BB]() ) {
+						for ( string const & fname_base : option[mh::path::scores_BB_BB]() ) {
 							string fname = fname_base + aa1s+aa2s+ss1s+ss2s+".xh.bin.gz";
 							Real wt = 1.0;
 							// if( (ss1=='H' && ss2=='E') || (ss1=='E' && ss2=='H') ){ wt =  5.5; /*cout << "FIXME SS wt" << endl;*/ }
@@ -2244,13 +2244,13 @@ void MotifHashManager::init(){
 			}
 		}
 		if ( allnull ) {
-			BOOST_FOREACH ( string s, option[mh::path::scores_BB_BB]() ) cout << "mh:path:scores_BB_BB " << s << endl;
+			for ( string s : option[mh::path::scores_BB_BB]() ) cout << "mh:path:scores_BB_BB " << s << endl;
 			utility_exit_with_message("no score files for mh::path::scores_BB_BB");
 		}
 	}
 	if ( option[mh::path::scores_frags].user() ) {
 		TR << "reading xform_score_data_frags" << endl;
-		BOOST_FOREACH ( string const & fname, option[mh::path::scores_frags]() ) {
+		for ( string const & fname : option[mh::path::scores_frags]() ) {
 			fill_xform_score_from_file(xform_score_frags_,fname,1.0);
 		}
 		// key_mask_frags_ = 0;
@@ -2259,14 +2259,14 @@ void MotifHashManager::init(){
 		// const char * SS1 = option[mh::score::use_ss1]()? "EHL" : " ";
 		// const char * SS2 = option[mh::score::use_ss2]()? "EHL" : " ";
 		// bool allnull = true;
-		// BOOST_FOREACH(char const & ss1,SS1){
-		// BOOST_FOREACH(char const & ss2,SS2){
+		// for(char const & ss1,SS1){
+		// for(char const & ss2,SS2){
 		//  Key k = key_mask_frags_ & ((Key)ss1 | ((Key)ss2<<8));
 		//  xform_scores_frags_[k] = new XformScore;
 		//  // cout << ss1 << " " << ss2 << " " << aa1 << " " << aa2 << " " << k << endl;
 		//  string ss1s = ss1!=' ' ? "_"+string_of(ss1) : "";
 		//  string ss2s = ss2!=' ' ?     string_of(ss2) : "";
-		//  BOOST_FOREACH( string const & fname_base, option[mh::path::scores_frags]() ){
+		//  for( string const & fname_base : option[mh::path::scores_frags]() ){
 		//   string fname = fname_base + ss1s+ss2s+".xh.bin.gz";
 		//   fill_xform_score_from_file(xform_scores_frags_[k],fname,1.0);
 		//   // if(xform_scores_frags_[k]) cout << "read " << fname << " " << k << endl;
@@ -2280,18 +2280,18 @@ void MotifHashManager::init(){
 		TR << "reading xform_score_data_SC_SC" << endl;
 		const char * AA = "ACDEFGHIKLMNPQRSTVWY";
 		bool allnull = true;
-		BOOST_FOREACH ( char const & aa1,AA ) {
-			BOOST_FOREACH ( char const & aa2,AA ) {
+		BOOST_FOREACH ( char const aa1, AA ) {
+			BOOST_FOREACH ( char const aa2, AA ) {
 				Key const k = (((Key)aa1<<0) | ((Key)aa2<<8));
 				xform_scores_SC_SC_[k] = NULL;
-				BOOST_FOREACH ( string const & fname,option[mh::path::scores_SC_SC]() ) {
+				for ( string const & fname : option[mh::path::scores_SC_SC]() ) {
 					fill_xform_score_from_file(xform_scores_SC_SC_[k],fname+"_"+aa1+aa2+".xh.bin.gz",1.0);
 					allnull &= (NULL==xform_scores_SC_SC_[k]);
 				}
 			}
 		}
 		if ( allnull ) {
-			BOOST_FOREACH ( string s, option[mh::path::scores_SC_SC]() ) cout << "mh:path:scores_SC_SC " << s << endl;
+			for ( string s : option[mh::path::scores_SC_SC]() ) cout << "mh:path:scores_SC_SC " << s << endl;
 			utility_exit_with_message("no score files for mh::path::scores_SC_SC");
 		}
 	}
@@ -2299,45 +2299,45 @@ void MotifHashManager::init(){
 		TR << "reading xform_score_data_SC_BB" << endl;
 		const char * AA = "ACDEFGHIKLMNPQRSTVWY";
 		bool allnull = true;
-		BOOST_FOREACH ( char const & aa,AA ) {
+		BOOST_FOREACH ( char const aa, AA ) {
 			xform_scores_SC_BB_[aa] = NULL;
-			BOOST_FOREACH ( string const & fname,option[mh::path::scores_SC_BB]() ) {
+			for ( string const & fname :option[mh::path::scores_SC_BB]() ) {
 				fill_xform_score_from_file(xform_scores_SC_BB_[aa],fname+"_"+aa+".xh.bin.gz",1.0);
 				allnull &= (NULL==xform_scores_SC_BB_[aa]);
 			}
 		}
 		if ( allnull ) {
-			BOOST_FOREACH ( string s, option[mh::path::scores_SC_BB]() ) cout << "mh:path:scores_SC_BB " << s << endl;
+			for ( string s : option[mh::path::scores_SC_BB]() ) cout << "mh:path:scores_SC_BB " << s << endl;
 			utility_exit_with_message("no score files for mh::path::scores_SC_BB");
 		}
 	}
 	if ( option[mh::path::scores_BB_PH].user() ) {
 		TR << "reading xform_score_data_BB_PH" << endl;
 		xform_score_BB_PH_ = NULL;
-		BOOST_FOREACH ( string const & fname,option[mh::path::scores_BB_PH]() ) {
+		for ( string const & fname : option[mh::path::scores_BB_PH]() ) {
 			fill_xform_score_from_file(xform_score_BB_PH_,fname,1.0);
 		}
 	}
 	if ( option[mh::path::scores_BB_PO].user() ) {
 		TR << "reading xform_score_data_BB_PO" << endl;
 		xform_score_BB_PO_ = NULL;
-		BOOST_FOREACH ( string const & fname,option[mh::path::scores_BB_PO]() ) {
+		for ( string const & fname : option[mh::path::scores_BB_PO]() ) {
 			fill_xform_score_from_file(xform_score_BB_PO_,fname,1.0);
 		}
 	}
 	if ( option[mh::path::scores_PH_PO].user() ) {
 		TR << "reading xform_score_data_PH_PO" << endl;
 		xform_score_PH_PO_ = NULL;
-		BOOST_FOREACH ( string const & fname,option[mh::path::scores_PH_PO]() ) {
+		for ( string const & fname : option[mh::path::scores_PH_PO]() ) {
 			fill_xform_score_from_file(xform_score_PH_PO_,fname);
 		}
 	}
-	BOOST_FOREACH ( std::string const & s,option[mh::path::motifs      ]() ) add_motif_set_name(utility::file_basename(s));
-	BOOST_FOREACH ( std::string const & s,option[mh::path::motifs_BB_BB]() ) add_motif_set_name(utility::file_basename(s));
-	BOOST_FOREACH ( std::string const & s,option[mh::path::motifs_SC_BB]() ) add_motif_set_name(utility::file_basename(s));
-	BOOST_FOREACH ( std::string const & s,option[mh::path::motifs_BB_PH]() ) add_motif_set_name(utility::file_basename(s));
-	BOOST_FOREACH ( std::string const & s,option[mh::path::motifs_BB_PO]() ) add_motif_set_name(utility::file_basename(s));
-	// BOOST_FOREACH(std::string const & s,motif_set_names_){
+	for ( std::string const & s : option[mh::path::motifs      ]() ) add_motif_set_name(utility::file_basename(s));
+	for ( std::string const & s : option[mh::path::motifs_BB_BB]() ) add_motif_set_name(utility::file_basename(s));
+	for ( std::string const & s : option[mh::path::motifs_SC_BB]() ) add_motif_set_name(utility::file_basename(s));
+	for ( std::string const & s : option[mh::path::motifs_BB_PH]() ) add_motif_set_name(utility::file_basename(s));
+	for ( std::string const & s : option[mh::path::motifs_BB_PO]() ) add_motif_set_name(utility::file_basename(s));
+	// for(std::string const & s : motif_set_names_){
 	//  string key(utility::file_basename(s));
 	//  if(key.size()>=11 && key.substr(key.size()-11)==".rpm.bin.gz") key = key.substr(0,key.size()-11);
 	//  add_motif_set_name(key);
@@ -2371,8 +2371,8 @@ void MotifHashManager::add_motif_set_name(std::string const & motifset){
 
 MotifHashManager::~MotifHashManager(){
 	/* transitioned from naked pointers to OP for Luki's code transition. This code should be automatically deleted
-	BOOST_FOREACH(XformScoreMap::value_type & v,xform_scores_BB_BB_) delete v.second;
-	BOOST_FOREACH(XformScoreMap::value_type & v,xform_scores_SC_BB_) delete v.second;
+	for(XformScoreMap::value_type & v : xform_scores_BB_BB_) delete v.second;
+	for(XformScoreMap::value_type & v : xform_scores_SC_BB_) delete v.second;
 	if(motif_hash_SC_BB_) delete motif_hash_SC_BB_;
 	if(motif_hash_BB_BB_) delete motif_hash_BB_BB_;
 	if(motif_hash_BB_PH_) delete motif_hash_BB_PH_;
@@ -2533,7 +2533,7 @@ int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifH
 	}
 	MotifHits newhits;
 	int count=0;
-	BOOST_FOREACH ( std::string const & mset, motif_set_names_/*option[mh::path::motifs]()*/ ) {
+	for ( std::string const & mset : motif_set_names_/*option[mh::path::motifs]()*/ ) {
 		TR << "check file " << mset << endl;
 		MotifHashCOP mh = MotifHashManager::get_instance()->get_motif_hash_by_fname(mset);
 		int n = mh->get_matching_motifs(opt,hits,newhits);
@@ -2575,7 +2575,7 @@ int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifH
 //  ):
 //  motifs_(motifs)
 //  {
-//  BOOST_FOREACH(MotifHit const & h, motifs_){
+//  for(MotifHit const & h : motifs_){
 //   Pose *pose = new Pose;
 //   h.motif.fill_pose_with_motif(*pose);
 //   align_motif_pose_super(*pose,refpose,h.residue1,refpose,h.residue2);
@@ -2594,10 +2594,10 @@ int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifH
 //  utility::graph::GraphCOP packer_neighbor_graph,
 //  core::pack::rotamer_set::RotamerSet & rotamer_set
 //  ){
-//  BOOST_FOREACH(PoseCOP pp, res1_poses_[rotamer_set.resid()]){
+//  for(PoseCOP pp : res1_poses_[rotamer_set.resid()]){
 //   rotamer_set.add_rotamer(pp->residue(1));
 //  }
-//  BOOST_FOREACH(PoseCOP pp, res2_poses_[rotamer_set.resid()]){
+//  for(PoseCOP pp : res2_poses_[rotamer_set.resid()]){
 //   rotamer_set.add_rotamer(pp->residue(2));
 //  }
 //  }
@@ -2608,13 +2608,13 @@ int MotifHashManager::get_matching_motifs( ResPairMotifQuery const & opt, MotifH
 //  Size ano = 0;
 //  Size nres = res1_poses_.size();
 //  for(Size ir = 1; ir <= nres; ++ir){
-//   BOOST_FOREACH(PoseCOP pose, res1_poses_[ir]){
+//   for(PoseCOP pose : res1_poses_[ir]){
 //    out << "MODEL" << endl;
 //    core::io::pdb::dump_pdb_residue(pose->residue(1),ano,out);
 //    core::io::pdb::dump_pdb_residue(pose->residue(2),ano,out);
 //    out << "ENDMDL" << endl;
 //   }
-//   BOOST_FOREACH(PoseCOP pose, res2_poses_[ir]){
+//   for(PoseCOP pose : res2_poses_[ir]){
 //    out << "MODEL" << endl;
 //    core::io::pdb::dump_pdb_residue(pose->residue(1),ano,out);
 //    core::io::pdb::dump_pdb_residue(pose->residue(2),ano,out);

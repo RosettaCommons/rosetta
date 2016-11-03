@@ -75,9 +75,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -192,7 +189,7 @@ void ResidueTypeSet::init(
 			}
 		}
 
-		BOOST_FOREACH ( std::string filename, extra_res_param_files ) {
+		for ( std::string const & filename : extra_res_param_files ) {
 			ResidueTypeOP rsd_type( read_topology_file(
 				filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 			base_residue_types_.push_back( rsd_type );

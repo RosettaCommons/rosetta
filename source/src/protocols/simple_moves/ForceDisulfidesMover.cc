@@ -15,7 +15,6 @@
 // unit headers
 #include <protocols/simple_moves/ForceDisulfidesMover.hh>
 #include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
-#include <boost/foreach.hpp>
 
 // type headers
 #include <core/types.hh>
@@ -130,7 +129,7 @@ ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );
 	TR<<"Setting fix disulfides on residues: ";
-	BOOST_FOREACH ( std::string const residue_pair, residue_pairs ) {
+	for ( std::string const & residue_pair : residue_pairs ) {
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ));
 		runtime_assert( residues.size() == 2);
 		core::Size const res1( core::pose::parse_resnum( residues[ 1 ], pose ) );

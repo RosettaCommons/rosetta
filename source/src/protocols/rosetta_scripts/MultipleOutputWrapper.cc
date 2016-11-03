@@ -42,7 +42,6 @@
 #include <utility/vector1.hh>
 
 // Boost headers
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <iomanip>
@@ -202,7 +201,7 @@ void MultipleOutputWrapper::parse_my_tag(
 	try {
 
 		// Children of tag are movers
-		BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+		for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
 			// Try instantiating first mover from tag to test parsing
 			if ( curr_tag->getName() == "ROSETTASCRIPTS" ) {
 				// Treat subtag as a ROSETTASCRIPTS protocol

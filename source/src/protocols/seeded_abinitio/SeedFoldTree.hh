@@ -50,7 +50,7 @@ public:
 	utility::vector1 < core::Size > get_cutpoints();
 	core::Size best_by_ala_scan( core::Size start, core::Size end, core::pose::PoseOP & ts_pose );
 
-	std::set< core::Size > get_folding_verteces();
+	std::set< core::Size > get_folding_vertices();
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
@@ -109,7 +109,7 @@ private:
 	core::pose::PoseOP target_chain_;
 	core::pose::PoseOP seeds_only_;
 	core::pose::PoseOP only_seeds_chain_;
-	std::set< core::Size > folding_verteces_;
+	std::set< core::Size > folding_vertices_;
 };
 }//end seeded_abinitio
 }//end protocols

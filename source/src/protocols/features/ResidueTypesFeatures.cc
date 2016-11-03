@@ -31,9 +31,6 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 // C++ Headers
 #include <set>
 #include <sstream>
@@ -102,7 +99,7 @@ ResidueTypesFeatures::report_features(
 		res_types.insert(&pose.residue_type(i));
 	}
 
-	BOOST_FOREACH ( ResidueType const * res_type, res_types ) {
+	for ( ResidueType const * res_type : res_types ) {
 		string const & residue_type_set_name(res_type->residue_type_set()->name());
 
 		// Is this residue type already in the database?

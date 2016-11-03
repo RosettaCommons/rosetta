@@ -268,8 +268,8 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		jump_nums_.clear();
 		std::string str = tag->getOption< std::string >( "jump", "" );
 		utility::vector1<std::string> const jumps( utility::string_split( str , ',' ) );
-		for ( utility::vector1<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
-			jump_nums_.push_back(utility::string2int(*it));
+		for (const auto & jump : jumps) {
+			jump_nums_.push_back(utility::string2int(jump));
 		}
 	}
 }// end parse_my_tag
@@ -302,15 +302,15 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 			}
 		}
 	} else {
-		for ( utility::vector1<Size>::iterator jit = jump_nums_.begin(); jit != jump_nums_.end(); ++jit ) {
-			if ( pose.num_jump() < *jit ) {
+		for (unsigned long & jump_num : jump_nums_) {
+			if ( pose.num_jump() < jump_num ) {
 				if ( TR.visible() ) {
 					TR.flush();
-					TR << " You have specied jump number '" << *jit << "', ";
+					TR << " You have specied jump number '" << jump_num << "', ";
 					TR << " however the pose only has '" << pose.num_jump() << "' ";
 					TR << " jumps." << endl;
 				}
-				runtime_assert( pose.num_jump() < *jit );
+				runtime_assert( pose.num_jump() < jump_num );
 			}
 		}
 	}
@@ -343,12 +343,12 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 
 	if ( no_init_taskfactory ) {
 		if ( get_start_res_vec().empty() ) {
-			for ( utility::vector1<Size>::iterator jit = jump_nums_.begin(); jit != jump_nums_.end(); ++jit ) {
-				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( *jit ) );
+			for (unsigned long & jump_num : jump_nums_) {
+				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
 				//interf->calculate( *ala_pose_ ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
-				if ( TR.visible() ) TR << " Storing interface residues for interface " << *jit << ":" << std::endl;
+				if ( TR.visible() ) TR << " Storing interface residues for interface " << jump_num << ":" << std::endl;
 				for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 					if ( !(pose.residue(resnum).is_protein()) ) {
 						continue;
@@ -428,8 +428,8 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 		//task_factory_ = new TaskFactory;
 		protocols::toolbox::task_operations::DesignAroundOperationOP desaround = protocols::toolbox::task_operations::DesignAroundOperationOP( new protocols::toolbox::task_operations::DesignAroundOperation() );
 		std::set< core::Size > temp_start_vec( get_start_res_vec() );
-		for ( std::set< core::Size >::const_iterator it = temp_start_vec.begin(); it != temp_start_vec.end(); ++it ) {
-			desaround->include_residue(*it);
+		for (unsigned long it : temp_start_vec) {
+			desaround->include_residue(it);
 		}
 		desaround->repack_shell(12.0);
 		desaround->design_shell(8.0);
@@ -439,8 +439,8 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 	} else {
 		set_task( create_ptask(pose) ); //temp task
 		if ( get_start_res_vec().empty() ) {
-			for ( utility::vector1<Size>::iterator jit = jump_nums_.begin(); jit != jump_nums_.end(); ++jit ) {
-				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( *jit ) );
+			for (unsigned long & jump_num : jump_nums_) {
+				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
 				//interf->calculate( *ala_pose_ ); //within 8 angstroms of Ala nbr residue
@@ -694,14 +694,14 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 {
 	Size num_helices(0);
 	utility::vector1< bool > helix_has_hbond_residue( helix_boundaries_.size(), false );
-	for ( utility::vector1< HBondResStructCOP >::const_iterator r = residues.begin(); r != residues.end(); ++r ) {
-		Size helix_id( get_helix_id( (*r)->resnum ) ); //returns 0 if residues is not part of a helix
+	for (const auto & residue : residues) {
+		Size helix_id( get_helix_id( residue->resnum ) ); //returns 0 if residues is not part of a helix
 		if ( helix_id > 0 ) {
 			helix_has_hbond_residue[ helix_id ] = true;
 		}
 	}
-	for ( utility::vector1< bool >::iterator hel = helix_has_hbond_residue.begin(); hel != helix_has_hbond_residue.end(); ++hel ) {
-		if ( *hel ) {
+	for (auto && hel : helix_has_hbond_residue) {
+		if ( hel ) {
 			num_helices++;
 		}
 	}
@@ -716,17 +716,17 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 	//numeric::xyzVector<core::Real> const & first_begin_coordinates = (*netit)->rotlist.front()->atom("CA").xyz();
 	//numeric::xyzVector<core::Real> const & first_end_coordinates = (*netit)->rotlist.back()->atom("CA").xyz();
 	Size combo_count(1);
-	std::vector< HBondNetStructOP >::const_iterator next_netit(netit);
+	auto next_netit(netit);
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
     { //number of combinations of multiple networks to try (default = 1)
         bool compatible( true );
-        for ( auto net_id = net_ids.begin(); net_id != net_ids.end(); ++ net_id ){
-            runtime_assert( get_network_by_id(*net_id) != nullptr );
+        for (unsigned long & net_id : net_ids){
+            runtime_assert( get_network_by_id(net_id) != nullptr );
             bool branch(false);
 //            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
 //                && !branch && !(net_clash( *(get_network_by_id(*net_id)), **next_netit )) ) {
-            if ( is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch )
-                || branch || net_clash( *(get_network_by_id(*net_id)), **next_netit ) ) {
+            if ( is_sub_residues( (get_network_by_id(net_id))->residues, (get_network_by_id(net_id))->residues, branch )
+                || branch || net_clash( *(get_network_by_id(net_id)), **next_netit ) ) {
                 compatible = false;
                 break;
             }
@@ -765,8 +765,8 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 bool
 HBNetStapleInterface::same_helix(utility::vector1< std::pair<Size,Size> > helix_boundaries, Size r1, Size r2)
 {
-	for ( utility::vector1< std::pair<Size,Size> >::iterator h = helix_boundaries.begin(); h != helix_boundaries.end(); ++h ) {
-		if ( (r1 >= h->first && r1 <= h->second) && (r2 >= h->first && r2 <= h->second) ) {
+	for (auto & helix_boundarie : helix_boundaries) {
+		if ( (r1 >= helix_boundarie.first && r1 <= helix_boundarie.second) && (r2 >= helix_boundarie.first && r2 <= helix_boundarie.second) ) {
 			return true;
 		}
 	}

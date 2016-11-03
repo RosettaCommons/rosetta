@@ -1522,7 +1522,7 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) smallPocket=true;
 		else smallPocket=false;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1534,20 +1534,20 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 			else concatenated_pdb_info += "";
 			concatenated_pdb_info += tmp.str()+"  ";
 			if ( smallPocket ) {
-				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) concatenated_pdb_info += "STP STP  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) concatenated_pdb_info += "STS STS  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) concatenated_pdb_info += "STB STB  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) concatenated_pdb_info += "STE STE  ";
+				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) concatenated_pdb_info += "STP STP  ";
+				if ( grid_[point.x][point.y][point.z]==TP_SURF ) concatenated_pdb_info += "STS STS  ";
+				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) concatenated_pdb_info += "STB STB  ";
+				if ( grid_[point.x][point.y][point.z]==TP_EDGE ) concatenated_pdb_info += "STE STE  ";
 			} else {
-				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
+				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
+				if ( grid_[point.x][point.y][point.z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
+				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
+				if ( grid_[point.x][point.y][point.z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
 			}
-			if ( grid_[pit->x][pit->y][pit->z]==POCKET ) concatenated_pdb_info += "PC  PC   ";
-			if ( grid_[pit->x][pit->y][pit->z]==PO_SURF ) concatenated_pdb_info += "PCS PCS  ";
-			if ( grid_[pit->x][pit->y][pit->z]==PO_BURIED ) concatenated_pdb_info += "PCB PCB  ";
-			if ( grid_[pit->x][pit->y][pit->z]==PO_EDGE ) concatenated_pdb_info += "PCE PCE  ";
+			if ( grid_[point.x][point.y][point.z]==POCKET ) concatenated_pdb_info += "PC  PC   ";
+			if ( grid_[point.x][point.y][point.z]==PO_SURF ) concatenated_pdb_info += "PCS PCS  ";
+			if ( grid_[point.x][point.y][point.z]==PO_BURIED ) concatenated_pdb_info += "PCB PCB  ";
+			if ( grid_[point.x][point.y][point.z]==PO_EDGE ) concatenated_pdb_info += "PCE PCE  ";
 
 			tmp.str(std::string());
 			tmp<<clustNo;
@@ -1556,7 +1556,7 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			concatenated_pdb_info += tmp.str();
 			counter2++;
 			outPDB_stream<<concatenated_pdb_info;
@@ -1596,8 +1596,8 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		int ccount = 0;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( pit->atom_type.compare("C") == 0 ) {
+		for (auto & point : cluster.points_) {
+			if ( point.atom_type.compare("C") == 0 ) {
 				ccount++;
 			}
 		}
@@ -1605,7 +1605,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			continue;
 		}
 
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "HETATM";
 			std::stringstream  tmp;
@@ -1615,13 +1615,13 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			else if ( counter2<1000 ) concatenated_pdb_info += "  ";
 			else if ( counter2<10000 ) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			if ( pit->atom_type.compare("BBe") == 0 ) {
+			if ( point.atom_type.compare("BBe") == 0 ) {
 				tmp << "   Be";
-			} else if ( pit->atom_type.compare("BNe") == 0 ) {
+			} else if ( point.atom_type.compare("BNe") == 0 ) {
 				tmp << "   Ne";
-			} else tmp << "   "<<pit->atom_type;
+			} else tmp << "   "<<point.atom_type;
 			concatenated_pdb_info += tmp.str()+" ";
-			if ( pit->atom_type.length() ==1 ) concatenated_pdb_info += " ";
+			if ( point.atom_type.length() ==1 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += "TMP A";
 
 			tmp.str(std::string());
@@ -1631,15 +1631,15 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			if ( pit->atom_type.compare("C") == 0 ) {
-				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<"  1.00  2.03           "<<pit->atom_type<<std::endl;
+			if ( point.atom_type.compare("C") == 0 ) {
+				tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<"  1.00  2.03           "<<point.atom_type<<std::endl;
 			} else {
-				if ( pit->atom_type.compare("BBe") == 0 ) {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          Be"<<std::endl;
-				} else if ( pit->atom_type.compare("BNe") == 0 ) {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          Ne"<<std::endl;
+				if ( point.atom_type.compare("BBe") == 0 ) {
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          Be"<<std::endl;
+				} else if ( point.atom_type.compare("BNe") == 0 ) {
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          Ne"<<std::endl;
 				} else {
-					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<"  1.00  2.03          "<<pit->atom_type<<std::endl;
+					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<"  1.00  2.03          "<<point.atom_type<<std::endl;
 				}
 			}
 
@@ -1673,8 +1673,8 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 		for ( auto & cluster : clusters_.clusters_ ) {
 			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 			if ( !cluster.isTarget(numTargets_) ) continue;
-			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-				tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
+			for (auto & point : cluster.points_) {
+				tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 			}
 		}
 		/*    for (core::Size tx=0;tx<xdim_;tx++)
@@ -1694,17 +1694,17 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			if ( minipock ) {
-				if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
-				if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
-				if ( tmpgrid_[pit->x+2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x-2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x][pit->y+2][pit->z] != EMPTY && tmpgrid_[pit->x][pit->y-2][pit->z] != EMPTY &&tmpgrid_[pit->x][pit->y][pit->z+2] != EMPTY && tmpgrid_[pit->x][pit->y][pit->z-2] != EMPTY ) {
+				if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
+				if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;
+				if ( tmpgrid_[point.x+2][point.y][point.z] != EMPTY && tmpgrid_[point.x-2][point.y][point.z] != EMPTY && tmpgrid_[point.x][point.y+2][point.z] != EMPTY && tmpgrid_[point.x][point.y-2][point.z] != EMPTY &&tmpgrid_[point.x][point.y][point.z+2] != EMPTY && tmpgrid_[point.x][point.y][point.z-2] != EMPTY ) {
 					bool pockpt=true;
 					for ( int i = -1; i <2; i++ ) {
 						for ( int j = -1; j <2; j++ ) {
 							for ( int k = -1; k <2; k++ ) {
 								if ( i==0 && j==0 && k==0 ) continue;
-								if ( tmpgrid_[pit->x+i][pit->y+j][pit->z+k] == EMPTY ) {
+								if ( tmpgrid_[point.x+i][point.y+j][point.z+k] == EMPTY ) {
 									pockpt=false;
 								}
 							}
@@ -1714,13 +1714,13 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 						for ( int i = -1; i <2; i++ ) {
 							for ( int j = -1; j <2; j++ ) {
 								for ( int k = -1; k <2; k++ ) {
-									tmpgrid_[pit->x+i][pit->y+j][pit->z+k] = EMPTY;
+									tmpgrid_[point.x+i][point.y+j][point.z+k] = EMPTY;
 								}
 							}
 						}
-						tmpgrid_[pit->x-2][pit->y][pit->z] = EMPTY;
-						tmpgrid_[pit->x][pit->y-2][pit->z] = EMPTY;
-						tmpgrid_[pit->x][pit->y][pit->z-2] = EMPTY;
+						tmpgrid_[point.x-2][point.y][point.z] = EMPTY;
+						tmpgrid_[point.x][point.y-2][point.z] = EMPTY;
+						tmpgrid_[point.x][point.y][point.z-2] = EMPTY;
 					} else continue;
 				} else continue;
 			}
@@ -1741,10 +1741,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 			if ( minipock ) {
 				concatenated_pdb_info += " C  TMP A";
 			} else {
-				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
+				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
+				if ( grid_[point.x][point.y][point.z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
+				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
+				if ( grid_[point.x][point.y][point.z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
 			}
 			tmp.str(std::string());
 			tmp<<clustNo;
@@ -1753,7 +1753,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_;
 			if ( minipock ) tmp << "  1.00  2.03           C";
 			tmp << std::endl;
 			concatenated_pdb_info += tmp.str();
@@ -1837,8 +1837,8 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			numeric::xyzVector<core::Real> coord(pit->x,pit->y,pit->z);
+		for (auto & point : cluster.points_) {
+			numeric::xyzVector<core::Real> coord(point.x,point.y,point.z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
 			coord = rot3 * coord;
@@ -1874,7 +1874,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1885,10 +1885,10 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 			else if ( counter2<10000 ) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
 			concatenated_pdb_info += tmp.str()+"  ";
-			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
-			if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
-			if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
-			if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
+			if ( grid_[point.x][point.y][point.z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
+			if ( grid_[point.x][point.y][point.z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
+			if ( grid_[point.x][point.y][point.z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
+			if ( grid_[point.x][point.y][point.z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
 
 			tmp.str(std::string());
 			tmp<<clustNo;
@@ -1897,7 +1897,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			numeric::xyzVector<core::Real> coord(pit->x*stepSize_+xcorn_,pit->y*stepSize_+ycorn_,pit->z*stepSize_+zcorn_);
+			numeric::xyzVector<core::Real> coord(point.x*stepSize_+xcorn_,point.y*stepSize_+ycorn_,point.z*stepSize_+zcorn_);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
 			coord = rot3 * coord;
@@ -1931,12 +1931,12 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) {
-				outstream << pit->x << " " << pit->y << " " << pit->z << " TP_POCKET" << std::endl;
+		for (auto & point : cluster.points_) {
+			if ( grid_[point.x][point.y][point.z]==TP_POCKET ) {
+				outstream << point.x << " " << point.y << " " << point.z << " TP_POCKET" << std::endl;
 			}
-			if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) {
-				outstream << pit->x << " " << pit->y << " " << pit->z << " TP_BURIED" << std::endl;
+			if ( grid_[point.x][point.y][point.z]==TP_BURIED ) {
+				outstream << point.x << " " << point.y << " " << point.z << " TP_BURIED" << std::endl;
 			}
 
 		}
@@ -1954,8 +1954,8 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			numeric::xyzVector<core::Real> coord(xcorn_ + stepSize_ * pit->x,ycorn_ + stepSize_ * pit->y,zcorn_ + stepSize_ * pit->z);
+		for (auto & point : cluster.points_) {
+			numeric::xyzVector<core::Real> coord(xcorn_ + stepSize_ * point.x,ycorn_ + stepSize_ * point.y,zcorn_ + stepSize_ * point.z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
 			coord = rot3 * coord;
@@ -2000,8 +2000,8 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			numeric::xyzVector<core::Real> coord(xcorn_ + pit->x * stepSize_, ycorn_ + pit->y * stepSize_, zcorn_ + pit->z * stepSize_);
+		for (auto & point : cluster.points_) {
+			numeric::xyzVector<core::Real> coord(xcorn_ + point.x * stepSize_, ycorn_ + point.y * stepSize_, zcorn_ + point.z * stepSize_);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
 			coord = rot3 * coord;
@@ -2010,10 +2010,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 			newCoord(2) = (core::Size)std::floor((coord(2) - new_ycorn)/stepSize_ + .5);
 			newCoord(3) = (core::Size)std::floor((coord(3) - new_zcorn)/stepSize_ + .5);
 
-			if (  grid_[pit->x][pit->y][pit->z]==TP_POCKET )  {
+			if (  grid_[point.x][point.y][point.z]==TP_POCKET )  {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_POCKET" << std::endl;
 			}
-			if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED )  {
+			if ( grid_[point.x][point.y][point.z]==TP_BURIED )  {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_BURIED" << std::endl;
 			}
 
@@ -2581,20 +2581,20 @@ void PocketGrid::findClusters(){
 	//Change target clusters to target types on grid
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( !cluster.isTarget(numTargets_) ) {
-			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) grid_[pit->x][pit->y][pit->z]=POCKET;
-				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) grid_[pit->x][pit->y][pit->z]=PO_SURF;
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) grid_[pit->x][pit->y][pit->z]=PO_BURIED;
-				if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) grid_[pit->x][pit->y][pit->z]=PO_EDGE;
+			for (auto & point : cluster.points_) {
+				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) grid_[point.x][point.y][point.z]=POCKET;
+				if ( grid_[point.x][point.y][point.z]==TP_SURF ) grid_[point.x][point.y][point.z]=PO_SURF;
+				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) grid_[point.x][point.y][point.z]=PO_BURIED;
+				if ( grid_[point.x][point.y][point.z]==TP_EDGE ) grid_[point.x][point.y][point.z]=PO_EDGE;
 			}
 			continue;
 		}
 
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( grid_[pit->x][pit->y][pit->z]==POCKET ) grid_[pit->x][pit->y][pit->z]=TP_POCKET;
-			if ( grid_[pit->x][pit->y][pit->z]==PO_SURF ) grid_[pit->x][pit->y][pit->z]=TP_SURF;
-			if ( grid_[pit->x][pit->y][pit->z]==PO_BURIED ) grid_[pit->x][pit->y][pit->z]=TP_BURIED;
-			if ( grid_[pit->x][pit->y][pit->z]==PO_EDGE ) grid_[pit->x][pit->y][pit->z]=TP_EDGE;
+		for (auto & point : cluster.points_) {
+			if ( grid_[point.x][point.y][point.z]==POCKET ) grid_[point.x][point.y][point.z]=TP_POCKET;
+			if ( grid_[point.x][point.y][point.z]==PO_SURF ) grid_[point.x][point.y][point.z]=TP_SURF;
+			if ( grid_[point.x][point.y][point.z]==PO_BURIED ) grid_[point.x][point.y][point.z]=TP_BURIED;
+			if ( grid_[point.x][point.y][point.z]==PO_EDGE ) grid_[point.x][point.y][point.z]=TP_EDGE;
 		}
 	}
 }
@@ -2621,8 +2621,8 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
+		for (auto & point : cluster.points_) {
+			tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 		}
 	}
 
@@ -2918,16 +2918,16 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After Donors/Acceptors"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( pit->atom_type.compare("C") == 0 ) {
-				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+		for (auto & point : cluster.points_) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
-				std::cout<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
+				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
 			}
 			for ( int c = -1; c <2; c++ ) {
 				for ( int j = -1; j <2; j++ ) {
 					for ( int k = -1; k <2; k++ ) {
-						tmpgrid_[pit->x+c][pit->y+j][pit->z+k] = EMPTY;
+						tmpgrid_[point.x+c][point.y+j][point.z+k] = EMPTY;
 					}
 				}
 			}
@@ -2941,18 +2941,18 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
-			if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
-			if ( (tmpgrid_[pit->x+2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x-2][pit->y][pit->z] != EMPTY) &&
-					(tmpgrid_[pit->x][pit->y+2][pit->z] != EMPTY && tmpgrid_[pit->x][pit->y-2][pit->z] != EMPTY) &&
-					(tmpgrid_[pit->x][pit->y][pit->z+2] != EMPTY && tmpgrid_[pit->x][pit->y][pit->z-2] != EMPTY) ) {
+		for (auto & point : cluster.points_) {
+			if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
+			if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;
+			if ( (tmpgrid_[point.x+2][point.y][point.z] != EMPTY && tmpgrid_[point.x-2][point.y][point.z] != EMPTY) &&
+					(tmpgrid_[point.x][point.y+2][point.z] != EMPTY && tmpgrid_[point.x][point.y-2][point.z] != EMPTY) &&
+					(tmpgrid_[point.x][point.y][point.z+2] != EMPTY && tmpgrid_[point.x][point.y][point.z-2] != EMPTY) ) {
 				bool pockpt=true;
 				for ( int i = -1; i <2; i++ ) {
 					for ( int j = -1; j <2; j++ ) {
 						for ( int k = -1; k <2; k++ ) {
 							if ( i==0 && j==0 && k==0 ) continue;
-							if ( tmpgrid_[pit->x+i][pit->y+j][pit->z+k] == EMPTY ) {
+							if ( tmpgrid_[point.x+i][point.y+j][point.z+k] == EMPTY ) {
 								pockpt=false;
 							}
 						}
@@ -2962,14 +2962,14 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 					for ( int i = -1; i <2; i++ ) {
 						for ( int j = -1; j <2; j++ ) {
 							for ( int k = -1; k <2; k++ ) {
-								tmpgrid_[pit->x+i][pit->y+j][pit->z+k] = EMPTY;
+								tmpgrid_[point.x+i][point.y+j][point.z+k] = EMPTY;
 							}
 						}
 					}
 					//       tmpgrid_[pit->x-2][pit->y][pit->z] = EMPTY;
 					//       tmpgrid_[pit->x][pit->y-2][pit->z] = EMPTY;
 					//       tmpgrid_[pit->x][pit->y][pit->z-2] = EMPTY;
-					c_clusters_.add(pit->x,pit->y,pit->z, "C", stepSize_);
+					c_clusters_.add(point.x,point.y,point.z, "C", stepSize_);
 				} else continue;
 			} else continue;
 		}
@@ -2977,11 +2977,11 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After shape"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( pit->atom_type.compare("C") == 0 ) {
-				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+		for (auto & point : cluster.points_) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
-				std::cout<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
+				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
 			}
 		}
 	}
@@ -2991,11 +2991,11 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After clustering"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( pit->atom_type.compare("C") == 0 ) {
-				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+		for (auto & point : cluster.points_) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
-				std::cout<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
+				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
 			}
 		}
 	}
@@ -3034,11 +3034,11 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	}
 	std::cout<<std::endl<<"End of findExemplars"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( pit->atom_type.compare("C") == 0 ) {
-				std::cout<<pit->atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+		for (auto & point : cluster.points_) {
+			if ( point.atom_type.compare("C") == 0 ) {
+				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
-				std::cout<<pit->atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->absX<<std::setw(8)<<pit->absY<<std::setw(8)<<pit->absZ<<std::endl;
+				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
 			}
 		}
 	}
@@ -3051,19 +3051,19 @@ void PocketGrid::findClustersByExemplars(){
 	//go through c clusters
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			for ( int x = -1* (int) (3/stepSize_)-1; x <= (int) (3/stepSize_)+1; x++ ) {
 				for ( int y = -1* (int) (3/stepSize_)-1; y <= (int) (3/stepSize_)+1; y++ ) {
 					for ( int z = -1* (int) (3/stepSize_)-1; z <= (int) (3/stepSize_)+1; z++ ) {
-						if ( (int) pit->x + x <0 ) continue;
-						if ( (int) pit->y + y <0 ) continue;
-						if ( (int) pit->z + z <0 ) continue;
-						if ( (int) pit->x + x > (int) xdim_-1 ) continue;
-						if ( (int) pit->y + y > (int) ydim_-1 ) continue;
-						if ( (int) pit->z + z > (int) zdim_-1 ) continue;
+						if ( (int) point.x + x <0 ) continue;
+						if ( (int) point.y + y <0 ) continue;
+						if ( (int) point.z + z <0 ) continue;
+						if ( (int) point.x + x > (int) xdim_-1 ) continue;
+						if ( (int) point.y + y > (int) ydim_-1 ) continue;
+						if ( (int) point.z + z > (int) zdim_-1 ) continue;
 						//add each c cluster point
-						if ( grid_[pit->x+x][pit->y+y][pit->z+z]==TP_BURIED || grid_[pit->x+x][pit->y+y][pit->z+z]==TP_POCKET || grid_[pit->x+x][pit->y+y][pit->z+z]==TP_EDGE ) {
-							c_grid_[pit->x+x][pit->y+y][pit->z+z] = TP_BURIED;
+						if ( grid_[point.x+x][point.y+y][point.z+z]==TP_BURIED || grid_[point.x+x][point.y+y][point.z+z]==TP_POCKET || grid_[point.x+x][point.y+y][point.z+z]==TP_EDGE ) {
+							c_grid_[point.x+x][point.y+y][point.z+z] = TP_BURIED;
 						}
 					}
 				}
@@ -3162,8 +3162,8 @@ void PocketGrid::linkExemplarsThroughSolvent(){
 				for ( auto & cluster : clusters_.clusters_ ) {
 					if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 					if ( !cluster.isTarget(numTargets_) ) continue;
-					for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-						tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
+					for (auto & point : cluster.points_) {
+						tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 					}
 				}
 
@@ -3273,24 +3273,24 @@ utility::vector1<core::Real> PocketGrid::getBounds(){
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET || grid_[pit->x][pit->y][pit->z]==TP_BURIED ||
-					grid_[pit->x][pit->y][pit->z]==TP_EDGE ) {
+		for (auto & point : cluster.points_) {
+			if ( grid_[point.x][point.y][point.z]==TP_POCKET || grid_[point.x][point.y][point.z]==TP_BURIED ||
+					grid_[point.x][point.y][point.z]==TP_EDGE ) {
 				if ( first ) {
-					tmp[1]=xcorn_+stepSize_*pit->x;
-					tmp[2]=xcorn_+stepSize_*pit->x;
-					tmp[3]=ycorn_+stepSize_*pit->y;
-					tmp[4]=ycorn_+stepSize_*pit->y;
-					tmp[5]=zcorn_+stepSize_*pit->z;
-					tmp[6]=zcorn_+stepSize_*pit->z;
+					tmp[1]=xcorn_+stepSize_*point.x;
+					tmp[2]=xcorn_+stepSize_*point.x;
+					tmp[3]=ycorn_+stepSize_*point.y;
+					tmp[4]=ycorn_+stepSize_*point.y;
+					tmp[5]=zcorn_+stepSize_*point.z;
+					tmp[6]=zcorn_+stepSize_*point.z;
 					first=false;
 				} else {
-					if ( tmp[1]>xcorn_+stepSize_*pit->x ) tmp[1]=xcorn_+stepSize_*pit->x;
-					if ( tmp[2]<xcorn_+stepSize_*pit->x ) tmp[2]=xcorn_+stepSize_*pit->x;
-					if ( tmp[3]>ycorn_+stepSize_*pit->y ) tmp[3]=ycorn_+stepSize_*pit->y;
-					if ( tmp[4]<ycorn_+stepSize_*pit->y ) tmp[4]=ycorn_+stepSize_*pit->y;
-					if ( tmp[5]>zcorn_+stepSize_*pit->z ) tmp[5]=zcorn_+stepSize_*pit->z;
-					if ( tmp[6]<zcorn_+stepSize_*pit->z ) tmp[6]=zcorn_+stepSize_*pit->z;
+					if ( tmp[1]>xcorn_+stepSize_*point.x ) tmp[1]=xcorn_+stepSize_*point.x;
+					if ( tmp[2]<xcorn_+stepSize_*point.x ) tmp[2]=xcorn_+stepSize_*point.x;
+					if ( tmp[3]>ycorn_+stepSize_*point.y ) tmp[3]=ycorn_+stepSize_*point.y;
+					if ( tmp[4]<ycorn_+stepSize_*point.y ) tmp[4]=ycorn_+stepSize_*point.y;
+					if ( tmp[5]>zcorn_+stepSize_*point.z ) tmp[5]=zcorn_+stepSize_*point.z;
+					if ( tmp[6]<zcorn_+stepSize_*point.z ) tmp[6]=zcorn_+stepSize_*point.z;
 				}
 			}
 		}
@@ -4167,8 +4167,8 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	core::Size self_num_points = 0;
 	for ( auto const & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-			if ( (grid_[pit->x][pit->y][pit->z]==TP_POCKET) || (grid_[pit->x][pit->y][pit->z]==TP_SURF) || (grid_[pit->x][pit->y][pit->z]==TP_EDGE) || (grid_[pit->x][pit->y][pit->z]==TP_BURIED) ) {
+		for (const auto & point : cluster.points_) {
+			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
 				++self_num_points;
 			}
 		}
@@ -4278,8 +4278,8 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 		for ( auto & cluster : clusters_.clusters_ ) {
 			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 			if ( !cluster.isTarget(numTargets_) ) continue;
-			for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
-				tmpgrid_[pit->x][pit->y][pit->z] = grid_[pit->x][pit->y][pit->z];
+			for (auto & point : cluster.points_) {
+				tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 			}
 		}
 		/*    for (core::Size tx=1;tx<xdim_-1;tx++)
@@ -4306,17 +4306,17 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for ( auto pit=cluster.points_.begin(); pit != cluster.points_.end(); ++pit ) {
+		for (auto & point : cluster.points_) {
 			if ( minipock ) {
-				if ( tmpgrid_[pit->x][pit->y][pit->z] == EMPTY ) continue;
-				if ( pit->x < 2 || pit->y < 2|| pit->z < 2 || pit->x > xdim_-3 || pit->y > ydim_-3|| pit->z > zdim_-3 ) continue;
-				if ( tmpgrid_[pit->x+2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x-2][pit->y][pit->z] != EMPTY && tmpgrid_[pit->x][pit->y+2][pit->z] != EMPTY && tmpgrid_[pit->x][pit->y-2][pit->z] != EMPTY &&tmpgrid_[pit->x][pit->y][pit->z+2] != EMPTY && tmpgrid_[pit->x][pit->y][pit->z-2] != EMPTY ) {
+				if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
+				if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;
+				if ( tmpgrid_[point.x+2][point.y][point.z] != EMPTY && tmpgrid_[point.x-2][point.y][point.z] != EMPTY && tmpgrid_[point.x][point.y+2][point.z] != EMPTY && tmpgrid_[point.x][point.y-2][point.z] != EMPTY &&tmpgrid_[point.x][point.y][point.z+2] != EMPTY && tmpgrid_[point.x][point.y][point.z-2] != EMPTY ) {
 					bool pockpt=true;
 					for ( int i = -1; i <2; i++ ) {
 						for ( int j = -1; j <2; j++ ) {
 							for ( int k = -1; k <2; k++ ) {
 								if ( i==0 && j==0 && k==0 ) continue;
-								if ( tmpgrid_[pit->x+i][pit->y+j][pit->z+k] == EMPTY ) {
+								if ( tmpgrid_[point.x+i][point.y+j][point.z+k] == EMPTY ) {
 									pockpt=false;
 								}
 							}
@@ -4326,13 +4326,13 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 						for ( int i = -1; i <2; i++ ) {
 							for ( int j = -1; j <2; j++ ) {
 								for ( int k = -1; k <2; k++ ) {
-									tmpgrid_[pit->x+i][pit->y+j][pit->z+k] = EMPTY;
+									tmpgrid_[point.x+i][point.y+j][point.z+k] = EMPTY;
 								}
 							}
 						}
-						tmpgrid_[pit->x-2][pit->y][pit->z] = EMPTY;
-						tmpgrid_[pit->x][pit->y-2][pit->z] = EMPTY;
-						tmpgrid_[pit->x][pit->y][pit->z-2] = EMPTY;
+						tmpgrid_[point.x-2][point.y][point.z] = EMPTY;
+						tmpgrid_[point.x][point.y-2][point.z] = EMPTY;
+						tmpgrid_[point.x][point.y][point.z-2] = EMPTY;
 					} else continue;
 				} else continue;
 			}
@@ -4349,10 +4349,10 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 			if ( minipock ) {
 				concatenated_pdb_info += " C  TMP A";
 			} else {
-				if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
-				if ( grid_[pit->x][pit->y][pit->z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
+				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) concatenated_pdb_info += "TP  TP   ";
+				if ( grid_[point.x][point.y][point.z]==TP_SURF ) concatenated_pdb_info += "TPS TPS  ";
+				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) concatenated_pdb_info += "TPB TPB  ";
+				if ( grid_[point.x][point.y][point.z]==TP_EDGE ) concatenated_pdb_info += "TPE TPE  ";
 			}
 			tmp.str(std::string());
 			tmp<<clustNo;
@@ -4361,7 +4361,7 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_;
+			tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_;
 			if ( minipock ) tmp << "  1.00  2.03           C";
 			tmp << std::endl;
 			concatenated_pdb_info += tmp.str();

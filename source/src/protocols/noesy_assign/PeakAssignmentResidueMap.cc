@@ -164,8 +164,8 @@ bool PeakAssignmentResidueMap::has( core::Size res1, core::Size res2 ) {
 void PeakAssignmentResidueMap::add( CrossPeakList const& cpl ) {
 #ifndef WIN32
 	for ( auto const & it : cpl.peaks() ) {
-		for ( auto ait = it->assignments().begin(); ait != it->assignments().end(); ++ait ) {
-			add( *ait );
+		for (const auto & ait : it->assignments()) {
+			add( ait );
 		}
 	}
 #endif

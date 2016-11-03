@@ -52,15 +52,8 @@ public:
 		//  core::pose::Pose const & ref_pose,
 		core::pose::PoseOP const & ref_pose,
 		core::Size const moving_suite,
-		core::Size const chainbreak_suite
-	);
-	
-	RNA_MC_KIC_Sampler(
-		//  core::pose::Pose const & ref_pose,
-		core::pose::PoseOP const & ref_pose,
-		core::Size const moving_suite,
 		core::Size const chainbreak_suite,
-		bool const change_foldtree
+		bool const change_ft = true
 	);
 
 	// ~RNA_MC_KIC_Sampler();
@@ -161,9 +154,6 @@ public:
 	void set_angle_range_from_init_torsions( core::Real const range );
 	bool check_angles_in_range( const core::pose::Pose & pose );
 
-	core::Size moving_suite() const { return moving_suite_; }
-	core::Size chainbreak_suite() const { return chainbreak_suite_; }
-
 private:
 	//Disable copy constructor and assignment
 	RNA_MC_KIC_Sampler( const RNA_MC_KIC_Sampler & );
@@ -186,8 +176,7 @@ private:
 	core::Size max_tries_;
 	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,
 		idealize_coord_, torsion_screen_, random_chain_closed_, did_close,
-	used_current_solution_, did_move;
-	bool const change_foldtree_;
+		used_current_solution_, did_move;
 
 	// StepWiseSamplerSizedCombOP bb_rotamer_;
 	MC_CombOP bb_rotamer_;

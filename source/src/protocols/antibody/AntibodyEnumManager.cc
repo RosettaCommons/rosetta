@@ -180,7 +180,7 @@ CDRNameEnum
 AntibodyEnumManager::cdr_name_string_to_enum(std::string const & cdr_name) const {
 
 	//This is here due to const correctness issues with [] operator
-	std::map< std::string, CDRNameEnum >::const_iterator iter( cdr_name_to_enum_.find( cdr_name ) );
+	auto iter( cdr_name_to_enum_.find( cdr_name ) );
 	return iter->second;
 }
 

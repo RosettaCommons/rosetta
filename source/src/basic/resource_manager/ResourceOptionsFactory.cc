@@ -25,9 +25,6 @@
 #include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
-// Boost headers
-#include <boost/foreach.hpp>
-
 //C++ headers
 #include <sstream>
 
@@ -52,7 +49,7 @@ ResourceOptionsFactory::create_resource_options(
 			<< "register a new ResourceOptionsCreator with the ResourceOptionsFactory." << std::endl
 			<< "Known ResourceOptions types are:" << std::endl;
 
-		BOOST_FOREACH ( const ResourceOptionsCreatorMap::value_type& type, creator_map_ ) {
+		for ( const ResourceOptionsCreatorMap::value_type& type : creator_map_ ) {
 			error_msg << "\t" << type.first << std::endl;
 		}
 

@@ -22,7 +22,6 @@
 
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <boost/foreach.hpp>
 
 // Utility Headers
 #include <core/types.hh>
@@ -111,7 +110,7 @@ PreventResiduesFromRepackingOperation::set_residues( utility::vector1  < core::S
 {
 	runtime_assert( residues_vec.size() != 0 );
 	residues_.clear();
-	BOOST_FOREACH ( core::Size const item, residues_vec ) {
+	for ( core::Size const item : residues_vec ) {
 		residues_.push_back( item );
 	}
 }
@@ -138,7 +137,7 @@ PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 		utility::vector1< core::Size > residues_vector;
 		residues_.clear();
 
-		BOOST_FOREACH ( std::string const key, res_keys ) {
+		for ( std::string const & key : res_keys ) {
 			Size res( utility::string2int( key ) );
 			if ( reference_pdb_id_ != "" ) {
 				res = core::pose::parse_resnum( key, reference_pose );

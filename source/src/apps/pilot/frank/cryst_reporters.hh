@@ -40,7 +40,6 @@
 #include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 
 #include <utility/tools/make_map.hh>
-#include <boost/foreach.hpp>
 
 #include <numeric/xyz.io.hh>
 #include <numeric/xyzMatrix.hh>
@@ -50,9 +49,6 @@
 #include <numeric/model_quality/rms.hh>
 
 #include <basic/options/keys/optimization.OptionKeys.gen.hh> // to confirm -new_sym_min
-
-#include <boost/foreach.hpp>
-#define foreach_ BOOST_FOREACH
 
 using namespace basic;
 using namespace core;
@@ -366,7 +362,7 @@ calc_vm( Real const volume, std::string const & sequence, Size const ncopies )
 		'S', 87,  'T', 101, 'W', 186, 'Y', 163, 'V', 99 ) );
 
 	Real weight(0.0);
-	BOOST_FOREACH ( char c, sequence ) weight += daltons[ c ];
+	for ( char const c : sequence ) weight += daltons[ c ];
 	return ( volume / Real( ncopies * weight ) );
 }
 
@@ -669,22 +665,22 @@ unsatisfied_buried_polars( core::pose::Pose & pose, core::scoring::ScoreFunction
 		find_buried_unsatisfied_polars( pose_apart_i   , nres_asu, unsatdons1, unsataccs1, probe );
 		find_buried_unsatisfied_polars( pose_together_i, nres_asu, unsatdons2, unsataccs2, probe );
 
-		BOOST_FOREACH ( id::AtomID id, unsatdons2 ) {
+		for ( id::AtomID const & id : unsatdons2 ) {
 			if ( !has_element( id, unsatdons1 ) ) {
 				unsat_frequency[id] += increment;
 				unsats += increment;
 			}
 		}
-		//BOOST_FOREACH( id::AtomID id, unsatdons1 ) {
+		//for ( id::AtomID const & id : unsatdons1 ) {
 		//if ( !has_element( id, unsatdons2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
 		//}
-		BOOST_FOREACH ( id::AtomID id, unsataccs2 ) {
+		for ( id::AtomID const & id : unsataccs2 ) {
 			if ( !has_element( id, unsataccs1 ) ) {
 				unsat_frequency[id] += increment;
 				unsats += increment;
 			}
 		}
-		//BOOST_FOREACH( id::AtomID id, unsataccs1 ) {
+		//for ( id::AtomID const & id : unsataccs1 ) {
 		//if ( !has_element( id, unsataccs2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
 		//}
 	}

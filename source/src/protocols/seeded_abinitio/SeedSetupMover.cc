@@ -21,7 +21,6 @@
 #include <core/pose/selection.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <boost/foreach.hpp>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -191,7 +190,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 
 	/*
 	/// disallow specified residues to repack:
-	BOOST_FOREACH( const Size res , norepack_res ){
+	for( const Size res , norepack_res ){
 	using namespace core::pack::task::operation;
 	PreventRepackingOP pr = new PreventRepacking;
 	pr->include_residue( res );
@@ -237,7 +236,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 
 		if ( residues.size() ) {
 			TR.Debug<<"The following residues will be repacked only: ";
-			BOOST_FOREACH ( core::Size const res, residues ) {
+			for ( core::Size const res : residues ) {
 				TR.Debug<<res<<", ";
 			}
 			TR.Debug<<std::endl;
@@ -324,7 +323,7 @@ adjust_des_residues( pose::Pose & pose,
 	utility::vector1< std::string > const design_keys( utility::string_split( design_residues, ',' ) );
 	utility::vector1< core::Size > design_res;
 
-	BOOST_FOREACH ( std::string const key, design_keys ) {
+	for ( std::string const & key : design_keys ) {
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
 		design_res.push_back( resnum);
@@ -421,7 +420,7 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 
 	/// read input seeds
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 
 		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 

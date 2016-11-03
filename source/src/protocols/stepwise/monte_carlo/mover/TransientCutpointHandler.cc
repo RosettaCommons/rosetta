@@ -92,7 +92,7 @@ TransientCutpointHandler::put_in_cutpoints(
 
 	// reset the alpha torsion to its original value
 	pose.set_torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1), alpha_ );
-
+	
 #ifdef GL_GRAPHICS
 	viewer_pose = pose;
 #endif
@@ -148,21 +148,16 @@ TransientCutpointHandler::take_out_cutpoints(
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 #endif
 
-	// remove chainbreak variants. along with fold_tree restorer, put into separate function.
-	// AMW oct 3: this is wrong; lower variant is on i+1. Note addition in 
-	// correctly_add_cutpoint_variants
-	//remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
-	//remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_ + 1 );
-	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_     );
-
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
+	
 	// return to simple fold tree
 	if ( change_foldtree_ ) {
 		core::kinematics::FoldTree f( pose.fold_tree() );
 		f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
 		pose.fold_tree( f );	
 	}
-
+	
 #ifdef GL_GRAPHICS
 	viewer_pose = pose;
 #endif

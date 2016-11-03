@@ -48,7 +48,6 @@
 //util
 #include <utility/vector1.hh>
 #include <set>
-#include <boost/foreach.hpp>
 
 
 using namespace core;
@@ -317,7 +316,7 @@ DefineMovableLoops::parse_my_tag(
 		TR<<"NOTE: chains have to be consecutive" << std::endl;
 		std::string chain_val( tag->getOption< std::string >( "chain_num" ) );
 		utility::vector1< std::string > const chain_keys( utility::string_split( chain_val, ',' ) );
-		BOOST_FOREACH ( std::string const key, chain_keys ) {
+		for ( std::string const & key : chain_keys ) {
 			Size n;
 			std::istringstream ss( key );
 			ss >> n;
@@ -335,7 +334,7 @@ DefineMovableLoops::parse_my_tag(
 
 	/// read input seeds
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 
 		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

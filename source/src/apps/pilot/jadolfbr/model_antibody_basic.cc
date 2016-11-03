@@ -59,9 +59,6 @@
 #include <fstream>
 #include <string>
 
-#include <boost/foreach.hpp>
-
-
 using namespace basic;
 using namespace utility;
 using namespace protocols;
@@ -85,8 +82,6 @@ OPT_1GRP_KEY(String, ab, DE_seq);
 
 OPT_1GRP_KEY(Boolean, ab, relax_cdrs);
 OPT_1GRP_KEY(Boolean, ab, snugdock);
-
-#define foreach_         BOOST_FOREACH
 
 namespace protocols {
 namespace antibody {

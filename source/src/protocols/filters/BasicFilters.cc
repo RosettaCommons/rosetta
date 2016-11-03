@@ -35,9 +35,6 @@
 // Utility headers
 #include <numeric/random/random.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -264,7 +261,7 @@ CompoundFilter::reset_filters()
 	for ( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
 		filter_pair.first = it->first;
 		filter_pair.second = it->second;
-		BOOST_FOREACH ( FilterOP filter, reset_filters_ ) {
+		for ( FilterOP filter : reset_filters_ ) {
 			if ( filter->get_user_defined_name() == it->first->get_user_defined_name() ) {
 				filter_pair.first = filter->clone();
 				break;
@@ -302,7 +299,7 @@ CompoundFilter::parse_my_tag(
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
 
-	BOOST_FOREACH ( TagCOP cmp_tag_ptr, tag->getTags() ) {
+	for ( TagCOP cmp_tag_ptr : tag->getTags() ) {
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< FilterOP, boolean_operations > filter_pair;
 		if ( operation == "AND" ) filter_pair.second = AND;
@@ -376,7 +373,7 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 {
 	core::Real value( 0.0 );
 
-	BOOST_FOREACH ( FilterWeightPair fw_pair, filterlist_ ) {
+	for ( FilterWeightPair const & fw_pair : filterlist_ ) {
 		value += fw_pair.second * fw_pair.first->report_sm( pose );
 	}
 	return( value );
@@ -393,10 +390,10 @@ CombinedFilter::reset_filters()
 {
 	FilterList new_filterlist;
 	FilterWeightPair filter_pair;
-	BOOST_FOREACH ( FilterWeightPair fw_pair, filterlist_ ) {
+	for ( FilterWeightPair const & fw_pair : filterlist_ ) {
 		filter_pair.first = fw_pair.first;
 		filter_pair.second = fw_pair.second;
-		BOOST_FOREACH ( FilterOP filter, reset_filters_ ) {
+		for ( FilterOP filter : reset_filters_ ) {
 			if ( filter->get_user_defined_name() == fw_pair.first->get_user_defined_name() ) {
 				filter_pair.first = filter->clone();
 				break;
@@ -424,7 +421,7 @@ CombinedFilter::parse_my_tag(
 {
 	set_threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
+	for ( TagCOP tag_ptr : sub_tags ) {
 		core::Real weight(1.0);
 		if ( tag_ptr->hasOption("factor") ) {
 			weight = tag_ptr->getOption<core::Real>( "factor" );
@@ -638,7 +635,7 @@ IfThenFilter::parse_my_tag(
 		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
 	}
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
+	for ( TagCOP tag_ptr : sub_tags ) {
 		std::string const tagname = tag_ptr->getName();
 		FilterOP valuefilter = nullptr; //default NULL
 		if ( tag_ptr->hasOption("valuefilter") ) {

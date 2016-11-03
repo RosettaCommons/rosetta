@@ -375,7 +375,6 @@
 #include <basic/options/option.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered/unordered_map.hpp>
@@ -401,7 +400,7 @@ rmsd_with_super(
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
-	BOOST_FOREACH ( Size i, subset_residues ) {
+	for ( Size const i : subset_residues ) {
 		Size num_atoms ( pose1.residue(i).natoms() );
 		if ( predicate == is_ligand_heavyatom ||
 				predicate == is_polymer_heavyatom ||

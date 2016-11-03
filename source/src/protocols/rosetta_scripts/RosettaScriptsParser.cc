@@ -39,7 +39,6 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/foreach.hpp>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -360,7 +359,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	}
 
 	// Round 1: Import previously defined filters and movers
-	BOOST_FOREACH ( TagCOP const curr_tag, all_tags ) {
+	for ( TagCOP const curr_tag : all_tags ) {
 
 		////// IMPORT
 		if ( curr_tag->getName() != "IMPORT" ) {
@@ -397,7 +396,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 			}
 		}//fi movers
 
-	}// BOOST_FOREACH curr_tag
+	}// for curr_tag
 
 	// Attempt to find and import requested objects; throws exception on failure
 	if ( import_tag_names.size() > 0 ) {
@@ -405,7 +404,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	}
 
 	// Round 2: Process definitions in this ROSETTASCRIPTS block
-	BOOST_FOREACH ( TagCOP const curr_tag, all_tags ) {
+	for ( TagCOP const curr_tag : all_tags ) {
 
 		///// APPLY TO POSE
 		if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
@@ -413,7 +412,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 			// apply to pose may affect all of the scorefxn definitions below, so it is called first.
 			TagCOPs const apply_tags( curr_tag->getTags() );
 
-			BOOST_FOREACH ( TagCOP apply_tag_ptr, apply_tags ) {
+			for ( TagCOP apply_tag_ptr : apply_tags ) {
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_mover != nullptr );
@@ -432,7 +431,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 
 		////// FILTERS
 		if ( curr_tag->getName() == "FILTERS" ) {
-			BOOST_FOREACH ( TagCOP const tag_ptr, curr_tag->getTags() ) {
+			for ( TagCOP const tag_ptr : curr_tag->getTags() ) {
 				instantiate_filter(tag_ptr, data, filters, movers, pose);
 			}
 		}
@@ -440,13 +439,13 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 
 		////// MOVERS
 		if ( curr_tag->getName() == "MOVERS" ) {
-			BOOST_FOREACH ( TagCOP const tag_ptr, curr_tag->getTags() ) {
+			for ( TagCOP const tag_ptr : curr_tag->getTags() ) {
 				instantiate_mover(tag_ptr, data, filters, movers, pose);
 			}
 		}
 		TR.flush();
 
-	}// BOOST_FOREACH curr_tag
+	}// for curr_tag
 
 	////// ADD MOVER FILTER PAIRS
 	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
@@ -570,7 +569,7 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 		if ( !option_name.length() ) {
 			return section_tag;
 		}
-		BOOST_FOREACH ( TagCOP const child_tag, section_tag->getTags() ) {
+		for ( TagCOP const child_tag : section_tag->getTags() ) {
 			if ( child_tag->getOption<std::string>(option_name) == option_value ) {
 				return child_tag;
 			}
@@ -615,10 +614,10 @@ void RosettaScriptsParser::import_tags(
 		TR.Debug << "Importing from tag: " << curr_level_tag << std::endl;
 
 		// Check what we'd like to import from it
-		BOOST_FOREACH ( TagCOP tag, curr_level_tag->getTags() ) {
+		for ( TagCOP tag : curr_level_tag->getTags() ) {
 
 			if ( tag->getName() == "TASKOPERATIONS" ) {
-				BOOST_FOREACH ( TagCOP taskoperation_tag, tag->getTags() ) {
+				for ( TagCOP taskoperation_tag : tag->getTags() ) {
 					std::string taskoperation_name( taskoperation_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), taskoperation_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
@@ -629,7 +628,7 @@ void RosettaScriptsParser::import_tags(
 				}
 			}
 			if ( tag->getName() == "FILTERS" ) {
-				BOOST_FOREACH ( TagCOP filter_tag, tag->getTags() ) {
+				for ( TagCOP filter_tag : tag->getTags() ) {
 					std::string filter_name( filter_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), filter_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
@@ -641,7 +640,7 @@ void RosettaScriptsParser::import_tags(
 			}
 
 			if ( tag->getName() == "MOVERS" ) {
-				BOOST_FOREACH ( TagCOP mover_tag, tag->getTags() ) {
+				for ( TagCOP mover_tag : tag->getTags() ) {
 					std::string mover_name( mover_tag->getOption<std::string>("name") );
 					ImportTagName key( std::make_pair( tag->getName(), mover_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
@@ -657,7 +656,7 @@ void RosettaScriptsParser::import_tags(
 				}
 			}
 
-		} //BOOST_FOREACH curr_level_tag->getTags()
+		} //for curr_level_tag->getTags()
 
 		if ( import_tag_names.size() <= 0 ) {
 			break; // All done
@@ -669,7 +668,7 @@ void RosettaScriptsParser::import_tags(
 	} // while
 
 	// Check if there are any remaining imports that could not be satisfied
-	BOOST_FOREACH ( ImportTagName import_tag, import_tag_names ) {
+	for ( ImportTagName import_tag : import_tag_names ) {
 		std::string msg("Failed to import " + import_tag.second + " from " + import_tag.first);
 		TR << msg << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption(msg);
@@ -695,9 +694,8 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & instream, u
 	}
 	//Print parsing for confirmation
 	TR << "Variable substitution will occur with the following values: ";
-	for ( map<string,string>::const_iterator map_it( var_map.begin() ), map_end( var_map.end() );
-			map_it != map_end; ++map_it ) {
-		TR << "'%%" << map_it->first << "%%'='" << map_it->second << "';  ";
+	for ( auto const & elem : var_map ) {
+		TR << "'%%" << elem.first << "%%'='" << elem.second << "';  ";
 	}
 	TR << std::endl;
 	var_map[""] = "%%"; //for %%%%->%% substitutions

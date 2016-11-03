@@ -33,7 +33,6 @@
 // Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <utility/exit.hh>
@@ -43,8 +42,6 @@
 // C++ headers
 #include <iostream>
 #include <cmath>
-
-#define foreach BOOST_FOREACH
 
 // Namespaces {{{1
 using namespace std;
@@ -168,7 +165,7 @@ void LoopProtocol::parse_my_tag( // {{{1
 
 	// Add loop movers to this protocol by parsing the subtags.
 
-	foreach ( TagCOP subtag, tag->getTags() ) {
+	for ( TagCOP subtag : tag->getTags() ) {
 
 		// Ignore <Loop> subtags (parsed by parent class).
 
@@ -260,7 +257,7 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 		TR << "ramp_temp:      " << ramp_temp_ << endl;
 		TR << "initial_temp:   " << initial_temp_ << endl;
 		TR << "final_temp:     " << final_temp_ << endl;
-		foreach ( string name, algorithm_names ) {
+		for ( string const & name : algorithm_names ) {
 			TR << "loop_movers:    " << name << endl;
 		}
 	}

@@ -33,7 +33,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/sort_predicates.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <string>
@@ -56,7 +55,7 @@ LogicalSelector::~LogicalSelector() = default;
 protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 {
 	protocols::rosetta_scripts::PoseSelectorFlags flags(protocols::rosetta_scripts::PSF_NONE);
-	BOOST_FOREACH ( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
+	for ( protocols::rosetta_scripts::PoseSelectorOP selector : selectors_ ) {
 		flags = (protocols::rosetta_scripts::PoseSelectorFlags)( flags | selector->get_flags() );
 	}
 	return flags;
@@ -71,7 +70,7 @@ void LogicalSelector::parse_my_tag(
 )
 {
 	// Children of tag are selectors
-	BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PoseSelectorOP new_selector(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
 			newPoseSelector( curr_tag, data, filters, movers, pose )
@@ -92,7 +91,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 	selected_poses.resize( poses.size(), get_default() );
 
-	BOOST_FOREACH ( protocols::rosetta_scripts::PoseSelectorOP selector, selectors_ ) {
+	for ( protocols::rosetta_scripts::PoseSelectorOP selector : selectors_ ) {
 		utility::vector1<bool> selector_selected_poses( selector->select_poses( poses ) );
 
 		// Merge sets using logical operator
@@ -108,14 +107,14 @@ utility::vector1<bool> LogicalSelector::select_poses(
 		}
 
 		TR.Debug << "Pose selections for " << get_name() << " after " << selector->get_name() << ": ";
-		BOOST_FOREACH ( bool selection, selected_poses ) {
+		for ( bool const selection : selected_poses ) {
 			TR.Debug << selection << " ";
 		}
 		TR.Debug << std::endl;
 	}
 
 	TR.Debug << "Final pose selections for " << get_name() << ": ";
-	BOOST_FOREACH ( bool selection, selected_poses ) {
+	for ( bool const selection : selected_poses ) {
 		TR.Debug << selection << " ";
 	}
 	TR.Debug << std::endl;
@@ -178,7 +177,7 @@ void TopNByProperty::parse_my_tag(
 	}
 
 	// Children of tag are reporters
-	BOOST_FOREACH ( utility::tag::TagCOP const curr_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP const curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
@@ -205,7 +204,7 @@ utility::vector1<bool> TopNByProperty::select_poses(
 	// Obtain properties of all poses
 	{
 		core::Size i = 1;
-		BOOST_FOREACH ( core::pose::PoseOP pose, poses ) {
+		for ( core::pose::PoseOP pose : poses ) {
 			core::Real r = reporter_->report_property( *pose );
 			pose_properties.push_back( Pose_Property(i, r) );
 			++i;
@@ -326,7 +325,7 @@ utility::vector1<bool> Filter::select_poses(
 	TR << "Applying selector " << get_name() << ": " << filter_->get_user_defined_name() << std::endl;
 
 	core::Size i = 1;
-	BOOST_FOREACH ( core::pose::PoseOP pose, poses ) {
+	for ( core::pose::PoseOP pose : poses ) {
 		TR.Debug << "Pose " << i << "..." << std::endl;
 
 		bool ok = filter_->apply( *pose );

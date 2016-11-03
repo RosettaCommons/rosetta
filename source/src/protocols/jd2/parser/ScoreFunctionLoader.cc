@@ -38,9 +38,6 @@
 #include <utility/string_util.hh>
 #include <utility/numbers.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 namespace protocols {
 namespace jd2 {
 namespace parser {
@@ -61,7 +58,7 @@ void ScoreFunctionLoader::load_data(
 
 	TagCOPs const & scorefxn_tags( tag->getTags() );
 
-	BOOST_FOREACH ( TagCOP scorefxn_tag, scorefxn_tags ) {
+	for ( TagCOP scorefxn_tag : scorefxn_tags ) {
 		using namespace core::scoring;
 		using namespace core::scoring::symmetry;
 
@@ -88,7 +85,7 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
-		BOOST_FOREACH ( TagCOP mod_tag, scorefxn_tag->getTags() ) {
+		for ( TagCOP mod_tag : scorefxn_tag->getTags() ) {
 			std::string const tagname( mod_tag->getName() ); //Get the name of the tag
 			if ( tagname == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );

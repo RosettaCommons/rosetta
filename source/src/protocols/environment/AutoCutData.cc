@@ -23,11 +23,6 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-//option includes
-
-// C++ Headers
-#include <boost/foreach.hpp>
-
 // ObjexxFCL Headers
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.environment.AutoCutData", basic::t_info );
@@ -91,7 +86,7 @@ void AutoCutData::write( std::ostream &out ) const {
 	out << hash() << " ";
 
 	out << "CUTS ";
-	BOOST_FOREACH ( Size cut, cuts() ) {
+	for ( Size const cut : cuts() ) {
 		out << cut << " ";
 	}
 }

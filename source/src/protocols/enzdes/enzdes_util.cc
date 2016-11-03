@@ -58,6 +58,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
+//#include <cctype>
+#include <regex>
 
 //Auto Headers
 #include <core/id/AtomID.hh>
@@ -72,8 +74,7 @@ bool
 is_catalytic_seqpos(
 	core::pose::Pose const & pose,
 	core::Size const seqpos
-)
-{
+) {
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if ( !enz_obs ) return false;
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
@@ -86,9 +87,8 @@ is_catalytic_seqpos(
 
 
 utility::vector1< core::Size >
-catalytic_res( core::pose::Pose const & pose)
+catalytic_res( core::pose::Pose const & pose )
 {
-
 	using namespace core;
 	utility::vector1< Size > to_return;
 
@@ -111,9 +111,7 @@ core::Real
 sum_constraint_scoreterms(
 	core::pose::Pose const & pose,
 	int which_res
-)
-{
-
+) {
 	using namespace core::scoring;
 
 	EnergyMap const & all_weights = pose.energies().weights();
@@ -126,7 +124,6 @@ sum_constraint_scoreterms(
 
 	return scores[ coordinate_constraint ] * all_weights[ coordinate_constraint ] + scores[atom_pair_constraint] * all_weights[ atom_pair_constraint] +
 		scores[ angle_constraint ] * all_weights[ angle_constraint ] + scores[ dihedral_constraint ] * all_weights[ dihedral_constraint ];
-
 }
 
 
@@ -142,8 +139,7 @@ void
 read_pose_from_file(
 	core::pose::Pose & pose,
 	std::string const & filename
-)
-{
+) {
 	utility::vector1< core::pose::Pose > input_poses;
 	core::import_pose::pose_from_file( input_poses, filename );
 	runtime_assert( input_poses.size() > 0 );
@@ -191,9 +187,7 @@ void
 make_continuous_true_regions_in_bool_vector(
 	utility::vector1< bool > & the_vector,
 	core::Size const min_number_continuous_trues
-)
-{
-
+) {
 	if (  min_number_continuous_trues > the_vector.size() ) {
 		utility_exit_with_message("ridiculous. continuous region is requested to be longer than the actual vector. go play in traffic.\n");
 	}
@@ -312,9 +306,7 @@ core::pack::task::PackerTaskOP
 recreate_task(
 	core::pose::Pose const & pose,
 	core::pack::task::PackerTask const & orig_task
-)
-{
-
+) {
 	using namespace core::pack::task;
 
 	if ( orig_task.total_residue() != pose.size() ) utility_exit_with_message("old task and pose don't have same number of residues.");
@@ -371,9 +363,7 @@ void
 remove_remark_header_for_geomcst(
 	core::pose::Pose & pose,
 	core::Size geomcst
-)
-{
-
+) {
 	core::io::Remarks remarks( pose.pdb_info()->remarks() );
 	core::io::Remarks newremarks;
 	for ( core::Size i = 0; i < remarks.size(); ++i ) {
@@ -392,8 +382,7 @@ remove_remark_header_for_geomcst(
 void
 create_remark_headers_from_cstcache(
 	core::pose::Pose & pose
-)
-{
+) {
 	core::io::Remarks remarks( pose.pdb_info()->remarks() );
 	core::io::Remarks newremarks;
 
@@ -454,26 +443,26 @@ get_pdb_code_from_pose_tag( core::pose::Pose const & pose ){
 
 	utility::vector1< std::string > tagparts = utility::string_split( outtag, '_' );
 
-	for ( utility::vector1< std::string >::const_iterator it = tagparts.begin(); it != tagparts.end(); ++it ) {
-
-		if ( it->size() != 4 ) continue;
-		std::string cand_str = *it;
+	std::regex pdb_regex( "[0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]" );
+	for ( auto const & cand_str : tagparts ) {
+		if ( cand_str.size() != 4 ) continue;
 		//ok, no boost regex, so clumsy implementation to look for pdb code in string
-		if ( is_digit( &cand_str[0]) ) {
-			if ( is_digit( &cand_str[1]) && is_digit( &cand_str[2]) && is_digit ( &cand_str[3] ) ) continue;
+		if ( std::regex_match( cand_str, pdb_regex ) ) pdb_matches.push_back( cand_str );
+		/*if ( std::is_digit( cand_str[0]) ) {
+			if ( std::is_digit( cand_str[1]) && std::is_digit( cand_str[2]) && std::is_digit( cand_str[3] ) ) continue;
 
-			if ( (( is_uppercase_letter( & cand_str[1] )|| is_digit( & cand_str[1] ) )
-					&& ( is_uppercase_letter( & cand_str[2] )|| is_digit( & cand_str[2] ) )
-					&& ( is_uppercase_letter( & cand_str[3] )|| is_digit( & cand_str[3] ) ) )
-					||(( is_lowercase_letter( & cand_str[1] )|| is_digit( & cand_str[1] ) )
-					&& ( is_lowercase_letter( & cand_str[2] )|| is_digit( & cand_str[2] ) )
-					&& ( is_lowercase_letter( & cand_str[3] )|| is_digit( & cand_str[3] ) ) )
+			if ( (( std::is_upper( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
+					&& ( std::is_upper( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
+					&& ( std::is_upper( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
+					||(( std::is_lower( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
+					&& ( std::is_lower( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
+					&& ( std::is_lower( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
 					) {
 
 				//std::cerr << "yeah, found putative pdb code " << cand_str << std::endl;
 				pdb_matches.push_back( cand_str );
 			}
-		}
+		}*/
 	}
 	/*
 
@@ -512,95 +501,6 @@ get_pdb_code_from_pose_tag( core::pose::Pose const & pose ){
 
 }
 
-bool
-is_digit( char * cha )
-{
-
-	//std::cerr << "comparing " << cha[0] << " to digits. " << std::endl;
-
-	if ( cha[0] == '0' ) return true;
-	else if ( cha[0] == '1' ) return true;
-	else if ( cha[0] == '2' ) return true;
-	else if ( cha[0] == '3' ) return true;
-	else if ( cha[0] == '4' ) return true;
-	else if ( cha[0] == '5' ) return true;
-	else if ( cha[0] == '6' ) return true;
-	else if ( cha[0] == '7' ) return true;
-	else if ( cha[0] == '8' ) return true;
-	else if ( cha[0] == '9' ) return true;
-
-	return false;
-}
-
-
-bool
-is_uppercase_letter( char * cha)
-{
-
-	if ( cha[0] == 'A' ) return true;
-	else if ( cha[0] == 'B' ) return true;
-	else if ( cha[0] == 'C' ) return true;
-	else if ( cha[0] == 'D' ) return true;
-	else if ( cha[0] == 'E' ) return true;
-	else if ( cha[0] == 'F' ) return true;
-	else if ( cha[0] == 'G' ) return true;
-	else if ( cha[0] == 'H' ) return true;
-	else if ( cha[0] == 'I' ) return true;
-	else if ( cha[0] == 'J' ) return true;
-	else if ( cha[0] == 'K' ) return true;
-	else if ( cha[0] == 'L' ) return true;
-	else if ( cha[0] == 'M' ) return true;
-	else if ( cha[0] == 'N' ) return true;
-	else if ( cha[0] == 'O' ) return true;
-	else if ( cha[0] == 'P' ) return true;
-	else if ( cha[0] == 'Q' ) return true;
-	else if ( cha[0] == 'R' ) return true;
-	else if ( cha[0] == 'S' ) return true;
-	else if ( cha[0] == 'T' ) return true;
-	else if ( cha[0] == 'U' ) return true;
-	else if ( cha[0] == 'V' ) return true;
-	else if ( cha[0] == 'W' ) return true;
-	else if ( cha[0] == 'X' ) return true;
-	else if ( cha[0] == 'Y' ) return true;
-	else if ( cha[0] == 'Z' ) return true;
-
-	return false;
-}
-
-
-bool
-is_lowercase_letter( char * cha)
-{
-
-	if ( cha[0] == 'a' ) return true;
-	else if ( cha[0] == 'b' ) return true;
-	else if ( cha[0] == 'c' ) return true;
-	else if ( cha[0] == 'd' ) return true;
-	else if ( cha[0] == 'e' ) return true;
-	else if ( cha[0] == 'f' ) return true;
-	else if ( cha[0] == 'g' ) return true;
-	else if ( cha[0] == 'h' ) return true;
-	else if ( cha[0] == 'i' ) return true;
-	else if ( cha[0] == 'j' ) return true;
-	else if ( cha[0] == 'k' ) return true;
-	else if ( cha[0] == 'l' ) return true;
-	else if ( cha[0] == 'm' ) return true;
-	else if ( cha[0] == 'n' ) return true;
-	else if ( cha[0] == 'o' ) return true;
-	else if ( cha[0] == 'p' ) return true;
-	else if ( cha[0] == 'q' ) return true;
-	else if ( cha[0] == 'r' ) return true;
-	else if ( cha[0] == 's' ) return true;
-	else if ( cha[0] == 't' ) return true;
-	else if ( cha[0] == 'u' ) return true;
-	else if ( cha[0] == 'v' ) return true;
-	else if ( cha[0] == 'w' ) return true;
-	else if ( cha[0] == 'x' ) return true;
-	else if ( cha[0] == 'y' ) return true;
-	else if ( cha[0] == 'z' ) return true;
-
-	return false;
-}
 void
 disable_constraint_scoreterms(core::scoring::ScoreFunctionOP scorefxn){
 
@@ -652,7 +552,7 @@ get_resnum_from_cstid_list( std::string const& cstidlist, core::pose::Pose const
 {
 	resnums.clear();
 	utility::vector1< std::string > const cstids ( utility::string_split( cstidlist , ',' ) );
-	BOOST_FOREACH ( std::string const cstid, cstids ) {
+	for ( std::string const & cstid : cstids ) {
 		if ( cstid=="" ) continue;
 		core::Size const resnum (get_resnum_from_cstid( cstid, pose) );
 		runtime_assert( resnum>0 && resnum <=pose.size() );

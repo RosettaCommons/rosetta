@@ -34,9 +34,6 @@
 // Scripter Headers
 #include <utility/tag/Tag.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <protocols/ligand_docking/LigandArea.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <utility/vector0.hh>
@@ -59,10 +56,10 @@ set_jumps(
 	core::pose::Pose const & pose, core::kinematics::MoveMapOP movemap,
 	LigandAreas ligand_areas
 ){
-	BOOST_FOREACH ( LigandAreas::value_type ligand_area_pair, ligand_areas ) {
+	for ( LigandAreas::value_type const & ligand_area_pair : ligand_areas ) {
 		char const & chain= ligand_area_pair.first;
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
-		BOOST_FOREACH ( core::Size jump_id, jump_ids ) {
+		for ( core::Size const jump_id : jump_ids ) {
 			movemap->set_jump(jump_id, true);
 		}
 	}

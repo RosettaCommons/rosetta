@@ -90,7 +90,6 @@
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 #include <boost/functional/hash.hpp>
-#include <boost/foreach.hpp>
 
 namespace core {
 namespace pose {
@@ -2415,7 +2414,7 @@ utility::vector1<core::Size>
 get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> jump_ids;
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
-	BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+	for ( core::Size const chain_id : chain_ids ) {
 		jump_ids.push_back( get_jump_id_from_chain_id(chain_id, pose));
 	}
 	return jump_ids;

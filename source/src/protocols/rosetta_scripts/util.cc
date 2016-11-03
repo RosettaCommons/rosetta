@@ -26,7 +26,6 @@
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <boost/foreach.hpp>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -348,7 +347,7 @@ foreach_movemap_tag(
 	using namespace core::kinematics;
 	using namespace utility::tag;
 
-	BOOST_FOREACH ( TagCOP const tag, in_tag->getTags() ) {
+	for ( TagCOP const tag : in_tag->getTags() ) {
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if ( name == "Jump" ) {
@@ -399,7 +398,7 @@ foreach_movemap_tag(
 				}
 			}
 		}
-	}//BOOST_FOREACH tag
+	}//for tag
 }
 
 void

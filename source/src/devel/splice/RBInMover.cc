@@ -36,7 +36,6 @@ static THREAD_LOCAL basic::Tracer TR( "devel.splice.RBInMover" );
 #include <algorithm>
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
-#include <boost/foreach.hpp>
 
 namespace devel {
 namespace splice {
@@ -92,7 +91,7 @@ RBInMover::checkpoint() const{
 		utility_exit_with_message( "Unable to open checkpointing file for writing: " + checkpointing_file() + "\n" );
 	}
 	data<<current_entry_<<'\n';
-	BOOST_FOREACH ( core::kinematics::Jump const jump, jump_library() ) {
+	for ( core::kinematics::Jump const & jump : jump_library() ) {
 		data<<jump<<'\n';
 	}
 	data.flush();

@@ -251,7 +251,7 @@ void append_ligand_grid_scores(
 	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
 
 	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
-	BOOST_FOREACH ( qsar::scoring_grid::ScoreMap::value_type grid_score, grid_scores ) {
+	for ( auto const & grid_score : grid_scores ) {
 		std::ostringstream score_label;
 		score_label << grid_score.first << "_grid_" <<ligand_chain;
 		if ( prefix == "" ) {
@@ -295,7 +295,7 @@ void append_ligand_grid_scores(
 	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
 
 	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
-	BOOST_FOREACH ( qsar::scoring_grid::ScoreMap::value_type grid_score, grid_scores ) {
+	for ( auto const & grid_score : grid_scores ) {
 		std::ostringstream score_label;
 		score_label << grid_score.first << "_grid_" <<ligand_chain;
 		if ( prefix == "" ) {

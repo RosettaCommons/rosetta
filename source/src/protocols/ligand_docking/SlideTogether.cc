@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace ligand_docking {
@@ -95,9 +94,9 @@ SlideTogether::parse_my_tag(
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
 	utility::vector1<std::string> chain_strs= utility::string_split(chains_str, ',');
-	BOOST_FOREACH ( std::string chain_str, chain_strs ) {
+	for ( std::string const & chain_str : chain_strs ) {
 		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_str, pose);
-		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+		for ( core::Size const chain_id : chain_ids ) {
 			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
 			jumps_.push_back(jump_id);
 		}
@@ -114,7 +113,7 @@ SlideTogether::apply( core::pose::Pose & pose ){
 			utility_exit_with_message("This should be impossible");// jumps are set through parse_my_tags, chain through the 1-arg constructor
 		}
 		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_, pose);
-		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+		for ( core::Size const chain_id : chain_ids ) {
 			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
 			jumps_.push_back(jump_id);
 		}

@@ -27,9 +27,6 @@
 #include <numeric/Calculator.hh>
 #include <numeric/random/random.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 namespace protocols {
 namespace filters {
 
@@ -116,7 +113,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	std::string equation = tag_ptr->getOption< std::string >( "equation" );
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 
-	BOOST_FOREACH ( utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ) {
+	for ( utility::tag::TagCOP sub_tag_ptr : tag_ptr->getTags() ) {
 		std::string varname( sub_tag_ptr->getOption<std::string>( "name" ) );
 
 		if ( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {

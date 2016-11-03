@@ -28,9 +28,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <protocols/ligand_docking/LigandArea.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
@@ -52,7 +49,7 @@ InterfaceBuilder::InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, 
 	ReferenceCount(),
 	extension_window_(extension_window)
 {
-	BOOST_FOREACH ( LigandAreaOP ligand_area, ligand_areas ) {
+	for ( LigandAreaOP ligand_area : ligand_areas ) {
 		ligand_areas_[ligand_area->chain_] = ligand_area;
 	}
 }
@@ -79,7 +76,7 @@ InterfaceBuilder::parse_my_tag(
 	std::string ligand_areas_string= tag->getOption<std::string>("ligand_areas");
 	utility::vector1<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');
 
-	BOOST_FOREACH ( std::string ligand_area_string, ligand_area_strings ) {
+	for ( std::string const & ligand_area_string : ligand_area_strings ) {
 		LigandAreaOP ligand_area = datamap.get_ptr< protocols::ligand_docking::LigandArea >( "ligand_areas", ligand_area_string);
 		ligand_areas_[ ligand_area->chain_ ] = ligand_area;
 	}
@@ -101,7 +98,7 @@ void InterfaceBuilder::find_interface_residues(
 	for ( ; ligand_area != ligand_areas_.end(); ++ligand_area ) {
 		char const & chain= ligand_area->first;
 		utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain, pose);
-		BOOST_FOREACH ( core::Size chain_id, chain_ids ) {
+		for ( core::Size const chain_id : chain_ids ) {
 			core::Size ligand_residue_id= pose.conformation().chain_begin(chain_id);
 			core::Size const & end= pose.conformation().chain_end(chain_id);
 			for ( ; ligand_residue_id <= end; ++ligand_residue_id ) {

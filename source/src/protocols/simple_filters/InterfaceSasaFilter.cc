@@ -13,7 +13,6 @@
 
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
@@ -288,7 +287,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 
 		runtime_assert( !sym_aware_jump_ids.empty() );
 
-		BOOST_FOREACH ( Size sym_aware_jump_id, sym_aware_jump_ids ) {
+		for ( Size const sym_aware_jump_id : sym_aware_jump_ids ) {
 			TR.Debug << "Moving jump id: " << sym_aware_jump_id << std::endl;
 			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
 			translate->step_size( 1000.0 );

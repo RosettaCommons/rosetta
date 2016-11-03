@@ -39,7 +39,6 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/random/random.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
@@ -90,7 +89,7 @@ LigandDesign::set_fragments(){
 	core::chemical::ResidueTypeCOPs fragment_types = core::chemical::ResidueTypeFinder( *rsd_set ).base_property( core::chemical::FRAGMENT ).get_all_possible_residue_types();
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {
+	for ( core::chemical::ResidueTypeCOP fragment_type : fragment_types ) {
 		core::conformation::ResidueOP temp( new core::conformation::Residue( *fragment_type, true) );
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
@@ -223,7 +222,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 }
 
 void LigandDesign::fragments_to_string() const{
-	BOOST_FOREACH ( core::conformation::ResidueCOP fragment, fragments_ ) {
+	for ( core::conformation::ResidueCOP fragment : fragments_ ) {
 		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
 		core::Size total= res.n_possible_residue_connections();

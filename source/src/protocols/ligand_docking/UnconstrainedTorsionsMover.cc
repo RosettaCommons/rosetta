@@ -17,10 +17,6 @@
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 
-
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility>
 #include <utility/vector1.hh>
 
@@ -46,7 +42,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(std::move(child_mover))
 {
-	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints ) {
+	for ( ResidueTorsionRestraintsOP restraint : restraints ) {
 		restraints_.push_back(restraint);
 	}
 }
@@ -58,19 +54,19 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(std::move(child_mover))
 {
-	BOOST_FOREACH ( MinimizeLigandOP minimize_ligand, minimize_ligands ) {
+	for ( MinimizeLigandOP minimize_ligand : minimize_ligands ) {
 		restraints_.insert( restraints_.end(), minimize_ligand->begin(), minimize_ligand->end() );
 	}
 }
 
 void UnconstrainedTorsionsMover::apply( core::pose::Pose & pose )
 {
-	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints_ ) {
+	for ( ResidueTorsionRestraintsOP restraint : restraints_ ) {
 		restraint->disable( pose );
 	}
 	child_mover_->apply(pose);
 
-	BOOST_FOREACH ( ResidueTorsionRestraintsOP restraint, restraints_ ) {
+	for ( ResidueTorsionRestraintsOP restraint : restraints_ ) {
 		restraint->enable( pose );
 	}
 }

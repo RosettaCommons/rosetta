@@ -29,7 +29,6 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <utility/string_util.hh>
@@ -100,7 +99,7 @@ void RestrictIdentitiesOperation::identities( utility::vector1 < std::string > i
 {
 	runtime_assert( identities_vec.size() != 0 );
 	identities_.clear();
-	BOOST_FOREACH ( std::string const item, identities_vec ) {
+	for ( std::string const & item : identities_vec ) {
 		identities_.push_back( item );
 	}
 }
@@ -142,7 +141,7 @@ RestrictIdentitiesOperation::parse_tag( TagCOP tag , DataMap & )
 
 		std::string action = (prevent_repacking_) ? "Preventing from repacking " : "Restricting to repacking " ;
 		TR << action << "residues of type(s): ";
-		BOOST_FOREACH ( std::string const id, ids ) {
+		for ( std::string const & id : ids ) {
 			TR << id << " ";
 			identities_.push_back( id );
 		}

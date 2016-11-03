@@ -400,8 +400,8 @@ public:
     // if call this, be sure to check that id exists and nullptr was not returned
     HBondNetStructOP get_network_by_id( core::Size id )
     {
-        for ( auto net = network_vector_.begin(); net != network_vector_.end(); ++net ){
-            if ( (*net)->id == id ) return *net;
+        for (auto & net : network_vector_){
+            if ( net->id == id ) return net;
         }
         return nullptr; // if id does not exist
     }

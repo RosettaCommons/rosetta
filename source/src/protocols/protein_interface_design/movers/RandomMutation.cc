@@ -31,7 +31,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 
@@ -115,7 +114,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 	ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
 	utility::vector1< AA > allow_temp;
 	allow_temp.clear();
-	BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
+	for ( ResidueTypeCOP const t : allowed ) {
 		if ( t->aa() != pose.residue( random_entry ).aa() ) {
 			allow_temp.push_back( t->aa() );
 		}

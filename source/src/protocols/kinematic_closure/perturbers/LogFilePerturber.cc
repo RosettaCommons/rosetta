@@ -22,7 +22,6 @@
 #include <numeric/conversions.hh>
 
 // Boost headers
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -33,8 +32,6 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -113,19 +110,19 @@ void LogFilePerturber::perturb_subset(
 
 void LogFilePerturber::log_torsions(ostream & out, ParameterList torsions) {
 	out << "TORSIONS ";
-	foreach ( Real x, torsions ) { out << x << " "; }
+	for ( Real const x : torsions ) { out << x << " "; }
 	out << endl;
 }
 
 void LogFilePerturber::log_angles(ostream & out, ParameterList angles) {
 	out << "ANGLES ";
-	foreach ( Real x, angles ) { out << x << " "; }
+	for ( Real const x : angles ) { out << x << " "; }
 	out << endl;
 }
 
 void LogFilePerturber::log_lengths(ostream & out, ParameterList lengths) {
 	out << "LENGTHS ";
-	foreach ( Real x, lengths ) { out << x << " "; }
+	for ( Real const x : lengths ) { out << x << " "; }
 	out << endl;
 }
 

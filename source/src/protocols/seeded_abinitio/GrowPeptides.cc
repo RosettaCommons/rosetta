@@ -68,7 +68,6 @@
 //util
 #include <utility/vector1.hh>
 #include <set>
-#include <boost/foreach.hpp>
 
 using namespace core;
 using namespace protocols::seeded_abinitio;
@@ -189,7 +188,7 @@ rcg_it != rcgs_.end(); ++rcg_it ){
 */
 
 void
-GrowPeptides::grow_from_verteces(
+GrowPeptides::grow_from_vertices(
 	core::pose::Pose & curr_pose,
 	std::string sequence,
 	protocols::loops::Loops & seeds,
@@ -206,50 +205,47 @@ GrowPeptides::grow_from_verteces(
 	core::kinematics::FoldTree grow_foldtree = curr_pose.fold_tree() ;
 	TR<<"foldtree before growing: " << grow_foldtree << std::endl;
 
-	utility::vector1< core::Size > verteces;
-	BOOST_FOREACH ( const Size vertex, vertex_set ) {
-		verteces.push_back( vertex );
-	}
+	utility::vector1< core::Size > vertices( vertex_set.begin(), vertex_set.end() );
 
-	TR<<"start new protein: " << verteces[1] <<" end: " << verteces[verteces.size()] <<" size sequence: " << sequence.size()<< std::endl;
-	TR.Debug <<"number verteces: "<< verteces.size()<< std::endl;
+	TR<<"start new protein: " << vertices[1] <<" end: " << vertices[vertices.size()] <<" size sequence: " << sequence.size()<< std::endl;
+	TR.Debug <<"number vertices: "<< vertices.size()<< std::endl;
 
-	if ( verteces[verteces.size()] - (verteces[1] - 1) != sequence.size() ) {
+	if ( vertices[vertices.size()] - (vertices[1] - 1) != sequence.size() ) {
 		utility_exit_with_message( "chunk pieces do not agree with the length of the submitted template pdb" );
 	}
 
-	for ( Size vertex_it = 4 ; vertex_it <= verteces.size(); vertex_it = vertex_it + 4 ) {
+	for ( Size vertex_it = 4 ; vertex_it <= vertices.size(); vertex_it = vertex_it + 4 ) {
 
-		if ( vertex_it < verteces.size() ) {
+		if ( vertex_it < vertices.size() ) {
 			grow_foldtree = curr_pose.fold_tree();
 			//connect seeds
-			TR.Debug <<"for temp jump --- from: " <<verteces[vertex_it - 3 ]<<", to: "<< verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 <<", cutpoint: "<< verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) <<std::endl;
+			TR.Debug <<"for temp jump --- from: " <<vertices[vertex_it - 3 ]<<", to: "<< vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 <<", cutpoint: "<< vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) <<std::endl;
 			//ensuring that the new temporariy cutpoint is unique
-			Size temp_cutpoint = verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start());
+			Size temp_cutpoint = vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start());
 			if ( curr_pose.fold_tree().is_cutpoint( temp_cutpoint ) ) {
 				++temp_cutpoint;
 			}
 
-			grow_foldtree.new_jump( verteces[vertex_it - 3 ], verteces[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 /*start of next seed before additions*/ , temp_cutpoint );
+			grow_foldtree.new_jump( vertices[vertex_it - 3 ], vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 /*start of next seed before additions*/ , temp_cutpoint );
 			curr_pose.fold_tree( grow_foldtree );
 			TR<<"foldtree before adding new seeds, current seed: "<<vertex_it/4 << " with foldtree " << grow_foldtree << std::endl;
 		}
 
-		//need to adjust the verteces for the N-terminally extensions since the vertex container has the numbering for the complete sequences
+		//need to adjust the vertices for the N-terminally extensions since the vertex container has the numbering for the complete sequences
 		//and not the trunctated starting pieces.
-		TR<<"appending N-terminally from: " << verteces[vertex_it - 3 ] << " to " << verteces[vertex_it - 2] <<std::endl;
-		TR<<"appending C-terminally from: " << verteces[vertex_it - 1 ] << " to " << verteces[vertex_it ] << std::endl;
+		TR<<"appending N-terminally from: " << vertices[vertex_it - 3 ] << " to " << vertices[vertex_it - 2] <<std::endl;
+		TR<<"appending C-terminally from: " << vertices[vertex_it - 1 ] << " to " << vertices[vertex_it ] << std::endl;
 
 		//need to adjust the extensions/numbering
-		Size nseq_start =  seeds[vertex_it/4 ].start() - ( verteces[vertex_it - 2] - verteces[vertex_it - 3] );
-		TR.Debug <<" grow nterm: start sequence " <<nseq_start <<" position in pose "<< verteces[vertex_it - 3] <<" stop " << verteces[vertex_it - 2] <<" sequence " << sequence << std::endl ;
+		Size nseq_start =  seeds[vertex_it/4 ].start() - ( vertices[vertex_it - 2] - vertices[vertex_it - 3] );
+		TR.Debug <<" grow nterm: start sequence " <<nseq_start <<" position in pose "<< vertices[vertex_it - 3] <<" stop " << vertices[vertex_it - 2] <<" sequence " << sequence << std::endl ;
 
 		//get sequence start through the seed start minus that actual length that needs to be added
-		append_residues_nterminally( seeds[vertex_it /4].start() - ( verteces[vertex_it - 2] - verteces[vertex_it - 3] ) , verteces[vertex_it - 3] , verteces[vertex_it - 2], sequence , curr_pose ) ;
+		append_residues_nterminally( seeds[vertex_it /4].start() - ( vertices[vertex_it - 2] - vertices[vertex_it - 3] ) , vertices[vertex_it - 3] , vertices[vertex_it - 2], sequence , curr_pose ) ;
 
 		TR <<"growing foldtree: " << grow_foldtree << std::endl;
-		TR.Debug <<" grow cterm: start sequence " << seeds<<" position in pose "<< verteces[vertex_it - 1 ] <<" stop " << verteces[vertex_it] <<" sequence " << sequence << std::endl ;
-		append_residues_cterminally( seeds[vertex_it/4].stop(), verteces[vertex_it - 1 ] , verteces[vertex_it], sequence , curr_pose ) ;
+		TR.Debug <<" grow cterm: start sequence " << seeds<<" position in pose "<< vertices[vertex_it - 1 ] <<" stop " << vertices[vertex_it] <<" sequence " << sequence << std::endl ;
+		append_residues_cterminally( seeds[vertex_it/4].stop(), vertices[vertex_it - 1 ] , vertices[vertex_it], sequence , curr_pose ) ;
 
 		//using simple foldtree that connects the two seeds with each other to keep consequutives seeds constants in space
 		//connect cutpoint with next seed
@@ -294,12 +290,12 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			std::string secstr_template = template_pdb_->secstruct();
 			TR.Debug  << "sec str for template: " << secstr_template << std::endl;
 			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds_, true );
-			verteces_ = seed_ft_generator->get_folding_verteces();
-			TR.Debug<<"verteces for folding: " <<std::endl;
+			vertices_ = seed_ft_generator->get_folding_vertices();
+			TR.Debug<<"vertices for folding: " <<std::endl;
 			cutpoints = seed_foldtree_->cutpoints();
 
 			//debugging stuff
-			BOOST_FOREACH ( core::Size const r, verteces_ ) {
+			for ( core::Size const r : vertices_ ) {
 				TR.Debug<< r <<"\t";
 			}
 		}
@@ -311,74 +307,13 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 		}
 		if ( seq == "" ) utility_exit_with_message("no sequence specified" );
 
-		grow_from_verteces( pose, seq, all_seeds_ , verteces_ );
+		grow_from_vertices( pose, seq, all_seeds_ , vertices_ );
 
 		//add the new seed foldtree to the pose
 		pose.fold_tree( *seed_foldtree_ );
 		TR<<"set new foldtree: "<< pose.fold_tree() <<std::endl;
 
 	}//end grow from seeds
-
-
-	/*
-	// ------------------ simple pose extensions based on teh parsers input -----------------------------
-
-	if( all_seeds_.size() == 0 ){
-	if( extend_nterm > 0 ){
-	std::string nseq;
-
-	if ( nsequence_.size() > 0 ){
-	nseq = nsequence_;
-	if( nsequence_.size() != extend_nterm ){
-	TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
-	for (Size i = 0 ; i < extend_nterm - nsequence_.size(); ++i )
-	nseq += "A";
-	}
-	}
-
-	if( all_ala_N ){
-	TR<<"overwriting N-term sequence with all ALA, if not desired turn of all_ala_N" <<std::endl;
-	for(Size i = 0; i < extend_nterm ; ++i){
-	nseq += "A";
-	std::cout<<nseq<<"\n"<< std::endl;
-	}
-	}
-
-	append_residues_nterminally ( 0 , 1 , 1 , nseq , copy_pose );
-	}//end nterm extension
-
-
-	if ( extend_cterm > 0 ){
-	std::string cseq;
-	std::cout<<"cseq "<< cseq <<std::endl;
-
-	if ( csequence_.size() > 0 ){
-	cseq = csequence_;
-	if( csequence_.size() != extend_cterm ){
-	TR<<"WARNING: specified sequence is not long enough for the desired length of extension, adding extra alanine residue" <<std::endl;
-	for (Size i = 0 ; i < extend_cterm - csequence_.size(); ++i )
-	std::cout<<cseq<<std::endl;
-	cseq = cseq + "A";
-	}
-	}
-
-	if( all_ala_C ){
-	TR<<"overwriting C-term sequence with all ALA, if not desired turn of all_ala_C" <<std::endl;
-	for(Size i = 0; i < extend_cterm ; ++i){
-	std::cout<<cseq<<"\n"<<std::endl;
-	cseq += "A";
-	}
-	}
-	std::cout<<"pose: "<< copy_pose.size()<< "\n" <<copy_pose.size() + extend_cterm <<"seq: "<<  cseq << std::endl;
-
-	append_residues_cterminally( 0, copy_pose.size(), copy_pose.size() + extend_cterm, cseq , copy_pose );
-
-	}//end cterm extension
-
-	pose = copy_pose;
-
-	}//end without loops
-	*/
 
 	if ( !output_centroid ) {
 		TR<<"switching back to full_atom mode" <<std::endl;
@@ -471,7 +406,7 @@ GrowPeptides::parse_my_tag(
 
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
 		if ( template_presence ) {

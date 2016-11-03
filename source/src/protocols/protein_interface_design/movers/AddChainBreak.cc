@@ -24,7 +24,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <utility/vector0.hh>
@@ -127,7 +126,7 @@ AddChainBreak::apply( core::pose::Pose & pose )
 			}
 		}
 	}
-	BOOST_FOREACH ( core::Size const res, cuts ) {
+	for ( core::Size const res : cuts ) {
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res +1);
 		if ( change_foldtree() ) {

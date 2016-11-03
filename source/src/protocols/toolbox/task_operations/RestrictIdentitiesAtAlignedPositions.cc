@@ -38,7 +38,6 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
-#include <boost/foreach.hpp>
 
 // C++ Headers
 
@@ -98,7 +97,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 	DesignAroundOperation dao;
 	dao.design_shell( 0.01 );
 	dao.repack_shell( 6.0 );
-	BOOST_FOREACH ( core::Size const resid, res_ids_ ) {
+	for ( core::Size const resid : res_ids_ ) {
 		core::Size const nearest_to_res = find_nearest_res( pose, *source_pose_, resid, chain() );
 		if ( nearest_to_res == 0 ) {
 			TR<<"WARNING: could not find a residue near to "<<resid<<std::endl;
@@ -147,7 +146,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap &
 	utility::vector1< std::string > const split_reslist( utility::string_split( res_list,',' ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	TR<<"source_pdb: "<<tag->getOption< std::string >( "source_pdb" )<<" restricting residues: ";
-	BOOST_FOREACH ( std::string const res_str, split_reslist ) {
+	for ( std::string const & res_str : split_reslist ) {
 		res_ids_.push_back( core::pose::parse_resnum( res_str, *source_pose_ ) );
 		TR<<res_str<<",";
 	}

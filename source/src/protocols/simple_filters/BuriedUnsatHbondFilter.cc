@@ -26,7 +26,6 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace simple_filters {
@@ -155,7 +154,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		if ( selected_residues.size() == 0 ) {
 			return 0;
 		}
-		BOOST_FOREACH ( core::Size const sr, selected_residues ) {
+		for ( core::Size const sr : selected_residues ) {
 			//   buried_unsat_hbond_filter_tracer<<sr<<": "<<(bound_tmp[ sr-1 ])<<" "<<(unbound_tmp[ sr-1 ])<<" "<<(bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ])<<std::endl;
 			if ( jump_num_ ) total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ]), 0 );
 			else total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - '0', 0 );

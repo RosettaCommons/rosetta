@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <boost/foreach.hpp>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -292,7 +291,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	residue_id_map.clear(); residue_id_val_map.clear();
 	unbind( pose );
 	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
-	BOOST_FOREACH ( core::Size const resi, being_designed ) {
+	for ( core::Size const resi : being_designed ) {
 		if ( keep_native() ) {
 			residue_id_map[ resi ].insert( pose.residue( resi ).aa() );
 		}
@@ -305,7 +304,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		core::pose::Pose const pose_ref( pose ); // 10Jul14 Adi debugging: save pose after two substitutions to self but compute baseline relative to 3 substitutions
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 		//  pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
-		BOOST_FOREACH ( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ) {
+		for ( protocols::simple_filters::DeltaFilterOP const delta_filter : delta_filters_ ) {
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
@@ -315,18 +314,18 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		utility::vector1< AA > allow_temp;
 		allow_temp.clear();
-		BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
+		for ( ResidueTypeCOP const t : allowed ) {
 			allow_temp.push_back( t->aa() );
 		}
 		//  core::pose::Pose const pose_ref( pose ); //10Jul14 Adi debugging: original line for pose_ref
-		BOOST_FOREACH ( AA const target_aa, allow_temp ) {
+		for ( AA const target_aa : allow_temp ) {
 			pose = pose_ref; //29Aug13 previously was pose_orig; here
 			single_substitution( pose, resi, target_aa );
 			//    pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
 			bool triage_filter_pass( false );
 			if ( delta_filters_.size() > 0 ) {
 				triage_filter_pass=true;
-				BOOST_FOREACH ( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ) {
+				for ( protocols::simple_filters::DeltaFilterCOP const delta_filter : delta_filters_ ) {
 					triage_filter_pass = delta_filter->apply( pose );
 					if ( delta_filters_.size() == 1 ) {
 						residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter->report_sm( pose ), triage_filter_pass);
@@ -372,7 +371,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	}//foreach resi
 
 	if ( delta_filter_thresholds_.size() > 0 && resfile_name() != "" ) {
-		BOOST_FOREACH ( core::Real const delta_threshold, delta_filter_thresholds_ ) {
+		for ( core::Real const delta_threshold : delta_filter_thresholds_ ) {
 			std::map< core::Size, std::set< char > > map_position_allowed_aa;
 			map_position_allowed_aa.clear();
 			for ( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ) {
@@ -417,7 +416,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}
 		for ( std::map< core::Size, std::set< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ) {
 			resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
-			BOOST_FOREACH ( AA const aa, pair->second ) {
+			for ( AA const aa : pair->second ) {
 				resfile<<oneletter_code_from_aa( aa );
 			}
 			resfile<<'\n';
@@ -539,7 +538,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 			delta_filter_thresholds_ = utility::string_split( tag->getOption< std::string >( "delta_filter_thresholds" ), ',', core::Real() );
 			TR<<"using delta filter thresholds: "<<tag->getOption< std::string >( "delta_filter_thresholds" )<<std::endl;
 		}
-		BOOST_FOREACH ( std::string const fname, delta_filter_names ) {
+		for ( std::string const & fname : delta_filter_names ) {
 			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<fname<<",";
 		}

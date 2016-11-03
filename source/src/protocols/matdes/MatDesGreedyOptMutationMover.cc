@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <boost/foreach.hpp>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -907,7 +906,7 @@ MatDesGreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, s
 void
 MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & pose )
 {
-	BOOST_FOREACH ( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ) {
+	for ( protocols::simple_filters::DeltaFilterOP const delta_filter : reset_delta_filters_ ) {
 		std::string const fname( delta_filter->get_user_defined_name() );
 		core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 		delta_filter->baseline( fbaseline );
@@ -915,12 +914,12 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 		TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
 	}
 	//Note: CompoundStatement and CombinedStatement filters create a filterOP clones at parsetime for each filter and thus these clones need to be reset when the delta filter baselines are updated.
-	BOOST_FOREACH ( protocols::filters::CompoundFilterOP const compound_filter, compound_filters_ ) {
+	for ( protocols::filters::CompoundFilterOP const compound_filter : compound_filters_ ) {
 		compound_filter->set_reset_filters( reset_delta_filters_ );
 		compound_filter->reset_filters();
 		compound_filter->clear_reset_filters();
 	}
-	BOOST_FOREACH ( protocols::filters::CombinedFilterOP const combined_filter, combined_filters_ ) {
+	for ( protocols::filters::CombinedFilterOP const combined_filter : combined_filters_ ) {
 		combined_filter->set_reset_filters( reset_delta_filters_ );
 		combined_filter->reset_filters();
 		combined_filter->clear_reset_filters();
@@ -961,10 +960,10 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	//load multiple filters from branch tags
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	BOOST_FOREACH ( utility::tag::TagCOP const btag, branch_tags ) {
+	for ( utility::tag::TagCOP const btag : branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
-			BOOST_FOREACH ( utility::tag::TagCOP const ftag, filters_tags ) {
+			for ( utility::tag::TagCOP const ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				auto find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
@@ -999,7 +998,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	delta_filter_names.clear();
 	if ( tag->hasOption( "reset_delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
-		BOOST_FOREACH ( std::string const fname, delta_filter_names ) {
+		for ( std::string const & fname : delta_filter_names ) {
 			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
@@ -1014,7 +1013,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	if ( tag->hasOption( "set_task_for_filters" ) ) {
 		utility::vector1< std::string > filter_names = utility::string_split( tag->getOption< std::string >( "set_task_for_filters" ), ',' );
-		BOOST_FOREACH ( std::string const fname, filter_names ) {
+		for ( std::string const & fname : filter_names ) {
 			set_task_for_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::TaskAwareScoreTypeFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
 			//Would be nice if task_factory() was a standard method of the filter class, so that we could make a Virtual task_factory() method in the Filter base class and not have to have this specific to TaskAwareScoreTypeFilter.  If this proves useful, then perhaps we could consider that...
 			TR<<"The task for filter "<<fname<<" will be set to only allow repacking at the mutated positions."<<std::endl;

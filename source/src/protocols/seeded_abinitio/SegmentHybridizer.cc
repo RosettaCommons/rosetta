@@ -17,7 +17,6 @@
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <boost/foreach.hpp>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Package headers
@@ -585,24 +584,25 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 	/// read areas that are supposed to be remodeled
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 
-		if ( btag->getName() == "Span" ) { //need an assertion for the presence of these or at least for the option file
-			std::string const beginS( btag->getOption<std::string>( "begin" ) );
-			std::string const endS( btag->getOption<std::string>( "end" ) );
+		//need an assertion for the presence of these or at least for the option file
+		if ( btag->getName() != "Span" ) continue;
+		
+		std::string const beginS( btag->getOption<std::string>( "begin" ) );
+		std::string const endS( btag->getOption<std::string>( "end" ) );
 
-			extend_outside_ = btag->getOption<core::Size>( "extend_outside", 5);
-			extend_inside_  =  btag->getOption<core::Size>( "extend_inside" , 1 );
-			//   N_mm_ = btag->getOption<core::Size>( "N_mm", 2 );
-			//   C_mm_ = btag->getOption<core::Size>( "C_mm", 2 );
+		extend_outside_ = btag->getOption<core::Size>( "extend_outside", 5);
+		extend_inside_  =  btag->getOption<core::Size>( "extend_inside" , 1 );
+		//   N_mm_ = btag->getOption<core::Size>( "N_mm", 2 );
+		//   C_mm_ = btag->getOption<core::Size>( "C_mm", 2 );
 
-			std::pair <std::string,std::string> segpair;
-			segpair.first  = beginS;
-			//std::cout  <<"parsing spans: " << beginS << " " <<endS << " and remdoel "<< std::endl;
-			segpair.second = endS;
-			seg_vector_.push_back( segpair ); // parse at runtime for possible length changes
+		std::pair <std::string,std::string> segpair;
+		segpair.first  = beginS;
+		//std::cout  <<"parsing spans: " << beginS << " " <<endS << " and remdoel "<< std::endl;
+		segpair.second = endS;
+		seg_vector_.push_back( segpair ); // parse at runtime for possible length changes
 
-		}//end seeds
 	}//end b-tags
 }//end parse tag
 

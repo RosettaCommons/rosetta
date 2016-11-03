@@ -224,7 +224,7 @@ void PossibleLoop::generate_stub_rmsd(){
 	residues.push_back(tmpResidueAfterLoop);
 	residues.push_back(tmpResidueAfterLoop+1);
 	for ( Size ii=1; ii<=residues.size(); ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
+		for ( std::string const & atom_name : SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(fullLengthPoseOP_->residue(residues[ii]).xyz(atom_name));
 		}
 	}
@@ -251,7 +251,7 @@ void PossibleLoop::generate_uncached_stub_rmsd(){
 		}
 	}
 	for ( Size ii=1; ii<=residues.size(); ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
+		for ( std::string const & atom_name : SSHashedFragmentStore_->get_fragment_store()->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(fullLengthPoseOP_->residue(residues[ii]).xyz(atom_name));
 		}
 	}

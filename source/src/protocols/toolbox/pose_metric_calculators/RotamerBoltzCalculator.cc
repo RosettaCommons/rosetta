@@ -53,7 +53,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <cmath>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
@@ -377,7 +376,7 @@ RotamerBoltzCalculator::create_rotamer_set( core::pose::Pose const & pose, core:
 
 core::Real RotamerBoltzCalculator::computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores){
 	core::Real boltz_sum ( 0.0 );
-	BOOST_FOREACH ( core::Real const score, scores ) {
+	for ( core::Real const score : scores ) {
 		boltz_sum += exp(( init_score - score )/temperature());
 	}
 

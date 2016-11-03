@@ -25,7 +25,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/pose/Pose.hh>
-#include <boost/foreach.hpp>
 
 ///Utility headers
 #include <utility/file/FileName.hh>
@@ -152,7 +151,7 @@ void SilentFileJobOutputter::read_done_jobs() {
 	core::io::silent::SilentFileData sfd;
 	if ( utility::file::file_exists( silent_file_ ) ) {
 		silent_file_tags_ = sfd.read_tags_fast( silent_file_ );
-		BOOST_FOREACH ( std::string & tag, silent_file_tags_ ) {
+		for ( std::string & tag : silent_file_tags_ ) {
 			/// eliminate the FAILURE_ prefix so that jobs know to start from
 			/// the 'next' nstruct on restart. This is important to avoid duplicate
 			/// entries

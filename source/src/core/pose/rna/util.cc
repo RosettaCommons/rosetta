@@ -682,7 +682,8 @@ is_torsion_valid(
 	bool const is_cutpoint_closed1 = is_cutpoint_closed_torsion( pose, torsion_id );
 	debug_assert( is_cutpoint_closed1 == is_cutpoint_closed_by_atom_name( rsd_1, rsd_2, rsd_3, rsd_4, id1, id2, id3, id4) ); // takes time
 
-	if ( is_cutpoint_closed1 && !is_virtual_torsion ) {
+	// AMW: If this isn't a cutpoint in the FT, the below is not a problem (fingers crossed -- hack)
+	if ( pose.fold_tree().is_cutpoint( id1.rsd() ) && is_cutpoint_closed1 && !is_virtual_torsion ) {
 		print_torsion_info( pose, torsion_id );
 		utility_exit_with_message( "is_cutpoint_closed1 == true && is_virtual_torsion == false!!" );
 	}
@@ -690,8 +691,7 @@ is_torsion_valid(
 	runtime_assert( id1.rsd() <= id2.rsd() );
 	runtime_assert( id2.rsd() <= id3.rsd() );
 	runtime_assert( id3.rsd() <= id4.rsd() );
-	runtime_assert( ( id1.rsd() == id4.rsd() )
-		|| ( id1.rsd() == ( id4.rsd() - 1 ) ) );
+	runtime_assert( ( id1.rsd() == id4.rsd() ) || ( id1.rsd() == ( id4.rsd() - 1 ) ) );
 
 	bool const inter_residue_torsion = ( id1.rsd() != id4.rsd() );
 

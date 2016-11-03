@@ -45,10 +45,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <boost/foreach.hpp>
 #include <iostream>
-
-#define foreach BOOST_FOREACH
 
 using namespace std;
 

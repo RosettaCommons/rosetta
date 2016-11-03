@@ -33,9 +33,6 @@
 #include <string>
 #include <utility/exit.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <utility/vector1.hh>
 
 namespace core {
@@ -129,8 +126,8 @@ void PDBPoseInputStream::add_list_filenames(
 	using utility::vector1;
 	bool init_current_position( filenames_.size() == 0 );
 
-	BOOST_FOREACH ( utility::file::FileName filename_obj, list_fns ) {
-		std::string filename( filename_obj.name() );
+	for ( utility::file::FileName const & filename_obj : list_fns ) {
+		std::string const & filename( filename_obj.name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename + '\n' );

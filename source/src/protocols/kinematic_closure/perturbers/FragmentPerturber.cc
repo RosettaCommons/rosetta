@@ -31,7 +31,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -123,7 +122,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 		return;
 	}
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		//check if residue is part of the given frame
 		if ( overlapping_frame->contains_seqpos(residue) ) {
 			//convert sequence position to internal fragment position

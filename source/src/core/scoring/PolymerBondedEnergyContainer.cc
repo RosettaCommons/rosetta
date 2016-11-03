@@ -259,7 +259,7 @@ PolymerBondedEnergyContainer::const_neighbor_iterator_begin( int resid ) const {
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for ( it p = range.first; p != range.second; ++p ) {
+	for ( auto p = range.first; p != range.second; ++p ) {
 		neighbors.push_back(p->second);
 	}
 
@@ -277,7 +277,7 @@ PolymerBondedEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) c
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for ( it p = range.first; p != range.second; ++p ) {
+	for ( auto p = range.first; p != range.second; ++p ) {
 		// use residue ordering to decide lower vs upper
 		if ( (int)p->second > resid ) {
 			neighbors.push_back(p->second);
@@ -299,7 +299,7 @@ PolymerBondedEnergyContainer::neighbor_iterator_begin( int resid ) {
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for ( it p = range.first; p != range.second; ++p ) {
+	for ( auto p = range.first; p != range.second; ++p ) {
 		neighbors.push_back(p->second);
 	}
 
@@ -318,7 +318,7 @@ PolymerBondedEnergyContainer::upper_neighbor_iterator_begin( int resid )
 	typedef std::multimap<core::Size, core::Size>::const_iterator it;
 	std::pair<it,it> range = chemical_edges_.equal_range(resid);
 
-	for ( it p = range.first; p != range.second; ++p ) {
+	for ( auto p = range.first; p != range.second; ++p ) {
 		// use residue ordering to decide lower vs upper
 		if ( (int)p->second > resid ) {
 			neighbors.push_back(p->second);
@@ -365,7 +365,7 @@ PolymerBondedEnergyContainer::is_valid(
 			bool connect_found = false;
 			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
 
-			for ( it p = range.first; p != range.second && !connect_found; ++p ) {
+			for ( auto p = range.first; p != range.second && !connect_found; ++p ) {
 				if ( p->second == connect_i ) connect_found = true;
 			}
 

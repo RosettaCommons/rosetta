@@ -41,7 +41,6 @@
 #include <protocols/moves/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -110,7 +109,7 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 		while ( fill_input_cache() ) {}
 
 		TR << "Collected input poses: " << pose_input_cache_.size() << std::endl;
-		BOOST_FOREACH ( core::pose::PoseOP p, pose_input_cache_ ) {
+		for ( core::pose::PoseOP p : pose_input_cache_ ) {
 			TR << "\t" << p->sequence() << std::endl;
 		}
 	}
@@ -189,7 +188,7 @@ core::pose::PoseOP MultiplePoseMover::generate_pose()
 		// 3. Process selected poses and put them into pose_output_cache_
 		if ( !selected_poses.empty() ) {
 			std::deque < core::pose::PoseOP > poses = process_poses(selected_poses);
-			BOOST_FOREACH ( core::pose::PoseOP pose, poses ) {
+			for ( core::pose::PoseOP pose : poses ) {
 				pose_output_cache_.push_back(pose);
 			}
 		}
@@ -216,12 +215,12 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 
 	// Temp work around that shouldn't be a big performance hit
 	utility::vector1 < core::pose::PoseOP > pose_vector;
-	BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
+	for ( core::pose::PoseOP p : poses ) {
 		pose_vector.push_back(p);
 	}
 
 	// Apply selectors
-	BOOST_FOREACH ( PoseSelectorOP selector, selectors_ ) {
+	for ( PoseSelectorOP selector : selectors_ ) {
 		selected_poses_by_selectors = selector->select_poses(pose_vector);
 		// TODO: How do we handle multiple selectors? AND? OR?
 		break;
@@ -242,7 +241,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 
 	// Apply movers to selected poses
 	TR << "Selected poses for processing: " << selected_poses_for_processing.size() << std::endl;
-	BOOST_FOREACH ( core::pose::PoseOP p, selected_poses_for_processing ) {
+	for ( core::pose::PoseOP p : selected_poses_for_processing ) {
 		TR << "\t" << p->sequence() << std::endl;
 	}
 
@@ -257,7 +256,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque <
 	std::deque < core::pose::PoseOP > selected_poses;
 	utility::vector1 < core::pose::PoseOP > additional_poses;
 
-	BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
+	for ( core::pose::PoseOP p : poses ) {
 		TR << "Applying mover to pose: " << p->sequence() << std::endl;
 		if ( process_pose(*p, additional_poses) ) {
 			// Processing successful (from sub-protocol and its filters)
@@ -266,7 +265,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque <
 	}
 
 	if ( !additional_poses.empty() ) {
-		BOOST_FOREACH ( core::pose::PoseOP p, additional_poses ) {
+		for ( core::pose::PoseOP p : additional_poses ) {
 			selected_poses.push_back( p );
 		}
 		TR << additional_poses.size() << " additional poses obtained; total output poses: " << selected_poses.size() << std::endl;
@@ -374,7 +373,7 @@ void MultiplePoseMover::parse_my_tag(
 		if ( tag->hasTag("SELECT") ) {
 			selectors_.clear();
 			TagCOP select_tag( tag->getTag("SELECT") );
-			BOOST_FOREACH ( TagCOP const curr_tag, select_tag->getTags() ) {
+			for ( TagCOP const curr_tag : select_tag->getTags() ) {
 				PoseSelectorOP new_selector(
 					PoseSelectorFactory::get_instance()->
 					newPoseSelector( curr_tag, data, selector_filters_, movers, pose )
@@ -400,7 +399,7 @@ void MultiplePoseMover::parse_my_tag(
 
 // Obtain flags from selector
 	PoseSelectorFlags flags = PSF_NONE;
-	BOOST_FOREACH ( PoseSelectorOP selector, selectors_ ) {
+	for ( PoseSelectorOP selector : selectors_ ) {
 		// flags |= selector->get_flags();
 		flags = (PoseSelectorFlags)( flags | selector->get_flags() );
 	}

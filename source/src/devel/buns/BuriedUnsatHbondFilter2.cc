@@ -29,7 +29,6 @@
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 
 namespace devel {
 namespace buns {
@@ -179,7 +178,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 		if ( selected_residues.size() == 0 ) {
 			unsat_hbonds = 0;
 		} else {
-			BOOST_FOREACH ( core::Size const sr, selected_residues ) {
+			for ( core::Size const sr : selected_residues ) {
 				unsat_hbonds += std::max( (res_buns_bound.value()[ sr ]) - (res_buns_unbound.value()[ sr ]), Size(0) );
 				//TR << "running value for total_in_selected_residues = " << total_in_selected_residues << std::endl;
 			}

@@ -26,7 +26,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMo
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -81,7 +80,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_residue_numbers.clear();
 	utility::vector1< core::Size > positions_in_new_pose;
 	positions_in_new_pose.clear();
-	BOOST_FOREACH ( char const chaini, chain_order() ) {
+	for ( char const chaini : chain_order() ) {
 		core::Size const chain( chaini - '0' );
 		TR<<"Now at chain: "<<chain<<std::endl;
 		runtime_assert( chain > 0 && chain <= conf.num_chains() );
@@ -94,7 +93,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 		}
 		core::Size const new_chain_end( positions_in_new_pose.size() );
 		if ( residue_numbers_ != nullptr ) {
-			BOOST_FOREACH ( core::Size const residue_number, residue_numbers_->obj ) {
+			for ( core::Size const residue_number : residue_numbers_->obj ) {
 				if ( residue_number >= chain_begin && residue_number <= chain_end ) {
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
 				}
@@ -127,7 +126,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	if ( residue_numbers_ != nullptr ) {
 		residue_numbers_->obj = new_residue_numbers;
 		TR<<"new residue numbers: ";
-		BOOST_FOREACH ( core::Size const res, residue_numbers_->obj ) {
+		for ( core::Size const res : residue_numbers_->obj ) {
 			TR<<res<<", ";
 		}
 		TR<<std::endl;
@@ -200,7 +199,7 @@ SwitchChainOrderMover::parse_my_tag(
 void
 SwitchChainOrderMover::chain_order( std::string const & co ){
 	utility::vector1<core::Size> new_chain_ids;
-	BOOST_FOREACH ( char const chaini, co ) {
+	for ( char const chaini : co ) {
 		core::Size const chain( chaini - '0' );
 		new_chain_ids.push_back( chain );
 	}
@@ -211,7 +210,7 @@ std::string
 SwitchChainOrderMover::chain_order() const
 {
 	std::string chain_order;
-	BOOST_FOREACH ( core::Size const chain, chain_ids_ ) {
+	for ( core::Size const chain : chain_ids_ ) {
 		chain_order += utility::to_string<core::Size>(chain);
 	}
 	return chain_order;

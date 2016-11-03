@@ -106,18 +106,6 @@ create_remark_headers_from_cstcache(
 std::string
 get_pdb_code_from_pose_tag( core::pose::Pose const & pose );
 
-/// @TODO delete and use cctype functions
-bool
-is_digit( char * cha );
-
-/// @TODO delete and use cctype functions
-bool
-is_uppercase_letter( char * cha);
-
-/// @TODO delete and use cctype functions
-bool
-is_lowercase_letter( char * cha );
-
 void
 disable_constraint_scoreterms(core::scoring::ScoreFunctionOP scorefxn);
 void

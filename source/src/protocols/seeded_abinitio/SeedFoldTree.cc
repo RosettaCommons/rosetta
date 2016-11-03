@@ -49,7 +49,6 @@
 #include <string>
 #include <utility>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 #include <protocols/simple_filters/AlaScan.hh>
 
 
@@ -103,7 +102,7 @@ SeedFoldTree::SeedFoldTree( core::kinematics::FoldTreeOP ft ) :
 	ddg_based_ = true;
 	anchors_.clear();
 	//manual_jump_pairs_.clear();
-	folding_verteces_.clear();
+	folding_vertices_.clear();
 
 }
 
@@ -370,8 +369,8 @@ SeedFoldTree::set_foldtree(
 		utility::vector1 < std::pair < Size, Size > > jump_pair_collection ;
 
 		//informing vertex container with the total length of the new protein
-		folding_verteces_.insert( total_size_complex );
-		folding_verteces_.insert( start_new_protein );
+		folding_vertices_.insert( total_size_complex );
+		folding_vertices_.insert( start_new_protein );
 
 		if ( seed_num <= 0 ) {
 			utility_exit_with_message( "NO SEEDS SPECIFIED!!!" );
@@ -390,8 +389,8 @@ SeedFoldTree::set_foldtree(
 				TR<<"... between: "<< end_seed << " and " << start_new_seed  << std::endl;
 				Size cut = define_cut_point_stochasticly( end_seed, start_new_seed, secstr , start_new_protein);
 				cut_points_.push_back( cut );
-				folding_verteces_.insert( cut );
-				folding_verteces_.insert( cut + 1 );
+				folding_vertices_.insert( cut );
+				folding_vertices_.insert( cut + 1 );
 				TR<<"vector: "<<cut_points_[seed_it - 1] << "method cut: " << cut << std::endl;
 			}
 		}//end additional cutpoints
@@ -421,8 +420,8 @@ SeedFoldTree::set_foldtree(
 
 				TR<<"seed_residue_counter: "<<seed_res_counter<<std::endl;
 				//populating container for peptide growth
-				folding_verteces_.insert(seed_start);
-				folding_verteces_.insert(seed_stop);
+				folding_vertices_.insert(seed_start);
+				folding_vertices_.insert(seed_stop);
 
 				TR<<"numbering for seed(only)-target pose with target\n ----- SEED: "<< seed_it << " start: "<<seed_start<<", stop: "<<seed_stop<<" ---------" <<std::endl;
 				TR<<"position adjustment of TRUNCATED seed motif by "<<position_adjustment<<std::endl;
@@ -506,7 +505,7 @@ SeedFoldTree::set_foldtree(
 
 		///target first:
 		Size target_head = 1;
-		BOOST_FOREACH ( core::Size const res, res_on_target ) {
+		for ( core::Size const res : res_on_target ) {
 			/// connect chain1 with no breaks
 			fold_tree_->add_edge( target_head, res, Edge::PEPTIDE );
 			target_head = res;
@@ -521,7 +520,7 @@ SeedFoldTree::set_foldtree(
 		Size last_cut = 0;
 		//Size last_jump = 0;
 
-		BOOST_FOREACH ( core::Size const jpos, res_on_design ) {
+		for ( core::Size const jpos : res_on_design ) {
 			TR<<"foldpose iterator: "<< jpos <<"and +1 "<< jpos+1 << std::endl;
 			if ( last_cut != 0 ) {
 				fold_tree_->add_edge( last_cut+1 , jpos , Edge::PEPTIDE ); //this way the cut is after the specified cut position, should it be before?
@@ -708,7 +707,7 @@ utility::vector1 < core::Size >
 SeedFoldTree::get_cutpoints(){ return cut_points_ ;}
 
 std::set< core::Size >
-SeedFoldTree::get_folding_verteces(){ return folding_verteces_;}
+SeedFoldTree::get_folding_vertices(){ return folding_vertices_;}
 
 std::string
 SeedFoldTree::get_name() const {
@@ -731,7 +730,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 		/* this parsing option works, it is just not hooked in yet
 		//in case anybody ever wanted to set them manually
 		if( btag->getName() == "cut_points" ) {

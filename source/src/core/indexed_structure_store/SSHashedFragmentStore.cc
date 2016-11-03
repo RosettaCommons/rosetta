@@ -41,7 +41,6 @@
 #include <map>
 #include <set>
 
-#define foreach BOOST_FOREACH
 
 static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.SSHashedFragmentStore" );
 
@@ -294,7 +293,7 @@ Real SSHashedFragmentStore::lookback_account_for_dssp_inaccuracy(pose::Pose cons
 	//get initial resid
 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 	for ( Size ii = 0;  ii < fragment_length; ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, get_fragment_store()->fragment_specification.fragment_atoms ) {
+		for ( std::string const & atom_name : get_fragment_store()->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 		}
 	}
@@ -342,7 +341,7 @@ Real SSHashedFragmentStore::lookback(pose::Pose const pose, Size resid,string fr
 		FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
 		std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 		for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
-			BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
+			for ( std::string const & atom_name : selected_fragStoreOP->fragment_specification.fragment_atoms ) {
 				coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 			}
 		}
@@ -455,7 +454,7 @@ std::vector< numeric::xyzVector<numeric::Real> > SSHashedFragmentStore::get_frag
 //  std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 //  std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates;
 //  for ( Size ii = 0;  ii < fragmentStore_fragment_length; ++ii ) {
-//   BOOST_FOREACH ( std::string atom_name, selected_fragStoreOP->fragment_specification.fragment_atoms ) {
+//   for ( std::string const & atom_name : selected_fragStoreOP->fragment_specification.fragment_atoms ) {
 //    coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 //   }
 //  }
@@ -518,7 +517,7 @@ void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resi
 	std::vector< numeric::xyzVector<numeric::Real> > coordinates;
 	FragmentStoreOP tmp_fragStoreOP = get_fragment_store();
 	for ( Size ii = 0;  ii < get_fragment_length(); ++ii ) {
-		BOOST_FOREACH ( std::string atom_name, tmp_fragStoreOP->fragment_specification.fragment_atoms ) {
+		for ( std::string const & atom_name : tmp_fragStoreOP->fragment_specification.fragment_atoms ) {
 			coordinates.push_back(pose.residue(resid+ii).xyz(atom_name));
 		}
 	}
@@ -544,11 +543,11 @@ void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resi
 			FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(ss_index);
 			FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
 			vector<FragmentLookupResult> lookupResults = selected_fragLookupOP->lookup_close_fragments(&coordinates[0], rms_threshold);
-			for ( Size ii=0; ii<lookupResults.size(); ++ii ) {
-				hits_rms.push_back(lookupResults[ii].match_rmsd);
-				std::vector<Real> cen_list_frag = selected_fragStoreOP->realVector_groups["cen"][lookupResults[ii].match_index];
+			for (auto & lookupResult : lookupResults) {
+				hits_rms.push_back(lookupResult.match_rmsd);
+				std::vector<Real> cen_list_frag = selected_fragStoreOP->realVector_groups["cen"][lookupResult.match_index];
 				hits_cen.push_back(cen_list_frag);
-				std::string tmp_aa = selected_fragStoreOP->string_groups["aa"][lookupResults[ii].match_index];
+				std::string tmp_aa = selected_fragStoreOP->string_groups["aa"][lookupResult.match_index];
 				hits_aa.push_back(tmp_aa);
 			}
 		}

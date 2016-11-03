@@ -32,8 +32,6 @@
 #include <stack>
 #include <numeric>
 
-#include <boost/foreach.hpp>
-
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -80,7 +78,7 @@ FoldTreeSketch::FoldTreeSketch( core::kinematics::FoldTree const& ft ):
 {
 	append_peptide( ft.nres() );
 
-	BOOST_FOREACH ( core::Size cutpoint, ft.cutpoints() ) {
+	for ( core::Size const cutpoint : ft.cutpoints() ) {
 		insert_cut( cutpoint );
 	}
 
@@ -188,7 +186,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 
 	if ( cuts.size() != jumps.size() ) {
 		tr.Debug << "Cuts were: ";
-		BOOST_FOREACH ( Size cut, cuts ) { tr.Debug << cut << ", "; }
+		for ( Size const cut : cuts ) { tr.Debug << cut << ", "; }
 		tr.Debug << std::endl << "Jumps were: ";
 		for ( auto const & jump : jumps ) {
 			tr.Debug << "(" << jump.first << "," << jump.second << "), ";
@@ -532,7 +530,7 @@ bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP calle
 	}
 
 	NodeCOP caller_op = caller.lock();
-	BOOST_FOREACH ( NodeCAP n, jump_neighbors_ ) {
+	for ( NodeCAP n : jump_neighbors_ ) {
 		if ( !n.expired() && !utility::pointer::equal(n, caller) ) {
 			if ( n.lock()->has_cycle(path, this_weak_ptr_) ) { // FIXME: lock() assert?
 				return true;
@@ -544,7 +542,7 @@ bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP calle
 }
 
 void FoldTreeSketch::Node::collect_jumps( std::set< std::pair< Size, Size > >& jumps ) const {
-	BOOST_FOREACH ( NodeCAP n, jump_neighbors_ ) {
+	for ( NodeCAP n : jump_neighbors_ ) {
 		Size seqid1 = seqid();
 		Size seqid2 = n.lock()->seqid(); // FIXME: lock() assert?
 

@@ -38,7 +38,6 @@
 #include <utility/vector1.hh>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 
 //// C++ headers
 #include <iostream>
@@ -115,7 +114,7 @@ ControlStrength EnvClaim::parse_ctrl_str( std::string const& str ) const {
 }
 
 void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::SequenceAnnotationOP ann ) const {
-	BOOST_FOREACH ( AnnotatingSelectors::value_type pair, selector_list_ ) {
+	for ( AnnotatingSelectors::value_type const & pair : selector_list_ ) {
 		std::string const& label = pair.first;
 		ResidueSelectorCOP selector = pair.second;
 

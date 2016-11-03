@@ -31,10 +31,8 @@
 
 #include <ctime>
 
-namespace core
-{
-namespace indexed_structure_store
-{
+namespace core {
+namespace indexed_structure_store {
 
 struct FragmentSpecification
 {
@@ -78,8 +76,9 @@ public:
 		typename std::vector<T>::iterator read_position = data_vector.begin();
 		typename std::vector<T>::iterator write_position = data_vector.begin();
 		typename std::vector<T>::iterator end_position = data_vector.end();
-		for ( std::vector<bool>::const_iterator itr=delete_vector.begin(); itr!= delete_vector.end(); ++itr ) {
-			if ( *itr==true ) {
+		//for (std::_Bit_const_iterator::const_reference itr : delete_vector) {
+		for ( bool const itr : delete_vector ) {
+			if ( itr==true ) {
 				read_position++;
 			} else {
 				*write_position = *read_position;

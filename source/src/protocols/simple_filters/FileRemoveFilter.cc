@@ -20,7 +20,6 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 #include <cstdio>
 #include <fstream>
 
@@ -61,7 +60,7 @@ FileRemoveFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 bool
 FileRemoveFilter::apply( core::pose::Pose const & ) const {
 	using namespace std;
-	BOOST_FOREACH ( std::string const f, file_names_ ) {
+	for ( std::string const & f : file_names_ ) {
 		if ( remove( f.c_str() ) ) {
 			TR<<"Successfully removed "<<f<<std::endl;
 		} else {

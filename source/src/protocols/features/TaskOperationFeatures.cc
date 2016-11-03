@@ -46,8 +46,6 @@
 
 // Boost Headers
 #include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <cmath>

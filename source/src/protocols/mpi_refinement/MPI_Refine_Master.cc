@@ -63,8 +63,6 @@
 #include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>

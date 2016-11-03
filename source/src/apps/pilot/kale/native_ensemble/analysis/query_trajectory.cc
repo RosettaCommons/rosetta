@@ -29,9 +29,6 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
-// External headers
-#include <boost/foreach.hpp>
-
 // C++ headers
 #include <sstream>
 #include <algorithm>
@@ -81,7 +78,7 @@ int main(int argc, char **argv) { // {{{1
 	cout << loop.start() << " ";
 	cout << loop.stop() << endl;
 	
-	BOOST_FOREACH(Size i, iterations) {
+	for (Size const i : iterations) {
 		cout << "  " << i << endl;
 		Pose pose = reader.get_pose(i);
 		Real score = pose.energies().total_energy();

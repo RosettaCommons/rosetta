@@ -14,9 +14,6 @@
 
 #include <basic/Emitter.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <cstddef>
 #include <iosfwd>
 #include <ostream>
@@ -88,7 +85,7 @@ std::string Emitter::escape_string(std::string const & s, bool & needs_quotes_ou
 
 	std::ostringstream o;
 
-	BOOST_FOREACH ( char ch, s ) {
+	for ( char ch : s ) {
 		if ( ' ' <= ch && ch <= '~' ) o << ch; // the range of printable ASCII characters
 		else if ( ch == '"'  ) o << "\\\"";
 		else if ( ch == '\\' ) o << "\\\\";

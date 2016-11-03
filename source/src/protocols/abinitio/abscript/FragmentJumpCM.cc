@@ -59,7 +59,6 @@
 #include <basic/datacache/DataMap.hh>
 
 #include <boost/functional/hash.hpp>
-#include <boost/foreach.hpp>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -169,7 +168,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 	if ( map->find( "JumpSampleData") != map->end() ) {
 		std::set< WriteableCacheableDataOP > const& data_set = map->find( "JumpSampleData" )->second;
 
-		BOOST_FOREACH ( WriteableCacheableDataOP data_ptr, data_set ) {
+		for ( WriteableCacheableDataOP data_ptr : data_set ) {
 			JumpSampleDataOP jumpdata_ptr = utility::pointer::dynamic_pointer_cast< protocols::abinitio::abscript::JumpSampleData > ( data_ptr );
 			assert( jumpdata_ptr );
 

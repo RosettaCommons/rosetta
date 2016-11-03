@@ -73,7 +73,6 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector0.hh>
@@ -187,7 +186,7 @@ BackrubDDMover::apply( Pose & pose )
 
 	kinematics::FoldTree const saved_ft( pose.fold_tree() );
 	bool make_new_ft( false );
-	BOOST_FOREACH ( kinematics::Edge const edge, saved_ft ) {
+	for ( kinematics::Edge const & edge : saved_ft ) {
 		if ( edge.start() > edge.stop() ) {
 			make_new_ft = true;
 			break;

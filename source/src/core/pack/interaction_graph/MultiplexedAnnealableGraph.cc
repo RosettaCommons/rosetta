@@ -11,8 +11,6 @@
 /// @brief  Multiplexing packing graph container.
 /// @author Alex Ford (fordas@uw.edu)
 
-#include <boost/foreach.hpp>
-
 // Unit Headers
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
 
@@ -67,7 +65,7 @@ int MultiplexedAnnealableGraph::get_num_nodes() const
 
 	int num_nodes = subgraphs.front()->get_num_nodes();
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		if ( subgraph->get_num_nodes() != num_nodes ) {
 			throw std::logic_error("inconsistent num_nodes in subgraphs.");
 		}
@@ -84,7 +82,7 @@ int MultiplexedAnnealableGraph::get_num_states_for_node(int node) const
 
 	int num_states = subgraphs.front()->get_num_states_for_node(node);
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		if ( subgraph->get_num_states_for_node(node) != num_states ) {
 			throw std::logic_error("inconsistent num_states_for_node in subgraphs.");
 		}
@@ -101,7 +99,7 @@ int MultiplexedAnnealableGraph::get_num_total_states() const
 
 	int num_states = subgraphs.front()->get_num_total_states();
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		if ( subgraph->get_num_total_states() != num_states ) {
 			throw std::logic_error("inconsistent num_total_states in subgraphs.");
 		}
@@ -112,21 +110,21 @@ int MultiplexedAnnealableGraph::get_num_total_states() const
 
 void MultiplexedAnnealableGraph::prepare_for_simulated_annealing()
 {
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		subgraph->prepare_for_simulated_annealing();
 	}
 }
 
 void MultiplexedAnnealableGraph::blanket_assign_state_0()
 {
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		subgraph->blanket_assign_state_0();
 	}
 }
 
 bool MultiplexedAnnealableGraph::any_vertex_state_unassigned() const
 {
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		if ( subgraph->any_vertex_state_unassigned() ) {
 			return true;
 		}
@@ -139,7 +137,7 @@ core::PackerEnergy MultiplexedAnnealableGraph::set_state_for_node(int node_ind, 
 {
 	core::PackerEnergy result = 0;
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		result += subgraph->set_state_for_node(node_ind, new_state);
 	}
 
@@ -150,7 +148,7 @@ core::PackerEnergy MultiplexedAnnealableGraph::set_network_state( ObjexxFCL::FAr
 {
 	core::PackerEnergy result = 0;
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		result += subgraph->set_network_state(node_states);
 	}
 
@@ -166,7 +164,7 @@ void MultiplexedAnnealableGraph::consider_substitution(
 	delta_energy = 0;
 	prev_energy_for_node = 0;
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		core::PackerEnergy subgraph_delta = 0;
 		core::PackerEnergy subgraph_prev = 0;
 		subgraph->consider_substitution( node_ind, new_state, subgraph_delta, subgraph_prev);
@@ -180,7 +178,7 @@ core::PackerEnergy MultiplexedAnnealableGraph::commit_considered_substitution()
 {
 	core::PackerEnergy result = 0;
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		result += subgraph->commit_considered_substitution();
 	}
 
@@ -191,7 +189,7 @@ core::PackerEnergy MultiplexedAnnealableGraph::get_energy_current_state_assignme
 {
 	core::PackerEnergy result = 0;
 
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		result += subgraph->get_energy_current_state_assignment();
 	}
 
@@ -200,7 +198,7 @@ core::PackerEnergy MultiplexedAnnealableGraph::get_energy_current_state_assignme
 
 void MultiplexedAnnealableGraph::set_errorfull_deltaE_threshold(core::PackerEnergy deltaE)
 {
-	BOOST_FOREACH ( AnnealableGraphBaseOP subgraph, subgraphs ) {
+	for ( AnnealableGraphBaseOP subgraph : subgraphs ) {
 		subgraph->set_errorfull_deltaE_threshold(deltaE);
 	}
 }

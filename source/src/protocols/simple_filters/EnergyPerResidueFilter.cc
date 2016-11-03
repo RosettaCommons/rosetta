@@ -38,8 +38,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <set>
 
@@ -241,13 +239,13 @@ EnergyPerResidueFilter::apply_helper( std::string name, core::pose::Pose const &
 		}
 	} else if ( select_resnums_ ) {
 		std::set< core::Size > const res_vec( core::pose::get_resnum_list( string_resnums_, pose ) );
-		foreach ( core::Size const res, res_vec ) {
+		for ( core::Size const res : res_vec ) {
 			use_all_residues[ res ]=true;
 		}
 	} else if ( select_around_resnums_ ) {
 		if ( string_around_resnums_.size()!=0 ) {
 			std::set< core::Size > const res_vec( core::pose::get_resnum_list( string_around_resnums_, pose ) );
-			foreach ( core::Size const res, res_vec ) {
+			for ( core::Size const res : res_vec ) {
 				use_all_residues[ res ]=true;
 
 				for ( core::Size i = 1; i <= pose.size(); ++i ) {

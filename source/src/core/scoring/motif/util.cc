@@ -63,7 +63,6 @@
 
 #include <boost/unordered_set.hpp>
 
-#include <boost/foreach.hpp>
 #include <bitset>
 #ifndef _WIN32
 #include <pthread.h>
@@ -463,33 +462,33 @@ core::id::AtomID_Mask get_motif_atom_mask( Pose const & motif_pose, RPM_Type con
 		core::pose::initialize_atomid_map(mask,motif_pose,false);
 		switch(rpm_type1(type)){
 		case RM_PH :
-			BOOST_FOREACH ( AtomID const & aid, get_nterminal_peptide_bond_reference_frame_atomids(motif_pose,1) )  mask[aid] = true;
+			for ( AtomID const & aid : get_nterminal_peptide_bond_reference_frame_atomids(motif_pose,1) )  mask[aid] = true;
 			break;
 		case RM_PO :
-			BOOST_FOREACH ( AtomID const & aid, get_cterminal_peptide_bond_reference_frame_atomids(motif_pose,1) )  mask[aid] = true;
+			for ( AtomID const & aid : get_cterminal_peptide_bond_reference_frame_atomids(motif_pose,1) )  mask[aid] = true;
 			break;
 		case RM_BB :
-			BOOST_FOREACH ( AtomID const & aid, get_backbone_reference_frame_atomids_with_downstream(motif_pose,1) )  mask[aid] = true;
+			for ( AtomID const & aid : get_backbone_reference_frame_atomids_with_downstream(motif_pose,1) )  mask[aid] = true;
 			break;
 		case RM_SC :
-			if ( with_Hpol ) BOOST_FOREACH ( AtomID const & aid, get_sidechain_reference_frame_atomids_with_downstream(motif_pose,1) )  mask[aid] = true;
-			else          BOOST_FOREACH ( AtomID const & aid, get_sidechain_reference_frame_atomids                (motif_pose,1) )  mask[aid] = true;
+			if ( with_Hpol ) for ( AtomID const & aid : get_sidechain_reference_frame_atomids_with_downstream(motif_pose,1) )  mask[aid] = true;
+			else          for ( AtomID const & aid : get_sidechain_reference_frame_atomids                (motif_pose,1) )  mask[aid] = true;
 			break;
 		default : utility_exit_with_message("unknown motif type");
 		}
 		switch(rpm_type2(type)){
 		case RM_PH :
-			BOOST_FOREACH ( AtomID const & aid, get_nterminal_peptide_bond_reference_frame_atomids(motif_pose,2) )  mask[aid] = true;
+			for ( AtomID const & aid : get_nterminal_peptide_bond_reference_frame_atomids(motif_pose,2) )  mask[aid] = true;
 			break;
 		case RM_PO :
-			BOOST_FOREACH ( AtomID const & aid, get_cterminal_peptide_bond_reference_frame_atomids(motif_pose,2) )  mask[aid] = true;
+			for ( AtomID const & aid : get_cterminal_peptide_bond_reference_frame_atomids(motif_pose,2) )  mask[aid] = true;
 			break;
 		case RM_BB :
-			BOOST_FOREACH ( AtomID const & aid, get_backbone_reference_frame_atomids_with_downstream(motif_pose,2) )  mask[aid] = true;
+			for ( AtomID const & aid : get_backbone_reference_frame_atomids_with_downstream(motif_pose,2) )  mask[aid] = true;
 			break;
 		case RM_SC :
-			if ( with_Hpol ) BOOST_FOREACH ( AtomID const & aid, get_sidechain_reference_frame_atomids_with_downstream(motif_pose,2) )  mask[aid] = true;
-			else          BOOST_FOREACH ( AtomID const & aid, get_sidechain_reference_frame_atomids                (motif_pose,2) )  mask[aid] = true;
+			if ( with_Hpol ) for ( AtomID const & aid : get_sidechain_reference_frame_atomids_with_downstream(motif_pose,2) )  mask[aid] = true;
+			else          for ( AtomID const & aid : get_sidechain_reference_frame_atomids                (motif_pose,2) )  mask[aid] = true;
 			break;
 		default : utility_exit_with_message("unknown motif type");
 		}

@@ -41,7 +41,6 @@
 #include <utility/string_util.hh>
 
 // External headers
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -90,7 +89,7 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	using namespace core::scoring;
 	using namespace core::pack::task;
 	using namespace core::pack::rotamer_set;
-	BOOST_FOREACH ( core::Size const resid, shove_residues_ ) {
+	for ( core::Size const resid : shove_residues_ ) {
 		if ( pose.residue(resid).name3() == "GLY" ) {
 			//The SHOVE_BB patch does not properly work with Glycine.  Looking at it, it's not clear that it even
 			//Makes sense to use this mover with Glycine.  Given this, it's probably best to exit here.
@@ -126,7 +125,7 @@ ShoveResidueMover::parse_my_tag( TagCOP const tag,
 	if ( tag->hasOption( "shove" ) ) {
 		std::string const shove_val( tag->getOption< std::string >( "shove" ) );
 		utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
-		BOOST_FOREACH ( std::string const key, shove_keys ) {
+		for ( std::string const & key : shove_keys ) {
 			core::Size const resnum( core::pose::parse_resnum( key, pose ) );
 			shove_residues_.push_back( resnum );
 			TR<<"Using shove atomtype for "<< key <<'\n';

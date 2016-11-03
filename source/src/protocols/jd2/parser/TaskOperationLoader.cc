@@ -24,9 +24,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -49,18 +46,18 @@ void TaskOperationLoader::load_data(
 {
 	using namespace core::pack::task::operation;
 
-	BOOST_FOREACH ( utility::tag::TagCOP tag, tag->getTags() ) {
-		std::string const type( tag->getName() );
-		if ( ! tag->hasOption("name") ) {
+	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
+		std::string const & type( subtag->getName() );
+		if ( ! subtag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed TaskOperation (type: " + type + ")" );
 		}
-		std::string const name( tag->getOption<std::string>("name") );
+		std::string const & name( subtag->getOption<std::string>("name") );
 		if ( data.has( "task_operations", name ) ) {
 			TR.Error << "Error TaskOperation of name \"" << name
-				<< "\" (with type " << type << ") already exists. \n" << tag << std::endl;
+				<< "\" (with type " << type << ") already exists. \n" << subtag << std::endl;
 			utility_exit_with_message("Duplicate definition of TaskOperation with name " + name);
 		}
-		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag ) );
+		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, subtag ) );
 		runtime_assert( new_t_o != 0 );
 		data.add("task_operations", name, new_t_o );
 		TR << "Defined TaskOperation named \"" << name << "\" of type " << type << std::endl;

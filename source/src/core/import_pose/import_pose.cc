@@ -59,7 +59,6 @@
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
-#include <boost/foreach.hpp>
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
@@ -254,13 +253,12 @@ pose_from_file(
 	ImportPoseOptions const & options,
 	bool read_fold_tree,
 	FileType file_type
-)
-{
+) {
 	utility::vector1< std::string > filenames = utility::split(filenames_string);
 
 	std::string contents_of_file;
 
-	BOOST_FOREACH ( std::string filename, filenames ) {
+	for ( std::string const & filename : filenames ) {
 		utility::io::izstream file( filename );
 		if ( !file ) {
 			TR.Error << "File: " << filename << " not found!" << std::endl;

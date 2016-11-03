@@ -241,10 +241,7 @@ void RMSDReporter::parse_my_tag(
 		std::string residues = tag->getOption<std::string>("residues");
 		// Why do we have std::set in some places and std::list elsewhere?
 		std::set< core::Size > residues_list ( core::pose::get_resnum_list(residues, pose) );
-		residues_.clear();
-		BOOST_FOREACH ( core::Size r, residues_list ) {
-			residues_.push_back(r);
-		}
+		residues_.assign( residues_list.begin(), residues_list.end() );
 	}
 
 	if ( mode_ == MODE_NONE ) {

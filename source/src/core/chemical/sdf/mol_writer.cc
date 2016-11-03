@@ -24,7 +24,6 @@
 #include <algorithm>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 
 #include <utility/vector1.hh>
@@ -103,7 +102,7 @@ void MolWriter::output_residue(std::ostream & output_stream, core::conformation:
 	}
 
 
-	BOOST_FOREACH ( std::string line, prepared_lines ) {
+	for ( std::string const & line : prepared_lines ) {
 		output_stream << line;
 	}
 
@@ -316,7 +315,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::Residue cons
 
 	core::Size bond_index = 1;
 	std::string bond_line;
-	BOOST_FOREACH ( BondData current_bond, bond_data_set ) {
+	for ( BondData const & current_bond : bond_data_set ) {
 		if ( ctab_mode_ == V2000 ) {
 			bond_line = str(boost::format("%|1|%|2|%|3|%|4|%|5|%|6|%|7|\n") %
 				boost::io::group(setfill(' '),dec,setw(3),current_bond.lower) % // lower bond

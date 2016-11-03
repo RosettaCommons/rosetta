@@ -1897,10 +1897,9 @@ ScoreFunction::check_methods() const
 	// counter indexes scoretypes to the number of energy methods. Each scoretype should only
 	// map to one energy method.
 	for ( auto const & all_method : all_methods_ ) {
-		for ( auto t=all_method->score_types().begin(),
-				t_end=all_method->score_types().end(); t != t_end; ++t ) {
+		for (auto t : all_method->score_types()) {
 			//++counter[ *t ]; //++ not defined for floats, right?
-			counter[ *t ] += 1;
+			counter[ t ] += 1;
 		}
 	}
 	for ( EnergyMap::const_iterator it=counter.begin(), it_end=counter.end();

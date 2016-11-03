@@ -72,15 +72,12 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
 // C++ headers
 #include <iostream>
 #include <cmath>
 #include <ctime>
-
-#define foreach BOOST_FOREACH
 
 // Namespaces {{{1
 using namespace std;
@@ -207,7 +204,7 @@ void LoopModeler::parse_my_tag( // {{{1
 
 	// Parse subtags.
 
-	foreach ( TagCOP subtag, tag->getTags() ) {
+	for ( TagCOP subtag : tag->getTags() ) {
 
 		// Ignore <Loop> subtags (parsed by parent class).
 

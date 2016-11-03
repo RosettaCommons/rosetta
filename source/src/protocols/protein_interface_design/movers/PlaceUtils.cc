@@ -44,7 +44,6 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/foreach.hpp>
 // Utility Headers
 #include <utility/exit.hh>
 
@@ -305,7 +304,7 @@ generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_ma
 	}
 	if ( tag->getName() != "NotifyMovers" ) return;
 	utility::vector0< TagCOP > const & ta_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const ta_tag, ta_tags ) {
+	for ( TagCOP const ta_tag : ta_tags ) {
 		std::string const mover_name( ta_tag->getOption< std::string >( "mover_name" ) );
 		std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 		bool const mover_found( find_mover != movers.end() );
@@ -354,7 +353,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 		return stub_sets;
 	}
 	utility::vector0< utility::tag::TagCOP > const stubset_tags( (*ss_tag)->getTags() );
-	BOOST_FOREACH ( utility::tag::TagCOP const stubset_tag, stubset_tags ) {
+	for ( utility::tag::TagCOP const stubset_tag : stubset_tags ) {
 		std::string const stub_fname = stubset_tag->getOption< std::string >( "stubfile" );
 		HotspotStubSetOP stubset( new HotspotStubSet );
 		if ( data.has( "hotspot_library", stub_fname ) ) {

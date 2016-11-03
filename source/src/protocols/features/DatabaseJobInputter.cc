@@ -39,7 +39,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 // External Headers
@@ -351,7 +350,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {
-		BOOST_FOREACH ( protocols::jd2::InnerJobOP ijob, inner_jobs ) {
+		for ( protocols::jd2::InnerJobOP ijob : inner_jobs ) {
 			jobs.push_back(protocols::jd2::JobOP( new protocols::jd2::Job(ijob, index) ));
 			tr.Trace
 				<< "pushing " << ijob->input_tag() << " nstruct index " << index << std::endl;

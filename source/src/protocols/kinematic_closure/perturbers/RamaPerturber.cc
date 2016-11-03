@@ -25,7 +25,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -43,7 +42,7 @@ void RamaPerturber::perturb_subset(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		rama.random_phipsi_from_rama(pose.aa(residue), phi, psi);
 		if ( pose.residue( residue ).has_property( "D_AA" ) ) {
 			phi *= -1.0;
@@ -66,7 +65,7 @@ void RamaPerturber::perturb_subset_with_balance(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		rama.uniform_phipsi_from_allowed_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);

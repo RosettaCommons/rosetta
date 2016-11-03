@@ -203,14 +203,14 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 
 	// loop over the string, character by character and split it on the underscore
 	// assume here that ensemble1 is reported first (in my experience this is always the case)
-	for ( auto it=partners.begin(); it!=partners.end(); ++it ) {
+	for (char & partner : partners) {
 
-		if ( *it == '_' ) {
+		if ( partner == '_' ) {
 			current_partner = &partner2_chains;
 			continue;
 		}
 
-		current_partner->push_back(*it);
+		current_partner->push_back(partner);
 
 	}
 

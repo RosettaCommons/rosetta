@@ -24,7 +24,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/HierarchicalDataMap.hh>
-#include <boost/foreach.hpp>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -34,7 +33,6 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 
-#define foreach BOOST_FOREACH
 // }}}1
 
 namespace protocols {
@@ -122,7 +120,7 @@ void LoopMover::get_children_names( // {{{1
 	utility::vector1<string> & names, string indent) const {
 
 	names.push_back(indent + get_name());
-	foreach ( LoopMoverOP mover, get_children() ) {
+	for ( LoopMoverOP mover : get_children() ) {
 		mover->get_children_names(names, indent + "  ");
 	}
 }
@@ -160,7 +158,7 @@ void LoopMover::set_loop(Loop const & loop) { // {{{1
 
 FoldTreeRequest LoopMover::request_fold_tree() const { // {{{1
 	FoldTreeRequest request = FTR_DONT_CARE;
-	foreach ( LoopMoverCOP mover, get_children() ) {
+	for ( LoopMoverCOP mover : get_children() ) {
 		request = request & mover->request_fold_tree();
 	}
 	return request;
@@ -196,7 +194,7 @@ void LoopMover::remove_child(LoopMoverOP child) { // {{{1
 }
 
 void LoopMover::clear_children() { // {{{1
-	foreach ( LoopMoverOP child, children_ ) {
+	for ( LoopMoverOP child : children_ ) {
 		child->parent_name_ = "";
 		child->toolbox_->unset_parent();
 	}

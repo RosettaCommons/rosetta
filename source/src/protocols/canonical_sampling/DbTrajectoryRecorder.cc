@@ -40,7 +40,6 @@
 #include <basic/database/insert_statement_generator/RowData.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 // External headers
 #include <cppdb/frontend.h>
@@ -183,7 +182,7 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 
 	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
 
-	BOOST_FOREACH ( Frame frame, frame_cache_ ) {
+	for ( Frame const & frame : frame_cache_ ) {
 		stringstream string_stream;
 		SilentFileData silent_file;
 		SilentStructOP silent_data( new BinarySilentStruct(frame.pose, "db") );

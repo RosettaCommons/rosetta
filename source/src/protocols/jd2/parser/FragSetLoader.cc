@@ -28,10 +28,6 @@
 #include <utility/string_util.hh>
 
 // Basic headers
-
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -59,10 +55,10 @@ void FragSetLoader::load_data(
 
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
-		BOOST_FOREACH ( TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags() ) {
-			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
+		for ( TagCOP subtag : tag->getTag( "FRAGMENTS" )->getTags() ) {
+			std::string const & name ( subtag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
-			FragmentReaderOP frop( new FragmentReader( tag ) );
+			FragmentReaderOP frop( new FragmentReader( subtag ) );
 			frag_readers_map[ name ] = frop;
 		}
 	} else {
@@ -70,17 +66,17 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	BOOST_FOREACH ( TagCOP tag, tag->getTags() ) {
-		std::string const name ( tag->getName() );
+	for ( TagCOP subtag : tag->getTags() ) {
+		std::string const & name ( tag->getName() );
 		if ( name == "FRAGMENTS" ) continue;
 
-		std::string const frag_name ( tag->getOption<std::string>( "frag_name", "" ) );
-		std::string const output ( tag->getOption<std::string>( "output", "" ) );
+		std::string const & frag_name ( subtag->getOption<std::string>( "frag_name", "" ) );
+		std::string const & output ( subtag->getOption<std::string>( "output", "" ) );
 		runtime_assert( !name.empty() && frag_name != "" );
 
 		core::fragment::FragSetOP fragset( new core::fragment::OrderedFragSet );
 		utility::vector1< std::string > fnames ( utility::string_split( frag_name, ',' ) );
-		BOOST_FOREACH ( std::string fname, fnames ) {
+		for ( std::string const & fname : fnames ) {
 			std::map< std::string, FragmentReaderOP >::const_iterator itr;
 			itr = frag_readers_map.find( fname );
 			if ( itr != frag_readers_map.end() ) {

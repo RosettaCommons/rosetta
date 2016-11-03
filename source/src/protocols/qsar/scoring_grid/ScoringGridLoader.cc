@@ -26,7 +26,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -80,7 +79,7 @@ void ScoringGridLoader::load_data(
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	BOOST_FOREACH ( TagCOP tag, grid_tags ) {
+	for ( TagCOP tag : grid_tags ) {
 		grid_manager->make_new_grid(tag);
 	}
 

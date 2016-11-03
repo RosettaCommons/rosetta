@@ -41,7 +41,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace simple_moves {
@@ -151,7 +150,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 
 	if ( string_exclude_resnums_.length()!=0 ) {
 		set< core::Size > const res_vec( core::pose::get_resnum_list( string_exclude_resnums_, pose ) );
-		BOOST_FOREACH ( core::Size const res, res_vec ) {
+		for ( core::Size const res : res_vec ) {
 			TR<<"Turning off res_type_constraint weight for "<<res<<std::endl;
 			use_all_residues[res]=false;
 		}

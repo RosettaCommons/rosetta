@@ -18,7 +18,6 @@
 #include <core/pose/selection.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
-#include <boost/foreach.hpp>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -332,7 +331,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 	if ( tag->hasOption( "add_seed_residues" ) ) {
 		std::string residues_string = tag->getOption< std::string > ("add_seed_residues" );
 		utility::vector1< std::string > const residue_keys( utility::string_split( residues_string, ',' ) );
-		BOOST_FOREACH ( std::string const key, residue_keys ) {
+		for ( std::string const & key : residue_keys ) {
 			Size const res( utility::string2int( key ) );
 			TR  << "add constraints to residues  within seed, residue: "<< key <<std::endl;
 			seed_exceptions_.push_back( res );
@@ -342,7 +341,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
 		if ( template_presence_ ) {
 			curr_pose_ = template_pdb_;

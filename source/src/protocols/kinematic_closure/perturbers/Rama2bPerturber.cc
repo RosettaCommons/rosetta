@@ -25,7 +25,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -43,7 +42,7 @@ void Rama2bPerturber::perturb_subset(
 	Ramachandran2B const & rama =
 		ScoringManager::get_instance()->get_Ramachandran2B();
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 
 		// Currently we don't have data for both neighbors together.  Instead, for
 		// each residue we consider either its left neighbor or its right neighbor

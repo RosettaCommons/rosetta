@@ -88,7 +88,6 @@
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 
 using namespace core;
 using namespace std;
@@ -307,11 +306,11 @@ vector1<Size> RepeatPropagationMover::initial_constrained_residues(const Pose & 
 	using namespace core::scoring::constraints;
 	vector1<Size> constrained_residues;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
-	BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+	for ( ConstraintCOP const c : constraints ) {
 		if ( c->type() == "MultiConstraint" ) {
 			MultiConstraintCOP multi_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 			ConstraintCOPs constraints_l2=multi_cst->member_constraints();
-			BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
+			for ( ConstraintCOP const c_l2 : constraints_l2 ) {
 				if ( c_l2->type() == "AtomPair" ) {
 					AtomPairConstraintCOP cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 					Size res1  =  cst->atom1().rsd();
@@ -367,11 +366,11 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	Size repeat_length = last_res_ - first_res_+1;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
 	for ( Size ii=1; ii<=numb_repeats_-1; ++ii ) {
-		BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+		for ( ConstraintCOP const c : constraints ) {
 			if ( c->type() == "MultiConstraint" ) {
 				MultiConstraintCOP multi_cst_old( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 				ConstraintCOPs constraints_l2=multi_cst_old->member_constraints();
-				BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
+				for ( ConstraintCOP const c_l2 : constraints_l2 ) {
 					if ( c_l2->type() == "AtomPair" ) { //it seemed like the wrong residue numbering was stored in the top level multi-constraint
 						AtomPairConstraintCOP old_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 						core::id::SequenceMapping seq_map;
@@ -461,14 +460,14 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	}
 	//debug print out first and last residues to constrain
 	EnzdesCstParamCacheOP extra_res_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
-	for ( std::map<Size,std::string>::iterator itr =first_repeat_constrained_res.begin() ; itr != first_repeat_constrained_res.end(); ++itr ) {
-		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
-		TR <<"Constraining additional residue" <<  itr->first << std::endl;
+	for (auto & first_repeat_constrained_re : first_repeat_constrained_res) {
+		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( first_repeat_constrained_re.first );
+		TR <<"Constraining additional residue" <<  first_repeat_constrained_re.first << std::endl;
 
 	}
-	for ( std::map<Size,std::string>::iterator itr =last_repeat_constrained_res.begin() ; itr != last_repeat_constrained_res.end(); ++itr ) {
-		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( itr->first );
-		TR <<"Constraining additional residue" <<  itr->first << std::endl;
+	for (auto & last_repeat_constrained_re : last_repeat_constrained_res) {
+		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( last_repeat_constrained_re.first );
+		TR <<"Constraining additional residue" <<  last_repeat_constrained_re.first << std::endl;
 	}
 	repeat_cst_cache->set_param_cache(n_csts_repeat_pose+1 , extra_res_param_cache);
 	// EnzdesCstParamCacheOP tmp_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());

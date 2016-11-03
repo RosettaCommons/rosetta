@@ -33,7 +33,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 #include <utility/tag/Tag.hh>
 // C++ headers
 #include <iostream>
@@ -138,7 +137,7 @@ adjust_residues(
 	utility::vector1< std::string > const design_keys( utility::string_split( design_residues, ',' ) );
 	utility::vector1< core::Size > design_res;
 
-	BOOST_FOREACH ( std::string const key, design_keys ) {
+	for ( std::string const & key : design_keys ) {
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		//TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
 		design_res.push_back( resnum);
@@ -154,11 +153,9 @@ void adjust_single_residues(
 	pose::Pose & pose,
 	std::string single_residues,
 	std::set < core::Size > resi_collection
-){
-
+) {
 	utility::vector1< std::string > const single_keys( utility::string_split( single_residues, ',' ) );
-
-	BOOST_FOREACH ( std::string const key, single_keys ) {
+	for ( std::string const & key : single_keys ) {
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		resi_collection.insert( resnum );
 	}
@@ -172,9 +169,7 @@ void add_coordinate_constraints(
 	std::string anchor_atom_name, // if this is the empty string, use the same string as "atom_name"
 	std::string atom_name,
 	core::scoring::func::HarmonicFuncOP & coord_cst_func
-)
-{
-
+) {
 	using namespace core::scoring::constraints;
 	using namespace core::conformation;
 	//should this rather be a ConstraintSet?
@@ -205,7 +200,7 @@ void add_coordinate_constraints(
 	}
 	coord_cst_func->sd( coord_sdev );
 
-	BOOST_FOREACH ( core::Size res, constrain_residues ) {
+	for ( core::Size const res : constrain_residues ) {
 		// safety check.
 		if ( ! pose.residue( res ).has( atom_name ) ) {
 			utility_exit_with_message( "Could not add coordinate constraint to " + atom_name + " on residue " + utility::to_string( res ) + " (" +
@@ -327,7 +322,7 @@ CoordinateCst::parse_my_tag(
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	BOOST_FOREACH ( TagCOP const btag, branch_tags ) {
+	for ( TagCOP const btag : branch_tags ) {
 
 		if ( btag->getName() == "Span" || btag->getName() == "span" ||  btag->getName() == "Seeds" ) {
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

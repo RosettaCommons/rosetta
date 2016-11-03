@@ -28,7 +28,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
@@ -108,11 +107,11 @@ AddHydrogens::apply( core::pose::Pose & pose )
 	core::Size const chain_end= pose.conformation().chain_end(chain_id);
 	utility::vector1<core::Size> unconnected_ids= find_unconnected_residues(pose, chain_begin, chain_end);
 
-	BOOST_FOREACH ( core::Size unconnected_id, unconnected_ids ) {
+	for ( core::Size const unconnected_id : unconnected_ids ) {
 		core::conformation::Residue const & res_to_fix= pose.residue(unconnected_id);
 		utility::vector1<core::Size> connect_ids= get_incomplete_connections(res_to_fix.get_self_ptr());
 
-		BOOST_FOREACH ( core::Size connect_id, connect_ids ) {
+		for ( core::Size const connect_id : connect_ids ) {
 			AddHydrogen AH(unconnected_id, connect_id);
 			AH.apply(pose);
 		}

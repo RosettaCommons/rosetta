@@ -23,7 +23,6 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -165,10 +164,10 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 		hotspot_stub_set_->read_data( hotspot_fname );
 	}
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const curr_tag, branch_tags ) {
+	for ( TagCOP const curr_tag : branch_tags ) {
 		if ( curr_tag->getName() == "HotspotFiles" ) {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			BOOST_FOREACH ( TagCOP const curr_tag2, branch_tags2 ) {
+			for ( TagCOP const curr_tag2 : branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
@@ -188,24 +187,24 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 	TR<<"applying " <<  stub_energy_fxn_ <<" constraints to pose with " << " cb_force weight of "<<CB_force_constant_<<", apply ambiguous constraints set to "<<apply_ambiguous_constraints_<< " and colonyE set to " << colonyE_ << std::endl;
 	data.add( "constraints" , "hotspot_stubset", hotspot_stub_set_ );
 
-	for ( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
+	for ( auto const & elem : (data)[ "scorefxns" ] ) {
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first) );
+		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", elem.first) );
 		if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 			core::Real const weight( scorefxn->get_weight( backbone_stub_constraint ) );
 			if ( weight == 0.0 ) {
 				scorefxn->set_weight( backbone_stub_constraint, bb_stub_cst_weight );
-				TR<<"Setting bacbkone_stub_constraint weight in scorefxn "<<it->first<<" to "<<bb_stub_cst_weight<<std::endl;
+				TR<<"Setting bacbkone_stub_constraint weight in scorefxn "<<elem.first<<" to "<<bb_stub_cst_weight<<std::endl;
 			} else {
-				TR<<"Skipping resetting of backbone_stub_constraint weight in "<<it->first<<" which is already preset to "<<weight<<std::endl;
+				TR<<"Skipping resetting of backbone_stub_constraint weight in "<<elem.first<<" which is already preset to "<<weight<<std::endl;
 			}
 		} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 			core::Real const weight( scorefxn->get_weight( backbone_stub_linear_constraint ) );
 			if ( weight == 0.0 ) {
 				scorefxn->set_weight( backbone_stub_linear_constraint, bb_stub_cst_weight );
-				TR<<"Setting backbone_stub_linear_constraint weight in scorefxn "<<it->first<<" to "<<bb_stub_cst_weight<<std::endl;
+				TR<<"Setting backbone_stub_linear_constraint weight in scorefxn "<<elem.first<<" to "<<bb_stub_cst_weight<<std::endl;
 			} else {
-				TR<<"Skipping resetting of backbone_stub_linear_constraint weight in "<<it->first<<" which is already preset to "<<weight<<std::endl;
+				TR<<"Skipping resetting of backbone_stub_linear_constraint weight in "<<elem.first<<" which is already preset to "<<weight<<std::endl;
 			}
 		} else {
 			utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");

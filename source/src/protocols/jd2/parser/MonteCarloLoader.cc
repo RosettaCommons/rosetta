@@ -24,9 +24,6 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 #include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -51,7 +48,7 @@ void MonteCarloLoader::load_data(
 
 	TagCOPs const montecarlo_tags( tag->getTags() );
 
-	BOOST_FOREACH ( TagCOP montecarlo_tag, montecarlo_tags ) {
+	for ( TagCOP montecarlo_tag : montecarlo_tags ) {
 		std::string const mc_name( montecarlo_tag->getName() );
 		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
 		core::scoring::ScoreFunctionOP scorefxn =

@@ -60,9 +60,6 @@
 
 // utility headers
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
-
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
 // tracer
@@ -115,7 +112,7 @@ void update_pdb_info(
 			<< new_info->nres() << std::endl;
 
 
-		BOOST_FOREACH ( Size cut , result.auto_cuts ) {
+		for ( Size const cut : result.auto_cuts ) {
 			new_info->replace_res( cut, pose.residue( cut ).natoms() );
 			new_info->replace_res( cut+1, pose.residue( cut+1 ).natoms() );
 			tr.Debug << "  Updating PDBInfo object to account updated numbers of atoms at " << cut << " and " << cut+1 << "." << std::endl;
@@ -150,7 +147,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 	core::conformation::Conformation const & in_conf = in_pose.conformation();
 	core::pose::Pose pose( in_pose );
 	claims_ = collect_claims( movers_and_passes, pose );
-	BOOST_FOREACH ( EnvClaimOP claim, claims_ ) { claim->annotate( pose, ann ); }
+	for ( EnvClaimOP claim : claims_ ) { claim->annotate( pose, ann ); }
 
 	// Build a temporary conformation for which we manipulate the fold tree. After the fold tree is set,
 	// we "seal it" as a ProtectedConformation for initializing DoFs.
@@ -163,7 +160,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 	ProtectedConformationOP conf( new ProtectedConformation( env, tmp_conf ) );
 	conf->attach_annotation( ann_ );
 
-	BOOST_FOREACH ( MoverPassMap::value_type pair, movers_and_passes ) {
+	for ( MoverPassMap::value_type const & pair : movers_and_passes ) {
 		pair.second->reference_conformation( conf );
 	}
 
@@ -179,7 +176,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 
 	result_.pose = pose;
 
-	BOOST_FOREACH ( MoverPassMap::value_type pair, movers_and_passes ) {
+	for ( MoverPassMap::value_type const & pair : movers_and_passes ) {
 		pair.first->broking_finished( result() );
 	}
 
@@ -238,7 +235,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	conf.fold_tree( *ft );
 
 	//Swap out unphysical cut residues for chainbreak variants
-	BOOST_FOREACH ( Size cut , result().auto_cuts ) {
+	for ( Size const cut : result().auto_cuts ) {
 		add_chainbreak_variants( cut, conf );
 	}
 
@@ -299,7 +296,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 	utility::vector1< core::Size > cuts;
 
 	if ( datamap && datamap->find( "AutoCutData" ) != datamap->end() ) {
-		BOOST_FOREACH ( basic::datacache::WriteableCacheableDataOP data,
+		for ( basic::datacache::WriteableCacheableDataOP data :
 				datamap->find( "AutoCutData" )->second ) {
 			AutoCutDataOP auto_cut_data = utility::pointer::dynamic_pointer_cast< protocols::environment::AutoCutData > ( data );
 
@@ -308,7 +305,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 			if ( auto_cut_data->hash() == hash ) {
 				tr.Debug << "  Found appropriate hash-valued AutoCutData. Repeating cut choices." << std::endl;
 
-				BOOST_FOREACH ( core::Size cut, auto_cut_data->cuts() ) {
+				for ( core::Size const cut : auto_cut_data->cuts() ) {
 					cuts.push_back( cut );
 				}
 
@@ -469,7 +466,7 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 	SequenceAnnotationOP ann ) {
 
 	//Bind jump numbers to labels in annotations
-	BOOST_FOREACH ( JumpDataMap::value_type pair, new_jumps ) {
+	for ( JumpDataMap::value_type const & pair : new_jumps ) {
 		std::string const & label = pair.first;
 		BrokeredJumpDataCOP jump_data = pair.second;
 
@@ -498,7 +495,7 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 	SequenceAnnotationOP ASSERT_ONLY(ann) )
 {
 	// Add new virtual residues into conformation.
-	BOOST_FOREACH ( SizeToStringMap::value_type pair, new_vrts ) {
+	for ( SizeToStringMap::value_type const & pair : new_vrts ) {
 		// Steal the residue type set of the first residue. Will obviously break if the conformation
 		// has no residues. Is this a case I need to worry about?
 		core::chemical::ResidueTypeSetCOP rsd_set( conf.residue(1).residue_type_set() );
@@ -534,7 +531,7 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 	// for the sampling phase.
 
 	tr.Debug << "Beginning initialization:" << std::endl;
-	BOOST_FOREACH ( MoverPassMap::value_type pair, movers_and_passes_ ) {
+	for ( MoverPassMap::value_type const & pair : movers_and_passes_ ) {
 		if ( pair.second->begin() != pair.second->end() ) {
 			tr.Debug << "  Invoking initialize: " << pair.first->get_name() << std::endl;
 			pair.first->passport_updated();
@@ -546,7 +543,7 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 	setup_passports( d_elems, ctrl_str_selector );
 
 	//Notify movers that passes have been updated.
-	BOOST_FOREACH ( MoverPassMap::value_type pair, movers_and_passes_ ) {
+	for ( MoverPassMap::value_type const & pair : movers_and_passes_ ) {
 		tr.Debug << "Passport for " << pair.first->get_name() << " has " << pair.second->active_jumps().size()
 			<< " allowed jumps and " << pair.second->active_dofs().size() << " dofs." << std::endl;
 		pair.first->passport_updated();
@@ -588,7 +585,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 	// Iterate through each element, and tag it as claimed if it's not been claimed.
 	// Using max_strength, we can check to see if somebody else has already claimed, and
 	// if we have a conflict.
-	BOOST_FOREACH ( DOFElemVect::Value pair, elems ) {
+	for ( DOFElemVect::Value const & pair : elems ) {
 		DOFElement const & element = pair.first;
 		ClientMoverOP const & owner = pair.second;
 		ControlStrength const strength = str_access( pair );
@@ -647,14 +644,14 @@ utility::vector1< std::pair< T, ClientMoverOP > > EnvClaimBroker::collect_elemen
 	ElementList elements;
 	std::ostringstream mover_breakdown;
 
-	BOOST_FOREACH ( EnvClaimOP claim, claims_ ) {
+	for ( EnvClaimOP claim : claims_ ) {
 		claim->yield_elements( info , tmp );
 		if ( tmp.size() > 0 ) {
 			mover_breakdown << "  collected " << tmp.size() << " " << T::type << " elements from "
 				<< claim->type() << "Claim owned by '" << claim->owner()->get_name() << "'."
 				<< std::endl;
 		}
-		BOOST_FOREACH ( T e, tmp ) { elements.push_back( std::make_pair( e, claim->owner() ) ); }
+		for ( T const & e : tmp ) { elements.push_back( std::make_pair( e, claim->owner() ) ); }
 		tmp.clear();
 	}
 
@@ -690,7 +687,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 		WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
 
 		claims::EnvClaims in_claims = movers_and_passe.first->yield_claims( pose, sandbox_map );
-		BOOST_FOREACH ( EnvClaimOP claim, in_claims ) {
+		for ( EnvClaimOP claim : in_claims ) {
 			if ( claim ) {
 				claim->annotate( pose, ann_ );
 				claims.push_back( claim );
@@ -780,7 +777,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 	typedef std::map< std::pair< core::Size, core::Size >, BrokeredJumpDataCOP > PositionDataMap;
 	PositionDataMap brokered_jumps;
 
-	BOOST_FOREACH ( JumpElemVect::Value pair, elems ) {
+	for ( JumpElemVect::Value const & pair : elems ) {
 		JumpElement const & element = pair.first;
 		ClientMoverCOP owner = pair.second;
 
@@ -833,7 +830,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 
 void EnvClaimBroker::process_elements( CutElemVect const & elems,
 	FoldTreeSketch& fts ){
-	BOOST_FOREACH ( CutElemVect::Value pair, elems ) {
+	for ( CutElemVect::Value const & pair : elems ) {
 		CutElement element = pair.first;
 
 		Size abs_p = ann_->resolve_seq( element.p );
@@ -852,7 +849,7 @@ void EnvClaimBroker::process_elements( CutElemVect const & elems,
 
 void EnvClaimBroker::process_elements( CutBiasElemVect const & elems, BiasVector& bias ){
 
-	BOOST_FOREACH ( CutBiasElemVect::Value pair, elems ) {
+	for ( CutBiasElemVect::Value const & pair : elems ) {
 		CutBiasElement element = pair.first;
 
 		Size abs_p = ann_->resolve_seq( element.p );

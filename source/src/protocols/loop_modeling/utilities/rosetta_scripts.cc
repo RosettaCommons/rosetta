@@ -25,10 +25,6 @@
 #include <string>
 #include <sstream>
 
-//for the copied loop tag handler
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 using namespace std;
 
 using utility::tag::TagCOP;
@@ -76,7 +72,7 @@ protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
 		parsed_loops = LoopsOP( new Loops(loops_file) );
 	}
 
-	foreach ( utility::tag::TagCOP subtag, tag->getTags("Loop") ) {
+	for ( utility::tag::TagCOP subtag : tag->getTags("Loop") ) {
 		core::Size start = subtag->getOption<Size>("start");
 		core::Size stop = subtag->getOption<Size>("stop");
 		core::Size cut = subtag->getOption<Size>("cut", 0);

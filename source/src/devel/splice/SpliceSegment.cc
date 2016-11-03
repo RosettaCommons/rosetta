@@ -14,7 +14,6 @@
 // Unit headers
 #include <devel/splice/SpliceSegment.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <boost/foreach.hpp>
 // Package headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -146,7 +145,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	}
 
 
-	BOOST_FOREACH ( SequenceProfileOP const prof, profiles ) {
+	for ( SequenceProfileOP const prof : profiles ) {
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		//find H3 seq and constract a new PSSM from given seqeunce
 		bool first_pass=true;

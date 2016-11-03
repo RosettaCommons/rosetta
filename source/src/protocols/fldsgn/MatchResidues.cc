@@ -43,7 +43,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 #include "boost/assign.hpp"
 
 
@@ -95,7 +94,7 @@ core::Real
 MatchResidues::compute( core::pose::Pose const & pose, VecSize & best_fit ) const
 {
 	Real smallest_rms = 99999;
-	BOOST_FOREACH ( VecSize const & comb, mod_segment_prod_ ) {
+	for ( VecSize const & comb : mod_segment_prod_ ) {
 		Real rms = compute_comb(pose, comb);
 		if ( rms < smallest_rms ) {
 			smallest_rms = rms;
@@ -142,7 +141,7 @@ MatchResidues::cart_product( VecVecSize const & input) const {
 	VecSize outputTemp;
 	cart_product(tmp, outputTemp, input.begin(), input.end());
 	//remove duplicates in combination
-	BOOST_FOREACH ( VecSize const & vec, tmp ) {
+	for ( VecSize const & vec : tmp ) {
 		std::set<Size> comb(vec.begin(), vec.end());
 		if ( comb.size() == vec.size() ) {
 			output.push_back(vec);
@@ -177,7 +176,7 @@ MatchResidues::parse_my_tag(
 		ss_seg = map_ss_segments( ss );
 	}
 
-	BOOST_FOREACH ( utility::tag::TagCOP pairs_tag, tag->getTags() ) {
+	for ( utility::tag::TagCOP pairs_tag : tag->getTags() ) {
 		if ( pairs_tag->getName() == "match" ) {
 			const Size ref_pos = pairs_tag->getOption< Size >("ref_pos");
 			Size mod_pos_start= 0;

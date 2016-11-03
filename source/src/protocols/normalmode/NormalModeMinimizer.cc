@@ -37,7 +37,6 @@
 #include <iostream>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <boost/foreach.hpp>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -198,7 +197,7 @@ void NormalModeMinimizer::parse_my_tag(
 		} else if ( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			BOOST_FOREACH ( std::string jump, jumps ) {
+			for ( std::string const & jump : jumps ) {
 				Size const value = std::atoi( jump.c_str() );
 				movemap_->set_jump( value, true );
 			}

@@ -771,9 +771,8 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 			single_sequence.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 		// alter dna types according to this dna sequence
-		for ( auto it( dna_sequence.begin() ),
-				seq_end( dna_sequence.end() ); it != seq_end; ++it ) {
-			single_sequence[ it->first ] = it->second;
+		for (const auto & it : dna_sequence) {
+			single_sequence[ it.first ] = it.second;
 		}
 		// populate rot_to_pack with only the rotamers that reflect single_sequence
 		restrict_to_single_sequence( rotamer_sets(), single_sequence, rot_to_pack );

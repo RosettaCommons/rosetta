@@ -86,7 +86,7 @@ bool LoopManager::IsNtermLoop(
 ///////////////////////////////////////////////////////////////////////////
 bool LoopManager::IsCtermLoop(
 	Loop const & ThisLoop
-)
+);
 {
 
 	if( ThisLoop.loop_end() == pose_.size() ) return true;

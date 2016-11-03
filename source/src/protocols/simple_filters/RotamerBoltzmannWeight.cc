@@ -32,7 +32,6 @@
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/graph/Graph.hh>
@@ -297,7 +296,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator rotboltz_calc( this->scorefxn(), this->temperature(), this->repacking_radius() );
 	rotboltz_calc.set_lazy( true );
 
-	BOOST_FOREACH ( core::Size const hs_res, hotspot_res ) {
+	for ( core::Size const hs_res : hotspot_res ) {
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
 		TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
 		rotamer_probabilities_[ hs_res ] = boltz_weight;
@@ -411,7 +410,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 		scores.push_back( score );
 	}
 	core::Real boltz_sum ( 0.0 );
-	BOOST_FOREACH ( core::Real const score, scores ) {
+	for ( core::Real const score : scores ) {
 		boltz_sum += exp(( init_score - score )/temperature());
 	}
 
@@ -475,9 +474,9 @@ RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pos
 		out<<"RotamerBoltzmannWeightFilter returns "<<compute( pose )<<std::endl;
 		out<<"RotamerBoltzmannWeightFilter final report\n";
 		out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\n';
-		for ( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ) {
-			core::Size const res( rot->first );
-			core::Real const prob( rot->second );
+		for ( auto const & rot : rotamer_probabilities_ ) {
+			core::Size const res( rot.first );
+			core::Real const prob( rot.second );
 			core::Real const ddG( 0.0 );
 			out<<pose.residue( res ).name3()<< pose.pdb_info()->number( res )<<'\t'<<ddG<<'\t'<<prob<<'\t';
 			out<<'\n';
@@ -511,7 +510,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	skip_report_ = tag->getOption< bool >( "skip_report", skip_report_ );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
-	BOOST_FOREACH ( TagCOP const tag, branch ) {
+	for ( TagCOP const tag : branch ) {
 		using namespace core::chemical;
 
 		std::string const residue_type( tag->getName() );
@@ -649,9 +648,9 @@ RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std
 	core::Real const ddG_in( ddg_filter.compute( pose ) ); //problem
 	core::Real modified_ddG( ddG_in );
 	out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\t'<<"EnergyReduction\n";
-	for ( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ) {
-		core::Size const res( rot->first );
-		core::Real const prob( rot->second );
+	for ( auto const & rot : rotamer_probabilities_ ) {
+		core::Size const res( rot.first );
+		core::Real const prob( rot.second );
 		core::Real const ddG( ddGs_[ res ] );
 		out<<pose.residue( res ).name3()<< pose.pdb_info()->number( res )<<'\t'<<ddG<<'\t'<<prob<<'\t';
 		core::Real const threshold_prob( threshold_probability( pose.residue( res ).aa() ) );

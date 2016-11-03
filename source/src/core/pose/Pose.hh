@@ -178,7 +178,7 @@ public:
 	typedef basic::datacache::ConstDataMap ConstDataMap;
 	typedef basic::datacache::ConstDataMapOP ConstDataMapOP;
 
-	typedef boost::indirect_iterator< const conformation::ResidueOPs::const_iterator, Residue const > const_iterator;
+	typedef boost::indirect_iterator< conformation::ResidueOPs::const_iterator, Residue const > const_iterator;
 	typedef boost::indirect_iterator< conformation::ResidueOPs::iterator, Residue const > iterator;
 
 public:

@@ -53,10 +53,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
-#include <boost/foreach.hpp>
 
 //Auto Headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
@@ -649,7 +647,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 			if ( filters_.size() != 0 ) {
 				bool all_filters_passed( true );
-				BOOST_FOREACH ( protocols::filters::FilterCOP filter, filters_ ) {
+				for ( protocols::filters::FilterCOP filter : filters_ ) {
 					if ( ! filter->apply( pose ) ) {
 						all_filters_passed = false;
 						break;

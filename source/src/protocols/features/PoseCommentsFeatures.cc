@@ -48,9 +48,6 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 // C++ Headers
 #include <string>
 #include <map>
@@ -129,7 +126,7 @@ PoseCommentsFeatures::report_features(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	BOOST_FOREACH ( kv_pair const & kv, get_all_comments(pose) ) {
+	for ( kv_pair const & kv : get_all_comments(pose) ) {
 
 		RowDataBaseOP comment_key_data( new RowData<string>("comment_key",kv.first) );
 		RowDataBaseOP value_data( new RowData<string>("value",kv.second) );

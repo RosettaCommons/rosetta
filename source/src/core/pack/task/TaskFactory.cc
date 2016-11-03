@@ -12,7 +12,6 @@
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #include <utility/exit.hh>
-#include <boost/foreach.hpp>
 
 // Unit Headers
 #include <core/pack/task/TaskFactory.hh>
@@ -54,7 +53,7 @@ void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
 	runtime_assert( task != 0 );
-	BOOST_FOREACH ( TaskOperationOP const taskop, *this ) {
+	for ( TaskOperationOP const taskop : *this ) {
 		taskop->apply( pose, *task );
 	}
 }

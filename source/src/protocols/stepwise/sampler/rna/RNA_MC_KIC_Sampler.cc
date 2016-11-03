@@ -52,36 +52,8 @@ namespace rna {
 RNA_MC_KIC_Sampler::RNA_MC_KIC_Sampler(
 	core::pose::PoseOP const & ref_pose,
 	core::Size const moving_suite,
-	core::Size const chainbreak_suite
-):
-	MC_StepWiseSampler(),
-	moving_suite_( moving_suite ),
-	chainbreak_suite_( chainbreak_suite ),
-	init_pucker_( NORTH),
-	pucker_flip_rate_( 0.1 ),
-	base_state_( ANY_CHI ), // ANY_CHI, ANTI, SYN, NO_CHI
-	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
-	max_tries_( 100 ),
-	verbose_( false ),
-	extra_epsilon_( false ),
-	extra_chi_( false ),
-	skip_same_pucker_( false ),
-	idealize_coord_( false ),
-	torsion_screen_( true ),
-	random_chain_closed_( true ),
-	did_close( false ),
-	change_foldtree_( true ),
-	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) ),
-	cutpoint_handler_(TransientCutpointHandlerOP ( new TransientCutpointHandler( moving_suite, chainbreak_suite, change_foldtree_ )))
-{
-	ref_pose_.reset(new core::pose::Pose(*ref_pose));
-}
-
-RNA_MC_KIC_Sampler::RNA_MC_KIC_Sampler(
-	core::pose::PoseOP const & ref_pose,
-	core::Size const moving_suite,
 	core::Size const chainbreak_suite,
-	bool const change_foldtree
+	bool const change_ft
 ):
 	MC_StepWiseSampler(),
 	moving_suite_( moving_suite ),
@@ -99,9 +71,8 @@ RNA_MC_KIC_Sampler::RNA_MC_KIC_Sampler(
 	torsion_screen_( true ),
 	random_chain_closed_( true ),
 	did_close( false ),
-	change_foldtree_( change_foldtree ),
 	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) ),
-	cutpoint_handler_(TransientCutpointHandlerOP ( new TransientCutpointHandler( moving_suite-1, chainbreak_suite-1, change_foldtree_ )))
+	cutpoint_handler_(TransientCutpointHandlerOP ( new TransientCutpointHandler( moving_suite, chainbreak_suite, change_ft )))
 {
 	ref_pose_.reset(new core::pose::Pose(*ref_pose));
 }
@@ -250,20 +221,13 @@ void RNA_MC_KIC_Sampler::apply( pose::Pose & pose_in ) {
 	did_move = false;
 
 	if ( did_close ) {
-		//TR << "Closure!" << std::endl;
-
 		current_jacobians_ = loop_closer_->get_all_jacobians();
-		//TR << "Number of solutions: " << loop_closer_->size() << std::endl;
-		//TR << "Number of jacobians: " << current_jacobians_.size() << " " << current_jacobians_ << std::endl;
 		all_jacobians_ = current_jacobians_;
 		copy_stored_jacobians_ = stored_jacobians_;
 		all_jacobians_.insert(all_jacobians_.end(),
 			copy_stored_jacobians_.begin(), copy_stored_jacobians_.end());
-		//TR << "Number of jacobians: " << all_jacobians_.size() << " " << all_jacobians_ << std::endl;
 		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
-		//TR << "Number of weights: " << jacobian_sampler_.weights().size() << std::endl;
 		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
-		//TR << "Chose " << solution_ << std::endl;
 		if ( solution_ <= current_jacobians_.size() ) {
 			for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
 				bb_samplers_[i]->apply( pose );
@@ -281,23 +245,16 @@ void RNA_MC_KIC_Sampler::apply( pose::Pose & pose_in ) {
 			//used_current solution remains false, so don't update stored angles, don't update stored loop closer
 		}
 	} else {
-		// Maybe just skip if stored_jacobians is also zero-sized
-		if ( stored_jacobians_.size() > 0 ) {
-			//TR << "No closure!" << std::endl;
-			all_jacobians_ = stored_jacobians_;
-			//TR << "Number of jacobians: " << all_jacobians_.size() << " " << all_jacobians_ << std::endl;
-			jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
-			//TR << "Number of weights: " << jacobian_sampler_.weights().size() << std::endl;
-			solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
-			//TR << "Chose " << solution_ << std::endl;
-			Real calculated_jacobian = get_jacobian( pose );
-			stored_loop_closer_->apply( pose, solution_ );
-			//Check whether this is actually a new pose
-			//This isn't really a good way to check if the pose is the same...change this!!
-			Real picked_jacobian = stored_jacobians_[ solution_ - current_jacobians_.size()];
-			if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { did_move = true; }
-			//used_current solution remains false, so don't update stored angles, don't update stored loop closer
-		}
+		all_jacobians_ = stored_jacobians_;
+		jacobian_sampler_ = numeric::random::WeightedSampler( all_jacobians_ );
+		solution_ = jacobian_sampler_.random_sample( numeric::random::rg().uniform() );
+		Real calculated_jacobian = get_jacobian( pose );
+		stored_loop_closer_->apply( pose, solution_ );
+		//Check whether this is actually a new pose
+		//This isn't really a good way to check if the pose is the same...change this!!
+		Real picked_jacobian = stored_jacobians_[ solution_ - current_jacobians_.size()];
+		if ( std::abs(calculated_jacobian - picked_jacobian) > 0.0000000001 ) { did_move = true; }
+		//used_current solution remains false, so don't update stored angles, don't update stored loop closer
 	}
 	cutpoint_handler_->take_out_cutpoints( pose );
 	if ( did_move ) {

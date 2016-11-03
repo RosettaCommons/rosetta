@@ -28,7 +28,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -58,19 +57,19 @@ void LoopsDefinerLoader::load_data(
 	basic::datacache::DataMap & data
 ) const
 {
-	BOOST_FOREACH ( TagCOP tag, tag->getTags() ) {
-		string const type( tag->getName() );
-		if ( ! tag->hasOption("name") ) {
+	for ( TagCOP subtag : tag->getTags() ) {
+		string const & type( subtag->getName() );
+		if ( ! subtag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed Loops definition (type: " + type + ")" );
 		}
-		string const name( tag->getOption<string>("name") );
+		string const & name( subtag->getOption<string>("name") );
 		if ( data.has( "loops_definers", name ) ) {
 			TR.Error << "Error LoopsDefiner of name \"" << name
-				<< "\" (with type " << type << ") already exists. \n" << tag << endl;
+				<< "\" (with type " << type << ") already exists. \n" << subtag << endl;
 			utility_exit_with_message("Duplicate definition of LoopsDefiner with name " + name);
 		}
 		LoopsDefinerOP loops_definer( LoopsDefinerFactory::get_instance()->create_loops_definer( type ) );
-		loops_definer->parse_my_tag(tag, data, pose);
+		loops_definer->parse_my_tag(subtag, data, pose);
 		data.add("loops_definers", name, loops_definer );
 		TR << "Created LoopsDefiner named \"" << name << "\" of type " << type << endl;
 	}

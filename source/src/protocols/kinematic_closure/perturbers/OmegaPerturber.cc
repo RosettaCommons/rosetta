@@ -19,7 +19,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace kinematic_closure {
@@ -33,7 +32,7 @@ void OmegaPerturber::perturb_subset(
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		// Omega distribution mean and stddev from Berkholz et al., PNAS 2012.
 		Real trans_omega = 179.1 + 6.3 * gaussian();
 

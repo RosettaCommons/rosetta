@@ -30,7 +30,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <boost/foreach.hpp>
 #include <protocols/filters/Filter.hh>
 
 #include <core/chemical/AtomType.hh>
@@ -158,7 +157,7 @@ make_hotspot_foldtree( core::pose::Pose const & pose )
 	auto last = std::unique( connection_points.begin(), connection_points.end() );
 	connection_points.erase( last, connection_points.end() );
 	core::Size upstream_position( 1 );
-	BOOST_FOREACH ( core::Size const con, connection_points ) {
+	for ( core::Size const con : connection_points ) {
 		ft.add_edge( upstream_position, con, Edge::PEPTIDE );
 		upstream_position = con;
 	}
@@ -183,8 +182,7 @@ get_bbcsts( core::pose::Pose const & pose ) {
 	// sort through pose's constraint set and pull out only active bbcst's
 	ConstraintCOPs original_csts = nonconst_pose.constraint_set()->get_all_constraints();
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
-		ConstraintCOP cst( *it );
+	for ( ConstraintCOP cst : original_csts ) {
 		if ( cst->type() == "AmbiguousConstraint" ) {
 			AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AmbiguousConstraint const > ( cst ) ); //downcast to derived ambiguous constraint
 			if ( ambiguous_cst ) { // safety check for downcasting
@@ -260,8 +258,7 @@ remove_coordinate_constraints_from_pose( core::pose::Pose & pose )
 
 	ConstraintCOPs original_csts = pose.constraint_set()->get_all_constraints() ;
 	ConstraintCOPs crd_csts;
-	for ( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
-		ConstraintCOP cst( *it );
+	for ( ConstraintCOP cst : original_csts ) {
 		if ( cst->type() == "CoordinateConstraint" ) {
 			ConstraintCOP crd_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::CoordinateConstraint const > ( cst ); //downcast to derived ambiguous constraint
 			if ( crd_cst ) { // safety check for downcasting

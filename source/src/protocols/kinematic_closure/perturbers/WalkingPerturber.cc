@@ -23,7 +23,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -39,7 +38,7 @@ WalkingPerturber::WalkingPerturber(Real magnitude)
 void WalkingPerturber::perturb_subset(
 	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
-	BOOST_FOREACH ( Size residue, residues ) {
+	for ( Size const residue : residues ) {
 		Real phi = problem->phi(residue, DEGREES) + magnitude_ * gaussian();
 		Real psi = problem->psi(residue, DEGREES) + magnitude_ * gaussian();
 
