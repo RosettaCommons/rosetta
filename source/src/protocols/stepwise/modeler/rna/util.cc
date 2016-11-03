@@ -359,8 +359,9 @@ setup_suite_atom_id_map( conformation::Residue const & rsd_1,
 
 	using namespace ObjexxFCL;
 
-	if ( name_from_aa( rsd_1.aa() ) != name_from_aa( rsd_2.aa() ) ) {
-		utility_exit_with_message( "rsd_1.aa() != rsd_2.aa(). res_num_1 = " + string_of( res_num_1 ) + " name_from_aa( rsd_1.aa() ) = " + name_from_aa( rsd_1.aa() ) + " res_num_2 = " +  string_of( res_num_2 ) + " name_from_aa( rsd_2.aa() ) = " + name_from_aa( rsd_2.aa() ) );
+	//	if ( name_from_aa( rsd_1.aa() ) != name_from_aa( rsd_2.aa() ) ) {
+	if ( rsd_1.name1() != rsd_2.name1() ) {
+	utility_exit_with_message( "rsd_1.name1() != rsd_2.name1(). res_num_1 = " + string_of( res_num_1 ) + " name_from_aa( rsd_1.name1() ) = " +  rsd_1.name1() + " res_num_2 = " +  string_of( res_num_2 ) + " name_from_aa( rsd_2.name1() ) = " + rsd_2.name1() );
 	}
 
 	Size const first_atom = ( base_only ) ? rsd_1.first_sidechain_atom() + 1 : 1; //+1 to exclude the O2prime oxygen

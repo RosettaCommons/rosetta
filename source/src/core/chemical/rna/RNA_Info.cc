@@ -86,11 +86,16 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	// There must be EITHER O2', a replacement like F2', or a virt.
 	if ( residue_type->has( " O2'" ) ) {
 		o2prime_index_ = residue_type->atom_index( " O2'" );
-	} else {
+	} else if (residue_type->has( " F2'" ) ) {
 		o2prime_index_ = residue_type->atom_index( " F2'" );
+	} else {
+		o2prime_index_ = 0;
 	}
-	ho2prime_index_ = residue_type->atom_index( "HO2'" );
-
+	if ( residue_type->has( "HO2'" ) ) {
+		ho2prime_index_ = residue_type->atom_index( "HO2'" );
+	} else {
+		ho2prime_index_ = 0;
+	}
 	p_atom_index_  = residue_type->atom_index( " P  " );
 
 	// Could be phosphorothioate
@@ -218,7 +223,7 @@ RNA_Info::rna_note_chi_controls_atom( Size const chi, Size const atomno,
 	//   The sidechain also contain 2 branch (RNA base and 2'OH sidechains)
 	//3)chi_2 is NEAREST. Then branch to chi_3 and chi_4. then chi_3 connects to chi_1 which IS FURTHEST!
 	ResidueTypeCOP residue_type( residue_type_ );
-	runtime_assert( residue_type->nchi() >= 4 );
+	runtime_assert( residue_type->nchi() >= 3 );
 	runtime_assert ( chi <= residue_type->nchi() );
 	runtime_assert ( chi >= 1 );
 

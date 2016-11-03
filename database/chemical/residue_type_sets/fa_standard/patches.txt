@@ -22,6 +22,7 @@ patches/nucleic/rna/rna_cutpoint_lower.txt
 patches/nucleic/rna/rna_cutpoint_upper.txt
 patches/nucleic/rna/Virtual_Phosphate.txt
 patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
+patches/nucleic/rna/Deoxy_O2prime.txt
 patches/nucleic/rna/2prime_connection.txt
 patches/nucleic/rna/LowerConnectRNA.txt
 

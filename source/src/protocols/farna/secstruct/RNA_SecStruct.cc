@@ -62,8 +62,9 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 	std::string const & sequence /* = "" */ )
 {
 	rna_complement_.clear();
-	rna_complement_[ 'a' ] = make_vector1( 'u' );
+	rna_complement_[ 'a' ] = make_vector1( 'u', 't' );
 	rna_complement_[ 'u' ] = make_vector1( 'a','g' );
+	rna_complement_[ 't' ] = make_vector1( 'a','g' );
 	rna_complement_[ 'c' ] = make_vector1( 'g' );
 	rna_complement_[ 'g' ] = make_vector1( 'c','u' );
 

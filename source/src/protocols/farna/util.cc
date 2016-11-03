@@ -754,6 +754,8 @@ convert_based_on_match_type( std::string const & RNA_string, Size const type ){
 
 	Size const size = RNA_string.length();
 
+	static bool print_warning( false );
+
 	//Obey orders to match exactly, match pyrimidine/purine, or match all.
 	if ( type == MATCH_ALL ) {
 		for ( Size i = 0; i < size; i++ )  RNA_string_local[ i ] = 'n';
@@ -762,8 +764,18 @@ convert_based_on_match_type( std::string const & RNA_string, Size const type ){
 			if ( RNA_string[ i ] == 'g' || RNA_string[ i ] == 'a' ) {
 				RNA_string_local[ i ] = 'r';
 			} else {
-				runtime_assert( RNA_string[ i ] == 'u' || RNA_string[ i ] == 'c' );
+				runtime_assert( RNA_string[ i ] == 'u' || RNA_string[ i ] == 'c' || RNA_string[ i ] == 't' );
 				RNA_string_local[ i ] = 'y';
+			}
+		}
+	} else {
+		for ( Size i = 0; i < size; i++ )  {
+			if ( RNA_string[ i ] == 't' ) {
+				if ( !print_warning ) {
+					TR.Warning << TR.Red << "Requesting an RNA fragment for t. Instead choosing fragment based on u!" << std::endl;
+					print_warning = true;
+				}
+				RNA_string_local[ i ] = 'u';
 			}
 		}
 	}

@@ -760,6 +760,12 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
 	sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
 	sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
 	sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ " DG" ] = Vector( 0.5, 0.0, 0.0); //red [now matching EteRNA]
+	sidechain_color_rhiju[ " DA" ] = Vector( 0.5, 0.5, 0.0); //yellow
+	sidechain_color_rhiju[ " DC" ] = Vector( 0.0, 0.5, 0.0); //green
+	sidechain_color_rhiju[ " DU" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ " DT" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+	sidechain_color_rhiju[ "5MU" ] = Vector( 0.0, 0.0, 0.5); //blue
 	sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
 	sidechain_color_rhiju[ "HOH" ] = Vector( 1.0, 0.0, 0.0); //bright green
 

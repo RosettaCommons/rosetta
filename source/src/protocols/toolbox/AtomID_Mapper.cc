@@ -197,6 +197,8 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 
 			AtomID source_atom_id( source_atomno, source_pos + rsd_offset );
 			if ( source_mapper_to_vanilla != nullptr ) {
+				// no mapping. happens with 2'-OH in DNA source poses.
+				if ( !source_mapper_to_vanilla->in_map_from_reference( source_atom_id ) ) continue;
 				source_atom_id = source_mapper_to_vanilla->map_from_reference( source_atom_id ); /* note 'reverse': from a vanilla pose to source pose. */
 			}
 
@@ -221,7 +223,7 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 	}
 
 	map_to_reference_.clear();
-	map_to_reference_.clear();
+	map_from_reference_.clear();
 	atom_ids_in_res_.clear();
 
 	for ( Size i = 1; i <= pose.size(); i++ ) {

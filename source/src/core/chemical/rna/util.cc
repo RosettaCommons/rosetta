@@ -48,6 +48,7 @@ convert_acgu_to_1234( char const c )
 	if ( rna_nts.find( c ) != std::string::npos ) {
 		return rna_nts.find( c ) + 1;
 	}
+	if ( c == 't' ) return rna_nts.find( 'u' ) + 1;
 	return 0;
 }
 

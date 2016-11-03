@@ -514,6 +514,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->conventional_chains() ) );
 	pdbslice( *pose_, full_pose, working_res );
 
+
 	////////////////////
 	// Step 11
 	////////////////////

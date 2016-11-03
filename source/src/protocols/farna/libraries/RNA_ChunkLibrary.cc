@@ -298,6 +298,8 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 				Size const & scratch_index = scratch_pose.residue( i_scratch ).atom_index( atomname );
 				AtomID const atom_id(j,i);
 				if ( scratch_rsd.is_virtual( scratch_index ) ) continue;
+				// hack to get DNA/RNA compatibility
+				if ( scratch_rsd.is_DNA() && rsd_i.is_RNA() && !atom_level_domain_map_->has_domain( atom_id ) ) continue;
 				// special case: base pair steps should not overwrite user input domain
 				if ( domain_num == ROSETTA_LIBRARY_DOMAIN &&
 						atom_level_domain_map_->get_domain( atom_id ) > 0 ) continue;

@@ -101,7 +101,7 @@ THREE_PRIME_PHOSPHATE      # alternative terminal variant in real RNAs, keep thi
 FIVE_PRIME_END_OH          # alternative terminal variant in real RNAs, keep this.
 FIVE_PRIME_END_PHOSPHATE   # alternative terminal variant in real RNAs, keep this.
 FIVE_PRIME_PHOSPHATE       # alternative terminal variant in real RNAs, keep this.
-
+DEOXY_O2PRIME # Make RNA into DNA
 UPPER_CONNECTION_RNA
 
 THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 2015 if not in use by then.

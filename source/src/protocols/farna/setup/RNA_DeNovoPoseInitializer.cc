@@ -129,7 +129,6 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 	if ( rna_params_.virtual_anchor_attachment_points_.size() == 0 ) return;
 
 	TR.Debug << "Current last residue is type: " << pose.residue( pose.size() ).name3()  << std::endl;
-	TR.Debug << pose.annotated_sequence() << std::endl;
 	if ( pose.residue( pose.size() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.

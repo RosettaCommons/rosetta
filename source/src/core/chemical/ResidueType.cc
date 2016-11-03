@@ -1055,6 +1055,7 @@ ResidueType::delete_atom( std::string const & name )
 {
 	debug_assert( has( name ) );
 	delete_atom( atom_index(name) );
+	atom_name_to_vd_.erase( atom_name_to_vd_.find(name) );
 }
 
 /// @brief flag an atom for deletion by adding its index to the delete_atom_ list

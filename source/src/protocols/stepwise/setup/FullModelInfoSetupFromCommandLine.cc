@@ -459,10 +459,72 @@ setup_water_bank_for_magnesiums( std::map< Size, std::string > & non_standard_re
 	fasta_sequences.push_back( SequenceOP( new Sequence( sequence, id.str() ) ) );
 }
 
+void
+look_for_dna( vector1< core::sequence::SequenceOP > & fasta_sequences )
+{
+	using namespace core::sequence;
+	std::map<char, std::string> rna_name = { {'a',"RAD"}, {'c',"RCY"}, {'g',"RGU"}, {'t',"5MU"} };
+	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
+		auto fasta_sequence = fasta_sequences[ n ];
+		auto id = fasta_sequences[ n ]->id();
+		std::stringstream ss( fasta_sequences[n]->id() );
+		bool is_DNA( false );
+		while ( ss.good() ) {
+			std::string tag;
+			ss >> tag;
+			if ( tag == "DNA" ) {
+				is_DNA = true; break;
+			}
+		}
+		auto sequence = fasta_sequences[ n ]->sequence();
+		utility::vector1< std::string > fullname_list; // a vector of non-standard full names
+		std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
+		std::string one_letter_sequence;
+		parse_sequence( sequence, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
+		if ( !is_DNA ) {
+			for ( Size k = 1; k <= one_letter_sequence.size(); k++ ) {
+				if ( one_letter_sequence[ k-1 ] == 't' ) {
+					Size const pos = oneletter_to_fullname_index[ k - 1 ];
+					if ( pos == 0 || fullname_list[ pos ].substr( 3, 14 ) != ":deoxy_O2prime" ) {
+					utility_exit_with_message( "Seeing a 't' in sequence -- if you want this to be DNA, include the tag 'DNA' in the FASTA id for this sequence. if you want this to be RNA, use X[5MU] as the character." );
+					}
+				}
+			}
+		}
+		if ( is_DNA ) {
+			auto fasta_sequence_new = fasta_sequence;
+			vector1< std::string > fullname_list_new;
+			for ( Size k = 1; k <= oneletter_to_fullname_index.size(); k++ ) {
+				Size const pos = oneletter_to_fullname_index[ k - 1 ];
+				std::string fullname_new;
+				if ( pos > 0 ) {
+					fullname_new = fullname_list[ pos ];
+				} else {
+					char q = one_letter_sequence[ k - 1 ];
+					if ( !rna_name.count( q ) ) utility_exit_with_message( "The character "+std::string(&q)+" is not a recognized DNA nucleotide. Use a,c,g,t." );
+					fullname_new = rna_name[ q ];
+				}
+				if ( fullname_new.substr(3,14) != ":deoxy_O2prime" ) {
+					fullname_new = fullname_new.substr(0,3) + ":deoxy_O2prime" + fullname_new.substr(3,std::string::npos);
+				}
+				fullname_list_new.push_back( fullname_new );
+			}
+			std::string sequence_new;
+			for ( Size k = 1; k <= one_letter_sequence.size(); k++ ) {
+				sequence_new.push_back( one_letter_sequence[ k-1 ] );
+				sequence_new.push_back( '[' );
+				sequence_new.append( fullname_list_new[ k ] );
+				sequence_new.push_back( ']' );
+			}
+			fasta_sequences[ n ] = SequenceOP( new Sequence( sequence_new, id ) );
+		}
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 FullModelParametersOP
-get_sequence_information( std::string const & fasta_file,
+get_sequence_information(
+	std::string const & fasta_file,
 	vector1< Size > & cutpoint_open_in_full_model )
 {
 	using namespace basic::options;
@@ -477,6 +539,7 @@ get_sequence_information( std::string const & fasta_file,
 		fasta_sequences[idx]->id( fasta_sequences[idx]->id() + " z:1" );
 	}
 
+	look_for_dna( fasta_sequences );
 	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 	if ( option[ magnesium::hydrate ]() ) setup_water_bank_for_magnesiums( non_standard_residue_map, fasta_sequences );
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );

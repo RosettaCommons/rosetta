@@ -45,6 +45,7 @@ rna_residue_name_to_num( char const c )
 	if ( c == 'c' ) return 2;
 	if ( c == 'g' ) return 3;
 	if ( c == 'u' ) return 4;
+	if ( c == 't' ) return 4;
 	if ( c == 'Z' ) return 5; // Mg(2+)
 	tr << "What is this? " << c << std::endl;
 	utility_exit_with_message( "Asked for rna_residue_name_to_num for unknown residue_name" );
@@ -120,9 +121,13 @@ RNA_AtomVDW::vdw_atom_list( char const which_nucleotide ) const
 	AtomList::const_iterator iter = rna_vdw_atom_.find( which_nucleotide );
 
 	if ( iter == rna_vdw_atom_.end() ) {
-		tr << "WARNING! Asked for vdw_atom_list for " << which_nucleotide << " and it did not exist! " << std::endl;
-		utility::vector1< std::string > blank_vector;
-		return blank_vector;
+		if ( which_nucleotide == 't' ) {
+			iter = rna_vdw_atom_.find( 'u' );
+		} else {
+			tr << "WARNING! Asked for vdw_atom_list for " << which_nucleotide << " and it did not exist! " << std::endl;
+			utility::vector1< std::string > blank_vector;
+			return blank_vector;
+		}
 	}
 
 	return ( iter->second );

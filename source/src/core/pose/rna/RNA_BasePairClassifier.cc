@@ -141,7 +141,7 @@ update_edge_hbond_numbers(
 				atom_name == " C1'"  ||
 				atom_name == " O2'"   ) N_S++;
 
-	} else if ( rsd.aa() == na_ura ) {
+	} else if ( rsd.aa() == na_ura || rsd.name1() == 't' ) {
 
 		if ( atom_name == " O2 "  ||
 				atom_name == " N3 "  ||

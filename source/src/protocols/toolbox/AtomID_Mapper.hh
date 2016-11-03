@@ -72,6 +72,11 @@ public:
 	core::id::AtomID const &
 	map_from_reference( core::id::AtomID const & atom_id ) const;
 
+	bool
+	in_map_from_reference( core::id::AtomID const & atom_id ) const {
+		return ( map_from_reference_.count( atom_id ) > 0 );
+	}
+
 	core::Size nres() const { return atom_ids_in_res_.size();}
 
 private:
