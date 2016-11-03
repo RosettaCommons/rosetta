@@ -12,7 +12,9 @@
 ## @brief
 ## @author Evan H. Baugh, Johns Hopkins University
 
-from rosetta import Pose
+from __future__ import print_function
+
+from pyrosetta import Pose
 
 # returns the x, y, and z coordinates of a pose
 #     returns a 1x3 list with elements [x,y,z]
@@ -24,7 +26,7 @@ def extract_coordinates_from_pose_3x1( pose , selection = [] ,
         for all residues in selection (defaults to all residues)
         with atom names in  <atom_names> and not in  <not_atom_names>
     note: returns a list with three elements, the x, y, and z
-    
+
     example(s):
         xyz = extract_coordinates_from_pose(pose)
     See Also:
@@ -65,7 +67,7 @@ def extract_coordinates_from_pose_1x3( pose , selection = [] ,
         for all residues in selection (defaults to all residues)
         with atom names in  <atom_names> and not in  <not_atom_names>
     note: returns a list with three elements, the x, y, and z
-    
+
     example(s):
         xyz = extract_coordinates_from_pose(pose)
     See Also:
@@ -86,5 +88,3 @@ def extract_coordinates_from_pose_1x3( pose , selection = [] ,
 # return list of xyzVector objects
 # return dictionary list w/ chains or residues
 # write coordinates
-
-

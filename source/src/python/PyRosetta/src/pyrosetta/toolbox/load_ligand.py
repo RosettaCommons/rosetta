@@ -14,13 +14,13 @@
 
 # generate_nonstandard_residue_set is adapted from an original script by Sid Chaudhury
 
+from __future__ import print_function
+
 import os
 # its in python!
 import openbabel
 import molfile_to_params
-from rosetta import Pose
-from rosetta import pose_from_file
-from rosetta import init
+from pyrosetta import Pose, pose_from_file, init
 
 ################################################################################
 # methods for obtaining ligand chemical files and producing params .files
@@ -46,7 +46,7 @@ def load_from_pubchem( cid , sdffilename = '' ):
             sdfile.write(sdfdata)
             sdfile.close()
 
-            print 'CID',cid,'successfully written to .sdf file',sdffilename
+            print( 'CID {} successfully written to .sdf file {}'.fortma(cid, sdffilename) )
 
             #mlf = mdl_molfile.read_mdl_molfile(cid+'.sdf')
         else:
@@ -67,13 +67,13 @@ def sdf2mdl( sdfile , mdlfilename ):
         converter.SetInAndOutFormats('sdf','mdl')
         mol = openbabel.OBMol()
         converter.ReadFile(mol,sdfile)
-        print 'if the file',mdlfilename,'already exists, it will be overwritten'
+        print( 'if the file {} already exists, it will be overwritten...'.format(mdlfilename) )
 #        os.system("babel  %s %s.pdb"%(sdfile,sdfile[:-4]))
         converted = converter.WriteFile(mol,mdlfilename)
         if converted:
-            print '.mdl file',mdlfilename,' successfully written'
+            print( '.mdl file {} successfully written'.format(mdlfilename) )
         else:
-            print 'Conversion Failed! could not produce the .mdl file',mdlfilename
+            print( 'Conversion Failed! could not produce the .mdl file {} '.format(mdlfilename) )
     else:
         raise IOError('No such file or directory named '+sdfile)
 
@@ -115,7 +115,7 @@ def generate_nonstandard_residue_set( params_list ):
         res_set.read_files( params_list , atoms , elements , mm_atoms , orbitals )
     except:
         # then this PyRosetta is v2.0 beta or earlier, as this is being written,
-        #    we support v2.0 beta, notice the subtle difference below 
+        #    we support v2.0 beta, notice the subtle difference below
         res_set.read_files( params_list , atoms , mm_atoms , orbitals )
     return res_set
 
@@ -205,4 +205,3 @@ def pose_from_params( filename , params_list ):
     pose = Pose()
     pose_from_file( pose , res_set , filename )
     return pose
-

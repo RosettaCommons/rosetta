@@ -12,15 +12,15 @@
 ## @brief
 ## @author Evan H. Baugh, Johns Hopkins University
 
+from __future__ import print_function
+
 import os
 import urllib
 
-from rosetta import Pose
-from rosetta import pose_from_file
+from pyrosetta import Pose, pose_from_file
 
 # other tools
-from cleaning import cleanATOM
-from cleaning import cleanCRYS
+from pyrosetta.toolbox.cleaning import cleanATOM, cleanCRYS
 
 # retreives pdbData from rcsb for  <pdb_code>
 # ADD NAMING OPTION
@@ -57,13 +57,13 @@ def load_from_rcsb( pdb_code , pdb_outfile = '' ):
                     # default the name to the <pdb_code>.pdb
                     pdb_outfile = pdb_code
                 if os.path.exists( os.getcwd() + '/' + pdb_outfile ):
-                    print 'the file',pdb_outfile,'already exists, this file will be overwritten'
+                    print( 'the file {} already exists, this file will be overwritten'.format(pdb_outfile) )
                 #if input('Do you want to overwrite ' + pdbCode + '.pdb')
                 pdb_file = open(pdb_outfile,'w')
                 pdb_file.writelines(pdb_data)
                 pdb_file.close()
 
-                print 'PDB',pdb_code[:-4],'successfully loaded from rcsb into',pdb_outfile
+                print( 'PDB {} successfully loaded from rcsb into {}'.format(pdb_code[:-4], pdb_outfile) )
 #                if auto_clean:
 #                    cleanATOM(pdb_code)
             else:
@@ -123,16 +123,13 @@ def load_fasta_from_rcsb( pdb_code , fasta_outfile ):
 #                pdb_code = pdb_code + '.fa'
                 if not fasta_outfile:
                     fasta_outfile = pdb_code + '.fa'
-                if os.path.exists( os.getcwd() + '/' + fasta_outfile ):
-                    print 'the file',fasta_outfile,'already exists, this file will be overwritten'
+                if os.path.exists( os.getcwd() + '/' + fasta_outfile ): print( 'the file {} already exists, this file will be overwritten'.format(fasta_outfile) )
                 #if input('Do you want to overwrite ' + pdbCode + '.pdb')
                 pdb_file = open(fasta_outfile,'w')
                 pdb_file.writelines(pdb_data)
                 pdb_file.close()
 
-                print 'PDB',pdb_code,'sequence successfully loaded from rcsb into',fasta_outfile
+                print( 'PDB {} sequence successfully loaded from rcsb into {}'.format(pdb_code, fasta_outfile) )
             else:
                 raise IOError('Invalid PDB code')
         os.remove(filename)    # remove temp file
-
-

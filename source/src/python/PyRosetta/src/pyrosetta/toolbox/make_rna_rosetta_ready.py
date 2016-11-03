@@ -12,6 +12,8 @@
 ## @brief
 ## @author ?
 
+from __future__ import print_function
+
 import string
 from sys import argv,stderr
 from os import popen,system
@@ -63,9 +65,9 @@ for pdbname in pdbnames:
     #if not exists(netpdbname):
     netpdbname = pdbname
 
-    print 'Reading ... '+netpdbname
+    print( 'Reading ... {}'.format(netpdbname) )
     if not exists( netpdbname ):
-        print 'DOES NOT EXIST: ', netpdbname
+        print( 'DOES NOT EXIST: {}'.format(netpdbname) )
         continue
 
     if ( netpdbname[-3:] == '.gz' ):
@@ -78,7 +80,7 @@ for pdbname in pdbnames:
     outfile = outfile.replace( '.pdb', '_RNA.pdb').replace('.gz','');
     outid = open( outfile, 'w')
 
-    print 'Writing ... '+outfile
+    print( 'Writing ... {}'.format(outfile) )
 
     #fastafile = pdbname[0:4]+chainid+'.pdb.fasta'
     #fastaid = open( fastafile, 'w')
@@ -219,4 +221,3 @@ for pdbname in pdbnames:
     fastaid.write('\n')
     outid.close()
     #fastaid.close()
-

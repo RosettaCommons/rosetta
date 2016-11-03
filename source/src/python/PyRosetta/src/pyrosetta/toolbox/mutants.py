@@ -16,14 +16,16 @@
 
 # UNFINISHED...below!
 
+from __future__ import print_function
+
 import random
-from rosetta import Pose
-from rosetta import make_pose_from_sequence
-from rosetta import create_score_function
-from rosetta import TaskFactory
+from pyrosetta import Pose, make_pose_from_sequence, create_score_function
+
 from rosetta.utility import vector1_bool
-from rosetta import aa_from_oneletter_code
-from rosetta import PackRotamersMover
+from rosetta.core.pack.task import TaskFactory
+from rosetta.core.chemical import aa_from_oneletter_code
+from rosetta.protocols.simple_moves import PackRotamersMover
+
 from rosetta.core.pose import PDBInfo
 
 # a different version of mutate_residue is provided in PyRosetta v2.0 and
@@ -85,13 +87,13 @@ def compare_mutants__( pose1 , pose2 ):
     seq2 = pose2.sequence()
     for i in range(pose1.total_residue()):
         if not seq1[i]==seq2[i]:
-            print 'mutation '+seq1[i]+str(i+1)+seq2[i]
+            print('mutation '+seq1[i]+str(i+1)+seq2[i])
 
 # use to compare sequences and sec_struct
 def compare_sequences( seq1 , seq2 ):
     for i in range(len(seq1)):
         if not seq1[i]==seq2[i]:
-            print 'discrepency at '+seq1[i]+str(i+1)+seq2[i]
+            print( 'discrepency at '+seq1[i]+str(i+1)+seq2[i] )
 
 # UNFINISHED BELOW HERE!
 
@@ -130,10 +132,10 @@ def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
    # is display:    #set this up to avoid lots of ifs
 
     if len(hblist2)>0:
-        print 'hbonds not in',names[0]
+        print( 'hbonds not in {}'.format(names[0]) )
     for j in range(len(hblist2)):
         # these hbonds are in pose2 but NOT in pose1
-        print hblist2[j][1],'\t',hblist2[j][2]
+        print( '{}\t{}'.format( hblist2[j][1], hblist2[j][2]) )
         if display:
             # send hbonds gained, green
             # align them first!!!!
@@ -144,10 +146,10 @@ def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
             pymol.send_point(names[0]+'_gains'+str(j),'green',acptr[0],acptr[1],acptr[2],False,False,'')
 
     if len(hblist1)>0:
-        print 'hbonds not in',names[1]
+        print( 'hbonds not in {}'.format(names[1]) )
     for i in range(len(hblist1)):
         # these hbonds are in pose1 but NOT in pose2
-        print hblist1[i][1],'\t',hblist1[i][2]
+        print( '{}\t{}'.format(hblist1[i][1], hblist1[i][2]) )
         if display:
             # send hbonds lost, red
             hbond = hbset1.hbond(hblist1[i][0])
@@ -157,7 +159,7 @@ def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
             pymol.send_point(names[0]+'_loses'+str(i),'red',acptr[0],acptr[1],acptr[2],False,False,'')
 
     if len(delEn)>0:
-        print 'Energy change from',names[0],'to',names[1]
+        print( 'Energy change from {} to {}'.format(names[0], names[1] ) )
     for k in range(len(delEn)):
         sign = '-'
         color = 'blue'
@@ -166,7 +168,7 @@ def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
             sign = '+'
             color = 'yellow'
             group = '_increases'
-        print sign,'in',str(delEn[k][1]).ljust(20),str(delEn[k][2]).ljust(20),'from %.4f to %.4f'%(delEn[k][3],delEn[k][4])
+        print('{} in {} {} from {:.4f} to {:.4f}'.format(sign, str(delEn[k][1]).ljust(20), str(delEn[k][2]).ljust(20), delEn[k][3],delEn[k][4]) )
         if display:
             # send energy change, if sign=='+' clr yellow, if sign=='-' clr blue
             hbond = delEn[k][6]
@@ -174,5 +176,3 @@ def compare_hbonds( pose1 , pose2 , Ethresh = .5 , display = False ):
             acptr = pose1.residue(hbond.acc_res()).xyz(hbond.acc_atm())
             pymol.send_point(names[0]+group+str(k),color,donor[0],donor[1],donor[2],False,False,'')
             pymol.send_point(names[0]+group+str(k),color,acptr[0],acptr[1],acptr[2],False,False,'')
-
-

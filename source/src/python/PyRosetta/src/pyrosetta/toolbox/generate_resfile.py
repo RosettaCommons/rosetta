@@ -14,8 +14,9 @@
 
 # adapted from original code by Sid Chaudhury
 
-from rosetta import Pose
-from rosetta import pose_from_file
+from __future__ import print_function
+
+from pyrosetta import Pose, pose_from_file
 
 # writes a specified resfile for the user, defaults to packing w/ input SC
 def generate_resfile_from_pose( pose , resfilename ,
@@ -118,5 +119,3 @@ class ResfileWriter():
         generate_resfile_from_pose( self.pose , resfilename , self.pack , self.design , self.input_sc , self.freeze , self.specific )
 
 # make it actually perform from PDB, use Bio.PDBParser
-
-

@@ -405,7 +405,13 @@ def generate_documentation(rosetta_source_path, path):
     source_prefix = get_binding_build_root(rosetta_source_path, source=True)
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
-    with open(source_prefix + '/rosetta.modules') as fh: modules = ' '.join( ['pyrosetta', 'rosetta'] + [ 'rosetta.'+ f for f in fh.read().split()] )
+    pyrosetta_modules = ['pyrosetta']
+    for dir_name, _, files in os.walk(build_prefix+'/pyrosetta'):
+        for f in sorted(files):
+            if f.endswith('.py')  and  (not f.startswith('__')):
+                pyrosetta_modules.append( (dir_name[len(build_prefix)+1:] + '/' + f).replace('/', '.')[:-len('.py')] )
+
+    with open(source_prefix + '/rosetta.modules') as fh: modules = ' '.join( pyrosetta_modules + ['rosetta'] + [ 'rosetta.'+ f for f in fh.read().split()] )
 
     if not os.path.isdir(path): os.makedirs(path)
     execute('Generating PyRosetta documentation...', 'cd {build_prefix} && {pydoc} -w {modules} && mv *.html {path}'.format(pydoc=Options.pydoc, **vars()), silent=True)
@@ -472,7 +478,7 @@ def main(args):
 
     if not Options.pybind11: Options.pybind11 = install_pybind11(rosetta_source_path + '/build/prefix')
 
-    if Options.skip_generation_phase: print('Option --skip-building-phase is supplied, skipping generation phase...')
+    if Options.skip_generation_phase: print('Option --skip-generation-phase is supplied, skipping generation phase...')
     else: generate_bindings(rosetta_source_path)
 
     if Options.skip_building_phase: print('Option --skip-building-phase is supplied, skipping building phase...')
