@@ -147,8 +147,8 @@ bool MultiConstraint::same_type_as_me( Constraint const & other ) const
 void
 MultiConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
-	for ( ConstraintCOPs::const_iterator member_it = member_constraints_.begin(), end = member_constraints_.end(); member_it != end; ++member_it ) {
-		(*member_it)->score( xyz_func, weights, emap );
+	for ( auto const & member_constraint : member_constraints_ ) {
+		member_constraint->score( xyz_func, weights, emap );
 	}
 }
 
@@ -167,7 +167,7 @@ MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
 			member_residues_.push_back( cur_atomid.rsd() );
 		}
 
-		std::map< AtomID, ConstraintCOPs >::iterator map_it = atomid_to_csts_.find(cur_atomid);
+		auto map_it = atomid_to_csts_.find(cur_atomid);
 
 		//if it does, add the atom id to the atom_members and the atomid/vect pair to the map
 		if ( map_it == atomid_to_csts_.end() ) {
@@ -184,8 +184,8 @@ MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
 
 //@brief translates the atom-names into numbers
 void MultiConstraint::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const & scfxn) const {
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
-		(*cst_it)->setup_for_scoring( xyz, scfxn );
+	for ( auto const & cst : member_constraints_ ) {
+		cst->setup_for_scoring( xyz, scfxn );
 	}
 }
 
@@ -194,8 +194,8 @@ ConstraintOP
 MultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
-		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
+	for ( auto const & cst : member_constraints_ ) {
+		ConstraintOP new_cst = cst->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
@@ -209,9 +209,8 @@ ConstraintOP MultiConstraint::remapped_clone(
 	id::SequenceMappingCOP map ) const
 {
 	MultiConstraintOP new_multi = empty_clone();
-	for ( ConstraintCOPs::const_iterator it = member_constraints_.begin();
-			it != member_constraints_.end(); ++it ) {
-		new_multi->add_individual_constraint( (*it)->remapped_clone( src, dest, map ) );
+	for ( auto const & cst : member_constraints_ ) {
+		new_multi->add_individual_constraint( cst->remapped_clone( src, dest, map ) );
 	}
 	return new_multi;
 }
@@ -235,7 +234,7 @@ MultiConstraint::fill_f1_f2(
 	// }
 	//std::cout << ", the atom map has " << atomid_to_csts_.size() << " atoms." << std::endl;
 
-	std::map< AtomID, ConstraintCOPs >::const_iterator map_it = atomid_to_csts_.find(atom);
+	auto map_it = atomid_to_csts_.find(atom);
 
 	if ( map_it != atomid_to_csts_.end() ) {
 		ConstraintCOPs cur_csts = map_it->second;

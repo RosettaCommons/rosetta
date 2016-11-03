@@ -879,7 +879,7 @@ make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
 
 ////////////////////////////////////////////////////////
 void
-remove_cutpoint_closed( pose::Pose & pose, Size const i ){
+remove_cutpoint_closed( pose::Pose & pose, Size const i ) {
 
 	using namespace core::chemical;
 	using namespace core::kinematics;

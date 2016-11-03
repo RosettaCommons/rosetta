@@ -20,6 +20,7 @@
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/BasePairConstraint.hh>
 #include <core/scoring/constraints/BigBinConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -82,7 +83,7 @@ AngleConstraintCreator::AngleConstraintCreator() {}
 AngleConstraintCreator::~AngleConstraintCreator() {}
 
 ConstraintOP AngleConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) ) ;
+	return ConstraintOP( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) ) ;
 }
 
 std::string AngleConstraintCreator::keyname() const
@@ -94,12 +95,25 @@ AtomPairConstraintCreator::AtomPairConstraintCreator() {}
 AtomPairConstraintCreator::~AtomPairConstraintCreator() {}
 
 ConstraintOP AtomPairConstraintCreator::create_constraint() const {
-	return ConstraintOP( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
+	return ConstraintOP( new AtomPairConstraint( id::AtomID(), id::AtomID(), nullptr ) );
 }
 
 std::string AtomPairConstraintCreator::keyname() const
 {
 	return "AtomPair";
+}
+
+BasePairConstraintCreator::BasePairConstraintCreator() {}
+BasePairConstraintCreator::~BasePairConstraintCreator() {}
+
+ConstraintOP BasePairConstraintCreator::create_constraint() const {
+	//return ConstraintOP( dynamic_cast< Constraint * >( new BasePairConstraint ) ); //BasePairConstraintOP( new BasePairConstraint( 0,0)));
+	return ConstraintOP( new BasePairConstraint( 0, 0 ) );
+}
+
+std::string BasePairConstraintCreator::keyname() const
+{
+	return "BasePair";
 }
 
 BigBinConstraintCreator::BigBinConstraintCreator() {}
@@ -130,7 +144,7 @@ DihedralConstraintCreator::DihedralConstraintCreator() {}
 DihedralConstraintCreator::~DihedralConstraintCreator() {}
 
 ConstraintOP DihedralConstraintCreator::create_constraint() const {
-	return ConstraintOP( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+	return ConstraintOP( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) );
 }
 
 std::string DihedralConstraintCreator::keyname() const
@@ -144,7 +158,7 @@ DihedralPairConstraintCreator::~DihedralPairConstraintCreator() {}
 ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
 	return ConstraintOP( new DihedralPairConstraint(
 		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(),
-		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), nullptr ) );
 }
 
 std::string DihedralPairConstraintCreator::keyname() const
@@ -228,7 +242,7 @@ NamedAngleConstraintCreator::NamedAngleConstraintCreator() {}
 NamedAngleConstraintCreator::~NamedAngleConstraintCreator() {}
 
 ConstraintOP NamedAngleConstraintCreator::create_constraint() const {
-	return ConstraintOP( new NamedAngleConstraint( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), NULL ) ) ;
+	return ConstraintOP( new NamedAngleConstraint( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), nullptr ) ) ;
 }
 
 std::string NamedAngleConstraintCreator::keyname() const

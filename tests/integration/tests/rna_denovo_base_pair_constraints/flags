@@ -1,0 +1,9 @@
+-nstruct 3
+-fasta target.fasta
+-out:file:silent default.out
+-include_neighbor_base_stacks
+-minimize_rna true
+-extra_minimize_res A:1-12
+-cst_file base_pair_constraint.cst
+-set_weights base_pair_constraint 1
+-secstruct "(..........)"

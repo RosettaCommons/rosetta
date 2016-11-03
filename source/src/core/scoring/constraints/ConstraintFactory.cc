@@ -71,8 +71,8 @@ ConstraintFactory::newConstraint( std::string const & type_name )
 
 		msg += "known types are:\n";
 		vector1< string > types = get_cst_names();
-		for ( vector1< string >::const_iterator it = types.begin(), end = types.end(); it != end; ++it ) {
-			msg += *it + "\n";
+		for ( auto const & elem : types ) {
+			msg += elem + "\n";
 		}
 
 		utility_exit_with_message( msg );
@@ -86,9 +86,8 @@ ConstraintFactory::get_cst_names() const {
 	using utility::vector1;
 
 	vector1< string > cst_names;
-	for ( ConstraintCreatorMap::const_iterator
-			it = cst_types_.begin(), end = cst_types_.end(); it != end; ++it ) {
-		cst_names.push_back( it->first );
+	for ( auto const & elem : cst_types_ ) {
+		cst_names.emplace_back( elem.first );
 	}
 
 	return cst_names;

@@ -34,6 +34,17 @@ public:
 	virtual std::string keyname() const;
 };
 
+/// @brief Mover creator for the BasePairConstraint constraint
+class BasePairConstraintCreator : public ConstraintCreator
+{
+public:
+	BasePairConstraintCreator();
+	virtual ~BasePairConstraintCreator();
+
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
 /// @brief Mover creator for the AngleConstraint constraint
 class AngleConstraintCreator : public ConstraintCreator
 {

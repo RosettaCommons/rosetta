@@ -1,0 +1,13 @@
+# Intended SS is basically ((((....))))
+# Given (..........)
+# Either the two residues next to the stem or the other two. 
+AmbiguousConstraint
+	MultiConstraint
+		BasePair 2 11 
+		BasePair 3 10 
+	END
+	MultiConstraint
+		BasePair 3 10
+		BasePair 4 9 
+	END
+END

@@ -580,6 +580,7 @@ static ConstraintRegistrator< core::scoring::constraints::AmbiguousNMRConstraint
 static ConstraintRegistrator< core::scoring::constraints::AmbiguousNMRDistanceConstraintCreator > AmbiguousNMRDistanceConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::AngleConstraintCreator > AngleConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::AtomPairConstraintCreator > AtomPairConstraintCreator_registrator;
+static ConstraintRegistrator< core::scoring::constraints::BasePairConstraintCreator > BasePairConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::BigBinConstraintCreator > BigBinConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::CoordinateConstraintCreator > CoordinateConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::DihedralConstraintCreator > DihedralConstraintCreator_registrator;
