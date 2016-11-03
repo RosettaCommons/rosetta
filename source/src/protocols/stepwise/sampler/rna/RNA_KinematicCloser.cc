@@ -23,6 +23,8 @@
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/rna/RNA_Info.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <basic/Tracer.hh>
 
@@ -101,21 +103,21 @@ void RNA_KinematicCloser::init() {
 		pivots[i] = 3 * i + 2;
 	}
 
-	atom_ids_.push_back( NamedAtomID ( " C3'", moving_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", moving_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " P  ", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O5'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C5'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C4'", moving_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C3'", chainbreak_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", chainbreak_suite_ ) );
-	atom_ids_.push_back( NamedAtomID ( " P  ", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C5'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C4'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " O3'", chainbreak_suite_ + 1 ) );
-	atom_ids_.push_back( NamedAtomID ( " C2'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", moving_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", moving_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " P  ", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O5'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C5'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C4'", moving_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ ) );
+	atom_ids_.emplace_back( NamedAtomID( " P  ", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O5'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C5'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C4'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C3'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " O3'", chainbreak_suite_ + 1 ) );
+	atom_ids_.emplace_back( NamedAtomID( " C2'", chainbreak_suite_ + 1 ) );
 
 	fill_chainTORS();
 	if ( verbose_ ) output_chainTORS();
@@ -126,32 +128,32 @@ void RNA_KinematicCloser::init() {
 	Size const cutpos = chainbreak_suite_;
 	////////////////////////////////////////////////////////////////
 	Real const d_O3prime_nextP = (
-		pose.xyz( NamedAtomID ( " O3'", cutpos ) ) -
-		pose.xyz( NamedAtomID ( "OVL1", cutpos ) ) ).length();
+		pose.xyz( NamedAtomID( " O3'", cutpos ) ) -
+		pose.xyz( NamedAtomID( "OVL1", cutpos ) ) ).length();
 	db_len_[ 8 ] = d_O3prime_nextP;
 	////////////////////////////////////////////////////////////////
 	Real const theta_C3prime_O3prime_nextP = degrees( angle_radians(
-		pose.xyz( NamedAtomID ( " C3'", cutpos ) ),
-		pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
-		pose.xyz( NamedAtomID ( "OVL1", cutpos ) ) ) );
+		pose.xyz( NamedAtomID( " C3'", cutpos ) ),
+		pose.xyz( NamedAtomID( " O3'", cutpos ) ),
+		pose.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 	db_ang_[ 8 ] = theta_C3prime_O3prime_nextP;
 	Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
-		pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
+		pose.xyz( NamedAtomID( " O3'", cutpos ) ),
 		pose.xyz( NamedAtomID( "OVL1", cutpos ) ),
 		pose.xyz( NamedAtomID( "OVL2", cutpos ) ) ) );
 	db_ang_[ 9 ] = theta_O3prime_nextP_nextO5prime;
 	////////////////////////////////////////////////////////////////
 	Real const phi_C4prime_C3prime_O3prime_nextP = degrees( dihedral_radians(
-		pose.xyz( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
+		pose.xyz( NamedAtomID( " C4'", moving_suite_ + 1 ) ),
 		pose.xyz( NamedAtomID( " C3'", cutpos ) ),
 		pose.xyz( NamedAtomID( " O3'", cutpos ) ),
 		pose.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
 	dt_ang_[ 7 ] =  phi_C4prime_C3prime_O3prime_nextP;
 	Real const phi_C3prime_O3prime_nextP_nextO5prime = degrees( dihedral_radians(
-		pose.xyz( NamedAtomID ( " C3'", cutpos ) ),
-		pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
-		pose.xyz( NamedAtomID ( "OVL1", cutpos ) ),
-		pose.xyz( NamedAtomID ( "OVL2", cutpos ) ) ) );
+		pose.xyz( NamedAtomID( " C3'", cutpos ) ),
+		pose.xyz( NamedAtomID( " O3'", cutpos ) ),
+		pose.xyz( NamedAtomID( "OVL1", cutpos ) ),
+		pose.xyz( NamedAtomID( "OVL2", cutpos ) ) ) );
 	dt_ang_[ 8 ] =  phi_C3prime_O3prime_nextP_nextO5prime;
 	Real const phi_O3prime_nextP_nextO5prime_nextC5prime =
 		degrees( dihedral_radians(
@@ -194,43 +196,32 @@ RNA_KinematicCloser::figure_out_dof_ids_and_offsets() {
 	/////////////////////////////////////////
 	// pivot 1
 	/////////////////////////////////////////
-	id1 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " P  " ),
-		moving_suite_ + 1 );
-	id2 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " O5'" ),
-		moving_suite_ + 1 );
-	id3 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " C5'" ),
-		moving_suite_ + 1 );
-	id4 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " C4'" ),
-		moving_suite_ + 1 );
+	id1 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().p_atom_index(), moving_suite_ + 1 );
+	id2 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().o5prime_atom_index(), moving_suite_ + 1 );
+	id3 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c5prime_atom_index(), moving_suite_ + 1 );
+	id4 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c4prime_atom_index(), moving_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
 	figure_out_offset( dof_id, dt_ang_[3 * 1 + 1] );
-	id1 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " O5'" ),
-		moving_suite_ + 1 );
-	id2 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " C5'" ),
-		moving_suite_ + 1 );
-	id3 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " C4'" ),
-		moving_suite_ + 1 );
-	id4 = AtomID( pose.residue( moving_suite_ + 1 ).atom_index( " C3'" ),
-		moving_suite_ + 1 );
+	id1 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().o5prime_atom_index(), moving_suite_ + 1 );
+	id2 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c5prime_atom_index(), moving_suite_ + 1 );
+	id3 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c4prime_atom_index(), moving_suite_ + 1 );
+	id4 = AtomID( pose.residue_type( moving_suite_ + 1 ).RNA_type().c3prime_atom_index(), moving_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
 	figure_out_offset( dof_id, dt_ang_[3 * 1 + 2] );
 	/////////////////////////////////////////
 	// pivot 2
 	/////////////////////////////////////////
-	id1 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( " C4'" ),
-		chainbreak_suite_ );
-	id2 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( " C3'" ),
-		chainbreak_suite_ );
-	id3 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( " O3'" ),
-		chainbreak_suite_ );
+	
+	id1 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c4prime_atom_index(), chainbreak_suite_ );
+	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ );
+	id3 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ );
 	id4 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( "OVL1" ),
 		chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
 	figure_out_offset( dof_id, dt_ang_[3 * 2 + 1] );
-	id1 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( " C3'" ),
-		chainbreak_suite_ );
-	id2 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( " O3'" ),
-		chainbreak_suite_ );
+	
+	id1 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ );
+	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ );
 	id3 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index( "OVL1" ),
 		chainbreak_suite_ );
 	id4 = AtomID( pose.residue( chainbreak_suite_ ).atom_index( "OVL2" ),
@@ -240,31 +231,23 @@ RNA_KinematicCloser::figure_out_dof_ids_and_offsets() {
 	/////////////////////////////////////////
 	// pivot 3
 	/////////////////////////////////////////
-	id1 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index( " P  " ),
-		chainbreak_suite_ + 1 );
-	id2 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index( " O5'" ),
-		chainbreak_suite_ + 1 );
-	id3 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index( " C5'" ),
-		chainbreak_suite_ + 1 );
-	id4 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index( " C4'" ),
-		chainbreak_suite_ + 1 );
+	id1 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().p_atom_index(), chainbreak_suite_ + 1 );
+	id2 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().o5prime_atom_index(), chainbreak_suite_ + 1 );
+	id3 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c5prime_atom_index(), chainbreak_suite_ + 1 );
+	id4 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c4prime_atom_index(), chainbreak_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( dof_id, dt_ang_[ 3 * 3 + 1 ] );
-	id1 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " O5'" ),
-		chainbreak_suite_ + 1 );
-	id2 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C5'" ),
-		chainbreak_suite_ + 1 );
-	id3 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C4'" ),
-		chainbreak_suite_ + 1 );
-	id4 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C3'" ),
-		chainbreak_suite_ + 1 );
+	id1 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().o5prime_atom_index(), chainbreak_suite_ + 1 );
+	id2 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c5prime_atom_index(), chainbreak_suite_ + 1 );
+	id3 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c4prime_atom_index(), chainbreak_suite_ + 1 );
+	id4 = AtomID( pose.residue_type( chainbreak_suite_ + 1 ).RNA_type().c3prime_atom_index(), chainbreak_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
 	figure_out_offset( dof_id, dt_ang_[3 * 3 + 2] );
 }
 
 ////////////////////////////////////////////////////////////////
 void
-RNA_KinematicCloser::figure_out_offset (
+RNA_KinematicCloser::figure_out_offset(
 	id::DOF_ID const & dof_id,
 	Real const original_torsion_value
 ) {

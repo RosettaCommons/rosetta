@@ -83,41 +83,30 @@ void RNA_MC_KIC_Sampler::init() {
 
 	/////// Backbone MC Sampler ////////
 
-	TorsionID epsilon_ID (TorsionID( moving_suite_, BB, EPSILON));
-	TorsionIDs.push_back(epsilon_ID);
-	MC_OneTorsionOP epsilon_torsion( new MC_OneTorsion( epsilon_ID, ref_pose_->torsion( epsilon_ID) ));
-	bb_samplers_.push_back(epsilon_torsion);
+	TorsionID epsilon_ID( TorsionID( moving_suite_, BB, EPSILON ) );
+	TorsionIDs.push_back( epsilon_ID );
+	bb_samplers_.emplace_back( new MC_OneTorsion( epsilon_ID, ref_pose_->torsion( epsilon_ID) ) );
 
-	TorsionID zeta_ID (TorsionID( moving_suite_, BB, ZETA));
-	TorsionIDs.push_back(zeta_ID);
-	MC_OneTorsionOP zeta_torsion( new MC_OneTorsion( zeta_ID, ref_pose_->torsion( zeta_ID) ));
-	bb_samplers_.push_back(zeta_torsion);
+	TorsionID zeta_ID( TorsionID( moving_suite_, BB, ZETA));
+	TorsionIDs.push_back( zeta_ID );
+	bb_samplers_.emplace_back( new MC_OneTorsion( zeta_ID, ref_pose_->torsion( zeta_ID ) ) );
 
-	TorsionID alpha1_ID (TorsionID( moving_suite_ + 1, BB, ALPHA));
-	TorsionIDs.push_back(alpha1_ID);
-	MC_OneTorsionOP alpha1_torsion( new MC_OneTorsion( alpha1_ID, ref_pose_->torsion( alpha1_ID) ));
-	bb_samplers_.push_back(alpha1_torsion);
+	TorsionID alpha1_ID( TorsionID( moving_suite_ + 1, BB, ALPHA ) );
+	TorsionIDs.push_back( alpha1_ID );
+	bb_samplers_.emplace_back( new MC_OneTorsion( alpha1_ID, ref_pose_->torsion( alpha1_ID ) ) );
 
-	TorsionID alpha2_ID (TorsionID( chainbreak_suite_ + 1, BB, ALPHA));
-	TorsionIDs.push_back(alpha2_ID);
-	MC_OneTorsionOP alpha2_torsion( new MC_OneTorsion( alpha2_ID, ref_pose_->torsion( alpha2_ID) ));
-	bb_samplers_.push_back(alpha2_torsion);
+	TorsionID alpha2_ID( TorsionID( chainbreak_suite_ + 1, BB, ALPHA ) );
+	TorsionIDs.push_back( alpha2_ID );
+	bb_samplers_.emplace_back( new MC_OneTorsion( alpha2_ID, ref_pose_->torsion( alpha2_ID ) ) );
 
 	//Add all the pivot torsions to the list of the torsion IDs so that we have a
 	//full list of the torsions that could be modified by this sampler
-
-	TorsionID pivot1 (TorsionID( moving_suite_ + 1, BB, BETA ));
-	TorsionIDs.push_back(pivot1);
-	TorsionID pivot2 (TorsionID( moving_suite_ + 1, BB, GAMMA ));
-	TorsionIDs.push_back(pivot2);
-	TorsionID pivot3 (TorsionID( moving_suite_ + 1, BB, EPSILON ));
-	TorsionIDs.push_back(pivot3);
-	TorsionID pivot4 (TorsionID( moving_suite_ + 1, BB, ZETA ));
-	TorsionIDs.push_back(pivot4);
-	TorsionID pivot5 (TorsionID( chainbreak_suite_ + 1, BB, BETA ));
-	TorsionIDs.push_back(pivot5);
-	TorsionID pivot6 (TorsionID( chainbreak_suite_ + 1, BB, GAMMA ));
-	TorsionIDs.push_back(pivot6);
+	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, BETA ) );
+	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, GAMMA ) );
+	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, EPSILON ) );
+	TorsionIDs.emplace_back( TorsionID( moving_suite_ + 1, BB, ZETA ) );
+	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, BETA ) );
+	TorsionIDs.emplace_back( TorsionID( chainbreak_suite_ + 1, BB, GAMMA ) );
 
 	// Now find the initial torsions
 	core::Real torsion;
@@ -127,7 +116,6 @@ void RNA_MC_KIC_Sampler::init() {
 		angle_min_.push_back(-180);
 		angle_max_.push_back(180);
 	}
-
 
 	//Let's not worry about the sugar rotamers for now (1/15/15)
 

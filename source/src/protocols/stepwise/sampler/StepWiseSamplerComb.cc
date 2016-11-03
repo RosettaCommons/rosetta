@@ -36,9 +36,9 @@ StepWiseSamplerComb::~StepWiseSamplerComb(){}
 void StepWiseSamplerComb::init() {
 	runtime_assert( !rotamer_list_.empty() );
 	is_empty_ = false;
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->init();
-		if ( !rotamer_list_[i]->not_end() ) {
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->init();
+		if ( !rotamer->not_end() ) {
 			TR << "Got a null rotamer sampler!" << std::endl;
 			is_empty_ = true;
 		}
@@ -50,8 +50,8 @@ void StepWiseSamplerComb::init() {
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::reset() {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->reset();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->reset();
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ void StepWiseSamplerComb::operator++() {
 	runtime_assert( not_end() );
 
 	if ( random() ) {
-		for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-			++( *rotamer_list_[i] );
+		for ( auto const & rotamer : rotamer_list_ ) {
+			++( *rotamer );
 		}
 	} else {
 		for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
@@ -78,24 +78,24 @@ bool StepWiseSamplerComb::not_end() const {
 	runtime_assert( is_init() );
 	if ( is_empty_ ) return false;
 	if ( random() ) return true;
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		if ( !rotamer_list_[i]->not_end() ) return false;
+	for ( auto const & rotamer : rotamer_list_ ) {
+		if ( !rotamer->not_end() ) return false;
 	}
 	return true;
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::apply( Pose & pose ) {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->apply( pose );
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->apply( pose );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerComb::set_random( bool const setting ) {
 	StepWiseSamplerBase::set_random( setting );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->set_random( setting );
-		runtime_assert( rotamer_list_[i]->random() == setting );
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->set_random( setting );
+		runtime_assert( rotamer->random() == setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

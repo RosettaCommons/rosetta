@@ -34,12 +34,8 @@ ValueList const &
 StepWiseSamplerOneValueComb::get_value_list( utility::vector1< Size > const & id_list ){
 
 	if ( id_list_cached_.size() != id_list.size() ) {
-		id_list_cached_.clear();
-		value_list_cached_.clear();
-		for ( Size n = 1; n <= id_list.size(); n++ ) {
-			id_list_cached_.push_back( 0 );
-			value_list_cached_.push_back( 0.0 );
-		}
+		id_list_cached_.assign( id_list.size(), 0 );
+		value_list_cached_.assign( id_list.size(), 0.0 );
 	}
 	runtime_assert( id_list.size() == rotamer_list_.size() );
 	runtime_assert( id_list.size() == id_list_cached_.size() );

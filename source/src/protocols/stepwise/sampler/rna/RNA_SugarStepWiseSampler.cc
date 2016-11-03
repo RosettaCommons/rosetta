@@ -96,15 +96,15 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				//Record the torsions in starting pose
 				utility::vector1 < core::id::TorsionID > saved_torsion_id;
 				utility::vector1 < Real > saved_torsions;
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  ALPHA   ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  BETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  GAMMA   ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  EPSILON ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  ZETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 1       ) ); //CHI
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 4       ) ); //O2H
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_-1, id::BB,  ZETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_+1, id::BB,  ALPHA   ) );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 1       ); //CHI
+				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 4       ); //O2H
+				saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
+				saved_torsion_id.emplace_back( rsd_id_+1, id::BB,  ALPHA   );
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
@@ -136,15 +136,15 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				//Record the torsions in starting pose
 				utility::vector1 < core::id::TorsionID > saved_torsion_id;
 				utility::vector1 < Real > saved_torsions;
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  ALPHA   ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  BETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  GAMMA   ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  EPSILON ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::BB,  ZETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 1       ) ); //CHI
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 4       ) ); //O2H
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_-1, id::BB,  ZETA    ) );
-				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_+1, id::BB,  ALPHA   ) );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ALPHA   );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  BETA    );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  GAMMA   );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  EPSILON );
+				saved_torsion_id.emplace_back( rsd_id_,   id::BB,  ZETA    );
+				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 1       ); //CHI
+				saved_torsion_id.emplace_back( rsd_id_,   id::CHI, 4       ); //O2H
+				saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
+				saved_torsion_id.emplace_back( rsd_id_+1, id::BB,  ALPHA   );
 
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );

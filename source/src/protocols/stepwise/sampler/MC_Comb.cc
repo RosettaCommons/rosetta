@@ -32,9 +32,9 @@ MC_Comb::MC_Comb():
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::init() {
 	runtime_assert( !rotamer_list_.empty() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->init();
-		if ( !rotamer_list_[i]->not_end() ) {
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->init();
+		if ( !rotamer->not_end() ) {
 			TR << "Got a null rotamer sampler!" << std::endl;
 		}
 	}
@@ -44,34 +44,34 @@ void MC_Comb::init() {
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::reset() {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->reset();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->reset();
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::operator++() {
 	runtime_assert( not_end() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) ++( *rotamer_list_[i] );
+	for ( auto const & rotamer : rotamer_list_ ) ++( *rotamer );
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::update() {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->update();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->update();
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::apply( Pose & pose ) {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->apply( pose );
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->apply( pose );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_Comb::set_uniform_modeler( bool const setting ) {
 	MC_StepWiseSampler::set_uniform_modeler( setting );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->set_uniform_modeler( setting );
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->set_uniform_modeler( setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

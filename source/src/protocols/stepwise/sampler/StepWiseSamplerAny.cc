@@ -43,9 +43,9 @@ void StepWiseSamplerAny::init() {
 	runtime_assert( !rotamer_list_.empty() );
 	is_empty_ = true;
 	has_empty_ = false;
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->init();
-		if ( !rotamer_list_[i]->not_end() ) {
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->init();
+		if ( !rotamer->not_end() ) {
 			TR << "Got a null rotamer sampler!" << std::endl;
 			has_empty_ = true;
 		} else {
@@ -58,12 +58,12 @@ void StepWiseSamplerAny::init() {
 		is_weighted_ = true;
 		Real sum( 0 );
 		cdf_.clear();
-		for ( Size i = 1; i <= weights_.size(); ++i ) {
-			sum += weights_[i];
+		for ( Real const weight : weights_ ) {
+			sum += weight;
 			cdf_.push_back( sum );
 		}
-		for ( Size i = 1; i <= cdf_.size(); ++i ) {
-			cdf_[i] /= sum;
+		for ( auto & cdf_bin : cdf_ ) {
+			cdf_bin /= sum;
 		}
 		cdf_.back() = 1; // To prevent potential float-point error
 	}
@@ -76,8 +76,8 @@ void StepWiseSamplerAny::init() {
 void StepWiseSamplerAny::reset() {
 	runtime_assert( is_init() );
 	curr_rotamer_ = 1;
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->reset();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->reset();
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -121,9 +121,9 @@ void StepWiseSamplerAny::apply( Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerAny::set_random( bool const setting ) {
 	StepWiseSamplerBase::set_random( setting );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->set_random( setting );
-		runtime_assert( rotamer_list_[i]->random() == setting );
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->set_random( setting );
+		runtime_assert( rotamer->random() == setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

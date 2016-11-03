@@ -60,16 +60,16 @@ StepWiseSamplerSizedComb::~StepWiseSamplerSizedComb(){}
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSizedComb::init() {
 	runtime_assert( !rotamer_list_.empty() );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		rotamer_list_[i]->init();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		rotamer->init();
 	}
 
 	size_list_.clear();
 	id_list_.clear();
 	size_ = 1;
 
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
-		Real const curr_size = rotamer_list_[i]->size();
+	for ( auto const & rotamer : rotamer_list_ ) {
+		Real const curr_size = rotamer->size();
 		id_list_.push_back( 0 );
 		size_list_.push_back( (Size)curr_size );
 		size_ = (Size)(size_ * curr_size);

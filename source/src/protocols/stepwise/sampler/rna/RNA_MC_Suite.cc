@@ -65,13 +65,13 @@ RNA_MC_Suite::RNA_MC_Suite( Size const rsd_id ):
 	init_torsions_ = a_form_torsions_;
 
 	torsion_ids_.clear();
-	torsion_ids_.push_back( TorsionID( rsd_id + 1, BB, GAMMA ) );
-	torsion_ids_.push_back( TorsionID( rsd_id + 1, BB, BETA ) );
-	torsion_ids_.push_back( TorsionID( rsd_id + 1, BB, ALPHA ) );
-	torsion_ids_.push_back( TorsionID( rsd_id, BB, EPSILON ) );
-	torsion_ids_.push_back( TorsionID( rsd_id, BB, ZETA ) );
-	torsion_ids_.push_back( TorsionID( rsd_id, id::CHI, 1 ) );
-	torsion_ids_.push_back( TorsionID( rsd_id + 1, id::CHI, 1 ) );
+	torsion_ids_.emplace_back( rsd_id + 1, BB, GAMMA );
+	torsion_ids_.emplace_back( rsd_id + 1, BB, BETA );
+	torsion_ids_.emplace_back( rsd_id + 1, BB, ALPHA );
+	torsion_ids_.emplace_back( rsd_id, BB, EPSILON );
+	torsion_ids_.emplace_back( rsd_id, BB, ZETA );
+	torsion_ids_.emplace_back( rsd_id, id::CHI, 1 );
+	torsion_ids_.emplace_back( rsd_id + 1, id::CHI, 1 );
 }
 ///////////////////////////////////////////////////////////////////////////
 void RNA_MC_Suite::init() {
