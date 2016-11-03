@@ -137,7 +137,10 @@ ResidueType::ResidueType(
 
 ResidueType::~ResidueType()
 {
-	tr.Trace << "Residue dstor" << std::endl;
+	//This tracer output can cause a segfault at the end of execution under certain circumstances,
+	//including running rosetta_scripts with match constraints on a static build, because tracer is already destroyed.
+	//I'm removing it.
+	//tr.Trace << "Residue dstor" << std::endl;
 }
 
 ResidueType::ResidueType( ResidueType const & residue_type ):
