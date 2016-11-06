@@ -228,6 +228,8 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 		// set cutpoint variant for chainbreak scoring.
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop_cut );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop_cut+1 );
+		pose.conformation().declare_chemical_bond( loop_cut, pose.residue( loop_cut ).atom_name( pose.residue( loop_cut ).upper_connect_atom() ),
+																							 loop_cut + 1, pose.residue( loop_cut + 1 ).atom_name( pose.residue( loop_cut + 1 ).lower_connect_atom() ) );
 	}
 
 	pose::Pose start_pose;

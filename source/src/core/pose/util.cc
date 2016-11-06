@@ -3043,13 +3043,9 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
 
 	// important -- to prevent artificial penalty from steric clash.
-	if ( pose.residue_type( cutpoint_res ).is_NA() ) {
-		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_NA() );
-		pose.conformation().declare_chemical_bond( cutpoint_res, " O3'", cutpoint_res+1, " P  " );
-	} else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
-		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
-		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
-	}
+	Size const next_res( cutpoint_res + 1 );
+	pose.conformation().declare_chemical_bond( cutpoint_res, pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
+																						 next_res, pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
 }
 
 void

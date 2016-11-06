@@ -214,11 +214,18 @@ void LoopMover_Refine_KIC::apply(
 		Size const loop_cut(it->cut());
 
 		if ( loop_cut != nres ) { //c-terminal loop
+			bool pose_changed( false );
 			if ( ! pose.residue(loop_cut).has_variant_type(chemical::CUTPOINT_LOWER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop_cut );
+				pose_changed = true;
 			}
 			if ( ! pose.residue(loop_cut+1).has_variant_type(chemical::CUTPOINT_UPPER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop_cut+1 );
+				pose_changed = true;
+			}
+			if ( pose_changed ) {
+				pose.conformation().declare_chemical_bond( loop_cut, pose.residue( loop_cut ).atom_name( pose.residue( loop_cut ).upper_connect_atom() ),
+																									 loop_cut + 1, pose.residue( loop_cut + 1 ).atom_name( pose.residue( loop_cut + 1 ).lower_connect_atom() ) );
 			}
 		}
 	}

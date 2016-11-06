@@ -144,6 +144,8 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	if ( chainbreak_present ) {
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop.cut()+1 );
+		pose.conformation().declare_chemical_bond( loop.cut(), pose.residue( loop.cut() ).atom_name( pose.residue( loop.cut() ).upper_connect_atom() ),
+																							 loop.cut() + 1, pose.residue( loop.cut() + 1 ).atom_name( pose.residue( loop.cut() + 1 ).lower_connect_atom() ) );
 	}
 
 	( *scorefxn() )(pose);
