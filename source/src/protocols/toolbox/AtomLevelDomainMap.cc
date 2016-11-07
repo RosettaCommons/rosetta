@@ -196,8 +196,9 @@ AtomLevelDomainMap::set_domain( Size const & i, Size const & setting  ){
 
 //////////////////////////////////////////////////////////////////
 void
-AtomLevelDomainMap::set_domain( core::id::AtomID const & atom_id, Size const & setting  ){
+AtomLevelDomainMap::set_domain( core::id::AtomID const & atom_id, Size const & setting, bool ok_if_missing /* = false */  ){
 	if ( !atom_id_mapper_->has_atom_id( atom_id ) ) {
+		if ( ok_if_missing ) return;
 		std::cerr << "Problem ID: " << atom_id << std::endl;
 		utility_exit_with_message( "Asked atom_level_domain_map to set atom_id that cannot be mapped to original pose!" );
 	}
@@ -431,6 +432,7 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 
 	// following is totally hacky, but I've got to put it somewhere -- rhiju.
 	update_to_not_move_virtual_phosphates( pose );
+	update_to_not_move_virtual_o2prime( pose );
 	update_to_not_move_last_virtual_residue( pose );
 	update_to_move_internal_phosphates( pose );
 
@@ -480,6 +482,19 @@ AtomLevelDomainMap::update_to_not_move_virtual_phosphates( pose::Pose const & po
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) ) {
 			set_phosphate( n, pose, false );
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+AtomLevelDomainMap::update_to_not_move_virtual_o2prime( pose::Pose const & pose )
+{
+	using namespace chemical;
+	for ( Size n = 1; n <= pose.size(); n++ ) {
+		if ( pose.residue_type( n ).has_variant_type( DEOXY_O2PRIME ) ) {
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O2'", n ), pose ) ), FIXED_DOMAIN, true /*ok_if_missing*/ );
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "HO2'", n ), pose ) ), FIXED_DOMAIN, true /*ok_if_missing*/ );
 		}
 	}
 }

@@ -53,10 +53,6 @@ using namespace protocols::farna::options;
 using namespace protocols::farna::setup;
 using utility::vector1;
 
-vector1<pose::PoseOP> get_refine_pose_list( std::string const & input_silent_file,
-	std::pair< utility::vector1< int >, utility::vector1< char > > const & output_res_and_chain,
-	core::chemical::ResidueTypeSetCOP rsd_set );
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 rna_denovo_test()

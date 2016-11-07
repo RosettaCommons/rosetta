@@ -83,7 +83,7 @@ public:
 	set_domain( Size const & i, Size const & setting  );
 
 	void
-	set_domain( core::id::AtomID const & atom_id, Size const & setting  );
+	set_domain( core::id::AtomID const & atom_id, Size const & setting, bool ok_if_missing = false );
 
 	void
 	set_domain( core::id::NamedAtomID const & atom_id, core::pose::Pose const & pose,  Size const & setting  );
@@ -161,6 +161,9 @@ private:
 
 	void
 	update_to_not_move_virtual_phosphates( core::pose::Pose const & pose );
+
+	void
+	update_to_not_move_virtual_o2prime( core::pose::Pose const & pose );
 
 	void
 	update_to_not_move_last_virtual_residue( core::pose::Pose const & pose );

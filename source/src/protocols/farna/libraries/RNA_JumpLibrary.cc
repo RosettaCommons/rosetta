@@ -182,8 +182,8 @@ RNA_JumpLibrary::check_forward_backward(
 /////////////////////////////////////////////////////////////////////////////////////
 core::kinematics::Jump
 RNA_JumpLibrary::get_random_base_pair_jump(
-	char const aa1,
-	char const aa2,
+	char const aa1_in,
+	char const aa2_in,
 	BaseEdge const edge1,
 	BaseEdge const edge2,
 	BaseDoubletOrientation const orientation,
@@ -197,6 +197,10 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	if ( rna_pairing_template_map_.empty() ) read_jumps_from_file();
 
 	// key for looking up the template geometry:
+	char aa1( aa1_in ), aa2( aa2_in );
+	if ( aa1_in == 't' ) aa1 = 'u';
+	if ( aa2_in == 't' ) aa2 = 'u';
+
 	BasePairType key( aa1, aa2, edge1, edge2, orientation );
 	Size ntemplates = 0;
 
@@ -204,9 +208,7 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 
 	if ( rna_pairing_template_map_.find( key ) == rna_pairing_template_map_.end() ) {
 
-		std::cout << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
-
-		std::cerr << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
+		tr << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
 
 		//  utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		success = false;

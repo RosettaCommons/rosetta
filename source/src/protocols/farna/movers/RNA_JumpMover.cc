@@ -176,6 +176,19 @@ RNA_JumpMover::add_new_RNA_jump(
 
 	pose.set_jump( which_jump, new_jump );
 
+	// wait, don't leave jumps connected to virtual atoms -- happens in 'edge' cases where we fake-treat DNA as an RNA with virtual 2'-OH.
+	// super hack:
+	if ( pose.residue( jump_pos1 ).is_virtual( pose.residue( jump_pos1 ).atom_index( atom_name1 ) ) ) {
+		atom_name1 = default_jump_atom( pose.residue_type( jump_pos1 ) );
+		fold_tree.set_jump_atoms( which_jump, atom_name1, atom_name2 );
+		pose.fold_tree( fold_tree );
+	}
+	if ( pose.residue( jump_pos2 ).is_virtual( pose.residue( jump_pos2 ).atom_index( atom_name2 ) ) ) {
+		atom_name2 = default_jump_atom( pose.residue_type( jump_pos2 ) );
+		fold_tree.set_jump_atoms( which_jump, atom_name1, atom_name2 );
+		pose.fold_tree( fold_tree );
+	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
