@@ -733,6 +733,9 @@ add_cutpoints( core::pose::Pose & pose, components::StructureData const & sd )
 		if ( cut ) {
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cut );
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cut+1 );
+			pose.conformation().declare_chemical_bond( cut, pose.residue( cut ).atom_name( pose.residue( cut ).upper_connect_atom() ),
+																								 cut + 1, pose.residue( cut + 1 ).atom_name( pose.residue( cut + 1 ).lower_connect_atom() ) );
+
 		}
 	}
 }

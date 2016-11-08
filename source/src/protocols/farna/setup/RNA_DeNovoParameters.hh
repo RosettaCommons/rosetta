@@ -63,6 +63,9 @@ public:
 	void set_cutpoints_closed( utility::vector1 <core::Size > const & setting ){ cutpoints_closed_ = setting; }
 	utility::vector1 <core::Size > cutpoints_closed() const { return cutpoints_closed_; }
 
+	void set_cutpoints_cyclize( utility::vector1 <core::Size > const & setting ){ cutpoints_cyclize_ = setting; }
+	utility::vector1 <core::Size > cutpoints_cyclize() const { return cutpoints_cyclize_; }
+
 	void set_virtual_anchor_attachment_points( utility::vector1 <core::Size > const & setting ){ virtual_anchor_attachment_points_ = setting; }
 	utility::vector1 <core::Size > virtual_anchor_attachment_points() const { return virtual_anchor_attachment_points_; }
 
@@ -108,6 +111,7 @@ private:
 
 	utility::vector1 <core::Size > cutpoints_open_;
 	utility::vector1 <core::Size > cutpoints_closed_;
+	utility::vector1 <core::Size > cutpoints_cyclize_;
 	utility::vector1 <core::Size > virtual_anchor_attachment_points_;
 
 	utility::vector1 < core::Size > allow_insert_res_;

@@ -606,6 +606,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		full_model_parameters->conventional_to_full( option[ full_model::jump_res ].resnum_and_chain() );
 	vector1< Size > const cutpoint_closed          =
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
+	if ( option[ full_model::cyclize ].user() ) utility_exit_with_message( "Cannot handle cyclize yet in stepwise." );
 	vector1< Size > const bulge_res                =
 		full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() );
 	vector1< Size > const extra_minimize_jump_res  =

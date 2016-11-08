@@ -85,6 +85,11 @@ add_cutpoint_variants(
 		op_performed = true;
 	}
 
+	if ( op_performed ) {
+		pose.conformation().declare_chemical_bond( pos, pose.residue( pos ).atom_name( pose.residue( pos ).upper_connect_atom() ),
+																							 pos + 1, pose.residue( pos + 1 ).atom_name( pose.residue( pos + 1 ).lower_connect_atom() ) );
+	}
+
 	return op_performed;
 }
 
@@ -121,6 +126,8 @@ remove_cutpoint_variants(
 		core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, next_pos );
 		op_done = true;
 	}
+
+	// should we remove chemical bond?
 
 	return op_done;
 }

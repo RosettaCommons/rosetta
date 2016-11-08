@@ -48,10 +48,9 @@ bool is_upper_cutpoint(
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	const bool is_cutpoint_in_tree_upper  = pose.fold_tree().is_cutpoint(residue - 1);
+	const bool is_cutpoint_in_tree_upper  = residue == 1 || pose.fold_tree().is_cutpoint(residue - 1);
 	const bool use_pose_cutpoint_variants = option[OptionKeys::score::score_pose_cutpoint_variants]();
 	const bool has_upper_variant_type     = pose.residue(residue).has_variant_type(chemical::CUTPOINT_UPPER);
-	if ( residue <= 1 ) return false;
 	return (has_upper_variant_type && (is_cutpoint_in_tree_upper || use_pose_cutpoint_variants));
 }
 
@@ -77,6 +76,64 @@ void find_cutpoint_variants(
 		std::back_inserter(cutpoints));
 
 	std::sort(cutpoints.begin(), cutpoints.end());
+}
+
+/// helper function for looking at residue connections to get lower/upper partners
+bool
+lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
+																			 core::conformation::Residue const & upper_rsd )
+{
+	if ( lower_rsd.connect_atom( upper_rsd ) == lower_rsd.upper_connect_atom() ) {
+			runtime_assert( upper_rsd.connect_atom( lower_rsd ) == upper_rsd.lower_connect_atom() );
+			runtime_assert( lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) );
+			runtime_assert( upper_rsd.has_variant_type( core::chemical::CUTPOINT_UPPER ) );
+			return true;
+	}
+	return false;
+}
+
+/// @details Instead of assuming cutpoint partner is simply cutpoint+1, find which residue connects via lower/upper.
+///          Important in handling cyclized nucleotides.
+Size
+get_upper_cutpoint_partner_for_lower( pose::Pose const & pose, Size const lower_res )
+{
+	using namespace core::conformation;
+	Residue const & lower_rsd( pose.residue( lower_res ) );
+	// generally upper_cutpoint_partner is just lower_res + 1
+	Size upper_cutpoint_partner( 0 );
+	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+		Size other( lower_rsd.connected_residue_at_resconn( k ) );
+		if ( other == 0 ) continue;
+		if ( lower_upper_connected_across_cutpoint( lower_rsd, pose.residue( other ) ) ) {
+			upper_cutpoint_partner = other; break;
+		}
+	}
+	if ( upper_cutpoint_partner == 0 &&
+			 pose.residue_type( lower_res + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+		utility_exit_with_message( "Did you mean to specify a chainbreak at " + ObjexxFCL::string_of( lower_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( lower_res + 1 ) + ". See, e.g., core/pose/util.cc:correctly_add_cutpoint_variants()."  );
+	}
+	return upper_cutpoint_partner;
+}
+
+Size
+get_lower_cutpoint_partner_for_upper( pose::Pose const & pose, Size const upper_res )
+{
+	using namespace core::conformation;
+	Residue const & upper_rsd( pose.residue( upper_res ) );
+	// generally lower_cutpoint_partner is just upper_res - 1
+	Size lower_cutpoint_partner( 0 );
+	for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+		Size other( upper_rsd.connected_residue_at_resconn( k ) );
+		if ( other == 0 ) continue;
+		if ( lower_upper_connected_across_cutpoint( pose.residue( other ), upper_rsd ) ) {
+			lower_cutpoint_partner = other; break;
+		}
+	}
+	if ( lower_cutpoint_partner == 0 &&
+			 pose.residue_type( upper_res - 1 ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
+		utility_exit_with_message( "Did you mean to specify a chainbreak before " + ObjexxFCL::string_of( upper_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( upper_res - 1 ) + ". See, e.g., core/pose/correctly_add_cutpoint_variants()."  );
+	}
+	return lower_cutpoint_partner;
 }
 
 } // namespace methods

@@ -3005,6 +3005,17 @@ std::map< std::string, core::Size > get_pdb2pose_numbering_as_stdmap ( core::pos
 	return pdb2pose_map;
 }
 
+// @brief chemical bond from lower to upper residue across CUTPOINT_LOWER/CUTPOINT_UPPER will prevent steric repulsion.
+void
+declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res, Size const next_res_in /* = 0 */ )
+{
+	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
+	pose.conformation().declare_chemical_bond( cutpoint_res,
+																						 pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
+																						 next_res,
+																						 pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+}
+
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
@@ -3020,32 +3031,32 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 // try to unify all cutpoint addition into this function.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-	Size const cutpoint_res,
-	bool const check_fold_tree /* = true*/ )
+																 Size const cutpoint_res,
+																 bool const check_fold_tree /* = true*/,
+																 Size const next_res_in /* = 0 */ )
 {
 	using namespace core::chemical;
 
-	runtime_assert( cutpoint_res < pose.size() );
+	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
+
 	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( cutpoint_res ) );
 
 	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, cutpoint_res );
 	remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, cutpoint_res );
 	remove_variant_type_from_pose_residue( pose, C_METHYLAMIDATION, cutpoint_res );
 
-	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, cutpoint_res + 1 );
-	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, cutpoint_res + 1 );
-	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, cutpoint_res + 1 );
-	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, cutpoint_res + 1);
+	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, next_res );
+	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, next_res );
+	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, next_res );
+	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, next_res);
 
-	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res );
+	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
 
 	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
-	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res + 1 );
+	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, next_res );
 
 	// important -- to prevent artificial penalty from steric clash.
-	Size const next_res( cutpoint_res + 1 );
-	pose.conformation().declare_chemical_bond( cutpoint_res, pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
-																						 next_res, pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+	declare_cutpoint_chemical_bond( pose, cutpoint_res, next_res );
 }
 
 void

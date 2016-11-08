@@ -170,7 +170,7 @@ BinarySilentStruct::fill_struct(
 				Size anchor_atom_num = pose.residue(anchor_rsd).residue_connection( anchor_conid ).atomno();
 				core::id::NamedAtomID atom2(pose.residue_type(anchor_rsd).atom_name(anchor_atom_num), anchor_rsd);
 
-				if ( ires == anchor_rsd+1 ) {
+				if ( ires == anchor_rsd+1 && !pose.fold_tree().is_cutpoint( anchor_rsd ) ) {
 					if ( icon == (int) pose.residue_type(ires).lower_connect_id() ) {
 						if ( anchor_conid == (int) pose.residue_type(anchor_rsd).upper_connect_id() ) {
 							// canonical polymer connection, skip

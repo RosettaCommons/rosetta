@@ -19,6 +19,7 @@
 
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 
 namespace core {
@@ -40,6 +41,19 @@ void find_cutpoint_variants(
 	core::kinematics::FoldTree const & tree,
 	utility::vector1<int> & cutpoints
 );
+
+/// @brief helper function for looking at residue connections to get lower/upper partners
+bool
+lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
+																			 core::conformation::Residue const & upper_rsd );
+
+/// @brief Instead of assuming cutpoint partner is simply cutpoint+1, find which residue connects via lower/upper.
+core::Size
+get_upper_cutpoint_partner_for_lower( core::pose::Pose const & pose, core::Size const lower_res );
+
+/// @brief Instead of assuming cutpoint partner is simply res-1, find which residue connects via lower/upper.
+core::Size
+get_lower_cutpoint_partner_for_upper( core::pose::Pose const & pose, core::Size const upper_res );
 
 } // namespace methods
 } // namespace scoring

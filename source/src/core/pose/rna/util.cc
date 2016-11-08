@@ -569,19 +569,23 @@ apply_pucker(
 
 //When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak ){
+correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
+																								Size const five_prime_chainbreak,
+																								Size three_prime_chainbreak /* = 0 */ )
+{
 
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
 	using namespace core::io::pdb;
 
+	if ( three_prime_chainbreak == 0 ) three_prime_chainbreak = five_prime_chainbreak + 1;
+
 	static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	chemical::AA res_aa = aa_from_name( "RAD" );
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
 
-	Size three_prime_chainbreak = five_prime_chainbreak + 1;
 	current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
 	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
@@ -593,34 +597,6 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size 
 	current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// try to unify all cutpoint addition into this function.
-void
-correctly_add_cutpoint_variants( core::pose::Pose & pose,
-	Size const res_to_add,
-	bool const check_fold_tree /* = true*/){
-
-	using namespace core::chemical;
-
-	runtime_assert( res_to_add < pose.size() );
-	if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
-
-	remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS_VARIANT, res_to_add );
-	remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS_VARIANT, res_to_add + 1 );
-
-	remove_variant_type_from_pose_residue( pose, THREE_PRIME_PHOSPHATE, res_to_add );
-	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
-	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, res_to_add + 1 );
-
-	if ( pose.residue_type( res_to_add ).is_RNA() ) {
-		// could also keep track of alpha, beta, etc.
-		runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
-		correctly_position_cutpoint_phosphate_torsions( pose, res_to_add );
-	}
-	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
-	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
-}
 
 ///////
 bool

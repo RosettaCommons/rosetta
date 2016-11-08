@@ -111,7 +111,9 @@ apply_ideal_c2endo_sugar_coords(
 	Size const i );
 
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak );
+correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
+																								Size const five_prime_chainbreak,
+																								Size three_prime_chainbreak = 0 );
 
 bool is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id );
 

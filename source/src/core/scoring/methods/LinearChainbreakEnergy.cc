@@ -7,11 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/ScoreFunction.cc
+/// @file   core/scoring/methods/LinearChainbreakEnergy.cc
 /// @brief  Atom pair energy functions
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Kevin P. Hinshaw (KevinHinshaw@gmail.com)
 /// @author Christopher Miles (cmiles@uw.edu)
+/// @author Rhiju Das (a few updates)
 
 
 #include <core/scoring/methods/chainbreak_util.hh>
@@ -46,7 +47,7 @@ namespace scoring {
 namespace methods {
 
 using core::Size;
-static THREAD_LOCAL basic::Tracer tr( "core.scoring.LinearChainbreak", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.LinearChainbreak", basic::t_info );
 
 LinearChainbreakEnergy::LinearChainbreakEnergy()
 : parent(methods::EnergyMethodCreatorOP( new LinearChainbreakEnergyCreator )) {
@@ -157,6 +158,7 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 		manual_lower_stub.M.col_z().distance(upper_stub.M.col_z());
 }
 
+
 /// called at the end of energy evaluation
 /// In this case (LinearChainbreakEnergy), all the calculation is done here
 void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
@@ -200,20 +202,18 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 	for ( Size i = 1; i <= cutpoints.size(); ++i ) {
 		int const cutpoint = cutpoints[ i ];
 		Residue const & lower_rsd = pose.residue( cutpoint );
-		Residue const & upper_rsd = pose.residue( cutpoint + 1 );
+		if ( ! lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) ) continue;
+		Size cutpoint_partner( get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
+		if ( cutpoint_partner == 0 ) continue;
+
+		Residue const & upper_rsd = pose.residue( cutpoint_partner );
 		Size const nbb = lower_rsd.mainchain_atoms().size();
-
-		if ( ! lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) ||
-				! upper_rsd.has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
-			continue;
-		}
-
 		// Determine whether the separation between <lowed_rsd> and <upper_rsd>,
 		// as computed by ShortestPathInFoldTree, exceeds the current allowable
 		// sequence separation
 		Size separation;
 		if ( shortest_path_check_req ) {
-			separation = shortest_paths_->dist( cutpoint, cutpoint + 1 );
+			separation = shortest_paths_->dist( cutpoint, cutpoint_partner );
 		}
 		if ( shortest_path_check_req && separation > allowable_sequence_sep_ ) {
 			tr.Trace << "Chainbreak skipped-- "
@@ -264,7 +264,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 	Size const residue = id.rsd();
 	if ( is_lower_cutpoint( residue, pose ) ) {
 		Residue const & lower_rsd( pose.residue( residue ) );
-		Residue const & upper_rsd( pose.residue( residue + 1 ) );
+		Size cutpoint_partner( get_upper_cutpoint_partner_for_lower( pose, residue ) );
+		Residue const & upper_rsd( pose.residue( cutpoint_partner ) );
 		Vector const & xyz_moving( pose.xyz( id ) );
 
 		bool match( true );
@@ -283,7 +284,7 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		if ( match ) {
 			Vector const f2 ( xyz_moving - xyz_fixed );
 			Real const dist ( f2.length() );
-			if ( dist >= 0.01 ) { // avoid getting too close to singularity...
+			if ( dist >= 0.01 /*1.0e-8*/ ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
 				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
 				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
@@ -293,7 +294,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 
 	// CASE 2: right-hand side of chainbreak (CUTPOINT_UPPER)
 	if ( is_upper_cutpoint( residue,pose ) ) {
-		Residue const & lower_rsd( pose.residue( residue - 1 ) );
+		Size cutpoint_partner( get_lower_cutpoint_partner_for_upper( pose, residue ) );
+		Residue const & lower_rsd( pose.residue( cutpoint_partner ) );
 		Residue const & upper_rsd( pose.residue( residue ) );
 		Vector const & xyz_moving( pose.xyz( id ) );
 
@@ -313,7 +315,7 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		if ( match ) {
 			Vector const f2 ( xyz_moving - xyz_fixed );
 			Real const dist ( f2.length() );
-			if ( dist >= 0.01 ) { // avoid getting too close to singularity...
+			if ( dist >= 0.01 /*1.0e-8*/ ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
 				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
 				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;

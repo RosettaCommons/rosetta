@@ -739,9 +739,12 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose );
 
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-	Size const cutpoint_res,
-	bool const check_fold_tree = true );
+																 Size const cutpoint_res,
+																 bool const check_fold_tree = true,
+																 Size const next_res_in = 0 );
 
+void
+declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res, Size const next_res_in = 0 );
 
 void
 get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep const & sfr );

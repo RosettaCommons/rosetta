@@ -97,6 +97,17 @@ merge_two_poses( core::pose::Pose & pose,
 	bool const fix_first_pose = true );
 
 void
+declare_chemical_bonds_at_cutpoints( core::pose::Pose & pose,
+																		 core::pose::Pose const & source_pose,
+																		 utility::vector1< core::Size > const & working_res,
+																		 utility::vector1< core::Size > const & source_working_res );
+
+void
+declare_chemical_bonds_at_cutpoints( core::pose::Pose & pose,
+																		 core::pose::Pose const & source_pose,
+																		 utility::vector1< core::Size > const & working_res );
+
+void
 slice( core::pose::Pose & sliced_out_pose,
 	core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & slice_res );

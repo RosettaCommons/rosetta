@@ -521,7 +521,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		if ( ! pose.fold_tree().is_cutpoint( cutpos ) ) continue;
 
 		// Don't assign a chainbreak penalty if user said this was an "open" cutpoint.
-		if ( std::find( cutpoints_open.begin(), cutpoints_open.end(), cutpos) != cutpoints_open.end() ) continue;
+		if ( cutpoints_open.has_value( cutpos ) ) continue;
 
 		core::pose::correctly_add_cutpoint_variants( pose, cutpos );
 
@@ -531,6 +531,17 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
 		} // i
+	}
+
+	for ( Size i = 1; i <= rna_params_.cutpoints_cyclize_.size(); i++ ) {
+		Size const n( rna_params_.cutpoints_cyclize_[ i ] );
+		// Need to track partner -- move back along chain until we see open cutpoint.
+		Size m;
+		for ( m = n; m > 1; m-- ) {
+			if ( cutpoints_open.has_value( m - 1 ) ) break;
+		}
+		TR << TR.Green << "Connecting: " << n << " to " << m << std::endl;
+		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 
 	atom_level_domain_map->renumber_after_variant_changes( pose );

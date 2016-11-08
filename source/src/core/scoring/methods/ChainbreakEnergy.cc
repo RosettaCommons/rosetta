@@ -18,6 +18,7 @@
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
 
 // Project headers
+#include <core/scoring/methods/chainbreak_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -28,6 +29,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
+#include <basic/Tracer.hh>
+
 // Utility header
 #include <utility/vector1.hh>
 
@@ -35,6 +38,8 @@
 namespace core {
 namespace scoring {
 namespace methods {
+
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
 
 /// @details This must return a fresh instance of the ChainbreakEnergy class, never an instance already in use.
 methods::EnergyMethodOP
@@ -73,14 +78,15 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 	using conformation::Residue;
 	using namespace core::chemical;
 	DistanceSquared total_dev( 0.0 );
-	for ( int n = 1; n <= pose.fold_tree().num_cutpoint(); ++n ) {
-		int const cutpoint( pose.fold_tree().cutpoint( n ) );
-		if ( cutpoint > static_cast< int >( max_res ) ) continue;
+	utility::vector1< int > cutpoints;
+	find_cutpoint_variants( pose, pose.fold_tree(), cutpoints );
+	for ( Size n = 1; n <= cutpoints.size(); ++n ) {
+		Size const cutpoint( cutpoints[ n ] );
+		if ( cutpoint > max_res ) continue;
 		Residue const & lower_rsd( pose.residue( cutpoint ) );
 		if ( ! lower_rsd.has_variant_type( CUTPOINT_LOWER ) ) continue;
 
-		// This logic restricts cutpoints from occurring at branch points, but that may be ok. ~Labonte
-		Residue const & upper_rsd( pose.residue( cutpoint + 1 ) );
+		Residue const & upper_rsd( pose.residue( get_upper_cutpoint_partner_for_lower( pose, cutpoint ) ) );
 		debug_assert( upper_rsd.has_variant_type( CUTPOINT_UPPER ) );
 		Size const last_mainchain_atm( lower_rsd.mainchain_atoms().size() );
 
@@ -148,11 +154,10 @@ ChainbreakEnergy::eval_atom_derivative(
 	// There are only 6 cases we care about; check for a match with one of them.
 
 	// If the moving atom is on the upstream (lower) side of the cutpoint,...
-	if ( pose.fold_tree().is_cutpoint( id.rsd() ) &&
-			pose.residue( id.rsd() ).has_variant_type( CUTPOINT_LOWER ) ) {
+	if ( pose.residue( id.rsd() ).has_variant_type( CUTPOINT_LOWER ) ) {
 		// Get the two residues across the cutpoint.
 		Residue const & lower_rsd( pose.residue( id.rsd() ) );
-		Residue const & upper_rsd( pose.residue( id.rsd() + 1 ) );
+		Residue const & upper_rsd( pose.residue( get_upper_cutpoint_partner_for_lower( pose, id.rsd() ) ) );
 
 		core::uint const last_mainchain_atm( lower_rsd.mainchain_atoms().size() );
 		// Case 1: The moving atom is the last main-chain atom on the upstream residue across the cutpoint and
@@ -181,10 +186,9 @@ ChainbreakEnergy::eval_atom_derivative(
 	// two targets.  Such a case would require a residue with only two main-chain atoms with a partial-double bond con-
 	// nection or one with only one main-chain atom and a single bond connection.  Neither case is at all likely.
 	// ~Labonte)
-	if ( ! match && id.rsd() > 1 && pose.fold_tree().is_cutpoint( id.rsd() - 1 ) &&
-			pose.residue( id.rsd() ).has_variant_type( CUTPOINT_UPPER ) ) {
+	if ( ! match && pose.residue( id.rsd() ).has_variant_type( CUTPOINT_UPPER ) ) {
 		// Get the two residues across the cutpoint.
-		Residue const & lower_rsd( pose.residue( id.rsd() - 1 ) );
+		Residue const & lower_rsd( pose.residue( get_lower_cutpoint_partner_for_upper( pose, id.rsd() ) ) );
 		Residue const & upper_rsd( pose.residue( id.rsd() ) );
 
 		// Case 4: The moving atom is the 1st main-chain atom on the downstream residue across the cutpoint and

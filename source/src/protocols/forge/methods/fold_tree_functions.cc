@@ -1179,6 +1179,8 @@ void make_star_foldtree(
 		if ( !start_is_cut && !end_is_cut ) {
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, this_cut   );
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, this_cut+1 );
+			pose.conformation().declare_chemical_bond( this_cut, pose.residue( this_cut ).atom_name( pose.residue( this_cut ).upper_connect_atom() ),
+																								 this_cut + 1, pose.residue( this_cut + 1 ).atom_name( pose.residue( this_cut + 1 ).lower_connect_atom() ) );
 		}
 		newF.add_edge( nres+1, out_midpt, njump );
 		if ( out_midpt != prev_cut+1 ) {

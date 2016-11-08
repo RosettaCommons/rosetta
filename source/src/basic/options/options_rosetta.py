@@ -7198,6 +7198,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'full_model',
 		Option( 'cutpoint_open',   'ResidueChainVector',desc='open cutpoints in full model',default=[]),
 		Option( 'cutpoint_closed', 'ResidueChainVector',desc='closed cutpoints in full model',default=[]),
+		Option( 'cyclize', 'ResidueChainVector',desc='cyclize points in full model',default=[]),
 		Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
 		Option( 'jump_res', 'ResidueChainVector', desc= "optional: residues for defining jumps -- please supply in pairs", default=[] ),
 		Option( 'extra_min_res', 'ResidueChainVector', desc= "specify residues other than those being built that should be minimized", default=[] ),

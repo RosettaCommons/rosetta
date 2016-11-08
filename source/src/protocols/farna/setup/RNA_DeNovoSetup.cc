@@ -168,8 +168,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	if ( fasta_files.size() > 0 ) {
 		// use fasta readin developed for stepwise application -- also reads in
 		// numbers & chains based on fasta header lines.
-		runtime_assert( sequence_strings.size() == 0 );
-		runtime_assert( fasta_files.size() == 1 );
+		if ( sequence_strings.size() > 0 ) utility_exit_with_message( "Cannot specify both -sequence and -fasta" );
+		if ( fasta_files.size() != 1 ) utility_exit_with_message( "Please specify exactly one fasta file." );
 		full_model_parameters = stepwise::setup::get_sequence_information( fasta_files[ 1 ], cutpoint_open_in_full_model );
 		if ( offset != 0 ) {
 			vector1< int > new_numbering = full_model_parameters->conventional_numbering();
@@ -203,6 +203,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
 	vector1< Size > const cutpoint_closed          =
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
+	vector1< Size > const cutpoint_cyclize          =
+		full_model_parameters->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() );
 	vector1< Size > extra_minimize_res =
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::minimize::extra_minimize_res ].resnum_and_chain() );
 	vector1< Size > extra_minimize_chi_res =
@@ -483,6 +485,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	///////////////////////////////////////////////////////////////////
 	vector1< Size > working_cutpoint_open   = working_res_map( cutpoint_open_in_full_model, working_res );
 	vector1< Size > working_cutpoint_closed = working_res_map( cutpoint_closed, working_res );
+	vector1< Size > working_cutpoint_cyclize = working_res_map( cutpoint_cyclize, working_res );
 	vector1< Size > working_virtual_anchor  = working_res_map( virtual_anchor, working_res );
 	vector1< pose::rna::BasePair > working_obligate_pairs;
 	vector1< vector1< std::pair< Size, Size > > > working_stems;
@@ -775,6 +778,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	rna_params_->set_chain_connections( working_chain_connections );
 	rna_params_->set_cutpoints_open( working_cutpoint_open );
 	rna_params_->set_cutpoints_closed( working_cutpoint_closed );
+	rna_params_->set_cutpoints_cyclize( working_cutpoint_cyclize );
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );
 
 
@@ -799,7 +803,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
 	}
 
-	runtime_assert( option[ OptionKeys::rna::farna::minimize_rna ].user() ); // user should specify -minimize_rna true or -minimize_rna false
+	if ( !option[ OptionKeys::rna::farna::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
 	// runtime_assert( option[ OptionKeys::score::include_neighbor_base_stacks ].user() ); // user should specify -include_neighbor_base_stacks true or -include_neighbor_base_stacks false.
 
 	// some stuff to update in *options*

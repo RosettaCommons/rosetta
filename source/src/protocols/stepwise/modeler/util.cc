@@ -49,6 +49,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/methods/chainbreak_util.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyz.functions.hh>
@@ -747,6 +748,9 @@ merge_two_poses( pose::Pose & pose,
 	copy_dofs_match_atom_names( pose, pose1, res_map1, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
 	copy_dofs_match_atom_names( pose, pose2, res_map2, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
 
+	declare_chemical_bonds_at_cutpoints( pose, pose1, working_res, working_res1 );
+	declare_chemical_bonds_at_cutpoints( pose, pose2, working_res, working_res2 );
+
 	if ( fix_first_pose ) {
 		align::superimpose_pose_legacy( pose, pose1, res_map1 );
 	} else {
@@ -755,6 +759,42 @@ merge_two_poses( pose::Pose & pose,
 
 	return working_res;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
+																		 pose::Pose const & source_pose,
+																		 utility::vector1< Size > const & working_res )
+{
+	utility::vector1< Size > source_res;
+	for ( Size n = 1; n <= source_pose.size(); n++ ) source_res.push_back( n );
+	declare_chemical_bonds_at_cutpoints( pose, source_pose, working_res, source_res );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Maybe should generalize this to handle all connections, not just bonds across cutpoints --
+//   would be important for, e.g., disulfides.
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
+																		 pose::Pose const & source_pose,
+																		 utility::vector1< Size > const & working_res,
+																		 utility::vector1< Size > const & source_working_res )
+{
+	using namespace core::chemical;
+	using namespace core::scoring::methods;
+	for ( Size n = 1; n <= source_pose.size(); n++ ) {
+		if ( source_pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) {
+			Size next_res = get_upper_cutpoint_partner_for_lower( source_pose, n );
+			if ( !working_res.has_value( source_working_res[ n ] ) ) continue;
+			if ( !working_res.has_value( source_working_res[ next_res ] ) ) continue;
+			declare_cutpoint_chemical_bond( pose,
+																			working_res.index( source_working_res[ n ] ),
+																			working_res.index( source_working_res[ next_res ] ) );
+		}
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
@@ -923,6 +963,8 @@ slice( pose::Pose & sliced_out_pose,
 	for ( Size n = 1; n <= slice_res.size(); n++ ) res_map[ n ] =  slice_res[ n ];
 	copy_dofs_match_atom_names( sliced_out_pose, pose, res_map, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
 	align::superimpose_pose_legacy( sliced_out_pose, pose, res_map );
+
+	declare_chemical_bonds_at_cutpoints( sliced_out_pose, pose, slice_res );
 
 }
 
