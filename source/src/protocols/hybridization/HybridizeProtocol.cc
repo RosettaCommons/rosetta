@@ -805,11 +805,12 @@ void HybridizeProtocol::validate_template(
 					<< " while reading residue " << i << std::endl;
 				if ( !is_ligand ) {
 					TR.Error << "   Residue number " << i_fasta << " is outside of input fasta range." << std::endl;
-					utility_exit();
+					requires_alignment = true;
+					break;
 				} else {
 					TR.Error << "   Ligands must be numbered sequentially after protein residues." << std::endl;
 					TR.Error << "   Expected: " << next_ligand << "   Saw: " << i_fasta << std::endl;
-					utility_exit();
+					template_pose->pdb_info()->number(i,next_ligand);
 				}
 			}
 			next_ligand++;
@@ -845,20 +846,20 @@ void HybridizeProtocol::validate_template(
 		core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
 		sequencemap.reverse();
 		core::Size ndel = 0;
-		core::Size currres = 1;
+		core::Size counter = 1;
 		core::Size nres = template_pose->size();
 		for ( Size i=1; i<=nres; i++ ) {
-			Size pdbnumber = template_pose->pdb_info()->number(i);
-			if ( sequencemap[i] == 0 ) { // extra residues in template
-				template_pose->delete_residue_range_slow( currres,currres );
+			Size pdbnumber = template_pose->pdb_info()->number(counter);
+			Size fastanumber = sequencemap[i];
+			if ( fastanumber == 0 ) { // extra residues in template
+				template_pose->delete_residue_range_slow( counter,counter );
 				ndel++;
 				continue;
 			}
-			if ( pdbnumber != sequencemap[i] ) {
-				Size fastanumber = sequencemap[i];
-				template_pose->pdb_info()->number(currres,fastanumber);
+			if ( pdbnumber != fastanumber ) {
+				template_pose->pdb_info()->number(counter,fastanumber);
 			}
-			currres++;
+			counter++;
 		}
 		if ( ndel > 0 ) {
 			TR.Error << "WARNING! Realignment removed " << ndel << " residues!" << std::endl;
