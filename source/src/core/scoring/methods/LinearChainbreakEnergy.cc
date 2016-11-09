@@ -284,7 +284,7 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		if ( match ) {
 			Vector const f2 ( xyz_moving - xyz_fixed );
 			Real const dist ( f2.length() );
-			if ( dist >= 0.01 /*1.0e-8*/ ) { // avoid getting too close to singularity...
+			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
 				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
 				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
@@ -315,7 +315,7 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 		if ( match ) {
 			Vector const f2 ( xyz_moving - xyz_fixed );
 			Real const dist ( f2.length() );
-			if ( dist >= 0.01 /*1.0e-8*/ ) { // avoid getting too close to singularity...
+			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
 				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
 				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
