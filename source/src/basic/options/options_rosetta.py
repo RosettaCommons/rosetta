@@ -2896,9 +2896,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 
 		Option_Group( 'lipid_acc',
-			Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
-			Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
+#			Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
+#			Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
 			Option( 'angle_cutoff', 'Real', desc="Cutoff for CA-CB-COM angle to identify lipid accessible residues, in degrees. <90 faces towards COM, >90 faces away from COM.", default='65' ),
+			Option( 'slice_width', 'Real', desc="Width of the slice in Angstrom to compute hull.", default='10.0' ),
+			Option( 'shell_radius', 'Real', desc="Radius of shell from outermost atoms that are still counted as boundary, i.e. how thick is lipid-exposed layer from the outside.", default='5.0' ),
+			Option( 'dist_cutoff', 'Real', desc="Distances between boundary atoms longer than this cutoff (in 2D) will be cut in. Anything larger will be kept as boundary atoms.", default='5.0' ),
+			Option( 'tm_alpha', 'Boolean', desc="Is the main secondary structure in the membrane helical?", default='true' ),
 		),
 
 		# For transforming protein into the membrane

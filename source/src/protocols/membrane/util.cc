@@ -1520,7 +1520,7 @@ core::Size rsd_closest_to_pose_tm_com( core::pose::Pose const & pose ) {
 core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid ) {
 
 	// check that the chain isn't the membrane residue
-	if ( chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
+	if ( pose.conformation().is_membrane() == true && chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
 		utility_exit_with_message("You are trying to compute the center-of-mass for the membrane residue as a chain. Choose a different one...");
 	}
 

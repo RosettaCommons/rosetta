@@ -95,6 +95,9 @@ sources = {
 		"SilentStructFactory",
 		"util",
 	],
+	"core/membrane": [
+		"hull",
+	],
 	"core/pose": [
 		"annotated_sequence",
 		"MiniPose",

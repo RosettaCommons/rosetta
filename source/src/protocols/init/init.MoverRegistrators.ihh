@@ -285,6 +285,7 @@ static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMove
 static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
 static MoverRegistrator< membrane::FlipMoverCreator > reg_FlipMoverCreator;
 static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
+static MoverRegistrator< membrane::MPLipidAccessibilityCreator > reg_MPLipidAccessibilityCreator;
 static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
 static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
 

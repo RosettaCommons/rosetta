@@ -26,6 +26,7 @@
 ///
 ///    Last Updated: 7/23/15
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author  JKLeman (julia.koehler.leman@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_hh
 #define INCLUDED_protocols_membrane_AddMembraneMover_hh

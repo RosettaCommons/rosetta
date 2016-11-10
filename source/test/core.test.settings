@@ -147,6 +147,9 @@ sources = {
 		"FoldTree",
 		"MoveMap",
 	],
+	"membrane" : [
+		"hull",
+	],
 	"numeric_tests_that_are_easier_to_write_if_you_can_use_a_pose" : [
 	    "cyclic_coordinate_descent",
 	],

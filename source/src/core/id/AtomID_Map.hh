@@ -35,12 +35,14 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-
+#include <basic/Tracer.hh>
 
 #ifdef WIN32
 #include <vector>
 #include <map>
 #endif
+
+//static THREAD_LOCAL basic::Tracer TR( "core.id.AtomID_Map" );
 
 namespace core {
 namespace id {
@@ -122,7 +124,6 @@ public: // Creation
 
 
 public: // Methods
-
 
 	/// @brief Resize to a given number of residues
 	inline
