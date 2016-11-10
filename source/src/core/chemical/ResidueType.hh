@@ -1588,6 +1588,10 @@ public:
 	///
 	bool is_gamma_aa() const;
 
+	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
+	///
+	bool has_polymer_dependent_groups() const;
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
 	bool is_sri() const;

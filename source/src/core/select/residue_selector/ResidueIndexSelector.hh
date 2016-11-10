@@ -77,6 +77,10 @@ public:
 	* @brief sets the string by which residues are selected
 	*/
 	void set_index( std::string const & index_str );
+	
+	/// @brief Append an additional index (in Rosetta numbering) to the list of indices.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void append_index( core::Size const index_in );
 
 private: // data members
 	std::string index_str_;

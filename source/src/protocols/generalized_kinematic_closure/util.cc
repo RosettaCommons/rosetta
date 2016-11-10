@@ -201,6 +201,18 @@ void copy_loop_pose_to_original (
 	return;
 }
 
+/// @brief Update the polymer bond-dependent atom positions for every residue in the
+/// residue map.
+void
+correct_polymer_dependent_atoms_in_pose_segment (
+	core::pose::Pose &original_pose,
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+) {
+	for(core::Size i=1, imax=residue_map.size(); i<=imax; ++i ) {
+		original_pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( residue_map[i].second );
+	}
+}
+
 /// @brief Sets phi for an L-alpha amino acid, even if the nitrogen has a nonstandard connection.
 ///
 void general_set_phi (

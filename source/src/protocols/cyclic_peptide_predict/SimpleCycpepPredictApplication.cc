@@ -53,6 +53,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Ramachandran.hh>
+#include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -84,6 +85,10 @@
 //Disulfides
 #include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+
+//N-methylation
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
@@ -154,10 +159,12 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::do_not_count_adjacent_res_hbonds     );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency       );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_relax_rounds          );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds      );
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sample_cis_pro_frequency             );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_relax_rounds                   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::angle_length_relax_rounds            );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -244,7 +251,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	do_not_count_adjacent_res_hbonds_(true),
 	angle_relax_rounds_(0),
 	angle_length_relax_rounds_(0),
-	cartesian_relax_rounds_(0)
+	cartesian_relax_rounds_(0),
+	use_rama_prepro_for_sampling_(true),
+	n_methyl_positions_()
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -321,7 +330,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	do_not_count_adjacent_res_hbonds_(src.do_not_count_adjacent_res_hbonds_),
 	angle_relax_rounds_(src.angle_relax_rounds_),
 	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
-	cartesian_relax_rounds_(src.cartesian_relax_rounds_)
+	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
+	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
+	n_methyl_positions_(src.n_methyl_positions_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -495,6 +506,20 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	}
 	if ( option[basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds].user() ) {
 		set_cartesian_relax_rounds( static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds]() ) );
+	}
+	
+	if ( option[basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling].user() ) {
+		set_use_rama_prepro_for_sampling( !option[basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling]() );
+	}
+
+	//Store the N-methylated positions.	
+	if( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions].user() ) {
+		core::Size const npos( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]().size() );
+		n_methyl_positions_.resize( npos );
+		for(core::Size i=1; i<=npos; ++i ) {
+			runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] > 0, "Error in simple_cycpep_predict app: The N-methylated positions must all have indices greater than zero." );
+			n_methyl_positions_[i] = static_cast< core::Size >( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] );
+		}
 	}
 
 	return;
@@ -703,6 +728,16 @@ SimpleCycpepPredictApplication::set_cartesian_relax_rounds(
 	cartesian_relax_rounds_ = rounds_in;
 }
 
+/// @brief Set whether we're using RamaPrePro tables for sampling.
+/// @details Setting this to "false" lets us use classic rama tables.  True by default.
+void
+SimpleCycpepPredictApplication::set_use_rama_prepro_for_sampling(
+	bool const setting
+) {
+	use_rama_prepro_for_sampling_ = setting;
+}
+
+
 
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -804,12 +839,15 @@ SimpleCycpepPredictApplication::run() const {
 		protocols::cyclic_peptide::DeclareBondOP termini( new protocols::cyclic_peptide::DeclareBond );
 		set_up_termini_mover( termini, pose );
 		termini->apply(*pose);
-
+		
 		//Add cyclic constraints:
 		add_cyclic_constraints(pose);
 
 		//Set all omega values to 180 and randomize mainchain torsions:
 		set_mainchain_torsions(pose, cyclic_offset);
+
+		//Add N-methylation:
+		add_n_methylation( pose, cyclic_offset );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -1055,6 +1093,32 @@ SimpleCycpepPredictApplication::build_polymer(
 
 	return;
 } //build_polymer()
+
+/// @brief Add N-methylation.
+/// @details Must be called after pose is cyclized.
+void
+SimpleCycpepPredictApplication::add_n_methylation(
+	core::pose::PoseOP pose,
+	core::Size const cyclic_offset
+) const {
+	if( n_methyl_positions_.size() == 0 ) { return; } //Do nothing if there's no N-methylation.
+	
+	core::Size const nres(pose->total_residue());
+
+	TR << "Adding N-methylation" << std::endl;
+	protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
+	add_nmethyl.set_additional_type_to_add("N_METHYLATION");
+	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
+	for( core::Size i=1, imax=n_methyl_positions_.size(); i<=imax; ++i ) {
+		runtime_assert_string_msg( n_methyl_positions_[i] > 0  && n_methyl_positions_[i] <= nres, "Error in simple_cycpep_predict app: The N-methylation position indices must be within the pose!" );
+		int permuted_position( static_cast<int>(n_methyl_positions_[i]) - static_cast<int>(cyclic_offset) );
+		if( permuted_position < 1 ) permuted_position += static_cast<int>(nres);
+		selector->append_index( static_cast<core::Size>(permuted_position) );
+	}
+	add_nmethyl.set_residue_selector(selector);
+	add_nmethyl.apply(*pose);
+	
+}
 
 /// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
 /// @details Error if unknown type.
@@ -1358,19 +1422,34 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 	TR << "Randomizing mainchain torsions." << std::endl;
 	core::Size const nres(pose->size());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
-		if ( pose->residue(i).type().is_alpha_aa() ) {
-			core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Get the Rama scoring function; must be nonconst to allow lazy loading
+		if ( pose->residue(i).type().is_alpha_aa() ) {		
+			core::scoring::Ramachandran & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst() ); //Get the Rama scoring function; must be nonconst to allow lazy loading
+			core::scoring::RamaPrePro const & ramaprepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
 			core::Real phi(0.0), psi(0.0);
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
 			core::Size const cur_abs_pos( original_position( i, cyclic_offset, pose->size() ) );
 			if ( custom_rama_table_defined( cur_abs_pos ) ) {
 				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
-			} else if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {
-				rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), phi, psi);
 			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
 				rama.draw_random_phi_psi_from_extra_cdf( default_rama_table_type(), phi, psi);
 			} else {
-				rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi); //TODO -- use backbone_aa
+			
+				if(use_rama_prepro_for_sampling() ) { //Using rama_prepro tables for sampling:
+					utility::vector1< core::Real > rand_torsions;					
+					core::chemical::ResidueTypeCOP following_rsd( pose->residue_type(
+							pose->residue(i).residue_connection_partner( pose->residue(i).upper_connect().index() )
+						).get_self_ptr()
+					);
+					ramaprepro.random_mainchain_torsions( pose->residue_type(i).get_self_ptr(), following_rsd, rand_torsions );
+					phi=rand_torsions[1]; psi=rand_torsions[2];
+				} else { //Using classic rama tables for sampling:
+					if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {
+						rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), phi, psi);
+					} else {
+						rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi); //TODO -- use backbone_aa
+					}
+				}
+
 			}
 			pose->set_phi(i,phi);
 			pose->set_psi(i,psi);
@@ -1464,6 +1543,13 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Create the pre-selection mover and set options.
 	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
+
+	//Update O and H atoms at the cyclization point:
+	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
+	set_up_termini_mover( update_OH, pose );
+	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
+		
+	//Filter for total hydrogen bonds:
 	pp->add_mover_filter_pair( nullptr, "Total_Hbonds", total_hbond );
 
 	//Filter out poses with oversaturated hydrogen bond acceptors.
@@ -1574,9 +1660,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	}
 
 	//Update O and H atoms at the cyclization point:
-	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
-	set_up_termini_mover( update_OH, pose );
-	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_O_and_H_atoms", nullptr );
+	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_2", nullptr );
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
@@ -1598,6 +1682,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	genkic->set_min_solution_count( genkic_min_solution_count_ );
 	genkic->set_selector_scorefunction( sfxn_highhbond );
 	genkic->set_preselection_mover(pp);
+	genkic->set_correct_polymer_dependent_atoms(true);
 
 	//If we're using BOINC graphics, let the GenKIC mover update the graphics with a "ghost" of the current
 	//conformation being sampled:
@@ -1660,12 +1745,21 @@ SimpleCycpepPredictApplication::genkic_close(
 					genkic->add_value_to_perturber_value_list( user_set_dihedral_perturbation_ );
 				}
 			} else { //If this position is not set, randomize it.
-				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
-				genkic->add_residue_to_perturber_residue_list(i);
 				if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
+					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
+					genkic->add_residue_to_perturber_residue_list(i);
 					genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
-				} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) { //If there is a default custom rama table defined for sampling, use it.
-					genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+				} else {
+					if( use_rama_prepro_for_sampling() && default_rama_table_type() == core::scoring::unknown_ramatable_type ) {
+						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_backbone_by_rama_prepro );
+						genkic->add_residue_to_perturber_residue_list(i);
+					} else {
+						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
+						genkic->add_residue_to_perturber_residue_list(i);
+						if( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
+							genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+						}
+					}
 				}
 			}
 		} else {
@@ -1678,7 +1772,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		for ( core::Size i=1; i<=nres; ++i ) {
 			if ( i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
 			if ( i-1==anchor_res ) continue; //Can't perturb the anchor residue.
-			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr ) {
+			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_n_methylated() ) {
 				genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::sample_cis_peptide_bond );
 				genkic->add_value_to_perturber_value_list( sample_cis_pro_frequency() );
 				genkic->add_residue_to_perturber_residue_list( i==1 ? nres : i-1 ); //The residue PRECEDING the proline is perturbed
@@ -1693,11 +1787,18 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( use_rama_filter() ) {
 		for ( core::Size i=1; i<=nres; ++i ) {
 			if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
-			if ( pose->residue(i).type().is_alpha_aa() ) {
-				genkic->add_filter( protocols::generalized_kinematic_closure::filter::alpha_aa_rama_check );
+			if( use_rama_prepro_for_sampling() ) {
+				genkic->add_filter( protocols::generalized_kinematic_closure::filter::rama_prepro_check );
 				genkic->set_filter_resnum(i);
 				genkic->set_filter_rama_cutoff_energy( rama_cutoff_ );
 				if ( i==first_loop_res ) genkic->set_filter_attach_boinc_ghost_observer(true);
+			} else {
+				if ( pose->residue(i).type().is_alpha_aa() ) {
+					genkic->add_filter( protocols::generalized_kinematic_closure::filter::alpha_aa_rama_check );
+					genkic->set_filter_resnum(i);
+					genkic->set_filter_rama_cutoff_energy( rama_cutoff_ );
+					if ( i==first_loop_res ) genkic->set_filter_attach_boinc_ghost_observer(true);
+				}
 			}
 		}
 	}

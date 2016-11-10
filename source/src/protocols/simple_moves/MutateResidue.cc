@@ -34,6 +34,7 @@
 #include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/conformation/Conformation.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -80,7 +81,8 @@ MutateResidue::MutateResidue() :
 	target_(""),
 	res_name_(""),
 	preserve_atom_coords_(false),
-	mutate_self_(false)
+	mutate_self_(false),
+	update_polymer_dependent_(false)
 {}
 
 /// @brief copy ctor
@@ -90,7 +92,8 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 	target_(dm.target_),
 	res_name_(dm.res_name_),
 	preserve_atom_coords_(dm.preserve_atom_coords_),
-	mutate_self_(dm.mutate_self_)
+	mutate_self_(dm.mutate_self_),
+	update_polymer_dependent_(dm.update_polymer_dependent_)
 {}
 
 /// @brief Mutate a single residue to a new amino acid
@@ -102,7 +105,8 @@ MutateResidue::MutateResidue( core::Size const target, string new_res ) :
 	target_(""),
 	res_name_(std::move(new_res)),
 	preserve_atom_coords_(false),
-	mutate_self_(false)
+	mutate_self_(false),
+	update_polymer_dependent_(false)
 {
 	set_target( target );
 }
@@ -112,7 +116,8 @@ MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	target_(""),
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
 	preserve_atom_coords_(false),
-	mutate_self_(false)
+	mutate_self_(false),
+	update_polymer_dependent_(false)
 {
 	set_target( target );
 }
@@ -122,7 +127,8 @@ MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const 
 	target_(""),
 	res_name_( name_from_aa( aa )),
 	preserve_atom_coords_(false),
-	mutate_self_(false)
+	mutate_self_(false),
+	update_polymer_dependent_(false)
 {
 	set_target( target );
 }
@@ -160,6 +166,9 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 
 	//Set whether the mover should try to preserve atom XYZ coordinates or not.  (Default false).
 	set_preserve_atom_coords( tag->getOption<bool>("preserve_atom_coords", false) );
+	
+	//Set whether we're updating coordinates of polymer bond-dependent atoms.
+	set_update_polymer_dependent( tag->getOption<bool>( "update_polymer_bond_dependent", update_polymer_dependent() ) );
 
 	return;
 }
@@ -212,6 +221,10 @@ void MutateResidue::apply( Pose & pose ) {
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
 		*new_res, pose.conformation(), !preserve_atom_coords() );
 	pose.replace_residue( rosetta_target, *new_res, false );
+	
+	if( update_polymer_dependent() ) { //Update the coordinates of atoms that depend on polymer bonds:
+		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( rosetta_target );
+	}
 
 }
 

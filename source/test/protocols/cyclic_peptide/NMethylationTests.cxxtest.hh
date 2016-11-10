@@ -39,7 +39,7 @@ class NMethylationTests : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init();
+		core_init_with_additional_options("-write_all_connect_info");
 	}
 
 	void tearDown(){

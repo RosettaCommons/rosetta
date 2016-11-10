@@ -282,6 +282,8 @@ public:
 	}
 
 
+	/// @brief Is this icoor immediately dependent on LOWER?
+	/// @details Returns true if stub atom 1, 2, or 3 is LOWER.
 	bool
 	depends_on_polymer_lower() const
 	{
@@ -289,6 +291,8 @@ public:
 	}
 
 
+	/// @brief Is this icoor immediately dependent on UPPER?
+	/// @details Returns true if stub atom 1, 2, or 3 is UPPER.
 	bool
 	depends_on_polymer_upper() const
 	{

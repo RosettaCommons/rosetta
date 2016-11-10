@@ -51,7 +51,7 @@ ADD_BOND 3HN  CN
 
 # Set the coordinates of the added atoms:
 SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
-SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N     C
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
 SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
 SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
 
@@ -60,7 +60,7 @@ ADD_PROPERTY N_METHYLATED
 
 # Set rotamers:
 REMOVE_ROTAMER_SPECIFICATIONS
-NCAA_ROTLIB_PATH nvl.rotlib #TODO update this to a real rotamer library
+NCAA_ROTLIB_PATH TRP_Nmethylated.rotlib
 NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 3
 
 # Set Ramachandran maps:
@@ -86,7 +86,7 @@ ADD_BOND 3HN  CN
 
 # Set the coordinates of the added atoms:
 SET_ICOOR  CN   180.000000   60.849998    1.449020   N     CA   LOWER
-SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N     C
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    N    CA
 SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    N    1HN
 SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    N    2HN
 

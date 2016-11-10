@@ -69,6 +69,7 @@ enum perturber_effect {
 
 	randomize_dihedral,
 	randomize_alpha_backbone_by_rama,
+	randomize_backbone_by_rama_prepro,
 	randomize_backbone_by_bins,
 	//randomize_chi,
 	//randomize_rotamer
@@ -384,6 +385,25 @@ private:
 	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
 	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
 	void apply_randomize_alpha_backbone_by_rama(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+	) const;
+
+	/// @brief Applies a randomize_backbone_by_rama_prepro perturbation to the list of torsions.
+	/// @details This checks whether each residue is an alpha-amino acid.
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	void apply_randomize_backbone_by_rama_prepro (
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 <core::Size> const &residues,

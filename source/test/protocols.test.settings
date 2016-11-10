@@ -226,6 +226,8 @@ sources = {
 
 	"generalized_kinematic_closure" : [
 		"GeneralizedKIC",
+		"GeneralizedKIC_ramaprepro",
+		"GeneralizedKIC_ramaprepro_NCAA",
 	],
 
 	"genetic_algorithm" : [

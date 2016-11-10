@@ -58,6 +58,31 @@ public:
 
 	/// @brief Get the ResidueSelector used by this mover.
 	inline core::select::residue_selector::ResidueSelectorCOP residue_selector() const { return residue_selector_; }
+	
+	/// @brief Set the types to add.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_add_target_types( utility::vector1 < std::string > const &types_in );
+
+	/// @brief Set the types to remove.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_remove_target_types( utility::vector1 < std::string > const &types_in );
+	
+	/// @brief Append a single type to the list to add.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_additional_type_to_add( std::string const &type_in );
+
+	/// @brief Append a single type to the list to remove.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_additional_type_to_remove( std::string const &type_in );
+	
+	/// @brief Set whether polymer bond-dependent atoms should be updated after updating variant types.
+	/// @details Defaults to true.  Set this to false to preserve polymer bond-dependent atom positions.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void set_update_polymer_bond_dependent_atoms( bool const setting );
+	
+	/// @brief Get whether polymer bond-dependent atoms should be updated after updating variant types.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	inline bool update_polymer_bond_dependent_atoms() const { return update_polymer_bond_dependent_atoms_; }
 
 private:
 	/// @brief List of types to ADD.
@@ -71,6 +96,11 @@ private:
 	/// @brief ResidueSelector specifying residues to which this should be applied.
 	///
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
+	
+	/// @brief Should polymer bond-dependent atoms be updated after updating variant types?
+	/// @details Default true.  Set to false to preserve polymer bond-dependent atom positions.
+	bool update_polymer_bond_dependent_atoms_;
+	
 };
 
 } // moves

@@ -112,7 +112,8 @@ GeneralizedKIC::GeneralizedKIC():
 	low_memory_mode_(false),
 	dont_fail_if_no_solution_found_(false),
 	bondangle_solutions_(),
-	bondlength_solutions_()
+	bondlength_solutions_(),
+	correct_polymer_dependent_atoms_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -148,7 +149,8 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	low_memory_mode_(src.low_memory_mode_),
 	dont_fail_if_no_solution_found_(src.dont_fail_if_no_solution_found_),
 	bondangle_solutions_(src.bondangle_solutions_),
-	bondlength_solutions_(src.bondlength_solutions_)
+	bondlength_solutions_(src.bondlength_solutions_),
+	correct_polymer_dependent_atoms_(src.correct_polymer_dependent_atoms_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	//Clone elements in the perturber list
@@ -285,6 +287,8 @@ GeneralizedKIC::parse_my_tag(
 	if ( tag->hasOption("low_memory_mode") ) {
 		set_low_memory_mode( tag->getOption<bool>( "low_memory_mode" , false ) );
 	}
+
+	set_correct_polymer_dependent_atoms( tag->getOption<bool>( "correct_polymer_dependent_atoms", correct_polymer_dependent_atoms() ) );
 
 	set_dont_fail_if_no_solution_found( tag->getOption<bool>( "dont_fail_if_no_solution_found", dont_fail_if_no_solution_found_ ) );
 
@@ -468,16 +472,16 @@ GeneralizedKIC::parse_my_tag(
 				std::string const binname( branch_tag->getOption<std::string>("bin", "")  );
 				set_filter_bin(binname);
 				if ( TR.visible() ) TR << "Set the bin name for the backbone_bin filter to " << binname << "." << std::endl;
-			} else if ( filtertype=="alpha_aa_rama_check" ) {
+			} else if ( filtertype == "alpha_aa_rama_check" || filtertype == "rama_prepro_check" ) {
 				//Residue number:
-				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
+				runtime_assert_string_msg( branch_tag->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check or rama_prepro_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
 				core::Size const resnum( branch_tag->getOption<core::Size>("residue",0) );
 				set_filter_resnum(resnum);
-				if ( TR.visible() ) TR << "Set the residue number for alpha_aa_rama_check filter to " << resnum << "." << std::endl;
+				if ( TR.visible() ) TR << "Set the residue number for " << filtertype << " filter to " << resnum << "." << std::endl;
 
 				core::Real const cutoff_energy( branch_tag->getOption<core::Real>("rama_cutoff_energy", 0.3) );
 				set_filter_rama_cutoff_energy( cutoff_energy );
-				if ( TR.visible() ) TR << "Set the rama term cutoff energy for the alpha_aa_rama_check filter to " << cutoff_energy << std::endl;
+				if ( TR.visible() ) TR << "Set the " << (filtertype == "rama_prepro_check" ? "rama_prepro" : "rama" ) << " term cutoff energy for the " << filtertype << " filter to " << cutoff_energy << std::endl;
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
@@ -1095,7 +1099,7 @@ void GeneralizedKIC::set_filter_bin( std::string const &name_in )
 	return;
 }
 
-/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check and rama_prepro_check filters.
 ///
 void GeneralizedKIC::set_filter_rama_cutoff_energy(
 	core::Size const filter_index,
@@ -1108,7 +1112,7 @@ void GeneralizedKIC::set_filter_rama_cutoff_energy(
 	return;
 }
 
-/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check and rama_prepro_check filters.
 /// @details This version acts on the last filter in the filter list.
 void GeneralizedKIC::set_filter_rama_cutoff_energy( core::Real const &cutoff_energy )
 {
@@ -1606,6 +1610,7 @@ GeneralizedKIC::doKIC(
 			core::pose::PoseOP looppose( pose.clone() ); //Clone the loop pose.
 			set_loop_pose( *looppose, atomlist_, t_ang[iattempt][j], b_ang[iattempt][j], b_len[iattempt][j]);
 			copy_loop_pose_to_original( *curpose, *looppose, residue_map, tail_residue_map);
+			if( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( *curpose, residue_map );
 
 			//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
 #ifdef BOINC_GRAPHICS
@@ -2084,6 +2089,7 @@ GeneralizedKIC::set_final_solution(
 	debug_assert( low_memory_mode() );
 	set_loop_pose( looppose, atomlist_, torsions, bondangles, bondlengths);
 	copy_loop_pose_to_original( pose, looppose, residue_map, tail_residue_map);
+	if( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( pose, residue_map );
 	if ( preselection_mover_exists() ) {
 		TR << "Re-applying pre-selection mover to solution." << std::endl;
 		pre_selection_mover_->apply( pose );

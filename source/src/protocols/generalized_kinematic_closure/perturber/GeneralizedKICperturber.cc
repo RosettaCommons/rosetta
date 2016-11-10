@@ -27,6 +27,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/Ramachandran.hh>
+#include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/ScoringManager.hh>
 
 #include <utility/exit.hh>
@@ -157,6 +158,9 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 	case randomize_alpha_backbone_by_rama :
 		returnstring = "randomize_alpha_backbone_by_rama";
 		break;
+	case randomize_backbone_by_rama_prepro :
+		returnstring = "randomize_backbone_by_rama_prepro";
+		break;
 	case randomize_backbone_by_bins :
 		returnstring = "randomize_backbone_by_bins";
 		break;
@@ -266,6 +270,9 @@ void GeneralizedKICperturber::apply(
 		break;
 	case randomize_alpha_backbone_by_rama :
 		apply_randomize_alpha_backbone_by_rama(original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions);
+		break;
+	case randomize_backbone_by_rama_prepro :
+		apply_randomize_backbone_by_rama_prepro(original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions);
 		break;
 	case randomize_backbone_by_bins :
 		apply_randomize_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
@@ -929,6 +936,123 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 
 	return;
 } //apply_randomize_alpha_backbone_by_rama
+
+/// @brief Applies a randomize_backbone_by_rama_prepro perturbation to the list of torsions.
+/// @details This checks whether each residue is an alpha-amino acid.
+/// @param[in] original_pose - The input pose.
+/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that
+/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
+	core::pose::Pose const &original_pose,
+	core::pose::Pose const &loop_pose,
+	utility::vector1 <core::Size> const &residues,
+	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+	utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+	utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+) const {
+	using namespace protocols::generalized_kinematic_closure;
+
+	//TR << "Applying randomize_backbone_by_rama_prepro perturbation effect." << std::endl;  TR.flush(); //DELETE ME
+
+	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the randomize_backbone_by_rama_prepro generalized kinematic closure perturber." );
+
+	core::scoring::RamaPrePro const & rama( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
+
+	core::Size nres = original_pose.size();
+
+	//Make a copy of the loop_pose
+	core::pose::Pose loop_pose_copy = loop_pose; //TODO -- switch this to just a conformation.
+
+	for ( core::Size ir=1, irmax=residues.size(); ir<=irmax; ++ir ) {
+		runtime_assert_string_msg( residues[ir] <= nres, "Unable to apply randomize_backbone_by_rama_prepro perturbation.  Residue list includes residues that are not in the original pose." );
+
+		//Get this residue's index in the loop pose:
+		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
+		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
+
+		//Randomize phi and psi for this residue:
+		utility::vector1< core::Real > rand_torsions;
+		runtime_assert_string_msg(
+			loop_pose_copy.residue(loopindex).has_lower_connect() && loop_pose_copy.residue(loopindex).has_upper_connect(),
+			"Unable to apply randomize_backbone_by_rama_prepro perturbation.  The residue must be connected at both its lower and upper connections." );
+		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type(
+				loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
+			).get_self_ptr()
+		);
+		rama.random_mainchain_torsions( loop_pose_copy.residue_type(loopindex).get_self_ptr(), following_rsd, rand_torsions );
+		
+		core::Size const ntors( rand_torsions.size() );
+		
+		for(core::Size i=1; i<=ntors; ++i) {
+			loop_pose_copy.set_torsion( core::id::TorsionID( loopindex, core::id::BB, i ), rand_torsions[i] );
+		}
+	
+		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+		if ( attach_boinc_ghost_observer() ) {
+			protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( loop_pose_copy );
+			protocols::boinc::Boinc::update_graphics_current_ghost( loop_pose_copy );
+			//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+			//std::cerr.flush();
+		}
+#endif
+
+		//Finding and setting mainchain torsions:
+		utility::vector1 < std::string > at1list;
+		utility::vector1 < std::string > at2list;
+		for(core::Size j=1; j<=ntors; ++j) {
+			at1list.push_back( loop_pose_copy.residue( loopindex ).atom_name(j) ); at2list.push_back( loop_pose_copy.residue( loopindex ).atom_name(j+1) );
+		}
+		
+		for ( core::Size j=1; j<=ntors; ++j ) {
+			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) {
+				if ( atomlist[ia].first.rsd()!=loopindex ) continue;
+				if ( atomlist[ia].first.atomno() == loop_pose_copy.residue(loopindex).atom_index(at1list[j]) ) {
+					core::Real angleval=0.0;
+					if ( ia<iamax &&
+							atomlist[ia+1].first.rsd()==loopindex &&
+							atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j])
+					) { //Torsion going forward
+						numeric::dihedral_degrees (
+							loop_pose_copy.xyz(atomlist[ia-1].first),
+							loop_pose_copy.xyz(atomlist[ia].first),
+							loop_pose_copy.xyz(atomlist[ia+1].first),
+							loop_pose_copy.xyz(atomlist[ia+2].first),
+							angleval
+						);
+						torsions[ia]=angleval;
+					} else if ( ia>4 &&
+							atomlist[ia-1].first.rsd()==loopindex &&
+							atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j])
+					) { //Torsion going backward
+						numeric::dihedral_degrees (
+							loop_pose_copy.xyz(atomlist[ia+1].first),
+							loop_pose_copy.xyz(atomlist[ia].first),
+							loop_pose_copy.xyz(atomlist[ia-1].first),
+							loop_pose_copy.xyz(atomlist[ia-2].first),
+							angleval
+						);
+						torsions[ia-1]=angleval;
+					} else {
+						if ( TR.Debug.visible() ) TR.Debug << "Warning! Residue " << residues[ir] << " was passed to GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro, but mainchain dihedral angle " << j << " was not part of the chain of atoms to be closed." << std::endl;
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	if ( TR.Warning.visible() ) TR.Warning.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	if ( TR.visible() ) TR.flush();
+	
+} //apply_randomize_backbone_by_rama_prepro
+
 
 /// @brief Applies a randomize_backbone_by_bins perturbation to the list of torsions.
 /// @details  This randomly assigns torsion bins based on transition probabilities of i->i+1 residues, then picks mainchain torsion angles

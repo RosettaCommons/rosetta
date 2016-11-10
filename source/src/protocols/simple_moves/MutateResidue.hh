@@ -86,7 +86,14 @@ public:
 	void set_res_name( std::string const &name_in ) { res_name_ = name_in; }
 
 	void set_res_name( core::chemical::AA const & aa);
+	
+	/// @brief Set whether this mover updates polymer-dependent atoms in the residue that it mutates.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void set_update_polymer_dependent( bool const setting ) { update_polymer_dependent_ = setting; }
 
+	/// @brief Set whether this mover updates polymer-dependent atoms in the residue that it mutates.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline bool update_polymer_dependent() const { return update_polymer_dependent_; }
 
 	/// @brief Get the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
@@ -117,6 +124,10 @@ private:
 
 	/// @brief If true, mutates the residue to itself, ie. Ala -> Ala. This fixes some problems with TerCards being attached to residues that shouldn't have them for RotamerLinks.
 	bool mutate_self_;
+	
+	/// @brief If true, updates polymer-dependent atoms.
+	/// @details false by default.
+	bool update_polymer_dependent_;
 
 };
 

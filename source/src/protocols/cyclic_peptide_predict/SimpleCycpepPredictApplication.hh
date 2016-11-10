@@ -155,6 +155,10 @@ public:
 	/// @brief Set the number of rounds of Cartesian relaxation.
 	///
 	void set_cartesian_relax_rounds( core::Size const rounds_in );
+	
+	/// @brief Set whether we're using RamaPrePro tables for sampling.
+	/// @details Setting this to "false" lets us use classic rama tables.  True by default.
+	void set_use_rama_prepro_for_sampling( bool const setting );
 
 	/// @brief Actually run the application.
 	/// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -186,6 +190,13 @@ private:
 	void build_polymer(
 		core::pose::PoseOP pose,
 		utility::vector1<std::string> const &restypes
+	) const;
+	
+	/// @brief Add N-methylation.
+	///
+	void add_n_methylation(
+		core::pose::PoseOP pose,
+		core::Size const cyclic_offset
 	) const;
 
 	/// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
@@ -439,6 +450,10 @@ private:
 	/// @brief Cartesian relax rounds.
 	///
 	inline core::Size cartesian_relax_rounds() const { return cartesian_relax_rounds_; }
+	
+	/// @brief Are we using RamaPrePro tables for sampling?
+	/// @details True if we are, false if we're using classic rama tables.
+	inline bool use_rama_prepro_for_sampling() const { return use_rama_prepro_for_sampling_; }
 
 private:
 	/// ------------- Data -------------------------------
@@ -707,6 +722,14 @@ private:
 	/// @brief Number of rounds of Cartesian-space relaxation.
 	/// @details Default 0.
 	core::Size cartesian_relax_rounds_;
+	
+	/// @brief Should we use rama_prepro tables for sampling?
+	/// @details Default true.
+	bool use_rama_prepro_for_sampling_;
+	
+	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
+	/// @details Defaults to empty list.
+	utility::vector1< core::Size > n_methyl_positions_;
 
 };
 

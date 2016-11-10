@@ -20,9 +20,13 @@
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask_.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -57,11 +61,14 @@ public:
 		maker->add_residue("Append", "ALA", 0, false, "", 15, 0, "");
 		maker->apply(*mypose);
 	
-		MutateResidueOP mutres5( new MutateResidue( 5, "GLU:N_Methylation" ) );
+		MutateResidueOP mutres5( new MutateResidue( 5, "TRP:N_Methylation" ) );
+		mutres5->set_update_polymer_dependent( true );
 		mutres5->apply(*mypose);
 		MutateResidueOP mutres6( new MutateResidue( 6, "TRP:N_Methylation" ) );
+		mutres6->set_update_polymer_dependent( true );
 		mutres6->apply(*mypose);
-		MutateResidueOP mutres7( new MutateResidue( 7, "ARG:N_Methylation" ) );
+		MutateResidueOP mutres7( new MutateResidue( 7, "TRP:N_Methylation" ) );
+		mutres7->set_update_polymer_dependent( true );
 		mutres7->apply(*mypose);
 	
 		DeclareBondOP termini( new DeclareBond );
@@ -69,19 +76,28 @@ public:
 		termini->apply( *mypose );
 	
 		for( core::Size i=1, imax=mypose->total_residue(); i<=imax; ++i) {
-			if( i>1) mypose->set_phi( i, -135 );
+			if( i>1) mypose->set_phi( i, -60 );
 			if( i<imax ) {
-				mypose->set_psi( i, 135 );
+				mypose->set_psi( i, 60 );
 				mypose->set_omega( i, 180 );
 			}
 		}
 		mypose->update_residue_neighbors();
+
+		//mypose->dump_pdb( "vtemp_nmethyl_pre_pack.pdb" ); //DELETE ME
+		
+		core::pose::PoseOP mypose2( mypose->clone() );
+		
+		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_(*mypose2) );
+		task->restrict_to_repacking();
+		PackRotamersMoverOP pack( new PackRotamersMover( scorefxn, task ) );
+		pack->apply(*mypose2);	
+		//mypose2->dump_pdb( "vtemp_nmethyl_post_pack.pdb" ); //DELETE ME
 	
+		core::pose::PoseOP mypose3( mypose2->clone() );
 		FastRelaxOP frlx( new FastRelax( scorefxn, 2 ) );
-		frlx->apply(*mypose);
-	
-		//mypose->dump_pdb( "vtemp_nmethyl.pdb" ); //DELETE ME
-	
+		frlx->apply(*mypose3);
+		//mypose3->dump_pdb( "vtemp_nmethyl_post_frlx.pdb" ); //DELETE ME
 	}
 
 };

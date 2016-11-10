@@ -56,6 +56,7 @@ enum filter_type {
 	atom_pair_distance,
 	backbone_bin,
 	alpha_aa_rama_check,
+	rama_prepro_check,
 
 	unknown_filter, //Keep this second-to-last.
 	end_of_filter_list = unknown_filter //Keep this last.
@@ -143,12 +144,12 @@ public:
 	/// @details Only used by some filters.
 	inline void set_binname( std::string const &name_in ) {bin_ = name_in; return; }
 
-	/// @brief Set the alpha_aa_rama_check filter's rama term cutoff energy.
-	/// @details Only used by alpha_aa_rama_check filter.
+	/// @brief Set the alpha_aa_rama_check or rama_prepro_check filter's rama term cutoff energy.
+	/// @details Only used by alpha_aa_rama_check and rama_prepro_check filters.
 	inline void set_rama_cutoff_energy( core::Real const &val ) { rama_threshhold_=val; return; }
 
-	/// @brief Get the alpha_aa_rama_check filter's rama term cutoff energy.
-	/// @details Only used by alpha_aa_rama_check filter.
+	/// @brief Get the alpha_aa_rama_check or rama_prepro_check filter's rama term cutoff energy.
+	/// @details Only used by alpha_aa_rama_check and rama_prepro_check filters.
 	inline core::Real rama_cutoff_energy( ) const { return rama_threshhold_; }
 
 	/// @brief Get the bin name for this filter.
@@ -197,8 +198,7 @@ private:
 
 	/// @brief The filter type for this filter (see the filter_type enum for all types).
 	filter_type filtertype_;
-
-
+	
 	/// @brief Real-valued filter parameters
 	utility::vector1 < std::pair<std::string, core::Real > > filter_params_real_;
 
@@ -227,7 +227,7 @@ private:
 	/// that must lie within the mainchain torsion bin specified.
 	core::Size resnum_;
 
-	/// @brief A parameter specifically for the alpha_aa_rama_check filter.  Rama energy
+	/// @brief A parameter specifically for the alpha_aa_rama_check and rama_prepro_check filters.  Rama energy
 	/// above which the solution is rejected.  Set to 0.3 by default.
 	core::Real rama_threshhold_;
 
@@ -335,6 +335,27 @@ private:
 	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
 	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_alpha_aa_rama_check(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
+		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 < core::Real > const &torsions,
+		utility::vector1 < core::Real > const &bondangles,
+		utility::vector1 < core::Real > const &bondlengths
+	) const;
+	
+	/// @brief Calculates RamaPrePro energy for a residue based on its mainchain torsion values.
+	/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+	/// @param[in] original_pose -- The full, initial pose.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
+	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	bool apply_rama_prepro_check(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,

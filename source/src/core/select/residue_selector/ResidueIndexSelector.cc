@@ -113,6 +113,23 @@ std::string ResidueIndexSelector::get_name() const {
 	return ResidueIndexSelector::class_name();
 }
 
+/// @brief Append an additional index (in Rosetta numbering) to the list of indices.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResidueIndexSelector::append_index(
+	core::Size const index_in
+) {
+	runtime_assert_string_msg( index_in > 0, "Error in core::select::residue_selector::ResidueIndexSelector::append_index(): The index must be greater than zero." );
+	std::stringstream this_str;
+	this_str << index_in;
+	if(index_str_.empty()) {
+		index_str_ = this_str.str();
+	} else {
+		index_str_ += "," + this_str.str();
+	}
+}
+
+
 std::string ResidueIndexSelector::class_name() {
 	return "Index";
 }

@@ -114,7 +114,6 @@ public:
 		do_test("AAPA", false, true);
 	}
 
-
 	/// @brief Test the drawing of random mainchain torsion values from the
 	/// Ramachandran probability distribution for a noncanonical (N-methyl-trp).
 	void test_random_phipsi_noncanonical() {

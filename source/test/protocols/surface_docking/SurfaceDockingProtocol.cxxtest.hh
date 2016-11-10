@@ -116,7 +116,7 @@ public:
 		slide_away_from_surface->apply( pose );
 		core::Real score_after_slide_away = (*sfxn)(pose);
 		TR<<"score after slide away: "<<score_after_slide_away<<std::endl;
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_slide_away.pdb");
+		//pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_slide_away.pdb");
 		
 		//coords before
 		//core::Vector starting_coords = pose.residue(1).xyz("CA");
@@ -134,7 +134,7 @@ public:
 		slide_into_surface->apply(pose);
 		core::Real score_after_slide_into = (*sfxn)(pose);
 		TR<<"score after slide into: "<<score_after_slide_into<<std::endl;
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_slide_into_surf.pdb");
+		//pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_slide_into_surf.pdb");
 
 		protocols::surface_docking::SurfaceOrientMoverOP surf_orient( new protocols::surface_docking::SurfaceOrientMover() );
 		surf_orient->set_surface_parameters(spptr);
@@ -148,7 +148,7 @@ public:
 		core::Real score_after = (*sfxn)(pose);
 		TR<<"score_after_orient: "<<score_after<<std::endl;
 		TS_ASSERT(score_after == score_before)
-		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/surf_orient_test_after.pdb");
+		//pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/surf_orient_test_after.pdb");
 		
 
 

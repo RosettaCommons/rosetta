@@ -39,7 +39,7 @@ class NMethylationTests_betanov15 : public CxxTest::TestSuite {
 public:
 
 	void setUp(){
-		core_init_with_additional_options( "-beta_nov15" );
+		core_init_with_additional_options( "-beta_nov15 -write_all_connect_info" );
 	}
 
 	void tearDown(){

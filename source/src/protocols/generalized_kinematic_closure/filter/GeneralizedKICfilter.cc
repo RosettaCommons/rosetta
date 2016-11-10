@@ -25,7 +25,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/scoring/Ramachandran.hh>
+#include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/ScoringManager.hh>
 
 #include <utility/exit.hh>
@@ -132,6 +134,9 @@ std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_
 		break;
 	case alpha_aa_rama_check :
 		returnstring = "alpha_aa_rama_check";
+		break;
+	case rama_prepro_check :
+		returnstring = "rama_prepro_check";
 		break;
 	default :
 		returnstring = "unknown_filter";
@@ -334,6 +339,8 @@ bool GeneralizedKICfilter::apply (
 		return apply_backbone_bin( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
 	case alpha_aa_rama_check :
 		return apply_alpha_aa_rama_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths );
+	case rama_prepro_check :
+		return apply_rama_prepro_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths );
 	default :
 		break;
 	}
@@ -674,7 +681,8 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
 /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
 /// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
-bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
+bool
+GeneralizedKICfilter::apply_alpha_aa_rama_check (
 	core::pose::Pose const &original_pose,
 	core::pose::Pose const &loop_pose,
 	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
@@ -714,7 +722,7 @@ bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
 	core::Real rama_out(0.0), drama_dphi(0.0), drama_dpsi(0.0);
 	rama.eval_rama_score_residue_nonstandard_connection(pose, pose.residue(curres), rama_out, drama_dphi, drama_dpsi);
 
-	rama_out = rama_out * 0.25;  //Multiplied by 0.25 to match talaris2014 weights.
+	rama_out = rama_out * 0.25;  //Multiplied by talaris2014 scorefunction weights.  TODO: let the user set the scorefunction?
 
 	bool const rama_passed( rama_out < rama_cutoff_energy() );
 
@@ -728,6 +736,83 @@ bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
 	}
 	return rama_passed;
 } //apply_alpha_aa_rama_check
+
+/// @brief Calculates RamaPrePro energy for a residue based on its mainchain torsion values.
+/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+/// @param[in] original_pose -- The full, initial pose.
+/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
+/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+bool
+GeneralizedKICfilter::apply_rama_prepro_check(
+	core::pose::Pose const &original_pose,
+	core::pose::Pose const &loop_pose,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &/*tail_residue_map*/,
+	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+	utility::vector1 < core::Real > const &torsions,
+	utility::vector1 < core::Real > const &bondangles,
+	utility::vector1 < core::Real > const &bondlengths
+) const {
+	//Initial checks:
+	if ( resnum() < 1 || resnum() > original_pose.size() ) {
+		utility_exit_with_message( "In GeneralizedKICfilter::apply_rama_prepro_check(): Could not apply filter.  The residue was not specified, or is out of range." );
+	}
+	if ( !original_pose_residue_is_in_residue_map(resnum(), residue_map) ) {
+		utility_exit_with_message( "In GeneralizedKICfilter::apply_rama_prepro_check(): The residue must be part of the loop being closed." );
+	}
+
+	core::Size const curres( get_loop_index( resnum(), residue_map ) );
+
+	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
+	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths); //Set the loop pose to the current solution
+
+	//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+	if ( attach_boinc_ghost_observer() ) {
+		protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( pose );
+		protocols::boinc::Boinc::update_graphics_current_ghost( pose );
+		//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+		//std::cerr.flush();
+	}
+#endif
+
+	core::scoring::RamaPrePro const & rama = core::scoring::ScoringManager::get_instance()->get_RamaPrePro(); //Get the Rama scoring function
+
+	core::Real rama_out(0.0);
+	utility::vector1 < core::Real > gradient; //Dummy var needed for next function call.
+	core::conformation::Residue const &this_residue( pose.residue(curres) );
+	utility::vector1 < core::Real > mainchain_torsions( this_residue.mainchain_torsions().size() - 1 );
+	for(core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i) mainchain_torsions[i] = this_residue.mainchain_torsions()[i];
+	core::Size const &that_residue_index( this_residue.residue_connection_partner( this_residue.upper_connect().index() ) );
+	
+	rama.eval_rpp_rama_score(
+		this_residue.type().get_self_ptr(),
+		pose.residue_type(that_residue_index).get_self_ptr(),
+		mainchain_torsions,
+		rama_out,
+		gradient,
+		false /*Don't return gradient*/
+	);
+
+	rama_out = rama_out * 0.45;  //Multiplied by beta_nov15 scorefunction weights.  TODO: let the user set the scorefunction?
+
+	bool const rama_passed( rama_out < rama_cutoff_energy() );
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Res" << original_pose.residue(resnum()).name3() << resnum() << " RamaPrePro_score=" << rama_out << " RamaPrePro_cutoff=" << rama_cutoff_energy();
+		if ( rama_passed ) {
+			TR.Debug << " PASSED" << std::endl;
+		} else {
+			TR.Debug << " FAILED" << std::endl;
+		}
+	}
+	return rama_passed;
+} //apply_rama_prepro_check
 
 } //namespace filter
 } //namespace generalized_kinematic_closure

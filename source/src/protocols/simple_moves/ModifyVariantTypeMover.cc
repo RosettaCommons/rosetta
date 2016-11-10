@@ -58,7 +58,8 @@ ModifyVariantTypeMover::ModifyVariantTypeMover() :
 	protocols::moves::Mover("ModifyVariantType"),
 	add_target_types_(),
 	remove_target_types_(),
-	residue_selector_()
+	residue_selector_(),
+	update_polymer_bond_dependent_atoms_(true)
 {}
 
 // @brief apply function here
@@ -84,13 +85,17 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 			new_rsd_type = rsd_set->get_residue_type_with_variant_removed( *new_rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
 		}
-
+			
 		for ( std::string const & add_type : add_target_types_ ) {
 			new_rsd_type = rsd_set->get_residue_type_with_variant_added( *new_rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
 		}
 
 		core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );
+
+		if( update_polymer_bond_dependent_atoms() ) {
+			pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( resi );
+		}
 	}
 }
 
@@ -124,11 +129,13 @@ void ModifyVariantTypeMover::parse_my_tag(
 
 	std::string add_type_value = tag->getOption< std::string >( "add_type", "");
 	//boost::split(add_target_types_, add_type_value, boost::is_any_of(","));
-	add_target_types_ = utility::string_split<std::string>(add_type_value,',',std::string());
+	set_add_target_types( utility::string_split<std::string>(add_type_value,',',std::string()) );
 
 	std::string remove_type_value = tag->getOption< std::string >( "remove_type", "");
 	//boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
-	remove_target_types_ = utility::string_split<std::string>(remove_type_value,',',std::string());
+	set_remove_target_types( utility::string_split<std::string>(remove_type_value,',',std::string()) );
+	
+	set_update_polymer_bond_dependent_atoms( tag->getOption< bool >( "update_polymer_bond_dependent_atoms", update_polymer_bond_dependent_atoms() ) );
 
 	if ( add_target_types_.size() == 0 && remove_target_types_.size() == 0 ) {
 		TR.Error << "Must specify add_type and/or remove_type type in ModifyVariantTypeMover." << std::endl;
@@ -151,6 +158,52 @@ ModifyVariantTypeMover::set_residue_selector(
 ) {
 	runtime_assert_string_msg( selector_in != nullptr , "Error in protocols::simple_moves::ModifyVariantTypeMover::set_residue_selector(): A null pointer was provided to this function." );
 	residue_selector_ = selector_in;
+}
+
+/// @brief Set the types to add.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_add_target_types(
+	utility::vector1 < std::string > const &types_in
+) {
+	add_target_types_ = types_in;
+}
+
+/// @brief Set the types to remove.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_remove_target_types(
+	utility::vector1 < std::string > const &types_in
+) {
+	remove_target_types_ = types_in;
+}
+
+/// @brief Append a single type to the list to add.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_additional_type_to_add(
+	std::string const &type_in
+) {
+	add_target_types_.push_back(type_in);
+}
+
+/// @brief Append a single type to the list to remove.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_additional_type_to_remove(
+	std::string const &type_in
+) {
+	remove_target_types_.push_back(type_in);
+}
+
+/// @brief Set whether polymer bond-dependent atoms should be updated after updating variant types.
+/// @details Defaults to true.  Set this to false to preserve polymer bond-dependent atom positions.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+ModifyVariantTypeMover::set_update_polymer_bond_dependent_atoms(
+	bool const setting
+) {
+	update_polymer_bond_dependent_atoms_ = setting;
 }
 
 protocols::moves::MoverOP

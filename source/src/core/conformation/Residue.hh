@@ -2003,7 +2003,20 @@ public:
 	{
 		return rsd_type_.icoor( atm );
 	}
+	
+	/// @brief Does this atom depend on the LOWER_CONNECT?
+	/// @details If recursive is set to true (the default), the dependencies are traced back and the function returns
+	/// true if ANY atom that this atom depends on is dependent on LOWER_CONNECT.  If false, only the immediate stub1, stub2, and
+	/// stub3 atoms are checked.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_lower( core::Size const atom_index, bool const recursive=true ) const;
 
+	/// @brief Does this atom depend on the UPPER_CONNECT?
+	/// @details If recursive is set to true (the default), the dependencies are traced back and the function returns
+	/// true if ANY atom that this atom depends on is dependent on UPPER_CONNECT.  If false, only the immediate stub1, stub2, and
+	/// stub3 atoms are checked.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_upper( core::Size const atom_index, bool const recursive=true ) const;
 
 	/// @brief  bondlength analog to set_chi
 	///    like set_chi, assumes changes propagate to atomtree
@@ -2188,6 +2201,18 @@ private:
 	/// coordinates; invoked from within the constructors.
 	void
 	assign_orbitals();
+	
+	/// @brief Does this atom depend on the LOWER_CONNECT?  Checks recursively.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_lower( core::Size const atom_index, utility::vector1< core::Size > visited_atoms ) const;
+
+	/// @brief Does this atom depend on the UPPER_CONNECT?  Checks recursively.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool atom_depends_on_upper( core::Size const atom_index, utility::vector1< core::Size > visited_atoms ) const;
+
+	/// @brief Is a value in a list?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	bool in_list( core::Size const val, utility::vector1< core::Size > const &vect ) const;
 
 
 	/////////////////////////////////////////////////////////////////////////////

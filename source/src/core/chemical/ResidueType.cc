@@ -2125,6 +2125,14 @@ ResidueType::is_gamma_aa() const {
 	return properties_->has_property( GAMMA_AA );
 }
 
+
+/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
+///
+bool
+ResidueType::has_polymer_dependent_groups() const {
+	return is_n_methylated(); //TODO: Update this if other polymer-dependent types are added.
+}
+
 /// @brief Is this one of SRI's special heteropolymer building blocks?
 ///
 bool
