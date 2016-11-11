@@ -1661,7 +1661,7 @@ int MotifHash::get_matching_motifs(ResPairMotifQuery const & opt, MotifHits & hi
 	}
 
 	for ( Size ir = res_begin1; ir <= res_end1; ++ir ) {
-		if ( !pose2.residue(ir).is_protein() ) { continue; }
+		if ( !pose1.residue(ir).is_protein() ) { continue; }
 		if ( !useres1[ir] ) { /*<<"not useres1"<<endl;*/ continue; }
 		if ( hits.num_hits1(ir)>0 && opt.overlap1()==NO_OVERLAP ) { /*<<"overlap1"<<endl;*/ continue; }
 		char aa1 = pose1.residue(ir).name1(), ss1=pose1.secstruct(ir);
