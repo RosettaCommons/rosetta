@@ -33,9 +33,13 @@ class Config
 private:
 	std::map<string, string> binders_, add_on_binders_;
 
-	string default_pointer_return_value_policy_          = "pybind11::return_value_policy::automatic";
-	string default_lvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
-	string default_rvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
+	string default_static_pointer_return_value_policy_          = "pybind11::return_value_policy::automatic";
+	string default_static_lvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
+	string default_static_rvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
+
+	string default_member_pointer_return_value_policy_          = "pybind11::return_value_policy::automatic";
+	string default_member_lvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
+	string default_member_rvalue_reference_return_value_policy_ = "pybind11::return_value_policy::automatic";
 
 public:
 	static Config &get();
@@ -52,9 +56,13 @@ public:
 	std::map<string, string> const &binders() const { return binders_; }
 	std::map<string, string> const &add_on_binders() const { return add_on_binders_; }
 
-	string const &default_pointer_return_value_policy()          { return default_pointer_return_value_policy_; }
-	string const &default_lvalue_reference_return_value_policy() { return default_lvalue_reference_return_value_policy_; }
-	string const &default_rvalue_reference_return_value_policy() { return default_rvalue_reference_return_value_policy_; }
+	string const &default_static_pointer_return_value_policy()          { return default_static_pointer_return_value_policy_; }
+	string const &default_static_lvalue_reference_return_value_policy() { return default_static_lvalue_reference_return_value_policy_; }
+	string const &default_static_rvalue_reference_return_value_policy() { return default_static_rvalue_reference_return_value_policy_; }
+
+	string const &default_member_pointer_return_value_policy()          { return default_member_pointer_return_value_policy_; }
+	string const &default_member_lvalue_reference_return_value_policy() { return default_member_lvalue_reference_return_value_policy_; }
+	string const &default_member_rvalue_reference_return_value_policy() { return default_member_rvalue_reference_return_value_policy_; }
 
 	string prefix;
 

@@ -59,9 +59,13 @@ void Config::read(string const &file_name)
 	string const _binder_        {"binder"};
 	string const _add_on_binder_ {"add_on_binder"};
 
-	string const _default_pointer_return_value_policy_          {"default_pointer_return_value_policy"};
-	string const _default_lvalue_reference_return_value_policy_	{"default_lvalue_reference_return_value_policy"};
-	string const _default_rvalue_reference_return_value_policy_ {"default_rvalue_reference_return_value_policy"};
+	string const _default_static_pointer_return_value_policy_           {"default_static_pointer_return_value_policy"};
+	string const _default_static_lvalue_reference_return_value_policy_	{"default_static_lvalue_reference_return_value_policy"};
+	string const _default_static_rvalue_reference_return_value_policy_  {"default_static_rvalue_reference_return_value_policy"};
+
+	string const _default_member_pointer_return_value_policy_           {"default_member_pointer_return_value_policy"};
+	string const _default_member_lvalue_reference_return_value_policy_	{"default_member_lvalue_reference_return_value_policy"};
+	string const _default_member_rvalue_reference_return_value_policy_  {"default_member_rvalue_reference_return_value_policy"};
 
 	std::ifstream f(file_name);
 	string line;
@@ -113,9 +117,14 @@ void Config::read(string const &file_name)
 							add_on_binders_[binder_function.first] = binder_function.second;
 						}
 					}
-					else if( token == _default_pointer_return_value_policy_ )          default_pointer_return_value_policy_ = name_without_spaces;
-					else if( token == _default_lvalue_reference_return_value_policy_ ) default_lvalue_reference_return_value_policy_ = name_without_spaces;
-					else if( token == _default_rvalue_reference_return_value_policy_ ) default_rvalue_reference_return_value_policy_ = name_without_spaces;
+					else if( token == _default_static_pointer_return_value_policy_ )          default_static_pointer_return_value_policy_ = name_without_spaces;
+					else if( token == _default_static_lvalue_reference_return_value_policy_ ) default_static_lvalue_reference_return_value_policy_ = name_without_spaces;
+					else if( token == _default_static_rvalue_reference_return_value_policy_ ) default_static_rvalue_reference_return_value_policy_ = name_without_spaces;
+
+					else if( token == _default_member_pointer_return_value_policy_ )          default_member_pointer_return_value_policy_ = name_without_spaces;
+					else if( token == _default_member_lvalue_reference_return_value_policy_ ) default_member_lvalue_reference_return_value_policy_ = name_without_spaces;
+					else if( token == _default_member_rvalue_reference_return_value_policy_ ) default_member_rvalue_reference_return_value_policy_ = name_without_spaces;
+
 					else throw std::runtime_error("Invalid token in config file! Each token must be ether: namespace, class or function! For example: '+function aaa::bb::my_function'. Token: '" + token + "' Line: '" + line + '\'');
 				}
 			}

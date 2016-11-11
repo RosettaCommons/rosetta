@@ -284,10 +284,15 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 	}
 
 	string maybe_return_policy = "";
-	if     ( F->getReturnType()->isPointerType() )         maybe_return_policy = ", " + Config::get().default_pointer_return_value_policy();
-	else if( F->getReturnType()->isLValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_lvalue_reference_return_value_policy();
-	else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_rvalue_reference_return_value_policy();
-
+	if( m  and  !m->isStatic() ) {
+		if     ( F->getReturnType()->isPointerType() )         maybe_return_policy = ", " + Config::get().default_member_pointer_return_value_policy();
+		else if( F->getReturnType()->isLValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_member_lvalue_reference_return_value_policy();
+		else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_member_rvalue_reference_return_value_policy();
+	} else {
+		if     ( F->getReturnType()->isPointerType() )         maybe_return_policy = ", " + Config::get().default_static_pointer_return_value_policy();
+		else if( F->getReturnType()->isLValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_static_lvalue_reference_return_value_policy();
+		else if( F->getReturnType()->isRValueReferenceType() ) maybe_return_policy = ", " + Config::get().default_static_rvalue_reference_return_value_policy();
+	}
 
 	//string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
 	string r = R"(.def{}("{}", {}, "{}"{})"_format(maybe_static, function_name, function, documentation, maybe_return_policy);

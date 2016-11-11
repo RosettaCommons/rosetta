@@ -35,12 +35,34 @@ public:
 	int const test(char q, char w, int a=1, int b=2, float c=3) const { return 0; }
 };
 
+struct A {};
+
 class Base1 : public virtual Common
-{};
+{
+};
 class Base2 : public virtual Common
 {};
 class Derived : public Base1, public Base2, public virtual Common
-{};
+{
+public:
+	static A &  static_lr(A &a)  { return a; }
+	static A && static_rr()      { return A(); }
+	static A *  static_p (A &a)  { return &a; }
+
+	A &  member_lr(A &a)  { return a; }
+	A && member_rr()      { return A(); }
+    A *  member_p (A &a)  { return &a; }
+
+};
+
+static A &  static_lr(A &a)  { return a; }
+static A && static_rr()      { return A(); }
+static A *  static_p (A &a)  { return &a; }
+
+
+A &  fun_lr(A &a)  { return a; }
+A && fun_rr()      { return A(); }
+A *  fun_p (A &a)  { return &a; }
 
 // class Base1 {};
 // class Base2 : public virtual Base1 {};
