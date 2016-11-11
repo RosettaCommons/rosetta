@@ -1,5 +1,11 @@
-import os
+import os, sys
 from setuptools import setup, find_packages, Distribution, Extension
+
+
+# Check if current working dir is where this file is located...
+if os.path.dirname(os.path.realpath(__file__)) != os.getcwd():
+    print('This script must be run from within setup directory! Exiting...')
+    sys.exit(1)
 
 
 def get_file_list(directory):

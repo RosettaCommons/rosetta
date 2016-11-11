@@ -185,7 +185,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False):
     p = os.path.join(rosetta_source_path, 'build/PyRosetta')
 
     #p = os.path.join(p, 'cross_compile' if Options.cross_compile else (Platform+ '/' + options.compiler) )
-    p =  os.path.join(p, Platform+ '/' + get_compiler_family() + '/pyhton-' + _python_version_)
+    p =  os.path.join(p, Platform+ '/' + get_compiler_family() + '/python-' + _python_version_)
 
     #p = os.path.join(p, 'monolith' if True else 'namespace' )
 
