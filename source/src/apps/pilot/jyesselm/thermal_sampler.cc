@@ -229,7 +229,9 @@ void vector2disk_in1d(
 ) {
 		utility::io::ozstream out (
 				out_filename.c_str(), std::ios::out | std::ios::binary );
-		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+		// What if the vector is empty because of a short trajectory? Let's say
+		// we just skip.
+		if ( out_vector.size() != 0 ) out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
 		out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -245,7 +247,9 @@ void vector2disk_in2d(
 		runtime_assert( dim1 * dim2 == out_vector.size() );
 		out.write( (const char*) &dim1, sizeof(Size) );
 		out.write( (const char*) &dim2, sizeof(Size) );
-		out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
+		// What if the vector is empty because of a short trajectory? Let's say
+		// we just skip.
+		if ( out_vector.size() != 0 ) out.write( (const char*) &out_vector[1], sizeof(T) * out_vector.size() );
 		out.close();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -391,9 +395,9 @@ thermal_sampler()
 
 	//Assign "free" residues (get bigger gaussian stdev)
 	for ( Size i = 1; i <= residues.size(); ++i ) {
-		if ( std::find( free_rsd.begin(), free_rsd.end(), residues[i]) != free_rsd.end() ) 
+		if ( std::find( free_rsd.begin(), free_rsd.end(), residues[i]) != free_rsd.end() ) {
 			is_free.push_back( true );
-		else is_free.push_back( false );
+		} else is_free.push_back( false );
 	}
 	
 	//Set up the internal move samplers
@@ -401,10 +405,9 @@ thermal_sampler()
 	for ( Size i = 1; i<= residues.size(); ++i ) {
 		RNA_MC_KIC_SamplerOP suite_sampler( new RNA_MC_KIC_Sampler( ref_pose, residues[i]-1, residues[i]) );
 		suite_sampler->init();
-		if ( is_free[i] || is_free[i-1] ) {
+		if ( is_free[i] || ( i > 1 && is_free[i-1] ) ) {
 			suite_sampler->set_angle_range_from_init_torsions( option[angle_range_free_bb]() );
-		}
-		else {
+		} else {
 			suite_sampler->set_angle_range_from_init_torsions( option[angle_range_bb]() );
 		}
 		sampler.push_back( suite_sampler );
@@ -435,7 +438,7 @@ thermal_sampler()
 	//Don't sample chi torsions here because there is a separate chi sampler
 	RNA_MC_MultiSuite standard_sampler;
 	for ( Size i = 1; i <= residues.size(); ++i ) {
-		if ( i == 1 || residues[i] != residues[i-1]+1 ) { 
+		if ( i == 1 || ( i > 1 && residues[i] != residues[i-1]+1 ) ) { 
 			//create samplers for [i]-1 and [i]
 			RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues[i] - 1 ) );
 			suite_sampler_1->set_init_from_pose( pose );
