@@ -217,6 +217,10 @@ ResidueTypeFinder::get_possible_base_custom_residue_types() const
 ResidueTypeCOPs
 ResidueTypeFinder::apply_basic_filters( ResidueTypeCOPs rsd_types ) const
 {
+	if ( rsd_types.empty() ) {
+		TR.Debug << "Going into apply_basic_filters() ResidueType filtering, no residue types were passed." << std::endl;
+		return rsd_types;
+	}
 	rsd_types = filter_by_aa( rsd_types );
 	rsd_types = filter_by_name1( rsd_types );
 	rsd_types = filter_by_name3( rsd_types, true /* keep_if_base_type_generates_name3 */ );
@@ -231,6 +235,10 @@ ResidueTypeCOPs
 ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	bool const allow_extra_variants  /* = false */ ) const
 {
+	if ( rsd_types.empty() ) {
+		TR.Debug << "Going into apply_filters_after_patches() ResidueType filtering, no residue types were passed." << std::endl;
+		return rsd_types;
+	}
 	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
 	//TR.Trace << " ...filtering by name3: " << rsd_types.size() << std::endl;
 	rsd_types = filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
@@ -250,9 +258,6 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 
 	return rsd_types;
 }
-
-/// OK to remove this after 2015.
-std::set< VariantType > variant_types_used;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Instantiates ResidueType (and gets exponentially slower), based on the number
@@ -278,6 +283,11 @@ ResidueTypeFinder::apply_patches_recursively(
 	Size const patch_number,
 	bool const get_first_totally_ok_residue_type /*= false*/
 ) const {
+
+	// Pointless to apply patches if we don't have any residue types to apply them to.
+	if ( rsd_types.empty() ) {
+		return rsd_types;
+	}
 
 	ResidueTypeCOPs rsd_types_new = rsd_types;
 	PatchCOP patch = residue_type_set_.patches()[ patch_number ];
@@ -308,23 +318,14 @@ ResidueTypeFinder::apply_patches_recursively(
 			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
 			ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
 			rsd_types_new.push_back( rsd_type_new );
-
-			{
-				vector1< std::string> const & patch_variant_types = patch->types();
-				for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
-					VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
-					variant_types_used.insert( patch_variant );
-				}
-			}
-
 		}
 
 	} // end loop
 
-	if ( get_first_totally_ok_residue_type ) { // maybe we're done?
+	if ( get_first_totally_ok_residue_type && ! rsd_types_new.empty() ) { // maybe we're done?
 		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
 		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
-		if ( rsd_types_filtered.size() > 0 ) return rsd_types_filtered;
+		if ( ! rsd_types_filtered.empty() ) return rsd_types_filtered;
 	}
 
 	// end of recursion through patches?
@@ -375,14 +376,6 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
 				ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
 				rsd_types_new.push_back( rsd_type_new );
-
-				{
-					vector1< std::string> const & patch_variant_types = patch->types();
-					for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
-						VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
-						variant_types_used.insert( patch_variant );
-					}
-				}
 			}
 		}
 
@@ -411,6 +404,9 @@ ResidueTypeFinder::filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const
 		if ( rsd_type->name1() != name1_ ) continue;
 		rsd_types_new.push_back( rsd_type );
 	}
+	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering by one letter code: '" << name1_ << "'" << std::endl;
+	}
 	return rsd_types_new;
 }
 
@@ -433,6 +429,11 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 			rsd_types_new.push_back( rsd_type );
 		}
 	}
+	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+		// RM: This seems to occur frequently in the integration tests.
+		// We may want to examine why we're doing so much filtering by name3 on sets that don't contain what we want.
+		TR.Debug << "No ResidueTypes remain after filtering by three letter code: '" << name3_ << "'" << std::endl;
+	}
 	return rsd_types_new;
 }
 
@@ -451,6 +452,11 @@ ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs const & r
 			rsd_types_new.push_back( rsd_type );
 		}
 	}
+	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+		// RM: This seems to occur frequently in the integration tests.
+		// We may want to examine why we're doing so much filtering on sets that don't contain what we want.
+		TR.Debug << "No ResidueTypes remain after filtering by interchangeability group: '" << interchangeability_group_ << "'" << std::endl;
+	}
 	return rsd_types_new;
 }
 
@@ -466,6 +472,11 @@ ResidueTypeFinder::filter_by_aa( ResidueTypeCOPs const & rsd_types ) const
 		if ( rsd_type->aa() == aa_ ) {
 			rsd_types_new.push_back( rsd_type );
 		}
+	}
+	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+		// RM: This seems to occur frequently in the integration tests.
+		// We may want to examine why we're doing so much filtering by aa_type on sets that don't contain what we want.
+		TR.Debug << "No ResidueTypes remain after filtering by amino acid designation: '" << aa_ << "'" << std::endl;
 	}
 	return rsd_types_new;
 }
@@ -484,6 +495,9 @@ ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd
 			filtered_rsd_types.push_back( rsd_type );
 		}
 	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering by ResidueType base name: '" << residue_type_base_name_ << "'" << std::endl;
+	}
 	return filtered_rsd_types;
 }
 
@@ -498,6 +512,9 @@ ResidueTypeFinder::filter_by_base_property( ResidueTypeCOPs const & rsd_types ) 
 		if ( rsd_type->properties().has_property( base_property_ ) ) {
 			filtered_rsd_types.push_back( rsd_type );
 		}
+	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering by ResidueType base property: '" << base_property_ << "'" << std::endl;
 	}
 	return filtered_rsd_types;
 }
@@ -668,6 +685,12 @@ ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs const & rsd_type
 	if ( !allow_extra_variants ) {
 		filtered_rsd_types = check_variant_sets_have_all_candidate_variants( filtered_rsd_types );
 	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		// RM: This seems to occur frequently in the integration tests.
+		// We may want to examine why we're doing so much filtering by matched variants on sets that don't contain what we want.
+		TR.Debug << "No ResidueTypes remain after filtering for matched variants." << std::endl;
+		//TODO: Print what those matched variants should have been.
+	}
 	return filtered_rsd_types;
 }
 
@@ -780,6 +803,12 @@ ResidueTypeFinder::filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  
 		if ( !found_patch_name ) continue;
 		filtered_rsd_types.push_back( rsd_type );
 	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering for the presence of all patch names." << std::endl;
+		TR << "    Patches sought: ";
+		for ( Size m = 1; m <= patch_names_.size(); m++ )  { TR << patch_names_[ m ] << "   "; }
+		TR << std::endl;
+	}
 	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
@@ -799,6 +828,12 @@ ResidueTypeFinder::filter_all_properties( ResidueTypeCOPs const & rsd_types )  c
 		if ( !found_property ) continue;
 		filtered_rsd_types.push_back( rsd_type );
 	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering for the presence of all properties." << std::endl;
+		TR << "    Properties sought: ";
+		for ( Size m = 1; m <= properties_.size(); m++ )  { TR << properties_[ m ] << "   "; }
+		TR << std::endl;
+	}
 	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
@@ -816,6 +851,12 @@ ResidueTypeFinder::filter_disallow_variants( ResidueTypeCOPs const & rsd_types )
 		}
 		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );
 	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering against the presence of variants." << std::endl;
+		TR << "    Variants prohibited: ";
+		for ( Size m = 1; m <= disallow_variants_.size(); m++ )  { TR << disallow_variants_[ m ] << "   "; }
+		TR << std::endl;
+	}
 	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
@@ -832,6 +873,12 @@ ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types
 			}
 		}
 		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );
+	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering against the presence of properties." << std::endl;
+		TR << "    Properties prohibited: ";
+		for ( Size m = 1; m <= disallow_properties_.size(); m++ )  { TR << disallow_properties_[ m ] << "   "; }
+		TR << std::endl;
 	}
 	return filtered_rsd_types;
 }
@@ -859,6 +906,15 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 		}
 
 		filtered_rsd_types.push_back( rsd_type );
+	}
+	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+		TR << "No ResidueTypes remain after filtering for special cases:" << std::endl;
+		if ( disallow_carboxyl_conjugation_at_glu_asp_ ) {
+			TR << "    * No carboxyl conjugation at GLU/ASP." << std::endl;
+		}
+		if ( actually_check_nucleic_acid_virtual_phosphates ) {
+			TR << "    * Nucleic acid has virtual phosphates." << std::endl;
+		}
 	}
 	return filtered_rsd_types;
 }

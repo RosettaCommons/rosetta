@@ -83,7 +83,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer tr( "core.chemical.ResidueTypeSet" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueTypeSet" );
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief c-tor from directory
@@ -186,6 +186,7 @@ void ResidueTypeSet::init(
 				}
 				base_residue_types_.push_back( rsd_type );
 				cache_->add_residue_type( rsd_type );
+				TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
 			}
 		}
 
@@ -194,6 +195,7 @@ void ResidueTypeSet::init(
 				filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 			base_residue_types_.push_back( rsd_type );
 			cache_->add_residue_type( rsd_type );
+			TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
 		}
 	}  // ResidueTypes read
 
@@ -242,7 +244,7 @@ void ResidueTypeSet::init(
 			// on the command line.
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
-				tr << "While generating ResidueTypeSet " << name_ <<
+				TR << "While generating ResidueTypeSet " << name_ <<
 					": Skipping patch " << fname.base() << " as requested" << std::endl;
 				continue;
 			}
@@ -261,11 +263,11 @@ void ResidueTypeSet::init(
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
 				if ( !utility::file::file_exists( database_directory_ + includelist[ ii ] ) ) {
-					tr.Warning << "Could not find: " << database_directory_+includelist[ii]  << std::endl;
+					TR.Warning << "Could not find: " << database_directory_+includelist[ii]  << std::endl;
 					continue;
 				}
 				patch_filenames.push_back( database_directory_ + includelist[ ii ]);
-				tr << "While generating ResidueTypeSet " << name_ <<
+				TR << "While generating ResidueTypeSet " << name_ <<
 					": Including patch " << fname << " as requested" << std::endl;
 			}
 		}
@@ -324,9 +326,9 @@ void ResidueTypeSet::init(
 		pdb_components_filename_ = option[ OptionKeys::in::file::PDB_components_file ].value();
 	}
 
-	tr << "Finished initializing " << name_ << " residue type set.  ";
-	tr << "Created " << residue_types.size() << " residue types" << std::endl;
-	tr << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	TR << "Finished initializing " << name_ << " residue type set.  ";
+	TR << "Created " << residue_types.size() << " residue types" << std::endl;
+	TR << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 }
 
@@ -1015,15 +1017,15 @@ ResidueTypeSet::remove_base_residue_type_DO_NOT_USE( std::string const & name )
 void
 ResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string const & filename /* = "shadow_list.txt" */ ) {
 
-	tr.Debug << "Loading shadowed PDB IDs from " << directory + filename << std::endl;
+	TR.Debug << "Loading shadowed PDB IDs from " << directory + filename << std::endl;
 
 	shadowed_ids_.clear();
 
 	utility::io::izstream file( directory + filename );
 	if ( ! file.good()  ) {
-		tr << "For ResidueTypeSet " << name() << " there is no " << filename << " file to list known PDB ids." << std::endl;
-		tr << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
-		tr << "    Expected file: " << directory + filename << std::endl;
+		TR << "For ResidueTypeSet " << name() << " there is no " << filename << " file to list known PDB ids." << std::endl;
+		TR << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
+		TR << "    Expected file: " << directory + filename << std::endl;
 		return;
 	}
 	std::string line;
@@ -1036,8 +1038,8 @@ ResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string co
 		getline( file, line );
 	}
 	if ( shadowed_ids_.size() == 0 ) {
-		tr.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
-		tr.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
+		TR.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
+		TR.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
 	}
 }
 
@@ -1060,13 +1062,13 @@ ResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
 			if ( new_rsd_type ) {
 				// Duplicate detection is handled by the shadowed file -- if it's not shadowed, we load the component
 				new_rsd_type->name( "pdb_" + short_name );
-				tr << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
+				TR << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
 			}
 		} else {
 			if ( shadowed_ids_.size() == 0 ) {
-				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because components are turned off for this ResidueTypeSet." << std::endl;
+				TR.Debug << "Not loading '" << short_name << "' from PDB components dictionary because components are turned off for this ResidueTypeSet." << std::endl;
 			} else {
-				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is shadowed in the ResidueTypeSet." << std::endl;
+				TR.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is shadowed in the ResidueTypeSet." << std::endl;
 			}
 			cache_->add_prohibited( rsd_base_name );
 			return false;
@@ -1096,10 +1098,10 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 			if ( !filestream.good() ) {
 				if ( ! warned_about_missing_file ) {
 					warned_about_missing_file = true;
-					tr.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filename_ << std::endl;
-					tr.Warning << "   or in the Rosetta database at " << db_filename << std::endl;
-					tr.Warning << "   For information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
-					tr.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
+					TR.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filename_ << std::endl;
+					TR.Warning << "   or in the Rosetta database at " << db_filename << std::endl;
+					TR.Warning << "   For information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
+					TR.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
 				}
 				return ResidueTypeOP( nullptr );
 			}
@@ -1129,7 +1131,7 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		}
 
 		if ( lines.size() == 0 ) {
-			tr.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
+			TR.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
 				<< "'! Skipping residue..." << std::endl;
 			return ResidueTypeOP(nullptr);
 		}
