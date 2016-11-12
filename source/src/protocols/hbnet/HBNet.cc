@@ -1821,7 +1821,7 @@ HBNet::output_networks( bool finalize )
                         // skip this networks (it won't get returned)
                         skip_this_network = true;
                         break; //because we found a native that's better, exit inner loop
-                        ++nit;
+                        //++nit;
                     }
                 }
                 else

@@ -725,7 +725,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
             bool branch(false);
 //            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
 //                && !branch && !(net_clash( *(get_network_by_id(*net_id)), **next_netit )) ) {
-            if ( is_sub_residues( (get_network_by_id(net_id))->residues, (get_network_by_id(net_id))->residues, branch )
+            if ( is_sub_residues( (get_network_by_id(net_id))->residues, (get_network_by_id((*next_netit)->id)->residues), branch )
                 || branch || net_clash( *(get_network_by_id(net_id)), **next_netit ) ) {
                 compatible = false;
                 break;
