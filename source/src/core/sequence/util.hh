@@ -178,7 +178,7 @@ calpha_superimpose_with_mapping(
 );
 
 utility::vector1< core::Size >
-strip_spacers( std::string & sequence );
+strip_spacers( std::string & sequence, bool const annotations_in_brackets = true /* remove [ and ]*/ );
 
 } // sequence
 } // core

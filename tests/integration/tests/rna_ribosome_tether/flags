@@ -17,3 +17,6 @@
 
 -output_res_num  L:1-37
 -ignore_zero_occupancy false 
+
+# should probably instead inherit chain & residue numbering from ribosome, which will make cutpoint placement obvious:
+-cut_at_rna_chainbreak

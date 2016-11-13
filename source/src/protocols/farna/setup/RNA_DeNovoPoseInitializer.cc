@@ -540,7 +540,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		for ( m = n; m > 1; m-- ) {
 			if ( cutpoints_open.has_value( m - 1 ) ) break;
 		}
-		TR << TR.Green << "Connecting: " << n << " to " << m << std::endl;
+		TR << TR.Green << "Cyclizing: " << n << " to " << m << std::endl;
 		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 

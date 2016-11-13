@@ -824,24 +824,26 @@ calpha_superimpose_with_mapping(
 
 ////////////////////////////////////////////////////////
 utility::vector1< Size >
-strip_spacers( std::string & sequence )
+strip_spacers( std::string & sequence, bool const annotations_in_brackets /* = true */ )
 {
 	std::string new_sequence;
 	utility::vector1< Size > spacer_pos;
 	Size offset = 0;
 	for ( Size n = 1; n <= sequence.size(); n++ ) {
-		if ( sequence[ n - 1 ] == '[' ) {
-			new_sequence += sequence[ n - 1 ];
-			++n;
-			++offset;
-			while ( sequence[ n - 1 ] != ']' ) {
+		if ( annotations_in_brackets ) {
+			if ( sequence[ n - 1 ] == '[' ) {
 				new_sequence += sequence[ n - 1 ];
 				++n;
 				++offset;
+				while ( sequence[ n - 1 ] != ']' ) {
+					new_sequence += sequence[ n - 1 ];
+					++n;
+					++offset;
+				}
 			}
-		}
-		if ( sequence[ n - 1 ] == '[' ) {
-			new_sequence += sequence[ n - 1 ];
+			if ( sequence[ n - 1 ] == '[' ) {
+				new_sequence += sequence[ n - 1 ];
+			}
 		}
 		if ( spacers.has_value( sequence[ n - 1 ] ) ) {
 			Size spacer_position = new_sequence.size() - offset;

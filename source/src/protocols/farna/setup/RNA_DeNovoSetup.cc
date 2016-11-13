@@ -178,7 +178,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		}
 	} else {
 		// basic read-in of sequence from command line
-		runtime_assert( sequence_strings.size() > 0 );
+		if ( sequence_strings.size() == 0 ) utility_exit_with_message( "Must specify -sequence or -fasta" );
 		std::string sequence( sequence_strings[1] );
 		for ( Size n = 2; n <= sequence_strings.size(); n++ ) sequence += std::string( " " + sequence_strings[ n ] );
 		cutpoint_open_in_full_model = core::sequence::strip_spacers( sequence );
@@ -201,6 +201,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	}
 	vector1< Size > working_res        =
 		full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
+	std::sort( working_res.begin(), working_res.end() ); // some the following depends on correct order.
 	vector1< Size > const cutpoint_closed          =
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
 	vector1< Size > const cutpoint_cyclize          =
@@ -319,11 +320,10 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 				resnum_in_full_model.push_back( input_silent_res[ input_silent_res_user_defined_count ] );
 			}
 		} else {
-			///////////////////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////////////////
-			// would need to read in working sequence used in silent file.
-			///////////////////////////////////////////////////////////////////
-			///////////////////////////////////////////////////////////////////
+			vector1<Size> input_silent_res_from_file = full_model_parameters->conventional_to_full( get_silent_resnum( silent ) );
+			for ( Size q = 1; q <= input_silent_res_from_file.size(); q++ ) {
+				resnum_in_full_model.push_back( input_silent_res_from_file[ q ] );
+			}
 		}
 		runtime_assert( resnum_in_full_model.size() == len_seq);
 
@@ -475,7 +475,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 
 	TR << "Sequence:            " << working_sequence << std::endl;
 	TR << "Secstruct:           " << working_secstruct.secstruct() << std::endl;
-	TR << "Secstruct [general]: " << working_secstruct_general.secstruct() << std::endl;
+	if ( !secstruct_general.blank() ) TR << "Secstruct [general]: " << working_secstruct_general.secstruct() << std::endl;
 
 	////////////////////
 	// Step 9
@@ -483,7 +483,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	///////////////////////////////////////////////////////////////////
 	// initialize variables needed for RNA_DeNovoParams (rna_params_)
 	///////////////////////////////////////////////////////////////////
-	vector1< Size > working_cutpoint_open   = working_res_map( cutpoint_open_in_full_model, working_res );
+	vector1< Size > working_cutpoint_open   = working_res_map( cutpoint_open_in_full_model, working_res, true /*leave out last residue*/ );
 	vector1< Size > working_cutpoint_closed = working_res_map( cutpoint_closed, working_res );
 	vector1< Size > working_cutpoint_cyclize = working_res_map( cutpoint_cyclize, working_res );
 	vector1< Size > working_virtual_anchor  = working_res_map( virtual_anchor, working_res );
@@ -497,7 +497,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	/////////////////////////
 	// working stems
 	/////////////////////////
-	working_stems = working_secstruct.get_all_stems( working_sequence, working_cutpoint_open );
+	vector1< Size > working_cutpoint( working_cutpoint_open ); working_cutpoint.append( working_cutpoint_closed );
+	working_stems = working_secstruct.get_all_stems( working_sequence, working_cutpoint );
 	vector1< Size > working_input_res = working_res_map( input_res, working_res );
 	if ( options_->fixed_stems() ) {
 		update_working_obligate_pairs_with_stems( working_obligate_pairs, working_stems, working_input_res );
@@ -917,12 +918,14 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 
 vector1< Size >
 RNA_DeNovoSetup::working_res_map( vector1< Size > const & vec,
-	vector1< Size > const & working_res ) const
+																	vector1< Size > const & working_res,
+																	bool const leave_out_last_working_residue /* = false */ ) const
 {
 	if ( working_res.size() == 0 ) return vec;
 	vector1< Size > working_vec;
 	for ( Size i = 1; i <= vec.size(); i++ ) {
 		Size const m = vec[ i ];
+		if ( leave_out_last_working_residue && m == working_res[ working_res.size() ]  ) continue;
 		if ( working_res.has_value( m ) ) {
 			working_vec.push_back( working_res.index( m ) );
 		}
@@ -932,10 +935,11 @@ RNA_DeNovoSetup::working_res_map( vector1< Size > const & vec,
 
 std::string
 RNA_DeNovoSetup::working_res_map( std::string const & seq_input,
-	vector1< Size > const & working_res ) const
+																	vector1< Size > const & working_res,
+																	bool const annotations_in_brackets /* = true */ ) const
 {
 	std::string seq( seq_input );
-	core::sequence::strip_spacers( seq );
+	core::sequence::strip_spacers( seq, annotations_in_brackets );
 	if ( working_res.size() == 0 ) return seq;
 	std::string working_seq;
 	for ( Size m = 1; m <= seq.size(); m++ ) {
@@ -951,7 +955,7 @@ secstruct::RNA_SecStruct
 RNA_DeNovoSetup::working_res_map( secstruct::RNA_SecStruct const & rna_secstruct,
 	vector1< Size > const & working_res ) const
 {
-	std::string working_secstruct = working_res_map( rna_secstruct.secstruct(), working_res );
+	std::string working_secstruct = working_res_map( rna_secstruct.secstruct(), working_res, false /*annotations_in_brackets*/ );
 	return secstruct::RNA_SecStruct( working_secstruct );
 }
 
@@ -983,6 +987,14 @@ RNA_DeNovoSetup::get_silent_seq( std::string const & silent_file ) const
 	using namespace core::io::silent;
 	SilentFileData silent_file_data;
 	return silent_file_data.get_sequence( silent_file );
+}
+
+std::pair< utility::vector1< int >, utility::vector1< char > >
+RNA_DeNovoSetup::get_silent_resnum( std::string const & silent_file ) const
+{
+	using namespace core::io::silent;
+	SilentFileData silent_file_data;
+	return silent_file_data.get_resnum( silent_file );
 }
 
 bool

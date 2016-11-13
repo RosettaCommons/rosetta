@@ -86,7 +86,7 @@ void
 RNA_SecStruct::set_secstruct( std::string const & secstruct )
 {
 	secstruct_ = secstruct;
-	spacer_positions_ = core::sequence::strip_spacers( secstruct_ );
+	spacer_positions_ = core::sequence::strip_spacers( secstruct_, false /*annotations_in_brackets*/ );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void
 RNA_SecStruct::blank_secstruct( std::string const & sequence_in )
 {
 	std::string sequence = sequence_in;
-	spacer_positions_ = core::sequence::strip_spacers( sequence  );
+	spacer_positions_ = core::sequence::strip_spacers( sequence );
 	secstruct_ = "";
 	for ( Size n = 1; n <= sequence.size(); n++ ) secstruct_ += '.';
 }
@@ -146,7 +146,7 @@ RNA_SecStruct::check_compatible_with_sequence( std::string const & sequence_in,
 	bool const check_complementarity /* = true */ ) const
 {
 	std::string sequence = sequence_in;
-	vector1< Size > spacer_positions_sequence = core::sequence::strip_spacers( sequence  );
+	vector1< Size > spacer_positions_sequence = core::sequence::strip_spacers( sequence );
 	if ( sequence.size() != secstruct_.size() ) {
 		TR << "'" << sequence  << "'" << std::endl;;
 		TR << "'" << secstruct_ << "'" << std::endl;

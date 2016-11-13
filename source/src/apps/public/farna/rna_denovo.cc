@@ -130,6 +130,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::filter_chain_closure );
 		option.add_relevant( rna::farna::filter_chain_closure_halfway );
 		option.add_relevant( rna::farna::filter_chain_closure_distance );
+		option.add_relevant( rna::farna::output_filters );
+		option.add_relevant( rna::farna::autofilter );
+		option.add_relevant( rna::farna::no_filters );
 		option.add_relevant( basic::options::OptionKeys::rna::farna::vall_torsions );
 		option.add_relevant( rna::farna::use_1jj2_torsions );
 		option.add_relevant( rna::farna::rna_lores_chainbreak_weight );
@@ -141,8 +144,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::move_first_rigid_body );
 		option.add_relevant( rna::farna::root_at_first_rigid_body );
 		option.add_relevant( rna::farna::suppress_bp_constraint );
-		option.add_relevant( rna::farna::output_filters );
-		option.add_relevant( rna::farna::autofilter );
 		option.add_relevant( rna::farna::output_res_num );
 		option.add_relevant( rna::farna::offset );
 		option.add_relevant( rna::farna::tag );

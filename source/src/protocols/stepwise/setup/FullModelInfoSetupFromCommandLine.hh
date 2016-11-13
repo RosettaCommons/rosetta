@@ -54,7 +54,8 @@ core::pose::PoseOP
 initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSetCAP rsd_set );
 
 void
-cleanup( core::pose::Pose & pose );
+cleanup( core::pose::Pose & pose,
+				 bool const force_cut_at_rna_chainbreak = false );
 
 void
 get_extra_cutpoints_from_names( core::Size const nres,

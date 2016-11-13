@@ -1,3 +1,5 @@
 -s chunk002_1lnt_RNA.pdb
 -out:file:silent SCORE.out
 -native chunk002_1lnt_RNA.pdb
+# should probably instead inherit chain & residue numbering from 1LNT, which will make cutpoint placement obvious:
+-cut_at_rna_chainbreak

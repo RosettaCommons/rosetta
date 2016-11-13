@@ -219,7 +219,7 @@ void
 AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 
 	if ( pose.sequence() != sequence_ ) {
-		utility_exit_with_message( "AtomID_Mapper cannot currenty handle changes in sequence, just changes in variants!" );
+		utility_exit_with_message( "AtomID_Mapper cannot currenty handle changes in sequence, just changes in variants! Your old sequence was " + sequence_ + " and the new sequence is " + pose.sequence() );
 	}
 
 	map_to_reference_.clear();

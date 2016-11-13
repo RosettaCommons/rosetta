@@ -113,8 +113,8 @@ get_pdb_and_cleanup( std::string const & input_file,
 //////////////////////////////////////////////////////////////////////////////////////
 // currently have stuff we need for RNA... put any protein cleanup here too.
 void
-cleanup( pose::Pose & pose ) {
-	rna::figure_out_reasonable_rna_fold_tree( pose );
+cleanup( pose::Pose & pose, bool const force_cut_at_rna_chainbreak /* = false */  ) {
+	rna::figure_out_reasonable_rna_fold_tree( pose, force_cut_at_rna_chainbreak);
 	rna::virtualize_5prime_phosphates( pose );
 	pose.conformation().detect_disulfides();
 }

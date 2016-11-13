@@ -3050,7 +3050,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	remove_variant_type_from_pose_residue( pose, FIVE_PRIME_PHOSPHATE, next_res );
 	remove_variant_type_from_pose_residue( pose, N_ACETYLATION, next_res);
 
-	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
+	if ( pose.residue_type( cutpoint_res ).is_RNA() )  rna::position_cutpoint_phosphate_torsions( pose, cutpoint_res, next_res );
 
 	add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res   );
 	add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, next_res );

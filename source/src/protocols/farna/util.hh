@@ -142,9 +142,11 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 	core::pose::Pose const & pose,
 	bool const move_first_rigid_body  = false );
 
+core::Size
+get_anchor_rsd( core::pose::Pose const & pose );
+
 void
 translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
-
 
 bool
 involved_in_phosphate_torsion( std::string atomname );

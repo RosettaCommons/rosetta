@@ -147,7 +147,7 @@ PhosphateMover::setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pos
 		remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT, sample_res );
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE,    sample_res );
 		add_variant_type_to_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, sample_res );
-		correctly_position_five_prime_phosphate( pose, sample_res );
+		position_five_prime_phosphate( pose, sample_res );
 		apply_Aform_torsions_to_five_prime_phosphate( pose, sample_res );
 	}
 }

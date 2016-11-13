@@ -118,10 +118,14 @@ public:
 	bool
 	random_chunk_insertion( core::pose::Pose & pose ) const;
 
+	core::Size
+	get_alignment_domain( core::pose::Pose const & pose ) const;
+
 	void
 	initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map() const { return atom_level_domain_map_; };
+
 
 	void set_atom_level_domain_map(protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map );
 

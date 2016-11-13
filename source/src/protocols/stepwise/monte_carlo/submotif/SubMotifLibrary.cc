@@ -168,7 +168,7 @@ SubMotifLibrary::initialize_from_jump_library()
 							pose->fold_tree( f );
 							core::kinematics::Jump const & j( templates[ n ]->jump_forward() );
 							pose->set_jump( 1, j );
-							setup::cleanup( *pose );
+							setup::cleanup( *pose, true /* force_cut_at_rna_chainbreak */ );
 
 							std::string tag( base_pair_type.tag() + "_" + ObjexxFCL::lead_zero_string_of( n, 5 ) );
 							//pose->dump_pdb( tag + ".pdb" );

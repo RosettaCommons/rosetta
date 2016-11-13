@@ -324,10 +324,10 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 		ChunkSet & chunk_set = *(chunk_sets_[k]);
 		bool const OK = chunk_set.check_fold_tree_OK( pose );
 		if ( !OK ) {
-			std::cout << "Problem with pose fold tree -- not enough jumps to handle the number of chains in chunk set " << k << std::endl;
-			std::cout << "////////////////////////////////////////////////////////////////////" << std::endl;
-			std::cout << "WARNING!!! Ignoring this fold tree problem and continuing!!!" << std::endl;
-			std::cout << "////////////////////////////////////////////////////////////////////" << std::endl;
+			TR << TR.Red  << "Problem with pose fold tree -- not enough jumps to handle the number of chains in chunk set " << k << std::endl;
+			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
+			TR << TR.Red  << "WARNING!!! Ignoring this fold tree problem and continuing!!!" << std::endl;
+			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
 			//utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 		}
 	}
@@ -385,8 +385,28 @@ RNA_ChunkLibrary::check_res_map( ResMap const & res_map, pose::Pose const & scra
 }
 
 ////////////////////////////////////////////////////////////////
+Size
+RNA_ChunkLibrary::get_alignment_domain( pose::Pose const & pose ) const
+{
+	// figure out which domain might be good for alignment
+	Size alignment_domain( 1 );
+	Size anchor_rsd = get_anchor_rsd( pose ); // if there's a VRT residue, where it connects.
+	if ( anchor_rsd > 0 ) {
+		Size anchor_domain = atom_level_domain_map_->get_domain( anchor_rsd );
+		if ( anchor_domain > 0 ) alignment_domain = anchor_domain;
+	}
+	//	TR << TR.Red << "alignment_domain: " << alignment_domain << " anchor_rsd " << anchor_rsd << std::endl;
+	return alignment_domain;
+}
+
+////////////////////////////////////////////////////////////////
 void
 RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_pdb /* = false */) const{
+
+	if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(0)+".pdb" );
+
+	Size alignment_domain = get_alignment_domain( pose );
+
 	for ( Size n = 1; n <= num_chunk_sets(); n++ ) {
 
 		ChunkSet const & chunk_set( *chunk_sets_[ n ] );
@@ -401,12 +421,11 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 
 		// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
 		// arbitrarily set to origin (except in special cases with virtual residues...)
-		if ( n == 1 && chunk_set.user_input()
+		if ( n == alignment_domain && chunk_set.user_input()
 				/*&&  pose.residue( pose.size() ).name3() != "VRT"*/ ) {
 			align_to_chunk( pose, chunk_set, chunk_index  );
 		}
 		if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
-
 	}
 
 }

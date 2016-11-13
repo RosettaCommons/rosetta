@@ -232,6 +232,9 @@ public:
 	std::string
 	get_sequence( std::string const & filename );
 
+	std::pair< utility::vector1< int >, utility::vector1< char > >
+	get_resnum( std::string const & filename );
+
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
 	/// lines beginning with SCORE: strings.
 	bool read_tags_fast(

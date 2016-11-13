@@ -35,6 +35,7 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -1050,7 +1051,7 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
 	if ( !pdb_info ) return;
 
-	utility::vector1< Size > residue_numbers;
+	utility::vector1< int > residue_numbers;
 	utility::vector1< char > chains;
 	bool residue_numbering_is_interesting( false );
 	for ( core::uint i = 1; i <= pose.size(); ++i ) {
@@ -1204,30 +1205,16 @@ SilentStruct::print_submotif_info( std::ostream & out ) const {
 ///////////////////////////////////////////////////////////////////////////
 void
 SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream ) {
-	utility::vector1< Size > residue_numbers;
+	utility::vector1< int > residue_numbers;
 	utility::vector1< char > chains;
-	std::string resnum_string;
-	line_stream >> resnum_string; // the tag (RES_NUM)
-	line_stream >> resnum_string;
-	while ( !line_stream.fail() ) {
-		bool string_ok( false );
-		std::pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( resnum_string, string_ok );
-		std::vector< int >  const & resnums      = resnum_and_chain.first;
-		std::vector< char > const & chainchars  = resnum_and_chain.second;
-		if ( string_ok ) {
-			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
-			for ( Size i = 0; i < chainchars.size(); i++ ) chains.push_back( chainchars[i] );
-		} else break;
-		line_stream >> resnum_string;
-	}
-
+	core::io::silent::figure_out_residue_numbers_from_line( line_stream, residue_numbers, chains );
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
 }
 
 void
 SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
-	utility::vector1< Size > residue_numbers;
+	utility::vector1< int > residue_numbers;
 	utility::vector1< std::string > segment_ids;
 	std::string resnum_string;
 	line_stream >> resnum_string; // the tag (SEGMENT_ID)

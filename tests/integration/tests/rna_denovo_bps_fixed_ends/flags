@@ -13,3 +13,6 @@
 -secstruct_general "(((((((( ))))))))"
 #-obligate_pair 2 15    8 9    1 16     3 14    4 13     5 12     6 11   7 10
 #-cutpoint_open 8
+
+# should probably instead inherit chain & residue numbering from 1LNT, which will make cutpoint placement obvious:
+-cut_at_rna_chainbreak

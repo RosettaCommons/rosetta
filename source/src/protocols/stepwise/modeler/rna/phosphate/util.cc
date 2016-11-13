@@ -62,7 +62,7 @@ remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-correctly_position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
+position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
 	using namespace core::chemical;
 	ResidueTypeSetCOP rsd_set = pose.residue( res ).residue_type_set();
 	conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( aa_from_name( "RAD") ) ) ) ;
@@ -72,7 +72,7 @@ correctly_position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-correctly_position_five_prime_phosphate( pose::Pose & pose, Size const res ) {
+position_five_prime_phosphate( pose::Pose & pose, Size const res ) {
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
@@ -131,7 +131,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 					added_new_phosphate = pose.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE );
 				}
 				if ( added_new_phosphate ) {
-					correctly_position_five_prime_phosphate( pose, n);
+					position_five_prime_phosphate( pose, n);
 				}
 				torsion_ids.push_back( TorsionID( n, id::BB, ALPHA ) );
 				torsion_ids.push_back( TorsionID( n, id::BB, BETA ) );

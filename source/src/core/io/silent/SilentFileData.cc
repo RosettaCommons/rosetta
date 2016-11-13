@@ -35,6 +35,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
+#include <core/io/silent/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 
@@ -225,6 +226,39 @@ SilentFileData::get_sequence( std::string const & filename )
 	// That would have more detailed information on the modeled sequence -- rhiju
 
 	return ObjexxFCL::strip_whitespace( sequence );
+}
+
+
+std::pair< utility::vector1< int >, utility::vector1< char > >
+SilentFileData::get_resnum( std::string const & filename )
+{
+	utility::io::izstream data( filename.c_str() );
+	if ( !data.good() ) {
+		utility_exit_with_message(
+			"ERROR: Unable to open silent_input file: '" + filename + "'"
+		);
+	}
+
+	utility::vector1< int > resnum;
+	utility::vector1< char > chain;
+
+	std::string line;
+	getline( data, line ); // sequence line
+	getline( data, line ); // score line
+	while ( getline(data,line) ) {
+		if ( line.substr(0,8) == "RES_NUM "  ) {
+			std::stringstream line_stream( line );
+			figure_out_residue_numbers_from_line( line_stream, resnum, chain );
+			break;
+		}
+	}
+	if ( resnum.size() == 0 ) {
+		std::string sequence  = get_sequence( filename );
+		for ( Size n = 1; n <= sequence.size(); n++ ) {
+			resnum.push_back( n ); chain.push_back( 'A' );
+		}
+	}
+	return std::make_pair( resnum, chain );
 }
 
 bool SilentFileData::read_tags_fast(

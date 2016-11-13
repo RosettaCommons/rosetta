@@ -39,7 +39,8 @@ bool
 mutate_position( pose::Pose & pose, Size const i, core::chemical::ResidueType const & rt );
 
 void
-figure_out_reasonable_rna_fold_tree( core::pose::Pose & pose );
+figure_out_reasonable_rna_fold_tree( core::pose::Pose & pose,
+																		 bool const force_cut_at_rna_chainbreak = false );
 
 void
 virtualize_5prime_phosphates( core::pose::Pose & pose );
@@ -111,9 +112,9 @@ apply_ideal_c2endo_sugar_coords(
 	Size const i );
 
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
-																								Size const five_prime_chainbreak,
-																								Size three_prime_chainbreak = 0 );
+position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
+																			Size const five_prime_chainbreak,
+																			Size three_prime_chainbreak = 0 );
 
 bool is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id );
 

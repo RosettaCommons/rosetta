@@ -10,4 +10,6 @@
 -num_random_samples 100
 -chemical::enlarge_H_lj
 
+# should probably instead inherit chain & residue numbering from 3d2v
+-cut_at_rna_chainbreak
 

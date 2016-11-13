@@ -38,6 +38,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -191,6 +192,10 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 		chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
 		chem_shift_scorefxn_ = chem_shift_scorefxn;
 	}
+	if ( options_->output_score_frequency() > 0) {
+		TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
+		running_score_output_.open_append( options_->output_score_file() );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -225,7 +230,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		if ( !options_->bps_moves() ) rna_base_pair_handler_->setup_base_pair_constraints( pose, atom_level_domain_map_, options_->suppress_bp_constraint() ); // needs to happen after setting cutpoint variants, etc.
 
 		constraint_set_ = pose.constraint_set()->clone();
-		rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
+		rna_chunk_library_->initialize_random_chunks( pose, options_->dump_pdb() ); //actually not random if only one chunk in each region.
 
 		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
 
@@ -285,6 +290,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
 				// Make this generic fragment/jump multimover next?
 				RNA_move_trial( pose );
+				output_score_if_desired( r, i, pose );
 			}
 
 			if ( get_native_pose() ) {
@@ -390,6 +396,11 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		);
 	}
 
+	if ( options_->output_score_frequency() > 0 ) {
+		running_score_output_.close();
+		TR << "Created running score file at: " << options_->output_score_file() << std::endl;
+	}
+
 	final_score( pose ); // may include rna_chem_map score here.
 
 }
@@ -479,8 +490,12 @@ RNA_FragmentMonteCarlo::do_random_moves( core::pose::Pose & pose ) {
 
 	if ( options_->dump_pdb() ) pose.dump_pdb( "add_chunks.pdb" );
 
+	//	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
+	//	if ( options_->dump_pdb() ) pose.dump_pdb( "translate_virtual.pdb" );
+
 	Size const heat_cycles = 3 * pose.size();
-	TR << "Heating up... " << std::endl;
+	// Size const heat_cycles = std::min( 3 * pose.size(), monte_carlo_cycles_ );
+	TR << "Heating up... " << heat_cycles << " cycles." << std::endl;
 
 	for ( Size i = 1; i <= heat_cycles; i++ ) {
 		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/ );
@@ -488,7 +503,7 @@ RNA_FragmentMonteCarlo::do_random_moves( core::pose::Pose & pose ) {
 
 	if ( options_->dump_pdb() )  pose.dump_pdb( "random_moves1.pdb" );
 
-	rna_chunk_library_->initialize_random_chunks( pose, options_->dump_pdb() );
+	rna_chunk_library_->initialize_random_chunks( pose );
 
 	if ( options_->dump_pdb() )  pose.dump_pdb( "random_moves2.pdb" );
 
@@ -658,8 +673,6 @@ RNA_FragmentMonteCarlo::update_frag_size( Size const r )
 void
 RNA_FragmentMonteCarlo::RNA_move_trial( pose::Pose & pose ) {
 
-
-
 	if  ( numeric::random::rg().uniform() < jump_change_frequency_ )  {
 		//Following returns early if there are no jumps.
 		random_jump_trial( pose );
@@ -674,7 +687,6 @@ RNA_FragmentMonteCarlo::RNA_move_trial( pose::Pose & pose ) {
 			random_fragment_trial( pose );
 		}
 	}
-
 
 }
 
@@ -861,6 +873,18 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 			}
 		}
 		atom_id_map = loop_atom_id_map;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::output_score_if_desired( Size const & r,
+																								 Size const & i,
+																								 pose::Pose & pose )
+{
+	if ( options_->output_score_frequency() == 0) return;
+	if ( i % options_->output_score_frequency() == 0 ) {
+		running_score_output_ << r << ' ' << i << " " << ( *working_denovo_scorefxn_ )( pose ) << std::endl;
 	}
 }
 

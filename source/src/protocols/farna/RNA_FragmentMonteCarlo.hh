@@ -39,6 +39,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/format.hh>
+#include <utility/io/ozstream.hh>
 
 namespace protocols {
 namespace farna {
@@ -186,6 +187,11 @@ private:
 	void
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
+	void
+	output_score_if_desired( core::Size const & r,
+													 core::Size const & i,
+													 core::pose::Pose & pose );
+
 private:
 
 	// The parameters in this OptionsCOP should not change:
@@ -230,6 +236,8 @@ private:
 	std::list< core::Real > all_lores_score_final_;
 	core::scoring::constraints::ConstraintSetOP constraint_set_;
 	core::pose::PoseOP lores_pose_;
+
+	utility::io::ozstream running_score_output_;
 
 };
 

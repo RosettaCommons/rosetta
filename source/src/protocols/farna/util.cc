@@ -1093,17 +1093,27 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-void
-translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
-
+Size
+get_anchor_rsd( pose::Pose const & pose )
+{
 	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
-	if ( rigid_body_jumps.size() == 0 ) return;
+	if ( rigid_body_jumps.size() == 0 ) return 0;
 
 	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
 
 	Size anchor_rsd = pose.fold_tree().downstream_jump_residue( rigid_body_jumps[1] );
 	if ( anchor_rsd == nres ) anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
+	return anchor_rsd;
+}
 
+/////////////////////////////////////////////////////////////////////////////////////
+void
+translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
+
+	Size anchor_rsd = get_anchor_rsd( pose );
+	if ( anchor_rsd == 0 ) return;
+
+	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
 	Vector anchor1 = pose.xyz( id::AtomID( 1, anchor_rsd ) );
 	Vector root1   = pose.xyz( id::AtomID( 1, nres ) );
 	Vector const offset = anchor1 - root1;

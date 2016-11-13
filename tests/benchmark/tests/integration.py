@@ -14,8 +14,7 @@
 ## @author Rocco Moretti (Valgrind additions)
 ## @author Jared Adolf-Bryfogle( Demos/Tutorials additions)
 
-import sys, os, os.path, shutil, re, commands, fnmatch
-import glob
+import os, os.path, shutil, re, commands, fnmatch
 from collections import defaultdict
 import json
 import codecs
@@ -145,14 +144,10 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_
 
     TR = Tracer(verbose)
     full_log = ''
+
     TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
 
     results = defaultdict()
-
-    # Remove old Dunbrack binaries, so we have a clean comparison.
-    for binname in glob.glob( rosetta_dir+'/database/rotamer/*.bin') + glob.glob(rosetta_dir+'/database/rotamer/*/*.bin'):
-        TR("Removing dunbrack binary %s" % binname )
-        os.remove(binname)
 
     TR('Compiling...')
     res, output, build_command_line = do_compile(mode, rosetta_dir, working_dir, platform, jobs, hpc_driver, verbose, debug)

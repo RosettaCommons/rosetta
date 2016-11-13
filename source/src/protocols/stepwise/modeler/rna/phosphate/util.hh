@@ -35,7 +35,7 @@ void
 remove_terminal_phosphates( core::pose::Pose & pose, utility::vector1< core::Size > const & res_list  );
 
 void
-correctly_position_five_prime_phosphate( core::pose::Pose & pose, core::Size const res );
+position_five_prime_phosphate( core::pose::Pose & pose, core::Size const res );
 
 void
 copy_over_phosphate_variants( core::pose::Pose & pose,

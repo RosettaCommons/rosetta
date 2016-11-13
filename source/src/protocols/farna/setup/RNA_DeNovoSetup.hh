@@ -69,11 +69,13 @@ private:
 
 	utility::vector1< core::Size >
 	working_res_map( utility::vector1< core::Size > const & vec,
-		utility::vector1< core::Size > const & working_res ) const;
+									 utility::vector1< core::Size > const & working_res,
+									 bool const leave_out_last_working_residue = false ) const;
 
 	std::string
 	working_res_map( std::string const & seq,
-		utility::vector1< core::Size > const & working_res ) const;
+									 utility::vector1< core::Size > const & working_res,
+									 bool const annotations_in_brackets = true ) const;
 
 	secstruct::RNA_SecStruct
 	working_res_map( secstruct::RNA_SecStruct const & seq,
@@ -87,6 +89,9 @@ private:
 
 	std::string
 	get_silent_seq( std::string const & silent_file ) const;
+
+	std::pair< utility::vector1< int >, utility::vector1< char > >
+	get_silent_resnum( std::string const & silent_file ) const;
 
 	bool
 	already_listed_in_obligate_pair( utility::vector1< core::Size > const & new_pair,

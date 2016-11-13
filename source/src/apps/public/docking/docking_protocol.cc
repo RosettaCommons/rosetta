@@ -79,6 +79,8 @@ main( int argc, char * argv [] )
 {
 	try {
 
+		basic::options::option.add_relevant( basic::options::OptionKeys::docking::no_filters );
+
 		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
 

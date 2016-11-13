@@ -43,6 +43,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
@@ -131,7 +132,9 @@ mutate_position( pose::Pose & pose, Size const i, std::string const & name3 ) {
 
 //////////////////////////////////////////////////////
 void
-figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
+figure_out_reasonable_rna_fold_tree(
+    pose::Pose & pose,
+		bool force_cut_at_rna_chainbreak /* = false */  )
 {
 	using namespace core::conformation;
 	using namespace core::chemical;
@@ -151,10 +154,31 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 			new_jump = true;
 		}
 
+		bool rna_chainbreak( false );
+		if ( pose.residue_type(i).is_RNA() && pose.residue_type(i+1).is_RNA() ) rna_chainbreak =  pose::rna::is_rna_chainbreak( pose, i );
+
 		if ( !new_jump &&
-				pose.residue_type(i).is_RNA() && pose.residue_type(i+1).is_RNA() &&
-				pose::rna::is_rna_chainbreak( pose, i ) ) {
-			new_jump = true;
+				 pose.pdb_info() && ( pose.pdb_info()->number(i+1) != pose.pdb_info()->number(i)+1 ) &&
+				 !basic::options::option[ basic::options::OptionKeys::full_model::allow_jump_in_numbering ]() ) {
+			if ( rna_chainbreak ) {
+				new_jump = true;
+			} else {
+				// user may not realize that jump in numbering is confusing.
+				TR << "There appears to be a break in numbering but not chain geometry at " << i << " to " << i+1;
+				if ( pose.pdb_info() ) TR << " [in PDBinfo numbering: "  << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number(i) << " to " << pose.pdb_info()->chain(i+1) << ":" << pose.pdb_info()->number(i+1) << "]" << std::endl;
+				TR << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering, and be careful with other parts of Rosetta." << TR.Reset << std::endl;
+			}
+		}
+
+		// Following is a legacy condition -- back when we used to make RNA poses that had all the same chain.
+		if ( !new_jump && rna_chainbreak ) {
+			if ( force_cut_at_rna_chainbreak ||  basic::options::option[ basic::options::OptionKeys::rna::cut_at_rna_chainbreak ]() ) {
+				new_jump = true;
+			} else {
+				TR << TR.Red << "Found possible chainbreak at: " << i << " to " << i+1;
+				if ( pose.pdb_info() ) TR << " [in PDBinfo numbering: "  << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number(i) << " to " << pose.pdb_info()->chain(i+1) << ":" << pose.pdb_info()->number(i+1) << "]" << std::endl;
+				TR << " but not enforcing cutpoint. If that is wrong, use flag -cut_at_rna_chainbreak; or, preferably, change PDB number or chains to reflect cutpoint." << std::endl;
+			}
 		}
 
 		if ( new_jump ) {
@@ -569,9 +593,9 @@ apply_pucker(
 
 //When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
-																								Size const five_prime_chainbreak,
-																								Size three_prime_chainbreak /* = 0 */ )
+position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
+																			Size const five_prime_chainbreak,
+																			Size three_prime_chainbreak /* = 0 */ )
 {
 
 	using namespace core::chemical;
@@ -594,7 +618,7 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
 	//These are the initial value of virtual upper and lower cutpoint atom.
 	//Actually only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
 	current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
-	current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
+	current_pose.delete_polymer_residue( three_prime_chainbreak );
 }
 
 

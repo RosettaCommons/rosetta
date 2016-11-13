@@ -65,6 +65,7 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
 	filter_chain_closure_halfway_( true ),
 	staged_constraints_( false ),
+	output_score_frequency_( 0 ),
 	filter_vdw_( false ),
 	vdw_rep_screen_include_sidechains_( false ),
 	gradual_constraints_( true ),
@@ -114,6 +115,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 		set_monte_carlo_cycles( option[ rna::farna::cycles ]() );
 		set_user_defined_cycles( true );
 	}
+	set_rounds( option[ rna::farna::rounds ]() );
 	minimize_structure_ = option[ rna::farna::minimize_rna ]();
 	relax_structure_ = option[ rna::farna::relax_rna ]();
 	allow_bulge_ = option[ rna::farna::allow_bulge ]();
@@ -135,6 +137,16 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_bps_moves( option[ rna::farna::bps_moves ] );
 	set_disallow_bps_at_extra_min_res( option[ rna::farna::disallow_bps_at_extra_min_res ] );
 	set_allow_fragment_moves_in_bps( option[ rna::farna::allow_fragment_moves_in_bps ] );
+
+	set_output_score_frequency( option[ rna::farna::output_score_frequency ]() );
+	set_output_score_file( option[ rna::farna::output_score_file ]() );
+	if ( output_score_file_.size() == 0 && output_score_frequency_ != 0 )  {
+		output_score_file_ = option[ out::file::silent ]();
+		std::string::size_type pos = output_score_file_.find( ".out", 0 );
+		std::string const new_prefix = ".SCORES.txt";
+		if ( pos == std::string::npos ) utility_exit_with_message(  "If you want to output a running score file, specify -output_score_file" );
+		output_score_file_.replace( pos, new_prefix.length(), new_prefix );
+	}
 
 	set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;
 	set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
@@ -167,6 +179,16 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	if ( option[ rna::farna::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( option[ rna::farna::rna_lores_chainbreak_weight ]() );
 
 	if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
+
+	if ( option[ rna::farna::no_filters ]() ) {
+		set_autofilter( false );
+		set_filter_chain_closure( false );
+		set_filter_chain_closure_distance( false );
+		set_filter_chain_closure_halfway(  false );
+		set_filter_lores_base_pairs(  false );
+		set_filter_lores_base_pairs_early(  false );
+	}
+
 }
 
 

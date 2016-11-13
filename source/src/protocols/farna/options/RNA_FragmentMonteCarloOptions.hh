@@ -202,6 +202,12 @@ public:
 	void set_input_res( utility::vector1< Size > const & input_res ) { input_res_ = input_res; }
 	utility::vector1< Size > const & input_res() const { return input_res_; };
 
+	void set_output_score_frequency( core::Size const & setting ){ output_score_frequency_ = setting; }
+	core::Size output_score_frequency() const { return output_score_frequency_; }
+
+	void set_output_score_file( std::string const & setting ){ output_score_file_ = setting; }
+	std::string output_score_file() const { return output_score_file_; }
+
 private:
 
 	Size rounds_;
@@ -238,6 +244,9 @@ private:
 	bool filter_chain_closure_halfway_;
 
 	bool staged_constraints_;
+
+	Size output_score_frequency_;
+	std::string output_score_file_;
 
 	utility::vector1< core::Size > allowed_bulge_res_;
 

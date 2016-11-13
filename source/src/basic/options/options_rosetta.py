@@ -6791,9 +6791,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
     Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
     Option( 'data_file', 'String', desc="RDAT or legacy-format file with RNA chemical mapping data",default='' ),
+    Option( 'cut_at_rna_chainbreak', 'Boolean', desc="If O3' to P distance is > 2.5 Angstroms, assume cutpoint.",default='false' ),
 
 		Option_Group( 'farna',
 		   Option( 'cycles', 'Integer', desc= "Default number of Monte Carlo cycles",default='0' ), # now default is set based on the number of moving residues
+			 Option( 'rounds', 'Integer', desc= "Number of rounds to split cycles into during fragment assembly", default='10' ),
 		   Option( 'temperature', 'Real', desc= "temperature",default='2.0' ),
 		   Option( 'minimize_rna', 'Boolean', desc= "Minimize RNA after fragment assembly",default='false' ),
 		   Option( 'sequence', 'StringVector', desc= "RNA sequence to model (better to supply in -fasta)",default="" ),
@@ -6833,6 +6835,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'suppress_bp_constraint', 'Real', desc= "Factor by which to lower base pair constraint weight. ",default='1.0' ),
 		   Option( 'output_filters', 'Boolean',desc= "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", default='false' ),
 		   Option( 'autofilter', 'Boolean', desc= "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.",default= 'true' ),
+		   Option( 'no_filters', 'Boolean',
+			    desc="Turn off filters in FARFAR. (umbrella flag)"
+							 " -autofilter false"
+							 " -filter_lores_base_pairs false"
+							 " -filter_lores_base_pairs_early false"
+							 " -filter_chain_closure false"
+							 " -filter_chain_closure_halfway false"
+							 " -filter_chain_closure_distance false",
+							 default="false"),
 		   Option( 'output_res_num', 'ResidueChainVector', desc= "Numbering (and chain) of residues in output PDB or silent file",default=[]  ),
 			 Option( 'offset', 'Integer', desc= "Numbering offset for output PDB or silent file (better to use -output_res_num))",default="0"  ),
 			 Option( 'input_silent_res', 'ResidueChainVector', desc= "Input residues for silent files",default=[]  ),
@@ -6854,6 +6865,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'working_native', 'String', desc= "Native to use if we only know a fragment",default='false' ),
 		   Option( 'use_legacy_setup', 'Boolean', desc= "Use old de novo setup without residue/chain mapping",default='false' ),
 		   Option( 'cst_gap', 'Boolean', desc= "Setup up atompair constraints to keep chain ends close if they are known to be part of the same chain in full model pose",default='false' ),
+			 Option( 'output_score_frequency', 'Integer', desc= "output running score with this frequency [0 means no running output]", default='0' ),
+			 Option( 'output_score_file', 'String', desc= "output running score to this file", default='' ),
 
 		   Option_Group('db',
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
