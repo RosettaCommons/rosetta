@@ -154,6 +154,7 @@ figure_out_reasonable_rna_fold_tree(
 			new_jump = true;
 		}
 
+		// probably would be OK to also check for protein or general polymer chainbreak based on UPPER/LOWER (util function may exist somewhere?).
 		bool rna_chainbreak( false );
 		if ( pose.residue_type(i).is_RNA() && pose.residue_type(i+1).is_RNA() ) rna_chainbreak =  pose::rna::is_rna_chainbreak( pose, i );
 
@@ -164,9 +165,9 @@ figure_out_reasonable_rna_fold_tree(
 				new_jump = true;
 			} else {
 				// user may not realize that jump in numbering is confusing.
-				TR << "There appears to be a break in numbering but not chain geometry at " << i << " to " << i+1;
-				if ( pose.pdb_info() ) TR << " [in PDBinfo numbering: "  << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number(i) << " to " << pose.pdb_info()->chain(i+1) << ":" << pose.pdb_info()->number(i+1) << "]" << std::endl;
-				TR << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering, and be careful with other parts of Rosetta." << TR.Reset << std::endl;
+				//				TR << "There appears to be a break in numbering but not chain geometry at " << i << " to " << i+1;
+				//				if ( pose.pdb_info() ) TR << " [in PDBinfo numbering: "  << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number(i) << " to " << pose.pdb_info()->chain(i+1) << ":" << pose.pdb_info()->number(i+1) << "]" << std::endl;
+				//				TR << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering, and be careful with other parts of Rosetta." << TR.Reset << std::endl;
 			}
 		}
 

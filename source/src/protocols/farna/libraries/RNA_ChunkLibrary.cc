@@ -271,7 +271,6 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 
 	// connected doesn't do anything anymore...
 	FArray1D< bool > connected( pose.size(), false );
-	covered_by_chunk_ = false;
 
 	Size i_prev( 0 );
 

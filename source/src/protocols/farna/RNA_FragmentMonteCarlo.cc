@@ -490,11 +490,10 @@ RNA_FragmentMonteCarlo::do_random_moves( core::pose::Pose & pose ) {
 
 	if ( options_->dump_pdb() ) pose.dump_pdb( "add_chunks.pdb" );
 
-	//	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
-	//	if ( options_->dump_pdb() ) pose.dump_pdb( "translate_virtual.pdb" );
+	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
+	if ( options_->dump_pdb() ) pose.dump_pdb( "translate_virtual.pdb" );
 
-	Size const heat_cycles = 3 * pose.size();
-	// Size const heat_cycles = std::min( 3 * pose.size(), monte_carlo_cycles_ );
+	Size const heat_cycles = std::min( 3 * pose.size(), monte_carlo_cycles_ );
 	TR << "Heating up... " << heat_cycles << " cycles." << std::endl;
 
 	for ( Size i = 1; i <= heat_cycles; i++ ) {
