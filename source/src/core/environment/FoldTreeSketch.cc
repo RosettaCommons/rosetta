@@ -235,7 +235,7 @@ Size FoldTreeSketch::num_jumps() const {
 	return n_jumps_;
 }
 
-Size FoldTreeSketch::num_cuts() const {
+int FoldTreeSketch::num_cuts() const {
 	return n_cuts_;
 }
 

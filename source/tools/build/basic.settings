@@ -1164,13 +1164,19 @@ settings = {
 		    "w2", # More verbose warnings
                     "Wp64",
 		    # Disable Specific warinings
+		    # 188: enumerated type mixed with another type
 		    # 279: controlling expression is constant
+		    # 300: const variable requires an initializer
+		    # 488: constant is not used in declaring the parameter types of function template
+		    # 654: partial override warning
 		    # 1682: implicit conversion of a 64-bit integral type to a smaller integral type
 		    # 1684: conversion from pointer to same-sized integral type -- Boost has issues with this
 		    # 1170: invalid redeclaration of nested class -- Boost has issues with this
 		    # 2196: routine is both "inline" and "noinline" -- Boost has issues with this
 		    # 2259: non-pointer conversion from "type" to "type" may lose significant bits
-                    "wd279,1682,1684,1170,2196,2259",
+		    # 3656: variable may be used before its value is set
+		    # 3682: always error warning
+                    "wd188,279,300,488,654,1682,1684,1170,2196,2259,3656,3682",
                 ],
                 "link" : [ "lsvml", "shared-intel", ],
             },
