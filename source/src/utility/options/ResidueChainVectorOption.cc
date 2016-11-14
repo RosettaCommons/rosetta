@@ -83,12 +83,7 @@ ResidueChainVectorOption::values_of( std::string const & value_str ) const
 	std::pair< std::vector< int >, std::vector< char > > const resnum_and_chain_info = get_resnum_and_chain( value_str, string_is_ok );
 	if ( !string_is_ok ) {
 		std::cerr << "ERROR: Illegal value for resnum/chain option -" << id()
-			<< " specified: {";
-		for(Size i=1, imax=value_strings_.size(); i<=imax; ++i) {
-			std::cerr << value_strings_[i];
-			if (i < imax ) std::cerr << ", ";
-		}
-		std::cerr << std::endl;
+			<< " specified: " << value_strings_ << std::endl;
 		std::exit( EXIT_FAILURE );
 	}
 

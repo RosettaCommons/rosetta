@@ -102,7 +102,7 @@ public:
 
 	Size num_jumps() const;
 
-	int num_cuts() const;
+	Size num_cuts() const;
 
 	/// @brief randomly insert a cut using the bias passed in.
 	core::Size insert_cut( utility::vector1< Real > bias );
@@ -118,7 +118,7 @@ private:
 	utility::vector1< NodeOP > nodes_;
 
 	core::Size n_jumps_;
-	int n_cuts_;
+	core::Size n_cuts_;
 
 	class Node : public ReferenceCount {
 	public:
