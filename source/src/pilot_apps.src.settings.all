@@ -893,7 +893,7 @@ sources = {
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
 		"cenrot_jd2",
-		#"cartesian_ddg", #moved to apps/public/ddg
+		"cartesian_ddg",
 		#"general_pair_counting",
 		#"pairwise_fa_energy",
 		#"params_opt",
