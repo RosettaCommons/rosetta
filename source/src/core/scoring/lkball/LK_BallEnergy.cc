@@ -1725,6 +1725,7 @@ LK_BallEnergy::eval_atom_derivative(
 	}
 
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+	if ( !rsd1_info.has_waters() ) return;
 	scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors(idresid,atom1) );
 
 	if ( !rsd1.atom_is_hydrogen( atom1 ) ) {
