@@ -147,11 +147,14 @@ void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
 	using core::kinematics::MoveMap;
 	using core::kinematics::MoveMapOP;
 	using std::string;
-
+	
+	// number of fragments (default:0 = load all)
+	int num = tag->getOption<int>("num", 0);
+	
 	// required flags
 	// fragments, movemap
 	string fragments_file = tag->getOption<string>("fragments");
-	FragSetOP fragments = FragmentIO().read_data(fragments_file);
+	FragSetOP fragments = FragmentIO(num).read_data(fragments_file);
 
 	// initially, all backbone torsions are movable
 	MoveMapOP movable( new MoveMap() );
