@@ -37,18 +37,15 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 // core headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
+
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/Energies.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/kinematics/Edge.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -59,22 +56,12 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 
 // numeric headers
 #include <numeric/random/uniform.hh>
-#include <numeric/types.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <sstream>
 
 // c++ headers
 #include <ctime>
-#include <algorithm>  
-#include <string>       // std::string
-#include <iostream>     // std::cout
-#include <sstream>      // std::stringstream, std::stringbuf
- 
-// boost headers
-//#include <boost/iostreams/filtering_streambuf.hpp>
-//#include <boost/iostreams/copy.hpp>
 
 //#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 //#endif
@@ -172,7 +159,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 	int count = 1;
 	if ( msg.size() > max_packet_size_ )  { count = msg.size()/max_packet_size_ + 1; }
 
-	for ( int i=0; i<count; ++i ) {
+	for ( int i=0; i<count; i++ ) {
 		unsigned int last = (i+1)*max_packet_size_;
 		if ( last>msg.size() ) last = msg.size();
 		sendRAWMessage(sentCount_, i, count, &msg[i*max_packet_size_], &msg[last] );
@@ -186,7 +173,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 		}
 	}
 
-	++sentCount_;
+	sentCount_++;
 #endif
 }
 
@@ -331,7 +318,7 @@ void PyMolMover::apply( Pose const & pose)
 
 	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
 	//TR << "Sending message, Size:" << message.size() << std::endl;
-    //TR << "debug in the apply function line 335 the send that the link_ sent would be "<< message << std::endl;
+
 	link_.sendMessage(message);
 
 	if ( update_membrane_ ) send_membrane_planes(pose);
@@ -353,6 +340,48 @@ void PyMolMover::print(std::string const & message)
 	link_.sendMessage(msg);
 }
 
+void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
+{
+#ifndef  __native_client__
+	if ( !is_it_time() ) return;
+
+	std::string msg(8*energies.size(), ' ');
+	core::pose::PDBInfoCOP info = pose.pdb_info();
+	for ( unsigned int i=1; i<=energies.size(); i++ ) {
+		char chain = ' ';
+		char icode = ' ';
+		int  res = i;
+		if ( info ) {
+			chain = info->chain(i);
+			icode = info->icode(i);
+			res = info->number(i);
+		}
+		char buf[256];
+		sprintf(buf, "%c%4d%c%02x", chain, res, icode, energies[i]);
+		for ( int k=0; k<8; k++ ) msg[(i-1)*8+k] = buf[k];
+	}
+	//TR << msg << std::endl;
+
+	// Compressing message
+	std::ostringstream zmsg;
+	zlib_stream::zip_ostream zipper(zmsg, true);
+	zipper << msg;
+	zipper.zflush_finalize();
+
+	std::string name = get_PyMol_model_name(pose);
+	std::string sname = energyType;
+
+	std::string message = std::string("Ene.gzip") + char(keep_history_) \
+		+ char(name.size()) + name \
+		+ char(sname.size()) + sname + zmsg.str();
+
+	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
+	//TR << "Sending message, Size:" << message.size() << std::endl;
+
+	link_.sendMessage(message);
+#endif
+}
+
 void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_type)
 {
 #ifndef  __native_client__
@@ -362,7 +391,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 
 		utility::vector1<core::Real> e(pose.size());
 		core::Real min=1e100, max=1e-100;
-		for ( unsigned int i=1; i<=e.size(); ++i ) {
+		for ( unsigned int i=1; i<=e.size(); i++ ) {
 			if ( score_type == core::scoring::total_score ) e[i] = pose.energies().residue_total_energy(i);
 			else e[i] = pose.energies().residue_total_energies(i)[score_type];
 
@@ -372,7 +401,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 		// We not using send_RAW_Energies for efficiency reasons...
 		std::string msg(8*e.size(), ' ');
 		core::pose::PDBInfoCOP info = pose.pdb_info();
-		for ( unsigned int i=1; i<=e.size(); ++i ) {
+		for ( unsigned int i=1; i<=e.size(); i++ ) {
 			char chain = ' ';
 			char icode = ' ';
 			int  res = i;
@@ -382,10 +411,9 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 				res = info->number(i);
 			}
 			char buf[256];
-            //TR << "Energy is for the residue " << i << " is " << e[i] << std::endl;
 			e[i] = (e[i]-min)*255. / (max-min+1e-100);
 			sprintf(buf, "%c%4d%c%02x", chain, res, icode, int(e[i]));
-			for ( int k=0; k<8; ++k ) msg[(i-1)*8+k] = buf[k];
+			for ( int k=0; k<8; k++ ) msg[(i-1)*8+k] = buf[k];
 		}
 
 		// Compressing message
@@ -414,59 +442,6 @@ void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
 {
 	send_energy(pose, core::scoring::ScoreTypeManager::score_type_from_name(stype) );
 }
-
-
-void PyMolMover::label_energy(core::pose::Pose const &input_pose , std::string score_type ="total_score"){
-	//Displays <sigs> number of characters for each energy with labels on CA.
-	//&&did not find the equivalent of _get_energies
-	core::scoring::Energies energy=input_pose.energies();
-	//(this connection).send_energy();
-    send_energy( input_pose, score_type);
-}
-	
-
-void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
-{
-#ifndef  __native_client__
-	if ( !is_it_time() ) return;
-
-	std::string msg(8*energies.size(), ' ');
-	core::pose::PDBInfoCOP info = pose.pdb_info();
-	for ( unsigned int i=1; i<=energies.size(); ++i ) {
-		char chain = ' ';
-		char icode = ' ';
-		int  res = i;
-		if ( info ) {
-			chain = info->chain(i);
-			icode = info->icode(i);
-			res = info->number(i);
-		}
-		char buf[256];
-		sprintf(buf, "%c%4d%c%02x", chain, res, icode, energies[i]);
-		for ( int k=0; k<8; ++k ) msg[(i-1)*8+k] = buf[k];
-	}
-	//TR << msg << std::endl;
-
-	// Compressing message
-	std::ostringstream zmsg;
-	zlib_stream::zip_ostream zipper(zmsg, true);
-	zipper << msg;
-	zipper.zflush_finalize();
-
-	std::string name = get_PyMol_model_name(pose);
-	std::string sname = energyType;
-
-	std::string message = std::string("Ene.gzip") + char(keep_history_) \
-		+ char(name.size()) + name \
-		+ char(sname.size()) + sname + zmsg.str();
-
-	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
-	//TR << "Sending message, Size:" << message.size() << std::endl;
-
-	link_.sendMessage(message);
-#endif
-}
-
 
 /// @brief Send Membrane Planes to PyMol
 /// @details If pose is a membrane pose
@@ -575,330 +550,6 @@ void PyMolMover::show(std::ostream & output) const
 	output << "Update interval:       " << update_interval_ << std::endl;
 	output << "Link:                  " << link_ << std::endl;
 }
-	
-
-/// Xiyao's Code
-/*
-###########################################################################
-# port "Luxury" methods in python code into c++
-*/	
-
-		
-void 
-PyMolMover::send_any( std::string ptype, core::pose::Pose const & pose, utility::vector1< std::string > data, core::Size  size /* = 6 */ ){
-
-    /// ptype is a tag for the type of data
-    /// pose is the pose in PyMOL (the size what matters)
-    /// data is a vector of strings, same size as pose
-    std::ostringstream to_send; 
-    to_send << std::to_string( size );
-    
-    core::pose::PDBInfoCOP info( pose.pdb_info() );
-
-    for (core::Size i=1; i<=pose.size(); ++i) {
-        std::ostringstream pdb;
-        pdb << std::right << std::setw(6); // set formatting
-        
-        if( info != nullptr  && info->nres() != 0) {
-            std::string pdb_resi_info = std::to_string(info->number(i)) + info->icode(i) + info->chain(i);
-            pdb << pdb_resi_info;
-        } else {
-            pdb << std::to_string(i) + " A";
-
-        }
-       
-        //proper formatting so 0 doesn't cast to 0.0 and is less than size
-        std::ostringstream dat;
-        dat << std::right << std::setw(size);
-
-        if (data[i] == "0" && size > 2 ){
-             dat << data[i];
-        } else {
-             dat << data[i];
-        }
-        to_send << pdb.str() << dat.str();
-    }
-
-    std::string name = get_PyMol_model_name(pose);
-    
-
-    //compressing message
-    std::ostringstream msgz;
-    zlib_stream::zip_ostream zipper( msgz, true);
-    //TR << "the ptype is \n" << ptype << std::endl;
-    //TR << "the to send message  is \n" << to_send.str() << std::endl;
-    zipper << to_send.str();
-    
-    zipper.zflush_finalize();
-    std::string message = ptype + char(keep_history_) \
-        + char(name.size()) + name \
-        + msgz.str();
-    // ptype << (char)keep_history() << (char)name.size() << name << to_send.rdbuf();
-    link_.sendMessage( message );
-}
-
-
-
-//H-bonds.
-//Sends list of hydrogen bonds and displays them in PyMOL.
-//Makes use of PyMOL's "distance" function
-void 
-PyMolMover::send_hbonds( core::pose::Pose const & pose){
-    
-    // Check that the energies are updated.
-    if(!pose.energies().energies_updated() ){
-        //TR << "PyMOL_Mover::send_hbonds: Energy is not updated! please score the pose first!" << std::endl;
-    }
-    
-    // Get the H-bonds.
-    core::scoring::hbonds::HBondSet hbset;
-    core::scoring::hbonds::fill_hbond_set(pose,false, hbset);
-    
-    std::stringstream to_send;
-    to_send << std::right << std::setw(5) << std::to_string(hbset.nhbonds());
-
-    //Get the energies.
-    core::pose::PDBInfoCOP info( pose.pdb_info() );
-    utility::vector1< numeric::Real> energy_list;
-    for(core::Size i = 1; i <= hbset.nhbonds(); ++i) {
-        energy_list.push_back(hbset.hbond(i).energy());
-    }
-
-    if (!energy_list.empty()){
-        numeric::Real max_e = *std::max_element(energy_list.begin(), energy_list.end());
-        numeric::Real min_e = *std::min_element(energy_list.begin(), energy_list.end());
-        
-        for(core::Size i = 1; i <= hbset.nhbonds(); ++i) {
-            core::scoring::hbonds::HBond hb = hbset.hbond(i);
-            std::string  accatm = pose.residue(hb.acc_res()).atom_name(hb.acc_atm());
-            std::string  donatm = pose.residue(hb.don_res()).atom_name(hb.don_hatm());
-            
-            // Each H-bond is 6 + 4 + 6 + 4 + 2 = 22 chars.
-            if ( info != nullptr && info->nres() != 0){
-                // acc codes for acceptor atom of H bonds
-                std::string acc_res = std::to_string(info->number(hb.acc_res()));
-                char acc_icode = info->icode(hb.acc_res());
-                char acc_chain = info->chain(hb.acc_res());
-                
-                // don codes for donor atom of H bonds
-                std::string don_res = std::to_string(info->number(hb.don_res()));
-                char don_icode = info->icode(hb.don_res());
-                char don_chain = info->chain(hb.don_res());
-                std::stringstream ss1, ss2;
-                std::string acc_info = acc_res + acc_icode + acc_chain;
-                std::string don_info = don_res + don_icode + don_chain;
-                ss1 << std::right << std::setw(6) << acc_info;
-                ss2 << std::right << std::setw(6) << don_info;
-
-                // Compressing energy value. Format specifier %02x would print at least 2 digit and prepend 0 if there's less than 2, x means number is int.
-                char buf[256];
-                sprintf(buf, "%02x", int((energy_list[i] - min_e)*255./(max_e - min_e)));
-                to_send  << ss1.str() << accatm << ss2.str() << donatm << buf;
-            }else{
-                
-                std::stringstream ss1, ss2, out_energy;
-                ss1 << std::right << std::setw(5)<<std::to_string(hb.acc_res());
-                ss2 << std::right << std::setw(5)<<std::to_string(hb.don_res());
-                out_energy << std::hex << std::setw(5)<< std::to_string(hb.energy());
-                to_send << ss1.str() << accatm << ss2.str() << donatm << out_energy.str();
-            }
-        }
-        //TR << to_send.str() << std::endl;
-
-        // Compressing message
-        std::ostringstream zmsg;
-        zlib_stream::zip_ostream zipper(zmsg, true);
-        zipper << to_send.str();
-        zipper.zflush_finalize();
-        std::string name = get_PyMol_model_name( pose);
-        std::string message = std::string("hbd.gzip") \
-               + char(keep_history_) \
-               + char(name.size()) \
-               + name \
-               + zmsg.str();
-        link_.sendMessage( message);
-    }else{
-        //TR<< "No H-bonds could be determined for your pose!"<< std::endl;
-    }
-}
-
-
-
-///@brief Returns a list of energies of type energy_type from the pose.
-utility::vector1< numeric::Real > get_energies( core::pose::Pose const & pose, core::scoring::ScoreType energy_type ) {
-    
-    utility::vector1< numeric::Real > energies;
-    
-    // Check to make sure the energies are available.
-    if ( !pose.energies().energies_updated()) {
-        //TR << "PyMOL_Mover::send_specific_energy:\n Energy is not updated; please score the pose first!" << std::endl;
-    }
-    
-    for ( int i = 1; i <= int(pose.size()); ++i ) {
-        energies.push_back(pose.energies().residue_total_energies(i)[energy_type]);
-    }
-    
-    return energies;
-}
-
-
-	
-/*
-Secondary-structure assignment using DSSP.
-Sends the DSSP assignment for pose to PyMOL and shows as a cartoon.
-Useful for when you are making moves to a pose that change secondary
-structure, and you wish for PyMOL to display the changes.
-*/
-
-void  
-PyMolMover::send_ss(core::pose::Pose &pose, std::string ss = ""){
-
-    // Get ss.
-    utility::vector1< std::string > ssv;
-    if (ss.empty()) {
-        core::scoring::dssp::Dssp dssp = core::scoring::dssp::Dssp(pose);
-        dssp.insert_ss_into_pose(pose);
-        std::string dssp_str = dssp.get_dssp_secstruct();
-        //or std::string const secstruct = get_secstruct( pose );?
-        //ssv.push_back(pose.secstruct());
-        for(char& c : dssp_str) {
-            std::string s(1, c);
-            ssv.push_back(s);
-        }
-    } else {
-    for(char& c : ss) {
-        std::string s(1, c);
-        ssv.push_back(s);
-    }
-    }
-    send_any(" ss.gzip", pose, ssv, 1);
-}
-
-	
-	
-//Polar identity per residue.
-//Colors polar residues red and nonpolar residues blue.
-
-void  
-PyMolMover::send_polars(core::pose::Pose const &pose) {
-
-    // Send 1 or 0, if polar or not.
-    utility::vector1< std::string > data;
-
-    // Get a string coding whether each residue is polar or not
-    for(int i = 1; i <= int(pose.size()); ++i) {
-        data.push_back(std::to_string(int(pose.residue_type(i).is_polar())));
-   }
-    
-    send_any("pol.gzip", pose, data, 1);
-}
-
-	
-
-//MoveMap DOF info per residue in pose.
-
-void 
-PyMolMover::send_movemap( core::pose::Pose const &pose, core::kinematics::MoveMap const &movemap) {
-
-    //Colors movable regions green and non-movable regions red.
-    utility::vector1< std::string > data;
-    for (core::Size i = 1; i <= pose.size(); i++){
-        data.push_back( "00");}
-    for (auto i = data.begin(); i != data.end(); ++i) 
-          std::cout << *i << ' ';
-    for (core::Size i=1 ; i <=pose.size(); ++ i){
-        int num = 11 + int(movemap.get_bb(i)) * 10 + int(movemap.get_chi(i));
-        data[i] = std::to_string(num);
-    }
-    send_any("mm1.gzip", pose, data, 2);
-}
-	
-	
-
-/*
- Colors the pose by fold tree information.
- Cutpoints (e.g., the C-termini of protein chains) are colored red.
- Jump points are colored orange. (Unfortunately, no indication of which
- jump point connects to which jump point is given at this time.)
- Loops are colored an assortment of colors other than red or orange.
- All other residues are colored gray.
- See also:
- PyMOL_Mover.view_foldtree_diagram()
-*/
-
-void 
-PyMolMover::send_foldtree(core::pose::Pose const &pose, core::kinematics::FoldTree const &foldtree) {
-
-	//If not sent, use pose's FoldTree.
-	utility::vector1< std::string > data;
-    for( core::Size i=1; i<= pose.size(); i++){
-        data.push_back("00");}
-
-        //# Remove jump data for identification later.
-        core::Size njump = foldtree.num_jump();
-        std::string starts = std::string( njump,'0');
-        std::string stops = std::string( njump,'0');
-        
-        //in_loops = []
-        utility::vector1<int> in_loops;
-        
-    //List of start and stop of jump edges, i.e., loops.
-	//for x in range(0, njump):
-	for(core::Size x =0; x< njump; x++) {
-        //TR << "this is in for loop and x is now " << x << std::endl;
-		core::kinematics::Edge loop = foldtree.jump_edge(x + 1);
-		Size s1 = loop.start();
-		Size s2 = loop.stop();
-		if (s1 < s2) 
-        {
-			starts[x] = s1;
-			stops[x] = s2;
-		}else{
-			starts[x] = s2;
-			stops[x] = s1;
-		}
-	}
-   
-    //Each residue is either a jump point, a cutpoint, in a loop, or else in a regular edge of the fold tree.
-	//for i in xrange(1, pose.total_residue() + 1):
-    for(core::Size i =1; i<= pose.size(); i++) {
-
-        // Keeps the identity relative to the jump, not entry.
-        if (foldtree.is_jump_point(i)) { // # Jump point residue: color 1.
-            data[i]="1";
-           
-            // After this point, we will either be entering a loop or leaving a loop.
-            for (int j =0; j< int(starts.length()); j++) {
-
-                //j in range(0 , len(starts)):
-                if (i == core::Size(starts[j])) {
-                    in_loops.push_back(j + 1);
-                } else if (i == core::Size(stops[j])) {
-                    in_loops.erase(std::remove(in_loops.begin(), in_loops.end(), j+1)); 
-                } 
-            }
-        } else if (foldtree.is_cutpoint(i)) { 
-
-            //Cutpoint residue: color 0
-            data[i] = "0";
-        } else if ( !in_loops.empty()) { 
-
-            //Residue in a loop: color varies.
-            /* Up to 7 loops can easily be viewed.
-             colors for more loops.) */
-             data[i] = std::to_string(2 + *std::max_element(in_loops.begin(),in_loops.end()));
-
-        } else{ 
-            //All other residues: color 2
-            data[i] = "2";
-        }
-    }
-     
-    send_any("ft1.gzip", pose, data, 1);
-}
-		
-		
-/// End Xiyao's Code
 
 std::ostream &
 operator<<(std::ostream & output, PyMolMover const & mover)
@@ -1084,4 +735,3 @@ PyMolMover::clone() const
 } // protocols
 
 #endif // INCLUDED_protocols_moves_PyMolMover_CC
-
