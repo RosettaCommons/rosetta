@@ -17,7 +17,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -122,7 +122,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 
 		////////////////////////////////////////////////////////////////////////////

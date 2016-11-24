@@ -103,7 +103,7 @@
 
 #include <basic/database/open.hh>
 
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
@@ -1977,7 +1977,7 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		protocols::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 		TR.flush();

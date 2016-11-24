@@ -24,7 +24,7 @@
 
 //Core
 #include <core/pose/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 //Protocols
 #include <protocols/wum/WorkUnitList.hh>
@@ -679,7 +679,7 @@ main( int argc, char * argv [] )
 	option.add( BundlePairRmsdCalculator::max_rmsd, "Maximum allowed RMSD to be written to the DB");
 
 	// initialize core
-	core::init::init(argc, argv);
+	devel::init(argc, argv);
 
 	// Initialize DB
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );

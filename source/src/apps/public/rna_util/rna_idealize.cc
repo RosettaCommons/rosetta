@@ -16,7 +16,7 @@
 #include <basic/options/option.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
 using namespace basic::options;
@@ -46,7 +46,7 @@ main ( int argc, char * argv [] ) {
 		NEW_OPT( noise, "add noise to the initial coordinates, providing a useful reason to run this more than once", false );
 		NEW_OPT( final_minimize, "do a final, unrestrained minimize", false );
 
-		core::init::init( argc, argv );
+		devel::init( argc, argv );
 
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {

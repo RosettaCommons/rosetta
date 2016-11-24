@@ -9,7 +9,7 @@
 
 #include <protocols/toolbox/KCluster.hh>
 
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	try {
 		NEW_OPT(bb_cluster::cluster_radius, "radius for cluster",0.8);
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		//read a list of pdbs
 		Size input_pdb_size=basic::options::option[ basic::options::OptionKeys::in::file::s ]().size();

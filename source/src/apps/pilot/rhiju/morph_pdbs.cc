@@ -16,7 +16,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/copydofs/CopyDofsInfo.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/simple_moves/CopyDofMover.hh>
 #include <protocols/viewer/viewers.hh>
@@ -189,7 +189,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -27,10 +27,10 @@
 
 
 #include <core/types.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 // avoid having to create the static protocol movers
-//#include <protocols/init/init.hh>
+//#include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
@@ -1335,10 +1335,10 @@ int main(int argc, char** argv) {
 		// create boinc object
 		/*protocols::boinc::Boinc boinc_wu =*/ protocols::boinc::Boinc::instance();
 
-		core::init::init( argc, argv );
+		devel::init( argc, argv );
 
 		// avoid having to create the static protocol movers
-		//protocols::init::init( argc, argv );
+		//devel::init( argc, argv );
 
 		// override database option and set to current directory
 		option[in::path::database].value("minirosetta_database");

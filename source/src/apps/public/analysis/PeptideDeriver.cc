@@ -26,7 +26,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/peptide_deriver.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/NullMover.hh>
@@ -79,7 +79,7 @@ main( int argc, char * argv[] ) {
 
 
 		//setup random numbers and options
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		// by default, enable jump generation when missing density
 		// this prevents Peptiderive from deriving discontinuous peptides

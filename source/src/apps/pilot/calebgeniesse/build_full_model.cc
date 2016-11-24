@@ -30,7 +30,7 @@
 
 // core
 #include <core/types.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -370,7 +370,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( cluster_radius, "cluster radius (clustering off by default)", 0.0 );
 
 		// setup
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );

@@ -11,7 +11,7 @@
 /// @brief Legacy version of recces app, to be merged with thermal_sampler by December 2016
 
 // libRosetta headers
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -445,7 +445,7 @@ main( int argc, char * argv [] )
 		"Number of intermediate conformations to be dumped", 0 );
 
 	try {
-		core::init::init ( argc, argv );
+		devel::init ( argc, argv );
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

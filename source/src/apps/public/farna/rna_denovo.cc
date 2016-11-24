@@ -17,7 +17,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <utility/vector1.hh>
 
 //RNA stuff.
@@ -164,7 +164,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for proteins for vdw screen

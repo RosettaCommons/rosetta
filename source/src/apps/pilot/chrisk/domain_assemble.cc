@@ -85,7 +85,7 @@
 #include <basic/Tracer.hh>
 
 //protocols library (Movers)
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
@@ -875,7 +875,7 @@ main( int argc, char * argv [] )
 	option.add( chrisk::design_radius, "radius around linker to design" ).def( 5.0 );
 	option.add( chrisk::n_add_linker, "n additional linker res to add" ).def( 0 );
 
-	protocols::init::init(argc, argv);
+	devel::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
 

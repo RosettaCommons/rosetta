@@ -13,7 +13,7 @@
 
 
 // Headers
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -155,7 +155,7 @@ int main( int argc, char* argv[] )
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	protocols::init::init( argc, argv);
+	devel::init( argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new AbInitio_MPI);
 	TR << "************************d**o**n**e**************************************" << std::endl;

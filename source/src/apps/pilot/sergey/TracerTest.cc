@@ -12,7 +12,7 @@
 /// @brief
 /// @author Sergey Lyskov
 
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <devel/init.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -217,8 +217,8 @@ void test_Tracer()
 
 void test_Random(void)
 {
-	//core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
-	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	//devel::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
+	devel::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	for(int i=0; i<100; i++) {
 		double r = numeric::random::uniform();
 		TR_.precision(25);

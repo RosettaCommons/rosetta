@@ -12,7 +12,7 @@
 /// @details
 ///	   use -help to see options
 ///    usage of class:
-///    call AbrelaxApplication::register_options() before core::init::init
+///    call AbrelaxApplication::register_options() before devel::init
 ///    in main program make instance and call run() method.
 ///
 /// @author Oliver Lange

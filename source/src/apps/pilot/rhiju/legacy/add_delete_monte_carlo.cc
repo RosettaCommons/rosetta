@@ -43,7 +43,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -522,7 +522,7 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
   // setup
   ////////////////////////////////////////////////////////////////////////////
-  core::init::init(argc, argv);
+  devel::init(argc, argv);
 
 
   ////////////////////////////////////////////////////////////////////////////

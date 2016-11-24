@@ -26,7 +26,7 @@
 #include <utility/string_util.hh>
 
 //Core
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 
 //Numeric
@@ -400,7 +400,7 @@ main( int argc, char * argv [] )
 	using namespace ObjexxFCL;
 	
 	// initialize core
-	core::init::init(argc, argv);
+	devel::init(argc, argv);
 	
 	// Initialize DB
 	utility::sql_database::sessionOP db_session(

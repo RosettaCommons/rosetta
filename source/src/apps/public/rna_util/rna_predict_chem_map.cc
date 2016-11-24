@@ -32,7 +32,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/io/rna/RDAT.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -326,7 +326,7 @@ main( int argc, char * argv [] )
 	try {
 		using namespace basic::options;
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 

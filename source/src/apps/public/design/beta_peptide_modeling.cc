@@ -53,7 +53,7 @@
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/vector1.hh>
@@ -481,7 +481,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

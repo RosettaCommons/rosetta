@@ -13,7 +13,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -111,7 +111,7 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 

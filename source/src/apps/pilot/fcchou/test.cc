@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/stepwise/sampler/MC_OneTorsion.hh>
 
 // C++ headers
@@ -46,7 +46,7 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace core;
-	core::init::init ( argc, argv );
+	devel::init ( argc, argv );
 	run();
   return 0;
 }

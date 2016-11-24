@@ -47,7 +47,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -441,7 +441,7 @@ main( int argc, char * argv [] )
 	try {
 		using namespace basic::options;
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 

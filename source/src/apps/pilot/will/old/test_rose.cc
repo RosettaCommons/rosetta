@@ -3,7 +3,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
@@ -42,7 +42,7 @@ int main(int argv, char **argc){
 
   try {
 
-	core::init::init(argv,argc);
+	devel::init(argv,argc);
 
 	for(core::Size i = 1; i <= 100000; ++i){
 		X I,x;

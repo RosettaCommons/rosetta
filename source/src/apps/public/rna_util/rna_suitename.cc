@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/rna/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <utility/vector1.hh>
@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

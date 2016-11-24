@@ -16,7 +16,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -226,7 +226,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::rna::data_file );
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 

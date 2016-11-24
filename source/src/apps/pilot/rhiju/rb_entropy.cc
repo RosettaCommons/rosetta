@@ -38,7 +38,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/farna/thermal_sampling/util.hh>
@@ -530,7 +530,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {

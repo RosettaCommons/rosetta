@@ -4,7 +4,7 @@
 #include <core/init/init.hh>
 #include <vector>
 #include <string>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -14,7 +14,7 @@ main( int argc, char * argv [] )
 	try {
 		using namespace protocols;
 		using namespace protocols::features;
-		protocols::init::init(argc,argv);
+		devel::init(argc,argv);
 		protocols::features::FeaturesReporterFactory *factory = FeaturesReporterFactory::get_instance();
 		utility::vector1<std::string> all_features = factory->get_all_features_names();
 		for ( core::Size i=1; i<=all_features.size(); ++i ) {

@@ -21,7 +21,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -366,7 +366,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( basic::options::OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

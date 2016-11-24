@@ -34,6 +34,7 @@
 #include <protocols/viewer/visualize.hh>
 
 #include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pdb_writer.hh>

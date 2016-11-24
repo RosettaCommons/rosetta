@@ -31,7 +31,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
@@ -214,7 +214,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );

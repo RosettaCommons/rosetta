@@ -31,7 +31,7 @@
 #include <core/pose/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
@@ -303,7 +303,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

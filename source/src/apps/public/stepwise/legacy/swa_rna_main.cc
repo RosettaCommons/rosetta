@@ -45,7 +45,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 
 #include <utility/file/file_sys_util.hh> //Add by Parin on May 04, 2011.
@@ -936,7 +936,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init( argc, argv );
+		devel::init( argc, argv );
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

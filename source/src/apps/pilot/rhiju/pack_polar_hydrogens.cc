@@ -13,7 +13,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
@@ -92,7 +92,7 @@ main( int argc, char * argv [] )
 	try {
 
 		utility::vector1< core::Size > blank_size_vector;
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

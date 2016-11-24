@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -420,7 +420,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( dump_pdb, "Dump pdb files", false );
 
 	try {
-		core::init::init ( argc, argv );
+		devel::init ( argc, argv );
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

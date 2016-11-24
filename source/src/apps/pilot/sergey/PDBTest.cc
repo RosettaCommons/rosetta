@@ -55,8 +55,8 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
-#include <protocols/init/init.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
+#include <devel/init.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -161,8 +161,8 @@ int main( int argc, char * argv [] )
 	using namespace core;
 
 	//devel::init(argc, argv);
-	//protocols::init::init(argc, argv);
-	core::init::init(argc, argv);
+	//devel::init(argc, argv);
+	devel::init(argc, argv);
 
 	{
 		core::pose::Pose pose;

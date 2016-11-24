@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -193,7 +193,7 @@ main( int argc, char * argv [] )
 {
 	try {
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -18,7 +18,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/util.hh>
@@ -32,7 +32,7 @@
 //silly using/typedef
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 //#include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
   using namespace basic::options::OptionKeys;
 
   // init option system
-  core::init::init(argc, argv);
+  devel::init(argc, argv);
 
   // Make a sequence move to hold our pack rotamers mover and relax mover
   protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;

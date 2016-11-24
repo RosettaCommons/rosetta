@@ -44,11 +44,11 @@
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #endif
 
 #ifdef WIN32
-#include <protocols/init/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #endif
@@ -132,7 +132,7 @@ main( int argc, char * argv [] )
 
 #endif
 
-		// has to be called before core::init::init. Which is really stupid.
+		// has to be called before devel::init. Which is really stupid.
 #ifdef BOINC // BOINC STUFF
 	std::cerr << "Registering options.. " << std::endl;std::cerr.flush();
 #endif
@@ -161,10 +161,10 @@ main( int argc, char * argv [] )
 		//#endif
 
 #ifdef BOINC
-	protocols::init::init( argc, argv );
+	devel::init( argc, argv );
 #endif
 #ifdef WIN32
-		protocols::init::init( argc, argv );
+		devel::init( argc, argv );
 #endif
 
 #ifdef BOINC // BOINC STUFF

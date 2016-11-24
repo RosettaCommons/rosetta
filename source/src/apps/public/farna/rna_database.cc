@@ -34,7 +34,7 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 
@@ -685,7 +685,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 
 		////////////////////////////////////////////////////////////////////////////

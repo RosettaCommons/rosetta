@@ -10,7 +10,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
@@ -232,7 +232,7 @@ main( int argc, char * argv [] )
 {
 	try {
 
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		JDmoverOP jd_mover( new JDmover );
 

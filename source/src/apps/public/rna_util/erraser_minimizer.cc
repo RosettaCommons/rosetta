@@ -43,7 +43,7 @@
 
 #include <protocols/viewer/viewers.hh>
 
-#include <core/init/init.hh>
+#include <devel/init.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -85,7 +85,7 @@ my_main ( void* ) {
 int
 main ( int argc, char * argv [] ) {
 	try {
-		core::init::init( argc, argv );
+		devel::init( argc, argv );
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

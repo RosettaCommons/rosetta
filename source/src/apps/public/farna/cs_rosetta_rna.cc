@@ -30,7 +30,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/init/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/sequence/Sequence.hh>
 
@@ -380,7 +380,7 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		// setup
 		////////////////////////////////////////////////////////////////////////////
-		core::init::init(argc, argv);
+		devel::init(argc, argv);
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
