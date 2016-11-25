@@ -35,6 +35,7 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.CoordinateConstraintGenerator" );
 
@@ -354,6 +355,35 @@ CoordinateConstraintGenerator::align_reference_pose(
 	core::sequence::calpha_superimpose_with_mapping( reference, input_pose, rev_seq_map );
 }
 
+void
+CoordinateConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoordinateConstraintGenerator::provide_xml_schema( xsd );
+}
+
+void
+CoordinateConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+
+		+ XMLSchemaAttribute::attribute_w_default( "native", xsct_rosetta_bool, "Constrain to native coordinates", "false" )
+		+ XMLSchemaAttribute( "ca_only", xsct_rosetta_bool, "Only apply constraints to alpha carbons" )
+		+ XMLSchemaAttribute( "sidechain", xsct_rosetta_bool, "Apply constraints to side chain atoms" )
+		+ XMLSchemaAttribute( "sd", xsct_real, "Standard deviation for constraints" )
+		+ XMLSchemaAttribute( "ambiguous_hnq", xsct_rosetta_bool, "If true, these residues could be flipped without affecting the score" )
+		+ XMLSchemaAttribute( "bounded", xsct_rosetta_bool, "Should we use a bounded function for this constraint?" )
+		+ XMLSchemaAttribute( "bounded_width", xsct_real, "Width of bounded function if using" )
+		+ XMLSchemaAttribute( "align_reference", xsct_rosetta_bool, "Align reference pose to constraint target pose?" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "Selector specifying residues to constrain" );
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Adds coordinate constraints to the specified residues",
+		attlist );
+}
 
 } //protocols
 } //constraint_generator

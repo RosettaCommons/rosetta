@@ -82,6 +82,9 @@
 #include <boost/algorithm/string.hpp>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.AntibodyDesignMover");
 
@@ -135,21 +138,6 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
 }
 
 AntibodyDesignMover::~AntibodyDesignMover(){}
-
-protocols::moves::MoverOP
-AntibodyDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyDesignMover );
-}
-
-std::string
-AntibodyDesignMoverCreator::keyname() const {
-	return AntibodyDesignMoverCreator::mover_name();
-}
-
-std::string
-AntibodyDesignMoverCreator::mover_name(){
-	return "AntibodyDesignMover";
-}
 
 void
 AntibodyDesignMover::set_defaults(){
@@ -286,7 +274,7 @@ AntibodyDesignMover::parse_my_tag(
 	inner_cycles_ = tag->getOption< core::Size >("inner_cycles", inner_cycles_);
 
 	outer_kt_ = tag->getOption< core::Real >("outer_kt", outer_kt_);
-	inner_kt_ = tag->getOption< core::Real >("outer_kt", outer_kt_);
+	inner_kt_ = tag->getOption< core::Real >("inner_kt", inner_kt_);
 
 	num_top_designs_ = tag->getOption< core::Size >("top_designs", num_top_designs_);
 
@@ -1369,10 +1357,10 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 
 ////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string
-AntibodyDesignMover::get_name() const{
-	return "AntibodyDesignMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyDesignMover::get_name() const{
+// XRW TEMP  return "AntibodyDesignMover";
+// XRW TEMP }
 
 void
 AntibodyDesignMover::show(std::ostream & output) const{
@@ -1482,6 +1470,164 @@ AntibodyDesignMover::print_str_vec(std::string const name, utility::vector1<std:
 		output<< "/// "<< name <<" "<<utility::to_string(vec)<<std::endl;
 	}
 }
+
+std::string AntibodyDesignMover::get_name() const {
+	return mover_name();
+}
+
+std::string AntibodyDesignMover::mover_name() {
+	return "AntibodyDesignMover";
+}
+
+void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	using namespace basic::options;
+
+	AttributeList attlist;
+
+	attributes_for_get_ab_design_min_scorefxn(attlist);
+	attributes_for_get_ab_design_global_scorefxn(attlist);
+
+	XMLSchemaRestriction ABcdr_enum;
+	ABcdr_enum.name("ABcdr_definitions");
+	ABcdr_enum.base_type(xs_string);
+	AntibodyEnumManager ABenum_manager;
+	for ( auto& cdr_def : ABenum_manager.get_recognized_cdr_definitions() ) {
+		ABcdr_enum.add_restriction(xsr_enumeration, cdr_def);
+	}
+	xsd.add_top_level_element(ABcdr_enum);
+
+	attlist + XMLSchemaAttribute(
+		"design_cdrs", "ABcdr_definitions",
+		"CDR regions to be designed");
+
+	attlist + XMLSchemaAttribute(
+		"instruction_file", xs_string,
+		"Path to the CDR instruction file (see application documentation for format)");
+	attlist + XMLSchemaAttribute(
+		"instructions_file", xs_string,
+		"used if instruction_file attribute is not specified");
+	attlist + XMLSchemaAttribute(
+		"cdr_instructions_file", xs_string,
+		"used if instructions_file attribute is not specified");
+
+	XMLSchemaRestriction ABdesign_enum;
+	ABdesign_enum.name("ABdesign_protocols");
+	ABdesign_enum.base_type(xs_string);
+	AntibodyDesignEnumManager ABdesign_enum_manager;
+	for ( auto& protocol : ABdesign_enum_manager.get_recognized_design_protocols() ) {
+		ABdesign_enum.add_restriction(xsr_enumeration, protocol);
+	}
+	xsd.add_top_level_element(ABdesign_enum);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"design_protocol", "ABdesign_protocols",
+		"Sets the design protocol (see app documentation for more information)",
+		"GENERALIZED_MONTE_CARLO");
+
+	attlist + XMLSchemaAttribute(
+		"interface_dis", xsct_real,
+		"Set the interface detection distance");
+
+	attlist + XMLSchemaAttribute(
+		"neighbor_dis", xsct_real,
+		"Set the neighbor detection distance");
+
+	attlist + XMLSchemaAttribute(
+		"outer_cycles", xsct_non_negative_integer,
+		"Set the number of outer cycles");
+
+	attlist + XMLSchemaAttribute(
+		"inner_cycles", xsct_non_negative_integer,
+		"Set the number of inner (minimization) cycles");
+
+	attlist + XMLSchemaAttribute(
+		"outer_kt", xsct_real,
+		"Temperature to use for outer cycle");
+
+	attlist + XMLSchemaAttribute(
+		"inner_kt", xsct_real,
+		"Temperature to use for inner cycle");
+
+	attlist + XMLSchemaAttribute(
+		"top_designs", xsct_non_negative_integer,
+		"Number of top designs to keep");
+
+	attlist + XMLSchemaAttribute(
+		"do_dock", xsct_rosetta_bool,
+		"Run RosettaDock during the inner cycles? Significantly increases run time");
+
+	attlist + XMLSchemaAttribute(
+		"do_rb_min", xsct_rosetta_bool,
+		"Perform rigid body minimization during the inner cycles?");
+
+	attlist + XMLSchemaAttribute(
+		"dock_cycles", xsct_non_negative_integer,
+		"Change the number of time the dock protocol is run");
+
+	attlist + XMLSchemaAttribute(
+		"dock_min_dock", xsct_rosetta_bool,
+		"Perform a quick high resolution dock after minimization?");
+
+	attlist + XMLSchemaAttribute(
+		"benchmark", xsct_rosetta_bool,
+		"Start with random CDRs from the antibody design database for any undergoing GraftDesign");
+
+	attlist + XMLSchemaAttribute(
+		"use_light_chain_type", xsct_rosetta_bool,
+		"Type of light chain to use when selecting CDR set");
+
+	attlist + XMLSchemaAttribute(
+		"adapt_graft", xsct_rosetta_bool,
+		"Adapt graft closure?");
+
+	attlist + XMLSchemaAttribute(
+		"enable_adapt_graft_cartesian", xsct_rosetta_bool,
+		"Use cartesian minimization in adapt graft");
+
+	attlist + XMLSchemaAttribute(
+		"idealize_graft_cdrs", xsct_rosetta_bool,
+		"Idealize graft before inserting?");
+
+	attlist + XMLSchemaAttribute(
+		"add_graft_log_to_pdb", xsct_rosetta_bool,
+		"Add a full grafting log to the pose including origin PDBs, clusters, etc.");
+
+	attlist + XMLSchemaAttribute(
+		"mutate_framework_for_cluster", xsct_rosetta_bool,
+		"Should we add framework mutations for the specified cdr?");
+
+	attlist + XMLSchemaAttribute(
+		"use_epitope_csts", xsct_rosetta_bool,
+		"Use the ParatopeEpitopeSiteConstraintMover during design instead of just the ParatopeSiteConstraintMover");
+
+	attlist + XMLSchemaAttribute(
+		"epitope_residues", xs_string,
+		"Use these residues as the epitope residues (auto-detects by default )");
+
+	attributes_for_get_cdr_bool_from_tag(attlist, "paratope_cdrs", "Specifically set the paratope as these cdrs.");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Part of the RosettaAntibody and RosettaAntibodyDesign (RAbD) Framework. Runs the full Rosetta Antibody Design protocol.",
+		attlist );
+}
+
+std::string AntibodyDesignMoverCreator::keyname() const {
+	return AntibodyDesignMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AntibodyDesignMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AntibodyDesignMover );
+}
+
+void AntibodyDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AntibodyDesignMover::provide_xml_schema( xsd );
+}
+
 
 } //design
 } //antibody

@@ -36,31 +36,34 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static basic::Tracer TR("protocols.simple_moves.FindConsensusSequence");
 
-std::string
-FindConsensusSequenceCreator::keyname() const
-{
-	return FindConsensusSequenceCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FindConsensusSequenceCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FindConsensusSequence::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-FindConsensusSequenceCreator::create_mover() const {
-	return FindConsensusSequenceOP( new FindConsensusSequence );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP FindConsensusSequenceCreator::create_mover() const {
+// XRW TEMP  return FindConsensusSequenceOP( new FindConsensusSequence );
+// XRW TEMP }
 
-std::string
-FindConsensusSequenceCreator::mover_name()
-{
-	return "FindConsensusSequence";
-}
+// XRW TEMP std::string
+// XRW TEMP FindConsensusSequence::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FindConsensusSequence";
+// XRW TEMP }
 
 FindConsensusSequence::FindConsensusSequence() :
-	moves::VectorPoseMover( FindConsensusSequenceCreator::mover_name() ),
+	moves::VectorPoseMover( FindConsensusSequence::mover_name() ),
 	sfxn_( core::scoring::get_score_function() )
 {}
 
@@ -246,9 +249,9 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 	}
 }
 
-std::string FindConsensusSequence::get_name() const {
-	return "FindConsensusSequence";
-}
+// XRW TEMP std::string FindConsensusSequence::get_name() const {
+// XRW TEMP  return "FindConsensusSequence";
+// XRW TEMP }
 
 core::scoring::ScoreFunctionOP FindConsensusSequence::score_function() const {
 	return sfxn_;
@@ -269,6 +272,47 @@ void FindConsensusSequence::task_factory( core::pack::task::TaskFactoryOP task_f
 void FindConsensusSequence::resfiles( utility::vector1< std::string > & resfiles ) {
 	resfiles_ = resfiles;
 }
+
+std::string FindConsensusSequence::get_name() const {
+	return mover_name();
+}
+
+std::string FindConsensusSequence::mover_name() {
+	return "FindConsensusSequence";
+}
+
+void FindConsensusSequence::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function to use when evaluating best amino acids at each position" )
+		+ XMLSchemaAttribute( "task_operations", xs_string, "Specifies behavior of the packer when substituting different amino acids and repacking." )
+		+ XMLSchemaAttribute( "resfiles", xs_string,
+		"A list of resfiles to define designable and repackable residues"
+		"for all states in multistate design. Multiple resfiles can be used"
+		"for multiple states - in this case the first resfile in the tag"
+		"will be applied to the first structure, etc."
+		"One single resfile used for all states is also supported." );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Takes in multiple poses from the MSDJobDistributor and finds the"
+		"consensus sequence that optimizes energy of all input poses", attlist );
+}
+
+std::string FindConsensusSequenceCreator::keyname() const {
+	return FindConsensusSequence::mover_name();
+}
+
+protocols::moves::MoverOP
+FindConsensusSequenceCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FindConsensusSequence );
+}
+
+void FindConsensusSequenceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FindConsensusSequence::provide_xml_schema( xsd );
+}
+
 
 utility::vector1< utility::vector1< core::Size > > FindConsensusSequence::res_links () { return res_links_; }
 

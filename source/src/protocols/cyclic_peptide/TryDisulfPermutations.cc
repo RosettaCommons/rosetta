@@ -42,6 +42,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -52,22 +55,22 @@ namespace cyclic_peptide {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.TryDisulfPermutations");
 
-std::string
-TryDisulfPermutationsCreator::keyname() const
-{
-	return TryDisulfPermutationsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TryDisulfPermutationsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TryDisulfPermutations::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TryDisulfPermutationsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TryDisulfPermutations );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TryDisulfPermutationsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TryDisulfPermutations );
+// XRW TEMP }
 
-std::string
-TryDisulfPermutationsCreator::mover_name()
-{
-	return "TryDisulfPermutations";
-}
+// XRW TEMP std::string
+// XRW TEMP TryDisulfPermutations::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TryDisulfPermutations";
+// XRW TEMP }
 
 /// @brief Creator for TryDisulfPermutations mover.
 TryDisulfPermutations::TryDisulfPermutations():
@@ -202,9 +205,9 @@ void TryDisulfPermutations::apply (
 
 
 /// @brief Returns the name of this mover ("TryDisulfPermutations").
-std::string TryDisulfPermutations::get_name() const{
-	return "TryDisulfPermutations";
-}
+// XRW TEMP std::string TryDisulfPermutations::get_name() const{
+// XRW TEMP  return "TryDisulfPermutations";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -436,6 +439,41 @@ core::Real TryDisulfPermutations::repack_minimize_disulfides(
 	(*sfxn)(*pose);
 	return pose->energies().total_energy();
 }
+
+std::string TryDisulfPermutations::get_name() const {
+	return mover_name();
+}
+
+std::string TryDisulfPermutations::mover_name() {
+	return "TryDisulfPermutations";
+}
+
+void TryDisulfPermutations::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "consider_already_bonded", xsct_rosetta_bool, "Also sample permutations of disulfides that are already bonded" )
+		+ XMLSchemaAttribute( "min_type", xsct_minimizer_type, "Type of minimization to perform" )
+		+ XMLSchemaAttribute( "min_tolerance", xsct_real, "tolerance for the minimizer" )
+		+ XMLSchemaAttribute( "selector", xs_string, "Residue selector specifying which residues to consider" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover that tries different sets of possible disulfide bonds between existing residues capable of forming disulfides", attlist );
+}
+
+std::string TryDisulfPermutationsCreator::keyname() const {
+	return TryDisulfPermutations::mover_name();
+}
+
+protocols::moves::MoverOP
+TryDisulfPermutationsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TryDisulfPermutations );
+}
+
+void TryDisulfPermutationsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TryDisulfPermutations::provide_xml_schema( xsd );
+}
+
 
 } //namespace cyclic_peptide
 } //namespace protocols

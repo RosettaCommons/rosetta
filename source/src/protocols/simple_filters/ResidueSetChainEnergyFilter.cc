@@ -38,6 +38,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -48,11 +51,11 @@ using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 
-protocols::filters::FilterOP
-ResidueSetChainEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueSetChainEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter ); }
 
-std::string
-ResidueSetChainEnergyFilterCreator::keyname() const { return "ResidueSetChainEnergy"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueSetChainEnergyFilterCreator::keyname() const { return "ResidueSetChainEnergy"; }
 
 //default ctor
 ResidueSetChainEnergyFilter::ResidueSetChainEnergyFilter() :
@@ -180,6 +183,44 @@ ResidueSetChainEnergyFilter::compute(
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );
 }
+
+std::string ResidueSetChainEnergyFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueSetChainEnergyFilter::class_name() {
+	return "ResidueSetChainEnergy";
+}
+
+void ResidueSetChainEnergyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "what scoreing type to use", "total_score")
+		+ XMLSchemaAttribute::required_attribute("threshold", xsct_real, "filter threshold")
+		+ XMLSchemaAttribute::required_attribute("resnums", xs_string, "Group1 is defined with resnums, a list of residue numbers (1,2,3 for pose numbering or 1A,2A,3A for pdb numbering).")
+		+ XMLSchemaAttribute::attribute_w_default("chain", xsct_non_negative_integer, "Group2 is defined with chain, which is the rosetta chain number.", "0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the interaction energy between 2 groups of residues: 1. a set of residues and 2. all residues on a given chain.", attlist );
+}
+
+std::string ResidueSetChainEnergyFilterCreator::keyname() const {
+	return ResidueSetChainEnergyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueSetChainEnergyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter );
+}
+
+void ResidueSetChainEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueSetChainEnergyFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

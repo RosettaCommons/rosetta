@@ -52,6 +52,9 @@
 #include <boost/algorithm/string.hpp>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.CDRDihedralConstraintMover");
 
@@ -146,14 +149,14 @@ CDRDihedralConstraintMover::parse_my_tag(
 	moves::Movers_map const & ,
 	Pose const &
 ){
-	AntibodyEnumManager manager = AntibodyEnumManager();
+	AntibodyEnumManager ab_manager = AntibodyEnumManager();
 	clusters::CDRClusterEnumManager cluster_manager = clusters::CDRClusterEnumManager();
 
 	if ( ! tag->hasOption("cdr") ) {
 		utility_exit_with_message("Must have cdr option to add constraints");
 	}
 
-	set_cdr( manager.cdr_name_string_to_enum( tag->getOption< std::string >("cdr") ) );
+	set_cdr( ab_manager.cdr_name_string_to_enum( tag->getOption< std::string >("cdr") ) );
 
 	use_cluster_csts_ = tag->getOption< bool >("use_cluster_csts", use_cluster_csts_);
 	use_general_csts_on_failure_ = tag->getOption< bool >("use_general_csts_on_failure", use_general_csts_on_failure_);
@@ -414,26 +417,94 @@ CDRDihedralConstraintMover::fresh_instance() const {
 	return ptr;
 }
 
-std::string
-CDRDihedralConstraintMover::get_name() const {
+std::string CDRDihedralConstraintMover::get_name() const {
+	return mover_name();
+}
+
+std::string CDRDihedralConstraintMover::mover_name() {
 	return "CDRDihedralConstraintMover";
+}
+
+void CDRDihedralConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	/*
+	XMLSchemaRestriction ABcdr_enum;
+	ABcdr_enum.name("ABcdr_definitions");
+	ABcdr_enum.base_type(xs_string);
+	AntibodyEnumManager ABenum_manager;
+	for ( auto const & cdr_def : ABenum_manager.get_recognized_cdr_definitions())
+	ABcdr_enum.add_restriction(xsr_enumeration, cdr_def);
+	xsd.add_top_level_element(ABcdr_enum);
+	*/
+	attlist + XMLSchemaAttribute::required_attribute(
+		"cdr", xs_string,
+		"CDR to add the constraints to (ex: H1 or h1)");
+
+	attlist + XMLSchemaAttribute(
+		"use_cluster_csts", xsct_rosetta_bool,
+		"Add cluster constraints? If false, will use general dihedral constraints");
+
+	attlist + XMLSchemaAttribute(
+		"use_general_constraints_on_failure", xsct_rosetta_bool,
+		"Add general constraints if cluster-based constraint addition fails?");
+
+	XMLSchemaRestriction cluster_enum;
+	cluster_enum.name("cluster_definitions");
+	cluster_enum.base_type(xs_string);
+	clusters::CDRClusterEnumManager cluster_enum_manager;
+	for ( auto const & cluster_def : cluster_enum_manager.get_recognized_cluster_definitions() ) {
+		cluster_enum.add_restriction(xsr_enumeration, cluster_def);
+	}
+	xsd.add_top_level_element(cluster_enum);
+	attlist + XMLSchemaAttribute(
+
+		"force_cluster", "cluster_definitions",
+		"Force addition of cluster constraints of this particular cluster. Must be same CDR length as the current CDR");
+
+	attlist + XMLSchemaAttribute(
+		"cluster_data_required", xsct_real,
+		"How many structures per cluster are required to use cluster-based constraints for those structures?");
+
+	attlist + XMLSchemaAttribute(
+		"use_outliers", xsct_real,
+		"Use a separate set of data for cluster-based constraints which contained outliers for the calculation (dihedral distance greater than 40 degrees, RMSD greater than 1.5A)");
+
+	attlist + XMLSchemaAttribute(
+		"general_phi_sd", xsct_real,
+		"Standard deviation for general constraints on phi angles");
+
+	attlist + XMLSchemaAttribute(
+		"general_psi_sd", xsct_real,
+		"Standard deviation for general constraints on psi angles");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Adds Circular Harmonic Dihedral Constraints to the Phi and Psi dihedral angles to a "
+		"particular CDR either using the current computed North/Dunbrack CDR Cluster "
+		"(requires AHo numbered antibody) or general constraints. These constraints keep the "
+		"CDR structure from moving too much during backbone optimization such as FastRelax. "
+		"Please see the constraints page for more information on constraints and this page for "
+		"more information on antibody numbering.",
+		attlist );
+}
+
+std::string CDRDihedralConstraintMoverCreator::keyname() const {
+	return CDRDihedralConstraintMover::mover_name();
 }
 
 protocols::moves::MoverOP
 CDRDihedralConstraintMoverCreator::create_mover() const {
-	CDRDihedralConstraintMoverOP ptr(new CDRDihedralConstraintMover);
-	return ptr;
+	return protocols::moves::MoverOP( new CDRDihedralConstraintMover );
 }
 
-std::string
-CDRDihedralConstraintMoverCreator::keyname() const {
-	return CDRDihedralConstraintMoverCreator::mover_name();
+void CDRDihedralConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CDRDihedralConstraintMover::provide_xml_schema( xsd );
 }
 
-std::string
-CDRDihedralConstraintMoverCreator::mover_name() {
-	return "CDRDihedralConstraintMover";
-}
 
 } //constraints
 } //antibody

@@ -98,7 +98,8 @@ public:
 		ControlStrength const& initialization_strength );
 
 	ControlStrength const& init_strength() const;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string class_name();
 	virtual EnvClaimOP clone() const;
 
 	virtual std::string type() const;

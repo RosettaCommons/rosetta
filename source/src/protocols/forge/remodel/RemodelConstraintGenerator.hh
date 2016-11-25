@@ -34,7 +34,7 @@
 //utility headers
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -51,16 +51,15 @@ public: // typedefs
 	virtual ~RemodelConstraintGenerator();
 
 	/// @brief generates constraints and adds them to the pose
-	virtual
-	void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	typedef protocols::forge::components::VarLengthBuildAP VarLengthBuildAP;
 
@@ -114,6 +113,8 @@ public:
 	static core::scoring::constraints::ConstraintCOPs const
 	lookup_stored_constraints( std::string const & id );
 
+	static void
+	attributes_for_remodel_constraint_generator( utility::tag::AttributeList & );
 protected:
 
 	void

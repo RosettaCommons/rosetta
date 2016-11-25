@@ -20,18 +20,21 @@
 
 // Protocol headers
 #include <protocols/moves/Mover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_modeling {
 namespace utilities {
 
-moves::MoverOP PrepareForCentroidCreator::create_mover() const {
-	return moves::MoverOP( new PrepareForCentroid );
-}
+// XRW TEMP moves::MoverOP PrepareForCentroidCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new PrepareForCentroid );
+// XRW TEMP }
 
-string PrepareForCentroidCreator::keyname() const {
-	return "PrepareForCentroid";
-}
+// XRW TEMP string PrepareForCentroidCreator::keyname() const {
+// XRW TEMP  return "PrepareForCentroid";
+// XRW TEMP }
 
 PrepareForCentroid::PrepareForCentroid() {}
 
@@ -45,6 +48,36 @@ bool PrepareForCentroid::do_apply(Pose & pose) {
 
 	return true;
 }
+
+std::string PrepareForCentroid::get_name() const {
+	return mover_name();
+}
+
+std::string PrepareForCentroid::mover_name() {
+	return "PrepareForCentroid";
+}
+
+void PrepareForCentroid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Switch to centroid mode", attlist );
+}
+
+std::string PrepareForCentroidCreator::keyname() const {
+	return PrepareForCentroid::mover_name();
+}
+
+protocols::moves::MoverOP
+PrepareForCentroidCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PrepareForCentroid );
+}
+
+void PrepareForCentroidCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PrepareForCentroid::provide_xml_schema( xsd );
+}
+
 
 }
 }

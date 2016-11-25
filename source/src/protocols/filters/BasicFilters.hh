@@ -53,6 +53,18 @@ public:
 	bool apply( core::pose::Pose const & ) const override { return false; }
 	FilterOP clone() const override { return FilterOP( new FalseFilter ); }
 	FilterOP fresh_instance() const override { return FilterOP( new FalseFilter ); }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class StochasticFilter : public Filter {
@@ -72,6 +84,18 @@ public:
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real confidence_;
@@ -113,6 +137,18 @@ public:
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real threashold_;
@@ -162,6 +198,18 @@ public:
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	core::Real threshold_;
 	FilterList filterlist_;
@@ -189,6 +237,18 @@ public:
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	FilterCOP subfilter_;
@@ -229,6 +289,18 @@ public:
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1< FilterCOP > iffilters_;

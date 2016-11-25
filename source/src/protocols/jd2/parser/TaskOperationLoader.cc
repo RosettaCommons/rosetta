@@ -84,6 +84,7 @@ void TaskOperationLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	task_op_subelements.add_group_subelement( & TaskOperationFactory::task_operation_xml_schema_group_name );
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( loader_name() )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( task_op_loader_ct_namer )
 		.set_subelements_repeatable( task_op_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -100,6 +101,12 @@ TaskOperationLoaderCreator::DerivedNameFunction
 TaskOperationLoaderCreator::schema_ct_naming_function() const
 {
 	return & TaskOperationLoader::task_op_loader_ct_namer;
+}
+
+void
+TaskOperationLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskOperationLoader::provide_xml_schema( xsd );
 }
 
 

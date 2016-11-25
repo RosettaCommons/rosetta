@@ -51,6 +51,9 @@
 #include <utility/vector1.hh>
 #include <set>
 #include <map>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr("protocols.filters.SSElementMotifContactFilter");
@@ -290,10 +293,47 @@ SSElementMotifContactFilter::parse_my_tag(
 
 }
 
-filters::FilterOP
-SSElementMotifContactFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementMotifContactFilter); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP SSElementMotifContactFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementMotifContactFilter); }
 
-std::string
-SSElementMotifContactFilterCreator::keyname() const { return "SSDegree"; }
+// XRW TEMP std::string
+// XRW TEMP SSElementMotifContactFilterCreator::keyname() const { return "SSDegree"; }
+
+std::string SSElementMotifContactFilter::name() const {
+	return class_name();
+}
+
+std::string SSElementMotifContactFilter::class_name() {
+	return "SSDegree";
+}
+
+void SSElementMotifContactFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("contacts_between_ssElement_threshold", xsct_real, "XRW TO DO", "3")
+		+ XMLSchemaAttribute::attribute_w_default("report_avg", xsct_rosetta_bool, "XRW TO DO", "true")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("only_n_term", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SSElementMotifContactFilterCreator::keyname() const {
+	return SSElementMotifContactFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SSElementMotifContactFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SSElementMotifContactFilter );
+}
+
+void SSElementMotifContactFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SSElementMotifContactFilter::provide_xml_schema( xsd );
+}
+
 } // filters
 } // protocols

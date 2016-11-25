@@ -57,6 +57,9 @@
 #include <protocols/simple_filters/DdgFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/AlaScan.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
@@ -584,11 +587,11 @@ RotamerBoltzmannWeight::compute_entropy_reduction( bool const cer ){
 	compute_entropy_reduction_ = cer ;
 }
 
-protocols::filters::FilterOP
-RotamerBoltzmannWeightFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RotamerBoltzmannWeight ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP RotamerBoltzmannWeightFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RotamerBoltzmannWeight ); }
 
-std::string
-RotamerBoltzmannWeightFilterCreator::keyname() const { return "RotamerBoltzmannWeight"; }
+// XRW TEMP std::string
+// XRW TEMP RotamerBoltzmannWeightFilterCreator::keyname() const { return "RotamerBoltzmannWeight"; }
 
 bool
 RotamerBoltzmannWeight::skip_ala_scan() const
@@ -671,6 +674,82 @@ RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std
 	out<<"ddG before, after modification: "<<ddG_in<<", "<<modified_ddG<<std::endl;
 	return( modified_ddG );
 }
+
+std::string RotamerBoltzmannWeight::name() const {
+	return class_name();
+}
+
+std::string RotamerBoltzmannWeight::class_name() {
+	return "RotamerBoltzmannWeight";
+}
+
+std::string RotBoltzWeight_subelement_ct_name( std::string const & name ) {
+	return "RotBoltzWeight_subelement_" + name + "Type";
+}
+
+void RotamerBoltzmannWeight::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "radius", xsct_real, "XRW TO DO", "6.0")
+		+ XMLSchemaAttribute::attribute_w_default( "type", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default( "sym_dof_names", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "unbound", xsct_rosetta_bool, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default( "ddG_threshold", xsct_real, "XRW TO DO", "1.5")
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "XRW TO DO", "0.8");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "energy_reduction_factor", xsct_real, "XRW TO DO", "0.5")
+		+ XMLSchemaAttribute::attribute_w_default( "compute_entropy_reduction", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "repack", xsct_rosetta_bool, "XRW TO DO", "1")
+		+ XMLSchemaAttribute( "skip_report", xsct_rosetta_bool, "XRW TO DO" );
+
+	AttributeList RotBoltzWeight_subtag_attributes;
+	RotBoltzWeight_subtag_attributes
+		+ XMLSchemaAttribute( "restype", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute( "threshold_probability", xsct_real, "XRW TO DO");
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & RotBoltzWeight_subelement_ct_name );
+	subelements.add_simple_subelement( "Threshold", RotBoltzWeight_subtag_attributes, "XRW TO DO");
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "target_residues", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "fast_calc", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "no_modified_ddG", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "compute_max", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "skip_ala_scan", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "confidence", xsct_real, "Probability that the pose will be filtered out if the filter fails", "1.0" );
+	XMLSchemaComplexTypeGenerator complex_type_generator;
+	complex_type_generator
+		.element_name( class_name() )
+		.description( "XRW TO DO" )
+		.complex_type_naming_func( & protocols::filters::complex_type_name_for_filter )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string RotamerBoltzmannWeightFilterCreator::keyname() const {
+	return RotamerBoltzmannWeight::class_name();
+}
+
+protocols::filters::FilterOP
+RotamerBoltzmannWeightFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RotamerBoltzmannWeight );
+}
+
+void RotamerBoltzmannWeightFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerBoltzmannWeight::provide_xml_schema( xsd );
+}
+
 
 
 } // simple_filters

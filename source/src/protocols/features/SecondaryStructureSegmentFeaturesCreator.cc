@@ -24,15 +24,15 @@
 namespace protocols {
 namespace features {
 
-SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
-SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() = default;
-FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
-}
+// XRW TEMP SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
+// XRW TEMP SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
+// XRW TEMP }
 
-std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {
-	return "SecondaryStructureSegmentFeatures";
-}
+// XRW TEMP std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {
+// XRW TEMP  return "SecondaryStructureSegmentFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -36,6 +36,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -47,26 +50,26 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.SetAAComposit
 
 
 /// @brief
-std::string
-SetAACompositionPotentialCreator::keyname() const
-{
-	return SetAACompositionPotentialCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetAACompositionPotentialCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetAACompositionPotential::mover_name();
+// XRW TEMP }
 
 
 /// @brief
-protocols::moves::MoverOP
-SetAACompositionPotentialCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetAACompositionPotential );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetAACompositionPotentialCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetAACompositionPotential );
+// XRW TEMP }
 
 
 /// @brief
-std::string
-SetAACompositionPotentialCreator::mover_name()
-{
-	return "SetAACompositionPotential";
-}
+// XRW TEMP std::string
+// XRW TEMP SetAACompositionPotential::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetAACompositionPotential";
+// XRW TEMP }
 
 
 /// @brief default constructor
@@ -173,10 +176,10 @@ SetAACompositionPotential::apply( Pose & )
 
 
 /// @brief
-std::string
-SetAACompositionPotential::get_name() const {
-	return SetAACompositionPotentialCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetAACompositionPotential::get_name() const {
+// XRW TEMP  return SetAACompositionPotential::mover_name();
+// XRW TEMP }
 /// @brief parse xml
 void
 SetAACompositionPotential::parse_my_tag(
@@ -205,6 +208,40 @@ SetAACompositionPotential::parse_my_tag(
 	}
 
 }
+
+std::string SetAACompositionPotential::get_name() const {
+	return mover_name();
+}
+
+std::string SetAACompositionPotential::mover_name() {
+	return "SetAACompositionPotential";
+}
+
+void SetAACompositionPotential::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "file", xs_string, "File specifying desired amino acid composition" )
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "Weight for amino acid composition potential", "1.0" )
+		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Score function to add this potential to" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sets the target amino acid composition of a pose and adds the relevant term to the indicated score function", attlist );
+}
+
+std::string SetAACompositionPotentialCreator::keyname() const {
+	return SetAACompositionPotential::mover_name();
+}
+
+protocols::moves::MoverOP
+SetAACompositionPotentialCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetAACompositionPotential );
+}
+
+void SetAACompositionPotentialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetAACompositionPotential::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace potentials

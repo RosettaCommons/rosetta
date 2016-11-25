@@ -45,6 +45,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -52,22 +55,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", basic::t_debug );
 
-std::string
-GrowLigandCreator::keyname() const
-{
-	return GrowLigandCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GrowLigandCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GrowLigand::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-GrowLigandCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GrowLigand );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GrowLigandCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GrowLigand );
+// XRW TEMP }
 
-std::string
-GrowLigandCreator::mover_name()
-{
-	return "GrowLigand";
-}
+// XRW TEMP std::string
+// XRW TEMP GrowLigand::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GrowLigand";
+// XRW TEMP }
 
 GrowLigand::GrowLigand():
 	Mover("GrowLigand"),
@@ -114,9 +117,9 @@ protocols::moves::MoverOP GrowLigand::fresh_instance() const {
 	return protocols::moves::MoverOP( new GrowLigand );
 }
 
-std::string GrowLigand::get_name() const{
-	return "GrowLigand";
-}
+// XRW TEMP std::string GrowLigand::get_name() const{
+// XRW TEMP  return "GrowLigand";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -191,6 +194,37 @@ void GrowLigand::add_scores_to_job(
 )
 {
 }
+
+std::string GrowLigand::get_name() const {
+	return mover_name();
+}
+
+std::string GrowLigand::mover_name() {
+	return "GrowLigand";
+}
+
+void GrowLigand::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("chain", xs_string, "Chain ID.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Randomly connects a fragment from the library to the growing ligand.", attlist );
+}
+
+std::string GrowLigandCreator::keyname() const {
+	return GrowLigand::mover_name();
+}
+
+protocols::moves::MoverOP
+GrowLigandCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GrowLigand );
+}
+
+void GrowLigandCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GrowLigand::provide_xml_schema( xsd );
+}
+
 
 } // namespace ligand_docking
 } // namespace protocols

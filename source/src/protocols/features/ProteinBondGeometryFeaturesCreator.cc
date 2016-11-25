@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ProteinBondGeometryFeaturesCreator::ProteinBondGeometryFeaturesCreator() {}
-ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() = default;
-FeaturesReporterOP ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinBondGeometryFeatures );
-}
+// XRW TEMP ProteinBondGeometryFeaturesCreator::ProteinBondGeometryFeaturesCreator() {}
+// XRW TEMP ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinBondGeometryFeatures );
+// XRW TEMP }
 
-std::string ProteinBondGeometryFeaturesCreator::type_name() const {
-	return "ProteinBondGeometryFeatures";
-}
+// XRW TEMP std::string ProteinBondGeometryFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinBondGeometryFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

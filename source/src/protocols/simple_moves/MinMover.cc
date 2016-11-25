@@ -33,7 +33,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/util.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Basic headers
 #include <basic/prof.hh>
@@ -76,10 +76,20 @@ MinMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new MinMover );
 }
 
+void MinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	MinMover::provide_xml_schema( xsd );
+}
+
 std::string
 MinMoverCreator::mover_name()
 {
 	return "MinMover";
+}
+
+std::string
+MinMover::mover_name()
+{
+	return MinMoverCreator::mover_name();
 }
 
 // default constructor
@@ -282,11 +292,6 @@ MinMover::apply(pose::Pose & pose) {
 	TR.Debug << std::endl;
 }
 
-std::string
-MinMover::get_name() const {
-	return MinMoverCreator::mover_name();
-}
-
 void
 MinMover::show(std::ostream & output) const
 {
@@ -453,39 +458,68 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 	return os;
 }
 
-void MinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
-{
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+MinMover::complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinition & xsd ){
+
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "jump",      xs_string )
-		+ XMLSchemaAttribute( "max_iter",  xs_integer )
-		+ XMLSchemaAttribute( "type",      xs_string )
-		+ XMLSchemaAttribute( "tolerance", xs_decimal )
-		+ XMLSchemaAttribute( "cartesian", xsct_rosetta_bool );
+		+ XMLSchemaAttribute(
+		"jump", xs_string,
+		"Comma-separated list of jumps to minimize over (be sure this jump exists!). "
+		"If set to \"ALL\", all jumps will be set to minimize. "
+		"If set to \"0\", jumps will be set not to minimize" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"max_iter",  xsct_non_negative_integer,
+		"maximum number of iterations allowed. This default is also very loose. "
+		"This and the tolerance setting both affect if you will reach convergence",
+		"200" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"type", xsct_minimizer_type,
+		"Minimizer type. linmin, dfpmin, dfpmin_armijo, dfpmin_armijo_nonmonotone. "
+		"dfpmin minimzers can also be used with absolute tolerance (add \"atol\" to the minimizer type).",
+		"lbfgs_armijo_nonmonotone" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"tolerance", xsct_real ,
+		"Criteria for convergence of minimization. The default is very loose, "
+		"it's recommended to specify something less than 0.01. "
+		"max_iter also affects convergence",
+		"0.01" )
+		+ XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool , "Perform cartesian minimization?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "bondangle",  xsct_rosetta_bool , "Minimize bond angles?", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "bondlength", xsct_rosetta_bool , "Minimize bond lengths?", "0" );
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "chi", xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "bb",  xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "omega",      xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "bondangle",  xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "bondlength", xsct_rosetta_bool );
+		+ XMLSchemaAttribute::required_attribute( "chi", xsct_rosetta_bool , "Minimize chi angles?" )
+		+ XMLSchemaAttribute::required_attribute( "bb",  xsct_rosetta_bool , "Minimize backbone torsion angles?" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega", xsct_rosetta_bool , "Minimize omega torsions?", "true" );
+	//All of these are lists of task operations, but none use parse_task_operations
 	attributes
-		+ XMLSchemaAttribute( "bb_task_operations", xs_string )
-		+ XMLSchemaAttribute( "chi_task_operations", xs_string )
-		+ XMLSchemaAttribute( "bondangle_task_operations", xs_string )
-		+ XMLSchemaAttribute( "bondlength_task_operations", xs_string );
+		+ XMLSchemaAttribute( "bb_task_operations", xs_string , "Task operations specifying residues for backbone minimization" )
+		+ XMLSchemaAttribute( "chi_task_operations", xs_string , "Task operations specifying residues for sidechain minimization" )
+		+ XMLSchemaAttribute( "bondangle_task_operations", xs_string , "Task operations specifying residues for bond angle minimization" )
+		+ XMLSchemaAttribute( "bondlength_task_operations", xs_string , "Task operation specifying residues for bond length minimization" );
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
-
-
 	XMLSchemaSimpleSubelementList subelements;
 	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
-	XMLSchemaComplexTypeGenerator ct_gen;
-	ct_gen
-		.element_name( MinMoverCreator::mover_name() )
-		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attributes )
-		.add_optional_name_attribute()
-		.set_subelements_single_appearance_optional( subelements )
+		.set_subelements_repeatable( subelements )
+		.add_optional_name_attribute();
+	return ct_gen;
+}
+
+void MinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	//Check parse_movemap
+
+	using namespace utility::tag;
+
+	auto ct_gen = complex_type_generator_for_min_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Does minimization over sidechain and/or backbone" )
 		.write_complex_type_to_schema( xsd );
 }
 

@@ -54,7 +54,7 @@ public:
 
 	~ErraserMinimizerMover() override = default;
 
-	std::string get_name() const override { return "ErraserMinimizerMover"; }
+	// XRW TEMP  std::string get_name() const override { return "ErraserMinimizerMover"; }
 
 	void pyrimidine_flip_trial( Pose & pose );
 	void setup_fold_tree( Pose & pose );
@@ -189,6 +189,18 @@ public:
 	ideal_has_atom(
 		core::chemical::ResidueType const & rt,
 		std::string const & an );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

@@ -57,6 +57,10 @@
 //External Headers
 #include <cppdb/frontend.h>
 #include <boost/graph/bron_kerbosch_all_cliques.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ModelFeaturesCreator.hh>
 
 static basic::Tracer TR("devel.sewing.ModelFeatures");
 
@@ -67,15 +71,15 @@ namespace features {
 /////////////  Creator functions   ////////////////////////
 ///////////////////////////////////////////////////////////
 
-ModelFeaturesCreator::ModelFeaturesCreator() {}
-ModelFeaturesCreator::~ModelFeaturesCreator() = default;
-protocols::features::FeaturesReporterOP ModelFeaturesCreator::create_features_reporter() const {
-	return ModelFeaturesOP( new ModelFeatures );
-}
+// XRW TEMP ModelFeaturesCreator::ModelFeaturesCreator() {}
+// XRW TEMP ModelFeaturesCreator::~ModelFeaturesCreator() = default;
+// XRW TEMP protocols::features::FeaturesReporterOP ModelFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return ModelFeaturesOP( new ModelFeatures );
+// XRW TEMP }
 
-std::string ModelFeaturesCreator::type_name() const {
-	return "ModelFeatures";
-}
+// XRW TEMP std::string ModelFeaturesCreator::type_name() const {
+// XRW TEMP  return "ModelFeatures";
+// XRW TEMP }
 
 ///////////////////////////////////////////////////////////
 ///////////////  Class functions   ////////////////////////
@@ -433,6 +437,43 @@ ModelFeatures::parse_my_tag(
 		angle_cutoff_ = tag->getOption<core::Real>("angle_cutoff");
 	}
 }
+
+std::string ModelFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ModelFeatures::class_name() {
+	return "ModelFeatures";
+}
+
+void ModelFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "min_helix_size", xsct_positive_integer, "Minimum helix size" )
+		+ XMLSchemaAttribute( "min_strand_size", xsct_positive_integer, "Minimum strand size" )
+		+ XMLSchemaAttribute( "min_ss_cluster_size", xsct_positive_integer, "Minimum size of secondary structure clusters" )
+		+ XMLSchemaAttribute( "max_ss_cluster_size", xsct_positive_integer, "Maximum size of secondary structure clusters" )
+		+ XMLSchemaAttribute( "distance_cutopff", xsct_real, "Maximum distance beyond which two secondary structure elements may not be assigned to the same cluster" )
+		+ XMLSchemaAttribute( "angle_cutoff", xsct_real, "Maximum angle beyond which two secondary structure elements may not be assigned to the same cluster" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ModelFeaturesCreator::type_name() const {
+	return ModelFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ModelFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ModelFeatures );
+}
+
+void ModelFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ModelFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namespace sewing
 } //namespace devel

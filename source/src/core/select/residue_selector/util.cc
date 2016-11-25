@@ -57,12 +57,14 @@ void
 xsd_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & description,
 	utility::tag::AttributeList const & attributes
 )
 {
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
+		.description( description )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
@@ -72,6 +74,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselector(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & description,
 	utility::tag::AttributeList const & attributes
 )
 {
@@ -82,6 +85,7 @@ xsd_type_definition_w_attributes_and_optional_subselector(
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
+		.description( description )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_single_appearance_optional( subelement )
@@ -92,6 +96,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & description,
 	utility::tag::AttributeList const & attributes
 )
 {
@@ -102,6 +107,7 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
+		.description( description )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_repeatable( subelement )
@@ -112,6 +118,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & description,
 	core::Size min_occurrence,
 	core::Size max_occurrence,
 	utility::tag::AttributeList const & attributes
@@ -124,6 +131,7 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
+		.description( description )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_repeatable( subelement, min_occurrence, max_occurrence )
@@ -139,6 +147,28 @@ parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap cons
 		return ResidueSelectorCOP();
 	}
 	return get_residue_selector( selectorname, data );
+}
+
+void
+attributes_for_parse_residue_selector(
+	utility::tag::AttributeList & attlist,
+	std::string const & option_name /* = "residue_selector" */,
+	std::string const & documentation_string /* = "" */
+)
+{
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute( option_name, xs_string, documentation_string == "" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
+}
+
+void
+attributes_for_parse_residue_selector_when_required(
+	utility::tag::AttributeList & attlist,
+	std::string const & option_name /* = "residue_selector"*/,
+	std::string const & documentation_string /* = ""*/
+)
+{
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute::required_attribute( option_name, xs_string, documentation_string == "XRW TO DO" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
 }
 
 ResidueSelectorCOP

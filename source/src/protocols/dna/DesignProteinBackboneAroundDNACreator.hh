@@ -21,9 +21,12 @@ namespace dna {
 
 class DesignProteinBackboneAroundDNACreator : public protocols::moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

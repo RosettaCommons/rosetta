@@ -43,6 +43,10 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/HelixCapFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -61,11 +65,11 @@ HelixCapFeatures::HelixCapFeatures( HelixCapFeatures const & /*src*/ ) : Feature
 HelixCapFeatures::~HelixCapFeatures()= default;
 
 /// @brief return string with class name
-std::string
-HelixCapFeatures::type_name() const
-{
-	return "HelixCapFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP HelixCapFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "HelixCapFeatures";
+// XRW TEMP }
 
 /// @brief generate the table schemas and write them to the database
 void
@@ -242,6 +246,37 @@ HelixCapFeatures::report_features(
 
 	return 0;
 }
+
+std::string HelixCapFeatures::type_name() const {
+	return class_name();
+}
+
+std::string HelixCapFeatures::class_name() {
+	return "HelixCapFeatures";
+}
+
+void HelixCapFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Records the dssp as well as the 4 residues on either side of the end of a helix, to obtain data on capping residue preferences", attlist );
+}
+
+std::string HelixCapFeaturesCreator::type_name() const {
+	return HelixCapFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+HelixCapFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new HelixCapFeatures );
+}
+
+void HelixCapFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HelixCapFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

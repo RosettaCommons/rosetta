@@ -64,23 +64,35 @@ public:
 	PlaceSurfaceProbeOP shared_from_this() { return utility::pointer::dynamic_pointer_cast<PlaceSurfaceProbe>( PlaceProbeMover::shared_from_this() ); }
 
 
-	virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
+	// XRW TEMP  virtual std::string get_name() const { return "PlaceSurfaceProbe"; }
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
+		core::pose::Pose const &) override;
 
-	virtual bool reinitialize_for_new_input() const { return false; }
+	bool reinitialize_for_new_input() const override { return false; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
-	virtual SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose);
-	virtual SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose);
-	virtual SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue);
+	SearchPatternOP create_search_pattern(core::pose::Pose const & target_pose) override;
+	SearchPatternOP create_partitioned_search_pattern(core::pose::Pose const & target_pose) override;
+	SearchPatternOP create_refinement_pattern(core::pose::Pose const & target_pose, core::Size target_residue) override;
 
 private:
 

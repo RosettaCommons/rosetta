@@ -36,6 +36,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -124,11 +127,46 @@ FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 
 }
 
-protocols::filters::FilterOP
-FNatFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FNatFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FNatFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FNatFilter ); }
 
-std::string
-FNatFilterCreator::keyname() const { return "FNat"; }
+// XRW TEMP std::string
+// XRW TEMP FNatFilterCreator::keyname() const { return "FNat"; }
+
+std::string FNatFilter::name() const {
+	return class_name();
+}
+
+std::string FNatFilter::class_name() {
+	return "FNat";
+}
+
+void FNatFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "reference_name" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold for Fnat, a docking metric above which the filter fails",  "5" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which the computation is carried out, numbered sequentially from 1", "1" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter for poor values of Fnat, a docking metric", attlist );
+}
+
+std::string FNatFilterCreator::keyname() const {
+	return FNatFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FNatFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FNatFilter );
+}
+
+void FNatFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FNatFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

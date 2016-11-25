@@ -90,6 +90,11 @@ void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::X
 
 }
 
+std::map< std::string, ResidueSelectorCreatorOP > const &
+ResidueSelectorFactory::creator_map() const {
+	return creator_map_;
+}
+
 std::string ResidueSelectorFactory::residue_selector_xml_schema_group_name()
 {
 	return "residue_selector";

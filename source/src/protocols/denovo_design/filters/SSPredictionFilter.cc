@@ -35,6 +35,9 @@
 // C++ Headers
 #include <fstream>
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
 
@@ -250,15 +253,104 @@ void SSPredictionFilter::parse_my_tag(
 	}
 }
 
-protocols::filters::FilterOP
-SSPredictionFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSPredictionFilter() );
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SSPredictionFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new SSPredictionFilter() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SSPredictionFilterCreator::keyname() const {
+// XRW TEMP  return "SSPrediction";
+// XRW TEMP }
+
+std::string SSPredictionFilter::name() const {
+	return class_name();
 }
 
-std::string
-SSPredictionFilterCreator::keyname() const {
+std::string SSPredictionFilter::class_name() {
 	return "SSPrediction";
 }
+
+void SSPredictionFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"threshold", xsct_real,
+		"If threshold is set and use_probability is true, the filter returns "
+		"true only if the calculated value is less than this number. If use_"
+		"probability is false, the filter returns true if the calculated "
+		"value is greater than this number." )
+		+ XMLSchemaAttribute(
+		"use_probability", xsct_rosetta_bool,
+		"If true, the probability information that psipred calculates will be "
+		"used to determine the score. IF false, the filter will return "
+		"the percentage of residues that match." )
+		+ XMLSchemaAttribute(
+		"mismatch_probability", xsct_rosetta_bool,
+		"If true AND use_probability is true, the score is determined as the "
+		"geometric average of the probability getting a WRONG secondary "
+		"structure type at each position. Just as in regular use_probability, "
+		"you want to minimize this score." )
+		+ XMLSchemaAttribute(
+		"use_confidence", xsct_rosetta_bool,
+		"XRW TO DO" )
+		+ XMLSchemaAttribute(
+		"temperature", xsct_real,
+		"XRW TO DO" )
+		+ XMLSchemaAttribute(
+		"use_svm", xsct_rosetta_bool,
+		"If set, an SVM will be used to make secondary structure predictions "
+		"instead of psipred. This requires downloading some database files. "
+		"If false, the psipred executable specified by cmd will be used." )
+		+ XMLSchemaAttribute(
+		"cmd", xs_string,
+		"Full path to runpsipred_single or runpsipred executable. "
+		"Must be specified if use_svm=false" )
+		+ XMLSchemaAttribute(
+		"blueprint", xs_string,
+		"If specified, the filter will take desired secondary structure from "
+		"a blueprint file, rather from DSSP on the pose." );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Uses the sequence in the pose to generate secondary structure predictions "
+		"for each position. Secondary structure predictions are then compared to "
+		"the desired secondary structure to determine a score. If use_probability "
+		"is true, the score returned is a value between 0 and 1, where 0 is complete "
+		"secondary structure agreement, and 1 is no agreement. The following "
+		"equation is used to determine the score: sum(i=1;N;e^(-p[i]/T)), where N is "
+		"the number of residues, p[i] is the probability of correct secondary "
+		"structure at position i, and T is a temperature factor set to 0.6 by "
+		"default. If use_probability is false, the filter returns the fraction of "
+		"residues that match the desired secondary structure as a number between 0 "
+		"and 1. If use_probability is true AND mismatch_probability is true, the "
+		"score is the geometric average of the probability of picking the WRONG "
+		"secondary structure type at all residue positions. Minimizing this number "
+		"will maximize the geometric average of the probability of picking the "
+		"CORRECT secondary structure type at all residue positions. This option "
+		"should be the most correct method for comparing two sequences to determine "
+		"their expected fragment quality based on their predicted secondary "
+		"structure probabilities at each residue.",
+		attlist );
+}
+
+std::string SSPredictionFilterCreator::keyname() const {
+	return SSPredictionFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SSPredictionFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SSPredictionFilter );
+}
+
+void SSPredictionFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SSPredictionFilter::provide_xml_schema( xsd );
+}
+
 
 
 //namespaces

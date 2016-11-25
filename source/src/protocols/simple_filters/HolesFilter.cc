@@ -30,6 +30,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.filters.HolesFilter" );
@@ -122,11 +125,44 @@ HolesFilter::parse_my_tag(
 	tr << "Structures which have holes value less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
-filters::FilterOP
-HolesFilterCreator::create_filter() const { return filters::FilterOP( new HolesFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP HolesFilterCreator::create_filter() const { return filters::FilterOP( new HolesFilter ); }
 
-std::string
-HolesFilterCreator::keyname() const { return "Holes"; }
+// XRW TEMP std::string
+// XRW TEMP HolesFilterCreator::keyname() const { return "Holes"; }
+
+std::string HolesFilter::name() const {
+	return class_name();
+}
+
+std::string HolesFilter::class_name() {
+	return "Holes";
+}
+
+void HolesFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("cmd", xs_string, "expects you to use -holes::dalphaball", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "Threshold value for the filter", "2.0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates holes value(?) and filters based upon topology", attlist );
+}
+
+std::string HolesFilterCreator::keyname() const {
+	return HolesFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HolesFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HolesFilter );
+}
+
+void HolesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HolesFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

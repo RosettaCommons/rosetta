@@ -93,9 +93,6 @@ public:
 	/// @brief apply GenericSimulatedAnnealer (Mover)
 	void apply( Pose & pose ) override;
 
-	/// @brief name of this mover
-	std::string get_name() const override;
-
 	/// @brief XML interface to this mover
 	void parse_my_tag(
 		TagCOP tag,
@@ -142,6 +139,18 @@ public: // mutators
 	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
 	TrialResult boltzmann_result( core::pose::Pose & pose,
 		utility::vector1< core::Real > const & random_nums );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // private functions
 	/// @brief calls a round of monte carlo -- basically copied from GenericMonteCarloMover

@@ -92,7 +92,7 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	std::string name() const override { return "IntraRepeatContactFilter"; }
+	// XRW TEMP  std::string name() const override { return "IntraRepeatContactFilter"; }
 
 
 public:// parser
@@ -119,6 +119,18 @@ public:// virtual main operation
 
 	/// @brief
 	Real compute( Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

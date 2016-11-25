@@ -39,6 +39,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -49,11 +52,11 @@ using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
-protocols::filters::FilterOP
-NMerPSSMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerPSSMEnergyFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP NMerPSSMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerPSSMEnergyFilter ); }
 
-std::string
-NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }
+// XRW TEMP std::string
+// XRW TEMP NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }
 
 //default ctor
 NMerPSSMEnergyFilter::NMerPSSMEnergyFilter() :
@@ -146,6 +149,44 @@ NMerPSSMEnergyFilter::compute(
 	}
 	return( score );
 }
+
+std::string NMerPSSMEnergyFilter::name() const {
+	return class_name();
+}
+
+std::string NMerPSSMEnergyFilter::class_name() {
+	return "NMerPSSMEnergy";
+}
+
+void NMerPSSMEnergyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("threshold", xsct_real, "XRW TO DO")
+		+ XMLSchemaAttribute("pssm_fname", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("pssm_list_fname", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("resnums", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("nmer_length", xsct_non_negative_integer, "XRW TO DO", "9")
+		+ XMLSchemaAttribute::attribute_w_default("nmer_pssm_scorecut", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("gate_pssm_scores", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string NMerPSSMEnergyFilterCreator::keyname() const {
+	return NMerPSSMEnergyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+NMerPSSMEnergyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new NMerPSSMEnergyFilter );
+}
+
+void NMerPSSMEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NMerPSSMEnergyFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -47,6 +47,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.VoxelSpacingRefinementMover" );
 
@@ -326,22 +329,56 @@ VoxelSpacingRefinementMover::parse_my_tag(TagCOP const tag, basic::datacache::Da
 
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP VoxelSpacingRefinementMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new VoxelSpacingRefinementMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP VoxelSpacingRefinementMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return VoxelSpacingRefinementMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP VoxelSpacingRefinementMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "VoxelSpacingRefinement";
+// XRW TEMP }
+
+std::string VoxelSpacingRefinementMover::get_name() const {
+	return mover_name();
+}
+
+std::string VoxelSpacingRefinementMover::mover_name() {
+	return "VoxelSpacingRefinement";
+}
+
+void VoxelSpacingRefinementMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("aniso", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("mapout", xs_string, "File name for map output")
+		+ XMLSchemaAttribute("max_iter", xsct_non_negative_integer, "XRW TO DO, default=100");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Set up morphing with electron density map.", attlist );
+}
+
+std::string VoxelSpacingRefinementMoverCreator::keyname() const {
+	return VoxelSpacingRefinementMover::mover_name();
+}
+
 protocols::moves::MoverOP
 VoxelSpacingRefinementMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new VoxelSpacingRefinementMover );
 }
 
-std::string
-VoxelSpacingRefinementMoverCreator::keyname() const
+void VoxelSpacingRefinementMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return VoxelSpacingRefinementMoverCreator::mover_name();
+	VoxelSpacingRefinementMover::provide_xml_schema( xsd );
 }
 
-std::string
-VoxelSpacingRefinementMoverCreator::mover_name()
-{
-	return "VoxelSpacingRefinement";
-}
 
 }
 }

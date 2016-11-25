@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility headers
@@ -43,29 +46,6 @@ using namespace protocols::moves;
 
 namespace protocols {
 namespace simple_moves {
-
-std::string
-MonteCarloResetCreator::keyname() const
-{
-	return MonteCarloResetCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-MonteCarloResetCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloReset );
-}
-
-std::string
-MonteCarloResetCreator::mover_name()
-{
-	return "MonteCarloReset";
-}
-
-std::string
-MonteCarloReset::get_name() const {
-	return MonteCarloResetCreator::mover_name();
-}
-
 
 /// @brief default constructor
 MonteCarloReset::MonteCarloReset():
@@ -121,6 +101,43 @@ MonteCarloReset::apply( core::pose::Pose & pose ){
 	MC_mover_->reset( pose );
 	TR<<"MC mover reset"<<std::endl;
 }
+
+std::string MonteCarloReset::get_name() const {
+	return mover_name();
+}
+
+std::string MonteCarloReset::mover_name() {
+	return "MonteCarloReset";
+}
+
+void MonteCarloReset::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"MC_name", xs_string,
+		"MC Mover to be reset");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Applies reset on given pose and mover (MC_name)",
+		attlist );
+}
+
+std::string MonteCarloResetCreator::keyname() const {
+	return MonteCarloReset::mover_name();
+}
+
+protocols::moves::MoverOP
+MonteCarloResetCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MonteCarloReset );
+}
+
+void MonteCarloResetCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MonteCarloReset::provide_xml_schema( xsd );
+}
+
 
 } // ns simple_moves
 } // ns protocols

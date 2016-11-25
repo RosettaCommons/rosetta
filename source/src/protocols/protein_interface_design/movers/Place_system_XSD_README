@@ -1,0 +1,33 @@
+These classes form a nexus of behaviors that cannot be cleanly expressed via the XML schema:
+
+
+PlaceStubMover
+PlaceSimultaneouslyMover
+StubScoreFilter
+PlacementAuctionMover
+PlacementMinimizationMover
+
+
+Comments and Problems:
+PlaceStubMover has 3 subelements (StubMinimize, DesignMovers , and NotifyMovers), none of which have attributes, but each of which has an unnamed subelement (probably intended to be Add) that does have attributes.  This unnamed subelement is a problem, but can be addressed by the rewriter script.
+
+
+PlaceStubMover calls utility function generate_taskfactory_and_add_task_awareness to parse its NotifyMovers subelement.  (This is not a problem in and of itself).
+
+
+PlaceSimultaneouslyMover defines the same subelements as PlaceStubMover.  Its StubMinimize subelement DOES have attributes.  Its NotifyMovers is parsed by the same utility function.  This is not precisely a problem but it represents duplicated code as-is, and it forces either duplicated code in the provide_xml_schema functions or much awkwardness.
+
+
+PlaceSimultaneouslyMover also parses a StubSets subelement.  It does NOT use a utility function to do so.
+
+
+PlaceSimultaneouslyMover CONTAINS by pointer a StubScoreFilter, PlacementAuctionMover, and PlacementMinimizationMover.  It calls their parse_my_tag with the full tag.  This means that PlaceSimultaneouslyMover’s XML schema must include anything valid in any of those contained classes.  Doing this without duplication is expensive and challenging.
+
+
+StubScoreFilter and PlacementAuctionMover ALSO parse the StubSets subelement, but DO use a utility function to do so.  As this is unshared with PlaceSimultaneouslyMover’s parsing, it makes determining the unified valid schema for this section either expensive or impossible.
+
+
+Finally, PlacementMinimizationMover goes looking through any subtags for a particular attribute to overwrite values read from the same attribute in the top level tag!  This is both bizarre and probably doesn’t work.
+
+
+XML XSD XRW is choosing to resolve these problems largely by ignoring them and building a very fragile XML schema for this set of classes that will probably both break and be hard to fix if anything changes.  The correct fix is to rewrite the parse_my_tags from scratch to be self-contained, and/or share functionality in more cleanly defined ways.

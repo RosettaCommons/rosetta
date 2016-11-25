@@ -33,6 +33,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -40,20 +43,20 @@ namespace simple_moves {
 namespace symmetry {
 
 // creator
-std::string
-SymRotamerTrialsMoverCreator::keyname() const {
-	return SymRotamerTrialsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymRotamerTrialsMoverCreator::keyname() const {
+// XRW TEMP  return SymRotamerTrialsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SymRotamerTrialsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymRotamerTrialsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymRotamerTrialsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymRotamerTrialsMover );
+// XRW TEMP }
 
-std::string
-SymRotamerTrialsMoverCreator::mover_name() {
-	return "SymRotamerTrialsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymRotamerTrialsMover::mover_name() {
+// XRW TEMP  return "SymRotamerTrialsMover";
+// XRW TEMP }
 
 //////////////////////////
 // default constructor
@@ -95,10 +98,10 @@ SymEnergyCutRotamerTrialsMover::get_name() const {
 	return "SymEnergyCutRotamerTrialsMover";
 }
 
-std::string
-SymRotamerTrialsMover::get_name() const {
-	return "SymRotamerTrialsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymRotamerTrialsMover::get_name() const {
+// XRW TEMP  return "SymRotamerTrialsMover";
+// XRW TEMP }
 
 void
 SymRotamerTrialsMover::make_symmetric_task(
@@ -129,6 +132,42 @@ SymRotamerTrialsMover::parse_my_tag(
 {
 	RotamerTrialsMover::parse_my_tag( tag,data,fm,mm,pose );
 }
+
+std::string SymRotamerTrialsMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymRotamerTrialsMover::mover_name() {
+	return "SymRotamerTrialsMover";
+}
+
+void SymRotamerTrialsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_rotamer_trials_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "This mover goes through each repackable/redesignable position in the pose, taking every permitted rotamer in turn, and evaluating the energy. Each position is then updated to the lowest energy rotamer. It does not consider coordinated changes at multiple residues, and may need several invocations to reach convergence." )
+		.write_complex_type_to_schema( xsd );
+
+	//SymRotamersTrial description: The symmetric versions of pack rotamers and rotamer trials movers (they take the same tags as asymmetric versions)
+
+}
+
+std::string SymRotamerTrialsMoverCreator::keyname() const {
+	return SymRotamerTrialsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SymRotamerTrialsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SymRotamerTrialsMover );
+}
+
+void SymRotamerTrialsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymRotamerTrialsMover::provide_xml_schema( xsd );
+}
+
 
 /////////////////////////
 // default constructor

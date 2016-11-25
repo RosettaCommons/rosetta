@@ -3,8 +3,8 @@
 	<xi:include href="inputs/include1.xml" />
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
-        <Phi name="posPhi" select_positive_phi=true ignore_unconnected_upper=false/>
-        <Phi name="negPhi" select_positive_phi=false ignore_unconnected_upper=false />
+        <Phi name="posPhi" select_positive_phi="true" ignore_unconnected_upper="false"/>
+        <Phi name="negPhi" select_positive_phi="false" ignore_unconnected_upper="false" />
     </RESIDUE_SELECTORS>
     <TASKOPERATIONS>
           <ReadResfile name="l_res" filename="inputs/l_res.txt" selector="negPhi"/>
@@ -14,20 +14,21 @@
     </FILTERS>
     <MOVERS>
         
-        <DeclareBond name=terminal_bond2 res1=24 res2=1 atom1=C atom2=N add_termini=false />
-        <DeclareBond name=terminal_bond1 res1=12 res2=13 atom1=C atom2=N add_termini=false />
+        <DeclareBond name="terminal_bond2" res1="24" res2="1" atom1="C" atom2="N" add_termini="false" />
+        <DeclareBond name="terminal_bond1" res1="12" res2="13" atom1="C" atom2="N" add_termini="false" />
         
         <!--required torsions to keep things in place. make sure you have them set for both ends-->
         
-        <PackRotamersMover name="packer" scorefxn=tala_comp task_operations=l_res,d_res />
+        <PackRotamersMover name="packer" scorefxn="tala_comp" task_operations="l_res,d_res" />
 
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
     <PROTOCOLS>
-        <Add mover=terminal_bond1/>
-        <Add mover=terminal_bond2/>
-        <Add mover=packer/>
+        <Add mover="terminal_bond1"/>
+        <Add mover="terminal_bond2"/>
+        <Add mover="packer"/>
     </PROTOCOLS>
-    <OUTPUT scorefxn=tala />
+    <OUTPUT scorefxn="tala" />
+
 </ROSETTASCRIPTS>

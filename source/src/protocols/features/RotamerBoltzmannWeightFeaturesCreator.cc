@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-RotamerBoltzmannWeightFeaturesCreator::RotamerBoltzmannWeightFeaturesCreator() {}
-RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() = default;
-FeaturesReporterOP RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
-}
+// XRW TEMP RotamerBoltzmannWeightFeaturesCreator::RotamerBoltzmannWeightFeaturesCreator() {}
+// XRW TEMP RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
+// XRW TEMP }
 
-std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {
-	return "RotamerBoltzmannWeightFeatures";
-}
+// XRW TEMP std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {
+// XRW TEMP  return "RotamerBoltzmannWeightFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

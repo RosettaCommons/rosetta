@@ -90,7 +90,13 @@ std::string DesignInterfacesOperationCreator::keyname() const {
 void DesignInterfacesOperation::provide_xml_schema(
 	utility::tag::XMLSchemaDefinition & xsd
 ) {
-	task_op_schema_empty( xsd, keyname() );
+	AttributeList task_op_attributes;
+	task_op_attributes + XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "Radius of residues for design", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "Radius of residues for repacking", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain1", xsct_rosetta_bool, "Restrict the first chain to repacking", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "Restrict the second chain to repacking", "true" );
+
+	task_op_schema_w_attributes( xsd, keyname(), task_op_attributes );
 }
 
 core::pack::task::operation::TaskOperationOP DesignInterfacesOperation::clone() const

@@ -51,6 +51,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -60,27 +63,27 @@ using namespace core;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 
-std::string
-SeedSetupMoverCreator::keyname() const
-{
-	return SeedSetupMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeedSetupMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SeedSetupMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SeedSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeedSetupMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SeedSetupMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SeedSetupMover );
+// XRW TEMP }
 
-std::string
-SeedSetupMoverCreator::mover_name()
-{
-	return "SeedSetupMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SeedSetupMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SeedSetupMover";
+// XRW TEMP }
 
 SeedSetupMover::~SeedSetupMover() = default;
 
 SeedSetupMover::SeedSetupMover() :
-	protocols::moves::Mover( SeedSetupMoverCreator::mover_name() ){
+	protocols::moves::Mover( SeedSetupMover::mover_name() ){
 	//movemap options
 	chi_chain1_ = false;
 	chi_chain2_ = false;
@@ -374,10 +377,10 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	TR.flush();
 }//end apply
 
-std::string
-SeedSetupMover::get_name() const {
-	return SeedSetupMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeedSetupMover::get_name() const {
+// XRW TEMP  return SeedSetupMover::mover_name();
+// XRW TEMP }
 
 void
 SeedSetupMover::parse_my_tag( TagCOP const tag,
@@ -450,6 +453,66 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 	}
 
 }//end parse my tag
+
+std::string SeedSetupMover::get_name() const {
+	return mover_name();
+}
+
+std::string SeedSetupMover::mover_name() {
+	return "SeedSetupMover";
+}
+
+void SeedSetupMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("chi_chain2", xsct_rosetta_bool, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("chi_chain1", xsct_rosetta_bool, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("interface_chain1", xsct_rosetta_bool, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("interface_chain2", xsct_rosetta_bool, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("interface_distance_cutoff", xsct_real, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("repack_target", xsct_rosetta_bool, "XRW TO DO","1")
+		+ XMLSchemaAttribute::attribute_w_default("repack_foldpose", xsct_rosetta_bool, "XRW TO DO","1")
+		+ XMLSchemaAttribute::attribute_w_default("design_target", xsct_rosetta_bool, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("design_foldpose", xsct_rosetta_bool, "XRW TO DO","1")
+		+ XMLSchemaAttribute::attribute_w_default("allow_all_aas", xsct_rosetta_bool, "XRW TO DO","0");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_repack" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_minimize" );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("design", xsct_rosetta_bool, "XRW TO DO","0");
+
+	//Subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "XRW TO DO");
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "XRW TO DO");
+
+	attlist
+		+ XMLSchemaAttribute("allow_design", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("norepack_res", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("packtask", xsct_rosetta_bool, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelement_list );
+}
+
+std::string SeedSetupMoverCreator::keyname() const {
+	return SeedSetupMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SeedSetupMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SeedSetupMover );
+}
+
+void SeedSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SeedSetupMover::provide_xml_schema( xsd );
+}
+
 
 }
 }//protocol

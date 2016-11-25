@@ -35,7 +35,7 @@ class MakeStarTopologyMover : public moves::Mover {
 public:
 	MakeStarTopologyMover() : Mover(), mode_(""), restore_(false) {}
 
-	std::string get_name() const override { return MakeStarTopologyMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return MakeStarTopologyMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MakeStarTopologyMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -45,6 +45,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string mode_;

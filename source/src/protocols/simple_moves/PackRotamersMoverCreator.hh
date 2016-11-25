@@ -23,6 +23,7 @@ class PackRotamersMoverCreator : public protocols::moves::MoverCreator {
 public:
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 	static std::string mover_name();
 };
 

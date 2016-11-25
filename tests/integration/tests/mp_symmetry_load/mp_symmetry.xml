@@ -1,13 +1,14 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<memb_hires weights=mpframework_smooth_fa_2012 />
+		<ScoreFunction name="memb_hires" weights="mpframework_smooth_fa_2012" />
 	</SCOREFXNS>
 	<MOVERS>
-		<SetupForSymmetry name=setup_symm/>
-		<SymmetricAddMembraneMover name=add_memb/>
+		<SetupForSymmetry name="setup_symm"/>
+		<SymmetricAddMembraneMover name="add_memb"/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover=setup_symm/>
-		<Add mover=add_memb/>
+		<Add mover="setup_symm"/>
+		<Add mover="add_memb"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

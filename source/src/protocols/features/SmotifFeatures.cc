@@ -47,6 +47,10 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/SmotifFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -68,11 +72,11 @@ SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesRepor
 SmotifFeatures::~SmotifFeatures()= default;
 
 /// @brief return string with class name
-std::string
-SmotifFeatures::type_name() const
-{
-	return "SmotifFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP SmotifFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "SmotifFeatures";
+// XRW TEMP }
 
 /// @brief generate the table schemas and write them to the database
 void
@@ -316,6 +320,40 @@ SmotifFeatures::get_ss_segments(
 	return ss_segments;
 
 }
+
+std::string SmotifFeatures::type_name() const {
+	return class_name();
+}
+
+std::string SmotifFeatures::class_name() {
+	return "SmotifFeatures";
+}
+
+void SmotifFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Calculate 4 geometric values used to classify smotifs. "
+		"Reference (http://www.ncbi.nlm.nih.gov/pubmed/20421995)",
+		attlist );
+}
+
+std::string SmotifFeaturesCreator::type_name() const {
+	return SmotifFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+SmotifFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new SmotifFeatures );
+}
+
+void SmotifFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SmotifFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

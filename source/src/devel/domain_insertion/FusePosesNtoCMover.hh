@@ -64,8 +64,8 @@ public:
 	clone() const override;
 
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 
 	void
@@ -157,6 +157,18 @@ public:
 		std::string const identifier
 	) const;
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 
 private:
 
@@ -239,8 +251,8 @@ public:
 	~SetupCoiledCoilFoldTreeMover() override;
 
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
@@ -254,6 +266,18 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

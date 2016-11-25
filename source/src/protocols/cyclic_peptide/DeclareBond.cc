@@ -39,6 +39,9 @@
 #include <basic/Tracer.hh>
 
 #include <cstdio>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
@@ -244,27 +247,68 @@ DeclareBond::parse_my_tag(
 moves::MoverOP DeclareBond::clone() const { return moves::MoverOP( new DeclareBond( *this ) ); }
 moves::MoverOP DeclareBond::fresh_instance() const { return moves::MoverOP( new DeclareBond ); }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DeclareBondCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DeclareBond );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DeclareBondCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DeclareBond::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DeclareBond::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DeclareBond";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DeclareBond::get_name() const {
+// XRW TEMP  return "DeclareBond";
+// XRW TEMP }
+
+std::string DeclareBond::get_name() const {
+	return mover_name();
+}
+
+std::string DeclareBond::mover_name() {
+	return "DeclareBond";
+}
+
+void DeclareBond::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "res1", xsct_non_negative_integer, "Residue containing first atom" )
+		+ XMLSchemaAttribute::required_attribute( "res2", xsct_non_negative_integer, "Residue containing second atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "Name of first atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "Name of second atom" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_termini", xsct_rosetta_bool, "Add termini to pose?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "rebuild_fold_tree", xsct_rosetta_bool, "Rebuild the fold tree after declaring this bond?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "run_kic", xsct_rosetta_bool, "Run KIC to close any chainbreak caused by the declared chemical bond?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "KIC_res1", xsct_non_negative_integer, "First residue to use in KIC", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "KIC_res2", xsct_non_negative_integer, "Second residue to use in KIC", "0" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Declares a chemical bond between two atoms", attlist );
+
+}
+
+std::string DeclareBondCreator::keyname() const {
+	return DeclareBond::mover_name();
+}
+
 protocols::moves::MoverOP
 DeclareBondCreator::create_mover() const {
 	return protocols::moves::MoverOP( new DeclareBond );
 }
 
-std::string
-DeclareBondCreator::keyname() const
+void DeclareBondCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return DeclareBondCreator::mover_name();
+	DeclareBond::provide_xml_schema( xsd );
 }
 
-std::string
-DeclareBondCreator::mover_name()
-{
-	return "DeclareBond";
-}
-
-std::string
-DeclareBond::get_name() const {
-	return "DeclareBond";
-}
 
 } // moves
 } // protocols

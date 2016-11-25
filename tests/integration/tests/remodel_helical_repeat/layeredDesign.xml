@@ -1,16 +1,17 @@
-<dock_design>
+<ROSETTASCRIPTS>
 <TASKOPERATIONS>
 </TASKOPERATIONS>
 <SCOREFXNS>
-    <sfn_centroid weights="score3.wts"/>
+    <ScoreFunction name="sfn_centroid" weights="score3.wts"/>
 </SCOREFXNS>
 <FILTERS>
 </FILTERS>
 <MOVERS>
-    <RemodelMover name=remodel_mover blueprint="design.blueprint"/>
+    <RemodelMover name="remodel_mover" blueprint="design.blueprint"/>
 </MOVERS>
-<OUTPUT scorefxn=sfn_centroid />
 <PROTOCOLS>
-    <Add mover_name=remodel_mover/>
+    <Add mover_name="remodel_mover"/>
 </PROTOCOLS>
-</dock_design>
+<OUTPUT scorefxn="sfn_centroid" />
+
+</ROSETTASCRIPTS>

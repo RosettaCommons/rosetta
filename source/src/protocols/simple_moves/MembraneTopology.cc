@@ -21,6 +21,9 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Utility Headers
 
@@ -37,22 +40,22 @@ using core::pose::Pose;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 
-std::string
-MembraneTopologyCreator::keyname() const
-{
-	return MembraneTopologyCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MembraneTopologyCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MembraneTopology::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MembraneTopologyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MembraneTopology );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MembraneTopologyCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MembraneTopology );
+// XRW TEMP }
 
-std::string
-MembraneTopologyCreator::mover_name()
-{
-	return "MembraneTopology";
-}
+// XRW TEMP std::string
+// XRW TEMP MembraneTopology::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MembraneTopology";
+// XRW TEMP }
 
 MembraneTopology::~MembraneTopology() = default;
 
@@ -69,10 +72,10 @@ void MembraneTopology::apply( Pose & pose ) {
 	TR<<"Setting pose's membrane topology according to span file "<<span_file()<<std::endl;
 }
 
-std::string
-MembraneTopology::get_name() const {
-	return MembraneTopologyCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MembraneTopology::get_name() const {
+// XRW TEMP  return MembraneTopology::mover_name();
+// XRW TEMP }
 
 void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -84,6 +87,43 @@ void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
 	span_file( tag->getOption< std::string >( "span_file" ) );
 	TR<<"Span file defined as "<<span_file()<<std::endl;
 }
+
+std::string MembraneTopology::get_name() const {
+	return mover_name();
+}
+
+std::string MembraneTopology::mover_name() {
+	return "MembraneTopology";
+}
+
+void MembraneTopology::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute(
+		"span_file", xs_string,
+		"path to transmembrane topology prediction file" );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Inserts membrane topology from a membrane span file into a pose",
+		attlist );
+}
+
+std::string MembraneTopologyCreator::keyname() const {
+	return MembraneTopology::mover_name();
+}
+
+protocols::moves::MoverOP
+MembraneTopologyCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MembraneTopology );
+}
+
+void MembraneTopologyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MembraneTopology::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

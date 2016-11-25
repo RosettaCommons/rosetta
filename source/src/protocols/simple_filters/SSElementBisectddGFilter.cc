@@ -54,6 +54,10 @@
 #include <set>
 #include <map>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr("protocols.filters.SSElementBisectddGFilter");
 
@@ -248,10 +252,49 @@ SSElementBisectddGFilter::parse_my_tag(
 	only_c_term_ = tag->getOption<bool>("only_c_term",false);
 }
 
-filters::FilterOP
-SSElementBisectddGFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementBisectddGFilter); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP SSElementBisectddGFilterCreator::create_filter() const { return protocols::filters::FilterOP(new SSElementBisectddGFilter); }
 
-std::string
-SSElementBisectddGFilterCreator::keyname() const { return "SSBisectddGFilter"; }
+// XRW TEMP std::string
+// XRW TEMP SSElementBisectddGFilterCreator::keyname() const { return "SSBisectddGFilter"; }
+
+std::string SSElementBisectddGFilter::name() const {
+	return class_name();
+}
+
+std::string SSElementBisectddGFilter::class_name() {
+	return "SSBisectddGFilter";
+}
+
+void SSElementBisectddGFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "XRW TO DO", "-999999")
+		+ XMLSchemaAttribute::attribute_w_default("report_avg", xsct_rosetta_bool, "XRW TO DO", "true")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_ss", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("only_n_term", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("only_c_term", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SSElementBisectddGFilterCreator::keyname() const {
+	return SSElementBisectddGFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SSElementBisectddGFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SSElementBisectddGFilter );
+}
+
+void SSElementBisectddGFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SSElementBisectddGFilter::provide_xml_schema( xsd );
+}
+
 } // filters
 } // protocols

@@ -26,6 +26,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.benchmark.MakeCanonicalHelix" );
 
@@ -92,10 +95,10 @@ MakeCanonicalHelix::fresh_instance() const
 	return protocols::moves::MoverOP( new MakeCanonicalHelix );
 }
 
-std::string
-MakeCanonicalHelix::get_name() const {
-	return "MakeCanonicalHelix";
-}
+// XRW TEMP std::string
+// XRW TEMP MakeCanonicalHelix::get_name() const {
+// XRW TEMP  return "MakeCanonicalHelix";
+// XRW TEMP }
 
 void
 MakeCanonicalHelix::show(std::ostream & output) const
@@ -137,20 +140,53 @@ MakeCanonicalHelix::is_valid( core::pose::Pose& pose ) {
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeCanonicalHelixCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MakeCanonicalHelix );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP MakeCanonicalHelixCreator::keyname() const {
+// XRW TEMP  return MakeCanonicalHelix::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP MakeCanonicalHelix::mover_name(){
+// XRW TEMP  return "MakeCanonicalHelix";
+// XRW TEMP }
+
+std::string MakeCanonicalHelix::get_name() const {
+	return mover_name();
+}
+
+std::string MakeCanonicalHelix::mover_name() {
+	return "MakeCanonicalHelix";
+}
+
+void MakeCanonicalHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("helix_start", xsct_real, "Residue to start with; by default, residue 1")
+		+ XMLSchemaAttribute("helix_end", xsct_real, "Residue to end with - user added");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Forms a canonical alpha helix between the specified residues", attlist );
+}
+
+std::string MakeCanonicalHelixCreator::keyname() const {
+	return MakeCanonicalHelix::mover_name();
+}
+
 protocols::moves::MoverOP
 MakeCanonicalHelixCreator::create_mover() const {
 	return protocols::moves::MoverOP( new MakeCanonicalHelix );
 }
 
-std::string
-MakeCanonicalHelixCreator::keyname() const {
-	return MakeCanonicalHelixCreator::mover_name();
+void MakeCanonicalHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeCanonicalHelix::provide_xml_schema( xsd );
 }
 
-std::string
-MakeCanonicalHelixCreator::mover_name(){
-	return "MakeCanonicalHelix";
-}
 
 } //protocols
 } //membrane

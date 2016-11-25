@@ -168,12 +168,34 @@ ConsensusLoopDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "blueprint", xs_string )
-		+ XMLSchemaAttribute( "residue_selector", xs_string )
-		+ XMLSchemaAttribute( "include_adjacent_residues", xs_boolean )
-		+ XMLSchemaAttribute( "enrichment_threshold", xs_string );
+		+ XMLSchemaAttribute(
+		"blueprint", xs_string,
+		"If a blueprint filename is given, the blueprint will be read and its "
+		"secondary structure will be used to set the \"secstruct\" option." )
+		+ XMLSchemaAttribute(
+		"residue_selector", xs_string,
+		"By default, ConsensusLoopDesign works on all residues deemed \"loops\" "
+		"by DSSP in the pose. If set, a residue selector is used to select regions "
+		"of the protein in which to disallow residues. The selector can be used to "
+		"choose one or two loops in the pose rather than all of them. Note that the "
+		"residues flanking loop regions are also restricted according to the sequence "
+		"profiles. By default, this task operation works on all loops in the pose." )
+		+ XMLSchemaAttribute(
+		"include_adjacent_residues", xsct_rosetta_bool,
+		"If true, amino acids allowed at the non-loop positions joined by each loop "
+		"will also be restricted via their frequencies in native structures. "
+		"For example, some loops which follow helices strongly prefer proline as the "
+		"last position in the helix." )
+		+ XMLSchemaAttribute(
+		"enrichment_threshold", xs_string,
+		"If the enrichment value of an amino acid at a particular position is below this number, "
+		"it will be disallowed. 0.5 is more stringent than 0.0." );
 
-	task_op_schema_w_attributes( xsd, class_name(), attributes );
+	task_op_schema_w_attributes(
+		xsd, class_name(), attributes,
+		"ConsensusLoopDesign restricts amino acid identities in loops based on the "
+		"ABEGO torsion bins of the loop residues and the common sequence profiles from "
+		"natives for loops with the same ABEGO bins.");
 }
 
 void

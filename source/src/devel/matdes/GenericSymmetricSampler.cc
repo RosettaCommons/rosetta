@@ -37,6 +37,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "devel.matdes.GenericSymmetricSampler" );
 
@@ -49,22 +52,22 @@ using namespace utility;
 
 //////////////////////////////////////////////
 /// creator
-std::string
-GenericSymmetricSamplerCreator::keyname() const
-{
-	return GenericSymmetricSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GenericSymmetricSamplerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GenericSymmetricSampler::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-GenericSymmetricSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericSymmetricSampler );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GenericSymmetricSamplerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GenericSymmetricSampler );
+// XRW TEMP }
 
-std::string
-GenericSymmetricSamplerCreator::mover_name()
-{
-	return "GenericSymmetricSampler";
-}
+// XRW TEMP std::string
+// XRW TEMP GenericSymmetricSampler::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GenericSymmetricSampler";
+// XRW TEMP }
 
 //////////////////////////////////////////////
 /// mover
@@ -212,6 +215,50 @@ GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 		usescore_ = false;
 	}
 }
+
+std::string GenericSymmetricSampler::get_name() const {
+	return mover_name();
+}
+
+std::string GenericSymmetricSampler::mover_name() {
+	return "GenericSymmetricSampler";
+}
+
+void GenericSymmetricSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute( "dof_id", xs_string, "Symmetry DOF number." )
+		+ XMLSchemaAttribute::attribute_w_default( "angle_min", xsct_real, "Min angle degrees to sample.", "-1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "angle_max", xsct_real, "Max angle degrees to sample.", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "angle_step", xsct_real, "Step size to make while sampling angle degrees.", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "radial_disp_min", xsct_real, "Min translation in Angstroms.", "-1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "radial_disp_max", xsct_real, "Max translation in Angstroms.", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "radial_disp_step", xsct_real, "Step size to make while sampling translation in angstroms.", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "select_max", xsct_rosetta_bool, "XRW TO DO: most positive score to allow?", "false" )
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Manditory mover to use" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_name", xs_string, "Optional filter to use", "true_filter" )
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Optional scorefunction to use" ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO: Use to sample more closely around a specified symmetry DOF.", attlist );
+}
+
+std::string GenericSymmetricSamplerCreator::keyname() const {
+	return GenericSymmetricSampler::mover_name();
+}
+
+protocols::moves::MoverOP
+GenericSymmetricSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GenericSymmetricSampler );
+}
+
+void GenericSymmetricSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GenericSymmetricSampler::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // devel

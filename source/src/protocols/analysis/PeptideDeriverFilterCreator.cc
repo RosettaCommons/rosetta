@@ -23,16 +23,16 @@
 namespace protocols {
 namespace analysis {
 
-protocols::filters::FilterOP
-PeptideDeriverFilterCreator::create_filter() const {
-	protocols::filters::FilterOP filter( new protocols::analysis::PeptideDeriverFilter() );
-	return filter;
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP PeptideDeriverFilterCreator::create_filter() const {
+// XRW TEMP  protocols::filters::FilterOP filter( new protocols::analysis::PeptideDeriverFilter() );
+// XRW TEMP  return filter;
+// XRW TEMP }
 
-std::string
-PeptideDeriverFilterCreator::keyname() const {
-	return "PeptideDeriver";
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideDeriverFilterCreator::keyname() const {
+// XRW TEMP  return "PeptideDeriver";
+// XRW TEMP }
 
 } //namespace analysis
 } //namespace protocols

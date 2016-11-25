@@ -24,7 +24,7 @@ class HydrogenBondConstraintGeneratorCreator : public protocols::constraint_gene
 public:
 	protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const override;
 	std::string keyname() const override;
-
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace constraint_generator

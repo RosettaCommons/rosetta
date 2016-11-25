@@ -214,19 +214,45 @@ void JointSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "use_current", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_natro", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_chain", xsct_non_negative_integer, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_current", xsct_rosetta_bool,
+		"Use residue identities from the current structure (input pose to apply() of the taskoperation)",
+		"true"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_natro", xsct_rosetta_bool,
+		"the task operation also adds the rotamers from the native structures (use_native/native) in the rotamer library.",
+		"false"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"chain", xsct_non_negative_integer,
+		"to which chain to apply, 0 is all chains",
+		"0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_chain", xsct_non_negative_integer,
+		"given an additional input pdb, such as through in:file:native, which chain should the sequence be derived from. 0 is all chains.",
+		"0"  )
 		// AMW: This relies on the presence of a command-line option.
-		+ XMLSchemaAttribute::attribute_w_default(  "use_native", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_starting_as_native", xs_boolean, "false" )
-		+ XMLSchemaAttribute( "filename", xs_string )
-		+ XMLSchemaAttribute( "native", xs_string )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_native", xsct_rosetta_bool,
+		"Use residue identities from the structure listed with -in:file:native",
+		"false"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_starting_as_native", xsct_rosetta_bool,
+		"use starting pose as native pose",
+		"false"  )
+		+ XMLSchemaAttribute(
+		"filename", xs_string ,
+		"Use residue identities from the listed file" )
+		+ XMLSchemaAttribute( "native", xs_string ,
+		"use this file path as the native pdb" )
 		// AMW: This relies on the presence of a command-line option.
-		+ XMLSchemaAttribute::attribute_w_default(  "use_fasta", xs_boolean, "false" );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_fasta", xsct_rosetta_bool,
+		"Use residue identities from a native sequence given by a FASTA file (specify the path to the FASTA file with the -in:file:fasta flag at the command line)",
+		"false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Prohibit designing to residue identities that aren't found at that position in any of the listed structures:");
 }
 
 /// @brief Add the sequence from the given filename to the set of allowed aas.
@@ -324,4 +350,3 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 } // TaskOperations
 } // toolbox
 } // protocols
-

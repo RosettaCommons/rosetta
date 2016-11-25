@@ -23,11 +23,14 @@ namespace features {
 class ResidueGridScoresFeaturesCreator : public protocols::features::FeaturesReporterCreator
 {
 public:
-	ResidueGridScoresFeaturesCreator();
-	~ResidueGridScoresFeaturesCreator() override;
+	// XRW TEMP  ResidueGridScoresFeaturesCreator();
+	// XRW TEMP  ~ResidueGridScoresFeaturesCreator() override;
 
+	// XRW TEMP  protocols::features::FeaturesReporterOP create_features_reporter() const override;
+	// XRW TEMP  std::string type_name() const override;
 	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 

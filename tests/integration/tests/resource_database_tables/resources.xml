@@ -5,7 +5,7 @@
 		<DatabaseSessionOptions tag="input_db_options" database_mode="sqlite3" database_name="rosetta_inputs.db3"/>
 	</ResourceOptions>
 	<Resources>
-	    <DatabaseSession tag="rosetta_inputs_db" options="input_db_options" locator=NULL/>
+	    <DatabaseSession tag="rosetta_inputs_db" options="input_db_options" locator="NULL"/>
 	</Resources>
 
 	Configure Output Database:
@@ -13,7 +13,7 @@
 		<DatabaseSessionOptions tag="scores_db_options" database_mode="sqlite3" database_name="scores.db3"/>
 	</ResourceOptions>
 	<Resources>
-	    <DatabaseSession tag="scores_db" options="scores_db_options" locator=NULL/>
+	    <DatabaseSession tag="scores_db" options="scores_db_options" locator="NULL"/>
 	</Resources>
 
 	Configure Job Resources:
@@ -22,14 +22,14 @@
 		<DatabaseResourceLocator tag="symmetry_definitions" database_session_tag="rosetta_inputs_db" sql_command="SELECT symmdef_file FROM symmetry_definitions WHERE pdb_code = ?;"/>
 	</ResourceLocators>
 	<ResourceOptions>
-		<PoseFromPDBOptions tag="pose_options" ignore_unrecognized_res=1/>
+		<PoseFromPDBOptions tag="pose_options" ignore_unrecognized_res="1"/>
 	</ResourceOptions>
 
 	<Resources>
-		<ResourceTable database_resource_tag=rosetta_inputs_db sql_command="SELECT * from resource_definitions;"/>
+		<ResourceTable database_resource_tag="rosetta_inputs_db" sql_command="SELECT * from resource_definitions;"/>
 	</Resources>
 
 	<Jobs>
-		<JobsTable database_resource_tag=rosetta_inputs_db sql_command="SELECT * from jobs;"/>
+		<JobsTable database_resource_tag="rosetta_inputs_db" sql_command="SELECT * from jobs;"/>
 	</Jobs>
 </JD2ResourceManagerJobInputter>

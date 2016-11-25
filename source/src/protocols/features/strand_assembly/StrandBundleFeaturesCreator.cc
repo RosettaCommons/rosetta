@@ -26,15 +26,15 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-StrandBundleFeaturesCreator::StrandBundleFeaturesCreator() {}
-StrandBundleFeaturesCreator::~StrandBundleFeaturesCreator() {}
-FeaturesReporterOP StrandBundleFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new StrandBundleFeatures );
-}
+// XRW TEMP StrandBundleFeaturesCreator::StrandBundleFeaturesCreator() {}
+// XRW TEMP StrandBundleFeaturesCreator::~StrandBundleFeaturesCreator() {}
+// XRW TEMP FeaturesReporterOP StrandBundleFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new StrandBundleFeatures );
+// XRW TEMP }
 
-std::string StrandBundleFeaturesCreator::type_name() const {
-	return "StrandBundleFeatures";
-}
+// XRW TEMP std::string StrandBundleFeaturesCreator::type_name() const {
+// XRW TEMP  return "StrandBundleFeatures";
+// XRW TEMP }
 
 } //namespace strand_assembly
 } //namespace features

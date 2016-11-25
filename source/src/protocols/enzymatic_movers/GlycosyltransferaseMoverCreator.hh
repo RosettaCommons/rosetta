@@ -27,13 +27,16 @@ class GlycosyltransferaseMoverCreator : public moves::MoverCreator {
 
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
-	virtual moves::MoverOP create_mover() const;
+	// XRW TEMP  virtual moves::MoverOP create_mover() const;
 
 	/// @brief  Return the string identifier for the associated Mover (GlycosyltransferaseMover).
-	virtual std::string keyname() const;
+	// XRW TEMP  virtual std::string keyname() const;
 
 	/// @brief  Static method that returns the keyname for performance reasons.
-	static std::string mover_name();
+	// XRW TEMP  static std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }  // namespace enzymatic_movers

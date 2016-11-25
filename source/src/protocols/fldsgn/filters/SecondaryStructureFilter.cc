@@ -46,6 +46,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -402,11 +405,56 @@ SecondaryStructureFilter::get_filtered_secstruct( core::pose::Pose const & pose 
 	return pose.secstruct();
 }
 
-protocols::filters::FilterOP
-SecondaryStructureFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SecondaryStructureFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureFilter ); }
 
-std::string
-SecondaryStructureFilterCreator::keyname() const { return "SecondaryStructure"; }
+// XRW TEMP std::string
+// XRW TEMP SecondaryStructureFilterCreator::keyname() const { return "SecondaryStructure"; }
+
+std::string SecondaryStructureFilter::name() const {
+	return class_name();
+}
+
+std::string SecondaryStructureFilter::class_name() {
+	return "SecondaryStructure";
+}
+
+void SecondaryStructureFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction abego_string;
+	abego_string.name( "abego_string" );
+	abego_string.base_type( xs_string );
+	abego_string.add_restriction( xsr_pattern, "[ABEGOX]*" );
+	xsd.add_top_level_element( abego_string );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "ss", xsct_dssp_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "abego", "abego_string", "XRW TO DO" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_abego", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute( "compute_pose_secstruct_by_dssp", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "threshold", xsct_real, "XRW TO DO" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SecondaryStructureFilterCreator::keyname() const {
+	return SecondaryStructureFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SecondaryStructureFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SecondaryStructureFilter );
+}
+
+void SecondaryStructureFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SecondaryStructureFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

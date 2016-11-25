@@ -53,6 +53,9 @@
 #include <cstdlib>
 #include <ostream>
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.benchmark.SampleTiltAngles" );
 
@@ -149,10 +152,10 @@ SampleTiltAngles::fresh_instance() const
 	return protocols::moves::MoverOP( new SampleTiltAngles );
 }
 
-std::string
-SampleTiltAngles::get_name() const {
-	return "SampleTiltAngles";
-}
+// XRW TEMP std::string
+// XRW TEMP SampleTiltAngles::get_name() const {
+// XRW TEMP  return "SampleTiltAngles";
+// XRW TEMP }
 
 void
 SampleTiltAngles::show(std::ostream & output) const
@@ -280,20 +283,55 @@ SampleTiltAngles::write_score_to_outfiles(
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SampleTiltAnglesCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SampleTiltAngles );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SampleTiltAnglesCreator::keyname() const {
+// XRW TEMP  return SampleTiltAngles::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SampleTiltAngles::mover_name(){
+// XRW TEMP  return "SampleTiltAngles";
+// XRW TEMP }
+
+std::string SampleTiltAngles::get_name() const {
+	return mover_name();
+}
+
+std::string SampleTiltAngles::mover_name() {
+	return "SampleTiltAngles";
+}
+
+void SampleTiltAngles::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("prefix", xs_string, "Prefix for output files.")
+		+ XMLSchemaAttribute("ref1", xs_string, "Name attribute of previously defined score function to use as first reference score function.")
+		+ XMLSchemaAttribute("ref2", xs_string, "Name attribute of previously defined score function to use as second reference score function.")
+		+ XMLSchemaAttribute("ref3", xs_string, "Name attribute of previously defined score function to use as third reference score function.");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sample different tilt angles of the pose within the membrane.", attlist );
+}
+
+std::string SampleTiltAnglesCreator::keyname() const {
+	return SampleTiltAngles::mover_name();
+}
+
 protocols::moves::MoverOP
 SampleTiltAnglesCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SampleTiltAngles );
 }
 
-std::string
-SampleTiltAnglesCreator::keyname() const {
-	return SampleTiltAnglesCreator::mover_name();
+void SampleTiltAnglesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SampleTiltAngles::provide_xml_schema( xsd );
 }
 
-std::string
-SampleTiltAnglesCreator::mover_name(){
-	return "SampleTiltAngles";
-}
 
 } //protocols
 } //membrane

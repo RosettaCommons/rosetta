@@ -29,7 +29,7 @@ public:
 	ResetBaselineMover();
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -43,6 +43,18 @@ public:
 
 	protocols::filters::FilterOP filter() const;
 	void filter( protocols::filters::FilterOP f );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	protocols::filters::FilterOP filter_; // dflt NULL; must be of type Operator or CompoundStatement
 };

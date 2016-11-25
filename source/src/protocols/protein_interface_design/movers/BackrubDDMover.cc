@@ -81,6 +81,9 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -91,22 +94,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.Backru
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
 
-std::string
-BackrubDDMoverCreator::keyname() const
-{
-	return BackrubDDMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BackrubDDMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BackrubDDMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BackrubDDMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubDDMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BackrubDDMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BackrubDDMover() );
+// XRW TEMP }
 
-std::string
-BackrubDDMoverCreator::mover_name()
-{
-	return "BackrubDD";
-}
+// XRW TEMP std::string
+// XRW TEMP BackrubDDMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BackrubDD";
+// XRW TEMP }
 
 BackrubDDMover::BackrubDDMover() :
 	simple_moves::DesignRepackMover( "BackrubDD" ),
@@ -395,10 +398,10 @@ BackrubDDMover::apply( Pose & pose )
 	pose.fold_tree( saved_ft );
 }
 
-std::string
-BackrubDDMover::get_name() const {
-	return BackrubDDMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BackrubDDMover::get_name() const {
+// XRW TEMP  return BackrubDDMover::mover_name();
+// XRW TEMP }
 
 void BackrubDDMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -448,6 +451,63 @@ void BackrubDDMover::parse_my_tag(
 	}
 	TR<<std::endl;
 }
+
+std::string BackrubDDMover::get_name() const {
+	return mover_name();
+}
+
+std::string BackrubDDMover::mover_name() {
+	return "BackrubDD";
+}
+
+std::string subtag_for_backrubdd( std::string const & subtag ) {
+	return "stfbdd_" + subtag;
+}
+
+void BackrubDDMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "partner1", xsct_rosetta_bool, "Backrub the first chain", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "partner2", xsct_rosetta_bool, "Backrub the second chain", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_distance_cutoff", xsct_real, "Distance from the interface that counts for backrubbing", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "moves", xsct_non_negative_integer, "Number of total moves to execute", "1000" )
+		+ XMLSchemaAttribute::attribute_w_default( "sc_move_probability", xsct_real, "Probability of making sidechain moves", "0.25" )
+		+ XMLSchemaAttribute::attribute_w_default( "small_move_probability", xsct_real, "Probability of making small moves", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "bbg_move_probability", xsct_real, "Probability of making big moves", "0.25" );
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	AttributeList residue_attributes;
+	AttributeList span_attributes;
+
+	residue_attributes + XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue number specified in PDB-or-refpose-or-seqpos notation" )
+		+ XMLSchemaAttribute( "resnum", xsct_non_negative_integer, "Residue number specified in seqpos (Rosetta) notation" );
+
+	span_attributes + XMLSchemaAttribute( "begin", xsct_refpose_enabled_residue_number, "Beginning of residue range in PDB-or-refpose-or-seqpos notation" )
+		+ XMLSchemaAttribute( "end", xsct_refpose_enabled_residue_number, "End of residue range in PDB-or-refpose-or-seqpos notation" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "residue", residue_attributes, "Tags describing individual residues to be sampled"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "span", span_attributes, "Tags describing residue ranges to be sampled"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_backrubdd );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string BackrubDDMoverCreator::keyname() const {
+	return BackrubDDMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BackrubDDMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackrubDDMover );
+}
+
+void BackrubDDMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackrubDDMover::provide_xml_schema( xsd );
+}
+
 
 
 } //movers

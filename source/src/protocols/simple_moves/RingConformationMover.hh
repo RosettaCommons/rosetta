@@ -65,7 +65,7 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 
@@ -94,6 +94,18 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 
 	/// @brief  Set whether or not this Mover will sample all ring conformers, regardless of energy.
 	void sample_all_conformers( bool setting ) { sample_all_conformers_ = setting; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:  // Private methods //////////////////////////////////////////////////

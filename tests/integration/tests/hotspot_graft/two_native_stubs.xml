@@ -1,64 +1,65 @@
-<dock_design>
+<ROSETTASCRIPTS>
 		<TASKOPERATIONS>
-			<ProteinInterfaceDesign name=pido repack_chain1=0 repack_chain2=1/>
+			<ProteinInterfaceDesign name="pido" repack_chain1="0" repack_chain2="1"/>
 		</TASKOPERATIONS>
         <SCOREFXNS>
-		  	  <stub_docking_low weights=interchain_cen hs_hash=10.0/>
-			  <ddg_scorefxn weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0/>
+		  	  <ScoreFunction name="stub_docking_low" weights="interchain_cen" hs_hash="10.0"/>
+			  <ScoreFunction name="ddg_scorefxn" weights="pre_talaris_2013_standard" patch="score12" hs_hash="0.0"/>
         </SCOREFXNS>
         <FILTERS>
-				<AverageDegree name=degree threshold=8.5 task_operations=pido/>
-		 <Ddg name=ddg threshold=-18 scorefxn=ddg_scorefxn/>
-		 <ResInInterface name=riif residues=15/>
-		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 residue=15A energy_cutoff=-0.05/>
-		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 residue=17A energy_cutoff=-0.05/>
-		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 residue=198A energy_cutoff=-0.05/>
-		<CompoundStatement name=either_hbond>
-			<OR filter_name=hbonds_15/>
-			<OR filter_name=hbonds_17/>
-			<OR filter_name=hbonds_198/>
+				<AverageDegree name="degree" threshold="8.5" task_operations="pido"/>
+		 <Ddg name="ddg" threshold="-18" scorefxn="ddg_scorefxn"/>
+		 <ResInInterface name="riif" residues="15"/>
+		<HbondsToResidue name="hbonds_15" partners="1" backbone="1" sidechain="1" residue="15A" energy_cutoff="-0.05"/>
+		<HbondsToResidue name="hbonds_17" partners="1" backbone="1" sidechain="1" residue="17A" energy_cutoff="-0.05"/>
+		<HbondsToResidue name="hbonds_198" partners="1" backbone="1" sidechain="1" residue="198A" energy_cutoff="-0.05"/>
+		<CompoundStatement name="either_hbond">
+			<OR filter_name="hbonds_15"/>
+			<OR filter_name="hbonds_17"/>
+			<OR filter_name="hbonds_198"/>
 		</CompoundStatement>
-		<CompoundStatement name=all_hbond>
-			<AND filter_name=hbonds_15/>
-			<AND filter_name=hbonds_17/>
-			<AND filter_name=hbonds_198/>
+		<CompoundStatement name="all_hbond">
+			<AND filter_name="hbonds_15"/>
+			<AND filter_name="hbonds_17"/>
+			<AND filter_name="hbonds_198"/>
 		</CompoundStatement>
 
-		<CompoundStatement name=hbond_ddg>
-			<AND filter_name=ddg/>
-			<AND filter_name=either_hbond/>
+		<CompoundStatement name="hbond_ddg">
+			<AND filter_name="ddg"/>
+			<AND filter_name="either_hbond"/>
 		</CompoundStatement>
-		<Sasa name=sasa threshold=800 confidence=0.0/>
+		<Sasa name="sasa" threshold="800" confidence="0.0"/>
         </FILTERS>
         <MOVERS>
-            <Docking name=dock fullatom=0 local_refine=0 score_low=stub_docking_low/>
-				<build_Ala_pose name=ala_pose/>
-				<SaveAndRetrieveSidechains name=save_retrieve_sc/>
-				<RepackMinimize name=des1 minimize_bb=0 minimize_rb=1 scorefxn_repack=soft_rep scorefxn_minimize=score_docking interface_cutoff_distance=8.0/>
-				<RepackMinimize name=des3 minimize_bb=1 minimize_rb=1 scorefxn_repack=score12 scorefxn_minimize=score12 interface_cutoff_distance=8.0 />
-				<SaveAndRetrieveSidechains name=srsc/>
-				<PlaceStub name=place_phe stubfile=native_phe_stub.pdb add_constraints=1 final_filter=hbond_ddg minimize_rb=1 hurry=1>
+            <Docking name="dock" fullatom="0" local_refine="0" score_low="stub_docking_low"/>
+				<build_Ala_pose name="ala_pose"/>
+				<SaveAndRetrieveSidechains name="save_retrieve_sc"/>
+				<RepackMinimize name="des1" minimize_bb="0" minimize_rb="1" scorefxn_repack="soft_rep" scorefxn_minimize="score_docking" interface_cutoff_distance="8.0"/>
+				<RepackMinimize name="des3" minimize_bb="1" minimize_rb="1" scorefxn_repack="score12" scorefxn_minimize="score12" interface_cutoff_distance="8.0" />
+				<SaveAndRetrieveSidechains name="srsc"/>
+				<PlaceStub name="place_phe" stubfile="native_phe_stub.pdb" add_constraints="1" final_filter="hbond_ddg" minimize_rb="1" hurry="1">
 					 <DesignMovers>
-						<Add mover_name=srsc/>
-						<Add mover_name=des1 coord_cst_std=0.6/>
-						<Add mover_name=des3 use_constraints=0/>
+						<Add mover_name="srsc"/>
+						<Add mover_name="des1" coord_cst_std="0.6"/>
+						<Add mover_name="des3" use_constraints="0"/>
 					</DesignMovers>
 				</PlaceStub>
-				<PlaceStub name=place_stub stubfile=native_gln_stub.pdb add_constraints=1 after_placement_filter=all_hbond place_scaffold=1 max_cb_dist=3.0>
+				<PlaceStub name="place_stub" stubfile="native_gln_stub.pdb" add_constraints="1" after_placement_filter="all_hbond" place_scaffold="1" max_cb_dist="3.0">
 					 <DesignMovers>
-						<Add mover_name=place_phe use_constraints=1 coord_cst_std=0.5/>
+						<Add mover_name="place_phe" use_constraints="1" coord_cst_std="0.5"/>
 					</DesignMovers>
 				</PlaceStub>
         </MOVERS>
         <APPLY_TO_POSE>
-		        <SetupHotspotConstraints stubfile=all_native_stubs.pdb cb_force=0.5/>
-						<profile weight=0.2 file_name="input/1l6x.min.sequence_profile"/>
+		        <SetupHotspotConstraints stubfile="all_native_stubs.pdb" cb_force="0.5"/>
+						<profile weight="0.2" file_name="input/1l6x.min.sequence_profile"/>
         </APPLY_TO_POSE>
         <PROTOCOLS>
-		  		<Add mover_name=dock filter=degree/>
-				<Add mover_name=place_stub/>
-				<Add filter_name=ddg/>
-				<Add filter_name=either_hbond/>
-				<Add filter_name=sasa/>
+		  		<Add mover_name="dock" filter="degree"/>
+				<Add mover_name="place_stub"/>
+				<Add filter_name="ddg"/>
+				<Add filter_name="either_hbond"/>
+				<Add filter_name="sasa"/>
         </PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

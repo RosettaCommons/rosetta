@@ -88,6 +88,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -112,22 +115,22 @@ using namespace protocols::moves;
 using namespace core;
 using namespace utility;
 
-std::string
-InterfaceAnalyzerMoverCreator::keyname() const
-{
-	return InterfaceAnalyzerMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceAnalyzerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InterfaceAnalyzerMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-InterfaceAnalyzerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterfaceAnalyzerMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InterfaceAnalyzerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InterfaceAnalyzerMover() );
+// XRW TEMP }
 
-std::string
-InterfaceAnalyzerMoverCreator::mover_name()
-{
-	return "InterfaceAnalyzerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceAnalyzerMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InterfaceAnalyzerMover";
+// XRW TEMP }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////InterfaceAnalyzerMover///////////////////////////////////////////////////////////
@@ -437,10 +440,10 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 
 }//end apply
 
-std::string
-InterfaceAnalyzerMover::get_name() const {
-	return "InterfaceAnalyzerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceAnalyzerMover::get_name() const {
+// XRW TEMP  return "InterfaceAnalyzerMover";
+// XRW TEMP }
 
 void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 	if ( use_jobname_ ) {
@@ -1454,11 +1457,6 @@ InterfaceAnalyzerMover::parse_my_tag(
 	core::pose::Pose const & pose
 )
 {
-	if ( tag->getName() != "InterfaceAnalyzerMover" ) {
-		//TR(t_warning) << " received incompatible Tag " << tag << std::endl;
-		// assert(false);
-		//   return;
-	}
 	sf_ = protocols::rosetta_scripts::parse_score_function( tag, datamap )->clone();
 
 	set_pack_separated(tag->getOption< bool >( "pack_separated", false ) );
@@ -1466,8 +1464,8 @@ InterfaceAnalyzerMover::parse_my_tag(
 	set_compute_packstat(tag->getOption< bool > ( "packstat", false ) );
 	set_compute_interface_sc(tag->getOption< bool > ("interface_sc", false ) );
 	set_pack_input(tag->getOption< bool > ( "pack_input", false ) );
-	set_use_tracer(tag->getOption( "tracer", false ) );
-	set_use_jobname(tag->getOption( "use_jobname", false ) );
+	set_use_tracer(tag->getOption< bool > ( "tracer", false ) );
+	set_use_jobname(tag->getOption< bool > ( "use_jobname", false ) );
 
 
 	if ( tag->hasOption( "jump" ) && tag->hasOption( "fixedchains" ) ) {
@@ -1507,7 +1505,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 		ligand_chain_ = tag->getOption< std::string >( "ligandchain" );
 		explicit_constructor_ = true;
 	} else {
-		set_interface_jump(tag->getOption( "jump", 1 ) );
+		set_interface_jump(tag->getOption< core::Size >( "jump", 1 ) );
 	}
 	//      tracer_(false), //output to tracer
 	//      calcs_ready_(false), //calculators are not ready
@@ -1822,6 +1820,55 @@ void InterfaceAnalyzerMover::set_use_tracer( bool const tracer) {tracer_ = trace
 void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname) { use_jobname_ = use_jobname; }
 void InterfaceAnalyzerMover::set_pack_separated( bool const pack_separated ) { pack_separated_ = pack_separated; }
 void InterfaceAnalyzerMover::set_scorefunction( core::scoring::ScoreFunctionCOP sf ) { sf_ = sf->clone(); }
+
+std::string InterfaceAnalyzerMover::get_name() const {
+	return mover_name();
+}
+
+std::string InterfaceAnalyzerMover::mover_name() {
+	return "InterfaceAnalyzerMover";
+}
+
+void InterfaceAnalyzerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "pack_separated", xsct_rosetta_bool, "repack chains after separation (better evaluation of unbound state)", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "pack_input", xsct_rosetta_bool, "repack the input before calculating bound state values", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "resfile", xsct_rosetta_bool, "use a resfile for packing operations note BOOLEAN", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "packstat", xsct_rosetta_bool, "run packstat on bound state", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "interface_sc", xsct_rosetta_bool, "run interface_sc on bound state", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "tracer", xsct_rosetta_bool, "report output to a Tracer", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_jobname", xsct_rosetta_bool, "when reporting output (especially to tracer), label with the job name (like 1UBQ_0001)", "false" );
+
+	std::string const exclusive_warning(" Notice that 'jump', 'interface', 'fixedchains', and 'ligandchain' are all mutually exclusive.");
+
+	attlist + XMLSchemaAttribute( "fixedchains", xs_string, "comma separated list of PDB chains on one side of the interface, most useful when you have multiple chains on each side. "+ exclusive_warning );
+	attlist + XMLSchemaAttribute( "interface", xs_string, "docking-style interface definitions, like HL_AB for chains HL vs AB for the interface. " + exclusive_warning );
+	attlist + XMLSchemaAttribute( "ligandchain", xs_string, "Move ONLY this PDB chain. " + exclusive_warning );
+	attlist + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Residues upstream/downstream of this Jump are on opposite sides of the interface; this Jump moves in the separation step. " + exclusive_warning );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover reports scores and statistics useful for judging the quality of protein-protein interfaces", attlist );
+}
+
+std::string InterfaceAnalyzerMoverCreator::keyname() const {
+	return InterfaceAnalyzerMover::mover_name();
+}
+
+protocols::moves::MoverOP
+InterfaceAnalyzerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InterfaceAnalyzerMover );
+}
+
+void InterfaceAnalyzerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceAnalyzerMover::provide_xml_schema( xsd );
+}
+
 
 }//analysis
 }//protocols

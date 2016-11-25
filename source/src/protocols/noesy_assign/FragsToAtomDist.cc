@@ -186,8 +186,8 @@ void initialize_group_list(
 		for ( auto const & methyl : methyls ) {
 			SizeList indices;
 			tr.Info << "pos " << pos << " " << methyl.first << " ";
-			for (auto atom : methyl.second) {
-					if ( pos == 1 && atom == "H" ) {
+			for ( auto atom : methyl.second ) {
+				if ( pos == 1 && atom == "H" ) {
 					atom="1H";
 				}
 				indices.push_back( rsd.atom_index( atom ) );

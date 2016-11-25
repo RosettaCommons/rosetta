@@ -24,6 +24,7 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 // c++ headers
@@ -72,6 +73,8 @@ public:
 	/// @brief main opeartion
 	void apply( FragSetOP & fragset );
 
+	static std::string xml_element_name(); // "FragReader"
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

@@ -39,7 +39,7 @@ public:
 	virtual core::scoring::constraints::ConstraintCOPs
 	generate_constraints( Pose const & pose );
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void task_factory( TaskFactoryOP tf );
 	void residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
@@ -69,6 +69,18 @@ public:
 	core::Real const & coord_dev() const { return coord_dev_; }
 	core::Real const & bound_width() const { return bound_width_; }
 	core::Size const & min_seq_sep() const { return min_seq_sep_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	core::Size

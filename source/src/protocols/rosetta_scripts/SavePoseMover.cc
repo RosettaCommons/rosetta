@@ -26,6 +26,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -35,23 +38,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SavePoseMover" );
 
 namespace protocols {
 namespace rosetta_scripts {
-
-std::string
-SavePoseMoverCreator::keyname() const
-{
-	return SavePoseMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-SavePoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SavePoseMover );
-}
-
-std::string
-SavePoseMoverCreator::mover_name()
-{
-	return "SavePoseMover";
-}
 
 SavePoseMover::SavePoseMover() :
 	Mover( "SavePoseMover" ),
@@ -91,11 +77,6 @@ SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_
 	}
 }
 
-std::string
-SavePoseMover::get_name() const {
-	return "SavePoseMover";
-}
-
 protocols::moves::MoverOP
 SavePoseMover::clone() const{
 	return protocols::moves::MoverOP( new SavePoseMover( *this ) );
@@ -106,7 +87,43 @@ SavePoseMover::fresh_instance() const{
 	return protocols::moves::MoverOP( new SavePoseMover );
 }
 
+std::string SavePoseMover::get_name() const {
+	return mover_name();
+}
+
+std::string SavePoseMover::mover_name() {
+	return "SavePoseMover";
+}
+
+void SavePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// I would consider a complex type that ends in .pdb, but I want users to be
+	// able to provide cifs! Or name their files whatever!
+	attlist + XMLSchemaAttribute("pdb_file", xs_string, "PDB file to be read in as a reference pose." )
+		+ XMLSchemaAttribute::attribute_w_default("restore_pose", xsct_rosetta_bool, "Restore the specified reference pose INTO the current pose rather than saving the current pose INTO the reference pose.", "1" );
+
+	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist , "reference_name" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SavePoseMoverCreator::keyname() const {
+	return SavePoseMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SavePoseMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SavePoseMover );
+}
+
+void SavePoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SavePoseMover::provide_xml_schema( xsd );
+}
+
+
 
 } // moves
 } // protocols
-

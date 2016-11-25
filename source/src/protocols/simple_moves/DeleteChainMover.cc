@@ -21,33 +21,36 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DeleteChainMover" );
 
-std::string
-DeleteChainMoverCreator::keyname() const
-{
-	return DeleteChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DeleteChainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DeleteChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteChainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DeleteChainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DeleteChainMover );
+// XRW TEMP }
 
-std::string
-DeleteChainMoverCreator::mover_name()
-{
-	return "DeleteChain";
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DeleteChain";
+// XRW TEMP }
 
-std::string
-DeleteChainMover::get_name() const {
-	return DeleteChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainMover::get_name() const {
+// XRW TEMP  return DeleteChainMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 DeleteChainMover::clone() const
@@ -112,6 +115,39 @@ DeleteChainMover::parse_my_tag(
 		chain_num_ = tag->getOption< core::Size >( "chain");
 	}
 }
+
+std::string DeleteChainMover::get_name() const {
+	return mover_name();
+}
+
+std::string DeleteChainMover::mover_name() {
+	return "DeleteChain";
+}
+
+void DeleteChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "chain", xsct_non_negative_integer, "delete this chain (number) (no option for PDB chains)");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Delete this chain.", attlist );
+}
+
+std::string DeleteChainMoverCreator::keyname() const {
+	return DeleteChainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DeleteChainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DeleteChainMover );
+}
+
+void DeleteChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DeleteChainMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

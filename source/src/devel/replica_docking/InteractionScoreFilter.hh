@@ -44,6 +44,18 @@ public:
 	void jump( core::Size const jump );
 	core::Size jump() const;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;

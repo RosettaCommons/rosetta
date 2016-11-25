@@ -89,7 +89,7 @@ public:
 	apply(
 		Pose & pose
 	) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief get the segment ID for a given starting and ending atom
 	/// @details
@@ -367,6 +367,18 @@ public:
 	/// @brief update string describing the move type
 	void
 	update_type();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

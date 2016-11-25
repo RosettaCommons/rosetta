@@ -64,6 +64,18 @@ public:
 
 	FilterOP clone() const override { return FilterOP( new RemoveLigandFilter( *this ) ); }
 	FilterOP fresh_instance() const override { return FilterOP( new RemoveLigandFilter ); }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real threshold_;
 	MoverOP mover_;

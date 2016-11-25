@@ -49,6 +49,9 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.OligomericAverageDegreeFilter" );
@@ -281,11 +284,51 @@ OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose cons
 	out << "OligomericAverageDegreeFilter returns " << compute( pose, verbose_, write2pdb_ ) << std::endl;
 }
 
-protocols::filters::FilterOP
-OligomericAverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new OligomericAverageDegreeFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP OligomericAverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new OligomericAverageDegreeFilter ); }
 
-std::string
-OligomericAverageDegreeFilterCreator::keyname() const { return "OligomericAverageDegree"; }
+// XRW TEMP std::string
+// XRW TEMP OligomericAverageDegreeFilterCreator::keyname() const { return "OligomericAverageDegree"; }
+
+std::string OligomericAverageDegreeFilter::name() const {
+	return class_name();
+}
+
+std::string OligomericAverageDegreeFilter::class_name() {
+	return "OligomericAverageDegree";
+}
+
+void OligomericAverageDegreeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_non_negative_integer , "How many residues need to be on average in the sphere of each of the residues under scrutiny in order for the filter to return true." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_threshold" , xsct_real, "Size of sphere around each residue under scrutiny in Angstroms." , "10.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer, "Which jump separates the building block from others?" , "1" )
+		+ XMLSchemaAttribute::required_attribute( "sym_dof_names" , xs_string , "Which sym_dofs separate the building blocks from the others (must also set multicomp=1 if it is a multicomponent symmetric system)?" )
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb" , xsct_rosetta_bool , "Whether to write the residue-level AverageDegree values to the output .pdb file." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "Output jump and corresponding displacement or angle to tracer." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "multicomp" , xsct_rosetta_bool , "Set to true if the systems has multiple components." ,"0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "A version of the AverageDegree filter that is compatible with oligomeric building blocks. Includes other subunits within the same building block in the neighbor count. Also works for monomeric building blocks.", attlist );
+}
+
+std::string OligomericAverageDegreeFilterCreator::keyname() const {
+	return OligomericAverageDegreeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+OligomericAverageDegreeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new OligomericAverageDegreeFilter );
+}
+
+void OligomericAverageDegreeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OligomericAverageDegreeFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // matdes

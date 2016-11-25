@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
     <SCOREFXNS>
-	<empty weights=empty />
+	<ScoreFunction name="empty" weights="empty" />
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
     </RESIDUE_SELECTORS>
@@ -9,23 +9,24 @@
     <FILTERS>
     </FILTERS>
     <MOVERS>
-	<CstInfoMover name=cstinfo cst_file="inputs/file1.cst" recursive=true />
-	<CstInfoMover name=cstinfo2 cst_file="inputs/file2.cst" prefix=c2t />
-	<ConstraintSetMover name=load_cst cst_file="inputs/file2.cst" />
-	<CstInfoMover name=cstinfo3 prefix=inpose />
-	<ClearConstraintsMover name=empty_cst />
-	<CstInfoMover name=cstinfo4 prefix=empty />
+	<CstInfoMover name="cstinfo" cst_file="inputs/file1.cst" recursive="true" />
+	<CstInfoMover name="cstinfo2" cst_file="inputs/file2.cst" prefix="c2t" />
+	<ConstraintSetMover name="load_cst" cst_file="inputs/file2.cst" />
+	<CstInfoMover name="cstinfo3" prefix="inpose" />
+	<ClearConstraintsMover name="empty_cst" />
+	<CstInfoMover name="cstinfo4" prefix="empty" />
 
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
     <PROTOCOLS>
-	<Add mover=cstinfo />
-	<Add mover=cstinfo2 />
-	<Add mover=load_cst />
-	<Add mover=cstinfo3 />
-	<Add mover=empty_cst />
-	<Add mover=cstinfo4 />
+	<Add mover="cstinfo" />
+	<Add mover="cstinfo2" />
+	<Add mover="load_cst" />
+	<Add mover="cstinfo3" />
+	<Add mover="empty_cst" />
+	<Add mover="cstinfo4" />
     </PROTOCOLS>
-    <OUTPUT scorefxn=empty/>
+    <OUTPUT scorefxn="empty"/>
+
 </ROSETTASCRIPTS>

@@ -50,6 +50,9 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -58,11 +61,11 @@ namespace simple_filters {
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
 
 // creator
-protocols::filters::FilterOP
-SymmetricMotifFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymmetricMotifFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SymmetricMotifFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymmetricMotifFilter ); }
 
-std::string
-SymmetricMotifFilterCreator::keyname() const { return "SymmetricMotif"; }
+// XRW TEMP std::string
+// XRW TEMP SymmetricMotifFilterCreator::keyname() const { return "SymmetricMotif"; }
 
 // helper functions
 void R2quat( numeric::xyzMatrix< core::Real > R, Quat &Q ) {
@@ -639,7 +642,48 @@ SymmetricMotifFilter::parse_my_tag(
 	runtime_assert( forced_pos_.size() == 0 || forced_pos_.size() == nsegs_ );
 }
 
+std::string SymmetricMotifFilter::name() const {
+	return class_name();
+}
+
+std::string SymmetricMotifFilter::class_name() {
+	return "SymmetricMotif";
+}
+
+void SymmetricMotifFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "symm_type" , xs_string , "Symmetric arrangement of motifs, i.e. Symmetry group D2: 2 motifs expected! Currently only D2 is supported." , "D2" )
+		+ XMLSchemaAttribute( "motifs" , xs_string , "PDB file containing the symmetrized motif." )
+		+ XMLSchemaAttribute( "angle_thresh" , xsct_real , "Angle threshold (degrees) for accepting a motif hit." )
+		+ XMLSchemaAttribute( "trans_thresh" , xsct_real , "Translation threshold (Angstrom) for accepting a motif hit." )
+		+ XMLSchemaAttribute( "rmsd_thresh" , xsct_real , "RMSD threshold for accepting a motif hit." )
+		+ XMLSchemaAttribute( "clash_thresh" , xsct_non_negative_integer , "Most clashes allowed for accepting a motif hit." )
+		+ XMLSchemaAttribute( "angle_wt" , xsct_real , "The angle weight for ranking all the passing hits." )
+		+ XMLSchemaAttribute( "trans_wt" , xsct_real , "The translation weight for ranking all the passing hits." )
+		+ XMLSchemaAttribute( "rmsd_wt" , xsct_real , "The RMSD for ranking all the passing hits." )
+		+ XMLSchemaAttribute( "clash_wt" , xsct_real , "The clash weight for ranking all the passing hits." )
+		+ XMLSchemaAttribute( "force_pos" , xs_string , "Force the motif to match at a particular position." ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Position-independent RMS filter evaluating how close a set of interfaces is to symmetric.", attlist );
+}
+
+std::string SymmetricMotifFilterCreator::keyname() const {
+	return SymmetricMotifFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SymmetricMotifFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SymmetricMotifFilter );
+}
+
+void SymmetricMotifFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymmetricMotifFilter::provide_xml_schema( xsd );
+}
+
+
 
 } // filters
 }
-

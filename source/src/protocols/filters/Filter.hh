@@ -33,8 +33,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
-//// C++ headers
+// C++ headers
 #include <string>
 
 #ifdef WIN32
@@ -86,7 +87,7 @@ private:
 	std::string const type_;
 	std::string user_defined_name_;
 protected:
-	std::string scorename_;
+	std::string scorename_; // what part of "no protected data" is unclear?
 };
 
 

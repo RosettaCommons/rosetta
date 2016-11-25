@@ -23,15 +23,15 @@
 namespace protocols {
 namespace loop_build {
 
-LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() = default;
+// XRW TEMP LoopMover_SlidingWindowCreator::~LoopMover_SlidingWindowCreator() = default;
 
-moves::MoverOP LoopMover_SlidingWindowCreator::create_mover() const {
-	return moves::MoverOP( new loop_build::LoopMover_SlidingWindow() );
-}
+// XRW TEMP moves::MoverOP LoopMover_SlidingWindowCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new loop_build::LoopMover_SlidingWindow() );
+// XRW TEMP }
 
-std::string LoopMover_SlidingWindowCreator::keyname() const {
-	return "LoopMover_SlidingWindow";
-}
+// XRW TEMP std::string LoopMover_SlidingWindowCreator::keyname() const {
+// XRW TEMP  return "LoopMover_SlidingWindow";
+// XRW TEMP }
 
 } //namespace
 } //namespace

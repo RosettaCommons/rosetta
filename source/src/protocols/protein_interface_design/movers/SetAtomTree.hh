@@ -37,11 +37,11 @@ public :
 	virtual ~SetAtomTree();
 	/// Commenting out to fix PyRosetta build  void fold_tree( core::kinematics::FoldTreeOP ft );
 	/// Commenting out to fix PyRosetta build  core::kinematics::FoldTreeOP fold_tree() const;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SetAtomTree ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new SetAtomTree ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::kinematics::FoldTreeOP create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_ = 0, std::string const & connect_to = "", std::string const & connect_from = "" );//if connect_to or connect_from = "" optimal_connection_point is invoked
 	bool simple_ft() const {return simple_ft_; }
 	void simple_ft( bool const s ){ simple_ft_ = s; }
@@ -55,6 +55,18 @@ public :
 	void start_tree_at_chain( char const c ){ start_tree_at_chain_ = c; }
 	void ab_fold_tree(bool b){ab_fold_tree_=b;}
 	bool ab_fold_tree(){return ab_fold_tree_;}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private :
 	bool docking_ft_, simple_ft_, two_parts_chain1_; //dflt false; false; false; two-parts-chain1 is intended for cases where chain1 has a cut and we want to optimize the jump between part1 and part2 along with the jump between chain1 and chain2
 	char start_tree_at_chain_; //dflt ''; if set, start the fold tree in the defined chain, and put all other chains beyond that jump

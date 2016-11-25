@@ -11,17 +11,19 @@
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
+// Unit Headers
+#include <protocols/ligand_docking/LigandArea.hh>
+
+// Package Headers
+#include <protocols/ligand_docking/LigandDockingLoaders.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-// Unit Headers
-#include <protocols/ligand_docking/LigandArea.hh>
-
 // Utility headers
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -68,16 +70,16 @@ void LigandArea::parse_my_tag(
 		tether_ligand_= tag->getOption<core::Real>("tether_ligand");
 	}
 
-	if ( tag->getOption<std::string>("add_nbr_radius") == "true" ) {
+	if ( tag->getOption< bool >("add_nbr_radius") ) {
 		add_nbr_radius_= true;
-	} else if ( tag->getOption<std::string>("add_nbr_radius") != "false" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'add_nbr_radius' option is true or false");
+	} else {
+		add_nbr_radius_= false;
 	}
 
-	if ( tag->getOption<std::string>("all_atom_mode") == "true" ) {
-		all_atom_mode_= true;
-	} else if ( tag->getOption<std::string>("all_atom_mode") != "false" ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("'all_atom_mode' option is true or false");
+	if ( tag->getOption< bool >("all_atom_mode") ) {
+		all_atom_mode_ = true;
+	} else {
+		all_atom_mode_ = false;
 	}
 
 	if ( tag->hasOption("high_res_angstroms") ) {
@@ -89,6 +91,41 @@ void LigandArea::parse_my_tag(
 	}
 
 }
+
+std::string LigandArea::element_name() { return "LigandArea"; }
+void LigandArea::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attributes;
+	attributes + optional_name_attribute();
+
+	attributes + Attr::required_attribute( "chain", xsct_char, "The ligand's chain" )
+		+ Attr::required_attribute( "cutoff", xsct_real, "The distance cutoff from the ligand" )
+		+ Attr( "Calpha_restraints", xsct_real, "Size of one standard deviation (in Angstroms) for restraints on C-alphas" )
+		+ Attr( "minimize_ligand", xsct_real, "Size of one standard deviation (in degrees) for ligand torsion"
+		" angles used by the ResidueTorsionRestraints class to create CircularHarmonic restraints on the ligand"
+		" dihedrals during minimization to keep these dihedrals near their starting conformation" )
+		+ Attr( "tether_ligand", xsct_real, "The standard deviation (in Angstroms) used by the HighResDocker to create"
+		" coordinate constraints on the ligand's neighbor atom" )
+		+ Attr::required_attribute( "add_nbr_radius", xsct_rosetta_bool, "Used by an InterfaceBuilder for deciding how to define"
+		" the distance threshold between the ligand and the protein's residues. If this is 'true', then the neighbor radius of"
+		" the protein residue is added into the LigandArea's 'cutoff' parameter. If this is 'false', then the 'cutoff' parameter"
+		"is used unaltered" )
+		+ Attr::required_attribute( "all_atom_mode", xsct_rosetta_bool, "When deciding whether a protein residue is sufficiently"
+		" close to the ligand, should the distance between the protein residue's neighbor atom and every atom in the ligand be"
+		" measured? If not, then only the ligand's neighbor atom will be used in that decision." )
+		+ Attr( "high_res_angstroms", xsct_real, "The euclidean perturbation magnitude, in Angstroms, used by the HighResDocker" )
+		+ Attr( "high_res_degrees", xsct_real, "The rotational perturbation magnitude, in degrees, used by the HighResDocker" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( element_name() )
+		.complex_type_naming_func( & LigandAreaLoader::ligand_area_ct_namer )
+		.description( "LigandAreas are used to define InterfaceBuilders which in turn are used to define MoveMapBuilders." )
+		.add_attributes(attributes)
+		.write_complex_type_to_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

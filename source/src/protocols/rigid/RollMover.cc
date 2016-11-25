@@ -35,6 +35,9 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // C++ Headers
@@ -117,10 +120,10 @@ RollMover::set_min_max_angles( core::Real min_angle, core::Real max_angle ) {
 	max_angle_ = max_angle;
 }
 
-std::string
-RollMover::get_name() const {
-	return "RollMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RollMover::get_name() const {
+// XRW TEMP  return "RollMover";
+// XRW TEMP }
 
 void
 RollMover::parse_my_tag(
@@ -206,23 +209,23 @@ RollMover::parse_my_tag(
 	}
 }
 
-std::string
-RollMoverCreator::keyname() const
-{
-	return RollMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RollMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RollMover::mover_name();
+// XRW TEMP }
 
-std::string
-RollMoverCreator::mover_name()
-{
-	return "RollMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RollMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RollMover";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-RollMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RollMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RollMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RollMover );
+// XRW TEMP }
 
 /// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
@@ -267,6 +270,59 @@ RollMover::RollMover(
 
 RollMover::~RollMover()= default;
 
+std::string RollMover::get_name() const {
+	return mover_name();
+}
+
+std::string RollMover::mover_name() {
+	return "RollMover";
+}
+
+void RollMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction axis;
+	axis.name( "axis_char");
+	axis.base_type( xs_string );
+	axis.add_restriction( xsr_pattern, "[xyz]" );
+	xsd.add_top_level_element( axis );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("start_res", xsct_non_negative_integer, "First residue id of object to roll", "1")
+		+ XMLSchemaAttribute("stop_res", xsct_non_negative_integer, "Last residue ID of object to roll" )
+		+ XMLSchemaAttribute("chain", xsct_positive_integer, "Chain ID of object to roll")
+		+ XMLSchemaAttribute::attribute_w_default("random_roll", xsct_rosetta_bool, "Rotate and/or translate pose over random axis/direction", "false")
+		+ XMLSchemaAttribute::attribute_w_default("random_roll_angle_mag", xsct_real, "Standard deviation for a gaussium magnitude rotation about a random axis", "3.0")
+		+ XMLSchemaAttribute::attribute_w_default("random_roll_trans_mag", xsct_real, "Standard deviation for a 3D gaussian random translation", "1.0")
+		+ XMLSchemaAttribute("min_angle", xsct_real, "Minimum angle to roll about axis, requierd if random_roll is not set to true" )
+		+ XMLSchemaAttribute("max_angle", xsct_real, "Maximum angle to roll about axis, required if random_roll is not set to true" )
+		+ XMLSchemaAttribute("axis", xsct_char, "Which axis (x, y, or z) to roll around");
+
+	AttributeList subelement_attributes;
+	rosetta_scripts::attributes_for_parse_xyz_vector( subelement_attributes );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "axis", subelement_attributes, "Specifies XYZ vector defining axis" )
+		.add_simple_subelement( "translate", subelement_attributes, "Specifies XYZ vector defining a 3D translation for the pose" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Rigid body mover that rolls the pose about the specified axis", attlist, subelements );
+}
+
+std::string RollMoverCreator::keyname() const {
+	return RollMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RollMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RollMover );
+}
+
+void RollMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RollMover::provide_xml_schema( xsd );
+}
+
+
 } //rigid
 } //protocols
-

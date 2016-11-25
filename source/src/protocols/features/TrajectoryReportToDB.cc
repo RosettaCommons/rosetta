@@ -18,14 +18,18 @@
 
 #include <protocols/features/TrajectoryReportToDB.hh>
 #include <protocols/features/TrajectoryMapFeatures.hh>
-
+#include <protocols/features/FeaturesReporterFactory.hh>
 // Setup Mover
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/tag/Tag.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace features {
@@ -108,22 +112,22 @@ TrajectoryReportToDB::get_cycle_counts() const {
 	return cycle_counts_;
 }
 
-std::string
-TrajectoryReportToDBCreator::keyname() const
-{
-	return TrajectoryReportToDBCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TrajectoryReportToDBCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TrajectoryReportToDB::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-TrajectoryReportToDBCreator::create_mover() const {
-	return moves::MoverOP( new TrajectoryReportToDB );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP TrajectoryReportToDBCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new TrajectoryReportToDB );
+// XRW TEMP }
 
-std::string
-TrajectoryReportToDBCreator::mover_name()
-{
-	return "TrajectoryReportToDB";
-}
+// XRW TEMP std::string
+// XRW TEMP TrajectoryReportToDB::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TrajectoryReportToDB";
+// XRW TEMP }
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 
@@ -160,7 +164,8 @@ TrajectoryReportToDB::parse_my_tag(
 
 void
 TrajectoryReportToDB::parse_stride_tag_item(
-	TagCOP const tag) {
+	TagCOP const tag
+) {
 	if ( tag->hasOption("stride") ) {
 		set_stride( tag->getOption<core::Size>("stride") );
 	}
@@ -194,6 +199,42 @@ TrajectoryReportToDB::apply( Pose& pose )
 	// Increase cycle count
 	cycle_counts_[structure_tag] += 1;
 }
+
+std::string TrajectoryReportToDB::get_name() const {
+	return mover_name();
+}
+
+std::string TrajectoryReportToDB::mover_name() {
+	return "TrajectoryReportToDB";
+}
+
+void TrajectoryReportToDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	FeaturesReporterFactory::get_instance()->define_features_reporter_xml_schema_group( xsd );
+	AttributeList attlist;
+	ReportToDB::attributes_for_report_to_db( attlist, xsd );
+	attlist
+		+ XMLSchemaAttribute( "stride", xsct_non_negative_integer, "Number of iterations between reports to database" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & FeaturesReporterFactory::features_reporter_xml_schema_group_name );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Reports to database every stride steps in a trajectory", attlist, subelements );
+}
+
+std::string TrajectoryReportToDBCreator::keyname() const {
+	return TrajectoryReportToDB::mover_name();
+}
+
+protocols::moves::MoverOP
+TrajectoryReportToDBCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TrajectoryReportToDB );
+}
+
+void TrajectoryReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TrajectoryReportToDB::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

@@ -41,20 +41,20 @@ public:
 
 	~ParatopeSiteConstraintMover();
 
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 	/// @brief Add AmbiguousSiteConstraints to specified paratope residues, or each CDR set.  Default is all of them.
 	/// If there are already exits AmbiguousSiteConstraints from the antigen to the residue, add them.
 	/// If they are missing, such as after a graft, add them.
 	void
-	apply(core::pose::Pose & pose);
+	apply(core::pose::Pose & pose) override;
 
 	/// @brief Remove constraints from each paratope residue and antigen chain set.  If reset_paratope_residues is true, then it will update the
 	/// set of paratope residues it has.  This is used after pose length changes such as CDR insertion or deletion.
@@ -93,19 +93,26 @@ public:
 	void
 	set_defaults();
 
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const {
+	// XRW TEMP   return "ParatopeSiteConstraintMover";
+	// XRW TEMP  }
+
 	std::string
-	get_name() const {
-		return "ParatopeSiteConstraintMover";
-	}
+	get_name() const override;
 
+	static
+	std::string
+	mover_name();
 
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 
 	void
 	setup_paratope_residues_from_cdrs(core::pose::Pose const & pose);
-
-
 
 	core::scoring::constraints::SiteConstraintOP
 	setup_constraints(core::pose::Pose const & pose, core::Size resnum, std::string chain);

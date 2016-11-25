@@ -48,6 +48,7 @@
 
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/mover_schemas.hh>
 #include <core/pose/selection.hh>
 
 
@@ -275,6 +276,48 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 	if ( symmetry_ ) {
 		core::pack::make_symmetric_PackerTask_by_truncation( in_pose, task_ );
 	}
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP DesignRepackMover::get_xsd_complex_type() {
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_repack" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_minimize" );
+	attlist + XMLSchemaAttribute( "repack", xsct_rosetta_bool, "Repack both partners" )
+		+ XMLSchemaAttribute( "repack_partner1", xsct_rosetta_bool, "Repack partner 1" )
+		+ XMLSchemaAttribute( "repack_partner2", xsct_rosetta_bool, "Repack partner 2" )
+		+ XMLSchemaAttribute( "design", xsct_rosetta_bool, "Design both partners" )
+		+ XMLSchemaAttribute( "design_partner1", xsct_rosetta_bool, "Design partner 1" )
+		+ XMLSchemaAttribute( "design_partner2", xsct_rosetta_bool, "Design partner 2" )
+		+ XMLSchemaAttribute::attribute_w_default( "optimize_fold_tree", xsct_rosetta_bool, "Optimize the fold tree", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "Minimize rigid body degrees of freedom", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_bb", xsct_rosetta_bool, "Minimize backbone of both chains", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_bb_ch1", xsct_rosetta_bool, "Minimize backbone of chain 1", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_bb_ch2", xsct_rosetta_bool, "Minimize backbone of chain 2", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_sc", xsct_rosetta_bool, "Minimize sidechains", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_cutoff_distance", xsct_real, "Interface cutoff distance", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_non_ala", xsct_rosetta_bool, "Repack residues that aren't alanine", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "symmetry", xsct_rosetta_bool, "operating on a symmetric pose", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "automatic_repacking_definition", xsct_rosetta_bool, "Is the packing setup automatically?", "1" );
+
+	XMLSchemaSimpleSubelementList ssl;
+
+	AttributeList subtag_attributes;
+	subtag_attributes + XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue number in reference pose or pdb or seqpos numbering" )
+		+ XMLSchemaAttribute( "resnum", xsct_refpose_enabled_residue_number, "Residue number in reference pose or pdb or seqpos numbering" );
+
+	ssl.add_simple_subelement( "residue", subtag_attributes, "Tags describing individual residues"/*, 0 minoccurs*/ );
+
+	ct_gen->complex_type_naming_func( & complex_type_name_for_mover );
+	ct_gen->add_attributes( attlist );
+	ct_gen->add_optional_name_attribute();
+	ct_gen->set_subelements_repeatable( ssl );
+
+	return ct_gen;
 }
 
 void

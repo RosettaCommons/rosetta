@@ -73,10 +73,10 @@ PhiSelector::apply(
 	ResidueSubset selected( nres, false ); //Output, initialized to a vector of "false".
 
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues.
-		if ( !pose.residue(i).type().is_alpha_aa() ) continue; //Skip non-alpha amino acid positions.
+		if ( !pose.residue_type(i).is_alpha_aa() ) continue; //Skip non-alpha amino acid positions.
 		if ( !pose.residue(i).has_lower_connect() || (ignore_unconnected_upper() && !pose.residue(i).has_upper_connect() ) ) continue; //Ignore residues with no lower or upper connection.
-		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().lower_connect_id() ) ) continue; //Ignore residues with a lower connection, but nothing there.
-		if ( ignore_unconnected_upper() && !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().upper_connect_id() ) ) continue; //Ignore residues with an upper connection, but nothing there.
+		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).lower_connect_id() ) ) continue; //Ignore residues with a lower connection, but nothing there.
+		if ( ignore_unconnected_upper() && !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).upper_connect_id() ) ) continue; //Ignore residues with an upper connection, but nothing there.
 		if ( pose.phi(i) >= 0 ) { //Select positive phi positions or negative phi positions.
 			selected[i] = select_positive_phi();
 		} else {
@@ -141,9 +141,29 @@ PhiSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xs_boolean, "true" );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"select_positive_phi", xsct_rosetta_bool,
+		"If true (the default), alpha-amino acids with phi values greater than or "
+		"equal to zero are selected. If false, alpha-amino acids "
+		"with phi values less than zero are selected.",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"ignore_unconnected_upper", xsct_rosetta_bool,
+		"If true (the default) then C-terminal residues and other residues "
+		"with nothing connected at the upper connection are not selected. "
+		"If false, then these residues can be selected, depending on their "
+		"phi values. Note that anything lacking a lower connection is never selected",
+		"true" );
+
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The PhiSelector selects alpha-amino acids that are in either the positive "
+		"phi or negative phi region of Ramachandran space. Ligands and polymeric "
+		"residues that are not alpha-amion acids are never selected. "
+		"Alpha-amino acids with no lower connection (or nothing connected at the "
+		"lower connection) are also never selected. By default, alpha-amino acids "
+		"with no upper connection are not selected, though this can be disabled.",
+		attributes );
 }
 
 ResidueSelectorOP

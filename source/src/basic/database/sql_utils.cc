@@ -50,6 +50,7 @@
 #include <utility/string_util.hh>                              // for join
 #include <utility/vector1.hh>                                  // for vector1
 #include <utility/tag/Tag.hh>                                  // for Tag
+#include <utility/tag/XMLSchemaGeneration.hh>                  // for AttributeList and XMLSchemaAttribute
 
 #include <cstddef>                                             // for size_t
 #include <iosfwd>                                              // for string
@@ -975,6 +976,82 @@ parse_database_connection(
 	}
 	return nullptr;
 }
+
+void
+attributes_for_parse_database_connection(
+	utility::tag::AttributeList & attlist,
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction database_mode;
+	database_mode.name( "database_mode_string" );
+	database_mode.base_type( xs_string );
+	database_mode.add_restriction( xsr_enumeration, "sqlite3" );
+	database_mode.add_restriction( xsr_enumeration, "postgres" );
+	database_mode.add_restriction( xsr_enumeration, "mysql" );
+	xsd.add_top_level_element( database_mode );
+	XMLSchemaRestriction database_transaction_mode;
+	database_transaction_mode.name( "database_transaction_mode_string" );
+	database_transaction_mode.base_type( xs_string );
+	database_transaction_mode.add_restriction( xsr_enumeration, "none" );
+	database_transaction_mode.add_restriction( xsr_enumeration, "standard" );
+	database_transaction_mode.add_restriction( xsr_enumeration, "chunk" );
+	xsd.add_top_level_element( database_transaction_mode );
+
+
+
+	XMLSchemaRestriction mode;
+	mode.name( "report_to_db_relevant_residues_mode" );
+	mode.base_type( xs_string );
+	//can be "explicit" or "implicit" with any capitalization
+	mode.add_restriction( xsr_pattern, "[eEiI][xXmM][pP][lL][iI][cC][iI][tT]" );
+	xsd.add_top_level_element( mode );
+
+
+	attlist
+		+ XMLSchemaAttribute( "resource_description", xs_string, "Resource description referring to the resource to be output" )
+		+ XMLSchemaAttribute( "database_resource", xs_string, "Resource description referring to the output database" )
+		+ XMLSchemaAttribute( "database_resource_tag", xs_string, "Tag referring to the output database" )
+		+ XMLSchemaAttribute::attribute_w_default( "transaction_mode", "database_transaction_mode_string", "Transaction mode for database output", "standard" )
+		+ XMLSchemaAttribute( "database_mode", "database_mode_string", "Which type of output database to use?" )
+		+ XMLSchemaAttribute( "database_name", xs_string, "Name of output database" )
+		+ XMLSchemaAttribute( "database_pq_schema", xs_string, "Schema name within the database" )
+		+ XMLSchemaAttribute( "database_separate_db_per_mpi_process", xsct_rosetta_bool, "Use a separate database for each MPI process? Specific to sqlite3" )
+		+ XMLSchemaAttribute( "database_partition", xs_integer, "Database partition to use" )
+		+ XMLSchemaAttribute( "database_read_only", xsct_rosetta_bool, "Is the database read-only?" )
+		+ XMLSchemaAttribute( "database_host", xs_string, "URI to the database server (postgres only)" )
+		+ XMLSchemaAttribute( "database_user", xs_string, "Username for database access( postgres only)" )
+		+ XMLSchemaAttribute( "database_password", xs_string, "Password for database access (postgres only)" )
+		+ XMLSchemaAttribute( "database_port", xsct_non_negative_integer, "Port to use for access to database server (postgres only)" )
+		+ XMLSchemaAttribute( "batch_description", xs_string, "Description of features database" )
+		+ XMLSchemaAttribute( "protocol_id", xsct_non_negative_integer, "Manually controls protocol_id associated with this ReportToDB tag. Autoincrements by default." )
+		+ XMLSchemaAttribute( "batch_id", xsct_non_negative_integer, "Manually controls the batch_id associated with this ReportToDB tag. Autoincrements by default." )
+		+ XMLSchemaAttribute( "use_transactions", xsct_rosetta_bool, "Use transactions to group database i/o to be more efficient. Turning them off can help debugging." )
+		+ XMLSchemaAttribute::attribute_w_default( "cache_size", xsct_non_negative_integer, "Specify the maximum number 1k pages to keep in memory before writing to disk.", "2000" )
+		+ XMLSchemaAttribute::attribute_w_default( "remove_xray_virt", xsct_rosetta_bool, "Remove virtual residue attached during xray refine process", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "relevant_residues_mode", "report_to_db_relevant_residues_mode", "Determine what features are reported given the relevant residues", "explicit" );
+
+	/*using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	attlist
+	+ Attr( "database_resource", xs_string, "Deprecated; do not use." )
+	+ Attr( "database_resource_tag", xs_string, "Deprecated; do not use." )
+	+ Attr::attribute_w_default( "transaction_mode", xs_string, "XRW TO DO (turn this into a restriction)", "standard" )
+	+ Attr( "chunk_size", xsct_non_negative_integer, "XRW TO DO; only allowed with transaction mode 'chunk', and is required with that transaction mode" )
+	+ Attr( "database_mode", xs_string, "XRW TO DO (turn this into a restriction)" )
+	+ Attr( "database_name", xs_string, "The name of the database to read from; if not provided, then it falls back on the -dbms:database_name (filename) flag provided on the command line" )
+	+ Attr( "database_pq_schema", xs_string, "XRW TO DO" )
+	+ Attr( "database_separate_db_per_mpi_process", xsct_rosetta_bool, "XRW TO DO" )
+	+ Attr( "database_partition", xs_integer, "XRW TO DO" )
+	+ Attr::attribute_w_default( "database_read_only", xsct_rosetta_bool, "XRW TO DO", "false" )
+	+ Attr( "database_host", xs_string, "XRW TO DO" )
+	+ Attr( "database_user", xs_string, "XRW TO DO" )
+	+ Attr( "database_password", xs_string, "XRW TO DO" )
+	+ Attr( "database_port", xsct_non_negative_integer, "XRW TO DO" );*/
+}
+
 
 }
 }

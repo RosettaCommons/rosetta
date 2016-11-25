@@ -59,6 +59,9 @@
 
 //Include ObjexxFCL
 #include <ObjexxFCL/FArray.all.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -185,14 +188,8 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & /*pose*/ )
 {
-
-	/// @brief
-	//Next line is to make the function pass the compiler, FixMe
-	pose.size();
-
-
 	if ( tag->hasOption("reference_name") ) {
 		TR.Warning << "reference_name not implemented yet for SSamountFilter, FixMe if you can!" << std::endl;
 		utility_exit_with_message("This option hasn't been implemented yet");
@@ -229,27 +226,58 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
 		TR.Warning << "Threshold option not specified, using default" << lower_threshold_ << std::endl;
 	}
 	if ( tag->hasOption("discard_lonely_SS") ) {
-		core::Size tmp_val= tag->getOption<core::Size>("discard_lonely_SS");
-		if ( tmp_val == 1 ) {
-			b_discard_lonely_SS_=true;
+		b_discard_lonely_SS_=tag->getOption<bool>("discard_lonely_SS");
+		if ( b_discard_lonely_SS_ ) {
 			TR.Info << "I'll return -1.0 for matches with a single SS element" << std::endl;
-		} else if ( tmp_val == 0 ) {
-			b_discard_lonely_SS_=false;
-		} else {
-			utility_exit_with_message("Invalid discard_lonely_SS value, valid options are 0 and 1 (disabled/enabled)" );
 		}
 	} else {
 		TR.Warning << "discard_lonely_SS option not specified, using default: " << b_discard_lonely_SS_ << std::endl;
 	}
 }
 
-protocols::filters::FilterOP SSamountFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new SSamountFilter );
+// XRW TEMP protocols::filters::FilterOP SSamountFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new SSamountFilter );
+// XRW TEMP }
+
+// XRW TEMP std::string SSamountFilterCreator::keyname() const {
+// XRW TEMP  return "SSamount";
+// XRW TEMP }
+
+std::string SSamountFilter::name() const {
+	return class_name();
+}
+
+std::string SSamountFilter::class_name() {
+	return "SSamount";
+}
+
+void SSamountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	attlist + XMLSchemaAttribute( "chain", xsct_char, "Chain over which to calculate the filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_threshold", xsct_real, "Upper threshold above which the filter would return false", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "lower_threshold", xsct_real, "Lower threshold above which the filter would return false", "0.5" )
+		+ XMLSchemaAttribute( "discard_lonely_SS", xsct_non_negative_integer, "Score poses with only one SS element as -1.0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter on the proportion of residues with a secondary structure assignment (i.e., not loop)", attlist );
 }
 
 std::string SSamountFilterCreator::keyname() const {
-	return "SSamount";
+	return SSamountFilter::class_name();
 }
+
+protocols::filters::FilterOP
+SSamountFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SSamountFilter );
+}
+
+void SSamountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SSamountFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

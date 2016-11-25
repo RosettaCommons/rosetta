@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
-LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() = default;
-FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new LoopAnchorFeatures );
-}
+// XRW TEMP LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
+// XRW TEMP LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new LoopAnchorFeatures );
+// XRW TEMP }
 
-std::string LoopAnchorFeaturesCreator::type_name() const {
-	return "LoopAnchorFeatures";
-}
+// XRW TEMP std::string LoopAnchorFeaturesCreator::type_name() const {
+// XRW TEMP  return "LoopAnchorFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

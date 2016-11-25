@@ -33,6 +33,9 @@
 //Project Headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -43,9 +46,9 @@ using core::Real;
 
 static basic::Tracer TR( "protocols.simple_filters.RepeatParameterFilter" );
 
-protocols::filters::FilterOP RepeatParameterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RepeatParameterFilter ); }
+// XRW TEMP protocols::filters::FilterOP RepeatParameterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RepeatParameterFilter ); }
 
-std::string RepeatParameterFilterCreator::keyname() const { return "RepeatParameter"; }
+// XRW TEMP std::string RepeatParameterFilterCreator::keyname() const { return "RepeatParameter"; }
 
 RepeatParameterFilter::RepeatParameterFilter() : Filter( "RepeatParameter" ) {}
 
@@ -282,5 +285,65 @@ void RepeatParameterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datac
 	std::string output_param_type = param_type_+"_r";  //r stands for repeat. There are other flags
 	set_user_defined_name( output_param_type);
 }
+
+std::string RepeatParameterFilter::name() const {
+	return class_name();
+}
+
+std::string RepeatParameterFilter::class_name() {
+	return "RepeatParameter";
+}
+
+void RepeatParameterFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction param_type_enum;
+	param_type_enum.name("param_types");
+	param_type_enum.base_type(xs_string);
+	param_type_enum.add_restriction(xsr_enumeration, "radius");
+	param_type_enum.add_restriction(xsr_enumeration, "rise");
+	param_type_enum.add_restriction(xsr_enumeration, "omega");
+	param_type_enum.add_restriction(xsr_enumeration, "handedness");
+	xsd.add_top_level_element(param_type_enum);
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"numb_repeats", xsct_non_negative_integer,
+		"number of repeats")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"start_at_repeat", xsct_non_negative_integer,
+		"what is the first repeat to investigate (unsure, ask author?)",
+		"1")
+		+ XMLSchemaAttribute::required_attribute(
+		"param_type", "param_types",
+		"What kid of parameter to investigate")
+		+ XMLSchemaAttribute(
+		"min", xsct_real,
+		"minimal value of helical paramter")
+		+ XMLSchemaAttribute(
+		"max", xsct_real,
+		"maximal value of helical parameter");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Checks wether certain helical parameters are in range",
+		attlist );
+}
+
+std::string RepeatParameterFilterCreator::keyname() const {
+	return RepeatParameterFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RepeatParameterFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RepeatParameterFilter );
+}
+
+void RepeatParameterFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepeatParameterFilter::provide_xml_schema( xsd );
+}
+
 }//simple_filters
 }//protocols

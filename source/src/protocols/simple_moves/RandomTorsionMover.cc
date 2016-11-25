@@ -37,6 +37,9 @@
 // basic headers
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -169,19 +172,56 @@ RandomTorsionMover::parse_my_tag(
 }
 
 /// @brief RandomTorsionMoverCreator interface, name of the mover
-std::string RandomTorsionMoverCreator::mover_name() {
+// XRW TEMP std::string RandomTorsionMover::mover_name() {
+// XRW TEMP  return "RandomTorsionMover";
+// XRW TEMP }
+
+/// @brief RandomTorsionMoverCreator interface, returns a unique key name to be used in xml file
+// XRW TEMP std::string RandomTorsionMoverCreator::keyname() const {
+// XRW TEMP  return RandomTorsionMover::mover_name();
+// XRW TEMP }
+
+/// @brief RandomTorsionMoverCreator interface, return a new instance
+// XRW TEMP protocols::moves::MoverOP RandomTorsionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RandomTorsionMover() );
+// XRW TEMP }
+
+std::string RandomTorsionMover::get_name() const {
+	return mover_name();
+}
+
+std::string RandomTorsionMover::mover_name() {
 	return "RandomTorsionMover";
 }
 
-/// @brief RandomTorsionMoverCreator interface, returns a unique key name to be used in xml file
-std::string RandomTorsionMoverCreator::keyname() const {
-	return RandomTorsionMoverCreator::mover_name();
+void RandomTorsionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "max_angle", xsct_real, "XRW_TODO" )
+		+ XMLSchemaAttribute( "num_moves", xsct_non_negative_integer, "XRW_TODO" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW_TODO", attlist, subelements );
 }
 
-/// @brief RandomTorsionMoverCreator interface, return a new instance
-protocols::moves::MoverOP RandomTorsionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomTorsionMover() );
+std::string RandomTorsionMoverCreator::keyname() const {
+	return RandomTorsionMover::mover_name();
 }
+
+protocols::moves::MoverOP
+RandomTorsionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RandomTorsionMover );
+}
+
+void RandomTorsionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RandomTorsionMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

@@ -71,26 +71,29 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace features {
 
-std::string
-ReportToDBCreator::keyname() const
-{
-	return ReportToDBCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ReportToDBCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ReportToDB::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-ReportToDBCreator::create_mover() const {
-	return moves::MoverOP( new ReportToDB );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP ReportToDBCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new ReportToDB );
+// XRW TEMP }
 
-std::string
-ReportToDBCreator::mover_name()
-{
-	return "ReportToDB";
-}
+// XRW TEMP std::string
+// XRW TEMP ReportToDB::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ReportToDB";
+// XRW TEMP }
 
 /// Macros are not properly caught and passed along by my #inclusion
 /// cleanup script
@@ -470,7 +473,7 @@ void
 ReportToDB::parse_cache_size_tag_item(
 	TagCOP const tag) {
 	if ( tag->hasOption("cache_size") ) {
-		cache_size_ = tag->getOption<bool>("cache_size");
+		cache_size_ = tag->getOption<core::Size>("cache_size", 2000 );
 	}
 }
 
@@ -478,7 +481,7 @@ void
 ReportToDB::parse_remove_xray_virt_tag_item(
 	TagCOP const tag) {
 	if ( tag->hasOption("remove_xray_virt") ) {
-		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt");
+		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt", false);
 	}
 }
 
@@ -593,20 +596,19 @@ ReportToDB::parse_my_tag(
 
 	for ( ; begin != end; ++begin ) {
 		TagCOP feature_tag= *begin;
-		// for (TagCOP const & feature_tag : tag->getTags()){
-
-		if ( feature_tag->getName() != "feature" ) {
-			TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
+		try{
+			FeaturesReporterOP features_reporter(
+				features_reporter_factory_->get_features_reporter(
+				feature_tag, data, filters, movers, pose));
+			features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
+			add_features_reporter(features_reporter);
+		} catch( utility::excn::EXCN_Base const & e ){
+			//TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;
 			TR.Error << "Tag with name '" << feature_tag->getName() << "' is invalid" << endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 
-		FeaturesReporterOP features_reporter(
-			features_reporter_factory_->get_features_reporter(
-			feature_tag, data, filters, movers, pose));
-		features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 
-		add_features_reporter(features_reporter);
 	}
 }
 
@@ -879,6 +881,55 @@ StructureID
 ReportToDB::get_last_struct_id() const {
 	return last_struct_id_;
 }
+
+std::string ReportToDB::get_name() const {
+	return mover_name();
+}
+
+std::string ReportToDB::mover_name() {
+	return "ReportToDB";
+}
+
+
+void ReportToDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	FeaturesReporterFactory::get_instance()->define_features_reporter_xml_schema_group( xsd );
+
+	//check possible transaction modes and database modes?
+	AttributeList attlist;
+	attributes_for_report_to_db( attlist, xsd );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & FeaturesReporterFactory::features_reporter_xml_schema_group_name );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Reports the specified features to the specified database", attlist, subelements );
+}
+
+void
+ReportToDB::attributes_for_report_to_db(
+	utility::tag::AttributeList & attlist,
+	utility::tag::XMLSchemaDefinition & xsd
+)
+{
+	basic::database::attributes_for_parse_database_connection( attlist, xsd );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+}
+
+std::string ReportToDBCreator::keyname() const {
+	return ReportToDB::mover_name();
+}
+
+protocols::moves::MoverOP
+ReportToDBCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ReportToDB );
+}
+
+void ReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	// + required_name_attribute( "Unique name of ReportToDBMover" )
+	ReportToDB::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

@@ -416,20 +416,22 @@ SeqprofConsensusOperation::create_complex_type_generator( XMLSchemaDefinition & 
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "restrict_to_repacking", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "convert_scores_to_probabilities", xs_boolean, "true" )
-		+ XMLSchemaAttribute( "filename", xs_string )
-		+ XMLSchemaAttribute( "min_aa_probability", xs_decimal )
-		+ XMLSchemaAttribute( "keep_native", xs_boolean )
-		+ XMLSchemaAttribute::attribute_w_default(  "chain_num", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute( "probability_larger_than_current", xs_boolean )
-		+ XMLSchemaAttribute( "ignore_pose_profile_length_mismatch", xs_boolean )
-		+ XMLSchemaAttribute::attribute_w_default(  "debug", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "restrict_to_repacking", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "convert_scores_to_probabilities", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "min_aa_probability", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "keep_native", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain_num", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute( "probability_larger_than_current", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "ignore_pose_profile_length_mismatch", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "debug", xsct_rosetta_bool, "XRW TO DO",  "false"  )
 
-		+ XMLSchemaAttribute( "conservation_cutoff_aligned_segments", xs_decimal )
-		+ XMLSchemaAttribute( "conservation_cutoff_protein_interface_design", xs_decimal );
+		+ XMLSchemaAttribute( "conservation_cutoff_aligned_segments", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "conservation_cutoff_protein_interface_design", xsct_real , "XRW TO DO" );
 
 	ct_generator->element_name( keyname() )
+		.add_optional_name_attribute()
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( taskop_naming_func )
 		.set_subelements_single_appearance_optional( subelements )
 		.add_attributes( attributes );
@@ -524,21 +526,27 @@ RestrictConservedLowDdgOperation::parse_tag( TagCOP tag , DataMap & datamap )
 
 void RestrictConservedLowDdgOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	auto ct_gen = create_complex_type_generator( xsd );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
 
+XMLSchemaComplexTypeGeneratorOP
+RestrictConservedLowDdgOperation::create_complex_type_generator( XMLSchemaDefinition & xsd )
+{
 	// calls Parent::parse_tag, so supports all those attributes and subtags; start
 	// with parent's complex type, reset the name, and add more attributes.
-	XMLSchemaComplexTypeGeneratorOP complex_type_gen = create_complex_type_generator( xsd );
-	complex_type_gen->element_name( keyname() );
+	XMLSchemaComplexTypeGeneratorOP complex_type_gen = SeqprofConsensusOperation::create_complex_type_generator( xsd );
+	complex_type_gen->element_name( keyname() ).description( "XRW TO DO" );
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "ddG_filename", xs_string )
-		+ XMLSchemaAttribute( "conservation_cutoff", xs_decimal )
-		+ XMLSchemaAttribute( "ddG_cutoff", xs_decimal )
-		+ XMLSchemaAttribute( "verbose", xs_boolean );
+		+ XMLSchemaAttribute( "ddG_filename", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "conservation_cutoff", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "ddG_cutoff", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "verbose", xsct_rosetta_bool , "XRW TO DO" );
 
-	complex_type_gen->add_attributes( attributes )
-		.write_complex_type_to_schema( xsd );
+	complex_type_gen->add_attributes( attributes );
+	return complex_type_gen;
 }
 
 void
@@ -632,4 +640,3 @@ RestrictConservedLowDdgOperation::position_ala_ddG( core::Size seqpos ) const
 } // TaskOperations
 } // toolbox
 } // protocols
-

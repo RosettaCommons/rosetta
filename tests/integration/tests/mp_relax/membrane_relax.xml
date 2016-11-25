@@ -1,16 +1,17 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<memb_hires weights=mpframework_smooth_fa_2012 />
+		<ScoreFunction name="memb_hires" weights="mpframework_smooth_fa_2012" />
 	</SCOREFXNS>
 	<MOVERS>
-		<AddMembraneMover name=add_memb/>
-		<MembranePositionFromTopologyMover name=init_pos/>
-		<FastRelax name=fast_relax scorefxn=memb_hires repeats=8/> 
+		<AddMembraneMover name="add_memb"/>
+		<MembranePositionFromTopologyMover name="init_pos"/>
+		<FastRelax name="fast_relax" scorefxn="memb_hires" repeats="8"/> 
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover=add_memb/>
-		<Add mover=init_pos/>
-		<Add mover=fast_relax/>
+		<Add mover="add_memb"/>
+		<Add mover="init_pos"/>
+		<Add mover="fast_relax"/>
 	</PROTOCOLS>
-	<OUTPUT scorefxn=memb_hires />
+	<OUTPUT scorefxn="memb_hires" />
+
 </ROSETTASCRIPTS>

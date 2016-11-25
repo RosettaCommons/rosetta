@@ -18,7 +18,7 @@
 #include <protocols/jd2/parser/DataLoader.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace protocols {
 namespace loops {
@@ -39,6 +39,9 @@ public:
 		basic::datacache::DataMap & data
 	) const;
 
+	static std::string loader_name();
+	static std::string loop_def_loader_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 } //namespace

@@ -43,7 +43,7 @@
 #include <basic/datacache/DataMap.hh>
 
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // C++ headers
 
 // option key includes
@@ -142,6 +142,45 @@ void VirtResClaim::strength( ControlStrength const& c_str, ControlStrength const
 	jump().strength( c_str, i_str );
 	xyz_claim_.strength( c_str, i_str );
 }
+
+
+std::string
+VirtResClaim::class_name(){
+	//Currently this is what tags look for instead of the actual class name; is this right?
+	return "VirtResClaim";
+}
+
+
+
+void
+VirtResClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	//Define control strings
+	XMLSchemaRestriction restr;
+	restr.name( "envclaim_ctrl_str" );
+	restr.base_type( xs_string );
+	restr.add_restriction( xsr_pattern, "((([Dd][Oo][Ee][Ss]_[Nn][Oo][Tt])|([Cc][Aa][Nn])|([Mm][Uu][Ss][Tt]))_[Cc][Oo][Nn][Tt][Rr][Oo][Ll])|([Ee][Xx][Cc][Ll][Uu][Ss][Ii][Vv][Ee])" );
+	xsd.add_top_level_element( restr );
+
+	AttributeList attlist;
+	attlist
+
+		+ XMLSchemaAttribute::required_attribute( "vrt_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "jump_label", xs_string, "Defaults to vrt_name with _jump appended" )
+		+ XMLSchemaAttribute::required_attribute( "parent", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_control_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( class_name() )
+		.complex_type_naming_func ( & EnvClaim::envclaim_ct_namer )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+
 
 EnvClaimOP VirtResClaim::clone() const {
 	return EnvClaimOP( new VirtResClaim( *this ) );

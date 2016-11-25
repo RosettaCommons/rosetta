@@ -47,7 +47,7 @@ public:
 	DnaDesignDefOPs const & targeted_dna() const;
 
 	void apply( Pose & ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(
@@ -60,6 +60,18 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 	void set_loop_info( Pose const &, Loops const & );

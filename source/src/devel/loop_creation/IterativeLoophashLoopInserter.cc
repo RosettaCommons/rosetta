@@ -51,6 +51,9 @@
 //utility
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -65,22 +68,22 @@ namespace loop_creation {
 static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.IterativeLoophashLoopInserter" );
 
 //****CREATOR METHODS****//
-std::string
-IterativeLoophashLoopInserterCreator::keyname() const
-{
-	return IterativeLoophashLoopInserterCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP IterativeLoophashLoopInserterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return IterativeLoophashLoopInserter::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-IterativeLoophashLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP IterativeLoophashLoopInserterCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
+// XRW TEMP }
 
-std::string
-IterativeLoophashLoopInserterCreator::mover_name()
-{
-	return "IterativeLoophashLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP IterativeLoophashLoopInserter::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "IterativeLoophashLoopInserter";
+// XRW TEMP }
 //****END CREATOR METHODS****//
 
 IterativeLoophashLoopInserter::IterativeLoophashLoopInserter():
@@ -98,10 +101,10 @@ IterativeLoophashLoopInserter::fresh_instance() const {
 	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
 }
 
-std::string
-IterativeLoophashLoopInserter::get_name() const {
-	return "IterativeLoophashLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP IterativeLoophashLoopInserter::get_name() const {
+// XRW TEMP  return "IterativeLoophashLoopInserter";
+// XRW TEMP }
 
 void
 IterativeLoophashLoopInserter::apply(
@@ -220,6 +223,41 @@ IterativeLoophashLoopInserter::parse_my_tag(
 		max_insertions_ = tag->getOption<core::Real>("max_insertions");
 	}
 }
+
+std::string IterativeLoophashLoopInserter::get_name() const {
+	return mover_name();
+}
+
+std::string IterativeLoophashLoopInserter::mover_name() {
+	return "IterativeLoophashLoopInserter";
+}
+
+void IterativeLoophashLoopInserter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	LoophashLoopInserter::attributes_for_tag( attlist );
+	attlist
+		//+ XMLSchemaAttribute( "max_closure_deviation", xsct_real, "Why is this separately specified in the derived class?")
+		+ XMLSchemaAttribute( "max_insertions", xsct_real, "Probably-integral description of how many insertions are appropriate over the course of simulation" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string IterativeLoophashLoopInserterCreator::keyname() const {
+	return IterativeLoophashLoopInserter::mover_name();
+}
+
+protocols::moves::MoverOP
+IterativeLoophashLoopInserterCreator::create_mover() const {
+	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
+}
+
+void IterativeLoophashLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IterativeLoophashLoopInserter::provide_xml_schema( xsd );
+}
+
 
 } //loop creation
 } //devel

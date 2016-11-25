@@ -28,6 +28,9 @@
 #include <utility/io/ozstream.hh>
 
 #include <utility/basic_sys_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #ifdef USEMPI
 #include <utility/mpi_util.hh>
@@ -44,32 +47,32 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
-std::string
-DumpPdbCreator::keyname() const
-{
-	return DumpPdbCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DumpPdbCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DumpPdb::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DumpPdbCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DumpPdb );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DumpPdbCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DumpPdb );
+// XRW TEMP }
 
-std::string
-DumpPdbCreator::mover_name()
-{
-	return "DumpPdb";
-}
+// XRW TEMP std::string
+// XRW TEMP DumpPdb::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DumpPdb";
+// XRW TEMP }
 
 DumpPdb::DumpPdb():
-	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
+	protocols::moves::Mover( DumpPdb::mover_name() ),
 	fname_("dump.pdb"),
 	scorefxn_(/* 0 */),
 	addtime_(false)
 {}
 
 DumpPdb::DumpPdb( std::string  fname ) :
-	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
+	protocols::moves::Mover( DumpPdb::mover_name() ),
 	fname_(std::move(fname)),
 	scorefxn_(/* 0 */),
 	addtime_(false)
@@ -116,10 +119,45 @@ DumpPdb::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, proto
 	TR<<"with filename "<<fname_<<std::endl;
 }
 
-std::string
-DumpPdb::get_name() const {
-	return DumpPdbCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP DumpPdb::get_name() const {
+// XRW TEMP  return DumpPdb::mover_name();
+// XRW TEMP }
+
+std::string DumpPdb::get_name() const {
+	return mover_name();
 }
+
+std::string DumpPdb::mover_name() {
+	return "DumpPdb";
+}
+
+void DumpPdb::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "fname" , xs_string , "Filename of dumped PDB." , "dump.pdb" )
+		+ XMLSchemaAttribute::attribute_w_default( "tag_time" , xsct_rosetta_bool , "If true, adds timestamp to name of pdb file." , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Dumps a pdb. Recommended ONLY for debugging as you can't change the name of the file during a run, although if tag_time is true a timestamp with second resolution will be added to the filename, allowing for a limited amount of multi-dumping. If scorefxn is specified, a scored pdb will be dumped.", attlist );
+}
+
+std::string DumpPdbCreator::keyname() const {
+	return DumpPdb::mover_name();
+}
+
+protocols::moves::MoverOP
+DumpPdbCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DumpPdb );
+}
+
+void DumpPdbCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DumpPdb::provide_xml_schema( xsd );
+}
+
 
 } //simple_moves
 } //protocols

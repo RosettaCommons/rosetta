@@ -1,21 +1,22 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<TASKOPERATIONS>
-		<InitializeFromCommandline name=IFC/>
-		<IncludeCurrent name=IC/>
-		<ReadResfile name=RRF/>
-		<RestrictDesignToProteinDNAInterface name=DnaInt base_only=1 z_cutoff=2.0/>
+		<InitializeFromCommandline name="IFC"/>
+		<IncludeCurrent name="IC"/>
+		<ReadResfile name="RRF"/>
+		<RestrictDesignToProteinDNAInterface name="DnaInt" base_only="1" z_cutoff="2.0"/>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<DNA weights=dna/>
-		<DNAGB weights=dna_gb/>
+		<ScoreFunction name="DNA" weights="dna"/>
+		<ScoreFunction name="DNAGB" weights="dna_gb"/>
 	</SCOREFXNS>
 	<FILTERS>
-		<FalseFilter name=falsefilter/>
+		<FalseFilter name="falsefilter"/>
 	</FILTERS>
 	<MOVERS>
-		<PackRotamersMover name=PackRot scorefxn=DNA task_operations=IFC,IC,RRF,DnaInt/>
+		<PackRotamersMover name="PackRot" scorefxn="DNA" task_operations="IFC,IC,RRF,DnaInt"/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=PackRot/>
+		<Add mover_name="PackRot"/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

@@ -75,9 +75,9 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	filters::FilterOP clone() const { return filters::FilterOP(new SSElementBisectddGFilter(*this));}
+	filters::FilterOP clone() const override { return filters::FilterOP(new SSElementBisectddGFilter(*this));}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const { return filters::FilterOP(new SSElementBisectddGFilter());}
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new SSElementBisectddGFilter());}
 
 
 public:// mutator
@@ -91,18 +91,18 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "SSElementBisectddGFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "SSElementBisectddGFilter"; }
 
 
 public:// virtual main operation
 
 
-	Real report_sm(const Pose & pose ) const;
-	void report( std::ostream & out,const Pose & pose ) const;
+	Real report_sm(const Pose & pose ) const override;
+	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
 	Real get_ddg_bisect_score(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
 	Real compute( const Pose & pose ) const;
-	virtual bool apply(const Pose & pose ) const;
+	bool apply(const Pose & pose ) const override;
 
 
 public:// parser
@@ -111,7 +111,19 @@ public:// parser
 		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

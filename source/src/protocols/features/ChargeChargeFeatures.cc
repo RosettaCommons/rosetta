@@ -46,6 +46,10 @@
 // C++ Headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ChargeChargeFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -96,8 +100,8 @@ ChargeChargeFeatures::ChargeChargeFeatures(
 	distance_cutoff_(src.distance_cutoff_)
 {}
 
-string
-ChargeChargeFeatures::type_name() const { return "ChargeChargeFeatures"; }
+// XRW TEMP string
+// XRW TEMP ChargeChargeFeatures::type_name() const { return "ChargeChargeFeatures"; }
 
 void
 ChargeChargeFeatures::write_schema_to_db(
@@ -275,6 +279,36 @@ ChargeChargeFeatures::report_features(
 
 	return 0;
 }
+
+std::string ChargeChargeFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ChargeChargeFeatures::class_name() {
+	return "ChargeChargeFeatures";
+}
+
+void ChargeChargeFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Evaluate features for charge pairs and the geometries connecting them (torsions, angles, distances) for a pose", attlist );
+}
+
+std::string ChargeChargeFeaturesCreator::type_name() const {
+	return ChargeChargeFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ChargeChargeFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ChargeChargeFeatures );
+}
+
+void ChargeChargeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ChargeChargeFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

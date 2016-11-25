@@ -60,27 +60,39 @@ public:
 		core::pose::Pose & pose,
 		core::pack::task::PackerTaskOP task
 	);
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 
 	// to be used/redefined by derived classes
-	virtual void setup( core::pose::Pose & pose );
+	void setup( core::pose::Pose & pose ) override;
 	// need a more elegant rot_to_pack implementation than this
-	virtual core::PackerEnergy run(
+	core::PackerEnergy run(
 		core::pose::Pose & pose,
 		utility::vector0< int > rot_to_pack = utility::vector0<int>()
-	) const;
+	) const override;
 
 private:
 

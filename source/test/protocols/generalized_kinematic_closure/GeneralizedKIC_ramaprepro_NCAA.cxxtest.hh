@@ -88,19 +88,19 @@ public:
 			protocols::cyclic_peptide::FlipChiralityMover flipper;
 			flipper.apply( *pose );
 		}
-		
+
 		TR << "\nPHI\tPSI\n";
 		core::Size leftcount(0);
-		
-		for(core::Size repeats=1; repeats<=ntrials; ++repeats) {
-		
+
+		for ( core::Size repeats=1; repeats<=ntrials; ++repeats ) {
+
 			//Fully randomize mainchain torsions:
-			for(core::Size ir=1, irmax=pose->total_residue(); ir<=irmax; ++ir) {
+			for ( core::Size ir=1, irmax=pose->total_residue(); ir<=irmax; ++ir ) {
 				pose->set_omega(ir, 180);
 				pose->set_phi(ir, numeric::random::rg().uniform()*360.0-180.0);
 				pose->set_psi(ir, numeric::random::rg().uniform()*360.0-180.0);
 			}
-		
+
 			GeneralizedKICOP genkic( new GeneralizedKIC ); //Create the mover.
 
 			//Add the loop residues:
@@ -112,7 +112,7 @@ public:
 			//Add a rama_prepro filter on the pivots:
 			utility::vector1 <core::Size> pivresidues(3);
 			pivresidues[1] = 2; pivresidues[2] = 9; pivresidues[3] = pose->total_residue() - 1;
-			for(core::Size i=1; i<=3; ++i ) {
+			for ( core::Size i=1; i<=3; ++i ) {
 				genkic->add_filter( "rama_prepro_check" );
 				genkic->set_filter_resnum(pivresidues[i]);
 				genkic->set_filter_rama_cutoff_energy( 100.0 ); //I don't actually want to reject anything; I just want to make sure that the filter doesn't crash.
@@ -124,8 +124,8 @@ public:
 
 			//Add full randomization for the other residues:
 			genkic->add_perturber( "randomize_dihedral" );
-			for(core::Size ir=2, irmax=pose->total_residue() -1; ir<=irmax; ++ir) {
-				if( ir == sampled_pos ) continue;
+			for ( core::Size ir=2, irmax=pose->total_residue() -1; ir<=irmax; ++ir ) {
+				if ( ir == sampled_pos ) continue;
 				utility::vector1< core::id::NamedAtomID > tors, tors2;
 				tors.push_back( core::id::NamedAtomID("N", ir) );
 				tors.push_back( core::id::NamedAtomID("CA", ir) );
@@ -134,7 +134,7 @@ public:
 				genkic->add_atomset_to_perturber_atomset_list( tors );
 				genkic->add_atomset_to_perturber_atomset_list( tors2 );
 			}
-		
+
 			//Set options:
 			genkic->set_closure_attempts(100); //Try a maximum of 10 times.
 			genkic->set_min_solution_count(1); //Stop when a solution is found.
@@ -142,8 +142,8 @@ public:
 			//Add a lowest_energy selector:
 			genkic->set_selector_type("random_selector");
 			genkic->apply(*pose);
-			
-			if( !genkic->last_run_successful() ) {
+
+			if ( !genkic->last_run_successful() ) {
 				--repeats;
 				continue;
 			}

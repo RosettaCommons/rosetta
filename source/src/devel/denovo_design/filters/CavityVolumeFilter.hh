@@ -63,21 +63,33 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::filters::FilterOP clone() const;
+	protocols::filters::FilterOP clone() const override;
 
 	/// @brief Apply the CavityVolumeFilter. Overloaded apply function from filter base class.
-	virtual protocols::filters::FilterOP fresh_instance() const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	protocols::filters::FilterOP fresh_instance() const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	core::Real compute( core::pose::Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:   // private functions
 

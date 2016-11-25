@@ -40,6 +40,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -57,22 +60,22 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-std::string
-FoldabilityFilterCreator::keyname() const
-{
-	return FoldabilityFilterCreator::filter_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FoldabilityFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FoldabilityFilter::class_name();
+// XRW TEMP }
 
-protocols::filters::FilterOP
-FoldabilityFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new FoldabilityFilter() );
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FoldabilityFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new FoldabilityFilter() );
+// XRW TEMP }
 
-std::string
-FoldabilityFilterCreator::filter_name()
-{
-	return "Foldability";
-}
+// XRW TEMP std::string
+// XRW TEMP FoldabilityFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "Foldability";
+// XRW TEMP }
 
 /*
 NOTES
@@ -467,6 +470,83 @@ FoldabilityFilter::fragment_insertion(
 	}
 	return good_count;
 }
+
+std::string FoldabilityFilter::name() const {
+	return class_name();
+}
+
+std::string FoldabilityFilter::class_name() {
+	return "Foldability";
+}
+
+void FoldabilityFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"tries", xsct_non_negative_integer,
+		"number of attempted fragment insertions",
+		"100");
+
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"(start_res;end_res) and selector are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"start_res", xsct_non_negative_integer,
+		"The N-terminal residue of the piece of backbone to be rebuilt. "
+		"(start_res;end_res) and selector are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"end_res", xsct_non_negative_integer,
+		"The C-terminal residue of the piece of backbone to be rebuilt. "
+		"(start_res;end_res) and selector are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"motif", xs_string,
+		"The secondary structure + abego to be used for the backbone region to be rebuilt. "
+		"Taken from input pose if not specified.");
+
+	attlist + XMLSchemaAttribute(
+		"ignore_pose_abego", xsct_rosetta_bool,
+		"Requires motif to be specified");
+
+	attlist + XMLSchemaAttribute(
+		"use_sequence", xsct_rosetta_bool,
+		"Use sequence for fragment insertion mover");
+
+	attlist + XMLSchemaAttribute(
+		"output_poses", xsct_rosetta_bool,
+		"dump pdbs");
+
+	attlist + XMLSchemaAttribute(
+		"distance_threshold", xsct_real,
+		"A folding attempt is considered successful if the end of the refolded region "
+		"is at most distance_threshold from its original location.");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"This filter is designed as a means of quantifying Nobu and Rie's \"foldability\" "
+		"metric, in which a structure is refolded several times and compared to the desired structure.",
+		attlist );
+}
+
+std::string FoldabilityFilterCreator::keyname() const {
+	return FoldabilityFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FoldabilityFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FoldabilityFilter );
+}
+
+void FoldabilityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FoldabilityFilter::provide_xml_schema( xsd );
+}
+
 
 } // namespace filters
 } // namespace denovo_design

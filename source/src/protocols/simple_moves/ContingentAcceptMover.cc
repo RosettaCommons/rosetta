@@ -27,26 +27,29 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ContingentAcceptMo
 
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-ContingentAcceptMoverCreator::keyname() const
-{
-	return ContingentAcceptMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ContingentAcceptMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ContingentAcceptMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ContingentAcceptMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ContingentAcceptMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ContingentAcceptMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ContingentAcceptMover );
+// XRW TEMP }
 
-std::string
-ContingentAcceptMoverCreator::mover_name()
-{
-	return "ContingentAccept";
-}
+// XRW TEMP std::string
+// XRW TEMP ContingentAcceptMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ContingentAccept";
+// XRW TEMP }
 
 ContingentAcceptMover::ContingentAcceptMover()
 : moves::Mover("ContingentAccept"),
@@ -85,10 +88,10 @@ ContingentAcceptMover::apply( Pose & pose )
 	}
 }
 
-std::string
-ContingentAcceptMover::get_name() const {
-	return ContingentAcceptMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ContingentAcceptMover::get_name() const {
+// XRW TEMP  return ContingentAcceptMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 ContingentAcceptMover::clone() const
@@ -126,11 +129,47 @@ ContingentAcceptMover::parse_my_tag(
 {
 	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), movers ) );
-	delta( tag->getOption< core::Real >( "delta" , 5)); // do I need anything like ( "MaxDeltaFilterVal", 5 )?? What is the integer for?
+	delta( tag->getOption< core::Real >( "delta" , 5.0 )); // do I need anything like ( "MaxDeltaFilterVal", 5 )?? What is the integer for?
 }
+
+std::string ContingentAcceptMover::get_name() const {
+	return mover_name();
+}
+
+std::string ContingentAcceptMover::mover_name() {
+	return "ContingentAccept";
+}
+
+void ContingentAcceptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "filter", xs_string, "Filter whose value is compared before and after applying the Mover; looked up from DataMap.")
+		+ XMLSchemaAttribute::required_attribute( "mover", xs_string, "Mover whose move is contingently accepted.")
+		+ XMLSchemaAttribute::attribute_w_default( "delta", xsct_real, "Amount Filter value can increase before rejection (units depend on Filter)", "5.0");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "checks filter, runs mover, checks filter.  Resets pose if filter value increases by more than delta. NOT Monte Carlo.", attlist );
+}
+
+std::string ContingentAcceptMoverCreator::keyname() const {
+	return ContingentAcceptMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ContingentAcceptMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ContingentAcceptMover );
+}
+
+void ContingentAcceptMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ContingentAcceptMover::provide_xml_schema( xsd );
+}
+
 
 
 
 } // simple_moves
 } // protocols
-

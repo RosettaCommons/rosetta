@@ -44,6 +44,10 @@
 // External Headers
 #include <cppdb/frontend.h>
 #include <boost/lexical_cast.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinBondGeometryFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -75,8 +79,8 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFea
 
 ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures()= default;
 
-string
-ProteinBondGeometryFeatures::type_name() const { return "ProteinBondGeometryFeatures"; }
+// XRW TEMP string
+// XRW TEMP ProteinBondGeometryFeatures::type_name() const { return "ProteinBondGeometryFeatures"; }
 
 void
 ProteinBondGeometryFeatures::write_schema_to_db(
@@ -788,6 +792,36 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 		}
 	}
 }
+
+std::string ProteinBondGeometryFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinBondGeometryFeatures::class_name() {
+	return "ProteinBondGeometryFeatures";
+}
+
+void ProteinBondGeometryFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record every four-atom torsion not in the AtomTree but in the Conformation and give its value, its ideal value, the difference, and the energy.", attlist );
+}
+
+std::string ProteinBondGeometryFeaturesCreator::type_name() const {
+	return ProteinBondGeometryFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinBondGeometryFeatures );
+}
+
+void ProteinBondGeometryFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinBondGeometryFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

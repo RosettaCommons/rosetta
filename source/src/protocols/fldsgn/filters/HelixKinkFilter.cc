@@ -38,6 +38,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 #ifdef WIN32
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
@@ -241,11 +244,49 @@ HelixKinkFilter::parse_my_tag(
 
 }
 
-protocols::filters::FilterOP
-HelixKinkFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixKinkFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HelixKinkFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixKinkFilter ); }
 
-std::string
-HelixKinkFilterCreator::keyname() const { return "HelixKink"; }
+// XRW TEMP std::string
+// XRW TEMP HelixKinkFilterCreator::keyname() const { return "HelixKink"; }
+
+std::string HelixKinkFilter::name() const {
+	return class_name();
+}
+
+std::string HelixKinkFilter::class_name() {
+	return "HelixKink";
+}
+
+void HelixKinkFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "bend", xsct_real, "XRW TO DO", "20.0" )
+		//Blueprint and secstruct are mutually exclusive
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "resnums", xsct_refpose_enabled_residue_number_cslist, "XRW TO DO" )
+		+ XMLSchemaAttribute( "helix_start", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "helix_end", xsct_non_negative_integer, "XRW TO DO" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string HelixKinkFilterCreator::keyname() const {
+	return HelixKinkFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HelixKinkFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HelixKinkFilter );
+}
+
+void HelixKinkFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HelixKinkFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // fldsgn

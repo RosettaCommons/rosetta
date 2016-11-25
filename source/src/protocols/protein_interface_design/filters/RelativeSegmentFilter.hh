@@ -34,24 +34,36 @@ public:
 	typedef core::Size Size;
 public :
 	RelativeSegmentFilter() : Filter( "RelativeSegment" ) {}
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new RelativeSegmentFilter( *this ) );
 	}
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override {
 		return protocols::filters::FilterOP( new RelativeSegmentFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	virtual ~RelativeSegmentFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	std::string source_pose() const { return source_pose_; }
 	void source_pose( std::string const & s ) { source_pose_ = s; }
 	core::Size start_res() const { return start_res_; }
 	void start_res( core::Size const s ) { start_res_ = s;}
 	core::Size stop_res() const { return stop_res_; }
 	void stop_res( core::Size const s ) { stop_res_ = s; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string source_pose_;
 	core::Size start_res_, stop_res_;

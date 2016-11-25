@@ -25,6 +25,7 @@
 #include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
 #include <map>
@@ -48,6 +49,12 @@ public:
 	virtual ~TempInterpolatorFactory();
 
 	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_level );
+
+	static
+	void
+	attributes_for_interpolators(
+		utility::tag::XMLSchemaDefinition & xsd,
+		utility::tag::AttributeList & interp_attributes );
 
 private:
 

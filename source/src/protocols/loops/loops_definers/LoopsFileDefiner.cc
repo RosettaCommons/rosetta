@@ -13,14 +13,18 @@
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsFileDefiner.hh>
+
+// Package headers
 #include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/loops_definers/util.hh>
 
 // Project Headers
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ Headers
 #include <string>
@@ -92,6 +96,22 @@ LoopsFileDefiner::apply(
 	Pose const &
 ) {
 	return loop_list_;
+}
+
+std::string LoopsFileDefiner::class_name()
+{
+	return "LoopsFile";
+}
+
+void LoopsFileDefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+
+	AttributeList attributes;
+	attributes + Attr::required_attribute( "filename", xs_string, "The file from which the loops should be read" );
+
+	xsd_type_definition_w_attributes( xsd, class_name(), "Define a set of loops reading them in from the provided file", attributes );
 }
 
 } //namespace

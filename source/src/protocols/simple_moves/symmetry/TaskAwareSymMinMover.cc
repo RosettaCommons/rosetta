@@ -39,6 +39,9 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.TaskAwareSymMinMover" );
@@ -51,22 +54,22 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-std::string
-TaskAwareSymMinMoverCreator::keyname() const
-{
-	return TaskAwareSymMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareSymMinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TaskAwareSymMinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TaskAwareSymMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareSymMinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TaskAwareSymMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareSymMinMover );
+// XRW TEMP }
 
-std::string
-TaskAwareSymMinMoverCreator::mover_name()
-{
-	return "TaskAwareSymMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareSymMinMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TaskAwareSymMinMover";
+// XRW TEMP }
 // -------------  Mover Creator -------------
 
 TaskAwareSymMinMover::TaskAwareSymMinMover() :
@@ -190,6 +193,47 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 	factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
 }
+
+std::string TaskAwareSymMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string TaskAwareSymMinMover::mover_name() {
+	return "TaskAwareSymMinMover";
+}
+
+void TaskAwareSymMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "scorefxn" , xs_string, "Score function to use.", "score12_symm" )
+		+ XMLSchemaAttribute::attribute_w_default( "chi", xsct_rosetta_bool, "Whether to allow side chain minimization.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb", xsct_rosetta_bool, "Whether to allow backbone minimization.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rb", xsct_rosetta_bool, "Whether to allow rigid body minimization.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "type", xs_string, "Minimization type. For example, can also be 'dfpmin_armijo_nonmonotone'.", "lbfgs_armijo_nonmonotone" )
+		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "Tolerance of minimization?", "1e-5" )
+		+ XMLSchemaAttribute::attribute_w_default( "designable_only", xsct_rosetta_bool, "If true, only minimize designable residues.", "true" ) ;
+
+	//protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "scorefxn" ) ;
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "(This is a devel Mover and not available in released versions.) A task-aware version of the SymMinMover that allows minimization of only certain sets of residues specified by user-defined task operations.", attlist );
+}
+
+std::string TaskAwareSymMinMoverCreator::keyname() const {
+	return TaskAwareSymMinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+TaskAwareSymMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TaskAwareSymMinMover );
+}
+
+void TaskAwareSymMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskAwareSymMinMover::provide_xml_schema( xsd );
+}
+
 
 } // symmetry
 } // simple_moves

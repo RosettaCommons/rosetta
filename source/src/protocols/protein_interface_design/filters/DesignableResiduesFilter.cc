@@ -29,6 +29,9 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -199,11 +202,47 @@ DesignableResiduesFilter::clone() const{
 	return protocols::filters::FilterOP( new DesignableResiduesFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-DesignableResiduesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DesignableResiduesFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP DesignableResiduesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DesignableResiduesFilter ); }
 
-std::string
-DesignableResiduesFilterCreator::keyname() const { return "DesignableResidues"; }
+// XRW TEMP std::string
+// XRW TEMP DesignableResiduesFilterCreator::keyname() const { return "DesignableResidues"; }
+
+std::string DesignableResiduesFilter::name() const {
+	return class_name();
+}
+
+std::string DesignableResiduesFilter::class_name() {
+	return "DesignableResidues";
+}
+
+void DesignableResiduesFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "lower_cutoff", xsct_non_negative_integer, "This option presently has no effect.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_cutoff", xsct_non_negative_integer, "This option presently has no effect.", "1000" )
+		+ XMLSchemaAttribute::attribute_w_default( "packable", xsct_rosetta_bool, "Determine all packable positions", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "designable", xsct_rosetta_bool, "Determine all designable positions", "0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters based on minimum and maximum number of designable residues allowed; useful for automatic interface detection", attlist );
+}
+
+std::string DesignableResiduesFilterCreator::keyname() const {
+	return DesignableResiduesFilter::class_name();
+}
+
+protocols::filters::FilterOP
+DesignableResiduesFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DesignableResiduesFilter );
+}
+
+void DesignableResiduesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DesignableResiduesFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

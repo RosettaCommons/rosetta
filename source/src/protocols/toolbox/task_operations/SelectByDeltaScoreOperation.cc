@@ -239,14 +239,14 @@ void SelectByDeltaScoreOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "score_type", xs_string, "total_score" )
-		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xs_decimal, "100" )
-		+ XMLSchemaAttribute::attribute_w_default(  "lower", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "individual_hbonds", xs_boolean, "false" )
-		+ XMLSchemaAttribute( "reference_name", xs_string )
-		+ XMLSchemaAttribute( "reference_pdb", xs_string );
+		+ XMLSchemaAttribute::attribute_w_default(  "score_type", xs_string, "Loop over the independent residues, assess score_type for each residue.",  "total_score"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xsct_real, "Restrict residues to repack based on whether they pass this threshold.",  "100"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "lower", xsct_rosetta_bool, "Higher or lower than threshold.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "individual_hbonds", xsct_rosetta_bool, "If true, get Hbond set.",  "false"  )
+		+ XMLSchemaAttribute( "reference_name", xs_string , "Name of reference pose." )
+		+ XMLSchemaAttribute( "reference_pdb", xs_string , "Reference pdb filename." );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Restrict design to residues passing a user-specified threshold on a given score type." );
 }
 
 

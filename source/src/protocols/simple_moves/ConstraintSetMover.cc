@@ -28,6 +28,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConstraintSetMover" );
 
@@ -40,26 +43,26 @@ using namespace scoring;
 using namespace constraints;
 using namespace utility::tag;
 
-std::string
-ConstraintSetMoverCreator::keyname() const
-{
-	return ConstraintSetMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConstraintSetMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ConstraintSetMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ConstraintSetMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new ConstraintSetMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConstraintSetMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new ConstraintSetMover );
+// XRW TEMP }
 
-std::string
-ConstraintSetMoverCreator::mover_name()
-{
-	return "ConstraintSetMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ConstraintSetMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ConstraintSetMover";
+// XRW TEMP }
 
 ConstraintSetMover::ConstraintSetMover()
-: protocols::moves::Mover( ConstraintSetMoverCreator::mover_name() )
+: protocols::moves::Mover( ConstraintSetMover::mover_name() )
 {
 	read_options();
 }
@@ -161,10 +164,10 @@ ConstraintSetMover::apply( Pose & pose )
 	}
 }
 
-std::string
-ConstraintSetMover::get_name() const {
-	return ConstraintSetMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConstraintSetMover::get_name() const {
+// XRW TEMP  return ConstraintSetMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP ConstraintSetMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::ConstraintSetMover( *this ) ); }
 protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstraintSetMover ); }
@@ -189,11 +192,48 @@ ConstraintSetMover::parse_my_tag(
 	if ( tag->hasOption("cst_fa_file") ) cst_fa_file_ = tag->getOption<std::string>("cst_fa_file");
 	else cst_fa_file_=cst_file_;
 	add_constraints( tag->getOption< bool >( "add_constraints", false ) );
-	TR << "of type ConstraintSetMover with constraint file: "<< cst_file_ <<std::endl;
+	TR << "of type ConstraintSetMover with constraint file: " << cst_file_ << std::endl;
 	if ( cst_fa_file_ != cst_file_ ) {
-		TR << "of type ConstraintSetMover with fullatom constraint file: "<< cst_fa_file_ <<std::endl;
+		TR << "of type ConstraintSetMover with fullatom constraint file: " << cst_fa_file_ << std::endl;
 	}
 }
+
+std::string ConstraintSetMover::get_name() const {
+	return mover_name();
+}
+
+std::string ConstraintSetMover::mover_name() {
+	return "ConstraintSetMover";
+}
+
+void ConstraintSetMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute( "cst_file", xs_string, "(implicitly centroid compatible) constraint file; attempts to autodetect if pose is centroid and uses these")
+		+ XMLSchemaAttribute( "cst_fa_file", xs_string, "(implicitly fullatom compatible) constraint file; attempts to autodetect if pose is fullatom and uses these.  If not supplied, uses the value in cst_file")
+		+ XMLSchemaAttribute::attribute_w_default( "add_constraints", xsct_rosetta_bool, "if True, ADD these constraints to the existing ConstraintSet in the Pose; if False, REPLACE the constraints in the Pose with these.", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds constraints from a constraint file to the pose.", attlist );
+}
+
+std::string ConstraintSetMoverCreator::keyname() const {
+	return ConstraintSetMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ConstraintSetMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConstraintSetMover );
+}
+
+void ConstraintSetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConstraintSetMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

@@ -76,31 +76,31 @@ public:
 		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 		TS_ASSERT(pose.residue(67).is_ligand());
 	}
-	
+
 	void test_recursive_identification_of_connection_dependencies() {
 		Pose pose;
 		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
-		
+
 		protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
 		add_nmethyl.set_additional_type_to_add("N_METHYLATION");
 		core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
 		selector->append_index( 5 );
 		add_nmethyl.set_residue_selector(selector);
 		add_nmethyl.apply(pose);
-		
+
 		TR << "\nATOM\tLOWER_DEP\tUPPER_DEP\n";
-		for(core::Size ia=1, iamax=pose.residue(5).natoms(); ia<=iamax; ++ia) {
+		for ( core::Size ia=1, iamax=pose.residue(5).natoms(); ia<=iamax; ++ia ) {
 			std::string const atomname( pose.residue(5).atom_name(ia) );
 			bool const lowerdep( pose.residue(5).atom_depends_on_lower(ia,true) );
 			//bool const upperdep(false);
 			bool const upperdep( pose.residue(5).atom_depends_on_upper(ia,true) );
 			TR << atomname << "\t" << (lowerdep ? "TRUE" : "FALSE") << "\t" << (upperdep ? "TRUE" : "FALSE") << "\n";
-			if( atomname == " CN " || atomname == "1HN " || atomname == "2HN " || atomname == "3HN " ) {
+			if ( atomname == " CN " || atomname == "1HN " || atomname == "2HN " || atomname == "3HN " ) {
 				TS_ASSERT( lowerdep );
 			} else {
 				TS_ASSERT( !lowerdep );
 			}
-			if( atomname == " O  " ) { TS_ASSERT(upperdep); }
+			if ( atomname == " O  " ) { TS_ASSERT(upperdep); }
 			else { TS_ASSERT(!upperdep); }
 		}
 		TR << std::endl;

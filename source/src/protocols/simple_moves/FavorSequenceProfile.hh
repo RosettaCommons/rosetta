@@ -36,7 +36,7 @@ class FavorSequenceProfile : public protocols::moves::Mover
 {
 public:
 	FavorSequenceProfile();
-	std::string get_name() const override { return "FavorSequenceProfile"; }
+	// XRW TEMP  std::string get_name() const override { return "FavorSequenceProfile"; }
 	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new protocols::simple_moves::FavorSequenceProfile( *this ) ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FavorSequenceProfile ); }
 	void set_sequence( core::sequence::Sequence & seq, std::string matrix);
@@ -50,6 +50,18 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	~FavorSequenceProfile() override = default;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real weight_;
 	bool use_current_;

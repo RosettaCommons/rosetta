@@ -48,6 +48,10 @@
 // C++ Headers
 #include <sstream>
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ScoreTypeFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -101,8 +105,8 @@ ScoreTypeFeatures::ScoreTypeFeatures(
 
 ScoreTypeFeatures::~ScoreTypeFeatures() = default;
 
-string
-ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
+// XRW TEMP string
+// XRW TEMP ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
 
 void
 ScoreTypeFeatures::write_schema_to_db(
@@ -209,6 +213,39 @@ ScoreTypeFeatures::insert_score_type_rows(
 		break;
 	}
 }
+
+std::string ScoreTypeFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ScoreTypeFeatures::class_name() {
+	return "ScoreTypeFeatures";
+}
+
+void ScoreTypeFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report scoring type features",
+		attlist);
+}
+
+std::string ScoreTypeFeaturesCreator::type_name() const {
+	return ScoreTypeFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ScoreTypeFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ScoreTypeFeatures );
+}
+
+void ScoreTypeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreTypeFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

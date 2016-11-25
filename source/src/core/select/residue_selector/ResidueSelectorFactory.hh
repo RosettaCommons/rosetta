@@ -61,6 +61,9 @@ public:
 	/// are responsible for creating.
 	void define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 
+	/// @brief Read access to the map of creator names to creators -- for unit testing purposes only
+	std::map< std::string, ResidueSelectorCreatorOP > const & creator_map() const;
+
 	static std::string residue_selector_xml_schema_group_name();
 
 private:

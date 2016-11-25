@@ -415,7 +415,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	if ( option[OptionKeys::coupled_moves::save_sequences] ) {
 		std::ofstream out_fasta( (output_tag + ".fasta").c_str() );
 		core::Size count = 1;
-		for (auto & unique_sequence : unique_sequences) {
+		for ( auto & unique_sequence : unique_sequences ) {
 			out_fasta << ">Sequence" << count << " " << unique_sequence.second << std::endl;
 			out_fasta << unique_sequence.first << std::endl;
 			count++;
@@ -424,14 +424,14 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 
 		std::ofstream out_stats( (output_tag + ".stats").c_str() );
 		count = 1;
-		for (auto & unique_sequence : unique_sequences) {
+		for ( auto & unique_sequence : unique_sequences ) {
 			out_stats << "Sequence" << count << "\t" << unique_sequence.second << "\tsequence:\t" << unique_sequence.first << "\t" << unique_scores[unique_sequence.first].weighted_string_of(score_fxn_->weights()) << std::endl;
 			count++;
 		}
 		out_stats.close();
 
 		if ( option[OptionKeys::coupled_moves::save_structures] ) {
-			for (auto & unique_structure : unique_structures) {
+			for ( auto & unique_structure : unique_structures ) {
 				if ( option[out::pdb_gz] ) {
 					unique_structure.second.dump_pdb(output_tag + "_" + unique_structure.first + "_low.pdb.gz");
 				} else {

@@ -96,7 +96,7 @@ public:
 	/// @brief apply GenericMonteCarloMover (Mover)
 	void apply( Pose & pose ) override;
 
-	String get_name() const override;
+	// XRW TEMP  String get_name() const override;
 
 	/// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
 	bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums ) override;
@@ -117,6 +117,18 @@ public: // mutators
 
 	void disable_fitness_evaluation( bool const d ){ disable_fitness_evaluation_ = d; };
 	bool disable_fitness_evaluation() const{ return disable_fitness_evaluation_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real population_size_; // dlft 10^6

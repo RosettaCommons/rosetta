@@ -28,6 +28,9 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace protocols::moves;
@@ -140,26 +143,57 @@ void DockMinMover::apply( core::pose::Pose & pose ) {
 }
 
 // creator methods
+// XRW TEMP std::string DockMinMover::get_name() const {
+// XRW TEMP  return "DockMinMover";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockMinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockMinMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockMinMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockMinMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockMinMover";
+// XRW TEMP }
+
 std::string DockMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string DockMinMover::mover_name() {
 	return "DockMinMover";
 }
 
-std::string
-DockMinMoverCreator::keyname() const
+void DockMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockMinMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	//I can't find where this one gets any information from the tag!
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs the docking_min high resolution protocol", attlist );
+}
+
+std::string DockMinMoverCreator::keyname() const {
+	return DockMinMover::mover_name();
 }
 
 protocols::moves::MoverOP
 DockMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockMinMover() );
+	return protocols::moves::MoverOP( new DockMinMover );
 }
 
-std::string
-DockMinMoverCreator::mover_name()
+void DockMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockMinMover";
+	DockMinMover::provide_xml_schema( xsd );
 }
+
 
 
 }

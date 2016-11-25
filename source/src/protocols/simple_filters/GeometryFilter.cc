@@ -31,6 +31,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -59,6 +60,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -66,11 +70,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
 
-protocols::filters::FilterOP
-GeometryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new GeometryFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP GeometryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new GeometryFilter ); }
 
-std::string
-GeometryFilterCreator::keyname() const { return "Geometry"; }
+// XRW TEMP std::string
+// XRW TEMP GeometryFilterCreator::keyname() const { return "Geometry"; }
 
 GeometryFilter::GeometryFilter() :
 	filters::Filter( "GeometryFilter" ),
@@ -230,6 +234,46 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 
 	return bad_residues;
 }
+
+std::string GeometryFilter::name() const {
+	return class_name();
+}
+
+std::string GeometryFilter::class_name() {
+	return "Geometry";
+}
+
+void GeometryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("omega", xsct_real, "cutoff for omega angle of peptide plane, Cis-proline is also considered. Works for multiple chains", "165.0")
+		+ XMLSchemaAttribute::attribute_w_default("cart_bonded", xsct_real, "bond angle and length penalty score", "20.0")
+		+ XMLSchemaAttribute::attribute_w_default("cstfile", xs_string, "if specified, the given constraint file will be used to introduce constraints into the pose. Only atom pair constraints will be used. The constraint scores will be checked to see if they are lower than cst_cutoff. If the constraint score is greater than cst_cutoff, the pose will fail.", "filename")
+		+ XMLSchemaAttribute::attribute_w_default("cst_cutoff", xsct_real, "cutoff for use with cstfile option", "10000.0")
+		+ XMLSchemaAttribute::attribute_w_default("start", xsct_non_negative_integer, "starting residue number to scan", "1")
+		+ XMLSchemaAttribute::attribute_w_default("end", xsct_non_negative_integer, "ending residue number", "100000")
+		+ XMLSchemaAttribute::attribute_w_default("count_bad_residues", xsct_rosetta_bool, "If true, the number of residues failing the filter will be computed and returned as the filter score by report_sm(). If false, the filter score will be either 1.0 (i.e. all residues pass) or 0.0 (i.e. a residue failed the filter). Default: false", "false");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "If specified, only residues selected by the user-specified residue selector will be scanned. By default, all residues are selected. If start and/or end are also set, only residues selected by the residue_selector AND within the range [start, end] will be scanned.");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters poses based upon their geometry (omega angle, for example(", attlist );
+}
+
+std::string GeometryFilterCreator::keyname() const {
+	return GeometryFilter::class_name();
+}
+
+protocols::filters::FilterOP
+GeometryFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new GeometryFilter );
+}
+
+void GeometryFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GeometryFilter::provide_xml_schema( xsd );
+}
+
 
 
 }

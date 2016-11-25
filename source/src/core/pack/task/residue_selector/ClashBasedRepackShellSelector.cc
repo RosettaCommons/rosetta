@@ -192,8 +192,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 	// determine clash-based repack shell around the design shell
 	std::set<core::Size> repack_shell;
 
-	for ( std::set<core::Size>::const_iterator cit = design_shell.begin(); cit != design_shell.end(); ++cit ) {
-		core::Size design_pos = *cit;
+	for ( Size const design_pos : design_shell ) {
 
 		// setup a bump check packer task for the given design residue
 		core::pack::task::PackerTaskOP bump_check_task( packer_task_->clone() );
@@ -217,8 +216,7 @@ ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 			//check if the given rotamer would result in a clash with a neighboring side chain
 			utility::vector1<core::Size> clash_positions = get_clashing_positions(*mypose, *bump_check_rotamer, design_pos);
 			// register all those clash-positions for repacking that are not part of the design shell
-			for ( core::Size j = 1; j <= clash_positions.size(); ++j ) {
-				core::Size clash_pos = clash_positions[j];
+			for ( Size const clash_pos : clash_positions ) {
 				if ( design_shell.find(clash_pos) == design_shell.end() ) {
 					//std::cout << "adding " << clash_pos << std::endl;
 					repack_shell.insert(clash_pos);
@@ -257,8 +255,14 @@ ClashBasedRepackShellSelector::provide_xml_schema( utility::tag::XMLSchemaDefini
 	using namespace utility::tag;
 	using namespace select::residue_selector;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::attribute_w_default(  "bump_overlap_factor", xs_decimal, "0.5" ); // default value specified in XSD
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute::attribute_w_default(
+		"bump_overlap_factor", xsct_real,
+		"returns true when distance_squared is less than (Lennard-Jones^2 * bump_overlap_factor)",
+		"0.5");
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The ClashBasedRepackShellSelector identifies all residues that clash with at least one rotamer of a design position",
+		attributes );
 }
 
 

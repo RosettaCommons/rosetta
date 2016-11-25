@@ -65,12 +65,24 @@ public:
 	void hurry( bool const setting ) { hurry_ = setting; }
 
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopRemodel ); }
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopRemodel ); }
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~LoopRemodel();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string protocol_;
 	core::scoring::ScoreFunctionOP hires_score_, lores_score_;

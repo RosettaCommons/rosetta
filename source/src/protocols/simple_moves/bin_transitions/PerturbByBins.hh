@@ -67,23 +67,23 @@ public:
 	///
 	virtual ~PerturbByBins();
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Clone -- i.e. create a new object copying this one and return an owning pointer to the copy.
 	///
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::bin_transitions::PerturbByBins( *this ) ) );
 	}
 
 	/// @brief Get a new instance of this mover (NOT copying).
 	///
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new PerturbByBins );
 	}
 
 	/// @brief Apply the mover to a pose.
 	///
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Parse XML for RosettaScripts.
 	///
@@ -91,7 +91,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/******************************
 	** SETTERS                  **
@@ -130,6 +130,18 @@ public:
 	/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
 	/// torsions are drawn from within the bin), or must it jump to a different bin?
 	bool must_switch_bins() const { return must_switch_bins_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	///////////////////////

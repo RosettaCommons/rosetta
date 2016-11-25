@@ -59,28 +59,32 @@ using basic::Warning;
 // Boost Headers
 #include <utility/excn/Exceptions.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 
 namespace protocols {
 namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
 
-std::string
-MinimizeBackboneCreator::keyname() const
-{
-	return MinimizeBackboneCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MinimizeBackboneCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MinimizeBackbone::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MinimizeBackboneCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinimizeBackbone );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MinimizeBackboneCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MinimizeBackbone );
+// XRW TEMP }
 
-std::string
-MinimizeBackboneCreator::mover_name()
-{
-	return "MinimizeBackbone";
-}
+// XRW TEMP std::string
+// XRW TEMP MinimizeBackbone::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MinimizeBackbone";
+// XRW TEMP }
 
 MinimizeBackbone::MinimizeBackbone():
 	protocols::moves::Mover(),
@@ -108,9 +112,9 @@ protocols::moves::MoverOP MinimizeBackbone::fresh_instance() const {
 	return protocols::moves::MoverOP( new MinimizeBackbone );
 }
 
-std::string MinimizeBackbone::get_name() const{
-	return "MinimizeBackbone";
-}
+// XRW TEMP std::string MinimizeBackbone::get_name() const{
+// XRW TEMP  return "MinimizeBackbone";
+// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -378,6 +382,38 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	minimize_backbone_tracer.Debug << "Restraining C-alpha of residue " << residue_id << " with "<< ligand_area->Calpha_restraints_<< std::endl;
 	pose.add_constraint(constraint);
 }
+
+std::string MinimizeBackbone::get_name() const {
+	return mover_name();
+}
+
+std::string MinimizeBackbone::mover_name() {
+	return "MinimizeBackbone";
+}
+
+void MinimizeBackbone::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("interface", xs_string, "Comma separated chains to dock.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform backbone mimimization of a docked structure.", attlist );
+}
+
+std::string MinimizeBackboneCreator::keyname() const {
+	return MinimizeBackbone::mover_name();
+}
+
+protocols::moves::MoverOP
+MinimizeBackboneCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MinimizeBackbone );
+}
+
+void MinimizeBackboneCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MinimizeBackbone::provide_xml_schema( xsd );
+}
+
 
 std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 	ligand_options::Interface const & interface,

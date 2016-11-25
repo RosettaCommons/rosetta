@@ -104,6 +104,18 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & reference_pose ) override;
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	// symmetry group and motifs
 	std::string symm_type_;

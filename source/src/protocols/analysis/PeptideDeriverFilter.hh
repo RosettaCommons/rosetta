@@ -346,7 +346,7 @@ public:
 
 	// NOTE : I have no idea why this virtual method exists together with the get_type() method, which
 	//        returns the type_ member initialized upon construction (see constructor).
-	std::string name() const override { return "PeptideDeriverFilter"; }
+	// XRW TEMP  std::string name() const override { return "PeptideDeriverFilter"; }
 
 	// accessors
 	utility::vector1<core::Size> get_pep_lengths() const { return pep_lengths_; }
@@ -435,6 +435,18 @@ public:
 		core::pose::Pose const & receptor_pose,
 		core::pose::Pose const & partner_pose,
 		core::Real const total_isc ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief Minimization step, run on an input once before derivation.

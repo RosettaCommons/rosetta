@@ -80,7 +80,7 @@ public:
 	~KicMover() override;
 
 	/// @brief Return the name of this mover.
-	std::string get_name() const override { return "KicMover"; }
+	// XRW TEMP  std::string get_name() const override { return "KicMover"; }
 
 public:
 
@@ -108,6 +108,18 @@ public:
 
 	/// @copydoc LoopMover::request_fold_tree
 	protocols::loop_modeling::FoldTreeRequest request_fold_tree() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 

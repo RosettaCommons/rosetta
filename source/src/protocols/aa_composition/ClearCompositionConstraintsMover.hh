@@ -60,7 +60,7 @@ public:
 
 	/// @brief Returns the name of this mover ("ClearCompositionConstraintsMover").
 	///
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Actually apply the mover to a pose.
 	///
@@ -70,6 +70,18 @@ public:
 	///
 	void
 	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map, Filters_map const &filters_map, protocols::moves::Movers_map const &movers_map, Pose const &pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	//Private member variables:

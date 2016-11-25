@@ -38,18 +38,30 @@ public:
 	/// @param jump_num The jump number of the interface. 0 for no interface
 	/// @note Pass everything through the final filter (True Filter)
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	//virtual std::string protocols::moves::Mover::get_name();
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	//std::string protocols::moves::Mover::get_name() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SpinMover( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SpinMover ); }
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SpinMover( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new SpinMover ); }
 	virtual ~SpinMover() {};
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size jump_num_;
 };

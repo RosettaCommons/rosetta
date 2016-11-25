@@ -18,14 +18,16 @@
 
 #include <protocols/ligand_docking/rdf/StandardRDFFunctions.fwd.hh>
 #include <protocols/ligand_docking/rdf/RDFFunctionCreator.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/ligand_docking/rdf/RDFBase.hh>
 #include <core/scoring/etable/coulomb/Coulomb.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/orbitals/OrbitalsScore.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 
 namespace protocols {
 namespace ligand_docking {
@@ -40,6 +42,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFEtableFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 /// @brief RDFEtableFunction computes fa_sol,fa_rep,fa_atr for a pair of atoms
@@ -57,7 +60,8 @@ public:
 
 	/// @brief compute atr, rep and solvation energy for atom pair
 	virtual RDFResultList operator()(AtomPairData const & atom_data );
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::scoring::etable::AnalyticEtableEvaluatorOP etable_evaluator_;
@@ -73,6 +77,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFEtableFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 /// @brief RDFElecFunction computes fa_elec for a pair of atoms
@@ -90,7 +95,8 @@ public:
 
 	/// @brief compute fa_elec for atom pair
 	virtual RDFResultList operator()(AtomPairData const & atom_data );
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::scoring::etable::coulomb::CoulombOP coloumb_;
@@ -106,6 +112,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFEtableFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 /// @brief RDFChargeFunction computes fa_elec for a pair of atoms
@@ -123,7 +130,8 @@ public:
 
 	/// @brief compute fa_elec for atom pair
 	virtual RDFResultList operator()(AtomPairData const & atom_data );
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	FunctionSign function_sign_;
@@ -140,6 +148,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFHbondFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 /// @brief RDFHbondFunction computes h-bonding energy for a pair of atoms.
@@ -160,6 +169,8 @@ public:
 
 	/// @brief setup hbond database for each pose
 	virtual void preamble(core::pose::Pose & pose);
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::scoring::hbonds::HBondSetOP hbond_set_;
@@ -177,6 +188,8 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFBinaryHbondFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
 };
 
 /// @brief RDFBinaryHbondFunction returns 1.0 if a pair of atoms are donor and acceptor, 0.0 otherwise.
@@ -194,7 +207,8 @@ public:
 
 	/// @brief compute binary hbond status for atom pair
 	virtual RDFResultList operator()(AtomPairData const & atom_data );
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	FunctionSign function_sign_;
@@ -210,6 +224,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFOrbitalFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const;
 };
 
 /// @brief RDFOrbitalFunction computes the orbital score energies of a pair of atoms
@@ -230,7 +245,8 @@ public:
 
 	/// @brief update residue neighbors and cache current pose
 	virtual void preamble(core::pose::Pose & pose);
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::pose::PoseAP pose_;
@@ -246,6 +262,7 @@ public:
 	virtual RDFBaseOP create_rdf_function() const;
 	/// @brief return the name of the RDFBinaryOrbitalFunction
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd) const;
 };
 
 /// @brief RDFBinaryOrbitalFunction returns 1 for various orbital pairs and 0 otherwise
@@ -266,7 +283,8 @@ public:
 
 	/// @brief update residue neighbors and cache current pose
 	virtual void preamble(core::pose::Pose & pose);
-
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::pose::PoseAP pose_;

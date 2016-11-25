@@ -32,6 +32,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.FragQualFilter" );
@@ -143,11 +146,58 @@ FragQualFilter::parse_my_tag(
 
 }
 
-protocols::filters::FilterOP
-FragQualFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragQualFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FragQualFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragQualFilter ); }
 
-std::string
-FragQualFilterCreator::keyname() const { return "FragQual"; }
+// XRW TEMP std::string
+// XRW TEMP FragQualFilterCreator::keyname() const { return "FragQual"; }
+
+std::string FragQualFilter::name() const {
+	return class_name();
+}
+
+std::string FragQualFilter::class_name() {
+	return "FragQual";
+}
+
+void FragQualFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction frag_qual_filter_type;
+	frag_qual_filter_type.name( "frag_qual_filter_type");
+	frag_qual_filter_type.base_type( xs_string );
+	frag_qual_filter_type.add_restriction( xsr_enumeration, "num_goodfrag" );
+	frag_qual_filter_type.add_restriction( xsr_enumeration, "coverage" );
+	xsd.add_top_level_element( frag_qual_filter_type );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "type", "frag_qual_filter_type", "XRW TO DO", "num_goodfrag" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" )
+		//add all attributes detected in FragQUalCalculator's parse_my_tag
+		+ XMLSchemaAttribute::attribute_w_default( "ratio_cutoff", xsct_real, "XRW TO DO", "0.3" )
+		+ XMLSchemaAttribute::attribute_w_default( "begin", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute( "end", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "rmsd_cutoff", xsct_real, "XRW TO DO", "1.0" )
+		+ XMLSchemaAttribute::required_attribute( "frag", xs_string, "XRW TO DO" ) //refers to a fragset in the data map
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string FragQualFilterCreator::keyname() const {
+	return FragQualFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FragQualFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FragQualFilter );
+}
+
+void FragQualFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FragQualFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

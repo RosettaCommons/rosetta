@@ -31,6 +31,9 @@
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -233,6 +236,8 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 	core::Size const mutated( res_names1.size() );
 	// AMW: cppcheck notices that if there are packable residues but no designable residues
 	// we divide by zero here.
+	if ( designable_count == 0 ) utility_exit_with_message( "This is impossible -- how are there no designable positions? The rate calculation would divide by zero." );
+
 	core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
 	TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
 	if ( verbose_ ) {
@@ -322,11 +327,49 @@ SequenceRecoveryFilter::clone() const{
 	return protocols::filters::FilterOP( new SequenceRecoveryFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-SequenceRecoveryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SequenceRecoveryFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SequenceRecoveryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SequenceRecoveryFilter ); }
 
-std::string
-SequenceRecoveryFilterCreator::keyname() const { return "SequenceRecovery"; }
+// XRW TEMP std::string
+// XRW TEMP SequenceRecoveryFilterCreator::keyname() const { return "SequenceRecovery"; }
+
+std::string SequenceRecoveryFilter::name() const {
+	return class_name();
+}
+
+std::string SequenceRecoveryFilter::class_name() {
+	return "SequenceRecovery";
+}
+
+void SequenceRecoveryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "rate_threshold", xsct_real, "Rate of sequence recovery below which the filter fails", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "mutation_threshold", xsct_non_negative_integer, "Raw number-of-mutations threshold above which the filter fails", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_mutations", xsct_rosetta_bool, "Decide pass/fail based on the mutation threshold, not the rate threshold", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "Give a lot more logging output", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb", xsct_rosetta_bool, "Write each mutation as a string to the output PDB", "0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SequenceRecoveryFilterCreator::keyname() const {
+	return SequenceRecoveryFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SequenceRecoveryFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SequenceRecoveryFilter );
+}
+
+void SequenceRecoveryFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SequenceRecoveryFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-HBondFeaturesCreator::HBondFeaturesCreator() {}
-HBondFeaturesCreator::~HBondFeaturesCreator() = default;
-FeaturesReporterOP HBondFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new HBondFeatures );
-}
+// XRW TEMP HBondFeaturesCreator::HBondFeaturesCreator() {}
+// XRW TEMP HBondFeaturesCreator::~HBondFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP HBondFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new HBondFeatures );
+// XRW TEMP }
 
-std::string HBondFeaturesCreator::type_name() const {
-	return "HBondFeatures";
-}
+// XRW TEMP std::string HBondFeaturesCreator::type_name() const {
+// XRW TEMP  return "HBondFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

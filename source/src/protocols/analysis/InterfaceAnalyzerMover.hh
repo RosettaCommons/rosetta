@@ -249,8 +249,8 @@ public:
 	virtual void
 	apply_const(core::pose::Pose const & pose);
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	///Print data to tracer or scorefile if tracer is not set (default).
 	virtual void
@@ -435,6 +435,18 @@ public:
 	/// @brief
 	core::Real
 	get_centroid_dG();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @brief
 	// Undefined, commenting out to fix PyRosetta build  core::Real get_interface_Hbond_sasa();

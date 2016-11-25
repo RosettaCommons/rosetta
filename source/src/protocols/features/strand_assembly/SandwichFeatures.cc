@@ -46,6 +46,10 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/strand_assembly/SandwichFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -2240,6 +2244,110 @@ catch ( utility::excn::EXCN_Base const & e )
 	}
 
 } //SandwichFeatures::report_features
+
+std::string SandwichFeatures::type_name() const {
+	return class_name();
+}
+
+std::string SandwichFeatures::class_name() {
+	return "SandwichFeatures";
+}
+
+void SandwichFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("min_num_strands_to_deal", xsct_non_negative_integer, "Minimum number of strands in beta sandwich", "4")
+		+ XMLSchemaAttribute::attribute_w_default("max_num_strands_to_deal", xsct_non_negative_integer, "Maximum number of strands to consider", "140")
+		+ XMLSchemaAttribute::attribute_w_default("min_res_in_strand", xsct_non_negative_integer, "Minimum number of residues per beta strand to count it", "2")
+		+ XMLSchemaAttribute::attribute_w_default("min_CA_CA_dis", xsct_real, "Minimum Calpha distance between strands (in Angstroms)", "3.5")
+		+ XMLSchemaAttribute::attribute_w_default("max_CA_CA_dis", xsct_real, "Maximum Calpha distance between strands (in Angstroms)", "6.2")
+		+ XMLSchemaAttribute::attribute_w_default("min_N_O_dis_between_sheets", xsct_real, "Minimum N-O distance between beta sheets", "3.3")
+		+ XMLSchemaAttribute::attribute_w_default("min_N_H_O_angle_between_two_sheets", xsct_real, "Minimum N-H-O distance between two beta sheets", "154.0")
+		+ XMLSchemaAttribute::attribute_w_default("min_C_O_N_angle", xsct_real, "Minimum C-O-N angle for a hydrogen bond between strands", "120.0")
+		+ XMLSchemaAttribute::attribute_w_default("min_sheet_dis", xsct_real, "Minimum distance between beta sheets in a sandwich (in Angstroms)", "7.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_sheet_dis", xsct_real, "Maximum distance between beta sheets in a sandwich (in Angstroms)", "15.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_sheet_angle_with_cen_res", xsct_real, "Maximum angle of the plane of the beta sheet with its center residue (defines the twist of the sheet)", "130.0")
+		+ XMLSchemaAttribute::attribute_w_default("min_sheet_angle_by_four_term_cen_res", xsct_real, "Minimum sheet angle defined by the four terminal residues and central residue", "25.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_sheet_angle_by_four_term_cen_res", xsct_real, "Maximum sheet angle defined by the four terminal residues and central residue", "150.0")
+		+ XMLSchemaAttribute::attribute_w_default("min_sheet_torsion_cen_res", xsct_real, "Minimum sheet torsion about the center residue", "-150.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_sheet_torsion_cen_res", xsct_real, "Maximum sheet torsion about the central residue", "150.0")
+		+ XMLSchemaAttribute::attribute_w_default("min_num_strands_in_sheet", xsct_non_negative_integer, "Minimum number of strands per beta sheet", "2")
+		+ XMLSchemaAttribute::attribute_w_default("min_inter_sheet_dis_CA_CA", xsct_real, "Minimum Calpha distance between sheets", "4.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_inter_sheet_dis_CA_CA", xsct_real, "Maximum Calpha distance between sheets", "24.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_inter_strand_angle_to_not_be_same_direction_strands", xsct_real, "Maximum angle between strands at which the strands will still be considered parallel", "120.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_abs_inter_strand_dihedral_to_not_be_same_direction_strands", xsct_real, "Maximum absolute value of the interstrand dihedral angle for them to be considered antiparallel", "100.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_num_sw_per_pdb", xsct_non_negative_integer, "Maximum number of sandwiches per PDB", "100")
+		+ XMLSchemaAttribute::attribute_w_default("check_N_to_C_direction_by", xs_string, "How to determine the N to C direction?", "PE")
+		+ XMLSchemaAttribute::attribute_w_default("check_canonicalness_cutoff", xsct_real, "Cutoff for considering a sandwich canonical", "80.0")
+		+ XMLSchemaAttribute::attribute_w_default("count_AA_with_direction", xsct_rosetta_bool, "Count amino acids in each direction?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("do_not_write_resfile_of_sandwich_that_has_non_canonical_LR", xsct_rosetta_bool, "Do not write resfile of beta sandwiches with non-canonical loop regions", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_desinated_pdbs", xsct_rosetta_bool, "Exclude designated PDBs", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", xsct_rosetta_bool, "Exclude beta sandwiches with nearby backbone atoms between the two sheets", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_has_non_canonical_LR", xsct_rosetta_bool, "Exclude sandwiches with noncanonical loop regions", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_has_non_canonical_properties", xsct_rosetta_bool, "Exclude noncanonical beta sandwiches", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw", xsct_rosetta_bool, "Exclude sandwiches with noncanonical shortest distances between aromatics in the sandwich", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_is_linked_w_same_direction_strand", xsct_rosetta_bool, "Exclude sanwiches linked with a parallel strand?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_that_is_suspected_to_have_not_facing_2_sheets", xsct_rosetta_bool, "Exclude sandwiches that do not have two facing sheets?", "true")
+		+ XMLSchemaAttribute::attribute_w_default("exclude_sandwich_with_SS_bond", xsct_rosetta_bool, "Exclude disulfide bonded sandwiches?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("max_starting_loop_size", xsct_non_negative_integer, "Maximum starting loop size", "6")
+		+ XMLSchemaAttribute::attribute_w_default("max_ending_loop_size", xsct_non_negative_integer, "Maximum ending loop size", "6")
+		+ XMLSchemaAttribute::attribute_w_default("max_E_in_extracted_sw_loop", xsct_non_negative_integer, "Maximum strand size in extracted sandwich loop", "10")
+		+ XMLSchemaAttribute::attribute_w_default("max_H_in_extracted_sw_loop", xsct_non_negative_integer, "Maximum strand size in the extracted sandwich loop", "100")
+		+ XMLSchemaAttribute::attribute_w_default("no_helix_in_pdb", xsct_rosetta_bool, "Do not include sandwiches with helices in the PDB", "false")
+		+ XMLSchemaAttribute::attribute_w_default("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", xsct_real, "Minimum cutoff for inter-sheet distance for a sheet to be associated with surrounding sheets. WIthin this distance, they are too close to each other.", "13.0")
+		+ XMLSchemaAttribute::attribute_w_default("allowed_deviation_for_turn_type_id", xsct_real, "Maximum deviation for turn type id", "40.0")
+		+ XMLSchemaAttribute::attribute_w_default("primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping", xs_integer, "maximum distance from beta sheet capping and N terminus", "2")
+		+ XMLSchemaAttribute::attribute_w_default("primary_seq_distance_cutoff_for_beta_sheet_capping_after_N_term_capping", xs_integer, "How many residues after the N terminal capping residues must beta sheet capping residues occur", "0")
+		+ XMLSchemaAttribute::attribute_w_default("primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping", xs_integer, "How many residues before the C terminal capping residues must beta sheet capping residues occur", "0")
+		+ XMLSchemaAttribute::attribute_w_default("primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping", xs_integer, "How many residues after the C terminal capping residues must beta sheet capping residues occur", "2")
+		+ XMLSchemaAttribute::attribute_w_default("distance_cutoff_for_electrostatic_interactions", xsct_real, "Only score electrostatic interactions within this distance", "7.0")
+		+ XMLSchemaAttribute::attribute_w_default("CB_b_factor_cutoff_for_electrostatic_interactions", xsct_real, "Cbeta B factor above which electrostatics will not be scored", "10000")
+		+ XMLSchemaAttribute::attribute_w_default("min_primary_seq_distance_diff_electrostatic_interactions", xsct_non_negative_integer, "Minimum primary sequence distance between residues for electrostatics to be scored", "4")
+		+ XMLSchemaAttribute::attribute_w_default("do_not_connect_sheets_by_loops", xsct_rosetta_bool, "Do not connect sheets with loops", "false")
+		+ XMLSchemaAttribute::attribute_w_default("extract_sandwich", xsct_rosetta_bool, "Extract beta sandwiches", "true")
+		+ XMLSchemaAttribute::attribute_w_default("wt_for_pro_in_starting_loop", xsct_real, "Keep wild type residue for prolines in initial loop", "20")
+		+ XMLSchemaAttribute::attribute_w_default("wt_for_pro_in_1st_inter_sheet_loop", xsct_real, "Keep wild type residues for prolines in the first intersheet loop", "10")
+		+ XMLSchemaAttribute::attribute_w_default("wt_for_pro_in_3rd_inter_sheet_loop", xsct_real, "Keep wild type prolines in the third intersheet loop", "1")
+		+ XMLSchemaAttribute::attribute_w_default("write_all_info_files", xsct_rosetta_bool, "Write all information to files", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_AA_kind_files", xsct_rosetta_bool, "Write files specifying amino acid distribution", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_loop_AA_distribution_files", xsct_rosetta_bool, "Write files specifying loop amino acid distribution", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_strand_AA_distribution_files", xsct_rosetta_bool, "Write files specifying beta strand amino acid distribution", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_beta_sheet_capping_info", xsct_rosetta_bool, "Output information on beta sheet capping", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_chain_B_resnum", xsct_rosetta_bool, "Write chain_B_resnum file for InterfaceAnalyzer", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_electrostatic_interactions_of_all_residues", xsct_rosetta_bool, "Output info on all electrostatic interactions", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_electrostatic_interactions_of_all_residues_in_a_strand", xsct_rosetta_bool, "Output info for strand electrostatic interactions", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_electrostatic_interactions_of_surface_residues_in_a_strand", xsct_rosetta_bool, "Output surface electrostatic interactions from strands", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_heading_directions_of_all_AA_in_a_strand", xsct_rosetta_bool, "Output strand direction for all strand residues", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_p_aa_pp_files", xsct_rosetta_bool, "Output p_aa_pp score for residues", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_phi_psi_of_all", xsct_rosetta_bool, "Output all phi and psi angles", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_phi_psi_of_E", xsct_rosetta_bool, "Output strand backbone torsion angles", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_rama_at_AA_to_files", xsct_rosetta_bool, "Output all rama scores to file", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile", xsct_rosetta_bool, "Output a resfile for this strand", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile_NOT_FWY_on_surface", xsct_rosetta_bool, "Do not allow aromatics on the sandwich surface", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile_when_seq_rec_is_bad", xsct_rosetta_bool, "Output resfile even if sequence recovery is bad", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands", xsct_rosetta_bool, "Write a resfile that will help prevent having too many internal-facing aromatics on core strands", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands", xsct_rosetta_bool, "Write a resfile that will help prevent having too many internal-facing aromatics on core strands", "false")
+		+ XMLSchemaAttribute::attribute_w_default("write_resfile_to_minimize_too_much_hydrophobic_surface", xsct_rosetta_bool, "Write a resfile that will minimize surface hydrophobic residues", "false");
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Extracts and analyzes beta sandwiches.", attlist );
+
+}
+
+std::string SandwichFeaturesCreator::type_name() const {
+	return SandwichFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+SandwichFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new SandwichFeatures );
+}
+
+void SandwichFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SandwichFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace strand_assembly

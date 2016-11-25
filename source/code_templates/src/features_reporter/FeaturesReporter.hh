@@ -32,10 +32,10 @@ public:
 	--class--();
 	--class--(--class-- const & src);
 
-	virtual ~--class--();
+	~--class--() override;
 
 	--class--OP
-	clone() const;
+	clone() const override;
 
 	/// @brief return string with class name
 	std::string
@@ -45,14 +45,14 @@ public: // Feature-Reporter Specific Methods
 
 	/// @brief generate the table schemas and write them to the database
 	void
-	write_schema_to_db( 
-		utility::sql_database::sessionOP db_session 
-		) const;
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session
+	) const override;
 
 	/// @brief return the set of features reporters that are required to
 	/// also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
 	core::Size
@@ -60,20 +60,19 @@ public: // Feature-Reporter Specific Methods
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session );
+		utility::sql_database::sessionOP db_session ) override;
 
 
 private:
 
 };
 
+//The Creator class will need these functions:
+//protocols::features::FeaturesReporterOP create_features_reporter() const override;
+//std::string type_name() const override;
+//void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 --end_namespace--
 
 
 #endif //INCLUDED_--path_underscore--_--class--_hh
-
-
-
-
-

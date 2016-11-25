@@ -44,6 +44,9 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -376,11 +379,65 @@ TaskAwareScoreTypeFilter::clone() const{
 	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-TaskAwareScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP TaskAwareScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter ); }
 
-std::string
-TaskAwareScoreTypeFilterCreator::keyname() const { return "TaskAwareScoreType"; }
+// XRW TEMP std::string
+// XRW TEMP TaskAwareScoreTypeFilterCreator::keyname() const { return "TaskAwareScoreType"; }
+
+std::string TaskAwareScoreTypeFilter::name() const {
+	return class_name();
+}
+
+std::string TaskAwareScoreTypeFilter::class_name() {
+	return "TaskAwareScoreType";
+}
+
+void TaskAwareScoreTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// AMW: should put in utility (also used elsewhere) but instead
+	// will namespace with TaskAwareScoreTypeFilter_
+	XMLSchemaRestriction mode_enumeration;
+	mode_enumeration.name( "TaskAwareScoreTypeFilter_mode_choices" );
+	mode_enumeration.base_type( xs_string );
+	mode_enumeration.add_restriction( xsr_enumeration, "average" );
+	mode_enumeration.add_restriction( xsr_enumeration, "total" );
+	mode_enumeration.add_restriction( xsr_enumeration, "individual" );
+	xsd.add_top_level_element( mode_enumeration );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "score_type" , xs_string , "Score term to use for the calculations. Defaults to total_score." , "total_score" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "Threshold for the highest permissible value for a passing design. Note: When using mode='individual' this is the score threshold that each individual residue must pass in order for the filter to pass. For example, the user could set threshold=3.5, score_type=fa_rep, and mode=individual to check if all the packable residues have a fa_rep score less than 3.5. The value reported when mode=individual is the number of failing residues." , "100000" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb_bb" , xsct_rosetta_bool , "See EnergyPerResidueFilter." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "unbound" , xsct_rosetta_bool , "Default is false. Set to true if you want the scores to be assessed in the unbound state. If unbound is set true, then the user must provide either the sym_dof_names or jump along which to separate the pose." , "false" )
+		+ XMLSchemaAttribute( "sym_dof_names" , xs_string, "For use with the unbound option. Which sym_dofs should be used to separate the pose?" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_non_negative_integer , "For use with the unbound option. Which jump should be used to separate the pose?" , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "mode" , "TaskAwareScoreTypeFilter_mode_choices" , "This filter can operate in three modes. The options are 'total', 'average', or 'individual'. If mode=total, then the total score of the packable residues is returned and the threshold refers to that total value. If mode=average, then the average score of the packable residues is returned and the threshold refers to that average value. If mode=individual, then each packable residue is evaluated on an individual basis and the threshold refers to those individual values; in this case, individual residue must pass in order for the filter to pass. For example, the user could set threshold=3.5, score_type=fa_rep, and mode=individual to check if all the packable residues have a fa_rep score less than 3.5. The value reported from the filter when mode=individual is the number of failing residues." , "average" )
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb" , xsct_rosetta_bool , "Only for use with mode=individual. Default is false. Setting to true will cause the individual scores to be output to the bottom of the pdb." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "individual_hbonds" , xsct_rosetta_bool , "This seems to still be in development." , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Takes task operations to determine the packable residues and then calculates/filters based on the scores of those residues in one of three possible modes: 1) total: the total score of all packable residues 2) average: the average score of all packable residues 3) individual: the scores of individual residues (in individual mode each residue must pass the user-defined threshold in order for the filter to pass). In each mode, the score type used to assess the score is set by the user (default is total_score).", attlist );
+}
+
+std::string TaskAwareScoreTypeFilterCreator::keyname() const {
+	return TaskAwareScoreTypeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+TaskAwareScoreTypeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter );
+}
+
+void TaskAwareScoreTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskAwareScoreTypeFilter::provide_xml_schema( xsd );
+}
+
 
 } // simple_filters
 } // protocols

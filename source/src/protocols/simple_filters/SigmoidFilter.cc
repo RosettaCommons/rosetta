@@ -23,17 +23,20 @@
 #include <fstream>
 #include <utility/io/izstream.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
 
-protocols::filters::FilterOP
-SigmoidFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Sigmoid ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SigmoidFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Sigmoid ); }
 
-std::string
-SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
+// XRW TEMP std::string
+// XRW TEMP SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
 
 //default ctor
 Sigmoid::Sigmoid() :
@@ -154,5 +157,46 @@ Sigmoid::filter() const{ return filter_; }
 
 void
 Sigmoid::filter( protocols::filters::FilterOP f ){ filter_ = f; }
+
+std::string Sigmoid::name() const {
+	return class_name();
+}
+
+std::string Sigmoid::class_name() {
+	return "Sigmoid";
+}
+
+void Sigmoid::attributes( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute::attribute_w_default( "steepness" , xsct_real , "Steepness of the sigmoid function where $$f(x) = 1 / ( 1 + (steepness)e^{ (x - offset - baseline) } ) )$$" , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "offset" , xsct_real , "Offset of the sigmoid function where $$f(x) = 1 / ( 1 + (steepness)e^{ (x - offset - baseline) } ) )$$" , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "negate" , xsct_rosetta_bool , "Substitute x for 1-x in evaluation (as the Boolean operator NOT)." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "Values above this threshold pass as true." , "0" )
+		+ XMLSchemaAttribute( "filter" , xs_string , "Filter whose value to transform with the sigmoid function." )
+		+ XMLSchemaAttribute( "baseline_checkpoint" , xs_string , "File name to keep track of the baseline value." );
+}
+
+void Sigmoid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	Sigmoid::attributes( attlist );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Part of the fuzzy-logic design algorithm: Warszawski S, Netzer R, Tawfik DS, Fleishman SJ. A 'fuzzy'-logic language for encoding multiple physical traits in biomolecules. J Mol Biol 2014.", attlist );
+}
+
+std::string SigmoidFilterCreator::keyname() const {
+	return Sigmoid::class_name();
+}
+
+protocols::filters::FilterOP
+SigmoidFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new Sigmoid );
+}
+
+void SigmoidFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Sigmoid::provide_xml_schema( xsd );
+}
+
 }
 }

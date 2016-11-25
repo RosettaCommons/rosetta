@@ -31,6 +31,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -44,6 +45,8 @@ using namespace core::scoring;
 using namespace core;
 using namespace std;
 using utility::vector1;
+
+
 
 /// @brief a convenience function to test whether the user has specified pdb numbering rather than rosetta numbering.
 core::Size
@@ -75,6 +78,22 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 	return( resnum );
 }
 
+///@brief Companion function for get_resnum
+///@brief Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string const & prefix ){
+	using namespace utility::tag;
+
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "pdb_num", attlist ) ) {
+		attlist
+			+ XMLSchemaAttribute( prefix + "pdb_num", xsct_residue_number, "Residue number in PDB numbering (residue number + chain ID)" );
+	}
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( prefix + "res_num", attlist ) ) {
+		attlist
+			+ XMLSchemaAttribute( prefix + "res_num", xsct_non_negative_integer, "Residue number in Rosetta numbering (sequentially with the first residue in the pose being 1" );
+	}
+}
+
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes three forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
@@ -84,7 +103,7 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 ///  - Reference pose numbers.  These have the form refpose([refpose name],[refpose number]).
 /// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
 /// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means
-/// three residues past the residue correpsonding to residue 17 in the reference pose called "state1".
+/// three residues past the residue corresponding to residue 17 in the reference pose called "state1".
 /// @return the rosetta residue number for the string, or 0 upon an error
 core::Size
 parse_resnum(
@@ -137,7 +156,7 @@ parse_resnum(
 	std::istringstream ss( number );
 	ss >> n;
 	if ( chain.size() == 1 ) { // PDB Number
-		TR.Trace << "Interpretting " << n << chain << " as a pdb number." << std::endl;
+		TR.Trace << "Interpreting " << n << chain << " as a pdb number." << std::endl;
 		pose::PDBInfoCOP info = pose.pdb_info();
 		runtime_assert(info != nullptr);
 		return info->pdb2pose( chain[0], n );
@@ -198,6 +217,25 @@ get_resnum_list(
 	resnums.erase(last, resnums.end() );
 
 	return resnums;
+}
+
+///@brief Companion function for get_resnum_list
+///@brief Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_get_resnum_list( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, string const& tag ){
+	using namespace utility::tag;
+	std::string resnum_list_regex = "(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
+	XMLSchemaRestriction restriction;
+	restriction.name( "resnum_list_with_ranges" );
+	restriction.base_type( xs_string );
+	restriction.add_restriction( xsr_pattern, resnum_list_regex );
+	xsd.add_top_level_element( restriction );
+
+
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( tag, attlist ) ) {
+
+		attlist + XMLSchemaAttribute( tag, "resnum_list_with_ranges", "List of residue numbers to use" );
+	}
 }
 
 set<Size>

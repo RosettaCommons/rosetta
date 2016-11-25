@@ -17,6 +17,8 @@
 #include <protocols/qsar/scoring_grid/ChargeGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -67,6 +69,9 @@ public:
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid
 	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

@@ -42,6 +42,9 @@
 
 #include <ObjexxFCL/format.hh>
 #include <utility/io/ozstream.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -49,20 +52,20 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer transform_tracer( "protocols.ligand_docking.Transform" );
 
-std::string TransformCreator::keyname() const
-{
-	return TransformCreator::mover_name();
-}
+// XRW TEMP std::string TransformCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return Transform::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP TransformCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new Transform );
-}
+// XRW TEMP protocols::moves::MoverOP TransformCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new Transform );
+// XRW TEMP }
 
-std::string TransformCreator::mover_name()
-{
-	return "Transform";
-}
+// XRW TEMP std::string Transform::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Transform";
+// XRW TEMP }
 
 Transform::Transform():
 	Mover("Transform")
@@ -102,10 +105,10 @@ protocols::moves::MoverOP Transform::fresh_instance() const
 	return protocols::moves::MoverOP( new Transform );
 }
 
-std::string Transform::get_name() const
-{
-	return "Transform";
-}
+// XRW TEMP std::string Transform::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "Transform";
+// XRW TEMP }
 
 void Transform::parse_my_tag
 (
@@ -391,5 +394,68 @@ bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, 
 	}
 
 }
+
+std::string Transform::get_name() const {
+	return mover_name();
+}
+
+std::string Transform::mover_name() {
+	return "Transform";
+}
+
+void Transform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// AMW: In order to make non_negative_real possible with the least pain
+	// it's easiest to make it come from decimal.
+	// This means we're limited to 12 digits and no scientific notation.
+
+	// To do: change this.
+	XMLSchemaRestriction restriction;
+	restriction.name( "non_negative_real" );
+	restriction.base_type( xs_decimal );
+	restriction.add_restriction( xsr_minInclusive, "0" );
+	xsd.add_top_level_element( restriction );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("chain", xs_string, "The ligand chain, specified as the PDB chain ID")
+		+ XMLSchemaAttribute("sampled_space_file", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::required_attribute("move_distance", xsct_real, "Maximum translation performed per step in the monte carlo search.")
+		+ XMLSchemaAttribute::required_attribute("box_size", xsct_real, "Maximum translation that can occur from the ligand starting point.")
+		+ XMLSchemaAttribute::required_attribute("angle", xsct_real, "Maximum rotation angle performed per step in the monte carlo search.")
+		+ XMLSchemaAttribute::required_attribute("temperature", xsct_real, "Boltzmann temperature for the monte carlo simulation.")
+		+ XMLSchemaAttribute("rmsd", xsct_real, "Maximum RMSD to be sampled away from the starting position.")
+		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer,
+		"Total number of steps to be performed in the monte carlo simulation.")
+		+ XMLSchemaAttribute::attribute_w_default("repeats", xsct_non_negative_integer,
+		"Total number of repeats of the monte carlo simulation to be performed.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("optimize_until_score_is_negative", xsct_rosetta_bool,
+		"Continue sampling beyond \"cycles\" if score is positive", "false")
+		+ XMLSchemaAttribute::attribute_w_default("initial_perturb", "non_negative_real" ,
+		"Make an initial, unscored translation and rotation "
+		"Translation will be selected uniformly in a sphere of the given radius (Angstrom)."
+		"Triggers 360 degress rotations are triggered.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("initial_angle_perturb", "non_negative_real", "Control the size of the rotational perturbation by intitial_perturb. (Degrees)", "0.0");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Performs a monte carlo search of the ligand binding site using precomputed scoring grids. "
+		"Replaces the Translate, Rotate, and SlideTogether movers.", attlist );
+}
+
+std::string TransformCreator::keyname() const {
+	return Transform::mover_name();
+}
+
+protocols::moves::MoverOP
+TransformCreator::create_mover() const {
+	return protocols::moves::MoverOP( new Transform );
+}
+
+void TransformCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Transform::provide_xml_schema( xsd );
+}
+
 }
 }

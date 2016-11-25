@@ -73,7 +73,7 @@ public:
 
 	// methods
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -120,6 +120,18 @@ public:
 
 	void off_rotamer_pack( bool );
 	bool off_rotamer_pack() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// pointers to data that are passed in

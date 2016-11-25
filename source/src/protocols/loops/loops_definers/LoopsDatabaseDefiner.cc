@@ -16,18 +16,20 @@
 
 // Package Headers
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/loops_definers/util.hh>
 
 // Project Headers
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/datacache/DataMap.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -85,13 +87,15 @@ LoopsDatabaseDefiner::parse_my_tag(
 	db_session_ = parse_database_connection(tag);
 
 	database_table_ =
-		tag->getOption<string>("database_table", "loops");
+		tag->getOption<std::string>("database_table", "loops");
 
-	string const type(tag->getName());
-
+	// the name attribute, as Matt sees it, is not optional. Its absence will
+	// cause the following code to throw an exception. However, the name is actually
+	// not needed by this class, but rather, by the LoopDefinerLoader. The following
+	// code could be reasonably removed.
 	if ( !tag->hasOption("name") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption(
-			"Unable to create unnamed LoopsDefiner (type: " + type + ")" );
+			"Unable to create unnamed LoopsDefiner (type: " + tag->getName() + ")" );
 	}
 	string const loops_name(tag->getOption<string>("name"));
 
@@ -130,6 +134,29 @@ LoopsDatabaseDefiner::apply(
 
 	return loop_list;
 }
+
+std::string LoopsDatabaseDefiner::class_name()
+{
+	return "LoopsDatabase";
+}
+
+void LoopsDatabaseDefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default( "database_table", xs_string,
+		"The name of the table in the database from which the loops are to be read", "loops" )
+		+ required_name_attribute();
+	basic::database::attributes_for_parse_database_connection( attributes, xsd );
+
+	xsd_type_definition_w_attributes( xsd, class_name(), "Load the loop defintions from a table in a database; the table from"
+		" which this LoopsDefiner reads may be specified, but if it is not then it will look for a table named 'loops'."
+		" Beause of the way the apply function is written, this class is specific for JD2, which is a shame; it will"
+		" have to be updated for JD3.", attributes );
+}
+
+
 
 } //namespace
 } //namespace

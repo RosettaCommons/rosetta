@@ -23,7 +23,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-
+#include <utility/tag/xml_schema_group_initialization.hh>
 namespace protocols {
 namespace constraint_generator {
 
@@ -62,6 +62,49 @@ ConstraintGeneratorFactory::new_constraint_generator(
 	ConstraintGeneratorOP new_constraint_generator = iter->second->create_constraint_generator();
 	new_constraint_generator->parse_my_tag( tag, datamap );
 	return new_constraint_generator;
+}
+
+
+
+void
+ConstraintGeneratorFactory::define_constraint_generator_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const{
+	try{
+		utility::tag::define_xml_schema_group(
+			creator_map_,
+			constraint_generator_xml_schema_group_name(),
+			& complex_type_name_for_constraint_generator,
+			xsd );
+	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Constraints from ConstraintFactory; offending class"
+			" must call protocols::constraint_generator::complex_type_name_for_constraint when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string
+ConstraintGeneratorFactory::constraint_generator_xml_schema_group_name(){
+	return "constraint_generator";
+}
+
+std::string
+ConstraintGeneratorFactory::complex_type_name_for_constraint_generator( std::string const & constraint_name ){
+	return "constraint_generator_" + constraint_name + "_complex_type";
+}
+
+void
+ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & constraint_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes)
+{
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & complex_type_name_for_constraint_generator )
+		.element_name( constraint_type )
+		.description( description )
+		.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
 }
 
 } //namespace constraint_generator

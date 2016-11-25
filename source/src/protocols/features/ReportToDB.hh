@@ -79,7 +79,7 @@ public:
 	moves::MoverOP clone() const override;
 
 	virtual std::string name() { return "ReportToDB"; }
-	std::string get_name() const override { return "ReportToDB"; }
+	// XRW TEMP  std::string get_name() const override { return "ReportToDB"; }
 
 	void
 	set_batch_name(
@@ -222,6 +222,21 @@ public:
 
 	StructureID
 	get_last_struct_id() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void
+	attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
 protected:
 

@@ -43,6 +43,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -218,11 +221,52 @@ SaveResfileToDiskFilter::report( std::ostream & out, core::pose::Pose const & po
 out << "SaveResfileToDiskFilter returns " << compute( pose ) << std::endl;
 }
 */
-protocols::filters::FilterOP
-SaveResfileToDiskFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SaveResfileToDiskFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SaveResfileToDiskFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SaveResfileToDiskFilter ); }
 
-std::string
-SaveResfileToDiskFilterCreator::keyname() const { return "SaveResfileToDisk"; }
+// XRW TEMP std::string
+// XRW TEMP SaveResfileToDiskFilterCreator::keyname() const { return "SaveResfileToDisk"; }
+
+std::string SaveResfileToDiskFilter::name() const {
+	return class_name();
+}
+
+std::string SaveResfileToDiskFilter::class_name() {
+	return "SaveResfileToDisk";
+}
+
+void SaveResfileToDiskFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("designable_only", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("renumber_pdb", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("resfile_suffix", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("resfile_prefix", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("resfile_name", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("resfile_general_property", xs_string, "XRW TO DO", "NATAA")
+		+ XMLSchemaAttribute::attribute_w_default("selected_resis_property", xs_string, "XRW TO DO", "XRW TO DO");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SaveResfileToDiskFilterCreator::keyname() const {
+	return SaveResfileToDiskFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SaveResfileToDiskFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SaveResfileToDiskFilter );
+}
+
+void SaveResfileToDiskFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SaveResfileToDiskFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // simple_filters

@@ -41,34 +41,37 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
 
 namespace protocols {
 namespace relax {
 
-std::string
-AtomCoordinateCstMoverCreator::keyname() const
-{
-	return AtomCoordinateCstMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AtomCoordinateCstMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AtomCoordinateCstMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AtomCoordinateCstMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AtomCoordinateCstMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AtomCoordinateCstMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AtomCoordinateCstMover() );
+// XRW TEMP }
 
-std::string
-AtomCoordinateCstMoverCreator::mover_name()
-{
-	return "AtomCoordinateCstMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AtomCoordinateCstMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AtomCoordinateCstMover";
+// XRW TEMP }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
-	protocols::moves::Mover( AtomCoordinateCstMoverCreator::mover_name() ),
+	protocols::moves::Mover( AtomCoordinateCstMover::mover_name() ),
 	refpose_(),
 	cst_sd_( 0.5 ),
 	bounded_( false ),
@@ -280,6 +283,46 @@ AtomCoordinateCstMover::parse_my_tag(
 		}
 	}
 }
+
+std::string AtomCoordinateCstMover::get_name() const {
+	return mover_name();
+}
+
+std::string AtomCoordinateCstMover::mover_name() {
+	return "AtomCoordinateCstMover";
+}
+
+void AtomCoordinateCstMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute::attribute_w_default( "coord_dev", xsct_real, "XRW TO DO", "0.5")
+		+ XMLSchemaAttribute::attribute_w_default("bounded", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("bound_width", xsct_real, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("sidechain", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("flip_hnq", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("native", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AtomCoordinateCstMoverCreator::keyname() const {
+	return AtomCoordinateCstMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AtomCoordinateCstMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AtomCoordinateCstMover );
+}
+
+void AtomCoordinateCstMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomCoordinateCstMover::provide_xml_schema( xsd );
+}
+
 
 } // namespace relax
 } // namespace protocols

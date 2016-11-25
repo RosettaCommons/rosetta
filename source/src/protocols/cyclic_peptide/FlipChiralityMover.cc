@@ -28,6 +28,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/chemical/VariantType.hh>
 
 //Protocol Headers
@@ -41,28 +42,31 @@
 //Basic Headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.FlipChiralityMover" );
 
 namespace protocols {
 namespace cyclic_peptide {
 
-std::string
-FlipChiralityMoverCreator::keyname() const
-{
-	return FlipChiralityMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FlipChiralityMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FlipChiralityMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FlipChiralityMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlipChiralityMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FlipChiralityMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FlipChiralityMover );
+// XRW TEMP }
 
-std::string
-FlipChiralityMoverCreator::mover_name()
-{
-	return "FlipChiralityMover";
-}
+// XRW TEMP std::string
+// XRW TEMP FlipChiralityMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FlipChiralityMover";
+// XRW TEMP }
 
 /// @brief Constructor for FlipChirality mover.
 ///
@@ -149,9 +153,9 @@ void FlipChiralityMover::apply( core::pose::Pose & pose )
 
 
 /// @brief Returns the name of this mover ("FlipChiralityMover").
-std::string FlipChiralityMover::get_name() const{
-	return "FlipChiralityMover";
-}
+// XRW TEMP std::string FlipChiralityMover::get_name() const{
+// XRW TEMP  return "FlipChiralityMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -301,5 +305,45 @@ void FlipChiralityMover::set_selector(
 	}
 	return;
 }
+
+std::string FlipChiralityMover::get_name() const {
+	return mover_name();
+}
+
+std::string FlipChiralityMover::mover_name() {
+	return "FlipChiralityMover";
+}
+
+void FlipChiralityMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "centerx", xsct_real, "X coordinate of center point" )
+		+ XMLSchemaAttribute( "centery", xsct_real, "Y coordinate of center point" )
+		+ XMLSchemaAttribute( "centerz", xsct_real, "Z coordinate of center point" )
+		+ XMLSchemaAttribute( "normalx", xsct_real, "X coordinate of normal vector" )
+		+ XMLSchemaAttribute( "normaly", xsct_real, "Y coordinate of normal vector" )
+		+ XMLSchemaAttribute( "normalz", xsct_real, "Z coordinate of normal vector" );
+	//get attributes for parse residue selector
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "Residue selector specifying residues for which chirality should be flipped" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Flips the chirality of the specified residues", attlist );
+}
+
+std::string FlipChiralityMoverCreator::keyname() const {
+	return FlipChiralityMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FlipChiralityMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FlipChiralityMover );
+}
+
+void FlipChiralityMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FlipChiralityMover::provide_xml_schema( xsd );
+}
+
 } // moves
 } // protocols

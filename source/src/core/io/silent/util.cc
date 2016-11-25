@@ -84,8 +84,8 @@ initialize_tag_is_done( std::string const & silent_file ){
 ////////////////////////////////////////////////////////////////
 void
 figure_out_residue_numbers_from_line( std::istream & line_stream,
-																			utility::vector1< int > & residue_numbers,
-																			utility::vector1< char > & chains )
+	utility::vector1< int > & residue_numbers,
+	utility::vector1< char > & chains )
 {
 	std::string resnum_string;
 	line_stream >> resnum_string; // the tag (RES_NUM)

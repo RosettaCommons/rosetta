@@ -30,7 +30,7 @@ public:
 	AddChainMover();
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -59,6 +59,18 @@ public:
 
 	void add_new_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
 	void swap_chain( core::pose::Pose & pose ) const; // Adds new chain to pose
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string fname_; //dflt ""; pdb names to load (can accept a comma-separated list)

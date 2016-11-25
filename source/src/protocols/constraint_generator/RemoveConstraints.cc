@@ -28,6 +28,9 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.RemoveConstraints" );
 
@@ -35,7 +38,7 @@ namespace protocols {
 namespace constraint_generator {
 
 RemoveConstraints::RemoveConstraints():
-	protocols::moves::Mover( RemoveConstraints::class_name() ),
+	protocols::moves::Mover( RemoveConstraints::mover_name() ),
 	generators_(),
 	exception_on_failure_( true )
 {
@@ -44,7 +47,7 @@ RemoveConstraints::RemoveConstraints():
 RemoveConstraints::RemoveConstraints(
 	ConstraintGeneratorCOPs const & generators,
 	bool const exception_on_failure ):
-	protocols::moves::Mover( RemoveConstraints::class_name() ),
+	protocols::moves::Mover( RemoveConstraints::mover_name() ),
 	generators_( generators ),
 	exception_on_failure_( exception_on_failure )
 {
@@ -80,11 +83,11 @@ RemoveConstraints::fresh_instance() const
 	return protocols::moves::MoverOP( new RemoveConstraints );
 }
 
-std::string
-RemoveConstraints::get_name() const
-{
-	return "RemoveConstraints";
-}
+// XRW TEMP std::string
+// XRW TEMP RemoveConstraints::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "RemoveConstraints";
+// XRW TEMP }
 
 void
 RemoveConstraints::apply( core::pose::Pose & pose )
@@ -119,17 +122,49 @@ RemoveConstraints::add_generator( ConstraintGeneratorCOP generator )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-RemoveConstraintsCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RemoveConstraintsCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new RemoveConstraints );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RemoveConstraintsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RemoveConstraints::mover_name();
+// XRW TEMP }
+
+std::string RemoveConstraints::get_name() const {
+	return mover_name();
+}
+
+std::string RemoveConstraints::mover_name() {
+	return "RemoveConstraints";
+}
+
+void RemoveConstraints::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "constraint_generators", xs_string, "XRW TO DO" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Remove constraints defined by the specified constraint generators from the pose", attlist );
+}
+
+std::string RemoveConstraintsCreator::keyname() const {
+	return RemoveConstraints::mover_name();
+}
+
+protocols::moves::MoverOP
+RemoveConstraintsCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RemoveConstraints );
 }
 
-std::string
-RemoveConstraintsCreator::keyname() const
+void RemoveConstraintsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return RemoveConstraints::class_name();
+	RemoveConstraints::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //constraint_generator

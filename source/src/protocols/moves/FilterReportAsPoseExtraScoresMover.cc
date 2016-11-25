@@ -28,6 +28,9 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.FilterReportAsPoseExtraScoresMover" );
 
@@ -35,7 +38,7 @@ namespace protocols {
 namespace moves {
 
 FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover():
-	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::class_name() )
+	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::mover_name() )
 {
 
 }
@@ -43,7 +46,7 @@ FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover():
 FilterReportAsPoseExtraScoresMover::FilterReportAsPoseExtraScoresMover(
 	protocols::filters::FilterOP filter,
 	std::string report_as ):
-	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::class_name() ),
+	protocols::moves::Mover( FilterReportAsPoseExtraScoresMover::mover_name() ),
 	filter_(std::move(filter)),
 	report_as_(std::move(report_as))
 {
@@ -71,7 +74,7 @@ FilterReportAsPoseExtraScoresMover::parse_my_tag(
 	if ( tag->hasOption( "report_as" ) ) {
 		set_report_as(tag->getOption< std::string >( "report_as" ));
 	} else {
-		throw utility::excn::EXCN_BadInput(class_name() + " requires report_as to know what to report its value to");
+		throw utility::excn::EXCN_BadInput(mover_name() + " requires report_as to know what to report its value to");
 	}
 }
 
@@ -87,17 +90,17 @@ FilterReportAsPoseExtraScoresMover::fresh_instance() const
 	return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
 }
 
-std::string
-FilterReportAsPoseExtraScoresMover::get_name() const
-{
-	return FilterReportAsPoseExtraScoresMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FilterReportAsPoseExtraScoresMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return FilterReportAsPoseExtraScoresMover::mover_name();
+// XRW TEMP }
 
-std::string
-FilterReportAsPoseExtraScoresMover::class_name()
-{
-	return "FilterReportAsPoseExtraScoresMover";
-}
+// XRW TEMP std::string
+// XRW TEMP FilterReportAsPoseExtraScoresMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FilterReportAsPoseExtraScoresMover";
+// XRW TEMP }
 
 void
 FilterReportAsPoseExtraScoresMover::show( std::ostream & output ) const
@@ -117,7 +120,7 @@ FilterReportAsPoseExtraScoresMover::apply( core::pose::Pose & pose)
 {
 	//ensure filter exists
 	if ( !filter_ ) {
-		throw utility::excn::EXCN_NullPointer(class_name() + " has no Filter.");
+		throw utility::excn::EXCN_NullPointer(mover_name() + " has no Filter.");
 	}
 
 	//extract report_sm from filter to setPoseExtraScores
@@ -135,18 +138,54 @@ void FilterReportAsPoseExtraScoresMover::set_report_as( std::string const & repo
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-FilterReportAsPoseExtraScoresMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FilterReportAsPoseExtraScoresMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP FilterReportAsPoseExtraScoresMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FilterReportAsPoseExtraScoresMover::mover_name();
+// XRW TEMP }
+
+std::string FilterReportAsPoseExtraScoresMover::get_name() const {
+	return mover_name();
+}
+
+std::string FilterReportAsPoseExtraScoresMover::mover_name() {
+	return "FilterReportAsPoseExtraScoresMover";
+}
+
+void FilterReportAsPoseExtraScoresMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		//TECHNICALLY has a default, but useless if not specified
+		+ XMLSchemaAttribute::required_attribute( "filter_name", xs_string, "Filter (defined in FILTERS section) to report value of")
+		+ XMLSchemaAttribute::required_attribute( "report_as", xs_string, "string to report value to (cannot use filter name because RosettaScripts is stupid and reports the filter's ENDING value there already)");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Reports the report_sm value of the provided Filter at the time this Mover runs (normally RosettaScripts reports at the end of the run, when the Filter's value will have changed)", attlist );
+}
+
+std::string FilterReportAsPoseExtraScoresMoverCreator::keyname() const {
+	return FilterReportAsPoseExtraScoresMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FilterReportAsPoseExtraScoresMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new FilterReportAsPoseExtraScoresMover );
 }
 
-std::string
-FilterReportAsPoseExtraScoresMoverCreator::keyname() const
+void FilterReportAsPoseExtraScoresMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return FilterReportAsPoseExtraScoresMover::class_name();
+	FilterReportAsPoseExtraScoresMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //moves
-

@@ -19,7 +19,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <string>
 
 namespace protocols {
@@ -35,8 +35,10 @@ public:
 
 	virtual protocols::rosetta_scripts::PoseSelectorOP create_selector() const = 0;
 	virtual std::string keyname() const = 0;
-};
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const = 0;
 
+
+};
 typedef utility::pointer::shared_ptr< PoseSelectorCreator > PoseSelectorCreatorOP;
 typedef utility::pointer::shared_ptr< PoseSelectorCreator const > PoseSelectorCreatorCOP;
 

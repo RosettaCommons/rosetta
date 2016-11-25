@@ -13,12 +13,14 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/Pose.hh>
 
 // C++ headers
@@ -88,6 +90,67 @@ protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
 	return parsed_loops;  //note may be NULL if no loops were found!
 }
 
+///@brief util function for append_subelement_and_attributes_for_parse_loops_from_tag
+std::string loop_subelement_namer( std::string const & subelement_name ) { return "loop_subelement_" + subelement_name + "_type"; }
+///@brief util function for append_subelement_and_attributes_for_parse_loops_from_tag
+//std::string unnamed_loop_ct_namer( std::string const & subelement_name ) { return "unnamed_loop" + subelement_name + "_type"; }
+
+///@brief use with XML schema if you use parse_loops_from_tag
+///@details appends the loopfile attribute to the AttributeList for the top level thing (the Mover itself), and appends the schema for Loops subtags to the provided (usually empty, but not necessarily) subelements list
+void append_subelement_and_attributes_for_parse_loops_from_tag (
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	utility::tag::AttributeList & attributes )
+{
+	using namespace utility::tag;
+
+	//First, append the attribute for the optional loops_file element
+	attributes + XMLSchemaAttribute( "loops_file", xs_string, "path to loops file" );
+
+	//This generates schema for the Loop subtag / subelement
+
+	//Some of this is copied from LoopsExplicitDefiner's provide_xml_schema
+	//AttributeList for Loop element
+	AttributeList loop_attributes;
+	loop_attributes
+		+ XMLSchemaAttribute::required_attribute( "start", xsct_non_negative_integer, "The residue index (pose numbering) for the first position in the loop." )
+		+ XMLSchemaAttribute::required_attribute( "stop", xsct_non_negative_integer, "The residue index (pose numbering) for the last position in the loop." )
+		+ XMLSchemaAttribute::attribute_w_default( "cut", xsct_non_negative_integer, "The residue index (pose numbering) for the cutpoint residue (i.e. the cut"
+		" residue will be the lower end of the chain break, and the cut+1 residue will be the upper end of the chain break). If a zero value is"
+		" given, it will be interpretted as saying that the cutpoint should be chosen using the logic in protocols::loops::Loop::choose_cutpoint", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "skip_rate", xsct_real, "The probability that you would like the loop will be skipped (such as by the IndependentLoopMover);"
+		" a value less than zero means never skip, a value greater than one means always skip - NOT RESPECTED BY ALL PROTOCOLS", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "rebuild", xsct_rosetta_bool, "If set to true, then the initial backbone dihedrals for the loop will be overwritten"
+		" to produce an extended conformation (i.e. phi=-150 degres, psi=150, omego=180) and the bond angles and lengths will be idealized - NOT RESPECTED BY AL PROTOCOLS", "false" );
+
+	//Generate type for Loop element
+	XMLSchemaComplexTypeGenerator unnamed_loop;
+	std::string const loop("Loop");
+	unnamed_loop.element_name( loop )
+		.description( "Use this element to define a series of loops in subtags, one loop per subtag" )
+		.complex_type_naming_func( & loop_subelement_namer )
+		.add_attributes(loop_attributes)
+		.write_complex_type_to_schema( xsd );  //this last call adds it to the global schema (safely ignoring repeated adds), but does not modify the schema of the class calling this function
+
+	//this call modifies the schema of the class calling this function
+	subelements.add_already_defined_subelement( loop, & loop_subelement_namer );
+
+	return;
+}
+
+/// @brief For XML schema: Appends the attributes read by set_task_factory_from_tag, which simply calls "parse_task_operations"
+void
+attributes_for_set_task_factory_from_tag( utility::tag::AttributeList & attributes )
+{
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attributes );
+}
+
+/// @brief For XML scheema: Appends the attributes read by set_scorefxn_from_tag, which simply calls  "parse_score_function"
+void
+attributes_for_set_scorefxn_from_tag( utility::tag::AttributeList & attributes )
+{
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attributes );
+}
 
 }
 }

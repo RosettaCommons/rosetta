@@ -92,7 +92,7 @@ TransientCutpointHandler::put_in_cutpoints(
 
 	// reset the alpha torsion to its original value
 	pose.set_torsion( id::TorsionID( cutpoint_suite_ + 1, core::id::BB, 1), alpha_ );
-	
+
 #ifdef GL_GRAPHICS
 	viewer_pose = pose;
 #endif
@@ -106,7 +106,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 	using namespace core::chemical::rna;
 
 	FoldTree f = pose.fold_tree();
-	
+
 	//update_fixed_res_and_minimize_res( pose );
 	utility::vector1< Size > sample_res_list = minimize_res_;
 
@@ -118,9 +118,9 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 		while ( jump_start_ > 1 && minimize_res_.has_value( jump_start_ ) && !f.is_cutpoint( jump_start_ - 1 ) )          jump_start_--;
 		while ( jump_end_ < pose.size() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
 	}
-	
+
 	Size const cutpoint = cutpoint_suite_;
-	
+
 	f.new_jump( jump_start_, jump_end_, cutpoint );
 
 	Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
@@ -150,14 +150,14 @@ TransientCutpointHandler::take_out_cutpoints(
 
 	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
 	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
-	
+
 	// return to simple fold tree
 	if ( change_foldtree_ ) {
 		core::kinematics::FoldTree f( pose.fold_tree() );
 		f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
-		pose.fold_tree( f );	
+		pose.fold_tree( f );
 	}
-	
+
 #ifdef GL_GRAPHICS
 	viewer_pose = pose;
 #endif

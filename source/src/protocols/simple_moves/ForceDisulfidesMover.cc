@@ -40,28 +40,14 @@
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/scoring/ScoreFunction.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ForceDisulfidesMover" );
-
-std::string
-ForceDisulfidesMoverCreator::keyname() const
-{
-	return ForceDisulfidesMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-ForceDisulfidesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ForceDisulfidesMover );
-}
-
-std::string
-ForceDisulfidesMoverCreator::mover_name()
-{
-	return "ForceDisulfides";
-}
 
 ForceDisulfidesMover::ForceDisulfidesMover() :
 	protocols::moves::Mover("ForceDisulfidesMover"),
@@ -118,13 +104,19 @@ ForceDisulfidesMover::scorefxn() const{
 	return scorefxn_;
 }
 
-std::string
-ForceDisulfidesMover::get_name() const {
-	return "ForceDisulfidesMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ForceDisulfidesMover::get_name() const {
+// XRW TEMP  return "ForceDisulfidesMover";
+// XRW TEMP }
 
 void
-ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+ForceDisulfidesMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose
+)
 {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "disulfides" ), ',' ) );
@@ -142,6 +134,48 @@ ForceDisulfidesMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 
 void
 ForceDisulfidesMover::disulfides( utility::vector1< std::pair < core::Size, core::Size >  > d ){ disulfides_ = d; }
+
+std::string ForceDisulfidesMover::get_name() const {
+	return mover_name();
+}
+
+std::string ForceDisulfidesMover::mover_name() {
+	return "ForceDisulfides";
+}
+
+void ForceDisulfidesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	XMLSchemaRestriction pair_cslist;
+	pair_cslist.name( "colon_sep_size_pair_cslist" );
+	pair_cslist.base_type( xs_string );
+	pair_cslist.add_restriction( xsr_pattern, "[+]?[0-9]+:[+]?[0-9]+(,[+]?[0-9]+:[+]?[0-9]+)*" );
+	xsd.add_top_level_element( pair_cslist );
+
+	attlist + XMLSchemaAttribute::required_attribute( "disulfides", "colon_sep_size_pair_cslist",
+		"For instance: 23A:88A,22B:91B. Can also take regular Rosetta numbering as in: 24:88,23:91." );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Set a list of cysteine pairs to form disulfides and repack their surroundings."
+		" Useful for cases where the disulfides aren't recognized by Rosetta.", attlist );
+}
+
+std::string ForceDisulfidesMoverCreator::keyname() const {
+	return ForceDisulfidesMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ForceDisulfidesMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ForceDisulfidesMover );
+}
+
+void ForceDisulfidesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ForceDisulfidesMover::provide_xml_schema( xsd );
+}
+
 
 utility::vector1< std::pair< core::Size, core::Size > >
 ForceDisulfidesMover::disulfides() const { return disulfides_; }

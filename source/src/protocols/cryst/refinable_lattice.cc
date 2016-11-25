@@ -106,6 +106,15 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -134,32 +143,32 @@ using namespace conformation::symmetry;
 ////////////////////////////////////////////////////
 
 // creators
-std::string
-UpdateCrystInfoCreator::keyname() const { return UpdateCrystInfoCreator::mover_name(); }
+// XRW TEMP std::string
+// XRW TEMP UpdateCrystInfoCreator::keyname() const { return UpdateCrystInfo::mover_name(); }
 
-protocols::moves::MoverOP
-UpdateCrystInfoCreator::create_mover() const { return protocols::moves::MoverOP(new UpdateCrystInfo); }
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP UpdateCrystInfoCreator::create_mover() const { return protocols::moves::MoverOP(new UpdateCrystInfo); }
 
-std::string
-UpdateCrystInfoCreator::mover_name() { return "UpdateCrystInfo"; }
+// XRW TEMP std::string
+// XRW TEMP UpdateCrystInfo::mover_name() { return "UpdateCrystInfo"; }
 
-std::string
-DockLatticeMoverCreator::keyname() const { return DockLatticeMoverCreator::mover_name(); }
+// XRW TEMP std::string
+// XRW TEMP DockLatticeMoverCreator::keyname() const { return DockLatticeMover::mover_name(); }
 
-protocols::moves::MoverOP
-DockLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new DockLatticeMover); }
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new DockLatticeMover); }
 
-std::string
-DockLatticeMoverCreator::mover_name() { return "DockLatticeMover"; }
+// XRW TEMP std::string
+// XRW TEMP DockLatticeMover::mover_name() { return "DockLatticeMover"; }
 
-std::string
-MakeLatticeMoverCreator::keyname() const { return MakeLatticeMoverCreator::mover_name(); }
+// XRW TEMP std::string
+// XRW TEMP MakeLatticeMoverCreator::keyname() const { return MakeLatticeMover::mover_name(); }
 
-protocols::moves::MoverOP
-MakeLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLatticeMover); }
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeLatticeMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLatticeMover); }
 
-std::string
-MakeLatticeMoverCreator::mover_name() { return "MakeLatticeMover"; }
+// XRW TEMP std::string
+// XRW TEMP MakeLatticeMover::mover_name() { return "MakeLatticeMover"; }
 
 ////////////////////////////////////////////////////
 
@@ -246,6 +255,37 @@ UpdateCrystInfo::parse_my_tag(
 {
 
 }
+
+std::string UpdateCrystInfo::get_name() const {
+	return mover_name();
+}
+
+std::string UpdateCrystInfo::mover_name() {
+	return "UpdateCrystInfo";
+}
+
+void UpdateCrystInfo::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Convert back to an asymm pose with a valid CRYST1 line.", attlist );
+}
+
+std::string UpdateCrystInfoCreator::keyname() const {
+	return UpdateCrystInfo::mover_name();
+}
+
+protocols::moves::MoverOP
+UpdateCrystInfoCreator::create_mover() const {
+	return protocols::moves::MoverOP( new UpdateCrystInfo );
+}
+
+void UpdateCrystInfoCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UpdateCrystInfo::provide_xml_schema( xsd );
+}
+
 
 ////////////////////////////////////////////////////
 
@@ -626,6 +666,43 @@ DockLatticeMover::parse_my_tag(
 
 
 }
+
+std::string DockLatticeMover::get_name() const {
+	return mover_name();
+}
+
+std::string DockLatticeMover::mover_name() {
+	return "DockLatticeMover";
+}
+
+void DockLatticeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "fullatom" , xsct_rosetta_bool, "If fullatom=1 it does fullatom docking with repacks and min steps; if fullatom=0 you need to provide a centroid energy function (e.g. score4_smooth) and it will also add lattice slide moves.", "false" )
+		+ XMLSchemaAttribute( "ncycles" , xsct_non_negative_integer , "# of steps to run." )
+		+ XMLSchemaAttribute( "trans_step" , xsct_real, "Magnitude of translational perturbations." )
+		+ XMLSchemaAttribute( "rot_step" , xsct_real, "Magnitude of rotational perturbations." ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function ( attlist ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Docking within a crystal lattice.", attlist );
+}
+
+std::string DockLatticeMoverCreator::keyname() const {
+	return DockLatticeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DockLatticeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockLatticeMover );
+}
+
+void DockLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DockLatticeMover::provide_xml_schema( xsd );
+}
+
 
 ////////////////////////////////////////////////////
 
@@ -1165,6 +1242,38 @@ MakeLatticeMover::parse_my_tag(
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );
 	}
 }
+
+std::string MakeLatticeMover::get_name() const {
+	return mover_name();
+}
+
+std::string MakeLatticeMover::mover_name() {
+	return "MakeLatticeMover";
+}
+
+void MakeLatticeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "contact_dist", xsct_real, "Command line '-interaction_shell ##' OR XML 'contact_dist=##' specifies the distance (in Angstrom) away from the input structure to generate symmetric partners." ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "If you wish to model a structure in its crystal lattice, a symmetry definition file is not needed. Rather, one can use the flag -symmetry_definition CRYST1.", attlist );
+}
+
+std::string MakeLatticeMoverCreator::keyname() const {
+	return MakeLatticeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeLatticeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakeLatticeMover );
+}
+
+void MakeLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeLatticeMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

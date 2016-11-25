@@ -734,7 +734,7 @@ add_cutpoints( core::pose::Pose & pose, components::StructureData const & sd )
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cut );
 			core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cut+1 );
 			pose.conformation().declare_chemical_bond( cut, pose.residue( cut ).atom_name( pose.residue( cut ).upper_connect_atom() ),
-																								 cut + 1, pose.residue( cut + 1 ).atom_name( pose.residue( cut + 1 ).lower_connect_atom() ) );
+				cut + 1, pose.residue( cut + 1 ).atom_name( pose.residue( cut + 1 ).lower_connect_atom() ) );
 
 		}
 	}
@@ -934,7 +934,7 @@ parse_motif_string( std::string const & motif_str, std::string & secstruct, std:
 	for ( auto const & motif : motifs ) {
 		// here, we can accept "3LX" or "3:LX"
 		std::string motif_seg = "";
-		for (char c : motif) {
+		for ( char c : motif ) {
 			if ( c == ' ' ) continue;
 			if ( c == '\t' ) continue;
 			if ( c == '\n' ) continue;

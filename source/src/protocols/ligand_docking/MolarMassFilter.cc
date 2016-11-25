@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -73,11 +76,45 @@ MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 }
 
-protocols::filters::FilterOP
-MolarMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolarMassFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP MolarMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolarMassFilter ); }
 
-std::string
-MolarMassFilterCreator::keyname() const { return "MolarMass"; }
+// XRW TEMP std::string
+// XRW TEMP MolarMassFilterCreator::keyname() const { return "MolarMass"; }
+
+std::string MolarMassFilter::name() const {
+	return class_name();
+}
+
+std::string MolarMassFilter::class_name() {
+	return "MolarMass";
+}
+
+void MolarMassFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chain", xsct_char, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "mass_limit", xsct_non_negative_integer, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string MolarMassFilterCreator::keyname() const {
+	return MolarMassFilter::class_name();
+}
+
+protocols::filters::FilterOP
+MolarMassFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new MolarMassFilter );
+}
+
+void MolarMassFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MolarMassFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // ligand_docking

@@ -26,15 +26,15 @@
 namespace protocols {
 namespace features {
 
-ProteinRMSDNoSuperpositionFeaturesCreator::ProteinRMSDNoSuperpositionFeaturesCreator() {}
-ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() = default;
-FeaturesReporterOP ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
-}
+// XRW TEMP ProteinRMSDNoSuperpositionFeaturesCreator::ProteinRMSDNoSuperpositionFeaturesCreator() {}
+// XRW TEMP ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
+// XRW TEMP }
 
-std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {
-	return "ProteinRMSDNoSuperpositionFeatures";
-}
+// XRW TEMP std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinRMSDNoSuperpositionFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

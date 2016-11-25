@@ -49,6 +49,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace core;
@@ -66,25 +69,25 @@ namespace movers {
 
 using namespace protocols::moves;
 
-std::string
-InterfaceRecapitulationMoverCreator::keyname() const
-{
-	return InterfaceRecapitulationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceRecapitulationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InterfaceRecapitulationMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-InterfaceRecapitulationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InterfaceRecapitulationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
+// XRW TEMP }
 
-std::string
-InterfaceRecapitulationMoverCreator::mover_name()
-{
-	return "InterfaceRecapitulation";
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceRecapitulationMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InterfaceRecapitulation";
+// XRW TEMP }
 
 InterfaceRecapitulationMover::InterfaceRecapitulationMover() :
-	Mover( InterfaceRecapitulationMoverCreator::mover_name() ),
+	Mover( InterfaceRecapitulationMover::mover_name() ),
 	saved_pose_( /* NULL */ ),
 	design_mover_( /* NULL */ ),
 	design_mover2_( /* NULL */ ),
@@ -150,10 +153,10 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 }
 
-std::string
-InterfaceRecapitulationMover::get_name() const {
-	return InterfaceRecapitulationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceRecapitulationMover::get_name() const {
+// XRW TEMP  return InterfaceRecapitulationMover::mover_name();
+// XRW TEMP }
 
 void
 InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
@@ -172,6 +175,39 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::dat
 		pssm_ = tag->getOption<bool>( "pssm", false );
 	}
 }
+
+std::string InterfaceRecapitulationMover::get_name() const {
+	return mover_name();
+}
+
+std::string InterfaceRecapitulationMover::mover_name() {
+	return "InterfaceRecapitulation";
+}
+
+void InterfaceRecapitulationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "mover_name", xs_string, "Name of mover to be applied, either a DesignRepack or PackRotamers" )
+		+ XMLSchemaAttribute::attribute_w_default( "pssm", xsct_rosetta_bool, "Should the pssm score be calculated against a possibly-provided pose reference?", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string InterfaceRecapitulationMoverCreator::keyname() const {
+	return InterfaceRecapitulationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+InterfaceRecapitulationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
+}
+
+void InterfaceRecapitulationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceRecapitulationMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

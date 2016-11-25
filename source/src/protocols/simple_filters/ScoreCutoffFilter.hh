@@ -92,12 +92,24 @@ public:
 	core::Real get_score( core::pose::Pose const & pose ) const;
 
 
-	std::string name() const override {
-		return "ScoreCutoffFilter";
-	}
+	// XRW TEMP  std::string name() const override {
+	// XRW TEMP   return "ScoreCutoffFilter";
+	// XRW TEMP  }
 
 	void
 	output_residue_pair_energies( std::ostream & ostr, core::pose::Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

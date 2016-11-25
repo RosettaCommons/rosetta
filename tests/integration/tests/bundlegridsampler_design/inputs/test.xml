@@ -1,10 +1,10 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 
-		<LayerDesign name=layerdes layer=core_boundary core=30 surface=50 >
+		<LayerDesign name="layerdes" layer="core_boundary" core="30" surface="50" >
          <core>
            <all append="FILVY" />
            <all exclude="MWACDEGHKNQRSTP" />
@@ -19,28 +19,29 @@
 
 	</TASKOPERATIONS>
 	<FILTERS>
-		<ScoreType name=scorefilter scorefxn=tala score_type=total_score threshold=0.0 />
+		<ScoreType name="scorefilter" scorefxn="tala" score_type="total_score" threshold="0.0" />
 	</FILTERS>
 	<MOVERS>
 
-		<FastDesign name=fdesign scorefxn=tala clear_designable_residues=0 ramp_down_constraints=0 repeats=1 task_operations=layerdes >
-			<MoveMap name=fdesign_mm>
-				<Jump number=1 setting=0 />
-				<Span begin=1 end=40 chi=1 bb=0 />
+		<FastDesign name="fdesign" scorefxn="tala" clear_designable_residues="0" ramp_down_constraints="0" repeats="1" task_operations="layerdes" >
+			<MoveMap name="fdesign_mm">
+				<Jump number="1" setting="0" />
+				<Span begin="1" end="40" chi="1" bb="0" />
 			</MoveMap>
 		</FastDesign>
 
-		<BundleGridSampler name="bgs1" helix_length=20 scorefxn="tala" set_bondlengths=true set_bondangles=true set_dihedrals=true
-				r0=5.13 omega0_min=0.1 omega0_max=0.15 omega0_samples=4 delta_omega0=0 delta_omega1=0 delta_t=0 dump_pdbs=true pdb_prefix="out" 
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="tala" set_bondlengths="true" set_bondangles="true" set_dihedrals="true"
+				r0="5.13" omega0_min="0.1" omega0_max="0.15" omega0_samples="4" delta_omega0="0" delta_omega1="0" delta_t="0" dump_pdbs="true" pdb_prefix="out" 
 				pre_selection_mover="fdesign" pre_selection_filter="scorefilter">
 			<Helix />
-			<Helix delta_omega0=3.141592654 invert=true omega0_copies_helix=1 r0_copies_helix=1 delta_t_copies_helix=1 delta_omega1_min=0 delta_omega1_max=1.727 delta_omega1_samples=4 />
+			<Helix delta_omega0="3.141592654" invert="true" omega0_copies_helix="1" r0_copies_helix="1" delta_t_copies_helix="1" delta_omega1_min="0" delta_omega1_max="1.727" delta_omega1_samples="4" />
 		</BundleGridSampler>
 
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=bgs1 />
+		<Add mover="bgs1" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

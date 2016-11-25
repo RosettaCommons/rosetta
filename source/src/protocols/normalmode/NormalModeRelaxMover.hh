@@ -57,7 +57,7 @@ public:
 	protocols::moves::MoverOP
 	clone() const override { return protocols::moves::MoverOP( new NormalModeRelaxMover(*this) ); }
 
-	std::string get_name() const override; //{ return NormalModeMinimizerCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override; //{ return NormalModeMinimizerCreator::mover_name(); }
 
 	void apply( core::pose::Pose & pose ) override;
 
@@ -118,6 +118,18 @@ public:
 	core::Real cst_sdev() const { return cst_sdev_; }
 	core::Real get_dynamic_scale() const { return scale_dynamic_; }
 	std::string relaxmode() const { return relaxmode_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void

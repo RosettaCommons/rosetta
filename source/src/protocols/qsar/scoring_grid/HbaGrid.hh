@@ -18,7 +18,7 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace qsar {
@@ -44,6 +44,9 @@ public:
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
 	void parse_my_tag(utility::tag::TagCOP tag);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	numeric::interpolation::spline::InterpolatorOP lj_spline_;

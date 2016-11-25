@@ -28,7 +28,7 @@ public:
 	PSSM2BfactorMover(core::Real const min_in , core::Real const max_in);
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -49,6 +49,18 @@ public:
 
 	core::Real chain_num() const { return chain_num_; }
 	void chain_num( core::Size const s ){ chain_num_ = s; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real min_value_,max_value_; // dflt -1, 5

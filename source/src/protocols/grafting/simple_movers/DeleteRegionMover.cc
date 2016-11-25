@@ -25,11 +25,14 @@
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
-
+#include <core/select/residue_selector/util.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
 #include <utility>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace grafting {
@@ -59,10 +62,10 @@ DeleteRegionMover::DeleteRegionMover( core::Size const res_start, core::Size con
 
 DeleteRegionMover::~DeleteRegionMover(){}
 
-std::string
-DeleteRegionMover::get_name() const {
-	return "DeleteRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteRegionMover::get_name() const {
+// XRW TEMP  return "DeleteRegionMover";
+// XRW TEMP }
 
 void
 DeleteRegionMover::region( std::string const & res_start, std::string const & res_end )
@@ -87,20 +90,20 @@ DeleteRegionMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new DeleteRegionMover );
 }
 
-protocols::moves::MoverOP
-DeleteRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteRegionMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DeleteRegionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DeleteRegionMover );
+// XRW TEMP }
 
-std::string
-DeleteRegionMoverCreator::keyname() const {
-	return DeleteRegionMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteRegionMoverCreator::keyname() const {
+// XRW TEMP  return DeleteRegionMover::mover_name();
+// XRW TEMP }
 
-std::string
-DeleteRegionMoverCreator::mover_name(){
-	return "DeleteRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteRegionMover::mover_name(){
+// XRW TEMP  return "DeleteRegionMover";
+// XRW TEMP }
 
 void
 DeleteRegionMover::parse_my_tag(
@@ -173,6 +176,46 @@ DeleteRegionMover::add_terminus_variants( core::pose::Pose & pose, core::Size co
 		core::pose::add_lower_terminus_type_to_pose_residue( pose, resid );
 	}
 }
+
+std::string DeleteRegionMover::get_name() const {
+	return mover_name();
+}
+
+std::string DeleteRegionMover::mover_name() {
+	return "DeleteRegionMover";
+}
+
+void DeleteRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "rechain", xsct_rosetta_bool, "Add terminus variants and recompute chains after deleting" )
+		+ XMLSchemaAttribute( "start", xsct_non_negative_integer, "First residue in region to delete" )
+		+ XMLSchemaAttribute( "end", xsct_non_negative_integer, "Last residue in region to delete" )
+		+ XMLSchemaAttribute( "nter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the N terminal side" )
+		+ XMLSchemaAttribute( "cter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the C terminal side" );
+
+	//Define things to do with the residue selector
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "XRW_TODO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Deletes a region from a pose", attlist );
+}
+
+std::string DeleteRegionMoverCreator::keyname() const {
+	return DeleteRegionMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DeleteRegionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DeleteRegionMover );
+}
+
+void DeleteRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DeleteRegionMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

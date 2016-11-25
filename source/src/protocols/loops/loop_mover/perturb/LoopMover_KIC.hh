@@ -56,14 +56,14 @@ public:
 	//destructor
 	~LoopMover_Perturb_KIC();
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
-	virtual void  set_extended_torsions(
+	void set_extended_torsions(
 		core::pose::Pose & pose,
 		Loop const & loop
-	);
+	) override;
 
 	void set_default_settings();
 
@@ -80,7 +80,19 @@ public:
 
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:
@@ -92,12 +104,12 @@ private:
 
 protected:
 
-	virtual loop_mover::LoopResult model_loop(
+	loop_mover::LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
-	);
+	) override;
 
-	virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const override;
 };
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover );

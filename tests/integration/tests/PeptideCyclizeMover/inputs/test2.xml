@@ -1,14 +1,14 @@
 <ROSETTASCRIPTS>
     <SCOREFXNS>
-	<score_cst >
-            <Reweight scoretype=coordinate_constraint weight=1 />
-            <Reweight scoretype=atom_pair_constraint weight=1 />
-            <Reweight scoretype=dihedral_constraint weight=1 />
-            <Reweight scoretype=angle_constraint weight=1 />
-        </score_cst>
+	<ScoreFunction name="score_cst" >
+            <Reweight scoretype="coordinate_constraint" weight="1" />
+            <Reweight scoretype="atom_pair_constraint" weight="1" />
+            <Reweight scoretype="dihedral_constraint" weight="1" />
+            <Reweight scoretype="angle_constraint" weight="1" />
+        </ScoreFunction>
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
-	<Chain name=chainb chains="B"/>
+	<Chain name="chainb" chains="B"/>
     </RESIDUE_SELECTORS>
     <TASKOPERATIONS>
     </TASKOPERATIONS>
@@ -17,19 +17,19 @@
     <MOVERS>
 
 	<PeptideCyclizeMover name="close" >
-		<Torsion res1=359 res2=359 res3=349 res4=349 atom1="CA" atom2="C" atom3="N" atom4="CA" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
-        	<Angle res1=359 atom1="CA" res_center=359 atom_center="C" res2=349 atom2="N" cst_func="HARMONIC 2.01000000 0.01" />
-            	<Angle res1=359 atom1="C" res_center=349 atom_center="N" res2=349 atom2="CA" cst_func="HARMONIC 2.14675498 0.01" />
-        	<Distance res1=359 res2=349 atom1="C" atom2="N" cst_func="HARMONIC 1.32865 0.01" />
-        	<Bond res1=359 res2=349 atom1="C" atom2="N" add_termini="true" />
+		<Torsion res1="359" res2="359" res3="349" res4="349" atom1="CA" atom2="C" atom3="N" atom4="CA" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+        	<Angle res1="359" atom1="CA" res_center="359" atom_center="C" res2="349" atom2="N" cst_func="HARMONIC 2.01000000 0.01" />
+            	<Angle res1="359" atom1="C" res_center="349" atom_center="N" res2="349" atom2="CA" cst_func="HARMONIC 2.14675498 0.01" />
+        	<Distance res1="359" res2="349" atom1="C" atom2="N" cst_func="HARMONIC 1.32865 0.01" />
+        	<Bond res1="359" res2="349" atom1="C" atom2="N" add_termini="true" />
         </PeptideCyclizeMover>
-	<SetTorsion name=initialize_tors>
-          <Torsion residue=349,359 torsion_name=omega angle=180.0 />
+	<SetTorsion name="initialize_tors">
+          <Torsion residue="349,359" torsion_name="omega" angle="180.0" />
         </SetTorsion>
-	<FastRelax name="relax" scorefxn=score_cst repeats=3 >
-		<MoveMap name=frlx1_mm>
-                	<Span begin=1 end=348 chi=0 bb=0/>
-                	<Span begin=349 end=359 chi=1 bb=1/>
+	<FastRelax name="relax" scorefxn="score_cst" repeats="3" >
+		<MoveMap name="frlx1_mm">
+                	<Span begin="1" end="348" chi="0" bb="0"/>
+                	<Span begin="349" end="359" chi="1" bb="1"/>
             	</MoveMap>
         </FastRelax>
     </MOVERS>
@@ -37,9 +37,10 @@
     </APPLY_TO_POSE>
     <PROTOCOLS>
 	Add mover=initialize_tors/>
-	<Add mover=close/>
-	<Add mover=relax/>
-	<Add mover=close/>
+	<Add mover="close"/>
+	<Add mover="relax"/>
+	<Add mover="close"/>
     </PROTOCOLS>
     <OUTPUT />
+
 </ROSETTASCRIPTS>

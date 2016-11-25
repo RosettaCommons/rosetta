@@ -17,7 +17,7 @@
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace qsar {
@@ -36,6 +36,9 @@ public:
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
 	void parse_my_tag(utility::tag::TagCOP tag);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	void set_protein_rings( core::conformation::Residue const & rsd);

@@ -44,7 +44,7 @@ class DisulfideInsertionMover : public protocols::moves::Mover {
 public:
 
 	// ctor
-	DisulfideInsertionMover(core::Size const peptide_chain,
+	DisulfideInsertionMover(core::Size const peptide_chain = 1,
 		core::scoring::ScoreFunctionOP scorefxn = nullptr, core::kinematics::MoveMapOP mm = nullptr,
 		bool const is_cyd_res_at_termini = true,
 		core::Size const n_cyd_seqpos = 0, core::Size const c_cyd_seqpos = 0);
@@ -60,7 +60,7 @@ public:
 
 	// mover interface
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override { return "DisulfideInsertionMover"; }
+	// XRW TEMP  std::string get_name() const override { return "DisulfideInsertionMover"; }
 
 	/// @brief checks if residues next to a putative derived peptide are near enough in space to be mutated to cysteins that might form a cyclic peptide.
 	static DisulfideCyclizationViability determine_cyclization_viability(
@@ -92,6 +92,18 @@ public:
 
 	void set_constraint_weight(core::Real const value) { constraint_weight_ = value; }
 	core::Real get_constraint_weight() const { return constraint_weight_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief adds angle, dihedral angle and atom-pair constraints to the pose

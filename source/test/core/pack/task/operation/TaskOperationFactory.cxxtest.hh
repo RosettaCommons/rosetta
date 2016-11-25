@@ -27,6 +27,9 @@
 #include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/excn/Exceptions.hh>
 
+// Test utility headers
+#include <test/util/schema_utilities.hh>
+
 // C++ headers
 #include <string>
 
@@ -126,8 +129,31 @@ public:
 		//std::cout << "Res filter factory XSD:\n" << xsd.full_definition() << std::endl;
 	}
 
-	// @brief From here forward, the TaskOperationFactory is "corrupted" in the sense that the DummyTaskOp2Creator
-	// is always going to cause an exception to be thrown.  This should be the last test in this test suite
+
+	void test_TaskOperationFactory_all_TaskOperation_complexTypes_have_descriptions() {
+		ensure_all_cts_for_creators_have_documentation_strings(
+			TaskOperationFactory::get_instance()->creator_map(),
+			"TaskOperation",
+			& complex_type_name_for_task_op );
+	}
+
+	void test_TaskOperationFactory_all_TaskOperation_all_attributes_have_descriptions() {
+		TaskOperationFactory * mf = TaskOperationFactory::get_instance();
+		TaskOperationFactory::TaskOperationCreatorMap const & creator_map = mf->creator_map();
+
+		for ( auto iter : creator_map ) {
+			XMLSchemaDefinition xsd;
+			iter.second->provide_xml_schema( xsd );
+			std::string full_def = xsd.full_definition();
+			//std::cout << "full def: " << iter.first << "\n" << full_def << std::endl;
+			TagCOP tag( Tag::create( full_def ) );
+			recurse_through_subtags_for_attribute_descriptions( tag, iter.first );
+		}
+	}
+
+	/// @brief From here forward, the TaskOperationFactory is "corrupted" in the sense that the DummyTaskOp2Creator
+	/// is always going to cause an exception to be thrown.
+	/// This should be the last test in this test suite
 	void test_task_op_factory_w_bad_xsd() {
 		TaskOperationFactory::get_instance()->factory_register( TaskOperationCreatorOP( new DummyTaskOp2Creator ));
 		try {
@@ -144,7 +170,6 @@ public:
 			//std::cout << e.msg() << "\n" << expected_message << std::endl;
 		}
 	}
-
 
 
 };

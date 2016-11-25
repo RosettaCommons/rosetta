@@ -31,6 +31,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinBackboneTorsionAngleFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -53,8 +57,8 @@ ProteinBackboneTorsionAngleFeatures::ProteinBackboneTorsionAngleFeatures( Protei
 
 ProteinBackboneTorsionAngleFeatures::~ProteinBackboneTorsionAngleFeatures()= default;
 
-string
-ProteinBackboneTorsionAngleFeatures::type_name() const { return "ProteinBackboneTorsionAngleFeatures"; }
+// XRW TEMP string
+// XRW TEMP ProteinBackboneTorsionAngleFeatures::type_name() const { return "ProteinBackboneTorsionAngleFeatures"; }
 
 void
 ProteinBackboneTorsionAngleFeatures::write_schema_to_db(
@@ -135,6 +139,37 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string ProteinBackboneTorsionAngleFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinBackboneTorsionAngleFeatures::class_name() {
+	return "ProteinBackboneTorsionAngleFeatures";
+}
+
+void ProteinBackboneTorsionAngleFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Reports the torsion angles (phi, psi, and omega) for a protein backbone, for every residue", attlist );
+}
+
+std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {
+	return ProteinBackboneTorsionAngleFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
+}
+
+void ProteinBackboneTorsionAngleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinBackboneTorsionAngleFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

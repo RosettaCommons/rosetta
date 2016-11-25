@@ -31,17 +31,17 @@
 namespace core {
 namespace membrane {
 
-	
+
 ////////////////////////////////////////////////////////////////////////////////
 // top-level helper functions
 
 /// @brief compute the concave shell from the pose, computes along a slice and
-///			takes the atoms within a shell, not just the outermost ones
+///   takes the atoms within a shell, not just the outermost ones
 core::id::AtomID_Map< bool > concave_shell( core::pose::Pose & pose, core::Real min_z, core::Real max_z, core::Real incr_z, core::Real shell_radius, core::Real dist_cutoff );
 
 /// @brief computes 2D convex hull: points in a slice on z-dimension are
-///			flattened into xy plane; the output is three lists of points for
-///			inside, outside and boundary
+///   flattened into xy plane; the output is three lists of points for
+///   inside, outside and boundary
 utility::vector1< utility::vector1< core::Size > > convex_hull( std::map< core::Size, core::Vector > coords, core::Real min_z, core::Real max_z );
 
 /// @brief computes 2D concave hull from three lists of points for inside, outside and boundary
@@ -54,26 +54,26 @@ utility::vector1< utility::vector1< core::Size > > add_shell( std::map< core::Si
 // medium-level helper functions
 
 /// @brief compute distances in point list from line p1p2
-///			which points: i,o,b for inside, outside or boundary
+///   which points: i,o,b for inside, outside or boundary
 utility::vector1< core::Real > get_distances( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > points, bool clock=false );
 
 /// @brief compute enclosing angles in point list from line p1p2
-///			which points: i,o,b for inside, outside or boundary
+///   which points: i,o,b for inside, outside or boundary
 utility::vector1< core::Real > get_angles( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > points, bool clock=false );
 
 /// @brief find point id that is closest to line connecting p1p2
-///			which points: i,o,b for inside, outside or boundary
+///   which points: i,o,b for inside, outside or boundary
 core::Size find_closest( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > inside_points, bool clock=false );
 
 /// @brief find point id that is farthest from line connecting p1p2
-///			which points: i,o,b for inside, outside or boundary
+///   which points: i,o,b for inside, outside or boundary
 core::Size find_farthest( std::map< core::Size, core::Vector > coords, core::Size p1, core::Size p2, utility::vector1< core::Size > outside_points, bool clock=false );
 
 /// @brief checks whether the point q is inside the polygon or not
-///			i.e. compute the number of crossing points with polygon
-///			0 outside
-///			1 inside
-///			2 on boundary
+///   i.e. compute the number of crossing points with polygon
+///   0 outside
+///   1 inside
+///   2 on boundary
 std::string inside_polygon( std::map< core::Size, core::Vector > coords, utility::vector1< core::Size > polygon, core::Vector q );
 
 /// @brief returns the points that are within the triangle between points p1, p2, q
@@ -87,7 +87,7 @@ core::Real distance_from_line2D( core::Vector p1, core::Vector p2, core::Vector 
 
 /// @brief is point q on line segment between points p1 and p2?
 bool on_segment( core::Vector p1, core::Vector p2, core::Vector q );
-	
+
 /// @brief q is inside xy boundaries of p1p2
 bool inside_boundaries( core::Vector p1, core::Vector p2, core::Vector q );
 
@@ -102,10 +102,10 @@ bool intersect( core::Vector p1, core::Vector p2, core::Vector q );
 
 /// @brief find the sum of angles p1q and p2q; p1, p2, q are points, not vectors
 core::Real enclosing_angles( core::Vector p1, core::Vector p2, core::Vector q );
-	
+
 } //core
 } //membrane
 
 
-#endif	//core/membrane_hull_hh
+#endif //core/membrane_hull_hh
 

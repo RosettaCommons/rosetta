@@ -19,7 +19,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <string>
 
 namespace protocols {
@@ -35,6 +35,7 @@ public:
 
 	virtual PosePropertyReporterOP create_reporter() const = 0;
 	virtual std::string keyname() const = 0;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
 typedef utility::pointer::shared_ptr< PosePropertyReporterCreator > PosePropertyReporterCreatorOP;

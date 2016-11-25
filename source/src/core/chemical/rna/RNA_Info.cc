@@ -86,7 +86,7 @@ RNA_Info::update_derived_rna_data( ResidueTypeCAP residue_type_in ){
 	// There must be EITHER O2', a replacement like F2', or a virt.
 	if ( residue_type->has( " O2'" ) ) {
 		o2prime_index_ = residue_type->atom_index( " O2'" );
-	} else if (residue_type->has( " F2'" ) ) {
+	} else if ( residue_type->has( " F2'" ) ) {
 		o2prime_index_ = residue_type->atom_index( " F2'" );
 	} else {
 		o2prime_index_ = 0;

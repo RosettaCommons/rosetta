@@ -22,6 +22,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );
 
@@ -74,25 +77,25 @@ KeepRegionMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new KeepRegionMover );
 }
 
-std::string
-KeepRegionMover::get_name() const {
-	return "KeepRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP KeepRegionMover::get_name() const {
+// XRW TEMP  return "KeepRegionMover";
+// XRW TEMP }
 
-protocols::moves::MoverOP
-KeepRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new KeepRegionMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP KeepRegionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new KeepRegionMover );
+// XRW TEMP }
 
-std::string
-KeepRegionMoverCreator::keyname() const {
-	return KeepRegionMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP KeepRegionMoverCreator::keyname() const {
+// XRW TEMP  return KeepRegionMover::mover_name();
+// XRW TEMP }
 
-std::string
-KeepRegionMoverCreator::mover_name() {
-	return "KeepRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP KeepRegionMover::mover_name() {
+// XRW TEMP  return "KeepRegionMover";
+// XRW TEMP }
 
 void
 KeepRegionMover::parse_my_tag(
@@ -166,6 +169,45 @@ KeepRegionMover::apply(core::pose::Pose& pose) {
 	pose = temp_pose;
 
 }
+
+std::string KeepRegionMover::get_name() const {
+	return mover_name();
+}
+
+std::string KeepRegionMover::mover_name() {
+	return "KeepRegionMover";
+}
+
+void KeepRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		//+ XMLSchemaAttribute::required_attribute( "start_", xsct_non_negative_integer, "First residue of region" )
+		//+ XMLSchemaAttribute::required_attribute( "end_", xsct_non_negative_integer, "Last residue of region" )
+		+ XMLSchemaAttribute::attribute_w_default( "nter_overhang", xsct_non_negative_integer, "Number of residues N terminal to start to include", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cter_overhang", xsct_non_negative_integer, "Number of residues C terminal to end to include", "0");
+
+	core::pose::attributes_for_get_resnum( attlist, "start_" );
+	core::pose::attributes_for_get_resnum( attlist, "end_" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Keeps a specified region of the current pose and deletes the rest", attlist );
+}
+
+std::string KeepRegionMoverCreator::keyname() const {
+	return KeepRegionMover::mover_name();
+}
+
+protocols::moves::MoverOP
+KeepRegionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new KeepRegionMover );
+}
+
+void KeepRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	KeepRegionMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

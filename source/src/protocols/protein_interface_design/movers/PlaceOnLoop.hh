@@ -41,11 +41,11 @@ class PlaceOnLoop : public simple_moves::DesignRepackMover
 {
 public:
 	PlaceOnLoop();
-	void apply( Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void set_kinematic_defaults();
 	bool minimize_toward_stub( core::pose::Pose & pose ) const;
 	void add_bb_csts_to_loop( core::pose::Pose & pose ) const;
@@ -53,6 +53,18 @@ public:
 	void ala_pose_loop( core::pose::Pose & pose ) const;
 	bool loop_length( core::pose::Pose & pose );
 	virtual ~PlaceOnLoop();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size loop_begin_, loop_end_, curr_loop_end_;
 	core::scoring::ScoreFunctionOP hires_scorefxn_, lores_scorefxn_;

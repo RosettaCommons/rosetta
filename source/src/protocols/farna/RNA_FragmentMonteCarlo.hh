@@ -189,8 +189,8 @@ private:
 
 	void
 	output_score_if_desired( core::Size const & r,
-													 core::Size const & i,
-													 core::pose::Pose & pose );
+		core::Size const & i,
+		core::pose::Pose & pose );
 
 private:
 

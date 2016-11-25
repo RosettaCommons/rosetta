@@ -43,6 +43,9 @@
 
 //Req'd on WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.StructPerturberCM", basic::t_info );
 
@@ -52,22 +55,6 @@ namespace abscript {
 
 using namespace core::environment;
 using namespace protocols::environment;
-
-// creator
-std::string
-StructPerturberCMCreator::keyname() const {
-	return StructPerturberCMCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-StructPerturberCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StructPerturberCM );
-}
-
-std::string
-StructPerturberCMCreator::mover_name() {
-	return "StructPerturberCM";
-}
 
 StructPerturberCM::StructPerturberCM():
 	Parent()
@@ -121,14 +108,56 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 	}
 }
 
-std::string StructPerturberCM::get_name() const {
-	return "StructPerturberCM";
-}
+// XRW TEMP std::string StructPerturberCM::get_name() const {
+// XRW TEMP  return "StructPerturberCM";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StructPerturberCM::clone() const {
 	return protocols::moves::MoverOP( new StructPerturberCM( *this ) );
 }
+
+std::string StructPerturberCM::get_name() const {
+	return mover_name();
+}
+
+std::string StructPerturberCM::mover_name() {
+	return "StructPerturberCM";
+}
+
+void StructPerturberCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"magnitude", xsct_real,
+		"Maximum magnitude of torsion angle change to make to in each step",
+		"2.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"label", xs_string,
+		"Defaults to BASE",
+		"BASE");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Client mover that perturbs torsion angles in the pose with a gaussian distribution of the provided magnitude",
+		attlist);
+}
+
+std::string StructPerturberCMCreator::keyname() const {
+	return StructPerturberCM::mover_name();
+}
+
+protocols::moves::MoverOP
+StructPerturberCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StructPerturberCM );
+}
+
+void StructPerturberCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StructPerturberCM::provide_xml_schema( xsd );
+}
+
 
 } // abscript
 } // abinitio

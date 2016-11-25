@@ -15,6 +15,7 @@
 #define INCLUDED_--path_underscore--_--class--Creator_hh
 
 #include <protocols/moves/MoverCreator.hh>
+//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from MoverCreator
 
 --namespace--
 
@@ -22,11 +23,15 @@ class --class--Creator : public protocols::moves::MoverCreator {
 
 public:
 
-	virtual protocols::moves::MoverOP
-	create_mover() const;
+	protocols::moves::MoverOP
+	create_mover() const override;
 
-	virtual std::string
-	keyname() const;
+	std::string
+	keyname() const override;
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+
 
 };
 

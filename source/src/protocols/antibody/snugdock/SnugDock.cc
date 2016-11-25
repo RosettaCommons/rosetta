@@ -47,6 +47,9 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.SnugDock" );
@@ -89,11 +92,6 @@ SnugDock & SnugDock::operator=( SnugDock const & rhs ) {
 
 //destructor
 SnugDock::~SnugDock() {}
-
-/// @brief Each derived class must specify its name.
-std::string SnugDock::get_name() const {
-	return type();
-}
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -362,23 +360,39 @@ std::ostream & operator<<(std::ostream& out, SnugDock const & ) {
 	return out;
 }
 
-// creator methods
-std::string
-SnugDockCreator::keyname() const
+std::string SnugDock::get_name() const {
+	return mover_name();
+}
+
+std::string SnugDock::mover_name() {
+	return "SnugDock";
+}
+
+void SnugDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return SnugDockCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	//This is a DockingHighRes mover and doesn't actually read anything from the tag
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Dock and antigen to an antibody while optimizing the rigid body orientation of the VH and VL chains and performing CDR loop minimization.",
+		attlist );
+}
+
+std::string SnugDockCreator::keyname() const {
+	return SnugDock::mover_name();
 }
 
 protocols::moves::MoverOP
 SnugDockCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SnugDock() );
+	return protocols::moves::MoverOP( new SnugDock );
 }
 
-std::string
-SnugDockCreator::mover_name()
+void SnugDockCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "SnugDock";
+	SnugDock::provide_xml_schema( xsd );
 }
+
 
 } // namespace snugdock
 } // namespace antibody

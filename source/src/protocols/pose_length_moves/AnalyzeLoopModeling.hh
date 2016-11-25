@@ -49,10 +49,27 @@ public:
 	core::Real get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose designed_pose, core::Size loopStart, core::Size loopEnd);
 	core::Size get_valid_resid(int resid,core::pose::Pose const pose);
 	core::Real generate_lookback_rmsd(core::pose::Pose pose, core::Size position);
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new AnalyzeLoopModeling( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	moves::MoverOP clone() const override { return moves::MoverOP( new AnalyzeLoopModeling( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+
+	//static
+	//utility::tag::XMLSchemaRestriction
+	//define_size_cspair();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	protocols::loops::Loops get_loops(core::pose::Pose const & pose);
 	core::Size loopLengthRangeLow_;

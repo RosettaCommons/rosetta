@@ -46,7 +46,7 @@ public:
 
 	~TrialCounterObserver() override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 
@@ -84,6 +84,18 @@ public:
 
 	bool
 	requires_pose() override { return false; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	protocols::canonical_sampling::MultiTemperatureTrialCounter counters_;

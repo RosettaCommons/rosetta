@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-RadiusOfGyrationFeaturesCreator::RadiusOfGyrationFeaturesCreator() {}
-RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() = default;
-FeaturesReporterOP RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new RadiusOfGyrationFeatures );
-}
+// XRW TEMP RadiusOfGyrationFeaturesCreator::RadiusOfGyrationFeaturesCreator() {}
+// XRW TEMP RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new RadiusOfGyrationFeatures );
+// XRW TEMP }
 
-std::string RadiusOfGyrationFeaturesCreator::type_name() const {
-	return "RadiusOfGyrationFeatures";
-}
+// XRW TEMP std::string RadiusOfGyrationFeaturesCreator::type_name() const {
+// XRW TEMP  return "RadiusOfGyrationFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

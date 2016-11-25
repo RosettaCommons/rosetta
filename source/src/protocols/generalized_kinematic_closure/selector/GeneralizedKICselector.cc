@@ -26,6 +26,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/pose/util.hh>
@@ -118,7 +119,6 @@ std::string GeneralizedKICselector::get_selector_type_name( core::Size const sel
 	}
 	return returnstring;
 }
-
 
 /// @brief Given the name of a selector type, return the selector type enum.  Returns unknown_selector if not recognized.
 selector_type GeneralizedKICselector::get_selector_type_by_name( std::string const &selectorname ) const {
@@ -468,6 +468,23 @@ void GeneralizedKICselector::apply_lowest_delta_torsion_selector(
 	TR.flush();
 
 	return;
+}
+
+void
+GeneralizedKICselector::define_valid_selector_name_enumeration( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction genkic_selector_name;
+	genkic_selector_name.name( "genkic_selector_name" );
+	genkic_selector_name.base_type( xs_string );
+	genkic_selector_name.add_restriction( xsr_enumeration, "no_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "random_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_energy_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "botlzmann_energy_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_rmsd_selector" );
+	genkic_selector_name.add_restriction( xsr_enumeration, "lowest_delta_torsion_selector" );
+	xsd.add_top_level_element( genkic_selector_name );
+
 }
 
 } //namespace selector

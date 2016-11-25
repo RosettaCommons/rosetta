@@ -39,7 +39,7 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/util.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #include <protocols/jd2/parser/ScoreFunctionLoader.hh>
 #include <protocols/jd2/parser/TaskOperationLoader.hh>

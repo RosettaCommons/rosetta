@@ -33,6 +33,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Boost headers
 #include <boost/lexical_cast.hpp>
@@ -76,6 +77,9 @@ protected:
 public:
 	void
 	parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+	static void
+	attributes_for_parse_my_tag( utility::tag::AttributeList& attlist);
 
 	std::string const &
 	id() const;

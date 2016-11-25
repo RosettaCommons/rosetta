@@ -55,11 +55,11 @@ public:
 		core::scoring::ScoreFunctionOP score,
 		core::Size cycles );
 
-	void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
 	void yield_submovers( MoverSet& set ) const;
 
-	std::string get_name() const;
+	std::string get_name() const override;
 
 	//@returns if this stage step should be run or not (sometimes they can be skipped).
 	bool setup_stage( core::pose::Pose& pose, core::Real const& progress );

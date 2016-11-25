@@ -50,7 +50,7 @@ public:
 	~TaskAwareMinMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP fresh_instance() const override;
 	protocols::moves::MoverOP clone() const override;
@@ -77,6 +77,18 @@ public:
 	bool chi() const { return chi_; }
 	bool bb() const { return bb_; }
 	bool jump() const{ return jump_;}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief OP for MinMover

@@ -60,6 +60,9 @@
 #include <core/kinematics/FoldTree.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // // C++ Headers
@@ -71,22 +74,6 @@ using namespace core;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.idealize.IdealizeMover" );
 
-std::string
-IdealizeMoverCreator::keyname() const
-{
-	return IdealizeMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-IdealizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IdealizeMover );
-}
-
-std::string
-IdealizeMoverCreator::mover_name()
-{
-	return "Idealize";
-}
 
 
 /// @brief Add the idealize constraints to the pose's constraint set
@@ -295,10 +282,6 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	TR.flush();
 } // apply
 
-std::string
-IdealizeMover::get_name() const {
-	return "IdealizeMover";
-}
 
 void
 IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
@@ -323,6 +306,47 @@ void
 IdealizeMover::ignore_residues_in_csts( utility::vector1< core::Size > const & i ) {
 	ignore_residues_in_csts_ = i;
 }
+
+std::string IdealizeMover::get_name() const {
+	return mover_name();
+}
+
+std::string IdealizeMover::mover_name() {
+	return "Idealize";
+}
+
+void IdealizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "atom_pair_constraint_weight", xsct_real, "Weight for atom pair constraints", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "coordinate_constraint_weight", xsct_real, "Weight for coordinate constraints", "0.01" )
+		+ XMLSchemaAttribute::attribute_w_default( "fast", xsct_rosetta_bool, "Don't minimize or calculate stats after each idealization", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chainbreaks", xsct_rosetta_bool, "Keep chainbreaks if they exist", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_CA_rmsd", xsct_rosetta_bool, "Report CA RMSD?", "true" )
+		+ XMLSchemaAttribute( "ignore_residues_in_csts", xsct_residue_number_cslist, "Ignore these residues when applying constraints" )
+		+ XMLSchemaAttribute::attribute_w_default( "impose_constraints", xsct_rosetta_bool, "Impose constraints on the pose?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "constraints_only", xsct_rosetta_bool, "Only impose constraints and don't idealize", "false")
+		+ XMLSchemaAttribute( "pos_list", xsct_int_cslist, "List of positions to idealize" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Idealizes the bond lengths and angles of a pose. It then minimizes the pose in a stripped-down energy function in the presence of coordinate constraints", attlist );
+}
+
+std::string IdealizeMoverCreator::keyname() const {
+	return IdealizeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+IdealizeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new IdealizeMover );
+}
+
+void IdealizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IdealizeMover::provide_xml_schema( xsd );
+}
+
 
 utility::vector1< core::Size >
 IdealizeMover::ignore_residues_in_csts() const{

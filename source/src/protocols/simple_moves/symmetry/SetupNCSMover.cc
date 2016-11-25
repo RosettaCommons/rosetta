@@ -37,6 +37,9 @@
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -55,20 +58,20 @@ namespace symmetry {
 static THREAD_LOCAL basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
 
 // creators
-std::string
-SetupNCSMoverCreator::keyname() const {
-	return SetupNCSMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetupNCSMoverCreator::keyname() const {
+// XRW TEMP  return SetupNCSMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetupNCSMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupNCSMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetupNCSMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetupNCSMover );
+// XRW TEMP }
 
-std::string
-SetupNCSMoverCreator::mover_name() {
-	return "SetupNCS";
-}
+// XRW TEMP std::string
+// XRW TEMP SetupNCSMover::mover_name() {
+// XRW TEMP  return "SetupNCS";
+// XRW TEMP }
 
 ////////////////////
 ////////////////////
@@ -375,10 +378,63 @@ void SetupNCSMover::parse_my_tag(
 	}
 }
 
-std::string
-SetupNCSMover::get_name() const {
-	return SetupNCSMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP SetupNCSMover::get_name() const {
+// XRW TEMP  return SetupNCSMover::mover_name();
+// XRW TEMP }
+
+std::string SetupNCSMover::get_name() const {
+	return mover_name();
 }
+
+std::string SetupNCSMover::mover_name() {
+	return "SetupNCS";
+}
+
+void SetupNCSMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	attlist + XMLSchemaAttribute( "bb", xsct_rosetta_bool, "Sets dihedral constraints for backbone.")
+		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool, "Sets dihedral constraints for side chains.")
+		+ XMLSchemaAttribute( "wt", xsct_real, "XRW TO DO")
+		+ XMLSchemaAttribute( "limit", xsct_real, "XRW TO DO")
+		+ XMLSchemaAttribute( "symmetric_sequence", xsct_rosetta_bool, "Forces the sequence from the source into the target.")
+		+ XMLSchemaAttribute( "sd", xsct_real, "for Harmonic, distance")
+		+ XMLSchemaAttribute( "distance_pair", xsct_rosetta_bool, "descrip") ;
+
+	// Subelement attributes
+	AttributeList subelement_attlist;
+	subelement_attlist + XMLSchemaAttribute( "source", xs_string, "Reference residues, express as single residue or interval. Source and target need the same number of residues." )
+		+ XMLSchemaAttribute( "target", xs_string, "Target residues, express as single residue or interval. Source and target need the same number of residues." ) ;
+
+	// Subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement( "NCSgroup" , subelement_attlist , "Defines two set of residues for which the constraints are generated. Source and target groups need to contain the same number of residues. The constraints are defined to minimize the different between dihedral angles, instead of forcing the target conformation into the source conformation. Backbone dihedral angles cannot be set for residues at the beginning or at the end of a chain." ) ;
+	subelement_list.add_simple_subelement( "NCSend" , subelement_attlist , "Forces sequence and conformation from source to target but does not set up any constraint. This tag applies only if symmetric_sequence=1." ) ;
+	subelement_list.add_simple_subelement( "NCSdistance" , subelement_attlist , "Make distance pairing constraints. Examples: source='2A,9A' target='28A,35A' OR source='2A-20A,42A-60A' target='128A-156A,168A-186A'" ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Establishes a non crystallographic symmetry (NCS) between residues. The mover sets dihedral constraints on backbone and side chains to force residues to maintain the same conformation. The amino acid type can be enforced too. This mover does not perform any minimization, so it is usually followed by MinMover or RelaxMover.", attlist , subelement_list );
+
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Establishes a non crystallographic symmetry (NCS) between residues. The mover sets dihedral constraints on backbone and side chains to force residues to maintain the same conformation. The amino acid type can be enforced too. This mover does not perform any minimization, so it is usually followed by MinMover or RelaxMover.", attlist );
+}
+
+std::string SetupNCSMoverCreator::keyname() const {
+	return SetupNCSMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetupNCSMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetupNCSMover );
+}
+
+void SetupNCSMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetupNCSMover::provide_xml_schema( xsd );
+}
+
 
 
 } // symmetry

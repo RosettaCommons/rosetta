@@ -25,12 +25,15 @@ namespace refine {
 /// @brief creator for the LoopRefineInnerCycleContainer class
 class LoopRefineInnerCycleContainerCreator : public moves::MoverCreator {
 public:
-	LoopRefineInnerCycleContainerCreator() {}
-	virtual ~LoopRefineInnerCycleContainerCreator();
+	// XRW TEMP  LoopRefineInnerCycleContainerCreator() {}
+	// XRW TEMP  virtual ~LoopRefineInnerCycleContainerCreator();
 
-	virtual moves::MoverOP create_mover() const;
+	// XRW TEMP  virtual moves::MoverOP create_mover() const;
 
-	virtual std::string keyname() const;
+	// XRW TEMP  virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

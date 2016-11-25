@@ -62,6 +62,18 @@ public:
 	std::string atm2() const{ return atm2_; }
 	void atm2( std::string const a ){ atm2_ = a; }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	core::Real min_angle_, max_angle_; //dflt 0, +90
 	core::Real refx_,refy_,refz_;// a reference vector for calculation

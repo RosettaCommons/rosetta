@@ -40,6 +40,9 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -58,20 +61,20 @@ using namespace optimization;
 using namespace scoring;
 
 // creator
-std::string
-SymMinMoverCreator::keyname() const {
-	return SymMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymMinMoverCreator::keyname() const {
+// XRW TEMP  return SymMinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SymMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymMinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymMinMover );
+// XRW TEMP }
 
-std::string
-SymMinMoverCreator::mover_name() {
-	return "SymMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymMinMover::mover_name() {
+// XRW TEMP  return "SymMinMover";
+// XRW TEMP }
 
 //////////////////////////
 // default constructor
@@ -146,10 +149,10 @@ SymMinMover::apply( pose::Pose & pose )
 	PROF_STOP( basic::MINMOVER_APPLY );
 }
 
-std::string
-SymMinMover::get_name() const {
-	return SymMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymMinMover::get_name() const {
+// XRW TEMP  return SymMinMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP SymMinMover::clone() const { return protocols::moves::MoverOP( new  SymMinMover( *this ) ); }
 protocols::moves::MoverOP SymMinMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymMinMover ); }
@@ -165,6 +168,40 @@ void SymMinMover::parse_my_tag(
 
 	// symm-specific options
 }
+
+std::string SymMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymMinMover::mover_name() {
+	return "SymMinMover";
+}
+
+void SymMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = MinMover::complex_type_generator_for_min_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Does minimization over sidechain and/or backbone." )
+		.write_complex_type_to_schema( xsd );
+	// SymMinMover description: "The symmetric version of min mover (they take the same tags as asymmetric version). Notice that to refine symmetric degrees of freedom, all jumps must be allowed to move with the tag 'jump=ALL'."
+}
+
+std::string SymMinMoverCreator::keyname() const {
+	return SymMinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SymMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SymMinMover );
+}
+
+void SymMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymMinMover::provide_xml_schema( xsd );
+}
+
 
 
 } // symmetry

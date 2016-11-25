@@ -27,6 +27,7 @@
 #include <protocols/simple_moves/ddG.fwd.hh>
 #include <string>
 
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -64,7 +65,7 @@ public :
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
 	protocols::filters::FilterOP filter() const;
@@ -80,6 +81,22 @@ public :
 	bool relax_bound() const { return relax_bound_; }
 
 	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	define_ddG_schema();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private :
 	/// @brief Helper method to appropriately form unbound complex. Returns false if monomer.

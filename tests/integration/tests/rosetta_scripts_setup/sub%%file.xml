@@ -1,15 +1,16 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<SCOREFXNS>
 	</SCOREFXNS>
 	<FILTERS>
-		<AlaScan name=scan partner1=1 partner2=1 scorefxn=%%dock_sf%% interface_distance_cutoff=%%inter_cutoff%% repeats=%%sub_ala_rep%%/> Test carry over from main file
+		<AlaScan name="scan" partner1="1" partner2="1" scorefxn="%%dock_sf%%" interface_distance_cutoff="%%inter_cutoff%%" repeats="%%sub_ala_rep%%"/> Test carry over from main file
 	</FILTERS>
 	<MOVERS>
-		<DumpPdb name=dump fname="unmatched%%.pdb"/> Test graceful handling of unmatched percents 
+		<DumpPdb name="dump" fname="unmatched%%.pdb"/> Test graceful handling of unmatched percents 
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
 		<Add />
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

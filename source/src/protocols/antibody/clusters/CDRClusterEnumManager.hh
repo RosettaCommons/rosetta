@@ -49,6 +49,9 @@ public:
 	bool
 	cdr_cluster_is_present(std::string const & cluster) const;
 
+	utility::vector1<std::string>
+	get_recognized_cluster_definitions() const;
+
 private:
 
 

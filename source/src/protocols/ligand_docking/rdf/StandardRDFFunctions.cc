@@ -12,7 +12,7 @@
 /// @brief headers for standard RDF Functions used by RosettaHTS
 /// @author Sam DeLuca
 
-
+#include <protocols/ligand_docking/rdf/RDFFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
@@ -30,7 +30,7 @@
 #include <protocols/ligand_docking/rdf/StandardRDFFunctions.hh>
 
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/datacache/DataMap.hh>
 
 
@@ -46,7 +46,11 @@ RDFBaseOP RDFEtableCreator::create_rdf_function() const
 
 std::string RDFEtableCreator::type_name() const
 {
-	return "RDFEtableFunction";
+	return RDFEtableFunction::class_name();
+}
+
+void RDFEtableCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	RDFEtableFunction::provide_xml_schema( xsd );
 }
 
 RDFEtableFunction::RDFEtableFunction() : RDFBase("RDFEtableFunction"), etable_evaluator_(/* NULL */)
@@ -61,6 +65,11 @@ RDFEtableFunction::~RDFEtableFunction()
 
 }
 
+std::string RDFEtableFunction::class_name(){
+	return "RDFEtableFunction";
+}
+
+
 void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap & data_map)
 {
 	if ( !tag->hasOption("scorefxn") ) {
@@ -74,6 +83,18 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	etable_evaluator_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator(*etable) );
 
 }
+
+void
+RDFEtableFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Name of score function to use when generating etable" );
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+
+}
+
+
 
 RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
 {
@@ -106,8 +127,21 @@ RDFBaseOP RDFElecCreator::create_rdf_function() const
 
 std::string RDFElecCreator::type_name() const
 {
+	return RDFElecFunction::class_name();
+}
+
+
+
+void
+RDFElecCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFElecFunction::provide_xml_schema( xsd );
+}
+
+std::string
+RDFElecFunction::class_name(){
 	return "RDFElecFunction";
 }
+
 
 RDFElecFunction::RDFElecFunction() : RDFBase("RDFElecFunction"), coloumb_(/* NULL */)
 {
@@ -134,6 +168,17 @@ void RDFElecFunction::parse_my_tag(
 
 }
 
+
+void
+RDFElecFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Name of score function to use when determining coulomb potential" );
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+
+}
+
 RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 {
 	RDFResultList results;
@@ -154,6 +199,16 @@ RDFBaseOP RDFChargeCreator::create_rdf_function() const
 
 std::string RDFChargeCreator::type_name() const
 {
+	return RDFChargeFunction::class_name();
+}
+
+void
+RDFChargeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFChargeFunction::provide_xml_schema( xsd );
+}
+
+std::string
+RDFChargeFunction::class_name(){
 	return "RDFChargeFunction";
 }
 
@@ -188,6 +243,33 @@ void RDFChargeFunction::parse_my_tag(
 	this->add_function_name(function_name_);
 }
 
+
+
+
+void
+RDFChargeFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Define possible sign modes
+	XMLSchemaRestriction signs;
+	signs.name( "rdf_charge_sign_mode" );
+	signs.base_type( xs_string );
+	signs.add_restriction( xsr_enumeration, "same_sign" );
+	signs.add_restriction( xsr_enumeration, "ligand_plus" );
+	signs.add_restriction( xsr_enumeration, "ligand_minus" );
+	xsd.add_top_level_element( signs );
+
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "sign_mode", "rdf_charge_sign_mode", "XRW TO DO", "same_sign" );
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+
+}
+
+
+
+
+
 RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 {
 	RDFResultList results;
@@ -221,8 +303,19 @@ RDFBaseOP RDFHbondCreator::create_rdf_function() const
 
 std::string RDFHbondCreator::type_name() const
 {
+	return RDFHbondFunction::class_name();
+}
+
+void
+RDFHbondCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFHbondFunction::provide_xml_schema( xsd );
+}
+
+std::string
+RDFHbondFunction::class_name(){
 	return "RDFHbondFunction";
 }
+
 
 RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(/* NULL */)
 {
@@ -255,6 +348,27 @@ void RDFHbondFunction::parse_my_tag(
 	}
 	this->add_function_name(function_name_);
 }
+
+void
+RDFHbondFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Define possible sign modes
+	XMLSchemaRestriction signs;
+	signs.name( "rdf_hbond_sign_mode" );
+	signs.base_type( xs_string );
+	signs.add_restriction( xsr_enumeration, "unsigned" );
+	signs.add_restriction( xsr_enumeration, "ligand_acceptor" );
+	signs.add_restriction( xsr_enumeration, "ligand_donor" );
+	xsd.add_top_level_element( signs );
+
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "sign_mode", "rdf_hbond_sign_mode", "XRW TO DO", "unsigned" );
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+
+}
+
 
 void RDFHbondFunction::preamble(core::pose::Pose & pose)
 {
@@ -303,6 +417,16 @@ RDFBaseOP RDFBinaryHbondCreator::create_rdf_function() const
 
 std::string RDFBinaryHbondCreator::type_name() const
 {
+	return RDFBinaryHbondFunction::class_name();
+}
+
+void
+RDFBinaryHbondCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFBinaryHbondFunction::provide_xml_schema( xsd );
+}
+
+std::string
+RDFBinaryHbondFunction::class_name(){
 	return "RDFBinaryHbondFunction";
 }
 
@@ -336,6 +460,30 @@ void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::dataca
 	this->add_function_name(function_name_);
 }
 
+
+void
+RDFBinaryHbondFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Define possible sign modes
+	XMLSchemaRestriction signs;
+	signs.name( "rdf_binary_hbond_sign_mode" );
+	signs.base_type( xs_string );
+	signs.add_restriction( xsr_enumeration, "matching_pair" );
+	signs.add_restriction( xsr_enumeration, "ligand_acceptor" );
+	signs.add_restriction( xsr_enumeration, "ligand_donor" );
+	xsd.add_top_level_element( signs );
+
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "sign_mode", "rdf_binary_hbond_sign_mode", "XRW TO DO", "matching_pair" );
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+
+}
+
+
+
+
 RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 {
 	RDFResultList results;
@@ -368,6 +516,16 @@ RDFBaseOP RDFOrbitalFunctionCreator::create_rdf_function() const
 
 std::string RDFOrbitalFunctionCreator::type_name() const
 {
+	return RDFOrbitalFunction::class_name();
+}
+
+void
+RDFOrbitalFunctionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFOrbitalFunction::provide_xml_schema( xsd );
+}
+
+std::string
+RDFOrbitalFunction::class_name(){
 	return "RDFOrbitalFunction";
 }
 
@@ -391,6 +549,16 @@ void RDFOrbitalFunction::parse_my_tag(
 {
 
 }
+
+void
+RDFOrbitalFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Nothing in parse_my_tag!
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+}
+
+
 
 RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 {
@@ -433,9 +601,19 @@ RDFBaseOP RDFBinaryOrbitalFunctionCreator::create_rdf_function() const
 
 std::string RDFBinaryOrbitalFunctionCreator::type_name() const
 {
-	return "RDFBinaryOrbitalFunction";
+	return RDFBinaryOrbitalFunction::class_name();
 }
 
+void
+RDFBinaryOrbitalFunctionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	RDFBinaryOrbitalFunction::provide_xml_schema( xsd );
+}
+
+
+std::string
+RDFBinaryOrbitalFunction::class_name(){
+	return "RDFBinaryOrbitalFunction";
+}
 
 RDFBinaryOrbitalFunction::RDFBinaryOrbitalFunction() : RDFBase("RDFBinaryOrbitalFunction"),pose_(/* NULL */)
 {
@@ -453,6 +631,16 @@ RDFBinaryOrbitalFunction::~RDFBinaryOrbitalFunction()
 }
 
 void RDFBinaryOrbitalFunction::parse_my_tag(utility::tag::TagCOP, basic::datacache::DataMap &) {}
+
+void
+RDFBinaryOrbitalFunction::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Nothing in parse_my_tag!
+	RDFFunctionFactory::xsd_type_definition_w_attributes( xsd, class_name(), attlist, "XRW TO DO" );
+}
+
+
 
 RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_data )
 {

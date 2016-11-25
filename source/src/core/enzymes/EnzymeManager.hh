@@ -47,46 +47,46 @@ public:  // Declare friends ///////////////////////////////////////////////////
 public:  // Static constant data access ///////////////////////////////////////
 	/// @brief  Return the consensus sequence of the requested enzyme.
 	static std::string const & get_consensus_sequence(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	/// @brief  Return the consensus sequence type of the requested enzyme.
 	static ConsensusSequenceType get_consensus_sequence_type(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	/// @brief  Return the efficiency of the requested enzyme.
 	static core::Real get_efficiency(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	/// @brief  Return the second substrates or byproducts of the requested enzyme.
 	static utility::vector1< std::string > const & get_second_substrates_or_byproducts(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 
 	/// @brief  Return the identifiers (such as 3-letter codes) of the residues of the consensus sequence.
 	static utility::vector1< utility::vector1< std::string > > const & get_consensus_residues(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	/// @brief  Return the position in the consensus sequence of the reactive residue.
 	static core::uint get_reactive_residue_consensus_sequence_position(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 	/// @brief  Return the name of the reactive site atom.
 	static std::string const & get_reactive_atom(
-			std::string const & family,
-			std::string const & species,
-			std::string const & enzyme );
+		std::string const & family,
+		std::string const & species,
+		std::string const & enzyme );
 
 
 private:  // Private methods //////////////////////////////////////////////////

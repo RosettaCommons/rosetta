@@ -48,6 +48,9 @@
 
 #include <utility/io/izstream.hh>
 #include <protocols/toolbox/superimpose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace protein_interface_design {
 namespace filters {
@@ -526,11 +529,74 @@ utility::vector1< numeric::xyzVector< core::Real > >Ca_coords( core::pose::Pose 
 	return coords;
 }
 
-protocols::filters::FilterOP
-RmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP RmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RmsdFilter ); }
 
-std::string
-RmsdFilterCreator::keyname() const { return "Rmsd"; }
+// XRW TEMP std::string
+// XRW TEMP RmsdFilterCreator::keyname() const { return "Rmsd"; }
+
+std::string RmsdFilter::name() const {
+	return class_name();
+}
+
+std::string RmsdFilter::class_name() {
+	return "Rmsd";
+}
+
+void RmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "symmetry", xsct_rosetta_bool, "Should we be symmetry-aware?", "0" )
+		+ XMLSchemaAttribute( "chains", xs_string, "Chain characters without separation" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimpose_on_all", xsct_rosetta_bool, "Do we want to superimpose on all residues?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimpose", xsct_rosetta_bool, "Do we want to superimpose?", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold in RMSD above which the filter fails", "5" )
+		+ XMLSchemaAttribute( "by_aln", xsct_rosetta_bool, "Perform RMSD calculation as guided by a sequence alignment file" )
+		+ XMLSchemaAttribute( "aln_files", xs_string, "Comma-separated list of alignment files" )
+		+ XMLSchemaAttribute( "template_names", xs_string, "Comma-separated list of template names" )
+		+ XMLSchemaAttribute( "query_names", xs_string, "Comma-separated list of query names" )
+		+ XMLSchemaAttribute::attribute_w_default( "rms_residues_from_pose_cache", xs_string, "Are the RMS residues stored in the Pose's cache?", "1" );
+
+	AttributeList rmsd_subtag_attributes;
+	rmsd_subtag_attributes + XMLSchemaAttribute( "resnum", xsct_refpose_enabled_residue_number, "Residue number for the beginning of the alignment region" )
+		+ XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue number for the beginning of the alignment region" );
+
+	AttributeList span_subtag_attributes;
+	span_subtag_attributes + XMLSchemaAttribute( "begin_res_num", xsct_refpose_enabled_residue_number, "Residue number for the beginning of the alignment region" )
+		+ XMLSchemaAttribute( "begin_pdb_num", xsct_refpose_enabled_residue_number, "Residue number for the beginning of the alignment region" )
+		+ XMLSchemaAttribute( "end_res_num", xsct_refpose_enabled_residue_number, "Residue number for the end of the alignment region" )
+		+ XMLSchemaAttribute( "end_pdb_num", xsct_refpose_enabled_residue_number, "Residue number for the end of the alignment region" );
+
+	AttributeList spn2_subtag_attributes;
+	spn2_subtag_attributes + XMLSchemaAttribute( "begin_native", xsct_non_negative_integer, "Residue number for the beginning of the alignment region, on the native" )
+		+ XMLSchemaAttribute( "end_native", xsct_non_negative_integer, "Residue number for the end of the alignment region, on the native" )
+		+ XMLSchemaAttribute( "begin_pose", xsct_non_negative_integer, "Residue number for the beginning of the alignment region, on the pose" )
+		+ XMLSchemaAttribute( "end_pose", xsct_non_negative_integer, "Residue number for the end of the alignment region, on the pose" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "rmsd", rmsd_subtag_attributes, "XRW TODO"/*, 0 minoccurs*/ );
+	ssl.add_simple_subelement( "span", span_subtag_attributes, "XRW TODO"/*, 0 minoccurs*/ );
+	ssl.add_simple_subelement( "span_two", spn2_subtag_attributes, "XRW TODO"/*, 0 minoccurs*/ );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "Filter based on the C-alpha RMSD to a reference structure.", attlist, ssl );
+}
+
+std::string RmsdFilterCreator::keyname() const {
+	return RmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RmsdFilter );
+}
+
+void RmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RmsdFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

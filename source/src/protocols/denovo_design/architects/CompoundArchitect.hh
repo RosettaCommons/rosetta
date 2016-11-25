@@ -59,9 +59,27 @@ public:
 	virtual StructureDataOP
 	design( core::pose::Pose const & pose, core::Real & random ) const;
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static std::string
+	subelement_ct_namer( std::string );
+
+	static std::string
+	pairing_subelement_ct_namer( std::string );
+
+	static std::string
+	pairing_group_namer();
+
+	static void
+	define_pairing_group( utility::tag::XMLSchemaDefinition & );
+
 protected:
 	virtual void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+	static void
+	attributes_for_parse_my_tag(utility::tag::AttributeList& attlist);
 
 public:
 	void
@@ -91,6 +109,7 @@ private:
 
 	void
 	add_parent_name( StructureArchitect & architect ) const;
+
 
 private:
 	DeNovoArchitectCOPs architects_;

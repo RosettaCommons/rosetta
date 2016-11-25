@@ -16,6 +16,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <platform/types.hh>
 
 #include <iosfwd>
@@ -122,8 +123,14 @@ std::string make_compound_statement(
 utility::sql_database::sessionOP
 parse_database_connection(
 	utility::tag::TagCOP tag);
-}
 
+void
+attributes_for_parse_database_connection(
+	utility::tag::AttributeList &,
+	utility::tag::XMLSchemaDefinition & xsd
+);
+
+}
 }
 
 #endif /* INCLUDED_basic_database_sql_utils_HH */

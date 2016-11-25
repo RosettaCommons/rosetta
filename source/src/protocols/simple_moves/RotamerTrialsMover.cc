@@ -40,6 +40,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -51,20 +54,20 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RotamerTrialsMover
 namespace protocols {
 namespace simple_moves {
 
-std::string
-RotamerTrialsMoverCreator::keyname() const {
-	return RotamerTrialsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMoverCreator::keyname() const {
+// XRW TEMP  return RotamerTrialsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RotamerTrialsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerTrialsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RotamerTrialsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsMover );
+// XRW TEMP }
 
-std::string
-RotamerTrialsMoverCreator::mover_name() {
-	return "RotamerTrialsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMover::mover_name() {
+// XRW TEMP  return "RotamerTrialsMover";
+// XRW TEMP }
 
 // default constructor
 RotamerTrialsMover::RotamerTrialsMover() : protocols::moves::Mover()
@@ -134,10 +137,10 @@ RotamerTrialsMover::apply( core::pose::Pose & pose )
 	core::pack::rotamer_trials( pose, *scorefxn_, ptask );
 }
 
-std::string
-RotamerTrialsMover::get_name() const {
-	return "RotamerTrialsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMover::get_name() const {
+// XRW TEMP  return "RotamerTrialsMover";
+// XRW TEMP }
 
 void
 RotamerTrialsMover::show(std::ostream & output) const
@@ -185,6 +188,63 @@ RotamerTrialsMover::parse_my_tag(
 	show_packer_task_ = tag->getOption<bool>( "show_packer_task", 0 );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }
+
+std::string RotamerTrialsMover::get_name() const {
+	return mover_name();
+}
+
+std::string RotamerTrialsMover::mover_name() {
+	return "RotamerTrialsMover";
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+RotamerTrialsMover::complex_type_generator_for_rotamer_trials_mover( utility::tag::XMLSchemaDefinition & /*xsd*/ ){
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "show_packer_task", xsct_rosetta_bool, "XRW TO DO", "false");
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW_TODO", attlist );
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_attributes( attlist )
+		.add_optional_name_attribute();
+	return ct_gen;
+}
+
+void RotamerTrialsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	//AttributeList attlist;
+	//attlist
+	// + XMLSchemaAttribute::attribute_w_default( "show_packer_task", xsct_rosetta_bool, "XRW TO DO", "false");
+	//rosetta_scripts::attributes_for_parse_score_function( attlist );
+	//rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW_TODO", attlist );
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_rotamer_trials_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string RotamerTrialsMoverCreator::keyname() const {
+	return RotamerTrialsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RotamerTrialsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RotamerTrialsMover );
+}
+
+void RotamerTrialsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerTrialsMover::provide_xml_schema( xsd );
+}
+
 
 std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover)
 {

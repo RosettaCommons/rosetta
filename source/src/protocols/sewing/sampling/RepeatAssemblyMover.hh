@@ -50,13 +50,13 @@ public:
 	RepeatAssemblyMover();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 	std::pair< bool, AssemblyOP >
 	dfs_cycle_finder(
@@ -65,9 +65,8 @@ public:
 		AssemblyOP assembly
 	) const;
 
-	virtual
 	AssemblyOP
-	generate_assembly();
+	generate_assembly() override;
 
 	///adds single repeat unit data to score file
 	void
@@ -107,13 +106,24 @@ public:
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual
 	core::pose::Pose
 	refine_assembly(
 		AssemblyOP & assembly
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

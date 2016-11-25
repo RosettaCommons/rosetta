@@ -62,6 +62,9 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 ///////////////////////////////////////////////////
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.EvolutionaryDynamicsMover" );
 static THREAD_LOCAL basic::Tracer TR_energies( "protocols.simple_moves.EvolutionaryDynamicsMover.individual_energies" );
@@ -74,22 +77,22 @@ namespace simple_moves {
 
 using namespace ObjexxFCL::format;
 
-std::string
-EvolutionaryDynamicsMoverCreator::keyname() const
-{
-	return EvolutionaryDynamicsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EvolutionaryDynamicsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return EvolutionaryDynamicsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-EvolutionaryDynamicsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EvolutionaryDynamicsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP EvolutionaryDynamicsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new EvolutionaryDynamicsMover );
+// XRW TEMP }
 
-std::string
-EvolutionaryDynamicsMoverCreator::mover_name()
-{
-	return "EvolutionaryDynamics";
-}
+// XRW TEMP std::string
+// XRW TEMP EvolutionaryDynamicsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "EvolutionaryDynamics";
+// XRW TEMP }
 
 /// @brief default constructor
 EvolutionaryDynamicsMover::EvolutionaryDynamicsMover():
@@ -279,10 +282,10 @@ EvolutionaryDynamicsMover::apply( Pose & pose )
 }// apply
 
 
-std::string
-EvolutionaryDynamicsMover::get_name() const {
-	return EvolutionaryDynamicsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EvolutionaryDynamicsMover::get_name() const {
+// XRW TEMP  return EvolutionaryDynamicsMover::mover_name();
+// XRW TEMP }
 
 /// @brief parse xml file
 void
@@ -292,9 +295,46 @@ EvolutionaryDynamicsMover::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	Super::parse_my_tag( tag, data, filters, movers, pose );
 	population_size( tag->getOption< core::Size >( "population_size", 1000000 ) );
 	disable_fitness_evaluation( tag->getOption< bool >( "disable_fitness_evaluation", false ) );
-
-
 }
+
+std::string EvolutionaryDynamicsMover::get_name() const {
+	return mover_name();
+}
+
+std::string EvolutionaryDynamicsMover::mover_name() {
+	return "EvolutionaryDynamics";
+}
+
+void EvolutionaryDynamicsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("population_size", xsct_positive_integer, "Set population size. Default = 1000000", "1000000")
+		+ XMLSchemaAttribute::attribute_w_default("disable_fitness_evaluation", xsct_rosetta_bool, "Disable fitness evaluation. Default = false", "false");
+
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Overwrites the boltzmann function in GenericMonteCarloMover to sample according to evolutionary dynamics instead." )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string EvolutionaryDynamicsMoverCreator::keyname() const {
+	return EvolutionaryDynamicsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+EvolutionaryDynamicsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new EvolutionaryDynamicsMover );
+}
+
+void EvolutionaryDynamicsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EvolutionaryDynamicsMover::provide_xml_schema( xsd );
+	//GenericMonteCarloMover::define_composition_schema( xsd );
+}
+
 
 
 } // ns simple_moves

@@ -156,10 +156,10 @@ void RestrictIdentitiesOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 	// See, I think this has to be there. But it still checks for a non-empty.
 	// AMW TODO check
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "identities", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "false" );
+		+ XMLSchemaAttribute::required_attribute( "identities", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xsct_rosetta_bool, "XRW TO DO",  "false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 } //namespace protocols

@@ -72,6 +72,10 @@
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/HBondFeaturesCreator.hh>
 
 
 //Auto Headers
@@ -157,8 +161,8 @@ HBondFeatures::HBondFeatures(HBondFeatures const & src) :
 
 HBondFeatures::~HBondFeatures() = default;
 
-string
-HBondFeatures::type_name() const { return "HBondFeatures"; }
+// XRW TEMP string
+// XRW TEMP HBondFeatures::type_name() const { return "HBondFeatures"; }
 
 void
 HBondFeatures::write_schema_to_db(
@@ -1231,6 +1235,49 @@ HBondFeatures::insert_hbond_dehydron_row(
 	basic::database::safely_write_to_database(stmt);
 
 }
+
+std::string HBondFeatures::type_name() const {
+	return class_name();
+}
+
+std::string HBondFeatures::class_name() {
+	return "HBondFeatures";
+}
+
+void HBondFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction hbond_def;
+	hbond_def.name( "hbond_def" );
+	hbond_def.base_type( xs_string );
+	hbond_def.add_restriction( xsr_enumeration, "energy" );
+	hbond_def.add_restriction( xsr_enumeration, "AHdist" );
+	xsd.add_top_level_element( hbond_def );
+
+	AttributeList attlist;
+	// This doesn't use parse_score_function so I won't either
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "Scorefunction" )
+		+ XMLSchemaAttribute::attribute_w_default( "definition_type", "hbond_def", "Definition for hydrogen bond assignment: either by 'energy' or acceptor-H distance ('AHdist')", "energy" )
+		+ XMLSchemaAttribute::attribute_w_default( "definition_threshold", xsct_real, "Threshold for making an H-bond assignment. Probably should be -1 - 0 for energy, 2-2.8 for AHdist", "0" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record features related to all the hydrogen bonds made in a Pose", attlist );
+}
+
+std::string HBondFeaturesCreator::type_name() const {
+	return HBondFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+HBondFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new HBondFeatures );
+}
+
+void HBondFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HBondFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

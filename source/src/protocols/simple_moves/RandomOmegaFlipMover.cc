@@ -37,6 +37,9 @@
 // basic headers
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -153,19 +156,52 @@ RandomOmegaFlipMover::parse_my_tag(
 }
 
 /// @brief RandomOmegaFlipMoverCreator interface, name of the mover
-std::string RandomOmegaFlipMoverCreator::mover_name() {
+// XRW TEMP std::string RandomOmegaFlipMover::mover_name() {
+// XRW TEMP  return "RandomOmegaFlipMover";
+// XRW TEMP }
+
+/// @brief RandomOmegaFlipMoverCreator interface, returns a unique key name to be used in xml file
+// XRW TEMP std::string RandomOmegaFlipMoverCreator::keyname() const {
+// XRW TEMP  return RandomOmegaFlipMover::mover_name();
+// XRW TEMP }
+
+/// @brief RandomOmegaFlipMoverCreator interface, return a new instance
+// XRW TEMP protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
+// XRW TEMP }
+
+std::string RandomOmegaFlipMover::get_name() const {
+	return mover_name();
+}
+
+std::string RandomOmegaFlipMover::mover_name() {
 	return "RandomOmegaFlipMover";
 }
 
-/// @brief RandomOmegaFlipMoverCreator interface, returns a unique key name to be used in xml file
-std::string RandomOmegaFlipMoverCreator::keyname() const {
-	return RandomOmegaFlipMoverCreator::mover_name();
+void RandomOmegaFlipMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	//All it has is a movemap parsed using parse_movemap
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW_TODO", attlist, subelements );
 }
 
-/// @brief RandomOmegaFlipMoverCreator interface, return a new instance
-protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
+std::string RandomOmegaFlipMoverCreator::keyname() const {
+	return RandomOmegaFlipMover::mover_name();
 }
+
+protocols::moves::MoverOP
+RandomOmegaFlipMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RandomOmegaFlipMover );
+}
+
+void RandomOmegaFlipMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RandomOmegaFlipMover::provide_xml_schema( xsd );
+}
+
 
 
 } // simple_moves

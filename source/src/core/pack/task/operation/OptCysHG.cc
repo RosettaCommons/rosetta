@@ -66,7 +66,7 @@ void OptCysHG::apply( Pose const & pose, PackerTask & task ) const {
 
 	// restrict to only non-disulfide bonded CYS
 	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
-		if ( ! pose.residue( i ).type().is_sidechain_thiol() || pose.residue( i ).has_variant_type( DISULFIDE ) ) { //check both names to be double sure; used in fake Cys catalytic residues
+		if ( ! pose.residue_type( i ).is_sidechain_thiol() || pose.residue_type( i ).has_variant_type( DISULFIDE ) ) { //check both names to be double sure; used in fake Cys catalytic residues
 			optH.disallow_resid( i );
 		}
 	}
@@ -78,7 +78,7 @@ void OptCysHG::apply( Pose const & pose, PackerTask & task ) const {
 std::string OptCysHG::keyname() { return "OptCysHG"; }
 
 void OptCysHG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "run optH on non-disulfided bonded CYS only; meant to relieve any clashes caused by swapping of CYD to CYS after calling conformation::detect_disulfides" );
 }
 
 TaskOperationOP OptCysHGCreator::create_task_operation() const
@@ -97,4 +97,3 @@ void OptCysHGCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 } // namespace task
 } // namespace pack
 } // namespace core
-

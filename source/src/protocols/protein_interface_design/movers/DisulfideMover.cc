@@ -56,6 +56,9 @@
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
 #include <utility/vector0.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -77,22 +80,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers
 
 const core::scoring::disulfides::CentroidDisulfidePotential DisulfideMover::potential_;
 
-std::string
-DisulfideMoverCreator::keyname() const
-{
-	return DisulfideMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DisulfideMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DisulfideMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DisulfideMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DisulfideMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DisulfideMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DisulfideMover );
+// XRW TEMP }
 
-std::string
-DisulfideMoverCreator::mover_name()
-{
-	return "DisulfideMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DisulfideMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DisulfideMover";
+// XRW TEMP }
 
 /// @brief default ctor
 DisulfideMover::DisulfideMover() :
@@ -235,10 +238,10 @@ void DisulfideMover::apply( Pose & pose ) {
 
 }
 
-std::string
-DisulfideMover::get_name() const {
-	return DisulfideMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DisulfideMover::get_name() const {
+// XRW TEMP  return DisulfideMover::mover_name();
+// XRW TEMP }
 
 /// @brief Find all residues which could disulfide bond to a target
 /// @return pairs of residues (target, host) from the target protein and the
@@ -330,6 +333,41 @@ void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	TR<<std::endl;
 }
+
+std::string DisulfideMover::get_name() const {
+	return mover_name();
+}
+
+std::string DisulfideMover::mover_name() {
+	return "DisulfideMover";
+}
+
+void DisulfideMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "targets", xsct_refpose_enabled_residue_number_cslist, "List of target residue numbers for disulfide creation" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_repack" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_minimize" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string DisulfideMoverCreator::keyname() const {
+	return DisulfideMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DisulfideMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DisulfideMover );
+}
+
+void DisulfideMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisulfideMover::provide_xml_schema( xsd );
+}
+
 
 
 } // movers

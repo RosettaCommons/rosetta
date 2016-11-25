@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-BetaTurnDetectionFeaturesCreator::BetaTurnDetectionFeaturesCreator() {}
-BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() = default;
-FeaturesReporterOP BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new BetaTurnDetectionFeatures );
-}
+// XRW TEMP BetaTurnDetectionFeaturesCreator::BetaTurnDetectionFeaturesCreator() {}
+// XRW TEMP BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new BetaTurnDetectionFeatures );
+// XRW TEMP }
 
-std::string BetaTurnDetectionFeaturesCreator::type_name() const {
-	return "BetaTurnDetectionFeatures";
-}
+// XRW TEMP std::string BetaTurnDetectionFeaturesCreator::type_name() const {
+// XRW TEMP  return "BetaTurnDetectionFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

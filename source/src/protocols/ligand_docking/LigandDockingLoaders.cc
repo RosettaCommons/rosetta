@@ -26,6 +26,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -48,11 +49,12 @@ void InterfaceBuilderLoader::load_data(
 	using namespace utility::tag;
 
 	for ( TagCOP interface_builder_tag : tag->getTags() ) {
-		std::string const name( interface_builder_tag->getName() );
+		runtime_assert( interface_builder_tag->getName() == InterfaceBuilder::element_name() );
+		std::string const name( interface_builder_tag->getOption< std::string >( "name" ));
 
 		if ( data.has("interface_builders", name) ) {
 			TR << "WARNING WARNING movemap_builder of name \"" << name
-				<< ") already exists. Skipping\n" << interface_builder_tag << std::endl;
+				<< "\" already exists. Skipping\n" << interface_builder_tag << std::endl;
 			continue;
 		}
 		///// Add this movemap to the data map
@@ -63,11 +65,46 @@ void InterfaceBuilderLoader::load_data(
 	TR.flush();
 }
 
+std::string InterfaceBuilderLoader::loader_name() { return "INTERFACE_BUILDERS"; }
+
+std::string
+InterfaceBuilderLoader::interface_builder_ct_namer( std::string const & element_name )
+{
+	return "interface_builder_" + element_name + "_type";
+}
+
+void InterfaceBuilderLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	InterfaceBuilder::provide_xml_schema( xsd );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_already_defined_subelement( InterfaceBuilder::element_name(), & interface_builder_ct_namer );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( loader_name() )
+		.complex_type_naming_func( & interface_builder_ct_namer )
+		.set_subelements_repeatable( subelements )
+		.description( "Define a set of InterfaceBuilders and load them into the DataMap for later use by MoveMapBuilders" )
+		.write_complex_type_to_schema( xsd );
+}
+
+
 jd2::parser::DataLoaderOP
 InterfaceBuilderLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new InterfaceBuilderLoader ); }
 
 std::string
-InterfaceBuilderLoaderCreator::keyname() const { return "INTERFACE_BUILDERS"; }
+InterfaceBuilderLoaderCreator::keyname() const { return InterfaceBuilderLoader::loader_name(); }
+
+InterfaceBuilderLoaderCreator::DerivedNameFunction
+InterfaceBuilderLoaderCreator::schema_ct_naming_function() const
+{
+	return & InterfaceBuilderLoader::interface_builder_ct_namer;
+}
+
+void
+InterfaceBuilderLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceBuilderLoader::provide_xml_schema( xsd );
+}
 
 MoveMapBuilderLoader::MoveMapBuilderLoader() {}
 MoveMapBuilderLoader::~MoveMapBuilderLoader() = default;
@@ -81,11 +118,11 @@ void MoveMapBuilderLoader::load_data(
 	using namespace utility::tag;
 
 	for ( TagCOP movemap_builder_tag : tag->getTags() ) {
-		std::string const name( movemap_builder_tag->getName() );
+		std::string const name( movemap_builder_tag->getOption< std::string> ( "name" ) );
 
 		if ( data.has("movemap_builders", name) ) {
 			TR << "WARNING WARNING movemap_builder of name \"" << name
-				<< ") already exists. Skipping\n" << movemap_builder_tag << std::endl;
+				<< "\" already exists. Skipping\n" << movemap_builder_tag << std::endl;
 			continue;
 		}
 		///// Add this movemap to the data map
@@ -96,11 +133,44 @@ void MoveMapBuilderLoader::load_data(
 	TR.flush();
 }
 
+std::string MoveMapBuilderLoader::loader_name() { return "MOVEMAP_BUILDERS"; }
+std::string MoveMapBuilderLoader::movemap_builder_ct_namer( std::string const & element_name )
+{
+	return "move_map_builder_" + element_name + "_type";
+}
+void MoveMapBuilderLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	MoveMapBuilder::provide_xml_schema( xsd );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_already_defined_subelement( MoveMapBuilder::element_name(), & movemap_builder_ct_namer );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( loader_name() )
+		.complex_type_naming_func( & movemap_builder_ct_namer )
+		.set_subelements_repeatable( subelements )
+		.description( "Define a set of MoveMapBuilders and load them into the DataMap for later use by other Movers and Filters" )
+		.write_complex_type_to_schema( xsd );
+
+
+}
+
 jd2::parser::DataLoaderOP
 MoveMapBuilderLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new MoveMapBuilderLoader ); }
 
 std::string
-MoveMapBuilderLoaderCreator::keyname() const { return "MOVEMAP_BUILDERS"; }
+MoveMapBuilderLoaderCreator::keyname() const { return MoveMapBuilderLoader::loader_name(); }
+
+MoveMapBuilderLoaderCreator::DerivedNameFunction
+MoveMapBuilderLoaderCreator::schema_ct_naming_function() const
+{
+	return & MoveMapBuilderLoader::movemap_builder_ct_namer;
+}
+
+void MoveMapBuilderLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MoveMapBuilderLoader::provide_xml_schema( xsd );
+}
+
 
 LigandAreaLoader::LigandAreaLoader() {}
 LigandAreaLoader::~LigandAreaLoader() = default;
@@ -114,11 +184,12 @@ void LigandAreaLoader::load_data(
 	using namespace utility::tag;
 
 	for ( TagCOP ligand_area_tag : tag->getTags() ) {
-		std::string const name( ligand_area_tag->getName() );
+		runtime_assert( ligand_area_tag->getName() == LigandArea::element_name() );
+		std::string const name( ligand_area_tag->getOption< std::string >( "name" ) );
 
 		if ( data.has("ligand_areas", name) ) {
 			TR << "WARNING WARNING ligand_area of name \"" << name
-				<< ") already exists. Skipping\n" << ligand_area_tag << std::endl;
+				<< "\" already exists. Skipping\n" << ligand_area_tag << std::endl;
 			continue;
 		}
 		///// Add this movemap to the data map
@@ -129,11 +200,43 @@ void LigandAreaLoader::load_data(
 	TR.flush();
 }
 
+std::string LigandAreaLoader::loader_name() { return "LIGAND_AREAS"; }
+std::string LigandAreaLoader::ligand_area_ct_namer( std::string const & element_name )
+{
+	return "ligand_area_builder_" + element_name + "_type";
+}
+void LigandAreaLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	LigandArea::provide_xml_schema( xsd );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_already_defined_subelement( LigandArea::element_name(), & ligand_area_ct_namer );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( loader_name() )
+		.complex_type_naming_func( & ligand_area_ct_namer )
+		.set_subelements_repeatable( subelements )
+		.description( "Define a set of LigandAreas and load them into the DataMap for later use by MoveMapBuilders and other Movers and Filters" )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+
 jd2::parser::DataLoaderOP
 LigandAreaLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new LigandAreaLoader ); }
 
 std::string
-LigandAreaLoaderCreator::keyname() const { return "LIGAND_AREAS"; }
+LigandAreaLoaderCreator::keyname() const { return LigandAreaLoader::loader_name(); }
+
+LigandAreaLoaderCreator::DerivedNameFunction
+LigandAreaLoaderCreator::schema_ct_naming_function() const
+{
+	return & LigandAreaLoader::ligand_area_ct_namer;
+}
+
+void LigandAreaLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LigandAreaLoader::provide_xml_schema( xsd );
+}
 
 
 } //namespace jd2

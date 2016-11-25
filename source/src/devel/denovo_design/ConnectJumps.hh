@@ -37,13 +37,25 @@ public:
 	~ConnectJumps() override;
 
 	/// @brief Return the name of this mover.
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Apply the ConnectJumps. Overloaded apply function from mover base class.
 	void apply( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 

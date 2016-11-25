@@ -37,7 +37,7 @@ public:
 	// Undefinded, commenting out to fix PyRosetta build  SwitchChainOrderMover( std::string const & );
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -54,6 +54,18 @@ public:
 
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP s );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1<core::Size> chain_ids_;
 

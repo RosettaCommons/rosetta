@@ -57,6 +57,9 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace devel {
@@ -96,11 +99,11 @@ InsertionSiteTestMover::clone() const{
 }
 
 
-std::string
-InsertionSiteTestMover::get_name() const
-{
-	return "InsertionSiteTestMover";
-}
+// XRW TEMP std::string
+// XRW TEMP InsertionSiteTestMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "InsertionSiteTestMover";
+// XRW TEMP }
 
 
 /// @details
@@ -491,10 +494,54 @@ InsertionSiteTestMover::evaluate_insert_pose(
 }
 
 
-std::string
-InsertionSiteTestMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP InsertionSiteTestMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InsertionSiteTestMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InsertionSiteTestMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InsertionSiteTestMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP InsertionSiteTestMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InsertionSiteTestMover";
+// XRW TEMP }
+
+std::string InsertionSiteTestMover::get_name() const {
+	return mover_name();
+}
+
+std::string InsertionSiteTestMover::mover_name() {
+	return "InsertionSiteTestMover";
+}
+
+void InsertionSiteTestMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return InsertionSiteTestMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist
+		+ XMLSchemaAttribute( "test_insert_ss", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "allowed_sc_increase", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "seqpos", xsct_positive_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "PDB_numbering", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "repeats", xsct_non_negative_integer, "XRW TO DO" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	AttributeList span_attributes;
+	core::pose::attributes_for_get_resnum( span_attributes, "begin_" );
+	core::pose::attributes_for_get_resnum( span_attributes, "end_" );
+	subelements.add_simple_subelement( "span", span_attributes, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string InsertionSiteTestMoverCreator::keyname() const {
+	return InsertionSiteTestMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -502,11 +549,11 @@ InsertionSiteTestMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new InsertionSiteTestMover );
 }
 
-std::string
-InsertionSiteTestMoverCreator::mover_name()
+void InsertionSiteTestMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "InsertionSiteTestMover";
+	InsertionSiteTestMover::provide_xml_schema( xsd );
 }
+
 
 
 }

@@ -33,27 +33,30 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover"
 #include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-PSSM2BfactorMoverCreator::keyname() const
-{
-	return PSSM2BfactorMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PSSM2BfactorMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PSSM2BfactorMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PSSM2BfactorMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PSSM2BfactorMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PSSM2BfactorMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PSSM2BfactorMover );
+// XRW TEMP }
 
-std::string
-PSSM2BfactorMoverCreator::mover_name()
-{
-	return "PSSM2Bfactor";
-}
+// XRW TEMP std::string
+// XRW TEMP PSSM2BfactorMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PSSM2Bfactor";
+// XRW TEMP }
 
 PSSM2BfactorMover::PSSM2BfactorMover()
 : moves::Mover("PSSM2Bfactor"),
@@ -88,7 +91,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	for ( ConstraintCOP const c : constraints ) {
 		if ( c->type() != "SequenceProfile" ) continue;
-		
+
 		SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 		runtime_assert( seqprof_cst != nullptr );
 		runtime_assert( seqprof_cst->profile_mapping() != nullptr );
@@ -138,10 +141,10 @@ PSSM2BfactorMover::apply( Pose & pose )
 	TR<<"Read "<<cst_num<<" sequence constraints"<<std::endl;
 }
 
-std::string
-PSSM2BfactorMover::get_name() const {
-	return PSSM2BfactorMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PSSM2BfactorMover::get_name() const {
+// XRW TEMP  return PSSM2BfactorMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 PSSM2BfactorMover::clone() const
@@ -168,5 +171,39 @@ PSSM2BfactorMover::parse_my_tag(
 	min_value( tag->getOption< core::Real >( "Value_for_red", -1.0 ));
 	TR<<"PSSM2Bfactor sets Value_for_blue: "<<max_value_<<" Value_for_red: "<<min_value_<<std::endl;
 }
+
+std::string PSSM2BfactorMover::get_name() const {
+	return mover_name();
+}
+
+std::string PSSM2BfactorMover::mover_name() {
+	return "PSSM2Bfactor";
+}
+
+void PSSM2BfactorMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "Value_for_blue", xsct_real, "PSSM score cutoff below which b factors will ", "5.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "Chain number for which to calculate PSSM and store as B factors", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "Value_for_red", xsct_real, "Above this PSSM score, B factors will be set to 50", "-1.0");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sets B factors in the PDB based on per-residue PSSM score", attlist );
+}
+
+std::string PSSM2BfactorMoverCreator::keyname() const {
+	return PSSM2BfactorMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PSSM2BfactorMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PSSM2BfactorMover );
+}
+
+void PSSM2BfactorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PSSM2BfactorMover::provide_xml_schema( xsd );
+}
+
 } // simple_moves
 } // protocols

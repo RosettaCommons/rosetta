@@ -35,6 +35,9 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 using namespace core;
 using namespace core::scoring;
@@ -53,17 +56,17 @@ using core::pose::PoseOP;
 using core::pose::Pose;
 using core::Real;
 
-std::string
-RemoveLigandFilterCreator::keyname() const
-{
-	return "RemoveLigandFilter";
-}
+// XRW TEMP std::string
+// XRW TEMP RemoveLigandFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return "RemoveLigandFilter";
+// XRW TEMP }
 
-FilterOP
-RemoveLigandFilterCreator::create_filter() const
-{
-	return FilterOP( new RemoveLigandFilter );
-}
+// XRW TEMP FilterOP
+// XRW TEMP RemoveLigandFilterCreator::create_filter() const
+// XRW TEMP {
+// XRW TEMP  return FilterOP( new RemoveLigandFilter );
+// XRW TEMP }
 
 
 
@@ -159,6 +162,53 @@ RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
 		filter_ = find_filter->second;
 	}
 }
+
+std::string RemoveLigandFilter::name() const {
+	return class_name();
+}
+
+std::string RemoveLigandFilter::class_name() {
+	return "RemoveLigandFilter";
+}
+
+void RemoveLigandFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"threshold", xsct_real,
+		"XSD XRW: TO DO score threshold",
+		"3.0");
+
+	attlist + XMLSchemaAttribute(
+		"mover", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"filter", xs_string,
+		"XSD XRW: TO DO rmsd type filter");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Check if the ligand's pocket is stable by removing the ligand, "
+		"relaxing the structure and calculating rms to the starting structure.",
+		attlist );
+}
+
+std::string RemoveLigandFilterCreator::keyname() const {
+	return RemoveLigandFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RemoveLigandFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RemoveLigandFilter );
+}
+
+void RemoveLigandFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RemoveLigandFilter::provide_xml_schema( xsd );
+}
+
 
 } // enzdes
 } // protocols

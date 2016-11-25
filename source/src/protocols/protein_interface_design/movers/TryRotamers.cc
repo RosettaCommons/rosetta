@@ -39,6 +39,9 @@
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -52,26 +55,26 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.TryRotamers" );
 
-std::string
-TryRotamersCreator::keyname() const
-{
-	return TryRotamersCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TryRotamersCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TryRotamers::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TryRotamersCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TryRotamers );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TryRotamersCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TryRotamers );
+// XRW TEMP }
 
-std::string
-TryRotamersCreator::mover_name()
-{
-	return "TryRotamers";
-}
+// XRW TEMP std::string
+// XRW TEMP TryRotamers::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TryRotamers";
+// XRW TEMP }
 
 
 TryRotamers::TryRotamers() :
-	protocols::moves::Mover( TryRotamersCreator::mover_name() )
+	protocols::moves::Mover( TryRotamers::mover_name() )
 { }
 
 TryRotamers::TryRotamers( Size resnum,
@@ -83,7 +86,7 @@ TryRotamers::TryRotamers( Size resnum,
 	bool solo_res,
 	bool include_current
 ) :
-	protocols::moves::Mover( TryRotamersCreator::mover_name() ),
+	protocols::moves::Mover( TryRotamers::mover_name() ),
 	scorefxn_(scorefxn.clone()),
 	resnum_(resnum),
 	jump_num_(jump_num),
@@ -212,10 +215,10 @@ TryRotamers::apply ( pose::Pose & pose )
 	pose.fold_tree( saved_ft );
 }
 
-std::string
-TryRotamers::get_name() const {
-	return TryRotamersCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TryRotamers::get_name() const {
+// XRW TEMP  return TryRotamers::mover_name();
+// XRW TEMP }
 
 void
 TryRotamers::parse_my_tag( TagCOP const tag,
@@ -228,7 +231,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
-	solo_res_ = tag->getOption<core::Size>( "solo_res", 0);
+	solo_res_ = tag->getOption<bool>( "solo_res", 0);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
 
@@ -267,6 +270,47 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 		<< ", include_current=" << include_current_
 		<< ", and explosion=" << explosion_ << std::endl;
 }
+
+std::string TryRotamers::get_name() const {
+	return mover_name();
+}
+
+std::string TryRotamers::mover_name() {
+	return "TryRotamers";
+}
+
+void TryRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	core::pose::attributes_for_get_resnum( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "automatic_connection", xsct_rosetta_bool, "Automatically set up a hotspot foldtree", "1" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_num", xsct_non_negative_integer, "Jump across which to evaluate energies, numbered sequentially from one", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "solo_res", xsct_rosetta_bool, "Add terminal types (upper and lower) to the hotspot residue", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_filter", xs_string, "Add terminal types (upper and lower) to the hotspot residue", "true_filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "clash_check", xsct_rosetta_bool, "Perform a clash check and filter out clashing rotamers (helps with speed!)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_current", xsct_rosetta_bool, "Include input conformation", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "explosion", xsct_non_negative_integer, "Aggression with which to sample conformations, 0-4 (values more than four are equivalent thereto)", "0" )
+		+ XMLSchemaAttribute( "shove", xsct_refpose_enabled_residue_number_cslist, "List of residues for which to use the shove type, given in refpose, pose, or PDB numbering" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string TryRotamersCreator::keyname() const {
+	return TryRotamers::mover_name();
+}
+
+protocols::moves::MoverOP
+TryRotamersCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TryRotamers );
+}
+
+void TryRotamersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TryRotamers::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

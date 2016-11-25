@@ -40,7 +40,7 @@ public:
 	ReportGradientsMover(core::scoring::ScoreFunctionOP sfin) :
 		Mover(), verbose_(false), score_function_(std::move(sfin)) {}
 
-	std::string get_name() const override { return ReportGradientsMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return ReportGradientsMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ReportGradientsMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -58,6 +58,18 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	bool verbose_;
 	core::scoring::ScoreFunctionOP score_function_;
@@ -69,7 +81,7 @@ public:
 	SetCrystWeightMover() :
 		Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(1.0) {}
 
-	std::string get_name() const override { return SetCrystWeightMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return SetCrystWeightMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -79,6 +91,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	bool autoset_wt_;
@@ -95,7 +119,7 @@ class RecomputeDensityMapMover : public moves::Mover {
 public:
 	RecomputeDensityMapMover() : Mover(), keep_sidechains_(true) {}
 
-	std::string get_name() const override { return RecomputeDensityMapMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return RecomputeDensityMapMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new RecomputeDensityMapMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -105,6 +129,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:
@@ -116,7 +152,7 @@ class LoadDensityMapMover : public moves::Mover {
 public:
 	LoadDensityMapMover() : Mover(), mapfile_("") {}
 
-	std::string get_name() const override { return LoadDensityMapMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return LoadDensityMapMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new LoadDensityMapMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -126,6 +162,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:
@@ -139,7 +187,7 @@ class FitBfactorsMover : public moves::Mover {
 public:
 	FitBfactorsMover() : Mover(), adp_strategy_("individual"), b_min_(5.0), b_max_(5.0) {}
 
-	std::string get_name() const override { return FitBfactorsMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return FitBfactorsMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new FitBfactorsMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -149,6 +197,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void randomize_bs( core::pose::Pose & pose );
@@ -161,7 +221,7 @@ class UpdateSolventMover : public moves::Mover {
 public:
 	UpdateSolventMover() : Mover(), update_mask_(true), update_fcalc_(true), optimize_mask_(false), optimize_params_(false) {}
 
-	std::string get_name() const override { return UpdateSolventMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return UpdateSolventMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new UpdateSolventMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -172,6 +232,18 @@ public:
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	bool update_mask_ , update_fcalc_, optimize_mask_, optimize_params_;
 };
@@ -181,7 +253,7 @@ class TagPoseWithRefinementStatsMover : public moves::Mover {
 public:
 	TagPoseWithRefinementStatsMover() : Mover(), tag_(""), dump_pose_(false),report_grads_(false) {}
 
-	std::string get_name() const override { return TagPoseWithRefinementStatsMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return TagPoseWithRefinementStatsMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -191,6 +263,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string tag_;
@@ -203,7 +287,7 @@ public:
 		Mover(), res_high_(0.0), res_low_(0.0), sharpen_b_(0.0), twin_law_(""), algo_(""), target_(""), map_type_(""), setmap_type_(false)
 	{}
 
-	std::string get_name() const override { return SetRefinementOptionsMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return SetRefinementOptionsMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetRefinementOptionsMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -213,6 +297,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real res_high_, res_low_;

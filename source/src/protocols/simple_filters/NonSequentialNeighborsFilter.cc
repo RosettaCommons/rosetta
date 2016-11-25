@@ -22,16 +22,19 @@
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NonSequentialNeighborsFilter" );
 
-protocols::filters::FilterOP
-NonSequentialNeighborsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NonSequentialNeighborsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP NonSequentialNeighborsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NonSequentialNeighborsFilter ); }
 
-std::string
-NonSequentialNeighborsFilterCreator::keyname() const { return "NonSequentialNeighbors"; }
+// XRW TEMP std::string
+// XRW TEMP NonSequentialNeighborsFilterCreator::keyname() const { return "NonSequentialNeighbors"; }
 
 //default ctor
 NonSequentialNeighborsFilter::NonSequentialNeighborsFilter() :
@@ -113,6 +116,42 @@ NonSequentialNeighborsFilter::compute(
 	TR.Debug<<"neighbors of residue "<<resnum()<<": "<<count_neighbors<<std::endl;
 	return( count_neighbors );
 }
+
+std::string NonSequentialNeighborsFilter::name() const {
+	return class_name();
+}
+
+std::string NonSequentialNeighborsFilter::class_name() {
+	return "NonSequentialNeighbors";
+}
+
+void NonSequentialNeighborsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("distance_threshold", xsct_real, "distance from given residue from which to count the number of neighbors", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("neighbor_cutoff", xsct_non_negative_integer, "number of neighboring residues that defines the cutoff", "10")
+		+ XMLSchemaAttribute::attribute_w_default("bound", xsct_rosetta_bool, "is the protein bound or not?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("resnum", xsct_non_negative_integer, "The number indicating the residue of interest. If set to 0, the entire protein will be anlayzed.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("jump", xsct_non_negative_integer, "jump number", "1");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters based upon the number of neighboring residues in a non-sequential fashion.", attlist );
+}
+
+std::string NonSequentialNeighborsFilterCreator::keyname() const {
+	return NonSequentialNeighborsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+NonSequentialNeighborsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new NonSequentialNeighborsFilter );
+}
+
+void NonSequentialNeighborsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NonSequentialNeighborsFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

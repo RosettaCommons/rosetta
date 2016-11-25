@@ -31,7 +31,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -200,6 +200,48 @@ LocalPosition const& JumpClaim::cut() const {
 EnvClaimOP JumpClaim::clone() const {
 	return EnvClaimOP( new JumpClaim( *this ) );
 }
+
+
+std::string
+JumpClaim::class_name(){
+	return "JumpClaim";
+}
+
+
+
+void
+JumpClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	//Define control strings
+	XMLSchemaRestriction restr;
+	restr.name( "envclaim_ctrl_str" );
+	restr.base_type( xs_string );
+	restr.add_restriction( xsr_pattern, "((([Dd][Oo][Ee][Ss]_[Nn][Oo][Tt])|([Cc][Aa][Nn])|([Mm][Uu][Ss][Tt]))_[Cc][Oo][Nn][Tt][Rr][Oo][Ll])|([Ee][Xx][Cc][Ll][Uu][Ss][Ii][Vv][Ee])" );
+	xsd.add_top_level_element( restr );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "jump_label", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "position1", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "position2", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "control_strength", "envclaim_ctrl_str", "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "initialization_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" )
+		+ XMLSchemaAttribute( "cut", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "atom1", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "physical_cut", xsct_rosetta_bool, "XRW TO DO" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( class_name() )
+		.complex_type_naming_func ( & EnvClaim::envclaim_ct_namer )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+
 
 std::string JumpClaim::type() const{
 	return "Jump";

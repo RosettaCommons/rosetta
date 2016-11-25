@@ -53,9 +53,21 @@ public:
 	core::Real get_cen_deviation(std::vector<core::Real> cenListFrag,utility::vector1<core::Real> cenListModel);
 	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const pose);
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	moves::MoverOP clone() const override { return moves::MoverOP( new StructProfileMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real rmsThreshold_;
 	std::string aa_order_;

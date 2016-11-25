@@ -237,18 +237,53 @@ void ProteinInterfaceDesignOperation::provide_xml_schema( utility::tag::XMLSchem
 {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_chain1", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_chain2", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_chain1", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_chain2", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_all_aas", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_all_aas", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "interface_distance_cutoff", xs_decimal, "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "modify_before_jump", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "modify_after_jump", xs_boolean, "true" );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"repack_chain1", xsct_non_negative_integer,
+		"first chain to repack",
+		"1"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"repack_chain2", xsct_non_negative_integer,
+		"2ndchain to repack",
+		"1"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"design_chain1", xsct_non_negative_integer,
+		"first chain to design",
+		"0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"design_chain2", xsct_non_negative_integer,
+		"2nd chain to design",
+		"1"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"allow_all_aas", xsct_non_negative_integer,
+		"allow all amino acid types for design. default: do not design to G/C/P",
+		"0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"design_all_aas", xsct_non_negative_integer,
+		"design all amino acids. default: do not design G/C/P",
+		"0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"jump", xsct_non_negative_integer,
+		"residue with the jump",
+		"1"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"interface_distance_cutoff", xsct_real,
+		"Cbeta distance of chain where design/repack is allowed on other chain",
+		"8.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"modify_before_jump", xsct_rosetta_bool,
+		"change residues before the jump. For instance, if you want set repack on "
+		"chain2 interfacial residues to true, and the rest of chain2 to false, "
+		"and yet not change the task for chain1, "
+		"then use this taskoperation with modify_before_jump=0",
+		"true"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"modify_after_jump", xsct_rosetta_bool,
+		"change residues after the jump",
+		"true"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Restricts to the task that is the basis for protein-interface design.");
 }
 
 

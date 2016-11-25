@@ -44,6 +44,9 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.CoreDunbrackFilter" );
 
@@ -216,11 +219,53 @@ CoreDunbrackFilter::parse_my_tag(
 
 }
 
-protocols::filters::FilterOP
-CoreDunbrackFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CoreDunbrackFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP CoreDunbrackFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CoreDunbrackFilter ); }
 
-std::string
-CoreDunbrackFilterCreator::keyname() const { return "CoreDunbrack"; }
+// XRW TEMP std::string
+// XRW TEMP CoreDunbrackFilterCreator::keyname() const { return "CoreDunbrack"; }
+
+std::string CoreDunbrackFilter::name() const {
+	return class_name();
+}
+
+std::string CoreDunbrackFilter::class_name() {
+	return "CoreDunbrack";
+}
+
+void CoreDunbrackFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	XMLSchemaRestriction filter_types;
+	filter_types.name( "core_dunbrack_filter_types" );
+	filter_types.base_type( xs_string );
+	filter_types.add_restriction( xsr_enumeration, "average" );
+	filter_types.add_restriction( xsr_enumeration, "num_frustrated_residue" );
+	filter_types.add_restriction( xsr_enumeration, "total" );
+	xsd.add_top_level_element( filter_types );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "threshold", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "type", "core_dunbrack_filter_types", "XRW TO DO", "average" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string CoreDunbrackFilterCreator::keyname() const {
+	return CoreDunbrackFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CoreDunbrackFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CoreDunbrackFilter );
+}
+
+void CoreDunbrackFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoreDunbrackFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

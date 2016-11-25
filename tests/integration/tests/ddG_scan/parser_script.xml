@@ -1,29 +1,30 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
-    <s weights=talaris2014>
-    </s>
+    <ScoreFunction name="s" weights="talaris2014">
+    </ScoreFunction>
   </SCOREFXNS>
   <TASKOPERATIONS>
-    <ReadResfile name=alamut filename="inputs/1A22.resfile"/>
+    <ReadResfile name="alamut" filename="inputs/1A22.resfile"/>
   </TASKOPERATIONS>
 
   <MOVERS>
-    <ddG name=ddgmover scorefxn=s chain_num=2 repack_unbound=false repack_bound=false relax_bound=false/>
+    <ddG name="ddgmover" scorefxn="s" chain_num="2" repack_unbound="false" repack_bound="false" relax_bound="false"/>
   </MOVERS>
 
   <FILTERS>
-    <DdGScan name=alascan task_operations=alamut repeats=1 scorefxn=s report_diffs=1 write2pdb=0 ddG_mover=ddgmover />
+    <DdGScan name="alascan" task_operations="alamut" repeats="1" scorefxn="s" report_diffs="1" write2pdb="0" ddG_mover="ddgmover" />
   </FILTERS>
 
   <MOVERS>
-    <ReportToDB name=report_to_db batch_description="ddG_batch" database_name="ddG_scan_IntegrationTest.db3">
-      <feature name=ResidueFeatures/>
-      <feature name=DdGFeatures ddG_scan_mover=alascan/>
+    <ReportToDB name="report_to_db" batch_description="ddG_batch" database_name="ddG_scan_IntegrationTest.db3">
+      <ResidueFeatures/>
+      <DdGFeatures ddG_scan_mover="alascan"/>
     </ReportToDB>
   </MOVERS>
 
   <PROTOCOLS>
-    <Add mover_name=report_to_db/>
+    <Add mover_name="report_to_db"/>
   </PROTOCOLS>
+
 
 </ROSETTASCRIPTS>

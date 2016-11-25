@@ -56,6 +56,10 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+#include <protocols/rosetta_scripts/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using namespace core;
 using namespace core::pose;
@@ -66,20 +70,20 @@ namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {
 
-std::string
-SidechainMoverCreator::keyname() const {
-	return SidechainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMoverCreator::keyname() const {
+// XRW TEMP  return SidechainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SidechainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SidechainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SidechainMover );
+// XRW TEMP }
 
-std::string
-SidechainMoverCreator::mover_name() {
-	return "Sidechain";
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMover::mover_name() {
+// XRW TEMP  return "Sidechain";
+// XRW TEMP }
 
 SidechainMover::SidechainMover():
 	rotamer_library_( * core::pack::dunbrack::RotamerLibrary::get_instance() ),
@@ -651,10 +655,10 @@ SidechainMover::apply(
 	PROF_STOP( basic::APPLY_SC_MOVE );
 }
 
-std::string
-SidechainMover::get_name() const {
-	return "SidechainMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMover::get_name() const {
+// XRW TEMP  return "SidechainMover";
+// XRW TEMP }
 
 
 core::Real
@@ -1061,6 +1065,43 @@ SidechainMover::update_type()
 	std::string const new_type(mt.str());
 	type(new_type);
 }
+
+std::string SidechainMover::get_name() const {
+	return mover_name();
+}
+
+std::string SidechainMover::mover_name() {
+	return "Sidechain";
+}
+
+void SidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default("ntrials", xsct_non_negative_integer, "Number of trials.", "10000" )
+		+ XMLSchemaAttribute::attribute_w_default("preserve_detailed_balance", xsct_rosetta_bool, "Should the simulation preserve detailed balance?", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_uniform", xsct_real, "The probability of uniform chi sampling.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_withinrot", xsct_real, "The probability of sampling within-rotamer.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_random_pert_current", xsct_real, "The probability of making a random perturbation to the current chi value.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("change_chi_without_replacing_residue", xsct_real, "The probability of changing chi but not replacing the residue.", "0.0" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Moves the side chain for a set of residues identified by a task operation in a manner that can be totally independent of rotamer assignments", attlist );
+}
+
+std::string SidechainMoverCreator::keyname() const {
+	return SidechainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SidechainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SidechainMover );
+}
+
+void SidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SidechainMover::provide_xml_schema( xsd );
+}
+
 
 
 /// APL NOTE:

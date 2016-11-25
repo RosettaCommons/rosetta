@@ -2,21 +2,22 @@
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<BackboneGridSampler name=bbgrid scorefxn=tala residue_count=24 residue_name="ALA" cap_ends=true>
-			<MainchainTorsion index=1 start=-50 end=50 samples=11 />
-			<MainchainTorsion index=2 value=-45 />
-			<MainchainTorsion index=3 value=180 />
+		<BackboneGridSampler name="bbgrid" scorefxn="tala" residue_count="24" residue_name="ALA" cap_ends="true">
+			<MainchainTorsion index="1" start="-50" end="50" samples="11" />
+			<MainchainTorsion index="2" value="-45" />
+			<MainchainTorsion index="3" value="180" />
 		</BackboneGridSampler>
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=bbgrid />
+		<Add mover="bbgrid" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn=tala />
+	<OUTPUT scorefxn="tala" />
+
 </ROSETTASCRIPTS>

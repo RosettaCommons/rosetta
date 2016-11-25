@@ -194,6 +194,9 @@ endrepeat
 
 //C++ Headers
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 #ifdef GL_GRAPHICS
@@ -227,22 +230,22 @@ namespace relax {
 using namespace ObjexxFCL;
 
 
-std::string
-FastRelaxCreator::keyname() const
-{
-	return FastRelaxCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FastRelaxCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FastRelax::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FastRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FastRelax() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FastRelaxCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FastRelax() );
+// XRW TEMP }
 
-std::string
-FastRelaxCreator::mover_name()
-{
-	return "FastRelax";
-}
+// XRW TEMP std::string
+// XRW TEMP FastRelax::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FastRelax";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  FastRelax main code:
@@ -950,10 +953,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 } //apply
 
-std::string
-FastRelax::get_name() const {
-	return "FastRelax";
-}
+// XRW TEMP std::string
+// XRW TEMP FastRelax::get_name() const {
+// XRW TEMP  return "FastRelax";
+// XRW TEMP }
 
 // Override the stored script with the default script for batchrelax
 void FastRelax::set_script_to_batchrelax_default( core::Size repeats ) {
@@ -1569,6 +1572,123 @@ FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 	core::pose::Pose & ) const {
 	local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * weight );
 }
+
+std::string FastRelax::get_name() const {
+	return mover_name();
+}
+
+std::string FastRelax::mover_name() {
+	return "FastRelax";
+}
+
+void FastRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_fast_relax( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Performs the fast relax protocol" )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinition & xsd){
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"disable_design", xsct_rosetta_bool,
+		"Do not perform design even if a resfile is specified",
+		"true");
+
+	rosetta_scripts::attributes_for_parse_task_operations_w_factory(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"repeats", xs_integer,
+		"Same as cmd-line FR. Number of fastrelax repeats to perform",
+		"5");
+
+	attlist + XMLSchemaAttribute(
+		"name", xs_string,
+		"Name of the mover");
+
+	attlist + XMLSchemaAttribute(
+		"relaxscript", xs_string,
+		"a filename for a relax script, as described in the documentation for the Relax application; "
+		"the default relax script is used if not specified");
+
+	attlist + XMLSchemaAttribute(
+		"cst_file", xs_string,
+		"Add constraints from the constraint file");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"batch", xsct_rosetta_bool,
+		"Perform BatchRelax?",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cartesian", xsct_rosetta_bool,
+		"Use cartesian minimization",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dualspace", xsct_rosetta_bool,
+		"Use dualspace minimization",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ramp_down_constraints", xsct_rosetta_bool,
+		"Ramp down constraint weights over the course of the protocol",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"bondangle", xsct_rosetta_bool,
+		"Minimize bond angles",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"bondlength", xsct_rosetta_bool,
+		"Minimize bond lengths",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_type", xsct_minimizer_type,
+		"Minimizer type to use",
+		"lbfgs_armijo_nonmonotone");
+
+	attlist + XMLSchemaAttribute(
+		"delete_virtual_residues_after_FastRelax", xsct_rosetta_bool,
+		"Should virtual residues be deleted when the protocol completes?");
+
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap(xsd, subelements);
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->add_attributes( attlist )
+		.set_subelements_repeatable( subelements, 0, 1)
+		.complex_type_naming_func( & moves::complex_type_name_for_mover );
+	return ct_gen;
+}
+
+
+
+
+std::string FastRelaxCreator::keyname() const {
+	return FastRelax::mover_name();
+}
+
+protocols::moves::MoverOP
+FastRelaxCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FastRelax );
+}
+
+void FastRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FastRelax::provide_xml_schema( xsd );
+}
+
 
 } // namespace relax
 

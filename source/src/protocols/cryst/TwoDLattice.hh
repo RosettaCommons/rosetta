@@ -141,9 +141,9 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override {
-		return "MakeLayerMover";
-	}
+	// XRW TEMP  std::string get_name() const override {
+	// XRW TEMP   return "MakeLayerMover";
+	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLayerMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLayerMover()); }
@@ -164,6 +164,18 @@ public:
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

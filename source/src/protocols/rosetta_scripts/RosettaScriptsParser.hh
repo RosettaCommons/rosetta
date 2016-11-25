@@ -31,6 +31,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -138,6 +139,18 @@ public:
 		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	);
+
+	void
+	validate_input_script_against_xsd(
+		std::string const & fname,
+		std::stringstream const & input_xml
+	) const;
+
+	static std::string xsd_for_rosetta_scripts();
+
+	static void write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchemaDefinition & );
+	static std::string rosetta_scripts_element_name(); // returns "ROSETTASCRIPTS"
+	static std::string rosetta_scripts_complex_type_naming_func( std::string const & element_name );
 
 private:
 

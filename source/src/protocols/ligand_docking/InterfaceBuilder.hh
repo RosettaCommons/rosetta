@@ -27,6 +27,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/datacache/DataMap.hh>
 
 //// C++ headers
@@ -62,6 +63,9 @@ public:
 	ligand_options::Interface build(core::pose::Pose const & pose) const;
 
 	LigandAreas get_ligand_areas() const;
+
+	static std::string element_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	LigandAreas ligand_areas_;

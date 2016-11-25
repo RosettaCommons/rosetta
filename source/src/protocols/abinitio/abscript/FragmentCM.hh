@@ -48,21 +48,21 @@ public:
 
 	virtual ~FragmentCM();
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual void initialize( Pose& pose );
+	void initialize( Pose& pose ) override;
 
-	virtual void apply( Pose& pose );
+	void apply( Pose& pose ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	core::select::residue_selector::ResidueSelectorCOP const&
 	selector() const { return selector_; }
@@ -75,8 +75,20 @@ public:
 
 	void yield_cut_bias( bool setting );
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
-	virtual void passport_updated();
+	void passport_updated() override;
 
 	simple_moves::FragmentMoverOP mover() const { return mover_; };
 

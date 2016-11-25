@@ -15,7 +15,7 @@
 // Unit headers
 #include <protocols/denovo_design/architects/BlueprintArchitect.hh>
 #include <protocols/denovo_design/architects/BlueprintArchitectCreator.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -26,6 +26,7 @@
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.BlueprintArchitect" );
 
@@ -66,6 +67,20 @@ BlueprintArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	}
 	protocols::jd2::parser::BluePrint bp( bp_file );
 	set_blueprint( bp );
+}
+void
+BlueprintArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "blueprint", xs_string, "Path to blueprint file" );
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, class_name(), "Architect that constructs pose using a blueprint", attlist );
+
+}
+void
+BlueprintArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	BlueprintArchitect::provide_xml_schema( xsd );
 }
 
 DeNovoArchitect::StructureDataOP

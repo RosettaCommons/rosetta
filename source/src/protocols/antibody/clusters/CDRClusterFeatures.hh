@@ -22,6 +22,8 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -35,22 +37,22 @@ public:
 
 	virtual ~CDRClusterFeatures();
 
-	std::string
-	type_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const;
 
 	//Required
 	void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	utility::vector1< std::string >
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & residues,
 		features::StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session) override;
 
 	/// @brief Specify specific CDRs to load and analyze, with cdr_definition and scheme
 	void
@@ -59,7 +61,7 @@ public:
 		basic::datacache::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/);
+		core::pose::Pose const & /*pose*/) override;
 
 public:
 
@@ -70,6 +72,18 @@ public:
 	/// @brief set the numbering scheme used by the pose.
 	void
 	set_numbering_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

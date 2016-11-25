@@ -46,6 +46,9 @@
 
 // C++ headers
 #include <set>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
 
@@ -405,11 +408,59 @@ HelixPairingFilter::find_missing_helices(
 	return missing;
 }
 
-protocols::filters::FilterOP
-HelixPairingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixPairingFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HelixPairingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixPairingFilter ); }
 
-std::string
-HelixPairingFilterCreator::keyname() const { return "HelixPairing"; }
+// XRW TEMP std::string
+// XRW TEMP HelixPairingFilterCreator::keyname() const { return "HelixPairing"; }
+
+std::string HelixPairingFilter::name() const {
+	return class_name();
+}
+
+std::string HelixPairingFilter::class_name() {
+	return "HelixPairing";
+}
+
+void HelixPairingFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction output;
+	output.name( "helix_pairing_output_type" );
+	output.base_type( xs_string );
+	output.add_restriction( xsr_enumeration, "cross" );
+	output.add_restriction( xsr_enumeration, "align" );
+	output.add_restriction( xsr_enumeration, "dist" );
+	xsd.add_top_level_element( output );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "helix_pairings", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "dist", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "bend", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "cross", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "align", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "output_id", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "output_type", "helix_pairing_output_type", "XRW TO DO" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string HelixPairingFilterCreator::keyname() const {
+	return HelixPairingFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HelixPairingFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HelixPairingFilter );
+}
+
+void HelixPairingFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HelixPairingFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // fldsgn

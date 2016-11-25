@@ -1,8 +1,8 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-         <sfxn weights=empty.wts symmetric=0>
-           <Reweight scoretype=fa_elec weight=1/>
-         </sfxn>
+         <ScoreFunction name="sfxn" weights="empty.wts" symmetric="0">
+           <Reweight scoretype="fa_elec" weight="1"/>
+         </ScoreFunction>
 
 	</SCOREFXNS>
 
@@ -13,23 +13,24 @@
 	</TASKOPERATIONS>
 
 	<FILTERS>
-	  <ScoreType name=just_elec scorefxn=sfxn score_type=fa_elec threshold=0 confidence=0/>
+	  <ScoreType name="just_elec" scorefxn="sfxn" score_type="fa_elec" threshold="0" confidence="0"/>
 	</FILTERS>
 
 	<MOVERS>
-	  <RigidBodyTransMover name=helix_move distance = 100 />
-	  <FilterReportAsPoseExtraScoresMover name=pre filter_name=just_elec report_as=elec_complex/>
-	  <FilterReportAsPoseExtraScoresMover name=post filter_name=just_elec report_as=elec_separated/>
+	  <RigidBodyTransMover name="helix_move" distance="100" />
+	  <FilterReportAsPoseExtraScoresMover name="pre" filter_name="just_elec" report_as="elec_complex"/>
+	  <FilterReportAsPoseExtraScoresMover name="post" filter_name="just_elec" report_as="elec_separated"/>
 	</MOVERS>
 
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 
 	<PROTOCOLS>
-	  <Add filter = just_elec/>
-	  <Add mover = pre/>
-	  <Add mover = helix_move/>
-	  <Add mover = post/>
+	  <Add filter="just_elec"/>
+	  <Add mover="pre"/>
+	  <Add mover="helix_move"/>
+	  <Add mover="post"/>
 	  
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

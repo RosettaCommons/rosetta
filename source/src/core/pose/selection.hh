@@ -19,10 +19,10 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// Utillity Headers
+// Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>
 #include <set>
@@ -35,6 +35,11 @@ namespace pose {
 
 core::Size
 get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::string const & prefix="" );
+
+///@brief Companion function for get_resnum
+///@details Appends relevant XMLSchemaAttributes to the AttributeList
+void
+attributes_for_get_resnum( utility::tag::AttributeList & attlist, std::string const & prefix="" );
 
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes three forms of numbering:
@@ -86,6 +91,12 @@ core::Size get_resnumber_from_reference_pose(
 	signed long const refpose_offset,
 	core::pose::Pose const &pose
 );
+
+///@brief Companion function for get_resnum_list
+///@details Appends relevant XMLSchemaAttributes to the AttributeList; needs the xsd because it adds restricted types
+
+void
+attributes_for_get_resnum_list( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd, std::string const& tag="" );
 
 } // pose
 } // core

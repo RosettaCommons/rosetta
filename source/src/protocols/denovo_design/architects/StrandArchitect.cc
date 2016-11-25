@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/architects/StrandArchitectCreator.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/architects/StructureArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
@@ -25,7 +25,7 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
 #include <boost/assign.hpp>
 
@@ -60,6 +60,11 @@ StrandArchitect::type() const
 }
 
 void
+StrandArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	StrandArchitect::provide_xml_schema( xsd );
+}
+
+void
 StrandArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	std::string const lengths_str = tag->getOption< std::string >( "length", "" );
@@ -69,6 +74,33 @@ StrandArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap 
 	if ( !bulge_str.empty() ) set_bulges( bulge_str );
 
 	if ( ! updated_ ) enumerate_permutations();
+}
+
+void
+StrandArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+
+	//Define the length restriction and the bulge restriction
+	XMLSchemaRestriction bulge_string;
+	bulge_string.name( "bulge_string" );
+	bulge_string.base_type( xs_string );
+	bulge_string.add_restriction( xsr_pattern, "[0-9]+([,;][0-9])+" );
+	xsd.add_top_level_element( bulge_string );
+
+	XMLSchemaRestriction length_string;
+	length_string.name( "length_string" );
+	length_string.base_type( xs_string );
+	length_string.add_restriction( xsr_pattern, "[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*" );
+	xsd.add_top_level_element( length_string );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "length", "length_string", "Comma-separated list of single integers and hyphen-separated ranges to specify all possible strand lengths" )
+		+ XMLSchemaAttribute( "bulge", "bulge_string", "Specifies where bulges occur in a strand" );
+
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, class_name(), "Architect to construct a beta strand", attlist );
+
 }
 
 StrandArchitect::StructureDataOP

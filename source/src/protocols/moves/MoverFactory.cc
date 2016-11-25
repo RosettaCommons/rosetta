@@ -12,7 +12,10 @@
 /// @author ashworth
 
 #include <protocols/moves/MoverFactory.hh>
+
+// Package headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // required for passing to Mover::parse_my_tag
 
@@ -21,6 +24,8 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
@@ -108,6 +113,29 @@ MoverFactory::newMover(
 	runtime_assert( mover != nullptr );
 	mover->parse_my_tag( tag, data, filters, movers, pose );
 	return mover;
+}
+
+MoverFactory::MoverMap const & MoverFactory::mover_creator_map() const { return mover_creator_map_; }
+
+void MoverFactory::define_mover_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			mover_creator_map_,
+			mover_xml_schema_group_name(),
+			& complex_type_name_for_mover,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Movers from MoverFactory; offending class"
+			" must call protocols::moves::complex_type_name_for_mover when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+
+}
+
+std::string MoverFactory::mover_xml_schema_group_name()
+{
+	return "mover";
 }
 
 } //namespace moves

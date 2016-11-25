@@ -36,6 +36,9 @@
 #include <boost/format.hpp>
 
 #include <time.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace indexed_structure_store {
@@ -271,11 +274,87 @@ FragmentSpecification const & FragmentLookupFilter::fragment_specification()
 	return target_lookup_->fragment_specification();
 }
 
-protocols::filters::FilterOP
-FragmentLookupFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragmentLookupFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FragmentLookupFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragmentLookupFilter ); }
 
-std::string
-FragmentLookupFilterCreator::keyname() const { return "FragmentLookupFilter"; }
+// XRW TEMP std::string
+// XRW TEMP FragmentLookupFilterCreator::keyname() const { return "FragmentLookupFilter"; }
+
+std::string FragmentLookupFilter::name() const {
+	return class_name();
+}
+
+std::string FragmentLookupFilter::class_name() {
+	return "FragmentLookupFilter";
+}
+
+void FragmentLookupFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"lookup_name", xs_string,
+		"Identification name for the fragment");
+
+	attlist + XMLSchemaAttribute(
+		"store_path", xs_string,
+		"Target store path. Default defined by StructureStoreManager.");
+
+	XMLSchemaRestriction lookup_mode_enum;
+	lookup_mode_enum.name("lookup_mode_types");
+	lookup_mode_enum.base_type(xs_string);
+	lookup_mode_enum.add_restriction(xsr_enumeration, "first");
+	lookup_mode_enum.add_restriction(xsr_enumeration, "closest");
+	xsd.add_top_level_element(lookup_mode_enum);
+
+	attlist + XMLSchemaAttribute(
+		"lookup_mode", "lookup_mode_types",
+		"Lookup mode used by filter. "
+		"First - Returns the first fragment matching the lookup criteria.  Faster "
+		"but not guarenteed to identify the closest potential library fragment. "
+		"Closest - Returns the closest fragment with the target lookup. "
+		"Significantly slower.");
+
+	attlist + XMLSchemaAttribute(
+		"chain", xsct_non_negative_integer,
+		"chain number (?)");
+
+	attlist + XMLSchemaAttribute(
+		"threshold", xsct_non_negative_integer,
+		"Number of failed attempts allowed before returning.");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Lookup pose sub-fragments within a target fragment library, filtering "
+		"pose which contain fragments not present in the library. "
+		"Targets a specified fragment lookup, which defines a fragment specification "
+		"and store of candidate fragments. Filter extracts all fragments from the "
+		"pose via the specification passes these fragments to the lookup. Filter "
+		"fails if any pose fragment can not be found within the store. "
+		"Lookup results, including a lookup success/failure flag and lookup "
+		"confidence score for successful lookups cached within the filter after each "
+		"apply call and exposed via the FragmentLookupFilter::lookup_result member. "
+		"Fragment stores are identified by a lookup name and a target store path. The "
+		"default store defined in the StructureStoreManager class via the options "
+		"system.",
+		attlist );
+}
+
+std::string FragmentLookupFilterCreator::keyname() const {
+	return FragmentLookupFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FragmentLookupFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FragmentLookupFilter );
+}
+
+void FragmentLookupFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FragmentLookupFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

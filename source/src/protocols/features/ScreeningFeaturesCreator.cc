@@ -24,15 +24,15 @@
 namespace protocols {
 namespace features {
 
-ScreeningFeaturesCreator::ScreeningFeaturesCreator() {}
-ScreeningFeaturesCreator::~ScreeningFeaturesCreator() = default;
-FeaturesReporterOP ScreeningFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ScreeningFeatures );
-}
+// XRW TEMP ScreeningFeaturesCreator::ScreeningFeaturesCreator() {}
+// XRW TEMP ScreeningFeaturesCreator::~ScreeningFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ScreeningFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ScreeningFeatures );
+// XRW TEMP }
 
-std::string ScreeningFeaturesCreator::type_name() const {
-	return "ScreeningFeatures";
-}
+// XRW TEMP std::string ScreeningFeaturesCreator::type_name() const {
+// XRW TEMP  return "ScreeningFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -75,6 +75,9 @@
 #include <basic/options/keys/fold_cst.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -130,20 +133,20 @@ private:
 
 
 // creator
-std::string
-AbscriptMoverCreator::keyname() const {
-	return AbscriptMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AbscriptMoverCreator::keyname() const {
+// XRW TEMP  return AbscriptMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AbscriptMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AbscriptMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AbscriptMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AbscriptMover );
+// XRW TEMP }
 
-std::string
-AbscriptMoverCreator::mover_name() {
-	return "AbscriptMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AbscriptMover::mover_name() {
+// XRW TEMP  return "AbscriptMover";
+// XRW TEMP }
 
 core::scoring::ScoreFunctionOP setup_score( std::string const& scorename,
 	basic::options::FileVectorOptionKey optkey ) {
@@ -515,9 +518,9 @@ void AbscriptMover::add_frags( std::string const& small_fragfile,
 	stage_movers_[ IVb ]->add_submover( claim_smooth, 1.0 );
 }
 
-std::string AbscriptMover::get_name() const {
-	return "AbscriptMover";
-}
+// XRW TEMP std::string AbscriptMover::get_name() const {
+// XRW TEMP  return "AbscriptMover";
+// XRW TEMP }
 
 void verify_stage_ID( std::map< std::string, StageID > const& id_map, std::string const& id ){
 	if ( id_map.find( id ) == id_map.end() ) {
@@ -615,6 +618,107 @@ void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs
 	}
 
 }
+
+std::string AbscriptMover::get_name() const {
+	return mover_name();
+}
+
+std::string AbscriptMover::mover_name() {
+	return "AbscriptMover";
+}
+
+std::string AbscriptMover::stage_complex_namer( std::string tag_name ){
+	return "abscript_stage_" + tag_name + "_complex_type";
+}
+
+void AbscriptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"name", xs_string,
+		"Prefix for the name of the scorefunction. Scorefunctions should have been previously defined with names prefix + '_stage' + I, II, IIIa, IIIb, IVa, and IVb.");
+	attlist + XMLSchemaAttribute(
+		"cycles", xsct_real,
+		"Equivalent to the -run:increase_cycles in standard ab initio; increases the number of ab initio cycles by that factor.");
+	attlist + XMLSchemaAttribute(
+		"skip_stages", xsct_positive_integer_cslist,
+		"Comma-separated list of ab initio stages (1, 2, 3, or 4) that you wish to skip");
+
+	//XMLSchemaSimpleSubelementList subelements;
+	XMLSchemaSimpleSubelementList subelements_fragments, subelements_stages;
+	XMLSchemaSimpleSubelementList stage_subelements;
+	AttributeList stage_attlist;
+	AttributeList mover_attlist;
+	AttributeList preparer_attlist;
+	stage_attlist + XMLSchemaAttribute::required_attribute(
+		"ids", xs_string,
+		"Stage of ab intio to which this subtag refers.");
+	mover_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "name", xs_string, "Name of a mover that this stage should use with the specified weight relative to other specified movers", "null" )
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "How heavily should this mover be weighted relative to other movers in this stage, i.e. how frequently should it be used relative to others?", "1.0" );
+	preparer_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "name", xs_string, "Name of the mover that this stage should use to prepare the structure", "null" );
+	stage_subelements
+		.add_simple_subelement( "Mover", mover_attlist, "Tag specifying a mover that should be used in this stage of the ab initio protocol" )
+		.add_simple_subelement( "Preparer", preparer_attlist, "Tag specifying a StagePreparer that should be run before other movers are sampled during this stage" );
+
+	AttributeList frag_attlist;
+
+	frag_attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"Name of previously defined residue selector specifying where fragments should be inserted")
+		+ XMLSchemaAttribute(
+		"small_frags", xs_string,
+		"Fragments file containing small fragments (i.e. 3mers) ")
+		+ XMLSchemaAttribute(
+		"large_frags", xs_string,
+		"Fragments file containing large fragments (i.e. 9mers)");
+
+	XMLSchemaComplexTypeGenerator stage_ctgen;
+	stage_ctgen.element_name( "Stage" )
+		.set_subelements_repeatable( stage_subelements )
+		.add_attributes( stage_attlist )
+		.complex_type_naming_func( & stage_complex_namer )
+		.description( "Tag specifying behavior for a specific stage of the ab initio protocol" )
+		.write_complex_type_to_schema( xsd );
+	//subelements.add_already_defined_subelement( "Stage", & stage_complex_namer );
+	subelements_stages.add_already_defined_subelement( "Stage", & stage_complex_namer );
+
+	//subelements.add_simple_subelement("Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments", 0, 1);
+	subelements_fragments.add_simple_subelement("Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments" ); //, 0, 1);
+
+	XMLSchemaComplexTypeGenerator whole_shebang;
+	whole_shebang.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.element_name( mover_name() )
+		.description( "A special mover used to replicate the state of ab initio in early 2014" )
+		.add_attributes( attlist )
+		//.add_optional_name_attribute() -- Name attribute has already been added as required.
+		//.set_subelements_repeatable( subelements )
+		.add_ordered_subelement_set_as_optional( subelements_fragments )
+		.add_ordered_subelement_set_as_repeatable( subelements_stages )
+		.write_complex_type_to_schema( xsd );
+
+	/*protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+	xsd, mover_name(),
+	"A special mover used to replicate the state of ab initio in early 2014",
+	attlist, subelements);*/
+}
+
+std::string AbscriptMoverCreator::keyname() const {
+	return AbscriptMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AbscriptMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AbscriptMover );
+}
+
+void AbscriptMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AbscriptMover::provide_xml_schema( xsd );
+}
+
 
 AbscriptMover::StageTracker::StageTracker( moves::MonteCarloOP mc ):
 	mc_( mc ),

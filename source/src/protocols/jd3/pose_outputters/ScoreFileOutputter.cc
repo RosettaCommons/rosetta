@@ -127,10 +127,11 @@ void ScoreFileOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 
 	AttributeList output_scorefile_attributes;
 	output_scorefile_attributes
-		+ XMLSchemaAttribute::required_attribute( "filename", xs_string ) // this stops being required if we instead accept a filename-pattern
-		+ XMLSchemaAttribute( "path", xs_string );
+		+ XMLSchemaAttribute::required_attribute( "filename", xs_string , "XRW TO DO" ) // this stops being required if we instead accept a filename-pattern
+		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
 	XMLSchemaComplexTypeGenerator output_scorefile;
 	output_scorefile.element_name( keyname() )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & PoseOutputterFactory::complex_type_name_for_secondary_pose_outputter )
 		.add_attributes( output_scorefile_attributes )
 		.write_complex_type_to_schema( xsd );

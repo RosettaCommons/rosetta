@@ -17,7 +17,7 @@
 
 // Protocol headers
 #include <protocols/constraint_generator/util.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
@@ -38,7 +38,7 @@
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // Numeric headers
 #include <numeric/constants.hh>
 
@@ -652,6 +652,37 @@ HydrogenBondInfo::atoms( std::string const & rsd_name ) const
 	if ( a == atoms_.end() ) return empty_;
 	else return a->second;
 }
+
+void
+HydrogenBondConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	HydrogenBondConstraintGenerator::provide_xml_schema( xsd );
+}
+
+void
+HydrogenBondConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "residue_selector1", xs_string, "Selector specifying the first residue to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "residue_selector2", xs_string, "Selector specifying the second residue to constrain" )
+		//The atoms default to the neighbor atom for that residue
+		+ XMLSchemaAttribute( "atoms1", xs_string, "Comma-separated list of atom names to constrain in the first residue" )
+		+ XMLSchemaAttribute( "atoms2", xs_string, "Comma-separated list of atoms to constrain in the second residue" )
+		+ XMLSchemaAttribute( "atom_definitions", xs_string, "Semicolon-separated list of atom definitions for hydrogen bonding atoms" )
+		+ XMLSchemaAttribute( "atom_pair_func", xs_string, "Function to use for distance constraint; defaults to a harmonic function" ) //Appears to default to a harmonic function
+		+ XMLSchemaAttribute( "angle1_func", xs_string, "Function to use for first angle constraint" )
+		+ XMLSchemaAttribute( "angle2_func", xs_string, "Function to use for second angle constraint" )
+		+ XMLSchemaAttribute( "bounded", xsct_rosetta_bool, "Use bounded constraints?" );
+
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Adds hydrogen bond distance and angle constraints between the specified residues",
+		attlist );
+}
+
+
+
 
 } // namespace constraint_generator
 } // namespace protocols

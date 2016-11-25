@@ -48,6 +48,10 @@
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueTotalScoresFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -96,8 +100,8 @@ ResidueTotalScoresFeatures::ResidueTotalScoresFeatures( ResidueTotalScoresFeatur
 ResidueTotalScoresFeatures::~ResidueTotalScoresFeatures()
 = default;
 
-string
-ResidueTotalScoresFeatures::type_name() const { return "ResidueTotalScoresFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueTotalScoresFeatures::type_name() const { return "ResidueTotalScoresFeatures"; }
 
 void
 ResidueTotalScoresFeatures::write_schema_to_db(
@@ -218,6 +222,43 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 
 
 } // End function body
+
+std::string ResidueTotalScoresFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueTotalScoresFeatures::class_name() {
+	return "ResidueTotalScoresFeatures";
+}
+
+void ResidueTotalScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"scorefxn", xs_string,
+		"score function name");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report the total per residue score to a features database",
+		attlist );
+}
+
+std::string ResidueTotalScoresFeaturesCreator::type_name() const {
+	return ResidueTotalScoresFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueTotalScoresFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueTotalScoresFeatures );
+}
+
+void ResidueTotalScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueTotalScoresFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

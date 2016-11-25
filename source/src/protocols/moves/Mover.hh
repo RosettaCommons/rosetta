@@ -42,6 +42,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers

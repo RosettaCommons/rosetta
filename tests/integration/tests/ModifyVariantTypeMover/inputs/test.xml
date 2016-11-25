@@ -1,17 +1,17 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<FILTERS>
 	</FILTERS>
 	<RESIDUE_SELECTORS>
-		<Index name=select_cterm resnums=18 />
+		<Index name="select_cterm" resnums="18" />
 	</RESIDUE_SELECTORS>	
 	<MOVERS>
 
-		<PeptideStubMover name=build1 reset=true>
+		<PeptideStubMover name="build1" reset="true">
 			<Append resname="ALA" />
 			<Append resname="ALA" />
 			<Append resname="ALA" />
@@ -32,22 +32,23 @@
 			<Append resname="ALA" />
 		</PeptideStubMover>
 		
-		<SetTorsion name=tors1>
-			<Torsion torsion_name=omega residue=ALL angle=180 />
+		<SetTorsion name="tors1">
+			<Torsion torsion_name="omega" residue="ALL" angle="180" />
 		</SetTorsion>
 
-		<DeclareBond name=termini add_termini=true res1=5 res2=6 atom1="C" atom2="N" />	
+		<DeclareBond name="termini" add_termini="true" res1="5" res2="6" atom1="C" atom2="N" />	
 
-		<ModifyVariantType name=vartype add_type="CTERM_AMIDATION" residue_selector=select_cterm />
+		<ModifyVariantType name="vartype" add_type="CTERM_AMIDATION" residue_selector="select_cterm" />
 		
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=build1 />
-		<Add mover=tors1 />
-		<Add mover=termini />
-		<Add mover=vartype />
+		<Add mover="build1" />
+		<Add mover="tors1" />
+		<Add mover="termini" />
+		<Add mover="vartype" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn=tala />
+	<OUTPUT scorefxn="tala" />
+
 </ROSETTASCRIPTS>

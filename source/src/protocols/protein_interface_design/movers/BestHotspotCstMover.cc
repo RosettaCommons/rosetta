@@ -31,6 +31,9 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -44,26 +47,26 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.BestHotspotCstMover" );
 
-std::string
-BestHotspotCstMoverCreator::keyname() const
-{
-	return BestHotspotCstMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BestHotspotCstMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BestHotspotCstMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BestHotspotCstMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BestHotspotCstMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BestHotspotCstMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BestHotspotCstMover );
+// XRW TEMP }
 
-std::string
-BestHotspotCstMoverCreator::mover_name()
-{
-	return "BestHotspotCst";
-}
+// XRW TEMP std::string
+// XRW TEMP BestHotspotCstMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BestHotspotCst";
+// XRW TEMP }
 
 
 BestHotspotCstMover::BestHotspotCstMover() :
-	protocols::moves::Mover( BestHotspotCstMoverCreator::mover_name() )
+	protocols::moves::Mover( BestHotspotCstMover::mover_name() )
 {}
 
 BestHotspotCstMover::BestHotspotCstMover(
@@ -71,7 +74,7 @@ BestHotspotCstMover::BestHotspotCstMover(
 	core::Size const host_chain,
 	core::Size const n_resi
 ) :
-	protocols::moves::Mover( BestHotspotCstMoverCreator::mover_name() ),
+	protocols::moves::Mover( BestHotspotCstMover::mover_name() ),
 	host_chain_( host_chain ),
 	n_resi_( n_resi )
 {
@@ -132,10 +135,10 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 	TR << std::endl;
 }
 
-std::string
-BestHotspotCstMover::get_name() const {
-	return BestHotspotCstMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BestHotspotCstMover::get_name() const {
+// XRW TEMP  return BestHotspotCstMover::mover_name();
+// XRW TEMP }
 
 void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
@@ -152,6 +155,40 @@ void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 	TR<<"BestHotspotCst mover on chain "<<host_chain_<<" with cbeta force " << cb_force_constant_ << "\n";
 }
+
+std::string BestHotspotCstMover::get_name() const {
+	return mover_name();
+}
+
+std::string BestHotspotCstMover::mover_name() {
+	return "BestHotspotCst";
+}
+
+void BestHotspotCstMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain to design, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "best_n", xsct_non_negative_integer, "Number of best-constrained residues for detailed analysis", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force on CB atoms applied in the hotspot constraints", "1.0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string BestHotspotCstMoverCreator::keyname() const {
+	return BestHotspotCstMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BestHotspotCstMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BestHotspotCstMover );
+}
+
+void BestHotspotCstMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BestHotspotCstMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

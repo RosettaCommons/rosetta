@@ -32,7 +32,7 @@
 #include <utility/SingletonBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ Headers
 #include <map>
 
@@ -69,6 +69,10 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose);
+
+	void define_features_reporter_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	static std::string features_reporter_xml_schema_group_name();
 
 	/// @brief Replace the load-time FeaturesReporterCreator with another creator.
 	// undefined, commenting out to fix PyRosetta build  void replace_creator( FeaturesReporterCreatorCOP creator );

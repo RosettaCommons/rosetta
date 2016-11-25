@@ -69,6 +69,9 @@
 
 // C++ headers
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.symmetric_docking.membrane.MPSymDockMover" );
 
@@ -116,32 +119,32 @@ MPSymDockMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-MPSymDockMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPSymDockMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MPSymDockMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MPSymDockMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-MPSymDockMoverCreator::keyname() const {
-	return MPSymDockMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MPSymDockMoverCreator::keyname() const {
+// XRW TEMP  return MPSymDockMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-MPSymDockMoverCreator::mover_name() {
-	return "MPSymDockMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPSymDockMover::mover_name() {
+// XRW TEMP  return "MPSymDockMover";
+// XRW TEMP }
 
 //////////////////////
 /// Mover Methods  ///
 //////////////////////
 
 /// @brief Return the name of this mover (MPSymDockMover)
-std::string
-MPSymDockMover::get_name() const {
-	return "MPSymDockMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPSymDockMover::get_name() const {
+// XRW TEMP  return "MPSymDockMover";
+// XRW TEMP }
 
 /// @brief Apply Method: Symmetric Docking in the membrane
 /// @details Setup pose for symmetry, add the membrane components to the total pose,
@@ -217,6 +220,37 @@ MPSymDockMover::position_membrane_at_topology_com( core::pose::Pose & pose ) {
 	set_initial_position->apply( pose );
 
 }
+
+std::string MPSymDockMover::get_name() const {
+	return mover_name();
+}
+
+std::string MPSymDockMover::mover_name() {
+	return "MPSymDockMover";
+}
+
+void MPSymDockMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// Empty parse_my_tag so this is intentional
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Given an asymmetric starting pose, setup the pose for symmetry, add a membrane representation for the full symmetric complex, position the pose at the center of mass of all transmembrane spans, and proceed with the standard symmetric docking protocol.", attlist );
+}
+
+std::string MPSymDockMoverCreator::keyname() const {
+	return MPSymDockMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MPSymDockMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MPSymDockMover );
+}
+
+void MPSymDockMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MPSymDockMover::provide_xml_schema( xsd );
+}
+
 
 } // membrane
 } // symmetric_docking

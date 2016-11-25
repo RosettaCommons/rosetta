@@ -37,6 +37,7 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 // Boost Headers
@@ -150,6 +151,28 @@ MatchResidues::cart_product( VecVecSize const & input) const {
 	return output;
 }
 
+std::string subtag_for_match_type( std::string const & foo ) {
+	return "subtag_for_match_" + foo + "_type";
+}
+
+void
+MatchResidues::provide_attributes_and_subelements( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl ) {
+
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute::required_attribute( "reference", xs_string, "Reference pose for comparison" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold for accuracy of match", "3.0" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "Blueprint file may provide start and end points" );
+
+	AttributeList subtag_attributes;
+	subtag_attributes + XMLSchemaAttribute( "ref_pos", xsct_non_negative_integer, "Reference position" )
+		+ XMLSchemaAttribute( "segment", xs_string, "Segment also, possibly, specified from blueprint file" )
+		+ XMLSchemaAttribute( "mod_pos_start", xsct_non_negative_integer, "Start of range of modified positions" )
+		+ XMLSchemaAttribute( "mod_pos_end", xsct_non_negative_integer, "End of range of modified positions" )
+		+ XMLSchemaAttribute( "mod_pos", xsct_non_negative_integer, "Single modified position" );
+
+	ssl.add_simple_subelement( "match", subtag_attributes, "Tags describing individual matches"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_match_type );
+}
 
 /// @brief parse xml
 void

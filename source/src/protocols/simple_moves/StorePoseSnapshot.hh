@@ -67,7 +67,7 @@ public:
 
 	/// @brief Get the mover name.
 	///
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Makea  copy of this mover, and return an owning pointer to the copy.
 	///
@@ -97,6 +97,18 @@ public:
 	/// @brief Return the name of the reference pose object that will be created and stored in the pose.
 	///
 	std::string reference_pose_name( ) const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

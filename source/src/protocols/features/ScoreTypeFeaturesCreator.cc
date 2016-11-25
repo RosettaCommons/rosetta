@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ScoreTypeFeaturesCreator::ScoreTypeFeaturesCreator() {}
-ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() = default;
-FeaturesReporterOP ScoreTypeFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ScoreTypeFeatures );
-}
+// XRW TEMP ScoreTypeFeaturesCreator::ScoreTypeFeaturesCreator() {}
+// XRW TEMP ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ScoreTypeFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ScoreTypeFeatures );
+// XRW TEMP }
 
-std::string ScoreTypeFeaturesCreator::type_name() const {
-	return "ScoreTypeFeatures";
-}
+// XRW TEMP std::string ScoreTypeFeaturesCreator::type_name() const {
+// XRW TEMP  return "ScoreTypeFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

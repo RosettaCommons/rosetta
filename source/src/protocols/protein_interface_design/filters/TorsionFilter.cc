@@ -24,6 +24,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pack/task/TaskFactory.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -154,11 +157,11 @@ Torsion::clone() const{
 	return protocols::filters::FilterOP( new Torsion( *this ) );
 }
 
-protocols::filters::FilterOP
-TorsionCreator::create_filter() const { return protocols::filters::FilterOP( new Torsion ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP TorsionCreator::create_filter() const { return protocols::filters::FilterOP( new Torsion ); }
 
-std::string
-TorsionCreator::keyname() const { return "Torsion"; }
+// XRW TEMP std::string
+// XRW TEMP TorsionCreator::keyname() const { return "Torsion"; }
 
 core::pack::task::TaskFactoryOP
 Torsion::task_factory() const{ return task_factory_; }
@@ -167,6 +170,42 @@ void
 Torsion::task_factory( core::pack::task::TaskFactoryOP tf ){
 	task_factory_ = tf;
 }
+
+std::string Torsion::name() const {
+	return class_name();
+}
+
+std::string Torsion::class_name() {
+	return "Torsion";
+}
+
+void Torsion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "lower", xsct_real, "Lower torsion threshold", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper", xsct_real, "Upper torsion threshold", "0" )
+		+ XMLSchemaAttribute::required_attribute( "torsion", xs_string, "The torsion of interest" )
+		+ XMLSchemaAttribute::required_attribute( "resnum", xsct_refpose_enabled_residue_number, "The residue number of interest" );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string TorsionCreator::keyname() const {
+	return Torsion::class_name();
+}
+
+protocols::filters::FilterOP
+TorsionCreator::create_filter() const {
+	return protocols::filters::FilterOP( new Torsion );
+}
+
+void TorsionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Torsion::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

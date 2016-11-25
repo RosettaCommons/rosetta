@@ -63,7 +63,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	// core::pose::PoseOP get_additional_output();
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
@@ -101,6 +101,18 @@ public:
 	void cenfilter( protocols::filters::FilterOP cenfilter );
 	void ranking_cenfilter( protocols::filters::FilterOP filter ){ ranking_cenfilter_ = filter; }
 	protocols::filters::FilterOP ranking_cenfilter() const{ return ranking_cenfilter_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// loopsampler

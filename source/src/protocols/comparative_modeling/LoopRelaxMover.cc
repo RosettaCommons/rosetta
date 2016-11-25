@@ -136,6 +136,9 @@
 #include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
 #include <basic/options/option.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -1458,10 +1461,10 @@ LoopRelaxMover::get_loops() {
 }
 
 
-std::string
-LoopRelaxMover::get_name() const {
-	return "LoopRelaxMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopRelaxMover::get_name() const {
+// XRW TEMP  return "LoopRelaxMover";
+// XRW TEMP }
 
 void LoopRelaxMover::set_defaults_() {
 	using namespace basic::options;
@@ -1512,10 +1515,62 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 	loops( loops::loops_definers::load_loop_definitions(tag, data, pose) );
 }
 
-std::string
-LoopRelaxMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP LoopRelaxMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopRelaxMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopRelaxMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopRelaxMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LoopRelaxMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopRelaxMover";
+// XRW TEMP }
+
+protocols::moves::MoverOP
+LoopRelaxMover::fresh_instance() const{ return protocols::moves::MoverOP( new LoopRelaxMover() ); }
+
+protocols::moves::MoverOP
+LoopRelaxMover::clone() const{ return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
+
+std::string LoopRelaxMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoopRelaxMover::mover_name() {
+	return "LoopRelaxMover";
+}
+
+void LoopRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return LoopRelaxMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "cmd_line_csts" , xsct_rosetta_bool , "Use constraints from command line" , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "copy_sidechains" , xsct_rosetta_bool , "Copy sidechain torsions from input pose" , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "rebuild_filter" , xsct_real , "Below this score, loops will not need to rebuild" , "999" )
+		+ XMLSchemaAttribute::attribute_w_default( "compute_rmsd" , xsct_rosetta_bool , "Compute RMSD to input?" , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "n_rebuild_tries" , xsct_non_negative_integer , "Number of times to attempt rebuilding the loop" , "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "remodel" , xs_string , "What type of move to use for remodeling?" , "quick_ccd" )
+		+ XMLSchemaAttribute::attribute_w_default( "intermedrelax" , xsct_rosetta_bool , "Perform intermediate relax moves" , "no" )
+		+ XMLSchemaAttribute::attribute_w_default( "refine" , xs_string , "What type of refinement to perform" , "refine_ccd" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax" , xsct_rosetta_bool , "Perform relax moves" , "no" )
+		+ XMLSchemaAttribute::attribute_w_default( "read_fragments" , xsct_rosetta_bool , "Read loop fragments files from command line" , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "score4L" ) ;
+
+	loops::loops_definers::attributes_for_load_loop_definitions( attlist ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Allows protocols in LoopMover_KIC to be combined with other loop modeling protocols", attlist );
+}
+
+std::string LoopRelaxMoverCreator::keyname() const {
+	return LoopRelaxMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -1523,17 +1578,11 @@ LoopRelaxMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new LoopRelaxMover );
 }
 
-std::string
-LoopRelaxMoverCreator::mover_name()
+void LoopRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "LoopRelaxMover";
+	LoopRelaxMover::provide_xml_schema( xsd );
 }
 
-protocols::moves::MoverOP
-LoopRelaxMover::fresh_instance() const{ return protocols::moves::MoverOP( new LoopRelaxMover() ); }
-
-protocols::moves::MoverOP
-LoopRelaxMover::clone() const{ return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
 
 
 /*

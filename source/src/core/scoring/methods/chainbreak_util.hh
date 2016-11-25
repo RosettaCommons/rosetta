@@ -45,7 +45,7 @@ void find_cutpoint_variants(
 /// @brief helper function for looking at residue connections to get lower/upper partners
 bool
 lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
-																			 core::conformation::Residue const & upper_rsd );
+	core::conformation::Residue const & upper_rsd );
 
 /// @brief Instead of assuming cutpoint partner is simply cutpoint+1, find which residue connects via lower/upper.
 core::Size

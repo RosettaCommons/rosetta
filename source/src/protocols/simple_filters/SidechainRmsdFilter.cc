@@ -33,6 +33,9 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -40,11 +43,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
-protocols::filters::FilterOP
-SidechainRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SidechainRmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SidechainRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SidechainRmsdFilter ); }
 
-std::string
-SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
+// XRW TEMP std::string
+// XRW TEMP SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
 
 SidechainRmsdFilter::SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  ) {}
 
@@ -135,6 +138,47 @@ filters::FilterOP SidechainRmsdFilter::clone() const {
 filters::FilterOP SidechainRmsdFilter::fresh_instance() const{
 	return filters::FilterOP( new SidechainRmsdFilter() );
 }
+
+std::string SidechainRmsdFilter::name() const {
+	return class_name();
+}
+
+std::string SidechainRmsdFilter::class_name() {
+	return "SidechainRmsd";
+}
+
+void SidechainRmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold"  , xsct_real , "In a truth value context, what's the maximum RMSD value which is considered to be passing." , "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_backbone" , xsct_rosetta_bool , "Whether to include the backbone in the RMSD calculation. It is recommended to set this to 'true' for ligands and other residues which don't have a backbone." , "false" ) ;
+
+	core::pose::attributes_for_get_resnum( attlist , "res1_" ) ;
+	//The residue number for the active pose. see RosettaScripts#rosettascripts-conventions_specifying-residues
+	core::pose::attributes_for_get_resnum( attlist , "res2_" ) ;
+	//The residue number for the reference pose. see RosettaScripts#rosettascripts-conventions_specifying-residues
+
+	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist , "reference_name" ) ;
+	//The name of the reference pose as saved with the SavePoseMover . If not given, will default to the structure passed to -in:file:native if it set, or the input structure, if not.
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates the all atom RMSD for a single residue, either with or without the backbone atoms. The RMSD calculated is the automorphic RMSD, so it will compensate for symmetric rearrangments. (For example, Phe ring flips.) No superposition is performed prior to rmsd calculation.", attlist );
+}
+
+std::string SidechainRmsdFilterCreator::keyname() const {
+	return SidechainRmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SidechainRmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SidechainRmsdFilter );
+}
+
+void SidechainRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SidechainRmsdFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

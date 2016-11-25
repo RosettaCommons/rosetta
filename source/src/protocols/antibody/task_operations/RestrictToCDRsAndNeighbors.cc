@@ -157,7 +157,7 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 		numbering_scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
 	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
-		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
+		TR <<"Please pass both cdr_definition and numbering_scheme. These can also be set via cmd line options of the same name." << std::endl;
 
 	}
 
@@ -169,17 +169,18 @@ void RestrictToCDRsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDefi
 {
 	AttributeList attributes;
 
+	attributes_for_get_cdr_bool_from_tag(attributes, "cdrs");
+
 	attributes
-		+ XMLSchemaAttribute( "cdrs", xs_string )
-
-		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_dis", xs_decimal, "6.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_cdrs", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_antigen", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_framework", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "stem_size", xsct_non_negative_integer, "0" )
-
-		+ XMLSchemaAttribute( "cdr_definition", xs_string )
-		+ XMLSchemaAttribute( "input_ab_scheme", xs_string );
+		+ XMLSchemaAttribute::attribute_w_default( "neighbor_dis", xsct_real, "XRW TO DO", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_cdrs", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_antigen", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_framework", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stem_size", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string ,
+		"cdr_definition requires input_ab_scheme to be set" )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string ,
+		"input_ab_scheme requires cdr_definition to be set" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }
@@ -255,7 +256,7 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 
 			if ( region == cdr_region && !design_cdrs_ ) {
 				turn_off_design.include_residue( i );
-			} else if  ( region == framework_region && ! design_framework_ ) {
+			} else if ( region == framework_region && ! design_framework_ ) {
 				turn_off_design.include_residue( i );
 			} else if ( region == antigen_region && ! design_antigen_ ) {
 				turn_off_design.include_residue( i );

@@ -1,10 +1,10 @@
 <ROSETTASCRIPTS>
 	<MOVERS>
-	        <SetupForSymmetry name=setup_symm resource_description=symmdata/>
-		<ExtractAsymmetricUnit name=extract_asu/>
+	        <SetupForSymmetry name="setup_symm" resource_description="symmdata"/>
+		<ExtractAsymmetricUnit name="extract_asu"/>
 	</MOVERS>
 	<PROTOCOLS>
-	        <Add mover=setup_symm/>
-	        <Add mover=extract_asu/>
+	        <Add mover="setup_symm"/>
+	        <Add mover="extract_asu"/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>

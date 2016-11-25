@@ -77,7 +77,7 @@ public:
 	clone() const override;
 
 	void apply( core::pose::Pose & pose) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void
 	parse_my_tag(
@@ -142,6 +142,18 @@ public:
 
 	void
 	set_max_allowed_score_increase( core::Real sc_increase );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 

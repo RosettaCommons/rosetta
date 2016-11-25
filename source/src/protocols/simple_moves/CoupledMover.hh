@@ -78,7 +78,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	// setters
 	void set_resnum( core::Size resnum );
@@ -127,6 +127,18 @@ public:
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

@@ -85,6 +85,9 @@
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace core::scoring;
@@ -99,22 +102,22 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-PlaceSimultaneouslyMoverCreator::keyname() const
-{
-	return PlaceSimultaneouslyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceSimultaneouslyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PlaceSimultaneouslyMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PlaceSimultaneouslyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlaceSimultaneouslyMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+// XRW TEMP }
 
-std::string
-PlaceSimultaneouslyMoverCreator::mover_name()
-{
-	return "PlaceSimultaneously";
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceSimultaneouslyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PlaceSimultaneously";
+// XRW TEMP }
 
 PlaceSimultaneouslyMover::~PlaceSimultaneouslyMover() {
 }
@@ -724,10 +727,10 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 }
 
-std::string
-PlaceSimultaneouslyMover::get_name() const {
-	return PlaceSimultaneouslyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceSimultaneouslyMover::get_name() const {
+// XRW TEMP  return PlaceSimultaneouslyMover::mover_name();
+// XRW TEMP }
 
 /// @details This should be called before failing placesimultaneously.
 void
@@ -772,11 +775,11 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	}
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
-	coor_cst_cutoff_ = tag->getOption< core::Real >( "coor_cst_cutoff", 100 );
-	optimize_foldtree( tag->getOption< bool >( "optimize_fold_tree", 1 ) );
+	coor_cst_cutoff_ = tag->getOption< core::Real >( "coor_cst_cutoff", 100.0 );
+	optimize_foldtree( tag->getOption< bool >( "optimize_fold_tree", true ) );
 	TR<<"optimize_foldtree set to: "<<optimize_foldtree()<<std::endl;
 
-	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", 1 );
+	repack_non_ala_ = tag->getOption<bool>( "repack_non_ala", true );
 	min_rb( true );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
@@ -813,7 +816,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			utility::vector0< TagCOP > const & design_tags( btag->getTags() );
 			for ( TagCOP const m_tag_ptr : design_tags ) {
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
-				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", 1 ) );
+				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
 				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
@@ -912,7 +915,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 }
 
 PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
-	simple_moves::DesignRepackMover( PlaceSimultaneouslyMoverCreator::mover_name() )
+	simple_moves::DesignRepackMover( PlaceSimultaneouslyMover::mover_name() )
 {
 	residue_level_tasks_for_placed_hotspots_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
 	// user_defined_auction_ = false;
@@ -936,6 +939,232 @@ PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
 	explosion_ = 0;
 	saved_coord_constraints_.clear();
 }
+
+std::string PlaceSimultaneouslyMover::get_name() const {
+	return mover_name();
+}
+
+std::string PlaceSimultaneouslyMover::mover_name() {
+	return "PlaceSimultaneously";
+}
+
+//name mangling XML schema extravaganza
+std::string PlaceSimultaneously_subelement_mangler( std::string const & element ) { return "PlaceSimultaneously_subelement" + element + "_type"; }
+std::string PlaceSimultaneously_StubMinimize_subelement_mangler( std::string const & element ) { return "PlaceSimultaneously_StubMinimize_subelement" + element + "_type"; }
+std::string PlaceSimultaneously_DesignMovers_subelement_mangler( std::string const & element ) { return "PlaceSimultaneously_DesignMovers_subelement" + element + "_type"; }
+std::string PlaceSimultaneously_NotifyMovers_subelement_mangler( std::string const & element ) { return "PlaceSimultaneously_NotifyMovers_subelement" + element + "_type"; }
+std::string PlaceSimultaneously_StubSets_subelement_mangler( std::string const & element ) { return "PlaceSimultaneously_StubSets_subelement" + element + "_type"; }
+
+void PlaceSimultaneouslyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//import anything from these (their parse_my_tags are called)
+	//PlacementAuctionMover
+	//PlacementMinimizationMover
+	//StubScoreFilter
+
+	/*  This is PlacementAuctionMover
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain where design ought to be performed, numbered sequentially from 1", "2" )
+	+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" )
+	+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms", "0.5" )
+	+ XMLSchemaAttribute::attribute_w_default( "stubscorefxn", xs_string, "Scoring function to apply to the stubs being placed", "backbone_stub_constraint" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	add_subelement_for_parse_stub_sets( ssl, xsd );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "A PlacementAuctionMover pays increasing prices to put hotspots in place on a chain", attlist, ssl );
+	*/
+
+	attlist + XMLSchemaAttribute( "name", xs_string, "XSD XRW: TO DO");
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_positive_integer, "Chain where design ought to be performed, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms", "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "stubscorefxn", xs_string, "Scoring function to apply to the stubs being placed", "backbone_stub_constraint" );
+	//will have to parse StubSets subelement later; fortunately this mover parses a superset of what PlacementAuctionMover sees
+
+	/* PlacementMinimizationMover's schema
+
+	attlist
+	+ XMLSchemaAttribute::attribute_w_default( "host_chain", xsct_positive_integer, "Probably the chain where the stub goes", "2")
+	+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms.  Must be positive.", "0.5" ) // XRW TODO, should be positive Real
+	+ XMLSchemaAttribute::attribute_w_default( "optimize_foldtree", xsct_rosetta_bool, "setup new fold_tree for better numerical behaviour between the residue at the center of target_residues and the nearest residue on the partner", "false")
+	+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "minimize the rigid body degree of freedom", "true");
+
+	XMLSchemaSimpleSubelementList ssl;
+	add_subelement_for_parse_stub_sets( ssl, xsd ); //XRW TODO the subelement is actually REQUIRED; might be for all uses of this function
+	*/
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "host_chain", xsct_positive_integer, "Probably the chain where the stub goes", "2")
+		+ XMLSchemaAttribute::attribute_w_default( "optimize_fold_tree", xsct_rosetta_bool, "setup new fold_tree for better numerical behaviour between the residue at the center of target_residues and the nearest residue on the partner", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "do we want to minimize the rb dof during stub placement? This will allow a previously placed stub to move a a little to accommodate the new stub. It's a good idea to use this with the previously placed stub adding its implied constraints.", "true");
+	//will have to parse StubSets subelement later; fortunately this mover parses a superset of what PlacementAuctionMover sees
+
+	//StubScoreFilter only has attributes we've already included from PlacementAuctionMover and PlacementMinimizationMover
+	/*attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" )
+	+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	protein_interface_design::movers::add_subelement_for_parse_stub_sets( ssl, xsd );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "This filter checks whether in the current configuration the scaffold is 'feeling' any of the hotspot stub constraints. This is useful for quick triaging of hopeless configuration. If used in conjunction with the Mover PlaceSimultaneously, don't bother setting flags -- the Mover will take care of it.", attlist, ssl );*/
+
+
+	//now we handle attributes actually in this class's parse_my_tag:
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist
+		//+ XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_positive_integer, "Chain where design ought to be performed, numbered sequentially from 1", "2")
+		+ XMLSchemaAttribute::attribute_w_default( "coor_cst_cutoff", xsct_real, "the threshold coordinate constraint energy between the added hotspot residues and the one in the stub library. Use with stubscorefxn=backbone_stub_linear_constraint. PlaceSimultaneously fails if placed residues deviates beyond this threshold.", "100.0")
+		//+ XMLSchemaAttribute::attribute_w_default( "optimize_fold_tree", xsct_rosetta_bool, "setup new fold_tree for better numerical behaviour between the residue at the center of target_residues and the nearest residue on the partner", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "repack_non_ala", xsct_rosetta_bool, "clearly implies something about repacking, although the only comment I could find mentioned reDESIGN instead", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "after_placement_filter", xs_string, "The name of a filter to be applied immediately after stub placement and StubMinimize movers, but before the DesignMovers run. Useful for quick sanity check on the goodness of the stub.", "true_filter");
+	if ( !attribute_w_name_in_attribute_list( "cb_force", attlist ) ) {
+		attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	//see main/source/test/utility/tag/XMLSchemaGeneration.cxxtest.hh for example that clarifies
+	//This is also copied from PlaceStubMover, with modifications
+	//This is the ROOT NODE
+	XMLSchemaRepeatableCTNodeOP PlaceSimultaneouslyMover_node( new XMLSchemaRepeatableCTNode );
+	PlaceSimultaneouslyMover_node->set_element_w_attributes( mover_name(), attlist, "Places hotspot residues simultaneously on a scaffold, rather than iteratively as in PlaceStub. It is faster therefore allowing more backbone sampling, and should be useful in placing more than 2 hotspots." );
+	PlaceSimultaneouslyMover_node->set_kids_naming_func( & PlaceSimultaneously_subelement_mangler );
+	PlaceSimultaneouslyMover_node->set_root_node_naming_func( & complex_type_name_for_mover );
+
+	//Subelement StubMinimize  //DIFFERENT from PlaceStubMover
+	//attribute min_repeats_before_placement, 0 (nnint)
+	//attribute min_repeats_after_placement, 1 (nnint)
+	//Subelement Add (fake name)
+	//attribute mover_name string
+	//attribute decimal bb_cst_weight 10.0
+
+	XMLSchemaRepeatableCTNodeOP StubMinimize_node( new XMLSchemaRepeatableCTNode );
+	AttributeList StubMinimize_attlist;
+	StubMinimize_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "min_repeats_before_placement", xsct_non_negative_integer, "minimization trials before placement", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "min_repeats_after_placement", xsct_non_negative_integer, "minimization trials before placement", "1");
+	if ( !attribute_w_name_in_attribute_list( "cb_force", StubMinimize_attlist ) ) {
+		StubMinimize_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+
+	StubMinimize_node->set_element_w_attributes( "StubMinimize", StubMinimize_attlist, "Defines Movers used to minimize w/r/t stub placement" );
+	StubMinimize_node->set_kids_naming_func( & PlaceSimultaneously_StubMinimize_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP StubMinimize_Add_node( new XMLSchemaRepeatableCTNode );
+	StubMinimize_node->add_child(StubMinimize_Add_node);
+
+	AttributeList StubMinimize_Add_attlist;
+	StubMinimize_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)")
+		+ XMLSchemaAttribute::attribute_w_default( "bb_cst_weight", xsct_real, "determines the strength of the constraints derived from the stubs. This value is a weight on the cb_force, so larger values are stronger constraints.", "10.0");
+	if ( !attribute_w_name_in_attribute_list( "cb_force", StubMinimize_Add_attlist ) ) {
+		StubMinimize_Add_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	StubMinimize_Add_node->set_element_w_attributes( "Add", StubMinimize_Add_attlist, "Defines one Mover used to minimize w/r/t stub placement");
+
+	//Subelement DesignMovers
+	//Subelement Add
+	//string mover_name
+	//bool use_constraints, true
+	//Real coord_cst_std, 0.5
+
+	XMLSchemaRepeatableCTNodeOP DesignMovers_node( new XMLSchemaRepeatableCTNode );
+	AttributeList empty_attlist;
+	DesignMovers_node->set_element_w_attributes( "DesignMovers", empty_attlist, "Defines Movers used to do design after stub placement" );
+	DesignMovers_node->set_kids_naming_func( & PlaceSimultaneously_DesignMovers_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP DesignMovers_Add_node( new XMLSchemaRepeatableCTNode );
+	DesignMovers_node->add_child(DesignMovers_Add_node);
+
+	AttributeList DesignMovers_Add_attlist;
+	DesignMovers_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)")
+		+ XMLSchemaAttribute::attribute_w_default( "use_constraints", xsct_rosetta_bool, "obey constraints", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "coord_cst_std", xsct_real, "standard deviation (width) on coordinate constraint", "0.5");
+	if ( !attribute_w_name_in_attribute_list( "cb_force", DesignMovers_Add_attlist ) ) {
+		DesignMovers_Add_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	DesignMovers_Add_node->set_element_w_attributes( "Add", DesignMovers_Add_attlist, "Defines a Mover used to do design after stub placement");
+
+	//This part ought to be in a shared function with PlaceSimultaneouslyMover, but fragility is the cost of these Movers doing things they ought not
+
+	//Subelement NotifyMovers (this comes from a helper function)
+	//Subelement Add
+	//string mover_name
+
+	XMLSchemaRepeatableCTNodeOP NotifyMovers_node( new XMLSchemaRepeatableCTNode );
+	//AttributeList empty_attlist;
+	NotifyMovers_node->set_element_w_attributes( "NotifyMovers", empty_attlist, "Defines Movers (named elsewhere in XML) that must be aware of the protected stub locations so they are not lost" );
+	NotifyMovers_node->set_kids_naming_func( & PlaceSimultaneously_NotifyMovers_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP NotifyMovers_Add_node( new XMLSchemaRepeatableCTNode );
+	NotifyMovers_node->add_child(NotifyMovers_Add_node);
+
+	AttributeList NotifyMovers_Add_attlist;
+	NotifyMovers_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)");
+	if ( !attribute_w_name_in_attribute_list( "cb_force", NotifyMovers_Add_attlist ) ) {
+		NotifyMovers_Add_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	NotifyMovers_Add_node->set_element_w_attributes( "Add", NotifyMovers_Add_attlist, "Defines a Mover (named elsewhere in XML) that must be aware of the protected stub locations so they are not lost");
+
+	//Subelement StubSets //MAY be similar to parse_stub_sets - actually a superset
+	//attribute explosion, nnint, 0
+	//attribute stub_energy_threshold, real, 1.0
+	//attribute max_cb_dist, real, 3.0
+	//Subelement Add
+	//attribute stubfile, string, required
+	//attribute filter_name, string, default true_filter
+
+	XMLSchemaRepeatableCTNodeOP StubSets_node( new XMLSchemaRepeatableCTNode );
+	AttributeList StubSets_attlist;
+	StubSets_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "explosion", xsct_non_negative_integer, "which chis to explode, which probably means 'sample extensively'", "0") //XRW TODO: positive integer if chis?  is 0 a flag value?
+		+ XMLSchemaAttribute::attribute_w_default( "stub_energy_threshold", xsct_real, "after placement and minimization, what energy cutoff to use for each of the hotspots", "1.0")
+		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" );
+	if ( !attribute_w_name_in_attribute_list( "cb_force", StubSets_attlist ) ) {
+		StubSets_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	StubSets_node->set_element_w_attributes( "StubSets", StubSets_attlist, "What are the Stubs we are placing?" );
+	StubSets_node->set_kids_naming_func( & PlaceSimultaneously_StubSets_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP StubSets_Add_node( new XMLSchemaRepeatableCTNode );
+	StubSets_node->add_child(StubSets_Add_node);
+
+	AttributeList StubSets_Add_attlist;
+	StubSets_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "stubfile", xs_string, "File that has a stub in it")
+		+ XMLSchemaAttribute( "filter_name", xs_string, "Stub placement tied to this Filter");
+
+	if ( !attribute_w_name_in_attribute_list( "cb_force", StubSets_Add_attlist ) ) {
+		StubSets_Add_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
+	}
+	StubSets_Add_node->set_element_w_attributes( "Add", StubSets_Add_attlist, "What is one Stub we are placing?");
+
+	//now tie all the child nodes to the root node and report
+	PlaceSimultaneouslyMover_node->add_child(StubMinimize_node);
+	PlaceSimultaneouslyMover_node->add_child(DesignMovers_node);
+	PlaceSimultaneouslyMover_node->add_child(NotifyMovers_node);
+	PlaceSimultaneouslyMover_node->add_child(StubSets_node);
+
+	PlaceSimultaneouslyMover_node->recursively_write_ct_to_schema( xsd );
+}
+
+std::string PlaceSimultaneouslyMoverCreator::keyname() const {
+	return PlaceSimultaneouslyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PlaceSimultaneouslyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
+}
+
+void PlaceSimultaneouslyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlaceSimultaneouslyMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

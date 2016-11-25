@@ -24,6 +24,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -34,13 +37,13 @@ using core::pose::Pose;
 using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
-protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RotamerTrialsRefiner );
-}
+// XRW TEMP protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsRefiner );
+// XRW TEMP }
 
-std::string RotamerTrialsRefinerCreator::keyname() const {
-	return "RotamerTrialsRefiner";
-}
+// XRW TEMP std::string RotamerTrialsRefinerCreator::keyname() const {
+// XRW TEMP  return "RotamerTrialsRefiner";
+// XRW TEMP }
 
 void RotamerTrialsRefiner::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -77,6 +80,50 @@ TaskFactoryOP RotamerTrialsRefiner::get_task_factory(TaskFactoryOP fallback) {
 void RotamerTrialsRefiner::set_task_factory(TaskFactoryOP task_factory) {
 	set_tool(ToolboxKeys::TASK_FACTORY, task_factory);
 }
+
+std::string RotamerTrialsRefiner::get_name() const {
+	return mover_name();
+}
+
+std::string RotamerTrialsRefiner::mover_name() {
+	return "RotamerTrialsRefiner";
+}
+
+void RotamerTrialsRefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// add score function tags
+	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+	// add task operation tags
+	utilities::attributes_for_set_task_factory_from_tag( attlist );
+	// add LoopMover base class tags
+	XMLSchemaSimpleSubelementList subelement_list;
+	XMLSchemaComplexTypeGenerator ct_gen;
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+	ct_gen.element_name( mover_name() )
+		.description(
+		"Use rotamer trials to quickly optimize the sidechains in and around the loop being sampled."
+		"Rotamer trials is a greedy algorithm for packing sidechains. Each residue is considered only"
+		" once, and is placed in its optimal rotamer" )
+		.add_attributes( attlist  )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string RotamerTrialsRefinerCreator::keyname() const {
+	return RotamerTrialsRefiner::mover_name();
+}
+
+protocols::moves::MoverOP
+RotamerTrialsRefinerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RotamerTrialsRefiner );
+}
+
+void RotamerTrialsRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerTrialsRefiner::provide_xml_schema( xsd );
+}
+
 
 }
 }

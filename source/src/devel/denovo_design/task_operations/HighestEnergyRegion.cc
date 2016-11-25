@@ -156,9 +156,9 @@ HighestEnergyRegionOperation::schema_attributes()
 {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "region_shell", xs_decimal )
-		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer )
-		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer );
+		+ XMLSchemaAttribute( "region_shell", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer , "XRW TO DO" )
+		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer , "XRW TO DO" );
 	return attributes;
 }
 

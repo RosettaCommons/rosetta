@@ -33,6 +33,7 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <map>
 
 
@@ -121,9 +122,13 @@ disable_h3_stem_positions(
 core::scoring::ScoreFunctionOP
 get_ab_design_global_scorefxn();
 
-/// @brief Get Global Scorefxn from RS
+/// @brief Get Global Scorefxn from RS; XSD companion function: attributes_for_get_ab_design_global_scorefxn
 core::scoring::ScoreFunctionOP
 get_ab_design_global_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMap & data);
+
+/// @brief adds the required attribute to the AttributeList for XMLSchema generation
+void
+attributes_for_get_ab_design_global_scorefxn(utility::tag::AttributeList& attlist);
 
 core::scoring::ScoreFunctionOP
 get_ab_design_dock_high_scorefxn();
@@ -131,8 +136,13 @@ get_ab_design_dock_high_scorefxn();
 core::scoring::ScoreFunctionOP
 get_ab_design_dock_low_scorefxn();
 
+/// @brief XSD companion function: attributes_for_get_ab_design_min_scorefxn
 core::scoring::ScoreFunctionOP
 get_ab_design_min_scorefxn();
+
+/// @brief adds the required attribute to the AttributeList for XMLSchema generation
+void
+attributes_for_get_ab_design_min_scorefxn(utility::tag::AttributeList& attlist);
 
 core::scoring::ScoreFunctionOP
 get_ab_design_min_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMap & data);

@@ -73,6 +73,10 @@
 
 //Basic
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -87,22 +91,22 @@ static THREAD_LOCAL basic::Tracer TR( "devel.loop_creation.LoopCreationMover" );
 using namespace core;
 
 //****CREATOR METHODS****//
-std::string
-LoopCreationMoverCreator::keyname() const
-{
-	return LoopCreationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopCreationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopCreationMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopCreationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopCreationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopCreationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopCreationMover );
+// XRW TEMP }
 
-std::string
-LoopCreationMoverCreator::mover_name()
-{
-	return "LoopCreationMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopCreationMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopCreationMover";
+// XRW TEMP }
 //****END CREATOR METHODS****//
 
 /// @brief default constructor
@@ -162,10 +166,10 @@ LoopCreationMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new LoopCreationMover );
 }
 
-std::string
-LoopCreationMover::get_name() const {
-	return "LoopCreationMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopCreationMover::get_name() const {
+// XRW TEMP  return "LoopCreationMover";
+// XRW TEMP }
 
 protocols::loops::Loop
 LoopCreationMover::get_last_created_loop() const
@@ -678,6 +682,51 @@ LoopCreationMover::parse_my_tag(
 		lam_score_cutoff_ = tag->getOption<core::Real>("lam_score_cutoff");
 	}
 }
+
+std::string LoopCreationMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoopCreationMover::mover_name() {
+	return "LoopCreationMover";
+}
+
+void LoopCreationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::required_attribute( "loop_inserter", xs_string, "Mover with which to insert the loop" )
+		+ XMLSchemaAttribute::required_attribute( "loop_closer", xs_string, "Mover with which to close the loop" )
+		+ XMLSchemaAttribute( "dump_pdbs", xsct_rosetta_bool, "Should the mover dump PDBs?" )
+		+ XMLSchemaAttribute( "refine", xsct_rosetta_bool, "Should the mover do refinement?" )
+		+ XMLSchemaAttribute( "attempts_per_anchor", xsct_non_negative_integer, "How many of " )
+		+ XMLSchemaAttribute( "minimize_loops", xsct_rosetta_bool, "Should the mover minimize loops?" )
+		+ XMLSchemaAttribute( "design_loops", xsct_rosetta_bool, "Also design loops?" )
+		+ XMLSchemaAttribute( "include_neighbors", xsct_rosetta_bool, "Should the mover include neighbors in minimization?" )
+		+ XMLSchemaAttribute( "loop_anchors", xsct_nnegative_int_cslist, "What residues should serve as loop anchors?" )
+		+ XMLSchemaAttribute( "asym_size", xsct_non_negative_integer, "A cryptic, integer option." )
+		+ XMLSchemaAttribute( "filter_by_lam", xsct_rosetta_bool, "Should we filter by the LoopAnalyzer score?" )
+		+ XMLSchemaAttribute( "lam_score_cutoff", xsct_rosetta_bool, "If so, what should the score cutoff be?" );
+	//****OPTIONAL TAGS****//
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopCreationMoverCreator::keyname() const {
+	return LoopCreationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopCreationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopCreationMover );
+}
+
+void LoopCreationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopCreationMover::provide_xml_schema( xsd );
+}
+
 
 } //loop creation
 } //devel

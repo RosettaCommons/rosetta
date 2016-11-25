@@ -13,6 +13,7 @@
 #include <protocols/qsar/scoring_grid/ShapeGrid.hh>
 #include <protocols/qsar/scoring_grid/ShapeGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
@@ -24,6 +25,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
 #include <numeric/interpolation/util.hh>
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
@@ -32,14 +34,13 @@
 #include <numeric/xyz.functions.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/tools/make_vector.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
-#include <basic/database/open.hh>
-#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace qsar {
@@ -49,7 +50,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.qsar.scoring_grid.ShapeGrid" );
 
 std::string ShapeGridCreator::keyname() const
 {
-	return ShapeGridCreator::grid_name();
+	return ShapeGrid::grid_name();
 }
 
 GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -66,11 +67,16 @@ GridBaseOP ShapeGridCreator::create_grid() const
 	return GridBaseOP( new ShapeGrid() );
 }
 
-
-std::string ShapeGridCreator::grid_name()
+void ShapeGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "ShapeGrid";
+	ShapeGrid::provide_xml_schema( xsd );
 }
+
+
+//std::string ShapeGridCreator::grid_name()
+//{
+// return "ShapeGrid";
+//}
 
 ShapeGrid::ShapeGrid() : SingleGrid("ShapeGrid")
 {
@@ -329,6 +335,22 @@ void ShapeGrid::load_kbp_data()
 		kbp_data_.insert(std::make_pair(resname,current_array));
 	}
 	TR << "Done loading Shape grid KBP data" << std::endl;
+}
+
+std::string ShapeGrid::grid_name()
+{
+	return "ShapeGrid";
+}
+
+void ShapeGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that gives a bonus based on a knowledge-based potential looking at favorable scores to residues based on a distance, an angle, and a dihedral; no parameters may be customized for this grid", attributes );
+
 }
 
 }

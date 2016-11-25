@@ -99,6 +99,14 @@ namespace flxbb {
 utility::vector1< std::string > const LayerDesignOperation::SS_TYPES =
 boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("Strand");
 
+//bool
+//valid_ss_type( std::string const & query ) {
+// for ( auto ss : SS_TYPES ) {
+//  if ( ss == query ) return true;
+// }
+// return false;
+//}
+
 TaskOperationOP
 LayerDesignOperationCreator::create_task_operation() const
 {
@@ -936,7 +944,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 void
 LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
-	typedef std::pair< std::string, bool > DesignLayerPair;
+	//typedef std::pair< std::string, bool > DesignLayerPair;
 
 	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
 
@@ -1028,22 +1036,22 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
 	make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
 
-	BOOST_FOREACH ( utility::tag::TagCOP const layer_tag, tag->getTags() ) {
+	for ( auto layer_tag : tag->getTags() ) {
 		parse_layer_tag( layer_tag, datamap );
 	}
 
 	if ( TR.visible() ) {
 		TR << "Layers to be designed:";
-		BOOST_FOREACH ( DesignLayerPair l_p, design_layer_ )  {
+		for ( auto l_p : design_layer_ )  {
 			if ( l_p.second ) {
 				TR << "\t" << l_p.first;
 			}
 		}
 		TR << std::endl;
 		// print the layer definitions
-		BOOST_FOREACH ( Layer const & layer, layer_residues_ ) {
+		for ( auto layer : layer_residues_ ) {
 			TR << "Layer " << layer.first << std::endl;
-			BOOST_FOREACH ( LayerDefinition const & layer_def, layer.second ) {
+			for ( auto layer_def : layer.second ) {
 				TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << "\t ncaa = " << print_string_vector( layer_nc_residues_[ layer.first ][ layer_def.first ] ) << std::endl;
 			}
 			TR << std::endl;
@@ -1051,57 +1059,205 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 }
 
+std::string
+layer_design_ss_layer_naming_func( std::string const & element_name )
+{
+	return "layer_design_ss_layer_" + element_name + "_type";
+}
+
+std::string
+layer_design_ss_layer_group() {
+	return "layer_design_ss_layer";
+}
+
+std::string
+layer_design_ss_layer_or_taskop_group() {
+	return "layer_design_ss_layer_or_taskop";
+}
+
 // AMW: Add a common_simple_type for an underscore separated string list?
 // TO DO: Fix this after we've changed the format of LayerDesign
 void LayerDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	using core::pack::task::operation::TaskOperationFactory;
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "use_original_non_designed_layer", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "layers", xs_string, "core_boundary_surface_Nterm_Cterm" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_non_design", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ignore_pikaa_natro", xs_boolean, "false" )
-		+ XMLSchemaAttribute( "use_sidechain_neighbors", xs_boolean )
-		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint", xs_decimal )
-		+ XMLSchemaAttribute( "sc_neighbor_denominator", xs_decimal )
-		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal )
-		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent", xs_decimal )
-		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent", xs_decimal )
-		+ XMLSchemaAttribute( "pore_radius", xs_decimal )
-		+ XMLSchemaAttribute( "core", xs_decimal )
-		+ XMLSchemaAttribute( "surface", xs_decimal )
-		+ XMLSchemaAttribute( "core_E", xs_decimal )
-		+ XMLSchemaAttribute( "core_L", xs_decimal )
-		+ XMLSchemaAttribute( "core_H", xs_decimal )
-		+ XMLSchemaAttribute( "surface_E", xs_decimal )
-		+ XMLSchemaAttribute( "surface_L", xs_decimal )
-		+ XMLSchemaAttribute( "surface_H", xs_decimal )
-		+ XMLSchemaAttribute( "make_rasmol_script", xs_boolean )
-		+ XMLSchemaAttribute( "blueprint", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_symmetry", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "restrict_restypes", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "make_pymol_script", xs_boolean, "false" );
+		+ optional_name_attribute()
+		+ XMLSchemaAttribute::attribute_w_default(  "use_original_non_designed_layer", xsct_rosetta_bool, "Restrict to repacking the non design layers",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "layer", xs_string, "Layer to be designed, other ex. core_surface means only design core and surface layer, other refers to the additional layers defined with packertasks",  "core_boundary_surface_Nterm_Cterm"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_non_design", xsct_rosetta_bool, "If true, side chains will be repacked, left untouched if otherwise.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ignore_pikaa_natro", xsct_rosetta_bool, "If true, and if a resfile is read before applying this TaskOperation, ignore any residues that have been set in the resfile with the PIKAA, NATRO, or NATAA commands.",  "false"  )
+		+ XMLSchemaAttribute( "use_sidechain_neighbors", xsct_rosetta_bool , "If true, assign a residue's layers based on counting the number CA atoms from other residues within a cone in front of the residue's ca-cb vector. Because this option is no longer SASA based, the layer assignments will always be identical regardless of the protein sequence; i.e. layers could be assigned based on a polyalanine backbone and it would make no difference. This option changes the defaults for core and surface to neighbors less than 2 --surface-- and neighbors greater than 5.2 --core. HOWEVER, these defaults will be overwritten if core and surface are manually specified in declaring the taskoperation! So make sure you do not specify new core and surface settings appropriate for SASA when you are actually counting neighboring residues." )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint", xsct_real , "These values fine-tune the behavior of the sidechain neighbors residue-counting logic. Typically, a user need not change these from default values. For details on these, see the LayerSelector ResidueSelector's documentation." )
+		+ XMLSchemaAttribute( "sc_neighbor_denominator", xsct_real , "These values fine-tune the behavior of the sidechain neighbors residue-counting logic. Typically, a user need not change these from default values. For details on these, see the LayerSelector ResidueSelector's documentation." )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xsct_real , "These values fine-tune the behavior of the sidechain neighbors residue-counting logic. Typically, a user need not change these from default values. For details on these, see the LayerSelector ResidueSelector's documentation." )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent", xsct_real , "These values fine-tune the behavior of the sidechain neighbors residue-counting logic. Typically, a user need not change these from default values. For details on these, see the LayerSelector ResidueSelector's documentation." )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent", xsct_real , "These values fine-tune the behavior of the sidechain neighbors residue-counting logic. Typically, a user need not change these from default values. For details on these, see the LayerSelector ResidueSelector's documentation." )
+		+ XMLSchemaAttribute( "pore_radius", xsct_real , "pore radius for calculating accessible surface area" )
+		+ XMLSchemaAttribute( "core", xsct_real , "residues of which asa is less than core are defined as core" )
+		+ XMLSchemaAttribute( "surface", xsct_real , "residues of which asa is greater than surface are defined as surface" )
+		+ XMLSchemaAttribute( "core_E", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "core_L", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "core_H", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "surface_E", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "surface_L", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "surface_H", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "make_rasmol_script", xsct_rosetta_bool , "if true, write a rasmol script coloring the residues by the three basic layers, core, boundary and surface." )
+		+ XMLSchemaAttribute( "blueprint", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_symmetry", xsct_rosetta_bool, "More recently, the use_symmetry option has been added to permit LayerDesign to be symmetry-aware. If use_symmetry is set to true --the default, layers are defined for symmetric poses using the full, symmetric pose.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xsct_rosetta_bool, "print to tracer",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "restrict_restypes", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "make_pymol_script", xsct_rosetta_bool, "if true, write a pymol script coloring the residues by the three basic layer and the aditional taskoperation defined layers..",  "false"  );
 
-	/*
-	std::list< XMLSchemaComplexTypeOP > layer_secstruct_cts;
-	BOOST_FOREACH( std::string const & sstype, SS_TYPES ) {
-	XMLSchemaComplexTypeOP layer_secstruct_type( new XMLSchemaComplexType );
-	layer_secstruct_type->name( sstype + "Type" );
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "copy_layer", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "aa", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "append", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_append", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "exclude", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "ncaa_exclude", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "operation", xs_string ));
-	layer_secstruct_type->add_attribute( XMLSchemaAttribute( "specification", xs_string ));
-	layer_secstruct_cts.push_back( layer_secstruct_type );
-	}*/
+	XMLSchemaRepeatableCTNodeOP root_node(new XMLSchemaRepeatableCTNode);
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	root_node->set_element_w_attributes(
+		keyname(), attributes,
+		"Note: The LayerDesign TaskOperation will likely be deprecated at some point in the future in favour of the"
+		" LayerSelector ResidueSelector. It is strongly recommended that users start to switch over to the LayerSelector"
+		" ResidueSelector, which permits greater flexibility in selecting residues. Design residues with selected amino"
+		" acids depending on the enviroment--accessible surface area. The layer of each residue is assigned to one of the"
+		" three basic layers--core, boundary or surface-- depending on the accessible surface area of mainchain + CB, or"
+		" depending on the number of neighbours in a cone extending along the CA-CB vector --if the use_sidechain_neighbors"
+		" option is used." );
+
+	root_node->set_root_node_naming_func(
+		&core::pack::task::operation::complex_type_name_for_task_op);
+
+	root_node->set_kids_naming_func( & layer_design_ss_layer_naming_func );
+
+	// child layer beneath LayerDesign:
+	// reads "core", "boundary", "surface", "Nterm", "Cterm"
+	// grandchild layer beneath this layer reads
+	// SS_TYPES?
+
+	// grandchild layer beneath CombinedTasks:
+	// reads "all", "Helix", "Strand", "Loop"
+
+	// grandchild layer beneath TaskLayer:
+	// reads SS_TYPES??
+
+	// ------------------- SS layer ----------------------- //
+	XMLSchemaRestriction layer_design_operation_behavior;
+	layer_design_operation_behavior.name( "layer_design_operation_behavior" );
+	layer_design_operation_behavior.base_type( xs_string );
+	layer_design_operation_behavior.add_restriction( xsr_enumeration, "design" );
+	layer_design_operation_behavior.add_restriction( xsr_enumeration, "no_design" );
+	layer_design_operation_behavior.add_restriction( xsr_enumeration, "omit" );
+	xsd.add_top_level_element( layer_design_operation_behavior );
+
+	XMLSchemaRestriction layer_design_specification_behavior;
+	layer_design_specification_behavior.name( "layer_design_specification_behavior" );
+	layer_design_specification_behavior.base_type( xs_string );
+	layer_design_specification_behavior.add_restriction( xsr_enumeration, "designable" );
+	layer_design_specification_behavior.add_restriction( xsr_enumeration, "repackable" );
+	layer_design_specification_behavior.add_restriction( xsr_enumeration, "fixed" );
+	xsd.add_top_level_element( layer_design_specification_behavior );
+
+
+	typedef XMLSchemaAttribute Attr;
+	AttributeList ss_layer_attributes;
+	ss_layer_attributes
+		+ Attr( "copy_layer", xs_string, "XRW TO DO" )
+		+ Attr( "aa", xs_string, "XRW TO DO" )
+		+ Attr( "ncaa", xs_string, "XRW TO DO" )
+		+ Attr( "append", xs_string, "XRW TO DO" )
+		+ Attr( "ncaa_append", xs_string, "XRW TO DO" )
+		+ Attr( "exclude", xs_string, "XRW TO DO" )
+		+ Attr( "ncaa_exclude", xs_string, "XRW TO DO" )
+		+ Attr( "operation", "layer_design_operation_behavior", "XRW TO DO" )
+		+ Attr( "specification", "layer_design_specification_behavior", "XRW TO DO" );
+
+	// Define the group
+	XMLSchemaModelGroup ss_group;
+	ss_group.group_name( layer_design_ss_layer_group() );
+	XMLSchemaModelGroupOP ss_choice( new XMLSchemaModelGroup );
+	ss_choice->type( xsmgt_choice );
+	XMLSchemaModelGroup ss_or_taskop_group;
+	ss_or_taskop_group.group_name( layer_design_ss_layer_or_taskop_group() );
+	XMLSchemaModelGroupOP ss_or_taskop_choice( new XMLSchemaModelGroup );
+	ss_or_taskop_choice->type( xsmgt_choice );
+
+	for ( auto ss_type : SS_TYPES ) {
+		XMLSchemaComplexTypeGenerator ss_ct_gen;
+		ss_ct_gen.element_name( ss_type )
+			.complex_type_naming_func( & layer_design_ss_layer_naming_func )
+			.description( "XRW TO DO" )
+			.add_attributes( ss_layer_attributes )
+			.write_complex_type_to_schema( xsd );
+
+		XMLSchemaElementOP ss_element( new XMLSchemaElement );
+		ss_element->name( ss_type ).type_name( layer_design_ss_layer_naming_func( ss_type ));
+		ss_choice->append_particle( ss_element );
+		ss_or_taskop_choice->append_particle( ss_element );
+	}
+	ss_group.append_particle( ss_choice );
+
+	ss_or_taskop_group.append_particle( ss_or_taskop_choice );
+	XMLSchemaModelGroupOP taskop_group_ref( new XMLSchemaModelGroup );
+	taskop_group_ref->group_name( TaskOperationFactory::task_operation_xml_schema_group_name() );
+	ss_or_taskop_choice->append_particle( taskop_group_ref );
+
+	xsd.add_top_level_element( ss_group );
+	xsd.add_top_level_element( ss_or_taskop_group );
+
+	// ---------------------- TaskLayer complex type ------------------- //
+	// The first subelement must be a task operation;
+	// all subsequent subelements must be one of the SS subelements
+	XMLSchemaSimpleSubelementList task_layer_task_op_element;
+	task_layer_task_op_element.add_group_subelement( & TaskOperationFactory::task_operation_xml_schema_group_name );
+	XMLSchemaSimpleSubelementList task_layer_ss_elements;
+	task_layer_ss_elements.add_group_subelement( & layer_design_ss_layer_group );
+	XMLSchemaComplexTypeGenerator task_layer_ctgen;
+	task_layer_ctgen.element_name( "TaskLayer" )
+		.complex_type_naming_func( & layer_design_ss_layer_naming_func )
+		.description( "XRW TO DO" )
+		.add_ordered_subelement_set_as_required( task_layer_task_op_element )
+		.add_ordered_subelement_set_as_repeatable( task_layer_ss_elements )
+		.write_complex_type_to_schema( xsd );
+
+	// Everything below follows the repeatable subelement idiom;
+
+	XMLSchemaRepeatableCTNodeOP core_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP boundary_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP surface_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP nterm_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP cterm_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP combined_tasks_node(new XMLSchemaRepeatableCTNode);
+	XMLSchemaRepeatableCTNodeOP task_layer_node(new XMLSchemaRepeatableCTNode);
+
+	root_node->add_child(core_node)
+		.add_child(boundary_node)
+		.add_child(surface_node)
+		.add_child(nterm_node)
+		.add_child(cterm_node)
+		.add_child(combined_tasks_node)
+		.add_child(task_layer_node);
+
+	XMLSchemaRepeatableCTNodeOP ss_layer_node( new XMLSchemaRepeatableCTNode );
+	ss_layer_node->set_group_subelement( & layer_design_ss_layer_group );
+
+	AttributeList empty_attribs; // this list is empty!
+	core_node->set_element_w_attributes( "core", empty_attribs, "XRW TO DO" ).add_child( ss_layer_node );
+	boundary_node->set_element_w_attributes( "boundary", empty_attribs, "XRW TO DO" ).add_child( ss_layer_node );
+	surface_node->set_element_w_attributes( "surface", empty_attribs, "XRW TO DO" ).add_child( ss_layer_node );
+	nterm_node->set_element_w_attributes( "Nterm", empty_attribs, "XRW TO DO" ).add_child( ss_layer_node );
+	cterm_node->set_element_w_attributes( "Cterm", empty_attribs, "XRW TO DO" ).add_child( ss_layer_node );
+
+	XMLSchemaRepeatableCTNodeOP ss_layer_or_taskop_node( new XMLSchemaRepeatableCTNode );
+	ss_layer_or_taskop_node->set_group_subelement( & layer_design_ss_layer_or_taskop_group );
+
+	AttributeList combined_task_attribs; combined_task_attribs + required_name_attribute();
+	combined_tasks_node->set_element_w_attributes( "CombinedTasks", combined_task_attribs, "XRW TO DO");
+
+	//combined_tasks_node->set_kids_naming_func( & layer_design_ss_layer_or_taskop_group );
+	combined_tasks_node->add_child( ss_layer_or_taskop_node );
+
+	task_layer_node->set_already_defined_element( "TaskLayer", & layer_design_ss_layer_naming_func );
+
+	root_node->recursively_write_ct_to_schema(xsd);
 }
 
 void
@@ -1111,35 +1267,63 @@ LayerDesignOperation::parse_layer_tag( utility::tag::TagCOP layer_tag, DataMap &
 	std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
 	if ( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" ) {
 		TR << "redefining default layer " << layer << std::endl;
+		for ( utility::tag::TagCOP const secstruct_tag : layer_tag->getTags() ) {
+			parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
+		}
 	} else if ( layer == "CombinedTasks" ) {
 		std::string const comb_name = layer_tag->getOption< std::string >( "name" );
 		layer = comb_name;
 		TR << "Making a combined task named " << comb_name << std::endl;
+
+		// 1st pass over subtags: read all the task operations.
 		utility::vector1< TaskOperationOP > task_ops;
-		BOOST_FOREACH ( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
+		for ( auto task_tag : layer_tag->getTags() ) {
 			std::string task_op_type = task_tag->getName();
 			if ( task_op_type == "all" || task_op_type == "Helix" || task_op_type == "Strand" || task_op_type == "Loop" ) {
 				continue;
+			} else if ( TaskOperationFactory::get_instance()->has_type( task_op_type ) ) {
+				TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, task_tag );
+				task_ops.push_back( task );
+			} else {
+				utility::excn::EXCN_Msg_Exception( "Illegal subtag \"" + task_op_type + "\" of CombinedTasks subtag of CombinedTasks. Expected \"all\", \"Helix\", \"Strand\", \"Loop\" or a valid TaskOperation name" );
 			}
-			TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, task_tag );
-			task_ops.push_back( task );
 		}
 		CombinedTaskOperationOP comb( new CombinedTaskOperation( task_ops ) );
 		add_layer( comb_name, comb, DESIGN, DESIGNABLE );
-	} else if ( TaskOperationFactory::get_instance()->has_type( layer ) ) {
+
+		// 2nd pass over subtags: read all the other acceptible subtags.
+		for ( utility::tag::TagCOP const secstruct_tag : layer_tag->getTags() ) {
+			std::string secstruct_type = secstruct_tag->getName();
+			if ( secstruct_type == "all" || secstruct_type == "Helix" || secstruct_type == "Strand" || secstruct_type == "Loop" ) {
+				parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
+			}
+		}
+	} else if ( layer == "TaskLayer" ) {
+		bool first_tag = true;
 		std::string const task_op_type = layer;
-		std::string const task_name = layer_tag->getOption< std::string >( "name" );
-		TR << "Defining new layer from task type " << layer << " named " << task_name << std::endl;
-		layer = task_name;
-		TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, layer_tag );
-		add_layer( task_name, task, DESIGN, DESIGNABLE );
+		std::string task_name;
+		for ( utility::tag::TagCOP const task_layer_subtag : layer_tag->getTags() ) {
+			std::string const task_op_type = task_layer_subtag->getName();
+			if ( first_tag ) {
+				first_tag = false;
+				if ( TaskOperationFactory::get_instance()->has_type( task_op_type ) ) {
+					task_name = task_layer_subtag->getOption< std::string >( "name" );
+					TR << "Defining new layer from task type " << layer << " named " << task_name << std::endl;
+					TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation( task_op_type, datamap, task_layer_subtag );
+					add_layer( task_name, task, DESIGN, DESIGNABLE );
+				} else {
+					throw utility::excn::EXCN_Msg_Exception( "Invalid TaskOperation name \"" + task_op_type + "\" in TaskLayer subtag of LayerDesign" );
+				}
+			} else {
+				parse_layer_secstruct_tag( task_layer_subtag, datamap, task_name );
+			}
+		}
+
 	} else {
-		utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations or CombinedTasks" );
+		utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations, CombinedTasks, or TaskLayer" );
 	}
 
-	BOOST_FOREACH ( utility::tag::TagCOP const secstruct_tag, layer_tag->getTags() ) {
-		parse_layer_secstruct_tag( secstruct_tag, datamap, layer );
-	}
+	// layer_tag is not accessed from here forward.
 
 	// check if layer ss is defined and if not fill it up
 	BOOST_FOREACH ( Layer const & layer, layer_residues_ ) {

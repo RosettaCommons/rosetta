@@ -28,7 +28,7 @@ class LoopmodelWrapper : public protocols::moves::Mover {
 public:
 
 	/// @copydoc protocols::moves::Mover::get_name
-	std::string get_name() const override { return "LoopmodelWrapper"; }
+	// XRW TEMP  std::string get_name() const override { return "LoopmodelWrapper"; }
 
 	/// @copydoc {parent}::parse_my_tag
 	void parse_my_tag(
@@ -47,6 +47,18 @@ public:
 	/// modeling cannot be controlled at all from this mover and must instead be
 	/// controlled using the usual command-line flags.
 	void apply(core::pose::Pose & pose) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

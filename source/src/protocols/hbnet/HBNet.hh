@@ -132,17 +132,17 @@ struct compare_hbond_resnums : public std::binary_function< HBondResStructCOP, H
 
 ///@brief struct that contains info needed for hbond networks
 struct hbond_net_struct : public utility::pointer::ReferenceCount {
-    bool is_native;
-    bool is_extended;
+	bool is_native;
+	bool is_extended;
 	bool term_w_bb;                                     //network terminates with sc_bb h-bond
 	bool term_w_start;                                  //network cycles to starting res (e.g. ligand)
 	bool term_w_cycle;                                  //network has a cycle
 	bool scored;                                        //has network been scored?
 	bool sort_first_by_tot_unsat;                       //if true, will sort first by total #unsat polar atoms
 	bool sort_by_connectivity;                          //if true, will sort next by % connectivity
-    bool cst_file_written;
-    bool network_pdb_written;
-    bool pml_file_written;
+	bool cst_file_written;
+	bool network_pdb_written;
+	bool pml_file_written;
 	std::string outstring;
 	Size id;
 	Size total_hbonds;                                  //total h-bonds in the network
@@ -167,17 +167,17 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 	//utility::vector1< std::pair< core::id::AtomID, core::conformation::ResidueOP > > waterrots;
 
 	hbond_net_struct() :
-        is_native(false),
-        is_extended(false),
+		is_native(false),
+		is_extended(false),
 		term_w_bb(false),
 		term_w_start(false),
 		term_w_cycle(false),
 		scored(false),
 		sort_first_by_tot_unsat(true),
 		sort_by_connectivity(true),
-        cst_file_written(false),
-        network_pdb_written(false),
-        pml_file_written(false),
+		cst_file_written(false),
+		network_pdb_written(false),
+		pml_file_written(false),
 		outstring(""),
 		id(0),
 		total_hbonds(0),
@@ -205,17 +205,17 @@ struct hbond_net_struct : public utility::pointer::ReferenceCount {
 
 	//copy constructor
 	hbond_net_struct( hbond_net_struct const & hbns ) :
-        is_native(hbns.is_native),
-        is_extended(hbns.is_extended),
+		is_native(hbns.is_native),
+		is_extended(hbns.is_extended),
 		term_w_bb(hbns.term_w_bb),
 		term_w_start(hbns.term_w_start),
 		term_w_cycle(hbns.term_w_cycle),
 		scored(hbns.scored),
 		sort_first_by_tot_unsat(hbns.sort_first_by_tot_unsat),
 		sort_by_connectivity(hbns.sort_by_connectivity),
-        cst_file_written(hbns.cst_file_written),
-        network_pdb_written(hbns.network_pdb_written),
-        pml_file_written(hbns.pml_file_written),
+		cst_file_written(hbns.cst_file_written),
+		network_pdb_written(hbns.network_pdb_written),
+		pml_file_written(hbns.pml_file_written),
 		outstring(hbns.outstring),
 		id(0),
 		total_hbonds(hbns.total_hbonds),
@@ -268,17 +268,17 @@ typedef utility::pointer::shared_ptr< hbond_net_struct > HBondNetStructOP;
 typedef utility::pointer::shared_ptr< hbond_net_struct const > HBondNetStructCOP;
 
 //compare function for sorting vectors of HBondNetStructOP's
-    // This is needed to compare vectors of OP's; if the vector was of the structrs themselves then
-    //  the overloading within the struct would work without calling this compare function from std::sort()
-    // make "inline bool operator()"?? this comparison happens many many times
+// This is needed to compare vectors of OP's; if the vector was of the structrs themselves then
+//  the overloading within the struct would work without calling this compare function from std::sort()
+// make "inline bool operator()"?? this comparison happens many many times
 struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNetStructOP, bool >{
 	bool operator()( HBondNetStructOP const & a, HBondNetStructOP const & b) const
 	{
-        // if exent_existing_networks_=true then use this logic; else is_extends will be false for all networks
-        //  network are only flagged as extended at the end for outputing the networks and poses
-        if ( ( a->is_extended && !b->is_extended ) || ( !a->is_extended && b->is_extended ) )
-            return ( a->is_extended && !b->is_extended );
-		else if ( a->sort_first_by_tot_unsat || b->sort_first_by_tot_unsat ) {
+		// if exent_existing_networks_=true then use this logic; else is_extends will be false for all networks
+		//  network are only flagged as extended at the end for outputing the networks and poses
+		if ( ( a->is_extended && !b->is_extended ) || ( !a->is_extended && b->is_extended ) ) {
+			return ( a->is_extended && !b->is_extended );
+		} else if ( a->sort_first_by_tot_unsat || b->sort_first_by_tot_unsat ) {
 			if ( !( a->lig_num_unsatisfied == b->lig_num_unsatisfied ) ) { //only happens in ligand case
 				return a->lig_num_unsatisfied < b->lig_num_unsatisfied;
 			} else if ( a->num_unsat == b->num_unsat ) {
@@ -321,10 +321,10 @@ public:
 		Size max_network_size = 15,
 		std::string des_residues = "STRKHYWNQDE",
 		bool find_native = false,
-        bool only_native = false,
-        bool keep_existing=false,
-        bool extend_existing=false,
-        bool only_extend=false
+		bool only_native = false,
+		bool keep_existing=false,
+		bool extend_existing=false,
+		bool only_extend=false
 	);
 
 	//HBNet( HBNet const & other );
@@ -333,12 +333,12 @@ public:
 	virtual ~HBNet();
 
 	//virtuals derived from Mover class
-	virtual std::string get_name() const { return "HBNet"; }
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &, core::pose::Pose const & );
-	virtual void apply( core::pose::Pose & pose );
+	// XRW TEMP  virtual std::string get_name() const { return "HBNet"; }
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void apply( core::pose::Pose & pose ) override;
 
 	//optional virtuals that can be derived from HBNet
 	virtual void setup( core::pose::Pose & pose );
@@ -380,32 +380,32 @@ public:
 		std::sort( network_vector_.begin(), network_vector_.end(), compare_net_vec() );
 		return network_vector_;
 	}
-    std::vector< HBondNetStructOP > & get_native_vec() // don't want COP here because of sorting / compare; use const_iterator
-    {
-        std::sort( native_networks_.begin(), native_networks_.end(), compare_net_vec() );
-        return native_networks_;
-    }
-//	//return all hbond networks, sorted with best networks at the front, THIS SHOULD RETURN A POINTER (OP)
-//	std::vector< HBondNetStructOP > & get_output_net_vec()
-//	{
-//		std::sort( output_net_vec_.begin(), output_net_vec_.end(), compare_net_vec() );
-//		return output_net_vec_;
-//	}
-    
-    std::vector< std::vector< Size > > & get_output_vector()
-    {
-        return output_vector_;
-    }
-    
-    // if call this, be sure to check that id exists and nullptr was not returned
-    HBondNetStructOP get_network_by_id( core::Size id )
-    {
-        for (auto & net : network_vector_){
-            if ( net->id == id ) return net;
-        }
-        return nullptr; // if id does not exist
-    }
-    
+	std::vector< HBondNetStructOP > & get_native_vec() // don't want COP here because of sorting / compare; use const_iterator
+	{
+		std::sort( native_networks_.begin(), native_networks_.end(), compare_net_vec() );
+		return native_networks_;
+	}
+	// //return all hbond networks, sorted with best networks at the front, THIS SHOULD RETURN A POINTER (OP)
+	// std::vector< HBondNetStructOP > & get_output_net_vec()
+	// {
+	//  std::sort( output_net_vec_.begin(), output_net_vec_.end(), compare_net_vec() );
+	//  return output_net_vec_;
+	// }
+
+	std::vector< std::vector< Size > > & get_output_vector()
+	{
+		return output_vector_;
+	}
+
+	// if call this, be sure to check that id exists and nullptr was not returned
+	HBondNetStructOP get_network_by_id( core::Size id )
+	{
+		for ( auto & net : network_vector_ ) {
+			if ( net->id == id ) return net;
+		}
+		return nullptr; // if id does not exist
+	}
+
 	core::pose::Pose const & get_orig_pose() { return *orig_pose_; }
 	void set_orig_pose( core::pose::Pose & pose ){ orig_pose_ = core::pose::PoseOP( new core::pose::Pose (pose) ); }
 	core::pose::Pose const & get_ala_pose() { return *ala_pose_; }
@@ -421,26 +421,28 @@ public:
 	Size get_min_networks_size(){ return min_network_size_; }
 	Size get_max_networks_size(){ return max_network_size_; }
 	Size get_max_unsat(){ return max_unsat_; }
-    void set_find_native( bool native ){ find_native_ = native; }
-    bool get_find_native(){ return find_native_; }
-    void set_find_only_native( bool only )
-    {
-        only_native_ = only;
-        if ( only_native_ == true )
-            find_native_ = true;
-    }
-    bool get_find_only_native(){ return find_native_; }
-    void set_keep_existing_networks( bool keep_existing_networks ){ keep_existing_networks_ = keep_existing_networks; }
-    bool get_keep_existing_networks(){ return keep_existing_networks_; }
-    void set_extend_existing_networks( bool extend_existing_networks ){ extend_existing_networks_ = extend_existing_networks; }
-    bool get_extend_existing_networks(){ return extend_existing_networks_; }
-    void set_only_extend_existing( bool only_extend_existing )
-    {
-        only_extend_existing_ = only_extend_existing;
-        if ( only_extend_existing_ == true )
-            extend_existing_networks_ = true;
-    }
-    bool get_only_extend_existing(){ return only_extend_existing_; }
+	void set_find_native( bool native ){ find_native_ = native; }
+	bool get_find_native(){ return find_native_; }
+	void set_find_only_native( bool only )
+	{
+		only_native_ = only;
+		if ( only_native_ == true ) {
+			find_native_ = true;
+		}
+	}
+	bool get_find_only_native(){ return find_native_; }
+	void set_keep_existing_networks( bool keep_existing_networks ){ keep_existing_networks_ = keep_existing_networks; }
+	bool get_keep_existing_networks(){ return keep_existing_networks_; }
+	void set_extend_existing_networks( bool extend_existing_networks ){ extend_existing_networks_ = extend_existing_networks; }
+	bool get_extend_existing_networks(){ return extend_existing_networks_; }
+	void set_only_extend_existing( bool only_extend_existing )
+	{
+		only_extend_existing_ = only_extend_existing;
+		if ( only_extend_existing_ == true ) {
+			extend_existing_networks_ = true;
+		}
+	}
+	bool get_only_extend_existing(){ return only_extend_existing_; }
 
 
 	utility::graph::GraphOP get_packer_graph(){ return packer_neighbor_graph_; }
@@ -531,20 +533,36 @@ public:
 
 	///@brief used by the job distributor to return multiple poses and branch the RosettaScripts protocol;
 	/// returns networks in order of score: places rotamers on the pose to be returned and automatically turns on constraints
-	core::pose::PoseOP get_additional_output();
-    
-    std::string get_file_name( core::Size id, std::string prefix, std::string extension );
+	core::pose::PoseOP get_additional_output() override;
+
+	std::string get_file_name( core::Size id, std::string prefix, std::string extension );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	attributes_for_hbnet( utility::tag::AttributeList& );
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	// functions to be accessed by classes that inherit from HBNet
 protected:
-    
-    ///@brief run common steps universal to all HBNet, e.g. finalize rotamer sets and scoring then populate and search IG for networks.
-    void run( core::pose::Pose & pose );
 
-    ///@brief remove unwanted rotamers from rotamer_sets_ before IG is populated and searched.
-    ///  calls virtual trim_additional_rotamers() that can be overriden by specialized HBNet classes to remove additional rotmaers
-    void trim_rotamers( core::pose::Pose & pose );
-    
+	///@brief run common steps universal to all HBNet, e.g. finalize rotamer sets and scoring then populate and search IG for networks.
+	void run( core::pose::Pose & pose );
+
+	///@brief remove unwanted rotamers from rotamer_sets_ before IG is populated and searched.
+	///  calls virtual trim_additional_rotamers() that can be overriden by specialized HBNet classes to remove additional rotmaers
+	void trim_rotamers( core::pose::Pose & pose );
+
 	///@brief Do a recursive traversal of an EnergyGraph of a static pose;
 	///will find and store all native h-bond networks, regardless of score/parameters.
 	void traverse_native(core::pose::Pose & pose, core::Real const hb_threshold );
@@ -614,21 +632,21 @@ protected:
 	core::pack::task::PackerTaskOP create_ptask( core::pose::Pose & pose, bool initialize_from_commandline=false );
 	bool task_is_valid( core::pose::Pose const & pose ) const;
 
-//	// writes out enzdes .cst constraint file for the h-bond network
-//    void write_cst_files( core::pose::Pose & in_pose, core::pose::Pose & out_pose, HBondNetStructOP o,
-//		std::string cst_fname, bool use_enzdes_cst, bool write_pymol_file=false, bool dump_resfile=false );
-//
-//    void write_pymol_files( std::string name );
-    
-    void write_network_pdb( HBondNetStructOP p );
-    void set_constraints( core::pose::Pose & pose, core::scoring::constraints::ConstraintSet & constraints, HBondNetStructOP p, bool write_cst_file=false );
+	// // writes out enzdes .cst constraint file for the h-bond network
+	//    void write_cst_files( core::pose::Pose & in_pose, core::pose::Pose & out_pose, HBondNetStructOP o,
+	//  std::string cst_fname, bool use_enzdes_cst, bool write_pymol_file=false, bool dump_resfile=false );
+	//
+	//    void write_pymol_files( std::string name );
 
-    
-//	///@brief turns on .cst contraints for the network
-//	void turn_on_enzdes_cst( Pose & pose, std::string cst_fname );
-    
+	void write_network_pdb( HBondNetStructOP p );
+	void set_constraints( core::pose::Pose & pose, core::scoring::constraints::ConstraintSet & constraints, HBondNetStructOP p, bool write_cst_file=false );
+
+
+	// ///@brief turns on .cst contraints for the network
+	// void turn_on_enzdes_cst( Pose & pose, std::string cst_fname );
+
 private:
-    core::pose::Pose & nonconst_get_orig_pose() { return *orig_pose_; }
+	core::pose::Pose & nonconst_get_orig_pose() { return *orig_pose_; }
 
 private:
 	//bool use_enzdes_cst_;
@@ -636,10 +654,10 @@ private:
 	bool write_network_pdbs_;                               //write .pdb's of the h-bond networks on Poly-Ala for easy visualization
 	bool write_cst_files_;
 	bool find_native_;
-    bool only_native_;                                      //only search for native networks in a static pose
-    bool keep_existing_networks_;
-    bool extend_existing_networks_;
-    bool only_extend_existing_;
+	bool only_native_;                                      //only search for native networks in a static pose
+	bool keep_existing_networks_;
+	bool extend_existing_networks_;
+	bool only_extend_existing_;
 	bool verbose_;                                          //print details of mover actions
 	bool symmetric_;
 	bool multi_component_;
@@ -650,7 +668,7 @@ private:
 	bool dump_resfile_;
 	bool start_from_csts_;
 	bool tyr_hydroxyls_must_donate_;
-    bool hydroxyls_must_donate_;
+	bool hydroxyls_must_donate_;
 	bool use_pdb_numbering_;
 	bool no_heavy_unsats_allowed_;
 	//core::Real bw_binary_cut_;
@@ -673,7 +691,7 @@ private:
 	std::vector< HBondNetStructOP > native_networks_;
 	std::vector< std::vector< Size > > merged_vecs_;
 	//std::vector< HBondNetStructOP > output_net_vec_;        //to collect final networks for output
-    std::vector< std::vector< Size > > output_vector_;
+	std::vector< std::vector< Size > > output_vector_;
 	core::Real pore_radius_;                                //for SASA calculations
 	std::map<char,std::pair<Size,Size> > chain_bounds_;
 	core::Real atom_burial_cutoff_;
@@ -706,7 +724,7 @@ private:
 	core::select::residue_selector::ResidueSelectorOP boundary_selector_;
 	core::select::residue_selector::ResidueSubset core_residues_;
 	core::select::residue_selector::ResidueSubset boundary_residues_;
-    core::select::residue_selector::ResidueSubset hbnet_info_residues_;
+	core::select::residue_selector::ResidueSubset hbnet_info_residues_;
 	utility::graph::GraphOP packer_neighbor_graph_;
 	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 };

@@ -131,16 +131,36 @@ enum XMLSchemaCommonType {
 	xsct_none,
 	xsct_int_cslist,
 	xsct_int_wsslist,
+	xsct_nnegative_int_cslist,
+	xsct_nnegative_int_wsslist,
+	xsct_real,
 	xsct_real_cslist,
+	xsct_real_cslist_w_ws,
 	xsct_real_wsslist,
+	xsct_bool_cslist,
 	xsct_bool_wsslist,
+	xsct_positive_integer_cslist,
+	xsct_positive_integer_wsslist,
 	xsct_non_negative_integer,
-	xsct_rosetta_bool
+	xsct_positive_integer,
+	xsct_rosetta_bool,
+	xsct_residue_number,
+	xsct_residue_number_cslist,
+	xsct_refpose_enabled_residue_number,
+	xsct_refpose_enabled_residue_number_cslist,
+	xsct_char,
+	xsct_minimizer_type,
+	xsct_size_cs_pair,
+	xsct_chain_cslist,
+	xsct_dssp_string
 };
-
+std::string residue_number_string();
+std::string real_regex_pattern();
+std::string refpose_enabled_residue_number_string();
 std::string name_for_common_type( XMLSchemaCommonType common_type );
 std::ostream & operator << ( std::ostream & os, XMLSchemaCommonType common_type );
 
+std::string chr_chains_nonrepeated();
 
 /// @brief class %XMLSchemaType represents the name of a defined type that can
 /// be used to describe either an XMLElement or an XMLAttribute.  It may refer
@@ -197,12 +217,12 @@ public:
 class XMLSchemaAttribute : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaAttribute();
-	XMLSchemaAttribute( std::string const & name, XMLSchemaType type );
+	XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & desc );
 	//XMLSchemaAttribute( std::string const & name, XMLSchemaType type, std::string const & default_value ); // temp -- find attribtues w/ default values
-	static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type );
+	//static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type );
 	static XMLSchemaAttribute required_attribute( std::string const & name, XMLSchemaType type, std::string const & desc );
-	static XMLSchemaAttribute attribute_w_default( std::string const & name, XMLSchemaType type, std::string const & default_value );
-	static XMLSchemaAttribute attribute_w_default( std::string const & name, XMLSchemaType type, std::string const & default_value, std::string const & desc );
+	//static XMLSchemaAttribute attribute_w_default( std::string const & name, XMLSchemaType type, std::string const & default_value );
+	static XMLSchemaAttribute attribute_w_default( std::string const & name, XMLSchemaType type, std::string const & desc, std::string const & default_value );
 
 	XMLSchemaAttribute & name( std::string const & setting );
 	XMLSchemaAttribute & type( XMLSchemaType setting );
@@ -375,6 +395,7 @@ class XMLSchemaComplexType : public XMLSchemaTopLevelElement {
 public:
 	XMLSchemaComplexType();
 	XMLSchemaComplexType & name( std::string const & setting );
+	XMLSchemaComplexType & description( std::string const & setting );
 	XMLSchemaComplexType & set_model_group( XMLSchemaModelGroupCOP model_group );
 	XMLSchemaComplexType & add_attribute( XMLSchemaAttribute attribute );
 	XMLSchemaComplexType & add_attributes( AttributeList const & attributes );
@@ -385,6 +406,7 @@ public:
 
 private:
 	std::string name_;
+	std::string desc_;
 	XMLSchemaModelGroupCOP model_group_; // 0 if this is an empty complex type
 	std::list< XMLSchemaAttribute > attributes_;
 };
@@ -484,6 +506,19 @@ public:
 	// the factory (and thus all the ResidueSelectors accessible through RosettaScripts).
 	typedef boost::function< std::string () >                      NameFunction;
 
+	struct ElementSummary {
+		ElementSummary();
+
+		enum { ct_simple, ct_ref, ct_group } element_type;
+		std::string element_name;
+		std::string ct_name;
+		std::string description;
+		AttributeList attributes;
+		bool min_or_max_occurs_set;
+		int min_occurs;
+		int max_occurs;
+	};
+
 public:
 	XMLSchemaSimpleSubelementList();
 	~XMLSchemaSimpleSubelementList() override;
@@ -494,14 +529,14 @@ public:
 
 	// Functions that the users should interact with
 
-	/// @brief the naming function is required if this subelement list is going to be repetable
+	/// @brief the naming function is required if this subelement list is going to be repeatable
 	XMLSchemaSimpleSubelementList & complex_type_naming_func( DerivedNameFunction const & naming_function );
 
 	/// @brief Add a new subelement to the growing list of subelements, defined by its name and a (possibly empty) list of attributes
 	/// This subelement may not itself contain other subelements, however.  The name for the complexType of this element will be
 	/// derived from the function given in complex_type_naming_func, if provided, and otherwise, the complexType for this element
 	/// will be listed within the element declaration and will be unnamed.
-	XMLSchemaSimpleSubelementList & add_simple_subelement( std::string const & name, AttributeList const &  );
+	XMLSchemaSimpleSubelementList & add_simple_subelement( std::string const & name, AttributeList const &, std::string const & description  );
 
 	/// @brief Add a new subelement to the growing list of subelements, but where the minimum and maximum number of
 	/// occurrences for this subelement has been set; note: usually, the min and max are set by the
@@ -510,6 +545,7 @@ public:
 	XMLSchemaSimpleSubelementList & add_simple_subelement(
 		std::string const & name,
 		AttributeList const &,
+		std::string const & description,
 		int min_occurs,
 		int max_occurs = xsminmax_unspecified
 	);
@@ -537,6 +573,30 @@ public:
 		int max_occurs = xsminmax_unspecified
 	);
 
+	/// @brief Add a subelement with a different name than the complex type was created with so that to get the
+	/// correct name for the complex type, the original name must also be provided. E.g. The PROTOCOLS subelement
+	/// takes its structure from the ParsedProtocol mover. Instead of duplicating the complex type for that mover,
+	/// instead, create an element whose type will be given by the protocols::moves::complex_type_name_for_mover
+	/// function when given the "ParsedProtocol" element name.
+	XMLSchemaSimpleSubelementList & add_already_defined_subelement_w_alt_element_name(
+		std::string const & alt_element_name, // the new element that you want to add
+		std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+		DerivedNameFunction const & ct_naming_function
+	);
+
+	/// @brief Add a subelement with a different name than the complex type was created with so that to get the
+	/// correct name for the complex type, the original name must also be provided. E.g. The PROTOCOLS subelement
+	/// takes its structure from the ParsedProtocol mover. Instead of duplicating the complex type for that mover,
+	/// instead, create an element whose type will be given by the protocols::moves::complex_type_name_for_mover
+	/// function when given the "ParsedProtocol" element name.
+	XMLSchemaSimpleSubelementList & add_already_defined_subelement_w_alt_element_name(
+		std::string const & alt_element_name, // the new element that you want to add
+		std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+		DerivedNameFunction const & ct_naming_function,
+		int min_occurs,
+		int max_occurs = xsminmax_unspecified
+	);
+
 	/// @brief Add a new subelement to the growing list of subelements which refers to an already existing group
 	/// whose name is given by the input function.
 	XMLSchemaSimpleSubelementList & add_group_subelement(
@@ -553,24 +613,89 @@ public:
 		int max_occurs = xsminmax_unspecified
 	);
 
+	/// @brief Really only intended to be used by the XMLSchemaRepeatableCTNode
+	XMLSchemaSimpleSubelementList &
+	add_subelement(
+		ElementSummary const & summary
+	);
+
 public:
 
 	// Functions interacted with by the XMLSchemaComplexTypeGenerator only
-
-	struct ElementSummary {
-		enum { ct_simple, ct_ref, ct_group } element_type;
-		std::string element_name;
-		std::string ct_name;
-		AttributeList attributes;
-		bool min_or_max_occurs_set;
-		int min_occurs;
-		int max_occurs;
-	};
 
 	bool simple_element_naming_func_has_been_set() const;
 	std::string complex_typename_for_element( std::string const & element_name ) const;
 	DerivedNameFunction naming_func() const;
 	std::list< ElementSummary > const & element_list() const;
+
+public:
+	// Static functions for creating ElementSummary objects
+
+	static
+	ElementSummary
+	element_summary_as_simple_subelement(
+		std::string const & name,
+		AttributeList const & attributes,
+		std::string const & description
+	);
+
+	static
+	ElementSummary
+	element_summary_as_simple_subelement(
+		std::string const & name,
+		AttributeList const & attributes,
+		std::string const & description,
+		int min_occurs,
+		int max_occurs
+	);
+
+	static
+	ElementSummary
+	element_summary_as_already_defined_subelement(
+		std::string const & name,
+		DerivedNameFunction const & ct_naming_function
+	);
+
+	static
+	ElementSummary
+	element_summary_as_already_defined_subelement(
+		std::string const & name,
+		DerivedNameFunction const & ct_naming_function,
+		int min_occurs,
+		int max_occurs
+	);
+
+	static
+	ElementSummary
+	element_summary_as_already_defined_subelement_w_alt_element_name(
+		std::string const & alt_element_name, // the new element that you want to add
+		std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+		DerivedNameFunction const & ct_naming_function
+	);
+
+	static
+	ElementSummary
+	element_summary_as_already_defined_subelement_w_alt_element_name(
+		std::string const & alt_element_name, // the new element that you want to add
+		std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+		DerivedNameFunction const & ct_naming_function,
+		int min_occurs,
+		int max_occurs /*= xsminmax_unspecified*/
+	);
+
+	static
+	ElementSummary
+	element_summary_as_group_subelement(
+		NameFunction const & group_name_function
+	);
+
+	static
+	ElementSummary
+	element_summary_as_group_subelement(
+		NameFunction const & group_name_function,
+		int min_occurs,
+		int max_occurs
+	);
 
 private:
 	DerivedNameFunction ct_naming_func_for_simple_subelements_;
@@ -646,6 +771,10 @@ private:
 /// most-common case. Adding additional functionality to this class comes at the expense of
 /// making it less clear how the class should be used.  Write me if you feel that there
 /// categories that should be added.
+///
+/// A description must be provided for every complex type even if that description
+/// is an empty string; do not forget to provide a description (your code will compile
+/// but will not run).
 class XMLSchemaComplexTypeGenerator : public utility::pointer::ReferenceCount
 {
 public:
@@ -665,16 +794,20 @@ public:
 
 	XMLSchemaComplexTypeGenerator();
 	~XMLSchemaComplexTypeGenerator() override;
-	XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src );
-	XMLSchemaComplexTypeGenerator & operator = (  XMLSchemaComplexTypeGenerator const & rhs );
+	XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src ) = delete;
+	XMLSchemaComplexTypeGenerator & operator = (  XMLSchemaComplexTypeGenerator const & rhs ) = delete;
 
 	XMLSchemaComplexTypeGenerator & element_name( std::string const & );
+
+	/// @brief Provide the description for this complex type -- this is a function that must be called, even
+	/// if you are passing in an empty string for the description.
+	XMLSchemaComplexTypeGenerator & description( std::string const & );
 	XMLSchemaComplexTypeGenerator & complex_type_naming_func( DerivedNameFunction const & naming_function );
 	XMLSchemaComplexTypeGenerator & add_attribute( XMLSchemaAttribute const & attribute );
 	// @brief Add a required "name" attribute of type "xs_string." Note that most name attributes are optional
-	XMLSchemaComplexTypeGenerator & add_required_name_attribute();
+	XMLSchemaComplexTypeGenerator & add_required_name_attribute( std::string const & desc = "" );
 	// @brief Add an optional "name" attribute of type "xs_string." Note that most name attributes are optional
-	XMLSchemaComplexTypeGenerator & add_optional_name_attribute();
+	XMLSchemaComplexTypeGenerator & add_optional_name_attribute( std::string const & desc = "" );
 	XMLSchemaComplexTypeGenerator & add_attributes( AttributeList const & attributes );
 
 	/// @brief set subelements as repeatable (and optional); setting the sub-elements replaces any sub-elements that were
@@ -773,6 +906,100 @@ private:
 
 };
 
+class XMLSchemaRepeatableCTNode : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< XMLSchemaRepeatableCTNode >
+{
+public:
+	typedef XMLSchemaSimpleSubelementList::DerivedNameFunction DerivedNameFunction;
+	typedef XMLSchemaSimpleSubelementList::NameFunction NameFunction;
+
+public:
+	XMLSchemaRepeatableCTNode();
+	virtual ~XMLSchemaRepeatableCTNode();
+
+	/// self pointers
+	inline XMLSchemaRepeatableCTNodeCOP get_self_ptr() const      { return shared_from_this(); }
+	inline XMLSchemaRepeatableCTNodeOP  get_self_ptr()            { return shared_from_this(); }
+	inline XMLSchemaRepeatableCTNodeCAP get_self_weak_ptr() const { return XMLSchemaRepeatableCTNodeCAP( shared_from_this() ); }
+	inline XMLSchemaRepeatableCTNodeAP  get_self_weak_ptr()       { return XMLSchemaRepeatableCTNodeAP( shared_from_this() ); }
+
+	XMLSchemaRepeatableCTNode &
+	set_element_w_attributes(
+		std::string const & name,
+		AttributeList const & atts,
+		std::string const & description
+	);
+
+	//XMLSchemaRepeatableCTNode &
+	//set_element_w_attributes(
+	// std::string const & name,
+	// AttributeList const & atts,
+	// std::string const & description,
+	// int min_occurs,
+	// int max_occurs = xsminmax_unspecified
+	//);
+
+	XMLSchemaRepeatableCTNode &
+	set_already_defined_element(
+		std::string const & name,
+		DerivedNameFunction const & naming_func
+	);
+
+	//XMLSchemaRepeatableCTNode &
+	//set_already_defined_element(
+	// std::string const & name,
+	// DerivedNameFunction const & naming_func,
+	// int min_occurs,
+	// int max_occurs = xsminmax_unspecified
+	//);
+
+	XMLSchemaRepeatableCTNode &
+	set_already_defined_element_w_alt_name(
+		std::string const & name,
+		std::string const & reference_element_name,
+		DerivedNameFunction const & naming_func
+	);
+
+	//XMLSchemaRepeatableCTNode &
+	//set_already_defined_element_w_alt_name(
+	// std::string const & name,
+	// DerivedNameFunction const & naming_func,
+	// int min_occurs,
+	// int max_occurs = xsminmax_unspecified
+	//);
+
+	XMLSchemaRepeatableCTNode &
+	set_group_subelement(
+		NameFunction const & group_name_function
+	);
+
+	//XMLSchemaRepeatableCTNode &
+	//set_group_subelement(
+	// NameFunction const & group_name_function,
+	// int min_occurs,
+	// int max_occurs = xsminmax_unspecified
+	//);
+
+	XMLSchemaRepeatableCTNode &
+	set_kids_naming_func( DerivedNameFunction const & naming_func );
+
+	XMLSchemaRepeatableCTNode &
+	set_root_node_naming_func( DerivedNameFunction const & naming_func );
+
+	XMLSchemaRepeatableCTNode &
+	add_child( XMLSchemaRepeatableCTNodeOP child_element );
+
+	void
+	recursively_write_ct_to_schema( XMLSchemaDefinition & xsd );
+
+private:
+	std::list< XMLSchemaRepeatableCTNodeOP > children_;
+	XMLSchemaRepeatableCTNodeAP parent_;
+	DerivedNameFunction kids_ct_naming_func_;
+	DerivedNameFunction my_naming_func_; // for the root node only!
+	XMLSchemaSimpleSubelementList::ElementSummary element_;
+};
+
+
 void indent_w_spaces( int indentation, std::ostream & os );
 std::string restriction_type_name( XMLSchemaRestrictionType type );
 std::ostream & operator << ( std::ostream & os, XMLSchemaRestrictionType type );
@@ -784,15 +1011,22 @@ std::ostream & operator << ( std::ostream & os, XMLSchemaModelGroupType type );
 XMLSchemaRestriction
 integer_range_restriction( std::string const & name, int lower_inclusive, int upper_inclusive );
 
-/// @brief This function creates an attribute named "name" of type xs_string that is required;
-/// naming is not always required -- it is not even mostly required.
-XMLSchemaAttribute
-required_name_attribute();
-
 /// @brief This function creates an attribute named "name" of type xs_string that is optional;
-/// naming is not always required -- it is not even mostly required.
+/// naming is not always required -- it is not even mostly required. This is probably the
+/// function you need; very few classes actually need to have a name -- the name is often
+/// only used by the function reading in the name, but there are reasonable times when a Mover,
+/// e.g. could go nameless -- for instance, in the fixbb_jd3 application, a PackRotamersMover
+/// can be given as a subtag of the <Job> tag. In this case, the PackRotamersMover doesn't need
+/// to be given a name.
 XMLSchemaAttribute
-optional_name_attribute();
+optional_name_attribute( std::string const & description = "" );
+
+/// @brief This function creates an attribute named "name" of type xs_string that is required;
+/// naming is not always required -- it is not even mostly required. This function is probably
+/// not what you need. Use with care. See comments for the "optional_name_attribute" function
+/// above.
+XMLSchemaAttribute
+required_name_attribute( std::string const & description = "" );
 
 /// @brief append an attribute of "name" with type "xs:string" along with the other attributes
 /// in the input attribute list to the input complex type.
@@ -810,7 +1044,11 @@ append_required_name_and_attributes_to_complex_type(
 	XMLSchemaComplexType & type_definition
 );
 
-}
-}
+/// @brief check whether an attribute with name attname already exists in AttributeList attlist to avoid collisions
+bool
+attribute_w_name_in_attribute_list(std::string const& attname, AttributeList const& attlist);
+
+}  // namespace tag
+}  // namespace utility
 
 #endif

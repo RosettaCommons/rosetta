@@ -102,6 +102,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -125,14 +128,14 @@ using namespace conformation::symmetry;
 ////////////////////////////////////////////////////
 
 // creators
-std::string
-MakeLayerMoverCreator::keyname() const { return MakeLayerMoverCreator::mover_name(); }
+// XRW TEMP std::string
+// XRW TEMP MakeLayerMoverCreator::keyname() const { return MakeLayerMover::mover_name(); }
 
-protocols::moves::MoverOP
-MakeLayerMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLayerMover); }
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeLayerMoverCreator::create_mover() const { return protocols::moves::MoverOP(new MakeLayerMover); }
 
-std::string
-MakeLayerMoverCreator::mover_name() { return "MakeLayerMover"; }
+// XRW TEMP std::string
+// XRW TEMP MakeLayerMover::mover_name() { return "MakeLayerMover"; }
 
 ////////////////////////////////////////////////////
 
@@ -568,6 +571,39 @@ MakeLayerMover::parse_my_tag(
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );
 	}
 }
+
+std::string MakeLayerMover::get_name() const {
+	return mover_name();
+}
+
+std::string MakeLayerMover::mover_name() {
+	return "MakeLayerMover";
+}
+
+void MakeLayerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "contact_dist" , xsct_real, "Command line '-interaction_shell ##' OR RosettaScripts 'contact_dist=##' specifies the distance (in Angstrom) away from the input structure to generate symmetric partners." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Make a 2D lattice from the input PDB and CRYST1 line. The CRYST1 line must correspond to one of the 17 layer groups.", attlist );
+}
+
+std::string MakeLayerMoverCreator::keyname() const {
+	return MakeLayerMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeLayerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakeLayerMover );
+}
+
+void MakeLayerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeLayerMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

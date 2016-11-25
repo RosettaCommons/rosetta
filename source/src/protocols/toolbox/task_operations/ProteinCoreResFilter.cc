@@ -78,11 +78,11 @@ void ProteinCore::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "distance_threshold", xs_decimal, "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_cutoff", xsct_non_negative_integer, "10" )
-		+ XMLSchemaAttribute::attribute_w_default(  "bound", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_count_cutoff", xsct_non_negative_integer, "6" );
+		+ XMLSchemaAttribute::attribute_w_default(  "distance_threshold", xsct_real, "XRW TO DO",  "8.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_cutoff", xsct_non_negative_integer, "XRW TO DO",  "10"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "bound", xsct_rosetta_bool, "XRW TO DO",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "neighbor_count_cutoff", xsct_non_negative_integer, "XRW TO DO",  "6"  );
 
 	res_filter_schema_w_attributes( xsd, keyname(), attributes );
 }

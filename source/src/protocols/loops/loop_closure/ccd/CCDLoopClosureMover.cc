@@ -49,6 +49,9 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.ccd.CCDLoopClosureMover" );
 
@@ -172,11 +175,11 @@ CCDLoopClosureMover::show( std::ostream & output ) const
 }
 
 // Mover methods
-std::string
-CCDLoopClosureMover::get_name() const
-{
-	return type();
-}
+// XRW TEMP std::string
+// XRW TEMP CCDLoopClosureMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return type();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 CCDLoopClosureMover::clone() const
@@ -803,10 +806,51 @@ operator<< ( std::ostream & os, CCDLoopClosureMover const & mover )
 
 
 // Creator methods ////////////////////////////////////////////////////////////
-std::string
-CCDLoopClosureMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP CCDLoopClosureMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CCDLoopClosureMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CCDLoopClosureMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CCDLoopClosureMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CCDLoopClosureMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CCDLoopClosureMover";
+// XRW TEMP }
+
+std::string CCDLoopClosureMover::get_name() const {
+	return mover_name();
+}
+
+std::string CCDLoopClosureMover::mover_name() {
+	return "CCDLoopClosureMover";
+}
+
+void CCDLoopClosureMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return CCDLoopClosureMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("max_torsion_delta_per_move_H", xsct_real, "Maximum torsion perturbation per move in helical segments. (deg?)")
+		+ XMLSchemaAttribute("max_torsion_delta_per_move_E", xsct_real, "Maximum torsion perturbation per move in beta-sheet segments. (deg?)")
+		+ XMLSchemaAttribute("max_torsion_delta_per_move_L", xsct_real, "Maximum torsion perturbation per move in loop segments. (deg?)")
+		+ XMLSchemaAttribute("max_torsion_delta_H", xsct_real, "Maximum torsion perturbation per run in helical segments. (deg?)")
+		+ XMLSchemaAttribute("max_torsion_delta_E", xsct_real, "Maximum torsion perturbation per run in beta-sheet segments. (deg?)")
+		+ XMLSchemaAttribute("max_torsion_delta_L", xsct_real, "Maximum torsion perturbation per run in loop segments. (deg?)")
+		+ XMLSchemaAttribute("tolerance", xsct_real, "Move acceptance stringency.")
+		+ XMLSchemaAttribute("max_cycles", xsct_non_negative_integer, "Maximum number of cycles per run. Quit the run even if not converged at this point.")
+		+ XMLSchemaAttribute("check_rama_scores", xsct_rosetta_bool, "XRW TO DO")
+		+ XMLSchemaAttribute("rama_2b", xsct_rosetta_bool, "Use the 2-body ramachandran scoring term.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs loops closure using the CCD algorythm.", attlist );
+}
+
+std::string CCDLoopClosureMoverCreator::keyname() const {
+	return CCDLoopClosureMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -814,11 +858,11 @@ CCDLoopClosureMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CCDLoopClosureMover );
 }
 
-std::string
-CCDLoopClosureMoverCreator::mover_name()
+void CCDLoopClosureMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "CCDLoopClosureMover";
+	CCDLoopClosureMover::provide_xml_schema( xsd );
 }
+
 
 } // namespace ccd
 } // namespace loop_closure

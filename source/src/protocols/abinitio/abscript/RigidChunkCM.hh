@@ -50,10 +50,10 @@ public:
 
 	virtual ~RigidChunkCM() {};
 
-	virtual EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	void sim_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
@@ -63,19 +63,18 @@ public:
 
 	core::select::residue_selector::ResidueSelectorCOP templ_selector() const;
 
-	virtual void initialize( Pose& pose );
+	void initialize( Pose& pose ) override;
 
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
 	loops::Loops select_parts( loops::Loops const& rigid_core,
 		core::Size random_grow_loops_by );
@@ -86,12 +85,24 @@ public:
 
 	core::pose::Pose const& templ() const { return *template_; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 	std::map< core::Size, core::Size > const& sim_origin() const { return sim_origin_; }
 
 	std::map< core::Size, core::Size > const& templ_target() const { return templ_target_; }
 
 protected:
-	virtual void passport_updated();
+	void passport_updated() override;
 
 private:
 	void configure( core::pose::Pose const& in_p,

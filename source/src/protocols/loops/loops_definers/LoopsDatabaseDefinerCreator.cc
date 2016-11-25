@@ -31,7 +31,13 @@ LoopsDatabaseDefinerCreator::create_loops_definer() const {
 
 string
 LoopsDatabaseDefinerCreator::type_name() const {
-	return "LoopsDatabase";
+	// return "LoopsDatabase";
+	return LoopsDatabaseDefiner::class_name();
+}
+
+void LoopsDatabaseDefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopsDatabaseDefiner::provide_xml_schema( xsd );
 }
 
 } //namespace

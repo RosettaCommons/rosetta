@@ -56,6 +56,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 #ifdef WIN32
@@ -78,20 +81,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-CoMTrackerCMCreator::keyname() const {
-	return CoMTrackerCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CoMTrackerCMCreator::keyname() const {
+// XRW TEMP  return CoMTrackerCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CoMTrackerCMCreator::create_mover() const {
-	return ClientMoverOP( new CoMTrackerCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CoMTrackerCMCreator::create_mover() const {
+// XRW TEMP  return ClientMoverOP( new CoMTrackerCM );
+// XRW TEMP }
 
-std::string
-CoMTrackerCMCreator::mover_name() {
-	return "CoMTrackerCM";
-}
+// XRW TEMP std::string
+// XRW TEMP CoMTrackerCM::mover_name() {
+// XRW TEMP  return "CoMTrackerCM";
+// XRW TEMP }
 
 CoMTrackerCM::CoMTrackerCM():
 	ClientMover()
@@ -314,9 +317,9 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 	return claim_list;
 }
 
-std::string CoMTrackerCM::get_name() const {
-	return "CoMTrackerCM('"+name_+"')";
-}
+// XRW TEMP std::string CoMTrackerCM::get_name() const {
+// XRW TEMP  return "CoMTrackerCM('"+name_+"')";
+// XRW TEMP }
 
 moves::MoverOP CoMTrackerCM::fresh_instance() const {
 	return ClientMoverOP( new CoMTrackerCM() );
@@ -325,6 +328,50 @@ moves::MoverOP CoMTrackerCM::fresh_instance() const {
 moves::MoverOP CoMTrackerCM::clone() const{
 	return ClientMoverOP( new CoMTrackerCM( *this ) );
 }
+
+std::string CoMTrackerCM::get_name() const {
+	return mover_name();
+}
+
+std::string CoMTrackerCM::mover_name() {
+	return "CoMTrackerCM";
+}
+
+void CoMTrackerCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"stationary_label", xs_string,
+		"Label for stationary residues",
+		GENERATE_STATIONARY_ATTACHMENT_POINT);
+	attlist + XMLSchemaAttribute::required_attribute(
+		"name", xs_string,
+		"Required unique ID for this mover");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"mobile_selector", xs_string,
+		"Residue selector specifying mobile residues");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Claim mover that tracks the center of mass",
+		attlist );
+}
+
+std::string CoMTrackerCMCreator::keyname() const {
+	return CoMTrackerCM::mover_name();
+}
+
+protocols::moves::MoverOP
+CoMTrackerCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CoMTrackerCM );
+}
+
+void CoMTrackerCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoMTrackerCM::provide_xml_schema( xsd );
+}
+
 
 } // rigid
 } // protocols

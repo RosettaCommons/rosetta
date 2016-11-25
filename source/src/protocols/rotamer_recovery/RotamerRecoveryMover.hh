@@ -65,8 +65,8 @@ public: // functional interface
 	apply( core::pose::Pose & pose ) override;
 
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief make a copy
 	moves::MoverOP clone() const override;
@@ -116,6 +116,18 @@ public: // functional interface
 	show(
 		std::ostream & out
 	) const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // data
 

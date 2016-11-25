@@ -92,7 +92,7 @@ public:// virtual constructor
 public:// accessor
 
 	// @brief get name of this filter
-	std::string name() const override { return "SaveResfileToDisk"; }
+	// XRW TEMP  std::string name() const override { return "SaveResfileToDisk"; }
 
 public:// setters
 
@@ -134,6 +134,18 @@ public:// virtual main operation
 	// @brief public functions
 	utility::vector1< core::Size > select_residues( Pose const & pose ) const;
 	void write_resfile( Pose const & pose, utility::vector1< core::Size > const & selected_residues ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @brief
 	//  virtual core::Real report_sm( core::pose::Pose const & pose ) const;

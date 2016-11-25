@@ -41,6 +41,10 @@
 #include <cppdb/frontend.h>
 
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueBurialFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -74,8 +78,8 @@ ResidueBurialFeatures::ResidueBurialFeatures(ResidueBurialFeatures const & src) 
 
 ResidueBurialFeatures::~ResidueBurialFeatures()= default;
 
-string
-ResidueBurialFeatures::type_name() const { return "ResidueBurialFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueBurialFeatures::type_name() const { return "ResidueBurialFeatures"; }
 
 void
 ResidueBurialFeatures::write_schema_to_db(
@@ -182,6 +186,36 @@ ResidueBurialFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string ResidueBurialFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueBurialFeatures::class_name() {
+	return "ResidueBurialFeatures";
+}
+
+void ResidueBurialFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record the number of neighbors at different radii and sasa with different probe radii", attlist );
+}
+
+std::string ResidueBurialFeaturesCreator::type_name() const {
+	return ResidueBurialFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueBurialFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueBurialFeatures );
+}
+
+void ResidueBurialFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueBurialFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

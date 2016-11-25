@@ -19,6 +19,8 @@
 #include <protocols/qsar/scoring_grid/SolvationGrid.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 #include <map>
 
 namespace protocols {
@@ -62,6 +64,10 @@ public:
 	virtual bool is_in_grid(core::conformation::UltraLightResidue const & residue);
 	/// @brief determine if all residue atoms are in a grid
 	virtual bool is_in_grid(core::conformation::Residue const & residue);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string type_;
 	std::map<core::ShortSize,SingleGridOP> grid_map_;

@@ -83,7 +83,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
 	//PackerTaskMover/RotamerTrialsMover needs to have a parent class that implements this?
@@ -101,6 +101,21 @@ public:
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_rotamer_trials_mover( utility::tag::XMLSchemaDefinition & xsd );
+	// The above was added so that this could be called in SymRotamerTrialsMover
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 

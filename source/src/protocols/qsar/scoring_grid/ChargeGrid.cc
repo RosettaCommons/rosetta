@@ -14,12 +14,15 @@
 #include <protocols/qsar/scoring_grid/ChargeGrid.hh>
 #include <protocols/qsar/scoring_grid/ChargeGridCreator.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
+
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 
@@ -53,7 +56,7 @@ void ChargeAtom::deserialize(utility::json_spirit::mObject data)
 }
 std::string ChargeGridCreator::keyname() const
 {
-	return ChargeGridCreator::grid_name();
+	return ChargeGrid::grid_name();
 }
 
 GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -69,11 +72,16 @@ GridBaseOP ChargeGridCreator::create_grid() const
 	return GridBaseOP( new ChargeGrid() );
 }
 
-
-std::string ChargeGridCreator::grid_name()
+void ChargeGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "ChargeGrid";
+	ChargeGrid::provide_xml_schema( xsd );
 }
+
+
+//std::string ChargeGridCreator::grid_name()
+//{
+// return "ChargeGrid";
+//}
 
 ChargeGrid::ChargeGrid() :
 	SingleGrid("ChargeGrid"),
@@ -315,6 +323,24 @@ void ChargeGrid::setup_charge_atoms(core::pose::Pose const & pose)
 		}
 	}
 }
+
+std::string ChargeGrid::grid_name()
+{
+	return "ChargeGrid";
+}
+
+void ChargeGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that computes the electrostatic potential at a set of grid points; no parameters may be customized currently", attributes );
+
+}
+
+
 
 }
 }

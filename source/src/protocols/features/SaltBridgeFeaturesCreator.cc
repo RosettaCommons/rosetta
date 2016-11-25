@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-SaltBridgeFeaturesCreator::SaltBridgeFeaturesCreator() {}
-SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() = default;
-FeaturesReporterOP SaltBridgeFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new SaltBridgeFeatures );
-}
+// XRW TEMP SaltBridgeFeaturesCreator::SaltBridgeFeaturesCreator() {}
+// XRW TEMP SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP SaltBridgeFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new SaltBridgeFeatures );
+// XRW TEMP }
 
-std::string SaltBridgeFeaturesCreator::type_name() const {
-	return "SaltBridgeFeatures";
-}
+// XRW TEMP std::string SaltBridgeFeaturesCreator::type_name() const {
+// XRW TEMP  return "SaltBridgeFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

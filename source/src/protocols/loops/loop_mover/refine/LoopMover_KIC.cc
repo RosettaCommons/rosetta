@@ -80,6 +80,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 
@@ -225,7 +228,7 @@ void LoopMover_Refine_KIC::apply(
 			}
 			if ( pose_changed ) {
 				pose.conformation().declare_chemical_bond( loop_cut, pose.residue( loop_cut ).atom_name( pose.residue( loop_cut ).upper_connect_atom() ),
-																									 loop_cut + 1, pose.residue( loop_cut + 1 ).atom_name( pose.residue( loop_cut + 1 ).lower_connect_atom() ) );
+					loop_cut + 1, pose.residue( loop_cut + 1 ).atom_name( pose.residue( loop_cut + 1 ).lower_connect_atom() ) );
 			}
 		}
 	}
@@ -846,10 +849,10 @@ void LoopMover_Refine_KIC::apply(
 	}
 }
 
-std::string
-LoopMover_Refine_KIC::get_name() const {
-	return "LoopMover_Refine_KIC";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Refine_KIC::get_name() const {
+// XRW TEMP  return "LoopMover_Refine_KIC";
+// XRW TEMP }
 
 void
 LoopMover_Refine_KIC::show(std::ostream & output) const
@@ -949,15 +952,47 @@ basic::Tracer & LoopMover_Refine_KIC::tr() const
 	return TR;
 }
 
-LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
+// XRW TEMP LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
 
-moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Refine_KIC() );
+// XRW TEMP moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_KIC() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopMover_Refine_KICCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Refine_KIC";
+// XRW TEMP }
+
+std::string LoopMover_Refine_KIC::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Refine_KIC::mover_name() {
+	return "LoopMover_Refine_KIC";
+}
+
+void LoopMover_Refine_KIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Refines the polypeptide segments in the LoopMover_Refine_KIC::loops_ class variable from their current conformations"
+		"Is controlled through command line options only", attlist );
 }
 
 std::string LoopMover_Refine_KICCreator::keyname() const {
-	return "LoopMover_Refine_KIC";
+	return LoopMover_Refine_KIC::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopMover_Refine_KICCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Refine_KIC );
+}
+
+void LoopMover_Refine_KICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Refine_KIC::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

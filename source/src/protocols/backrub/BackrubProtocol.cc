@@ -89,32 +89,20 @@
 #include <utility/keys/Key3Vector.hh>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.backrub.BackrubProtocol");
 
 namespace protocols {
 namespace backrub {
 
-std::string
-protocols::backrub::BackrubProtocolCreator::keyname() const {
-	return BackrubProtocolCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-protocols::backrub::BackrubProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubProtocol );
-}
-
-std::string
-protocols::backrub::BackrubProtocolCreator::mover_name() {
-	return "BackrubProtocol";
-}
-
 BackrubProtocol::BackrubProtocol():
 	Mover(),
 	scorefxn_(NULL),
 	main_task_factory_(NULL),
-	backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
+	backrubmover_(BackrubMoverOP( new BackrubMover() )),
 	smallmover_(protocols::simple_moves::SmallMoverOP(new protocols::simple_moves::SmallMover())),
 	sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP(new protocols::simple_moves::sidechain_moves::SidechainMover())),
 	packrotamersmover_(protocols::simple_moves::PackRotamersMoverOP(new protocols::simple_moves::PackRotamersMover())),
@@ -299,13 +287,13 @@ BackrubProtocol::fresh_instance() const {
 	return protocols::moves::MoverOP( new BackrubProtocol );
 }
 
-std::string
-BackrubProtocol::get_name() const {
-	return "BackrubProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP BackrubProtocol::get_name() const {
+// XRW TEMP  return "BackrubProtocol";
+// XRW TEMP }
 
 void
-BackrubProtocol::set_backrub_mover(protocols::backrub::BackrubMoverOP backrub_mover){
+BackrubProtocol::set_backrub_mover(BackrubMoverOP backrub_mover){
 	backrubmover_ = backrub_mover;
 }
 
@@ -618,6 +606,55 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 		append_fold_tree_to_file(mc.last_accepted_pose().fold_tree(), output_tag + "_last.pdb"); // this is the last accepted pose from MC trials
 	}
 }
+
+std::string BackrubProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string BackrubProtocol::mover_name() {
+	return "BackrubProtocol";
+}
+
+void BackrubProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"pivot_residues", xs_string,
+		"Pivot residues to use for backbone moves. Can contain segments (comma separated). Can use PDB numbers ([resnum][chain]) or absolute Rosetta numbers (integer)");
+	attlist + XMLSchemaAttribute(
+		"pivot_atoms", xs_string,
+		"main chain atoms usable as pivots (comma separated)");
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	attlist + XMLSchemaAttribute(
+		"mc_kt", xsct_real,
+		"Temperature to use for Metropolis criterion");
+	attlist + XMLSchemaAttribute(
+		"ntrials", xsct_real,
+		"Number of trials to perform");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Performs backrub-style backbone moves",
+		attlist );
+}
+
+std::string BackrubProtocolCreator::keyname() const {
+	return BackrubProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+BackrubProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackrubProtocol );
+}
+
+void BackrubProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackrubProtocol::provide_xml_schema( xsd );
+}
+
 
 } //backrub
 } //protocols

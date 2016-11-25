@@ -80,10 +80,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return FilterOP( new InterlockingAromaFilter( *this ) ); }
+	FilterOP clone() const override { return FilterOP( new InterlockingAromaFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const { return FilterOP( new InterlockingAromaFilter() ); }
+	FilterOP fresh_instance() const override { return FilterOP( new InterlockingAromaFilter() ); }
 
 
 public:// mutator
@@ -103,16 +103,16 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "InterlockingAromaFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "InterlockingAromaFilter"; }
 
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & pose );
+		Pose const & pose ) override;
 
 
 public:// virtual main operation
@@ -120,19 +120,31 @@ public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief
-	virtual Real report_sm( Pose const & pose ) const;
+	Real report_sm( Pose const & pose ) const override;
 
 	/// @brief used to report score
-	virtual void report( std::ostream & out, Pose const & pose ) const;
+	void report( std::ostream & out, Pose const & pose ) const override;
 
 	/// @brief compute this filter
 	Real compute( Pose const & pose ) const;
 
 	/// @brief compute this filter for a give residue
 	bool compute( Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

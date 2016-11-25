@@ -53,6 +53,9 @@
 #include <map>
 #include <set>
 #include <boost/assign/list_of.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.InsertResMover" );
 
@@ -66,20 +69,20 @@ using utility::vector1;
 
 InsertResMover::InsertResMover():moves::Mover("InsertResMover"){}
 
-std::string InsertResMoverCreator::keyname() const
-{
-	return InsertResMoverCreator::mover_name();
-}
+// XRW TEMP std::string InsertResMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InsertResMover::mover_name();
+// XRW TEMP }
 
-std::string InsertResMoverCreator::mover_name(){
-	return "InsertResMover";
-}
+// XRW TEMP std::string InsertResMover::mover_name(){
+// XRW TEMP  return "InsertResMover";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-InsertResMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertResMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InsertResMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InsertResMover );
+// XRW TEMP }
 
 numeric::xyzVector<core::Real>
 InsertResMover::center_of_mass(core::pose::Pose const & pose) {
@@ -210,9 +213,9 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 }
 
 
-std::string InsertResMover::get_name() const {
-	return "InsertResMover";
-}
+// XRW TEMP std::string InsertResMover::get_name() const {
+// XRW TEMP  return "InsertResMover";
+// XRW TEMP }
 
 void
 InsertResMover::parse_my_tag(
@@ -258,6 +261,80 @@ core::pose::PoseOP InsertResMover::get_additional_output(){
 	set_last_move_status(protocols::moves::FAIL_RETRY);
 	return nullptr;
 }
+
+std::string InsertResMover::get_name() const {
+	return mover_name();
+}
+
+std::string InsertResMover::mover_name() {
+	return "InsertResMover";
+}
+
+void InsertResMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"chain", xs_string,
+		"XSD_XRW: TO DO",
+		"999");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resType", xs_string,
+		"XSD_XRW: TO DO",
+		"H");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"steal_angles_from_res", xsct_non_negative_integer,
+		"XSD_XRW: TO DO",
+		"0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"residue", xsct_non_negative_integer,
+		"XSD_XRW: TO DO",
+		"1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"grow_toward_Nterm", xsct_rosetta_bool,
+		"XSD_XRW: TO DO",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ideal", xsct_rosetta_bool,
+		"XSD_XRW: TO DO",
+		"true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"phi", xsct_real,
+		"XSD_XRW: TO DO",
+		"-57.8");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"psi", xsct_real,
+		"XSD_XRW: TO DO",
+		"-47.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"omega", xsct_real,
+		"XSD_XRW: TO DO",
+		"180.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"additionalResidue", xs_string,
+		"XSD_XRW: TO DO",
+		"1");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Inserts ideal residues into pose. Useful for extending helices",
+		attlist );
+}
+
+std::string InsertResMoverCreator::keyname() const {
+	return InsertResMover::mover_name();
+}
+
+protocols::moves::MoverOP
+InsertResMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InsertResMover );
+}
+
+void InsertResMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InsertResMover::provide_xml_schema( xsd );
+}
+
 
 }//pose_length_moves
 }//protocols

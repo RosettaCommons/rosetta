@@ -35,7 +35,7 @@ public:
 	~StoreQuasiSymmetricTaskMover() override;
 
 	void apply( core::pose::Pose & pose  ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -57,6 +57,18 @@ public:
 	char quasi_symm_comp() const;
 	core::Size num_quasi_repeats() const;
 	core::Size offset_resis() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;

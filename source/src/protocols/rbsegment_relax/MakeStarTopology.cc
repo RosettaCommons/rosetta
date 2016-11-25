@@ -35,6 +35,9 @@
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -55,20 +58,20 @@ using namespace core;
 /// creator
 
 
-std::string
-MakeStarTopologyMoverCreator::keyname() const {
-	return MakeStarTopologyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MakeStarTopologyMoverCreator::keyname() const {
+// XRW TEMP  return MakeStarTopologyMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MakeStarTopologyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeStarTopologyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeStarTopologyMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MakeStarTopologyMover );
+// XRW TEMP }
 
-std::string
-MakeStarTopologyMoverCreator::mover_name() {
-	return "MakeStarTopology";
-}
+// XRW TEMP std::string
+// XRW TEMP MakeStarTopologyMover::mover_name() {
+// XRW TEMP  return "MakeStarTopology";
+// XRW TEMP }
 
 
 //////////////////
@@ -117,6 +120,49 @@ void MakeStarTopologyMover::parse_my_tag(
 		TR << "Adding foldtrees " << tag_ << " to datamap" << std::endl;
 	}
 }
+
+std::string MakeStarTopologyMover::get_name() const {
+	return mover_name();
+}
+
+std::string MakeStarTopologyMover::mover_name() {
+	return "MakeStarTopology";
+}
+
+void MakeStarTopologyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction valid_modes;
+	valid_modes.name( "valid_make_star_topology_modes" );
+	valid_modes.base_type( xs_string );
+	valid_modes.add_restriction( xsr_enumeration, "default" );
+	valid_modes.add_restriction( xsr_enumeration, "disconnected" );
+	xsd.add_top_level_element( valid_modes );
+
+	//default, disconnected
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "mode", "valid_make_star_topology_modes", "Set up default or disconnected star topology?", "default" )
+		+ XMLSchemaAttribute::attribute_w_default( "restore", xsct_rosetta_bool, "Apply the fold tree set up on a previous run of this mover to the pose?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "tag", xs_string, "Name of a previously defined fold tree to be used in this mover. If the fold tree has not been defined, it will be set as the default fold tree.", "nulltag" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sets up a star topology fold tree for this pose", attlist );
+}
+
+std::string MakeStarTopologyMoverCreator::keyname() const {
+	return MakeStarTopologyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeStarTopologyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakeStarTopologyMover );
+}
+
+void MakeStarTopologyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeStarTopologyMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

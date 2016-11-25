@@ -24,6 +24,9 @@
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace grafting {
@@ -73,10 +76,10 @@ ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& src) :
 
 ReplaceRegionMover::~ReplaceRegionMover(){}
 
-std::string
-ReplaceRegionMover::get_name() const {
-	return "ReplaceRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ReplaceRegionMover::get_name() const {
+// XRW TEMP  return "ReplaceRegionMover";
+// XRW TEMP }
 
 
 void
@@ -100,20 +103,20 @@ ReplaceRegionMover::parse_my_tag(
 
 }
 
-protocols::moves::MoverOP
-ReplaceRegionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReplaceRegionMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ReplaceRegionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ReplaceRegionMover );
+// XRW TEMP }
 
-std::string
-ReplaceRegionMoverCreator::keyname() const {
-	return ReplaceRegionMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ReplaceRegionMoverCreator::keyname() const {
+// XRW TEMP  return ReplaceRegionMover::mover_name();
+// XRW TEMP }
 
-std::string
-ReplaceRegionMoverCreator::mover_name(){
-	return "ReplaceRegionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ReplaceRegionMover::mover_name(){
+// XRW TEMP  return "ReplaceRegionMover";
+// XRW TEMP }
 
 void ReplaceRegionMover::src_pose_start(core::Size start){ src_pose_start_ = start; }
 core::Size ReplaceRegionMover::src_pose_start() const{ return src_pose_start_; }
@@ -153,6 +156,43 @@ ReplaceRegionMover::apply(core::pose::Pose& pose) {
 	pose = protocols::grafting::replace_region (*src_pose_, pose, src_pose_start_, target_pose_start_, span_);
 
 }
+
+std::string ReplaceRegionMover::get_name() const {
+	return mover_name();
+}
+
+std::string ReplaceRegionMover::mover_name() {
+	return "ReplaceRegionMover";
+}
+
+void ReplaceRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "span", xsct_non_negative_integer, "Length of the region to replace" )
+		+ XMLSchemaAttribute::attribute_w_default( "copy_pdbinfo", xsct_rosetta_bool, "Copy PDBInfo to the new pose?", "false" )
+		+ XMLSchemaAttribute::required_attribute( "src_pose_start_", xsct_non_negative_integer, "First residue to copy from the source pose" )
+		+ XMLSchemaAttribute::required_attribute( "target_pose_start_", xsct_non_negative_integer, "First residue to replace in the target pose" );
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Replaces a region of length span in the target pose with a specified region of length span in the source pose.", attlist );
+}
+
+std::string ReplaceRegionMoverCreator::keyname() const {
+	return ReplaceRegionMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ReplaceRegionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ReplaceRegionMover );
+}
+
+void ReplaceRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReplaceRegionMover::provide_xml_schema( xsd );
+}
+
 
 
 }

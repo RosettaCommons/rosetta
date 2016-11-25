@@ -536,7 +536,7 @@ dump_pdb(
 	std::string & out,
 	std::string const &filename
 ) {
-	
+
 	core::io::StructFileRepOptionsOP options=core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
 
 	// OK, what's here?

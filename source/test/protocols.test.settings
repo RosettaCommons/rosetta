@@ -137,6 +137,7 @@ sources = {
 	"filters" : [
 		"BasicFilters",
 		"CalculatorFilter",
+		"FilterFactory",
 		"ReplicateFilter",
 	],
 
@@ -253,6 +254,11 @@ sources = {
 	"hybridization" : [
 		"TMalign",
 	],
+        "init" : [
+                "features_reporter_creators",
+                "filter_creators",
+                "mover_creators"
+        ],
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
@@ -294,6 +300,7 @@ sources = {
 	],
 
 	"ligand_docking": [
+		"LigandDockingLoaders",
 		"ResidueTorsionRestraints",
 		"StartFrom",
  	],
@@ -376,6 +383,7 @@ sources = {
                 "FilterReportAsPoseExtraScoresMover",
 		"MoverContainer",
 		"MoversTest",
+		"MoverFactory",
 		"PyMolMoverTest",
 		"ScoreTest",
 		"SmallMover",
@@ -417,6 +425,7 @@ sources = {
 
 	"qsar/scoring_grid" : [
 		"ScoreNormalization",
+		"ScoringGridLoader",
 	],
 
 	"relax" : [

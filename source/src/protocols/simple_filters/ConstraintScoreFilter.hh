@@ -72,6 +72,18 @@ public:
 	protocols::filters::FilterOP
 	clone() const override;
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	ConstraintGeneratorCOPs cgs_;
 	core::Real threshold_;

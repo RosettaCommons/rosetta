@@ -24,6 +24,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -42,7 +44,7 @@ public:
 	~TotalScoreFeatures() override;
 
 	/// @copydoc FeaturesReporter::type_name
-	std::string type_name() const override;
+	// XRW TEMP  std::string type_name() const override;
 
 	/// @brief Get the score function being reported by this object.
 	core::scoring::ScoreFunctionCOP scorefxn() const;
@@ -68,6 +70,18 @@ public:
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

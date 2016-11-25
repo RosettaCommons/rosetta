@@ -52,8 +52,8 @@ public:
 	void set_defaults();
 
 	/// @brief Apply the loop-build protocol to the input pose
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	std::string get_name() const override;
 
 	/// Accessors:
 

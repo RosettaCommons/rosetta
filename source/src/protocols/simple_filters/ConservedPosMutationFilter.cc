@@ -33,6 +33,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -107,12 +110,51 @@ ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datac
 	}
 }
 
+std::string ConservedPosMutationFilter::name() const {
+	return class_name();
+}
 
-filters::FilterOP
-ConservedPosMutationFilterCreator::create_filter() const { return filters::FilterOP( new ConservedPosMutationFilter ); }
+std::string ConservedPosMutationFilter::class_name() {
+	return "ConservedPosMutationFilter";
+}
 
-std::string
-ConservedPosMutationFilterCreator::keyname() const { return "ConservedPosMutationFilter"; }
+void ConservedPosMutationFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	auto ct_gen = protocols::toolbox::task_operations::
+		RestrictConservedLowDdgOperation::create_complex_type_generator(xsd);
+
+	attlist + XMLSchemaAttribute(
+		"max_conerved_pos_mutations", xsct_non_negative_integer,
+		"Maximum number of allowed mutations of conserved positions.");
+
+	ct_gen->add_attributes(attlist).complex_type_naming_func( filters::complex_type_name_for_filter )
+		.description(
+		"Returns true if the given pose passes the filter, false otherwise. "
+		"In this case, a pose passes if it less than max_allowed_conserved_pos_mutations_ "
+		"mutations at conserved position. The decision whether a given position "
+		"counts as conserved is made by the RestrictConservedLowDdgOperation "
+		"task operation to prevent duplication of code")
+		.element_name(class_name())
+		.write_complex_type_to_schema(xsd);
+}
+
+std::string ConservedPosMutationFilterCreator::keyname() const {
+	return ConservedPosMutationFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ConservedPosMutationFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ConservedPosMutationFilter );
+}
+
+void ConservedPosMutationFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConservedPosMutationFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

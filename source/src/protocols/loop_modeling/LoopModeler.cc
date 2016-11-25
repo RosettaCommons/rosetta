@@ -78,6 +78,9 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -115,13 +118,13 @@ namespace loop_modeling {
 
 static basic::Tracer TR("protocols.loop_modeling.LoopModeler");
 
-MoverOP LoopModelerCreator::create_mover() const { // {{{1
-	return MoverOP( new LoopModeler );
-}
+// XRW TEMP MoverOP LoopModelerCreator::create_mover() const { // {{{1
+// XRW TEMP  return MoverOP( new LoopModeler );
+// XRW TEMP }
 
-string LoopModelerCreator::keyname() const { // {{{1
-	return "LoopModeler";
-}
+// XRW TEMP string LoopModelerCreator::keyname() const { // {{{1
+// XRW TEMP  return "LoopModeler";
+// XRW TEMP }
 // }}}1
 
 LoopModeler::LoopModeler() { // {{{1
@@ -156,7 +159,8 @@ void LoopModeler::parse_my_tag( // {{{1
 	DataMap & data,
 	Filters_map const & filters,
 	Movers_map const & movers,
-	Pose const & pose) {
+	Pose const & pose
+) {
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_task_factory_from_tag(*this, tag, data);
@@ -478,8 +482,84 @@ void LoopModeler::set_cen_scorefxn(ScoreFunctionOP function) { // {{{1
 	centroid_stage_->set_score_function(function);
 }
 
+std::string LoopModeler::get_name() const {
+	return mover_name();
+}
+
+std::string LoopModeler::mover_name() {
+	return "LoopModeler";
+}
+
+void LoopModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// config restriction (kic or kic_with_frags or empty)
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "config_options" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "kic|kic_with_frags|empty" );
+	xsd.add_top_level_element( restriction_type );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("config", "config_options",
+		"Configure the local backbone move used in the refinement steps."
+		"If kic_with_frags is specified, -loops:frag_sizes and -loops:frag_files options are required.", "kic")
+		+ XMLSchemaAttribute::attribute_w_default("auto_refine", xsct_rosetta_bool,
+		"Disable \"auto_refine\" if you want"
+		"to specify your own refinement moves", "true")
+		+ XMLSchemaAttribute("scorefxn_fa", xs_string, "Score function for full atom modeling.")
+		+ XMLSchemaAttribute("scorefxn_cen", xs_string, "Score function for modeling in centroid representation.")
+		+ XMLSchemaAttribute::attribute_w_default("fast", xsct_rosetta_bool, "Only test run (fewer cycles)", "false");
+
+	// Use helper function in ./utilities/rosetta_scripts.cc to parse task operations
+	utilities::attributes_for_set_task_factory_from_tag( attlist );
+
+	// subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	// Create a complex type and get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	XMLSchemaComplexTypeGenerator ct_gen;
+	// Get LoopMover tag
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+
+	AttributeList subelement_attributes;
+	subelement_attributes + XMLSchemaAttribute("skip", xsct_rosetta_bool, "If \"skip\" is enabled, the corresponding step will be skipped");
+	subelement_list.add_simple_subelement("Build", subelement_attributes,
+		"Configure the build step. If \"skip\" is enabled, none of the loops will be rebuilt."
+		"You may also provide this tag with any option or subtag that would be understood by LoopBuilder.");
+	subelement_list.add_simple_subelement("Centroid", subelement_attributes,
+		"Configure the centroid refinement step. If \"skip\" is enabled, none of the loops will be rebuilt. "
+		"You may also provide this tag with any option or subtag that would be understood by LoopProtocol.");
+	subelement_list.add_simple_subelement("Fullatom", subelement_attributes,
+		"Configure the centroid refinement step. If \"skip\" is enabled, none of the loops will be rebuilt. "
+		"You may also provide this tag with any option or subtag that would be understood by LoopProtocol.");
+
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	ct_gen.element_name( mover_name() )
+		.description( "Perform a complete loop modeling simulation, including the build, centroid, and fullatom steps. "
+		"It is a wrapper around other modeling movers." )
+		.add_attributes( attlist  )
+		.set_subelements_repeatable( subelement_list )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string LoopModelerCreator::keyname() const {
+	return LoopModeler::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopModelerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopModeler );
+}
+
+void LoopModelerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopModeler::provide_xml_schema( xsd );
+}
+
+
 // }}}1
 
 }
 }
-

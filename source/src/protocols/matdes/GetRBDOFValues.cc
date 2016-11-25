@@ -46,6 +46,9 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.string.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -242,11 +245,58 @@ GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const
 	out << "GetRBDOFValues returns " << compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) << std::endl;
 }
 
-protocols::filters::FilterOP
-GetRBDOFValuesCreator::create_filter() const { return protocols::filters::FilterOP( new GetRBDOFValues ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP GetRBDOFValuesCreator::create_filter() const { return protocols::filters::FilterOP( new GetRBDOFValues ); }
 
-std::string
-GetRBDOFValuesCreator::keyname() const { return "GetRBDOFValues"; }
+// XRW TEMP std::string
+// XRW TEMP GetRBDOFValuesCreator::keyname() const { return "GetRBDOFValues"; }
+
+std::string GetRBDOFValues::name() const {
+	return class_name();
+}
+
+std::string GetRBDOFValues::class_name() {
+	return "GetRBDOFValues";
+}
+
+void GetRBDOFValues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction xyz_char;
+	xyz_char.name( "type_for_xyz_char" );
+	xyz_char.base_type( xs_string );
+	xyz_char.add_restriction( xsr_pattern, "x|y|z" );
+	xsd.add_top_level_element( xyz_char );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "Jump number of movable jump for which to calculate the translation or rotation" , "1" )
+		+ XMLSchemaAttribute::required_attribute( "sym_dof_name" , xs_string, "Sym_dof_name for movable jump for which to calculate the translation or rotation." )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "Output jump and corresponding displacement or angle to tracer." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "axis" , "type_for_xyz_char" , "Axis in local coordinate frame about which to calculate the translation or rotation (not currently set up to handle off axis values)." , "x" )
+		+ XMLSchemaAttribute::attribute_w_default( "get_disp" , xsct_rosetta_bool , "If set to true (and get_disp is false), then will calculate the displacement across the specified jump." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "get_angle" , xsct_rosetta_bool , "If set to true (and get_angle is false), then will calculate the angle of rotation about the specified jump." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "init_angle" , xsct_real , "Initial angle value to add to each calculated value." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "init_disp" , xsct_real , "Initial displacement value to add to each calculated value." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "get_init_value" , xsct_rosetta_bool , "Get the initial displacement or angle for the specified jump from the SymDofMoverSampler" , "0" ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates either the current translation or rotation across a user specified jump (referenced by jump_id or sym_dof_name).", attlist );
+}
+
+std::string GetRBDOFValuesCreator::keyname() const {
+	return GetRBDOFValues::class_name();
+}
+
+protocols::filters::FilterOP
+GetRBDOFValuesCreator::create_filter() const {
+	return protocols::filters::FilterOP( new GetRBDOFValues );
+}
+
+void GetRBDOFValuesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GetRBDOFValues::provide_xml_schema( xsd );
+}
+
 
 
 } // matdes

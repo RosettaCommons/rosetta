@@ -205,16 +205,15 @@ void CrystalContactsOperation::provide_xml_schema( utility::tag::XMLSchemaDefini
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "all_gap", xs_decimal, "0.5" )
-		+ XMLSchemaAttribute::attribute_w_default(  "polar_gap", xs_decimal, "2.5" )
-		+ XMLSchemaAttribute::attribute_w_default(  "max_buried_sasa", xs_decimal, "0.01" )
-		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "all_gap", xsct_real, "add this to all calculated distances",  "0.5"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "polar_gap", xsct_real, "if either residue is polar - add this to calculated distances",  "2.5"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "max_buried_sasa", xsct_real, "ignore buried residues as defined by maximum allowed sasa",  "0.01"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xsct_rosetta_bool, "design residues in contact",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_nbr_radius", xsct_rosetta_bool, "contact determined by nbr radius overlap. CBeta to CBeta",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_atoms", xsct_rosetta_bool, "contact determined by nbr radius to atom distance. CBeta to any atom on symmetric partner",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "atoms_to_atoms", xsct_rosetta_bool, "contact determined by atom to atom distances. Any atom to any atom.",  "false"  );
 
-		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_nbr_radius", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "nbr_radius_to_atoms", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "atoms_to_atoms", xs_boolean, "false" );
-
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Exclude crystal contacts from design." );
 }
 
 } //namespace task_operations

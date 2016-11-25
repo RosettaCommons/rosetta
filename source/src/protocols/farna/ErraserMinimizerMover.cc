@@ -110,6 +110,9 @@
 #include <algorithm>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.farna.ErraserMinimizerMover" );
 
@@ -684,7 +687,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 int
 ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	int nres = pose.size();
-	
+
 	// if already rooted on virtual residue , return
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		TR.Warning << "add_virtual_res() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
@@ -694,12 +697,12 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	// attach virt res there
 	core::chemical::ResidueTypeSet const & residue_set = *pose.residue_type( 1 ).residue_type_set();
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *( residue_set.get_representative_type_name3( "VRT" ) ) ) );
-	
+
 	// OK, what we need is to save the PDBInfo, then add it back for every residue.
 	PDBInfo info = *pose.pdb_info();
 	pose.append_residue_by_jump( *new_res , nres );
 	pose.pdb_info()->copy( info, 1, nres, 1 );
-	
+
 	// make the virt atom the root
 	kinematics::FoldTree newF( pose.fold_tree() );
 	newF.reorder( nres + 1 );
@@ -709,7 +712,7 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	set_full_model_info( pose, full_model_info );
 	// This is fine
 	pose.pdb_info()->obsolete( false );
-	
+
 	return nres + 1;
 }
 
@@ -1173,7 +1176,7 @@ ErraserMinimizerMover::apply(
 	TR << "Identified " << n_chunk << " chunks" << std::endl;
 	for ( Size ii = 1; ii <= n_chunk; ++ii ) {
 		TR << "[";
-		for (unsigned long jj : chunks[ii]) {
+		for ( unsigned long jj : chunks[ii] ) {
 			TR << " " << jj;
 		}
 		TR << "]" << std::endl;
@@ -1364,7 +1367,7 @@ ErraserMinimizerMover::apply(
 	pose.pdb_info()->obsolete( false );
 
 	TR << "Job completed sucessfully." << std::endl;
-	
+
 	// Remove slice output files
 	for ( Size chunk_i = 1; chunk_i <= n_chunk; ++chunk_i ) {
 		std::stringstream outname;
@@ -1373,10 +1376,49 @@ ErraserMinimizerMover::apply(
 	}
 }
 
-std::string
-ErraserMinimizerMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP ErraserMinimizerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ErraserMinimizerMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ErraserMinimizerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ErraserMinimizerMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ErraserMinimizerMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ErraserMinimizerMover";
+// XRW TEMP }
+
+std::string ErraserMinimizerMover::get_name() const {
+	return mover_name();
+}
+
+std::string ErraserMinimizerMover::mover_name() {
+	return "ErraserMinimizerMover";
+}
+
+void ErraserMinimizerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return ErraserMinimizerMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "vary_bond_geometry", xsct_rosetta_bool, "Vary bond lengths and angles, constrained to ideal values." )
+		+ XMLSchemaAttribute( "constrain_phosphate", xsct_rosetta_bool, "Constrain phosphates to their initial positions." )
+		+ XMLSchemaAttribute( "ready_set_only", xsct_rosetta_bool, "Do nothing but ensure phosphate nomenclature is correct: useful for PHENIX integration and little else." )
+		+ XMLSchemaAttribute( "skip_minimize", xsct_rosetta_bool, "Skip the minimization step -- only do pyrimidine rotamer trials (if enabled)." )
+		+ XMLSchemaAttribute( "attempt_pyrimidine_flip", xsct_rosetta_bool, "Rotamer trials on pyrimidine bases." )
+		+ XMLSchemaAttribute( "fixed_res_list", xsct_int_wsslist, "Whitespace-separated list of sequence positions in Rosetta numbering." )
+		+ XMLSchemaAttribute( "cutpoint_list", xsct_int_wsslist, "Whitespace-separated list of sequence positions in Rosetta numbering indicating cutpoints." )
+		+ XMLSchemaAttribute( "output_pdb_name", xs_string, "Output a PDB to this file, subverting JD2." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Optimize an RNA in the presence of electron density from X-ray or cryo-EM: minimization phase", attlist );
+}
+
+std::string ErraserMinimizerMoverCreator::keyname() const {
+	return ErraserMinimizerMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -1384,11 +1426,11 @@ ErraserMinimizerMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new ErraserMinimizerMover );
 }
 
-std::string
-ErraserMinimizerMoverCreator::mover_name()
+void ErraserMinimizerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "ErraserMinimizerMover";
+	ErraserMinimizerMover::provide_xml_schema( xsd );
 }
+
 
 } //farna
 } //protocols

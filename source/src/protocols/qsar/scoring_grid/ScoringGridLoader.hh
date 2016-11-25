@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -47,6 +48,11 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
+
+	static std::string loader_name();
+	static std::string scoring_grid_loader_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

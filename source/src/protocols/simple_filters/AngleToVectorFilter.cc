@@ -23,6 +23,9 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -34,11 +37,11 @@ using utility::vector1;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
 
-protocols::filters::FilterOP
-AngleToVectorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AngleToVector ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AngleToVectorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AngleToVector ); }
 
-std::string
-AngleToVectorFilterCreator::keyname() const { return "AngleToVector"; }
+// XRW TEMP std::string
+// XRW TEMP AngleToVectorFilterCreator::keyname() const { return "AngleToVector"; }
 
 //default ctor
 AngleToVector::AngleToVector() :
@@ -104,6 +107,45 @@ core::Real
 AngleToVector::report_sm( core::pose::Pose const & pose ) const {
 	return compute( pose );
 }
+
+std::string AngleToVector::name() const {
+	return class_name();
+}
+
+std::string AngleToVector::class_name() {
+	return "AngleToVector";
+}
+
+void AngleToVector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "min_angle", xsct_real, "Minimum angle to pass the filter", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_angle", xsct_real, "Maximum angle to pass the filter", "90.0" )
+		+ XMLSchemaAttribute( "atm1", xs_string, "First atom in vector definition" )
+		+ XMLSchemaAttribute( "atm2", xs_string, "Seocnd atom in vector definition" )
+		+ XMLSchemaAttribute( "chain", xsct_char, "Chain whose first residue's two atoms are in question" )
+		+ XMLSchemaAttribute( "refx", xsct_real, "x coordinate of vector" )
+		+ XMLSchemaAttribute( "refy", xsct_real, "y coordinate of vector" )
+		+ XMLSchemaAttribute( "refz", xsct_real, "z coordinate of vector" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter on the value of the angle between a vector between two atoms in the first residue of a chain and a reference vector.", attlist );
+}
+
+std::string AngleToVectorFilterCreator::keyname() const {
+	return AngleToVector::class_name();
+}
+
+protocols::filters::FilterOP
+AngleToVectorFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AngleToVector );
+}
+
+void AngleToVectorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AngleToVector::provide_xml_schema( xsd );
+}
+
 
 }
 }

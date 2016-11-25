@@ -112,7 +112,7 @@ public:
 public:
 	Splice();
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new Splice ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -248,6 +248,18 @@ public:
 	core::Size delete_hairpin_c() const{ return delete_hairpin_c_; }
 	void delete_hairpin_c( core::Size const c ){ delete_hairpin_c_ = c;}
 	void remove_hairpin( core::pose::Pose & pose ) const; // the function that actually removes the hairpin
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply

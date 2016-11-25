@@ -44,6 +44,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.ReportFSC" );
 
@@ -205,22 +208,59 @@ ReportFSC::parse_my_tag(
 	}
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ReportFSCCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ReportFSC );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ReportFSCCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ReportFSC::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ReportFSC::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ReportFSC";
+// XRW TEMP }
+
+std::string ReportFSC::get_name() const {
+	return mover_name();
+}
+
+std::string ReportFSC::mover_name() {
+	return "ReportFSC";
+}
+
+void ReportFSC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("res_low", xsct_real, "Low resolution cut off (Angstroms)")
+		+ XMLSchemaAttribute("res_high", xsct_real, "High resultion cut off (Angstroms)")
+		+ XMLSchemaAttribute("nresbins", xsct_non_negative_integer, "XRW TO DO, default=50")
+		+ XMLSchemaAttribute("asymm_only", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("mask", xsct_rosetta_bool, "XRW TO DO, default=true")
+		+ XMLSchemaAttribute("bin_squared", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("testmap", xs_string, "XRW TO DO");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Calculate a model-map FSC (Fourier Shell Correlation), and integrate over the input resolution ranges.", attlist );
+}
+
+std::string ReportFSCCreator::keyname() const {
+	return ReportFSC::mover_name();
+}
+
 protocols::moves::MoverOP
 ReportFSCCreator::create_mover() const {
 	return protocols::moves::MoverOP( new ReportFSC );
 }
 
-std::string
-ReportFSCCreator::keyname() const
-{
-	return ReportFSCCreator::mover_name();
+void ReportFSCCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ReportFSC::provide_xml_schema( xsd );
 }
 
-std::string
-ReportFSCCreator::mover_name()
-{
-	return "ReportFSC";
-}
 
 }
 }

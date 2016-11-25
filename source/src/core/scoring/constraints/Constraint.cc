@@ -94,7 +94,7 @@ Real
 Constraint::score( pose::Pose const& pose ) const {
 	// Just set every weight to 1.0, to capture all results
 	EnergyMap weights;
-	for( Size st(1); st <= Size(n_score_types); ++st ) {
+	for ( Size st(1); st <= Size(n_score_types); ++st ) {
 		weights[ ScoreType(st) ] = 1.0;
 	}
 

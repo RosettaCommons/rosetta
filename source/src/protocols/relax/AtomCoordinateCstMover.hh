@@ -47,7 +47,7 @@ public:
 	void
 	apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override { return "AtomCoordinateCstMover"; }
+	// XRW TEMP  std::string get_name() const override { return "AtomCoordinateCstMover"; }
 
 	protocols::moves::MoverOP fresh_instance() const override;
 	protocols::moves::MoverOP clone() const override;
@@ -79,6 +79,18 @@ public:
 
 	void set_loop_segments( protocols::loops::LoopsCOP loops);
 	void set_task_segments( core::pack::task::TaskFactoryCOP taskfactory);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::select::residue_selector::ResidueSubset

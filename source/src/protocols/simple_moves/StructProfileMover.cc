@@ -64,6 +64,9 @@
 #include <map>
 #include <set>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.StructProfileMover" );
 
@@ -101,20 +104,20 @@ StructProfileMover::StructProfileMover(Real rmsThreshold,Size consider_topN_frag
 	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
 }
 
-std::string StructProfileMoverCreator::keyname() const
-{
-	return StructProfileMoverCreator::mover_name();
-}
+// XRW TEMP std::string StructProfileMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return StructProfileMover::mover_name();
+// XRW TEMP }
 
-std::string StructProfileMoverCreator::mover_name(){
-	return "StructProfileMover";
-}
+// XRW TEMP std::string StructProfileMover::mover_name(){
+// XRW TEMP  return "StructProfileMover";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-StructProfileMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StructProfileMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StructProfileMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StructProfileMover );
+// XRW TEMP }
 
 
 
@@ -178,70 +181,70 @@ void StructProfileMover::read_P_AA_SS_cen6(){
 			l >> tmp_probability >> skip(1);
 			P_AA_SS_burial_[ss_type_convert(ss_type)][burial_type][ii]=tmp_probability;
 			debug_assert( ( tmp_probability >= Probability( 0.0 ) ) && ( tmp_probability <= Probability( 1.0 ) ) );
-			debug_assert( burial_type <= BURIAL_TYPES)
-				}
-				}
-				stream.close();
+			debug_assert( burial_type <= BURIAL_TYPES);
 		}
-
-
-		vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
-			vector1<string> top_hits_aa;
-		//I want to normalize the rmsd & burial
-		vector1<vector<Real> > hits_cen;
-		vector1<Real> hits_rms;
-		vector1<std::string> hits_aa;
-		SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
-		if ( hits_cen.size() == 0 ) {
-			return top_hits_aa;
-		}
-		vector1<Hit>hits;
-		for ( Size ii=1; ii<=hits_cen.size(); ++ii ) {
-			Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
-			struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
-			hits.push_back(result_tmp);
-		}
-		//step1 get max and min cen and rmsd
-		Real maxRmsd = -9999;
-		Real minRmsd = 9999;
-		Real maxCend = -9999;
-		Real minCend = 9999;
-		for ( Size ii=1; ii<=hits.size(); ++ii ) {
-			if ( hits[ii].cend>maxCend ) {
-				maxCend = hits[ii].cend;
-			}
-			if ( hits[ii].cend<minCend ) {
-				minCend = hits[ii].cend;
-			}
-			if ( hits[ii].rmsd>maxRmsd ) {
-				maxRmsd = hits[ii].rmsd;
-			}
-			if ( hits[ii].rmsd<minRmsd ) {
-				minRmsd = hits[ii].rmsd;
-			}
-		}
-		//step2 set normatlized rmsd cend and set score
-		for ( Size ii=1; ii<=hits.size(); ++ii ) {
-			hits[ii].cend_norm = 1-(maxCend-hits[ii].cend)/(maxCend-minCend);
-			hits[ii].rmsd_norm = 1-(maxRmsd-hits[ii].rmsd)/(maxRmsd-minRmsd);
-			hits[ii].score = hits[ii].cend_norm*(burialWt_)+hits[ii].rmsd_norm*(1-burialWt_);
-		}
-		//step3 sort array based on score
-		if ( consider_topN_frags_ < hits.size() ) {
-			std::sort(hits.begin(), hits.end(), less_then_match_rmsd());
-		}
-		//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
-		// lookupResultsPlusV[ii].print();
-		//}
-		//step4 get AA from top hits
-		for ( Size ii=1; ii<=hits.size()&&ii<consider_topN_frags_; ++ii ) {
-			top_hits_aa.push_back(hits[ii].aa);
-		}
-		return(top_hits_aa);
 	}
+	stream.close();
+}
 
-	vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
-		Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+
+vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose::Pose const pose, Size res,vector1<Real> cenList){
+	vector1<string> top_hits_aa;
+	//I want to normalize the rmsd & burial
+	vector1<vector<Real> > hits_cen;
+	vector1<Real> hits_rms;
+	vector1<std::string> hits_aa;
+	SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
+	if ( hits_cen.size() == 0 ) {
+		return top_hits_aa;
+	}
+	vector1<Hit>hits;
+	for ( Size ii=1; ii<=hits_cen.size(); ++ii ) {
+		Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
+		struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
+		hits.push_back(result_tmp);
+	}
+	//step1 get max and min cen and rmsd
+	Real maxRmsd = -9999;
+	Real minRmsd = 9999;
+	Real maxCend = -9999;
+	Real minCend = 9999;
+	for ( Size ii=1; ii<=hits.size(); ++ii ) {
+		if ( hits[ii].cend>maxCend ) {
+			maxCend = hits[ii].cend;
+		}
+		if ( hits[ii].cend<minCend ) {
+			minCend = hits[ii].cend;
+		}
+		if ( hits[ii].rmsd>maxRmsd ) {
+			maxRmsd = hits[ii].rmsd;
+		}
+		if ( hits[ii].rmsd<minRmsd ) {
+			minRmsd = hits[ii].rmsd;
+		}
+	}
+	//step2 set normatlized rmsd cend and set score
+	for ( Size ii=1; ii<=hits.size(); ++ii ) {
+		hits[ii].cend_norm = 1-(maxCend-hits[ii].cend)/(maxCend-minCend);
+		hits[ii].rmsd_norm = 1-(maxRmsd-hits[ii].rmsd)/(maxRmsd-minRmsd);
+		hits[ii].score = hits[ii].cend_norm*(burialWt_)+hits[ii].rmsd_norm*(1-burialWt_);
+	}
+	//step3 sort array based on score
+	if ( consider_topN_frags_ < hits.size() ) {
+		std::sort(hits.begin(), hits.end(), less_then_match_rmsd());
+	}
+	//for(Size ii=1; ii<=lookupResultsPlusV.size(); ++ii){
+	// lookupResultsPlusV[ii].print();
+	//}
+	//step4 get AA from top hits
+	for ( Size ii=1; ii<=hits.size()&&ii<consider_topN_frags_; ++ii ) {
+		top_hits_aa.push_back(hits[ii].aa);
+	}
+	return(top_hits_aa);
+}
+
+vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const pose,vector1<Real> cenList){
+	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -471,9 +474,9 @@ void StructProfileMover::apply(core::pose::Pose & pose) {
 }
 
 
-std::string StructProfileMover::get_name() const {
-	return "StructProfileMover";
-}
+// XRW TEMP std::string StructProfileMover::get_name() const {
+// XRW TEMP  return "StructProfileMover";
+// XRW TEMP }
 
 void
 StructProfileMover::parse_my_tag(
@@ -497,6 +500,48 @@ StructProfileMover::parse_my_tag(
 	add_csts_to_pose_ = tag->getOption<bool>("add_csts_to_pose",true);
 	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
 }
+
+std::string StructProfileMover::get_name() const {
+	return mover_name();
+}
+
+std::string StructProfileMover::mover_name() {
+	return "StructProfileMover";
+}
+
+void StructProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "RMSthreshold", xsct_real, "XRW TO DO", "0.40" )
+		+ XMLSchemaAttribute::attribute_w_default( "burialWt", xsct_real, "XRW TO DO", "0.8" )
+		+ XMLSchemaAttribute::attribute_w_default( "consider_topN_frags", xsct_non_negative_integer, "XRW TO DO", "50" )
+		+ XMLSchemaAttribute::attribute_w_default( "only_loops", xsct_rosetta_bool, "XRW TO DO",  "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "allowed_deviation", xsct_real,  "XRW TO DO", "0.10" )
+		+ XMLSchemaAttribute::attribute_w_default( "allowed_deviation_loops", xsct_real, "XRW TO DO", "0.10" )
+		+ XMLSchemaAttribute::attribute_w_default( "eliminate_background", xsct_rosetta_bool, "XRW TO DO", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "cenType", xsct_non_negative_integer, "XRW TO DO",  "6")
+		+ XMLSchemaAttribute::attribute_w_default( "outputProfile", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_csts_to_pose", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Quickly generates a structure profile", attlist );
+}
+
+std::string StructProfileMoverCreator::keyname() const {
+	return StructProfileMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StructProfileMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StructProfileMover );
+}
+
+void StructProfileMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StructProfileMover::provide_xml_schema( xsd );
+}
+
 
 }//simple_moves
 }//protocols

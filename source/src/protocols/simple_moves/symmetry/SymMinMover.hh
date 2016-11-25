@@ -66,18 +66,30 @@ public:
 		bool deriv_check_verbose_in = false
 	);
 
-	virtual void apply( core::pose::Pose & pose_ );
-	virtual std::string get_name() const;
+	virtual void apply( core::pose::Pose & pose_ ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

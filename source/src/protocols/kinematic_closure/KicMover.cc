@@ -40,6 +40,9 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -54,13 +57,13 @@ using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
 namespace protocols {
 namespace kinematic_closure {
 
-protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
-	return protocols::moves::MoverOP( new KicMover );
-}
+// XRW TEMP protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
+// XRW TEMP  return protocols::moves::MoverOP( new KicMover );
+// XRW TEMP }
 
-std::string KicMoverCreator::keyname() const { // {{{1
-	return "KicMover";
-}
+// XRW TEMP std::string KicMoverCreator::keyname() const { // {{{1
+// XRW TEMP  return "KicMover";
+// XRW TEMP }
 // }}}1
 
 KicMover::KicMover() { // {{{1
@@ -140,6 +143,36 @@ void KicMover::set_solution_picker(SolutionPickerOP picker) { // {{{1
 FoldTreeRequest KicMover::request_fold_tree() const { // {{{1
 	return FTR_LOOPS_WITH_CUTS;
 }
+
+std::string KicMover::get_name() const {
+	return mover_name();
+}
+
+std::string KicMover::mover_name() {
+	return "KicMover";
+}
+
+void KicMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string KicMoverCreator::keyname() const {
+	return KicMover::mover_name();
+}
+
+protocols::moves::MoverOP
+KicMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new KicMover );
+}
+
+void KicMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	KicMover::provide_xml_schema( xsd );
+}
+
 // }}}1
 
 }

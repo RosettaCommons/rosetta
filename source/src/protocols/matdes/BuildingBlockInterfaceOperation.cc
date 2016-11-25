@@ -249,16 +249,16 @@ void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchem
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "nsub_bblock", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "contact_dist", xs_decimal, "10.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "bblock_dist", xs_decimal, "5.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "fa_rep_cut", xs_decimal, "3.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "filter_intrabb", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "intrabb_only", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "multicomp", xs_boolean, "false" );
+		+ XMLSchemaAttribute::attribute_w_default(  "nsub_bblock", xsct_non_negative_integer, "The number of subunits in the symmetric building block (e.g., 3 for a trimer). This option is not needed for multicomponent systems.",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "Names of the sym_dofs corresponding to the symmetric building blocks. (Eventually replace the need for this option by having is_singlecomponent or is_multicomponent utility functions). If no sym_dof_names are specified, then they will be extracted from the pose.",  "XRW TO DO"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "contact_dist", xsct_real, "Residues with beta carbons not within this distance of any beta carbon from another building block are prevented from repacking.",  "10.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "bblock_dist", xsct_real, "The all-heavy atom cutoff distance used to specify residues that are making inter-subunit contacts within the building block. Because these residues are making presumably important intra-building block interactions, they are prevented from repacking unless they are clashing.",  "5.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "fa_rep_cut", xsct_real, "The cutoff used to determine whether residues making inter-subunit contacts within the building block are clashing.",  "3.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "filter_intrabb", xsct_rosetta_bool, "Filter intra-building block interactions?",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "intrabb_only", xsct_rosetta_bool, "Only intra-building block residues?",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "multicomp", xsct_rosetta_bool, "If true, system has more than one component. If false, it is a single component system.",  "false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "For use when designing with symmetric building blocks. Prevents repacking at residues that are: 1) distant from the inter-building block interface, or 2) near the inter-building block interface, but also make intra-building block interface contacts that are not clashing." );
 }
 
 

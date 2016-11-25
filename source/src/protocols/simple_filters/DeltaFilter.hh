@@ -71,6 +71,18 @@ public:
 	void relax_mover( protocols::moves::MoverOP const mover );
 	void scorefxn( core::scoring::ScoreFunctionOP s );
 	core::scoring::ScoreFunctionOP scorefxn() const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 
 	protocols::filters::FilterOP filter_; //which filter to use

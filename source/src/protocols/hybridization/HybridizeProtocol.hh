@@ -103,7 +103,7 @@ public:
 	void check_and_create_fragments( Pose & );
 
 	void apply( Pose & ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -122,6 +122,18 @@ public:
 	void set_stage1_increase_cycles( core::Real newval ) { stage1_increase_cycles_ = newval; }
 	void set_stage2_increase_cycles( core::Real newval ) { stage2_increase_cycles_ = newval; }
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// parsible options

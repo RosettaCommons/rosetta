@@ -88,7 +88,7 @@ public:// virtual constructor
 public:// accessor
 
 	// @brief get name of this filter
-	std::string name() const override { return "GetRBDOFValues"; }
+	// XRW TEMP  std::string name() const override { return "GetRBDOFValues"; }
 
 public:// setters
 
@@ -132,6 +132,18 @@ public:// virtual main operation
 
 	/// @brief get the translation and rotation for a user specified jump
 	core::Real compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

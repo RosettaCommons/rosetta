@@ -50,6 +50,9 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MembranePositionMoverFromTopologyMover" );
 
@@ -104,22 +107,22 @@ MembranePositionFromTopologyMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-MembranePositionFromTopologyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MembranePositionFromTopologyMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-MembranePositionFromTopologyMoverCreator::keyname() const {
-	return MembranePositionFromTopologyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MembranePositionFromTopologyMoverCreator::keyname() const {
+// XRW TEMP  return MembranePositionFromTopologyMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-MembranePositionFromTopologyMoverCreator::mover_name() {
-	return "MembranePositionFromTopologyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MembranePositionFromTopologyMover::mover_name() {
+// XRW TEMP  return "MembranePositionFromTopologyMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -193,10 +196,42 @@ MembranePositionFromTopologyMover::apply( core::pose::Pose & pose ) {
 } // apply
 
 /// @brief Get the name of this mover
-std::string
-MembranePositionFromTopologyMover::get_name() const {
+// XRW TEMP std::string
+// XRW TEMP MembranePositionFromTopologyMover::get_name() const {
+// XRW TEMP  return "MembranePositionFromTopologyMover";
+// XRW TEMP }
+
+std::string MembranePositionFromTopologyMover::get_name() const {
+	return mover_name();
+}
+
+std::string MembranePositionFromTopologyMover::mover_name() {
 	return "MembranePositionFromTopologyMover";
 }
+
+void MembranePositionFromTopologyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("anchor_at_res1", xsct_rosetta_bool, "Should we do a simple reorder anchoring the membrane at residue 1?");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Computes and sets the initial position of the membrane", attlist );
+}
+
+std::string MembranePositionFromTopologyMoverCreator::keyname() const {
+	return MembranePositionFromTopologyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MembranePositionFromTopologyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
+}
+
+void MembranePositionFromTopologyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MembranePositionFromTopologyMover::provide_xml_schema( xsd );
+}
+
 
 } // membrane
 } // protocols

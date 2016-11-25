@@ -21,9 +21,12 @@ namespace moves {
 
 class RampingMoverCreator : public MoverCreator {
 public:
-	MoverOP create_mover() const override;
+	// XRW TEMP  MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

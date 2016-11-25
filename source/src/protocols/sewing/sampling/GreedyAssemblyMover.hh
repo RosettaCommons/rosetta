@@ -38,17 +38,16 @@ public:
 	GreedyAssemblyMover();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
-	virtual
 	AssemblyOP
-	generate_assembly();
+	generate_assembly() override;
 
 	//void
 	//follow_random_edge_from_node(
@@ -63,7 +62,19 @@ public:
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & pose
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	// virtual
 	// void

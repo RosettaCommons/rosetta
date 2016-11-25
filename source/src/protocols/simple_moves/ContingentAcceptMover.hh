@@ -30,7 +30,7 @@ public:
 	// Undefined, commenting out to fix PyRosetta build  ContingentAcceptMover(core::Real const min_in , core::Real const max_in);
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -56,6 +56,18 @@ public:
 
 	core::Real delta() const { return delta_; }
 	void delta( core::Real const s ){ delta_ = s; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	protocols::filters::FilterOP filter_;

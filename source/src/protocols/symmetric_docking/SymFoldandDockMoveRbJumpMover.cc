@@ -27,6 +27,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -48,10 +51,10 @@ SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 	core::pose::symmetry::find_new_symmetric_jump_residues( pose );
 }
 
-std::string
-SymFoldandDockMoveRbJumpMover::get_name() const {
-	return "SymFoldandDockMoveRbJumpMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockMoveRbJumpMover::get_name() const {
+// XRW TEMP  return "SymFoldandDockMoveRbJumpMover";
+// XRW TEMP }
 
 void
 SymFoldandDockMoveRbJumpMover::parse_my_tag(
@@ -64,20 +67,51 @@ SymFoldandDockMoveRbJumpMover::parse_my_tag(
 }
 
 
-std::string
-SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
-	return SymFoldandDockMoveRbJumpMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
+// XRW TEMP  return SymFoldandDockMoveRbJumpMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockMoveRbJumpMover::mover_name() {
+// XRW TEMP  return "SymFoldandDockMoveRbJumpMover";
+// XRW TEMP }
+
+std::string SymFoldandDockMoveRbJumpMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymFoldandDockMoveRbJumpMover::mover_name() {
+	return "SymFoldandDockMoveRbJumpMover";
+}
+
+void SymFoldandDockMoveRbJumpMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This seems to help set up Symmetric Fold and Dock. It symmetrizes the asymmetric input pose and then finds the jump residues between rigid bodies.", attlist );
+}
+
+std::string SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
+	return SymFoldandDockMoveRbJumpMover::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover );
 }
 
-std::string
-SymFoldandDockMoveRbJumpMoverCreator::mover_name() {
-	return "SymFoldandDockMoveRbJumpMover";
+void SymFoldandDockMoveRbJumpMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymFoldandDockMoveRbJumpMover::provide_xml_schema( xsd );
 }
+
 
 } // symmetric_docking
 } // protocols

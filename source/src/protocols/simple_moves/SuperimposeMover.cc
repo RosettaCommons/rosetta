@@ -44,28 +44,31 @@
 
 //option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
-std::string
-SuperimposeMoverCreator::keyname() const
-{
-	return SuperimposeMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SuperimposeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SuperimposeMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SuperimposeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SuperimposeMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SuperimposeMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SuperimposeMover );
+// XRW TEMP }
 
-std::string
-SuperimposeMoverCreator::mover_name()
-{
-	return "Superimpose";
-}
+// XRW TEMP std::string
+// XRW TEMP SuperimposeMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Superimpose";
+// XRW TEMP }
 
 SuperimposeMover::SuperimposeMover() :
 	protocols::moves::Mover("SuperimposeMover"),
@@ -226,10 +229,10 @@ SuperimposeMover::apply( Pose & pose ) {
 	}
 }
 
-std::string
-SuperimposeMover::get_name() const {
-	return "SuperimposeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SuperimposeMover::get_name() const {
+// XRW TEMP  return "SuperimposeMover";
+// XRW TEMP }
 
 void
 SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -248,6 +251,47 @@ SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 		ref_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name");
 	}
 }
+
+std::string SuperimposeMover::get_name() const {
+	return mover_name();
+}
+
+std::string SuperimposeMover::mover_name() {
+	return "Superimpose";
+}
+
+void SuperimposeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// Note: target_start and target_end are formally not required, but you
+	// may get a no-op as a result if they retain their meaningless default values.
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "ref_start", xsct_non_negative_integer, "Starting residue for superposition, in reference", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "ref_end", xsct_non_negative_integer, "Ending residue for superposition, in reference", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "target_start", xsct_non_negative_integer, "Starting residue for superposition", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "target_end", xsct_non_negative_integer, "Ending residue for superposition", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "CA_only", xsct_rosetta_bool, "Superimpose by CA coordinates only", "1" )
+		+ XMLSchemaAttribute( "ref_pose", xs_string, "Reference pose file name" );
+	//+ XMLSchemaAttribute( "spm_reference_name", xs_string, "Reference pose name " );
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist, "spm_reference_name" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SuperimposeMoverCreator::keyname() const {
+	return SuperimposeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SuperimposeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SuperimposeMover );
+}
+
+void SuperimposeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SuperimposeMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

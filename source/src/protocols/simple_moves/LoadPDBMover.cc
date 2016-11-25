@@ -22,26 +22,29 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-LoadPDBMoverCreator::keyname() const
-{
-	return LoadPDBMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoadPDBMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoadPDBMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoadPDBMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadPDBMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoadPDBMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoadPDBMover );
+// XRW TEMP }
 
-std::string
-LoadPDBMoverCreator::mover_name()
-{
-	return "LoadPDB";
-}
+// XRW TEMP std::string
+// XRW TEMP LoadPDBMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoadPDB";
+// XRW TEMP }
 
 LoadPDBMover::LoadPDBMover()
 : moves::Mover("LoadPDB"),
@@ -65,10 +68,10 @@ LoadPDBMover::apply( Pose & pose )
 	}
 }
 
-std::string
-LoadPDBMover::get_name() const {
-	return LoadPDBMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoadPDBMover::get_name() const {
+// XRW TEMP  return LoadPDBMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 LoadPDBMover::clone() const
@@ -105,6 +108,50 @@ std::string
 LoadPDBMover::filename() const{
 	return filename_;
 }
+
+std::string LoadPDBMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoadPDBMover::mover_name() {
+	return "LoadPDB";
+}
+
+void LoadPDBMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute(
+		"filename", xs_string,
+		"Path to PDB file" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"append", xsct_rosetta_bool,
+		"Appends the pose conformation to the current pose by a new jump",
+		"false" );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Replaces current PDB with one from disk. This is probably only useful "
+		"in checkpointing, since this mover deletes all information gained so far "
+		"in the trajectory.",
+		attlist );
+}
+
+std::string LoadPDBMoverCreator::keyname() const {
+	return LoadPDBMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoadPDBMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoadPDBMover );
+}
+
+void LoadPDBMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoadPDBMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

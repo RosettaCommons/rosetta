@@ -32,6 +32,9 @@
 #include <core/import_pose/import_pose.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 
@@ -42,22 +45,22 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-std::string
-AddChainMoverCreator::keyname() const
-{
-	return AddChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddChainMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddChainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AddChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddChainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddChainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddChainMover );
+// XRW TEMP }
 
-std::string
-AddChainMoverCreator::mover_name()
-{
-	return "AddChain";
-}
+// XRW TEMP std::string
+// XRW TEMP AddChainMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddChain";
+// XRW TEMP }
 
 AddChainMover::AddChainMover()
 : moves::Mover("AddChain"),
@@ -202,10 +205,10 @@ AddChainMover::apply( Pose & pose )
 
 }
 
-std::string
-AddChainMover::get_name() const {
-	return AddChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddChainMover::get_name() const {
+// XRW TEMP  return AddChainMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 AddChainMover::clone() const
@@ -236,7 +239,7 @@ AddChainMover::parse_my_tag(
 		//  TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
 		//  fname( split_names[ random_num ] );
 	}
-	new_chain( tag->getOption< bool >( "new_chain", 1 ) );
+	new_chain( tag->getOption< bool >( "new_chain", true ) );
 	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
@@ -244,5 +247,47 @@ AddChainMover::parse_my_tag(
 
 void AddChainMover::scorefxn( core::scoring::ScoreFunctionOP s ){ scorefxn_ = s; }
 core::scoring::ScoreFunctionOP AddChainMover::scorefxn() const{ return scorefxn_; }
+
+std::string AddChainMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddChainMover::mover_name() {
+	return "AddChain";
+}
+
+void AddChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	std::string const chain_warning("There is some interaction between swap_chain_number and new_chain; probably you can use only one.  ");
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "random_access", xsct_rosetta_bool, "if true randomly choose one file name from a list and work with that throughout the run.", "false" )
+		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "Either a path to the file to read chains from, or a comma-separated list of such if random_access is true." )
+		+ XMLSchemaAttribute::attribute_w_default( "new_chain", xsct_rosetta_bool, chain_warning + "add as a new chain?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "swap_chain_number", xsct_non_negative_integer, chain_warning + "swap chain with specified chain number", "0" ); //0 is valid as a flag value, so it really is a default and not required
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Replace or add chains to a pose from other PDBs", attlist );
+}
+
+std::string AddChainMoverCreator::keyname() const {
+	return AddChainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddChainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddChainMover );
+}
+
+void AddChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddChainMover::provide_xml_schema( xsd );
+}
+
 } // simple_moves
 } // protocols

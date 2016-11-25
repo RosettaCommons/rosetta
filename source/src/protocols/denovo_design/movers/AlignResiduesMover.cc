@@ -44,6 +44,9 @@
 
 // Boost headers
 #include <boost/assign.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.AlignResiduesMover" );
 
@@ -52,7 +55,7 @@ namespace denovo_design {
 namespace movers {
 
 AlignResiduesMover::AlignResiduesMover():
-	protocols::moves::Mover( AlignResiduesMover::class_name() ),
+	protocols::moves::Mover( AlignResiduesMover::mover_name() ),
 	id_( "Default_Align_Residues_Mover_Name" ),
 	template_selectors_(),
 	target_selectors_()
@@ -112,17 +115,17 @@ AlignResiduesMover::fresh_instance() const
 	return protocols::moves::MoverOP( new AlignResiduesMover );
 }
 
-std::string
-AlignResiduesMover::get_name() const
-{
-	return AlignResiduesMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AlignResiduesMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return AlignResiduesMover::mover_name();
+// XRW TEMP }
 
-std::string
-AlignResiduesMover::class_name()
-{
-	return "AlignResiduesMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AlignResiduesMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AlignResiduesMover";
+// XRW TEMP }
 
 void
 AlignResiduesMover::show( std::ostream & output ) const
@@ -263,7 +266,7 @@ AlignResiduesMover::align_residues(
 {
 	if ( template_resids.size() != 1 ) {
 		std::stringstream msg;
-		msg << class_name() << "::align_residues(): Exactly one residue must be selected by the template selector. "
+		msg << mover_name() << "::align_residues(): Exactly one residue must be selected by the template selector. "
 			<< "You have selected the following residues: " << template_resids << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
@@ -384,17 +387,62 @@ AlignResiduesMover::set_id( std::string const & idval )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-AlignResiduesMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AlignResiduesMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AlignResiduesMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AlignResiduesMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AlignResiduesMover::mover_name();
+// XRW TEMP }
+
+std::string AlignResiduesMover::get_name() const {
+	return mover_name();
+}
+
+std::string AlignResiduesMover::mover_name() {
+	return "AlignResiduesMover";
+}
+
+void AlignResiduesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "Unique id for this mover")
+		+ XMLSchemaAttribute::required_attribute( "template_selectors", xs_string, "Selectors specifying residues to align onto the target")
+		+ XMLSchemaAttribute::required_attribute( "target_selectors", xs_string, "Selectors specifying residues where template should be aligned. Must be same size as template"); //template and target selectors must be same size
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Align one set of residues onto another", attlist );
+
+	// remove utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	// remove ct_gen.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+	// remove  .element_name( mover_name() )
+	// remove  .description( "Align one set of residues onto another" )
+	// remove  .add_attributes( attlist )
+	// remove  .add_optional_name_attribute()
+	// remove  .write_complex_type_to_schema( xsd );
+
+}
+
+std::string AlignResiduesMoverCreator::keyname() const {
+	return AlignResiduesMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AlignResiduesMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AlignResiduesMover );
 }
 
-std::string
-AlignResiduesMoverCreator::keyname() const
+void AlignResiduesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return AlignResiduesMover::class_name();
+	AlignResiduesMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //denovo_design

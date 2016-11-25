@@ -196,11 +196,12 @@ void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "database_table", xs_string )
-		+ XMLSchemaAttribute( "table", xs_string )
-		+ XMLSchemaAttribute( "resource_description", xs_string );
+		+ XMLSchemaAttribute( "database_table", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "table", xs_string , "XRW TO DO" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	basic::database::attributes_for_parse_database_connection(attributes, xsd);
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

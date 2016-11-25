@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/jd2/parser/FragmentReader.hh>
+#include <protocols/jd2/parser/FragSetLoader.hh>
 
 // Package Headers
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -38,6 +39,7 @@
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -159,6 +161,47 @@ FragmentReader::parse_tag( TagCOP const & tag )
 	}
 	runtime_assert( begin_ <= end_ );
 
+}
+
+std::string
+FragmentReader::xml_element_name() { return "FragReader"; }
+
+void FragmentReader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef utility::tag::XMLSchemaAttribute Attr;
+
+	XMLSchemaRestriction frag_reader_type;
+	frag_reader_type.name( "frag_reader_type" );
+	frag_reader_type.base_type( xs_string );
+	frag_reader_type.add_restriction( xsr_enumeration, "pdb" );
+	frag_reader_type.add_restriction( xsr_enumeration, "silent" );
+	frag_reader_type.add_restriction( xsr_enumeration, "vall" );
+	frag_reader_type.add_restriction( xsr_enumeration, "fragfile" );
+	xsd.add_top_level_element( frag_reader_type );
+
+	AttributeList attributes;
+	attributes
+		+ required_name_attribute( "The name given to the FragmentReader that will be used when defining FragmentSets" )
+		+ Attr( "type", "frag_reader_type", "the source of the fragments: from pdb, silent, fragfile, or vall" )
+		+ Attr( "filename", xs_string, "the file from which to read the fragments; required if using the pdb, silent or fragfile input type" )
+		+ Attr( "size", xsct_non_negative_integer, "the length of the fragments" )
+		+ Attr( "begin", xsct_non_negative_integer, "the beginning sequence positions where fragments are stolen and inserted" )
+		+ Attr( "end", xsct_non_negative_integer, "the end of sequence positions where fragments are stolen and inserted" )
+		+ Attr::attribute_w_default( "nfrags", xsct_non_negative_integer, "the number of fragments per position", "200" )
+		+ Attr( "blueprint", xs_string, "optional secondary structure assignments used when picking fragments from the vall, read from a blueprint file" )
+		+ Attr::attribute_w_default( "use_sequence_bias", xsct_rosetta_bool, "pick fragments using sequence information", "0" )
+		+ Attr::attribute_w_default( "use_abego", xsct_rosetta_bool, "use abego definitino which is given by blueprint file when picking fragments", "0" )
+		+ Attr( "ss", xs_string, "The secondary structure assignment; required if not provided by a blueprint file" )
+		+ Attr( "aa", xs_string, "amino acids to pick fragments from the vall" )
+		+ Attr::attribute_w_default( "steal_times", xsct_non_negative_integer, "number of times to steal a fragment when generating fragments using either the pdb or silent input types", "1" );
+
+	XMLSchemaComplexTypeGenerator frag_reader_ct;
+	frag_reader_ct.element_name( xml_element_name() )
+		.complex_type_naming_func( & FragSetLoader::frag_set_loader_ct_namer )
+		.add_attributes( attributes )
+		.description( "Fragment readers load fragments from one of several sources; you can compose multiple fragment readers to produce a single fragment set" )
+		.write_complex_type_to_schema( xsd );
 }
 
 /// @brief

@@ -51,6 +51,9 @@
 #include <map>
 #include <set>
 #include <ctime>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.AnalyzeLoopModeling" );
@@ -65,20 +68,20 @@ using utility::vector1;
 
 AnalyzeLoopModeling::AnalyzeLoopModeling():moves::Mover("AnalyzeLoopModeling"){}
 
-std::string AnalyzeLoopModelingCreator::keyname() const
-{
-	return AnalyzeLoopModelingCreator::mover_name();
-}
+// XRW TEMP std::string AnalyzeLoopModelingCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AnalyzeLoopModeling::mover_name();
+// XRW TEMP }
 
-std::string AnalyzeLoopModelingCreator::mover_name(){
-	return "AnalyzeLoopModeling";
-}
+// XRW TEMP std::string AnalyzeLoopModeling::mover_name(){
+// XRW TEMP  return "AnalyzeLoopModeling";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-AnalyzeLoopModelingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AnalyzeLoopModeling );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AnalyzeLoopModelingCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AnalyzeLoopModeling );
+// XRW TEMP }
 
 protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & pose){
 	protocols::loops::Loops pose_loops;
@@ -236,9 +239,9 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 }
 
 
-std::string AnalyzeLoopModeling::get_name() const {
-	return "AnalyzeLoopModeling";
-}
+// XRW TEMP std::string AnalyzeLoopModeling::get_name() const {
+// XRW TEMP  return "AnalyzeLoopModeling";
+// XRW TEMP }
 
 void
 AnalyzeLoopModeling::parse_my_tag(
@@ -259,6 +262,38 @@ AnalyzeLoopModeling::parse_my_tag(
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 	TR << "database loaded!!" << std::endl;
 }
+
+std::string AnalyzeLoopModeling::get_name() const {
+	return mover_name();
+}
+
+std::string AnalyzeLoopModeling::mover_name() {
+	return "AnalyzeLoopModeling";
+}
+
+void AnalyzeLoopModeling::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "XRW TO DO", "2,5" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AnalyzeLoopModelingCreator::keyname() const {
+	return AnalyzeLoopModeling::mover_name();
+}
+
+protocols::moves::MoverOP
+AnalyzeLoopModelingCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AnalyzeLoopModeling );
+}
+
+void AnalyzeLoopModelingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AnalyzeLoopModeling::provide_xml_schema( xsd );
+}
+
 
 }//pose_length_moves
 }//protocols

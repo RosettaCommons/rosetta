@@ -36,7 +36,7 @@ public:
 	DumpPdb( std::string fname ); // argument is moved
 	~DumpPdb() override;
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new DumpPdb( *this ) ) );
 	}
@@ -45,6 +45,18 @@ public:
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string fname_;
 	/// @brief Dump a scored pdb?

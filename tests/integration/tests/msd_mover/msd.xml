@@ -1,24 +1,25 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tal weights=talaris2013.wts >
-			<Reweight scoretype=res_type_constraint weight=1.0 />
-		</tal>
+		<ScoreFunction name="tal" weights="talaris2013.wts" >
+			<Reweight scoretype="res_type_constraint" weight="1.0" />
+		</ScoreFunction>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<InitializeFromCommandline name=ifcl />
+		<InitializeFromCommandline name="ifcl" />
 	</TASKOPERATIONS>
 	<MOVERS>
 		Design movers
-		<PackRotamersMover name=design scorefxn=tal task_operations=ifcl />
-		<MSDMover name=msd1 design_mover=design constraint_weight=0.5 resfiles=one.resfile,two.resfile />
-		<FindConsensusSequence name=finish scorefxn=tal resfiles=one.resfile,two.resfile />
+		<PackRotamersMover name="design" scorefxn="tal" task_operations="ifcl" />
+		<MSDMover name="msd1" design_mover="design" constraint_weight="0.5" resfiles="one.resfile,two.resfile" />
+		<FindConsensusSequence name="finish" scorefxn="tal" resfiles="one.resfile,two.resfile" />
 	</MOVERS>
 	<FILTERS>
 	</FILTERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=msd1 />
-		<Add mover=finish />
+		<Add mover="msd1" />
+		<Add mover="finish" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

@@ -71,6 +71,18 @@ public:
 	void score_type( core::scoring::ScoreType score_type );
 	void threshold( core::Real const th );
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	std::set< core::Size > compute_resnums( core::pose::Pose const & pose ) const;
 	core::Real penalty_from_score( core::Real const res_intE ) const;

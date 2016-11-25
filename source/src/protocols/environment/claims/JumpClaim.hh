@@ -98,6 +98,12 @@ public:
 
 	std::pair< std::string, std::string > const& atoms() const { return atoms_; }
 
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string class_name();
+
+
+
 	virtual EnvClaimOP clone() const;
 
 	virtual std::string type() const;

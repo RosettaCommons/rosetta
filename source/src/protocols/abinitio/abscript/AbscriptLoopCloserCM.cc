@@ -64,6 +64,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -79,20 +82,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-AbscriptLoopCloserCMCreator::keyname() const {
-	return AbscriptLoopCloserCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AbscriptLoopCloserCMCreator::keyname() const {
+// XRW TEMP  return AbscriptLoopCloserCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AbscriptLoopCloserCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AbscriptLoopCloserCMCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
+// XRW TEMP }
 
-std::string
-AbscriptLoopCloserCMCreator::mover_name() {
-	return "AbscriptLoopCloserCM";
-}
+// XRW TEMP std::string
+// XRW TEMP AbscriptLoopCloserCM::mover_name() {
+// XRW TEMP  return "AbscriptLoopCloserCM";
+// XRW TEMP }
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM():
 	Parent(),
@@ -354,13 +357,54 @@ void AbscriptLoopCloserCM::broking_finished( EnvClaimBroker::BrokerResult const&
 	assert( final_ft_ );
 }
 
-std::string AbscriptLoopCloserCM::get_name() const {
-	return "AbscriptLoopCloserCM";
-}
+// XRW TEMP std::string AbscriptLoopCloserCM::get_name() const {
+// XRW TEMP  return "AbscriptLoopCloserCM";
+// XRW TEMP }
 
 moves::MoverOP AbscriptLoopCloserCM::clone() const {
 	return moves::MoverOP( new AbscriptLoopCloserCM( *this ) );
 }
+
+std::string AbscriptLoopCloserCM::get_name() const {
+	return mover_name();
+}
+
+std::string AbscriptLoopCloserCM::mover_name() {
+	return "AbscriptLoopCloserCM";
+}
+
+void AbscriptLoopCloserCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"Residue selector specifying the region where fragments will be inserted");
+	attlist + XMLSchemaAttribute(
+		"fragments", xs_string,
+		"Path to fragment file containing fragments that will be used to close the loop");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Uses the WidthFirstSlidingWindowLoopCloser to fix loops using fragment insertion in the specified region",
+		attlist );
+}
+
+std::string AbscriptLoopCloserCMCreator::keyname() const {
+	return AbscriptLoopCloserCM::mover_name();
+}
+
+protocols::moves::MoverOP
+AbscriptLoopCloserCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
+}
+
+void AbscriptLoopCloserCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AbscriptLoopCloserCM::provide_xml_schema( xsd );
+}
+
 
 } // abscript
 } // abinitio

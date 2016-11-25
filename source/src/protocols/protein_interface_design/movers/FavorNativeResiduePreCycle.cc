@@ -18,6 +18,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -31,26 +34,26 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
 
-std::string FavorNativeResiduePreCycleCreator::keyname() const
-{
-	return FavorNativeResiduePreCycleCreator::mover_name();
-}
+// XRW TEMP std::string FavorNativeResiduePreCycleCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FavorNativeResiduePreCycle::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FavorNativeResiduePreCycleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorNativeResiduePreCycle );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FavorNativeResiduePreCycleCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FavorNativeResiduePreCycle );
+// XRW TEMP }
 
-std::string
-FavorNativeResiduePreCycleCreator::mover_name() {
-	return "FavorNativeResidue";
-}
+// XRW TEMP std::string
+// XRW TEMP FavorNativeResiduePreCycle::mover_name() {
+// XRW TEMP  return "FavorNativeResidue";
+// XRW TEMP }
 
 
-std::string
-FavorNativeResiduePreCycle::get_name() const {
-	return "FavorNativeResidue";
-}
+// XRW TEMP std::string
+// XRW TEMP FavorNativeResiduePreCycle::get_name() const {
+// XRW TEMP  return "FavorNativeResidue";
+// XRW TEMP }
 
 FavorNativeResiduePreCycle::~FavorNativeResiduePreCycle() {}
 
@@ -76,6 +79,38 @@ FavorNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::Da
 	*/
 	TR<<"applying favor native residue to pose with weight: "<<bonus_<<std::endl;
 }
+
+std::string FavorNativeResiduePreCycle::get_name() const {
+	return mover_name();
+}
+
+std::string FavorNativeResiduePreCycle::mover_name() {
+	return "FavorNativeResidue";
+}
+
+void FavorNativeResiduePreCycle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "bonus", xsct_real, "Bonus for the native residue", "1.5" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string FavorNativeResiduePreCycleCreator::keyname() const {
+	return FavorNativeResiduePreCycle::mover_name();
+}
+
+protocols::moves::MoverOP
+FavorNativeResiduePreCycleCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FavorNativeResiduePreCycle );
+}
+
+void FavorNativeResiduePreCycleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FavorNativeResiduePreCycle::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

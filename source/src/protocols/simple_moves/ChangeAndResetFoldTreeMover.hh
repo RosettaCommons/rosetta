@@ -109,8 +109,8 @@ public:
 
 public:
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	//void parse_my_tag(
 	// TagCOP tag,
@@ -126,6 +126,18 @@ public:
 	//ChangeAndResetFoldTreeMover & operator=(ChangeAndResetFoldTreeMover const & src);
 
 	protocols::moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	protocols::moves::MoverOP main_mover_;

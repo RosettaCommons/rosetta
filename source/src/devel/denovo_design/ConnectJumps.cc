@@ -19,6 +19,9 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.ConnectJumps" );
 
@@ -28,22 +31,22 @@ namespace devel {
 namespace denovo_design {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string
-ConnectJumpsCreator::keyname() const
-{
-	return ConnectJumpsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConnectJumpsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ConnectJumps::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ConnectJumpsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConnectJumps() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConnectJumpsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ConnectJumps() );
+// XRW TEMP }
 
-std::string
-ConnectJumpsCreator::mover_name()
-{
-	return "ConnectJumps";
-}
+// XRW TEMP std::string
+// XRW TEMP ConnectJumps::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ConnectJumps";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ConnectJumps main code:
@@ -66,11 +69,11 @@ ConnectJumps::clone() const
 	return protocols::moves::MoverOP( new ConnectJumps(*this) );
 }
 
-std::string
-ConnectJumps::get_name() const
-{
-	return ConnectJumpsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConnectJumps::get_name() const
+// XRW TEMP {
+// XRW TEMP  return ConnectJumps::mover_name();
+// XRW TEMP }
 
 void ConnectJumps::apply( core::pose::Pose & pose )
 {
@@ -79,6 +82,38 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 	TR << "*****************************************************************************" << std::endl;
 	protocols::denovo_design::movers::BridgeChainsMover::apply( pose );
 }
+
+std::string ConnectJumps::get_name() const {
+	return mover_name();
+}
+
+std::string ConnectJumps::mover_name() {
+	return "ConnectJumps";
+}
+
+void ConnectJumps::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	BridgeChainsMover::setup_attlist_for_derived_classes( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "The ConnectJumps, as the Doxygen calls it, is deprecated. Use BridgeChains instead.", attlist );
+}
+
+std::string ConnectJumpsCreator::keyname() const {
+	return ConnectJumps::mover_name();
+}
+
+protocols::moves::MoverOP
+ConnectJumpsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConnectJumps );
+}
+
+void ConnectJumpsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConnectJumps::provide_xml_schema( xsd );
+}
+
 
 } // namespace denovo_design
 } // namespace devel

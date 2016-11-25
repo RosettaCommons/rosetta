@@ -124,10 +124,10 @@ public:
 
 	Size
 	c4prime_atom_index() const;
-	
+
 	Size
 	c3prime_atom_index() const { return c3prime_index_; }
-	
+
 	Size
 	c5prime_atom_index() const { return c5prime_index_; }
 
@@ -157,7 +157,7 @@ public:
 	core::Size c1prime_index_;
 	core::Size c2prime_index_;
 	core::Size c4prime_index_;
-	
+
 	// AMW: these are ribose atoms not added by default
 	core::Size c3prime_index_;
 	core::Size c5prime_index_;

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints 
+/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints
 /// @author Andrew Watkins (amw579@stanford.edu, October 2016)
 
 #ifndef INCLUDED_core_scoring_constraints_BasePairConstraint_hh
@@ -60,7 +60,7 @@ public:
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
 	virtual void show_def( std::ostream& out, pose::Pose const& /*pose*/ ) const;
-	
+
 	std::string type() const;
 
 	Real
@@ -76,7 +76,7 @@ public:
 	/// @brief compute score
 	void
 	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
-	
+
 	/// @brief number of atoms involved in this BasePairConstraint
 	Size natoms() const { return 0; }
 	virtual
@@ -98,12 +98,12 @@ public:
 	void show( std::ostream& out) const;
 
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
-	
+
 	ConstraintCOPs const &
 	constraints() const {
 		return constraints_;
 	}
-	
+
 protected:
 	/// @brief Copy constructor for derived classes to ensure that they perform a deep copy on the
 	/// approriate data members

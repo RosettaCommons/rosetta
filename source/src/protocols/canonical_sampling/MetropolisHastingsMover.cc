@@ -16,7 +16,6 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
 
-
 // protocols headers
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
@@ -78,6 +77,9 @@
 
 // C++ Headers
 #include <vector>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -88,20 +90,20 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.MetropolisHa
 namespace protocols {
 namespace canonical_sampling {
 
-std::string
-MetropolisHastingsMoverCreator::keyname() const {
-	return MetropolisHastingsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MetropolisHastingsMoverCreator::keyname() const {
+// XRW TEMP  return MetropolisHastingsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MetropolisHastingsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MetropolisHastingsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MetropolisHastingsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MetropolisHastingsMover );
+// XRW TEMP }
 
-std::string
-MetropolisHastingsMoverCreator::mover_name() {
-	return "MetropolisHastings";
-}
+// XRW TEMP std::string
+// XRW TEMP MetropolisHastingsMover::mover_name() {
+// XRW TEMP  return "MetropolisHastings";
+// XRW TEMP }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
 	monte_carlo_(/*0*/),
@@ -426,11 +428,11 @@ MetropolisHastingsMover::wind_down_simulation( core::pose::Pose& pose) {
 	if ( output_name_from_job_distributor_ ) set_output_name("");
 }
 
-std::string
-MetropolisHastingsMover::get_name() const
-{
-	return "MetropolisHastingsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MetropolisHastingsMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "MetropolisHastingsMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const
@@ -487,7 +489,9 @@ MetropolisHastingsMover::parse_my_tag(
 	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 	for ( auto subtag : subtags ) {
 		protocols::moves::MoverOP mover;
+		utility::tag::TagCOP tag_containing_mover;
 		if ( subtag->getName() == "Add" ) { //add existing mover
+			tag_containing_mover = subtag;
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
 			auto mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
@@ -495,16 +499,31 @@ MetropolisHastingsMover::parse_my_tag(
 				throw utility::excn::EXCN_RosettaScriptsOption("");
 			}
 			mover = mover_iter->second;
-		} else { //generate new mover
+		} else if ( subtag->getName() == "AddNew" ) { //generate new mover
+			utility::vector0< utility::tag::TagCOP > sub_subtags = subtag->getTags();
+			if ( sub_subtags.size() != 1 ) {
+				throw utility::excn::EXCN_Msg_Exception( "Expected a single subelement of the \"AddNew\" tag while parsing the MetropolisHastings mover" );
+			}
+			tag_containing_mover = sub_subtags[0];
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
-			mover = mover_factory->newMover(subtag, data, filters, movers, pose);
+			mover = mover_factory->newMover( tag_containing_mover, data, filters, movers, pose);
+		} else {
+			// Error case
+			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
+			if ( mover_factory->mover_creator_map().count( subtag->getName() ) ) {
+				throw utility::excn::EXCN_Msg_Exception( "The MetropolisHastings mover no longer accepts Mover subtags as direct descendents;"
+					" you must use an intermediate tag named \"AddNew\" in which you may nest the new mover you wish to declare.\nError encountered"
+					" while parsing MetropolisHasings mover when the Mover \"" + subtag->getName() + "\" was encountered." );
+			} else {
+				throw utility::excn::EXCN_Msg_Exception( "The MetropolisHasings mover expects subtags named either \"Add\" or \"AddNew\"" );
+			}
 		}
 
 		ThermodynamicMoverOP th_mover( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicMover > ( mover ) );
 		ThermodynamicObserverOP th_observer( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicObserver > ( mover ) );
 		TemperatureControllerOP temp_controller( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::TemperatureController > ( mover ) );
 		//figure out if ThermodynamicMover or ThermodynamicObserver
-		if ( th_mover ) { //its a mover
+		if ( th_mover ) { //it's a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
 			add_mover( th_mover, weight, subtag );
 			//    add_mover( th_mover, weight );
@@ -519,7 +538,7 @@ MetropolisHastingsMover::parse_my_tag(
 				add_observer( th_observer );
 			}
 		} else { //its something different
-			tr.Error<< "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
+			tr.Error << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << tag_containing_mover << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
 	}
@@ -795,6 +814,105 @@ MetropolisHastingsMover::add_observer(
 {
 	observers_.push_back(observer);
 }
+
+std::string MetropolisHastingsMover::get_name() const {
+	return mover_name();
+}
+
+std::string MetropolisHastingsMover::mover_name() {
+	return "MetropolisHastings";
+}
+
+void MetropolisHastingsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "trials", xsct_non_negative_integer, "Number of MonteCarlo trials to perform" )
+		+ XMLSchemaAttribute( "checkpoint_interval", xsct_non_negative_integer, "How often in terms of cycles to checkpoint?" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "Temperature for Metropolis criterion", "0.6" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte", xsct_rosetta_bool, "Use WTEBiasEnergy?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_stride", xsct_non_negative_integer, "Stride for WTE score function", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_omega", xsct_real, "Omega for WTE score function", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_gamma", xsct_real, "Gamma for WTE score function", "10.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_grid_min", xsct_real, "Minimum grid value for WTE score function", "-10.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_grid_max", xsct_real, "Maximum grid value for WTE score function", "1000.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_grid_size", xsct_non_negative_integer, "Grid size for WTE score function", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "wte_output", xs_string, "Output file for WTE score function", "wte_bias.grid" )
+		+ optional_name_attribute();
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::MoverFactory::get_instance()->define_mover_xml_schema( xsd );
+	//Subelements:
+	//Add
+	AttributeList add_attlist;
+	add_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "mover_name", xs_string,  "Name attribute of previously defined mover to add", "null" )
+		+ XMLSchemaAttribute::attribute_w_default( "sampling_weight", xsct_real,  "XRW TO DO","1.0" );
+
+	XMLSchemaRepeatableCTNodeOP add_node( new XMLSchemaRepeatableCTNode );
+	add_node->set_element_w_attributes( "Add", add_attlist, "Specify a previously defined mover to add to the protocol" );
+
+	// AddNew
+	AttributeList add_new_attlist;
+	add_new_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "sampling_weight", xsct_real,  "XRW TO DO","1.0" );
+
+	XMLSchemaRepeatableCTNodeOP add_new_node( new XMLSchemaRepeatableCTNode );
+	add_new_node->set_already_defined_element( "AddNew", & add_ct_name );
+
+	XMLSchemaSimpleSubelementList add_new_subelement;
+	add_new_subelement.add_group_subelement( & protocols::moves::MoverFactory::mover_xml_schema_group_name );
+
+	XMLSchemaComplexTypeGenerator add_new_ct;
+	add_new_ct.element_name( "AddNew" )
+		.complex_type_naming_func( & add_ct_name )
+		.description( "Specify a new mover as a subtag and add it to the protocol" )
+		.add_attributes( add_new_attlist )
+		.set_subelements_single_appearance_required( add_new_subelement )
+		.write_complex_type_to_schema( xsd );
+
+	//Complex type for Add attribute
+	XMLSchemaElementOP add_subelement( new XMLSchemaElement );
+	add_subelement->name( "Add" );
+	add_subelement->type_name( add_ct_name( "Add" ) );
+
+	XMLSchemaRepeatableCTNodeOP metropolis_hastings_node( new XMLSchemaRepeatableCTNode );
+	metropolis_hastings_node->set_element_w_attributes( mover_name(), attlist, "Performs Metropolis-Hastings Monte"
+		" Carlo simulations which can be used to estimate a distribution of thermodynamic states (see documentation"
+		" for details)" )
+		.set_root_node_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.set_kids_naming_func( & add_ct_name )
+		.add_child( add_node )
+		.add_child( add_new_node )
+		.recursively_write_ct_to_schema( xsd );
+}
+
+std::string
+MetropolisHastingsMover::mover_or_add_group_name(){
+	return "mover_or_add_group";
+}
+
+std::string
+MetropolisHastingsMover::add_ct_name( std::string tag_name ){
+	return "metropolis_hastings_" + tag_name + "_type";
+}
+
+std::string MetropolisHastingsMoverCreator::keyname() const {
+	return MetropolisHastingsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MetropolisHastingsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MetropolisHastingsMover );
+}
+
+void MetropolisHastingsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MetropolisHastingsMover::provide_xml_schema( xsd );
+}
+
 
 } //moves
 } //protocols

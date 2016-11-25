@@ -86,6 +86,9 @@
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
@@ -122,25 +125,25 @@ CoordinateConstraintStack::coord_csts( utility::vector1< core::scoring::constrai
 
 CoordinateConstraintStackOP CoordinateConstraintStack::parent() const { return parent_; }
 
-std::string
-PlaceStubMoverCreator::keyname() const
-{
-	return PlaceStubMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceStubMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PlaceStubMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PlaceStubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceStubMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlaceStubMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PlaceStubMover );
+// XRW TEMP }
 
-std::string
-PlaceStubMoverCreator::mover_name()
-{
-	return "PlaceStub";
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceStubMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PlaceStub";
+// XRW TEMP }
 
 PlaceStubMover::PlaceStubMover() :
-	simple_moves::DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlaceStubMover::mover_name() ),
 	score_threshold_( 0.0 ),
 	host_chain_( 2 ),
 	stub_set_( /* NULL */ ),
@@ -178,7 +181,7 @@ PlaceStubMover::PlaceStubMover(
 	bool const triage_positions/*=true*/,
 	core::Real stub_energy_threshold /*= 1.0*/
 ) :
-	simple_moves::DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlaceStubMover::mover_name() ),
 	score_threshold_( score_threshold ),
 	host_chain_( host_chain ),
 	hurry_(hurry),
@@ -976,10 +979,10 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	set_last_move_status( protocols::moves::FAIL_RETRY );
 }
 
-std::string
-PlaceStubMover::get_name() const {
-	return PlaceStubMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceStubMover::get_name() const {
+// XRW TEMP  return PlaceStubMover::mover_name();
+// XRW TEMP }
 
 /// @details reapply saved coord constraints and refresh placed_stubs and prevent_repacking
 /// Nov09 changed logic: curr_coordinate constraints are removed only
@@ -1097,7 +1100,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	}
 
 	if ( tag->hasOption( "residue_numbers_setter" ) ) {
-		std::string const residue_numbers_name( tag->getOption( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ) ) );
+		std::string const residue_numbers_name( tag->getOption< std::string >( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ) ) );
 		residue_numbers_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_name, data );
 	}
 
@@ -1108,9 +1111,9 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
-	score_threshold_ = tag->getOption<core::Real>( "score_threshold", 0 );
-	hurry_ = tag->getOption<bool>( "hurry", 0 );
-	triage_positions_ = tag-> getOption<bool>( "triage_positions", 1 );
+	score_threshold_ = tag->getOption<core::Real>( "score_threshold", 0.0 );
+	hurry_ = tag->getOption<bool>( "hurry", false );
+	triage_positions_ = tag-> getOption<bool>( "triage_positions", true );
 	stub_energy_threshold_ = tag-> getOption<core::Real>( "stub_energy_threshold", 1.0 );
 
 	if ( tag->hasOption( "stubfile" ) ) { //assigning a unique stubset
@@ -1127,7 +1130,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		stub_set_ = data.get_ptr<HotspotStubSet>( "constraints", hs );
 	}
 
-	bool const minimize_rb( tag->getOption< bool >( "minimize_rb", 0 ) );
+	bool const minimize_rb( tag->getOption< bool >( "minimize_rb", false ) );
 	min_rb( minimize_rb );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
@@ -1208,7 +1211,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 			for ( utility::vector0< TagCOP >::const_iterator m_it=design_tags.begin(); m_it!=design_tags.end(); ++m_it ) {
 				TagCOP const m_tag_ptr = *m_it;
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
-				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", 1 ) );
+				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
 				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
@@ -1236,7 +1239,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only\n";
 	}
 
-	add_constraints_ = tag->getOption< bool >( "add_constraints", 1 );
+	add_constraints_ = tag->getOption< bool >( "add_constraints", true );
 
 
 	{ // pair stubset with an ala_pose scope
@@ -1280,7 +1283,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	}// pair stubset scope
 
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 4.0 );
-	leave_coord_csts_after_placement_ = tag->getOption< bool >( "leave_coord_csts", 0 );
+	leave_coord_csts_after_placement_ = tag->getOption< bool >( "leave_coord_csts", false );
 	if ( leave_coord_csts_after_placement_ ) {
 		post_placement_sdev_ = tag->getOption< core::Real >("post_placement_sdev", 1.0 );
 		TR<<"leaving constraints on after successful placement\n";
@@ -1288,11 +1291,145 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		post_placement_sdev_ = -1.0; // this will assert later on
 	}
 	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<'\n';
-	place_scaffold_ = tag->getOption< bool >( "place_scaffold", 0 );
+	place_scaffold_ = tag->getOption< bool >( "place_scaffold", false );
 	TR<<"place stub mover on chain "<<host_chain_<<" with score threshold of "<<score_threshold_<<" minimize_rb to "<<minimize_rb<<" final filter "<<final_filter_name<<" and place scaffold="<<place_scaffold_<<std::endl;
 }
+
+std::string PlaceStubMover::get_name() const {
+	return mover_name();
+}
+
+std::string PlaceStubMover::mover_name() {
+	return "PlaceStub";
+}
+
+//name mangling XML schema extravaganza
+std::string PlaceStub_subelement_mangler( std::string const & element ) { return "PlaceStub_subelement" + element + "_type"; }
+std::string PlaceStub_StubMinimize_subelement_mangler( std::string const & element ) { return "PlaceStub_StubMinimize_subelement" + element + "_type"; }
+std::string PlaceStub_DesignMovers_subelement_mangler( std::string const & element ) { return "PlaceStub_DesignMovers_subelement" + element + "_type"; }
+std::string PlaceStub_NotifyMovers_subelement_mangler( std::string const & element ) { return "PlaceStub_NotifyMovers_subelement" + element + "_type"; }
+
+void PlaceStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	//WARNING WARNING.  PlaceSimultaneouslyMover does some BAD THINGS in its parse_my_tag that make writing its XML schema the "right way" impossible.  This splashes onto PlaceStubMover as they share code.  This provide_xml_schema is FRAGILE. Instead of trying to modify it, you should first read Place_system_XSD_README and then refactor the parse_my_tags first.
+
+	using namespace utility::tag;
+	AttributeList direct_attlist;
+
+	direct_attlist
+		+ XMLSchemaAttribute( "name", xs_string, "Stores its own name for some reason") //weird
+		+ XMLSchemaAttribute( "residue_numbers", xs_string, "residue number where Stubs are going / have gone; default value is contents of attribute 'residue_numbers_setter'; REQUIRES residue_number_setter to be set")
+		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "name of thing in DataMap containing residue_numbers; REQUIRED if residue_numbers is set")
+		+ XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_positive_integer, "Chain where design ought to be performed, numbered sequentially from 1", "2")
+		+ XMLSchemaAttribute::attribute_w_default( "score_threshold", xsct_real, "probably a filtering threshold", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default( "hurry", xsct_rosetta_bool, "use a truncated scorefxn for minimization. large speed increases, doesn't seem to be less accurate", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "triage_positions", xsct_rosetta_bool, "remove potential scaffold positions based on distance/cst cutoffs. speeds up the search, but must be turned off to use place_scaffold=true as a replacement for docking (that is, when placing the scaffold at positions regardless of the input structure). triage_positions=true triages placements based on whether the hotspot is close enough (within max_cb_distance) and whether the hotspot's vectors align with those of the host position (with some tolerance).", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "stub_energy_threshold", xsct_real, "Decoys are only considered if the single-residue energy of the stub is below this value", "1.0")
+		+ XMLSchemaAttribute( "stubfile", xs_string, "XRW TODO")
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "do we want to minimize the rb dof during stub placement? This will allow a previously placed stub to move a a little to accommodate the new stub. It's a good idea to use this with the previously placed stub adding its implied constraints.", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "after_placement_filter", xs_string, "The name of a filter to be applied immediately after stub placement and StubMinimize movers, but before the DesignMovers run. Useful for quick sanity check on the goodness of the stub.", "true_filter")
+		+ XMLSchemaAttribute::attribute_w_default( "final_filter", xs_string, "The name of a filter to be applied at the final stage of stub placement as the last test, after DesignMovers run. Useful, e.g., if we want a stub to form an hbond to a particular target residue.", "true_filter")
+		+ XMLSchemaAttribute::attribute_w_default( "add_constraints", xsct_rosetta_bool, "should we apply the coordinate constraints to this stub?", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "the maximum cb-cb distance between stub and potential host residue to be considered for placement", "4.0") //XRW TODO should be nonnegative Real
+		+ XMLSchemaAttribute::attribute_w_default( "leave_coord_csts", xsct_rosetta_bool, "should the coordinate constraints be left on when placement is completed successfully? This is useful if you plan on making moves after placement and you want the hotspot's placement to be respected. Note that designing a residue that has constraints on it is likely to yield crashes. You can use task operations to disallow that residue from designing.  Must be true for post_placement_sdev to be interpreted", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "post_placement_sdev", xsct_real, "related to and requires leave_coord_csts. The lower the sdev (towards 0) the more stringent the constraint.", "1.0") //XRW TODO should be nonnegative Real
+		+ XMLSchemaAttribute::attribute_w_default( "place_scaffold", xsct_rosetta_bool, "use PlaceScaffold instead of PlaceStub. this will place the scaffold on the stub's position by using an inverse rotamer approach.", "false");
+	rosetta_scripts::attributes_for_parse_task_operations( direct_attlist );
+	core::pose::attributes_for_get_resnum_list( direct_attlist, xsd, "allowed_host_res");
+
+	//see main/source/test/utility/tag/XMLSchemaGeneration.cxxtest.hh for example that clarifies
+	//This is the ROOT NODE
+	XMLSchemaRepeatableCTNodeOP PlaceStubMover_node( new XMLSchemaRepeatableCTNode );
+	PlaceStubMover_node->set_element_w_attributes( mover_name(), direct_attlist, "The Hotspot-based sidechain placement. This is the main workhorse of the hot-spot centric method for protein-binder design." );
+	PlaceStubMover_node->set_kids_naming_func( & PlaceStub_subelement_mangler );
+	PlaceStubMover_node->set_root_node_naming_func( & complex_type_name_for_mover );
+
+	//Subelement StubMinimize
+	//Subelement Add
+	//string mover_name
+	//decimal bb_cst_weight 10.0
+	XMLSchemaRepeatableCTNodeOP StubMinimize_node( new XMLSchemaRepeatableCTNode );
+	AttributeList empty_attlist;
+	StubMinimize_node->set_element_w_attributes( "StubMinimize", empty_attlist, "Defines Movers used to minimize w/r/t stub placement" );
+	StubMinimize_node->set_kids_naming_func( & PlaceStub_StubMinimize_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP StubMinimize_Add_node( new XMLSchemaRepeatableCTNode );
+	StubMinimize_node->add_child(StubMinimize_Add_node);
+
+	AttributeList StubMinimize_Add_attlist;
+	StubMinimize_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)")
+		+ XMLSchemaAttribute::attribute_w_default( "bb_cst_weight", xsct_real, "determines the strength of the constraints derived from the stubs. This value is a weight on the cb_force, so larger values are stronger constraints.", "10.0");
+
+	StubMinimize_Add_node->set_element_w_attributes( "Add", StubMinimize_Add_attlist, "XML TODO");
+
+	//Subelement DesignMovers
+	//Subelement Add
+	//string mover_name
+	//bool use_constraints, true
+	//Real coord_cst_std, 0.5
+
+	XMLSchemaRepeatableCTNodeOP DesignMovers_node( new XMLSchemaRepeatableCTNode );
+	//AttributeList empty_attlist;
+	DesignMovers_node->set_element_w_attributes( "DesignMovers", empty_attlist, "Defines Movers used to do design after stub placement" );
+	DesignMovers_node->set_kids_naming_func( & PlaceStub_DesignMovers_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP DesignMovers_Add_node( new XMLSchemaRepeatableCTNode );
+	DesignMovers_node->add_child(DesignMovers_Add_node);
+
+	AttributeList DesignMovers_Add_attlist;
+	DesignMovers_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)")
+		+ XMLSchemaAttribute::attribute_w_default( "use_constraints", xsct_rosetta_bool, "obey constraints", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "coord_cst_std", xsct_real, "standard deviation (width) on coordinate constraint", "0.5");
+
+	DesignMovers_Add_node->set_element_w_attributes( "Add", DesignMovers_Add_attlist, "Defines a Mover used to do design after stub placement");
+
+	//This part ought to be in a shared function with PlaceSimultaneouslyMover, but fragility is the cost of these Movers doing things they ought not
+
+	//Subelement NotifyMovers (this comes from a helper function)
+	//Subelement Add
+	//string mover_name
+
+	XMLSchemaRepeatableCTNodeOP NotifyMovers_node( new XMLSchemaRepeatableCTNode );
+	//AttributeList empty_attlist;
+	NotifyMovers_node->set_element_w_attributes( "NotifyMovers", empty_attlist, "Defines Movers (named elsewhere in XML) that must be aware of the protected stub locations so they are not lost" );
+	NotifyMovers_node->set_kids_naming_func( & PlaceStub_NotifyMovers_subelement_mangler );
+
+	XMLSchemaRepeatableCTNodeOP NotifyMovers_Add_node( new XMLSchemaRepeatableCTNode );
+	NotifyMovers_node->add_child(NotifyMovers_Add_node);
+
+	AttributeList NotifyMovers_Add_attlist;
+	NotifyMovers_Add_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover_name", xs_string, "Name of the Mover (defined elsewhere in the XML)");
+
+	NotifyMovers_Add_node->set_element_w_attributes( "Add", NotifyMovers_Add_attlist, "Defines a Mover (named elsewhere in XML) that must be aware of the protected stub locations so they are not lost");
+
+	//now tie all the child nodes to the root node and report
+	PlaceStubMover_node->add_child(StubMinimize_node);
+	PlaceStubMover_node->add_child(DesignMovers_node);
+	PlaceStubMover_node->add_child(NotifyMovers_node);
+
+	PlaceStubMover_node->recursively_write_ct_to_schema( xsd );
+
+}
+
+std::string PlaceStubMoverCreator::keyname() const {
+	return PlaceStubMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PlaceStubMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlaceStubMover );
+}
+
+void PlaceStubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlaceStubMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design
 } //protocols
-

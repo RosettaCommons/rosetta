@@ -58,6 +58,9 @@
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -283,10 +286,10 @@ core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_packing() const {
 	return scorefxn_pack();
 }
 
-std::string
-DockMCMProtocol::get_name() const {
-	return "DockMCMProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP DockMCMProtocol::get_name() const {
+// XRW TEMP  return "DockMCMProtocol";
+// XRW TEMP }
 
 std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 {
@@ -301,22 +304,52 @@ std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 }
 
 // creator methods
-std::string
-DockMCMProtocolCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP DockMCMProtocolCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockMCMProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockMCMProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockMCMProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockMCMProtocol::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockMCMProtocol";
+// XRW TEMP }
+
+std::string DockMCMProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string DockMCMProtocol::mover_name() {
+	return "DockMCMProtocol";
+}
+
+void DockMCMProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockMCMProtocolCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs Metropolis Monte Carlo high resolution docking protocol", attlist );
+}
+
+std::string DockMCMProtocolCreator::keyname() const {
+	return DockMCMProtocol::mover_name();
 }
 
 protocols::moves::MoverOP
 DockMCMProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockMCMProtocol() );
+	return protocols::moves::MoverOP( new DockMCMProtocol );
 }
 
-std::string
-DockMCMProtocolCreator::mover_name()
+void DockMCMProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockMCMProtocol";
+	DockMCMProtocol::provide_xml_schema( xsd );
 }
+
 
 
 } // namespace docking

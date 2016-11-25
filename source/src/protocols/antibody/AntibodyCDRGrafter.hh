@@ -173,8 +173,8 @@ public:
 
 public:
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -189,6 +189,18 @@ public:
 	//AntibodyCDRGrafter & operator=( AntibodyCDRGrafter const & src );
 
 	moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

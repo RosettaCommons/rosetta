@@ -136,8 +136,8 @@ StoredResidueSubsetSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.emplace_back( "subset_name", xs_string );
-	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes.emplace_back( "subset_name", xs_string, "Name of a previously stored residue subset" );
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Selects residues using a previously stored residue subset.", attributes );
 }
 
 std::string

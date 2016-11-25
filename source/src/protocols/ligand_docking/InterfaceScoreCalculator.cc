@@ -39,6 +39,10 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 
 using basic::T;
 using basic::Error;
@@ -49,22 +53,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer InterfaceScoreCalculator_tracer( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator", basic::t_debug );
 
-std::string
-InterfaceScoreCalculatorCreator::keyname() const
-{
-	return InterfaceScoreCalculatorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceScoreCalculatorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InterfaceScoreCalculator::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-InterfaceScoreCalculatorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InterfaceScoreCalculatorCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InterfaceScoreCalculator );
+// XRW TEMP }
 
-std::string
-InterfaceScoreCalculatorCreator::mover_name()
-{
-	return "InterfaceScoreCalculator";
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceScoreCalculator::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InterfaceScoreCalculator";
+// XRW TEMP }
 
 /// @brief
 InterfaceScoreCalculator::InterfaceScoreCalculator():
@@ -98,9 +102,9 @@ protocols::moves::MoverOP InterfaceScoreCalculator::fresh_instance() const {
 	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
 }
 
-std::string InterfaceScoreCalculator::get_name() const{
-	return "InterfaceScoreCalculator";
-}
+// XRW TEMP std::string InterfaceScoreCalculator::get_name() const{
+// XRW TEMP  return "InterfaceScoreCalculator";
+// XRW TEMP }
 
 void InterfaceScoreCalculator::chains(std::vector<std::string> const & chains)
 {
@@ -268,6 +272,42 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 
 
 }
+
+std::string InterfaceScoreCalculator::get_name() const {
+	return mover_name();
+}
+
+std::string InterfaceScoreCalculator::mover_name() {
+	return "InterfaceScoreCalculator";
+}
+
+void InterfaceScoreCalculator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "chains", xs_string , "Comma separated chains to dock." )
+		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string , "Scorefxn of choice." )
+		+ XMLSchemaAttribute( "native", xs_string , "This is your native pdb without interface mutations. If a native structure is specified, 4 additional score terms are calculated: ligand_centroid_travel, ligand_radious_of_gyration, ligand_rms_no_super, and ligand_rms_with_super." )
+		+ XMLSchemaAttribute( "normalize", xs_string , "The normalization function you wish to use." )
+		+ XMLSchemaAttribute::attribute_w_default( "compute_grid_scores", xsct_rosetta_bool , "If compute_grid_scores is true, the scores for each grid will be calculated. This may result in the regeneration of the scoring grids, which can be slow.", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "InterfaceScoreCalculator calculates a myriad of ligand specific scores and appends them to the output file. After scoring the complex the ligand is moved 1000 Å away from the protein. The model is then scored again. An interface score is calculated for each score term by subtracting separated energy from complex energy.", attlist );
+}
+
+std::string InterfaceScoreCalculatorCreator::keyname() const {
+	return InterfaceScoreCalculator::mover_name();
+}
+
+protocols::moves::MoverOP
+InterfaceScoreCalculatorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
+}
+
+void InterfaceScoreCalculatorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceScoreCalculator::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace ligand_docking

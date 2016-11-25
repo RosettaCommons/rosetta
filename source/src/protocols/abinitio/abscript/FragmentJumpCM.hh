@@ -46,11 +46,10 @@ public:
 	virtual
 	~FragmentJumpCM() {};
 
-	virtual
 	EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Set the topology using a topology file.
 	void set_topology( std::string const& topology_file );
@@ -66,18 +65,28 @@ public:
 
 	std::string const& moverkey() { return moverkey_; }
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual
-	moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	jumping::JumpSample calculate_jump_sample() const;

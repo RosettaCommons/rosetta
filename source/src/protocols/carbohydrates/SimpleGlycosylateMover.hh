@@ -148,8 +148,8 @@ public:
 	void
 	show( std::ostream & output=std::cout ) const override;
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -170,6 +170,18 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
 	clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

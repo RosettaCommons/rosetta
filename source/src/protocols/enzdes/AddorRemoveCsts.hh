@@ -51,7 +51,7 @@ public:  //Constructor / Destructor
 public:
 
 	protocols::moves::MoverOP clone() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -74,6 +74,18 @@ public:
 	void set_cst_action(CstAction action){ cst_action_=action; }
 	void set_accept_blocks_missing_header( bool setting ){ accept_blocks_missing_header_ = setting; }
 	void set_keep_covalent( bool setting ){ keep_covalent_ = setting; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 protected:

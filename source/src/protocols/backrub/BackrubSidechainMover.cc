@@ -54,6 +54,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/id/TorsionID_Range.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -66,25 +69,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.backrub.BackrubSidechainMover" 
 namespace protocols {
 namespace backrub {
 
-std::string
-protocols::backrub::BackrubSidechainMoverCreator::keyname() const {
-	return BackrubSidechainMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-protocols::backrub::BackrubSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubSidechainMover );
-}
-
-std::string
-protocols::backrub::BackrubSidechainMoverCreator::mover_name() {
-	return "BackrubSidechain";
-}
-
-protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
+BackrubSidechainMover::BackrubSidechainMover(
 ) :
 	protocols::canonical_sampling::ThermodynamicMover(),
-	backrub_mover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover )),
+	backrub_mover_(BackrubMoverOP( new BackrubMover )),
 	sidechain_mover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover )),
 	record_statistics_(false),
 	statistics_filename_("brsc_stats.txt")
@@ -93,7 +81,7 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 	backrub_mover_->set_max_atoms(7);
 }
 
-protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
+BackrubSidechainMover::BackrubSidechainMover(
 	BackrubSidechainMover const & mover
 ) :
 	//utility::pointer::ReferenceCount(),
@@ -108,7 +96,7 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 	accept_hists_(mover.accept_hists_)
 {
 	if ( mover.backrub_mover_ ) {
-		backrub_mover_ = utility::pointer::dynamic_pointer_cast< protocols::backrub::BackrubMover > ( mover.backrub_mover_->clone() );
+		backrub_mover_ = utility::pointer::dynamic_pointer_cast< BackrubMover > ( mover.backrub_mover_->clone() );
 		runtime_assert(backrub_mover_ != nullptr);
 	}
 	if ( mover.sidechain_mover_ ) {
@@ -117,28 +105,22 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 	}
 }
 
-protocols::backrub::BackrubSidechainMover::~BackrubSidechainMover()= default;
+BackrubSidechainMover::~BackrubSidechainMover()= default;
 
 protocols::moves::MoverOP
-protocols::backrub::BackrubSidechainMover::clone() const
+BackrubSidechainMover::clone() const
 {
-	return protocols::moves::MoverOP( new protocols::backrub::BackrubSidechainMover( *this ) );
+	return protocols::moves::MoverOP( new BackrubSidechainMover( *this ) );
 }
 
 protocols::moves::MoverOP
-protocols::backrub::BackrubSidechainMover::fresh_instance() const
+BackrubSidechainMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new BackrubSidechainMover );
 }
 
-std::string
-protocols::backrub::BackrubSidechainMover::get_name() const
-{
-	return "BackrubSidechainMover";
-}
-
 void
-protocols::backrub::BackrubSidechainMover::parse_my_tag(
+BackrubSidechainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
@@ -184,7 +166,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::update_segments(
+BackrubSidechainMover::update_segments(
 	core::pose::Pose const & pose
 )
 {
@@ -218,7 +200,7 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::initialize_simulation(
+BackrubSidechainMover::initialize_simulation(
 	core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
@@ -236,7 +218,7 @@ protocols::backrub::BackrubSidechainMover::initialize_simulation(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::apply(
+BackrubSidechainMover::apply(
 	core::pose::Pose & pose
 )
 {
@@ -262,7 +244,7 @@ protocols::backrub::BackrubSidechainMover::apply(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::observe_after_metropolis(
+BackrubSidechainMover::observe_after_metropolis(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
@@ -270,7 +252,7 @@ protocols::backrub::BackrubSidechainMover::observe_after_metropolis(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::finalize_simulation(
+BackrubSidechainMover::finalize_simulation(
 	core::pose::Pose & /*pose*/,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
@@ -290,13 +272,13 @@ protocols::backrub::BackrubSidechainMover::finalize_simulation(
 }
 
 utility::vector1<core::Size> const &
-protocols::backrub::BackrubSidechainMover::pivot_residues() const
+BackrubSidechainMover::pivot_residues() const
 {
 	return backrub_mover_->pivot_residues();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_pivot_residues(
+BackrubSidechainMover::set_pivot_residues(
 	utility::vector1<core::Size> const & pivot_residues
 )
 {
@@ -304,13 +286,13 @@ protocols::backrub::BackrubSidechainMover::set_pivot_residues(
 }
 
 core::pack::task::TaskFactoryCOP
-protocols::backrub::BackrubSidechainMover::task_factory() const
+BackrubSidechainMover::task_factory() const
 {
 	return sidechain_mover_->task_factory();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_task_factory(
+BackrubSidechainMover::set_task_factory(
 	core::pack::task::TaskFactoryOP task_factory
 )
 {
@@ -319,13 +301,13 @@ protocols::backrub::BackrubSidechainMover::set_task_factory(
 }
 
 core::Real
-protocols::backrub::BackrubSidechainMover::prob_uniform() const
+BackrubSidechainMover::prob_uniform() const
 {
 	return sidechain_mover_->prob_uniform();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_prob_uniform(
+BackrubSidechainMover::set_prob_uniform(
 	core::Real prob_uniform
 )
 {
@@ -333,13 +315,13 @@ protocols::backrub::BackrubSidechainMover::set_prob_uniform(
 }
 
 core::Real
-protocols::backrub::BackrubSidechainMover::prob_withinrot() const
+BackrubSidechainMover::prob_withinrot() const
 {
 	return sidechain_mover_->prob_withinrot();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_prob_withinrot(
+BackrubSidechainMover::set_prob_withinrot(
 	core::Real prob_withinrot
 )
 {
@@ -347,13 +329,13 @@ protocols::backrub::BackrubSidechainMover::set_prob_withinrot(
 }
 
 core::Real
-protocols::backrub::BackrubSidechainMover::prob_random_pert_current() const
+BackrubSidechainMover::prob_random_pert_current() const
 {
 	return sidechain_mover_->prob_random_pert_current();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_prob_random_pert_current(
+BackrubSidechainMover::set_prob_random_pert_current(
 	core::Real prob_pert
 )
 {
@@ -361,13 +343,13 @@ protocols::backrub::BackrubSidechainMover::set_prob_random_pert_current(
 }
 
 bool
-protocols::backrub::BackrubSidechainMover::preserve_detailed_balance() const
+BackrubSidechainMover::preserve_detailed_balance() const
 {
 	return backrub_mover_->preserve_detailed_balance() && sidechain_mover_->preserve_detailed_balance();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_preserve_detailed_balance(
+BackrubSidechainMover::set_preserve_detailed_balance(
 	bool preserve_detailed_balance
 )
 {
@@ -376,13 +358,13 @@ protocols::backrub::BackrubSidechainMover::set_preserve_detailed_balance(
 }
 
 bool
-protocols::backrub::BackrubSidechainMover::require_mm_bend() const
+BackrubSidechainMover::require_mm_bend() const
 {
 	return backrub_mover_->require_mm_bend();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_require_mm_bend(
+BackrubSidechainMover::set_require_mm_bend(
 	bool require_mm_bend
 )
 {
@@ -390,7 +372,7 @@ protocols::backrub::BackrubSidechainMover::set_require_mm_bend(
 }
 
 utility::vector1<core::id::TorsionID_Range>
-protocols::backrub::BackrubSidechainMover::torsion_id_ranges(
+BackrubSidechainMover::torsion_id_ranges(
 	core::pose::Pose & //pose
 )
 {
@@ -398,13 +380,13 @@ protocols::backrub::BackrubSidechainMover::torsion_id_ranges(
 }
 
 bool
-protocols::backrub::BackrubSidechainMover::record_statistics() const
+BackrubSidechainMover::record_statistics() const
 {
 	return record_statistics_;
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_record_statistics(
+BackrubSidechainMover::set_record_statistics(
 	bool record_statistics
 )
 {
@@ -414,13 +396,13 @@ protocols::backrub::BackrubSidechainMover::set_record_statistics(
 }
 
 std::string const &
-protocols::backrub::BackrubSidechainMover::statistics_filename() const
+BackrubSidechainMover::statistics_filename() const
 {
 	return statistics_filename_;
 }
 
 void
-protocols::backrub::BackrubSidechainMover::set_statistics_filename(
+BackrubSidechainMover::set_statistics_filename(
 	std::string const & statistics_filename
 )
 {
@@ -428,13 +410,13 @@ protocols::backrub::BackrubSidechainMover::set_statistics_filename(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::reset_statistics()
+BackrubSidechainMover::reset_statistics()
 {
 	setup_histograms();
 }
 
 void
-protocols::backrub::BackrubSidechainMover::output_statistics(
+BackrubSidechainMover::output_statistics(
 	std::ostream & out
 )
 {
@@ -444,7 +426,7 @@ protocols::backrub::BackrubSidechainMover::output_statistics(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::setup_histograms()
+BackrubSidechainMover::setup_histograms()
 {
 	if ( !(record_statistics_ && backrub_mover_->get_input_pose()) ) {
 		proposal_hists_.resize(0);
@@ -491,7 +473,7 @@ protocols::backrub::BackrubSidechainMover::setup_histograms()
 }
 
 void
-protocols::backrub::BackrubSidechainMover::record_histograms(
+BackrubSidechainMover::record_histograms(
 	bool accepted
 )
 {
@@ -515,7 +497,7 @@ protocols::backrub::BackrubSidechainMover::record_histograms(
 }
 
 void
-protocols::backrub::BackrubSidechainMover::update_type()
+BackrubSidechainMover::update_type()
 {
 	std::stringstream mt;
 
@@ -532,6 +514,78 @@ protocols::backrub::BackrubSidechainMover::update_type()
 	std::string const new_type(mt.str());
 	type(new_type);
 }
+
+std::string BackrubSidechainMover::get_name() const {
+	return mover_name();
+}
+
+std::string BackrubSidechainMover::mover_name() {
+	return "BackrubSidechain";
+}
+
+void BackrubSidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"pivot_residues", xs_string,
+		"residues for which contiguous stretches can contain segments (comma separated) can "
+		"use PDB numbers ([resnum][chain]) or absolute Rosetta numbers (integer)");
+
+	rosetta_scripts::attributes_for_parse_task_operations_w_factory(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"prob_uniform", xsct_real,
+		"probability of a uniform move - all sidechain chis are uniformly randomized between -180 degrees and 180 degrees",
+		"0.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"prob_withinrot", xsct_real,
+		"within rotamer - sidechain chis are picked from the Dunbrack distribution for the current rotamer",
+		"0.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"prob_random_pert_current", xsct_real,
+		"random perturbation of current position - the current sidechain "
+		"chis are perturbed +/- 10 degrees from their current positions, biased by "
+		"the resulting Dunbrack energy. Note that if your score function "
+		"contains a Dunbrack energy term, this will result in "
+		"double counting issues.",
+		"0.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"preserve_detailed_balance", xsct_rosetta_bool,
+		"if set to true, does not change branching atom angles during apply and sets ideal branch angles during initialization if used with MetropolisHastings",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"require_mm_bend", xsct_rosetta_bool,
+		"if true and used with MetropolisHastings, will exit if mm_bend is not in the score function",
+		"true");
+	attlist + XMLSchemaAttribute(
+		"record_statistics", xsct_rosetta_bool,
+		"Write histogram of MC scores to statistics_file" );
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"statistics_fileame", xs_string,
+		"Name of file where statistics are being dumped into",
+		"brsc_stats.txt");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Backrub for off-rotamer sidechains",
+		attlist );
+}
+
+std::string BackrubSidechainMoverCreator::keyname() const {
+	return BackrubSidechainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BackrubSidechainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackrubSidechainMover );
+}
+
+void BackrubSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackrubSidechainMover::provide_xml_schema( xsd );
+}
+
 
 } //moves
 } //protocols

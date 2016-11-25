@@ -46,6 +46,9 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -60,22 +63,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.util" );
 using namespace protocols;
 using namespace core;
 
-std::string
-SetupForDensityScoringMoverCreator::keyname() const
-{
-	return SetupForDensityScoringMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetupForDensityScoringMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetupForDensityScoringMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetupForDensityScoringMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupForDensityScoringMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetupForDensityScoringMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetupForDensityScoringMover );
+// XRW TEMP }
 
-std::string
-SetupForDensityScoringMoverCreator::mover_name()
-{
-	return "SetupForDensityScoring";
-}
+// XRW TEMP std::string
+// XRW TEMP SetupForDensityScoringMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetupForDensityScoring";
+// XRW TEMP }
 
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -97,10 +100,10 @@ SetupForDensityScoringMover::clone() const {
 	return( protocols::moves::MoverOP( new SetupForDensityScoringMover( *this ) ) );
 }
 
-std::string
-SetupForDensityScoringMover::get_name() const {
-	return SetupForDensityScoringMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetupForDensityScoringMover::get_name() const {
+// XRW TEMP  return SetupForDensityScoringMover::mover_name();
+// XRW TEMP }
 
 void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) {
 	mask_reses_.clear();
@@ -123,6 +126,38 @@ void SetupForDensityScoringMover::parse_my_tag(
 
 	// TO DO: make mask parsable
 }
+
+std::string SetupForDensityScoringMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetupForDensityScoringMover::mover_name() {
+	return "SetupForDensityScoring";
+}
+
+void SetupForDensityScoringMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("realign", xs_string, "Dock pose into density map.","no");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Roots pose in VRT. Option to trigger docking into the density.", attlist );
+}
+
+std::string SetupForDensityScoringMoverCreator::keyname() const {
+	return SetupForDensityScoringMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetupForDensityScoringMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetupForDensityScoringMover );
+}
+
+void SetupForDensityScoringMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetupForDensityScoringMover::provide_xml_schema( xsd );
+}
+
 
 ///////////////////////////////////////
 ///////////////////////////////////////

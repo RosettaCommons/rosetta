@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/Remarks.hh>
 
@@ -60,6 +61,9 @@
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -80,20 +84,20 @@ using namespace core;
 /// creator
 
 
-std::string
-OptimizeThreadingMoverCreator::keyname() const {
-	return OptimizeThreadingMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP OptimizeThreadingMoverCreator::keyname() const {
+// XRW TEMP  return OptimizeThreadingMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-OptimizeThreadingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new OptimizeThreadingMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP OptimizeThreadingMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new OptimizeThreadingMover );
+// XRW TEMP }
 
-std::string
-OptimizeThreadingMoverCreator::mover_name() {
-	return "OptimizeThreading";
-}
+// XRW TEMP std::string
+// XRW TEMP OptimizeThreadingMover::mover_name() {
+// XRW TEMP  return "OptimizeThreading";
+// XRW TEMP }
 
 
 //////////////////
@@ -529,6 +533,7 @@ void OptimizeThreadingMover::parse_my_tag(
 	temperature_ = tag->getOption<core::Real>( "temperature", 2.0 );
 	max_shift_ = tag->getOption<core::Size>( "max_shift", 4 );
 
+
 	// different nstep default for greedy
 	if ( greedy_ && !tag->hasOption("nsteps") ) nsteps_=2;
 
@@ -538,6 +543,52 @@ void OptimizeThreadingMover::parse_my_tag(
 		data.add( "loops", looptag, loops_ );
 	}
 }
+
+std::string OptimizeThreadingMover::get_name() const {
+	return mover_name();
+}
+
+std::string OptimizeThreadingMover::mover_name() {
+	return "OptimizeThreading";
+}
+
+void OptimizeThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Scorefunction to use for threading" )
+		+ XMLSchemaAttribute( "scorefxn_sampling", xs_string, "Scorefunction to use for Monte Carlo sampling" )
+		+ XMLSchemaAttribute( "native", xs_string, "Path to PDB file containing native pose" )
+		+ XMLSchemaAttribute( "chains", xsct_chain_cslist, "Specify chains within the pose to use for threading" )
+		+ XMLSchemaAttribute::attribute_w_default( "nsteps", xsct_non_negative_integer, "Number of monte carlo steps", "5000" )
+		+ XMLSchemaAttribute::attribute_w_default( "step_penalty", xsct_rosetta_bool, "This attribute is never actually used", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "recover_low", xsct_rosetta_bool, "Recover the lowest energy structure", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "greedy", xsct_rosetta_bool, "Perform a greedy alignment", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rebuild_cycles", xsct_non_negative_integer, "Number of loop modeling cycles", "200" )
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "Weight for the sequence shift mover's score", "0.1" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "Temperature for the Metropolis criterion", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_shift", xsct_non_negative_integer, "Maximum number of residues to shift sequence", "4" )
+		+ XMLSchemaAttribute( "loops_out", xs_string, "Add the LoopsOP to the datamap with this name" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Optimize threading of a sequence onto a pose", attlist );
+}
+
+std::string OptimizeThreadingMoverCreator::keyname() const {
+	return OptimizeThreadingMover::mover_name();
+}
+
+protocols::moves::MoverOP
+OptimizeThreadingMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new OptimizeThreadingMover );
+}
+
+void OptimizeThreadingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OptimizeThreadingMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

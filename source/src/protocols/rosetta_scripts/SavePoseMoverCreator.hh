@@ -25,7 +25,8 @@ class SavePoseMoverCreator : public protocols::moves::MoverCreator {
 public:
 	moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static std::string mover_name();
+	//static std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

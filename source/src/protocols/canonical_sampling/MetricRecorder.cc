@@ -16,7 +16,7 @@
 // Unit header or inline function header
 #include <protocols/canonical_sampling/MetricRecorder.hh>
 #include <protocols/canonical_sampling/MetricRecorderCreator.hh>
-
+#include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 // Other project headers or inline function headers
 #include <core/pose/Pose.hh>
 //Gabe testing
@@ -48,6 +48,9 @@
 #include <core/id/TorsionID.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Operating system headers
@@ -58,20 +61,20 @@
 namespace protocols {
 namespace canonical_sampling {
 
-std::string
-MetricRecorderCreator::keyname() const {
-	return MetricRecorderCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MetricRecorderCreator::keyname() const {
+// XRW TEMP  return MetricRecorder::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MetricRecorderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MetricRecorder );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MetricRecorderCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MetricRecorder );
+// XRW TEMP }
 
-std::string
-MetricRecorderCreator::mover_name() {
-	return "MetricRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP MetricRecorder::mover_name() {
+// XRW TEMP  return "MetricRecorder";
+// XRW TEMP }
 
 MetricRecorder::MetricRecorder() :
 	stride_(1),
@@ -119,11 +122,11 @@ MetricRecorder::fresh_instance() const
 	return protocols::moves::MoverOP( new MetricRecorder );
 }
 
-std::string
-MetricRecorder::get_name() const
-{
-	return "MetricRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP MetricRecorder::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "MetricRecorder";
+// XRW TEMP }
 
 void
 MetricRecorder::parse_my_tag(
@@ -426,6 +429,68 @@ MetricRecorder::finalize_simulation(
 {
 	recorder_stream_.close();
 }
+
+std::string MetricRecorder::get_name() const {
+	return mover_name();
+}
+
+std::string MetricRecorder::mover_name() {
+	return "MetricRecorder";
+}
+
+void MetricRecorder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	TrajectoryRecorder::attributes_for_trajectory_recorder( attlist );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "prepend_output_name", xsct_rosetta_bool, "Prepend the current job output name to the file name", "false" );
+	//Define subelements
+	//Attribute lists for subelements
+
+	AttributeList torsion_attributes;
+	torsion_attributes
+		+ XMLSchemaAttribute::required_attribute( "rsd", xs_string, "Residue this torsion belongs to" )
+		+ XMLSchemaAttribute::required_attribute( "type", xs_string, "Type of this torsion (e.g. CHI )" )
+		+ XMLSchemaAttribute::required_attribute( "torsion", xsct_non_negative_integer, "Which of the specified torsion angles are we modifying? E.g. 1 for chi1" )
+		+ optional_name_attribute( "Unique identifier for this torsion" );
+	AttributeList allchi_attributes; //no attributes in this one
+	allchi_attributes
+		+ optional_name_attribute( "unique identifier for this tag" );
+	AttributeList allbb_attributes; //none in this one either
+	allbb_attributes
+		+ optional_name_attribute( "unique identifier for this tag" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "Torsion", torsion_attributes, "Specifies a torsion angle to be recorded" )
+		.add_simple_subelement( "AllChi", allchi_attributes, "Record all chi angles" )
+		.add_simple_subelement( "AllBB", allbb_attributes, "Record all backbone torsion angles" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen
+		.add_attributes( attlist )
+		.set_subelements_repeatable( subelements )
+		.element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.description( "Record numeric metrics to a tab-delimited text file" )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+std::string MetricRecorderCreator::keyname() const {
+	return MetricRecorder::mover_name();
+}
+
+protocols::moves::MoverOP
+MetricRecorderCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MetricRecorder );
+}
+
+void MetricRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MetricRecorder::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace canonical_sampling

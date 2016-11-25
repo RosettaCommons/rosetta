@@ -29,6 +29,9 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loops {
@@ -36,7 +39,7 @@ namespace loops {
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 
 FoldTreeFromLoops::FoldTreeFromLoops() :
-	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
+	Mover( FoldTreeFromLoops::mover_name() ), loop_str_( "" )
 {
 	loops_ = LoopsOP( new Loops );
 	loops_->clear();
@@ -68,10 +71,10 @@ FoldTreeFromLoops::apply( core::pose::Pose & pose )
 	TR<<pose.fold_tree()<<std::endl;
 }
 
-std::string
-FoldTreeFromLoops::get_name() const {
-	return FoldTreeFromLoopsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FoldTreeFromLoops::get_name() const {
+// XRW TEMP  return FoldTreeFromLoops::mover_name();
+// XRW TEMP }
 
 void
 FoldTreeFromLoops::parse_my_tag(
@@ -104,10 +107,41 @@ LoopsOP FoldTreeFromLoops::loops() const
 	return loops_;
 }
 
-std::string
-FoldTreeFromLoopsCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP FoldTreeFromLoopsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FoldTreeFromLoops::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FoldTreeFromLoopsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FoldTreeFromLoops );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP FoldTreeFromLoops::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FoldTreeFromLoops";
+// XRW TEMP }
+
+std::string FoldTreeFromLoops::get_name() const {
+	return mover_name();
+}
+
+std::string FoldTreeFromLoops::mover_name() {
+	return "FoldTreeFromLoops";
+}
+
+void FoldTreeFromLoops::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return FoldTreeFromLoopsCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	loops_definers::attributes_for_load_loop_definitions( attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Helper mover that looks for loop definitions and sets up the fold tree.", attlist );
+}
+
+std::string FoldTreeFromLoopsCreator::keyname() const {
+	return FoldTreeFromLoops::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -115,11 +149,11 @@ FoldTreeFromLoopsCreator::create_mover() const {
 	return protocols::moves::MoverOP( new FoldTreeFromLoops );
 }
 
-std::string
-FoldTreeFromLoopsCreator::mover_name()
+void FoldTreeFromLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "FoldTreeFromLoops";
+	FoldTreeFromLoops::provide_xml_schema( xsd );
 }
+
 
 } // namespace loops
 } // namespace protocols

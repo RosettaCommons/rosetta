@@ -28,6 +28,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.MakeAsymmetricStructureDataMover" );
 
@@ -36,7 +39,7 @@ namespace denovo_design {
 namespace movers {
 
 MakeAsymmetricStructureDataMover::MakeAsymmetricStructureDataMover():
-	protocols::moves::Mover( MakeAsymmetricStructureDataMover::class_name() )
+	protocols::moves::Mover( MakeAsymmetricStructureDataMover::mover_name() )
 {
 
 }
@@ -66,17 +69,17 @@ MakeAsymmetricStructureDataMover::fresh_instance() const
 	return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
 }
 
-std::string
-MakeAsymmetricStructureDataMover::get_name() const
-{
-	return MakeAsymmetricStructureDataMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MakeAsymmetricStructureDataMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return MakeAsymmetricStructureDataMover::mover_name();
+// XRW TEMP }
 
-std::string
-MakeAsymmetricStructureDataMover::class_name()
-{
-	return "MakeAsymmetricStructureDataMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MakeAsymmetricStructureDataMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MakeAsymmetricStructureDataMover";
+// XRW TEMP }
 
 void
 MakeAsymmetricStructureDataMover::show( std::ostream & output ) const
@@ -136,17 +139,47 @@ MakeAsymmetricStructureDataMover::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-MakeAsymmetricStructureDataMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeAsymmetricStructureDataMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP MakeAsymmetricStructureDataMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MakeAsymmetricStructureDataMover::mover_name();
+// XRW TEMP }
+
+std::string MakeAsymmetricStructureDataMover::get_name() const {
+	return mover_name();
+}
+
+std::string MakeAsymmetricStructureDataMover::mover_name() {
+	return "MakeAsymmetricStructureDataMover";
+}
+
+void MakeAsymmetricStructureDataMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Transform the StructureData for a symmetric Pose into its asymmetric equivalent, by replicating across subunits as appropriate", attlist );
+}
+
+std::string MakeAsymmetricStructureDataMoverCreator::keyname() const {
+	return MakeAsymmetricStructureDataMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeAsymmetricStructureDataMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new MakeAsymmetricStructureDataMover );
 }
 
-std::string
-MakeAsymmetricStructureDataMoverCreator::keyname() const
+void MakeAsymmetricStructureDataMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return MakeAsymmetricStructureDataMover::class_name();
+	MakeAsymmetricStructureDataMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //denovo_design

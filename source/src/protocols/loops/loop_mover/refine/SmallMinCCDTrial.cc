@@ -50,6 +50,9 @@
 
 // C++ headers
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.SmallMinCCDTrial" );
 
@@ -87,10 +90,10 @@ SmallMinCCDTrial & SmallMinCCDTrial::operator=( SmallMinCCDTrial const & rhs ){
 SmallMinCCDTrial::~SmallMinCCDTrial() {}
 
 /// @brief Each derived class must specify its name.
-std::string SmallMinCCDTrial::get_name() const
-{
-	return type();
-}
+// XRW TEMP std::string SmallMinCCDTrial::get_name() const
+// XRW TEMP {
+// XRW TEMP  return type();
+// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -361,15 +364,46 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 ////////////////////////////////////// END OF EXCESSIVE DEBUG OUTPUT //////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
+// XRW TEMP SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
 
-moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
-	return moves::MoverOP( new SmallMinCCDTrial() );
+// XRW TEMP moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new SmallMinCCDTrial() );
+// XRW TEMP }
+
+// XRW TEMP std::string SmallMinCCDTrialCreator::keyname() const {
+// XRW TEMP  return "SmallMinCCDTrial";
+// XRW TEMP }
+
+std::string SmallMinCCDTrial::get_name() const {
+	return mover_name();
+}
+
+std::string SmallMinCCDTrial::mover_name() {
+	return "SmallMinCCDTrial";
+}
+
+void SmallMinCCDTrial::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Perform a small move followed CCD closure, packing and minimization. Takes only command line options.", attlist );
 }
 
 std::string SmallMinCCDTrialCreator::keyname() const {
-	return "SmallMinCCDTrial";
+	return SmallMinCCDTrial::mover_name();
 }
+
+protocols::moves::MoverOP
+SmallMinCCDTrialCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SmallMinCCDTrial );
+}
+
+void SmallMinCCDTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SmallMinCCDTrial::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

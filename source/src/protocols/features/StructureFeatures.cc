@@ -54,6 +54,10 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/StructureFeaturesCreator.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.features.StructureFeatures" );
 
@@ -86,8 +90,8 @@ StructureFeatures::StructureFeatures( StructureFeatures const & ) :
 
 StructureFeatures::~StructureFeatures()= default;
 
-string
-StructureFeatures::type_name() const { return "StructureFeatures"; }
+// XRW TEMP string
+// XRW TEMP StructureFeatures::type_name() const { return "StructureFeatures"; }
 
 void
 StructureFeatures::write_schema_to_db(
@@ -283,6 +287,39 @@ StructureFeatures::get_struct_id(
 	res >> struct_id;
 	return struct_id;
 }
+
+std::string StructureFeatures::type_name() const {
+	return class_name();
+}
+
+std::string StructureFeatures::class_name() {
+	return "StructureFeatures";
+}
+
+void StructureFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report structure identifiers to a features database",
+		attlist );
+}
+
+std::string StructureFeaturesCreator::type_name() const {
+	return StructureFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+StructureFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new StructureFeatures );
+}
+
+void StructureFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StructureFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

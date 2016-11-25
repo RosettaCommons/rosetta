@@ -27,6 +27,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/izstream.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CstInfoMover" );
 
@@ -69,7 +72,7 @@ CstInfoMover::clone() const{
 
 /*
 CstInfoMover & CstInfoMoveroperator=( CstInfoMover const & src){
-	return CstInfoMover( src );
+return CstInfoMover( src );
 }
 */
 
@@ -80,10 +83,10 @@ CstInfoMover::fresh_instance() const
 	return protocols::moves::MoverOP( new CstInfoMover );
 }
 
-std::string
-CstInfoMover::get_name() const {
-	return "CstInfoMover";
-}
+// XRW TEMP std::string
+// XRW TEMP CstInfoMover::get_name() const {
+// XRW TEMP  return "CstInfoMover";
+// XRW TEMP }
 
 void
 CstInfoMover::show(std::ostream & output) const
@@ -199,20 +202,75 @@ CstInfoMover::get_constraints_from_pose( core::pose::Pose const & pose ) const {
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CstInfoMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CstInfoMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CstInfoMoverCreator::keyname() const {
+// XRW TEMP  return CstInfoMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CstInfoMover::mover_name(){
+// XRW TEMP  return "CstInfoMover";
+// XRW TEMP }
+
+std::string CstInfoMover::get_name() const {
+	return mover_name();
+}
+
+std::string CstInfoMover::mover_name() {
+	return "CstInfoMover";
+}
+
+void CstInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"cst_file", xs_string,
+		"Which constraints to report. If not given (or given as an empty string), "
+		"report on the constraints that are currently in the pose. "
+		"For consistency between different structures, it's highly recommended to "
+		"supply a constraints file. In-pose constraints are not stored in any "
+		"defined order, there's no guarantee that the constraint numbering will "
+		"match up structure-to-structure, even if every pose has identical constraints. "
+		"(If a constraint file is used, the order of the constraints will be the "
+		"same as the order of the constraints in the constraint file.)" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"prefix", xs_string,
+		"What prefix to give the values. Important if you have more than one CstInfoMover "
+		"(or more than one application), as later values with the same prefix "
+		"will overwrite earlier values.",
+		"CST" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"recursive", xsct_rosetta_bool,
+		"Should sub-constraints of a multi-constraint also be output",
+		"false" );
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Report information about how well the pose reflects given constraint values",
+		attlist );
+}
+
+std::string CstInfoMoverCreator::keyname() const {
+	return CstInfoMover::mover_name();
+}
+
 protocols::moves::MoverOP
 CstInfoMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CstInfoMover );
 }
 
-std::string
-CstInfoMoverCreator::keyname() const {
-	return CstInfoMoverCreator::mover_name();
+void CstInfoMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CstInfoMover::provide_xml_schema( xsd );
 }
 
-std::string
-CstInfoMoverCreator::mover_name(){
-	return "CstInfoMover";
-}
 
 } //protocols
 } //simple_moves

@@ -29,6 +29,12 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
+
+
+std::string
+get_chain_id_string();
+
+
 bool
 is_symmetric( conformation::Conformation const & conf );
 

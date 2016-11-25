@@ -216,6 +216,18 @@ public:
 	void set_report_crd( bool const value ){ RDC_.report_crd( value ); }
 	void set_niter( core::Size const value ){ RDC_.niter( value ); }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 	// helpers
 	utility::vector1< core::Real > get_scdepth_avrg() const { return RDC_.get_scdepth_avrg(); }
 	utility::vector1< core::Real > get_scdepth_sdev() const { return RDC_.get_scdepth_sdev(); }

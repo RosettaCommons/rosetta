@@ -37,28 +37,31 @@
 
 //option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
 
-std::string
-PDBReloadMoverCreator::keyname() const
-{
-	return PDBReloadMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PDBReloadMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PDBReloadMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PDBReloadMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PDBReloadMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PDBReloadMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PDBReloadMover );
+// XRW TEMP }
 
-std::string
-PDBReloadMoverCreator::mover_name()
-{
-	return "PDBReload";
-}
+// XRW TEMP std::string
+// XRW TEMP PDBReloadMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PDBReload";
+// XRW TEMP }
 
 PDBReloadMover::PDBReloadMover() :
 	protocols::moves::Mover("PDBReloadMover")
@@ -85,10 +88,10 @@ PDBReloadMover::apply( Pose & pose ) {
 	core::import_pose::pose_from_pdbstring(pose, ss.str());
 }
 
-std::string
-PDBReloadMover::get_name() const {
-	return "PDBReloadMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PDBReloadMover::get_name() const {
+// XRW TEMP  return "PDBReloadMover";
+// XRW TEMP }
 
 void
 PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,
@@ -98,6 +101,38 @@ PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,
 	core::pose::Pose const & )
 {
 }
+
+std::string PDBReloadMover::get_name() const {
+	return mover_name();
+}
+
+std::string PDBReloadMover::mover_name() {
+	return "PDBReload";
+}
+
+void PDBReloadMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW: consciously blank; empty PMT.
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string PDBReloadMoverCreator::keyname() const {
+	return PDBReloadMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PDBReloadMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PDBReloadMover );
+}
+
+void PDBReloadMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PDBReloadMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

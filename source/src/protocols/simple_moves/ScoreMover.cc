@@ -57,6 +57,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -72,25 +75,25 @@ using basic::Error;
 using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
 
-std::string
-ScoreMoverCreator::keyname() const
-{
-	return ScoreMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ScoreMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ScoreMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ScoreMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ScoreMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ScoreMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ScoreMover );
+// XRW TEMP }
 
-std::string
-ScoreMoverCreator::mover_name()
-{
-	return "ScoreMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ScoreMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ScoreMover";
+// XRW TEMP }
 
 ScoreMover::ScoreMover() :
-	moves::Mover( ScoreMoverCreator::mover_name() ),
+	moves::Mover( ScoreMover::mover_name() ),
 	score_function_( get_score_function() ),
 	verbose_(true),
 	scorefile_("")
@@ -101,7 +104,7 @@ ScoreMover::~ScoreMover() = default;
 ScoreMover::ScoreMover(
 	std::string const & weights, std::string const & patch /* = "" */
 ) :
-	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
+	protocols::moves::Mover( ScoreMover::mover_name() ),
 	score_function_(/* 0 */),
 	verbose_(true),
 	scorefile_("")
@@ -116,7 +119,7 @@ ScoreMover::ScoreMover(
 }
 
 ScoreMover::ScoreMover( ScoreFunctionOP score_function_in ) :
-	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
+	protocols::moves::Mover( ScoreMover::mover_name() ),
 	score_function_(std::move( score_function_in )),
 	verbose_(true),
 	scorefile_("")
@@ -188,10 +191,10 @@ ScoreMover::apply( Pose & pose ) {
 
 }
 
-std::string
-ScoreMover::get_name() const {
-	return ScoreMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ScoreMover::get_name() const {
+// XRW TEMP  return ScoreMover::mover_name();
+// XRW TEMP }
 
 void ScoreMover::parse_my_tag(
 	TagCOP const tag,
@@ -237,6 +240,49 @@ void ScoreMover::register_options() {
 	//option.add_relevant( in::file::native        ); // implicit from use of if( get_native_pose())?
 
 }
+
+std::string ScoreMover::get_name() const {
+	return mover_name();
+}
+
+std::string ScoreMover::mover_name() {
+	return "ScoreMover";
+}
+
+void ScoreMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		//Doesn't use parse_score_function
+		+ XMLSchemaAttribute::required_attribute(
+		"scorefxn", xs_string,
+		"Score function to use when scoring this pose. Must be previously defined in the DataMap. "
+		"Calls ScoreFunctionFactory with an empty string by default, which is either a good default or NULL" )
+		+ XMLSchemaAttribute(
+		"verbose", xsct_rosetta_bool,
+		"boolean controls a bunch of extra output - pose.energies.show() and something called a jd2:ScoreMap" );
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"This Mover applies the scorefunction to your pose",
+		attlist );
+}
+
+std::string ScoreMoverCreator::keyname() const {
+	return ScoreMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ScoreMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ScoreMover );
+}
+
+void ScoreMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

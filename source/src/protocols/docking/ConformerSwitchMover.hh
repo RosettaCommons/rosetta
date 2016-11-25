@@ -71,12 +71,24 @@ public:
 		core::Size conf_num
 	);
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void set_temperature( core::Real temp_in );
 
 	void set_random_confomer( bool rand ) { random_conformer_ = rand; }
 	core::Real get_temperature() const {return temperature_;}
 	bool use_random_conformer() const {return random_conformer_;}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

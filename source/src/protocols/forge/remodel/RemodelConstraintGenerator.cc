@@ -23,6 +23,7 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.remodelconstraintgenerator" );
@@ -111,6 +112,14 @@ RemodelConstraintGenerator::remove_remodel_constraints_from_pose(
 		throw EXCN_RemoveCstsFailed();
 	}
 }
+
+void
+RemodelConstraintGenerator::attributes_for_remodel_constraint_generator( utility::tag::AttributeList & attlist ){
+	using namespace utility::tag;
+	attlist
+		+ required_name_attribute();
+}
+
 
 void
 RemodelConstraintGenerator::add_constraint( core::scoring::constraints::ConstraintCOP cst )

@@ -113,37 +113,37 @@ public:
 public:// virtual constructor
 
 	// @brief make clone
-	virtual FilterOP clone() const { return FilterOP( new FragmentLookupFilter( *this ) ); }
+	FilterOP clone() const override { return FilterOP( new FragmentLookupFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const { return FilterOP( new FragmentLookupFilter() ); }
+	FilterOP fresh_instance() const override { return FilterOP( new FragmentLookupFilter() ); }
 
 public:
 
 	// @brief Filter Name
-	virtual std::string name() const { return "FragmentLookupFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "FragmentLookupFilter"; }
 
 	// @brief False if any pose fragment is outside the fragment lookup radius.
 	//
 	// Cached lookup results are available under
 	// FragmentLookupFilter::lookup_result after apply call.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	// @brief Parse arguments from rosettascripts XML
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 	//Main Filter computation routine
 	core::Size compute( core::pose::Pose const & pose ) const;
 
 	// @brief Write cached fragment lookup result as json to output stream.
-	virtual void report( std::ostream &, core::pose::Pose const & ) const;
+	void report( std::ostream &, core::pose::Pose const & ) const override;
 
 	// @Report back to JD2.
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
 	// @brief Per-fragment lookup results of previous apply call, keyed by fragment start residue id.
 	std::map<core::Size, FragmentLookupResult> const & lookup_result() { return cached_lookup_result_; }
@@ -153,6 +153,18 @@ public:
 
 	/// @brief sets chain
 	inline void set_chain( core::Size const chainid ) { target_chain_ = chainid; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	// @brief Default constructor

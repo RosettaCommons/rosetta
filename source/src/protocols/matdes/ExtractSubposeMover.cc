@@ -38,6 +38,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.ExtractSubposeMover" );
@@ -49,22 +52,22 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-std::string
-ExtractSubposeMoverCreator::keyname() const
-{
-	return ExtractSubposeMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ExtractSubposeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ExtractSubposeMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ExtractSubposeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ExtractSubposeMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ExtractSubposeMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ExtractSubposeMover );
+// XRW TEMP }
 
-std::string
-ExtractSubposeMoverCreator::mover_name()
-{
-	return "ExtractSubposeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ExtractSubposeMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ExtractSubposeMover";
+// XRW TEMP }
 // -------------  Mover Creator -------------
 
 ExtractSubposeMover::ExtractSubposeMover() :
@@ -218,6 +221,42 @@ ExtractSubposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	extras_ = tag->getOption<bool>("extras", 0 );
 
 }
+
+std::string ExtractSubposeMover::get_name() const {
+	return mover_name();
+}
+
+std::string ExtractSubposeMover::mover_name() {
+	return "ExtractSubposeMover";
+}
+
+void ExtractSubposeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; //XRW TO DO: check
+	attlist + XMLSchemaAttribute( "sym_dof_names" , xs_string, "This is 'optional', but if you do not specify sym_dof_names, you might just get a full pose or empty pose instead of a smaller number of subunits. Name(s) of the sym_dofs corresponding to the primary component(s) to extract along with the neighboring subunits/building blocks. Passed as a string (optionally: with a comma-separated list).")
+		+ XMLSchemaAttribute::attribute_w_default( "prefix", xs_string, "Prefix of choice for output", "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "suffix", xs_string, "Suffix of choice for output", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "contact_dist", xsct_real, "Maximum CA or CB distance from any residue in the primary component(s) to any residue in another component for it to be considered a 'neighbor' and added to the extracted subpose. Default is '10.0' angstroms.", "10.0")
+		+ XMLSchemaAttribute::attribute_w_default( "extras", xsct_rosetta_bool , "Boolean option to set whether or not full building blocks are extracted rather than just subunits.", "0" ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Used to extract a subset of the subunits from a symmetric pose based on contacts with a user specified component (via sym_dof_name(s)). This subpose is dumped as a pdb with the user specified prefix, suffix, and basename derived from the job distributer. DOES NOT MODIFY THE POSE. For each sym_dof_name passed by the user, all neighboring subunits (as assessed by CA or CB contacts with the user specified contact_distance (10.0 A by default)). If extras=true, then all the full building block for each sym_dof will be extracted along with all touching building blocks.", attlist );
+}
+
+std::string ExtractSubposeMoverCreator::keyname() const {
+	return ExtractSubposeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ExtractSubposeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ExtractSubposeMover );
+}
+
+void ExtractSubposeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtractSubposeMover::provide_xml_schema( xsd );
+}
+
 
 
 } // matdes

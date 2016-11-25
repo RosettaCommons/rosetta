@@ -34,6 +34,9 @@
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -47,24 +50,24 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.BuildAlaPose" );
 
-std::string
-BuildAlaPoseCreator::keyname() const
-{
-	return BuildAlaPoseCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BuildAlaPoseCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BuildAlaPose::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BuildAlaPoseCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BuildAlaPose );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BuildAlaPoseCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BuildAlaPose );
+// XRW TEMP }
 
-std::string
-BuildAlaPoseCreator::mover_name()
-{
-	return "build_Ala_pose";
-}
+// XRW TEMP std::string
+// XRW TEMP BuildAlaPose::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "build_Ala_pose";
+// XRW TEMP }
 
-BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() ),
+BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPose::mover_name() ),
 	AA_("ALA")
 {}
 
@@ -74,7 +77,7 @@ BuildAlaPose::BuildAlaPose(
 	core::Real interface_distance_cutoff,
 	std::string AA
 ) :
-	simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() )
+	simple_moves::DesignRepackMover( BuildAlaPose::mover_name() )
 {
 	repack_partner1_=design_partner1_=partner1;
 	repack_partner2_=design_partner2_=partner2;
@@ -112,10 +115,10 @@ BuildAlaPose::apply( pose::Pose & pose )
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 }
 
-std::string
-BuildAlaPose::get_name() const {
-	return BuildAlaPoseCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BuildAlaPose::get_name() const {
+// XRW TEMP  return BuildAlaPose::mover_name();
+// XRW TEMP }
 
 void
 BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
@@ -135,6 +138,44 @@ protocols::moves::MoverOP
 BuildAlaPose::clone() const {
 	return( protocols::moves::MoverOP( new BuildAlaPose( *this ) ));
 }
+
+std::string BuildAlaPose::get_name() const {
+	return mover_name();
+}
+
+std::string BuildAlaPose::mover_name() {
+	return "build_Ala_pose";
+}
+
+void BuildAlaPose::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "partner1", xsct_rosetta_bool, "Design/repack the first chain", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "partner2", xsct_rosetta_bool, "Design/repack the second chain", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_cutoff_distance", xsct_real, "Distance from the interface that counts for backrubbing", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "AA", xs_string, "Amino acid, by name, from which to build the pose", "ALA" );
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string BuildAlaPoseCreator::keyname() const {
+	return BuildAlaPose::mover_name();
+}
+
+protocols::moves::MoverOP
+BuildAlaPoseCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BuildAlaPose );
+}
+
+void BuildAlaPoseCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BuildAlaPose::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

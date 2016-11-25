@@ -51,6 +51,9 @@
 // C output headers:
 #include <cstdio>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -62,22 +65,22 @@ namespace helical_bundle {
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
 static THREAD_LOCAL basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
 
-std::string
-BackboneGridSamplerCreator::keyname() const
-{
-	return BackboneGridSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BackboneGridSamplerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BackboneGridSampler::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BackboneGridSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneGridSampler );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BackboneGridSamplerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BackboneGridSampler );
+// XRW TEMP }
 
-std::string
-BackboneGridSamplerCreator::mover_name()
-{
-	return "BackboneGridSampler";
-}
+// XRW TEMP std::string
+// XRW TEMP BackboneGridSampler::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BackboneGridSampler";
+// XRW TEMP }
 
 ///
 /// @brief Creator for BackboneGridSampler mover.
@@ -416,9 +419,9 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 
 ///
 /// @brief Returns the name of this mover ("BackboneGridSampler").
-std::string BackboneGridSampler::get_name() const{
-	return "BackboneGridSampler";
-}
+// XRW TEMP std::string BackboneGridSampler::get_name() const{
+// XRW TEMP  return "BackboneGridSampler";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -766,6 +769,85 @@ core::Size BackboneGridSampler::calculate_total_samples() const {
 
 	return total_samples;
 }
+
+std::string BackboneGridSampler::get_name() const {
+	return mover_name();
+}
+
+std::string BackboneGridSampler::mover_name() {
+	return "BackboneGridSampler";
+}
+
+std::string subtag_for_bbgrid( std::string const & tag_name ) {
+	return "stfbbg_" + tag_name;
+}
+
+void BackboneGridSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction lohigh;
+	lohigh.name( "BackboneGridSampler_lohigh" );
+	lohigh.base_type( xs_string );
+	lohigh.add_restriction( xsr_enumeration, "low" );
+	lohigh.add_restriction( xsr_enumeration, "high" );
+	xsd.add_top_level_element( lohigh );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("scorefxn", xs_string, "Scorefunction to employ" )
+		+ XMLSchemaAttribute::attribute_w_default("max_samples", xsct_non_negative_integer, "Maximum number of total backbone combinations to be sampled.", "10000" )
+		+ XMLSchemaAttribute("selection_type", "BackboneGridSampler_lohigh", "Score criterion for selection: \"high\" or \"low\"." )
+		+ XMLSchemaAttribute("pre_scoring_mover", xs_string, "A mover to apply after backbone torsions are set but before final scoring and evaluation (like a min mover or something similar)." )
+		+ XMLSchemaAttribute("pre_scoring_filter", xs_string, "A filter to apply before scoring, which could help avoid wasteful scoring of bad conformations (like a bump check filter)." )
+		+ XMLSchemaAttribute::attribute_w_default("dump_pdbs", xsct_rosetta_bool, "Dump all PDBs, if true; otherwise, there will be no PDB output at all.", "false" )
+		+ XMLSchemaAttribute("pdb_prefix", xs_string, "A prefix to apply to all output PDBs." )
+		+ XMLSchemaAttribute::attribute_w_default("nstruct_mode", xsct_rosetta_bool, "If true, sample a different set of mainchain torsions for each job; if false, each job consists of the whole mainchain sampling effort.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("nstruct_repeats", xsct_non_negative_integer, "Number of repeats to perform for each nstruct.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("residues_per_repeat", xsct_non_negative_integer, "Number of residues in the minimal repeating unit of this secondary structure.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_count", xsct_non_negative_integer, "Number of residues in the secondary structure exemplar to be sampled.", "12" )
+		+ XMLSchemaAttribute::attribute_w_default("repeat_count", xsct_non_negative_integer, "Number of residue-repeats in the secondary structure exemplar to be sampled.", "12" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_name", xs_string, "Residue type of which to create the secondary structure, indicated by three-letter code.", "ALA" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_name_1", xs_string, "Residue type of which to create the secondary structure, indicated by three-letter code.", "ALA" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_name_2", xs_string, "Residue type of which to create the secondary structure, indicated by three-letter code.", "ALA" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_name_3", xs_string, "Residue type of which to create the secondary structure, indicated by three-letter code.", "ALA" )
+		+ XMLSchemaAttribute::attribute_w_default("residue_name_4", xs_string, "Residue type of which to create the secondary structure, indicated by three-letter code.", "ALA" )
+		//More are possible?
+
+
+
+		// NOTE residue_name_1 disaster. Have to repair.
+		+ XMLSchemaAttribute::attribute_w_default("cap_ends", xsct_rosetta_bool, "If true, adds acetylated and amidated N- and C- termini.", "false" );
+
+	AttributeList subtag_attributes;
+	/*** Parse Sub-Tags ***/
+	subtag_attributes + XMLSchemaAttribute::required_attribute( "index", xsct_non_negative_integer, "Mainchain torsion index indicated" )
+		+ XMLSchemaAttribute::attribute_w_default( "res_index", xsct_non_negative_integer, "Residue whose mainchain torsion is being specified (if there is more than one residue per repeat)", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "value", xsct_real, "A single value in degrees, if this torsion ought to be fixed", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "start", xsct_real, "Starting value of a torsion range in degrees", "-180.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "end", xsct_real, "Ending value of a torsion range in degrees", "-180.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "samples", xsct_non_negative_integer, "Number of samples to be taken of the dihedral range indicated", "2" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "MainchainTorsion", subtag_attributes, "Tags describing individual torsions in the helix"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_bbgrid );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Sample mainchain torsions for peptides in a grid, saving good conformations", attlist, ssl );
+}
+
+std::string BackboneGridSamplerCreator::keyname() const {
+	return BackboneGridSampler::mover_name();
+}
+
+protocols::moves::MoverOP
+BackboneGridSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackboneGridSampler );
+}
+
+void BackboneGridSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackboneGridSampler::provide_xml_schema( xsd );
+}
+
 
 } //namespace helical_bundle
 } //namespace protocols

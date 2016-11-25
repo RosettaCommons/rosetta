@@ -44,6 +44,7 @@
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 
 #include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>
@@ -58,6 +59,9 @@
 // option
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddConstraintsToCurrentConformationMover" );
 
@@ -73,7 +77,7 @@ using namespace scoring;
 using namespace constraints;
 
 AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover():
-	protocols::moves::Mover( AddConstraintsToCurrentConformationMoverCreator::mover_name() ),
+	protocols::moves::Mover( AddConstraintsToCurrentConformationMover::mover_name() ),
 	use_distance_cst_( false ),
 	CA_only_( true ),
 	bb_only_( false ),
@@ -320,25 +324,70 @@ moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const 
 	return moves::MoverOP( new AddConstraintsToCurrentConformationMover );
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddConstraintsToCurrentConformationMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AddConstraintsToCurrentConformationMoverCreator::keyname() const {
+// XRW TEMP  return AddConstraintsToCurrentConformationMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AddConstraintsToCurrentConformationMover::mover_name() {
+// XRW TEMP  return "AddConstraintsToCurrentConformationMover";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AddConstraintsToCurrentConformationMover::get_name() const {
+// XRW TEMP  return "AddConstraintsToCurrentConformationMover";
+// XRW TEMP }
+
+std::string AddConstraintsToCurrentConformationMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddConstraintsToCurrentConformationMover::mover_name() {
+	return "AddConstraintsToCurrentConformationMover";
+}
+
+void AddConstraintsToCurrentConformationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "use_distance_cst", xsct_rosetta_bool, "use distance constraints instead of CoordinateConstraints. Probable default false." )
+		+ XMLSchemaAttribute( "max_distance", xsct_real, "do not generate distance constraints beyond this distance.  Only active with use_distance_cst." )
+		+ XMLSchemaAttribute( "coord_dev", xsct_real, "width (sd) for HarmonicFunc or BoundFunc." )
+		+ XMLSchemaAttribute( "bound_width", xsct_real, "BoundFunc zero basin width BoundFunc; also activates use of BoundFunc over HarmonicFunc" )
+		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Do not generate distance constraints between residues within this sequence separation.  Only active with use_distance_cst." )
+		+ XMLSchemaAttribute( "cst_weight", xsct_real, "use ScalarWeightedFunc to reweight constraints by this" )
+		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms." )
+		+ XMLSchemaAttribute( "bb_only", xsct_rosetta_bool, "constrain only backbone atoms." )
+		+ XMLSchemaAttribute( "inter_chain", xsct_rosetta_bool, "Generate distance constraints between residues on different chains if true.  (Does not appear to generate ONLY interchain constraints.)  If false, skips constraints that would go between chains.  Only active with use_distance_cst." );
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "make constraints for these residues; mutually exclisuve with task_operations" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AddConstraintsToCurrentConformationMoverCreator::keyname() const {
+	return AddConstraintsToCurrentConformationMover::mover_name();
+}
+
 protocols::moves::MoverOP
 AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AddConstraintsToCurrentConformationMover );
 }
 
-std::string
-AddConstraintsToCurrentConformationMoverCreator::keyname() const {
-	return AddConstraintsToCurrentConformationMoverCreator::mover_name();
+void AddConstraintsToCurrentConformationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddConstraintsToCurrentConformationMover::provide_xml_schema( xsd );
 }
 
-std::string
-AddConstraintsToCurrentConformationMoverCreator::mover_name() {
-	return "AddConstraintsToCurrentConformationMover";
-}
-
-std::string
-AddConstraintsToCurrentConformationMover::get_name() const {
-	return "AddConstraintsToCurrentConformationMover";
-}
 
 } // moves
 } // protocols

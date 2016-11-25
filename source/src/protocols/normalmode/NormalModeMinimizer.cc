@@ -44,6 +44,9 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace ObjexxFCL::format;
@@ -55,22 +58,6 @@ using namespace scoring;
 namespace protocols {
 namespace normalmode {
 
-std::string
-NormalModeMinimizerCreator::keyname() const
-{
-	return NormalModeMinimizerCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-NormalModeMinimizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NormalModeMinimizer );
-}
-
-std::string
-NormalModeMinimizerCreator::mover_name()
-{
-	return "NormalModeMinimizer";
-}
 
 ////////////
 
@@ -163,11 +150,6 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 		" start_func: "  << F(12,3,start_func ) <<
 		" end_score: "   << F(12,3,end_score  ) <<
 		" end_func: "    << F(12,3,end_func   ) << std::endl;
-}
-
-std::string
-NormalModeMinimizer::get_name() const {
-	return NormalModeMinimizerCreator::mover_name();
 }
 
 
@@ -267,6 +249,75 @@ NormalModeMinimizer::deriv_check_local( pose::Pose const &pose,
 	}
 
 }
+
+std::string NormalModeMinimizer::get_name() const {
+	return mover_name();
+}
+
+std::string NormalModeMinimizer::mover_name() {
+	return "NormalModeMinimizer";
+}
+
+void NormalModeMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( [] (std::string const& name) {
+		return mover_name() + "_subelement_" + name + "Type";
+		});
+	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"scorefxns", xs_string,
+		"XRW TO DO",
+		"score12");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"chi", xsct_rosetta_bool,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"bb", xsct_rosetta_bool,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"jump", xs_string,
+		"comma separated list or core::Size XRW TO DO");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_iter", xs_integer,
+		"XRW TO DO",
+		"200");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_type", xs_string,
+		"XRW TO DO",
+		"lbfgs_armijo_nonmonotone");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"tolerance", xsct_real,
+		"XRW TO DO",
+		"0.01");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dampen", xsct_real,
+		"XRW TO DO",
+		"0.05");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"XRW TO DO",
+		attlist, subelements );
+}
+
+std::string NormalModeMinimizerCreator::keyname() const {
+	return NormalModeMinimizer::mover_name();
+}
+
+protocols::moves::MoverOP
+NormalModeMinimizerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NormalModeMinimizer );
+}
+
+void NormalModeMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NormalModeMinimizer::provide_xml_schema( xsd );
+}
+
 
 } // namespace normalmode
 } // namespace protocols

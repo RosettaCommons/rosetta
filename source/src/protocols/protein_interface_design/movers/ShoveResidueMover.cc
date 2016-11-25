@@ -40,7 +40,10 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-// External headers
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 
 
 namespace protocols {
@@ -54,31 +57,31 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ShoveResidueMover" );
 
-std::string
-ShoveResidueMoverCreator::keyname() const
-{
-	return ShoveResidueMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ShoveResidueMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ShoveResidueMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ShoveResidueMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ShoveResidueMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ShoveResidueMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ShoveResidueMover );
+// XRW TEMP }
 
-std::string
-ShoveResidueMoverCreator::mover_name()
-{
-	return "ShoveResidueMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ShoveResidueMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ShoveResidueMover";
+// XRW TEMP }
 
 
 ShoveResidueMover::ShoveResidueMover() :
-	protocols::moves::Mover( ShoveResidueMoverCreator::mover_name() ),
+	protocols::moves::Mover( ShoveResidueMover::mover_name() ),
 	resnum_( 0 )
 {}
 
 ShoveResidueMover::ShoveResidueMover( Size resnum ) :
-	protocols::moves::Mover( ShoveResidueMoverCreator::mover_name() ),
+	protocols::moves::Mover( ShoveResidueMover::mover_name() ),
 	resnum_( resnum )
 {}
 
@@ -108,10 +111,10 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	}
 }
 
-std::string
-ShoveResidueMover::get_name() const {
-	return ShoveResidueMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ShoveResidueMover::get_name() const {
+// XRW TEMP  return ShoveResidueMover::mover_name();
+// XRW TEMP }
 
 void
 ShoveResidueMover::parse_my_tag( TagCOP const tag,
@@ -134,6 +137,40 @@ ShoveResidueMover::parse_my_tag( TagCOP const tag,
 		shove_residues_.push_back( resnum_ );
 	}
 }
+
+std::string ShoveResidueMover::get_name() const {
+	return mover_name();
+}
+
+std::string ShoveResidueMover::mover_name() {
+	return "ShoveResidueMover";
+}
+
+void ShoveResidueMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	core::pose::attributes_for_get_resnum( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "remove_shove_variant", xsct_rosetta_bool, "Remove the shove variant from the residue in question?", "false" )
+		+ XMLSchemaAttribute( "shove", xsct_refpose_enabled_residue_number_cslist, "Residues to which to add shove variant, especially if resnum isn't provided" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ShoveResidueMoverCreator::keyname() const {
+	return ShoveResidueMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ShoveResidueMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ShoveResidueMover );
+}
+
+void ShoveResidueMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ShoveResidueMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

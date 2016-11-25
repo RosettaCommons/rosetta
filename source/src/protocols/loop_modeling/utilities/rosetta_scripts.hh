@@ -22,6 +22,8 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 namespace protocols {
 namespace loop_modeling {
 namespace utilities {
@@ -36,7 +38,7 @@ LoopMoverOP loop_mover_from_tag(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose);
 
-/// @brief Parse the "scorefxn" rosetta-scripts tag for the given mover.
+/// @brief Parse the "scorefxn" rosetta-scripts tag for the given mover. Has a compaion function: "attributes_for_set_scorefxn_from_tag" to generate the XSD
 /// @details The given mover must implement a set_score_function() method.
 template <class LoopMoverSubclass>
 void set_scorefxn_from_tag(
@@ -54,7 +56,12 @@ void set_scorefxn_from_tag(
 	}
 }
 
-/// @brief Parse the "task_operations" rosetta-scripts tag for the given mover.
+/// @brief Appends the attributes read by set_scorefxn_from_tag, which simply calls  "parse_score_function"
+void
+attributes_for_set_scorefxn_from_tag( utility::tag::AttributeList & attributes );
+
+
+/// @brief Parse the "task_operations" rosetta-scripts tag for the given mover. Has a compaion function: "attributes_for_set_task_factory_from_tag" to generate the XSD
 /// @details The given mover must implement a set_score_function() method.
 template <class LoopMoverSubclass>
 void set_task_factory_from_tag(
@@ -72,9 +79,20 @@ void set_task_factory_from_tag(
 	}
 }
 
+/// @brief Appends the attributes read by set_task_factory_from_tag, which simply calls "parse_task_operations"
+void
+attributes_for_set_task_factory_from_tag( utility::tag::AttributeList & attributes );
+
 /// @brief return a Loops object from tags
 /// @details returns a LoopsOP object from tags "loops_file" or a Loop subtag.  Moved from loop_modeling/LoopMover.cc.
 protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag );
+
+///@brief use with XML schema if you use parse_loops_from_tag
+///@details appends the loopfile attribute to the AttributeList for the top level thing (the Mover itself), and appends the schema for Loops subtags to the provided (usually empty, but not necessarily) subelements list
+void append_subelement_and_attributes_for_parse_loops_from_tag (
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements,
+	utility::tag::AttributeList & attributes );
 
 } //utilities
 } //loop_modeling

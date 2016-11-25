@@ -19,6 +19,9 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <ctime>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
@@ -27,11 +30,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
-protocols::filters::FilterOP
-ExpiryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ExpiryFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ExpiryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ExpiryFilter ); }
 
-std::string
-ExpiryFilterCreator::keyname() const { return "Expiry"; }
+// XRW TEMP std::string
+// XRW TEMP ExpiryFilterCreator::keyname() const { return "Expiry"; }
 
 //default ctor
 ExpiryFilter::ExpiryFilter() :
@@ -85,6 +88,38 @@ core::Size
 ExpiryFilter::start_time() const{
 	return start_time_;
 }
+
+std::string ExpiryFilter::name() const {
+	return class_name();
+}
+
+std::string ExpiryFilter::class_name() {
+	return "Expiry";
+}
+
+void ExpiryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("seconds", xsct_non_negative_integer, "how many seconds until this triggers failure?");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Has a predetermined number of seconds elapsed since the start of the trajectory? If so, return false (to stop the trajectory), else return true.", attlist );
+}
+
+std::string ExpiryFilterCreator::keyname() const {
+	return ExpiryFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ExpiryFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ExpiryFilter );
+}
+
+void ExpiryFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExpiryFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

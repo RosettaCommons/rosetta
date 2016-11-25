@@ -92,9 +92,18 @@ parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap cons
 core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
 
+//This function was moved to src/core/select/residue_selector/util.hh
 /// @brief Appends the attributes read by parse_residue_selector
 //void
 //attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by get_score_function_name
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by get_score_function_name w/ name argument
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
 /// through the given option. Defaults to 'commandline'.
@@ -131,15 +140,30 @@ get_score_function_name(
 
 /// @brief Appends the attributes read by parse_score_function
 void
-attributes_for_parse_score_function( utility::tag::AttributeList & attributes );
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes);
 
 /// @brief Appends the attributes read by parse_score_function w/ name argument
 void
-attributes_for_parse_score_function( utility::tag::AttributeList & attributes, std::string const & sfxn_option_name );
+attributes_for_parse_score_function( utility::tag::AttributeList & attributes,
+	std::string const & sfxn_option_name );
+
+/// @brief Appends the attributes read by parse_score_function with description
+void
+attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
+	std::string const & description );
+
+/// @brief Appends the attributes read by parse_score_function w/ name argument and description
+void
+attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
+	std::string const & sfxn_option_name,
+	std::string const & description );
 
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
 /// Will look for tag in in_tag variable
+void
+attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name="reference_name" );
+
 core::pose::PoseOP
 saved_reference_pose(
 	utility::tag::TagCOP in_tag,
@@ -207,6 +231,10 @@ parse_filter( std::string const & filter_name, protocols::filters::Filters_map c
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & d );
 
+
+void
+attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
+
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 
@@ -233,6 +261,11 @@ residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFact
 /// This function is to prevent unused variable crash.
 void
 parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const & prefix);
+
+///This is kind of a strange place for this, but for library-level reasons it needs to be more accessible than a more logical home with ReportToDB, and cannot live in basic because it needs other functions in this file.  (There is also value in not creating a new file b/c it breaks the fast-compile system XML XSD XRW is using, and it's 6pm on Friday!)
+
+//void
+//attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
 } // RosettaScripts
 } // protocols

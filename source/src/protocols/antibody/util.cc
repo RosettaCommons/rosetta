@@ -78,6 +78,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_constants.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <cmath>
 
@@ -111,6 +112,26 @@ get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool i
 	return cdrs;
 }
 
+void
+attributes_for_get_cdr_bool_from_tag(utility::tag::AttributeList& attlist,
+	std::string const& tagname, std::string const& Description) {
+	using namespace utility::tag;
+
+	std::string recognized_cdrs;
+	AntibodyEnumManager manager = AntibodyEnumManager();
+	for ( auto& cdr_def : manager.get_recognized_cdr_definitions() ) {
+		recognized_cdrs += cdr_def + "|";
+	}
+
+	attlist + XMLSchemaAttribute(
+		tagname, xs_string,
+		Description + (!Description.empty() ? "\n" : "" ) +
+		//"List of CDR regions (string) devided by one of the following characters: \":,'`~+*&|;. \""
+		"List of CDR regions (string) devided by one of the following characters: \":,'`~+*|;. \""
+		"Recognized CDRs: \"" + recognized_cdrs + "\"");
+}
+
+/// @brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
 protocols::loops::LoopsOP
 get_cdr_loops(
 	AntibodyInfoCOP ab_info,

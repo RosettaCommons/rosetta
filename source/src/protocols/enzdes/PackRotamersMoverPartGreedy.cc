@@ -48,6 +48,9 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/sort_predicates.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -62,18 +65,6 @@ using namespace scoring;
 using basic::Warning;
 using basic::t_warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.PackRotamersMoverPartGreedy" );
-
-std::string
-PackRotamersMoverPartGreedyCreator::keyname() const
-{
-	return PackRotamersMoverPartGreedyCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-PackRotamersMoverPartGreedyCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
-}
 
 PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 	ScoreFunctionOP scorefxn,
@@ -97,13 +88,6 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() :
 	threshold_(0),
 	n_best_(0)
 {}
-
-std::string
-PackRotamersMoverPartGreedyCreator::mover_name()
-{
-	return "PackRotamersMoverPartGreedy";
-}
-
 
 PackRotamersMoverPartGreedy::~PackRotamersMoverPartGreedy()= default;
 
@@ -138,11 +122,6 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	if ( tag->hasOption("choose_best_n") ) {
 		n_best_ = tag->getOption<core::Size>("choose_best_n", 0 );
 	}
-}
-
-std::string
-PackRotamersMoverPartGreedy::get_name() const {
-	return PackRotamersMoverPartGreedyCreator::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -402,6 +381,71 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	}
 	return chosen_residues;
 }
+
+std::string PackRotamersMoverPartGreedy::get_name() const {
+	return mover_name();
+}
+
+std::string PackRotamersMoverPartGreedy::mover_name() {
+	return "PackRotamersMoverPartGreedy";
+}
+
+void PackRotamersMoverPartGreedy::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_task_operations_w_factory(attlist);
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "scorefxn_repack");
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "scorefxn_repack_greedy");
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "scorefxn_minimize");
+
+	attlist + XMLSchemaAttribute(
+		"target_residues", xs_string,
+		"comma-separated list of target residues");
+
+	attlist + XMLSchemaAttribute(
+		"target_cstids", xs_string,
+		"comma-separated list of target cstids (e.g. 1B,2B,3B etc)");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"distance_threshold", xsct_real,
+		"distance between residues to be considered neighbors (of target residue)",
+		"8.0");
+
+	attlist + XMLSchemaAttribute(
+		"choose_best_n", xsct_non_negative_integer,
+		"number of lowest scoring residues on a protein-ligand interface to use as targets");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Greedily optimizes around a set of target residues, then repacks sidechains with user-supplied options, "
+		"including TaskOperations. Given a task and a set of target residues, this mover will first greedily choose "
+		"the neighbors of these residues, and then perform the usual simulated annealing on the rest "
+		"(while maintaining the identity of the greedily chosen sidechains). "
+		"The greedy choices are made one by one, i.e. first convert every neighbor of a given target sidechain "
+		"to Ala, choose the lowest energy neighbor rotamer and minimize, then look at the rest of the neighbors "
+		"and choose the best for interacting with the two chosen so far, and so on, until you're out of neighbor "
+		"positions. If more than one target residues are specified, a random permutation of this list is used in "
+		"each run of the mover.",
+		attlist );
+}
+
+std::string PackRotamersMoverPartGreedyCreator::keyname() const {
+	return PackRotamersMoverPartGreedy::mover_name();
+}
+
+protocols::moves::MoverOP
+PackRotamersMoverPartGreedyCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
+}
+
+void PackRotamersMoverPartGreedyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PackRotamersMoverPartGreedy::provide_xml_schema( xsd );
+}
+
 
 }//moves
 }//protocols

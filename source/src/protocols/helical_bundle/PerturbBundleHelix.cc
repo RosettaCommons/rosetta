@@ -40,6 +40,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -52,22 +55,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.PerturbBundleHelix");
 
-std::string
-PerturbBundleHelixCreator::keyname() const
-{
-	return PerturbBundleHelixCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbBundleHelixCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PerturbBundleHelix::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PerturbBundleHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbBundleHelix );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PerturbBundleHelixCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PerturbBundleHelix );
+// XRW TEMP }
 
-std::string
-PerturbBundleHelixCreator::mover_name()
-{
-	return "PerturbBundleHelix";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbBundleHelix::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PerturbBundleHelix";
+// XRW TEMP }
 
 
 /// @brief Creator for PerturbBundleHelix mover.
@@ -189,9 +192,40 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("PerturbBundleHelix").
-std::string PerturbBundleHelix::get_name() const{
+// XRW TEMP std::string PerturbBundleHelix::get_name() const{
+// XRW TEMP  return "PerturbBundleHelix";
+// XRW TEMP }
+
+std::string PerturbBundleHelix::get_name() const {
+	return mover_name();
+}
+
+std::string PerturbBundleHelix::mover_name() {
 	return "PerturbBundleHelix";
 }
+
+void PerturbBundleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW: this is actually never tag-parsed.
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string PerturbBundleHelixCreator::keyname() const {
+	return PerturbBundleHelix::mover_name();
+}
+
+protocols::moves::MoverOP
+PerturbBundleHelixCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PerturbBundleHelix );
+}
+
+void PerturbBundleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PerturbBundleHelix::provide_xml_schema( xsd );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///

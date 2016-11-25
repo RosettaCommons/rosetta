@@ -8,15 +8,16 @@
     <FILTERS>
     </FILTERS>
     <MOVERS>
-	<PeptideStubMover name="prepend" reset=true>
-		<Append resname="TRP" repeat=1/>
-		<Prepend resname="ALA" repeat=2/>
+	<PeptideStubMover name="prepend" reset="true">
+		<Append resname="TRP" repeat="1"/>
+		<Prepend resname="ALA" repeat="2"/>
 	</PeptideStubMover>
     </MOVERS>
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
     <PROTOCOLS>
-	<Add mover=prepend/>
+	<Add mover="prepend"/>
     </PROTOCOLS>
     <OUTPUT />
+
 </ROSETTASCRIPTS>

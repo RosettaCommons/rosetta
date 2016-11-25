@@ -154,13 +154,13 @@ void SelectResiduesWithinChainOperation::provide_xml_schema( utility::tag::XMLSc
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute( "resid", xsct_int_cslist )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_design", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_repacking", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "modify_unselected_residues", xs_boolean, "true" );
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_positive_integer, "Which chain. Use only sequential numbering: 1, 2..",  "1"  )
+		+ XMLSchemaAttribute( "resid", xsct_int_cslist , "Which residues within the chain. Again, only numbering: 24,35." )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design", xsct_rosetta_bool, "If true, allows design at selected positions.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_repacking", xsct_rosetta_bool, "If true, allows repacking at selected positions.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "modify_unselected_residues", xsct_rosetta_bool, "If modify_unselected_residues is true all other residues are set to norepack.",  "true"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Selects a list of residues within a chain for design/repacking according to internal chain numbering." );
 }
 
 

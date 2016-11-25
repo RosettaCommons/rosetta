@@ -83,7 +83,7 @@ core::Real qsarOptFunc::operator() (core::optimization::Multivec const & vars) c
 
 		core::Real total_score = 0.0;
 
-		for (const auto & score_it : data_it.score_map) {
+		for ( const auto & score_it : data_it.score_map ) {
 			core::Size vec_index = grid_indices_.find(score_it.first)->second;
 			core::Real initial_weight = initial_values_[vec_index];
 			core::Real current_weight = vars[vec_index];

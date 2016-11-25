@@ -70,10 +70,10 @@ public:
 public: // methods
 
 	/// @brief Create a Clone of this mover
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Parse Rosetta Scripts Options for this Mover
 	void parse_my_tag(
@@ -82,18 +82,30 @@ public: // methods
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (MPDockingSetupMover)
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Reads in 2 poses and 2 spanfiles, concatenates the poses and
 	///   spanfiles and prints them out
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 

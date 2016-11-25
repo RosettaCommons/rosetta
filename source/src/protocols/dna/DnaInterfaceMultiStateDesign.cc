@@ -50,10 +50,14 @@
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -80,25 +84,8 @@ using basic::t_debug;
 using basic::t_trace;
 static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
 
-std::string
-DnaInterfaceMultiStateDesignCreator::keyname() const
-{
-	return DnaInterfaceMultiStateDesignCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-DnaInterfaceMultiStateDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfaceMultiStateDesign );
-}
-
-std::string
-DnaInterfaceMultiStateDesignCreator::mover_name()
-{
-	return "DnaInterfaceMultiStateDesign";
-}
-
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()
-: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesignCreator::mover_name() ),
+: protocols::simple_moves::PackRotamersMover( DnaInterfaceMultiStateDesign::mover_name() ),
 	gen_alg_(/* 0 */),
 	multistate_packer_(/* 0 */),
 	dna_chains_(/* 0 */),
@@ -353,11 +340,6 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 	TR(t_info) << std::endl;
 }
 
-std::string
-DnaInterfaceMultiStateDesign::get_name() const {
-	return DnaInterfaceMultiStateDesignCreator::mover_name();
-}
-
 /// @brief parse "XML" Tag (specifically in the context of the parser/scripting scheme)
 void DnaInterfaceMultiStateDesign::parse_my_tag(
 	TagCOP const tag,
@@ -513,6 +495,95 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 	}
 	TR(t_info) << std::endl;
 }
+
+std::string DnaInterfaceMultiStateDesign::get_name() const {
+	return mover_name();
+}
+
+std::string DnaInterfaceMultiStateDesign::mover_name() {
+	return "DnaInterfaceMultiStateDesign";
+}
+
+void DnaInterfaceMultiStateDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"generations", xsct_non_negative_integer,
+		"Number of generations for the genetic algorithm to evolve");
+
+	attlist + XMLSchemaAttribute(
+		"pop_size", xsct_non_negative_integer,
+		"number of sequences per generation");
+
+	attlist + XMLSchemaAttribute(
+		"num_packs", xsct_non_negative_integer,
+		"number of times to call the simulated annealer to find the best rotamer configuration for a given sequence");
+
+	attlist + XMLSchemaAttribute(
+		"pop_from_ss", xsct_non_negative_integer,
+		" number of sequences to include in the initial population that are created by mutation of the sequence determined by full redesign");
+
+	attlist + XMLSchemaAttribute(
+		"numresults", xsct_non_negative_integer,
+		"number of sequences to output structures for, starting with the lowest scoring sequence");
+
+	attlist + XMLSchemaAttribute(
+		"fraction_by_recombination", xsct_real,
+		"fraction of sequences to generate by recombination of sequences from the previous generation");
+
+	attlist + XMLSchemaAttribute(
+		"mutate_rate", xsct_real,
+		"probability of randomizing each residue when a sequence is mutated");
+
+	attlist + XMLSchemaAttribute(
+		"boltz_temp", xsct_real,
+		"Temperature for Metropolis criterion");
+
+	attlist + XMLSchemaAttribute(
+		"anchor_offset", xsct_real,
+		"Anchor offset for multistate packer aggregate function");
+
+	attlist + XMLSchemaAttribute(
+		"checkpoint_prefix", xs_string,
+		"prefix to add to the beginning of checkpoint file names");
+
+	attlist + XMLSchemaAttribute(
+		"checkpoint_interval", xsct_non_negative_integer,
+		"frequency in number of sequences scored with which the checkpoint files are written");
+
+	attlist + XMLSchemaAttribute(
+		"checkpoint_gz", xsct_rosetta_bool,
+		"compress the checkpoint files with gzip");
+
+	attlist + XMLSchemaAttribute(
+		"checkpoint_rename", xsct_rosetta_bool,
+		"rename checkpoint files after the genetic algorithm completes, so that subsequent runs generate new output");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Performs multistate design on DNA interfaces",
+		attlist );
+}
+
+std::string DnaInterfaceMultiStateDesignCreator::keyname() const {
+	return DnaInterfaceMultiStateDesign::mover_name();
+}
+
+protocols::moves::MoverOP
+DnaInterfaceMultiStateDesignCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DnaInterfaceMultiStateDesign );
+}
+
+void DnaInterfaceMultiStateDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DnaInterfaceMultiStateDesign::provide_xml_schema( xsd );
+}
+
 
 } // namespace dna
 } // namespace protocols

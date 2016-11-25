@@ -127,13 +127,13 @@ FeaturesReporter::report_features(
 
 void
 FeaturesReporter::parse_my_tag(
-	TagCOP const tag,
+	TagCOP const /*tag*/,
 	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	runtime_assert(tag->getName() == "feature");
+	// runtime_assert(tag->getName() == "feature");
 }
 
 

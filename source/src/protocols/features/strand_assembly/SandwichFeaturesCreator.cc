@@ -24,15 +24,15 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-SandwichFeaturesCreator::SandwichFeaturesCreator() {}
-SandwichFeaturesCreator::~SandwichFeaturesCreator() {}
-FeaturesReporterOP SandwichFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new SandwichFeatures );
-}
+// XRW TEMP SandwichFeaturesCreator::SandwichFeaturesCreator() {}
+// XRW TEMP SandwichFeaturesCreator::~SandwichFeaturesCreator() {}
+// XRW TEMP FeaturesReporterOP SandwichFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new SandwichFeatures );
+// XRW TEMP }
 
-std::string SandwichFeaturesCreator::type_name() const {
-	return "SandwichFeatures";
-}
+// XRW TEMP std::string SandwichFeaturesCreator::type_name() const {
+// XRW TEMP  return "SandwichFeatures";
+// XRW TEMP }
 
 } //namespace strand_assembly
 } //namespace features

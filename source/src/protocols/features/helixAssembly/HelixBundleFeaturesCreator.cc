@@ -26,15 +26,15 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
-HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
-FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new HelixBundleFeatures );
-}
+// XRW TEMP HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
+// XRW TEMP HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
+// XRW TEMP FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new HelixBundleFeatures );
+// XRW TEMP }
 
-std::string HelixBundleFeaturesCreator::type_name() const {
-	return "HelixBundleFeatures";
-}
+// XRW TEMP std::string HelixBundleFeaturesCreator::type_name() const {
+// XRW TEMP  return "HelixBundleFeatures";
+// XRW TEMP }
 
 } //namespace helixAssembly
 } //namespace features

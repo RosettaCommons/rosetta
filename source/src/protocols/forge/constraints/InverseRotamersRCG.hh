@@ -72,24 +72,24 @@ public:
 
 	~InverseRotamersRCG();
 
-	virtual void
+	void
 	parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual void
-	generate_remodel_constraints( core::pose::Pose const & pose );
+	void
+	generate_remodel_constraints( core::pose::Pose const & pose ) override;
 
 public:
 	// public member functions
@@ -106,6 +106,18 @@ public:
 	void init( core::Size const lstart,
 		core::Size const lstop,
 		std::list< core::conformation::ResidueCOP > const & inverse_rotamers );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1< forge::build::Interval > intervals_;

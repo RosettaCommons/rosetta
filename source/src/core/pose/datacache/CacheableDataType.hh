@@ -95,22 +95,22 @@ public:
 		POSE_SEQUENCE, // a core::scoring::electron_density_atomwise::PoseSeqeunce
 
 		// Old, unused terms
-//		MEMBRANE_POTENTIAL,
-//		RB_JUMP,
-//		SITE_CST,
-//		DOCK_ENS_CONF1,
-//		DOCK_ENS_CONF2,
-//		FILTER_STAGE2_BEGINNING,
-//		FILTER_STAGE2_QUARTER,
-//		FILTER_STAGE2_HALF,
-//		FILTER_STAGE2_END,
-//		VALL_LOOKBACK_DATA,
-//		SEQUENCE_PROFILE,
-//		CUSTOM_PAIR_DIST_SCORE_INFO,
-//		STRUCTURAL_CONSERVATION,
-//		SURFACE_PARAMS,
-//		MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
-//		FLOATING_POINT_CLOUD_INFO,
+		//  MEMBRANE_POTENTIAL,
+		//  RB_JUMP,
+		//  SITE_CST,
+		//  DOCK_ENS_CONF1,
+		//  DOCK_ENS_CONF2,
+		//  FILTER_STAGE2_BEGINNING,
+		//  FILTER_STAGE2_QUARTER,
+		//  FILTER_STAGE2_HALF,
+		//  FILTER_STAGE2_END,
+		//  VALL_LOOKBACK_DATA,
+		//  SEQUENCE_PROFILE,
+		//  CUSTOM_PAIR_DIST_SCORE_INFO,
+		//  STRUCTURAL_CONSERVATION,
+		//  SURFACE_PARAMS,
+		//  MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
+		//  FLOATING_POINT_CLOUD_INFO,
 
 		// *** IMPORTANT ***  // The 'num_cacheable_data_types' below must be the last enum, and must
 		// always be set equal to the (last-2) enum. The 'dummy_cacheable_data_type'

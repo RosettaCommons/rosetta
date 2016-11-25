@@ -45,7 +45,7 @@ class BackrubProtocol : public protocols::moves::Mover {
 public:
 	BackrubProtocol();
 	BackrubProtocol(BackrubProtocol const & bp);
-	~BackrubProtocol() override;
+	~BackrubProtocol();
 
 	void
 	apply( core::pose::Pose& pose ) override;
@@ -96,8 +96,8 @@ public:
 	void
 	write_database();
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	protocols::moves::MoverOP
 	clone() const override;
@@ -113,6 +113,18 @@ public:
 		moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

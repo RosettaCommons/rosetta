@@ -37,6 +37,9 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.InterlockingAromaFilter" );
@@ -269,11 +272,47 @@ InterlockingAromaFilter::parse_my_tag(
 	verbose_ = tag->getOption<bool>( "verbose", 1 );
 }
 
-protocols::filters::FilterOP
-InterlockingAromaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterlockingAromaFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP InterlockingAromaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterlockingAromaFilter ); }
 
-std::string
-InterlockingAromaFilterCreator::keyname() const { return "InterlockingAroma"; }
+// XRW TEMP std::string
+// XRW TEMP InterlockingAromaFilterCreator::keyname() const { return "InterlockingAroma"; }
+
+std::string InterlockingAromaFilter::name() const {
+	return class_name();
+}
+
+std::string InterlockingAromaFilter::class_name() {
+	return "InterlockingAroma";
+}
+
+void InterlockingAromaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "dist", xsct_real, "XRW TO DO", "5.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "true" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string InterlockingAromaFilterCreator::keyname() const {
+	return InterlockingAromaFilter::class_name();
+}
+
+protocols::filters::FilterOP
+InterlockingAromaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new InterlockingAromaFilter );
+}
+
+void InterlockingAromaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterlockingAromaFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

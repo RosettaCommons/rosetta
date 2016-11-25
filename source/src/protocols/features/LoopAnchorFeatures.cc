@@ -46,6 +46,10 @@
 // C++ Headers
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/LoopAnchorFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -82,8 +86,8 @@ LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
 
 LoopAnchorFeatures::~LoopAnchorFeatures() = default;
 
-string
-LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
+// XRW TEMP string
+// XRW TEMP LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
 
 void
 LoopAnchorFeatures::write_schema_to_db(
@@ -364,6 +368,40 @@ LoopAnchorFeatures::compute_transform_and_write_to_db(
 	stmt.bind(11, tau101);
 	basic::database::safely_write_to_database(stmt);
 }
+
+std::string LoopAnchorFeatures::type_name() const {
+	return class_name();
+}
+
+std::string LoopAnchorFeatures::class_name() {
+	return "LoopAnchorFeatures";
+}
+
+void LoopAnchorFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "min_loop_length", xsct_positive_integer, "Minimum length of a loop to be recorded", "5" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_loop_length", xsct_positive_integer, "Maximum length of a loop to be recorded", "30" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_relevant_residues_as_loop_length", xsct_rosetta_bool, "Instead define the loop's length only in terms of relevant residues", "0" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record features in and around loop anchors and the transform between them", attlist );
+}
+
+std::string LoopAnchorFeaturesCreator::type_name() const {
+	return LoopAnchorFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+LoopAnchorFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new LoopAnchorFeatures );
+}
+
+void LoopAnchorFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopAnchorFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

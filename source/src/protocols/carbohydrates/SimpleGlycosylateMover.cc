@@ -36,6 +36,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/io/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.SimpleGlycosylateMover" );
 
@@ -132,10 +135,10 @@ SimpleGlycosylateMover::fresh_instance() const
 	return protocols::moves::MoverOP( new SimpleGlycosylateMover );
 }
 
-std::string
-SimpleGlycosylateMover::get_name() const {
-	return "SimpleGlycosylateMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SimpleGlycosylateMover::get_name() const {
+// XRW TEMP  return "SimpleGlycosylateMover";
+// XRW TEMP }
 
 void
 SimpleGlycosylateMover::show(std::ostream & output) const
@@ -356,20 +359,74 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SimpleGlycosylateMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SimpleGlycosylateMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SimpleGlycosylateMoverCreator::keyname() const {
+// XRW TEMP  return SimpleGlycosylateMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SimpleGlycosylateMover::mover_name(){
+// XRW TEMP  return "SimpleGlycosylateMover";
+// XRW TEMP }
+
+std::string SimpleGlycosylateMover::get_name() const {
+	return mover_name();
+}
+
+std::string SimpleGlycosylateMover::mover_name() {
+	return "SimpleGlycosylateMover";
+}
+
+void SimpleGlycosylateMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+
+	XMLSchemaRestriction delimited_real_list;
+	//std::string real_list_regex = real_regex_pattern() + "([,'`~\\+\\*&\\|;\\. ]" + real_regex_pattern() + ")*";
+	// AMW: temp -- can't have &
+	std::string real_list_regex = real_regex_pattern() + "([,'`~\\+\\*\\|;\\. ]" + real_regex_pattern() + ")*";
+	delimited_real_list.name( "delimited_real_list" );
+	delimited_real_list.base_type( xs_string );
+	delimited_real_list.add_restriction( xsr_pattern, real_list_regex );
+	xsd.add_top_level_element( delimited_real_list );
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "glycosylation", xs_string, "String specifying the glycosylation to add to this pose (or a file name containing the glycosylation)" )
+		+ XMLSchemaAttribute( "glycosylations", xs_string, "String or file name specifying multiple possible glycosylations to add to this pose (will be sampled randomly" )
+		+ XMLSchemaAttribute( "position", xsct_refpose_enabled_residue_number, "Position to add glycosylation" )
+		+ XMLSchemaAttribute( "positions", xsct_refpose_enabled_residue_number_cslist, "Positions to add glycosylations" )
+		+ XMLSchemaAttribute( "weights", "delimited_real_list", "Sampling weights corresponding to the provided set of glycans" )
+		+ XMLSchemaAttribute( "strip_existing", xsct_rosetta_bool, "Strip existing glycosylations from the pose" )
+		+ XMLSchemaAttribute( "ref_pose_name", xs_string, "Name of saved reference pose" )
+		+ XMLSchemaAttribute( "idealize_glycosylation", xsct_rosetta_bool, "Idealize glycosylations on the pose?" );
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Mover to add specified glycosylations to a pose in the specified positions", attlist, subelements );
+}
+
+std::string SimpleGlycosylateMoverCreator::keyname() const {
+	return SimpleGlycosylateMover::mover_name();
+}
+
 protocols::moves::MoverOP
 SimpleGlycosylateMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SimpleGlycosylateMover );
 }
 
-std::string
-SimpleGlycosylateMoverCreator::keyname() const {
-	return SimpleGlycosylateMoverCreator::mover_name();
+void SimpleGlycosylateMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SimpleGlycosylateMover::provide_xml_schema( xsd );
 }
 
-std::string
-SimpleGlycosylateMoverCreator::mover_name(){
-	return "SimpleGlycosylateMover";
-}
 
 } //protocols
 } //carbohydrates

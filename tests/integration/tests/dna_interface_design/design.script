@@ -1,41 +1,42 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<TASKOPERATIONS>
-		<InitializeFromCommandline name=IFC/>
-		<IncludeCurrent name=IC/>
-		<RestrictDesignToProteinDNAInterface name=DnaInt base_only=1 z_cutoff=3.0 dna_defs=C.-10.GUA/>
-		<OperateOnCertainResidues name=AUTOprot>
-			<AddBehaviorRLT behavior=AUTO/>
-			<ResidueHasProperty property=PROTEIN/>
+		<InitializeFromCommandline name="IFC"/>
+		<IncludeCurrent name="IC"/>
+		<RestrictDesignToProteinDNAInterface name="DnaInt" base_only="1" z_cutoff="3.0" dna_defs="C.-10.GUA"/>
+		<OperateOnCertainResidues name="AUTOprot">
+			<ResidueHasProperty property="PROTEIN"/>
+			<AddBehaviorRLT behavior="AUTO"/>
 		</OperateOnCertainResidues>
-		<OperateOnCertainResidues name=ProtNoDes>
+		<OperateOnCertainResidues name="ProtNoDes">
+			<ResidueHasProperty property="PROTEIN"/>
 			<RestrictToRepackingRLT/>
-			<ResidueHasProperty property=PROTEIN/>
 		</OperateOnCertainResidues>
-		<OperateOnCertainResidues name=DnaNoPack>
+		<OperateOnCertainResidues name="DnaNoPack">
+			<ResidueHasProperty property="DNA"/>
 			<PreventRepackingRLT/>
-			<ResidueHasProperty property=DNA/>
 		</OperateOnCertainResidues>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<DNA weights=dna/>
-		<DNAGB weights=dna_gb/>
+		<ScoreFunction name="DNA" weights="dna"/>
+		<ScoreFunction name="DNAGB" weights="dna_gb"/>
 	</SCOREFXNS>
 	<FILTERS>
-		<FalseFilter name=falsefilter/>
+		<FalseFilter name="falsefilter"/>
 	</FILTERS>
 	<MOVERS>
-		<DnaInterfaceMultiStateDesign name=msd scorefxn=DNA task_operations=IFC,IC,AUTOprot,DnaInt pop_size=20 num_packs=1 numresults=0 boltz_temp=2 anchor_offset=15 mutate_rate=0.8 generations=5/>
-		<DesignProteinBackboneAroundDNA name=bb scorefxn=DNA task_operations=IFC,IC,AUTOprot,DnaInt type=ccd gapspan=4 spread=3 cycles_outer=3 cycles_inner=1 temp_initial=2 temp_final=0.6/>
-		<DnaInterfacePacker name=DnaPack scorefxn=DNA task_operations=IFC,IC,AUTOprot,ProtNoDes,DnaInt binding=1 probe_specificity=1/>
-		<ParsedProtocol name=bb_msd>
-			<Add mover_name=msd/>
-			<Add mover_name=bb/>
-			<Add mover_name=msd/>
+		<DnaInterfaceMultiStateDesign name="msd" scorefxn="DNA" task_operations="IFC,IC,AUTOprot,DnaInt" pop_size="20" num_packs="1" numresults="0" boltz_temp="2" anchor_offset="15" mutate_rate="0.8" generations="5"/>
+		<DesignProteinBackboneAroundDNA name="bb" scorefxn="DNA" task_operations="IFC,IC,AUTOprot,DnaInt" type="ccd" gapspan="4" spread="3" cycles_outer="3" cycles_inner="1" temp_initial="2" temp_final="0.6"/>
+		<DnaInterfacePacker name="DnaPack" scorefxn="DNA" task_operations="IFC,IC,AUTOprot,ProtNoDes,DnaInt" binding="1" probe_specificity="1"/>
+		<ParsedProtocol name="bb_msd">
+			<Add mover_name="msd"/>
+			<Add mover_name="bb"/>
+			<Add mover_name="msd"/>
 		</ParsedProtocol>
-		<LoopOver name=iterbb mover_name=bb_msd filter_name=falsefilter iterations=1/>
+		<LoopOver name="iterbb" mover_name="bb_msd" filter_name="falsefilter" iterations="1"/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=iterbb/>
-		<Add mover_name=DnaPack/>
+		<Add mover_name="iterbb"/>
+		<Add mover_name="DnaPack"/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

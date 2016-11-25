@@ -33,12 +33,24 @@ class DockAndRetrieveSidechains : public protocols::moves::Mover
 {
 public:
 	DockAndRetrieveSidechains();
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DockAndRetrieveSidechains ); }
-	void apply( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DockAndRetrieveSidechains ); }
+	void apply( core::pose::Pose & pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~DockAndRetrieveSidechains();
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	protocols::docking::DockingProtocolOP docking_mover_;
 	protocols::symmetric_docking::SymDockProtocolOP sym_docking_mover_;

@@ -41,6 +41,9 @@
 #include <protocols/jd2/util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -51,11 +54,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NMerSVMEnergyFilter" );
 
-protocols::filters::FilterOP
-NMerSVMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerSVMEnergyFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP NMerSVMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerSVMEnergyFilter ); }
 
-std::string
-NMerSVMEnergyFilterCreator::keyname() const { return "NMerSVMEnergy"; }
+// XRW TEMP std::string
+// XRW TEMP NMerSVMEnergyFilterCreator::keyname() const { return "NMerSVMEnergy"; }
 
 //default ctor
 NMerSVMEnergyFilter::NMerSVMEnergyFilter() :
@@ -213,6 +216,47 @@ NMerSVMEnergyFilter::compute(
 	if ( count_eps_ ) return( static_cast< core::Real >( n_eps ) );
 	return( score );
 }
+
+std::string NMerSVMEnergyFilter::name() const {
+	return class_name();
+}
+
+std::string NMerSVMEnergyFilter::class_name() {
+	return "NMerSVMEnergy";
+}
+
+void NMerSVMEnergyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("threshold", xsct_real, "XRW TO DO")
+		+ XMLSchemaAttribute("svm_fname", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("svm_list_fname", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("resnums", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("nmer_length", xsct_non_negative_integer, "XRW TO DO", "9")
+		+ XMLSchemaAttribute::attribute_w_default("nmer_svm_scorecut", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("gate_svm_scores", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("dump_table", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("count_eps", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("ep_cutoff", xsct_real, "XRW TO DO", "0.425");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string NMerSVMEnergyFilterCreator::keyname() const {
+	return NMerSVMEnergyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+NMerSVMEnergyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new NMerSVMEnergyFilter );
+}
+
+void NMerSVMEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NMerSVMEnergyFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

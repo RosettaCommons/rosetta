@@ -40,6 +40,9 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CreateAngleConstraint" );
 
@@ -124,27 +127,69 @@ CreateAngleConstraint::parse_my_tag(
 moves::MoverOP CreateAngleConstraint::clone() const { return moves::MoverOP( new CreateAngleConstraint( *this ) ); }
 moves::MoverOP CreateAngleConstraint::fresh_instance() const { return moves::MoverOP( new CreateAngleConstraint ); }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CreateAngleConstraintCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CreateAngleConstraint );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateAngleConstraintCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CreateAngleConstraint::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateAngleConstraint::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CreateAngleConstraint";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateAngleConstraint::get_name() const {
+// XRW TEMP  return "CreateAngleConstraint";
+// XRW TEMP }
+
+std::string CreateAngleConstraint::get_name() const {
+	return mover_name();
+}
+
+std::string CreateAngleConstraint::mover_name() {
+	return "CreateAngleConstraint";
+}
+
+void CreateAngleConstraint::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; //no attributes for main tag
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute::required_attribute( "res_center", xsct_non_negative_integer, "Residue at center of angle" )
+		+ XMLSchemaAttribute::required_attribute( "atom_center", xs_string, "Atom at center of angle" )
+		+ XMLSchemaAttribute::required_attribute( "res1", xsct_non_negative_integer, "Residue on one side of angle" )
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "Atom on one side of angle" )
+		+ XMLSchemaAttribute::required_attribute( "res2", xsct_non_negative_integer, "Residue on other side of the angle" )
+		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "Atom on other side of the angle" )
+		+ XMLSchemaAttribute::required_attribute( "cst_func", xs_string, "Function to use for this constraint" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_simple_subelement( "Add", subelement_attlist, "Specifies an angle constraint to add" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Adds angle constraints to a pose", attlist, subelements );
+}
+
+std::string CreateAngleConstraintCreator::keyname() const {
+	return CreateAngleConstraint::mover_name();
+}
+
 protocols::moves::MoverOP
 CreateAngleConstraintCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CreateAngleConstraint );
 }
 
-std::string
-CreateAngleConstraintCreator::keyname() const
+void CreateAngleConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return CreateAngleConstraintCreator::mover_name();
+	CreateAngleConstraint::provide_xml_schema( xsd );
 }
 
-std::string
-CreateAngleConstraintCreator::mover_name()
-{
-	return "CreateAngleConstraint";
-}
-
-std::string
-CreateAngleConstraint::get_name() const {
-	return "CreateAngleConstraint";
-}
 
 } // moves
 } // protocols

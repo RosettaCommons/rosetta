@@ -375,7 +375,7 @@ int main( int argc, char * argv [] )
 							lj_r6_coeff[atypid] * inv_dis6;
 
 						//d_ljE = -12.*lj_r12_coeff[atypid] * inv_dis13-6. *
-						//	lj_r6_coeff[atypid] * inv_dis7;
+						// lj_r6_coeff[atypid] * inv_dis7;
 					}
 
 					if ( ljE < 0. ) {

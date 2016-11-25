@@ -27,6 +27,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -70,11 +71,58 @@ void ResidueSelectorLoader::load_data(
 	TR.flush();
 }
 
+std::string
+ResidueSelectorLoader::loader_name() { return "RESIDUE_SELECTORS"; }
+
+std::string
+ResidueSelectorLoader::res_selector_loader_ct_namer( std::string const & element_name )
+{
+	return "res_selector_loader_" + element_name + "_type";
+}
+
+void ResidueSelectorLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	using namespace core::select::residue_selector;
+
+	ResidueSelectorFactory::get_instance()->define_residue_selector_xml_schema( xsd );
+
+	XMLSchemaSimpleSubelementList rs_loader_subelements;
+	rs_loader_subelements.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
+
+	XMLSchemaComplexTypeGenerator rs_ct;
+	rs_ct.element_name( loader_name() ).complex_type_naming_func( & res_selector_loader_ct_namer )
+		.description( "ResidueSelectors may be defined as subelements of the " + loader_name() + " element, and then will be placed into the DataMap"
+		" for later retrieval by Movers and Filters or anything else that might use a ResidueSelector. All immediate subelements should have the 'name' attribute"
+		" as that is how they will be identified in the DataMap. Subelements of the immediate subelements will not be loaded into the data map and do"
+		" not need to be given a name; e.g. if an immediate subelemement is an 'And' ResidueSelector, and this 'And' ResidueSelector has a 'Chain' subelement,"
+		" then the 'And' subelement must be given a name, but the 'Chain' subelement probably should not be given a name. Why not? The 'Chain' subelement"
+		" will not end up as a member of the DataMap in any case, and if a name is given to it, then a user of the XML file may think it is reasonable"
+		" to use the name for that Chain selector elsewhere in their script -- but their script would fail if they do so." )
+		.set_subelements_repeatable( rs_loader_subelements )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+
 DataLoaderOP
 ResidueSelectorLoaderCreator::create_loader() const { return DataLoaderOP( new ResidueSelectorLoader ); }
 
 std::string
-ResidueSelectorLoaderCreator::keyname() const { return "RESIDUE_SELECTORS"; }
+ResidueSelectorLoaderCreator::keyname() const { return ResidueSelectorLoader::loader_name(); }
+
+ResidueSelectorLoaderCreator::DerivedNameFunction
+ResidueSelectorLoaderCreator::schema_ct_naming_function() const
+{
+	return & ResidueSelectorLoader::res_selector_loader_ct_namer;
+}
+
+void
+ResidueSelectorLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueSelectorLoader::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace parser

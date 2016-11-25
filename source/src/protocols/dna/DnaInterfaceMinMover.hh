@@ -39,7 +39,7 @@ public:
 	DnaInterfaceMinMover( DnaInterfaceFinderOP );
 
 	void apply( core::pose::Pose & ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void use_interface( DnaInterfaceFinderOP );
 	void chi( bool value ) { chi_ = value; }
@@ -58,6 +58,18 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	DnaInterfaceFinderOP interface_;

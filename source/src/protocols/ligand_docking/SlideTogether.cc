@@ -31,28 +31,31 @@
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_options.slide_together" );
 
-std::string
-SlideTogetherCreator::keyname() const
-{
-	return SlideTogetherCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SlideTogetherCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SlideTogether::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SlideTogetherCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SlideTogether );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SlideTogetherCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SlideTogether );
+// XRW TEMP }
 
-std::string
-SlideTogetherCreator::mover_name()
-{
-	return "SlideTogether";
-}
+// XRW TEMP std::string
+// XRW TEMP SlideTogether::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SlideTogether";
+// XRW TEMP }
 
 SlideTogether::SlideTogether(){}
 
@@ -75,9 +78,9 @@ protocols::moves::MoverOP SlideTogether::fresh_instance() const {
 	return protocols::moves::MoverOP( new SlideTogether );
 }
 
-std::string SlideTogether::get_name() const{
-	return "SlideTogether";
-}
+// XRW TEMP std::string SlideTogether::get_name() const{
+// XRW TEMP  return "SlideTogether";
+// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -122,6 +125,37 @@ SlideTogether::apply( core::pose::Pose & pose ){
 	protocols::docking::FaDockingSlideIntoContact slideTogether(jumps_);
 	slideTogether.apply(pose);
 }
+
+std::string SlideTogether::get_name() const {
+	return mover_name();
+}
+
+std::string SlideTogether::mover_name() {
+	return "SlideTogether";
+}
+
+void SlideTogether::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("chains", xs_string, "Comma separated list of chain IDs.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Move the small molecule and protein into close proximity.", attlist );
+}
+
+std::string SlideTogetherCreator::keyname() const {
+	return SlideTogether::mover_name();
+}
+
+protocols::moves::MoverOP
+SlideTogetherCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SlideTogether );
+}
+
+void SlideTogetherCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SlideTogether::provide_xml_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

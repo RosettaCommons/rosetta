@@ -31,6 +31,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
@@ -72,6 +73,9 @@ public:
 	SerializedLoopList
 	apply(
 		core::pose::Pose const &);
+
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	SerializedLoopList loop_list_;

@@ -50,8 +50,8 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~FilterReportAsPoseExtraScoresMover() override;
 
-	static std::string
-	class_name();
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name();
 
 public:
 	// mover virtual API
@@ -61,8 +61,8 @@ public:
 	void
 	show( std::ostream & output = std::cout ) const override;
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void
@@ -91,6 +91,16 @@ public:
 	protocols::filters::FilterOP get_filter() const { return filter_; }
 	std::string const & get_report_as() const { return report_as_; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

@@ -42,6 +42,9 @@
 #include <ctime>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm/count.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.ConnectChainsMover" );
@@ -56,20 +59,20 @@ using utility::vector1;
 
 ConnectChainsMover::ConnectChainsMover():moves::Mover("ConnectChainsMover"){}
 
-std::string ConnectChainsMoverCreator::keyname() const
-{
-	return ConnectChainsMoverCreator::mover_name();
-}
+// XRW TEMP std::string ConnectChainsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ConnectChainsMover::mover_name();
+// XRW TEMP }
 
-std::string ConnectChainsMoverCreator::mover_name(){
-	return "ConnectChainsMover";
-}
+// XRW TEMP std::string ConnectChainsMover::mover_name(){
+// XRW TEMP  return "ConnectChainsMover";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-ConnectChainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConnectChainsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConnectChainsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ConnectChainsMover );
+// XRW TEMP }
 
 
 void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,vector1< vector1 <std::string> > & chains_in_poses){
@@ -90,7 +93,7 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 			}
 		}
 	}
-	for (const auto & iter : tmp_chains_set) {
+	for ( const auto & iter : tmp_chains_set ) {
 		individual_chains.push_back(iter);
 		TR << "chains" << iter << std::endl;
 	}
@@ -225,9 +228,9 @@ void ConnectChainsMover::apply(core::pose::Pose & pose) {
 }
 
 
-std::string ConnectChainsMover::get_name() const {
-	return "ConnectChainsMover";
-}
+// XRW TEMP std::string ConnectChainsMover::get_name() const {
+// XRW TEMP  return "ConnectChainsMover";
+// XRW TEMP }
 
 void
 ConnectChainsMover::parse_my_tag(
@@ -290,6 +293,47 @@ ConnectChainsMover::parse_my_tag(
 		loopLengthRangeHigh_ = atoi(loopLengthRange_split[1].c_str());
 	}
 }
+
+std::string ConnectChainsMover::get_name() const {
+	return mover_name();
+}
+
+std::string ConnectChainsMover::mover_name() {
+	return "ConnectChainsMover";
+}
+
+void ConnectChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// AMW: eventually we will want a better restriction
+	// but int_cslist is at least close
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "XRW TO DO", "1,4" )
+		+ XMLSchemaAttribute::attribute_w_default( "RMSthreshold", xsct_real, "XRW TO DO", "0.4" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1", xsct_int_cslist, "XRW TO DO", "-3,3" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2", xsct_int_cslist, "XRW TO DO", "-3,3" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1_sheet", xsct_int_cslist, "XRW TO DO", "-1,1" )
+		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2_sheet", xsct_int_cslist, "XRW TO DO", "-1,1" )
+		+ XMLSchemaAttribute::required_attribute( "chain_connections", xs_string, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ConnectChainsMoverCreator::keyname() const {
+	return ConnectChainsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ConnectChainsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConnectChainsMover );
+}
+
+void ConnectChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConnectChainsMover::provide_xml_schema( xsd );
+}
+
 
 }//pose_length_moves
 }//protocols

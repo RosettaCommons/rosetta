@@ -88,6 +88,9 @@
 // C++ headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces
@@ -537,22 +540,63 @@ OopCreatorMover::parse_my_tag
 	} else {
 		final_correct_oop_post_ = false;
 	}
-
 }
 
 // MoverCreator
-moves::MoverOP
-OopCreatorMoverCreator::create_mover() const {
-	return moves::MoverOP( new OopCreatorMover() );
+// XRW TEMP moves::MoverOP
+// XRW TEMP OopCreatorMoverCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new OopCreatorMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string OopCreatorMoverCreator::keyname() const {
+// XRW TEMP  return OopCreatorMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string OopCreatorMover::mover_name(){
+// XRW TEMP  return "OopCreatorMover";
+// XRW TEMP }
+
+std::string OopCreatorMover::get_name() const {
+	return mover_name();
+}
+
+std::string OopCreatorMover::mover_name() {
+	return "OopCreatorMover";
+}
+
+void OopCreatorMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "oop_plus_positions", xsct_int_cslist, "Positions where the oop should have a positive pucker" )
+		+ XMLSchemaAttribute( "oop_minus_positions", xsct_int_cslist, "Positions where the oop should have a negative pucker" )
+		+ XMLSchemaAttribute( "oop_d_plus_positions", xsct_int_cslist, "Positions where the oop has a D amino acid and should have a positive pucker" )
+		+ XMLSchemaAttribute( "oop_d_minus_positions", xsct_int_cslist, "Positions where the oop has a D amino acid and should have a negative pucker" )
+		+ XMLSchemaAttribute( "oop_low_e_puck_positions", xsct_int_cslist, "Positions where the oop should have the lower energy pucker option" )
+		+ XMLSchemaAttribute::attribute_w_default( "prepend_n_residues", xsct_non_negative_integer, "Prepend this many residues to the input pose", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "append_n_residues", xsct_non_negative_integer, "Append this many residues to the input pose", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_repack", xsct_rosetta_bool, "Repack the pose at the very end", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_minimize", xsct_rosetta_bool, "Minimize the pose at the very end", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_mc", xsct_rosetta_bool, "Run a short MC simulation on the pose at the very end", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_correct_oop_post", xsct_rosetta_bool, "Do special corrections to the oop_post positions", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 
 std::string OopCreatorMoverCreator::keyname() const {
-	return OopCreatorMoverCreator::mover_name();
+	return OopCreatorMover::mover_name();
 }
 
-std::string OopCreatorMoverCreator::mover_name(){
-	return "OopCreatorMover";
+protocols::moves::MoverOP
+OopCreatorMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new OopCreatorMover );
 }
+
+void OopCreatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OopCreatorMover::provide_xml_schema( xsd );
+}
+
 
 
 

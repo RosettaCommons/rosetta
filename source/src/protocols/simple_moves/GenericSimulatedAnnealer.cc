@@ -36,6 +36,9 @@
 // C/C++ headers
 #include <fstream>
 #include <boost/foreach.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GenericSimulatedAnnealer" );
 
@@ -43,22 +46,22 @@ namespace protocols {
 namespace simple_moves {
 
 
-std::string
-GenericSimulatedAnnealerCreator::keyname() const
-{
-	return GenericSimulatedAnnealerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GenericSimulatedAnnealerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GenericSimulatedAnnealer::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-GenericSimulatedAnnealerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GenericSimulatedAnnealerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
+// XRW TEMP }
 
-std::string
-GenericSimulatedAnnealerCreator::mover_name()
-{
-	return "GenericSimulatedAnnealer";
-}
+// XRW TEMP std::string
+// XRW TEMP GenericSimulatedAnnealer::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GenericSimulatedAnnealer";
+// XRW TEMP }
 
 /// @brief default constructor
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
@@ -716,10 +719,10 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 
 }
 
-std::string
-GenericSimulatedAnnealer::get_name() const {
-	return GenericSimulatedAnnealerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GenericSimulatedAnnealer::get_name() const {
+// XRW TEMP  return GenericSimulatedAnnealer::mover_name();
+// XRW TEMP }
 
 /// @brief parse xml file
 void
@@ -744,6 +747,49 @@ GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 		periodic_mover_ = find_mover->second;
 	}
 }
+
+std::string GenericSimulatedAnnealer::get_name() const {
+	return mover_name();
+}
+
+std::string GenericSimulatedAnnealer::mover_name() {
+	return "GenericSimulatedAnnealer";
+}
+
+void GenericSimulatedAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	XMLSchemaSimpleSubelementList ssl;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = GenericMonteCarloMover::define_composition_schema( xsd );
+
+	attlist + XMLSchemaAttribute( "history", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "eval_period", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "periodic_mover", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "checkpoint_file", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "keep_checkpoint_file", xsct_rosetta_bool, "XRW TO DO" );
+
+	ct_gen
+		->element_name( mover_name() )
+		.description( "Performs a simulated annealing simulation (so, a temperature schedule) instead of merely generic Monte Carlo, as does its parent class the GenericMonteCarloMover" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string GenericSimulatedAnnealerCreator::keyname() const {
+	return GenericSimulatedAnnealer::mover_name();
+}
+
+protocols::moves::MoverOP
+GenericSimulatedAnnealerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
+}
+
+void GenericSimulatedAnnealerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GenericSimulatedAnnealer::provide_xml_schema( xsd );
+}
+
 
 
 } // ns simple_moves

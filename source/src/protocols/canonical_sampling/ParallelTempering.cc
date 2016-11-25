@@ -60,6 +60,9 @@
 
 // C++ Headers
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -83,20 +86,20 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-std::string
-ParallelTemperingCreator::keyname() const {
-	return ParallelTemperingCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ParallelTemperingCreator::keyname() const {
+// XRW TEMP  return ParallelTempering::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ParallelTemperingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParallelTempering );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ParallelTemperingCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ParallelTempering );
+// XRW TEMP }
 
-std::string
-ParallelTemperingCreator::mover_name() {
-	return "ParallelTempering";
-}
+// XRW TEMP std::string
+// XRW TEMP ParallelTempering::mover_name() {
+// XRW TEMP  return "ParallelTempering";
+// XRW TEMP }
 
 ParallelTempering::ParallelTempering() :
 	rank_( -1 ),
@@ -330,11 +333,11 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 	}
 }
 
-std::string
-ParallelTempering::get_name() const
-{
-	return "ParallelTempering";
-}
+// XRW TEMP std::string
+// XRW TEMP ParallelTempering::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "ParallelTempering";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 ParallelTempering::clone() const
@@ -374,6 +377,37 @@ void ParallelTempering::init_from_options() {
 	using namespace core;
 	Parent::init_from_options();
 }
+
+std::string ParallelTempering::get_name() const {
+	return mover_name();
+}
+
+std::string ParallelTempering::mover_name() {
+	return "ParallelTempering";
+}
+
+void ParallelTempering::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	TemperingBase::attributes_for_tempering_base( attlist, xsd );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform parallel tempering at two temperatures specified on the command line", attlist );
+}
+
+std::string ParallelTemperingCreator::keyname() const {
+	return ParallelTempering::mover_name();
+}
+
+protocols::moves::MoverOP
+ParallelTemperingCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ParallelTempering );
+}
+
+void ParallelTemperingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ParallelTempering::provide_xml_schema( xsd );
+}
+
 
 #ifdef USEMPI
 void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) {

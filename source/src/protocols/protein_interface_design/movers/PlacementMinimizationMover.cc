@@ -56,6 +56,9 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using namespace protocols::protein_interface_design;
 
@@ -68,22 +71,22 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-PlacementMinimizationMoverCreator::keyname() const
-{
-	return PlacementMinimizationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlacementMinimizationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PlacementMinimizationMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PlacementMinimizationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlacementMinimizationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlacementMinimizationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PlacementMinimizationMover );
+// XRW TEMP }
 
-std::string
-PlacementMinimizationMoverCreator::mover_name()
-{
-	return "PlacementMinimization";
-}
+// XRW TEMP std::string
+// XRW TEMP PlacementMinimizationMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PlacementMinimization";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 PlacementMinimizationMover::clone() const {
@@ -226,7 +229,7 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 	repack_partner1_ = true;
 	repack_partner2_ = true;
 	optimize_foldtree_ = tag->getOption< bool >( "optimize_foldtree", false );
-	min_rb( tag->getOption< bool >( "minimize_rb", 1 ));
+	min_rb( tag->getOption< bool >( "minimize_rb", true ));
 	stub_sets( parse_stub_sets( tag, pose, host_chain_, data ) );
 	runtime_assert( stub_sets_.size() );
 	TR<<"optimize_foldtree set to: "<<optimize_foldtree_<<'\n';
@@ -241,17 +244,57 @@ PlacementMinimizationMover::fresh_instance() const {
 PlacementMinimizationMover::~PlacementMinimizationMover(){}
 
 PlacementMinimizationMover::PlacementMinimizationMover() :
-	simple_moves::DesignRepackMover( PlacementMinimizationMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlacementMinimizationMover::mover_name() ),
 	host_chain_( 2 ),
 	cb_force_( 0.0 )
 {}
 
-std::string
-PlacementMinimizationMover::get_name() const {
-	return PlacementMinimizationMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP PlacementMinimizationMover::get_name() const {
+// XRW TEMP  return PlacementMinimizationMover::mover_name();
+// XRW TEMP }
+
+std::string PlacementMinimizationMover::get_name() const {
+	return mover_name();
 }
+
+std::string PlacementMinimizationMover::mover_name() {
+	return "PlacementMinimization";
+}
+
+void PlacementMinimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	//WARNING WARNING WARNING.  This class's parse_my_tag does something crazy - it defines no subelements, but it iterates through any subelements that just happen to be there (even though they can't be there) looking for a particular attribute.  This is to support some extralegal behavior of PlaceSimultaneouslyMover.  See also Place_system_XSD_README.
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "host_chain", xsct_positive_integer, "Probably the chain where the stub goes", "2")
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms.  Must be positive.", "0.5" ) // XRW TODO, should be positive Real
+		+ XMLSchemaAttribute::attribute_w_default( "optimize_foldtree", xsct_rosetta_bool, "setup new fold_tree for better numerical behaviour between the residue at the center of target_residues and the nearest residue on the partner", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "minimize the rigid body degree of freedom", "true");
+
+	XMLSchemaSimpleSubelementList ssl;
+	add_subelement_for_parse_stub_sets( ssl, xsd ); //XRW TODO the subelement is actually REQUIRED; might be for all uses of this function
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "A simple rb-minimization in a bb-stub constraint biased forcefield. Note that this mover is dependent on a placement mover for setting its stubsets", attlist, ssl );
+}
+
+std::string PlacementMinimizationMoverCreator::keyname() const {
+	return PlacementMinimizationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PlacementMinimizationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlacementMinimizationMover );
+}
+
+void PlacementMinimizationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlacementMinimizationMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design
 } //protocols
-

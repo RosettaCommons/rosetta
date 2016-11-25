@@ -172,11 +172,22 @@ void LimitAromaChi2Operation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "chi2max", xs_decimal, "110.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "chi2min", xs_decimal, "70.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "include_trp", xs_boolean, "false" );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"chi2max", xsct_real,
+		"max value of chi2 to be used",
+		"110.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"chi2min", xsct_real,
+		"min value of chi2 to be used",
+		"70.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"include_trp", xsct_rosetta_bool,
+		"also impose chi2 limits for tryptophans",
+		"false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Prevent to use the rotamers of PHE, TYR and HIS that have chi2 far from 90.");
 }
 
 

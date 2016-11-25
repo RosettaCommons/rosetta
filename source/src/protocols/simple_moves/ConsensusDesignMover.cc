@@ -55,27 +55,30 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMov
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-ConsensusDesignMoverCreator::keyname() const
-{
-	return ConsensusDesignMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConsensusDesignMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ConsensusDesignMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ConsensusDesignMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConsensusDesignMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConsensusDesignMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ConsensusDesignMover );
+// XRW TEMP }
 
-std::string
-ConsensusDesignMoverCreator::mover_name()
-{
-	return "ConsensusDesignMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ConsensusDesignMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ConsensusDesignMover";
+// XRW TEMP }
 
 
 ConsensusDesignMover::ConsensusDesignMover()
@@ -224,23 +227,63 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 	return csts;
 }
 
-std::string
-ConsensusDesignMover::get_name() const {
-	return "ConsensusDesignMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ConsensusDesignMover::get_name() const {
+// XRW TEMP  return "ConsensusDesignMover";
+// XRW TEMP }
 
 void
 ConsensusDesignMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
-	if ( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task",1);
-	if ( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints",1);
-	if ( tag->hasOption("sasa_cutoff") ) sasa_cutoff_ = tag->getOption< core::Real >("sasa_cutoff",1.0);
+	if ( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task", true);
+	if ( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints", true);
+	if ( tag->hasOption("sasa_cutoff") ) sasa_cutoff_ = tag->getOption< core::Real >("sasa_cutoff", 1.0);
 	//if( tag->hasOption("scorefxn") ) sfxn_ = new core::scoring::ScoreFunction( *data_map.get< core::scoring::ScoreFunction * >("scorefxns", tag->getOption< std::string >("scorefxn")) );
 	if ( tag->hasOption("scorefxn") ) sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
 
 	if ( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 }
+
+std::string ConsensusDesignMover::get_name() const {
+	return mover_name();
+}
+
+std::string ConsensusDesignMover::mover_name() {
+	return "ConsensusDesignMover";
+}
+
+void ConsensusDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn" );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "invert_task", xsct_rosetta_bool, "Operate on the residues specified as non-packable in the PackerTask", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_seqprof_constraints", xsct_rosetta_bool, "use sequence profile constraints", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "sasa_cutoff", xsct_real, "skip designing residues with SASA lower than this", "1.0" )
+		+ XMLSchemaAttribute( "ignore_pose_profile_length_mismatch", xsct_rosetta_bool, "If true, and the pose/profile mismatch, excess pose residues are marked repackable by SeqprofConsensusOperation.  If false, and they mismatch, it crashes.  If they match, no problems!" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover will modify a given task according to a sequence profile and then call the PackRotamersMover. At every position that is designable in the task, AAs that have a probability greater than min_aa_probability_ and higher than the native in the sequence profile will be allowed", attlist );
+}
+
+std::string ConsensusDesignMoverCreator::keyname() const {
+	return ConsensusDesignMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ConsensusDesignMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConsensusDesignMover );
+}
+
+void ConsensusDesignMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConsensusDesignMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace simple_moves
 }  // namespace protocols

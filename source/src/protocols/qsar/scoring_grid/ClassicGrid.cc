@@ -13,12 +13,15 @@
 #include <protocols/qsar/scoring_grid/ClassicGrid.hh>
 #include <protocols/qsar/scoring_grid/ClassicGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace protocols {
 namespace qsar {
@@ -26,7 +29,7 @@ namespace scoring_grid {
 
 std::string ClassicGridCreator::keyname() const
 {
-	return ClassicGridCreator::grid_name();
+	return ClassicGrid::grid_name();
 }
 
 GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -41,10 +44,15 @@ GridBaseOP ClassicGridCreator::create_grid() const
 	return GridBaseOP( new ClassicGrid() );
 }
 
-std::string ClassicGridCreator::grid_name()
+void ClassicGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "ClassicGrid";
+	ClassicGrid::provide_xml_schema( xsd );
 }
+
+//std::string ClassicGridCreator::grid_name()
+//{
+// return "ClassicGrid";
+//}
 
 ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_radius_(2.25)
 {
@@ -118,6 +126,21 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & ce
 	refresh(pose,center);
 }
 
+std::string ClassicGrid::grid_name()
+{
+	return "ClassicGrid";
+}
+
+void ClassicGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that treats all atoms as both attractive within 4.75A (getting a score of -1) and repulsive within 2.25A (getting a score of +1); no parameters may be customized currently", attributes );
+
+}
 
 }
 }

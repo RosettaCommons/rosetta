@@ -97,6 +97,18 @@ public:
 		core::Real value
 	);
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 
 private:
 	core::Real path_tightness_;

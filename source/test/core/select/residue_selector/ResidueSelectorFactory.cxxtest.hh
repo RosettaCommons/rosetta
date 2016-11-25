@@ -31,6 +31,9 @@
 #include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/excn/Exceptions.hh>
 
+// Test utility headers
+#include <test/util/schema_utilities.hh>
+
 // C++ headers
 #include <string>
 
@@ -69,7 +72,7 @@ public:
 	std::string keyname() const { return "DummyResidueSelector"; }
 
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
-		core::select::residue_selector::xsd_type_definition_w_attributes( xsd, keyname(), utility::tag::AttributeList() );
+		core::select::residue_selector::xsd_type_definition_w_attributes( xsd, keyname(), "testing 1 2 3", utility::tag::AttributeList() );
 	}
 };
 
@@ -160,4 +163,29 @@ public:
 		TR << "XSD: " << std::endl;
 		TR << xsd.full_definition() << std::endl;
 	}
+
+	void test_ResidueSelectorFactory_all_ResidueSelector_complexTypes_have_descriptions() {
+		ensure_all_cts_for_creators_have_documentation_strings(
+			ResidueSelectorFactory::get_instance()->creator_map(),
+			"ResidueSelector",
+			& complex_type_name_for_residue_selector );
+	}
+
+	void test_ResidueSelectorFactory_all_ResidueSelector_all_attributes_have_descriptions() {
+
+		ResidueSelectorFactory * rsf = ResidueSelectorFactory::get_instance();
+		std::map< std::string, ResidueSelectorCreatorOP > const & creator_map = rsf->creator_map();
+
+		for ( auto iter : creator_map ) {
+			XMLSchemaDefinition xsd;
+			iter.second->provide_xml_schema( xsd );
+			std::string full_def = xsd.full_definition();
+			//std::cout << "full def: " << iter.first << "\n" << full_def << std::endl;
+			TagCOP tag( Tag::create( full_def ) );
+
+			recurse_through_subtags_for_attribute_descriptions( tag, iter.first );
+		}
+	}
+
+
 };

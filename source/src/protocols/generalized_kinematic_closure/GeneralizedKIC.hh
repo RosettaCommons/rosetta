@@ -61,7 +61,7 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -457,10 +457,21 @@ public:
 	/// @details True means it does NOT fail if no solution is found.  False is the default (fail if no solution found).
 	inline bool dont_fail_if_no_solution_found() const { return dont_fail_if_no_solution_found_; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	/// @brief Sets whether this mover corrects positions of polymer-dependent atoms.
 	///
 	inline void set_correct_polymer_dependent_atoms( bool const setting ) { correct_polymer_dependent_atoms_ = setting; }
-	
+
 	/// @brief Gets whether this mover corrects positions of polymer-dependent atoms.
 	///
 	inline bool correct_polymer_dependent_atoms() const { return correct_polymer_dependent_atoms_; }
@@ -598,7 +609,7 @@ private:
 	/// @brief Vector of loop bond lengths from final solutions.
 	/// @details Only stored in low-memory mode.
 	utility::vector1 < utility::vector1 < core::Real > > bondlength_solutions_;
-	
+
 	/// @brief Should we correct positions of polymer bond-dependent atoms?
 	/// @details Default false.
 	bool correct_polymer_dependent_atoms_;

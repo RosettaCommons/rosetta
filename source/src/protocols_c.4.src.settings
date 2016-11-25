@@ -30,6 +30,7 @@ sources = {
 		"DatabaseJobInputter",
 		"DatabaseJobOutputter",
 		"DatabaseStatements",
+		"feature_schemas",
 		"FeaturesReporter",
 		"FeaturesReporterFactory",
 		"GeometricSolvationFeatures",

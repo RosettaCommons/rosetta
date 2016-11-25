@@ -165,7 +165,7 @@ new_jump_and_cutpoint( core::pose::Pose & pose, core::Size const saferes1, core:
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, cutres );
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cutres + 1 );
 	pose.conformation().declare_chemical_bond( cutres, pose.residue( cutres ).atom_name( pose.residue( cutres ).upper_connect_atom() ),
-																						 cutres + 1, pose.residue( cutres + 1 ).atom_name( pose.residue( cutres + 1 ).lower_connect_atom() ) );
+		cutres + 1, pose.residue( cutres + 1 ).atom_name( pose.residue( cutres + 1 ).lower_connect_atom() ) );
 
 	rebuild_missing_atoms( pose, cutres );
 	rebuild_missing_atoms( pose, cutres + 1 );

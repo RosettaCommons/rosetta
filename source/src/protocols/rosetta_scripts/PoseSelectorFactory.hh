@@ -30,7 +30,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // c++ headers
 #include <map>
 #include <set>
@@ -81,12 +81,19 @@ public:
 		core::pose::Pose const &
 	);
 
+	void define_pose_selector_group( utility::tag::XMLSchemaDefinition & xsd ) const;
+	static std::string pose_selector_group_name();
+	static std::string
+	complex_type_name_for_pose_selector( std::string const & selector_name );
+
+
 private:
 	PoseSelectorFactory();
 
 	// Unimplemented -- uncopyable
 	PoseSelectorFactory( PoseSelectorFactory const & );
 	PoseSelectorFactory const & operator = ( PoseSelectorFactory const & );
+
 
 private:
 

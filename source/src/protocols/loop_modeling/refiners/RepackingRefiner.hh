@@ -39,7 +39,7 @@ public:
 	RepackingRefiner(Size repack_period=1);
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "RepackingRefiner"; }
+	// XRW TEMP  string get_name() const { return "RepackingRefiner"; }
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
@@ -47,7 +47,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 	/// @brief Get the score function to be used on the next call to apply().
 	core::scoring::ScoreFunctionOP get_score_function();
@@ -73,10 +73,22 @@ public:
 	/// @brief Specify how often this refiner should actually repack the pose.
 	void set_repack_period(Size period);
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 
 	/// @brief Repack the pose within 10A of the loops being sampled.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 

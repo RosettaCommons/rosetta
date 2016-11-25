@@ -164,6 +164,18 @@ public:
 	///
 	inline bool use_threeletter( ) const { return report_three_letter_codes_; }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 
 private:
 

@@ -15,6 +15,7 @@
 
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/SolvationGrid.fwd.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -22,6 +23,7 @@
 #include <core/conformation/UltraLightResidue.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <map>
 
@@ -31,7 +33,7 @@ namespace scoring_grid {
 
 std::string SolvationMetaGridCreator::keyname() const
 {
-	return SolvationMetaGridCreator::grid_name();
+	return SolvationMetaGrid::grid_name();
 }
 
 GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -46,10 +48,15 @@ GridBaseOP SolvationMetaGridCreator::create_grid() const
 	return GridBaseOP( new SolvationMetaGrid() );
 }
 
-std::string SolvationMetaGridCreator::grid_name()
+void SolvationMetaGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "SolvationMetaGrid";
+	SolvationMetaGrid::provide_xml_schema( xsd );
 }
+
+//std::string SolvationMetaGridCreator::grid_name()
+//{
+// return "SolvationMetaGrid";
+//}
 
 SolvationMetaGrid::SolvationMetaGrid() :type_("SolvationMetaGrid")
 {
@@ -167,7 +174,8 @@ core::Real SolvationMetaGrid::atom_score(core::conformation::Residue const & res
 
 std::string SolvationMetaGrid::get_type()
 {
-	return "SolvationMetaGrid";
+	//return "SolvationMetaGrid";
+	return grid_name();
 }
 
 void SolvationMetaGrid::set_chain(char chain)
@@ -238,6 +246,22 @@ bool SolvationMetaGrid::is_in_grid(core::conformation::Residue const & residue)
 	}
 	return true;
 }
+
+std::string SolvationMetaGrid::grid_name()
+{
+	return "SolvationMetaGrid";
+}
+
+void SolvationMetaGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A collection of scoring grids based on the EEF1 (aka Lazaridis Karplus) solvation energy where each individual grid represents the desolvation energy of a particular atom type against the protein. This grid offers no customizable data.", attributes );
+}
+
 
 }
 }

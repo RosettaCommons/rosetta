@@ -53,6 +53,19 @@ public:
 	core::Real distance_threshold() const{ return distance_threshold_; }
 	void distance_threshold( core::Real const r ){ distance_threshold_ = r; }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
+
 private:
 	std::string residue_; // dflt ""; save as string, parse the actual residue number at apply
 	//SJF 3Sep13 core::Size target_residue_;

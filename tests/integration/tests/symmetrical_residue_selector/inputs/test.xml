@@ -11,13 +11,14 @@
 		</OperateOnResidueSubset>
 	</TASKOPERATIONS>
 	<MOVERS>
-		<SymDofMover name=gen_sym_config symm_file="inputs/C2_Z.sym" sym_dof_names="JS1" />
+		<SymDofMover name="gen_sym_config" symm_file="inputs/C2_Z.sym" sym_dof_names="JS1" />
 	</MOVERS>
 	<FILTERS>
-		<DesignableResidues name="output" task_operations="nopack" designable=0 packable=1 />
+		<DesignableResidues name="output" task_operations="nopack" designable="0" packable="1" />
 	</FILTERS>
 	<PROTOCOLS>
 		<Add mover_name="gen_sym_config" />
 		<Add filter_name="output" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

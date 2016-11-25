@@ -96,6 +96,9 @@
 // C++ Headers
 #include <cstdlib>
 #include <map>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
 
@@ -343,22 +346,22 @@ AddMembraneMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-AddMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMembraneMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddMembraneMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddMembraneMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-AddMembraneMoverCreator::keyname() const {
-	return AddMembraneMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddMembraneMoverCreator::keyname() const {
+// XRW TEMP  return AddMembraneMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-AddMembraneMoverCreator::mover_name() {
-	return "AddMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddMembraneMover::mover_name() {
+// XRW TEMP  return "AddMembraneMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////
 /// Getters - For subclasses of AddMembraneMover ///
@@ -390,10 +393,10 @@ void AddMembraneMover::include_lips( bool include_lips ) { include_lips_ = inclu
 /////////////////////
 
 /// @brief Get the name of this Mover (AddMembraneMover)
-std::string
-AddMembraneMover::get_name() const {
-	return "AddMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddMembraneMover::get_name() const {
+// XRW TEMP  return "AddMembraneMover";
+// XRW TEMP }
 
 
 /// @brief Add Membrane Components to Pose
@@ -655,6 +658,58 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	return pose.size();
 
 }
+
+std::string AddMembraneMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddMembraneMover::mover_name() {
+	return "AddMembraneMover";
+}
+
+void
+AddMembraneMover::attributes_for_parse_center_normal_from_tag( utility::tag::AttributeList & attributes )
+{
+	// these attributes are actually more complex than just strings
+	using namespace utility::tag;
+	// AMW: these are not required
+	attributes + XMLSchemaAttribute( "center", xs_string , "Position of center of membrane in format x,y,z" )
+		+ XMLSchemaAttribute("normal", xs_string, "Membrane normal vector in format x,y,z");
+}
+
+
+void AddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "include_lips", xsct_rosetta_bool, "Include lipid accessibility information from a lipsfile")
+		+ XMLSchemaAttribute( "spanfile", xs_string, "Path to input spanfile")
+		+ XMLSchemaAttribute( "lipsfile", xs_string, "Path to input lipsfile")
+		+ XMLSchemaAttribute( "anchor_rsd", xsct_non_negative_integer, "Index of membrane residue anchor")
+		+ XMLSchemaAttribute( "membrane_rsd", xsct_non_negative_integer, "Membrane residue position")
+		+ XMLSchemaAttribute( "thickness", xsct_real, "Thickness of membrane. Score function is optimized to 15 Angstroms.")
+		+ XMLSchemaAttribute( "steepness", xsct_real, "Steepness of membrane transition. Score function optimized to 10.");
+
+	attributes_for_parse_center_normal_from_tag( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add membrane to a pose", attlist );
+}
+
+std::string AddMembraneMoverCreator::keyname() const {
+	return AddMembraneMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddMembraneMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddMembraneMover );
+}
+
+void AddMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddMembraneMover::provide_xml_schema( xsd );
+}
+
 
 /// @brief Helper Method - Check for Membrane residue already in the PDB
 utility::vector1< core::SSize >

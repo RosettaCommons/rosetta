@@ -63,6 +63,9 @@
 
 //Req'd on WN32
 #include <basic/datacache/WriteableCacheableMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
 
@@ -74,20 +77,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-RigidChunkCMCreator::keyname() const {
-	return RigidChunkCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RigidChunkCMCreator::keyname() const {
+// XRW TEMP  return RigidChunkCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RigidChunkCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidChunkCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RigidChunkCMCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RigidChunkCM );
+// XRW TEMP }
 
-std::string
-RigidChunkCMCreator::mover_name() {
-	return "RigidChunkCM";
-}
+// XRW TEMP std::string
+// XRW TEMP RigidChunkCM::mover_name() {
+// XRW TEMP  return "RigidChunkCM";
+// XRW TEMP }
 
 // This could be adapted to underpin the loops::Loops object, probably.
 class ResidueChunkSelection {
@@ -853,20 +856,20 @@ core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector(
 	return templ_selector_;
 }
 
-std::string RigidChunkCM::get_name() const {
-	std::ostringstream ss;
-	ss << "RigidChunkCM(";
-
-	if ( xml_name_ == "" ) {
-		ss << sim_selector()->get_name() << "+" << templ_selector()->get_name();
-		return ss.str();
-	} else {
-		ss << xml_name_;
-	}
-
-	ss << ")";
-	return ss.str();
-}
+// XRW TEMP std::string RigidChunkCM::get_name() const {
+// XRW TEMP  std::ostringstream ss;
+// XRW TEMP  ss << "RigidChunkCM(";
+// XRW TEMP
+// XRW TEMP  if ( xml_name_ == "" ) {
+// XRW TEMP   ss << sim_selector()->get_name() << "+" << templ_selector()->get_name();
+// XRW TEMP   return ss.str();
+// XRW TEMP  } else {
+// XRW TEMP   ss << xml_name_;
+// XRW TEMP  }
+// XRW TEMP
+// XRW TEMP  ss << ")";
+// XRW TEMP  return ss.str();
+// XRW TEMP }
 
 void RigidChunkCM::passport_updated() {
 	if ( !has_passport() ) {
@@ -878,6 +881,61 @@ void RigidChunkCM::passport_updated() {
 moves::MoverOP RigidChunkCM::clone() const {
 	return moves::MoverOP( new RigidChunkCM( *this ) );
 }
+
+std::string RigidChunkCM::get_name() const {
+	return mover_name();
+}
+
+std::string RigidChunkCM::mover_name() {
+	return "RigidChunkCM";
+}
+
+void RigidChunkCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"name", xs_string,
+		"Unique name for this client mover");
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"Residue selector specifying the region over which this client mover will be applied");
+	attlist + XMLSchemaAttribute(
+		"apply_to_template", xs_string,
+		"Comma-separated list of movers to apply to the template region");
+	attlist + XMLSchemaAttribute(
+		"template", xs_string,
+		"PDB file to be used as a template for the specified region. If the argument 'INPUT' is supplied instead, it will fix the coordinates to their current positions");
+	attlist + XMLSchemaAttribute(
+		"region_file", xs_string,
+		"Loops file specifying the region of the template pdb to use as a template for the pose");
+	attlist + XMLSchemaAttribute(
+		"region_selector", xs_string,
+		"Residue selector specifying the region of the template pdb to use as a template for the pose");
+	attlist + XMLSchemaAttribute(
+		"region", xs_string,
+		"String specifying indices of residues to be used as a template");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Holds a specified region of the pose constant, fixed to the coordinates in the template pdb file.",
+		attlist );
+}
+
+std::string RigidChunkCMCreator::keyname() const {
+	return RigidChunkCM::mover_name();
+}
+
+protocols::moves::MoverOP
+RigidChunkCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RigidChunkCM );
+}
+
+void RigidChunkCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RigidChunkCM::provide_xml_schema( xsd );
+}
+
 
 } // abscript
 } // abinitio

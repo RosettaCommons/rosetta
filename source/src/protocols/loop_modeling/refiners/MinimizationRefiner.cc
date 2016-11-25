@@ -28,6 +28,9 @@
 
 // C++ headers
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -43,13 +46,13 @@ using protocols::simple_moves::MinMover;
 using protocols::simple_moves::MinMoverOP;
 using protocols::simple_moves::symmetry::SymMinMover;
 
-protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinimizationRefiner );
-}
+// XRW TEMP protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MinimizationRefiner );
+// XRW TEMP }
 
-std::string MinimizationRefinerCreator::keyname() const {
-	return "MinimizationRefiner";
-}
+// XRW TEMP std::string MinimizationRefinerCreator::keyname() const {
+// XRW TEMP  return "MinimizationRefiner";
+// XRW TEMP }
 
 MinimizationRefiner::MinimizationRefiner(
 	bool cartesian, MinimizerOptionsOP options) {
@@ -139,6 +142,50 @@ void MinimizationRefiner::use_cartesian(bool setting) {
 bool MinimizationRefiner::use_cartesian() const {
 	return use_cartesian_;
 }
+
+std::string MinimizationRefiner::get_name() const {
+	return mover_name();
+}
+
+std::string MinimizationRefiner::mover_name() {
+	return "MinimizationRefiner";
+}
+
+void MinimizationRefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	// Calls :LoopMover::parse_my_tag: and "set_scorefxn_from_tag"
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	XMLSchemaSimpleSubelementList subelement_list;
+	XMLSchemaComplexTypeGenerator ct_gen;
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+	ct_gen.element_name( mover_name() )
+		.description(
+		"Perform gradient minimization on the loop being sampled. Both the sidechain"
+		"and backbone atoms are allowed to move, and no restraints are used" )
+		.add_attributes( attlist  )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string MinimizationRefinerCreator::keyname() const {
+	return MinimizationRefiner::mover_name();
+}
+
+protocols::moves::MoverOP
+MinimizationRefinerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MinimizationRefiner );
+}
+
+void MinimizationRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MinimizationRefiner::provide_xml_schema( xsd );
+}
+
 
 }
 }

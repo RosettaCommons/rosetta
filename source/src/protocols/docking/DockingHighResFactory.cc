@@ -49,15 +49,15 @@ DockingHighResFactory::create_docking_high_res_mover(
 	using std::endl;
 	using std::string;
 	using std::stringstream;
-	
+
 	static const std::map<DHR_Type, string> type_map {
 		{ DHR_Type::DockingHighResLegacy, "DockingHighResLegacy" },
 		{ DHR_Type::DockingPrepackProtocol, "DockingPrepackProtocol" },
 		{ DHR_Type::DockMCMProtocol, "DockMCMProtocol" },
 		{ DHR_Type::DockMinMover, "DockMinMover" },
 		{ DHR_Type::SnugDock, "SnugDock" },
-	};
-	
+		};
+
 	// temporary until I decide how I want to handle this
 	string type_name = type_map.at( type );
 

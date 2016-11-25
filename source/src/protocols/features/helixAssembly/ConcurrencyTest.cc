@@ -48,6 +48,10 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -87,6 +91,36 @@ ConcurrencyTest::report_features(
 	}
 	return 0;
 }
+
+std::string ConcurrencyTest::type_name() const {
+	return class_name();
+}
+
+std::string ConcurrencyTest::class_name() {
+	return "ConcurrencyTest";
+}
+
+void ConcurrencyTest::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Only used to test concurrent writing to a database. Doesn't report anything about the pose.", attlist );
+}
+
+std::string ConcurrencyTestCreator::type_name() const {
+	return ConcurrencyTest::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ConcurrencyTestCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ConcurrencyTest );
+}
+
+void ConcurrencyTestCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConcurrencyTest::provide_xml_schema( xsd );
+}
+
 
 }
 }

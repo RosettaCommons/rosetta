@@ -24,6 +24,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_modeling {
@@ -34,13 +37,13 @@ using core::pose::Pose;
 using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
-protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackingRefiner );
-}
+// XRW TEMP protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RepackingRefiner );
+// XRW TEMP }
 
-std::string RepackingRefinerCreator::keyname() const {
-	return "RepackingRefiner";
-}
+// XRW TEMP std::string RepackingRefinerCreator::keyname() const {
+// XRW TEMP  return "RepackingRefiner";
+// XRW TEMP }
 
 RepackingRefiner::RepackingRefiner(Size repack_period)
 : repack_period_(repack_period),
@@ -94,6 +97,51 @@ Size RepackingRefiner::get_repack_period() const {
 void RepackingRefiner::set_repack_period(Size period) {
 	repack_period_ = period;
 }
+
+std::string RepackingRefiner::get_name() const {
+	return mover_name();
+}
+
+std::string RepackingRefiner::mover_name() {
+	return "RepackingRefiner";
+}
+
+void RepackingRefiner::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("once_every", xsct_non_negative_integer, "Trigger repacking every Nth cycle.");
+
+	// add score function tags
+	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+	// add task operation tags
+	utilities::attributes_for_set_task_factory_from_tag( attlist );
+	// add LoopMover base class tags
+	XMLSchemaSimpleSubelementList subelement_list;
+	XMLSchemaComplexTypeGenerator ct_gen;
+
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+	ct_gen.element_name( mover_name() )
+		.description( "Repack the sidechains in and around the loop being sampled." )
+		.add_attributes( attlist  )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+std::string RepackingRefinerCreator::keyname() const {
+	return RepackingRefiner::mover_name();
+}
+
+protocols::moves::MoverOP
+RepackingRefinerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RepackingRefiner );
+}
+
+void RepackingRefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepackingRefiner::provide_xml_schema( xsd );
+}
+
 
 }
 }

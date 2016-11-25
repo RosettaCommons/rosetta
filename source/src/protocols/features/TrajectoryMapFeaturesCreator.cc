@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-TrajectoryMapFeaturesCreator::TrajectoryMapFeaturesCreator() {}
-TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() = default;
-FeaturesReporterOP TrajectoryMapFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new TrajectoryMapFeatures );
-}
+// XRW TEMP TrajectoryMapFeaturesCreator::TrajectoryMapFeaturesCreator() {}
+// XRW TEMP TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP TrajectoryMapFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new TrajectoryMapFeatures );
+// XRW TEMP }
 
-std::string TrajectoryMapFeaturesCreator::type_name() const {
-	return "TrajectoryMapFeatures";
-}
+// XRW TEMP std::string TrajectoryMapFeaturesCreator::type_name() const {
+// XRW TEMP  return "TrajectoryMapFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

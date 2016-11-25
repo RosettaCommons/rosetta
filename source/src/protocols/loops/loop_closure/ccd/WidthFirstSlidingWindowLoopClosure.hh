@@ -73,10 +73,10 @@ public:
 
 	//@brief run find fragments that close loop  (if ideal loop closing: such that the less_cut pose is close RMSD <0.1 to pose more_cut)
 	// returns less_cut and more_cut with best fragment already applied..
-	virtual void sample_loops( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
+	void sample_loops( core::pose::Pose& more_cut, core::pose::Pose& less_cut ) override;
 	// virtual void select_final_loop( core::pose::Pose& more_cut, core::pose::Pose& less_cut );
 	static void register_options();
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected:
 

@@ -26,6 +26,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -53,6 +54,10 @@ protected:
 public:
 	void
 	set_function( std::string const & func_def_str );
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::scoring::constraints::ConstraintOP

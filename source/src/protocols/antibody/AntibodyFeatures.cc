@@ -48,6 +48,10 @@
 #include <cppdb/frontend.h>
 
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/antibody/AntibodyFeaturesCreator.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 
@@ -92,10 +96,10 @@ AntibodyFeatures::set_interface_chains(utility::vector1<std::string> const & int
 	intermediate_interfaces_ = intermediate_interfaces;
 }
 
-std::string
-AntibodyFeatures::type_name() const {
-	return "AntibodyFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyFeatures::type_name() const {
+// XRW TEMP  return "AntibodyFeatures";
+// XRW TEMP }
 
 void
 AntibodyFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {
@@ -719,7 +723,7 @@ AntibodyFeatures::parse_my_tag(
 
 	}
 
-	include_proto_cdr4_ = tag->getOption("include_proto_cdr4", include_proto_cdr4_);
+	include_proto_cdr4_ = tag->getOption< bool >("include_proto_cdr4", include_proto_cdr4_);
 
 }
 
@@ -876,6 +880,96 @@ AntibodyFeatures::calculate_cdr_contacts_nres(const core::pose::Pose& pose, CDRN
 	TR << "CDR contacts: "<< ab_info_->get_CDR_name(cdr) << " "<< counts << std::endl;
 	return counts;
 }
+
+std::string AntibodyFeatures::type_name() const {
+	return class_name();
+}
+
+std::string AntibodyFeatures::class_name() {
+	return "AntibodyFeatures";
+}
+
+void AntibodyFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	//interface string
+	//some combination of L, H, A, and underscore
+
+	using namespace utility::tag;
+	std::string interface_regex = "[LH][LH]?_[AH]";
+	XMLSchemaRestriction interface;
+	interface.name( "ab_interface_string" );
+	interface.base_type( xs_string );
+	interface.add_restriction( xsr_pattern, interface_regex );
+	xsd.add_top_level_element( interface );
+	XMLSchemaRestriction interface_list;
+	interface_list.name( "ab_interface_list" );
+	interface_list.base_type( xs_string );
+	//interface_list.add_restriction( xsr_pattern, interface_regex + "([:,'`~+*&|;.]" + interface_regex + ")*" );
+	// AMW temp can't have &
+	interface_list.add_restriction( xsr_pattern, interface_regex + "([:,'`~+*|;.]" + interface_regex + ")*" );
+	xsd.add_top_level_element( interface_list );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default(
+		"pack_separated", xsct_rosetta_bool,
+		"repack chains after separation (better evaluation of unbound state).",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"pack_together", xsct_rosetta_bool,
+		"repack the input before calculating bound state values",
+		"false" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"dSASA_cutoff", xsct_real,
+		"XRW TO DO currently unused parameter",
+		"100" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"compute_packstat", xsct_rosetta_bool,
+		"Compute interface packstat",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"skip_all_antigen_analysis", xsct_rosetta_bool,
+		"Do not report antigen analysis.",
+		"false" )
+		+ XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"Name of the scoring function" )
+		+ XMLSchemaAttribute(
+		"interface", "ab_interface_string",
+		"Definition of the interface" )
+		+ XMLSchemaAttribute(
+		"interfaces", "ab_interface_list",
+		"Define multiple interface sections" )
+		+ XMLSchemaAttribute(
+		"cdr_definition", xs_string,
+		"XRW TO DO" )
+		+ XMLSchemaAttribute(
+		"input_ab_scheme", xs_string,
+		"XRW TO DO" )
+		+ XMLSchemaAttribute(
+		"include_proto_cdr4", xsct_rosetta_bool,
+		"XRW TO DO" );
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, "
+		"and LH_A (this can be set), and other metrics.",
+		attlist );
+}
+
+std::string AntibodyFeaturesCreator::type_name() const {
+	return AntibodyFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+AntibodyFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new AntibodyFeatures );
+}
+
+void AntibodyFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AntibodyFeatures::provide_xml_schema( xsd );
+}
+
 
 } //antibody
 } //protocols

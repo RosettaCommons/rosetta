@@ -42,6 +42,9 @@
 #include <protocols/forge/build/SegmentRebuild.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 //#include <basic/datacache/DataMap.hh>
@@ -52,22 +55,22 @@ namespace fldsgn {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
 
-std::string
-CircularPermutationCreator::keyname() const
-{
-	return CircularPermutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CircularPermutationCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CircularPermutation::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CircularPermutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CircularPermutation );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CircularPermutationCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CircularPermutation );
+// XRW TEMP }
 
-std::string
-CircularPermutationCreator::mover_name()
-{
-	return "CircularPermutation";
-}
+// XRW TEMP std::string
+// XRW TEMP CircularPermutation::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CircularPermutation";
+// XRW TEMP }
 
 
 /// @brief default constructor
@@ -140,10 +143,10 @@ CircularPermutation::which_chain( Size const pos, Pose const & pose ) const
 	return 0;
 }
 
-std::string
-CircularPermutation::get_name() const {
-	return CircularPermutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CircularPermutation::get_name() const {
+// XRW TEMP  return CircularPermutation::mover_name();
+// XRW TEMP }
 
 
 /// @brief
@@ -314,6 +317,41 @@ CircularPermutation::parse_my_tag(
 	split_ = ( tag->getOption<Size>( "split_chain", 0 ) );
 
 }
+
+std::string CircularPermutation::get_name() const {
+	return mover_name();
+}
+
+std::string CircularPermutation::mover_name() {
+	return "CircularPermutation";
+}
+
+void CircularPermutation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "pos", xsct_non_negative_integer, "Set new N-term. pos-1 becomes the new C-term." )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_chain", xsct_rosetta_bool, "Exclude this chain from the circular permutation.", "false" )
+		+ XMLSchemaAttribute( "split_chain", xsct_non_negative_integer, "Split chain at this position??? -Ask Nobuyasu Koga ( nobuyasu@uw.edu )" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "perform circularpermutation give a pose ( under development )", attlist );
+}
+
+std::string CircularPermutationCreator::keyname() const {
+	return CircularPermutation::mover_name();
+}
+
+protocols::moves::MoverOP
+CircularPermutationCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CircularPermutation );
+}
+
+void CircularPermutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CircularPermutation::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace fldsgn

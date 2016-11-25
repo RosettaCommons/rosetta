@@ -38,6 +38,10 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {
@@ -50,23 +54,23 @@ using namespace core::kinematics;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotDisjointedFoldTreeMover" );
 
-std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const
-{
-	return HotspotDisjointedFoldTreeMoverCreator::mover_name();
-}
+// XRW TEMP std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return HotspotDisjointedFoldTreeMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
+// XRW TEMP }
 
-std::string
-HotspotDisjointedFoldTreeMoverCreator::mover_name() {
-	return "HotspotDisjointedFoldTree";
-}
+// XRW TEMP std::string
+// XRW TEMP HotspotDisjointedFoldTreeMover::mover_name() {
+// XRW TEMP  return "HotspotDisjointedFoldTree";
+// XRW TEMP }
 
 HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
-	protocols::moves::Mover( HotspotDisjointedFoldTreeMoverCreator::mover_name()  ),
+	protocols::moves::Mover( HotspotDisjointedFoldTreeMover::mover_name()  ),
 	ddG_threshold_( 1.0 ),
 	chain_( 2 ),
 	interface_radius_( 8.0 ),
@@ -77,9 +81,9 @@ HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 
 HotspotDisjointedFoldTreeMover::~HotspotDisjointedFoldTreeMover( ) {}
 
-std::string HotspotDisjointedFoldTreeMover::get_name() const {
-	return HotspotDisjointedFoldTreeMoverCreator::mover_name();
-}
+// XRW TEMP std::string HotspotDisjointedFoldTreeMover::get_name() const {
+// XRW TEMP  return HotspotDisjointedFoldTreeMover::mover_name();
+// XRW TEMP }
 
 /// @details generates a foldtree that links the nearest residues on chain 1 to key residues on chain 2 and breaks the chain around the key residues on chain 2
 core::kinematics::FoldTreeOP
@@ -249,6 +253,44 @@ HotspotDisjointedFoldTreeMover::interface_radius() const
 {
 	return interface_radius_;
 }
+
+std::string HotspotDisjointedFoldTreeMover::get_name() const {
+	return mover_name();
+}
+
+std::string HotspotDisjointedFoldTreeMover::mover_name() {
+	return "HotspotDisjointedFoldTree";
+}
+
+void HotspotDisjointedFoldTreeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "ddG_threshold", xsct_real, "Threshold to categorize residues as hotspots by ddG", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain", xsct_non_negative_integer, "Chain with hotspots of interest, identified by sequentially numbering", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "radius", xsct_real, "Radius around which to calculate the local interface", "8.0" );
+	// + XMLSchemaAttribute( "resnums", xsct_refpose_enabled_residue_number_cslist, "Residues of interest to the alanine scanning calculation" );
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "resnums" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const {
+	return HotspotDisjointedFoldTreeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
+}
+
+void HotspotDisjointedFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HotspotDisjointedFoldTreeMover::provide_xml_schema( xsd );
+}
+
 }//movers
 }//protein_interface_design
 }//protocols

@@ -78,8 +78,8 @@ public:
 
 	/// @brief Return the name of this mover.
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
@@ -259,6 +259,27 @@ public:
 
 	std::string
 	get_last_checkpoint() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
+	static
+	std::string
+	mover_or_add_group_name();
+
+	static
+	std::string
+	add_ct_name( std::string );
+
 
 protected:
 

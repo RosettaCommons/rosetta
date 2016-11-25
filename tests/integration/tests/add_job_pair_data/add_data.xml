@@ -9,4 +9,5 @@
 		<Add mover_name="stringstring"/>
 		<Add mover_name="stringreal"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

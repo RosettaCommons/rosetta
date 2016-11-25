@@ -134,7 +134,7 @@ public:
 	/// @brief apply GenericMonteCarloMover (Mover)
 	void apply( Pose & pose ) override;
 
-	String get_name() const override;
+	// XRW TEMP  String get_name() const override;
 
 	/// @brief reset MC iterations, with pose used for the last & best structures
 	void reset( Pose & pose );
@@ -273,6 +273,8 @@ public: // mutators
 		Pose const &
 	) override;
 
+	//static void modify_attlist_and_ssl_for_children( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );
+
 	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
 		TagCOP,
@@ -334,6 +336,22 @@ public: // mutators
 	void last_accepted_score( core::Real const score ) { last_accepted_score_ = score; }
 	void lowest_score_pose( core::pose::PoseOP pose );
 	void last_accepted_pose( core::pose::PoseOP pose );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	define_composition_schema( utility::tag::XMLSchemaDefinition & );
+
 protected:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );

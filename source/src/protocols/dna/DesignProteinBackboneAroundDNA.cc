@@ -39,6 +39,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -60,6 +61,9 @@ using utility::vector1;
 #include <utility/vector0.hh>
 #include <utility/keys/Key3Vector.hh>
 #include <iterator>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -79,25 +83,25 @@ using basic::t_debug;
 using basic::t_trace;
 static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DesignProteinBackboneAroundDNA", t_info );
 
-std::string
-DesignProteinBackboneAroundDNACreator::keyname() const
-{
-	return DesignProteinBackboneAroundDNACreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DesignProteinBackboneAroundDNACreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DesignProteinBackboneAroundDNA::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DesignProteinBackboneAroundDNACreator::create_mover() const {
-	return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DesignProteinBackboneAroundDNACreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
+// XRW TEMP }
 
-std::string
-DesignProteinBackboneAroundDNACreator::mover_name()
-{
-	return "DesignProteinBackboneAroundDNA";
-}
+// XRW TEMP std::string
+// XRW TEMP DesignProteinBackboneAroundDNA::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DesignProteinBackboneAroundDNA";
+// XRW TEMP }
 
 DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA() :
-	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
 	type_("ccd"),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
@@ -113,7 +117,7 @@ DesignProteinBackboneAroundDNA::DesignProteinBackboneAroundDNA(
 	std::string  type,
 	ScoreFunctionCOP scorefxn
 ) :
-	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNACreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( DesignProteinBackboneAroundDNA::mover_name() ),
 	type_(std::move(type)),
 	gapspan_( option[ OptionKeys::loops::gapspan ]() ),
 	spread_( option[ OptionKeys::loops::spread ]() ),
@@ -220,10 +224,10 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	pose.fold_tree( ft_orig ); // restore original fold tree
 }
 
-std::string
-DesignProteinBackboneAroundDNA::get_name() const {
-	return DesignProteinBackboneAroundDNACreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DesignProteinBackboneAroundDNA::get_name() const {
+// XRW TEMP  return DesignProteinBackboneAroundDNA::mover_name();
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void DesignProteinBackboneAroundDNA::parse_my_tag(
@@ -360,6 +364,87 @@ DesignProteinBackboneAroundDNA::backrub(
 		pose = mc.last_accepted_pose();
 	}
 }
+
+std::string DesignProteinBackboneAroundDNA::get_name() const {
+	return mover_name();
+}
+
+std::string DesignProteinBackboneAroundDNA::mover_name() {
+	return "DesignProteinBackboneAroundDNA";
+}
+
+void DesignProteinBackboneAroundDNA::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction type_enum;
+	type_enum.name("bb_movement_types");
+	type_enum.base_type(xs_string);
+	type_enum.add_restriction(xsr_enumeration, "ccd");
+	type_enum.add_restriction(xsr_enumeration, "backrub");
+	xsd.add_top_level_element(type_enum);
+
+	attlist + XMLSchemaAttribute(
+		"type", "bb_movement_types",
+		"Backbone movement type");
+
+	attlist + XMLSchemaAttribute(
+		"gapspan", xsct_non_negative_integer,
+		"Number of residues allowed between dna contacting residues "
+		"for loop building.");
+
+	attlist + XMLSchemaAttribute(
+		"spread", xsct_non_negative_integer,
+		"Loop start/ends are extended by this number of residues.");
+
+	attlist + XMLSchemaAttribute(
+		"cycles_outer", xsct_non_negative_integer,
+		"outer cycles of CCD/backrub (MC)");
+
+	attlist + XMLSchemaAttribute(
+		"cycles_inner", xsct_non_negative_integer,
+		"inner cycles of CCD/backrub (MC)");
+
+	attlist + XMLSchemaAttribute(
+		"repack_rate", xsct_non_negative_integer,
+		"repack rate of CCD/backrub (MC)");
+
+	attlist + XMLSchemaAttribute(
+		"temp_initial", xsct_real,
+		"Initial temp of backrub (MC)");
+
+	attlist + XMLSchemaAttribute(
+		"temp_final", xsct_real,
+		"Final temp of backrub (MC)");
+
+	attlist + XMLSchemaAttribute(
+		"designable_second_shell", xsct_rosetta_bool,
+		"Allow design of residues in the neighborhood of the design shell");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Performs a round flexible backbone sampling/design and loop design around DNA.",
+		attlist );
+}
+
+std::string DesignProteinBackboneAroundDNACreator::keyname() const {
+	return DesignProteinBackboneAroundDNA::mover_name();
+}
+
+protocols::moves::MoverOP
+DesignProteinBackboneAroundDNACreator::create_mover() const {
+	return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
+}
+
+void DesignProteinBackboneAroundDNACreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DesignProteinBackboneAroundDNA::provide_xml_schema( xsd );
+}
+
 
 } // namespace dna
 } // namespace protocols

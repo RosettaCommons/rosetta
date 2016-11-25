@@ -153,7 +153,7 @@ private:  // Private data /////////////////////////////////////////////////////
 
 	// Glycan Relax
 	std::map< std::pair< std::string, std::string >, utility::vector1< LinkageConformerData > >
-			linkage_conformers_map_;
+		linkage_conformers_map_;
 };  // class CarbohydrateInfoManager
 
 

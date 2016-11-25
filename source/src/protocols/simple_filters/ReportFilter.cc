@@ -27,6 +27,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
@@ -35,11 +38,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
 
-protocols::filters::FilterOP
-ReportFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ReportFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ReportFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ReportFilter ); }
 
-std::string
-ReportFilterCreator::keyname() const { return "Report"; }
+// XRW TEMP std::string
+// XRW TEMP ReportFilterCreator::keyname() const { return "Report"; }
 
 //default ctor
 ReportFilter::ReportFilter() :
@@ -143,6 +146,62 @@ std::string ReportFilter::report_string() const
 {
 	return report_string_->obj;
 }
+
+std::string ReportFilter::name() const {
+	return class_name();
+}
+
+std::string ReportFilter::class_name() {
+	return "Report";
+}
+
+void ReportFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"name", xs_string,
+		"Name for tag the filter to be reported")
+		+ XMLSchemaAttribute(
+		"report_string", xs_string,
+		"name of an object on the datamap that stores a value for reporting. "
+		"This requires another mover/filter to be aware of this object and modify "
+		"it. Currently no movers/filters use this functionality, "
+		"but it could come in useful in future")
+		+ XMLSchemaAttribute(
+		"filter", xs_string,
+		"name of a filter on the datamap that report will invoke")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"checkpointing_file", xs_string,
+		"If the protocol is checkpointed (e.g., through GenericMonteCarlo) "
+		"this will make ReportFilter checkpoint its data. If the checkpointing "
+		"file exists the value from the checkpointing file will be read into "
+		"ReportFilter's internal value and will be reported at the end of the "
+		"run. On apply, the filter's value will be written to the checkpointing file.",
+		"");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"This filter reports the value of another filter with the current job "
+		"name. Useful when running long trajectories where one wants to see "
+		"intermediate values of successful trajectories",
+		attlist );
+}
+
+std::string ReportFilterCreator::keyname() const {
+	return ReportFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ReportFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ReportFilter );
+}
+
+void ReportFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReportFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

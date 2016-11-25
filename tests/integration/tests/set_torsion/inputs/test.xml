@@ -1,15 +1,15 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<RestrictToRepacking name=repack_only />
+		<RestrictToRepacking name="repack_only" />
 	</TASKOPERATIONS>
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
 
-		<PeptideStubMover name=build1 reset=true>
+		<PeptideStubMover name="build1" reset="true">
 			<Append resname="ALA" />
 			<Append resname="ALA" />
 			<Append resname="ALA" />
@@ -35,35 +35,36 @@
 			<Append resname="ALA" />
 		</PeptideStubMover>
 		
-		<SetTorsion name=tors1>
-			<Torsion torsion_name=omega residue=ALL angle=180 />
-			<Torsion torsion_name=phi residue=ALL angle=-150 />
-			<Torsion torsion_name=psi residue=ALL angle=150 />
+		<SetTorsion name="tors1">
+			<Torsion torsion_name="omega" residue="ALL" angle="180" />
+			<Torsion torsion_name="phi" residue="ALL" angle="-150" />
+			<Torsion torsion_name="psi" residue="ALL" angle="150" />
 		</SetTorsion>
 		
-		<SetTorsion name=tors2>
-			<Torsion torsion_name=phi residue=2 angle=-60 />
-			<Torsion torsion_name=psi residue=2 angle=-41 />
-			<Torsion torsion_name=rama residue=4 angle=rama_biased />
-			<Torsion residue=pick_atoms angle=-50 >
-				<Atom1 residue=5 atom=C />
-				<Atom2 residue=6 atom=N />
-				<Atom3 residue=6 atom=CA />
-				<Atom4 residue=6 atom=C />
+		<SetTorsion name="tors2">
+			<Torsion torsion_name="phi" residue="2" angle="-60" />
+			<Torsion torsion_name="psi" residue="2" angle="-41" />
+			<Torsion torsion_name="rama" residue="4" angle="rama_biased" />
+			<Torsion residue="pick_atoms" angle="-50" >
+				<Atom1 residue="5" atom="C" />
+				<Atom2 residue="6" atom="N" />
+				<Atom3 residue="6" atom="CA" />
+				<Atom4 residue="6" atom="C" />
 			</Torsion>
-			<Torsion residue=8 torsion_name=phi angle=random />
-			<Torsion residue=8 torsion_name=psi angle=random />
-			<Torsion residue=10 torsion_name=phi angle=perturb perturbation_type=uniform perturbation_magnitude=5 />
-			<Torsion residue=10 torsion_name=psi angle=perturb perturbation_type=gaussian perturbation_magnitude=5  />
+			<Torsion residue="8" torsion_name="phi" angle="random" />
+			<Torsion residue="8" torsion_name="psi" angle="random" />
+			<Torsion residue="10" torsion_name="phi" angle="perturb" perturbation_type="uniform" perturbation_magnitude="5" />
+			<Torsion residue="10" torsion_name="psi" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="5"  />
 		</SetTorsion>
 	
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=build1 />
-		<Add mover=tors1 />
-		<Add mover=tors2 />
+		<Add mover="build1" />
+		<Add mover="tors1" />
+		<Add mover="tors2" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn=tala />
+	<OUTPUT scorefxn="tala" />
+
 </ROSETTASCRIPTS>

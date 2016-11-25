@@ -126,6 +126,10 @@
 #include <devel/splice/RBInMover.hh>
 #include <devel/splice/RBOutMover.hh>
 #include <protocols/toolbox/superimpose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 namespace devel {
 namespace splice {
@@ -137,20 +141,20 @@ static THREAD_LOCAL basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
 static THREAD_LOCAL basic::Tracer TR_constraints( "devel.splice.Splice_constraints" );
 static THREAD_LOCAL basic::Tracer TR_pssm( "devel.splice.Splice_pssm" );
 static THREAD_LOCAL basic::Tracer TR_min( "devel.splice.Splice_min" );
-std::string SpliceCreator::keyname() const {
-	return SpliceCreator::mover_name();
-}
+// XRW TEMP std::string SpliceCreator::keyname() const {
+// XRW TEMP  return Splice::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP SpliceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Splice );
-}
+// XRW TEMP protocols::moves::MoverOP SpliceCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new Splice );
+// XRW TEMP }
 
-std::string SpliceCreator::mover_name() {
-	return "Splice";
-}
+// XRW TEMP std::string Splice::mover_name() {
+// XRW TEMP  return "Splice";
+// XRW TEMP }
 
 Splice::Splice() :
-	Mover(SpliceCreator::mover_name()), from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
+	Mover(Splice::mover_name()), from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
 	/* NULL */), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_( /* NULL */),
 	design_task_factory_( /* NULL */), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
 	template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* NULL */), start_pose_( nullptr),source_pose_(nullptr),
@@ -1774,9 +1778,9 @@ void Splice::retrieve_values() {
 	save_to_checkpoint();
 }
 
-std::string Splice::get_name() const {
-	return SpliceCreator::mover_name();
-}
+// XRW TEMP std::string Splice::get_name() const {
+// XRW TEMP  return Splice::mover_name();
+// XRW TEMP }
 
 void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
@@ -3075,6 +3079,174 @@ core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) 
 
 	return 0;
 }
+
+std::string Splice::get_name() const {
+	return mover_name();
+}
+
+std::string Splice::mover_name() {
+	return "Splice";
+}
+
+std::string complex_type_name_for_subsubtag( std::string const & foo ) {
+	return "subsubtag_splice_" + foo + "_type";
+}
+
+std::string complex_type_name_for_subtag( std::string const & foo ) {
+	return "subtag_splice_" + foo + "_type";
+}
+
+void Splice::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW TODO
+	using namespace utility::tag;
+
+	XMLSchemaRestriction n_or_c;
+	n_or_c.name( "n_or_c" );
+	n_or_c.base_type( xs_string );
+	n_or_c.add_restriction( xsr_enumeration, "n" );
+	n_or_c.add_restriction( xsr_enumeration, "c" );
+	xsd.add_top_level_element( n_or_c );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "XRW TO DO", "0.23" )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_chain_break", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "debug", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_seg", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "CG_const", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rb_sensitive", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "chain_num", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute( "segment", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "superimposed", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_n", xsct_non_negative_integer, "XRW TO DO", "4" )
+		+ XMLSchemaAttribute::attribute_w_default( "delete_hairpin_c", xsct_non_negative_integer, "XRW TO DO", "13" )
+		+ XMLSchemaAttribute( "tail_segment", "n_or_c", "XRW TO DO" )
+		//+ XMLSchemaAttribute( "tail_segment", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "protein_family", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "source_pdb_to_res", xsct_refpose_enabled_residue_number, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "skip_alignment", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	// The "Segments" subtag
+	AttributeList segments_subtag_attlist;
+	segments_subtag_attlist + XMLSchemaAttribute::attribute_w_default( "profile_weight_away_from_interface", xsct_real, "XRW TO DO", "1.0" )
+		+ XMLSchemaAttribute( "current_segment", xs_string, "XRW TO DO" );
+
+	// The "segment" sub-subtag"
+	AttributeList subtag_segments_subtag_attlist;
+	subtag_segments_subtag_attlist + XMLSchemaAttribute( "pdb_profile_match", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "profiles", xs_string, "XRW TO DO" );
+
+	XMLSchemaComplexTypeGenerator segment_subsubtag_gen;
+	segment_subsubtag_gen.complex_type_naming_func( & complex_type_name_for_subsubtag )
+		.element_name( "segment" )
+		.description( "individual segment tag" )
+		.add_attributes( subtag_segments_subtag_attlist )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList subsubelements;
+	subsubelements.add_already_defined_subelement( "segment", complex_type_name_for_subsubtag/*, 0*/ );
+
+	XMLSchemaComplexTypeGenerator segments_subtag_gen;
+	segments_subtag_gen.complex_type_naming_func( & complex_type_name_for_subtag )
+		.element_name( "Segments" )
+		.description( "Wrapper for multiple segments tags" )
+		.add_attributes( segments_subtag_attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( subsubelements )
+		.write_complex_type_to_schema( xsd );
+
+	// The "db" subtag
+
+	AttributeList db_subtag_attlist;
+
+	// The "torsion_db" sub-subtag"
+	AttributeList torsion_db_subsubtag_attlist;
+	torsion_db_subsubtag_attlist + XMLSchemaAttribute( "torsion_db", xs_string, "XRW TO DO" );
+
+
+	XMLSchemaComplexTypeGenerator torsion_db_subsubtag_gen;
+	torsion_db_subsubtag_gen.complex_type_naming_func( & complex_type_name_for_subsubtag )
+		.element_name( "torsion_db" )
+		.description( "individual torsion_db tag" )
+		.add_attributes( torsion_db_subsubtag_attlist )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+	XMLSchemaAttribute( "torsion_db_file", xs_string, "XRW TO DO" );
+
+	XMLSchemaSimpleSubelementList db_subsubelements;
+	subsubelements.add_already_defined_subelement( "torsion_db", complex_type_name_for_subsubtag/*, 0*/ );
+
+	XMLSchemaComplexTypeGenerator db_subtag_gen;
+	db_subtag_gen.complex_type_naming_func( & complex_type_name_for_subtag )
+		.element_name( "DB" )
+		.description( "Wrapper for multiple segments tags" )
+		.add_attributes( db_subtag_attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( db_subsubelements )
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_already_defined_subelement( "Segments", complex_type_name_for_subtag/*, 0*/ );
+	subelements.add_already_defined_subelement( "DB", complex_type_name_for_subtag/*, 0*/ );
+
+	attlist + XMLSchemaAttribute( "use_seqeunce_profile", xsct_rosetta_bool, "XRW TO DO" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "add_sequence_constraints_only", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute( "template_file", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "set_fold_tree_only", xsct_rosetta_bool, "XRW TO DO", "false" );
+	//+ XMLSchemaAttribute::attribute_w_default( "source_pdb", xsct_rosetta_bool, "XRW TO DO", "false" ); ///aaa
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "from_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "to_res", xsct_refpose_enabled_residue_number, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute( "design_task_operations", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "torsion_database", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "database_entry", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "database_pdb_entry", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "source_pdb", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "ccd", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_shell", xsct_real, "XRW TO DO", "6.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell", xsct_real, "XRW TO DO", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "rms_cutoff", xsct_real, "XRW TO DO", "999999" )
+		+ XMLSchemaAttribute::attribute_w_default( "res_move", xsct_non_negative_integer, "XRW TO DO", "1000" )
+		+ XMLSchemaAttribute::attribute_w_default( "randomize_cut", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "cut_secondarystruc", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "equal_length", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "thread_ala", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute( "delta_lengths", xsct_int_cslist, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "thread_original_sequence", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "allow_all_aa", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dbase_iterate", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute( "locked_residue", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "loop_dbase_file_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "splice_filter", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "mover_tag", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "loop_pdb_source", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "restrict_to_repacking_chain2", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sequence_profiles", xsct_rosetta_bool, "XRW TO DO", "true" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string SpliceCreator::keyname() const {
+	return Splice::mover_name();
+}
+
+protocols::moves::MoverOP
+SpliceCreator::create_mover() const {
+	return protocols::moves::MoverOP( new Splice );
+}
+
+void SpliceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Splice::provide_xml_schema( xsd );
+}
+
 
 
 } //splice

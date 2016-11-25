@@ -2,7 +2,7 @@
     <SCOREFXNS>
     </SCOREFXNS>
     <RESIDUE_SELECTORS>
-	<Chain name=pep chains=C/>
+	<Chain name="pep" chains="C"/>
     </RESIDUE_SELECTORS>
     <TASKOPERATIONS>
     </TASKOPERATIONS>
@@ -15,7 +15,8 @@
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
     <PROTOCOLS>
-	<Add mover=mirror/> #remember to de-activate one of the above
+	<Add mover="mirror"/> #remember to de-activate one of the above
     </PROTOCOLS>
     <OUTPUT />
+
 </ROSETTASCRIPTS>

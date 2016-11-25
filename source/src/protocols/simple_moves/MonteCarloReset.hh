@@ -67,7 +67,7 @@ public: // constructor/destructor
 
 	/// @brief create this type of objectt
 	MoverOP fresh_instance() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief apply MonteCarloReset (Mover)
 	void apply( Pose & pose ) override;
@@ -83,6 +83,18 @@ public: // constructor/destructor
 		Movers_map const & movers,
 		Pose const &
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	// bool recover_low() const;
 	// void recover_low( bool const recover );

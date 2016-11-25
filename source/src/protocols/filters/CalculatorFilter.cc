@@ -27,6 +27,14 @@
 #include <numeric/Calculator.hh>
 #include <numeric/random/random.hh>
 
+// Boost Headers
+// ?? #include <boost/foreach.hpp>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+
+
 namespace protocols {
 namespace filters {
 
@@ -143,11 +151,59 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	}
 }
 
-FilterOP
-CalculatorFilterCreator::create_filter() const { return FilterOP( new CalculatorFilter ); }
+// XRW TEMP FilterOP
+// XRW TEMP CalculatorFilterCreator::create_filter() const { return FilterOP( new CalculatorFilter ); }
 
-std::string
-CalculatorFilterCreator::keyname() const { return "CalculatorFilter"; }
+// XRW TEMP std::string
+// XRW TEMP CalculatorFilterCreator::keyname() const { return "CalculatorFilter"; }
+
+std::string CalculatorFilter::name() const {
+	return class_name();
+}
+
+std::string CalculatorFilter::class_name() {
+	return "CalculatorFilter";
+}
+
+void CalculatorFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "Unique name to identify this constant" )
+		+ XMLSchemaAttribute( "value", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "filter", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "filter_name", xs_string, "XRW TO DO" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "VAR", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "Var", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "var", subelement_attlist, "XRW TO DO" );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "equation", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string CalculatorFilterCreator::keyname() const {
+	return CalculatorFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CalculatorFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CalculatorFilter );
+}
+
+void CalculatorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CalculatorFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protocols

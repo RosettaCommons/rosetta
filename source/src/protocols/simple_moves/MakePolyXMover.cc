@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -29,6 +30,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MakePolyXMover" );
@@ -36,25 +40,25 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MakePolyXMover" );
 namespace protocols {
 namespace simple_moves {
 
-std::string
-MakePolyXMoverCreator::keyname() const
-{
-	return MakePolyXMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MakePolyXMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MakePolyXMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MakePolyXMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakePolyXMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakePolyXMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MakePolyXMover );
+// XRW TEMP }
 
-std::string
-MakePolyXMoverCreator::mover_name()
-{
-	return "MakePolyX";
-}
+// XRW TEMP std::string
+// XRW TEMP MakePolyXMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MakePolyX";
+// XRW TEMP }
 
 MakePolyXMover::MakePolyXMover():
-	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
+	protocols::moves::Mover( MakePolyXMover::mover_name() ),
 	aa_( "ALA" ), //SML Jul 10 2016, changed AA to ALA.  Unclear if a typo or deliberate non amino acid?
 	keep_pro_( false ),
 	keep_gly_( true ),
@@ -63,7 +67,7 @@ MakePolyXMover::MakePolyXMover():
 {}
 
 MakePolyXMover::MakePolyXMover( std::string aa, bool keep_pro, bool keep_gly, bool keep_disulfide_cys ):
-	protocols::moves::Mover( MakePolyXMoverCreator::mover_name() ),
+	protocols::moves::Mover( MakePolyXMover::mover_name() ),
 	aa_(std::move( aa )),
 	keep_pro_( keep_pro ),
 	keep_gly_( keep_gly ),
@@ -100,12 +104,6 @@ void MakePolyXMover::apply( Pose & pose )
 	construct_poly_XXX_pose( aa_, pose, protein_residues, keep_pro_, keep_gly_, keep_disulfide_cys_ );
 }
 
-
-std::string
-MakePolyXMover::get_name() const {
-	return MakePolyXMoverCreator::mover_name();
-}
-
 /// @brief parse xml
 void
 MakePolyXMover::parse_my_tag(
@@ -120,7 +118,7 @@ MakePolyXMover::parse_my_tag(
 	keep_gly_  = tag->getOption<bool>( "keep_gly", 1 );
 	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulfide_cys", 0 );
 
-	ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) selector_ = selector;
 
 	TR << "MakePolyXMover was loaded" << std::endl;
@@ -134,6 +132,57 @@ MakePolyXMover::parse_my_tag(
 	}
 
 }
+
+std::string MakePolyXMover::get_name() const {
+	return mover_name();
+}
+
+std::string MakePolyXMover::mover_name() {
+	return "MakePolyX";
+}
+
+void MakePolyXMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default(
+		"aa", xs_string,
+		"using amino acid type for converting",
+		"ALA" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"keep_pro", xsct_rosetta_bool,
+		"Pro is not converted to XXX",
+		"false" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"keep_gly", xsct_rosetta_bool,
+		"Gly is not converted to XXX",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"keep_disulfide_cys", xsct_rosetta_bool,
+		"disulfide CYS is not converted to XXX",
+		"false" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Convert pose into poly XXX ( XXX can be any amino acid )",
+		attlist );
+}
+
+std::string MakePolyXMoverCreator::keyname() const {
+	return MakePolyXMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MakePolyXMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakePolyXMover );
+}
+
+void MakePolyXMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakePolyXMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace simple_moves
 }  // namespace protocols

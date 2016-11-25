@@ -75,17 +75,17 @@ public:
 	setup( core::scoring::ScoreFunctionCOP sfxn );
 
 	//parser stuff
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief apply a sidechain move to a Pose object
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	void
 	set_ntrials( core::Size ntrial ){
@@ -129,50 +129,56 @@ public:
 		return sfxn_;
 	}
 
-	virtual
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
-	virtual
 	core::Real
-	last_proposal_density_ratio()
+	last_proposal_density_ratio() override
 	{
 		return 1;
 	}
 
-	virtual
 	bool
-	is_multi_trial()
+	is_multi_trial() override
 	{
 		return true;
 	}
 
-	virtual
 	core::Real
-	last_inner_score_delta_over_temperature()
+	last_inner_score_delta_over_temperature() override
 	{
 		return (score_post_apply_-score_pre_apply_)/temperature_;
 	}
 
-	virtual
 	protocols::canonical_sampling::MetropolisHastingsMoverAP
-	metropolis_hastings_mover()
+	metropolis_hastings_mover() override
 	{
 		return metropolis_hastings_mover_;
 	}
 
-	virtual
 	void
 	set_metropolis_hastings_mover(
 		protocols::canonical_sampling::MetropolisHastingsMoverAP metropolis_hastings_mover
-	)
+	) override
 	{
 		metropolis_hastings_mover_ = metropolis_hastings_mover;
 	}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

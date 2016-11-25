@@ -83,7 +83,7 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -414,6 +414,18 @@ public:
 	/// @details The apply() function calls the private function set_last_apply_failed() to
 	/// set this.
 	bool last_apply_failed() const { return last_apply_failed_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

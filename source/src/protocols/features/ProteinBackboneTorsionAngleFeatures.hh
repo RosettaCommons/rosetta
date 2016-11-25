@@ -29,6 +29,8 @@
 #include <string>
 
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -43,8 +45,8 @@ public:
 	~ProteinBackboneTorsionAngleFeatures() override;
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
@@ -70,6 +72,18 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

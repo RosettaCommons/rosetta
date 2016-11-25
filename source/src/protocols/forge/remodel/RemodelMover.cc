@@ -134,9 +134,14 @@
 
 // C++ headers
 #include <utility>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
+// ObjexxFCL includes
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-
 
 //#define FILE_DEBUG 1
 
@@ -154,20 +159,20 @@ namespace remodel {
 static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
 // parser
-std::string
-RemodelMoverCreator::keyname() const {
-	return RemodelMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RemodelMoverCreator::keyname() const {
+// XRW TEMP  return RemodelMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RemodelMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemodelMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RemodelMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RemodelMover );
+// XRW TEMP }
 
-std::string
-RemodelMoverCreator::mover_name() {
-	return "RemodelMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RemodelMover::mover_name() {
+// XRW TEMP  return "RemodelMover";
+// XRW TEMP }
 
 ///
 /// @brief
@@ -1454,9 +1459,9 @@ forge::remodel::RemodelData RemodelMover::setup_remodel_data_for_loop_btw_parame
 
 
 /// @brief get_name function for JobDistributor
-std::string RemodelMover::get_name() const {
-	return "RemodelMover";
-}
+// XRW TEMP std::string RemodelMover::get_name() const {
+// XRW TEMP  return "RemodelMover";
+// XRW TEMP }
 
 ///
 /// @brief
@@ -2529,14 +2534,14 @@ RemodelMover::parse_my_tag(
 	TR << "Setting match_rt_limit " << rosetta_scripts_match_rt_limit_ << std::endl;
 
 	if ( tag->hasOption("min_disulfides") ) {
-		rosetta_scripts_min_disulfides_ = tag->getOption< core::Real >( "min_disulfides", 1 );
+		rosetta_scripts_min_disulfides_ = tag->getOption< core::Size >( "min_disulfides", 1 );
 	} else {
 		rosetta_scripts_min_disulfides_ = 1;
 	}
 	TR << "Setting min_disulfides " << rosetta_scripts_min_disulfides_ << std::endl;
 
 	if ( tag->hasOption("max_disulfides") ) {
-		rosetta_scripts_max_disulfides_ = tag->getOption< core::Real >( "max_disulfides", 1 );
+		rosetta_scripts_max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", 1 );
 	} else {
 		rosetta_scripts_max_disulfides_ = 1;
 	}
@@ -2591,6 +2596,52 @@ RemodelMover::parse_my_tag(
 	}
 	TR << "Setting disulf_fa_max " << disulf_fa_max_ << std::endl;
 }
+
+std::string RemodelMover::get_name() const {
+	return mover_name();
+}
+
+std::string RemodelMover::mover_name() {
+	return "RemodelMover";
+}
+
+void RemodelMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "build_disulf", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "fast_disulf", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "quick_and_dirty", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "bypass_fragments", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "match_rt_limit", xsct_real, "XRW TO DO", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_disulfides", xsct_real, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_disulfides", xsct_real, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_loop", xsct_real, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_current_disulfides", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_current_disulfides", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_bb_for_disulf", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_match_rt", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_disulf_fa_score", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "disulf_fa_max", xsct_real, "XRW TO DO", "-0.25" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RemodelMoverCreator::keyname() const {
+	return RemodelMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RemodelMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RemodelMover );
+}
+
+void RemodelMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RemodelMover::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace remodel

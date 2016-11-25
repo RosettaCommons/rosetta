@@ -53,6 +53,10 @@
 #include <algorithm>
 #include <utility/excn/Exceptions.hh>
 #include <map>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/AtomAtomPairFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -137,8 +141,8 @@ AtomAtomPairFeatures::AtomAtomPairFeatures(AtomAtomPairFeatures const & ) = defa
 
 AtomAtomPairFeatures::~AtomAtomPairFeatures()= default;
 
-string
-AtomAtomPairFeatures::type_name() const { return "AtomAtomPairFeatures"; }
+// XRW TEMP string
+// XRW TEMP AtomAtomPairFeatures::type_name() const { return "AtomAtomPairFeatures"; }
 
 void
 AtomAtomPairFeatures::write_schema_to_db(
@@ -317,6 +321,40 @@ AtomAtomPairFeatures::report_atom_pairs(
 		}
 	}
 }
+
+std::string AtomAtomPairFeatures::type_name() const {
+	return class_name();
+}
+
+std::string AtomAtomPairFeatures::class_name() {
+	return "AtomAtomPairFeatures";
+}
+
+void AtomAtomPairFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "min_dist", xsct_real, "Minimum distance of interest", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_dist", xsct_real, "Maximum distance of interest", "10.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "nbins", xsct_positive_integer, "Number of bins to subdivide the above interval", "15" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Atom pair features for any two atoms in a pose", attlist );
+}
+
+std::string AtomAtomPairFeaturesCreator::type_name() const {
+	return AtomAtomPairFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+AtomAtomPairFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new AtomAtomPairFeatures );
+}
+
+void AtomAtomPairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomAtomPairFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

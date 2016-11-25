@@ -33,6 +33,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 // Project Headers
 
 
@@ -41,11 +44,11 @@ static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.LrmsdFilter" );
 namespace devel {
 namespace replica_docking {
 
-protocols::filters::FilterOP
-LrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LrmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP LrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LrmsdFilter ); }
 
-std::string
-LrmsdFilterCreator::keyname() const { return "Lrmsd"; }
+// XRW TEMP std::string
+// XRW TEMP LrmsdFilterCreator::keyname() const { return "Lrmsd"; }
 
 void LrmsdFilter::register_options() {
 	using namespace basic::options;
@@ -147,6 +150,41 @@ LrmsdFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real lrmsd = protocols::docking::calc_Lrmsd( pose, *native_pose_, movable_jumps_ );
 	return( lrmsd );
 }
+
+std::string LrmsdFilter::name() const {
+	return class_name();
+}
+
+std::string LrmsdFilter::class_name() {
+	return "Lrmsd";
+}
+
+void LrmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// Doesn't parse a scorefunction, unlike the others
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold below which the interaction score filter fails", "-30" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_threshold", xsct_real, "Threshold above which the interaction score filter fails", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_positive_integer, "Jump across which the interface is defined, numbered sequentially from 1", "1" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string LrmsdFilterCreator::keyname() const {
+	return LrmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LrmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LrmsdFilter );
+}
+
+void LrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LrmsdFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

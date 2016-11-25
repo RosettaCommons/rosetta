@@ -34,21 +34,19 @@ public:
 	AddStartnodeFragments();
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
-	virtual
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
-	virtual
 	void
 	parse_my_tag(
 		TagCOP tag,
@@ -56,7 +54,19 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

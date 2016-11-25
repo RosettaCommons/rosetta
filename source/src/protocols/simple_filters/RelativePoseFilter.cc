@@ -41,6 +41,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -373,11 +376,11 @@ RelativePoseFilter::clone() const{
 	return protocols::filters::FilterOP( new RelativePoseFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-RelativePoseFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativePoseFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP RelativePoseFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativePoseFilter ); }
 
-std::string
-RelativePoseFilterCreator::keyname() const { return "RelativePose"; }
+// XRW TEMP std::string
+// XRW TEMP RelativePoseFilterCreator::keyname() const { return "RelativePose"; }
 
 protocols::moves::MoverOP
 RelativePoseFilter::relax_mover() const{
@@ -444,6 +447,61 @@ RelativePoseFilter::rtmin() const{ return rtmin_; }
 
 void
 RelativePoseFilter::rtmin( bool const b ){ rtmin_ = b; }
+
+std::string RelativePoseFilter::name() const {
+	return class_name();
+}
+
+std::string RelativePoseFilter::class_name() {
+	return "RelativePose";
+}
+
+void RelativePoseFilter::attributes( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+
+	attlist + XMLSchemaAttribute::attribute_w_default("use_native_pdb", xsct_rosetta_bool, "boolean as to whether or not to use the native pdb", "false")
+		+ XMLSchemaAttribute("pdb_name", xs_string, "which is the reference pose to read from disk.")
+		+ XMLSchemaAttribute::attribute_w_default("symmetry_definition", xs_string, "; default is none", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("relax_mover", xs_string, "which relax mover to apply after threading; by default, it is null", "null")
+		+ XMLSchemaAttribute::required_attribute("filter", xs_string, "which filter to apply; default is null")
+		+ XMLSchemaAttribute::attribute_w_default("name", xs_string, "actual name given to the filter being used", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("baseline", xsct_rosetta_bool, "indicates whether or not a baseline should be used", "1")
+		+ XMLSchemaAttribute::attribute_w_default("dump_pose", xs_string, "filename for where to dump the pdb pose", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("alignment", xs_string, "alignment is expecting X1:Y1,X2:Y2,X3:Y3... where X is the protein on disk (target) and Y is the active structure (starting structure). When no alignment is given it is implied that the poses are trivially aligned 1..nres", "XRW TO DO");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("packing_shell", xsct_real, "radius of shell around each residue to repack after threading. The more use use the longer the simulation", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("rtmin", xsct_rosetta_bool, "do rtmin following repack?", "0")
+		+ XMLSchemaAttribute("thread", xsct_rosetta_bool, "Normally you'd want this to be true. This is not the case only if you're estimating baselines for the disk pose before doing an actual run.")
+		+ XMLSchemaAttribute::attribute_w_default("unbound", xsct_rosetta_bool, "before threading, should we dissociate the complex?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("copy_stretch", xsct_rosetta_bool, "rather than threading the residue identities on the pose read from disk, copy the aligned segment from the current pose onto the pose read from disk (residue identities + conformations). No repacking is done, and then goes straight to relax. Obviously the segment should be prealigned for this to make any sense, and should probably only be used on entire chains rather than stretches within chains. Any way, take care in using. No guarantees.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("copy_comments", xs_string, "a comma-delimited list of pose-comment key values to copy from the reference pose (the current pose computed in the trajectory) to the relative pose (from disk). Useful if conformational change needs to be communicated from the reference pose to the relative pose", "XRW TO DO");
+}
+
+void RelativePoseFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	RelativePoseFilter::attributes( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Compute a filter's value relative to a different pose's structure.", attlist );
+}
+
+std::string RelativePoseFilterCreator::keyname() const {
+	return RelativePoseFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RelativePoseFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RelativePoseFilter );
+}
+
+void RelativePoseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RelativePoseFilter::provide_xml_schema( xsd );
+}
+
 
 } // simple_filters
 } // protocols

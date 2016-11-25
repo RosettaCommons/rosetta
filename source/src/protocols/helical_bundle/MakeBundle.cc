@@ -41,6 +41,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -51,22 +54,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundle");
 
-std::string
-MakeBundleCreator::keyname() const
-{
-	return MakeBundleCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MakeBundleCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MakeBundle::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MakeBundleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeBundle );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeBundleCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MakeBundle );
+// XRW TEMP }
 
-std::string
-MakeBundleCreator::mover_name()
-{
-	return "MakeBundle";
-}
+// XRW TEMP std::string
+// XRW TEMP MakeBundle::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MakeBundle";
+// XRW TEMP }
 
 /// @brief Creator for MakeBundle mover.
 MakeBundle::MakeBundle():
@@ -266,9 +269,9 @@ void MakeBundle::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("MakeBundle").
-std::string MakeBundle::get_name() const{
-	return "MakeBundle";
-}
+// XRW TEMP std::string MakeBundle::get_name() const{
+// XRW TEMP  return "MakeBundle";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -785,6 +788,67 @@ bool MakeBundle::default_allow_dihedrals() const {
 	runtime_assert_string_msg( default_allow_dihedrals_set(), "In protocols::helical_bundle::MakeBundle::default_allow_dihedrals(): The default allow_dihedrals value has not been set!" );
 	return default_allow_dihedrals_;
 }
+
+std::string MakeBundle::get_name() const {
+	return mover_name();
+}
+
+std::string MakeBundle::mover_name() {
+	return "MakeBundle";
+}
+
+void MakeBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_degrees", xsct_rosetta_bool, "Input values in degrees, instead of radians", "false" );
+	add_attributes_for_make_bundle_symmetry( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "reset", xsct_rosetta_bool, "Reset the input pose, instead of appending the bundle to it", "false" );
+	add_attributes_for_make_bundle_dofs( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "r0", xsct_real, "Default r0 (major helix radius)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0", xsct_real, "Default omega0 (major helix turn per residue)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0", xsct_real, "Default delta_omega0 (major helix rotation)", "0.0" );
+	add_attributes_for_make_bundle_minorhelix_defaults( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "delta_omega1", xsct_real, "Default delta_omega1 (minor helix rotation)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t", xsct_real, "Default delta_t (residue offset)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset", xsct_real, "Default z1_offset (helix offset along minor helix axis)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset", xsct_real, "Default z0_offset (helix offset along major helix axis)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon", xsct_real, "Default epsilon (bundle lateral squash factor)", "0.0" );
+	add_attributes_for_other_helix_params( attlist );
+
+	AttributeList subtag_attributes;
+	add_attributes_for_helix_params( subtag_attributes );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "r0", xsct_real, "Per-helix r0 (major helix radius)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0", xsct_real, "Per-helix omega0 (major helix turn per residue)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0", xsct_real, "Per-helix delta_omega0 (major helix rotation)", "0.0" );
+	add_attributes_for_minor_helix_params( subtag_attributes );
+	add_attributes_for_other_helix_params( subtag_attributes );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "delta_t", xsct_real, "Per-helix delta_t (residue offset)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset", xsct_real, "Per-helix z1_offset (helix offset across the minor helix axis)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset", xsct_real, "Per-helix z0_offset (helix offset across the major helix axis)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon", xsct_real, "Per-helix epsilon (bundle lateral squash factor)", "0.0" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing individual helices in the bundle"/*, 0 minoccurs*/ );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string MakeBundleCreator::keyname() const {
+	return MakeBundle::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeBundleCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakeBundle );
+}
+
+void MakeBundleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeBundle::provide_xml_schema( xsd );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //

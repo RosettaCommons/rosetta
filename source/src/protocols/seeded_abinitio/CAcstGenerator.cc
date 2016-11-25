@@ -35,6 +35,9 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <utility/vector0.hh>
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -46,27 +49,27 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
-std::string
-CAcstGeneratorCreator::keyname() const
-{
-	return CAcstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CAcstGeneratorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CAcstGenerator::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CAcstGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CAcstGenerator );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CAcstGeneratorCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CAcstGenerator );
+// XRW TEMP }
 
-std::string
-CAcstGeneratorCreator::mover_name()
-{
-	return "CAcstGenerator";
-}
+// XRW TEMP std::string
+// XRW TEMP CAcstGenerator::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CAcstGenerator";
+// XRW TEMP }
 
 CAcstGenerator::~CAcstGenerator() = default;
 
 CAcstGenerator::CAcstGenerator() :
-	protocols::moves::Mover( CAcstGeneratorCreator::mover_name() )
+	protocols::moves::Mover( CAcstGenerator::mover_name() )
 {
 	stddev_ = 3.0;
 	seed_exceptions_.clear();
@@ -286,10 +289,10 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	TR.flush();
 }
 
-std::string
-CAcstGenerator::get_name() const {
-	return CAcstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CAcstGenerator::get_name() const {
+// XRW TEMP  return CAcstGenerator::mover_name();
+// XRW TEMP }
 
 
 void
@@ -386,6 +389,59 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 	}
 
 }//end parse my tag
+
+std::string CAcstGenerator::get_name() const {
+	return mover_name();
+}
+
+std::string CAcstGenerator::mover_name() {
+	return "CAcstGenerator";
+}
+
+void CAcstGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// Main attributes
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("stddev", xsct_real, "Contraint strength as stddev.", "3.0")
+		+ XMLSchemaAttribute("template_pdb", xs_string, "Template pdb to derive coordinate contraints from.")
+		+ XMLSchemaAttribute::attribute_w_default("add_cst_seed", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("replace", xsct_rosetta_bool, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default("seq_separation", xsct_non_negative_integer, "XRW TO DO", "6")
+		+ XMLSchemaAttribute::attribute_w_default("distance", xsct_real, "XRW TO DO", "6.0")
+		+ XMLSchemaAttribute("add_seed_residues", xs_string, "Residues to which to apply contraints.")
+		+ XMLSchemaAttribute::attribute_w_default("from_chain", xsct_non_negative_integer, "Chain from which to derive the constraints from.","1")
+		+ XMLSchemaAttribute::attribute_w_default("to_chain", xsct_non_negative_integer, "Chain which to apply the contraints to.","1");
+
+	// Subelements
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "First residue of a segment.")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "Last residue of a segment.");
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "Segment to which to apply the contraints?");
+	subelement_list.add_simple_subelement("Clear_cst_segments", subelement_attributes, "Remove contraints from this segment?");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Generate coordinate constraints from the input or a template pdb", attlist, subelement_list );
+}
+
+std::string CAcstGeneratorCreator::keyname() const {
+	return CAcstGenerator::mover_name();
+}
+
+protocols::moves::MoverOP
+CAcstGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CAcstGenerator );
+}
+
+void CAcstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CAcstGenerator::provide_xml_schema( xsd );
+}
+
 
 }//CAcstGenerator
 }//protocol

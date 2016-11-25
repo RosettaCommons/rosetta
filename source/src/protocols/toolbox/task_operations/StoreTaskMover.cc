@@ -32,6 +32,9 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -85,14 +88,14 @@ StoreTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 }
 
 // @brief Identification
-std::string StoreTaskMoverCreator::keyname() const { return StoreTaskMoverCreator::mover_name(); }
-std::string StoreTaskMoverCreator::mover_name() { return "StoreTaskMover"; }
-std::string StoreTaskMover::get_name() const { return "StoreTaskMover"; }
+// XRW TEMP std::string StoreTaskMoverCreator::keyname() const { return StoreTaskMover::mover_name(); }
+// XRW TEMP std::string StoreTaskMover::mover_name() { return "StoreTaskMover"; }
+// XRW TEMP std::string StoreTaskMover::get_name() const { return "StoreTaskMover"; }
 
-protocols::moves::MoverOP
-StoreTaskMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreTaskMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StoreTaskMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StoreTaskMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreTaskMover::clone() const {
@@ -103,6 +106,42 @@ protocols::moves::MoverOP
 StoreTaskMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new StoreTaskMover );
 }
+
+std::string StoreTaskMover::get_name() const {
+	return mover_name();
+}
+
+std::string StoreTaskMover::mover_name() {
+	return "StoreTaskMover";
+}
+
+void StoreTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "task_name", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string StoreTaskMoverCreator::keyname() const {
+	return StoreTaskMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StoreTaskMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StoreTaskMover );
+}
+
+void StoreTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StoreTaskMover::provide_xml_schema( xsd );
+}
+
 
 } // task_operations
 } // toolbox

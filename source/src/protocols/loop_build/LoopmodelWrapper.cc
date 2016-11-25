@@ -29,6 +29,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_build {
@@ -37,13 +40,13 @@ using namespace std;
 using core::Size;
 using core::Real;
 
-protocols::moves::MoverOP LoopmodelWrapperCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopmodelWrapper );
-}
+// XRW TEMP protocols::moves::MoverOP LoopmodelWrapperCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopmodelWrapper );
+// XRW TEMP }
 
-std::string LoopmodelWrapperCreator::keyname() const {
-	return "LoopmodelWrapper";
-}
+// XRW TEMP std::string LoopmodelWrapperCreator::keyname() const {
+// XRW TEMP  return "LoopmodelWrapper";
+// XRW TEMP }
 
 protocols::moves::MoverOP LoopmodelWrapper::clone() const {
 	return protocols::moves::MoverOP( new LoopmodelWrapper );
@@ -125,6 +128,39 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 
 	loopbuild_mover->apply(pose);
 }
+
+std::string LoopmodelWrapper::get_name() const {
+	return mover_name();
+}
+
+std::string LoopmodelWrapper::mover_name() {
+	return "LoopmodelWrapper";
+}
+
+void LoopmodelWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("loops_file", xs_string, "Name of a loop file.")
+		+ XMLSchemaAttribute("fast", xsct_rosetta_bool, "Run fewer cycles. E.g. for testing.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Run loopmodel.", attlist );
+}
+
+std::string LoopmodelWrapperCreator::keyname() const {
+	return LoopmodelWrapper::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopmodelWrapperCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopmodelWrapper );
+}
+
+void LoopmodelWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopmodelWrapper::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -95,24 +95,23 @@ public:  // Standard Rosetta methods //////////////////////////////////////////
 	static void register_options();
 
 	/// @brief  Generate a string representation of CCDLoopClosureMover for debugging purposes.
-	virtual void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output=std::cout ) const override;
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief  Apply the corresponding move to <pose>.
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Called by MoverFactory when constructing new Movers
-	virtual
 	void parse_my_tag( TagCOP tag, basic::datacache::DataMap &, Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:  // Accessors/Mutators ////////////////////////////////////////////////
@@ -242,6 +241,18 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 public:  // Other Public Methods //////////////////////////////////////////////
 	/// @brief Return true if the forward and backward RMS deviations are each lower than the tolerance value.
 	bool success() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:  // Private methods //////////////////////////////////////////////////

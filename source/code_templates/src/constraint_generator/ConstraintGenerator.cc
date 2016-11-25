@@ -14,9 +14,12 @@
 // Unit headers
 #include <--path--/--class--.hh>
 #include <--path--/--class--Creator.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -65,5 +68,24 @@ core::scoring::constraints::ConstraintCOPs
 	return core::scoring::constraints::ConstraintCOPs();
 }
 
---end_namespace--
+void
+--class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	--class--::provide_xml_schema( xsd );
+}
 
+void
+--class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	AttributeList attlist;
+
+	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
+
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"DOCUMENTATION STRING FOR CLASS",
+		attlist );
+}
+
+--end_namespace--

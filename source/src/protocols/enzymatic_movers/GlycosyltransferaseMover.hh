@@ -39,11 +39,11 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 	// Assignment operator
 	GlycosyltransferaseMover & operator=( GlycosyltransferaseMover const & object_to_copy );
-	
+
 	// Destructor
 	virtual ~GlycosyltransferaseMover();
 
-	
+
 public: // Standard Rosetta methods ///////////////////////////////////////////
 	// General methods
 	/// @brief  Register options with the option system.
@@ -52,25 +52,37 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	// Mover methods
 	/// @brief  Return the name of the Mover.
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual void parse_my_tag(
-			TagCOP tag,
-			basic::datacache::DataMap & data,
-			Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose );
+	void parse_my_tag(
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const & /*filters*/,
+		moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @brief  Apply the corresponding move to <input_pose>.
 	//virtual void apply( core::pose::Pose & input_pose );
 
-	
+
 protected:
-	virtual void perform_reaction( core::pose::Pose & input_pose, core::uint const sepos, std::string const & cosubstrate );
+	void perform_reaction( core::pose::Pose & input_pose, core::uint const sepos, std::string const & cosubstrate ) override;
 
 
 private:  // Private methods //////////////////////////////////////////////////
@@ -82,7 +94,7 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data(
-			GlycosyltransferaseMover & object_to_copy_to, GlycosyltransferaseMover const & object_to_copy_from );
+		GlycosyltransferaseMover & object_to_copy_to, GlycosyltransferaseMover const & object_to_copy_from );
 };  // class GlycosyltransferaseMover
 
 // Insertion operator (overloaded so that GlycosyltransferaseMover can be "printed" in PyRosetta).

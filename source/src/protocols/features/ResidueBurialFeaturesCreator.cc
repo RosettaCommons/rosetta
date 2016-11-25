@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ResidueBurialFeaturesCreator::ResidueBurialFeaturesCreator() {}
-ResidueBurialFeaturesCreator::~ResidueBurialFeaturesCreator() = default;
-FeaturesReporterOP ResidueBurialFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ResidueBurialFeatures );
-}
+// XRW TEMP ResidueBurialFeaturesCreator::ResidueBurialFeaturesCreator() {}
+// XRW TEMP ResidueBurialFeaturesCreator::~ResidueBurialFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ResidueBurialFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ResidueBurialFeatures );
+// XRW TEMP }
 
-std::string ResidueBurialFeaturesCreator::type_name() const {
-	return "ResidueBurialFeatures";
-}
+// XRW TEMP std::string ResidueBurialFeaturesCreator::type_name() const {
+// XRW TEMP  return "ResidueBurialFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

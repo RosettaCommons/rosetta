@@ -31,6 +31,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer tr( "protocols.filters.RangeFilter" );
@@ -99,11 +102,54 @@ RangeFilter::parse_my_tag(
 	assert(lower_bound_ < upper_bound_);
 }
 
-filters::FilterOP
-RangeFilterCreator::create_filter() const { return filters::FilterOP( new RangeFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP RangeFilterCreator::create_filter() const { return filters::FilterOP( new RangeFilter ); }
 
-std::string
-RangeFilterCreator::keyname() const { return "Range"; }
+// XRW TEMP std::string
+// XRW TEMP RangeFilterCreator::keyname() const { return "Range"; }
+
+std::string RangeFilter::name() const {
+	return class_name();
+}
+
+std::string RangeFilter::class_name() {
+	return "Range";
+}
+
+void RangeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"filter", xs_string,
+		"Filter to be examined")
+		+ XMLSchemaAttribute::required_attribute(
+		"lower_bound", xsct_real,
+		"minimal filter score allowed")
+		+ XMLSchemaAttribute::required_attribute(
+		"upper_bound", xsct_real,
+		"maximal filter score allowed");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"This filter returns true if the return value of the given filter is between lower_bound and upper_bound.",
+		attlist );
+}
+
+std::string RangeFilterCreator::keyname() const {
+	return RangeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RangeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RangeFilter );
+}
+
+void RangeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RangeFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

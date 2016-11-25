@@ -918,8 +918,8 @@ RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 
 vector1< Size >
 RNA_DeNovoSetup::working_res_map( vector1< Size > const & vec,
-																	vector1< Size > const & working_res,
-																	bool const leave_out_last_working_residue /* = false */ ) const
+	vector1< Size > const & working_res,
+	bool const leave_out_last_working_residue /* = false */ ) const
 {
 	if ( working_res.size() == 0 ) return vec;
 	vector1< Size > working_vec;
@@ -935,8 +935,8 @@ RNA_DeNovoSetup::working_res_map( vector1< Size > const & vec,
 
 std::string
 RNA_DeNovoSetup::working_res_map( std::string const & seq_input,
-																	vector1< Size > const & working_res,
-																	bool const annotations_in_brackets /* = true */ ) const
+	vector1< Size > const & working_res,
+	bool const annotations_in_brackets /* = true */ ) const
 {
 	std::string seq( seq_input );
 	core::sequence::strip_spacers( seq, annotations_in_brackets );

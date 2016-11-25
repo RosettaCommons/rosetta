@@ -80,6 +80,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.symmetry.SymmetricAddMembraneMover" );
 
@@ -187,22 +190,22 @@ SymmetricAddMembraneMover::parse_my_tag(
 {}
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-SymmetricAddMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymmetricAddMembraneMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymmetricAddMembraneMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymmetricAddMembraneMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-SymmetricAddMembraneMoverCreator::keyname() const {
-	return SymmetricAddMembraneMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymmetricAddMembraneMoverCreator::keyname() const {
+// XRW TEMP  return SymmetricAddMembraneMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-SymmetricAddMembraneMoverCreator::mover_name() {
-	return "SymmetricAddMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymmetricAddMembraneMover::mover_name() {
+// XRW TEMP  return "SymmetricAddMembraneMover";
+// XRW TEMP }
 
 
 /////////////////////
@@ -210,10 +213,10 @@ SymmetricAddMembraneMoverCreator::mover_name() {
 /////////////////////
 
 /// @brief Get the name of this Mover (SymmetricAddMembraneMover)
-std::string
-SymmetricAddMembraneMover::get_name() const {
-	return "SymmetricAddMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymmetricAddMembraneMover::get_name() const {
+// XRW TEMP  return "SymmetricAddMembraneMover";
+// XRW TEMP }
 
 
 /////////////////////
@@ -339,6 +342,38 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	return pose.size();
 }
+
+std::string SymmetricAddMembraneMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymmetricAddMembraneMover::mover_name() {
+	return "SymmetricAddMembraneMover";
+}
+
+void SymmetricAddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Symmetry-enabled form of AddMembraneMover", attlist );
+}
+
+std::string SymmetricAddMembraneMoverCreator::keyname() const {
+	return SymmetricAddMembraneMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SymmetricAddMembraneMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SymmetricAddMembraneMover );
+}
+
+void SymmetricAddMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymmetricAddMembraneMover::provide_xml_schema( xsd );
+}
+
 
 /// @brief Helper Method - Check for Membrane residue already in the PDB
 /// @details If there is an MEM residue in the PDB at the end of the pose

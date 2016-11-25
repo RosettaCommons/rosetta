@@ -29,26 +29,29 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace qsar {
 
-std::string RenderGridsToKinemageCreator::keyname() const
-{
-	return RenderGridsToKinemageCreator::mover_name();
-}
+// XRW TEMP std::string RenderGridsToKinemageCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RenderGridsToKinemage::mover_name();
+// XRW TEMP }
 
 
-moves::MoverOP RenderGridsToKinemageCreator::create_mover() const
-{
-	return moves::MoverOP( new RenderGridsToKinemage );
-}
+// XRW TEMP moves::MoverOP RenderGridsToKinemageCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return moves::MoverOP( new RenderGridsToKinemage );
+// XRW TEMP }
 
-std::string RenderGridsToKinemageCreator::mover_name()
-{
-	return "RenderGridsToKinemage";
-}
+// XRW TEMP std::string RenderGridsToKinemage::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RenderGridsToKinemage";
+// XRW TEMP }
 
 ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
 	core::Real const & lower,
@@ -84,10 +87,10 @@ protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 	return protocols::moves::MoverOP( new RenderGridsToKinemage(*this) );
 }
 
-std::string RenderGridsToKinemage::get_name() const
-{
-	return "RenderGridsToKinemage";
-}
+// XRW TEMP std::string RenderGridsToKinemage::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "RenderGridsToKinemage";
+// XRW TEMP }
 
 
 void RenderGridsToKinemage::apply(core::pose::Pose & )
@@ -330,6 +333,55 @@ void RenderGridsToKinemage::write_header(utility::io::ozstream & kin_file)
 	kin_file << "@kinemage 1" <<std::endl;
 	kin_file << "@group dominant {dots}" <<std::endl;
 }
+
+std::string RenderGridsToKinemage::get_name() const {
+	return mover_name();
+}
+
+std::string RenderGridsToKinemage::mover_name() {
+	return "RenderGridsToKinemage";
+}
+
+std::string real_regex_pattern() {
+	return "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
+}
+
+void RenderGridsToKinemage::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction three_dim_real_vector;
+	three_dim_real_vector.name( "three_dim_real_vector" );
+	three_dim_real_vector.base_type( xs_string );
+	three_dim_real_vector.add_restriction( xsr_pattern, real_regex_pattern() + "," + real_regex_pattern() + "," + real_regex_pattern() );
+	xsd.add_top_level_element( three_dim_real_vector );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "grid_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "file_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "low_color", "three_dim_real_vector", "RGB values for color to use for low value" )
+		+ XMLSchemaAttribute( "zero_color", "three_dim_real_vector", "RGB values for color to use for zero" )
+		+ XMLSchemaAttribute( "high_color", "three_dim_real_vector", "RGB values for color to use for high value" )
+		+ XMLSchemaAttribute( "color", "three_dim_real_vector", "RGB values for color to use" )
+		+ XMLSchemaAttribute::attribute_w_default( "gradient_bins", xsct_non_negative_integer, "Size of bins to use", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "stride", xsct_non_negative_integer, "Separation between possible colors", "2" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Visualization tool for grids", attlist );
+}
+
+std::string RenderGridsToKinemageCreator::keyname() const {
+	return RenderGridsToKinemage::mover_name();
+}
+
+protocols::moves::MoverOP
+RenderGridsToKinemageCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RenderGridsToKinemage );
+}
+
+void RenderGridsToKinemageCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RenderGridsToKinemage::provide_xml_schema( xsd );
+}
+
 
 }
 }

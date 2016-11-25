@@ -739,9 +739,9 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose );
 
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-																 Size const cutpoint_res,
-																 bool const check_fold_tree = true,
-																 Size const next_res_in = 0 );
+	Size const cutpoint_res,
+	bool const check_fold_tree = true,
+	Size const next_res_in = 0 );
 
 void
 declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res, Size const next_res_in = 0 );
@@ -811,6 +811,9 @@ set_bb_torsion( uint torsion_id, Pose & pose, core::Size sequence_position, core
 /// Think about moving this to pose itself.
 core::Angle
 get_bb_torsion( uint torsion_id, Pose const & pose, core::Size sequence_position );
+
+
+
 
 
 } // pose

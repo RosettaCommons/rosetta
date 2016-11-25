@@ -17,6 +17,7 @@
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <list>
 
@@ -42,6 +43,9 @@ public:
 	virtual void deserialize(utility::json_spirit::mObject data);
 
 	void set_probe_atom_type(core::ShortSize const & atom_type);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::ShortSize probe_atom_type_;

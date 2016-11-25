@@ -40,31 +40,31 @@ public:
 	/// @brief virtual constructor to allow derivation
 	virtual ~ExtendChainMover();
 
-	static std::string
-	class_name() { return "ExtendChain"; }
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name() { return "ExtendChain"; }
 
 	// mover virtuals
 public:
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Parses the ExtendChainTags
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	// public methods
 public:
@@ -85,6 +85,18 @@ public:
 
 	void
 	set_segment_names( SegmentNames const & seg_names );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief designs the extension

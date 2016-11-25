@@ -50,7 +50,7 @@ public:
 	Symmetrizer();
 
 	// --- virtual functions from mover ---
-	std::string get_name() const override { return "Symmetrizer"; }
+	// XRW TEMP  std::string get_name() const override { return "Symmetrizer"; }
 	void apply(Pose& pose) override;
 
 	// --- virtual copy constructors
@@ -66,6 +66,18 @@ public:
 		Filters_map const &,
 		Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	Real get_radial_disp();

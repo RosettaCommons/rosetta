@@ -144,6 +144,9 @@
 #include <basic/Tracer.hh>
 
 #include <boost/unordered/unordered_map.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace hybridization {
@@ -154,20 +157,20 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.CartesianSampler"
 
 /////////////
 // creator
-std::string
-CartesianSamplerCreator::keyname() const {
-	return CartesianSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CartesianSamplerCreator::keyname() const {
+// XRW TEMP  return CartesianSampler::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CartesianSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartesianSampler );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CartesianSamplerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CartesianSampler );
+// XRW TEMP }
 
-std::string
-CartesianSamplerCreator::mover_name() {
-	return "CartesianSampler";
-}
+// XRW TEMP std::string
+// XRW TEMP CartesianSampler::mover_name() {
+// XRW TEMP  return "CartesianSampler";
+// XRW TEMP }
 
 ////////////
 
@@ -994,22 +997,22 @@ CartesianSampler::parse_my_tag(
 
 	// options
 	if ( tag->hasOption( "debug" ) ) {
-		debug_ = tag->getOption<bool >( "debug" );
+		debug_ = tag->getOption< bool >( "debug" );
 	}
 	if ( tag->hasOption( "fullatom" ) ) {
-		fullatom_ = tag->getOption<bool >( "fullatom" );
+		fullatom_ = tag->getOption< bool >( "fullatom" );
 	}
 	if ( tag->hasOption( "bbmove" ) ) {
-		bbmove_ = tag->getOption<bool >( "bbmove" );
+		bbmove_ = tag->getOption< bool >( "bbmove" );
 	}
 	if ( tag->hasOption( "temp" ) ) {
-		temp_ = tag->getOption<core::Real  >( "temp" );
+		temp_ = tag->getOption< core::Real >( "temp" );
 	}
 	if ( tag->hasOption( "rms" ) ) {
-		rms_cutoff_ = tag->getOption<core::Real  >( "rms" );
+		rms_cutoff_ = tag->getOption< core::Real >( "rms" );
 	}
 	if ( tag->hasOption( "nminsteps" ) ) {
-		nminsteps_ = tag->getOption<core::Size  >( "nminsteps" );
+		nminsteps_ = tag->getOption< core::Size >( "nminsteps" );
 	}
 	if ( tag->hasOption( "overlap" ) ) {
 		overlap_ = tag->getOption<core::Size>( "overlap" );
@@ -1018,11 +1021,11 @@ CartesianSampler::parse_my_tag(
 		ncycles_ = tag->getOption<core::Size>( "ncycles" );
 	}
 	if ( tag->hasOption( "fragbias" ) ) {
-		selection_bias_ = tag->getOption<std::string>( "fragbias" );
+		selection_bias_ = tag->getOption< std::string >( "fragbias" );
 	}
 
-	recover_low_ = tag->getOption<bool>( "recover_low" , true );
-	force_ss_    = tag->getOption<char>( "force_ss" , 'D' );
+	recover_low_ = tag->getOption< bool >( "recover_low" , true );
+	force_ss_    = tag->getOption< char >( "force_ss" , 'D' );
 
 	////////////////////////////////////////////////////////////////////////////////
 	// residue selection strategy
@@ -1088,10 +1091,10 @@ CartesianSampler::parse_my_tag(
 		}
 	}
 	if ( tag->hasOption( "reference_cst_wt" ) ) {
-		ref_cst_weight_ = tag->getOption<core::Real  >( "reference_cst_wt" );
+		ref_cst_weight_ = tag->getOption< core::Real >( "reference_cst_wt" );
 	}
 	if ( tag->hasOption( "reference_cst_maxdist" ) ) {
-		ref_cst_maxdist_ = tag->getOption<core::Real  >( "reference_cst_maxdist" );
+		ref_cst_maxdist_ = tag->getOption< core::Real >( "reference_cst_maxdist" );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -1138,6 +1141,108 @@ CartesianSampler::parse_my_tag(
 	hetatm_prot_cst_weight_ = tag->getOption< core::Real >( "hetatm_to_protein_cst_weight" );
 	*/
 }
+
+std::string CartesianSampler::get_name() const {
+	return mover_name();
+}
+
+std::string CartesianSampler::mover_name() {
+	return "CartesianSampler";
+}
+
+std::string CartesianSampler_subelement_ct_name( std::string const & name ) {
+	return "CartesianSampler_subelement_" + name + "Type";
+}
+
+void CartesianSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "(centroid) scorefunction")
+		+ XMLSchemaAttribute( "fascorefxn", xs_string, "(fullatom) scorefunction")
+		+ XMLSchemaAttribute( "mcscorefxn", xs_string, "Monte Carlo (?) scorefunction")
+		+ XMLSchemaAttribute( "debug", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "fullatom", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "bbmove", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "temp", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "rms", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "nminsteps", xsct_non_negative_integer, "XRW TODO")
+		+ XMLSchemaAttribute( "overlap", xsct_non_negative_integer, "XRW TODO")
+		+ XMLSchemaAttribute( "ncycles", xsct_non_negative_integer, "XRW TODO")
+		+ XMLSchemaAttribute( "fragbias", xs_string, "XRW TODO")
+		+ XMLSchemaAttribute::attribute_w_default( "recover_low", xsct_rosetta_bool, "XRW TODO", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "force_ss", xsct_char, "XRW TODO", "D");
+	//take a break from this fun list to restrict the next attribute.
+
+	//argument legality checker for "strategy":
+	// AMW: could sanely do this as an enumeration instead
+	std::string const strategy_possibles("user|uniform|auto|density|density_nbr|geometry|rama|bfactors|chainbreak");
+	XMLSchemaRestriction strategy_type;
+	strategy_type.name("strategy_type");
+	strategy_type.base_type( xs_string );
+	strategy_type.add_restriction( xsr_pattern, strategy_possibles + "(," + strategy_possibles + ")+" );
+	xsd.add_top_level_element( strategy_type );
+
+	attlist
+		+ XMLSchemaAttribute( "strategy", "strategy_type", "fragment bias strategies.  This string is a comma-separated list; allowed values include 'user', 'uniform', 'auto', 'density', 'density_nbr', 'geometry', 'rama', 'bfactors', 'chainbreak' ")
+		//now we return to the FUN LIST OF FUN
+		+ XMLSchemaAttribute( "rsd_wdw_to_refine", xsct_non_negative_integer, "residue window to refine")
+		+ XMLSchemaAttribute( "score_threshold", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "cumulate_prob", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "automode_scorecut", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "dump_pdb", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "dump_pdb_tag", xs_string, "XRW TODO")
+		+ XMLSchemaAttribute( "wdw_to_freeze", xs_integer, "XRW TODO") //is stored as int
+		+ XMLSchemaAttribute( "freeze_endpoints", xsct_rosetta_bool, "XRW TODO");
+
+	std::string const residues_loops_warning(" 'residues' and 'loops_in' are mutually exclusive.");
+
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues"); //XRW TODO, fix function to take a docstring; here is partial docstring:
+	//+ XMLSchemaAttribute( "residues", xsct_refpose_enabled_residue_number_cslist, "XRW TODO" + residues_loops_warning) // XRW TODO this is the wrong type, use get_attributes_for_get_resnum_list instead
+
+	attlist + XMLSchemaAttribute( "loops_in", xs_string, "XRW TODO.  Looks for a Loops object in the DataMap with this name." + residues_loops_warning);
+
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues_to_include");
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues_to_exclude");
+
+	attlist
+		+ XMLSchemaAttribute( "reference_model", xs_string, "XRW TODO; if 'input' uses the Pose from apply(); otherwise loads this pdb file")
+		+ XMLSchemaAttribute( "reference_cst_wt", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "reference_cst_maxdist", xsct_real, "XRW TODO");
+
+	// attributes for Fragments subelement
+	AttributeList fragment_subelement_attributes;
+	fragment_subelement_attributes
+		+ XMLSchemaAttribute::required_attribute( "fragfile", xs_string, "file to read fragments from")
+		+ XMLSchemaAttribute( "nfrags", xsct_non_negative_integer, "read this many fragments from the top of 'fragfile'");
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & CartesianSampler_subelement_ct_name );
+	subelements.add_simple_subelement( "Fragments", fragment_subelement_attributes, "Instructions for fragments files.");
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "nfrags", xsct_non_negative_integer, "XRW TODO; unclear if this should be used with the Fragments subelement", "25")
+		+ XMLSchemaAttribute( "fraglens", xsct_positive_integer_cslist, "XRW TODO; comma separated list of positive integers, unclear if this should be used with the Fragments subelement");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TODO", attlist, subelements );
+}
+
+std::string CartesianSamplerCreator::keyname() const {
+	return CartesianSampler::mover_name();
+}
+
+protocols::moves::MoverOP
+CartesianSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CartesianSampler );
+}
+
+void CartesianSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CartesianSampler::provide_xml_schema( xsd );
+}
+
 
 } // hybridization
 }// protocols

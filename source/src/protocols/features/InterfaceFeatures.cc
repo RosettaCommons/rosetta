@@ -40,6 +40,10 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/InterfaceFeaturesCreator.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.InterfaceFeatures" );
 
@@ -110,10 +114,10 @@ InterfaceFeatures::set_interface_chains(vector1<std::string> const & interfaces)
 
 InterfaceFeatures::~InterfaceFeatures()= default;
 
-std::string
-InterfaceFeatures::type_name() const {
-	return "InterfaceFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP InterfaceFeatures::type_name() const {
+// XRW TEMP  return "InterfaceFeatures";
+// XRW TEMP }
 
 void
 InterfaceFeatures::parse_my_tag(
@@ -803,6 +807,64 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 	basic::database::safely_write_to_database(stmnt);
 
 }
+
+std::string InterfaceFeatures::type_name() const {
+	return class_name();
+}
+
+std::string InterfaceFeatures::class_name() {
+	return "InterfaceFeatures";
+}
+
+void InterfaceFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+
+	std::string interface_pattern = "[" + chr_chains_nonrepeated() + "]+_[" + chr_chains_nonrepeated() + "]+";
+	//interface_features_string
+	//interface_features_list
+	XMLSchemaRestriction str_res;
+	str_res.name( "interface_features_string" );
+	str_res.base_type( xs_string );
+	str_res.add_restriction( xsr_pattern, interface_pattern );
+	xsd.add_top_level_element( str_res );
+	XMLSchemaRestriction list_res;
+	list_res.name( "interface_features_list" );
+	list_res.base_type( xs_string );
+	//list_res.add_restriction( xsr_pattern, interface_pattern + "([:,'`~+*&|;.]" + interface_pattern + ")*" );
+	// AMW: temp can't have &
+	list_res.add_restriction( xsr_pattern, interface_pattern + "([:,'`~+*|;.]" + interface_pattern + ")*" );
+	xsd.add_top_level_element( list_res );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "pack_separated", xsct_rosetta_bool, "Pack the structures separately", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "pack_together", xsct_rosetta_bool, "Pack the structures together", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dSASA_cutoff", xsct_real, "Cutoff for buried solvent accessible surface area to ignore reporting most values", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "compute_packstat", xsct_rosetta_bool, "Compute packstat score for interface?", "true" )
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function to use when evaluating interface")
+		+ XMLSchemaAttribute( "interface", "interface_features_string", "Specify the interface as ChainsSide1_ChainsSide2 (e.g. AB_C)" )
+		+ XMLSchemaAttribute( "interfaces", "interface_features_list", "Provide a comma-separated list of interfaces." );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "FeaturesReporter wrapper for InterfaceAnalyzer", attlist );
+
+}
+
+std::string InterfaceFeaturesCreator::type_name() const {
+	return InterfaceFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+InterfaceFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new InterfaceFeatures );
+}
+
+void InterfaceFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceFeatures::provide_xml_schema( xsd );
+}
+
 
 } //features
 } //protocols

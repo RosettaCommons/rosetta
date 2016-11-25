@@ -24,6 +24,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/read_patchdock.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -34,22 +37,22 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
 
-std::string
-PatchdockTransformCreator::keyname() const
-{
-	return PatchdockTransformCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PatchdockTransformCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PatchdockTransform::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PatchdockTransformCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PatchdockTransform );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PatchdockTransformCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PatchdockTransform );
+// XRW TEMP }
 
-std::string
-PatchdockTransformCreator::mover_name()
-{
-	return "PatchdockTransform";
-}
+// XRW TEMP std::string
+// XRW TEMP PatchdockTransform::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PatchdockTransform";
+// XRW TEMP }
 
 PatchdockTransform::PatchdockTransform() :
 	Mover()
@@ -73,10 +76,10 @@ PatchdockTransform::apply( core::pose::Pose & pose )
 	pd_reader()->transform_pose( pose, 2/*chain*/, t );
 }
 
-std::string
-PatchdockTransform::get_name() const {
-	return PatchdockTransformCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PatchdockTransform::get_name() const {
+// XRW TEMP  return PatchdockTransform::mover_name();
+// XRW TEMP }
 
 void
 PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
@@ -109,6 +112,42 @@ void
 PatchdockTransform::pd_reader( PatchdockReaderOP p ){
 	pd_reader_ = p;
 }
+
+std::string PatchdockTransform::get_name() const {
+	return mover_name();
+}
+
+std::string PatchdockTransform::mover_name() {
+	return "PatchdockTransform";
+}
+
+void PatchdockTransform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "fname", xs_string, "Patchdock filename to be read" )
+		+ XMLSchemaAttribute( "from_entry", xs_string, "Entry from which to read" )
+		+ XMLSchemaAttribute( "to_entry", xs_string, "Entry to which to write" )
+		+ XMLSchemaAttribute( "random_entry", xsct_rosetta_bool, "Use random from and to entries" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string PatchdockTransformCreator::keyname() const {
+	return PatchdockTransform::mover_name();
+}
+
+protocols::moves::MoverOP
+PatchdockTransformCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PatchdockTransform );
+}
+
+void PatchdockTransformCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PatchdockTransform::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

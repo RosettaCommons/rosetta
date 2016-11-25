@@ -51,20 +51,32 @@ public:
 	utility::vector1<Overlap> determine_overlap(Pose const pose);
 	utility::vector1<core::pose::PoseOP> generate_overlaps(Pose & pose, utility::vector1<MergePDBMover::Overlap> overlaps);
 	utility::vector1<core::pose::PoseOP> pack_and_minimize(utility::vector1<core::pose::PoseOP> poses, utility::vector1<MergePDBMover::Overlap> overlaps,core::Real baseline_score);
-	core::pose::PoseOP get_additional_output();
+	core::pose::PoseOP get_additional_output() override;
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  std::string get_name() const override;
 
-	moves::MoverOP clone() const;
-	moves::MoverOP fresh_instance() const;
+	moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1<core::pose::PoseOP> outputPoses_;

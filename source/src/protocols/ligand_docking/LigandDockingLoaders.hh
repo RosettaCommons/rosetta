@@ -20,7 +20,7 @@
 #include <protocols/jd2/parser/DataLoader.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -40,6 +40,9 @@ public:
 		basic::datacache::DataMap & data
 	) const override;
 
+	static std::string loader_name();
+	static std::string interface_builder_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 };
 
 /// @brief A class for loading MoveMapBuilders into the XML parser's basic::datacache::DataMap.
@@ -59,6 +62,10 @@ public:
 		basic::datacache::DataMap & data
 	) const override;
 
+	static std::string loader_name();
+	static std::string movemap_builder_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class LigandAreaLoader : public jd2::parser::DataLoader
@@ -74,6 +81,10 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const override;
+
+	static std::string loader_name();
+	static std::string ligand_area_ct_namer( std::string const & element_name );
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 };
 

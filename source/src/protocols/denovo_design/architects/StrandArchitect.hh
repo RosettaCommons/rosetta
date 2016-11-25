@@ -99,6 +99,9 @@ public:
 	void
 	enumerate_permutations();
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 public:
 	static std::string const
 	bulge_keyname();

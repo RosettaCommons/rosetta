@@ -43,9 +43,10 @@
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/moves/mover_schemas.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 // Core headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -66,6 +67,9 @@
 
 // C++ headers
 #include <ctime>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BuildDeNovoBackboneMover" );
 
@@ -74,7 +78,7 @@ namespace denovo_design {
 namespace movers {
 
 BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
-	protocols::moves::Mover( BuildDeNovoBackboneMover::class_name() ),
+	protocols::moves::Mover( BuildDeNovoBackboneMover::mover_name() ),
 	architect_(),
 	builder_( new components::ExtendedPoseBuilder ),
 	folder_( new components::RemodelLoopMoverPoseFolder ),
@@ -153,17 +157,17 @@ BuildDeNovoBackboneMover::fresh_instance() const
 	return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
 }
 
-std::string
-BuildDeNovoBackboneMover::get_name() const
-{
-	return BuildDeNovoBackboneMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BuildDeNovoBackboneMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return BuildDeNovoBackboneMover::mover_name();
+// XRW TEMP }
 
-std::string
-BuildDeNovoBackboneMover::class_name()
-{
-	return "BuildDeNovoBackboneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP BuildDeNovoBackboneMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BuildDeNovoBackboneMover";
+// XRW TEMP }
 
 std::string const &
 BuildDeNovoBackboneMover::id() const
@@ -320,7 +324,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 
 	// if we reach here without returning something, folding failed.
 	std::stringstream msg;
-	msg << class_name() << "build_in_phases():  Failed to fold anything passing filters after "
+	msg << mover_name() << "build_in_phases():  Failed to fold anything passing filters after "
 		<< max_iter << " attempts." << std::endl;
 	throw components::EXCN_Fold( msg.str() );
 	return core::pose::PoseOP();
@@ -837,17 +841,299 @@ BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-BuildDeNovoBackboneMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BuildDeNovoBackboneMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP BuildDeNovoBackboneMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BuildDeNovoBackboneMover::mover_name();
+// XRW TEMP }
+
+std::string BuildDeNovoBackboneMover::get_name() const {
+	return mover_name();
+}
+
+std::string BuildDeNovoBackboneMover::mover_name() {
+	return "BuildDeNovoBackboneMover";
+}
+
+
+std::string BuildDeNovoBackboneMover::folder_ct_namer( std::string folder_name ){
+	return "denovo_folder_" + folder_name + "_complex_type";
+}
+std::string BuildDeNovoBackboneMover::perturber_ct_namer( std::string perturber_name ){
+	return "denovo_perturber_" + perturber_name + "_complex_type";
+}
+
+std::string BuildDeNovoBackboneMover::folder_group_name(){
+	return "denovo_folder";
+}
+
+std::string BuildDeNovoBackboneMover::perturber_group_name(){
+	return "denovo_perturber";
+}
+
+
+std::string BuildDeNovoBackboneMover::build_denovo_backbone_ct_naming_func( std::string subelement_name ){
+	return "build_denovo_backbone_" + subelement_name + "_complex_type";
+}
+
+std::string BuildDeNovoBackboneMover::prefold_ct_naming_func( std::string subelement_name ){
+	return "denovo_prefold_" + subelement_name + "_complex_type";
+}
+
+std::string BuildDeNovoBackboneMover::postfold_ct_naming_func( std::string subelement_name ){
+	return "denovo_postfold_" + subelement_name + "_complex_type";
+}
+
+std::string BuildDeNovoBackboneMover::filters_ct_naming_func( std::string subelement_name ){
+	return "denovo_filters_" + subelement_name + "_complex_type";
+}
+
+
+void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDefinition & xsd ){
+
+	using namespace utility::tag;
+	AttributeList helix_or_connection_perturber_attlist;
+	helix_or_connection_perturber_attlist + XMLSchemaAttribute::required_attribute( "architect", xs_string, "Architect to use for this mover" );
+	AttributeList null_perturber_attlist; //empty
+
+	//Define the complex types for all of these
+	//Helix and connection have the same attributes
+	XMLSchemaComplexTypeGenerator helix_perturber_ct;
+	helix_perturber_ct.element_name( "HelixPerturber" )
+		.complex_type_naming_func ( & perturber_ct_namer )
+		.description( "Used to perturb helices" )
+		.add_attributes( helix_or_connection_perturber_attlist )
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaComplexTypeGenerator connection_perturber_ct;
+	connection_perturber_ct.element_name( "ConnectionPerturber" )
+		.complex_type_naming_func ( & perturber_ct_namer )
+		.description( "Used to perturb connections" )
+		.add_attributes( helix_or_connection_perturber_attlist )
+		.write_complex_type_to_schema( xsd );
+
+	//Null has no attributes
+	XMLSchemaComplexTypeGenerator null_perturber_ct;
+	null_perturber_ct.element_name( "NullPerturber" )
+		.complex_type_naming_func ( & perturber_ct_namer )
+		.description( "Doesn't do anything" )
+		.write_complex_type_to_schema( xsd );
+
+	//Compound takes other perturbers as subtags
+
+	XMLSchemaRestriction mode;
+	mode.name( "compound_perturber_mode" );
+	mode.base_type( xs_string );
+	mode.add_restriction( xsr_enumeration, "AND" );
+	mode.add_restriction( xsr_enumeration, "OR" );
+	xsd.add_top_level_element( mode );
+
+	AttributeList compound_perturber_attlist;
+	compound_perturber_attlist
+		+ XMLSchemaAttribute::attribute_w_default( "mode", "compound_perturber_mode", "Which logical operator to apply to these perturbers?", "AND" );
+	XMLSchemaSimpleSubelementList compound_perturber_subelements;
+	compound_perturber_subelements
+		.add_group_subelement( & perturber_group_name );
+	XMLSchemaComplexTypeGenerator compound_perturber_ct;
+	helix_perturber_ct.element_name( "CompoundPerturber" )
+		.complex_type_naming_func ( & perturber_ct_namer )
+		.description( "Used to combine other perturbers" )
+		.set_subelements_repeatable( compound_perturber_subelements)
+		.add_attributes( compound_perturber_attlist )
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaElementOP helix_perturber_subelement( new XMLSchemaElement );
+	helix_perturber_subelement->name( "HelixPerturber" );
+	helix_perturber_subelement->type_name( perturber_ct_namer( "HelixPerturber" ) );
+
+	XMLSchemaElementOP connection_perturber_subelement( new XMLSchemaElement );
+	connection_perturber_subelement->name( "ConnectionPerturber" );
+	connection_perturber_subelement->type_name( perturber_ct_namer( "ConnectionPerturber" ) );
+
+	XMLSchemaElementOP null_perturber_subelement( new XMLSchemaElement );
+	null_perturber_subelement->name( "NullPerturber" );
+	null_perturber_subelement->type_name( perturber_ct_namer( "NullPerturber" ) );
+
+	XMLSchemaElementOP compound_perturber_subelement( new XMLSchemaElement );
+	compound_perturber_subelement->name( "CompoundPerturber" );
+	compound_perturber_subelement->type_name( perturber_ct_namer( "CompoundPerturber" ) );
+
+	XMLSchemaModelGroupOP perturber_choice( new XMLSchemaModelGroup );
+	perturber_choice->type( xsmgt_choice );
+	perturber_choice->append_particle( helix_perturber_subelement );
+	perturber_choice->append_particle( connection_perturber_subelement );
+	perturber_choice->append_particle( null_perturber_subelement );
+	perturber_choice->append_particle( compound_perturber_subelement );
+
+	XMLSchemaModelGroup perturber_group;
+	perturber_group.group_name( perturber_group_name() );
+	perturber_group.append_particle( perturber_choice );
+	xsd.add_top_level_element( perturber_group );
+
+}
+
+void BuildDeNovoBackboneMover::define_folder_group( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	AttributeList remodel_folder_attlist;
+	rosetta_scripts::attributes_for_parse_score_function( remodel_folder_attlist );
+	//Define the complex types for all of these
+	XMLSchemaComplexTypeGenerator remodel_folder_ct;
+	remodel_folder_ct.element_name( "RemodelLoopMoverPoseFolder" )
+		.complex_type_naming_func ( & folder_ct_namer )
+		.description( "Folds residues in a pose using RemodelLoopMover" )
+		.add_attributes( remodel_folder_attlist )
+		.write_complex_type_to_schema( xsd );
+
+
+	//random and null have no attributes
+	XMLSchemaComplexTypeGenerator random_folder_ct;
+	random_folder_ct.element_name( "RandomTorsionPoseFolder" )
+		.complex_type_naming_func ( & folder_ct_namer )
+		.description( "Folds pose using random phi/psi torsions" )
+		.write_complex_type_to_schema( xsd );
+
+
+	XMLSchemaComplexTypeGenerator null_folder_ct;
+	null_folder_ct.element_name( "NullPoseFolder" )
+		.complex_type_naming_func ( & folder_ct_namer )
+		.description( "Does nothing" )
+		.write_complex_type_to_schema( xsd );
+
+
+	XMLSchemaElementOP remodel_folder_subelement( new XMLSchemaElement );
+	remodel_folder_subelement->name( "RemodelLoopMoverPoseFolder" );
+	remodel_folder_subelement->type_name( folder_ct_namer( "RemodelLoopMoverPoseFolder" ) );
+
+	XMLSchemaElementOP random_folder_subelement( new XMLSchemaElement );
+	random_folder_subelement->name( "RandomTorsionPoseFolder" );
+	random_folder_subelement->type_name( folder_ct_namer( "RandomTorsionPoseFolder" ) );
+
+	XMLSchemaElementOP null_folder_subelement( new XMLSchemaElement );
+	null_folder_subelement->name( "NullPoseFolder" );
+	null_folder_subelement->type_name( folder_ct_namer( "NullPoseFolder" ) );
+
+	XMLSchemaModelGroupOP folder_choice( new XMLSchemaModelGroup );
+	folder_choice->type( xsmgt_choice );
+	folder_choice->append_particle( remodel_folder_subelement );
+	folder_choice->append_particle( random_folder_subelement );
+	folder_choice->append_particle( null_folder_subelement );
+
+	XMLSchemaModelGroup folder_group;
+	folder_group.group_name( folder_group_name() );
+	folder_group.append_particle( folder_choice );
+	xsd.add_top_level_element( folder_group );
+}
+
+
+
+void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	architects::DeNovoArchitectFactory::get_instance()->define_architect_group( xsd );
+	//prefold and postfold take the same subelements
+	AttributeList prefold_subelements_attlist;
+	prefold_subelements_attlist
+		+ XMLSchemaAttribute::required_attribute( "mover", xs_string, "Mover to add to this step step" );
+	XMLSchemaSimpleSubelementList prefold_subelements;
+	prefold_subelements.add_simple_subelement( "Add", prefold_subelements_attlist, "Specify a mover to add to this step" );
+	//no attributes for prefold
+	XMLSchemaComplexTypeGenerator prefold_ct_gen;
+	prefold_ct_gen
+		.set_subelements_repeatable( prefold_subelements )
+		.complex_type_naming_func( & prefold_ct_naming_func )
+		.element_name( "Prefold" )
+		.description( "Prefold protocol" )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+
+	XMLSchemaComplexTypeGenerator postfold_ct_gen;
+	postfold_ct_gen
+		.set_subelements_repeatable( prefold_subelements )
+		.complex_type_naming_func( & postfold_ct_naming_func )
+		.element_name( "Postfold" )
+		.description( "Postfold protocol" )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+	AttributeList filters_subelements_attlist;
+	filters_subelements_attlist
+		+ XMLSchemaAttribute::required_attribute( "filter", xs_string, "Filter to add" );
+
+	XMLSchemaSimpleSubelementList filters_subelements;
+	filters_subelements.add_simple_subelement( "Add", filters_subelements_attlist, "Specifies a filter to apply to the backbones" );
+
+	XMLSchemaComplexTypeGenerator filters_ct_gen;
+	filters_ct_gen
+		.set_subelements_repeatable( filters_subelements )
+		.complex_type_naming_func( & filters_ct_naming_func )
+		.element_name( "Filters" )
+		.description( "Filters to apply to generated backbones" )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+
+	//These functions define the complex types for all elements of these groups and define the groups to be used later
+	define_perturber_group( xsd );
+	define_folder_group( xsd );
+
+
+	XMLSchemaSimpleSubelementList unordered_subelements;
+	unordered_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func );
+	unordered_subelements.add_already_defined_subelement( "Prefold", & prefold_ct_naming_func )
+		.add_already_defined_subelement( "Postfold", & postfold_ct_naming_func )
+		.add_already_defined_subelement( "Filters", & filters_ct_naming_func )
+		.add_group_subelement( & perturber_group_name );
+	XMLSchemaSimpleSubelementList architect_subelements;
+	architect_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_group_subelement( & architects::DeNovoArchitectFactory::architect_group_name );
+
+	XMLSchemaSimpleSubelementList folder_subelements;
+	folder_subelements.complex_type_naming_func( & build_denovo_backbone_ct_naming_func )
+		.add_group_subelement( & folder_group_name );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "Unique ID for this mover")
+		+ XMLSchemaAttribute( "build_overlap", xsct_non_negative_integer, "Overlap to use when building loops")
+		+ XMLSchemaAttribute( "start_segments", xs_string, "Set names of segments to include in the first build phase")
+		+ XMLSchemaAttribute( "stop_segments", xs_string, "Set names of segments to be included in the final build phase")
+		+ XMLSchemaAttribute( "iterations_per_phase", xsct_non_negative_integer, "Number of iterations per build phase")
+		+ XMLSchemaAttribute( "dump_pdbs", xsct_rosetta_bool, "Dump output to PDB files?");
+
+	XMLSchemaComplexTypeGenerator complex_type_generator;
+	complex_type_generator
+		.element_name( mover_name() )
+		.description( "Mover to generate backbones for de novo design")
+		.complex_type_naming_func( & moves::complex_type_name_for_mover)
+		.add_attributes( attlist )
+		.add_ordered_subelement_set_as_repeatable( unordered_subelements)
+		.add_ordered_subelement_set_as_required( architect_subelements )
+		.add_ordered_subelement_set_as_required( folder_subelements )
+		.write_complex_type_to_schema( xsd);
+}
+
+std::string BuildDeNovoBackboneMoverCreator::keyname() const {
+	return BuildDeNovoBackboneMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BuildDeNovoBackboneMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new BuildDeNovoBackboneMover );
 }
 
-std::string
-BuildDeNovoBackboneMoverCreator::keyname() const
+void BuildDeNovoBackboneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return BuildDeNovoBackboneMover::class_name();
+	BuildDeNovoBackboneMover::provide_xml_schema( xsd );
 }
+
 
 ////////////// Helper movers /////////////////
 std::string

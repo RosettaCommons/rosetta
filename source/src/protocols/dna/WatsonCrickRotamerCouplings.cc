@@ -80,7 +80,10 @@ WatsonCrickRotamerCouplings::parse_tag( TagCOP /*tag*/ , DataMap & )
 
 void WatsonCrickRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty(
+		xsd, keyname(),
+		"Ensures Watson-Crick base pairing of DNA which may be lost "
+		"during repacking otherwise.");
 }
 
 void

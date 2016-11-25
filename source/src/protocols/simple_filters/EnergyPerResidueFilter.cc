@@ -40,17 +40,20 @@
 #include <core/types.hh>
 
 #include <set>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer energy_per_residue_filter_tracer( "protocols.simple_filters.EnergyPerResidueFilter" );
 
-protocols::filters::FilterOP
-EnergyPerResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new EnergyPerResidueFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP EnergyPerResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new EnergyPerResidueFilter ); }
 
-std::string
-EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
+// XRW TEMP std::string
+// XRW TEMP EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
 
 EnergyPerResidueFilter::EnergyPerResidueFilter(
 	core::Size const resnum,
@@ -435,6 +438,56 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 	}
 	return( weighted_score );
 }
+
+std::string EnergyPerResidueFilter::name() const {
+	return class_name();
+}
+
+std::string EnergyPerResidueFilter::class_name() {
+	return "EnergyPerResidue";
+}
+
+void EnergyPerResidueFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "score type", "total_score")
+		+ XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "energy threshold", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("whole_interface", xsct_rosetta_bool, "If whole_interface is set to 1, it computes all the energies for the interface residues defined by the jump_number and the interface_distance_cutoff", "0")
+		+ XMLSchemaAttribute::attribute_w_default("whole_protein", xsct_rosetta_bool, "tests the energy of the interface if true", "0")
+		+ XMLSchemaAttribute::attribute_w_default("jump_number", xsct_non_negative_integer, "The jump which describes the interface", "1")
+		+ XMLSchemaAttribute::attribute_w_default("interface_distance_cutoff", xsct_real, "Along with the jump_number, it defines the residues on the interface", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("bb_bb", xsct_rosetta_bool, "Needs to be set to true if you want to evaluate backbone-backbone hydrogen bonding energies", "false");
+
+	// can't do this twice -- adds sfxn twice
+	//protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
+
+	attlist + XMLSchemaAttribute("resnums", xs_string, "a list of residue numbers (1,2,3 for pose numbering or 1A,2A,3A for pdb numbering) to filter through")
+		+ XMLSchemaAttribute("around_resnums", xs_string, "a list of residues that you want to evaluate the energy around")
+		+ XMLSchemaAttribute::attribute_w_default("around_shell", xsct_real, "distance measure that helps define the region to evaluate the energy", "8.0");
+
+	core::pose::attributes_for_get_resnum( attlist, "");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Tests the energy of a particular residue (e.g. pdb_num=1), or interface (whole_interface=1), or whole protein (whole_protein=1), or a set of residues (e.g. resnums=1,2,3).", attlist );
+}
+
+std::string EnergyPerResidueFilterCreator::keyname() const {
+	return EnergyPerResidueFilter::class_name();
+}
+
+protocols::filters::FilterOP
+EnergyPerResidueFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new EnergyPerResidueFilter );
+}
+
+void EnergyPerResidueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnergyPerResidueFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -21,25 +21,28 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-std::string GridInitMoverCreator::keyname() const
-{
-	return GridInitMoverCreator::mover_name();
-}
+// XRW TEMP std::string GridInitMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GridInitMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP GridInitMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new GridInitMover );
-}
+// XRW TEMP protocols::moves::MoverOP GridInitMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new GridInitMover );
+// XRW TEMP }
 
-std::string GridInitMoverCreator::mover_name()
-{
-	return "GridInitMover";
-}
+// XRW TEMP std::string GridInitMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GridInitMover";
+// XRW TEMP }
 
 GridInitMover::GridInitMover()
 {
@@ -61,10 +64,10 @@ protocols::moves::MoverOP GridInitMover::fresh_instance() const
 	return protocols::moves::MoverOP( new GridInitMover );
 }
 
-std::string GridInitMover::get_name() const
-{
-	return "GridInitMover";
-}
+// XRW TEMP std::string GridInitMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "GridInitMover";
+// XRW TEMP }
 
 void GridInitMover::parse_my_tag
 (
@@ -99,6 +102,38 @@ void GridInitMover::apply(core::pose::Pose & pose)
 	grid_manager->update_grids(pose,center);
 
 }
+
+std::string GridInitMover::get_name() const {
+	return mover_name();
+}
+
+std::string GridInitMover::mover_name() {
+	return "GridInitMover";
+}
+
+void GridInitMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chain", xsct_char, "Chain for which to initialize grids" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Initializes grids using the GridManager", attlist );
+}
+
+std::string GridInitMoverCreator::keyname() const {
+	return GridInitMover::mover_name();
+}
+
+protocols::moves::MoverOP
+GridInitMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GridInitMover );
+}
+
+void GridInitMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GridInitMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

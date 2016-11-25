@@ -76,6 +76,10 @@
 #include <set>
 #include <utility/excn/Exceptions.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 using namespace core;
 using namespace protocols::seeded_abinitio;
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.CloseFold" );
@@ -87,28 +91,28 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-CloseFoldCreator::keyname() const
-{
-	return CloseFoldCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CloseFoldCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CloseFold::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CloseFoldCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CloseFold() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CloseFoldCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CloseFold() );
+// XRW TEMP }
 
-std::string
-CloseFoldCreator::mover_name()
-{
-	return "CloseFold";
-}
+// XRW TEMP std::string
+// XRW TEMP CloseFold::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CloseFold";
+// XRW TEMP }
 
 
 CloseFold::~CloseFold() = default;
 
 CloseFold::CloseFold() :
-	protocols::moves::Mover( CloseFoldCreator::mover_name() )
+	protocols::moves::Mover( CloseFold::mover_name() )
 {
 	use_cutpoints_ = true;
 	secstructure_ = "";
@@ -418,10 +422,10 @@ CloseFold::apply( core::pose::Pose & pose ){
 
 }
 
-std::string
-CloseFold::get_name() const {
-	return CloseFoldCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CloseFold::get_name() const {
+// XRW TEMP  return CloseFold::mover_name();
+// XRW TEMP }
 
 void
 CloseFold::parse_my_tag(
@@ -528,6 +532,60 @@ CloseFold::parse_my_tag(
 		}//end seeds
 	}//end b-tags
 }//end parse_my_tag
+
+std::string CloseFold::get_name() const {
+	return mover_name();
+}
+
+std::string CloseFold::mover_name() {
+	return "CloseFold";
+}
+
+void CloseFold::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "fa_scorefxn" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "cen_scorefxn" );
+
+	attlist
+		+ XMLSchemaAttribute::required_attribute("fragments", xs_string, "Name of fragment file for fragment-based loop modeling.")
+		+ XMLSchemaAttribute::attribute_w_default("add_chainbreakterm", xsct_rosetta_bool, "Penalize chain break in score calculation.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("cutpoint_based", xsct_rosetta_bool, "Use cutpoint during loop moelding.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("use_kic", xsct_rosetta_bool, "Use KIC for loop modeling.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("idealize", xsct_rosetta_bool,
+		"Sample only ideal bb torsions. Faster. idealize=\"false\" is being ignored!", "1")
+		+ XMLSchemaAttribute::attribute_w_default("use_ccd", xsct_rosetta_bool, "Use CCD for loop modeling.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("trials_ccd", xsct_non_negative_integer, "XRW TO DO", "3")
+		+ XMLSchemaAttribute("secstrct", xs_string, "File with secondary struct assignment for each residue in chain(s)")
+		+ XMLSchemaAttribute("template_pdb", xs_string, "Template pdb file")
+		+ XMLSchemaAttribute("chain_num", xs_string, "Comma-separated list of chain IDs. NOTE: chains have to be consecutive");
+
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "Beginning of seed fragments (residue number)")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "End of seed fragment (residue number)");
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "Element to set seeds for seeded abinitio.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelement_list );
+}
+
+std::string CloseFoldCreator::keyname() const {
+	return CloseFold::mover_name();
+}
+
+protocols::moves::MoverOP
+CloseFoldCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CloseFold );
+}
+
+void CloseFoldCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CloseFold::provide_xml_schema( xsd );
+}
+
 
 }
 }

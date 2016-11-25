@@ -42,6 +42,10 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/JobDataFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -58,10 +62,10 @@ JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features
 
 JobDataFeatures::~JobDataFeatures() = default;
 
-std::string JobDataFeatures::type_name() const
-{
-	return "JobDataFeatures";
-}
+// XRW TEMP std::string JobDataFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "JobDataFeatures";
+// XRW TEMP }
 
 void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -300,6 +304,36 @@ JobDataFeatures::load_string_real_data(
 		job->add_string_real_pair(data_key, data_value);
 	}
 }
+
+std::string JobDataFeatures::type_name() const {
+	return class_name();
+}
+
+std::string JobDataFeatures::class_name() {
+	return "JobDataFeatures";
+}
+
+void JobDataFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record all of the job's string-real pair data (i.e. extra weird scoreterms, often) as features.", attlist );
+}
+
+std::string JobDataFeaturesCreator::type_name() const {
+	return JobDataFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+JobDataFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new JobDataFeatures );
+}
+
+void JobDataFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	JobDataFeatures::provide_xml_schema( xsd );
+}
+
 
 
 }

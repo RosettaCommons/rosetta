@@ -29,7 +29,8 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.DeNovoArchitectFactory" );
 
 namespace protocols {
@@ -110,6 +111,53 @@ DeNovoArchitectFactory::add_creator( DeNovoArchitectCreatorOP creator )
 		utility_exit_with_message( msg.str() );
 	}
 }
+
+
+
+void
+DeNovoArchitectFactory::define_architect_group( utility::tag::XMLSchemaDefinition & xsd ) const{
+	try{
+		utility::tag::define_xml_schema_group(
+			creators_,
+			architect_group_name(),
+			& DeNovoArchitectFactory::complex_type_name_for_architect,
+			xsd );
+	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Architects from DeNovoArchitectFactory; offending class"
+			" must call protocols::denovo_design::architects::complex_type_name_for_architect when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string
+DeNovoArchitectFactory::architect_group_name(){
+	return "denovo_architect";
+}
+
+std::string
+DeNovoArchitectFactory::complex_type_name_for_architect( std::string const & tag_name ){
+	return "denovo_architect_" + tag_name + "_complex_type";
+}
+
+void
+DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & architect_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes)
+{
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & complex_type_name_for_architect )
+		.element_name( architect_type )
+		.description( description )
+		.add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
+}
+
+
+
+
+
 
 } //protocols
 } //denovo_design

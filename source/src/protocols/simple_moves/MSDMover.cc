@@ -39,6 +39,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 //#include <protocols/simple_moves/MutateResidue.hh>
 //#include <core/chemical/AA.hh>
 
@@ -48,25 +51,25 @@ namespace simple_moves {
 
 static basic::Tracer TR("protocols.simple_moves.MSDMover");
 
-std::string
-MSDMoverCreator::keyname() const
-{
-	return MSDMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MSDMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MSDMover::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-MSDMoverCreator::create_mover() const {
-	return MSDMoverOP( new MSDMover );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP MSDMoverCreator::create_mover() const {
+// XRW TEMP  return MSDMoverOP( new MSDMover );
+// XRW TEMP }
 
-std::string
-MSDMoverCreator::mover_name()
-{
-	return "MSDMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MSDMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MSDMover";
+// XRW TEMP }
 
 MSDMover::MSDMover() :
-	moves::VectorPoseMover( MSDMoverCreator::mover_name() ),
+	moves::VectorPoseMover( MSDMover::mover_name() ),
 	weight_(0.5),
 	current_pose_( 1 ),
 	debug_( false )
@@ -89,10 +92,10 @@ moves::MoverOP MSDMover::fresh_instance() const {
 	return MSDMoverOP ( new MSDMover );
 }
 
-std::string
-MSDMover::get_name() const {
-	return MSDMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MSDMover::get_name() const {
+// XRW TEMP  return MSDMover::mover_name();
+// XRW TEMP }
 
 void
 MSDMover::apply( core::pose::Pose & pose ) {
@@ -317,6 +320,70 @@ core::Real MSDMover::weight () { return weight_; }
 void MSDMover::weight( core::Real weight ) { weight_ = weight; }
 
 void MSDMover::set_current_pose( core::Size current_pose ) { current_pose_ = current_pose; }
+
+std::string MSDMover::get_name() const {
+	return mover_name();
+}
+
+std::string MSDMover::mover_name() {
+	return "MSDMover";
+}
+
+void MSDMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"design_mover", xs_string,
+		"A previously defined mover that will design the input states. "
+		"Note that since resfiles are applied as a TaskOperation within the MSDMover, "
+		"there's no need to specify ReadResfile behavior for the design_mover - "
+		"however all other desired TaskOperations (InitializeFromCommandLine, etc) "
+		"should be specified in the design_mover tag");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"resfiles", xs_string,
+		"A comma-separated list of resfiles to define designable and repackable residues "
+		"for all states in multistate design. Multiple resfiles can be used "
+		"for multiple states - in this case the first resfile in the tag will be applied "
+		"to the first structure, etc. One single resfile used for all states is also supported.");
+
+	attlist +XMLSchemaAttribute::attribute_w_default(
+		"constraint_weight", xsct_real,
+		"The weight of amino acid linking constraints during the RECON protocol. "
+		"Generally weights will be ramped from 0.5 to 2.0, to allow searching of more "
+		"sequence space in early rounds.",
+		"1.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"debug", xsct_rosetta_bool,
+		"Output extra messages during the protocol",
+		"false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Multistate design mover used in the RECON protocol. "
+		"MSDMover applies linking constraints to a pose based on the sequence "
+		"of other input poses, then uses a predefined design mover to run "
+		"design based on these sequence constraints. These constraints are "
+		"then removed for the next step of the protocol. ",
+		attlist );
+}
+
+std::string MSDMoverCreator::keyname() const {
+	return MSDMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MSDMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MSDMover );
+}
+
+void MSDMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MSDMover::provide_xml_schema( xsd );
+}
+
 
 utility::vector1< utility::vector1< core::Size > > MSDMover::res_links () { return res_links_; }
 

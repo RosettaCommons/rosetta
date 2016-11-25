@@ -452,9 +452,9 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 		// for ( Size q: obligate_cut_points_reformat ) TR << TR.Cyan << " " << pose.pdb_info()->chain( q ) << ":" << pose.pdb_info()->number( q ) << std::endl;
 		// for (Size n = 1; n <= num_pairings_to_force; n++ ){
 		//   TR << TR.Cyan << "JUMPS" <<
-		// 		" " << pose.pdb_info()->chain( jump_points(1, n) ) << ":" << pose.pdb_info()->number( jump_points( 1, n ) ) <<
-		// 		" " << pose.pdb_info()->chain( jump_points(2, n) ) << ":" << pose.pdb_info()->number( jump_points( 2, n ) ) <<
-		// 		std::endl;
+		//   " " << pose.pdb_info()->chain( jump_points(1, n) ) << ":" << pose.pdb_info()->number( jump_points( 1, n ) ) <<
+		//   " " << pose.pdb_info()->chain( jump_points(2, n) ) << ":" << pose.pdb_info()->number( jump_points( 2, n ) ) <<
+		//   std::endl;
 		// }
 
 		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points_reformat, cut_bias, 1, true /*enable 1 or NRES jumps*/ );

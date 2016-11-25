@@ -16,6 +16,7 @@
 #include <protocols/constraint_generator/AtomPairConstraintGeneratorCreator.hh>
 
 // Protocol headers
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 #include <protocols/constraint_generator/util.hh>
 
 // Core headers
@@ -30,7 +31,7 @@
 #include <basic/Tracer.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );
 
 namespace protocols {
@@ -244,6 +245,34 @@ AtomPairConstraintGenerator::create_sequence_mapping( core::pose::Pose const & p
 		return core::pose::sequence_map_from_pdbinfo( pose, ref_pose );
 	}
 }
+
+void
+AtomPairConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "native", xsct_rosetta_bool, "Restrain to native distance?", "false" )
+		+ XMLSchemaAttribute( "sd", xsct_real, "Standard deviation for distance constraint" )
+		+ XMLSchemaAttribute( "weight", xsct_real, "Weight of distance constraint" )
+		+ XMLSchemaAttribute( "ca_only", xsct_rosetta_bool, "Only make constraints between alpha carbons" )
+		+ XMLSchemaAttribute( "max_distance", xsct_real, "Do not add constraints if atoms are farther apart than this" )
+		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Minimum sequence separation between constrained residues" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector_when_required( attlist, "residue_selector", "Selector specifying residues to be constrained" );
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Generates atom pair constraints between specified residues",
+		attlist );
+}
+
+void
+AtomPairConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	AtomPairConstraintGenerator::provide_xml_schema( xsd );
+}
+
+
+
 
 AtomPairConstraintGenerator::MappedAtoms
 AtomPairConstraintGenerator::atoms_to_constrain(

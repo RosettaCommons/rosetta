@@ -54,6 +54,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MergePDBMover" );
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -63,21 +66,21 @@ using namespace core;
 using core::pose::Pose;
 using utility::vector1;
 
-std::string MergePDBMoverCreator::keyname() const
-{
-	return MergePDBMoverCreator::mover_name();
-}
+// XRW TEMP std::string MergePDBMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MergePDBMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MergePDBMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MergePDBMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MergePDBMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MergePDBMover );
+// XRW TEMP }
 
-std::string
-MergePDBMoverCreator::mover_name()
-{
-	return "MergePDB";
-}
+// XRW TEMP std::string
+// XRW TEMP MergePDBMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MergePDB";
+// XRW TEMP }
 
 MergePDBMover::MergePDBMover()
 : moves::Mover("MergePDB"),
@@ -85,10 +88,10 @@ MergePDBMover::MergePDBMover()
 {
 }
 
-std::string
-MergePDBMover::get_name() const {
-	return MergePDBMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MergePDBMover::get_name() const {
+// XRW TEMP  return MergePDBMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 MergePDBMover::clone() const
@@ -384,6 +387,54 @@ void MergePDBMover::parse_my_tag(
 
 }
 
+std::string MergePDBMover::get_name() const {
+	return mover_name();
+}
+
+std::string MergePDBMover::mover_name() {
+	return "MergePDB";
+}
+
+void MergePDBMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction attachment_termini_type;
+	attachment_termini_type.name( "attachment_termini_type" );
+	attachment_termini_type.base_type( xs_string );
+	attachment_termini_type.add_restriction( xsr_enumeration, "n_term" );
+	attachment_termini_type.add_restriction( xsr_enumeration, "c_term" );
+	xsd.add_top_level_element( attachment_termini_type );
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "attachment_termini", "attachment_termini_type", "XRW TO DO", "n_term" )
+		+ XMLSchemaAttribute::attribute_w_default( "overlap_length", xsct_non_negative_integer, "XRW TO DO", "4" )
+		+ XMLSchemaAttribute::attribute_w_default( "overlap_rmsd", xsct_real, "XRW TO DO", "0.3" )
+		+ XMLSchemaAttribute::attribute_w_default( "overlap_scan_range", xsct_non_negative_integer, "XRW TO DO", "20" )
+		+ XMLSchemaAttribute::required_attribute( "attach_pdb", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "design_range", xsct_real, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "packing_range", xsct_real, "XRW TO DO", "5" )
+		+ XMLSchemaAttribute::attribute_w_default( "do_minimize", xsct_rosetta_bool, "Perform energy minimization", "true" )
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function used for packing and design." )
+		+ XMLSchemaAttribute( "task_operations", xsct_rosetta_bool, "Set task operations" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Align + combine parts of the pdb", attlist );
+}
+
+std::string MergePDBMoverCreator::keyname() const {
+	return MergePDBMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MergePDBMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MergePDBMover );
+}
+
+void MergePDBMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MergePDBMover::provide_xml_schema( xsd );
+}
+
+
 } // simple_moves
 } // protocols
-

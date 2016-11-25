@@ -12,10 +12,15 @@
 
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
+
 //#include <protocols/qsar/qsarTypeManager.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
+// Utility headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
@@ -60,8 +65,8 @@ GridFactory::factory_register(GridCreatorOP creator)
 
 GridBaseOP GridFactory::new_grid(utility::tag::TagCOP tag) const
 {
-	//string const name = tag->getName();
-	std::string const type = tag->getOption<std::string>("grid_type");
+	std::string const type = tag->getName();
+	//std::string const type = tag->getOption<std::string>("grid_type");
 
 	GridMap::const_iterator iter(grid_creator_map_.find(type));
 	if ( iter != grid_creator_map_.end() ) {
@@ -112,6 +117,23 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 	new_grid->deserialize(data);
 	return new_grid;
 }
+
+void GridFactory::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			grid_creator_map_,
+			scoring_grid_xml_schema_group_name(),
+			& complex_type_name_for_scoring_grid,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for ScoringGrids from GridFactory; offending class"
+			" must call protocols::qsar::scoring_grids::complex_type_name_for_scoring_grid when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+
+}
+std::string GridFactory::scoring_grid_xml_schema_group_name() { return "scoring_grid"; }
 
 }
 }

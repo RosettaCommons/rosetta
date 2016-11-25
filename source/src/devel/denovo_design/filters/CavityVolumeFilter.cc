@@ -35,6 +35,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -62,22 +65,22 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-std::string
-CavityVolumeFilterCreator::keyname() const
-{
-	return CavityVolumeFilterCreator::filter_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CavityVolumeFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CavityVolumeFilter::class_name();
+// XRW TEMP }
 
-protocols::filters::FilterOP
-CavityVolumeFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CavityVolumeFilter() );
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP CavityVolumeFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new CavityVolumeFilter() );
+// XRW TEMP }
 
-std::string
-CavityVolumeFilterCreator::filter_name()
-{
-	return "CavityVolume";
-}
+// XRW TEMP std::string
+// XRW TEMP CavityVolumeFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "CavityVolume";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  CavityVolumeFilter main code:
@@ -209,6 +212,51 @@ CavityVolumeFilter::apply( core::pose::Pose const & pose ) const
 	report_sm( pose );
 	return true;
 }
+
+std::string CavityVolumeFilter::name() const {
+	return class_name();
+}
+
+std::string CavityVolumeFilter::class_name() {
+	return "CavityVolume";
+}
+
+void CavityVolumeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"residue selector name");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Uses Will Sheffler's packing code (packstat) to estimate the total volume of "
+		"intra-protein voids. The value returned is the sum of volumes of the computed "
+		"cavities in Angstroms 3. A value of 20 is approximately equal to the volume "
+		"of a carbon atom. This filter currently has no options or threshold, and "
+		"currently always returns true, but that is likely to change in the future. "
+		"This calculation of cavity volume is inherently stochastic (packstat is stochastic). "
+		"Therefore, setting the temperature to be permissive for the variation in "
+		"results with the same input or using the average value of many decoys "
+		"(nstruct) is recommended. The filter should not count cavities that are exposed to solvent.",
+		attlist );
+}
+
+std::string CavityVolumeFilterCreator::keyname() const {
+	return CavityVolumeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CavityVolumeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CavityVolumeFilter );
+}
+
+void CavityVolumeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CavityVolumeFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace filters

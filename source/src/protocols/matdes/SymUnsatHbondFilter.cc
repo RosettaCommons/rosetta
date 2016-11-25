@@ -62,6 +62,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // C++ Headers
 
@@ -417,11 +420,61 @@ SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose )
 	out<<"# unsatisfied hbonds: "<< unsat_hbonds<<'\n';
 }
 
-protocols::filters::FilterOP
-SymUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymUnsatHbondFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SymUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymUnsatHbondFilter ); }
 
-std::string
-SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }
+// XRW TEMP std::string
+// XRW TEMP SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }
+
+std::string SymUnsatHbondFilter::name() const {
+	return class_name();
+}
+
+std::string SymUnsatHbondFilter::class_name() {
+	return "SymUnsatHbonds";
+}
+
+void SymUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction mode_enumeration;
+	mode_enumeration.name( "SymUnsatHbondFilter_mode_choices" );
+	mode_enumeration.base_type( xs_string );
+	mode_enumeration.add_restriction( xsr_enumeration, "unbound_design_vs_reference" );
+	mode_enumeration.add_restriction( xsr_enumeration, "unbound_mutated_sidechains" );
+	mode_enumeration.add_restriction( xsr_enumeration, "all" );
+	mode_enumeration.add_restriction( xsr_enumeration, "bound_vs_unbound" );
+	xsd.add_top_level_element( mode_enumeration );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "cutoff" , xsct_non_negative_integer , "Maximum number of buried unsatisfied H-bonds allowed." , "20" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "What jump to look at." , "1" )
+		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "What jump(s) to look at. For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used." )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "Output info to tracer. If passes, will output the number of unsatisfied hydrogen bonds to the scorefile and tracer. Also outputs to the tracer the specific residues and atoms that are unsatisfied and a formatted string for easy selection in pymol." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb" , xsct_rosetta_bool , "If true, write value to pdb file." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "mode", "SymUnsatHbondFilter_mode_choices" , "Default: Takes the current pose, uses the jump number or sym_dof_names and core::pose::symmetry::get_sym_aware_jump_num(pose,jump) to get the correct vector for translation into the unbound state, uses the RigidBodyTransMover to translate the pose into its unbound state, goes through every heavy atom in the asymmetric unit and finds cases where a polar is considered buried in the bound state, but not in the unbound state Can also set to calculate differently. See enumeration." , "bound_vs_unbound" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_native" , xsct_rosetta_bool , "Use native pdb as reference." , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Maximum number of buried unsatisfied H-bonds allowed across an interface.", attlist );
+}
+
+std::string SymUnsatHbondFilterCreator::keyname() const {
+	return SymUnsatHbondFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SymUnsatHbondFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SymUnsatHbondFilter );
+}
+
+void SymUnsatHbondFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymUnsatHbondFilter::provide_xml_schema( xsd );
+}
+
 
 } //namespace matdes
 } //namespace protocols

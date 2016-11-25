@@ -31,7 +31,7 @@ public:
 	~RBInMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -63,6 +63,18 @@ public:
 
 	void modify_foldtree( bool const m ){ modify_foldtree_ = m; }
 	bool modify_foldtree() const { return modify_foldtree_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	void init(); /// sets the entry order; if the jump_library is already populated returns without doing anything
 	bool checkpoint_recovery(); /// recover from checkpointing. If checkpointing is off, does nothing. Returns true if recovered from checkpoint

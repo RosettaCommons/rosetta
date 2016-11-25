@@ -61,6 +61,9 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -70,21 +73,21 @@ namespace movers {
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.LoopRemodelFromCommandLine" );
 static THREAD_LOCAL basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPORT" );
 
-std::string
-LoopMoverFromCommandLineCreator::keyname() const
-{
-	return LoopMoverFromCommandLineCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMoverFromCommandLineCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopMoverFromCommandLine::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopMoverFromCommandLineCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopMoverFromCommandLineCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
+// XRW TEMP }
 
-std::string LoopMoverFromCommandLineCreator::mover_name()
-{
-	return "LoopMoverFromCommandLine";
-}
+// XRW TEMP std::string LoopMoverFromCommandLine::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopMoverFromCommandLine";
+// XRW TEMP }
 
 LoopMoverFromCommandLine::~LoopMoverFromCommandLine() {}
 
@@ -98,7 +101,7 @@ LoopMoverFromCommandLine::clone() const
 
 //call on empty constructor
 LoopMoverFromCommandLine::LoopMoverFromCommandLine() :
-	simple_moves::DesignRepackMover( LoopMoverFromCommandLineCreator::mover_name() ),
+	simple_moves::DesignRepackMover( LoopMoverFromCommandLine::mover_name() ),
 	intermedrelax_( "no" ),
 	remodel_( "no" ),
 	relax_( "no" ),
@@ -118,7 +121,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 	std::string const & loop_file_name,
 	protocols::loops::LoopsCOP loops
 ) :
-	simple_moves::DesignRepackMover ( LoopMoverFromCommandLineCreator::mover_name()),
+	simple_moves::DesignRepackMover ( LoopMoverFromCommandLine::mover_name()),
 	protocol_ ( protocol ),
 	perturb_( perturb),
 	refine_(refine),
@@ -240,10 +243,10 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		}//end single loop
 	}//loops>0
 }
-std::string
-LoopMoverFromCommandLine::get_name() const {
-	return LoopMoverFromCommandLineCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMoverFromCommandLine::get_name() const {
+// XRW TEMP  return LoopMoverFromCommandLine::mover_name();
+// XRW TEMP }
 void
 LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
@@ -265,6 +268,59 @@ LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::Data
 	// task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ));
 
 }//parsemytags
+
+std::string LoopMoverFromCommandLine::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMoverFromCommandLine::mover_name() {
+	return "LoopMoverFromCommandLine";
+}
+
+void LoopMoverFromCommandLine::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction closuremethod;
+	closuremethod.name( "closuremethod" );
+	closuremethod.base_type( xs_string );
+	closuremethod.add_restriction( xsr_enumeration, "ccd" );
+	closuremethod.add_restriction( xsr_enumeration, "automatic" );
+	closuremethod.add_restriction( xsr_enumeration, "kinematic" );
+	xsd.add_top_level_element( closuremethod );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "protocol", "closuremethod", "Which loop closure protocol to use?", "ccd" )
+		+ XMLSchemaAttribute::attribute_w_default( "perturb", xsct_rosetta_bool, "Perturb before closure?", "1" )
+		// In parse_my_tag, refine has two default values, contingent on the value of protocol_.
+		// Since the default value must be universal, we have no default.
+		+ XMLSchemaAttribute( "refine", xsct_rosetta_bool, "Use a refinement protocol?" )
+		+ XMLSchemaAttribute::attribute_w_default( "intermedrelax", xsct_rosetta_bool, "Use an intermediate relax protocol?", "no" )
+		+ XMLSchemaAttribute::attribute_w_default( "remodel", xsct_rosetta_bool, "Perform a remodeling protocol?", "no" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax", xsct_rosetta_bool, "A final round of fullatom relaxation?", "no" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "refine_score" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "perturb_score" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "loop_file", xs_string, "File from which loops definitions might be read", "loops.loops" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopMoverFromCommandLineCreator::keyname() const {
+	return LoopMoverFromCommandLine::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopMoverFromCommandLineCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
+}
+
+void LoopMoverFromCommandLineCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMoverFromCommandLine::provide_xml_schema( xsd );
+}
+
 }//movers
 }//protein_interface_design
 }//protocols

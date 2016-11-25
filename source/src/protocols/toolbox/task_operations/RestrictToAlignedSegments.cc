@@ -219,25 +219,26 @@ void RestrictToAlignedSegmentsOperation::provide_xml_schema( utility::tag::XMLSc
 	AttributeList aligned_seg_attributes;
 	aligned_seg_attributes
 		+ required_name_attribute()
-		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "start_res", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "stop_res", xs_string );
+		+ XMLSchemaAttribute( "source_pdb", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "start_res", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "stop_res", xs_string , "XRW TO DO" );
 	subelements
 		.complex_type_naming_func( & rtas_subelement_ct_naming_function )
-		.add_simple_subelement( "AlignedSegment", aligned_seg_attributes );
+		.add_simple_subelement( "AlignedSegment", aligned_seg_attributes , "XRW TO DO");
 
 	AttributeList attributes;
 
 	attributes
 		+ optional_name_attribute()
-		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "start_res", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "stop_res", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xs_decimal, "6.0" );
+		+ XMLSchemaAttribute( "source_pdb", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "start_res", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "stop_res", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xsct_real, "XRW TO DO",  "6.0"  );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( keyname() )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attributes( attributes )
 		.set_subelements_repeatable( subelements )

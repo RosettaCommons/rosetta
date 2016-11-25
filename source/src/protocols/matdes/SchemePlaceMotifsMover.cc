@@ -24,6 +24,11 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <numeric/random/random_xyz.hh>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 #include <protocols/matdes/MotifHitsRotamersOperation.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -32,6 +37,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
+
 static basic::Tracer TR("protocols.matdes.SchemePlaceMotifsMover");
 
 //static numeric::random::RandomGenerator::RandomGenerator() ;
@@ -45,22 +51,23 @@ using core::pose::Pose;
 
 
 // -------------  Mover Creator -------------
-std::string
-SchemePlaceMotifsMoverCreator::keyname() const
-{
-	return SchemePlaceMotifsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SchemePlaceMotifsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SchemePlaceMotifsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SchemePlaceMotifsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP(new SchemePlaceMotifsMover) ;
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SchemePlaceMotifsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SchemePlaceMotifsMover );
+// XRW TEMP }
 
-std::string
-SchemePlaceMotifsMoverCreator::mover_name()
-{
-	return "SchemePlaceMotifs";
-}
+// XRW TEMP std::string
+// XRW TEMP SchemePlaceMotifsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SchemePlaceMotifs";
+// XRW TEMP }
+
 // -------------  Mover Creator -------------
 
 SchemePlaceMotifsMover::SchemePlaceMotifsMover() : halt_on_error_(false)
@@ -233,6 +240,46 @@ SchemePlaceMotifsMover::parse_my_tag(
 
 
 }
+
+std::string SchemePlaceMotifsMover::get_name() const {
+	return mover_name();
+}
+
+std::string SchemePlaceMotifsMover::mover_name() {
+	return "SchemePlaceMotifs";
+}
+
+void SchemePlaceMotifsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "name", xs_string, "Tag name.", "XRW TO DO") //should this be default?
+		+ XMLSchemaAttribute::attribute_w_default( "dumpfile", xs_string, "This is an option to generate a extra pdb that dumps the motifs used for packing, it's meant for troubleshooting.", "XRW TO DO") //should this be default or just optional?
+		+ XMLSchemaAttribute::attribute_w_default( "mode", xs_string, "The option 'standard' will just skip the mode setting. 'standard' is the recommended use, it requires taskops and then looks for motifs in the designable residues. 'basic' uses Will's scheme logic to decide where the motifs are being placed (and therefore which residues are designable).", "basic" )
+		+ XMLSchemaAttribute::attribute_w_default( "allowed_aas", xs_string, "This means that it will use the motifs in the motif files. Do not change this, there is currently no other option.", "motifs" )
+		+ XMLSchemaAttribute::attribute_w_default( "halt_on_error", xsct_rosetta_bool, "XRW TO DO: unsure?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "motif_sets", xs_string, "Path to motif sets file to use.", "XRW TO DO" ) ; //XRW TO DO: does this look correct?
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover will use only motif pairs found in input motif_sets or in the default motif sets to design interface residues.", attlist );
+}
+
+std::string SchemePlaceMotifsMoverCreator::keyname() const {
+	return SchemePlaceMotifsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SchemePlaceMotifsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SchemePlaceMotifsMover );
+}
+
+void SchemePlaceMotifsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SchemePlaceMotifsMover::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // protocols

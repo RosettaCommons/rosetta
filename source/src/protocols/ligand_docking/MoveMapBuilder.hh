@@ -23,16 +23,17 @@
 
 //// Project Headers
 
-//// Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/vector1.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/vector1.hh>
+
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -63,6 +64,9 @@ public:
 	get_bb_interface_builder()const;
 
 	bool minimize_backbone();
+
+	static std::string element_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	InterfaceBuilderOP sc_interface_builder_; // which side chains to minimize?

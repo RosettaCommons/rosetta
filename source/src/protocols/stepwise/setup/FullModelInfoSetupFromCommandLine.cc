@@ -486,7 +486,7 @@ look_for_dna( vector1< core::sequence::SequenceOP > & fasta_sequences )
 				if ( one_letter_sequence[ k-1 ] == 't' ) {
 					Size const pos = oneletter_to_fullname_index[ k - 1 ];
 					if ( pos == 0 || fullname_list[ pos ].substr( 3, 14 ) != ":deoxy_O2prime" ) {
-					utility_exit_with_message( "Seeing a 't' in sequence -- if you want this to be DNA, include the tag 'DNA' in the FASTA id for this sequence. if you want this to be RNA, use X[5MU] as the character." );
+						utility_exit_with_message( "Seeing a 't' in sequence -- if you want this to be DNA, include the tag 'DNA' in the FASTA id for this sequence. if you want this to be RNA, use X[5MU] as the character." );
 					}
 				}
 			}

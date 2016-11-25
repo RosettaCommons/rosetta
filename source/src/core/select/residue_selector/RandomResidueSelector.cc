@@ -87,17 +87,17 @@ RandomResidueSelector::subset_from_randomized_vector(
 {
 	TR << "Selected residues: ";
 	std::set< core::Size > selected;
-	for ( ResidueVector::const_iterator r=random_order_residue_set.begin(); r!=random_order_residue_set.end(); ++r ) {
-		TR << *r << " ";
-		selected.insert( *r );
+	for ( auto const & r : random_order_residue_set ) {
+		TR << r << " ";
+		selected.insert( r );
 		if ( selected.size() >= num_residues_ ) break;
 	}
 	TR << std::endl;
 
 	ResidueSubset subset( pose.size(), false );
-	for ( std::set< core::Size >::const_iterator r=selected.begin(); r!=selected.end(); ++r ) {
-		debug_assert( *r <= subset.size() );
-		subset[ *r ] = true;
+	for ( Size const  r : selected ) {
+		debug_assert( r <= subset.size() );
+		subset[ r ] = true;
 	}
 	return subset;
 }
@@ -143,9 +143,20 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute( "num_residues", xsct_non_negative_integer ) );
-	attributes.push_back( XMLSchemaAttribute( "selector", xs_string ) );
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute(
+		"num_residues", xsct_non_negative_integer,
+		"The number of residues to be randomly selected")
+		+ XMLSchemaAttribute(
+		"selector", xs_string,
+		"Defines the subset from which random residues are chosen.");
+	xsd_type_definition_w_attributes_and_optional_subselector(
+		xsd, class_name(),
+		"Selects residues in the pose at random. Note that this residue "
+		"selector is stochastic. This is, it will return a different set "
+		"of residues every time it is called. However, the randomly selected "
+		"residues can be saved using the StoreResidueSubsetMover and "
+		"retrieved using the StoredResidueSubset selector.",
+		attributes );
 }
 
 ResidueSelectorOP

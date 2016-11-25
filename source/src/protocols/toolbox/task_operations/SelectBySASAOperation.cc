@@ -283,20 +283,35 @@ void SelectBySASAOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 {
 	AttributeList attributes;
 
-	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "mode", xs_string, "sc" )
-		+ XMLSchemaAttribute::attribute_w_default(  "state", xs_string, "monomer" )
-		+ XMLSchemaAttribute::attribute_w_default(  "probe_radius", xs_decimal, "2.2" )
-		+ XMLSchemaAttribute::attribute_w_default(  "core_asa", xs_decimal, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "surface_asa", xs_decimal, "30" )
-		+ XMLSchemaAttribute::attribute_w_default(  "jumps", xsct_int_cslist, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "core", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "boundary", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "surface", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" );
+	XMLSchemaRestriction mode_enumeration;
+	mode_enumeration.name( "SelectBySASAOperation_mode_choices" );
+	mode_enumeration.base_type( xs_string );
+	mode_enumeration.add_restriction( xsr_enumeration, "mc" );
+	mode_enumeration.add_restriction( xsr_enumeration, "sc" );
+	xsd.add_top_level_element( mode_enumeration );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	XMLSchemaRestriction state_enumeration;
+	state_enumeration.name( "SelectBySASAOperation_state_choices" );
+	state_enumeration.base_type( xs_string );
+	state_enumeration.add_restriction( xsr_enumeration, "monomer" );
+	state_enumeration.add_restriction( xsr_enumeration, "bound" );
+	state_enumeration.add_restriction( xsr_enumeration, "unbound" );
+	xsd.add_top_level_element( state_enumeration );
+
+	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "mode", "SelectBySASAOperation_mode_choices", "Options: 'mc' or 'sc'. Atoms to be evaluated during the SASA calculation. The default is to consider the total SASA of the sidechain atoms of each residue --mode='sc', but one can alternatively consider the total SASA of the mainchain + CB atoms of each residue --mode='mc'.",  "sc"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "state", "SelectBySASAOperation_state_choices", "Options: 'monomer', 'bound', or 'unbound'. Specify the state you would like the SASA to be evaluate in. If state='monomer', then each chain will be extracted from the pose and the SASA evaluated separately on each of these monomeric poses. If state='bound', then the pose is not modified before evaluating SASAs. If state='unbound', then the chains are translated 1000 angstroms along the user specified jumps or sym_dofs prior to evaluating SASAs.",  "monomer"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "probe_radius", xsct_real, "Probe radius for calculating the solvent accessible surface area. Note: the default is larger than the typical used to represent water of 1.4 angstroms, but has been found to work well with the other default parameters for protein redesign purposes.",  "2.2"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "core_asa", xsct_real, "Upper accessible surface area cutoff for a residue to be considered core. Any residue with a value below core_asa will be selected as core.",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "surface_asa", xsct_real, "Lower accessible surface area cutoff for a residue to be considered surface. Any residue with a value above surface_asa will be selected as surface. Any residue with a value between core_asa and surface_asa will be considered boundary.",  "30"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "jumps", xsct_int_cslist, "Comma-separated list of jumps to be translated along if mode='unbound'.",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "Comma-separated list of sym_dof_names controlling master symmetric DOFs to be translated along if mode='unbound'.",  "XRW TO DO"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "core", xsct_rosetta_bool, "Should core positions be designable? If yes, then set core=true.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "boundary", xsct_rosetta_bool, "Should boundary positions be designable? If yes, then set boundary=true.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "surface", xsct_rosetta_bool, "Should surface positions be designable? If yes, then set surface=true.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xsct_rosetta_bool, "If set to true, then extra information will be output to the tracer, including PyMOL selections of the residues considered to be core, boundary, and surface. Aids in testing out appropriate parameters for a given system and verifying that the positions are being selected as desired.",  "false"  );
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Select residues by their solvent accessible surface area in either the monomeric, bound, or unbound state of the pose." );
 }
 
 

@@ -34,11 +34,11 @@ public:
 	typedef core::pose::Pose Pose;
 public:
 	LoopLengthChange();
-	void apply( Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopLengthChange ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new LoopLengthChange ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~LoopLengthChange();
 	void loop_start( core::Size const loop_start );
 	void loop_end( core::Size const loop_end );
@@ -49,6 +49,18 @@ public:
 	void delta( int const d );
 	void tail( bool b );
 	int delta() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size loop_start_, loop_end_, loop_cut_;
 	int delta_; // delta_: by how much to change

@@ -194,11 +194,17 @@ void CDRResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "cdrs",      xs_string, "L1,L2,L3,H1,H2,H3" )
-		+ XMLSchemaAttribute::attribute_w_default(  "cdr_definition", xs_string, option [OptionKeys::antibody::cdr_definition]() )
-		+ XMLSchemaAttribute::attribute_w_default(  "input_ab_scheme", xs_string, option [OptionKeys::antibody::input_ab_scheme]());
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute::attribute_w_default(  "cdrs", xs_string,
+		"Which CDRs to include. Comma separated list. Default: L1,L2,L3,H1,H2,H3 ",
+		"L1,L2,L3,H1,H2,H3" )
+		+ XMLSchemaAttribute::attribute_w_default(  "cdr_definition", xs_string,
+		"Set the cdr definition you want to use. Requiresthe input_ab_scheme XML option.",
+		option [OptionKeys::antibody::cdr_definition]( ) )
+		+ XMLSchemaAttribute(  "input_ab_scheme", xs_string,
+		"Set the antibody numbering scheme. Requiresthe cdr_definition option. "
+		"Both options can also be set through the command line (recommended)");
 
+	xsd_type_definition_w_attributes( xsd, class_name(), "Select CDR residues.", attributes );
 }
 
 ResidueSelectorOP

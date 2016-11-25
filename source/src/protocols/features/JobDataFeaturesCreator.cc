@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-JobDataFeaturesCreator::JobDataFeaturesCreator() {}
-JobDataFeaturesCreator::~JobDataFeaturesCreator() = default;
-FeaturesReporterOP JobDataFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new JobDataFeatures );
-}
+// XRW TEMP JobDataFeaturesCreator::JobDataFeaturesCreator() {}
+// XRW TEMP JobDataFeaturesCreator::~JobDataFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP JobDataFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new JobDataFeatures );
+// XRW TEMP }
 
-std::string JobDataFeaturesCreator::type_name() const {
-	return "JobDataFeatures";
-}
+// XRW TEMP std::string JobDataFeaturesCreator::type_name() const {
+// XRW TEMP  return "JobDataFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -37,6 +37,9 @@
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <core/chemical/VariantType.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -50,22 +53,22 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetAtomTree" );
 
-std::string
-SetAtomTreeCreator::keyname() const
-{
-	return SetAtomTreeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetAtomTreeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetAtomTree::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetAtomTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetAtomTree );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetAtomTreeCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetAtomTree );
+// XRW TEMP }
 
-std::string
-SetAtomTreeCreator::mover_name()
-{
-	return "AtomTree";
-}
+// XRW TEMP std::string
+// XRW TEMP SetAtomTree::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AtomTree";
+// XRW TEMP }
 
 //initializing
 core::Size anchor_num = 0;
@@ -73,7 +76,7 @@ std::string connect_from("");
 std::string connect_to("");
 
 SetAtomTree::SetAtomTree() :
-	protocols::moves::Mover( SetAtomTreeCreator::mover_name() ),
+	protocols::moves::Mover( SetAtomTree::mover_name() ),
 	docking_ft_( false ),
 	simple_ft_( false ),
 	two_parts_chain1_( false ),
@@ -422,16 +425,68 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
 }
 
-std::string
-SetAtomTree::get_name() const {
-	return SetAtomTreeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetAtomTree::get_name() const {
+// XRW TEMP  return SetAtomTree::mover_name();
+// XRW TEMP }
 
 core::kinematics::FoldTreeOP
 SetAtomTree::fold_tree() const{ return fold_tree_; }
 
 void
 SetAtomTree::fold_tree( core::kinematics::FoldTreeOP ft ){ fold_tree_ = ft; }
+
+std::string SetAtomTree::get_name() const {
+	return mover_name();
+}
+
+std::string SetAtomTree::mover_name() {
+	return "AtomTree";
+}
+
+void SetAtomTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "start_tree_at_chain", xsct_char, "Chain from which the atom tree ought to begin" )
+		+ XMLSchemaAttribute::attribute_w_default( "ab_fold_tree", xsct_rosetta_bool, "Antibody-based foldtree?", "false" )
+		// Since this has two defaults depending on ab_fold_tree, we give it no default.
+		+ XMLSchemaAttribute( "host_chain", xsct_non_negative_integer, "Chain that isn't part of the antibody, which only matters if ab_fold_tree is true -- nonetheless, typically 2 if ab_fold_tree is false" )
+
+		+ XMLSchemaAttribute( "fold_tree_file", xs_string, "Foldtree may be read in from a file, if desired" )
+		+ XMLSchemaAttribute::attribute_w_default( "docking_ft", xsct_rosetta_bool, "Use a classic docking foldtree", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "simple_ft", xsct_rosetta_bool, "Impose the simplest possible foldtree", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "If the docking foldtree is desired, over which jump should it apply?", "1" )
+
+		// AMW: We would prefer to impose a restriction on this, but resnum is only parsed
+		// eventually, in apply(). We think this is okay.
+		+ XMLSchemaAttribute( "resnum", xsct_refpose_enabled_residue_number, "Residue central to this AtomTree resetting" )
+		+ XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue central to this AtomTree resetting" )
+		+ XMLSchemaAttribute( "connect_to", xs_string, "Atom to be connected to" )
+
+		// This isn't passed through parse_resnum ANYWHERE. That's a shame. Have to keep a string.
+		+ XMLSchemaAttribute( "anchor_res", xs_string, "Anchor residue for the foldtree" )
+		+ XMLSchemaAttribute( "connect_from", xs_string, "Corresponding atom on the anchor residue" )
+		+ XMLSchemaAttribute::attribute_w_default( "two_parts_chain1", xsct_rosetta_bool, "Is the aim actually to cut chain 1 in two parts?", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SetAtomTreeCreator::keyname() const {
+	return SetAtomTree::mover_name();
+}
+
+protocols::moves::MoverOP
+SetAtomTreeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetAtomTree );
+}
+
+void SetAtomTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetAtomTree::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

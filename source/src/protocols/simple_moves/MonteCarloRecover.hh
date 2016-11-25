@@ -63,7 +63,7 @@ public: // constructor/destructor
 
 	/// @brief create this type of objectt
 	MoverOP fresh_instance() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 
 	/// @brief apply MonteCarloRecover (Mover)
@@ -84,6 +84,18 @@ public: // constructor/destructor
 
 	bool recover_low() const;
 	void recover_low( bool const recover );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // data
 	bool recover_low_; //dflt true; if false, recovers last

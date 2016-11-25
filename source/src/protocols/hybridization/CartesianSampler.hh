@@ -70,7 +70,7 @@ public:
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
-	std::string get_name() const override { return "CartesianSampler"; }
+	// XRW TEMP  std::string get_name() const override { return "CartesianSampler"; }
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -96,6 +96,18 @@ public:
 	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
 	void set_nfrags(core::Size nfrags_in) { nfrags_=nfrags_in; }
 	void set_temp(core::Real temp_in) { temp_=temp_in; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 protected:

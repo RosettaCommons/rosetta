@@ -33,6 +33,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <basic/Tracer.hh>
 
@@ -203,6 +204,38 @@ ControlStrength const& TorsionClaim::ctrl_strength() const {
 
 ControlStrength const& TorsionClaim::init_strength() const {
 	return i_str_;
+}
+
+std::string
+TorsionClaim::class_name(){
+	return "TorsionClaim";
+}
+
+void
+TorsionClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	XMLSchemaRestriction restr;
+	restr.name( "envclaim_ctrl_str" );
+	restr.base_type( xs_string );
+	restr.add_restriction( xsr_pattern, "((([Dd][Oo][Ee][Ss]_[Nn][Oo][Tt])|([Cc][Aa][Nn])|([Mm][Uu][Ss][Tt]))_[Cc][Oo][Nn][Tt][Rr][Oo][Ll])|([Ee][Xx][Cc][Ll][Uu][Ss][Ii][Vv][Ee])" );
+	xsd.add_top_level_element( restr );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "control_strength", "envclaim_ctrl_str", "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "initialization_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" )
+		+ XMLSchemaAttribute::attribute_w_default( "backbone", xsct_rosetta_bool, "XRW TO DO",  "false" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "sidechain", xsct_rosetta_bool,"XRW TO DO",  "false" )
+		+ XMLSchemaAttribute::required_attribute( "selector", xs_string, "Name of previously defined residue selector that defines where to apply this claim" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( class_name() )
+		.complex_type_naming_func ( & EnvClaim::envclaim_ct_namer )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
 }
 
 EnvClaimOP TorsionClaim::clone() const {

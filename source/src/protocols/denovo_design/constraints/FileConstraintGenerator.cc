@@ -20,7 +20,7 @@
 // Package headers
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -30,6 +30,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
@@ -145,6 +146,30 @@ FileConstraintGenerator::clean_constraint_string( std::string const & cst_str ) 
 		if ( l->find_first_not_of( "\t\n\v\f\r " ) != std::string::npos ) newstr += *l + "\n";
 	}
 	return newstr;
+}
+
+void
+FileConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	FileConstraintGenerator::provide_xml_schema( xsd );
+}
+
+std::string
+FileConstraintGenerator::class_name(){
+	return FileConstraintGeneratorCreator::constraint_generator_name();
+}
+void
+FileConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "filename", xs_string, "Path to constraint file to use" );
+
+	constraint_generator::ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Applies constraints from a constraint file to the pose",
+		attlist );
+
 }
 
 } //namespace constraints

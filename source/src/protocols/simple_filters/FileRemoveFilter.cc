@@ -22,6 +22,9 @@
 #include <utility/string_util.hh>
 #include <cstdio>
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -32,11 +35,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
 
-protocols::filters::FilterOP
-FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }
 
-std::string
-FileRemoveFilterCreator::keyname() const { return "FileRemove"; }
+// XRW TEMP std::string
+// XRW TEMP FileRemoveFilterCreator::keyname() const { return "FileRemove"; }
 
 //default ctor
 FileRemoveFilter::FileRemoveFilter() :
@@ -102,6 +105,39 @@ void
 FileRemoveFilter::file_names( utility::vector1< std::string > const & f ){
 	file_names_ = f;
 }
+
+std::string FileRemoveFilter::name() const {
+	return class_name();
+}
+
+std::string FileRemoveFilter::class_name() {
+	return "FileRemove";
+}
+
+void FileRemoveFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("filenames", xs_string, "list of file names separated by comma, e.g., 3r2x_0001.pdb,3r2x_0002.pdb")
+		+ XMLSchemaAttribute::attribute_w_default("delete_content_only", xsct_rosetta_bool, "if true, only eliminates the contents of the file but leaves a placeholder file of size 0bytes.", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Remove a file from disk.", attlist );
+}
+
+std::string FileRemoveFilterCreator::keyname() const {
+	return FileRemoveFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FileRemoveFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FileRemoveFilter );
+}
+
+void FileRemoveFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FileRemoveFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

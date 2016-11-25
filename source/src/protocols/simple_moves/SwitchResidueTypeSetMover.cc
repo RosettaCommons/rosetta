@@ -28,27 +28,30 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeS
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-SwitchResidueTypeSetMoverCreator::keyname() const
-{
-	return SwitchResidueTypeSetMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchResidueTypeSetMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SwitchResidueTypeSetMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SwitchResidueTypeSetMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SwitchResidueTypeSetMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
+// XRW TEMP }
 
-std::string
-SwitchResidueTypeSetMoverCreator::mover_name()
-{
-	return "SwitchResidueTypeSetMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchResidueTypeSetMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SwitchResidueTypeSetMover";
+// XRW TEMP }
 
 SwitchResidueTypeSetMover::SwitchResidueTypeSetMover()
 : moves::Mover("SwitchResidueTypeSetMover")
@@ -70,10 +73,10 @@ SwitchResidueTypeSetMover::apply( Pose & pose )
 	core::util::switch_to_residue_type_set( pose, type_set_tag_ );
 }
 
-std::string
-SwitchResidueTypeSetMover::get_name() const {
-	return SwitchResidueTypeSetMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchResidueTypeSetMover::get_name() const {
+// XRW TEMP  return SwitchResidueTypeSetMover::mover_name();
+// XRW TEMP }
 
 void
 SwitchResidueTypeSetMover::show(std::ostream & output) const
@@ -104,6 +107,39 @@ SwitchResidueTypeSetMover::parse_my_tag(
 {
 	if ( tag->hasOption("set") ) type_set_tag_ = tag->getOption<std::string>("set");
 }
+
+std::string SwitchResidueTypeSetMover::get_name() const {
+	return mover_name();
+}
+
+std::string SwitchResidueTypeSetMover::mover_name() {
+	return "SwitchResidueTypeSetMover";
+}
+
+void SwitchResidueTypeSetMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute("set", xs_string, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SwitchResidueTypeSetMoverCreator::keyname() const {
+	return SwitchResidueTypeSetMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SwitchResidueTypeSetMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
+}
+
+void SwitchResidueTypeSetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SwitchResidueTypeSetMover::provide_xml_schema( xsd );
+}
+
 
 std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover)
 {

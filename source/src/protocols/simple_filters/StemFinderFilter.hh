@@ -62,6 +62,18 @@ public:
 	bool stems_are_neighbors() const{ return stems_are_neighbors_; }
 	void neighbor_separation( core::Size const c ){ neighbor_separation_ = c; }
 	core::Size neighbor_separation() const{ return neighbor_separation_; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size from_res_, to_res_; // dflt 0,0; If not specified goes across the entire range of the -s pdb
 	core::Real rmsd_; //dflt 0.7; the maximal RMSd. If no positions fall under this, the filter fails

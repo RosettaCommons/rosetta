@@ -41,7 +41,7 @@ public:
 	~SuperimposeMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=0);
 	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( Size start=1, Size end=-1);
@@ -53,6 +53,18 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);

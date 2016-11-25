@@ -34,16 +34,28 @@ public:
 	FavorNativeResiduePreCycle( core::Real const bonus = 1.5 ) : protocols::moves::Mover( "favor_native_residue" ), bonus_( bonus ) {
 		runtime_assert( bonus_ >= 0 );
 	}
-	void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		FavorNativeResidue fnr( pose, bonus_ );
 	}
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new FavorNativeResiduePreCycle( bonus_ ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorNativeResiduePreCycle ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FavorNativeResiduePreCycle ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~FavorNativeResiduePreCycle();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real bonus_;
 };

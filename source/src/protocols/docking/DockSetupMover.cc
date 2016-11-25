@@ -50,6 +50,9 @@
 #include <basic/options/option_macros.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.docking.DockSetupMover" );
 
@@ -196,21 +199,56 @@ DockSetupMover::parse_my_tag(
 
 /// ------------------ End initializing helpers ---------------------------------
 
-std::string
-DockSetupMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP DockSetupMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockSetupMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockSetupMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockSetupMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockSetupMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockSetupMover";
+// XRW TEMP }
+
+std::string DockSetupMover::get_name() const {
+	return mover_name();
+}
+
+std::string DockSetupMover::mover_name() {
+	return "DockSetupMover";
+}
+
+void DockSetupMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockSetupMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "partners", xs_string, "Underscore-separated list of partners to dock" )
+		+ XMLSchemaAttribute::attribute_w_default( "rb_mover", xs_string, "Previously-defined rigid body mover to use to separate partners", "null" )
+		+ XMLSchemaAttribute( "moveable_jump", xsct_non_negative_integer, "Which jump number should be moveable during docking? Defaults to 1 if partners not set" ); //This defaults to 1 if partners is not set
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Uses a rigid body mover to separate docking partners", attlist );
+}
+
+std::string DockSetupMoverCreator::keyname() const {
+	return DockSetupMover::mover_name();
 }
 
 protocols::moves::MoverOP
 DockSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockSetupMover() );
+	return protocols::moves::MoverOP( new DockSetupMover );
 }
 
-std::string
-DockSetupMoverCreator::mover_name()
+void DockSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockSetupMover";
+	DockSetupMover::provide_xml_schema( xsd );
 }
+
 } //docking
 } //protocols

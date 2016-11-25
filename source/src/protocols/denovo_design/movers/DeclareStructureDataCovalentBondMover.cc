@@ -28,6 +28,9 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.DeclareStructureDataCovalentBondMover" );
 
@@ -41,7 +44,7 @@ namespace movers {
 
 /// @brief Default constructor
 DeclareStructureDataCovalentBondMover::DeclareStructureDataCovalentBondMover():
-	protocols::moves::Mover( DeclareStructureDataCovalentBondMover::class_name() ),
+	protocols::moves::Mover( DeclareStructureDataCovalentBondMover::mover_name() ),
 	atom1_( "" ),
 	atom2_( "" )
 {
@@ -172,17 +175,17 @@ DeclareStructureDataCovalentBondMover::clone() const
 	return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover( *this ) );
 }
 
-std::string
-DeclareStructureDataCovalentBondMover::get_name() const
-{
-	return DeclareStructureDataCovalentBondMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeclareStructureDataCovalentBondMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return DeclareStructureDataCovalentBondMover::mover_name();
+// XRW TEMP }
 
-std::string
-DeclareStructureDataCovalentBondMover::class_name()
-{
-	return "DeclareStructureDataCovalentBondMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DeclareStructureDataCovalentBondMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DeclareStructureDataCovalentBondMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Creator ///
@@ -190,17 +193,51 @@ DeclareStructureDataCovalentBondMover::class_name()
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-DeclareStructureDataCovalentBondMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DeclareStructureDataCovalentBondMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DeclareStructureDataCovalentBondMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DeclareStructureDataCovalentBondMover::mover_name();
+// XRW TEMP }
+
+std::string DeclareStructureDataCovalentBondMover::get_name() const {
+	return mover_name();
+}
+
+std::string DeclareStructureDataCovalentBondMover::mover_name() {
+	return "DeclareStructureDataCovalentBondMover";
+}
+
+void DeclareStructureDataCovalentBondMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string DeclareStructureDataCovalentBondMoverCreator::keyname() const {
+	return DeclareStructureDataCovalentBondMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DeclareStructureDataCovalentBondMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new DeclareStructureDataCovalentBondMover );
 }
 
-std::string
-DeclareStructureDataCovalentBondMoverCreator::keyname() const
+void DeclareStructureDataCovalentBondMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return DeclareStructureDataCovalentBondMover::class_name();
+	DeclareStructureDataCovalentBondMover::provide_xml_schema( xsd );
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// private methods ///

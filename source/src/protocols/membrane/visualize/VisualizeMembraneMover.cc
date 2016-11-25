@@ -51,6 +51,9 @@
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.visualize.VisualizeMembraneMover" );
 
@@ -161,22 +164,22 @@ VisualizeMembraneMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-VisualizeMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VisualizeMembraneMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP VisualizeMembraneMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new VisualizeMembraneMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-VisualizeMembraneMoverCreator::keyname() const {
-	return VisualizeMembraneMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeMembraneMoverCreator::keyname() const {
+// XRW TEMP  return VisualizeMembraneMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-VisualizeMembraneMoverCreator::mover_name() {
-	return "VisualizeMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeMembraneMover::mover_name() {
+// XRW TEMP  return "VisualizeMembraneMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -234,10 +237,10 @@ VisualizeMembraneMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-std::string
-VisualizeMembraneMover::get_name() const {
-	return "VisualizeMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeMembraneMover::get_name() const {
+// XRW TEMP  return "VisualizeMembraneMover";
+// XRW TEMP }
 
 //////////////////////
 /// Helper Methods ///
@@ -304,6 +307,40 @@ VisualizeMembraneMover::create_membrane_virtual( core::Vector pos, bool fullatom
 
 	return rsd;
 }
+
+std::string VisualizeMembraneMover::get_name() const {
+	return mover_name();
+}
+
+std::string VisualizeMembraneMover::mover_name() {
+	return "VisualizeMembraneMover";
+}
+
+void VisualizeMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("spacing", xsct_real, "Spacing between membrane residues")
+		+ XMLSchemaAttribute("width", xsct_real, "Width of the membrane to visualize")
+		+ XMLSchemaAttribute("thickness", xsct_real, "Thickness of the membrane to visualize");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Used to visualize the protein in a membrane of a specified thickness", attlist );
+}
+
+std::string VisualizeMembraneMoverCreator::keyname() const {
+	return VisualizeMembraneMover::mover_name();
+}
+
+protocols::moves::MoverOP
+VisualizeMembraneMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new VisualizeMembraneMover );
+}
+
+void VisualizeMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	VisualizeMembraneMover::provide_xml_schema( xsd );
+}
+
 
 
 } // visualize

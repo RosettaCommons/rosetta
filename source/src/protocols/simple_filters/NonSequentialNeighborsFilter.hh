@@ -57,6 +57,18 @@ public:
 	void jump( core::Size const j ){ jump_ = j; }
 	core::Size jump() const { return jump_; }
 	core::Size residue_neighbors( core::pose::Pose const & pose, core::Size const resi ) const; // number of residue neighbours outside the sequence neighbours.
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real distance_threshold_; // dflt 8.0A; sphere around the residue
 	core::Size neighbor_cutoff_; // dflt 10; how many residues in the sequence around the target residue to ignore in computing neighbours

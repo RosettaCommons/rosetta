@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Numeric headers
 
 // C++ headers
@@ -62,6 +62,7 @@ public:
 
 	friend std::ostream &
 	operator<<( std::ostream & os, HydrogenBondingAtom const & atom );
+
 
 private:
 	HydrogenBondingAtom();
@@ -123,6 +124,10 @@ public:
 
 	core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & pose ) const override;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 public:
 	void

@@ -55,6 +55,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -62,11 +65,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
-protocols::filters::FilterOP
-AlaScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlaScan ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AlaScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlaScan ); }
 
-std::string
-AlaScanFilterCreator::keyname() const { return "AlaScan"; }
+// XRW TEMP std::string
+// XRW TEMP AlaScanFilterCreator::keyname() const { return "AlaScan"; }
 
 
 void
@@ -291,6 +294,47 @@ AlaScan::report_symmetry( std::ostream & out, core::pose::Pose const & const_pos
 		}
 	}
 }
+
+std::string AlaScan::name() const {
+	return class_name();
+}
+
+std::string AlaScan::class_name() {
+	return "AlaScan";
+}
+
+void AlaScan::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "interface_distance_cutoff", xsct_real, "Distance from chain 1 to define chain 2's interface, and vice versa" )
+		+ XMLSchemaAttribute( "partner1", xsct_rosetta_bool, "Perform alanine mutations on chain 1" )
+		+ XMLSchemaAttribute( "partner2", xsct_rosetta_bool, "Perform alanine mutations on chain 2" )
+		+ XMLSchemaAttribute( "jump", xsct_non_negative_integer, "An inter-chain jump over which the calculation is performed, numbered sequentially from 1" )
+		+ XMLSchemaAttribute( "repeats", xsct_non_negative_integer, "Number of repeats over which to average" )
+		+ XMLSchemaAttribute( "symmetry", xsct_rosetta_bool, "Assume a symmetric pose" )
+		+ XMLSchemaAttribute( "repack", xsct_rosetta_bool, "Repack in a radius around the mutated residue" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Perform alanine scanning over a particular jump-defined interface, with a certain number of repeats with which to average results. Repacking is suggested.", attlist );
+}
+
+std::string AlaScanFilterCreator::keyname() const {
+	return AlaScan::class_name();
+}
+
+protocols::filters::FilterOP
+AlaScanFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AlaScan );
+}
+
+void AlaScanFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AlaScan::provide_xml_schema( xsd );
+}
+
 
 
 }

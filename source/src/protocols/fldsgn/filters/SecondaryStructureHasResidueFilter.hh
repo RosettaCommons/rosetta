@@ -69,16 +69,16 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureHasResidueFilter( *this ) ); }
+	virtual FilterOP clone() const override { return FilterOP( new SecondaryStructureHasResidueFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const { return FilterOP( new SecondaryStructureHasResidueFilter() ); }
+	virtual FilterOP fresh_instance() const override { return FilterOP( new SecondaryStructureHasResidueFilter() ); }
 
 public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "SecondaryStructureHasResidueFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "SecondaryStructureHasResidueFilter"; }
 
 
 public:// parser
@@ -87,18 +87,30 @@ public:// parser
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// main operation
 
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
-	bool apply( Pose const & pose ) const;
-	core::Real report_sm( Pose const & pose ) const;
-	void report( std::ostream & out,  Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
+	core::Real report_sm( Pose const & pose ) const override;
+	void report( std::ostream & out,  Pose const & pose ) const override;
 	core::Real compute( Pose const & pose ) const;
 	core::Size n_req_res_in_seq( std::string const &, utility::vector0< bool > const & is_checked ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 
 	core::Size min_helix_length_;

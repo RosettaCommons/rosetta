@@ -51,6 +51,9 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace helical_bundle {
@@ -87,11 +90,11 @@ BundleReporterFilter::BundleReporterFilter( BundleReporterFilter const &src ) :
 static THREAD_LOCAL basic::Tracer TR( "protocols.helical_bundle.BundleReporterFilter" );
 static THREAD_LOCAL basic::Tracer TRReport( "protocols.helical_bundle.BundleReporterFilter.REPORT" );
 
-protocols::filters::FilterOP
-BundleReporterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BundleReporterFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP BundleReporterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BundleReporterFilter ); }
 
-std::string
-BundleReporterFilterCreator::keyname() const { return "BundleReporter"; }
+// XRW TEMP std::string
+// XRW TEMP BundleReporterFilterCreator::keyname() const { return "BundleReporter"; }
 
 /// @brief Destructor.
 ///
@@ -319,6 +322,52 @@ BundleReporterFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );
 }
+
+std::string BundleReporterFilter::name() const {
+	return class_name();
+}
+
+std::string BundleReporterFilter::class_name() {
+	return "BundleReporter";
+}
+
+void BundleReporterFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction behav;
+	behav.name( "behav" );
+	behav.base_type( xs_string );
+	behav.add_restriction( xsr_enumeration, "ALWAYS_TRUE" );
+	behav.add_restriction( xsr_enumeration, "ALWAYS_FALSE" );
+	behav.add_restriction( xsr_enumeration, "FILTER" );
+	xsd.add_top_level_element( behav );
+
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "score_type", xs_string, "Score type on which to filter", "total_score" )
+		+ XMLSchemaAttribute::attribute_w_default( "behavior", "behav", "Filter behavior", "ALWAYS_TRUE" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold above which the filter may fail (do not need or want to specify if filter behavior is ALWAYS_TRUE or ALWAYS_FALSE)", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_sequence", xsct_rosetta_bool, "Report the bundle sequence", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_three_letter_code", xsct_rosetta_bool, "In reporting the bundle sequence, use three letter codes (may be desirable in case of noncanonical amino acids, in particular, where using the AA or one letter code would be a poor choice).", "0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string BundleReporterFilterCreator::keyname() const {
+	return BundleReporterFilter::class_name();
+}
+
+protocols::filters::FilterOP
+BundleReporterFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new BundleReporterFilter );
+}
+
+void BundleReporterFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BundleReporterFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

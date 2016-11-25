@@ -229,7 +229,7 @@ JobGenealogist::get_next_job_for_node( Size node_id )
 {
 	if ( last_delivered_job_for_node_[ node_id ] == 0 ) {
 		last_delivered_job_for_node_[ node_id ] = target_jobid_ranges_for_node_[ node_id ].first;
-	} else if ( jobs_remain_for_node( node_id )) {
+	} else if ( jobs_remain_for_node( node_id ) ) {
 		++last_delivered_job_for_node_[ node_id ];
 	} else {
 		return 0;

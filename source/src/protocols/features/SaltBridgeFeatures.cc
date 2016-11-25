@@ -49,6 +49,10 @@
 // C++ Headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/SaltBridgeFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -98,8 +102,8 @@ SaltBridgeFeatures::SaltBridgeFeatures(
 	distance_cutoff_(src.distance_cutoff_)
 {}
 
-string
-SaltBridgeFeatures::type_name() const { return "SaltBridgeFeatures"; }
+// XRW TEMP string
+// XRW TEMP SaltBridgeFeatures::type_name() const { return "SaltBridgeFeatures"; }
 
 void
 SaltBridgeFeatures::write_schema_to_db(
@@ -289,6 +293,39 @@ SaltBridgeFeatures::report_features(
 
 	return 0;
 }
+
+std::string SaltBridgeFeatures::type_name() const {
+	return class_name();
+}
+
+std::string SaltBridgeFeatures::class_name() {
+	return "SaltBridgeFeatures";
+}
+
+void SaltBridgeFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report geometric solvation energy for each polar site to a features database",
+		attlist );
+}
+
+std::string SaltBridgeFeaturesCreator::type_name() const {
+	return SaltBridgeFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+SaltBridgeFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new SaltBridgeFeatures );
+}
+
+void SaltBridgeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SaltBridgeFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

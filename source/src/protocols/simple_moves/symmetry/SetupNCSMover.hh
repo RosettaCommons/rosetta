@@ -40,7 +40,7 @@ class NCSResMapping:  public basic::datacache::CacheableData {
 public:
 	NCSResMapping( core::pose::Pose &pose );
 
-	basic::datacache::CacheableDataOP clone() const {
+	basic::datacache::CacheableDataOP clone() const  override{
 		return basic::datacache::CacheableDataOP( new NCSResMapping(*this) );
 	}
 
@@ -96,18 +96,18 @@ public:
 	// clear all groups
 	// Undefined, commenting out to fix PyRosetta build   void clear();
 
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetupNCSMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetupNCSMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	// getters/setters
 	void set_bb( bool bb_in ) { bb_ = bb_in; }
@@ -126,6 +126,18 @@ public:
 	void set_sd( core::Real sd_in) { sd_ = sd_in; }
 	core::Real sd( ) { return sd_; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	utility::vector1< std::string > src_;
 	utility::vector1< std::string > tgt_;
@@ -142,6 +154,8 @@ private:
 } // symmetry
 } // moves
 } // rosetta
+
+
 #ifdef    SERIALIZATION
 CEREAL_FORCE_DYNAMIC_INIT( protocols_simple_moves_symmetry_SetupNCSMover )
 #endif // SERIALIZATION

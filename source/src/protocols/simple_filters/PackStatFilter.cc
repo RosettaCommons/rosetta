@@ -31,6 +31,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -132,11 +135,45 @@ PackStatFilter::parse_my_tag(
 	repeats_ = tag->getOption<core::Size>( "repeats", 1 );
 }
 
-filters::FilterOP
-PackStatFilterCreator::create_filter() const { return filters::FilterOP( new PackStatFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP PackStatFilterCreator::create_filter() const { return filters::FilterOP( new PackStatFilter ); }
 
-std::string
-PackStatFilterCreator::keyname() const { return "PackStat"; }
+// XRW TEMP std::string
+// XRW TEMP PackStatFilterCreator::keyname() const { return "PackStat"; }
+
+std::string PackStatFilter::name() const {
+	return class_name();
+}
+
+std::string PackStatFilter::class_name() {
+	return "PackStat";
+}
+
+void PackStatFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "packstat above which filter passes. Common wisdom says 0.65 is a good number.", "0.58")
+		+ XMLSchemaAttribute::attribute_w_default("chain", xsct_non_negative_integer, "jump on which to separate the complex before computing packstat. 0 means not to separate the complex.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("repeats", xsct_non_negative_integer, "How many times to repeat the calculation.", "1");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates packing statistics", attlist );
+}
+
+std::string PackStatFilterCreator::keyname() const {
+	return PackStatFilter::class_name();
+}
+
+protocols::filters::FilterOP
+PackStatFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new PackStatFilter );
+}
+
+void PackStatFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PackStatFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

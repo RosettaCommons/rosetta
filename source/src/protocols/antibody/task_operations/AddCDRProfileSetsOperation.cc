@@ -164,17 +164,17 @@ void AddCDRProfileSetsOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "cdrs", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "limit_only_to_length", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "force_north_paper_db", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_light_chain_type", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_outliers", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "add_to_current", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "include_native_restype", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "picking_rounds", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "cutoff", xsct_non_negative_integer, "10" )
-		+ XMLSchemaAttribute( "input_ab_scheme", xs_string )
-		+ XMLSchemaAttribute( "cdr_definition", xs_string );
+		+ XMLSchemaAttribute( "cdrs", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "limit_only_to_length", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_light_chain_type", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "XRW TO DO", "10" )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string , "XRW TO DO" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

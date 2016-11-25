@@ -74,6 +74,9 @@ using basic::T;
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::Error;
 using basic::Warning;
@@ -88,23 +91,23 @@ namespace docking {
 
 
 // Creator part for DockingInitialPerturbation, used in scripts
-std::string
-DockingInitialPerturbationCreator::keyname() const
-{
-	return DockingInitialPerturbationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DockingInitialPerturbationCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockingInitialPerturbation::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DockingInitialPerturbationCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new DockingInitialPerturbation );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockingInitialPerturbationCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new DockingInitialPerturbation );
+// XRW TEMP }
 
-std::string
-DockingInitialPerturbationCreator::mover_name()
-{
-	return "DockingInitialPerturbation";
-}
+// XRW TEMP std::string
+// XRW TEMP DockingInitialPerturbation::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockingInitialPerturbation";
+// XRW TEMP }
 
 
 // initial perturbation on one of the partners
@@ -403,10 +406,10 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 
 
 }
-std::string
-DockingInitialPerturbation::get_name() const {
-	return "DockingInitialPerturbation";
-}
+// XRW TEMP std::string
+// XRW TEMP DockingInitialPerturbation::get_name() const {
+// XRW TEMP  return "DockingInitialPerturbation";
+// XRW TEMP }
 
 void
 DockingInitialPerturbation::parse_my_tag(
@@ -458,6 +461,48 @@ DockingInitialPerturbation::parse_my_tag(
 
 	slide_ = tag->getOption<bool>( "slide", true );
 }
+
+std::string DockingInitialPerturbation::get_name() const {
+	return mover_name();
+}
+
+std::string DockingInitialPerturbation::mover_name() {
+	return "DockingInitialPerturbation";
+}
+
+void DockingInitialPerturbation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "randomize1", xsct_rosetta_bool, "Randomize the first docking partner" )
+		+ XMLSchemaAttribute( "randomize2", xsct_rosetta_bool, "Randomize the second docking partner" )
+		+ XMLSchemaAttribute( "use_ellipsoidal_randomization", xsct_rosetta_bool, "Use the EllipsoidalRandomizationMover instead of the RigidBodyRandomizeMover" )
+		+ XMLSchemaAttribute::attribute_w_default( "dock_pert", xsct_rosetta_bool, "Read in translational and rotational perturbations and apply to pose", "false" )
+		+ XMLSchemaAttribute( "trans", xsct_real, "Translational perturbation to apply before docking" ) //required if dock_pert is true
+		+ XMLSchemaAttribute( "rot", xsct_real, "Rotational perturbation to apply before docking" ) //required if dock_pert is true
+		+ XMLSchemaAttribute( "uniform_trans", xsct_real, "Use the UniformSphereTransMover" )
+		+ XMLSchemaAttribute( "spin", xsct_rosetta_bool, "Spin partner about its axis" )
+		+ XMLSchemaAttribute( "center_at_interface", xsct_rosetta_bool, "Center the spin at the interface" )
+		+ XMLSchemaAttribute( "slide", xsct_rosetta_bool, "Slide docking partners into contact" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform an initial perturbation to docking partners before docking", attlist );
+}
+
+std::string DockingInitialPerturbationCreator::keyname() const {
+	return DockingInitialPerturbation::mover_name();
+}
+
+protocols::moves::MoverOP
+DockingInitialPerturbationCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockingInitialPerturbation );
+}
+
+void DockingInitialPerturbationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DockingInitialPerturbation::provide_xml_schema( xsd );
+}
+
 
 
 ////////////////////////////////////////// DockingSlideIntoContact ////////////////////////////////

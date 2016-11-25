@@ -40,11 +40,11 @@ public:
 	/// @brief default ctor
 	AverageDegreeFilter();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~AverageDegreeFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -53,11 +53,23 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	core::Real threshold() const;
 	void threshold( core::Real threshold );
 	core::Real distance_threshold() const;
 	void distance_threshold( core::Real const d );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Real threshold_;

@@ -40,6 +40,9 @@
 #include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using namespace utility::tag;
 
@@ -53,27 +56,27 @@ using namespace protocols::scoring;
 
 static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
 
-std::string
-AddEncounterConstraintMoverCreator::keyname() const
-{
-	return AddEncounterConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddEncounterConstraintMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddEncounterConstraintMover::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-AddEncounterConstraintMoverCreator::create_mover() const {
-	return moves::MoverOP( new AddEncounterConstraintMover );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP AddEncounterConstraintMoverCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new AddEncounterConstraintMover );
+// XRW TEMP }
 
-std::string
-AddEncounterConstraintMoverCreator::mover_name()
-{
-	return "AddEncounterConstraintMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddEncounterConstraintMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddEncounterConstraintMover";
+// XRW TEMP }
 
 ///////////////////////////////////////////////////////////////////////
 
 AddEncounterConstraintMover::AddEncounterConstraintMover()
-: moves::Mover( AddEncounterConstraintMoverCreator::mover_name() )
+: moves::Mover( AddEncounterConstraintMover::mover_name() )
 {
 	cst_ = nullptr;
 }
@@ -102,10 +105,10 @@ AddEncounterConstraintMover::apply(pose::Pose& pose){
 	tr.Debug << "Encounter constraints have been applied" << std::endl;
 }
 
-std::string
-AddEncounterConstraintMover::get_name() const {
-	return AddEncounterConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddEncounterConstraintMover::get_name() const {
+// XRW TEMP  return AddEncounterConstraintMover::mover_name();
+// XRW TEMP }
 
 void
 AddEncounterConstraintMover::parse_my_tag(
@@ -182,6 +185,44 @@ AddEncounterConstraintMover::interface_from_pose( pose::Pose const & pose ) cons
 	tr.Debug << "extracted InterfaceInfo from PoseCache with address " << ptr << std::endl;
 	return *ptr;
 }
+
+std::string AddEncounterConstraintMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddEncounterConstraintMover::mover_name() {
+	return "AddEncounterConstraintMover";
+}
+
+void AddEncounterConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"gap", xsct_real,
+		"XSD_XRW: TO DO",
+		"10.0");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XSD_XRW: TO DO",
+		attlist );
+}
+
+std::string AddEncounterConstraintMoverCreator::keyname() const {
+	return AddEncounterConstraintMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddEncounterConstraintMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddEncounterConstraintMover );
+}
+
+void AddEncounterConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddEncounterConstraintMover::provide_xml_schema( xsd );
+}
+
 
 }//replica_docking
 }//devel

@@ -70,8 +70,8 @@ public:
 	clone() const override;
 
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 
 	void
@@ -117,6 +117,18 @@ public:
 		core::pose::Pose const & relax_pose,
 		core::Size const insert_pos
 	);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/*
 	void

@@ -26,15 +26,15 @@ namespace protocols {
 namespace antibody {
 using namespace protocols::features;
 
-AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
-AntibodyFeaturesCreator::~AntibodyFeaturesCreator() = default;
-FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new AntibodyFeatures );
-}
+// XRW TEMP AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
+// XRW TEMP AntibodyFeaturesCreator::~AntibodyFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new AntibodyFeatures );
+// XRW TEMP }
 
-std::string AntibodyFeaturesCreator::type_name() const {
-	return "AntibodyFeatures";
-}
+// XRW TEMP std::string AntibodyFeaturesCreator::type_name() const {
+// XRW TEMP  return "AntibodyFeatures";
+// XRW TEMP }
 
 } //antibody
 } //protocols

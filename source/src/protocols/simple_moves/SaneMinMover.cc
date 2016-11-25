@@ -26,6 +26,9 @@
 #include <utility>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -33,20 +36,20 @@ namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SaneMinMover" );
 
-std::string
-SaneMinMoverCreator::keyname() const {
-	return SaneMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SaneMinMoverCreator::keyname() const {
+// XRW TEMP  return SaneMinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SaneMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SaneMinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SaneMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SaneMinMover );
+// XRW TEMP }
 
-std::string
-SaneMinMoverCreator::mover_name() {
-	return "SaneMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SaneMinMover::mover_name() {
+// XRW TEMP  return "SaneMinMover";
+// XRW TEMP }
 
 // default constructor
 SaneMinMover::SaneMinMover() : protocols::moves::Mover("SaneMinMover") {
@@ -108,10 +111,10 @@ SaneMinMover::apply( core::pose::Pose & pose ) {
 	TR.flush();
 }
 
-std::string
-SaneMinMover::get_name() const {
-	return SaneMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SaneMinMover::get_name() const {
+// XRW TEMP  return SaneMinMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP SaneMinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::SaneMinMover( *this ) ); }
 
@@ -121,6 +124,42 @@ void SaneMinMover::set_defaults_() {
 	scorefxn_    = core::scoring::get_score_function();
 	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false ) );
 }
+
+std::string SaneMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string SaneMinMover::mover_name() {
+	return "SaneMinMover";
+}
+
+void SaneMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Minimizes a Pose to a local energy minimum by "
+		"performing energy minimization of a ScoreFunction over the allowable degrees "
+		"of freedom, defined by a MoveMap. Unlike the classic MinMover, the only "
+		"method for setting Minimization options is via the MinimizerOptions class.",
+		attlist);
+}
+
+std::string SaneMinMoverCreator::keyname() const {
+	return SaneMinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SaneMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SaneMinMover );
+}
+
+void SaneMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SaneMinMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

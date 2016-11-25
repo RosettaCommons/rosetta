@@ -82,7 +82,7 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/*virtual void parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -358,6 +358,18 @@ public:
 	/// @brief Set a new set of bundle parameters.
 	///
 	void set_bundle_parameters( BundleParametersOP newparams ) {  bundle_parameters_ = newparams; return; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

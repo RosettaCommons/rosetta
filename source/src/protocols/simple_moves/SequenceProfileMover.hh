@@ -32,7 +32,7 @@ public:
 	~SequenceProfileMover() override;
 	SequenceProfileMover();
 	void apply( core::pose::Pose& pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	// function for the parser with lots of accessors
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -44,6 +44,18 @@ public:
 
 	core::Real get_profile_wgt() const { return profile_wgt_; }
 	std::string const& get_cst_file_name() const { return cst_file_name_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real profile_wgt_;

@@ -71,6 +71,9 @@
 #include <vector> // for rot_to_pack
 #include <iostream>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 //Auto using namespaces
@@ -103,23 +106,23 @@ using basic::t_info;
 using basic::t_debug;
 static THREAD_LOCAL basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 
-std::string
-MotifDnaPackerCreator::keyname() const
-{
-	return MotifDnaPackerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MotifDnaPackerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MotifDnaPacker::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MotifDnaPackerCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new MotifDnaPacker );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MotifDnaPackerCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new MotifDnaPacker );
+// XRW TEMP }
 
-std::string
-MotifDnaPackerCreator::mover_name()
-{
-	return "MotifDnaPacker";
-}
+// XRW TEMP std::string
+// XRW TEMP MotifDnaPacker::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MotifDnaPacker";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief lightweight default constructor
@@ -183,10 +186,10 @@ MotifDnaPacker::clone() const
 	return protocols::moves::MoverOP( new MotifDnaPacker( *this ) );
 }
 
-std::string
-MotifDnaPacker::get_name() const {
-	return MotifDnaPackerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MotifDnaPacker::get_name() const {
+// XRW TEMP  return MotifDnaPacker::mover_name();
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief
@@ -717,6 +720,40 @@ MotifDnaPacker::aromatic_motifs(
 	aromatic_motifs_ = false;
 	run_motifs( pose, design_positions, src_pos, rotamer_map, types_map, info_lines, taskfactory );
 }
+
+std::string MotifDnaPacker::get_name() const {
+	return mover_name();
+}
+
+std::string MotifDnaPacker::mover_name() {
+	return "MotifDnaPacker";
+}
+
+void MotifDnaPacker::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XRW TO DO",
+		attlist );
+}
+
+std::string MotifDnaPackerCreator::keyname() const {
+	return MotifDnaPacker::mover_name();
+}
+
+protocols::moves::MoverOP
+MotifDnaPackerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MotifDnaPacker );
+}
+
+void MotifDnaPackerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MotifDnaPacker::provide_xml_schema( xsd );
+}
+
 
 } // namespace motifs
 } // namespace protocols

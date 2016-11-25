@@ -32,7 +32,13 @@ LoopsExplicitDefinerCreator::create_loops_definer() const {
 
 string
 LoopsExplicitDefinerCreator::type_name() const {
-	return "Loops";
+	// return "Loops";
+	return LoopsExplicitDefiner::class_name();
+}
+
+void LoopsExplicitDefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopsExplicitDefiner::provide_xml_schema( xsd );
 }
 
 } //namespace

@@ -1,13 +1,14 @@
 <ROSETTASCRIPTS>
 	<MOVERS>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the extracting PDB specific information.">
-			<feature name=ResidueFeatures/>
-			<feature name=PdbDataFeatures/>
-			<feature name=UnrecognizedAtomFeatures/>
+		<ReportToDB name="features_reporter" database_name="features_IntegrationTest.db3" batch_description="Test the extracting PDB specific information.">
+			<ResidueFeatures/>
+			<PdbDataFeatures/>
+			<UnrecognizedAtomFeatures/>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=features_reporter/>
+		<Add mover_name="features_reporter"/>
 	</PROTOCOLS>
-</ROSETTASCRIPTS>
 
+
+</ROSETTASCRIPTS>

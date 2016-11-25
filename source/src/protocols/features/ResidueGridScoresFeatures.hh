@@ -23,6 +23,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -37,8 +39,8 @@ public:
 	~ResidueGridScoresFeatures() override;
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
@@ -65,6 +67,18 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	char chain_;

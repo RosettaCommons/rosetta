@@ -53,6 +53,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -280,11 +283,50 @@ ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) co
 	out << "ClashCheckFilter returns " << compute( pose, false, false ) << std::endl;
 }
 
-protocols::filters::FilterOP
-ClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashCheckFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashCheckFilter ); }
 
-std::string
-ClashCheckFilterCreator::keyname() const { return "ClashCheck"; }
+// XRW TEMP std::string
+// XRW TEMP ClashCheckFilterCreator::keyname() const { return "ClashCheck"; }
+
+std::string ClashCheckFilter::name() const {
+	return class_name();
+}
+
+std::string ClashCheckFilter::class_name() {
+	return "ClashCheck";
+}
+
+void ClashCheckFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; // XRW TO DO: check
+	attlist + XMLSchemaAttribute::attribute_w_default( "clash_dist" , xsct_real , "Distance between heavy atoms below which they are considered to be clashing. Note: A hard-coded cutoff of 2.6 is set for contacts between backbone carbonyl oxygens and nitrogens for bb-bb hbonds." , "3.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "sym_dof_names" , xs_string , "Only use with multicomponent systems. Comma-separated list of name(s) of the sym_dof(s) corresponding to the building block(s) between which to check for clashes." , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "nsub_bblock" , xsct_non_negative_integer , "The number of subunits in the symmetric building block. Does not need to be set for multicomponent systems." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cutoff" , xsct_non_negative_integer , "Maximum number of allowable clashes." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If set to true, then will output a pymol selection string to the logfile with the clashing positions/atoms." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb" , xsct_rosetta_bool , "If set to true, then will output a pymol selection string to the output pdb with the clashing positions/atoms." , "0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculate the number of heavy atoms clashing between building blocks.", attlist );
+}
+
+std::string ClashCheckFilterCreator::keyname() const {
+	return ClashCheckFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ClashCheckFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ClashCheckFilter );
+}
+
+void ClashCheckFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ClashCheckFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // matdes

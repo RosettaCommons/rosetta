@@ -28,17 +28,14 @@
 #include <utility/vector1.hh>
 #include <core/pose/selection.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.ResidueIEFilter" );
-
-protocols::filters::FilterOP
-ResidueIEFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueIEFilter ); }
-
-std::string
-ResidueIEFilterCreator::keyname() const { return "ResidueIE"; }
 
 ResidueIEFilter::ResidueIEFilter():
 	filters::Filter( "ResidueIE" ),
@@ -294,6 +291,103 @@ ResidueIEFilter::penalty_from_score( core::Real const res_intE ) const
 	if ( res_intE > threshold_ ) return (res_intE - threshold_);
 	return 0.0;
 }
+
+std::string ResidueIEFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueIEFilter::class_name() {
+	return "ResidueIE";
+}
+
+void ResidueIEFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"score_type", xs_string,
+		"XSD XRW: TO DO",
+		"total_score");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"energy_cutoff", xsct_real,
+		"XSD XRW: TO DO",
+		"0.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"whole_pose", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"interface", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"jump_number", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"interface_distance_cutoff", xsct_real,
+		"XSD XRW: TO DO",
+		"8.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"restype3", xs_string,
+		"XSD XRW: TO DO",
+		"TRP");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"penalty_factor", xsct_real,
+		"XSD XRW: TO DO",
+		"1.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_penalty", xsct_real,
+		"XSD XRW: TO DO",
+		"1000.0");
+
+	attlist + XMLSchemaAttribute(
+		"report_energy", xsct_rosetta_bool,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"resnums", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_resE", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Finds the ineraction energy (IE) for the specified residue over the interface",
+		attlist );
+}
+
+std::string ResidueIEFilterCreator::keyname() const {
+	return ResidueIEFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueIEFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueIEFilter );
+}
+
+void ResidueIEFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueIEFilter::provide_xml_schema( xsd );
+}
+
 
 std::set< core::Size >
 ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const

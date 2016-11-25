@@ -41,6 +41,9 @@
 #include <protocols/moves/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -50,20 +53,20 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.MultiplePoseMov
 
 ////////////////////////////////////////////////////////////////////////
 
-std::string MultiplePoseMoverCreator::mover_name()
-{
-	return "MultiplePoseMover";
-}
+// XRW TEMP std::string MultiplePoseMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MultiplePoseMover";
+// XRW TEMP }
 
-std::string MultiplePoseMoverCreator::keyname() const
-{
-	return mover_name();
-}
+// XRW TEMP std::string MultiplePoseMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new MultiplePoseMover() );
-}
+// XRW TEMP protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new MultiplePoseMover() );
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -84,10 +87,10 @@ MultiplePoseMover::MultiplePoseMover() :
 {
 }
 
-std::string MultiplePoseMover::get_name() const
-{
-	return MultiplePoseMoverCreator::mover_name();
-}
+// XRW TEMP std::string MultiplePoseMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return MultiplePoseMover::mover_name();
+// XRW TEMP }
 
 /// @brief Process input pose
 void MultiplePoseMover::apply(core::pose::Pose& pose)
@@ -427,6 +430,72 @@ void MultiplePoseMover::set_previous_mover( protocols::moves::MoverOP const m ) 
 
 /// @brief sets rosettascripts tag
 void MultiplePoseMover::set_rosetta_scripts_tag( utility::tag::TagCOP tag ) { rosetta_scripts_tag_ = tag; }
+
+std::string MultiplePoseMover::get_name() const {
+	return mover_name();
+}
+
+std::string MultiplePoseMover::mover_name() {
+	return "MultiplePoseMover";
+}
+
+std::string mpm_mangler( std::string const & element_name )
+{ return "multiple_pose_mover_" + element_name + "_type"; }
+
+void MultiplePoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( xsd );
+
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attlist;
+	attlist
+		+ Attr( "max_input_poses", xsct_non_negative_integer, "XSD TO DO" )
+		+ Attr( "max_output_poses", xsct_non_negative_integer, "XSD TO DO" )
+		+ Attr( "cached", xsct_rosetta_bool, "XSD TO DO" );
+
+	PoseSelectorFactory::get_instance()->define_pose_selector_group( xsd );
+
+	XMLSchemaSimpleSubelementList pose_selector_subelement;
+	pose_selector_subelement.add_group_subelement( & PoseSelectorFactory::pose_selector_group_name );
+	XMLSchemaComplexTypeGenerator select_ct;
+	select_ct.element_name( "SELECT" )
+		.complex_type_naming_func( & mpm_mangler )
+		.set_subelements_repeatable( pose_selector_subelement )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList rs_element, select_element;
+	rs_element.add_already_defined_subelement(
+		RosettaScriptsParser::rosetta_scripts_element_name(),
+		& RosettaScriptsParser::rosetta_scripts_complex_type_naming_func );
+	select_element.add_already_defined_subelement(
+		"SELECT", & mpm_mangler );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( mover_name() )
+		.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.add_ordered_subelement_set_as_optional( select_element )
+		.add_ordered_subelement_set_as_optional( rs_element )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string MultiplePoseMoverCreator::keyname() const {
+	return MultiplePoseMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MultiplePoseMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MultiplePoseMover );
+}
+
+void MultiplePoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MultiplePoseMover::provide_xml_schema( xsd );
+}
 
 } //rosetta_scripts
 } //protocols

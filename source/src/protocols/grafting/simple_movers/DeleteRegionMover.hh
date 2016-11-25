@@ -35,8 +35,8 @@ public:
 
 	virtual ~DeleteRegionMover();
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 
 public:
@@ -51,22 +51,34 @@ public:
 
 public:
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief Adds terminal variants to residues resid and resid-1

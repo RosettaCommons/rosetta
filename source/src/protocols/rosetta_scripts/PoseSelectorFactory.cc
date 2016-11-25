@@ -24,7 +24,8 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -89,6 +90,33 @@ PoseSelectorFactory::newPoseSelector(
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }
+
+
+
+void
+PoseSelectorFactory::define_pose_selector_group( utility::tag::XMLSchemaDefinition & xsd ) const{
+	try{
+		utility::tag::define_xml_schema_group(
+			poseselector_creator_map_,
+			pose_selector_group_name(),
+			& complex_type_name_for_pose_selector,
+			xsd );
+	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for PoseSelector from PoseSelectorFactory; offending class"
+			" must call protocols::rosetta_scripts::complex_type_name_for_pose_selector when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string
+PoseSelectorFactory::pose_selector_group_name(){
+	return "pose_selector";
+}
+std::string
+PoseSelectorFactory::complex_type_name_for_pose_selector( std::string const & selector_name ){
+	return "pose_selector_" + selector_name + "_complex_type";
+}
+
 
 } //namespace rosetta_scripts
 } //namespace protocols

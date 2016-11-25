@@ -45,6 +45,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueFeaturesCreator.hh>
 
 // C++ Headers
 //#include <cmath>
@@ -74,8 +78,8 @@ ResidueFeatures::ResidueFeatures( ResidueFeatures const & ) :
 
 ResidueFeatures::~ResidueFeatures() = default;
 
-string
-ResidueFeatures::type_name() const { return "ResidueFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueFeatures::type_name() const { return "ResidueFeatures"; }
 
 void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -164,6 +168,36 @@ ResidueFeatures::delete_record(
 
 	delete_records_from_table("residues", struct_id, db_session);
 }
+
+std::string ResidueFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueFeatures::class_name() {
+	return "ResidueFeatures";
+}
+
+void ResidueFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Just record the residue number + type + name3 for each residue of a Pose", attlist );
+}
+
+std::string ResidueFeaturesCreator::type_name() const {
+	return ResidueFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueFeatures );
+}
+
+void ResidueFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

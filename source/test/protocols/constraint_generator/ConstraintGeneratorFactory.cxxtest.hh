@@ -25,6 +25,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
@@ -70,6 +71,8 @@ public:
 
 	static
 	std::string constraint_generator_name() { return "DummyConstraintGenerator"; }
+
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const {}
 };
 
 

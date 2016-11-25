@@ -23,7 +23,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -88,6 +89,37 @@ PosePropertyReporterFactory::newPosePropertyReporter(
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }
+
+
+
+void
+PosePropertyReporterFactory::define_pose_reporter_group( utility::tag::XMLSchemaDefinition & xsd ) const{
+	try{
+		utility::tag::define_xml_schema_group(
+			reporter_creator_map_,
+			pose_reporter_group_name(),
+			& complex_type_name_for_pose_reporter,
+			xsd );
+	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for PosePropertyReporter from PosePropertyReporterFactory; offending class"
+			" must call protocols::rosetta_scripts::complex_type_name_for_pose_reporter when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string
+PosePropertyReporterFactory::pose_reporter_group_name(){
+	return "pose_property_reporter";
+}
+
+std::string
+PosePropertyReporterFactory::complex_type_name_for_pose_reporter( std::string const & reporter_name ){
+	return "pose_property_reporter_" + reporter_name + "_complex_type";
+}
+
+
+
+
 
 } //namespace rosetta_scripts
 } //namespace protocols

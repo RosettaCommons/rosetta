@@ -43,8 +43,8 @@ public:
 public:
 	MapHotspot();
 	// for direct access
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	/// @brief this is the recursive function where the functionality takes place
 	void GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose & curr_pose, core::Size const jump_number );
 	/// @brief minimizes rb and sc dofs for all of the hotspots
@@ -53,12 +53,24 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new MapHotspot( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new MapHotspot ); }
+		core::pose::Pose const & ) override;
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new MapHotspot( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MapHotspot ); }
 	void output_pose( core::pose::Pose const & pose ) const;
 	RotamerSetOP create_rotamer_set( core::pose::Pose const &, core::Size const hotspot_resnum, core::Size const explosion ) const;
 	virtual ~MapHotspot();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	bool clash_check_;
 	std::map< core::Size, core::Size > explosion_; // rotamer explosion

@@ -175,6 +175,12 @@ void TaskOperationFactory::define_task_op_xml_schema( utility::tag::XMLSchemaDef
 
 }
 
+TaskOperationFactory::TaskOperationCreatorMap const & TaskOperationFactory::creator_map() const
+{
+	return task_operation_creator_map_;
+}
+
+
 std::string TaskOperationFactory::task_operation_xml_schema_group_name() {
 	return "task_operation";
 }

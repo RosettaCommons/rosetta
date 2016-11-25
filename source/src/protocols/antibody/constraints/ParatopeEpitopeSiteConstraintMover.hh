@@ -49,17 +49,17 @@ public:
 
 	~ParatopeEpitopeSiteConstraintMover();
 
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 	void
-	apply(core::pose::Pose & pose);
+	apply(core::pose::Pose & pose) override;
 
 	void
 	remove(core::pose::Pose & pose);
@@ -98,19 +98,28 @@ public:
 	void
 	set_defaults();
 
-	std::string
-	get_name() const {
-		return "ParatopeEpitopeSiteConstraintMover";
-	}
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const {
+	// XRW TEMP   return "ParatopeEpitopeSiteConstraintMover";
+	// XRW TEMP  }
 
 	utility::vector1<bool>
 	get_epitope_residues() const {
 		return epitope_residues_;
 	}
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
-
-
 
 	core::scoring::constraints::SiteConstraintOP
 	setup_constraints(core::pose::Pose const & pose, core::Size residue, utility::vector1<bool> const & residues) const;

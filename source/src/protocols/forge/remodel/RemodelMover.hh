@@ -121,13 +121,11 @@ private: // disallow assignment
 public: // virtual constructors
 
 	/// @brief clone this object, for parser
-	virtual
-	MoverOP clone() const;
+	MoverOP clone() const override;
 
 
 	/// @brief create this type of object, for parser
-	virtual
-	MoverOP fresh_instance() const;
+	MoverOP fresh_instance() const override;
 
 
 	/// @brief clone this object
@@ -331,11 +329,9 @@ public: // virtual main methods
 
 
 	/// @brief apply defined moves to given Pose
-	virtual
-	void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 
-
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	bool confirm_sequence(core::pose::Pose & pose );
 
@@ -558,7 +554,19 @@ private: // per-stage movers
 
 public: // parser
 
-	virtual void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
+	virtual void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

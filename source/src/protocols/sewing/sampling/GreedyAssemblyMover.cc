@@ -30,6 +30,9 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -39,23 +42,23 @@ static basic::Tracer TR( "protocols.sewing.sampling.GreedyAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-GreedyAssemblyMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP(new GreedyAssemblyMover);
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GreedyAssemblyMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP(new GreedyAssemblyMover);
+// XRW TEMP }
 
-std::string
-GreedyAssemblyMoverCreator::keyname() const
-{
-	return GreedyAssemblyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyAssemblyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GreedyAssemblyMover::mover_name();
+// XRW TEMP }
 
-std::string
-GreedyAssemblyMoverCreator::mover_name()
-{
-	return "GreedyAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyAssemblyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GreedyAssemblyMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 GreedyAssemblyMover::clone() const {
@@ -66,10 +69,10 @@ GreedyAssemblyMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new GreedyAssemblyMover );
 }
 
-std::string
-GreedyAssemblyMover::get_name() const {
-	return "GreedyAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyAssemblyMover::get_name() const {
+// XRW TEMP  return "GreedyAssemblyMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  GreedyAssemblyMover function   //////////////////////////////////
@@ -190,6 +193,38 @@ GreedyAssemblyMover::parse_my_tag(
 		max_edges_per_node_ = tag->getOption<core::Size>("max_edges_per_node");
 	}
 }
+
+std::string GreedyAssemblyMover::get_name() const {
+	return mover_name();
+}
+
+std::string GreedyAssemblyMover::mover_name() {
+	return "GreedyAssemblyMover";
+}
+
+void GreedyAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string GreedyAssemblyMoverCreator::keyname() const {
+	return GreedyAssemblyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+GreedyAssemblyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GreedyAssemblyMover );
+}
+
+void GreedyAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GreedyAssemblyMover::provide_xml_schema( xsd );
+}
+
 
 } //sewing
 } //protocols

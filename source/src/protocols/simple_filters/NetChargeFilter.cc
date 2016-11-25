@@ -42,6 +42,10 @@
 #include <utility/vector1.hh>
 #include <sstream>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+
 
 namespace protocols {
 namespace simple_filters {
@@ -55,11 +59,11 @@ NetChargeFilter::NetChargeFilter() :
 	net_charge_min_( -100 ),
 	task_factory_( /* NULL */ ) {}
 
-protocols::filters::FilterOP
-NetChargeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NetChargeFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP NetChargeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NetChargeFilter ); }
 
-std::string
-NetChargeFilterCreator::keyname() const { return "NetCharge"; }
+// XRW TEMP std::string
+// XRW TEMP NetChargeFilterCreator::keyname() const { return "NetCharge"; }
 
 NetChargeFilter::~NetChargeFilter()= default;
 
@@ -169,6 +173,42 @@ NetChargeFilter::task_factory() const{ return task_factory_; }
 
 void
 NetChargeFilter::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+
+std::string NetChargeFilter::name() const {
+	return class_name();
+}
+
+std::string NetChargeFilter::class_name() {
+	return "NetCharge";
+}
+
+void NetChargeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("chain", xsct_non_negative_integer, "specify which chain you want to calculate the net charge (In the input PDB file, from top to bottom: 1 means first chain, 2 means the second chain, and so forth). Use the value 0 (default) if you want to consider all residues in the input PDB structure.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("max", xs_integer, "maximum net charge desired", "100")
+		+ XMLSchemaAttribute::attribute_w_default("min", xs_integer, "minimum net charge desired", "-100");
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter sums up all of the positively and negatively charged amino acids in your structure and reports a simplistic sequence-based net charge.", attlist );
+}
+
+std::string NetChargeFilterCreator::keyname() const {
+	return NetChargeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+NetChargeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new NetChargeFilter );
+}
+
+void NetChargeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NetChargeFilter::provide_xml_schema( xsd );
+}
+
 
 
 }

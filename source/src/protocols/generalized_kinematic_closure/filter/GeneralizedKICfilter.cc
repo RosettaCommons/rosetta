@@ -35,6 +35,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/pose/util.hh>
@@ -787,9 +788,9 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 	utility::vector1 < core::Real > gradient; //Dummy var needed for next function call.
 	core::conformation::Residue const &this_residue( pose.residue(curres) );
 	utility::vector1 < core::Real > mainchain_torsions( this_residue.mainchain_torsions().size() - 1 );
-	for(core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i) mainchain_torsions[i] = this_residue.mainchain_torsions()[i];
+	for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = this_residue.mainchain_torsions()[i];
 	core::Size const &that_residue_index( this_residue.residue_connection_partner( this_residue.upper_connect().index() ) );
-	
+
 	rama.eval_rpp_rama_score(
 		this_residue.type().get_self_ptr(),
 		pose.residue_type(that_residue_index).get_self_ptr(),
@@ -813,6 +814,23 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 	}
 	return rama_passed;
 } //apply_rama_prepro_check
+
+void
+GeneralizedKICfilter::define_valid_filter_name_enumeration( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction genkic_filter_name;
+	genkic_filter_name.name( "genkic_filter_name" );
+	genkic_filter_name.base_type( xs_string );
+	genkic_filter_name.add_restriction( xsr_enumeration, "no_filter" );
+	genkic_filter_name.add_restriction( xsr_enumeration, "loop_bump_check" );
+	genkic_filter_name.add_restriction( xsr_enumeration, "atom_pair_distance" );
+	genkic_filter_name.add_restriction( xsr_enumeration, "backbone_bin" );
+	genkic_filter_name.add_restriction( xsr_enumeration, "alpha_aa_rama_check" );
+	genkic_filter_name.add_restriction( xsr_enumeration, "rama_prepro_check" );
+	xsd.add_top_level_element( genkic_filter_name );
+
+}
 
 } //namespace filter
 } //namespace generalized_kinematic_closure

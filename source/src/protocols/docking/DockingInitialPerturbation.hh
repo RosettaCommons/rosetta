@@ -72,7 +72,7 @@ public:
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
 	void apply_body(core::pose::Pose & pose, core::Size jump_number );
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Calls set_dault, register_from_options and init_from_options
 	void init();
@@ -121,6 +121,18 @@ public:
 		core::pose::Pose const &
 	) override;
 	protocols::moves::MoverOP clone() const override; //zhe for scripts
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// do slide into context?

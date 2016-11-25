@@ -124,4 +124,9 @@ public:
 		TR.flush();
 	}
 
+	void test_all_attributes_in_xsd_have_descriptions()
+	{
+
+	}
+
 };

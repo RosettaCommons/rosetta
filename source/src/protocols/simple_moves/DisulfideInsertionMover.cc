@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/simple_moves/DisulfideInsersionMover.cc
+/// @file protocols/simple_moves/DisulfideInsertionMover.cc
 /// @brief a mover that closes a receptor bound peptide by an added disulfide bond
 /// @author Orly Marcu ( orly.marcu@mail.huji.ac.il )
 /// @date Jan. 12, 2014
@@ -58,6 +58,10 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -360,6 +364,60 @@ void DisulfideInsertionMover::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 }
+
+std::string DisulfideInsertionMover::get_name() const {
+	return mover_name();
+}
+
+std::string DisulfideInsertionMover::mover_name() {
+	return "DisulfideInsertion";
+}
+
+void DisulfideInsertionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	XMLSchemaSimpleSubelementList ssl;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap(xsd, ssl);
+
+	attlist + XMLSchemaAttribute(
+		"n_cyd", xsct_non_negative_integer,
+		"XSD XRW: TO DO specifiy n_cyd and c_cyd or neither");
+
+	attlist + XMLSchemaAttribute(
+		"c_cyd", xsct_non_negative_integer,
+		"XSD XRW: TO DO specifiy n_cyd and c_cyd or neither");
+
+	attlist + XMLSchemaAttribute(
+		"chain", xsct_non_negative_integer,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"constraint_weight", xsct_real,
+		"XSD XRW: TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"XSD XRW: TO DO",
+		attlist, ssl);
+}
+
+std::string DisulfideInsertionMoverCreator::keyname() const {
+	return DisulfideInsertionMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DisulfideInsertionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DisulfideInsertionMover );
+}
+
+void DisulfideInsertionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisulfideInsertionMover::provide_xml_schema( xsd );
+}
+
 
 }//simple_moves
 }//protocols

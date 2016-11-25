@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints 
+/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints
 /// @author Andrew Watkins (amw579@stanford.edu, October 2016)
 
 // Unit headers
@@ -72,19 +72,19 @@ Real
 BasePairConstraint::dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const {
 	return 0;
 }
-	
+
 void BasePairConstraint::show_def( std::ostream& out, pose::Pose const& /*pose*/ ) const {
 	out << "Base pair between bases " << res1_ << " and " << res2_ << std::endl;
 }
 
 ConstraintOP BasePairConstraint::remapped_clone( pose::Pose const& /*src*/, pose::Pose const& /*dest*/, id::SequenceMappingCOP smap ) const {
-	
+
 	if ( !smap ) {
 		return clone();
 	}
 	Size const res1 = (*smap)[ res1_ ];
 	Size const res2 = (*smap)[ res2_ ];
-	
+
 	if ( res1 == 0 || res2 == 0 ) return nullptr;
 	return ConstraintOP( new BasePairConstraint( (*smap)[ res1 ], (*smap)[ res2 ] ) );
 }
@@ -100,7 +100,7 @@ BasePairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 		return nullptr;
 	}
 }
-	
+
 std::string BasePairConstraint::type() const {
 	return "BasePairConstraint";
 }
@@ -110,11 +110,11 @@ BasePairConstraint::operator == ( Constraint const & other_cst ) const
 {
 	if ( !           same_type_as_me( other_cst ) ) return false;
 	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
-	
+
 	BasePairConstraint const & other( static_cast< BasePairConstraint const & > (other_cst) );
 	if ( res1_ != other.res1_ ) return false;
 	if ( res2_ != other.res2_ ) return false;
-	
+
 	return true;
 }
 
@@ -177,10 +177,10 @@ BasePairConstraint::read_def(
 	ConstraintIO::parse_residue( pose, tempres2, res2_ );
 
 	tr.Debug << "read: " << res1_ << " " << res2_ << std::endl;
-	
+
 	if ( res1_ > pose.size() || res2_ > pose.size() ) {
 		tr.Warning  << "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.size() << " "
-		<< res1_ << " " << res2_ << std::endl;
+			<< res1_ << " " << res2_ << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
@@ -189,50 +189,50 @@ BasePairConstraint::read_def(
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
-	
+
 	// OK, now set up all the AtomPairConstraints and everything...
 	// NOTE: currently we use the same method rna_helix does for defining the
 	// constraints, but we could easily accept functions from the constraint definition
 	// too.
-	
-	
+
+
 	// AMW TODO: enable non-WC specifications. Right now it'll just do as much with the
 	// WC donors and acceptors as it can.
 	// How do we handle chemically modified residues? Great question. We don't add
 	// constraints on atoms that don't exist, but we don't totally rule out interaction.
 	// So UR3 (3-methyl uridine) can still make a "Watson-Crick base pair" with
 	// one of its carbonyls. It's just lame-o.
-		
+
 	Real const WC_distance( 1.9 );
 	Real const distance_stddev( 0.25 );
- 	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( WC_distance, distance_stddev ) );
-	
+	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( WC_distance, distance_stddev ) );
+
 	// Need to force base pairing -- not base stacking!
 	Real const C1prime_distance( 10.5 );
 	Real const C1prime_distance_stddev( 1.0 ); //Hmm. Maybe try linear instead?
 	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
-	
+
 	Size const atom1 = pose.residue_type( res1_ ).RNA_type().c1prime_atom_index();
 	Size const atom2 = pose.residue_type( res2_ ).RNA_type().c1prime_atom_index();
 	constraints_.emplace_back( new AtomPairConstraint( id::AtomID( atom1, res1_ ), id::AtomID(atom2, res2_ ), C1prime_distance_func, base_pair_constraint ) );
-	
+
 	utility::vector1< std::string > atom_ids1, atom_ids2;
 	// yo I am gonna have to make this function work with NCNTs.
 	chemical::rna::get_watson_crick_base_pair_atoms( pose.residue_type( res1_ ), pose.residue_type( res2_ ), atom_ids1, atom_ids2 );
-	
+
 	for ( Size p = 1; p <= atom_ids1.size(); p++ ) {
-		
+
 		Size const atom1 = pose.residue_type( res1_ ).atom_index( atom_ids1[ p ] ) ;
 		Size const atom2 = pose.residue_type( res2_ ).atom_index( atom_ids2[ p ] ) ;
-		
+
 		tr.Debug << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue_type(res1_).name1() << res1_ << " <-->  " <<
-		pose.residue_type(res2_).name1() << res2_ << "   " <<
-		atom_ids1[ p ] << " <--> " <<
-		atom_ids2[ p ] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-		
+			pose.residue_type(res2_).name1() << res2_ << "   " <<
+			atom_ids1[ p ] << " <--> " <<
+			atom_ids2[ p ] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+
 		constraints_.emplace_back( new AtomPairConstraint( id::AtomID(atom1,res1_), id::AtomID(atom2,res2_), distance_func, base_pair_constraint ) );
 	}
-	
+
 }
 
 BasePairConstraint::BasePairConstraint( BasePairConstraint const & src ) :

@@ -180,11 +180,25 @@ void DesignAroundOperation::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "resnums", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_shell", xs_decimal, "8.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_design", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "resnums_allow_design", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_shell", xs_decimal, "8.0" );
+		+ XMLSchemaAttribute::required_attribute(
+		"resnums", xs_string,
+		"can be a list of pdb numbers, such as 291B,101A." )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"design_shell", xsct_real,
+		"what sphere to design around the target residues. Must be at least as large as design_shell.",
+		"8.0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"allow_design", xsct_rosetta_bool,
+		"allow design in the sphere, else restrict to repacking.",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"resnums_allow_design", xsct_rosetta_bool,
+		"allow design in the resnums list, else restrict to repacking.",
+		"true" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"repack_shell", xsct_real,
+		"what sphere to pack around the target residues. Must be at least as large as design_shell.",
+		"8.0" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

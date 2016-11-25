@@ -32,7 +32,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-
+#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 // }}}1
 
 namespace protocols {
@@ -207,6 +208,32 @@ LoopMoverOPs LoopMover::get_children() const { // {{{1
 
 Size LoopMover::count_children() const { // {{{1
 	return children_.size();
+}
+
+// XML schema stuff
+std::string LoopMover_subelement_ct_name( std::string const & name ) {
+	return "LoopMover_Loop_subelement_" + name + "Type";
+}
+
+void
+LoopMover::define_composition_schema(
+	utility::tag::XMLSchemaDefinition & xsd,
+	utility::tag::XMLSchemaComplexTypeGenerator & ct_gen,
+	utility::tag::XMLSchemaSimpleSubelementList & subelements
+)
+{
+	using namespace utility::tag;
+	using namespace protocols::moves;
+
+	AttributeList attlist;
+
+	subelements.complex_type_naming_func( & LoopMover_subelement_ct_name );
+	loop_modeling::utilities::append_subelement_and_attributes_for_parse_loops_from_tag( xsd, subelements, attlist );
+
+	ct_gen
+		.complex_type_naming_func( & complex_type_name_for_mover )
+		.add_optional_name_attribute()
+		.add_attributes( attlist );
 }
 // }}}1
 

@@ -60,6 +60,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.docking.membrane.MPDockingSetupMover" );
 
@@ -118,32 +121,32 @@ MPDockingSetupMover::parse_my_tag(
 {}
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-MPDockingSetupMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPDockingSetupMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MPDockingSetupMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MPDockingSetupMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-MPDockingSetupMoverCreator::keyname() const {
-	return MPDockingSetupMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MPDockingSetupMoverCreator::keyname() const {
+// XRW TEMP  return MPDockingSetupMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-MPDockingSetupMoverCreator::mover_name() {
-	return "MPDockingSetupMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPDockingSetupMover::mover_name() {
+// XRW TEMP  return "MPDockingSetupMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
 /////////////////////
 
 /// @brief Get the name of this Mover (MPDockingSetupMover)
-std::string
-MPDockingSetupMover::get_name() const {
-	return "MPDockingSetupMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPDockingSetupMover::get_name() const {
+// XRW TEMP  return "MPDockingSetupMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -340,6 +343,36 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	}
 
 }// transform pose into membrane
+
+std::string MPDockingSetupMover::get_name() const {
+	return mover_name();
+}
+
+std::string MPDockingSetupMover::mover_name() {
+	return "MPDockingSetupMover";
+}
+
+void MPDockingSetupMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Set up for membrane protein docking.", attlist );
+}
+
+std::string MPDockingSetupMoverCreator::keyname() const {
+	return MPDockingSetupMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MPDockingSetupMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MPDockingSetupMover );
+}
+
+void MPDockingSetupMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MPDockingSetupMover::provide_xml_schema( xsd );
+}
+
 
 
 } // membrane

@@ -95,7 +95,7 @@ public:
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void set_dock_min_protocol();
 	void set_dock_mcm_protocol( core::pose::Pose & pose );
@@ -104,6 +104,18 @@ public:
 	// @brief turns on design of partner2 during docking. Experimental!
 	void design( bool const des );
 	bool design() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::kinematics::MoveMapOP movemap_;

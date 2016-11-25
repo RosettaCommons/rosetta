@@ -51,27 +51,39 @@ public:
 	virtual ~RemoveRemodelCsts();
 
 	/// @brief this function looks up the constraints created by the object with the given generator and removes them
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual void
+	void
 	parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	void
 	set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	protocols::forge::remodel::RemodelConstraintGeneratorOP generator_;

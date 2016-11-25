@@ -84,6 +84,9 @@
 #include <basic/Tracer.hh>
 #include <fstream>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -105,133 +108,133 @@ using namespace scoring;
 /// creators
 
 
-std::string
-ReportGradientsMoverCreator::keyname() const {
-	return ReportGradientsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ReportGradientsMoverCreator::keyname() const {
+// XRW TEMP  return ReportGradientsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ReportGradientsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ReportGradientsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ReportGradientsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ReportGradientsMover );
+// XRW TEMP }
 
-std::string
-ReportGradientsMoverCreator::mover_name() {
-	return "ReportGradients";
-}
+// XRW TEMP std::string
+// XRW TEMP ReportGradientsMover::mover_name() {
+// XRW TEMP  return "ReportGradients";
+// XRW TEMP }
 
 ///
 
-std::string
-SetCrystWeightMoverCreator::keyname() const {
-	return SetCrystWeightMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetCrystWeightMoverCreator::keyname() const {
+// XRW TEMP  return SetCrystWeightMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetCrystWeightMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetCrystWeightMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetCrystWeightMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetCrystWeightMover );
+// XRW TEMP }
 
-std::string
-SetCrystWeightMoverCreator::mover_name() {
-	return "SetCrystWeight";
-}
-
-
-std::string
-RecomputeDensityMapMoverCreator::keyname() const {
-	return RecomputeDensityMapMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-RecomputeDensityMapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RecomputeDensityMapMover );
-}
-
-std::string
-RecomputeDensityMapMoverCreator::mover_name() {
-	return "RecomputeDensityMap";
-}
+// XRW TEMP std::string
+// XRW TEMP SetCrystWeightMover::mover_name() {
+// XRW TEMP  return "SetCrystWeight";
+// XRW TEMP }
 
 
-std::string
-LoadDensityMapMoverCreator::keyname() const {
-	return LoadDensityMapMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RecomputeDensityMapMoverCreator::keyname() const {
+// XRW TEMP  return RecomputeDensityMapMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoadDensityMapMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadDensityMapMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RecomputeDensityMapMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RecomputeDensityMapMover );
+// XRW TEMP }
 
-std::string
-LoadDensityMapMoverCreator::mover_name() {
-	return "LoadDensityMap";
-}
-
-
-std::string
-FitBfactorsMoverCreator::keyname() const {
-	return FitBfactorsMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-FitBfactorsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FitBfactorsMover );
-}
-
-std::string
-FitBfactorsMoverCreator::mover_name() {
-	return "FitBfactors";
-}
+// XRW TEMP std::string
+// XRW TEMP RecomputeDensityMapMover::mover_name() {
+// XRW TEMP  return "RecomputeDensityMap";
+// XRW TEMP }
 
 
-std::string
-UpdateSolventMoverCreator::keyname() const {
-	return UpdateSolventMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoadDensityMapMoverCreator::keyname() const {
+// XRW TEMP  return LoadDensityMapMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-UpdateSolventMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UpdateSolventMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoadDensityMapMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoadDensityMapMover );
+// XRW TEMP }
 
-std::string
-UpdateSolventMoverCreator::mover_name() {
-	return "UpdateSolvent";
-}
-
-
-std::string
-TagPoseWithRefinementStatsMoverCreator::keyname() const {
-	return TagPoseWithRefinementStatsMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-TagPoseWithRefinementStatsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
-}
-
-std::string
-TagPoseWithRefinementStatsMoverCreator::mover_name() {
-	return "TagPoseWithRefinementStats";
-}
+// XRW TEMP std::string
+// XRW TEMP LoadDensityMapMover::mover_name() {
+// XRW TEMP  return "LoadDensityMap";
+// XRW TEMP }
 
 
-std::string
-SetRefinementOptionsMoverCreator::keyname() const {
-	return SetRefinementOptionsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FitBfactorsMoverCreator::keyname() const {
+// XRW TEMP  return FitBfactorsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetRefinementOptionsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetRefinementOptionsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FitBfactorsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FitBfactorsMover );
+// XRW TEMP }
 
-std::string
-SetRefinementOptionsMoverCreator::mover_name() {
-	return "SetRefinementOptions";
-}
+// XRW TEMP std::string
+// XRW TEMP FitBfactorsMover::mover_name() {
+// XRW TEMP  return "FitBfactors";
+// XRW TEMP }
+
+
+// XRW TEMP std::string
+// XRW TEMP UpdateSolventMoverCreator::keyname() const {
+// XRW TEMP  return UpdateSolventMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP UpdateSolventMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new UpdateSolventMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP UpdateSolventMover::mover_name() {
+// XRW TEMP  return "UpdateSolvent";
+// XRW TEMP }
+
+
+// XRW TEMP std::string
+// XRW TEMP TagPoseWithRefinementStatsMoverCreator::keyname() const {
+// XRW TEMP  return TagPoseWithRefinementStatsMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TagPoseWithRefinementStatsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP TagPoseWithRefinementStatsMover::mover_name() {
+// XRW TEMP  return "TagPoseWithRefinementStats";
+// XRW TEMP }
+
+
+// XRW TEMP std::string
+// XRW TEMP SetRefinementOptionsMoverCreator::keyname() const {
+// XRW TEMP  return SetRefinementOptionsMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetRefinementOptionsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetRefinementOptionsMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SetRefinementOptionsMover::mover_name() {
+// XRW TEMP  return "SetRefinementOptions";
+// XRW TEMP }
 
 //////////////////
 //////////////////
@@ -548,6 +551,40 @@ void ReportGradientsMover::parse_my_tag(
 	outfile_ = tag->getOption<std::string>("outfile", "");
 }
 
+std::string ReportGradientsMover::get_name() const {
+	return mover_name();
+}
+
+std::string ReportGradientsMover::mover_name() {
+	return "ReportGradients";
+}
+
+void ReportGradientsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "report per-atom/per-scoreterm gradients", "false" );
+	attlist + XMLSchemaAttribute( "outfile", xs_string, "output file for gradients" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code.  Reports to file per score-term gradients, used for: a) verbose output; b) normalization for non-etable derivs", attlist );
+}
+
+std::string ReportGradientsMoverCreator::keyname() const {
+	return ReportGradientsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ReportGradientsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ReportGradientsMover );
+}
+
+void ReportGradientsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReportGradientsMover::provide_xml_schema( xsd );
+}
+
+
 ////
 
 void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
@@ -650,6 +687,83 @@ void SetCrystWeightMover::parse_my_tag(
 	cartesian_ = tag->getOption<bool>("cartesian", false);
 }
 
+std::string SetCrystWeightMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetCrystWeightMover::mover_name() {
+	return "SetCrystWeight";
+}
+
+std::string SetCrystWeightMover_subelement_ct_name( std::string const & name ) {
+	return "SetCrystWeightMover_subelement_" + name + "Type";
+}
+
+void SetCrystWeightMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute( "scorefxn_ref", xs_string, "String name of scorefunction defined in SCOREFUNCTION section; used to copy weights from; defaults to scorefunction defined by this element's scorefunction subelement)" );
+
+	//empty SubelementList for MoveMap util function
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & SetCrystWeightMover_subelement_ct_name );
+	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+
+	//argument legality checker for "jump":
+	XMLSchemaRestriction jump_type;
+	jump_type.name("jump_type");
+	jump_type.base_type( xs_string );
+	jump_type.add_restriction( xsr_pattern, "ALL|All|all|[0-9]+(,[0-9]+)*");
+	xsd.add_top_level_element( jump_type );
+
+	attlist + XMLSchemaAttribute( "jump", "jump_type", "if 'ALL', 'All', or 'all'; all jumps mobile in MoveMap.  else, interpreted as a comma-separated list of integers labeling jumps" );
+
+	attlist + XMLSchemaAttribute( "chi", xsct_rosetta_bool, "chi mobile in MoveMap" );
+	attlist + XMLSchemaAttribute( "bb", xsct_rosetta_bool, "backbone mobile in MoveMap" );
+	attlist + XMLSchemaAttribute( "bondangle", xsct_rosetta_bool, "bond angles mobile in MoveMap" );
+	attlist + XMLSchemaAttribute( "bondlength", xsct_rosetta_bool, "bond lengths mobile in MoveMap" );
+
+	attlist + XMLSchemaAttribute( "weight", xsct_real, "Always set to this weight; overriding heuristics" );
+	attlist + XMLSchemaAttribute( "weight_min", xsct_real, "Keep weight above this minimum" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "weight_scale", xsct_real, "scale weight by this factor (applies to automatic AND overriden weights)", "1.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool, "Use cartesian ??? when automatically determining weights", "false" );
+
+	moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "PHENIX crystallographic refinement interface code. Converts weights from one score function into weights for the xtal_ml term for some other scorefunction; MoveMap helps determine optimal weight", attlist, subelements);
+
+
+	// XMLSchemaComplexTypeGenerator complex_type_generator;
+	// complex_type_generator
+	//  .element_name( mover_name() )
+	//  .description( "PHENIX crystallographic refinement interface code. Converts weights from one score function into weights for the xtal_ml term for some other scorefunction; MoveMap helps determine optimal weight" )
+	//  .complex_type_naming_func( & moves::complex_type_name_for_mover )
+	//  .add_attributes( attlist )
+	//  .set_subelements_repeatable( subelements ) //unclear that MoveMap is repeatable; not worth figuring out now
+	//  .write_complex_type_to_schema( xsd );
+
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SetCrystWeightMoverCreator::keyname() const {
+	return SetCrystWeightMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetCrystWeightMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetCrystWeightMover );
+}
+
+void SetCrystWeightMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetCrystWeightMover::provide_xml_schema( xsd );
+}
+
+
 ////
 
 void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
@@ -668,6 +782,40 @@ void RecomputeDensityMapMover::parse_my_tag(
 {
 	keep_sidechains_ = tag->getOption<bool>("sidechains", true);
 }
+
+std::string RecomputeDensityMapMover::get_name() const {
+	return mover_name();
+}
+
+std::string RecomputeDensityMapMover::mover_name() {
+	return "RecomputeDensityMap";
+}
+
+void RecomputeDensityMapMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "sidechains", xsct_rosetta_bool, "does nothing", "true" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code. Uses PHENIX to recompute the density map", attlist );
+}
+
+std::string RecomputeDensityMapMoverCreator::keyname() const {
+	return RecomputeDensityMapMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RecomputeDensityMapMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RecomputeDensityMapMover );
+}
+
+void RecomputeDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RecomputeDensityMapMover::provide_xml_schema( xsd );
+}
+
 
 ////
 void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
@@ -691,6 +839,42 @@ void LoadDensityMapMover::parse_my_tag(
 	sc_scale_ = tag->getOption<core::Real>("sc_scale", 1.0);
 	window_ = tag->getOption<core::Size>("window", 3);
 }
+
+std::string LoadDensityMapMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoadDensityMapMover::mover_name() {
+	return "LoadDensityMap";
+}
+
+void LoadDensityMapMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "mapfile", xs_string, "path to density map" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "sc_scale", xsct_real, "set sidechain scaling in density map to this factor", "1.0");
+	attlist + XMLSchemaAttribute::attribute_w_default( "window", xsct_non_negative_integer, "set window in the density map to this value", "3");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code. Loads an electron density map", attlist );
+}
+
+std::string LoadDensityMapMoverCreator::keyname() const {
+	return LoadDensityMapMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoadDensityMapMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoadDensityMapMover );
+}
+
+void LoadDensityMapMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoadDensityMapMover::provide_xml_schema( xsd );
+}
+
 
 ////
 
@@ -744,6 +928,65 @@ void FitBfactorsMover::randomize_bs( core::pose::Pose & pose ) {
 	}
 }
 
+std::string FitBfactorsMover::get_name() const {
+	return mover_name();
+}
+
+std::string FitBfactorsMover::mover_name() {
+	return "FitBfactors";
+}
+
+void FitBfactorsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//argument legality checker for "adp_strategy":
+	XMLSchemaRestriction adp_strategy_type;
+	adp_strategy_type.name("adp_strategy_type");
+	adp_strategy_type.base_type( xs_string );
+	adp_strategy_type.add_restriction( xsr_enumeration, "individual");
+	adp_strategy_type.add_restriction( xsr_enumeration, "group");
+	adp_strategy_type.add_restriction( xsr_enumeration, "randomize");
+	xsd.add_top_level_element( adp_strategy_type );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "adp_strategy", "adp_strategy_type", "ADP (?) strategy.  Must be one of ('individual', 'group', 'randomize')", "individual" );
+
+
+	//argument legality checker for "adp_strategy":
+	XMLSchemaRestriction group_adp_mode;
+	group_adp_mode.name("group_adp_mode_restricted_string_type");
+	group_adp_mode.base_type( xsct_non_negative_integer );
+	group_adp_mode.add_restriction( xsr_enumeration, "1");
+	group_adp_mode.add_restriction( xsr_enumeration, "2");
+	xsd.add_top_level_element( group_adp_mode );
+
+	//XML XRW TODO: this option only relevant if adp_strategy == group; does not crash if not true but unchecked
+	attlist + XMLSchemaAttribute::attribute_w_default( "group_adp_mode", "group_adp_mode_restricted_string_type", "group_adp_mode strategy, legal arguments are 1 or 2", "1" );
+
+	//XML XRW TODO: these options are only checked if adp_strategy == random; does not crash if not true but unchecked
+	attlist + XMLSchemaAttribute::attribute_w_default( "b_min", xsct_real, "b value min; used only with randomize strategy", "5.0" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "b_max", xsct_real, "b value max; used only with randomize strategy", "5.0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code.  Fits b factors using an adp strategy", attlist );
+}
+
+std::string FitBfactorsMoverCreator::keyname() const {
+	return FitBfactorsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FitBfactorsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FitBfactorsMover );
+}
+
+void FitBfactorsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FitBfactorsMover::provide_xml_schema( xsd );
+}
+
+
 ////
 
 void UpdateSolventMover::apply( core::pose::Pose & pose ) {
@@ -774,11 +1017,52 @@ void UpdateSolventMover::parse_my_tag(
 	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
-	update_mask_ = tag->getOption<bool>("update_mask", 1);
-	update_fcalc_ = tag->getOption<bool>("update_fcalc", 1);
-	optimize_mask_ = tag->getOption<bool>("optimize_mask", 0);
-	optimize_params_ = tag->getOption<bool>("optimize_params", 0);
+	update_mask_ = tag->getOption<bool>("update_mask", true);
+	update_fcalc_ = tag->getOption<bool>("update_fcalc", true);
+	optimize_mask_ = tag->getOption<bool>("optimize_mask", false);
+	optimize_params_ = tag->getOption<bool>("optimize_params", false);
 }
+
+std::string UpdateSolventMover::get_name() const {
+	return mover_name();
+}
+
+std::string UpdateSolventMover::mover_name() {
+	return "UpdateSolvent";
+}
+
+void UpdateSolventMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//XML XRW TODO: encode this dependency?
+	attlist + XMLSchemaAttribute::attribute_w_default( "update_mask", xsct_rosetta_bool, "call PHENIX to update solvent mask. Only valid if optimize_mask and optimize_params are both false.", "true" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "update_fcalc", xsct_rosetta_bool, "call PHENIX to update fcalc", "true" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "optimize_mask", xsct_rosetta_bool, "call PHENIX to optimize solvent mask; can be combined with optimize_params", "false" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "optimize_params", xsct_rosetta_bool, "call PHENIX to optimize solvent mask; can be combined with optimize_mask", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code.  Calls PHENIX to update and optimize solvent mask.", attlist );
+}
+
+std::string UpdateSolventMoverCreator::keyname() const {
+	return UpdateSolventMover::mover_name();
+}
+
+protocols::moves::MoverOP
+UpdateSolventMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new UpdateSolventMover );
+}
+
+void UpdateSolventMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UpdateSolventMover::provide_xml_schema( xsd );
+}
+
 
 ////
 
@@ -882,9 +1166,45 @@ void TagPoseWithRefinementStatsMover::parse_my_tag(
 	core::pose::Pose const & /*pose*/ )
 {
 	tag_ = tag->getOption<std::string>("tag", "");
-	dump_pose_ = tag->getOption<bool>("dump", 0);
-	report_grads_ = tag->getOption<bool>("report_grads", 0);
+	dump_pose_ = tag->getOption<bool>("dump", false);
+	report_grads_ = tag->getOption<bool>("report_grads", false);
 }
+
+std::string TagPoseWithRefinementStatsMover::get_name() const {
+	return mover_name();
+}
+
+std::string TagPoseWithRefinementStatsMover::mover_name() {
+	return "TagPoseWithRefinementStats";
+}
+
+void TagPoseWithRefinementStatsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute( "tag", xs_string, "tags Mover's output with this string" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "dump", xsct_rosetta_bool, "dump a copy of the PDB", "false" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "report_grads", xsct_rosetta_bool, "report gradients sum", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code.  Modifies Pose with refinement statistics and can dump the pdb", attlist );
+}
+
+std::string TagPoseWithRefinementStatsMoverCreator::keyname() const {
+	return TagPoseWithRefinementStatsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+TagPoseWithRefinementStatsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
+}
+
+void TagPoseWithRefinementStatsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TagPoseWithRefinementStatsMover::provide_xml_schema( xsd );
+}
+
 
 ////
 void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
@@ -948,6 +1268,49 @@ void SetRefinementOptionsMover::parse_my_tag(
 		cif_files_ = utility::string_split( allcifs, ',' );
 	}
 }
+
+std::string SetRefinementOptionsMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetRefinementOptionsMover::mover_name() {
+	return "SetRefinementOptions";
+}
+
+void SetRefinementOptionsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "res_high", xsct_real, "sets high ResLimit for PHENIX refinement", "0.0" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "res_low", xsct_real, "sets low ResLimit for PHENIX refinement", "0.0" );
+	attlist + XMLSchemaAttribute( "twin_law", xs_string, "sets twin law for PHENIX refinement" );
+	attlist + XMLSchemaAttribute( "algorithm", xs_string, "sets algorithm for PHENIX refinement" );
+	attlist + XMLSchemaAttribute( "target", xs_string, "sets target function for PHENIX refinement" );
+	attlist + XMLSchemaAttribute( "map_type", xs_string, "sets map type for PHENIX refinement" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "sharpen_b", xsct_real, "sets sharpen_b for PHENIX refinement", "0.0" );
+
+	//XML XRW NOTE: cannot enforce "comma separated strings" with XSD restrictions
+	attlist + XMLSchemaAttribute( "cifs", xs_string, "cif files passed along to PHENIX refinement.  Legal argument is cifs split by commas: 'cif1.cif,cif2.cif,cif3.cif" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "PHENIX crystallographic refinement interface code.  Sets refinement options to pass along through the PHENIX interface.", attlist );
+}
+
+std::string SetRefinementOptionsMoverCreator::keyname() const {
+	return SetRefinementOptionsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetRefinementOptionsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetRefinementOptionsMover );
+}
+
+void SetRefinementOptionsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetRefinementOptionsMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -34,6 +34,10 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {
@@ -47,24 +51,24 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
 
-std::string
-HotspotHasherMoverCreator::keyname() const
-{
-	return HotspotHasherMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HotspotHasherMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return HotspotHasherMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HotspotHasherMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HotspotHasherMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HotspotHasherMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HotspotHasherMover );
+// XRW TEMP }
 
-std::string
-HotspotHasherMoverCreator::mover_name()
-{
-	return "HotspotHasher";
-}
+// XRW TEMP std::string
+// XRW TEMP HotspotHasherMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "HotspotHasher";
+// XRW TEMP }
 
-HotspotHasherMover::HotspotHasherMover() : protocols::moves::Mover( HotspotHasherMoverCreator::mover_name() ) { }
+HotspotHasherMover::HotspotHasherMover() : protocols::moves::Mover( HotspotHasherMover::mover_name() ) { }
 HotspotHasherMover::HotspotHasherMover(
 	std::vector<std::string> const & resnames,
 	core::scoring::ScoreFunctionCOP scorefxn,
@@ -75,7 +79,7 @@ HotspotHasherMover::HotspotHasherMover(
 	std::string const & hashin_fname,
 	std::string const & hashout_fname
 ) :
-	protocols::moves::Mover( HotspotHasherMoverCreator::mover_name() ),
+	protocols::moves::Mover( HotspotHasherMover::mover_name() ),
 	scorefxn_(scorefxn),
 	resnames_(resnames),
 	n_stubs_(n_stubs),
@@ -192,10 +196,10 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 	}
 } // HotspotHasherMover::apply
 
-std::string
-HotspotHasherMover::get_name() const {
-	return HotspotHasherMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HotspotHasherMover::get_name() const {
+// XRW TEMP  return HotspotHasherMover::mover_name();
+// XRW TEMP }
 
 
 void
@@ -253,6 +257,69 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 	if ( target_resnum_ ) TR << target_distance_ << "A away from residue " << target_resnum_ << std::endl;
 	TR<<std::endl;
 } // HotspotHasherMover::parse_my_tag
+
+std::string HotspotHasherMover::get_name() const {
+	return mover_name();
+}
+
+std::string HotspotHasherMover::mover_name() {
+	return "HotspotHasher";
+}
+
+std::string subtag_for_hotspothasher( std::string const & tag ) {
+	return "stfhsh_" + tag;
+}
+
+void HotspotHasherMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "nstubs", xsct_non_negative_integer, "Number of hotspot stubs to generate", "1000 ")
+		+ XMLSchemaAttribute( "target_residue_pdb_num", xsct_refpose_enabled_residue_number, "Residue number from which to generate hot spot stubs; provide this or target_residue_res_num" )
+		+ XMLSchemaAttribute( "target_residue_res_num", xsct_refpose_enabled_residue_number, "Residue number from which to generate hot spot stubs; provide this or target_residue_pdb_num" )
+		+ XMLSchemaAttribute::attribute_w_default( "target_distance", xsct_real, "Interface distance definition", "15.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold below which stubs are favorable enough in energy to dump", "-1.0" )
+		+ XMLSchemaAttribute( "in", xs_string, "Input for a checkpoint of the hotspot hashing effort" )
+		+ XMLSchemaAttribute::attribute_w_default( "out", xs_string, "Output where hashed stubs should be stored", "hash.stubs" )
+		+ XMLSchemaAttribute::attribute_w_default( "hotspot_filter", xs_string, "Filter to apply to all hotspots before storage", "true_filter" );
+
+	AttributeList subtag_attributes;
+	/*** Parse Sub-Tags ***/
+	subtag_attributes + XMLSchemaAttribute::required_attribute( "type", xs_string, "Residue name for consideration" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "residue", subtag_attributes, "Tags describing individual residues hotspots of which are to be hashed"/*, 1 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_hotspothasher );
+
+	//protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & complex_type_name_for_mover )
+		.element_name( mover_name() )
+		.description( "XRW TODO" )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( ssl, 1, xsminmax_unbounded )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string HotspotHasherMoverCreator::keyname() const {
+	return HotspotHasherMover::mover_name();
+}
+
+protocols::moves::MoverOP
+HotspotHasherMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HotspotHasherMover );
+}
+
+void HotspotHasherMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HotspotHasherMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

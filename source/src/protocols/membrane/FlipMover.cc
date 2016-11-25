@@ -54,6 +54,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.membrane.FlipMover" );
 
@@ -167,22 +170,22 @@ FlipMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-FlipMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlipMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FlipMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FlipMover() );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-FlipMoverCreator::keyname() const {
-	return FlipMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FlipMoverCreator::keyname() const {
+// XRW TEMP  return FlipMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-FlipMoverCreator::mover_name() {
-	return "FlipMover";
-}
+// XRW TEMP std::string
+// XRW TEMP FlipMover::mover_name() {
+// XRW TEMP  return "FlipMover";
+// XRW TEMP }
 
 
 /////////////////////
@@ -190,10 +193,10 @@ FlipMoverCreator::mover_name() {
 /////////////////////
 
 /// @brief Get the name of this Mover (FlipMover)
-std::string
-FlipMover::get_name() const {
-	return "FlipMover";
-}
+// XRW TEMP std::string
+// XRW TEMP FlipMover::get_name() const {
+// XRW TEMP  return "FlipMover";
+// XRW TEMP }
 
 /// @brief Flip the downstream partner in the membrane
 void FlipMover::apply( core::pose::Pose & pose ) {
@@ -338,6 +341,36 @@ void FlipMover::set_defaults() {
 	max_angle_dev_ = 0;
 
 }// set_defaults
+
+std::string FlipMover::get_name() const {
+	return mover_name();
+}
+
+std::string FlipMover::mover_name() {
+	return "FlipMover";
+}
+
+void FlipMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Flips pose in the membrane", attlist );
+}
+
+std::string FlipMoverCreator::keyname() const {
+	return FlipMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FlipMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FlipMover );
+}
+
+void FlipMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FlipMover::provide_xml_schema( xsd );
+}
+
 
 
 } // membrane

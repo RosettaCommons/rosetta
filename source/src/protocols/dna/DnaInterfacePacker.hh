@@ -73,7 +73,7 @@ public:
 
 	moves::MoverOP fresh_instance() const override;
 	moves::MoverOP clone() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void apply( Pose & ) override;
 
@@ -114,6 +114,18 @@ public:
 	std::string allowed_types() const;
 	void clear_initialization();
 	std::string pdbname() { return pdbname_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 	void standard_packing( Pose & );

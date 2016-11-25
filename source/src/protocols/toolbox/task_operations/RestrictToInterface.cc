@@ -284,10 +284,10 @@ void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "distance", xs_decimal, "8" );
+		+ XMLSchemaAttribute::attribute_w_default(  "jump", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance", xsct_real, "XRW TO DO",  "8"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

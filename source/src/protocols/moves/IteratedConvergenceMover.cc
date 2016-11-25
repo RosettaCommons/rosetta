@@ -28,29 +28,15 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.IteratedConvergenceMover" );
-
-std::string
-IteratedConvergenceMoverCreator::keyname() const
-{
-	return IteratedConvergenceMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-IteratedConvergenceMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IteratedConvergenceMover );
-}
-
-std::string
-IteratedConvergenceMoverCreator::mover_name()
-{
-	return "IteratedConvergence";
-}
 
 IteratedConvergenceMover::IteratedConvergenceMover() :
 	Mover("IteratedConvergenceMover"),
@@ -108,11 +94,6 @@ IteratedConvergenceMover::apply( Pose & pose )
 		TR<<"After "<<ii<<" applications, at cycle "<<ncyc<<" of "<<cycles_<<", filter delta in range at "<<(trialval-refval)<<std::endl;
 	}
 	TR << "Exiting IteratedConvergence WITHOUT convergence after "<<maxcycles_<<" applications of mover."<<std::endl;
-}
-
-std::string
-IteratedConvergenceMover::get_name() const {
-	return IteratedConvergenceMoverCreator::mover_name();
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -196,6 +177,69 @@ filters::FilterCOP IteratedConvergenceMover::filter() const { return filter_; }
 core::Real IteratedConvergenceMover::delta() const { return delta_; }
 core::Size IteratedConvergenceMover::cycles() const { return cycles_; }
 core::Size IteratedConvergenceMover::maxcycles() const { return maxcycles_; }
+
+std::string IteratedConvergenceMover::get_name() const {
+	return mover_name();
+}
+
+std::string IteratedConvergenceMover::mover_name() {
+	return "IteratedConvergence";
+}
+
+void IteratedConvergenceMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"mover", xs_string,
+		"the mover to repeatedly apply");
+	attlist + XMLSchemaAttribute(
+		"mover_name", xs_string,
+		"the mover to repeatedly apply");
+	attlist + XMLSchemaAttribute(
+		"filter", xs_string,
+		"the filter to use when assaying for convergence "
+		"(should return a reasonable value from report_sm())");
+	attlist + XMLSchemaAttribute(
+		"filter_name", xs_string,
+		"the filter to use when assaying for convergence "
+		"(should return a reasonable value from report_sm())");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"delta", xsct_real,
+		"how close do the filter values have to be to count as converged", "0.1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cycles", xsct_non_negative_integer,
+		"for how many mover applications does the filter value have to "
+		"fall within delta of the reference value before counting as converged. "
+		"If the filter is outside of the range, the reference value is "
+		"reset to the new filter value", "1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"maxcycles", xsct_non_negative_integer,
+		"exit regardless if filter doesn't converge within this many "
+		"applications of the mover - intended mainly as a safety "
+		"check to prevent infinite recursion", "1000");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Repeatedly applies a sub-mover until the given filter returns "
+		"a value within the given delta for the given number of cycles",
+		attlist );
+}
+
+std::string IteratedConvergenceMoverCreator::keyname() const {
+	return IteratedConvergenceMover::mover_name();
+}
+
+protocols::moves::MoverOP
+IteratedConvergenceMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new IteratedConvergenceMover );
+}
+
+void IteratedConvergenceMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IteratedConvergenceMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

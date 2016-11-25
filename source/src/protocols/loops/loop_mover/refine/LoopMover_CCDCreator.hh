@@ -26,10 +26,13 @@ namespace refine {
 class LoopMover_Refine_CCDCreator : public moves::MoverCreator
 {
 public:
-	virtual ~LoopMover_Refine_CCDCreator();
+	// XRW TEMP  virtual ~LoopMover_Refine_CCDCreator();
 
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
+	// XRW TEMP  virtual moves::MoverOP create_mover() const;
+	// XRW TEMP  virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

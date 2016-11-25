@@ -23,22 +23,22 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-std::string
-RotamerRecoveryMoverCreator::keyname() const
-{
-	return RotamerRecoveryMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerRecoveryMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RotamerRecoveryMover::mover_name();
+// XRW TEMP }
 
-moves::MoverOP
-RotamerRecoveryMoverCreator::create_mover() const {
-	return moves::MoverOP( new RotamerRecoveryMover );
-}
+// XRW TEMP moves::MoverOP
+// XRW TEMP RotamerRecoveryMoverCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new RotamerRecoveryMover );
+// XRW TEMP }
 
-std::string
-RotamerRecoveryMoverCreator::mover_name()
-{
-	return "RotamerRecoveryMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerRecoveryMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RotamerRecoveryMover";
+// XRW TEMP }
 
 }
 }
@@ -89,6 +89,9 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //using std::ios::app;
 using std::endl;
@@ -196,10 +199,10 @@ RotamerRecoveryMover::apply( Pose & pose
 	rotamer_recovery_->run(pose, *scfxn, *packer_task);
 }
 
-string
-RotamerRecoveryMover::get_name() const {
-	return "RotamerRecoveryMover";
-}
+// XRW TEMP string
+// XRW TEMP RotamerRecoveryMover::get_name() const {
+// XRW TEMP  return "RotamerRecoveryMover";
+// XRW TEMP }
 
 MoverOP
 RotamerRecoveryMover::fresh_instance() const {
@@ -278,6 +281,45 @@ RotamerRecoveryMover::show(ostream & out) const
 {
 	rotamer_recovery_->show( out );
 }
+
+std::string RotamerRecoveryMover::get_name() const {
+	return mover_name();
+}
+
+std::string RotamerRecoveryMover::mover_name() {
+	return "RotamerRecoveryMover";
+}
+
+void RotamerRecoveryMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		//Can have protocol OR mover/mover_name but not both
+		+ XMLSchemaAttribute::attribute_w_default( "protocol", xs_string, "Name of protocol to use for rotamer recovery detection", "RRProtocolMinPack" )
+		+ XMLSchemaAttribute( "mover", xs_string, "Mover to apply to pose. Interchangeable with mover_name." )
+		+ XMLSchemaAttribute( "mover_name", xs_string, "Mover to apply to pose. Interchangeable with mover." )
+		+ XMLSchemaAttribute::attribute_w_default( "comparer", xs_string, "Name of RRComparer to use when measuring rotamer recovery", "RRComparerAutomorphicRMSD" )
+		+ XMLSchemaAttribute::attribute_w_default( "reporter", xs_string, "Name of RRReporter to use to report rotamer recovery", "RRReporterSimple" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A wrapper mover that measures how similar the rotamers are before and after running the child mover", attlist );
+}
+
+std::string RotamerRecoveryMoverCreator::keyname() const {
+	return RotamerRecoveryMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RotamerRecoveryMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RotamerRecoveryMover );
+}
+
+void RotamerRecoveryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerRecoveryMover::provide_xml_schema( xsd );
+}
+
 
 } // namespace rotamer_recovery
 } // namespace protocols

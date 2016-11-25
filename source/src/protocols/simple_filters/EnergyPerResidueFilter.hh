@@ -59,6 +59,18 @@ public:
 	void score_type( core::scoring::ScoreType score_type );
 	void threshold( core::Real const th );
 	void bb_bb( bool const b_b );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size resnum_;
 	core::scoring::ScoreFunctionOP scorefxn_; //?

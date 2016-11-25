@@ -57,6 +57,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.GlycanRelaxMover" );
@@ -205,10 +208,10 @@ GlycanRelaxMover::fresh_instance() const
 	return protocols::moves::MoverOP( new GlycanRelaxMover );
 }
 
-std::string
-GlycanRelaxMover::get_name() const {
-	return "GlycanRelaxMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GlycanRelaxMover::get_name() const {
+// XRW TEMP  return "GlycanRelaxMover";
+// XRW TEMP }
 
 void
 GlycanRelaxMover::show(std::ostream & output) const
@@ -596,20 +599,60 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GlycanRelaxMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GlycanRelaxMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP GlycanRelaxMoverCreator::keyname() const {
+// XRW TEMP  return GlycanRelaxMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP GlycanRelaxMover::mover_name(){
+// XRW TEMP  return "GlycanRelaxMover";
+// XRW TEMP }
+
+std::string GlycanRelaxMover::get_name() const {
+	return mover_name();
+}
+
+std::string GlycanRelaxMover::mover_name() {
+	return "GlycanRelaxMover";
+}
+
+void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute("kt", xsct_real, "Temperature for metropolis criterion")
+		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Number of relax rounds to perform")
+		+ XMLSchemaAttribute("pack_glycans", xsct_rosetta_bool, "Should we sample rotamers for glycans?")
+		+ XMLSchemaAttribute("final_min", xsct_rosetta_bool, "Perform a final minimization")
+		+ XMLSchemaAttribute("pymol_movie", xsct_rosetta_bool, "Output a PyMOL movie of the run")
+		+ XMLSchemaAttribute("random_start", xsct_rosetta_bool, "Start with a random glycan conformation");
+
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Mover to relax glycans", attlist, subelements );
+}
+
+std::string GlycanRelaxMoverCreator::keyname() const {
+	return GlycanRelaxMover::mover_name();
+}
+
 protocols::moves::MoverOP
 GlycanRelaxMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new GlycanRelaxMover );
 }
 
-std::string
-GlycanRelaxMoverCreator::keyname() const {
-	return GlycanRelaxMoverCreator::mover_name();
+void GlycanRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GlycanRelaxMover::provide_xml_schema( xsd );
 }
 
-std::string
-GlycanRelaxMoverCreator::mover_name(){
-	return "GlycanRelaxMover";
-}
 
 } //protocols
 } //carbohydrates

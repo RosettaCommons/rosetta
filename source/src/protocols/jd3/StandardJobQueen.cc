@@ -211,7 +211,7 @@ value_attribute_type_for_option(
 	case RESIDUE_CHAIN_VECTOR_OPTION :
 		return xs_string;
 	case REAL_OPTION :
-		return xs_decimal;
+		return xsct_real;
 	case REAL_VECTOR_OPTION :
 		return xsct_real_wsslist;
 	case INTEGER_OPTION :
@@ -219,7 +219,7 @@ value_attribute_type_for_option(
 	case INTEGER_VECTOR_OPTION :
 		return xsct_int_wsslist;
 	case BOOLEAN_OPTION :
-		return xs_boolean;
+		return xsct_rosetta_bool;
 	case BOOLEAN_VECTOR_OPTION :
 		return xsct_bool_wsslist; // note: double check that options system uses utility/string_funcs.hh to cast from strings to bools.
 	default :
@@ -249,6 +249,7 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaComplexTypeGenerator input_ct;
 	input_ct
 		.element_name( "Input" )
+		.description("XRW TO DO")
 		.complex_type_naming_func( & job_complex_type_name )
 		.set_subelements_pick_one( input_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -260,6 +261,7 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaComplexTypeGenerator output_ct;
 	output_ct
 		.element_name( "Output" )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & job_complex_type_name )
 		.set_subelements_pick_one( output_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -269,6 +271,7 @@ StandardJobQueen::job_definition_xsd() const
 	XMLSchemaComplexTypeGenerator secondary_output_ct;
 	secondary_output_ct
 		.element_name( "SecondaryOutput" )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & job_complex_type_name )
 		.set_subelements_single_appearance_optional( secondary_output_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -292,22 +295,23 @@ StandardJobQueen::job_definition_xsd() const
 			XMLSchemaType value_attribute_type = value_attribute_type_for_option( opt_type );
 			if ( option[ opt_key ].has_default() ) {
 				if ( opt_type == BOOLEAN_OPTION ) {
-					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, option[ opt_key ].raw_default_string() );
+					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, "XRW TO DO",  option[ opt_key ].raw_default_string( ) );
 				} else {
-					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, option[ opt_key ].raw_default_string() );
+					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, "XRW TO DO",  option[ opt_key ].raw_default_string( ) );
 				}
 			} else { // no default; value is required, unless it's a boolean option
 				if ( opt_type == BOOLEAN_OPTION ) {
-					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, "false" );
+					attributes + XMLSchemaAttribute::attribute_w_default(  "value", value_attribute_type, "XRW TO DO",  "false"  );
 				} else {
-					attributes + XMLSchemaAttribute::required_attribute( "value", value_attribute_type );
+					attributes + XMLSchemaAttribute::required_attribute( "value", value_attribute_type , "XRW TO DO" );
 				}
 			}
 
 			std::string decolonized_name = basic::options::replace_option_namespace_colons_with_underscores( iter );
-			option_subelements.add_simple_subelement( decolonized_name, attributes );
+			option_subelements.add_simple_subelement( decolonized_name, attributes , "");
 		}
 		option_generator.element_name( "Options" )
+			.description( "XRW TO DO" )
 			.complex_type_naming_func( & job_complex_type_name )
 			.set_subelements_single_appearance_optional( option_subelements )
 			.write_complex_type_to_schema( xsd );
@@ -346,8 +350,9 @@ StandardJobQueen::job_definition_xsd() const
 
 	job_ct
 		.element_name( "Job" )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & job_complex_type_name )
-		.add_attribute( XMLSchemaAttribute::attribute_w_default(  "nstruct", xsct_non_negative_integer, "1" ))
+		.add_attribute( XMLSchemaAttribute::attribute_w_default(  "nstruct", xsct_non_negative_integer, "XRW TO DO",  "1"  ))
 		.write_complex_type_to_schema( xsd );
 
 	XMLSchemaComplexTypeGenerator common_block_ct_gen;
@@ -373,6 +378,7 @@ StandardJobQueen::job_definition_xsd() const
 
 	common_block_ct_gen
 		.element_name( "Common" )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & job_complex_type_name )
 		.write_complex_type_to_schema( xsd );
 
@@ -382,6 +388,7 @@ StandardJobQueen::job_definition_xsd() const
 	job_def_subelements.add_already_defined_subelement( "Job", & job_complex_type_name, 1, xsminmax_unbounded );
 	job_def_file_ct.element_name( "JobDefinitionFile" )
 		.complex_type_naming_func( & job_complex_type_name )
+		.description( "XRW TO DO" )
 		.set_subelements_single_appearance_required_and_ordered( job_def_subelements )
 		.write_complex_type_to_schema( xsd );
 
@@ -1134,8 +1141,8 @@ StandardJobQueen::load_job_definition_file(
 
 	// look for the Common block, if there is one
 	Tag::tags_t const & subtags = job_definition_file_tags_->getTags();
-	for (auto subtag : subtags) {
-			if ( subtag->getName() == "Common" ) {
+	for ( auto subtag : subtags ) {
+		if ( subtag->getName() == "Common" ) {
 			common_block_tags_ = subtag;
 			return;
 		}

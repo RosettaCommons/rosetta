@@ -3722,22 +3722,22 @@ Conformation::backbone_torsion_angle_atoms(
 				// It's exceptionally ugly, and I'm trying to isolate it as much as possible to keep it from being invoked
 				// accidentally (as it seems to be).
 			} else if (  fold_tree_->is_cutpoint( seqpos ) &&
-									 // These extra conditions cause issues in rna_denovo
-									 // Added the hack rsd.is_RNA() for now to solve this
-									 // Eventually the thing to do would be to have terminal RNA variants
-									 // And use these when a "cutpoint_open" is specified in rna_denovo
-									 // rather than a cutpoint without any variants
-									 ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ||
-										 rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ||
-										 rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ||
-										 rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ||
-										 rsd.is_RNA()
-										 ) &&
-									 // Danger! Possibly. Removed this condition to allow for RNA cyclizaton -- rhiju.
-									 //									 ! ( seqpos == residues_.size() && rsd.has_upper_connect() &&
-									 //											 ! rsd.connection_incomplete( rsd.type().upper_connect_id() )
-									 //											 /*special case -- last residue is connected to something at its upper connection*/ ) &&
-									 ! ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) ) {
+					// These extra conditions cause issues in rna_denovo
+					// Added the hack rsd.is_RNA() for now to solve this
+					// Eventually the thing to do would be to have terminal RNA variants
+					// And use these when a "cutpoint_open" is specified in rna_denovo
+					// rather than a cutpoint without any variants
+					( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ||
+					rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ||
+					rsd.has_variant_type( chemical::C_METHYLAMIDATION ) ||
+					rsd.has_variant_type( chemical::THREE_PRIME_PHOSPHATE ) ||
+					rsd.is_RNA()
+					) &&
+					// Danger! Possibly. Removed this condition to allow for RNA cyclizaton -- rhiju.
+					//          ! ( seqpos == residues_.size() && rsd.has_upper_connect() &&
+					//            ! rsd.connection_incomplete( rsd.type().upper_connect_id() )
+					//            /*special case -- last residue is connected to something at its upper connection*/ ) &&
+					! ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) ) {
 				if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 					if ( torsion + 1 == ntorsions ) {
 						id3.rsd() = seqpos; id3.atomno() = mainchain[ torsion + 1 ];

@@ -47,6 +47,9 @@
 //util
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace core;
@@ -60,27 +63,27 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-SwapSegmentCreator::keyname() const
-{
-	return SwapSegmentCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwapSegmentCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SwapSegment::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SwapSegmentCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwapSegment() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SwapSegmentCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SwapSegment() );
+// XRW TEMP }
 
-std::string
-SwapSegmentCreator::mover_name(){
-	return "SwapSegment";
-}
+// XRW TEMP std::string
+// XRW TEMP SwapSegment::mover_name(){
+// XRW TEMP  return "SwapSegment";
+// XRW TEMP }
 
 
 SwapSegment::~SwapSegment() = default;
 
 SwapSegment::SwapSegment():
-	protocols::moves::Mover( SwapSegmentCreator::mover_name() ){
+	protocols::moves::Mover( SwapSegment::mover_name() ){
 	previously_grown_ = false;
 }
 
@@ -213,10 +216,10 @@ SwapSegment::apply( core::pose::Pose & pose )
 }
 
 
-std::string
-SwapSegment::get_name() const {
-	return SwapSegmentCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwapSegment::get_name() const {
+// XRW TEMP  return SwapSegment::mover_name();
+// XRW TEMP }
 
 void
 SwapSegment::parse_my_tag(
@@ -300,5 +303,54 @@ SwapSegment::parse_my_tag(
 	}
 
 }
+
+std::string SwapSegment::get_name() const {
+	return mover_name();
+}
+
+std::string SwapSegment::mover_name() {
+	return "SwapSegment";
+}
+
+void SwapSegment::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("copy_sidechains", xsct_rosetta_bool, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default("swap_segment", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("swap_chain", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("from_chain", xsct_non_negative_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default("to_chain", xsct_non_negative_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute("seeds_pdb", xs_string, "XRW TO DO, required if template_pdb is not specified.")
+		+ XMLSchemaAttribute("template_pdb", xs_string, "XRW TO DO, required if seeds_pdb is not specified.")
+		+ XMLSchemaAttribute::attribute_w_default("previously_grown", xsct_rosetta_bool, "XRW TO DO", "0");
+
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "XRW TO DO");
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelement_list );
+}
+
+std::string SwapSegmentCreator::keyname() const {
+	return SwapSegment::mover_name();
+}
+
+protocols::moves::MoverOP
+SwapSegmentCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SwapSegment );
+}
+
+void SwapSegmentCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SwapSegment::provide_xml_schema( xsd );
+}
+
 }
 }

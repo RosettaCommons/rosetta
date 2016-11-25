@@ -42,6 +42,9 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/lexical_cast.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.MatchResiduesMover" );
 
@@ -50,11 +53,11 @@ namespace fldsgn {
 
 // -------------  Mover Creator -------------
 
-protocols::moves::MoverOP
-MatchResiduesMoverCreator::create_mover() const { return protocols::moves::MoverOP( new MatchResiduesMover ); }
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MatchResiduesMoverCreator::create_mover() const { return protocols::moves::MoverOP( new MatchResiduesMover ); }
 
-std::string
-MatchResiduesMoverCreator::keyname() const { return "MatchResiduesMover"; }
+// XRW TEMP std::string
+// XRW TEMP MatchResiduesMoverCreator::keyname() const { return "MatchResiduesMover"; }
 
 // -------------  Mover Creator -------------
 
@@ -108,6 +111,39 @@ MatchResiduesMover::parse_my_tag(
 	MatchResidues::parse_my_tag(tag, data, filters, movers, pose);
 	superimpose_ = tag->getOption< bool >("superimpose", false);
 }
+
+std::string MatchResiduesMover::get_name() const {
+	return mover_name();
+}
+
+std::string MatchResiduesMover::mover_name() {
+	return "MatchResiduesMover";
+}
+
+void MatchResiduesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	XMLSchemaSimpleSubelementList ssl;
+	MatchResidues::provide_attributes_and_subelements( attlist, ssl );
+	attlist + XMLSchemaAttribute::attribute_w_default( "superimpose", xsct_rosetta_bool, "Superimpose the input pose by its matched position", "false" );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string MatchResiduesMoverCreator::keyname() const {
+	return MatchResiduesMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MatchResiduesMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MatchResiduesMover );
+}
+
+void MatchResiduesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MatchResiduesMover::provide_xml_schema( xsd );
+}
+
 
 } // fldsgn
 } // protocols

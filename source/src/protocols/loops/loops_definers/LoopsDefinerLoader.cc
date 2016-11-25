@@ -76,12 +76,47 @@ void LoopsDefinerLoader::load_data(
 	TR.flush();
 }
 
+std::string LoopsDefinerLoader::loader_name() { return "LOOP_DEFINITIONS"; }
+std::string LoopsDefinerLoader::loop_def_loader_ct_namer( std::string const & element_name )
+{
+	return "loop_def_loader_" + element_name + "_type";
+}
+
+void LoopsDefinerLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	LoopsDefinerFactory::get_instance()->define_loop_definer_xml_schema( xsd );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & LoopsDefinerFactory::loop_definer_xml_schema_group_name );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( loader_name() )
+		.complex_type_naming_func( & loop_def_loader_ct_namer )
+		.set_subelements_repeatable( subelements )
+		.description( "The " + loader_name() + " element allows you to define loops from various sources (e.g. from files, from databases, or directly within the XML file); loops will be named and placed in the DataMap for other Movers and Filters to retrieve." )
+		.write_complex_type_to_schema( xsd );
+}
+
+
 jd2::parser::DataLoaderOP
 LoopsDefinerLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new LoopsDefinerLoader ); }
 
 string
-LoopsDefinerLoaderCreator::keyname() const { return "LOOP_DEFINITIONS"; }
+LoopsDefinerLoaderCreator::keyname() const { return LoopsDefinerLoader::loader_name(); }
 
+LoopsDefinerLoaderCreator::DerivedNameFunction
+LoopsDefinerLoaderCreator::schema_ct_naming_function() const
+{
+	return & LoopsDefinerLoader::loop_def_loader_ct_namer;
+}
+
+void
+LoopsDefinerLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopsDefinerLoader::provide_xml_schema( xsd );
+}
 
 } //namespace
 } //namespace

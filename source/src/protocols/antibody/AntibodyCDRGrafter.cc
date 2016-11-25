@@ -38,6 +38,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyCDRGrafter" );
 
@@ -213,12 +216,12 @@ AntibodyCDRGrafter::fresh_instance() const
 
 }
 
-std::string
-AntibodyCDRGrafter::get_name() const {
-
-	return "AntibodyCDRGrafter";
-
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyCDRGrafter::get_name() const {
+// XRW TEMP
+// XRW TEMP  return "AntibodyCDRGrafter";
+// XRW TEMP
+// XRW TEMP }
 
 void
 AntibodyCDRGrafter::setup_classes(){
@@ -544,20 +547,109 @@ AntibodyCDRGrafter::apply_to_cdr(core::pose::Pose& pose, core::pose::Pose & cdr_
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AntibodyCDRGrafterCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AntibodyCDRGrafter );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AntibodyCDRGrafterCreator::keyname() const {
+// XRW TEMP  return AntibodyCDRGrafter::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AntibodyCDRGrafter::mover_name(){
+// XRW TEMP  return "AntibodyCDRGrafter";
+// XRW TEMP }
+
+std::string AntibodyCDRGrafter::get_name() const {
+	return mover_name();
+}
+
+std::string AntibodyCDRGrafter::mover_name() {
+	return "AntibodyCDRGrafter";
+}
+
+void AntibodyCDRGrafter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"cdrs", xs_string,
+		"String specifying CDRs to graft");
+	attlist + XMLSchemaAttribute(
+		"cdr", xs_string,
+		"String specifying CDR to graft");
+	attlist + XMLSchemaAttribute(
+		"cdr_definition", xs_string,
+		"String defining CDRs");
+	attlist + XMLSchemaAttribute(
+		"input_ab_scheme", xs_string,
+		"Sets the antibody numbering scheme. Must also specify cdr_definition when using this option");
+	attlist + XMLSchemaAttribute(
+		"donor_structure_from_pdb", xs_string,
+		"Path to the structure used for the graft. Either use donor_structure_from_pdb or donor_structure_from_spm. One of these is required.");
+	attlist + XMLSchemaAttribute(
+		"donor_structure_from_spm", xs_string,
+		"Takes donor structure from the SavePoseMover. Either use donor_structure_from_pdb or donor_structure_from_spm (one is required )");
+
+	rosetta_scripts::attributes_for_saved_reference_pose(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_secondary_graft_mover", xsct_rosetta_bool,
+		"Should we use the secondary graft mover if the graft is not closed using the first?",
+		"false");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"nter_overhang", xsct_non_negative_integer,
+		"Number of extra residues on the Nter side of the CDR to use for grafting",
+		"3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cter_overhang", xsct_non_negative_integer,
+		"Number of extra residues on the Cter side of the CDR to use for grafting",
+		"3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"stop_after_closure", xsct_rosetta_bool,
+		"Should we stop after graft closure?",
+		"true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"optimize_cdrs", xsct_rosetta_bool,
+		"Should we optimize grafted and neighbor CDRs using dihedral constrained relax?",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"optimize_cdr4_if_neighbor", xsct_rosetta_bool,
+		"Optimize CDR4 if a neighbor CDR is grafted",
+		"true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dihedral_cst_wt", xsct_real,
+		"Weight of dihedral constraints used during optimization",
+		"2.0");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Graft CDR loops from one structure to another, optionally optimize CDRs and neighbor CDRs of the grafted one. "
+		"Results in 100 percent loop closure if using both graft graft movers "
+		"(where peptide bond geometries of both ends are checked relative to ideal values).",
+		attlist );
+
+}
+
+std::string AntibodyCDRGrafterCreator::keyname() const {
+	return AntibodyCDRGrafter::mover_name();
+}
+
 protocols::moves::MoverOP
 AntibodyCDRGrafterCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AntibodyCDRGrafter );
 }
 
-std::string
-AntibodyCDRGrafterCreator::keyname() const {
-	return AntibodyCDRGrafterCreator::mover_name();
+void AntibodyCDRGrafterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AntibodyCDRGrafter::provide_xml_schema( xsd );
 }
 
-std::string
-AntibodyCDRGrafterCreator::mover_name(){
-	return "AntibodyCDRGrafter";
-}
 
 }//protocols
 }//antibody

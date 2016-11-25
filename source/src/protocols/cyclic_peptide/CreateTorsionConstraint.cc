@@ -40,6 +40,9 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
 
@@ -134,27 +137,72 @@ CreateTorsionConstraint::parse_my_tag(
 moves::MoverOP CreateTorsionConstraint::clone() const { return moves::MoverOP( new CreateTorsionConstraint( *this ) ); }
 moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return moves::MoverOP( new CreateTorsionConstraint ); }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CreateTorsionConstraintCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CreateTorsionConstraint );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateTorsionConstraintCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CreateTorsionConstraint::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateTorsionConstraint::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CreateTorsionConstraint";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateTorsionConstraint::get_name() const {
+// XRW TEMP  return "CreateTorsionConstraint";
+// XRW TEMP }
+
+std::string CreateTorsionConstraint::get_name() const {
+	return mover_name();
+}
+
+std::string CreateTorsionConstraint::mover_name() {
+	return "CreateTorsionConstraint";
+}
+
+void CreateTorsionConstraint::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute::required_attribute( "res1", xsct_non_negative_integer, "Residue containing first atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "Name of first atom in torsion" )
+		+ XMLSchemaAttribute::required_attribute( "res2", xsct_non_negative_integer, "Residue containing second atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "Name of second atom in torsion" )
+		+ XMLSchemaAttribute::required_attribute( "res3", xsct_non_negative_integer, "Residue containing third atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom3", xs_string, "Name of third atom in torsion" )
+		+ XMLSchemaAttribute::required_attribute( "res4", xsct_non_negative_integer, "Residue containing fourth atom" )
+		+ XMLSchemaAttribute::required_attribute( "atom4", xs_string, "Name of fourth atom in torsion" )
+		+ XMLSchemaAttribute::required_attribute( "cst_func", xs_string, "Function to use for this torsion constraint" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_simple_subelement( "Add", subelement_attlist, "Adds a torsion constraint for the four specified atoms" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Adds torsion constraints to a pose", attlist, subelements );
+
+}
+
+std::string CreateTorsionConstraintCreator::keyname() const {
+	return CreateTorsionConstraint::mover_name();
+}
+
 protocols::moves::MoverOP
 CreateTorsionConstraintCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CreateTorsionConstraint );
 }
 
-std::string
-CreateTorsionConstraintCreator::keyname() const
+void CreateTorsionConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return CreateTorsionConstraintCreator::mover_name();
+	CreateTorsionConstraint::provide_xml_schema( xsd );
 }
 
-std::string
-CreateTorsionConstraintCreator::mover_name()
-{
-	return "CreateTorsionConstraint";
-}
-
-std::string
-CreateTorsionConstraint::get_name() const {
-	return "CreateTorsionConstraint";
-}
 
 } // moves
 } // protocols

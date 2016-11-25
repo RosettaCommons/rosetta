@@ -85,32 +85,32 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 
 	utility::vector1< std::string > const res_name_vec = utility::string_split( res_name_str_, ',' );
 	std::set< std::string > res_set;
-	for ( utility::vector1< std::string >::const_iterator n=res_name_vec.begin(), endn=res_name_vec.end(); n!=endn; ++n ) {
-		if ( n->empty() ) {
+	for ( std::string const & n : res_name_vec ) {
+		if ( n.empty() ) {
 			continue;
 		}
 		// check if the given name is valid
-		if ( !pose.residue(1).residue_type_set()->has_name( *n ) ) {
+		if ( !pose.residue(1).residue_type_set()->has_name( n ) ) {
 			std::stringstream err;
-			err << "ResidueNameSelector: " << *n << " is not a valid residue type name.";
+			err << "ResidueNameSelector: " << n << " is not a valid residue type name.";
 			throw utility::excn::EXCN_BadInput( err.str() );
 		}
-		res_set.insert( *n );
+		res_set.insert( n );
 	}
 
 	utility::vector1< std::string > const res_name3_vec = utility::string_split( res_name3_str_, ',' );
 	std::set< std::string > res_name3_set;
-	for ( utility::vector1< std::string >::const_iterator n=res_name3_vec.begin(), endn=res_name3_vec.end(); n!=endn; ++n ) {
-		if ( n->empty() ) {
+	for ( std::string const & n : res_name3_vec ) {
+		if ( n.empty() ) {
 			continue;
 		}
 		// check if the given name is valid
-		if ( !pose.residue(1).residue_type_set()->has_name3( *n ) ) {
+		if ( !pose.residue(1).residue_type_set()->has_name3( n ) ) {
 			std::stringstream err;
-			err << "ResidueNameSelector: " << *n << " is not a valid residue type name.";
+			err << "ResidueNameSelector: " << n << " is not a valid residue type name.";
 			throw utility::excn::EXCN_BadInput( err.str() );
 		}
-		res_name3_set.insert( *n );
+		res_name3_set.insert( n );
 	}
 
 	for ( core::Size i=1, endi=pose.size(); i<=endi; ++i ) {
@@ -167,12 +167,28 @@ std::string ResidueNameSelector::class_name() {
 void
 ResidueNameSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	std::string const req_warning(" Note that one of residue_name3 and residue_names are REQUIRED.");
+
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "residue_name3", xs_string )
-		+ XMLSchemaAttribute( "residue_names", xs_string );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute(
+		"residue_name3", xs_string,
+		"A comma-separated list of 3-letter Rosetta residue names. "
+		"These will be selected regardless of variant type. "
+		"For example, 'SER' will select residues named 'SER', "
+		"'SER:NtermProteinFull', and 'SER:Phosphorylated'." + req_warning )
+		+ XMLSchemaAttribute(
+		"residue_names", xs_string,
+		"A comma-separated list of Rosetta residue names (including patches). "
+		"For example, 'CYD' will select all disulfides, and 'CYD,SER:NTermProteinFull,ALA' "
+		"will select all disulfides, alanines, and N-terminal serines -- "
+		"all other residues will not be selected (i.e. be false in the ResidueSubset object)." + req_warning );
+
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The ResidueNameSelector selects residues using a string containing residue names" + req_warning,
+		attributes );
 }
 
 ResidueSelectorOP

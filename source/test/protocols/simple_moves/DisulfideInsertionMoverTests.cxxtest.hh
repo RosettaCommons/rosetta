@@ -110,7 +110,7 @@ catch ( utility::excn::EXCN_Msg_Exception e ) {
 			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag)) );
 			TS_ASSERT_EQUALS(protocol->size(), 1);
 			protocols::rosetta_scripts::ParsedProtocol::MoverFilterPair pair = protocol->get_mover_filter_pair(1);
-			TS_ASSERT_EQUALS(protocol->get_mover(1)->get_name(), "DisulfideInsertionMover");
+			TS_ASSERT_EQUALS(protocol->get_mover(1)->get_name(), "DisulfideInsertion");
 			protocols::simple_moves::DisulfideInsertionMoverCOP const mover( utility::pointer::dynamic_pointer_cast<protocols::simple_moves::DisulfideInsertionMover const> (protocol->get_mover(1)) );
 
 			TS_ASSERT_EQUALS(mover->get_peptide_chain(), 2);

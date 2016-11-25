@@ -47,6 +47,7 @@ void
 xsd_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & rs_description,
 	utility::tag::AttributeList const & attributes
 );
 
@@ -57,6 +58,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselector(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & rs_description,
 	utility::tag::AttributeList const & attributes
 );
 
@@ -67,6 +69,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & rs_description,
 	utility::tag::AttributeList const & attributes
 );
 
@@ -77,6 +80,7 @@ void
 xsd_type_definition_w_attributes_and_optional_subselectors(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
+	std::string const & rs_description,
 	core::Size min_occurrence,
 	core::Size max_occurrence,
 	utility::tag::AttributeList const & attributes
@@ -88,7 +92,28 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
 ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const &option_name="residue_selector" );
+parse_residue_selector(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap const & data,
+	std::string const &option_name="residue_selector"
+);
+
+/// @brief Companion function for parse_residue_selector
+void
+attributes_for_parse_residue_selector(
+	utility::tag::AttributeList & attlist,
+	std::string const & option_name = "residue_selector",
+	std::string const & documentation_string = ""
+);
+
+/// @brief Companion function for parse_residue_selector to be used when it is unacceptible
+/// for the parse_residue_selector function to return a null pointer
+void
+attributes_for_parse_residue_selector_when_required(
+	utility::tag::AttributeList & attlist,
+	std::string const & option_name /*= "residue_selector"*/,
+	std::string const & documentation_string /*= ""*/
+);
 
 /// @brief returns a residue selector given a selector's name and datamap
 /// @details Looks for selector in the datamap

@@ -17,6 +17,7 @@
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace qsar {
@@ -36,6 +37,9 @@ public:
 	virtual void deserialize(utility::json_spirit::mObject data);
 
 	void parse_my_tag(utility::tag::TagCOP tag);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	core::Real atr_radius_;

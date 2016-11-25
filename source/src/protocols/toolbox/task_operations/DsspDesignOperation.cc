@@ -295,29 +295,59 @@ void DsspDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	// attributes for the subelements -- all the subelements have the same attributes
 	AttributeList dsspdo_subtag_attributes;
 	dsspdo_subtag_attributes
-		+ XMLSchemaAttribute( "aa", xs_string )
-		+ XMLSchemaAttribute( "append", xs_string )
-		+ XMLSchemaAttribute( "exclude", xs_string );
+		+ XMLSchemaAttribute(
+		"aa", xs_string,
+		"define the set of residues allowed for the defined secondary structure type; "
+		"the string is composed of one letter amino acid codes." )
+		+ XMLSchemaAttribute(
+		"append", xs_string ,
+		"append the following residues to the set of allowed residues for the defined "
+		"secondary structure type." )
+		+ XMLSchemaAttribute(
+		"exclude", xs_string ,
+		"opposite of append." );
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( & dsspdo_subelement_ct_name );
-	subelements.add_simple_subelement( "Loop",         dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "Strand",       dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "Helix",        dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "HelixStart",   dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "HelixCapping", dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "Nterm",        dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "Cterm",        dsspdo_subtag_attributes );
-	subelements.add_simple_subelement( "all",          dsspdo_subtag_attributes );
+	subelements.add_simple_subelement(
+		"Loop",         dsspdo_subtag_attributes ,
+		"allowed loop residues. default: ACDEFGHIKLMNPQRSTVWY");
+	subelements.add_simple_subelement(
+		"Strand",       dsspdo_subtag_attributes ,
+		"allowed strand residues. default: DEFHIKLNQRSTVWY");
+	subelements.add_simple_subelement(
+		"Helix",        dsspdo_subtag_attributes ,
+		"allowed helix residues. default: ADEFIKLNQRSTVWY");
+	subelements.add_simple_subelement(
+		"HelixStart",   dsspdo_subtag_attributes ,
+		"allowed helix start residues. default: ADEFHIKLNPQRSTVWY");
+	subelements.add_simple_subelement(
+		"HelixCapping", dsspdo_subtag_attributes ,
+		"allowed helix capping residues. default: DNST");
+	subelements.add_simple_subelement(
+		"Nterm",        dsspdo_subtag_attributes ,
+		"allowed n terminal residues. default: ACDEFGHIKLMNPQRSTVWY");
+	subelements.add_simple_subelement(
+		"Cterm",        dsspdo_subtag_attributes ,
+		"allowed c terminal residues. default: ACDEFGHIKLMNPQRSTVWY");
+	subelements.add_simple_subelement(
+		"all",          dsspdo_subtag_attributes ,
+		"allowed residues for all secstruct tyes: ACDEFGHIKLMNPQRSTVWY");
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "name", xs_string )
-		+ XMLSchemaAttribute( "blueprint", xs_string );
+		+ XMLSchemaAttribute(
+		"name", xs_string, "Name of the operation" )
+		+ XMLSchemaAttribute(
+		"blueprint", xs_string,
+		"a blueprint file which specifies the secondary structure at each position" );
 
 	XMLSchemaComplexTypeGenerator complex_type_generator;
 	complex_type_generator
 		.element_name( keyname() )
+		.description("Design residues with selected amino acids depending on the "
+		"local secondary structure. The secondary structure at each residue "
+		"is determined by DSSP (or read from a blueprint file).")
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attributes( attributes )
 		.set_subelements_repeatable( subelements )

@@ -37,11 +37,23 @@ public:
 	PeptideStapleDesignMover( PeptideStapleDesignMover const & init );
 	virtual ~PeptideStapleDesignMover();
 
-	protocols::moves::MoverOP clone() const;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new PeptideStapleDesignMover ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new PeptideStapleDesignMover ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	protocols::simple_moves::PeptideStapleMoverOP stapler_;
 };

@@ -122,6 +122,10 @@
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -131,22 +135,22 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.protein_interface_design.movers.SetupHotspotConstraintsLoopsMover" );
 
-std::string
-SetupHotspotConstraintsLoopsMoverCreator::keyname() const
-{
-	return SetupHotspotConstraintsLoopsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetupHotspotConstraintsLoopsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetupHotspotConstraintsLoopsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetupHotspotConstraintsLoopsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupHotspotConstraintsLoopsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetupHotspotConstraintsLoopsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetupHotspotConstraintsLoopsMover );
+// XRW TEMP }
 
-std::string
-SetupHotspotConstraintsLoopsMoverCreator::mover_name()
-{
-	return "SetupHotspotConstraintsLoops";
-}
+// XRW TEMP std::string
+// XRW TEMP SetupHotspotConstraintsLoopsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetupHotspotConstraintsLoops";
+// XRW TEMP }
 
 SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover() :
 	protocols::moves::Mover( "SetupHotspotConstraintsLoopsMover" ),
@@ -345,10 +349,10 @@ SetupHotspotConstraintsLoopsMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-std::string
-SetupHotspotConstraintsLoopsMover::get_name() const {
-	return "SetupHotspotConstraintsLoopsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SetupHotspotConstraintsLoopsMover::get_name() const {
+// XRW TEMP  return "SetupHotspotConstraintsLoopsMover";
+// XRW TEMP }
 
 /// This needs to be parsed before all other movers b/c it changes scorefxns
 void
@@ -409,6 +413,74 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 }
 
 SetupHotspotConstraintsLoopsMover::~SetupHotspotConstraintsLoopsMover() {}
+
+std::string SetupHotspotConstraintsLoopsMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetupHotspotConstraintsLoopsMover::mover_name() {
+	return "SetupHotspotConstraintsLoops";
+}
+
+std::string subtag_for_SetupHotspotConstraintsLoopsMover( std::string const & foo ) {
+	return "subtag_for_SHCLM_" + foo + "_type";
+}
+
+void SetupHotspotConstraintsLoopsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "redesign_chain", xsct_non_negative_integer, "The chain on which to redesign, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "resfile", xs_string, "Resfile applied", "NONE" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force applied to CB atoms in hotspot constraints", "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "worst_allowed_stub_bonus", xsct_real, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "apply_stub_self_energies", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "apply_stub_bump_cutoff", xsct_real, "XRW TO DO", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "pick_best_energy_constraint", xsct_rosetta_bool, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::required_attribute( "start", xsct_positive_integer, "First loop residue" )
+		+ XMLSchemaAttribute::required_attribute( "stop", xsct_positive_integer, "Final loop residue" )
+		+ XMLSchemaAttribute::attribute_w_default( "colonyE", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "stubfile", xs_string, "File containing hotspot stubs", "stubs.pdb" );
+
+	AttributeList subtag_attributes, subsubtag_attributes;
+	subsubtag_attributes + XMLSchemaAttribute::required_attribute( "file_name", xs_string, "File name of the hot spot stub file" )
+		+ XMLSchemaAttribute::required_attribute( "nickname", xs_string, "Nickname for the hot spot stub file" )
+		+ XMLSchemaAttribute::attribute_w_default( "stub_num", xsct_positive_integer, "XRW TO DO", "100000" );
+
+
+	utility::tag::XMLSchemaSimpleSubelementList subsubelements;
+	subsubelements.add_simple_subelement( "HotspotFile"/*name never read from branch_tags2*/, subsubtag_attributes, "Tags for each file"/*, 0minoccurs*/ );
+
+	XMLSchemaComplexTypeGenerator subtag_gen;
+	subtag_gen.complex_type_naming_func( & subtag_for_SetupHotspotConstraintsLoopsMover )
+		.element_name( "HotspotFiles" )
+		.description( "Wrapper for tags describing each of several hotspot files to read" )
+		.add_attributes( subtag_attributes )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( subsubelements )
+		.write_complex_type_to_schema( xsd );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_already_defined_subelement( "HotspotFiles", & subtag_for_SetupHotspotConstraintsLoopsMover/*, 0*/ );
+	//.complex_type_naming_func( & subtag_for_SetupHotspotConstraintsLoopsMover );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string SetupHotspotConstraintsLoopsMoverCreator::keyname() const {
+	return SetupHotspotConstraintsLoopsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetupHotspotConstraintsLoopsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetupHotspotConstraintsLoopsMover );
+}
+
+void SetupHotspotConstraintsLoopsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetupHotspotConstraintsLoopsMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

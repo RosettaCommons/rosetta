@@ -69,6 +69,10 @@
 #include <utility/vector1.hh>
 #include <set>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 using namespace core;
 using namespace protocols::seeded_abinitio;
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.GrowPeptides" );
@@ -80,20 +84,20 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-GrowPeptidesCreator::keyname() const{
-	return GrowPeptidesCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GrowPeptidesCreator::keyname() const{
+// XRW TEMP  return GrowPeptides::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-GrowPeptidesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GrowPeptides() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GrowPeptidesCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GrowPeptides() );
+// XRW TEMP }
 
-std::string
-GrowPeptidesCreator::mover_name(){
-	return "GrowPeptides";
-}
+// XRW TEMP std::string
+// XRW TEMP GrowPeptides::mover_name(){
+// XRW TEMP  return "GrowPeptides";
+// XRW TEMP }
 
 
 GrowPeptides::GrowPeptides()
@@ -333,10 +337,10 @@ GrowPeptides::setup_cached_observers( core::pose::Pose & pose ){
 	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
 }
 
-std::string
-GrowPeptides::get_name() const {
-	return GrowPeptidesCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GrowPeptides::get_name() const {
+// XRW TEMP  return GrowPeptides::mover_name();
+// XRW TEMP }
 
 void
 GrowPeptides::parse_my_tag(
@@ -379,11 +383,11 @@ GrowPeptides::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "nseq" ) ) {
-		csequence_ = ( tag->getOption< std::string >( "nseq" ) );
+		nsequence_ = ( tag->getOption< std::string >( "nseq" ) );
 	}
 
 	if ( tag->hasOption( "cseq" ) ) {
-		nsequence_ = ( tag->getOption< std::string >( "cseq" ) );
+		csequence_ = ( tag->getOption< std::string >( "cseq" ) );
 	}
 
 	output_centroid = tag->getOption< bool >( "output_centroid", 0 );
@@ -452,6 +456,65 @@ GrowPeptides::parse_my_tag(
 
 	}//end branch tags
 }//end parse my tag
+
+std::string GrowPeptides::get_name() const {
+	return mover_name();
+}
+
+std::string GrowPeptides::mover_name() {
+	return "GrowPeptides";
+}
+
+void GrowPeptides::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("SeedFoldTree", xsct_rosetta_bool, "Use SeedFoldTree to setup fold tree."
+		"If \"false\", the fold tree will be extracted from the input pose.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("ddg_based", xsct_rosetta_bool, "Comput jump atoms based on ddG", "0")
+		+ XMLSchemaAttribute::attribute_w_default("extend_nterm", xsct_non_negative_integer, "Extend peptide N-terminally by n residues", "0")
+		+ XMLSchemaAttribute::attribute_w_default("extend_cterm", xsct_non_negative_integer, "Extend peptide C-terminally by n residues", "0")
+		+ XMLSchemaAttribute::attribute_w_default("all_ala_N", xsct_rosetta_bool, "N-terminally added amino acids are all ALA", "0")
+		+ XMLSchemaAttribute::attribute_w_default("all_ala_C", xsct_rosetta_bool, "C-terminally added amino acids are all ALA", "0")
+		+ XMLSchemaAttribute("nseq", xs_string, "Not used.")
+		+ XMLSchemaAttribute("cseq", xs_string, "Not used.")
+		+ XMLSchemaAttribute::attribute_w_default("output_centroid", xsct_rosetta_bool, "Ouput the structure in centroid representation.", "0")
+		+ XMLSchemaAttribute("template_pdb", xs_string, "Template pdb to take the sequence from. Required if sequence is nor specified.")
+		+ XMLSchemaAttribute("sequence", xs_string, "Sequence for growing peptide. Required if template_pdb is not specified.");
+
+	// Subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "First residue of a fragment.")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "Last residue of a fragment.");
+	subelement_list.add_simple_subelement("Steal_seq_span", subelement_attributes, "Part of template pdb fragment to steel the sequence from.");
+	AttributeList ext_subelement_attributes = subelement_attributes;
+	ext_subelement_attributes
+		+ XMLSchemaAttribute::attribute_w_default("anchor", xsct_non_negative_integer, "Use anchor residue for Seed."
+		"Specifies residue nr of anchor residue.", "0");
+	subelement_list.add_simple_subelement("Seeds", ext_subelement_attributes, "Defines a Seed element.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Extend a structure by adding new reidues to N or C terminual.", attlist, subelement_list );
+}
+
+std::string GrowPeptidesCreator::keyname() const {
+	return GrowPeptides::mover_name();
+}
+
+protocols::moves::MoverOP
+GrowPeptidesCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GrowPeptides );
+}
+
+void GrowPeptidesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GrowPeptides::provide_xml_schema( xsd );
+}
+
 }//seeded abinitio
 } //end protocols
 

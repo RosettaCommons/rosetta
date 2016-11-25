@@ -36,6 +36,9 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //ObjexxFCL Headers
 
@@ -50,17 +53,17 @@ namespace denovo_design {
 namespace movers {
 ///////////////////////////////////////////////////////////////////////////////
 
-std::string
-ExtendChainMoverCreator::keyname() const
-{
-	return ExtendChainMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ExtendChainMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ExtendChainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ExtendChainMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new ExtendChainMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ExtendChainMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new ExtendChainMover() );
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ExtendChainMover main code:
@@ -68,7 +71,7 @@ ExtendChainMoverCreator::create_mover() const
 
 /// @brief default constructor
 ExtendChainMover::ExtendChainMover() :
-	protocols::moves::Mover( ExtendChainMover::class_name() ),
+	protocols::moves::Mover( ExtendChainMover::mover_name() ),
 	architect_( new architects::DeNovoMotifArchitect( "ExtendChain_DeNovoMotif__" ) ),
 	segment_names_(),
 	chain_(),
@@ -97,11 +100,11 @@ ExtendChainMover::fresh_instance() const
 }
 
 /// @brief return a fresh instance of ourselves
-std::string
-ExtendChainMover::get_name() const
-{
-	return ExtendChainMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ExtendChainMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return ExtendChainMover::mover_name();
+// XRW TEMP }
 
 void
 ExtendChainMover::parse_my_tag(
@@ -213,6 +216,43 @@ ExtendChainMover::set_dry_run( bool const dry_run )
 {
 	dry_run_ = dry_run;
 }
+
+std::string ExtendChainMover::get_name() const {
+	return mover_name();
+}
+
+std::string ExtendChainMover::mover_name() {
+	return "ExtendChain";
+}
+
+void ExtendChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+
+	attlist + XMLSchemaAttribute::required_attribute( "motif", xs_string, "Motif to add to chain (e.g. 1LG-1LB-10HA)")
+		+ XMLSchemaAttribute( "segment", xs_string, "Segment to extend. Mutually exclusive with chain, but one is required.")
+		+ XMLSchemaAttribute( "chain", xsct_non_negative_integer, "Chain to extend. Mutually exclusive with segment, but one is required.")
+		+ XMLSchemaAttribute( "prepend", xsct_rosetta_bool, "Add motif to the beginning of the chain");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add a specified motif (with secondary structure and abego) to a chain", attlist );
+}
+
+std::string ExtendChainMoverCreator::keyname() const {
+	return ExtendChainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ExtendChainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ExtendChainMover );
+}
+
+void ExtendChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtendChainMover::provide_xml_schema( xsd );
+}
+
 
 /*
 /// @brief configures based on a permutation

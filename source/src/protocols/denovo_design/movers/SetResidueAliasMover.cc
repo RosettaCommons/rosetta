@@ -26,6 +26,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.SetResidueAliasMover" );
 
@@ -34,7 +37,7 @@ namespace denovo_design {
 namespace movers {
 
 SetResidueAliasMover::SetResidueAliasMover():
-	protocols::moves::Mover( SetResidueAliasMover::class_name() ),
+	protocols::moves::Mover( SetResidueAliasMover::mover_name() ),
 	alias_name_( "" ),
 	segment_name_( "" ),
 	resid_( 0 )
@@ -58,14 +61,14 @@ SetResidueAliasMover::parse_my_tag(
 
 	if ( resid_ == 0 ) {
 		std::stringstream msg;
-		msg << class_name() << "::apply(): Residue number must be specified to add an alias via the \"residue\" option. If a residue number is "
+		msg << mover_name() << "::apply(): Residue number must be specified to add an alias via the \"residue\" option. If a residue number is "
 			<< "specified along with a segment_name, the residue number will be local within the segment." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 
 	if ( alias_name_.empty() ) {
 		std::stringstream msg;
-		msg << class_name() << "::apply(): Alias name is not specified -- you must specify the \"alias_name\" option in order "
+		msg << mover_name() << "::apply(): Alias name is not specified -- you must specify the \"alias_name\" option in order "
 			<< "to set an alias." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
@@ -83,17 +86,17 @@ SetResidueAliasMover::fresh_instance() const
 	return protocols::moves::MoverOP( new SetResidueAliasMover );
 }
 
-std::string
-SetResidueAliasMover::get_name() const
-{
-	return SetResidueAliasMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetResidueAliasMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return SetResidueAliasMover::mover_name();
+// XRW TEMP }
 
-std::string
-SetResidueAliasMover::class_name()
-{
-	return "SetResidueAlias";
-}
+// XRW TEMP std::string
+// XRW TEMP SetResidueAliasMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetResidueAlias";
+// XRW TEMP }
 
 void
 SetResidueAliasMover::show( std::ostream & output ) const
@@ -113,13 +116,13 @@ SetResidueAliasMover::apply( core::pose::Pose & pose )
 {
 	if ( resid_ == 0 ) {
 		std::stringstream msg;
-		msg << class_name() << "::apply(): Residue number must be specified to add an alias. If a residue number is "
+		msg << mover_name() << "::apply(): Residue number must be specified to add an alias. If a residue number is "
 			<< "specified along with a segment_name, the residue number will be local within the segment." << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 	if ( alias_name_.empty() ) {
 		std::stringstream msg;
-		msg << class_name() << "::apply(): Alias name is not specified -- you must specify the alias_name option in order "
+		msg << mover_name() << "::apply(): Alias name is not specified -- you must specify the alias_name option in order "
 			<< "to set an alias." << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
@@ -135,17 +138,52 @@ SetResidueAliasMover::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-SetResidueAliasMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetResidueAliasMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new SetResidueAliasMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SetResidueAliasMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetResidueAliasMover::mover_name();
+// XRW TEMP }
+
+std::string SetResidueAliasMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetResidueAliasMover::mover_name() {
+	return "SetResidueAlias";
+}
+
+void SetResidueAliasMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute::required_attribute( "alias_name", xs_string, "Alias name to set for the specified residue")
+		+ XMLSchemaAttribute( "segment_name", xs_string, "Optional argument to specify which segment this residue is in. If specified, residue numbering is local within the segment.")
+		+ XMLSchemaAttribute::required_attribute( "residue", xsct_non_negative_integer, "Number of residue for which to specify an alias");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Used to specify an alias name in the StructureDefinition for a specified residue", attlist );
+}
+
+std::string SetResidueAliasMoverCreator::keyname() const {
+	return SetResidueAliasMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetResidueAliasMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SetResidueAliasMover );
 }
 
-std::string
-SetResidueAliasMoverCreator::keyname() const
+void SetResidueAliasMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return SetResidueAliasMover::class_name();
+	SetResidueAliasMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //denovo_design

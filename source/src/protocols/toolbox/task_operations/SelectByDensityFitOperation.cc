@@ -142,10 +142,10 @@ void SelectByDensityFitOperation::provide_xml_schema( utility::tag::XMLSchemaDef
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xs_decimal, "0.72" )
-		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" );
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xsct_real, "threshold value, electron density correlation must be above to pass",  "0.72"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xsct_rosetta_bool, "invert_ flips the Boolean when true",  "false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Restrict design to residues with electron density correlation above threshold value." );
 }
 
 

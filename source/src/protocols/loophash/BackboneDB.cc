@@ -313,12 +313,12 @@ void BackboneDB::write_db( std::string filename )
 		file << "pdb " << extra_data_[ i.extra_key ].pdb_id << std::endl;
 		file << "seq " << extra_data_[ i.extra_key ].sequence << std::endl;
 		file << "rot ";
-		for (int j : extra_data_[ i.extra_key ].rotamer_id) {
+		for ( int j : extra_data_[ i.extra_key ].rotamer_id ) {
 			file << j << " ";
 		}
 		file << std::endl;
 		file << "ang ";
-		for (short angle : i.angles) {
+		for ( short angle : i.angles ) {
 			file << angle << " ";
 		}
 		file << std::endl;

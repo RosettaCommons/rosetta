@@ -161,17 +161,20 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 	return task_operations;
 }
 
+////////////////////////////////////////////////////////////////////
+///  Get attributes ( i.e. options ) for movers to build xml schemas
+
 /// @brief Appends the attributes read by parse_task_operations
 void
 attributes_for_parse_task_operations( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" );
 }
 
 void
 attributes_for_get_task_operations( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" );
 }
 
 /// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
@@ -179,11 +182,11 @@ void
 attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes )
 {
 	attributes
-		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string )
-		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string );
+		+ utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" )
+		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , "XRW TO DO" );
 }
 
-
+//this function was moved to src/core/select/residue_selector/util.cc
 //core::select::residue_selector::ResidueSelectorCOP
 //parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 //{
@@ -289,6 +292,12 @@ parse_score_function(
 	return parse_score_function(tag, "scorefxn", data, dflt_key);
 }
 
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attlist, std::string option_name ){
+	attlist
+		+ utility::tag::XMLSchemaAttribute( option_name, utility::tag::xs_string, "Name of the score function to use here" );
+}
+
 std::string
 get_score_function_name(
 	utility::tag::TagCOP tag,
@@ -304,20 +313,61 @@ get_score_function_name(
 	return get_score_function_name(tag, "scorefxn");
 }
 
+////////////////////////////////////////////////////////////////////
+///  Get attributes ( i.e. options ) for movers to build xml schemas
+/// @brief Appends the attributes read by get_score_function_name
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes )
+{
+	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string, "commandline" );
+}
+
+/// @brief Appends the attributes read by get_score_function_name w/ name argument
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name )
+{
+	attributes + utility::tag::XMLSchemaAttribute( option_name, utility::tag::xs_string, "commandline" );
+}
+
 /// @brief Appends the attributes read by parse_score_function
 void
 attributes_for_parse_score_function( utility::tag::AttributeList & attributes )
 {
-	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "scorefxn", utility::tag::xs_string , "XRW TO DO" );
 }
 
 /// @brief Appends the attributes read by parse_score_function w/ name argument
 void
 attributes_for_parse_score_function( utility::tag::AttributeList & attributes, std::string const & sfxn_option_name )
 {
-	attributes + utility::tag::XMLSchemaAttribute( sfxn_option_name, utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( sfxn_option_name, utility::tag::xs_string , "XRW TO DO" );
 }
 
+/// @brief Appends the attributes read by parse_score_function
+void
+attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
+	std::string const & description )
+{
+	attributes + utility::tag::XMLSchemaAttribute(
+		"scorefxn", utility::tag::xs_string ,
+		description);
+}
+
+/// @brief Appends the attributes read by parse_score_function w/ name argument
+void
+attributes_for_parse_score_function_w_description( utility::tag::AttributeList & attributes,
+	std::string const & sfxn_option_name,
+	std::string const & description )
+{
+	attributes + utility::tag::XMLSchemaAttribute(
+		sfxn_option_name, utility::tag::xs_string ,
+		description);
+}
+
+void
+attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name ){
+	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string , "XRW_TODO" );
+}
 
 core::pose::PoseOP
 saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const & tag_name ){
@@ -492,42 +542,46 @@ std::string unnamed_move_map_ct_namer( std::string const & ) { return "unnamed_m
 std::string optionally_named_move_map_ct_namer( std::string const & ) { return "optionally_named_move_map_type"; }
 
 void
-common_movemap_complext_type_def( utility::tag::XMLSchemaComplexTypeGenerator & ct_gen )
+common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & ct_gen )
 {
 	using namespace utility::tag;
 	XMLSchemaSimpleSubelementList movemap_subelements;
 	AttributeList jump_attributes;
 	jump_attributes
-		+ XMLSchemaAttribute::required_attribute( "number",  xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "setting", xsct_rosetta_bool );
-	movemap_subelements.add_simple_subelement( "Jump", jump_attributes );
+		+ XMLSchemaAttribute::required_attribute( "number",  xsct_non_negative_integer , "Which jump number (in the FoldTree)" )
+		+ XMLSchemaAttribute::required_attribute( "setting", xsct_rosetta_bool , "true for move, false for don't move" );
+	movemap_subelements.add_simple_subelement( "Jump", jump_attributes , "jumps are the not-chemistry internal coordinate connections between separate parts of your pose");
+
+	std::string const chi_desc("move sidechain chi torsions?");
+	std::string const bb_desc("move backbone torsions?");
 
 	AttributeList chain_attributes;
 	chain_attributes
-		+ XMLSchemaAttribute::required_attribute( "number", xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "bb",     xsct_rosetta_bool );
-	movemap_subelements.add_simple_subelement( "Chain", chain_attributes );
+		+ XMLSchemaAttribute::required_attribute( "number", xsct_non_negative_integer , "which chain?" )
+		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_rosetta_bool , chi_desc )
+		+ XMLSchemaAttribute::required_attribute( "bb",     xsct_rosetta_bool , bb_desc );
+	movemap_subelements.add_simple_subelement( "Chain", chain_attributes , "this controls a kinematically contiguous chain (think protein chains)");
 
 	AttributeList span_attributes;
 	span_attributes
-		+ XMLSchemaAttribute::required_attribute( "begin",     xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "end",       xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "chi",       xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "bb",        xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "bondangle", xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "bondlenth", xsct_rosetta_bool );
-	movemap_subelements.add_simple_subelement( "Span", span_attributes );
+		+ XMLSchemaAttribute::required_attribute( "begin",     xsct_non_negative_integer , "beginning of span" )
+		+ XMLSchemaAttribute::required_attribute( "end",       xsct_non_negative_integer , "end of span" )
+		+ XMLSchemaAttribute::required_attribute( "chi",       xsct_rosetta_bool , chi_desc )
+		+ XMLSchemaAttribute::required_attribute( "bb",        xsct_rosetta_bool , bb_desc )
+		+ XMLSchemaAttribute( "bondangle", xsct_rosetta_bool , "move 3-body angles?" )
+		+ XMLSchemaAttribute( "bondlenth", xsct_rosetta_bool , "move 2-body lengths?" );
+	movemap_subelements.add_simple_subelement( "Span", span_attributes , "XRW TO DO, probably a user-defined region of the Pose");
 	movemap_subelements.complex_type_naming_func( & move_map_tag_namer );
 
 
 	AttributeList movemap_tag_attributes;
 	movemap_tag_attributes
-		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool );
+		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool , bb_desc )
+		+ XMLSchemaAttribute( "chi", xsct_rosetta_bool , chi_desc )
+		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool , "move all jumps?" );
 
 	ct_gen.element_name( "MoveMap" )
+		.description( "MoveMaps dicate what degrees of freedom are mobile to other bits of code, especially minimization - they do NOT work with packing" )
 		.add_attributes( movemap_tag_attributes )
 		.set_subelements_repeatable( movemap_subelements );
 
@@ -543,8 +597,9 @@ append_subelement_for_parse_movemap(
 {
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGenerator unnamed_move_map;
-	common_movemap_complext_type_def( unnamed_move_map );
+	common_movemap_complex_type_def( unnamed_move_map );
 	unnamed_move_map
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & unnamed_move_map_ct_namer )
 		.write_complex_type_to_schema( xsd );
 
@@ -560,8 +615,9 @@ append_subelement_for_parse_movemap_w_datamap(
 {
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGenerator named_move_map;
-	common_movemap_complext_type_def( named_move_map );
+	common_movemap_complex_type_def( named_move_map );
 	named_move_map
+		.description( "XRW TO DO" )
 		.add_optional_name_attribute()
 		.complex_type_naming_func( & optionally_named_move_map_ct_namer )
 		.write_complex_type_to_schema( xsd );
@@ -583,11 +639,11 @@ add_movemaps_to_datamap(
 	if ( in_tag == nullptr ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() =="MoveMap" ) {
+	for ( auto const & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() =="MoveMap" ) {
 
-			if ( ! (*tag_it)->hasOption("name") ) continue;
-			std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
+			if ( ! branch_tag->hasOption("name") ) continue;
+			std::string const name( branch_tag->getOption< std::string >( "name" ) );
 			if ( data.has("movemaps", name) ) continue;
 
 
@@ -597,7 +653,7 @@ add_movemaps_to_datamap(
 				mm->set_chi( true );
 				mm->set_jump( true );
 			}
-			foreach_movemap_tag( *tag_it, pose, mm );
+			foreach_movemap_tag( branch_tag, pose, mm );
 			data.add("movemaps", name, mm);
 		}
 
@@ -610,8 +666,8 @@ has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
 
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ) {
-		if ( (*tag_it)->getName() == branch_name ) {
+	for ( auto const & branch_tag : branch_tags ) {
+		if ( branch_tag->getName() == branch_name ) {
 			return true;
 		}
 	}
@@ -635,6 +691,19 @@ parse_mover( std::string const & mover_name, protocols::moves::Movers_map const 
 	}
 	return mover_it->second;
 }
+
+void
+attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist ){
+	using namespace utility::tag;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "x", xsct_real, "X coordinate for this vector" )
+		+ XMLSchemaAttribute::required_attribute( "y", xsct_real, "Y coordinate for this vector" )
+		+ XMLSchemaAttribute::required_attribute( "z", xsct_real, "Z coordinate for this vector" );
+
+}
+
+
+
 
 /// @brief utility function for parsing xyzVector
 numeric::xyzVector< core::Real >
@@ -756,6 +825,62 @@ parse_bogus_res_tag( utility::tag::TagCOP tag, std::string const & prefix ){
 	}
 
 }
+
+// void
+// attributes_for_report_to_db( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd)
+// {
+//  using namespace utility::tag;
+//
+//  XMLSchemaRestriction database_mode;
+//  database_mode.name( "database_mode_string" );
+//  database_mode.base_type( xs_string );
+//  database_mode.add_restriction( xsr_enumeration, "sqlite3" );
+//  database_mode.add_restriction( xsr_enumeration, "postgres" );
+//  database_mode.add_restriction( xsr_enumeration, "mysql" );
+//  xsd.add_top_level_element( database_mode );
+//  XMLSchemaRestriction database_transaction_mode;
+//  database_transaction_mode.name( "database_transaction_mode_string" );
+//  database_transaction_mode.base_type( xs_string );
+//  database_transaction_mode.add_restriction( xsr_enumeration, "none" );
+//  database_transaction_mode.add_restriction( xsr_enumeration, "standard" );
+//  database_transaction_mode.add_restriction( xsr_enumeration, "chunk" );
+//  xsd.add_top_level_element( database_transaction_mode );
+//
+//
+//
+//  XMLSchemaRestriction mode;
+//  mode.name( "report_to_db_relevant_residues_mode" );
+//  mode.base_type( xs_string );
+//  //can be "explicit" or "implicit" with any capitalization
+//  mode.add_restriction( xsr_pattern, "[eEiI][xXmM][pP][lL][iI][cC][iI][tT]" );
+//  xsd.add_top_level_element( mode );
+//
+//
+//  attlist
+//   + XMLSchemaAttribute( "resource_description", xs_string, "Resource description referring to the resource to be output" )
+//   + XMLSchemaAttribute( "database_resource", xs_string, "Resource description referring to the output database" )
+//   + XMLSchemaAttribute( "database_resource_tag", xs_string, "Tag referring to the output database" )
+//   + XMLSchemaAttribute::attribute_w_default( "transaction_mode", "database_transaction_mode_string", "Transaction mode for database output", "standard" )
+//   + XMLSchemaAttribute( "database_mode", "database_mode_string", "Which type of output database to use?" )
+//   + XMLSchemaAttribute( "database_name", xs_string, "Name of output database" )
+//   + XMLSchemaAttribute( "database_pq_schema", xs_string, "Schema name within the database" )
+//   + XMLSchemaAttribute( "database_separate_db_per_mpi_process", xsct_rosetta_bool, "Use a separate database for each MPI process? Specific to sqlite3" )
+//   + XMLSchemaAttribute( "database_partition", xs_integer, "Database partition to use" )
+//   + XMLSchemaAttribute( "database_read_only", xsct_rosetta_bool, "Is the database read-only?" )
+//   + XMLSchemaAttribute( "database_host", xs_string, "URI to the database server (postgres only)" )
+//   + XMLSchemaAttribute( "database_user", xs_string, "Username for database access( postgres only)" )
+//   + XMLSchemaAttribute( "database_password", xs_string, "Password for database access (postgres only)" )
+//   + XMLSchemaAttribute( "database_port", xsct_non_negative_integer, "Port to use for access to database server (postgres only)" )
+//   + XMLSchemaAttribute( "batch_description", xs_string, "Description of features database" )
+//   + XMLSchemaAttribute( "protocol_id", xsct_non_negative_integer, "Manually controls protocol_id associated with this ReportToDB tag. Autoincrements by default." )
+//   + XMLSchemaAttribute( "batch_id", xsct_non_negative_integer, "Manually controls the batch_id associated with this ReportToDB tag. Autoincrements by default." )
+//   + XMLSchemaAttribute( "use_transactions", xsct_rosetta_bool, "Use transactions to group database i/o to be more efficient. Turning them off can help debugging." )
+//   + XMLSchemaAttribute::attribute_w_default( "cache_size", xsct_non_negative_integer, "Specify the maximum number 1k pages to keep in memory before writing to disk.", "2000" )
+//   + XMLSchemaAttribute::attribute_w_default( "remove_xray_virt", xsct_rosetta_bool, "Remove virtual residue attached during xray refine process", "false" )
+//   + XMLSchemaAttribute::attribute_w_default( "relevant_residues_mode", "report_to_db_relevant_residues_mode", "Determine what features are reported given the relevant residues", "explicit" );
+//
+//  rosetta_scripts::attributes_for_parse_task_operations( attlist );
+// }
 
 } //RosettaScripts
 } //protocols

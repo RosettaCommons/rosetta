@@ -18,6 +18,7 @@
 #include <protocols/residue_selectors/StoreResidueSubsetMoverCreator.hh>
 
 // Protocol Headers
+#include <core/select/residue_selector/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 /*#include <protocols/toolbox/task_operations/STMStoredTask.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -38,6 +39,9 @@
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -109,30 +113,30 @@ StoreResidueSubsetMover::parse_my_tag( TagCOP const tag, basic::datacache::DataM
 }
 
 // @brief Identification
-std::string
-StoreResidueSubsetMoverCreator::keyname() const
-{
-	return StoreResidueSubsetMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP StoreResidueSubsetMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return StoreResidueSubsetMover::mover_name();
+// XRW TEMP }
 
-std::string
-StoreResidueSubsetMoverCreator::mover_name()
-{
-	return "StoreResidueSubset";
-}
+// XRW TEMP std::string
+// XRW TEMP StoreResidueSubsetMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "StoreResidueSubset";
+// XRW TEMP }
 
-std::string
-StoreResidueSubsetMover::get_name() const
-{
-	return "StoreResidueSubset";
-}
+// XRW TEMP std::string
+// XRW TEMP StoreResidueSubsetMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "StoreResidueSubset";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-StoreResidueSubsetMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new StoreResidueSubsetMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StoreResidueSubsetMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new StoreResidueSubsetMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreResidueSubsetMover::clone() const
@@ -145,6 +149,41 @@ StoreResidueSubsetMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new StoreResidueSubsetMover );
 }
+
+std::string StoreResidueSubsetMover::get_name() const {
+	return mover_name();
+}
+
+std::string StoreResidueSubsetMover::mover_name() {
+	return "StoreResidueSubset";
+}
+
+void StoreResidueSubsetMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist);
+	attlist + XMLSchemaAttribute::required_attribute( "subset_name", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute( "overwrite", xsct_rosetta_bool, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string StoreResidueSubsetMoverCreator::keyname() const {
+	return StoreResidueSubsetMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StoreResidueSubsetMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StoreResidueSubsetMover );
+}
+
+void StoreResidueSubsetMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StoreResidueSubsetMover::provide_xml_schema( xsd );
+}
+
 
 } // residue_selectors
 } // protocols

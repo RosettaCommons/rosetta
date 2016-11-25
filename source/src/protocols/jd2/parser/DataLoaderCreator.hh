@@ -20,6 +20,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -43,6 +44,9 @@ public:
 
 	virtual DataLoaderOP create_loader() const = 0;
 	virtual std::string keyname() const = 0;
+	virtual DerivedNameFunction schema_ct_naming_function() const = 0;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
+
 };
 
 typedef utility::pointer::shared_ptr< DataLoaderCreator > DataLoaderCreatorOP;

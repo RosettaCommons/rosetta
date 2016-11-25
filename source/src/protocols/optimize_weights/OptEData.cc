@@ -584,13 +584,13 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 
 		Size const nfree( rot->data().size() );
 		outfile.write( (char*) &nfree, sizeof(Size) );
-		for (double energy : rot->data()) {
+		for ( double energy : rot->data() ) {
 			outfile.write( (char*) &energy, sizeof(Real) );
 		}
 
 		Size const nfixed( rot->fixed_data().size() );
 		outfile.write( (char*) &nfixed, sizeof(Size) );
-		for (double fixed_energy : rot->fixed_data()) {
+		for ( double fixed_energy : rot->fixed_data() ) {
 			outfile.write( (char*) &fixed_energy, sizeof(Real) );
 		}
 	}

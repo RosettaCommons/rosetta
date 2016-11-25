@@ -45,7 +45,7 @@ public:
 
 	ExtractSubposeMover(const ExtractSubposeMover& rval);
 
-	std::string get_name() const override { return "ExtractSubposeMover"; }
+	// XRW TEMP  std::string get_name() const override { return "ExtractSubposeMover"; }
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;
@@ -57,6 +57,18 @@ public:
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

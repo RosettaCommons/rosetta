@@ -62,6 +62,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -77,20 +80,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-FragmentJumpCMCreator::keyname() const {
-	return FragmentJumpCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentJumpCMCreator::keyname() const {
+// XRW TEMP  return FragmentJumpCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FragmentJumpCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentJumpCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FragmentJumpCMCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FragmentJumpCM );
+// XRW TEMP }
 
-std::string
-FragmentJumpCMCreator::mover_name() {
-	return "FragmentJumpCM";
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentJumpCM::mover_name() {
+// XRW TEMP  return "FragmentJumpCM";
+// XRW TEMP }
 
 FragmentJumpCM::FragmentJumpCM():
 	Parent(),
@@ -259,9 +262,9 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 	return claim_list;
 }
 
-std::string FragmentJumpCM::get_name() const {
-	return "FragmentJumpCM";
-}
+// XRW TEMP std::string FragmentJumpCM::get_name() const {
+// XRW TEMP  return "FragmentJumpCM";
+// XRW TEMP }
 
 void FragmentJumpCM::set_topology( std::string const& ss_info_file,
 	std::string const& pairing_file,
@@ -390,6 +393,67 @@ moves::MoverOP FragmentJumpCM::fresh_instance() const {
 moves::MoverOP FragmentJumpCM::clone() const{
 	return moves::MoverOP( new FragmentJumpCM( *this ) );
 }
+
+std::string FragmentJumpCM::get_name() const {
+	return mover_name();
+}
+
+std::string FragmentJumpCM::mover_name() {
+	return "FragmentJumpCM";
+}
+
+void FragmentJumpCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"topol_file", xs_string,
+		"File specifying topology for the pose. If not provided, must specify ss_info, pairing_file, and n_sheets");
+	attlist + XMLSchemaAttribute(
+		"ss_info", xs_string,
+		"File containing secondary structure information for the pose. Incompatible with topol_file.");
+	attlist + XMLSchemaAttribute(
+		"pairing_file", xs_string,
+		"File containing info on secondary structure pairing for the pose.");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"n_sheets", xsct_non_negative_integer,
+		"Number of beta sheets", "0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"random_sheets", xsct_rosetta_bool,
+		"Should beta sheets be built randomly?", "true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"restart_only", xsct_rosetta_bool,
+		"Do not reset the topology for this pose", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"initialize", xsct_rosetta_bool,
+		"Apply FragmentJumpCM after brokering is complete?", "true");
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"Residue selector specifying region where this mover will be applied");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"name", xs_string,
+		"Unique name for this client mover", "");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Inserts strand-strand rigid body translations into jumps between predicted adjacent beta strands.",
+		attlist );
+}
+
+std::string FragmentJumpCMCreator::keyname() const {
+	return FragmentJumpCM::mover_name();
+}
+
+protocols::moves::MoverOP
+FragmentJumpCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FragmentJumpCM );
+}
+
+void FragmentJumpCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FragmentJumpCM::provide_xml_schema( xsd );
+}
+
 
 } // abscript
 } // abinitio

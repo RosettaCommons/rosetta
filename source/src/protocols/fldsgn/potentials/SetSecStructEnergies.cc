@@ -49,6 +49,9 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.SetSecStructEnergies" );
 
@@ -56,22 +59,22 @@ namespace protocols {
 namespace fldsgn {
 namespace potentials {
 
-std::string
-SetSecStructEnergiesCreator::keyname() const
-{
-	return SetSecStructEnergiesCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetSecStructEnergiesCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetSecStructEnergies::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetSecStructEnergiesCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetSecStructEnergies );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetSecStructEnergiesCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetSecStructEnergies );
+// XRW TEMP }
 
-std::string
-SetSecStructEnergiesCreator::mover_name()
-{
-	return "SetSecStructEnergies";
-}
+// XRW TEMP std::string
+// XRW TEMP SetSecStructEnergies::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetSecStructEnergies";
+// XRW TEMP }
 
 
 /// @brief default constructor
@@ -301,10 +304,10 @@ void SetSecStructEnergies::apply( Pose & pose )
 }
 
 /// @brief
-std::string
-SetSecStructEnergies::get_name() const {
-	return SetSecStructEnergiesCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetSecStructEnergies::get_name() const {
+// XRW TEMP  return SetSecStructEnergies::mover_name();
+// XRW TEMP }
 
 
 /// @brief parse xml
@@ -467,6 +470,69 @@ SetSecStructEnergies::init_from_blueprint( protocols::jd2::parser::BluePrint con
 	ss_pair_ = bp.strand_pairings();
 	hss_triplet_ = bp.hss_triplets();
 }
+
+std::string SetSecStructEnergies::get_name() const {
+	return mover_name();
+}
+
+std::string SetSecStructEnergies::mover_name() {
+	return "SetSecStructEnergies";
+}
+
+void SetSecStructEnergies::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "blueprint", xs_string, "Name of blueprint file used to specify secondary structure" )
+		+ XMLSchemaAttribute::attribute_w_default( "ss_from_blueprint", xs_string, "Get secondary structure from blueprint file?", "true" )
+		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "String specifying desired pose secondary structure" )
+		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine ideal secondary structure (if not provided )? If false, pose secondary structure will be used" )
+		+ XMLSchemaAttribute( "hh_pair", xs_string, "String specifying helix pairings" )
+		+ XMLSchemaAttribute( "ss_pair", xs_string, "String specifying strand pairings" )
+		+ XMLSchemaAttribute( "hss_triplets", xs_string, "String specifying helix-strand-strand triplets" )
+		+ XMLSchemaAttribute::required_attribute( "scorefxn", xs_string, "Score function to use when scoring pose" )
+		+ XMLSchemaAttribute( "add_symmetry", xsct_rosetta_bool, "Add symmetry definition to pose" )
+		+ XMLSchemaAttribute( "natbias_ss", xsct_real, "Native bias for strand-strand pairings" )
+		+ XMLSchemaAttribute( "natbias_hh", xsct_real, "Native bias for helix-helix pairings" )
+		+ XMLSchemaAttribute( "natbias_hs", xsct_real, "Native bias for helix-strand pairings" )
+		+ XMLSchemaAttribute( "natbias_stwist", xsct_real, "Native bias for strand twist" )
+		+ XMLSchemaAttribute( "hs_pair", xsct_real, "Weight of hs_pair score term" )
+		+ XMLSchemaAttribute( "rsigma", xsct_real, "Weight of rsigma score term" )
+		+ XMLSchemaAttribute( "hh_dist_wts", xsct_real, "Weights for helix-helix distance term" )
+		+ XMLSchemaAttribute( "hh_dist", xsct_real, "Ideal distance between helices" )
+		+ XMLSchemaAttribute( "hh_dist_s2", xsct_real, "Variance in ideal distance between helices" )
+		+ XMLSchemaAttribute( "hh_cross_angle_wts", xsct_real, "Weights for helix-helix cross angle term" )
+		+ XMLSchemaAttribute( "hh_cross_angle", xsct_real, "Ideal helix-helix cross angle" )
+		+ XMLSchemaAttribute( "hh_cross_angle_s2", xsct_real, "Variance of helix-helix cross angle" )
+		+ XMLSchemaAttribute( "hs_atr_dist_wts", xsct_real, "Weights for helix-strand attraction term" )
+		+ XMLSchemaAttribute( "hs_atr_dist", xsct_real, "Ideal helix-strand distance" )
+		+ XMLSchemaAttribute( "hs_atr_dist_s2", xsct_real, "Variance in ideal helix-strand distance" )
+		+ XMLSchemaAttribute( "hs_angle_wts", xsct_real, "Weights for helix-strand angle term" )
+		+ XMLSchemaAttribute( "hs_angle", xsct_real, "Ideal helix-strand angle" )
+		+ XMLSchemaAttribute( "hs_angle_s2", xsct_real, "Variance in ideal helix-strand angle" )
+		+ XMLSchemaAttribute( "hsheet_repl_dist", xsct_real, "Helix-sheedistance for NatbiasHelicesSheetPotential" )
+		+ XMLSchemaAttribute( "hh_align_angle_wts", xsct_real, "Weights for helix-helix alignment term" )
+		+ XMLSchemaAttribute( "hh_align_angle", xsct_real, "Ideal helix-helix alignment angle" )
+		+ XMLSchemaAttribute( "hh_align_angle_s2", xsct_real, "Variance in ideal helix-helix alignment angle" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Gives a bonus to user-specified secondary structures", attlist );
+}
+
+std::string SetSecStructEnergiesCreator::keyname() const {
+	return SetSecStructEnergies::mover_name();
+}
+
+protocols::moves::MoverOP
+SetSecStructEnergiesCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetSecStructEnergies );
+}
+
+void SetSecStructEnergiesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetSecStructEnergies::provide_xml_schema( xsd );
+}
+
 
 
 } // Namespace potentials

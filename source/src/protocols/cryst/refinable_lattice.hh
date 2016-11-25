@@ -86,9 +86,9 @@ class UpdateCrystInfo : public protocols::moves::Mover {
 public:
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override {
-		return "UpdateCrystInfo";
-	}
+	// XRW TEMP  std::string get_name() const override {
+	// XRW TEMP   return "UpdateCrystInfo";
+	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new UpdateCrystInfo(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new UpdateCrystInfo()); }
@@ -99,6 +99,18 @@ public:
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 
@@ -145,9 +157,9 @@ public:
 
 	void set_temp(core::Real val) { temp_=val; }
 
-	std::string get_name() const override {
-		return "DockLatticeMover";
-	}
+	// XRW TEMP  std::string get_name() const override {
+	// XRW TEMP   return "DockLatticeMover";
+	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new DockLatticeMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new DockLatticeMover()); }
@@ -158,6 +170,18 @@ public:
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 
@@ -245,9 +269,9 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override {
-		return "MakeLatticeMover";
-	}
+	// XRW TEMP  std::string get_name() const override {
+	// XRW TEMP   return "MakeLatticeMover";
+	// XRW TEMP  }
 
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP(new MakeLatticeMover(*this)); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP(new MakeLatticeMover()); }
@@ -268,6 +292,18 @@ public:
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

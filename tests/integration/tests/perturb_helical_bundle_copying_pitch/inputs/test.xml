@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
@@ -8,24 +8,25 @@
 	</FILTERS>
 	<MOVERS>
 
-		<MakeBundle name="makebundle" helix_length=240
-				r0=8 omega0=0.1 delta_omega0=0 delta_omega1=0 delta_t=0 z0_offset=0 >
-			<Helix invert=false/>
-			<Helix delta_omega0=1.57079632679 invert=true />
-			<Helix delta_omega0=3.141592654 invert=false />
-			<Helix delta_omega0=4.71238898038 invert=true />
+		<MakeBundle name="makebundle" helix_length="240"
+				r0="8" omega0="0.1" delta_omega0="0" delta_omega1="0" delta_t="0" z0_offset="0" >
+			<Helix invert="false"/>
+			<Helix delta_omega0="1.57079632679" invert="true" />
+			<Helix delta_omega0="3.141592654" invert="false" />
+			<Helix delta_omega0="4.71238898038" invert="true" />
 		</MakeBundle>
 		
-		<PerturbBundle name="perturbbundle" default_perturbation_type=uniform >
-			<Helix helix_index=3 r0_perturbation=7 pitch_from_helix=1 />
-			<Helix helix_index=4 r0_copies_helix=3 pitch_from_helix=3 />
+		<PerturbBundle name="perturbbundle" default_perturbation_type="uniform" >
+			<Helix helix_index="3" r0_perturbation="7" pitch_from_helix="1" />
+			<Helix helix_index="4" r0_copies_helix="3" pitch_from_helix="3" />
 		</PerturbBundle>
 
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=makebundle />
-		<Add mover=perturbbundle />
+		<Add mover="makebundle" />
+		<Add mover="perturbbundle" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

@@ -22,58 +22,82 @@ namespace cryst {
 
 class ReportGradientsMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class SetCrystWeightMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RecomputeDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class LoadDensityMapMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class FitBfactorsMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class UpdateSolventMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class TagPoseWithRefinementStatsMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class SetRefinementOptionsMoverCreator : public moves::MoverCreator {
 public:
-	moves::MoverOP create_mover() const override;
+	// XRW TEMP  moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
+	// XRW TEMP  static  std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
-	static  std::string mover_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

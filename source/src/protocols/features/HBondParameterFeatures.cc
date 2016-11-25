@@ -40,6 +40,10 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/HBondParameterFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -91,8 +95,8 @@ HBondParameterFeatures::HBondParameterFeatures(
 
 HBondParameterFeatures::~HBondParameterFeatures() = default;
 
-string
-HBondParameterFeatures::type_name() const { return "HBondParameterFeatures"; }
+// XRW TEMP string
+// XRW TEMP HBondParameterFeatures::type_name() const { return "HBondParameterFeatures"; }
 
 void
 HBondParameterFeatures::write_schema_to_db(
@@ -143,6 +147,39 @@ HBondParameterFeatures::report_features(
 	HBondDatabaseCOP hb_database(HBondDatabase::get_database(database_tag));
 	return hb_database->report_parameter_features(db_session);
 }
+
+std::string HBondParameterFeatures::type_name() const {
+	return class_name();
+}
+
+std::string HBondParameterFeatures::class_name() {
+	return "HBondParameterFeatures";
+}
+
+void HBondParameterFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// This doesn't use parse_score_function so I won't either
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "Scorefunction" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record the scoring function's hbonding parameters", attlist );
+}
+
+std::string HBondParameterFeaturesCreator::type_name() const {
+	return HBondParameterFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+HBondParameterFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new HBondParameterFeatures );
+}
+
+void HBondParameterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HBondParameterFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

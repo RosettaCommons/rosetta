@@ -55,6 +55,9 @@
 
 //Auto Headers
 #include <core/id/AtomID.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loophash {
@@ -71,28 +74,28 @@ using core::scoring::ScoreFunctionOP;
 static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 ///****Creator Methods****///
-std::string
-LoopHashDiversifierCreator::keyname() const
-{
-	return LoopHashDiversifierCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashDiversifierCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopHashDiversifier::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopHashDiversifierCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopHashDiversifier );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopHashDiversifierCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopHashDiversifier );
+// XRW TEMP }
 
-std::string
-LoopHashDiversifierCreator::mover_name()
-{
-	return "LoopHashDiversifier";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashDiversifier::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopHashDiversifier";
+// XRW TEMP }
 ///****End Creator Methods****///
 
 LoopHashDiversifier::~LoopHashDiversifier() = default;
 
 LoopHashDiversifier::LoopHashDiversifier() :
-	protocols::moves::Mover( LoopHashDiversifierCreator::mover_name() ),
+	protocols::moves::Mover( LoopHashDiversifier::mover_name() ),
 	library_( /* NULL */ ),
 	min_inter_ss_bbrms_( 0.0 ),
 	max_inter_ss_bbrms_( 100000.0 ),
@@ -146,7 +149,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	core::scoring::ScoreFunctionOP scorefxn_cen_cst,
 	core::scoring::ScoreFunctionOP scorefxn_rama_cst
 ) :
-	protocols::moves::Mover( LoopHashDiversifierCreator::mover_name() ),
+	protocols::moves::Mover( LoopHashDiversifier::mover_name() ),
 	library_(std::move( library )),
 	min_inter_ss_bbrms_( min_inter_ss_bbrms ),
 	max_inter_ss_bbrms_( max_inter_ss_bbrms ),
@@ -337,10 +340,10 @@ LoopHashDiversifier::apply( Pose & pose )
 // return pose;
 //}
 
-std::string
-LoopHashDiversifier::get_name() const {
-	return LoopHashDiversifierCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashDiversifier::get_name() const {
+// XRW TEMP  return LoopHashDiversifier::mover_name();
+// XRW TEMP }
 
 void
 LoopHashDiversifier::parse_my_tag(
@@ -497,6 +500,68 @@ void
 LoopHashDiversifier::add_loop_size( Size const loop_size ){
 	loop_sizes_.push_back( loop_size );
 }
+
+std::string LoopHashDiversifier::get_name() const {
+	return mover_name();
+}
+
+std::string LoopHashDiversifier::mover_name() {
+	return "LoopHashDiversifier";
+}
+
+void LoopHashDiversifier::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("num_iterations", xsct_non_negative_integer, "Number of loophash runs to execute", "100")
+		+ XMLSchemaAttribute::attribute_w_default("num_try_div", xsct_non_negative_integer, "Number of loophash runs to try in each execution", "100")
+		+ XMLSchemaAttribute::attribute_w_default("diversify_loop_only", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default("min_inter_ss_bbrms", xsct_real,
+		"Min torsion-angle rmsd for residue windows that span two pieces of secondary structure", "0")
+		+ XMLSchemaAttribute::attribute_w_default("max_inter_ss_bbrms", xsct_real,
+		"Max torsion-angle rmsd for residue windows that span two pieces of secondary structure", "100000")
+		+ XMLSchemaAttribute::attribute_w_default("min_intra_ss_bbrms", xsct_real,
+		"Min torsion-angle rmsd for residue windows that are a single pieces of secondary structure", "0")
+		+ XMLSchemaAttribute::attribute_w_default("max_intra_ss_bbrms", xsct_real,
+		"Max torsion-angle rmsd for residue windows that are a single pieces of secondary structure", "100000")
+		+ XMLSchemaAttribute::attribute_w_default("min_rms", xsct_real, "Min Anstrom Rmsd cuttofs for loophash generated structures", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_rms", xsct_real, "Max Anstrom Rmsd cuttofs for loophash generated structures", "100.0")
+		+ XMLSchemaAttribute::attribute_w_default("max_radius", xsct_non_negative_integer, "max loophash radius", "4")
+		+ XMLSchemaAttribute::attribute_w_default("max_struct", xsct_non_negative_integer,
+		"Max models to create in loophash (number of fragment tried is 200x this)", "10")
+		+ XMLSchemaAttribute::attribute_w_default("ideal", xsct_rosetta_bool, "Save space and assume structure is ideal?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("filter_by_phipsi", xsct_rosetta_bool, "Filter-out non-ideal phipsi.", "false");
+
+	core::pose::attributes_for_get_resnum( attlist, "start_" );
+	core::pose::attributes_for_get_resnum( attlist, "stop_" );
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("window_size", xsct_non_negative_integer, "loophash window size and loophash fragment size", "4")
+		+ XMLSchemaAttribute("scorefxn_cen_cst", xs_string, "Score function for constraint centroid mode sampling")
+		+ XMLSchemaAttribute("scorefxn_rama_cst", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("db_path", xs_string, "path to DB -- if not specified then command-line flag is used" )
+		+ XMLSchemaAttribute::attribute_w_default("centroid_filter", xs_string, "Filter after centroid stage using this filter.", "true_filter" )
+		+ XMLSchemaAttribute("ranking_cenfilter", xs_string, "Prune decoys based on the filter's apply function." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Simple mover that uses loophash to replace randomly chosen fragments in a given pose.", attlist );
+}
+
+std::string LoopHashDiversifierCreator::keyname() const {
+	return LoopHashDiversifier::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopHashDiversifierCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopHashDiversifier );
+}
+
+void LoopHashDiversifierCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopHashDiversifier::provide_xml_schema( xsd );
+}
+
 
 } //loophash
 } //protocols

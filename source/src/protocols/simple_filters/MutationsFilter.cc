@@ -31,6 +31,9 @@
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -329,11 +332,51 @@ MutationsFilter::clone() const{
 	return protocols::filters::FilterOP( new MutationsFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-MutationsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MutationsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP MutationsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MutationsFilter ); }
 
-std::string
-MutationsFilterCreator::keyname() const { return "Mutations"; }
+// XRW TEMP std::string
+// XRW TEMP MutationsFilterCreator::keyname() const { return "Mutations"; }
+
+std::string MutationsFilter::name() const {
+	return class_name();
+}
+
+std::string MutationsFilter::class_name() {
+	return "Mutations";
+}
+
+void MutationsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("rate_threshold", xsct_real, "Lower cutoff for the acceptable recovery rate for a passing design. Will fail if actual rate is below this threshold.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("mutation_threshold", xsct_non_negative_integer, "Upper cutoff for the number of mutations for an acceptable design. Only matters if report_mutations is set to true.", "100")
+		+ XMLSchemaAttribute::attribute_w_default("report_mutations", xsct_rosetta_bool, "Defaults to false. If set to true, then will act as a filter for the number of mutations rather than the rate.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("verbose", xsct_rosetta_bool, "Defaults to false. If set to true, then will output the mutated positions and identities to the tracer.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("packable", xsct_rosetta_bool, "Defaults to false. If set to true, then will also consider mutations at packable positions in addition to designable positions.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("write2pdb", xsct_rosetta_bool, "Defaults to false. If set to true, then will output the mutated positions and identities to the output pdb.", "0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Determines mutated residues in current pose as compared to a reference pose", attlist );
+}
+
+std::string MutationsFilterCreator::keyname() const {
+	return MutationsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+MutationsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new MutationsFilter );
+}
+
+void MutationsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MutationsFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // simple_filters

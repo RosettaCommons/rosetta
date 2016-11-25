@@ -53,6 +53,9 @@
 #include <sstream>
 #include <fstream>
 #include <utility/fixedsizearray1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using namespace core;
 using namespace core::pose;
 
@@ -66,20 +69,20 @@ using namespace chemical;
 using namespace conformation;
 
 
-std::string
-JumpRotamerSidechainMoverCreator::keyname() const {
-	return JumpRotamerSidechainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP JumpRotamerSidechainMoverCreator::keyname() const {
+// XRW TEMP  return JumpRotamerSidechainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-JumpRotamerSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new JumpRotamerSidechainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP JumpRotamerSidechainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new JumpRotamerSidechainMover );
+// XRW TEMP }
 
-std::string
-JumpRotamerSidechainMoverCreator::mover_name() {
-	return "JumpRotamerSidechain";
-}
+// XRW TEMP std::string
+// XRW TEMP JumpRotamerSidechainMover::mover_name() {
+// XRW TEMP  return "JumpRotamerSidechain";
+// XRW TEMP }
 
 
 JumpRotamerSidechainMover::JumpRotamerSidechainMover() {
@@ -120,10 +123,10 @@ JumpRotamerSidechainMover::parse_my_tag(
 
 }
 
-std::string
-JumpRotamerSidechainMover::get_name() const {
-	return "JumpRotamerSidechainMover";
-}
+// XRW TEMP std::string
+// XRW TEMP JumpRotamerSidechainMover::get_name() const {
+// XRW TEMP  return "JumpRotamerSidechainMover";
+// XRW TEMP }
 
 
 void
@@ -243,6 +246,37 @@ JumpRotamerSidechainMover::compute_tempered_rotamer_probabilities(
 	}
 	normalize = 1.0/sum_prob;
 }
+
+std::string JumpRotamerSidechainMover::get_name() const {
+	return mover_name();
+}
+
+std::string JumpRotamerSidechainMover::mover_name() {
+	return "JumpRotamerSidechain";
+}
+
+void JumpRotamerSidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// AMW TODO EMPTY
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Non-discrete side chain sampling using Dunbrack rotamer probabilities/distributions", attlist );
+}
+
+std::string JumpRotamerSidechainMoverCreator::keyname() const {
+	return JumpRotamerSidechainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+JumpRotamerSidechainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new JumpRotamerSidechainMover );
+}
+
+void JumpRotamerSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	JumpRotamerSidechainMover::provide_xml_schema( xsd );
+}
+
 
 
 } // sidechain_moves

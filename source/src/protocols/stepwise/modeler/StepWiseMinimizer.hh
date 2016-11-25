@@ -54,9 +54,9 @@ public:
 
 public:
 
-	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const{ return "StepWiseMinimizer"; }
+	std::string get_name() const override { return "StepWiseMinimizer"; }
 
 public:
 

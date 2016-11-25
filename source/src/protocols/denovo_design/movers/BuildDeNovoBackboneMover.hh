@@ -68,30 +68,30 @@ public:
 	virtual ~BuildDeNovoBackboneMover();
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	static std::string
-	class_name();
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name();
 
 public:
 	std::string const &
@@ -146,6 +146,17 @@ public:
 
 	void
 	set_iterations_per_phase( core::Size const niter );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	FoldScore
@@ -223,6 +234,36 @@ private:
 
 	void
 	parse_perturbers( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+	static std::string
+	build_denovo_backbone_ct_naming_func( std::string );
+
+	static std::string
+	prefold_ct_naming_func( std::string );
+
+
+	static std::string
+	postfold_ct_naming_func( std::string );
+
+	static std::string
+	filters_ct_naming_func( std::string );
+
+	static std::string
+	folder_ct_namer( std::string );
+
+	static std::string
+	perturber_ct_namer( std::string );
+
+	static void
+	define_folder_group( utility::tag::XMLSchemaDefinition & );
+
+	static void
+	define_perturber_group( utility::tag::XMLSchemaDefinition & );
+
+	static std::string
+	perturber_group_name();
+
+	static std::string
+	folder_group_name();
 
 	void
 	parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map );
@@ -247,6 +288,9 @@ private:
 
 	void
 	fold_attempt( core::pose::Pose & pose ) const;
+
+
+
 
 private:
 	// objects
@@ -276,14 +320,14 @@ public:
 	static std::string const
 	class_name() { return "SetPoseSecstructFromStructureDataMover"; }
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	std::string
+	get_name() const override;
 };
 
 class EXCN_FilterFailed : public utility::excn::EXCN_Base {

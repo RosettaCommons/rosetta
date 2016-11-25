@@ -59,6 +59,9 @@
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -73,21 +76,21 @@ using namespace ObjexxFCL::format;
 using namespace core;
 
 // Creator stuffs first
-protocols::moves::MoverOP
-NormalModeRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NormalModeRelaxMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP NormalModeRelaxMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new NormalModeRelaxMover );
+// XRW TEMP }
 
-std::string
-NormalModeRelaxMoverCreator::mover_name()
-{
-	return "NormalModeRelax";
-}
-std::string
-NormalModeRelaxMoverCreator::keyname() const
-{
-	return NormalModeRelaxMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NormalModeRelaxMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "NormalModeRelax";
+// XRW TEMP }
+// XRW TEMP std::string
+// XRW TEMP NormalModeRelaxMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return NormalModeRelaxMover::mover_name();
+// XRW TEMP }
 
 ///////////////////////////
 
@@ -170,10 +173,10 @@ NormalModeRelaxMover::set_default()
 	sfxn_cen_ = scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
 }
 
-std::string
-NormalModeRelaxMover::get_name() const {
-	return NormalModeRelaxMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NormalModeRelaxMover::get_name() const {
+// XRW TEMP  return NormalModeRelaxMover::mover_name();
+// XRW TEMP }
 
 void
 NormalModeRelaxMover::apply( pose::Pose &pose )
@@ -645,6 +648,121 @@ void NormalModeRelaxMover::parse_my_tag(
 
 	set_movemap( pose, movemap );
 }
+
+std::string NormalModeRelaxMover::get_name() const {
+	return mover_name();
+}
+
+std::string NormalModeRelaxMover::mover_name() {
+	return "NormalModeRelax";
+}
+
+void NormalModeRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( [] (std::string const& name) {
+		return mover_name() + "_subelement_" + name + "Type";
+		});
+	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+
+
+	XMLSchemaRestriction relaxmode_enum;
+	relaxmode_enum.name("relaxmode_name");
+	relaxmode_enum.base_type(xs_string);
+	relaxmode_enum.add_restriction( xsr_enumeration, "min" );
+	relaxmode_enum.add_restriction( xsr_enumeration, "relax" );
+	relaxmode_enum.add_restriction( xsr_enumeration, "extrapolate" );
+	xsd.add_top_level_element(relaxmode_enum);
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cartesian", xsct_rosetta_bool,
+		"Use Cartesian normal model, which is recommended over Torsional normal mode",
+		"true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"centroid", xsct_rosetta_bool,
+		"Use centroid description in the Mover. relaxmode = \"relax\" is prevented in this case",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"nmodes", xsct_non_negative_integer,
+		"How many normal modes to try",
+		"5");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mix_modes", xsct_rosetta_bool,
+		"Whether use mixture of modes",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"pertscale", xsct_real,
+		"By how much to perturb the backbone in Angstrom",
+		"1.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"randomselect", xsct_rosetta_bool,
+		"Do random selection among sampled structures instead of picking best scoring one",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"relaxmode", "relaxmode_name",
+		"The way of relaxing structure. \"relax\" calls FastRelax, \"min\" Minimizer",
+		"min");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"selection_kT", xsct_real,
+		"XRW TO DO",
+		"1e6");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cartesian_minimize", xsct_rosetta_bool,
+		"Use cartesian minimization for relax or minimization",
+		"false");
+	attlist + XMLSchemaAttribute(
+		"nsample", xsct_non_negative_integer,
+		"How many structures to try. This only works when mix_modes = true; otherwise will try 2*nmodes");
+	attlist + XMLSchemaAttribute(
+		"k_bond", xsct_real,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"k_short", xsct_real,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"k_long", xsct_real,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"outsilent", xs_string,
+		"Specifies name of output silent file to store all the sampled structures. "
+		"By default the Mover won't output any silent");
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"Scorefxn to relax poses and select among multiple solutions. For centroid mode, stage4");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"chi", xsct_rosetta_bool,
+		"XRW TO DO",
+		"true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"bb", xsct_rosetta_bool,
+		"XRW TO DO",
+		"true");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"NormalModeRelax relaxes a structures to the coordinate directions derived from Anisotropic "
+		"Network Model (ANM). The way how it works is: a) generate a extrapolated coordinates, "
+		"b) put coordinate restraints to that coordinates, and c) run minimization or FastRelax. "
+		"Current implementation tries multiple normal modes and returns the best scoring one",
+		attlist, subelements );
+}
+
+std::string NormalModeRelaxMoverCreator::keyname() const {
+	return NormalModeRelaxMover::mover_name();
+}
+
+protocols::moves::MoverOP
+NormalModeRelaxMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NormalModeRelaxMover );
+}
+
+void NormalModeRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NormalModeRelaxMover::provide_xml_schema( xsd );
+}
+
 
 } // namespace normalmode
 } // namespace protocols

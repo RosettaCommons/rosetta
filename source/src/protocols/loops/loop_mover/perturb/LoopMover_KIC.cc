@@ -74,6 +74,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 
@@ -604,10 +607,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	return loop_mover::Success;
 }
 
-std::string
-LoopMover_Perturb_KIC::get_name() const {
-	return "LoopMover_Perturb_KIC";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Perturb_KIC::get_name() const {
+// XRW TEMP  return "LoopMover_Perturb_KIC";
+// XRW TEMP }
 
 void
 LoopMover_Perturb_KIC::show(std::ostream & output) const
@@ -630,15 +633,46 @@ basic::Tracer & LoopMover_Perturb_KIC::tr() const
 	return TR;
 }
 
-LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
+// XRW TEMP LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
 
-moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Perturb_KIC() );
+// XRW TEMP moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_KIC() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopMover_Perturb_KICCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Perturb_KIC";
+// XRW TEMP }
+
+std::string LoopMover_Perturb_KIC::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Perturb_KIC::mover_name() {
+	return "LoopMover_Perturb_KIC";
+}
+
+void LoopMover_Perturb_KIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Model one single loop using KIC for loop closure. Reads only commandline options.", attlist );
 }
 
 std::string LoopMover_Perturb_KICCreator::keyname() const {
-	return "LoopMover_Perturb_KIC";
+	return LoopMover_Perturb_KIC::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopMover_Perturb_KICCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Perturb_KIC );
+}
+
+void LoopMover_Perturb_KICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Perturb_KIC::provide_xml_schema( xsd );
+}
+
 
 } // namespace perturb
 } // namespace loop_mover

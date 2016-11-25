@@ -43,6 +43,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -52,23 +55,23 @@ static basic::Tracer TR( "protocols.sewing.AddStartnodeFragments" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-AddStartnodeFragmentsCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new AddStartnodeFragments );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddStartnodeFragmentsCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AddStartnodeFragments );
+// XRW TEMP }
 
-std::string
-AddStartnodeFragmentsCreator::keyname() const
-{
-	return AddStartnodeFragmentsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddStartnodeFragmentsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddStartnodeFragments::mover_name();
+// XRW TEMP }
 
-std::string
-AddStartnodeFragmentsCreator::mover_name()
-{
-	return "AddStartnodeFragments";
-}
+// XRW TEMP std::string
+// XRW TEMP AddStartnodeFragments::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddStartnodeFragments";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 AddStartnodeFragments::clone() const {
@@ -79,10 +82,10 @@ AddStartnodeFragments::fresh_instance() const {
 	return protocols::moves::MoverOP( new AddStartnodeFragments );
 }
 
-std::string
-AddStartnodeFragments::get_name() const {
-	return "AddStartnodeFragments";
-}
+// XRW TEMP std::string
+// XRW TEMP AddStartnodeFragments::get_name() const {
+// XRW TEMP  return "AddStartnodeFragments";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  AddStartnodeFragments function   //////////////////////////////////
@@ -144,6 +147,38 @@ AddStartnodeFragments::parse_my_tag(
 	end_res_ = tag->getOption<core::Size>("end_res");
 
 }
+
+std::string AddStartnodeFragments::get_name() const {
+	return mover_name();
+}
+
+std::string AddStartnodeFragments::mover_name() {
+	return "AddStartnodeFragments";
+}
+
+void AddStartnodeFragments::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AddStartnodeFragmentsCreator::keyname() const {
+	return AddStartnodeFragments::mover_name();
+}
+
+protocols::moves::MoverOP
+AddStartnodeFragmentsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddStartnodeFragments );
+}
+
+void AddStartnodeFragmentsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddStartnodeFragments::provide_xml_schema( xsd );
+}
+
 
 
 } //sewing

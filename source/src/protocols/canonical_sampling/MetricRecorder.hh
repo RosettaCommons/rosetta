@@ -71,8 +71,8 @@ public: // Methods
 
 	/// @brief Return the name of this mover.
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief Use a RosettaScripts tag to configure this mover.
 
@@ -206,6 +206,18 @@ public: // Methods
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // Fields
 

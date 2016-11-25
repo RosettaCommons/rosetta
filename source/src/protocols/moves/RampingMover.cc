@@ -34,6 +34,9 @@
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 #include <complex>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -127,15 +130,15 @@ InvGeometricFunc::func( Real x ) const
 	return std::exp( -1 * ( 1 - x ) * inv_one_minus_xval_at_0p5_ * ln_0p5 );
 }
 
-MoverOP RampingMoverCreator::create_mover() const { return MoverOP( new RampingMover ); }
-std::string RampingMoverCreator::keyname() const { return RampingMoverCreator::mover_name(); }
-std::string RampingMoverCreator::mover_name() { return "RampingMover"; }
+// XRW TEMP MoverOP RampingMoverCreator::create_mover() const { return MoverOP( new RampingMover ); }
+// XRW TEMP std::string RampingMoverCreator::keyname() const { return RampingMover::mover_name(); }
+// XRW TEMP std::string RampingMover::mover_name() { return "RampingMover"; }
 
 
 /// RampingMover
 
 RampingMover::RampingMover() :
-	Mover( RampingMoverCreator::mover_name() ),
+	Mover( RampingMover::mover_name() ),
 	mover_( /* 0 */ ),
 	scorefxn_( /* 0 */ ),
 	ramp_one_weight_( true ),
@@ -157,7 +160,7 @@ RampingMover::RampingMover(
 	MonteCarloOP  mc_in,
 	bool geometric_in
 ) :
-	Mover( RampingMoverCreator::mover_name() ),
+	Mover( RampingMover::mover_name() ),
 	mover_(std::move( mover_in )),
 	scorefxn_( scorefxn_in ), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( true ),
@@ -182,7 +185,7 @@ RampingMover::RampingMover(
 	int inner_cycles_in,
 	MonteCarloOP  mc_in
 ) :
-	Mover( RampingMoverCreator::mover_name() ),
+	Mover( RampingMover::mover_name() ),
 	mover_(std::move( mover_in )),
 	scorefxn_(std::move( scorefxn_in )), // replace this with clone() when symmetry comes online.
 	ramp_one_weight_( false ),
@@ -369,12 +372,6 @@ RampingMover::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-RampingMover::get_name() const {
-	return "RampingMover";
-}
-
-
 // @details The Ramping mover performs a shallow copy of the input
 // score function pointer, so that multiple objects can share the
 // same score function and be influenced by this mover's change to
@@ -463,6 +460,79 @@ RampingMover::instantiate_rampfunc(
 
 	return RampingFuncOP( new LinearFunc ); // appease compiler.
 }
+
+std::string RampingMover::get_name() const {
+	return mover_name();
+}
+
+std::string RampingMover::mover_name() {
+	return "RampingMover";
+}
+
+void RampingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"start_weight", xsct_real,
+		"starting weight for ramp");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"end_weight", xsct_real,
+		"ending weight for ramp");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"scoretype", xs_string,
+		"name of the score term to ramp");
+
+	XMLSchemaRestriction ram_func_enumeration;
+	ram_func_enumeration.name( "ramp_func_name" );
+	ram_func_enumeration.base_type( xs_string );
+	ram_func_enumeration.add_restriction( xsr_enumeration, "linear" );
+	ram_func_enumeration.add_restriction( xsr_enumeration, "fast_linear" );
+	ram_func_enumeration.add_restriction( xsr_enumeration, "geometric" );
+	ram_func_enumeration.add_restriction( xsr_enumeration, "inverse_geometric" );
+	xsd.add_top_level_element(ram_func_enumeration);
+	attlist + XMLSchemaAttribute::required_attribute(
+		"ramp_func", "ramp_func_name",
+		"the ramp funct to use");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"inner_cycles", xsct_non_negative_integer,
+		"number of times to call inner mover in each score ramp increment");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"outer_cycles", xsct_non_negative_integer,
+		"number of increments to ramp score in");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"mover", xs_string,
+		"name of the inner mover to use");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"montecarlo", xs_string,
+		"the name of the montecarlo object to use", "none");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Repeatedly applies a given mover while ramping the score from "
+		"a low value to a high value",
+		attlist );
+}
+
+std::string RampingMoverCreator::keyname() const {
+	return RampingMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RampingMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RampingMover );
+}
+
+void RampingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RampingMover::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

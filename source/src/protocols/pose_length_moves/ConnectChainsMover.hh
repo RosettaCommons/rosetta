@@ -61,10 +61,22 @@ public:
 	std::map<std::string, Chain> generate_connected_chains(core::pose::Pose const pose,utility::vector1<std::string> individual_chains);
 	void assemble_missing_chain(std::map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder);
 	void generate_best_final_pose(core::pose::Pose & pose,utility::vector1< utility::vector1 <std::string> > chains_in_poses,std::map<std::string, Chain> connected_chains);
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new ConnectChainsMover( *this ) ); }
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	moves::MoverOP clone() const override { return moves::MoverOP( new ConnectChainsMover( *this ) ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	int resAdjustmentStartLow_;
 	int resAdjustmentStartHigh_;

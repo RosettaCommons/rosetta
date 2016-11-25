@@ -33,6 +33,9 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.PeptideStubMover" );
 
@@ -301,27 +304,27 @@ void PeptideStubMover::add_residue(
 moves::MoverOP PeptideStubMover::clone() const { return moves::MoverOP( new PeptideStubMover( *this ) ); }
 moves::MoverOP PeptideStubMover::fresh_instance() const { return moves::MoverOP( new PeptideStubMover ); }
 
-protocols::moves::MoverOP
-PeptideStubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeptideStubMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PeptideStubMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PeptideStubMover );
+// XRW TEMP }
 
-std::string
-PeptideStubMoverCreator::keyname() const
-{
-	return PeptideStubMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideStubMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PeptideStubMover::mover_name();
+// XRW TEMP }
 
-std::string
-PeptideStubMoverCreator::mover_name()
-{
-	return "PeptideStubMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideStubMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PeptideStubMover";
+// XRW TEMP }
 
-std::string
-PeptideStubMover::get_name() const {
-	return "PeptideStubMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideStubMover::get_name() const {
+// XRW TEMP  return "PeptideStubMover";
+// XRW TEMP }
 
 //Private functions:
 
@@ -375,6 +378,56 @@ void PeptideStubMover::update_pdb_numbering (
 
 	return;
 }
+
+std::string PeptideStubMover::get_name() const {
+	return mover_name();
+}
+
+std::string PeptideStubMover::mover_name() {
+	return "PeptideStubMover";
+}
+
+void PeptideStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "reset", xsct_rosetta_bool, "Delete the input pose" )
+		+ XMLSchemaAttribute( "update_pdb_numbering", xsct_rosetta_bool, "Update the PDB chain IDs and numbers for this pose" );
+	//go through subelements
+	AttributeList subelement_attributes; //all have same attributes
+	subelement_attributes
+		+ XMLSchemaAttribute( "resname", xs_string, "Name of stub residue" )
+		+ XMLSchemaAttribute( "position", xsct_non_negative_integer, "Position to insert stub residue" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_rosetta_bool, "Append residue by jump?", "false" )
+		+ XMLSchemaAttribute( "connecting_atom", xs_string, "Name of atom where residues should be connected" )
+		+ XMLSchemaAttribute::attribute_w_default( "repeat", xsct_non_negative_integer, "Number of times to add this residue", "1" )
+		+ XMLSchemaAttribute( "anchor_rsd", xsct_non_negative_integer, "Residue to which the stub residue should bond" )
+		+ XMLSchemaAttribute( "anchor_atom", xs_string, "Atom to which the stub residue should bond" );
+	XMLSchemaSimpleSubelementList subelements;
+	//Append, Prepend, or Insert
+	subelements
+		.add_simple_subelement( "Append", subelement_attributes, "Specify a residue to append at a position" )
+		.add_simple_subelement( "Prepend", subelement_attributes, "Specify a residue to prepend at a position" )
+		.add_simple_subelement( "Insert", subelement_attributes, "Specify a residue to insert at a position" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Used to append/insert/prepend residues to a pose", attlist, subelements );
+}
+
+std::string PeptideStubMoverCreator::keyname() const {
+	return PeptideStubMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PeptideStubMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PeptideStubMover );
+}
+
+void PeptideStubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PeptideStubMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

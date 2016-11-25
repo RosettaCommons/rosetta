@@ -58,8 +58,8 @@ public:
 
 	~SymRotamerTrialsMover();
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	void
 	make_symmetric_task(
@@ -67,12 +67,24 @@ public:
 		core::pack::task::PackerTaskOP task
 	);
 
-	virtual void parse_my_tag(
+	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 class SymEnergyCutRotamerTrialsMover : public SymRotamerTrialsMover {
@@ -114,11 +126,10 @@ public:
 public:
 
 	/// @brief apply this mover to a pose
-	virtual
 	void
-	apply( core::pose::Pose & pose );
+	apply( core::pose::Pose & pose ) override;
 
-	virtual std::string get_name() const;
+	std::string get_name() const override;
 
 protected:
 

@@ -38,6 +38,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility Headers
@@ -57,23 +60,6 @@ using core::pose::Pose;
 using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MutateResidue" );
-
-std::string
-MutateResidueCreator::keyname() const
-{
-	return MutateResidueCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-MutateResidueCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MutateResidue );
-}
-
-std::string
-MutateResidueCreator::mover_name()
-{
-	return "MutateResidue";
-}
 
 /// @brief default ctor
 MutateResidue::MutateResidue() :
@@ -166,7 +152,7 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 
 	//Set whether the mover should try to preserve atom XYZ coordinates or not.  (Default false).
 	set_preserve_atom_coords( tag->getOption<bool>("preserve_atom_coords", false) );
-	
+
 	//Set whether we're updating coordinates of polymer bond-dependent atoms.
 	set_update_polymer_dependent( tag->getOption<bool>( "update_polymer_bond_dependent", update_polymer_dependent() ) );
 
@@ -221,17 +207,84 @@ void MutateResidue::apply( Pose & pose ) {
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
 		*new_res, pose.conformation(), !preserve_atom_coords() );
 	pose.replace_residue( rosetta_target, *new_res, false );
-	
-	if( update_polymer_dependent() ) { //Update the coordinates of atoms that depend on polymer bonds:
+
+	if ( update_polymer_dependent() ) { //Update the coordinates of atoms that depend on polymer bonds:
 		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( rosetta_target );
 	}
 
 }
 
-std::string
-MutateResidue::get_name() const {
-	return MutateResidueCreator::mover_name();
+std::string MutateResidue::get_name() const {
+	return mover_name();
 }
+
+std::string MutateResidue::mover_name() {
+	return "MutateResidue";
+}
+
+void MutateResidue::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"target", xs_string,
+		"The location to mutate. This can be a PDB number (e.g. 31A), a Rosetta index (e.g. 177), "
+		"or an index in a reference pose or snapshot stored at a point in a protocol "
+		"before residue numbering changed in some way (e.g. refpose(snapshot1,23)). "
+		"See the convention on residue indices in the RosettaScripts Conventions documentation for details");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"new_res", xs_string,
+		"The name of the residue to introduce. This string should correspond to "
+		"the ResidueType::name() function (eg ASP).");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mutate_self", xsct_rosetta_bool,
+		"If true, will mutate the selected residue to itself, regardless of what new_res "
+		"is set to (although new_res is still required). This is useful to \"clean\" residues when "
+		"there are Rosetta residue incompatibilities (such as terminal residues) with movers and filters.",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"perserve_atom_coords", xsct_rosetta_bool,
+		"If true, then atoms in the new residue that have names matching atoms in the old residue "
+		"will be placed at the coordinates of the atoms in the old residue, with other atoms "
+		"rebuilt based on ideal coordinates. If false, then only the mainchain heavyatoms are "
+		"placed based on the old atom's mainchain heavyatoms; the sidechain is built from ideal "
+		"coordinates, and sidechain torsion values are then set to the sidechain torsion values "
+		"from the old residue. False if unspecified.",
+		"false");
+
+	attlist + XMLSchemaAttribute(
+		"update_polymer_bond_dependent", xsct_rosetta_bool,
+		"Update the coordinates of atoms that depend on polymer bonds");
+
+	attlist + XMLSchemaAttribute( "preserve_atom_coords", xsct_rosetta_bool,
+		"Preserve atomic coords as much as possible" );
+
+	// AMW: can this take a residue selector? No evidence in parse_my_tag, but
+	// some support from Parisa's submitted XML
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Change a single residue to a different type. For instance, mutate Arg31 to an Asp.",
+		attlist );
+}
+
+std::string MutateResidueCreator::keyname() const {
+	return MutateResidue::mover_name();
+}
+
+protocols::moves::MoverOP
+MutateResidueCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MutateResidue );
+}
+
+void MutateResidueCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MutateResidue::provide_xml_schema( xsd );
+}
+
 
 
 

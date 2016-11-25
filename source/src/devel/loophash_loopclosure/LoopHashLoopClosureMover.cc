@@ -62,6 +62,9 @@
 #include <sstream>
 #include <iostream>
 #include <unistd.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace loophash_loopclosure {
@@ -73,25 +76,25 @@ std::ostream& operator<< (std::ostream& out , const MyLoop & loop ) {
 	return out;
 }
 
-LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator() = default;
-LoopHashLoopClosureMoverCreator::~LoopHashLoopClosureMoverCreator() = default;
+// XRW TEMP LoopHashLoopClosureMoverCreator::LoopHashLoopClosureMoverCreator() = default;
+// XRW TEMP LoopHashLoopClosureMoverCreator::~LoopHashLoopClosureMoverCreator() = default;
 
-protocols::moves::MoverOP
-LoopHashLoopClosureMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopHashLoopClosureMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
+// XRW TEMP }
 
-std::string
-LoopHashLoopClosureMoverCreator::keyname() const
-{
-	return LoopHashLoopClosureMoverCreator::mover_name();
-}
-std::string
-LoopHashLoopClosureMoverCreator::mover_name()
-{
-	return "LoopHashLoopClosureMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashLoopClosureMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopHashLoopClosureMover::mover_name();
+// XRW TEMP }
+// XRW TEMP std::string
+// XRW TEMP LoopHashLoopClosureMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopHashLoopClosureMover";
+// XRW TEMP }
 
 LoopHashLoopClosureMover::LoopHashLoopClosureMover()
 {
@@ -121,11 +124,11 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 	remodel_ = protocols::forge::remodel::RemodelMover_OP( new protocols::forge::remodel::RemodelMover() );
 	remodel_->apply(pose);
 }
-std::string
-LoopHashLoopClosureMover::get_name() const
-{
-	return "LoopHashLoopClosureMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashLoopClosureMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "LoopHashLoopClosureMover";
+// XRW TEMP }
 protocols::moves::MoverOP
 LoopHashLoopClosureMover::clone() const {
 	return protocols::moves::MoverOP( new LoopHashLoopClosureMover( *this ) );
@@ -483,6 +486,99 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	// No optimization on hydrogens
 	TR << "packing::no_optH = " << (option[packing::no_optH] ? "true" : "false") << std::endl;
 }
+
+std::string LoopHashLoopClosureMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoopHashLoopClosureMover::mover_name() {
+	return "LoopHashLoopClosureMover";
+}
+
+void LoopHashLoopClosureMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"loop_insert", xs_string,
+		"Instruction string in Between Chains format: "
+		"e.g. \"A6B7CDE\" to insert a loop of size 6 between chain A and B and another of 7 between B and C "
+		"loop_insert, loop_insert_rclrc, and blueprint are mutually exclusive options");
+
+	attlist + XMLSchemaAttribute(
+		"loop_insert_rclrc", xs_string,
+		"Instruction string in Residue:Chain:Length format: "
+		"e.g. 25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit) "
+		"and another of size 7 residues between 50 and 51. "
+		"loop_insert, loop_insert_rclrc, and blueprint are mutually exclusive options");
+
+	attlist + XMLSchemaAttribute(
+		"blueprint", xs_string,
+		"loop_insert, loop_insert_rclrc, and blueprint are mutually exclusive options");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"loophash_db_path", xs_string,
+		"path to the loophash library");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"loophash_ex_limit", xsct_non_negative_integer,
+		"loop extension limit",
+		"4");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"quick_and_dirty", xsct_rosetta_bool,
+		"remodel quick and dirty?",
+		"true");
+
+	attlist + XMLSchemaAttribute(
+		"symmetry_definition", xs_string,
+		"The structure is symmetric. Specify symmetry definition. "
+		"symmetry_definition and repeat_strucutre are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"repeat_structure", xs_integer,
+		"Number of times the structure should be repeated. "
+		"symmetry_definition and repeat_strucutre are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"lh_filter_string", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_linear_chainbreak", xsct_real,
+		"XSD XRW: TO DO",
+		"0.07");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"num_trajectory", xsct_non_negative_integer,
+		"number of trajectories",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"save_top", xsct_non_negative_integer,
+		"keep top n scores",
+		"1");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Close loops using loophash library",
+		attlist );
+}
+
+std::string LoopHashLoopClosureMoverCreator::keyname() const {
+	return LoopHashLoopClosureMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopHashLoopClosureMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopHashLoopClosureMover );
+}
+
+void LoopHashLoopClosureMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopHashLoopClosureMover::provide_xml_schema( xsd );
+}
+
 
 } // loophash_loopclosure
 } // devel

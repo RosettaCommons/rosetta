@@ -112,6 +112,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -597,10 +600,10 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	}
 }
 
-std::string
-SymDockProtocol::get_name() const {
-	return "SymDockProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP SymDockProtocol::get_name() const {
+// XRW TEMP  return "SymDockProtocol";
+// XRW TEMP }
 
 
 core::Real
@@ -784,22 +787,63 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 }//end parse_my_tag
 
 
-std::string
-SymDockProtocolCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP SymDockProtocolCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SymDockProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymDockProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymDockProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SymDockProtocol::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SymDockProtocol";
+// XRW TEMP }
+
+std::string SymDockProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string SymDockProtocol::mover_name() {
+	return "SymDockProtocol";
+}
+
+void SymDockProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return SymDockProtocolCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "dock_rtmin", xsct_rosetta_bool, "Does rotamer trials with minimization." )
+		+ XMLSchemaAttribute( "sc_min", xsct_rosetta_bool, "Does sidechain minimization of interface residues." )
+		+ XMLSchemaAttribute( "max_repeats", xsct_rosetta_bool, "If a decoy does not pass the low- and high-resolution filters, how many attempts to make before failure." )
+		+ XMLSchemaAttribute( "dock_ppk", xsct_rosetta_bool, "Docking prepack mode." )
+		+ XMLSchemaAttribute( "fullatom", xsct_rosetta_bool, "Enable full-atom input of PDB or centroid structures." )
+		+ XMLSchemaAttribute( "local_refine", xsct_rosetta_bool, "Do a local refinement of the docking position (high resolution)." )
+		+ XMLSchemaAttribute( "view", xsct_rosetta_bool, "Decide whether to use the viewer (graphical) or not." ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "docking_score_low" ) ;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist , "docking_score_high" ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Symmetric oligomer docking.", attlist );
+}
+
+std::string SymDockProtocolCreator::keyname() const {
+	return SymDockProtocol::mover_name();
 }
 
 protocols::moves::MoverOP
 SymDockProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymDockProtocol() );
+	return protocols::moves::MoverOP( new SymDockProtocol );
 }
 
-std::string
-SymDockProtocolCreator::mover_name()
+void SymDockProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "SymDockProtocol";
+	SymDockProtocol::provide_xml_schema( xsd );
 }
+
 
 
 } // symmetric_docking

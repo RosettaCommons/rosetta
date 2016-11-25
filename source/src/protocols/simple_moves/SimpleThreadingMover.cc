@@ -32,6 +32,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("SimpleThreadingMover");
 
@@ -111,12 +114,6 @@ SimpleThreadingMover::clone() const{
 moves::MoverOP
 SimpleThreadingMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new SimpleThreadingMover);
-
-}
-
-std::string
-SimpleThreadingMover::get_name() const {
-	return "SimpleThreadingMover";
 
 }
 
@@ -251,22 +248,67 @@ SimpleThreadingMover::apply(core::pose::Pose& pose){
 
 ////////////// Creator /////////
 
+std::string SimpleThreadingMover::get_name() const {
+	return mover_name();
+}
+
+std::string SimpleThreadingMover::mover_name() {
+	return "SimpleThreadingMover";
+}
+
+void SimpleThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"pack_neighbors", xsct_rosetta_bool,
+		"Option to pack neighbors while threading", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"neighbor_dis", xsct_real,
+		"Distance to repack neighbor side chains. Repack shell distance for each threaded residue",
+		"6.0");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"start_position", xs_string,
+		"Position to start thread. PDB numbering (like 30L) or Rosetta pose numbering. "
+		"PDB numbering parsed at apply time to allow for pose-length changes prior to apply of this mover");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"thread_sequence", xs_string,
+		"One letter amino acid sequence we will be grafting. "
+		"Currently only works for canonical amino acids");
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"Optional Scorefunction name passed - setup in score function block");
+	attlist + XMLSchemaAttribute(
+		"skip_unknown_mutant", xsct_rosetta_bool,
+		"Skip unknown amino acid in thread_sequence string instead of throwing an exception" );
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"pack_rounds", xsct_non_negative_integer,
+		"Number of packing rounds for threading", "5");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"This mover functions to thread the sequence of a region onto the given pose. "
+		"Nothing fancy here. Useful when combined with -parser:string_vars option "
+		"to replace strings within the RosettaScript. "
+		"For more a more fancy comparative modeling protocol, please see the lovely RosettaCM",
+		attlist );
+}
+
+std::string SimpleThreadingMoverCreator::keyname() const {
+	return SimpleThreadingMover::mover_name();
+}
+
 protocols::moves::MoverOP
 SimpleThreadingMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SimpleThreadingMover );
 }
 
-std::string
-SimpleThreadingMoverCreator::keyname() const {
-	return SimpleThreadingMoverCreator::mover_name();
+void SimpleThreadingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SimpleThreadingMover::provide_xml_schema( xsd );
 }
 
-std::string
-SimpleThreadingMoverCreator::mover_name(){
-	return "SimpleThreadingMover";
-}
 
 
 }//simple_moves
 }//protocols
-

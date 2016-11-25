@@ -24,6 +24,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -31,11 +34,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
 
-protocols::filters::FilterOP
-ResidueDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDistanceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDistanceFilter ); }
 
-std::string
-ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }
 
 ResidueDistanceFilter::~ResidueDistanceFilter()= default;
 
@@ -77,6 +80,48 @@ ResidueDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real const distance( res_res1.xyz( res_res1.nbr_atom() ).distance( res_res2.xyz( res_res2.nbr_atom() ) ) );
 	return( distance );
 }
+
+std::string ResidueDistanceFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueDistanceFilter::class_name() {
+	return "ResidueDistance";
+}
+
+void ResidueDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"distance", xsct_real,
+		"Maximal distance between residue 1 and residue 2");
+
+	core::pose::attributes_for_get_resnum(attlist, "res1_");
+	core::pose::attributes_for_get_resnum(attlist, "res2_");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Returns true if the distance between 2 residues does not "
+		"exceed the threshold",
+		attlist );
+}
+
+std::string ResidueDistanceFilterCreator::keyname() const {
+	return ResidueDistanceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueDistanceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueDistanceFilter );
+}
+
+void ResidueDistanceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueDistanceFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

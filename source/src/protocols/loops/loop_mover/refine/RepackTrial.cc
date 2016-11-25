@@ -42,6 +42,9 @@
 
 // C++ headers
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.RepackTrial" );
 using namespace core;
@@ -80,10 +83,10 @@ RepackTrial & RepackTrial::operator=( RepackTrial const & rhs ){
 RepackTrial::~RepackTrial() {}
 
 /// @brief Each derived class must specify its name.
-std::string RepackTrial::get_name() const
-{
-	return type();
-}
+// XRW TEMP std::string RepackTrial::get_name() const
+// XRW TEMP {
+// XRW TEMP  return type();
+// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -192,15 +195,46 @@ std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial )
 	return out;
 }
 
-RepackTrialCreator::~RepackTrialCreator() {}
+// XRW TEMP RepackTrialCreator::~RepackTrialCreator() {}
 
-moves::MoverOP RepackTrialCreator::create_mover() const {
-	return moves::MoverOP( new RepackTrial() );
+// XRW TEMP moves::MoverOP RepackTrialCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new RepackTrial() );
+// XRW TEMP }
+
+// XRW TEMP std::string RepackTrialCreator::keyname() const {
+// XRW TEMP  return "RepackTrial";
+// XRW TEMP }
+
+std::string RepackTrial::get_name() const {
+	return mover_name();
+}
+
+std::string RepackTrial::mover_name() {
+	return "RepackTrial";
+}
+
+void RepackTrial::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Interface for all types of \"inner cycle\" operations used for loop refinement.", attlist );
 }
 
 std::string RepackTrialCreator::keyname() const {
-	return "RepackTrial";
+	return RepackTrial::mover_name();
 }
+
+protocols::moves::MoverOP
+RepackTrialCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RepackTrial );
+}
+
+void RepackTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepackTrial::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

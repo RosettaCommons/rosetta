@@ -45,6 +45,10 @@
 // C++ Headers
 #include <algorithm>
 #include <limits>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/PdbDataFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -87,10 +91,10 @@ PdbDataFeatures::PdbDataFeatures(PdbDataFeatures const & ) : FeaturesReporter()
 
 PdbDataFeatures::~PdbDataFeatures() = default;
 
-string PdbDataFeatures::type_name() const
-{
-	return "PdbDataFeatures";
-}
+// XRW TEMP string PdbDataFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "PdbDataFeatures";
+// XRW TEMP }
 
 void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -445,6 +449,37 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	confidence_insert.write_to_database(db_session);
 
 }
+
+std::string PdbDataFeatures::type_name() const {
+	return class_name();
+}
+
+std::string PdbDataFeatures::class_name() {
+	return "PdbDataFeatures";
+}
+
+void PdbDataFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record PDB-specific features for a set of residues, such as the minimum and maximum occupancies for the backbone and sidechain atoms", attlist );
+}
+
+std::string PdbDataFeaturesCreator::type_name() const {
+	return PdbDataFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+PdbDataFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new PdbDataFeatures );
+}
+
+void PdbDataFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PdbDataFeatures::provide_xml_schema( xsd );
+}
+
 
 
 }

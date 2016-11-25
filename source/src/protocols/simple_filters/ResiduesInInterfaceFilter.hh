@@ -51,6 +51,18 @@ public:
 	core::Size compute( core::pose::Pose const & pose ) const;
 	~ResiduesInInterfaceFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size residues_in_interface_threshold_, rb_jump_;
 };

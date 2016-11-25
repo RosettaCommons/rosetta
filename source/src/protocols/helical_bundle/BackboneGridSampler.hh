@@ -79,7 +79,7 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -265,6 +265,18 @@ public:
 	/// @brief Get the number of residues per repeat.
 	///
 	core::Size residues_per_repeat() const { return residues_per_repeat_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

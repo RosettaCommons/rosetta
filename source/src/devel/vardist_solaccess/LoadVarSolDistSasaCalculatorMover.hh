@@ -28,6 +28,7 @@ class LoadVarSolDistSasaCalculatorMoverCreator : public protocols::moves::MoverC
 public:
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 /// @brief Handles sphere-sphere overlap calculations
@@ -39,6 +40,9 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	std::string get_name() const override;
+	static std::string mover_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	void apply( core::pose::Pose & p ) override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)

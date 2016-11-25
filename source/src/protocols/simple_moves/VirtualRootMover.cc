@@ -29,31 +29,17 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.VirtualRootMover" );
 
-std::string
-VirtualRootMoverCreator::keyname() const
-{
-	return VirtualRootMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-VirtualRootMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VirtualRootMover );
-}
-
-std::string
-VirtualRootMoverCreator::mover_name()
-{
-	return "VirtualRoot";
-}
-
 VirtualRootMover::VirtualRootMover() :
-	moves::Mover( VirtualRootMoverCreator::mover_name() ),
+	moves::Mover( VirtualRootMover::mover_name() ),
 	remove_(false),
 	removable_(false)
 {}
@@ -99,10 +85,10 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-std::string
-VirtualRootMover::get_name() const {
-	return VirtualRootMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP VirtualRootMover::get_name() const {
+// XRW TEMP  return VirtualRootMover::mover_name();
+// XRW TEMP }
 
 void VirtualRootMover::parse_my_tag(
 	TagCOP const tag,
@@ -126,6 +112,51 @@ VirtualRootMover::set_remove( bool const remove )
 {
 	remove_ = remove;
 }
+
+std::string VirtualRootMover::get_name() const {
+	return mover_name();
+}
+
+std::string VirtualRootMover::mover_name() {
+	return "VirtualRoot";
+}
+
+void VirtualRootMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"remove", xsct_rosetta_bool,
+		"Removes the virtual root from the pose. Useful for subsequent use to a previous VirtualRoot call")
+		+ XMLSchemaAttribute(
+		"removable", xsct_rosetta_bool,
+		"Set this to true of you want the virtual root to be removable. See remove option.");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Reroot the pose foldtree on a (new) virtual residue. Useful for minimization "
+		"in the context of absolute frames (coordinate constraints, electron density information, etc.) "
+		"By default, the mover will add a virtual root residue to the pose if one "
+		"does not already exist. If you wish to later remove the virtual root, "
+		"add the root with a mover with removable set to true, and then later "
+		"use a separate VirtualRoot mover with remove set to true to remove it.",
+		attlist );
+}
+
+std::string VirtualRootMoverCreator::keyname() const {
+	return VirtualRootMover::mover_name();
+}
+
+protocols::moves::MoverOP
+VirtualRootMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new VirtualRootMover );
+}
+
+void VirtualRootMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	VirtualRootMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

@@ -46,6 +46,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.SymDofMover" );
 
@@ -61,22 +64,22 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
 // -------------  Mover Creator -------------
-std::string
-SymDofMoverCreator::keyname() const
-{
-	return SymDofMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymDofMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SymDofMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SymDofMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymDofMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymDofMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymDofMover );
+// XRW TEMP }
 
-std::string
-SymDofMoverCreator::mover_name()
-{
-	return "SymDofMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymDofMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SymDofMover";
+// XRW TEMP }
 // -------------  Mover Creator -------------
 
 SymDofMover::SymDofMover() :
@@ -693,6 +696,81 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		radial_disp_deltas_ = radial_disp_deltas;
 	}
 }
+
+std::string SymDofMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymDofMover::mover_name() {
+	return "SymDofMover";
+}
+
+void SymDofMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction sampling_mode_enumeration;
+	sampling_mode_enumeration.name( "sampling_mode_choices" );
+	sampling_mode_enumeration.base_type( xs_string );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "grid" );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "gaussian" );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "single_dock" );
+	xsd.add_top_level_element( sampling_mode_enumeration );
+
+	XMLSchemaRestriction axes_cslist;
+	axes_cslist.name( "type_for_axes_cslist" );
+	axes_cslist.base_type( xs_string );
+	axes_cslist.add_restriction( xsr_pattern, "[xyz](,[xyz])*" );
+	xsd.add_top_level_element( axes_cslist );
+
+	XMLSchemaRestriction axes_or_zero_cslist;
+	axes_or_zero_cslist.name( "type_for_axes_or_zero_cslist" );
+	axes_or_zero_cslist.base_type( xs_string );
+	axes_or_zero_cslist.add_restriction( xsr_pattern, "[xyz0](,[xyz0])*" );
+	xsd.add_top_level_element( axes_or_zero_cslist );
+
+	/// XRW TO DO: Might be worth adding these patterns to src/utility/tag/XMLSchemaGeneration.cc
+	/// XRW TO DO: There are some detailed descriptions of when to use certain attributes based on the result of other attributes, add to documentation.
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "set_sampler" , xsct_rosetta_bool, "For use with the GetRBDOFValues filter. If set to false, then the RBDOF values will not be updated when the reported DOF values are not affected by the SymDofMoverSampler. Defaults to true." , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "auto_range" , xsct_rosetta_bool, "Boolean to set the manner in which the user defined ranges for radial displacements are interpreted. If set to true, then the negative values for min or max displacement are interpreted as moving the structure closer to the origin and positive values away from the origin." , "false" )
+		+ XMLSchemaAttribute::required_attribute( "symm_file" , xs_string, "Symmetry definition file." )
+		+ XMLSchemaAttribute::required_attribute( "sym_dof_names" , xs_string, "Names of the sym_dofs in the symmetry definition file along which one wishes to move or rotate the input. NOTE: For multicomponent systems, the order of the displacements, angles, ranges, and steps must correspond with the the order of the sym_dof_names. Passed as a string with comma-separated list (e.g. sym_dof_names='JTP1,JDP1')" )
+		+ XMLSchemaAttribute::attribute_w_default("sampling_mode", "sampling_mode_choices", "Which mode to use to sample around the initial configuration, if desired. 'grid', 'uniform', or 'gaussian'", "single_dock" )
+		+ XMLSchemaAttribute( "flip_input_about_axes" , "type_for_axes_or_zero_cslist", "Rotate subunits 180 degrees about the specified axes prior to applying transtions, rotations, alignment, and symmetry. ie, 'reverse' the component before further manipulation." )
+		+ XMLSchemaAttribute( "align_input_axes_to_symdof_axes", "type_for_axes_cslist", "If specified, will align the specified axis of each subunit with the corresponding axis of the symdof jump from the symmetry definition file." )
+		+ XMLSchemaAttribute( "radial_disps", xs_string, "Initial displacement(s) by which to translate the input structure(s) along the user specified axis. Passed as a string with a comma-separated list (e.g. radial_disps='-65.4,109.2'). Must also specify translationa_axes to apply these along." )
+		+ XMLSchemaAttribute( "radial_offsets", xs_string, "Can be used in any sampling mode. Offset value(s) are added to the corresponding radial_disps before grid, uniform, or gaussian sampling is performed. Works with auto_range. For example, if one wants to space out both symdofs a given structure by 2 angstroms, one can pass radial_offsets='2,2' and auto_range=true. Then, regardless of the sign of the radial disps, the subunits will be displaced 2 angstroms further from the origin (assuming the input subunit(s) start at the origin)." )
+		+ XMLSchemaAttribute( "translation_axes", "type_for_axes_cslist", "Need to use this when using radial_disps. Axes (x, y, or z) along which to translate each subunit prior to applying symmetry." )
+		+ XMLSchemaAttribute( "angles", xsct_real_cslist, "Initial angle(s) by which to rotate the input structure(s) about the user specified axis. Passed as a comma-separated list (e.g. angles='-65.4,109.2'). Must also specificy rotation axes to apply these along." )
+		+ XMLSchemaAttribute( "rotation_axes", "type_for_axes_cslist", "Axes (x, y, or x) along which to rotate each subunit prior to applying symmetry. Need to use this when using angles."  )
+		+ XMLSchemaAttribute( "radial_disps_range_min", xsct_real, "For use with grid or uniform sampling. Minimum distance(s) in Angstroms by which to modify the initial radial_disps. Passed as a string with a comma-separated list (e.g. radial_disps_range_min='-1,-1'." )
+		+ XMLSchemaAttribute( "radial_disps_range_max", xs_string, "For use with grid or uniform sampling. Maximum distance(s) in Angstroms by which to modify the initial radial_disps. Passed as a string with a comma-separated list (e.g. radial_disps_range_max='1,1'." )
+		+ XMLSchemaAttribute( "angles_range_min", xs_string, "For use with grid or uniform sampling. Minimum angle(s) in degrees by which to rotate the structure around the initial angle(s) provided by the user. Passed as a string with a comma-separated list (e.g. angles_range_min='-1,-1'." )
+		+ XMLSchemaAttribute( "angles_range_max", xs_string, "For use with grid or uniform sampling. Maximum angle(s) in degrees by which to rotate the structure around the initial angle(s) provided by the user. Passed as a string with a comma-separated list (e.g. angles_range_max='1,1'." )
+		+ XMLSchemaAttribute( "angle_steps", xs_string, "For use with grid sampling. Set the bin size(s) by which to sample within the user defined range(s). Passed as a string with a comma-separated list (e.g. angle_steps='0.5,0.5'." )
+		+ XMLSchemaAttribute( "radial_disp_steps", xs_string, "For use with Gaussian sampling. The range within to sample inward and outward around the user specified initial displacement(s). Passed as a string with a comma-separated list (e.g. radial_disp_deltas='0.5,0.5'." )
+		+ XMLSchemaAttribute( "angle_deltas", xs_string, "For use with Gaussian sampling. The range within to sample around the user specified initial angle(s). Passed as a string with a comma-separated list (e.g. angle_deltas='0.5,0.5'." )
+		+ XMLSchemaAttribute( "radial_disp_deltas", xs_string, "For use with Gaussian sampling. The range within to sample inward and outward around the user specified initial displacement(s). Passed as a string with a comma-separated list (e.g. radial_disp_deltas='0.5,0.5'." ) ;
+
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Used to setup symmetric systems in which the input structures(s) are aligned along the x, y, or z axis.", attlist );
+}
+
+std::string SymDofMoverCreator::keyname() const {
+	return SymDofMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SymDofMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SymDofMover );
+}
+
+void SymDofMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymDofMover::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // protocols

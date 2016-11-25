@@ -3011,9 +3011,9 @@ declare_cutpoint_chemical_bond( core::pose::Pose & pose, Size const cutpoint_res
 {
 	Size const next_res = ( next_res_in == 0 ) ? ( cutpoint_res + 1 ) : next_res_in; // user might specify a different "next_res" to cyclize.
 	pose.conformation().declare_chemical_bond( cutpoint_res,
-																						 pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
-																						 next_res,
-																						 pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
+		pose.residue( cutpoint_res ).atom_name( pose.residue( cutpoint_res ).upper_connect_atom() ),
+		next_res,
+		pose.residue( next_res ).atom_name( pose.residue( next_res ).lower_connect_atom() ) );
 }
 
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
@@ -3031,9 +3031,9 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
 // try to unify all cutpoint addition into this function.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose,
-																 Size const cutpoint_res,
-																 bool const check_fold_tree /* = true*/,
-																 Size const next_res_in /* = 0 */ )
+	Size const cutpoint_res,
+	bool const check_fold_tree /* = true*/,
+	Size const next_res_in /* = 0 */ )
 {
 	using namespace core::chemical;
 

@@ -25,7 +25,7 @@
 // Proeject Header
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace denovo_design {
@@ -45,6 +45,13 @@ public:
 
 	virtual core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & pose ) const;
+
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static std::string
+	class_name();
+
 
 protected:
 	virtual void

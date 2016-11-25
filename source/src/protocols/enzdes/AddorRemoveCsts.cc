@@ -34,6 +34,9 @@
 // amw debug
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -44,23 +47,6 @@ namespace enzdes {
 std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP > AddOrRemoveMatchCsts::cstfile_map_;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.AddorRemoveCsts" );
-
-std::string
-AddOrRemoveMatchCstsCreator::keyname() const
-{
-	return AddOrRemoveMatchCstsCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-AddOrRemoveMatchCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts );
-}
-
-std::string
-AddOrRemoveMatchCstsCreator::mover_name()
-{
-	return "AddOrRemoveMatchCsts";
-}
 
 AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 : Mover("AddOrRemoveMatchCsts"),
@@ -126,11 +112,6 @@ AddOrRemoveMatchCsts::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-AddOrRemoveMatchCsts::get_name() const {
-	return AddOrRemoveMatchCstsCreator::mover_name();
-}
-
 void
 AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
@@ -189,6 +170,74 @@ AddOrRemoveMatchCsts::get_EnzConstraintIO_for_cstfile(
 	}
 	return cstio_it->second;
 }
+
+std::string AddOrRemoveMatchCsts::get_name() const {
+	return mover_name();
+}
+
+std::string AddOrRemoveMatchCsts::mover_name() {
+	return "AddOrRemoveMatchCsts";
+}
+
+void AddOrRemoveMatchCsts::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"cstfile", xs_string,
+		"name of file to get csts from (can be specified here if one wants to change the constraints, "
+		"e.g. tighten or relax them, as the pose progresses down a protocol.)");
+
+	XMLSchemaRestriction cst_instr_enum;
+	cst_instr_enum.name("cst_instruction_types");
+	cst_instr_enum.base_type(xs_string);
+	cst_instr_enum.add_restriction(xsr_enumeration, "add_new");
+	cst_instr_enum.add_restriction(xsr_enumeration, "add_pregenerated");
+	cst_instr_enum.add_restriction(xsr_enumeration, "remove");
+	xsd.add_top_level_element( cst_instr_enum );
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"cst_instruction", "cst_instruction_types",
+		"1 of 3 choices - \"add_new\" (read from file), \"remove\", or \"add_pregenerated\" "
+		"(i.e. if enz csts existed at any point previosuly in the protocol add them back)");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"keep_covalent", xsct_rosetta_bool,
+		"during removal, keep constraints corresponding to covalent bonds between protein and ligand intact (default=0).",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"accept_blocks_missing_header", xsct_rosetta_bool,
+		"allow more blocks in the cstfile than specified in header REMARKs (see enzdes documentation for details, default=0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fail_on_constraints_missing", xsct_rosetta_bool,
+		"When removing constraints, raise an error if the constraint blocks do not exist in the pose (default=1).",
+		"true");
+
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XRW XSD: TO DO",
+		attlist );
+}
+
+std::string AddOrRemoveMatchCstsCreator::keyname() const {
+	return AddOrRemoveMatchCsts::mover_name();
+}
+
+protocols::moves::MoverOP
+AddOrRemoveMatchCstsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts );
+}
+
+void AddOrRemoveMatchCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddOrRemoveMatchCsts::provide_xml_schema( xsd );
+}
+
 
 } //enzdes
 } //protocols

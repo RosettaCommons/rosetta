@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints 
+/// @brief A wrapper for a very particular AmbiguousConstraint of MultiConstraints
 /// @author Andrew Watkins (amw579@stanford.edu, October 2016)
 
 #ifndef INCLUDED_core_scoring_constraints_BasePairConstraint_fwd_hh

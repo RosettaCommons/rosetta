@@ -40,6 +40,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -53,22 +56,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer FinalMinimizer_tracer( "protocols.ligand_docking.ligand_options.FinalMinimizer", basic::t_debug );
 
-std::string
-FinalMinimizerCreator::keyname() const
-{
-	return FinalMinimizerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FinalMinimizerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FinalMinimizer::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FinalMinimizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FinalMinimizer );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FinalMinimizerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FinalMinimizer );
+// XRW TEMP }
 
-std::string
-FinalMinimizerCreator::mover_name()
-{
-	return "FinalMinimizer";
-}
+// XRW TEMP std::string
+// XRW TEMP FinalMinimizer::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FinalMinimizer";
+// XRW TEMP }
 
 FinalMinimizer::FinalMinimizer():
 	Mover("FinalMinimizer"),
@@ -103,9 +106,9 @@ protocols::moves::MoverOP FinalMinimizer::fresh_instance() const {
 	return protocols::moves::MoverOP( new FinalMinimizer );
 }
 
-std::string FinalMinimizer::get_name() const{
-	return "FinalMinimizer";
-}
+// XRW TEMP std::string FinalMinimizer::get_name() const{
+// XRW TEMP  return "FinalMinimizer";
+// XRW TEMP }
 
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -166,6 +169,39 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	FinalMinimizer_tracer<< std::endl;
 	return protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list) );
 }
+
+std::string FinalMinimizer::get_name() const {
+	return mover_name();
+}
+
+std::string FinalMinimizer::mover_name() {
+	return "FinalMinimizer";
+}
+
+void FinalMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("scorefxn", xs_string, "Used scorefunction. Required.")
+		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMapBuilder. Required.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Do a gradient based minimization of the final docked pose.", attlist );
+}
+
+std::string FinalMinimizerCreator::keyname() const {
+	return FinalMinimizer::mover_name();
+}
+
+protocols::moves::MoverOP
+FinalMinimizerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FinalMinimizer );
+}
+
+void FinalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FinalMinimizer::provide_xml_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

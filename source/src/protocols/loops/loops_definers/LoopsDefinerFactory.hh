@@ -29,6 +29,7 @@
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -76,6 +77,9 @@ public:
 	LoopsDefinerOP
 	create_loops_definer(
 		std::string const & type_name);
+
+	void define_loop_definer_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string loop_definer_xml_schema_group_name();
 
 private:
 

@@ -120,11 +120,11 @@ void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute(  "branch",      xs_string )
-		+ XMLSchemaAttribute(  "branches",    xs_string )
-		+ XMLSchemaAttribute(  "ref_pose_name", xs_string );
+		+ XMLSchemaAttribute(  "branch",      xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute(  "branches",    xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute(  "ref_pose_name", xs_string , "XRW TO DO" );
 
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
 
 
 }

@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/denovo_design/architects/HelixArchitect.hh>
 #include <protocols/denovo_design/architects/HelixArchitectCreator.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -23,6 +23,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.HelixArchitect" );
 
@@ -51,6 +52,31 @@ HelixArchitect::type() const
 {
 	return HelixArchitect::class_name();
 }
+
+void
+HelixArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	HelixArchitect::provide_xml_schema( xsd );
+}
+
+void
+HelixArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	XMLSchemaRestriction length_string;
+	length_string.name( "length_string" );
+	length_string.base_type( xs_string );
+	length_string.add_restriction( xsr_pattern, "[0-9]+(-[0-9]+)?(,[0-9]+(-[0-9]+)?)*" );
+	xsd.add_top_level_element( length_string );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "length", "length_string", "Comma-separated list of single integers and hyphen-separated ranges to specify all possible helix lengths" );
+
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, class_name(), "Design helical segments", attlist );
+
+}
+
+
 
 void
 HelixArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )

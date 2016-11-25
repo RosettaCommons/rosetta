@@ -25,6 +25,9 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -98,11 +101,49 @@ void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
 	// Right now we don't have any options to control, so don't bother doing anything.
 }
 
-protocols::filters::FilterOP
-PoseInfoFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseInfoFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP PoseInfoFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseInfoFilter ); }
 
-std::string
-PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }
+// XRW TEMP std::string
+// XRW TEMP PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }
+
+std::string PoseInfoFilter::name() const {
+	return class_name();
+}
+
+std::string PoseInfoFilter::class_name() {
+	return "PoseInfo";
+}
+
+void PoseInfoFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Primarily intended for debugging purposes. When invoked, it will print "
+		"basic information about the pose (e.g. PDB numbering and FoldTree layout) "
+		"to the standard/tracer output. This filter *always* returns true, therefore "
+		"it's not recommended to use it with the standard \"confidence\" option, as that "
+		"may result in the filter not being applied when you want it to be "
+		"(and consequently not getting the tracer output).",
+		attlist );
+}
+
+std::string PoseInfoFilterCreator::keyname() const {
+	return PoseInfoFilter::class_name();
+}
+
+protocols::filters::FilterOP
+PoseInfoFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new PoseInfoFilter );
+}
+
+void PoseInfoFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PoseInfoFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

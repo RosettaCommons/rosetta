@@ -13,6 +13,7 @@
 //#include <algorithm >
 #include <protocols/matdes/MatDesPointMutationCalculator.hh>
 #include <protocols/matdes/MatDesGreedyOptMutationMover.hh>
+#include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/matdes/MatDesGreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
@@ -62,6 +63,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace matdes {
@@ -74,7 +78,7 @@ using std::pair;
 
 /// @brief default ctor
 MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover() :
-	Mover( MatDesGreedyOptMutationMoverCreator::mover_name() ),
+	Mover( MatDesGreedyOptMutationMover::mover_name() ),
 	task_factory_( /* NULL */ ),
 	// filters_( NULL ), /* how set default vecgtor of NULLs? */
 	// sample_type_( "low" ),
@@ -118,7 +122,7 @@ MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover(
 	bool keep_trying,
 	protocols::filters::FilterOP stopping_condition
 ) :
-	Mover( MatDesGreedyOptMutationMoverCreator::mover_name() )
+	Mover( MatDesGreedyOptMutationMover::mover_name() )
 {
 	task_factory_ = task_factory;
 	filters_ = filters;
@@ -146,10 +150,10 @@ MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover(
 MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover()= default;
 
 //creators
-protocols::moves::MoverOP
-MatDesGreedyOptMutationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MatDesGreedyOptMutationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMover::clone() const{
@@ -157,22 +161,22 @@ MatDesGreedyOptMutationMover::clone() const{
 }
 
 //name getters
-std::string
-MatDesGreedyOptMutationMoverCreator::keyname() const
-{
-	return MatDesGreedyOptMutationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MatDesGreedyOptMutationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MatDesGreedyOptMutationMover::mover_name();
+// XRW TEMP }
 
-std::string
-MatDesGreedyOptMutationMoverCreator::mover_name()
-{
-	return "MatDesGreedyOptMutationMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MatDesGreedyOptMutationMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MatDesGreedyOptMutationMover";
+// XRW TEMP }
 
-std::string
-MatDesGreedyOptMutationMover::get_name() const {
-	return MatDesGreedyOptMutationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MatDesGreedyOptMutationMover::get_name() const {
+// XRW TEMP  return MatDesGreedyOptMutationMover::mover_name();
+// XRW TEMP }
 
 // setter - getter pairs
 void
@@ -942,7 +946,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	if ( mover_it == movers.end() ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Relax mover "+relax_mover_name+" not found" );
 	}
-	relax_mover( mover_it->second );
+	relax_mover( mover_it->second ); //XRW TO DO: what does this mean? do I need to add something?
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
@@ -1075,6 +1079,56 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 		filter_thresholds( filter_thresholds_tmp );
 	}
 }
+
+std::string MatDesGreedyOptMutationMover::get_name() const {
+	return mover_name();
+}
+
+std::string MatDesGreedyOptMutationMover::mover_name() {
+	return "MatDesGreedyOptMutationMover";
+}
+
+void MatDesGreedyOptMutationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	//  XMLSchemaRestriction filter_thresholds_pattern;
+	//         filter_thresholds_enumeration.name( "choices_for_filter_thresholds" ) ;
+	//         filter_thresholds_enumeration.base_type( xs_string ) ;
+	//       filter_thresholds_enumeration.add_restriction( xsr_pattern , "XRW TO DO: Someone with more regular expression experience could write an expression of alternating 'upper/lower,decimal,upper/lower,decimal'" ) ;
+	//       xsd.add_top_level_element( filter_thresholds_pattern ) ;
+
+	AttributeList attlist1;
+	XMLSchemaRepeatableCTNodeOP node1( design_opt::GreedyOptMutationMover::root_node_for_greedy_opt( attlist1, xsd ) );
+
+	attlist1  + XMLSchemaAttribute( "set_task_for_filters" , xs_string , "Returns a Null pointer if incompatible filter type is passed through the xml. Would be nice if task_factory() was a standard method of the filter class, so that we could make a Virtual task_factory() method in the Filter base class and not have to have this specific to TaskAwareScoreTypeFilter.  If this proves useful, then perhaps we could consider that..." )
+		+ XMLSchemaAttribute( "force_natro_for_stored_tasks" , xs_string, "Get reference pose with rotamer(s) to be forced back." )
+		+ XMLSchemaAttribute::attribute_w_default( "use_native" , xsct_rosetta_bool , "Use input native protein as reference pose." , "false" )
+		//+ XMLSchemaAttribute( "reference_name")
+		+ XMLSchemaAttribute( "reference_pdb" , xs_string , "Input alternative reference pdb." )
+		+ XMLSchemaAttribute( "filter_thresholds" , xs_string , "This is a string describing a pattern of comma-separated descriptors. Each filter is related to a pair of either 'upper' or 'lower', then a comma, then a decimal describing the filter threshold the greedyopt can tolerate. An example for one filter that has an upper limit of a change of 0.3 is 'upper,0.3'. I could combined then with a second filter that can tolerate up to 0.05 lower than the original value: 'upper,0.3,lower,0.05'. " ) ; //XRW TO DO: This becomes filter_thresholds_pattern (commented out above) if someone can write the regular expression for it
+
+	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist1 );
+
+	node1->set_element_w_attributes( mover_name(), attlist1, "This mover will first attempt isolated/independent mutations defined in the input task operation, score/filter them all, rank them by score, then attempt to combine them, starting with the best scoring single mutation, accepting the mutation only if the filter score decreases (see skip_best_check for optional exception), and working down the list to the end. Optionally test one of the top N mutations at each positions instead of just the best." );
+	node1->recursively_write_ct_to_schema( xsd );
+
+}
+
+std::string MatDesGreedyOptMutationMoverCreator::keyname() const {
+	return MatDesGreedyOptMutationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MatDesGreedyOptMutationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
+}
+
+void MatDesGreedyOptMutationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MatDesGreedyOptMutationMover::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

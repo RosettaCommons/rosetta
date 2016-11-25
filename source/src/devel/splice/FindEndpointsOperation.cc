@@ -230,14 +230,14 @@ FindEndpointsOperation::provide_xml_schema(
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "Cterm_offset", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "Nterm_offset", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "even", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "odd", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "neighbors", xsct_non_negative_integer, "6" )
-		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xs_decimal, "18.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "point_inside", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "sequence_separation", xsct_non_negative_integer, "15" );
+		+ XMLSchemaAttribute::attribute_w_default(  "Cterm_offset", xsct_non_negative_integer, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "Nterm_offset", xsct_non_negative_integer, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "even", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "odd", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "neighbors", xsct_non_negative_integer, "XRW TO DO",  "6"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xsct_real, "XRW TO DO",  "18.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "point_inside", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "sequence_separation", xsct_non_negative_integer, "XRW TO DO",  "15"  );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

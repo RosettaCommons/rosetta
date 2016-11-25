@@ -35,17 +35,20 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
-protocols::filters::FilterOP
-DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }
 
-std::string
-DdgFilterCreator::keyname() const { return "Ddg"; }
+// XRW TEMP std::string
+// XRW TEMP DdgFilterCreator::keyname() const { return "Ddg"; }
 
 
 DdgFilter::DdgFilter() :
@@ -335,6 +338,51 @@ DdgFilter::filter( protocols::filters::FilterOP f ){
 
 protocols::filters::FilterOP
 DdgFilter::filter() const{ return filter_; }
+
+std::string DdgFilter::name() const {
+	return class_name();
+}
+
+std::string DdgFilter::class_name() {
+	return "Ddg";
+}
+
+void DdgFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "Threshold below which the filter computes the binding energy." , "-15" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_positive_integer , "Specifies which chains to separate. Jump=1 would separate the chains interacting across the first chain termination, jump=2, second etc." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "repeats" , xsct_positive_integer , "Averages the calculation over the number of repeats. Note that ddg calculations show noise of about 1-1.5 energy units, so averaging over 3-5 repeats is recommended for many applications." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack" , xsct_rosetta_bool , "Should the complex be repacked in the bound and unbound states prior to taking the energy difference? If false, the filter turns to a dG evaluator. If repack=false repeats should be turned to 1, b/c the energy evaluations converge very well with repack=false." , "1" )
+		+ XMLSchemaAttribute( "symmetry" , xs_string , "Note: DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." ) //seems like this could be removed
+		+ XMLSchemaAttribute::attribute_w_default( "repack_bound" , xsct_rosetta_bool , "Should the complex be repacked in the bound state? Note: If repack=true, then the complex will be repacked in the bound and unbound state by default. However, if the complex has already been repacked in the bound state prior to calling the DdgFilter then setting repack_bound=false allows one to avoid unnecessary repetition." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_bound" , xsct_rosetta_bool , "Should the relax mover (if specified) be applied to the bound as well as the unbound state? Note: the bound state is not relaxed by default." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "translate_by" , xsct_real , "How far to translate the unbound pose. Note: Default is now 100 Angstroms rather than 1000." , "100" )
+		+ XMLSchemaAttribute( "relax_mover" , xs_string , "Optionally define a mover which will be applied prior to computing the system energy in the unbound state." )
+		+ XMLSchemaAttribute( "filter" , xs_string , "If specified, the given filter will be calculated in the bound and unbound state for the score, rather than the given scorefunction. Repacking, if any, will be done with the provided scorefunction." )
+		+ XMLSchemaAttribute( "chain_num" , xs_string , "Allows you to specify a list of chain numbers to use to calculate the ddg, rather than a single jump. You cannot move chain 1, moving all the other chains is the same thing as moving chain 1, so do that instead. Use independently of jump." )
+		+ XMLSchemaAttribute::attribute_w_default( "extreme_value_removal" , xsct_rosetta_bool , "Compute ddg value times, sort and remove the top and bottom evaluation. This should reduce the noise levels in trajectories involving 1000s of evaluations. If set to true, repeats must be set to at least 3." , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the binding energy for the complex and if it is below the threshold returns true. o/w false. Useful for identifying complexes that have poor binding energy and killing their trajectory.", attlist );
+}
+
+std::string DdgFilterCreator::keyname() const {
+	return DdgFilter::class_name();
+}
+
+protocols::filters::FilterOP
+DdgFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DdgFilter );
+}
+
+void DdgFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DdgFilter::provide_xml_schema( xsd );
+}
+
 }
 
 }

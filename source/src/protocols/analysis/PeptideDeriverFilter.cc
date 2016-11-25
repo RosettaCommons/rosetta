@@ -84,6 +84,10 @@
 
 // C++ headers
 #include <cassert>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+#include <protocols/analysis/PeptideDeriverFilterCreator.hh>
 
 namespace protocols {
 namespace analysis {
@@ -692,7 +696,8 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	// this is simpler than creating a full-fledged factory. Sorry, design pattern people. --yuvals
 	switch ( report_format_ ) {
 	case PRF_MARKDOWN :
-		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*prefix=*/"" ) ) );
+		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*
+			prefix=*/"" ) ) );
 		break;
 	case PRF_BASIC :
 		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , /*prefix=*/"" ) ) );
@@ -1345,6 +1350,95 @@ PeptideDeriverFilter::parse_my_tag( utility::tag::TagCOP tag,
 	set_restrict_receptors_to_chains(restrict_receptors_to_chains);
 	set_restrict_partners_to_chains(restrict_partners_to_chains);
 }
+
+std::string PeptideDeriverFilter::name() const {
+	return class_name();
+}
+
+std::string PeptideDeriverFilter::class_name() {
+	return "PeptideDeriver";
+}
+
+void PeptideDeriverFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction format;
+	format.name( "peptide_deriver_format" );
+	format.base_type( xs_string );
+	format.add_restriction( xsr_enumeration, "markdown" );
+	format.add_restriction( xsr_enumeration, "basic" );
+	xsd.add_top_level_element( format );
+	AttributeList attlist;
+	//Define report format string
+	attlist
+		+ XMLSchemaAttribute(
+		"pep_lengths", xsct_nnegative_int_cslist,
+		"Length(s) of derived peptides" )
+		+ XMLSchemaAttribute(
+		"skip_zero_isc", xsct_rosetta_bool,
+		"Makes derivation go faster by skipping peptides with 0 interface score" )
+		+ XMLSchemaAttribute(
+		"dump_peptide_pose", xsct_rosetta_bool,
+		"Output pose with peptide cut out (best one for each chain pair)" )
+		+ XMLSchemaAttribute(
+		"dump_cyclic_poses", xsct_rosetta_bool,
+		"Output each cyclic peptide pose (those that are modeled; "
+		"which is determined by -optimize_cyclic_threshold)" )
+		+ XMLSchemaAttribute(
+		"dump_report_file", xsct_rosetta_bool,
+		"Send PeptideDeriver output to a file (.peptiderive.txt)" )
+		+ XMLSchemaAttribute(
+		"report_gzip", xsct_rosetta_bool,
+		"Compress report" )
+		+ XMLSchemaAttribute(
+		"dump_prepared_pose", xsct_rosetta_bool,
+		"Output each receptor-partner pose as PeptiDerive sees it, "
+		"i.e. after preparation (minimization and disulfide detection)" )
+		+ XMLSchemaAttribute(
+		"do_minimize", xsct_rosetta_bool,
+		"Perform minimization before everything." )
+		+ XMLSchemaAttribute(
+		"optimize_cyclic_threshold", xsct_rosetta_bool,
+		"Value of peptide interface score percent of total isc "
+		"from which to optimize cyclic peptide" )
+		+ XMLSchemaAttribute(
+		"report_format", "peptide_deriver_format",
+		"The format of the report. Either basic (easily parsable format) "
+		"or markdown (pretty, readable, but verbose format)" )
+		+ XMLSchemaAttribute(
+		"restrict_receptors_to_chains", xsct_chain_cslist,
+		"Only use chains listed here as receptors. "
+		"When empty, consider all chains." )
+		+ XMLSchemaAttribute(
+		"restrict_partners_to_chains", xsct_chain_cslist,
+		"Only use chains listed here as partners. When empty, "
+		"consider all chains. For each receptor-partner pair, a "
+		"peptide is derived from the partner." );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn_deriver" );
+
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Filter for PeptiDerive, a simple application that derives from a given interface "
+		"the linear stretch that contributes most of the binding energy (approximated as "
+		"the score over the interface).",
+		attlist );
+}
+
+std::string PeptideDeriverFilterCreator::keyname() const {
+	return PeptideDeriverFilter::class_name();
+}
+
+protocols::filters::FilterOP
+PeptideDeriverFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new PeptideDeriverFilter );
+}
+
+void PeptideDeriverFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PeptideDeriverFilter::provide_xml_schema( xsd );
+}
+
 
 } // namespace analysis
 } // namespace protocols

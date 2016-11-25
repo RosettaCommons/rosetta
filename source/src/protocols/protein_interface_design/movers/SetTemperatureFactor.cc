@@ -31,6 +31,9 @@
 
 //Auto Headers
 #include <core/kinematics/Jump.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -42,25 +45,25 @@ using protocols::moves::ResId;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
 
-std::string
-SetTemperatureFactorCreator::keyname() const
-{
-	return SetTemperatureFactorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetTemperatureFactorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetTemperatureFactor::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetTemperatureFactorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetTemperatureFactor );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetTemperatureFactorCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetTemperatureFactor );
+// XRW TEMP }
 
-std::string
-SetTemperatureFactorCreator::mover_name()
-{
-	return "SetTemperatureFactor";
-}
+// XRW TEMP std::string
+// XRW TEMP SetTemperatureFactor::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetTemperatureFactor";
+// XRW TEMP }
 
 SetTemperatureFactor::SetTemperatureFactor() :
-	Mover( SetTemperatureFactorCreator::mover_name() ),
+	Mover( SetTemperatureFactor::mover_name() ),
 	filter_( /* NULL */ ),
 	scaling_( 1.0 )
 {
@@ -84,10 +87,10 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-SetTemperatureFactor::get_name() const {
-	return SetTemperatureFactorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetTemperatureFactor::get_name() const {
+// XRW TEMP  return SetTemperatureFactor::mover_name();
+// XRW TEMP }
 
 void
 SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
@@ -124,6 +127,39 @@ core::Real
 SetTemperatureFactor::scaling() const{
 	return scaling_;
 }
+
+std::string SetTemperatureFactor::get_name() const {
+	return mover_name();
+}
+
+std::string SetTemperatureFactor::mover_name() {
+	return "SetTemperatureFactor";
+}
+
+void SetTemperatureFactor::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "filter", xs_string, "Filter to apply" )
+		+ XMLSchemaAttribute::attribute_w_default( "scaling", xsct_real, "Scale filter value by this amount prior to storing in temperature factor", "1.0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Co-opt the PDB field for temperature factors to instead store filter values", attlist );
+}
+
+std::string SetTemperatureFactorCreator::keyname() const {
+	return SetTemperatureFactor::mover_name();
+}
+
+protocols::moves::MoverOP
+SetTemperatureFactorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetTemperatureFactor );
+}
+
+void SetTemperatureFactorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetTemperatureFactor::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

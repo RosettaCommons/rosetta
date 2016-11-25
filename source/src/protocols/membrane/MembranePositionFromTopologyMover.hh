@@ -89,10 +89,22 @@ public:
 	void apply( Pose & pose ) override;
 
 	/// @brief Get the name of this mover
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Anchor membrane at residue 1, default is true
 	void anchor_at_res1( bool truefalse );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // data
 

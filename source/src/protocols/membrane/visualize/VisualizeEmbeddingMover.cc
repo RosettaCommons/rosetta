@@ -52,6 +52,9 @@
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.visualize.VisualizeEmbeddingMover" );
 
@@ -118,22 +121,22 @@ VisualizeEmbeddingMover::fresh_instance() const {
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-VisualizeEmbeddingMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VisualizeEmbeddingMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP VisualizeEmbeddingMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new VisualizeEmbeddingMover() );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-VisualizeEmbeddingMoverCreator::keyname() const {
-	return VisualizeEmbeddingMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeEmbeddingMoverCreator::keyname() const {
+// XRW TEMP  return VisualizeEmbeddingMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-VisualizeEmbeddingMoverCreator::mover_name() {
-	return "VisualizeEmbeddingMover";
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeEmbeddingMover::mover_name() {
+// XRW TEMP  return "VisualizeEmbeddingMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -216,10 +219,10 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 	}
 }
 
-std::string
-VisualizeEmbeddingMover::get_name() const {
-	return "VisualizeEmbeddingMover";
-}
+// XRW TEMP std::string
+// XRW TEMP VisualizeEmbeddingMover::get_name() const {
+// XRW TEMP  return "VisualizeEmbeddingMover";
+// XRW TEMP }
 
 //////////////////////
 /// Helper Methods ///
@@ -262,6 +265,36 @@ VisualizeEmbeddingMover::create_embedding_virtual( core::Vector center, core::Ve
 
 	return rsd;
 }
+
+std::string VisualizeEmbeddingMover::get_name() const {
+	return mover_name();
+}
+
+std::string VisualizeEmbeddingMover::mover_name() {
+	return "VisualizeEmbeddingMover";
+}
+
+void VisualizeEmbeddingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds virtual residues as a separate chain to be used for visualizing the embedding normal and center", attlist );
+}
+
+std::string VisualizeEmbeddingMoverCreator::keyname() const {
+	return VisualizeEmbeddingMover::mover_name();
+}
+
+protocols::moves::MoverOP
+VisualizeEmbeddingMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new VisualizeEmbeddingMover );
+}
+
+void VisualizeEmbeddingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	VisualizeEmbeddingMover::provide_xml_schema( xsd );
+}
+
 
 
 } // visualize

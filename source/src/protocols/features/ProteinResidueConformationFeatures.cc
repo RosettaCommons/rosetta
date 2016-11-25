@@ -55,6 +55,10 @@
 // C++ Headers
 #include <cmath>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -90,10 +94,10 @@ ProteinResidueConformationFeatures::ProteinResidueConformationFeatures(
 }
 
 
-string
-ProteinResidueConformationFeatures::type_name() const {
-	return "ProteinResidueConformationFeatures";
-}
+// XRW TEMP string
+// XRW TEMP ProteinResidueConformationFeatures::type_name() const {
+// XRW TEMP  return "ProteinResidueConformationFeatures";
+// XRW TEMP }
 
 void
 ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -647,6 +651,38 @@ ProteinResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 		seqpos++;
 	}
 }
+
+std::string ProteinResidueConformationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinResidueConformationFeatures::class_name() {
+	return "ProteinResidueConformationFeatures";
+}
+
+void ProteinResidueConformationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ProteinResidueConformationFeaturesCreator::type_name() const {
+	return ProteinResidueConformationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinResidueConformationFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinResidueConformationFeatures );
+}
+
+void ProteinResidueConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinResidueConformationFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

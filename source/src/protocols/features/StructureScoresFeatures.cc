@@ -59,6 +59,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/StructureScoresFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -125,8 +129,8 @@ StructureScoresFeatures::StructureScoresFeatures(
 
 StructureScoresFeatures::~StructureScoresFeatures() = default;
 
-string
-StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
+// XRW TEMP string
+// XRW TEMP StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
 
 void
 StructureScoresFeatures::write_schema_to_db(
@@ -311,6 +315,43 @@ StructureScoresFeatures::insert_structure_score_rows(
 		utility::tools::make_vector(batch_id_data,struct_id_data,total_id_data,total_score_data));
 	structure_scores_insert.write_to_database(db_session);
 }
+
+std::string StructureScoresFeatures::type_name() const {
+	return class_name();
+}
+
+std::string StructureScoresFeatures::class_name() {
+	return "StructureScoresFeatures";
+}
+
+void StructureScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"scorefunction name");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report structure score features to a features database",
+		attlist );
+}
+
+std::string StructureScoresFeaturesCreator::type_name() const {
+	return StructureScoresFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+StructureScoresFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new StructureScoresFeatures );
+}
+
+void StructureScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StructureScoresFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

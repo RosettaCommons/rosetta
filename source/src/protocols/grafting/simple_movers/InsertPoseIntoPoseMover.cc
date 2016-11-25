@@ -23,6 +23,9 @@
 #include <basic/datacache/DataCache.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace grafting {
@@ -93,10 +96,10 @@ InsertPoseIntoPoseMover::end() const {
 	return end_;
 }
 
-std::string
-InsertPoseIntoPoseMover::get_name() const {
-	return "InsertPoseIntoPoseMover";
-}
+// XRW TEMP std::string
+// XRW TEMP InsertPoseIntoPoseMover::get_name() const {
+// XRW TEMP  return "InsertPoseIntoPoseMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMover::clone() const {
@@ -122,20 +125,20 @@ InsertPoseIntoPoseMover::parse_my_tag(
 
 }
 
-protocols::moves::MoverOP
-InsertPoseIntoPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InsertPoseIntoPoseMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
+// XRW TEMP }
 
-std::string
-InsertPoseIntoPoseMoverCreator::keyname() const {
-	return InsertPoseIntoPoseMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InsertPoseIntoPoseMoverCreator::keyname() const {
+// XRW TEMP  return InsertPoseIntoPoseMover::mover_name();
+// XRW TEMP }
 
-std::string
-InsertPoseIntoPoseMoverCreator::mover_name(){
-	return "InsertPoseIntoPoseMover";
-}
+// XRW TEMP std::string
+// XRW TEMP InsertPoseIntoPoseMover::mover_name(){
+// XRW TEMP  return "InsertPoseIntoPoseMover";
+// XRW TEMP }
 
 void
 InsertPoseIntoPoseMover::apply(core::pose::Pose& pose) {
@@ -147,12 +150,49 @@ InsertPoseIntoPoseMover::apply(core::pose::Pose& pose) {
 
 	PyAssert(start_ != 0, "Cannot insert region starting with 0 - make sure region is set for InsertPoseIntoPoseMover");
 	PyAssert(end_ !=0, "Cannot insert region ending with 0 - make sure region is set for InsertPoseIntoPoseMover");
-	PyAssert(end_ > start_, "Cannot insert into a region where end > start");
+	PyAssert(end_ > start_, "Cannot insert into a region where end < start");
 	PyAssert(end_ <= pose.size(), "Cannot insert a region where end is > pose.sizes of the scaffold");
 
 	pose = protocols::grafting::insert_pose_into_pose(pose, *src_pose_, start_, end_);
 
 }
+
+std::string InsertPoseIntoPoseMover::get_name() const {
+	return mover_name();
+}
+
+std::string InsertPoseIntoPoseMover::mover_name() {
+	return "InsertPoseIntoPoseMover";
+}
+
+void InsertPoseIntoPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "start_", xsct_non_negative_integer, "First residue to insert" )
+		+ XMLSchemaAttribute::required_attribute( "end_", xsct_non_negative_integer, "Last residue to insert" )
+		+ XMLSchemaAttribute::attribute_w_default( "copy_pdbinfo", xsct_rosetta_bool, "Copy PDB info to new pose?", "false");
+
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Inserts a pose between the specified residues of a second pose", attlist );
+}
+
+std::string InsertPoseIntoPoseMoverCreator::keyname() const {
+	return InsertPoseIntoPoseMover::mover_name();
+}
+
+protocols::moves::MoverOP
+InsertPoseIntoPoseMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
+}
+
+void InsertPoseIntoPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InsertPoseIntoPoseMover::provide_xml_schema( xsd );
+}
+
 
 
 }

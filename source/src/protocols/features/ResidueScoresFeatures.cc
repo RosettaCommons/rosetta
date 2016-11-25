@@ -53,6 +53,10 @@
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueScoresFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -106,8 +110,8 @@ ResidueScoresFeatures::ResidueScoresFeatures( ResidueScoresFeatures const & src)
 
 ResidueScoresFeatures::~ResidueScoresFeatures() = default;
 
-string
-ResidueScoresFeatures::type_name() const { return "ResidueScoresFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueScoresFeatures::type_name() const { return "ResidueScoresFeatures"; }
 
 void
 ResidueScoresFeatures::write_schema_to_db(
@@ -652,6 +656,38 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	}
 	insert_twobody_longrange.write_to_database(db_session);
 }
+
+std::string ResidueScoresFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueScoresFeatures::class_name() {
+	return "ResidueScoresFeatures";
+}
+
+void ResidueScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "Scorefunction to be used" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record all per-residue and per-residue-pair scores given a scoring function", attlist );
+}
+
+std::string ResidueScoresFeaturesCreator::type_name() const {
+	return ResidueScoresFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueScoresFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueScoresFeatures );
+}
+
+void ResidueScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueScoresFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

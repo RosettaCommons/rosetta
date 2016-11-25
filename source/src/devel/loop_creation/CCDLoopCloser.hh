@@ -53,8 +53,8 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const override;
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	void
 	init();
@@ -76,6 +76,18 @@ public:
 	prepare_fold_tree(
 		core::pose::Pose & pose
 	);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

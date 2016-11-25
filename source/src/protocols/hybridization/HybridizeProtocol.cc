@@ -167,6 +167,9 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 
@@ -187,20 +190,20 @@ using namespace protocols::loops;
 
 /////////////
 // creator
-std::string
-HybridizeProtocolCreator::keyname() const {
-	return HybridizeProtocolCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HybridizeProtocolCreator::keyname() const {
+// XRW TEMP  return HybridizeProtocol::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HybridizeProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HybridizeProtocol );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HybridizeProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HybridizeProtocol );
+// XRW TEMP }
 
-std::string
-HybridizeProtocolCreator::mover_name() {
-	return "Hybridize";
-}
+// XRW TEMP std::string
+// XRW TEMP HybridizeProtocol::mover_name() {
+// XRW TEMP  return "Hybridize";
+// XRW TEMP }
 
 
 /////////////
@@ -1714,10 +1717,10 @@ HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 protocols::moves::MoverOP HybridizeProtocol::clone() const { return protocols::moves::MoverOP( new HybridizeProtocol( *this ) ); }
 protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return protocols::moves::MoverOP( new HybridizeProtocol ); }
 
-std::string
-HybridizeProtocol::get_name() const {
-	return "HybridizeProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP HybridizeProtocol::get_name() const {
+// XRW TEMP  return "HybridizeProtocol";
+// XRW TEMP }
 
 void
 HybridizeProtocol::parse_my_tag(
@@ -1895,8 +1898,8 @@ HybridizeProtocol::parse_my_tag(
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Fragments" ) {
 			using namespace core::fragment;
-			if ( (*tag_it)->hasOption( "3mers" ) ) {
-				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "3mers" )  );
+			if ( (*tag_it)->hasOption( "three_mers" ) ) {
+				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "three_mers" )  );
 				fragments_small_.push_back(frags);
 			} else if ( (*tag_it)->hasOption( "small" ) ) {
 				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "small" ), ',');
@@ -1904,8 +1907,8 @@ HybridizeProtocol::parse_my_tag(
 					fragments_small_.push_back(core::fragment::FragmentIO().read_data( frag_files[i] ));
 				}
 			}
-			if ( (*tag_it)->hasOption( "9mers" ) ) {
-				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
+			if ( (*tag_it)->hasOption( "nine_mers" ) ) {
+				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "nine_mers" ) );
 				fragments_big_.push_back(frags);
 			} else if ( (*tag_it)->hasOption( "big" ) ) {
 				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "big" ), ',');
@@ -1919,7 +1922,7 @@ HybridizeProtocol::parse_my_tag(
 		if ( (*tag_it)->getName() == "Template" ) {
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
-			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
+			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1.0 );
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
@@ -1962,7 +1965,7 @@ HybridizeProtocol::parse_my_tag(
 				random_sheets_.clear();
 				random_sheets_.push_back(random_sheets);
 			}
-			filter_templates_ = (*tag_it)->getOption<bool>( "filter_templates" , 0 );
+			filter_templates_ = (*tag_it)->getOption<bool>( "filter_templates" , false );
 		}
 
 		// per-residue control
@@ -2001,6 +2004,143 @@ HybridizeProtocol::parse_my_tag(
 		} //forach tag
 	}
 }
+
+std::string HybridizeProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string HybridizeProtocol::mover_name() {
+	return "Hybridize";
+}
+
+std::string hybridize_subelement_ct_name( std::string const & name ) {
+	return "Hybridize_subelement_" + name + "Type";
+}
+
+void HybridizeProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//basic direct attributes
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "stage1_increase_cycles", xsct_real, "Increase/decrease sampling in stage 1", "1.0" ) //XRW TODO: should be nonnegative real
+		+ XMLSchemaAttribute::attribute_w_default( "stage2_increase_cycles", xsct_real, "Increase/decrease sampling in stage 2", "1.0" ) //XRW TODO: should be nonnegative real
+		+ XMLSchemaAttribute::attribute_w_default( "stage2_temperature", xsct_real, "kT for the Monte Carlo simulation", "2.0" ) //XRW TODO: should be nonnegative real
+		+ XMLSchemaAttribute::attribute_w_default( "stage2.5_increase_cycles", xsct_real, "Increase/decrease number of minimization steps following stage 2", "1.0" ) //XRW TODO: should be nonnegative real
+		+ XMLSchemaAttribute( "fa_cst_file", xs_string, "constraints file for fullatom stage" )
+		+ XMLSchemaAttribute::attribute_w_default( "batch", xsct_non_negative_integer, "The number of centroid structures to generate per fullatom model. Setting this to 0 will only run centroid modeling.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_move", xsct_rosetta_bool, "rigid body moves in stage 1", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_move_repeat", xsct_non_negative_integer, "cycles in stage 1 that handle rigid body moves", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_pose_constraint", xsct_rosetta_bool, "If set to true, keep constraints on the incoming pose (useful if constraints are generated in a mover prior to hybridize)", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "cenrot", xsct_rosetta_bool, "centroid rotamer modeling; necessary for stage2_pack_scorefxn to be useful; probably requires command line option -corrections:score:cenrot", "false" )
+		+ XMLSchemaAttribute( "csts_from_frags", xsct_rosetta_bool, "when set, derives dihedral constraints from input fragments; you need to set 'dihedral_constraint' weight in the stages you want to use this")
+		+ XMLSchemaAttribute( "max_contig_insertion", xsct_non_negative_integer, "Limits the length of 'template recombination' moves. Useful when inputs are full-length (no gaps).")
+		+ XMLSchemaAttribute( "min_after_stage1", xsct_rosetta_bool, "minimize after stage 1 (?)")
+		+ XMLSchemaAttribute( "fragprob_stage2", xsct_real, "controls the ratio of fragment insertions versus template recombination moves, implicit default 0.3")
+		+ XMLSchemaAttribute( "randfragprob_stage2", xsct_real, "controls the number of random fragfile insertions versus 'cutpoint' insertions, implicit default 0.5")
+		//ab initio options
+		+ XMLSchemaAttribute( "stage1_1_cycles", xsct_non_negative_integer, "set number of cycles for this stage")
+		+ XMLSchemaAttribute( "stage1_2_cycles", xsct_non_negative_integer, "set number of cycles for this stage")
+		+ XMLSchemaAttribute( "stage1_3_cycles", xsct_non_negative_integer, "set number of cycles for this stage")
+		+ XMLSchemaAttribute( "stage1_4_cycles", xsct_non_negative_integer, "set number of cycles for this stage")
+		+ XMLSchemaAttribute( "stage1_probability", xsct_real, "probability of doing 'fold tree hybridize' for stage one (with rigid body moves(?) instead of 'frag insertion in unaligned regions'")
+		+ XMLSchemaAttribute( "add_hetatm", xsct_rosetta_bool, "If true, use ligands from input template files")
+		+ XMLSchemaAttribute( "hetatm_cst_weight", xsct_real, "If add_hetatm is enabled, this will set the weight on automatically generated intra-ligand restraints.  Called hetatm_self_cst_weight in documentation.")
+		+ XMLSchemaAttribute( "hetatm_to_protein_cst_weight", xsct_real, "If add_hetatm is enabled, this will set the weight on automatically generated ligand-protein restraints. Called hetatm_prot_cst_weight in documentation.")
+		+ XMLSchemaAttribute( "realign_domains", xsct_rosetta_bool, "If unset, this will not align the input domains to each other before running the protocol. Unsetting this option requires that input domains be previously aligned to a common reference frame. This option may be useful to unset for building models into density (if all inputs are docking into density).")
+		+ XMLSchemaAttribute( "realign_domains_stage2", xsct_rosetta_bool, "If set, realign domains in between the two centroid stages; default only aligns the initial models.")
+		+ XMLSchemaAttribute( "add_non_init_chunks", xsct_real, "Normally, secondary structure chunks are used from the starting model to set the foldtree. This option will steal chunks from other templates as well (as long as they do not overlap with current chunks); the number is the expected number of chunks (poisson distribution). This option is recommended when starting from an extended chain.")
+		+ XMLSchemaAttribute( "frag_1mer_insertion_weight", xsct_real, "For fine control of protocol behavior, control the relative weight of this move type.") //XRW TODO should be positive real
+		+ XMLSchemaAttribute( "small_frag_insertion_weight", xsct_real, "For fine control of protocol behavior, control the relative weight of this move type.") //XRW TODO should be positive real
+		+ XMLSchemaAttribute( "big_frag_insertion_weight", xsct_real, "For fine control of protocol behavior, control the relative weight of this move type.") //XRW TODO should be positive real
+		+ XMLSchemaAttribute( "chunk_insertion_weight", xsct_real, "For fine control of protocol behavior, control the relative weight of this move type.") //XRW TODO should be positive real
+		+ XMLSchemaAttribute( "frag_weight_aligned", xsct_real, "Allow fragment insertions in template regions. The default is 0; increasing this will lead to increased model diversity.")
+		+ XMLSchemaAttribute( "auto_frag_insertion_weight", xsct_rosetta_bool, "automatically set fragment insertion weights")
+		+ XMLSchemaAttribute( "max_registry_shift", xsct_non_negative_integer, "Add a random move that shifts the sequence during model-building")
+		+ XMLSchemaAttribute( "repeats", xsct_non_negative_integer, "repeats for relax step")
+		+ XMLSchemaAttribute( "disulf_file", xs_string, "If specified, force the attached disulfide patterning")
+		//stage 2 options
+		+ XMLSchemaAttribute( "no_global_frame", xsct_rosetta_bool, "only valid in Cartesian Hybridize; undocumented")
+		+ XMLSchemaAttribute( "linmin_only", xsct_rosetta_bool, "only valid in Cartesian Hybridize; undocumented")
+		+ XMLSchemaAttribute( "cartfrag_overlap", xsct_non_negative_integer, "only valid in Cartesian Hybridize; undocumented")
+		+ XMLSchemaAttribute( "seqfrags_only", xsct_non_negative_integer, "only valid in Cartesian Hybridize; undocumented")
+		+ XMLSchemaAttribute( "skip_long_min", xsct_non_negative_integer, "only valid in Cartesian Hybridize; skip a final minimization")
+		//scorefunctions
+		+ XMLSchemaAttribute( "stage1_scorefxn", xs_string, "Scorefunction for stage 1 (looked up from DataMap")
+		+ XMLSchemaAttribute( "stage2_scorefxn", xs_string, "Scorefunction for stage 2 (looked up from DataMap")
+		+ XMLSchemaAttribute( "stage2_min_scorefxn", xs_string, "Scorefunction for stage 2 minimization (looked up from DataMap")
+		+ XMLSchemaAttribute( "stage2_pack_scorefxn", xs_string, "Scorefunction for stage 2 'packing' (looked up from DataMap. Only valid if boolean cenrot is true.")
+		+ XMLSchemaAttribute( "fa_scorefxn", xs_string, "Scorefunction for fullatom stage (looked up from DataMap")
+		//ddomain options (not a typo)
+		+ XMLSchemaAttribute::attribute_w_default( "domain_pcut", xsct_real, "Used in DDomainParse. Aggressively undocumented.", "0.18")
+		+ XMLSchemaAttribute::attribute_w_default( "domain_hcut", xsct_real, "Used in DDomainParse. Aggressively undocumented.", "0.81")
+		+ XMLSchemaAttribute::attribute_w_default( "domain_length", xsct_non_negative_integer, "Used in DDomainParse.  Aggressively undocumented.", "38");
+	//user constraints
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "coord_cst_res");
+	//orphaned docstring: "residues with user-provided CoordinateConstraints; If defined, at least one of the scorefunctions in [stage1_scorefxn, stage2_scorefxn, fa_scorefxn] must have nonzero coordinate_constraint weights"); //XRW TODO maybe
+
+	// attributes for Fragments subelement
+	AttributeList fragment_subelement_attributes;
+	fragment_subelement_attributes
+		+ XMLSchemaAttribute( "three_mers", xs_string, "3mers fragments file")
+		+ XMLSchemaAttribute( "small", xs_string, "comma separated vector of small (probably 3mer) fragments files")
+		+ XMLSchemaAttribute( "nine_mers", xs_string, "9mers fragments file")
+		+ XMLSchemaAttribute( "big", xs_string, "comma separated vector of small (probably 3mer) fragments files");
+
+	// attributes for Template subelement
+	AttributeList template_subelement_attributes;
+	template_subelement_attributes
+		+ XMLSchemaAttribute::required_attribute( "pdb", xs_string, "file path to pdb template")
+		+ XMLSchemaAttribute::attribute_w_default( "cst_file", xs_string, "file path to constraints file associated with this template", "AUTO")
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "Sampling frequency weight for this template", "1.0")
+		+ XMLSchemaAttribute( "symmdef", xs_string, "symmdef file associated with this template (only if using symmetry)")
+		+ XMLSchemaAttribute( "randomize", xs_string, "comma-seprated list of chains to randomize - not documented")
+		+ XMLSchemaAttribute::attribute_w_default( "auto_align", xsct_rosetta_bool, "frustratingly undocumented", "true");
+
+	std::string const pairings_warning(" sheets and random_sheets are mutually exclusive.");
+	// attributes for Pairings subelement
+	AttributeList pairings_subelement_attributes;
+	pairings_subelement_attributes
+		+ XMLSchemaAttribute::required_attribute( "file", xs_string, "path to pairings file")
+		+ XMLSchemaAttribute( "sheets", xsct_non_negative_integer, "used with FoldTreeHybridize, undocumented" + pairings_warning)
+		+ XMLSchemaAttribute( "random_sheets", xsct_non_negative_integer, "used with FoldTreeHybridize, undocumented" + pairings_warning)
+		+ XMLSchemaAttribute::attribute_w_default( "filter_templates", xsct_rosetta_bool, "remove templates with incorrect pairings", "false");
+
+	// attributes for DetailedControls subelement
+	AttributeList DetailedControls_subelement_attributes;
+	DetailedControls_subelement_attributes
+		+ XMLSchemaAttribute::attribute_w_default( "start_res", xsct_non_negative_integer, "starting residue for a DetailedControl region", "1")
+		+ XMLSchemaAttribute( "stop_res", xsct_non_negative_integer, "ending residue for a DetailedControl region; defaults to the rest of the Pose")
+		+ XMLSchemaAttribute::attribute_w_default( "sample_template", xsct_rosetta_bool, "if false, disallow template hybridization moves", "true")
+		+ XMLSchemaAttribute::attribute_w_default( "sample_abinitio", xsct_rosetta_bool, "if false, disallow fragment insertion moves", "true");
+	rosetta_scripts::attributes_for_parse_task_operations(DetailedControls_subelement_attributes);
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & hybridize_subelement_ct_name );
+	subelements.add_simple_subelement( "Fragments", fragment_subelement_attributes, "Instructions for fragments files.  Should occur exactly once.");
+	subelements.add_simple_subelement( "Template", template_subelement_attributes, "Instructions for templates. Must occur at least once, may occur as many times as you wish.");
+	subelements.add_simple_subelement( "Pairings", pairings_subelement_attributes, "Used with FoldTreeHybridize and poorly documented");
+	subelements.add_simple_subelement( "DetailedControls", DetailedControls_subelement_attributes, "Used to prevent regions from being sampled extensively (meaning, don't remodel regions where the model is already correct)");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "This is the Hybridize mover at the core of comparative modeling (RosettaCM).  Typically its XML is written by a script rather than manually.", attlist, subelements );
+}
+
+std::string HybridizeProtocolCreator::keyname() const {
+	return HybridizeProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+HybridizeProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HybridizeProtocol );
+}
+
+void HybridizeProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HybridizeProtocol::provide_xml_schema( xsd );
+}
+
 
 } // hybridization
 } // protocols

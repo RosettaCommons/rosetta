@@ -49,7 +49,7 @@ public:
 	/// @note: a single protocols::moves::Mover only converts in ONE direction e.g. to centroid
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
 	void type_set_tag( std::string const & type_set_tag_in ) { type_set_tag_ = type_set_tag_in; }
@@ -63,6 +63,18 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string type_set_tag_;

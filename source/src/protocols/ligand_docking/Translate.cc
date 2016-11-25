@@ -38,6 +38,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -47,22 +50,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.translate", basic::t_debug );
 
-std::string
-TranslateCreator::keyname() const
-{
-	return TranslateCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TranslateCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return Translate::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TranslateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Translate );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TranslateCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new Translate );
+// XRW TEMP }
 
-std::string
-TranslateCreator::mover_name()
-{
-	return "Translate";
-}
+// XRW TEMP std::string
+// XRW TEMP Translate::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Translate";
+// XRW TEMP }
 
 /// @brief
 Translate::Translate():
@@ -99,9 +102,9 @@ protocols::moves::MoverOP Translate::fresh_instance() const {
 	return protocols::moves::MoverOP( new Translate );
 }
 
-std::string Translate::get_name() const{
-	return "Translate";
-}
+// XRW TEMP std::string Translate::get_name() const{
+// XRW TEMP  return "Translate";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -361,6 +364,53 @@ Translate::add_excluded_chains(
 ){
 	chain_ids_to_exclude_.insert( chain_ids_to_exclude_.end(), begin, end);
 }
+
+std::string Translate::get_name() const {
+	return mover_name();
+}
+
+std::string Translate::mover_name() {
+	return "Translate";
+}
+
+void Translate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// Restriction for sampling distribution tag
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "distribution_string" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "uniform|gaussian" );
+	xsd.add_top_level_element( restriction_type );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("chain", xs_string, "Chain ID of chain to be translated.")
+		+ XMLSchemaAttribute::required_attribute("distribution", "distribution_string",
+		"The random move can be chosen from a \"uniform\" or \"gaussian\" distribution.")
+		+ XMLSchemaAttribute("force", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("tag_along_chains", xs_string, "XRW TO DO . Comma separated list of chain IDs to be moved together with \"chain\". ")
+		+ XMLSchemaAttribute::required_attribute("angstroms", xsct_real, "Movement can be anywhere within a sphere of radius specified by \"angstroms\".")
+		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer,
+		"Number of attempts to make such a movement without landing on top of another molecule.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Performs a course random movement of a small molecule in xyz-space.", attlist );
+}
+
+std::string TranslateCreator::keyname() const {
+	return Translate::mover_name();
+}
+
+protocols::moves::MoverOP
+TranslateCreator::create_mover() const {
+	return protocols::moves::MoverOP( new Translate );
+}
+
+void TranslateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Translate::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace ligand_docking

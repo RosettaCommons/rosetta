@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <utility/SingletonBase.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Package headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorCreator.fwd.hh>
@@ -50,6 +50,22 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 	) const;
+
+
+	void define_constraint_generator_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	//All of these may move to a new file for schema generation
+
+	static std::string constraint_generator_xml_schema_group_name();
+	static std::string
+	complex_type_name_for_constraint_generator( std::string const & constraint_name );
+
+	static void
+	xsd_constraint_generator_type_definition_w_attributes(
+		utility::tag::XMLSchemaDefinition & xsd,
+		std::string const & constraint_type,
+		std::string const & description,
+		utility::tag::AttributeList const & attributes);
 
 private:
 	CreatorMap creator_map_;

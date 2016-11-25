@@ -21,6 +21,7 @@
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -223,6 +224,10 @@ public:
 	/// @brief Set the custom Ramachandran table (by name) for the perturb_alpha_backbone_by_rama perturber.
 	///
 	void set_custom_rama_table ( std::string const &name );
+
+	static
+	void
+	define_valid_perturber_name_enumeration( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

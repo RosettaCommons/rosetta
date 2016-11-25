@@ -64,7 +64,7 @@ public:
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
 	void apply( core::pose::Pose & input_pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 public: ///////////////////getters, setters/////////////
 	/// @brief set loops object, because public setters/getters are a rule
@@ -89,6 +89,18 @@ public: ///////////////////getters, setters/////////////
 	/// @brief Return the vector of chainbreak scores
 	utility::vector1<core::Real>
 	get_chainbreak_scores();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief reset stored data

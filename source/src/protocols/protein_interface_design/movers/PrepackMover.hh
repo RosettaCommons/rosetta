@@ -37,15 +37,27 @@ public:
 	PrepackMover( core::scoring::ScoreFunctionCOP scorefxn, core::Size jump_num );
 	virtual ~PrepackMover();
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	bool min_bb() const;
 	void min_bb( bool const m );
 	core::kinematics::MoveMapOP mm() const;
 	void mm( core::kinematics::MoveMapOP mm );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::Size jump_num_;

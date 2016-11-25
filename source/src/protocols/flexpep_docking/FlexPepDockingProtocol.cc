@@ -113,6 +113,9 @@
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -1405,10 +1408,10 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 } // END: FlexPepDockingProtocol::apply
 
 
-std::string
-FlexPepDockingProtocol::get_name() const {
-	return "FlexPepDockingProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP FlexPepDockingProtocol::get_name() const {
+// XRW TEMP  return "FlexPepDockingProtocol";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief mark peptide residues that are in the native structure interface,
@@ -1858,17 +1861,82 @@ void FlexPepDockingProtocol::parse_my_tag(
 
 //////////////////////////FlexPepDockingProtocolCreator//////////////////////////////
 
-moves::MoverOP FlexPepDockingProtocolCreator::create_mover() const {
-	return moves::MoverOP( new FlexPepDockingProtocol(1, true, true) );
+// XRW TEMP moves::MoverOP FlexPepDockingProtocolCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new FlexPepDockingProtocol(1, true, true) );
+// XRW TEMP }
+
+// XRW TEMP std::string FlexPepDockingProtocolCreator::keyname() const {
+// XRW TEMP  return FlexPepDockingProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string FlexPepDockingProtocol::mover_name(){
+// XRW TEMP  return "FlexPepDock";
+// XRW TEMP }
+
+std::string FlexPepDockingProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string FlexPepDockingProtocol::mover_name() {
+	return "FlexPepDock";
+}
+
+void FlexPepDockingProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "scorefxn_lowres", xs_string, "Score function to use for low resolution step." );
+	attlist + XMLSchemaAttribute( "lowres_abinitio", xsct_rosetta_bool, "Invoke the ab-initio protocol" );
+	attlist + XMLSchemaAttribute( "lowres_preoptimize", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "min_only", xsct_rosetta_bool, "Apply just a minimization step." );
+	attlist + XMLSchemaAttribute( "random_phi_psi_pert", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "extend", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "place_peptide", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "slidentocontact", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "recal_foldtree", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "pep_refine", xsct_rosetta_bool, "Invoke the refinement protocol" );
+	attlist + XMLSchemaAttribute( "peptide_loop_model", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "design_peptide", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "backrub_opt", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "boost_fa_atr", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "ramp_fa_rep", xsct_rosetta_bool, "Gradually ramp up weight on full atom prepulsion term." );
+	attlist + XMLSchemaAttribute( "ramp_rama", xsct_rosetta_bool, "Gradually ramp up weight on ramachandran scoring term." );
+	attlist + XMLSchemaAttribute( "extra_scoring", xsct_rosetta_bool, "scoring only mode" );
+	attlist + XMLSchemaAttribute( "use_cen_score", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "min_receptor_bb", xsct_rosetta_bool, "Perform the final scoring, w/o constraints for receptor backbone." );
+	attlist + XMLSchemaAttribute( "ppk_only", xsct_rosetta_bool, "Just prepacking." );
+	attlist + XMLSchemaAttribute( "no_prepack1", xsct_rosetta_bool, "Don't prepack parter 1" );
+	attlist + XMLSchemaAttribute( "no_prepack2", xsct_rosetta_bool, "Don;t prepack partner 2" );
+	attlist + XMLSchemaAttribute( "score_filter", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "hb_filter", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "hotspot_filter", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "pSer2Asp_centroid", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "pSer2Glu_centroid", xsct_rosetta_bool, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "random_phi_psi_pert_size", xsct_non_negative_integer, "Randomly perturb phi-psi of peptide to a given range." );
+	attlist + XMLSchemaAttribute( "sample_pc", xsct_non_negative_integer, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "rep_ramp_cycles", xsct_non_negative_integer, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "mcm_cycles", xsct_non_negative_integer, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "rb_trans_size", xsct_real, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "rb_rot_size", xsct_real, "XRW TO DO" );
+	attlist + XMLSchemaAttribute( "smove_angle_range", xsct_real, "XRW TO DO" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Protocol for docking flexible peptides onto globular proteins.", attlist );
 }
 
 std::string FlexPepDockingProtocolCreator::keyname() const {
-	return FlexPepDockingProtocolCreator::mover_name();
+	return FlexPepDockingProtocol::mover_name();
 }
 
-std::string FlexPepDockingProtocolCreator::mover_name(){
-	return "FlexPepDock";
+protocols::moves::MoverOP
+FlexPepDockingProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FlexPepDockingProtocol );
 }
+
+void FlexPepDockingProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FlexPepDockingProtocol::provide_xml_schema( xsd );
+}
+
 
 } // end namespace flexpep_docking
 } // end namespace protocols

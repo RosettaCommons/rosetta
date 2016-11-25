@@ -29,6 +29,9 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.filters.LoopAnalyzerFilter" );
 
@@ -87,7 +90,7 @@ LoopAnalyzerFilter::fresh_instance() const
 std::string
 LoopAnalyzerFilter::get_name() const
 {
-	return LoopAnalyzerFilterCreator::filter_name();
+	return LoopAnalyzerFilter::class_name();
 }
 
 /// @details Calculates a bunch of loop-geometry related score terms and dumps them to tracer / Job object for output with the Pose.
@@ -136,23 +139,67 @@ protocols::loops::LoopsCOP const & LoopAnalyzerFilter::get_loops( void ) const {
 
 /////////////// Creator ///////////////
 
-protocols::filters::FilterOP
-LoopAnalyzerFilterCreator::create_filter() const
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP LoopAnalyzerFilterCreator::create_filter() const
+// XRW TEMP {
+// XRW TEMP  return protocols::filters::FilterOP( new LoopAnalyzerFilter );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LoopAnalyzerFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopAnalyzerFilter::class_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LoopAnalyzerFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopAnalyzerFilter";
+// XRW TEMP }
+
+std::string LoopAnalyzerFilter::name() const {
+	return class_name();
+}
+
+std::string LoopAnalyzerFilter::class_name() {
+	return "LoopAnalyzerFilter";
+}
+
+void LoopAnalyzerFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default(
+		"use_tracer", xsct_rosetta_bool,
+		"if false, store results in the PoseExtraScores / DataCache for "
+		"output at the end of the run. If true, print results to a Tracer object",
+		"false" );
+	XMLSchemaSimpleSubelementList subelements;
+
+	loop_modeling::utilities::append_subelement_and_attributes_for_parse_loops_from_tag(xsd, subelements, attlist);
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, class_name(),
+		"This Filter calls LoopAnalyzerMover to compute a bunch of loop-specific metrics. "
+		"You can also try GeometryFilter",
+		attlist, subelements );
+}
+
+std::string LoopAnalyzerFilterCreator::keyname() const {
+	return LoopAnalyzerFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LoopAnalyzerFilterCreator::create_filter() const {
 	return protocols::filters::FilterOP( new LoopAnalyzerFilter );
 }
 
-std::string
-LoopAnalyzerFilterCreator::keyname() const
+void LoopAnalyzerFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return LoopAnalyzerFilterCreator::filter_name();
+	LoopAnalyzerFilter::provide_xml_schema( xsd );
 }
 
-std::string
-LoopAnalyzerFilterCreator::filter_name()
-{
-	return "LoopAnalyzerFilter";
-}
 
 } //protocols
 } //loops

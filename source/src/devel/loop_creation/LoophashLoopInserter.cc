@@ -57,6 +57,9 @@
 
 //numeric
 #include <numeric/random/random_permutation.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -71,22 +74,22 @@ namespace loop_creation {
 static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
 
 //****CREATOR METHODS****//
-std::string
-LoophashLoopInserterCreator::keyname() const
-{
-	return LoophashLoopInserterCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoophashLoopInserterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoophashLoopInserter::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoophashLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoophashLoopInserter );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoophashLoopInserterCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoophashLoopInserter );
+// XRW TEMP }
 
-std::string
-LoophashLoopInserterCreator::mover_name()
-{
-	return "LoophashLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP LoophashLoopInserter::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoophashLoopInserter";
+// XRW TEMP }
 //****END CREATOR METHODS****//
 
 LoophashLoopInserter::LoophashLoopInserter():
@@ -112,10 +115,10 @@ LoophashLoopInserter::fresh_instance() const {
 	return protocols::moves::MoverOP( new LoophashLoopInserter );
 }
 
-std::string
-LoophashLoopInserter::get_name() const {
-	return "LoophashLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP LoophashLoopInserter::get_name() const {
+// XRW TEMP  return "LoophashLoopInserter";
+// XRW TEMP }
 
 void
 LoophashLoopInserter::init(
@@ -509,6 +512,52 @@ LoophashLoopInserter::parse_my_tag(
 	}
 
 }
+
+std::string LoophashLoopInserter::get_name() const {
+	return mover_name();
+}
+
+std::string LoophashLoopInserter::mover_name() {
+	return "LoophashLoopInserter";
+}
+
+void LoophashLoopInserter::attributes_for_tag( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+
+	attributes_for_parse_loop_anchor( attlist );
+
+	attlist + XMLSchemaAttribute( "max_torsion_rms", xsct_real, "maximum rmsd of flanking regions" )
+		+ XMLSchemaAttribute( "min_torsion_rms", xsct_real, "min rmsd rmsd of flanking regions" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_closure_deviation", xsct_real, "closure deviation", "1" )
+		+ XMLSchemaAttribute( "loop_sizes", xsct_nnegative_int_cslist, "Loop sizes, as a comma-separated list" )
+		+ XMLSchemaAttribute( "max_lh_radius", xsct_non_negative_integer, "Maximum loophash radius, an integer" )
+		+ XMLSchemaAttribute( "modify_flanking_regions", xsct_rosetta_bool, "Whether we are allowed to modify flanking regions" )
+		+ XMLSchemaAttribute( "num_flanking_residues_to_match", xsct_non_negative_integer, "If we are modifying flanking regions, then this many residues must match" );
+}
+
+void LoophashLoopInserter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	LoophashLoopInserter::attributes_for_tag( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoophashLoopInserterCreator::keyname() const {
+	return LoophashLoopInserter::mover_name();
+}
+
+protocols::moves::MoverOP
+LoophashLoopInserterCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoophashLoopInserter );
+}
+
+void LoophashLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoophashLoopInserter::provide_xml_schema( xsd );
+}
+
 
 } //loop creation
 } //devel

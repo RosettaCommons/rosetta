@@ -55,7 +55,9 @@ void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
 std::string RestrictToRepackingRLT::keyname() { return "RestrictToRepackingRLT"; }
 
 void RestrictToRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_lvl_task_op_schema_empty( xsd, keyname() );
+	res_lvl_task_op_schema_empty(
+		xsd, keyname(),
+		"Turn off design on the positions selected by the accompanying ResFilter.");
 }
 
 ResLvlTaskOperationOP
@@ -96,13 +98,12 @@ void RestrictAbsentCanonicalAASRLT::aas_to_keep( std::string const & aastring )
 {
 	using namespace chemical;
 	runtime_assert( canonical_aas_to_keep_.size() == num_canonical_aas );
-	for ( std::string::const_iterator it( aastring.begin() ), end( aastring.end() );
-			it != end; ++it ) {
-		if ( oneletter_code_specifies_aa( *it ) ) {
-			canonical_aas_to_keep_[ aa_from_oneletter_code( *it ) ] = true;
+	for ( char const code : aastring ) {
+		if ( oneletter_code_specifies_aa( code ) ) {
+			canonical_aas_to_keep_[ aa_from_oneletter_code( code ) ] = true;
 		} else {
 			std::ostringstream os;
-			os << "aa letter " << *it << " does not not correspond to a canonical AA";
+			os << "aa letter " << code << " does not not correspond to a canonical AA";
 			utility_exit_with_message( os.str() );
 		}
 	}
@@ -119,8 +120,15 @@ std::string RestrictAbsentCanonicalAASRLT::keyname() { return "RestrictAbsentCan
 
 void RestrictAbsentCanonicalAASRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "aas", utility::tag::xs_string );
-	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
+		"aas", utility::tag::xs_string,
+		"list of one letter codes of permitted amino acids, with no separator. "
+		"(e.g. aas=HYFW for only aromatic amino acids.)" );
+
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Do not allow design to amino acid identities that are not listed (i.e. permit only those listed) "
+		"at the positions selected by the accompanying ResFilter.");
 }
 
 void RestrictAbsentCanonicalAASRLTCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
@@ -159,8 +167,8 @@ void DisallowIfNonnativeRLT::clear(){
 utility::vector1< bool >
 DisallowIfNonnativeRLT::invert_vector( utility::vector1< bool > disallowed_aas){
 	utility::vector1< bool > inverted_vec;
-	for ( core::Size ii=1; ii<=disallowed_aas_.size(); ii++ ) {
-		inverted_vec.push_back( ! disallowed_aas[ii] );
+	for ( bool const pos : disallowed_aas ) {
+		inverted_vec.push_back( ! pos );
 	}
 	return inverted_vec;
 }
@@ -179,13 +187,12 @@ void DisallowIfNonnativeRLT::disallow_aas( utility::vector1< bool > const & cann
 void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){
 	using namespace chemical;
 	utility::vector1< bool > aa_vector ( chemical::num_canonical_aas, false );
-	for ( std::string::const_iterator it( aa_string.begin() ), end( aa_string.end() );
-			it != end; ++it ) {
-		if ( oneletter_code_specifies_aa( *it ) ) {
-			aa_vector[ aa_from_oneletter_code( *it ) ] = true;
+	for ( char const code : aa_string ) {
+		if ( oneletter_code_specifies_aa( code ) ) {
+			aa_vector[ aa_from_oneletter_code( code ) ] = true;
 		} else {
 			std::ostringstream os;
-			os << "aa letter " << *it << " does not not correspond to a canonical AA";
+			os << "aa letter " << code << " does not not correspond to a canonical AA";
 			utility_exit_with_message( os.str() );
 		}
 	}
@@ -205,8 +212,18 @@ std::string DisallowIfNonnativeRLT::keyname() { return "DisallowIfNonnativeRLT";
 
 void DisallowIfNonnativeRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "disallow_aas", utility::tag::xs_string );
-	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
+		"disallow_aas", utility::tag::xs_string ,
+		"takes a string of one letter amino acid codes, no separation needed. "
+		"For example disallow_aas=GCP would prevent Gly, Cys, and Pro from being designed "
+		"unless they were the native amino acid at a position."
+		"This task is useful when you are designing in a region that has Gly and Pro and "
+		"you do not want to include them at other positions that aren't already Gly or Pro.");
+
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Restrict design to not include a residue as an possibility in the task at a position unless it is the starting residue. "
+		"If resnum is left as 0, the restriction will apply throughout the pose.");
 }
 
 ResLvlTaskOperationOP
@@ -234,7 +251,9 @@ void PreventRepackingRLT::apply( ResidueLevelTask & rlt ) const
 std::string PreventRepackingRLT::keyname() { return "PreventRepackingRLT"; }
 
 void PreventRepackingRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_lvl_task_op_schema_empty( xsd, keyname());
+	res_lvl_task_op_schema_empty(
+		xsd, keyname(),
+		"Turn off design and repacking on the positions selected by the accompanying ResFilter.");
 }
 
 ResLvlTaskOperationOP
@@ -277,8 +296,13 @@ std::string AddBehaviorRLT::keyname() { return "AddBehaviorRLT"; }
 
 void AddBehaviorRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute::required_attribute( "behavior", utility::tag::xs_string );
-	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
+		"behavior", utility::tag::xs_string,
+		"Behavior string. These are protocol-specific. "
+		"Consult the protocol documentation for if it responds to behavior strings.");
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Add the given \"behavior\" to the positions selected by the accompanying ResFilter.");
 }
 
 ResLvlTaskOperationOP
@@ -307,7 +331,9 @@ void IncludeCurrentRLT::apply( ResidueLevelTask & rlt ) const
 std::string IncludeCurrentRLT::keyname() { return "IncludeCurrentRLT"; }
 
 void IncludeCurrentRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_lvl_task_op_schema_empty( xsd, keyname() );
+	res_lvl_task_op_schema_empty(
+		xsd, keyname(),
+		"Includes current rotamers (eg - from input pdb) in the rotamer set. ");
 }
 
 ResLvlTaskOperationOP
@@ -335,7 +361,10 @@ void PreserveCBetaRLT::apply( ResidueLevelTask & rlt ) const
 std::string PreserveCBetaRLT::keyname() { return "PreserveCBetaRLT"; }
 
 void PreserveCBetaRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_lvl_task_op_schema_empty( xsd, keyname() );
+	res_lvl_task_op_schema_empty(
+		xsd, keyname(),
+		"preserves c-beta during rotamer building for all residues. "
+		"Under development and untested. Use at your own risk.");
 }
 
 ResLvlTaskOperationOP
@@ -373,8 +402,14 @@ std::string ExtraChiCutoffRLT::keyname() { return "ExtraChiCutoffRLT"; }
 void ExtraChiCutoffRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::attribute_w_default( "extrachi_cutoff", xsct_non_negative_integer, utility::to_string( EXTRACHI_CUTOFF_LIMIT ) );
-	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + XMLSchemaAttribute::attribute_w_default(
+		"extrachi_cutoff", xsct_non_negative_integer,
+		"lower extrachi_cutoff to given value; do nothing if not a decrease",
+		utility::to_string( EXTRACHI_CUTOFF_LIMIT  ) );
+
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Move only toward a lower cutoff for #neighbors w/i 10A that qualify a residue to be considered buried.");
 }
 
 ResLvlTaskOperationOP
@@ -468,7 +503,13 @@ std::string ExtraRotamersGenericRLT::keyname() { return "ExtraRotamersGenericRLT
 
 void ExtraRotamersGenericRLT::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes = rotamer_sampling_data_xml_schema_attributes( xsd );
-	res_lvl_task_op_schema_w_attributes( xsd, keyname(), attributes );
+	res_lvl_task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"During packing, extra rotamers can be used to increase sampling. "
+		"Use this TaskOperation to specify for all residues at once what extra rotamers should be used. "
+		"Note: The extrachi_cutoff is used to determine how many neighbors a residue "
+		"must have before the extra rotamers are applied. For example of you want "
+		"to apply extra rotamers to all residues, set extrachi_cutoff=0. ");
 }
 
 ResLvlTaskOperationOP

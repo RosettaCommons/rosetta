@@ -35,6 +35,9 @@
 
 // boost headers
 #include <boost/assign.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
 
@@ -42,23 +45,23 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-protocols::moves::MoverOP
-InvrotTreeCstGeneratorCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new InvrotTreeRCG() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InvrotTreeCstGeneratorCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new InvrotTreeRCG() );
+// XRW TEMP }
 
-std::string
-InvrotTreeCstGeneratorCreator::keyname() const
-{
-	return InvrotTreeCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InvrotTreeCstGeneratorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InvrotTreeRCG::mover_name();
+// XRW TEMP }
 
-std::string
-InvrotTreeCstGeneratorCreator::mover_name()
-{
-	return "InvrotTreeCstGenerator";
-}
+// XRW TEMP std::string
+// XRW TEMP InvrotTreeRCG::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InvrotTreeCstGenerator";
+// XRW TEMP }
 
 InvrotTreeRCG::InvrotTreeRCG()
 : RemodelConstraintGenerator(),
@@ -107,11 +110,11 @@ InvrotTreeRCG::parse_my_tag( TagCOP const tag,
 	set_add_ligand_to_pose( tag->getOption<bool>( "add_ligand_to_pose", add_ligand_to_pose_ ) );
 }
 
-std::string
-InvrotTreeRCG::get_name() const
-{
-	return InvrotTreeCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InvrotTreeRCG::get_name() const
+// XRW TEMP {
+// XRW TEMP  return InvrotTreeRCG::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 InvrotTreeRCG::fresh_instance() const
@@ -207,6 +210,41 @@ InvrotTreeRCG::init( core::pose::Pose const & pose )
 		vlbop->add_user_provided_mover( run_align_pose_ );
 	}
 }
+
+std::string InvrotTreeRCG::get_name() const {
+	return mover_name();
+}
+
+std::string InvrotTreeRCG::mover_name() {
+	return "InvrotTreeCstGenerator";
+}
+
+void InvrotTreeRCG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	RemodelConstraintGenerator::attributes_for_remodel_constraint_generator( attlist );
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "cstfile", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "add_ligand_to_pose", xsct_rosetta_bool, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string InvrotTreeCstGeneratorCreator::keyname() const {
+	return InvrotTreeRCG::mover_name();
+}
+
+protocols::moves::MoverOP
+InvrotTreeCstGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InvrotTreeRCG );
+}
+
+void InvrotTreeCstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InvrotTreeRCG::provide_xml_schema( xsd );
+}
+
 
 } //namespace remodel
 } //namespace forge

@@ -13,6 +13,7 @@
 #include <protocols/qsar/scoring_grid/VdwGrid.hh>
 #include <protocols/qsar/scoring_grid/VdwGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
@@ -29,6 +30,7 @@
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -40,7 +42,7 @@ namespace scoring_grid {
 
 std::string VdwGridCreator::keyname() const
 {
-	return VdwGridCreator::grid_name();
+	return VdwGrid::grid_name();
 }
 
 GridBaseOP VdwGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -57,11 +59,16 @@ GridBaseOP VdwGridCreator::create_grid() const
 	return GridBaseOP( new VdwGrid() );
 }
 
-
-std::string VdwGridCreator::grid_name()
+void VdwGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "VdwGrid";
+	VdwGrid::provide_xml_schema( xsd );
 }
+
+
+//std::string VdwGridCreator::grid_name()
+//{
+// return "VdwGrid";
+//}
 
 VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 {
@@ -217,6 +224,26 @@ void VdwGrid::deserialize(utility::json_spirit::mObject data)
 	interp->deserialize(data["spline"].get_obj());
 	lj_spline_ = interp;
 	SingleGrid::deserialize(data["base_data"].get_obj());
+}
+
+std::string VdwGrid::grid_name()
+{
+	return "VdwGrid";
+}
+
+void VdwGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that stores at each grid point the shortest"
+		" distance to the closest surface point on any van der Waals sphere in the protein, and then uses that distance"
+		" when scoring to evaluate a Lennard-Jones like potential created from a spline interpolation of a scoring"
+		" table in the rosetta database: scoring/qsar/lj_table.txt. No parameters may be customized for this grid",
+		attributes );
+
 }
 
 }

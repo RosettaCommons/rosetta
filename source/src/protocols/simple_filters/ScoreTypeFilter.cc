@@ -45,6 +45,9 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -55,11 +58,11 @@ using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
 
-protocols::filters::FilterOP
-ScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ScoreTypeFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ScoreTypeFilter ); }
 
-std::string
-ScoreTypeFilterCreator::keyname() const { return "ScoreType"; }
+// XRW TEMP std::string
+// XRW TEMP ScoreTypeFilterCreator::keyname() const { return "ScoreType"; }
 
 /// @brief Constructor
 ///
@@ -155,6 +158,41 @@ ScoreTypeFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real const weighted_score( weight * score );
 	return( weighted_score );
 }
+
+std::string ScoreTypeFilter::name() const {
+	return class_name();
+}
+
+std::string ScoreTypeFilter::class_name() {
+	return "ScoreType";
+}
+
+void ScoreTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "score_type" , xs_string , "If no score_type is set, it filters on the entire scorefxn." , "total_score" )
+		+ XMLSchemaAttribute::required_attribute( "threshold" , xsct_real , "If that energy is lower than threshold, returns true." ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the energy of a particular score type for the entire pose and if that energy is lower than threshold, returns true. If no score_type is set, it filters on the entire scorefxn.", attlist );
+}
+
+std::string ScoreTypeFilterCreator::keyname() const {
+	return ScoreTypeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ScoreTypeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ScoreTypeFilter );
+}
+
+void ScoreTypeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreTypeFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

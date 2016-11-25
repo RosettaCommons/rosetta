@@ -2,31 +2,32 @@
 	<SCOREFXNS>
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
-		<Index name=select_acceptor resnums=6 />
-		<Index name=select_donors resnums=1-3 />
-		<Index name=select_one_donor resnums=2 />
-		<Index name=select_wrong_acceptor resnums=5 />
+		<Index name="select_acceptor" resnums="6" />
+		<Index name="select_donors" resnums="1-3" />
+		<Index name="select_one_donor" resnums="2" />
+		<Index name="select_wrong_acceptor" resnums="5" />
 	</RESIDUE_SELECTORS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<FILTERS>
-		<OversaturatedHbondAcceptorFilter name=oversat_fail1 />
-		<OversaturatedHbondAcceptorFilter name=oversat_pass1 donor_selector="select_one_donor" acceptor_selector="select_acceptor" />
-		<OversaturatedHbondAcceptorFilter name=oversat_pass2 acceptor_selector="select_wrong_acceptor" />
-		<OversaturatedHbondAcceptorFilter name=oversat_pass3 max_allowed_oversaturated=1 donor_selector="select_donors" acceptor_selector="select_acceptor" />
-		<OversaturatedHbondAcceptorFilter name=oversat_pass4 hbond_energy_cutoff=-3.0 />
+		<OversaturatedHbondAcceptorFilter name="oversat_fail1" />
+		<OversaturatedHbondAcceptorFilter name="oversat_pass1" donor_selector="select_one_donor" acceptor_selector="select_acceptor" />
+		<OversaturatedHbondAcceptorFilter name="oversat_pass2" acceptor_selector="select_wrong_acceptor" />
+		<OversaturatedHbondAcceptorFilter name="oversat_pass3" max_allowed_oversaturated="1" donor_selector="select_donors" acceptor_selector="select_acceptor" />
+		<OversaturatedHbondAcceptorFilter name="oversat_pass4" hbond_energy_cutoff="-3.0" />
 	</FILTERS>
 	<MOVERS>
-		<DeclareBond name=link_ends atom1=C atom2=N res1=8 res2=1 />
+		<DeclareBond name="link_ends" atom1="C" atom2="N" res1="8" res2="1" />
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=link_ends />
-		<Add filter=oversat_pass1 />
-		<Add filter=oversat_pass2 />
-		<Add filter=oversat_pass3 />
-		<Add filter=oversat_pass4 />
-		<Add filter=oversat_fail1 />
+		<Add mover="link_ends" />
+		<Add filter="oversat_pass1" />
+		<Add filter="oversat_pass2" />
+		<Add filter="oversat_pass3" />
+		<Add filter="oversat_pass4" />
+		<Add filter="oversat_fail1" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

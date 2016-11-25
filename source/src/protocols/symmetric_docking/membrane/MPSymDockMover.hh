@@ -72,11 +72,11 @@ public:
 
 	/// @brief Create a Clone of this mover
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void
@@ -86,23 +86,34 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	//////////////////////
 	/// Mover Methods  ///
 	//////////////////////
 
 	/// @brief Return the name of this mover (MPSymDockMover)
-	virtual
-	std::string
-	get_name() const;
+	// XRW TEMP  virtual
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 	/// @brief Apply Method: Symmetric Docking in the membrane
 	/// @details Setup pose for symmetry, add the membrane components to the total pose,
 	/// and then perform symmetric docking
-	virtual
 	void
-	apply( Pose & pose );
+	apply( Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

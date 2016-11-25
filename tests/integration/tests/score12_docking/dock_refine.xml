@@ -1,18 +1,19 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<SCOREFXNS>
 	</SCOREFXNS>
 	<FILTERS>
-		<Sasa name=sasa confidence=0/>
-		<Rmsd name=rms confidence=0/>
+		<Sasa name="sasa" confidence="0"/>
+		<Rmsd name="rms" confidence="0"/>
 	</FILTERS>
 	<MOVERS>
-		<Docking name=dock1 fullatom=1 local_refine=1 score_high=score12/>
+		<Docking name="dock1" fullatom="1" local_refine="1" score_high="score12"/>
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover_name=dock1/>
-		<Add filter_name=sasa/>
-		<Add filter_name=rms/>
+		<Add mover_name="dock1"/>
+		<Add filter_name="sasa"/>
+		<Add filter_name="rms"/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

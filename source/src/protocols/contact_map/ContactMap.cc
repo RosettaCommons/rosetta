@@ -46,6 +46,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace contact_map {
@@ -61,24 +64,24 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.moves.ContactMap" );
 
 ///////////////////////////////  ContactMapCreator  ///////////////////////////////
 
-std::string ContactMapCreator::keyname() const {
-	return ContactMapCreator::mover_name();
-}
+// XRW TEMP std::string ContactMapCreator::keyname() const {
+// XRW TEMP  return ContactMap::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP ContactMapCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ContactMap );
-}
+// XRW TEMP protocols::moves::MoverOP ContactMapCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ContactMap );
+// XRW TEMP }
 
-std::string ContactMapCreator::mover_name() {
-	return "ContactMap";
-}
+// XRW TEMP std::string ContactMap::mover_name() {
+// XRW TEMP  return "ContactMap";
+// XRW TEMP }
 
 
 ///////////////////////////////  ContactMap  ///////////////////////////////
 
 /// @brief Default constructor
 ContactMap::ContactMap() :
-	Mover(ContactMapCreator::mover_name()),
+	Mover(ContactMap::mover_name()),
 	output_prefix_("contact_map_"),
 	n_poses_(0),
 	distance_cutoff_(10.0),
@@ -104,9 +107,9 @@ moves::MoverOP ContactMap::fresh_instance() const {
 	return moves::MoverOP( new ContactMap );
 }
 
-std::string ContactMap::get_name() const {
-	return ContactMapCreator::mover_name();
-}
+// XRW TEMP std::string ContactMap::get_name() const {
+// XRW TEMP  return ContactMap::mover_name();
+// XRW TEMP }
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
 void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
@@ -442,6 +445,59 @@ ContactMap::get_contact( core::Size row, core::Size col) {
 		* column_names_.size() + col];
 	return contacts_.at(pos_in_contacts);
 }
+
+std::string ContactMap::get_name() const {
+	return mover_name();
+}
+
+std::string ContactMap::mover_name() {
+	return "ContactMap";
+}
+
+void ContactMap::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	//Format for region strings?
+	//Option 1: a single character (chain ID)
+	//Option 2: hyphen-separated residue numbers
+	//Option 3: a single residue number
+	XMLSchemaRestriction region_string;
+	region_string.name( "contact_map_region_string" );
+	region_string.base_type( xs_string );
+	region_string.add_restriction( xsr_pattern, ".|[0-9]+(-[0-9]+)?" );
+	xsd.add_top_level_element( region_string );
+
+	AttributeList attlist;
+	attlist
+
+		+ XMLSchemaAttribute( "distance_cutoff", xsct_real, "Maximum distance between two atoms that will be considered a contact" )
+		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix for output filenames" )
+		+ XMLSchemaAttribute::attribute_w_default( "reset_count", xsct_rosetta_bool, "Should the count be reset to zero after outputting the contact map to a file?", "true" )
+		+ XMLSchemaAttribute( "models_per_file", xsct_non_negative_integer, "Number of models to output per file" )
+		+ XMLSchemaAttribute::attribute_w_default( "row_format", xsct_rosetta_bool, "Should the output be in row format instead of matrix format?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_matrix", xsct_rosetta_bool, "Store distances of contacts in matrix", "false" )
+		+ XMLSchemaAttribute( "region1", "contact_map_region_string", "Region definition for region1 of the contact map in format start-end or chainID" )
+		+ XMLSchemaAttribute( "region2", "contact_map_region_string", "Region definition for region2 of the contact map" )
+		+ XMLSchemaAttribute( "ligand", "contact_map_region_string", "Sequence position or chainID of a ligand" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Generates a contact map between specified regions", attlist );
+
+}
+
+std::string ContactMapCreator::keyname() const {
+	return ContactMap::mover_name();
+}
+
+protocols::moves::MoverOP
+ContactMapCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ContactMap );
+}
+
+void ContactMapCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ContactMap::provide_xml_schema( xsd );
+}
+
 
 ///////////////////////////////  ContactPartner  ///////////////////////////////
 

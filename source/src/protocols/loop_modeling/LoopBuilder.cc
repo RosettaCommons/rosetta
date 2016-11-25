@@ -44,6 +44,10 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -60,13 +64,13 @@ using basic::datacache::DataMap;
 namespace protocols {
 namespace loop_modeling {
 
-moves::MoverOP LoopBuilderCreator::create_mover() const { // {{{1
-	return moves::MoverOP( new LoopBuilder );
-}
+// XRW TEMP moves::MoverOP LoopBuilderCreator::create_mover() const { // {{{1
+// XRW TEMP  return moves::MoverOP( new LoopBuilder );
+// XRW TEMP }
 
-string LoopBuilderCreator::keyname() const { // {{{1
-	return "LoopBuilder";
-}
+// XRW TEMP string LoopBuilderCreator::keyname() const { // {{{1
+// XRW TEMP  return "LoopBuilder";
+// XRW TEMP }
 // }}}1
 
 LoopBuilder::LoopBuilder() { // {{{1
@@ -205,12 +209,59 @@ void LoopBuilder::set_score_function(ScoreFunctionOP score_function) { // {{{1
 	set_tool(ToolboxKeys::SCOREFXN, score_function);
 }
 
+std::string LoopBuilder::get_name() const {
+	return mover_name();
+}
+
+std::string LoopBuilder::mover_name() {
+	return "LoopBuilder";
+}
+
+// handle parse_score_function for derived classes
+void
+LoopBuilder::get_score_function_attributes( utility::tag::AttributeList &attlist ) {
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+}
+
+void LoopBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	XMLSchemaComplexTypeGenerator ct_gen;
+	// subelement_list for the LoopMover subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+
+	ct_gen.element_name( mover_name() )//complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.description( "Builds in backbone atoms for loop regions where they are missing. "
+		"The backbones created by LoopBuilder will have ideal bond lengths, ideal bond angles, "
+		"and torsions picked from a Ramachandran distribution."  )
+		.add_attribute( XMLSchemaAttribute("max_attempts", xsct_non_negative_integer, "Stop after n cycles irrespective of convergence.")  )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string LoopBuilderCreator::keyname() const {
+	return LoopBuilder::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopBuilderCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopBuilder );
+}
+
+void LoopBuilderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopBuilder::provide_xml_schema( xsd );
+}
+
+
 void LoopBuilder::idealize_loop(Pose & pose, Loop const & loop, core::kinematics::FoldTree &ft) const{
 	core::kinematics::FoldTree original_ft(pose.fold_tree());
 	pose.fold_tree(ft);
 	loops::idealize_loop(pose, loop);
 	pose.fold_tree(original_ft);
 }
+
 // }}}1
 
 

@@ -32,6 +32,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/dssp/Dssp.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -205,11 +208,56 @@ void SecondaryStructureCountFilter::report( std::ostream & out, core::pose::Pose
 	out << " Pose has " << num_helix_pose_ << " helix " << num_sheet_pose_  << " sheet " << num_helix_pose_ << " loop according to dssp_reduced definition" <<  std::endl;
 }
 
-protocols::filters::FilterOP
-SecondaryStructureCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureCountFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SecondaryStructureCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureCountFilter ); }
 
-std::string
-SecondaryStructureCountFilterCreator::keyname() const { return "SecondaryStructureCount"; }
+// XRW TEMP std::string
+// XRW TEMP SecondaryStructureCountFilterCreator::keyname() const { return "SecondaryStructureCount"; }
+
+std::string SecondaryStructureCountFilter::name() const {
+	return class_name();
+}
+
+std::string SecondaryStructureCountFilter::class_name() {
+	return "SecondaryStructureCount";
+}
+
+void SecondaryStructureCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "num_helix", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "num_sheet", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "num_helix_sheet", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "num_loop", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_helix_length", xsct_non_negative_integer, "XRW TO DO", "4" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_sheet_length", xsct_non_negative_integer, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_loop_length", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_helix_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_sheet_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_loop_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_helix", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_sheet", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_loop", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_helix_sheet", xsct_rosetta_bool, "XRW TO DO", "true" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SecondaryStructureCountFilterCreator::keyname() const {
+	return SecondaryStructureCountFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SecondaryStructureCountFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SecondaryStructureCountFilter );
+}
+
+void SecondaryStructureCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SecondaryStructureCountFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

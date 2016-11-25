@@ -34,6 +34,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.util" );
 
@@ -132,6 +133,13 @@ parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap
 		cgs.push_back( new_cg );
 	}
 	return cgs;
+}
+
+/// @brief Appends the attributes read by parse_constraint_generators
+void
+attributes_for_parse_constraint_generators( utility::tag::AttributeList & attributes )
+{
+	attributes + utility::tag::XMLSchemaAttribute( "constraint_generators", utility::tag::xs_string , "ConstraintGenerators that define constraints for the pose" );
 }
 
 } //protocols

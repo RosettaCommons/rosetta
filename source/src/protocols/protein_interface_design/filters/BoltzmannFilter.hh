@@ -38,18 +38,18 @@ public:
 	/// @brief default ctor
 	BoltzmannFilter();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~BoltzmannFilter();
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	void add_positive_filter( protocols::filters::FilterOP f );
 	void add_negative_filter( protocols::filters::FilterOP f );
 	void anchors( utility::vector1< core::Real > const & anchors );
@@ -64,6 +64,18 @@ public:
 	void fitness_threshold( core::Real const f );
 	bool norm_neg() const;
 	void norm_neg( bool const n );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< protocols::filters::FilterOP > positive_filters_;
 	utility::vector1< protocols::filters::FilterOP > negative_filters_;

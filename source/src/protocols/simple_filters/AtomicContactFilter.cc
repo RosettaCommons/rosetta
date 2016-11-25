@@ -31,6 +31,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -152,11 +155,49 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"AtomicContact filter between residues "<<residue1_<<" and "<<get_resid()<<" with distance cutoff of "<<distance_<<std::endl;
 }
 
-filters::FilterOP
-AtomicContactFilterCreator::create_filter() const { return filters::FilterOP( new AtomicContactFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP AtomicContactFilterCreator::create_filter() const { return filters::FilterOP( new AtomicContactFilter ); }
 
-std::string
-AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }
+// XRW TEMP std::string
+// XRW TEMP AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }
+
+std::string AtomicContactFilter::name() const {
+	return class_name();
+}
+
+std::string AtomicContactFilter::class_name() {
+	return "AtomicContact";
+}
+
+void AtomicContactFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "distance", xsct_real, "Distance below which a contact counts", "4.0" )
+		+ XMLSchemaAttribute( "range1", xs_string, "Space-separated pair of integers indicating the first residue range over which to evaluate the filter" )
+		+ XMLSchemaAttribute( "residue1", xsct_refpose_enabled_residue_number, "Residue number that may be making atomic contacts with residue2; only read if range1 is not provided" )
+		+ XMLSchemaAttribute( "residue2", xsct_refpose_enabled_residue_number, "Residue number that may be making atomic contacts with the range of residues range1" )
+		+ XMLSchemaAttribute( "sidechain", xsct_rosetta_bool, "Count sidechain contacts" )
+		+ XMLSchemaAttribute( "backbone", xsct_rosetta_bool, "Count contacts to the backbone" )
+		+ XMLSchemaAttribute( "protons", xsct_rosetta_bool, "Count contacts made by protons" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string AtomicContactFilterCreator::keyname() const {
+	return AtomicContactFilter::class_name();
+}
+
+protocols::filters::FilterOP
+AtomicContactFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AtomicContactFilter );
+}
+
+void AtomicContactFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomicContactFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

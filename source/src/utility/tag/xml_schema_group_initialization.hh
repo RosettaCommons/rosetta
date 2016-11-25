@@ -35,7 +35,7 @@
 namespace utility {
 namespace tag {
 
-/// @details Creator must define two functions: keyname() and provide_xml_schema()
+/// @details Creator must define a single function: provide_xml_schema()
 ///
 /// @throws In the event that the Creator does not define a complex type with the
 /// name coming from the complex_type_name_for_widget_func, this function will throw
@@ -81,7 +81,7 @@ void define_xml_schema_group(
 		}
 
 		if ( ! xsd.has_top_level_element( complex_type_name_for_widget_func( iter->first ) ) ) {
-			//std::cout << "schema:\n" << xsd.full_definition() << std::endl;
+			//std::cerr << "schema:\n" << xsd.full_definition() << std::endl;
 			throw utility::excn::EXCN_Msg_Exception( "define_xml_schema_group: failed to detect a complex type of name \"" +
 				complex_type_name_for_widget_func( iter->first ) + "\" for \"" +
 				iter->first + "\"\n" );

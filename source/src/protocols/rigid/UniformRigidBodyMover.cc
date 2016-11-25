@@ -27,6 +27,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -43,20 +46,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-UniformRigidBodyMoverCreator::keyname() const {
-	return UniformRigidBodyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP UniformRigidBodyMoverCreator::keyname() const {
+// XRW TEMP  return UniformRigidBodyMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-UniformRigidBodyMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new UniformRigidBodyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP UniformRigidBodyMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new UniformRigidBodyMover );
+// XRW TEMP }
 
-std::string
-UniformRigidBodyMoverCreator::mover_name() {
-	return "UniformRigidBodyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP UniformRigidBodyMover::mover_name() {
+// XRW TEMP  return "UniformRigidBodyMover";
+// XRW TEMP }
 
 UniformRigidBodyMover::UniformRigidBodyMover():
 	ThermodynamicMover(),
@@ -123,9 +126,9 @@ void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
 	target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );
 }
 
-std::string UniformRigidBodyMover::get_name() const {
-	return "UniformRigidBodyMover";
-}
+// XRW TEMP std::string UniformRigidBodyMover::get_name() const {
+// XRW TEMP  return "UniformRigidBodyMover";
+// XRW TEMP }
 
 utility::vector1<core::id::TorsionID_Range>
 UniformRigidBodyMover::torsion_id_ranges( core::pose::Pose & ) {
@@ -139,6 +142,73 @@ moves::MoverOP UniformRigidBodyMover::fresh_instance() const {
 moves::MoverOP UniformRigidBodyMover::clone() const{
 	return moves::MoverOP( new UniformRigidBodyMover( *this ) );
 }
+
+std::string UniformRigidBodyMover::get_name() const {
+	return mover_name();
+}
+
+std::string UniformRigidBodyMover::mover_name() {
+	return "UniformRigidBodyMover";
+}
+
+void UniformRigidBodyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_gen();
+	ct_gen->description( "XRW TO DO" );
+	ct_gen->add_attributes( attlist );
+	ct_gen->element_name( mover_name() );
+	ct_gen->write_complex_type_to_schema( xsd );
+
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+UniformRigidBodyMover::complex_type_gen()
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("rotation_magnitude", xsct_real, "XRW TO DO", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("translation_magnitude", xsct_real, "XRW TO DO", "3.0")
+		+ XMLSchemaAttribute::attribute_w_default("target_jump", xs_integer, "XRW TO DO", utility::to_string(NO_JUMP));
+
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen ( new XMLSchemaComplexTypeGenerator );
+	ct_gen->add_attributes( attlist );
+	ct_gen->complex_type_naming_func( & protocols::moves::complex_type_name_for_mover );
+	ct_gen->add_optional_name_attribute();
+	return ct_gen;
+}
+
+/*
+void UniformRigidBodyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+using namespace utility::tag;
+XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_gen();
+ct_gen->description( "XRW TO DO" );
+ct_gen->add_attributes( attlist );
+ct_gen->element_name( mover_name() );
+ct_gen->write_complex_type_to_schema( xsd );
+}
+*/
+
+std::string UniformRigidBodyMoverCreator::keyname() const {
+	return UniformRigidBodyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+UniformRigidBodyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new UniformRigidBodyMover );
+}
+
+void UniformRigidBodyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UniformRigidBodyMover::provide_xml_schema( xsd );
+}
+
 
 } // rigid
 } // protocols

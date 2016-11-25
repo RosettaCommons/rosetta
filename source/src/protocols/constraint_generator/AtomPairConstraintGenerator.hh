@@ -30,7 +30,7 @@
 #include <utility/fixedsizearray1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 namespace protocols {
 namespace constraint_generator {
 
@@ -88,6 +88,9 @@ public:
 	void
 	set_reference_pose( core::pose::PoseCOP ref_pose );
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::scoring::constraints::ConstraintCOPs
 	generate_constraints( core::pose::Pose const & pose, core::select::residue_selector::ResidueSubset const & subset ) const;
@@ -127,6 +130,7 @@ private:
 		core::conformation::Residue const & ref_jres,
 		MappedAtoms const & iatoms,
 		MappedAtoms const & jatoms ) const;
+
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;

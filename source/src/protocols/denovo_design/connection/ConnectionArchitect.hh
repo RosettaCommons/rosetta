@@ -31,6 +31,7 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <set>
@@ -73,10 +74,14 @@ public:
 	clone() const;
 
 protected:
+	/// @brief companion function: attributes_for_parse_my_tag
 	virtual void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 public:
+	static void
+	attributes_for_parse_my_tag(utility::tag::AttributeList& attlist);
+
 	/// @brief does the work of modifying the StructureData
 	void
 	apply( components::StructureData & sd ) const;

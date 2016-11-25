@@ -51,6 +51,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/RotamerFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -85,10 +89,10 @@ using cppdb::result;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.features.RotamerFeatures" );
 
-string
-RotamerFeatures::type_name() const {
-	return "RotamerFeatures";
-}
+// XRW TEMP string
+// XRW TEMP RotamerFeatures::type_name() const {
+// XRW TEMP  return "RotamerFeatures";
+// XRW TEMP }
 
 void
 RotamerFeatures::write_schema_to_db(
@@ -392,6 +396,39 @@ RotamerFeatures::delete_record(
 	conf_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(conf_stmt);
 }
+
+std::string RotamerFeatures::type_name() const {
+	return class_name();
+}
+
+std::string RotamerFeatures::class_name() {
+	return "RotamerFeatures";
+}
+
+void RotamerFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report idealized torsional DOFs Statistics Scientific Benchmark",
+		attlist );
+}
+
+std::string RotamerFeaturesCreator::type_name() const {
+	return RotamerFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+RotamerFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new RotamerFeatures );
+}
+
+void RotamerFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

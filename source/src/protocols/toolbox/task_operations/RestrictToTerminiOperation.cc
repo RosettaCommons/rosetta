@@ -149,11 +149,11 @@ void RestrictToTerminiOperation::provide_xml_schema( utility::tag::XMLSchemaDefi
 {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_n_terminus", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "repack_c_terminus", xs_boolean, "true" );
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_n_terminus", xsct_rosetta_bool, "XRW TO DO",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "repack_c_terminus", xsct_rosetta_bool, "XRW TO DO",  "true"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

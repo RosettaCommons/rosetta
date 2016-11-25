@@ -48,7 +48,7 @@ public:
 		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	}
 
-	std::string get_name() const override { return OptimizeThreadingMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return OptimizeThreadingMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -59,6 +59,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// helper function

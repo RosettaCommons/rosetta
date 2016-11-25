@@ -36,6 +36,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -124,11 +127,46 @@ IRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 
 }
 
-protocols::filters::FilterOP
-IRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IRmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP IRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IRmsdFilter ); }
 
-std::string
-IRmsdFilterCreator::keyname() const { return "IRmsd"; }
+// XRW TEMP std::string
+// XRW TEMP IRmsdFilterCreator::keyname() const { return "IRmsd"; }
+
+std::string IRmsdFilter::name() const {
+	return class_name();
+}
+
+std::string IRmsdFilter::class_name() {
+	return "IRmsd";
+}
+
+void IRmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "RMSD threshold above which we would fail the filter", "5" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump for calculating docking RMSD, numbered sequentially from 1", "1" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates an interface rmsd. Rmsd is calculated over all backbone atoms for those residues found in the interface of the reference structure. Interface residues are those residues which are within 8 Angstroms of any residue on the other side of the interface.", attlist );
+}
+
+std::string IRmsdFilterCreator::keyname() const {
+	return IRmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+IRmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new IRmsdFilter );
+}
+
+void IRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IRmsdFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

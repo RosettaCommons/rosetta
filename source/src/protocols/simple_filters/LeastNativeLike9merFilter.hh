@@ -73,7 +73,7 @@ public:// virtual constructor
 	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new LeastNativeLike9merFilter());}
 
 	// @brief get name of this filter
-	std::string name() const override { return "LeastNativeLike9merFilter"; }
+	// XRW TEMP  std::string name() const override { return "LeastNativeLike9merFilter"; }
 	Real report_sm(const Pose & pose ) const override;
 	void report( std::ostream & out,const Pose & pose ) const override;
 	Real compute( const Pose & pose ) const;
@@ -83,6 +83,18 @@ public:// virtual constructor
 		filters::Filters_map const &,
 		Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

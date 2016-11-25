@@ -60,6 +60,18 @@ public:
 		core::pose::Pose const & ) override;
 	virtual void set_value( bool const value );
 	virtual bool get_value() const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	bool value_; // defaults to false
 };

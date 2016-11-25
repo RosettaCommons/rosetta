@@ -61,6 +61,8 @@ public:
 	bool
 	design_protocol_is_present(std::string const &design_protocol) const;
 
+	utility::vector1<std::string>
+	get_recognized_design_protocols() const;
 
 
 	////////////////// MinType ///////////////////////////////////////////////

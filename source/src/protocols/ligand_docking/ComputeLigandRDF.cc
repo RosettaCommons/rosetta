@@ -49,28 +49,31 @@
 
 #include <map>
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
 
-std::string
-ComputeLigandRDFCreator::keyname() const
-{
-	return ComputeLigandRDFCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ComputeLigandRDFCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ComputeLigandRDF::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ComputeLigandRDFCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ComputeLigandRDF );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ComputeLigandRDFCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ComputeLigandRDF );
+// XRW TEMP }
 
-std::string
-ComputeLigandRDFCreator::mover_name()
-{
-	return "ComputeLigandRDF";
-}
+// XRW TEMP std::string
+// XRW TEMP ComputeLigandRDF::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ComputeLigandRDF";
+// XRW TEMP }
 
 
 ComputeLigandRDF::ComputeLigandRDF() : mode_(""),ligand_chain_(""),bin_count_(100), smoothing_factor_(100.0),range_squared_(100.0)
@@ -114,10 +117,10 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string ComputeLigandRDF::get_name() const
-{
-	return "ComputeLigandRDF";
-}
+// XRW TEMP std::string ComputeLigandRDF::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "ComputeLigandRDF";
+// XRW TEMP }
 
 void ComputeLigandRDF::parse_my_tag
 (
@@ -154,19 +157,76 @@ void ComputeLigandRDF::parse_my_tag
 	for ( ; begin != end; ++begin ) {
 		TagCOP function_tag= *begin;
 		// for(TagCOP const & feature_tag : tag->getTags()){
+		try{
+			rdf::RDFBaseOP rdf_function(rdf::RDFFunctionFactory::get_instance()->get_rdf_function(function_tag, data_map));
 
-		if ( function_tag->getName() != "RDF" ) {
-			compute_rdf_tracer.Error << "Please include only tags with name 'RDF' as subtags of ReportToDB" << std::endl;
+			rdf_functions_.push_back(rdf_function);
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			compute_rdf_tracer.Error << "Please include only RDFFunction tags as subtags of ComputeLigandRDF" << std::endl;
 			compute_rdf_tracer.Error << "Tag with name '" << function_tag->getName() << "' is invalid" << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		}
-
-		rdf::RDFBaseOP rdf_function(rdf::RDFFunctionFactory::get_instance()->get_rdf_function(function_tag, data_map));
-
-		rdf_functions_.push_back(rdf_function);
-
 	}
 }
+
+std::string ComputeLigandRDF::get_name() const {
+	return mover_name();
+}
+
+std::string ComputeLigandRDF::mover_name() {
+	return "ComputeLigandRDF";
+}
+
+void ComputeLigandRDF::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("ligand_chain", xs_string, "Chain ID of the ligand.")
+		+ XMLSchemaAttribute::attribute_w_default("bin_count", xsct_non_negative_integer,
+		"Number of bins to represent the distribution, default=100", "100")
+		+ XMLSchemaAttribute::attribute_w_default("smoothing_factor", xsct_real, "Set smoothing factor. Default=100.", "100")
+		+ XMLSchemaAttribute::attribute_w_default("range", xsct_real, "Max distance to include in RDF (radius). Defaut=10 Angstroms", "10");
+	// Add restriction for mode (pocket or interface)
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "pocket_or_interface" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "pocket|interface" );
+	xsd.add_top_level_element( restriction_type );
+	attlist + XMLSchemaAttribute::required_attribute("mode", "pocket_or_interface", "interface mode: RDF is computed using all "
+		"ligand atoms and all protein atoms within 10 Angstroms of the ligand"
+		"pocket mode; RDF is computed using all protein atoms within 10 Angstroms of the ligand.");
+	// subelements (RDFs)
+	rdf::RDFFunctionFactory::get_instance()->define_rdf_function_group( xsd );
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_group_subelement( & ligand_docking::rdf::RDFFunctionFactory::rdf_function_group_name );
+	//protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+	// "ComputeLigandRDF computes Radial Distribution Functions using pairs of protein-protein or protein-ligand atoms. "
+	// , attlist, subelement_list );
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.element_name( mover_name() )
+		.description( "ComputeLigandRDF computes Radial Distribution Functions using pairs of protein-protein or protein-ligand atoms." )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( subelement_list, 1, xsminmax_unbounded )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string ComputeLigandRDFCreator::keyname() const {
+	return ComputeLigandRDF::mover_name();
+}
+
+protocols::moves::MoverOP
+ComputeLigandRDFCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ComputeLigandRDF );
+}
+
+void ComputeLigandRDFCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ComputeLigandRDF::provide_xml_schema( xsd );
+}
+
 
 //@brief do the work of computing an RDF.  look at Equation 18 of the ADRIANA.Code Manual (http://mol-net.com/files/docs/adrianacode/adrianacode_manual.pdf)
 std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_protein_rdf(core::pose::Pose & pose)

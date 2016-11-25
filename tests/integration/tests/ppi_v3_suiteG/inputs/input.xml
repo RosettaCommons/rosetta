@@ -1,36 +1,37 @@
+<ROSETTASCRIPTS>
+
 <!-- #### 6/22/16 FINAL BENCHMARK DESIGN PROTOCOL: BINDER = CHAIN A and TARGET=CHAIN B
 #### Authors: Franziska Seeger
 #### edited 7/8/16: fixed RIFRES recognition issue 
 #### example command to be used to run this xml: "mkdir "+str(pdb)+" ; cd /work/fseeger/nanobody_designs/14_gen2_design/trial22/"+str(pdb_name)+"/ ; /work/tayi/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccrelease -database /work/tayi/Rosetta/main/database/ -parser:protocol /work/fseeger/PPI_Benchmark/Design_Scripts/Design_Scripts/FD_FR_benchmark_digs.xml -holes:dalphaball /work/brunette/scripts/DAlphaBall.gcc -beta -rama_prepro_steep -nstruct 1 -s " +str(pdb)+"> "+str(pdb_name)+".log; cd /work/fseeger/nanobody_designs/14_gen2_design/trial22/" use make_parallel_joblist.py file to make a joblist that can be executed in parallel on the digs or added to an sql library on hyak
 ### for i in "full_path_to_pdbs"; do python make_parallel_joblist.py $i ; done > your_parallel_joblist  -->
 
-<ROSETTASCRIPTS>
 <SCOREFXNS>
   ### add Nov15 energy function with coordinate constraints
-  <NOV15 weights="beta" >
+  <ScoreFunction name="NOV15" weights="beta" >
     <Reweight scoretype="coordinate_constraint" weight="1" />
-  </NOV15>
-  <VDW weights="empty" >
-    <Reweight scoretype="fa_atr" weight=1.0 />
-  </VDW>
+  </ScoreFunction>
+  <ScoreFunction name="VDW" weights="empty" >
+    <Reweight scoretype="fa_atr" weight="1.0" />
+  </ScoreFunction>
   ### ADDED FOR SCORING FILTERS
-  <TotalHydrophobic weights="inputs/total_hydrophobic_weights.wts"/>
+  <ScoreFunction name="TotalHydrophobic" weights="inputs/total_hydrophobic_weights.wts"/>
 </SCOREFXNS>
 
 <RESIDUE_SELECTORS>
   <ResiduePDBInfoHasLabel name="RIF_Res" property="RIFRES" />
   ### select chain A
-  <Chain name=chainA chains="A"/>
+  <Chain name="chainA" chains="A"/>
   ### select chain B
-  <Chain name=chainB chains="B"/>
+  <Chain name="chainB" chains="B"/>
   ### select interface of chainB close within 8.0 A of chainA 
-  <Neighborhood name=interface_chA selector=chainB distance=8.0/>
+  <Neighborhood name="interface_chA" selector="chainB" distance="8.0"/>
   ### select interface of chainA close within 8.0 A of chainB 
-  <Neighborhood name=interface_chB selector=chainA distance=8.0/>
+  <Neighborhood name="interface_chB" selector="chainA" distance="8.0"/>
   ### select intersection of chain A and Chain B interface
   <And name="AB_interface" selectors="interface_chA,interface_chB" />
   ### select everything but the designable interface residues
-  <Not name=Not_interface selector=AB_interface />
+  <Not name="Not_interface" selector="AB_interface" />
 
 </RESIDUE_SELECTORS>
 
@@ -45,28 +46,28 @@
   <ProteinInterfaceDesign name="chain2_interface" repack_chain1="1" design_chain2="0" jump="1" interface_distance_cutoff="8"/> //
   ### this task operation defines an extended generous interface for minimization
   <ProteinInterfaceDesign name="pack_long" design_chain1="0" design_chain2="0" jump="1" interface_distance_cutoff="15"/>
-  <InitializeFromCommandline name=init/>
-  <IncludeCurrent name=current/>
-  <LimitAromaChi2 name="limitchi2" chi2max=110 chi2min=70 include_trp="True" />
+  <InitializeFromCommandline name="init"/>
+  <IncludeCurrent name="current"/>
+  <LimitAromaChi2 name="limitchi2" chi2max="110" chi2min="70" include_trp="True" />
   ### expanded chi1 and chi2 rotamer libraries
-  <ExtraRotamersGeneric name=ex1_ex2 ex1=1 ex2=1/>
-  <ExtraRotamersGeneric name=ex1 ex1=1/>
+  <ExtraRotamersGeneric name="ex1_ex2" ex1="1" ex2="1"/>
+  <ExtraRotamersGeneric name="ex1" ex1="1"/>
 
   ### define layer design parameters
-  <LayerDesign name="all_layers" layer="core_boundary_surface_Nterm_Cterm" use_sidechain_neighbors=True pore_radius="2.0" verbose="true" />
+  <LayerDesign name="all_layers" layer="core_boundary_surface_Nterm_Cterm" use_sidechain_neighbors="True" pore_radius="2.0" verbose="true" />
 
   ### restrict design to only interface residues
-  <OperateOnResidueSubset name=restrict_to_interface selector="Not_interface">
+  <OperateOnResidueSubset name="restrict_to_interface" selector="Not_interface">
     <PreventRepackingRLT/>
   </OperateOnResidueSubset>
 
   ### don't design the target
-  <OperateOnResidueSubset name=restrict_target selector="chainB">
+  <OperateOnResidueSubset name="restrict_target" selector="chainB">
     <PreventRepackingRLT/>
   </OperateOnResidueSubset>
 
   ### restrict the target to only changing rotamers
-  <OperateOnResidueSubset name=restrict_target2repacking selector="chainB">
+  <OperateOnResidueSubset name="restrict_target2repacking" selector="chainB">
     <RestrictToRepackingRLT/>
   </OperateOnResidueSubset>
 
@@ -75,55 +76,55 @@
   </OperateOnResidueSubset>
 
   ### disallow ALA and GLY at the Interface
-  <DisallowIfNonnative name=disallow_GLY resnum=0 disallow_aas=G />
-  <DisallowIfNonnative name=disallow_PRO resnum=0 disallow_aas=P />
+  <DisallowIfNonnative name="disallow_GLY" resnum="0" disallow_aas="G" />
+  <DisallowIfNonnative name="disallow_PRO" resnum="0" disallow_aas="P" />
 
   ##### ADDED FOR SCORING FILTERS ##########
   ### don't design the target
-  <OperateOnCertainResidues name=restrict_chA>
+  <OperateOnCertainResidues name="restrict_chA">
+  <ChainIs chain="A"/>
   <RestrictToRepackingRLT/>
-  <ChainIs chain=A/>
   </OperateOnCertainResidues>
 
   ### don't design the target
-  <OperateOnCertainResidues name=restrict_chB>
+  <OperateOnCertainResidues name="restrict_chB">
+  <ChainIs chain="B"/>
   <RestrictToRepackingRLT/>
-  <ChainIs chain=B/>
   </OperateOnCertainResidues>
 
   ### restrict all to repack only
   <RestrictToRepacking name="restrict_to_repack" />
 
   ### layer design task ops that define surface, core, and boundary for residue count filters
-  <LayerDesign name="core" layer="core" use_sidechain_neighbors=True verbose="true" /> make_pymol_script="true"/>
-  <LayerDesign name="boundary" layer="boundary" use_sidechain_neighbors=True verbose="true" /> make_pymol_script="true"/>
-  <LayerDesign name="surface" layer="surface_Nterm_Cterm" use_sidechain_neighbors=True verbose="true" /> make_pymol_script="true"/>
+  <LayerDesign name="core" layer="core" use_sidechain_neighbors="True" verbose="true" /> make_pymol_script="true"/>
+  <LayerDesign name="boundary" layer="boundary" use_sidechain_neighbors="True" verbose="true" /> make_pymol_script="true"/>
+  <LayerDesign name="surface" layer="surface_Nterm_Cterm" use_sidechain_neighbors="True" verbose="true" /> make_pymol_script="true"/>
 
-  <LayerDesign name="layer_core_SCN" layer="core" pore_radius="2.0" verbose="true" use_sidechain_neighbors="True" core=4 />
+  <LayerDesign name="layer_core_SCN" layer="core" pore_radius="2.0" verbose="true" use_sidechain_neighbors="True" core="4" />
   <LayerDesign name="layer_core_SASA" layer="core" core="20" pore_radius="2.0" verbose="true" />
   <LayerDesign name="layer_core_boundary_SCN" layer="core_boundary" pore_radius="2.0" verbose="true" use_sidechain_neighbors="True" />
 
   <OperateOnCertainResidues name="no_ala_disulf" >
-    <RestrictToRepackingRLT />
     <ResidueName3Is name3="ALA" />
+    <RestrictToRepackingRLT />
   </OperateOnCertainResidues>
 
   <OperateOnCertainResidues name="no_repack_non-disulf" >
-    <PreventRepackingRLT/>
     <ResidueName3Isnt name3="CYS" />
+    <PreventRepackingRLT/>
   </OperateOnCertainResidues>
 
 </TASKOPERATIONS>
 
 <MOVERS>
   ### minimization of the extended PPI
-  <TaskAwareMinMover name=min scorefxn=NOV15 bb=0 chi=1 task_operations=pack_long/>
+  <TaskAwareMinMover name="min" scorefxn="NOV15" bb="0" chi="1" task_operations="pack_long"/>
   ### define chain 1 and chain 2
-  <SwitchChainOrder name=chain1only chain_order="1"/>
-  <SwitchChainOrder name=chain2only chain_order="2"/>
+  <SwitchChainOrder name="chain1only" chain_order="1"/>
+  <SwitchChainOrder name="chain2only" chain_order="2"/>
   ### need this for the rmsd filter
-  <SavePoseMover name="save_RMSDreference_conformation_FD"  restore_pose=0 reference_name="reference_conformation_FD"/>
-  <SavePoseMover name="restore_RMSDreference_conformation_FD"  restore_pose=1 reference_name="reference_conformation_FD"/>
+  <SavePoseMover name="save_RMSDreference_conformation_FD"  restore_pose="0" reference_name="reference_conformation_FD"/>
+  <SavePoseMover name="restore_RMSDreference_conformation_FD"  restore_pose="1" reference_name="reference_conformation_FD"/>
 
   ### add CA coordinate constraints to 0.1 coord_dev: Add constraints to the entire pose based on the current conformation. It can either apply coordinate constraints to protein Calpha and DNA heavy atoms (the default) or atom pair distance constraints between protein Calpha pairs. The functional form for the coordinate constraints can either be harmonic or bounded (flat-bottom), whereas atom pair distance constraints are currently only gaussian in form.
   ### coord_dev - Controls how quickly constraints increase with increasing deviation for all three constraint types. A value in Angstroms, with smaller numbers being tighter constraints.
@@ -139,12 +140,12 @@
   <RemoveConstraints name="rm_csts_chainA" constraint_generators="chainA_cst" />
 
   ### ADDED FOR SCORING FILTERS
-  <Dssp name=dssp reduced_IG_as_L=1/>
+  <Dssp name="dssp" reduced_IG_as_L="1"/>
 
   ### FastRelax mover for filter that tests how much the monomer moves outside the target context after relaxation
-  <FastRelax name=FastRelax_Monomer scorefxn=NOV15 repeats=3 task_operations=limitchi2 >
+  <FastRelax name="FastRelax_Monomer" scorefxn="NOV15" repeats="3" task_operations="limitchi2" >
      <MoveMap >
-        <Chain number=1 chi=1 bb=1/>
+        <Chain number="1" chi="1" bb="1"/>
      </MoveMap>
   </FastRelax>
 
@@ -167,125 +168,125 @@
   # COMPLEX FILTERS
   ###############################################
     ### ddG w/ and w/o repack/min NOV15 score function
-    <Ddg name="ddg"  threshold=-10 jump=1 repeats=5 repack=1 relax_mover=min confidence=0 scorefxn=NOV15 />
-    <Ddg name="ddg_norepack"  threshold=-10 jump=1 repeats=1 repack=0 confidence=0 scorefxn=NOV15/>
+    <Ddg name="ddg"  threshold="-10" jump="1" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="NOV15" />
+    <Ddg name="ddg_norepack"  threshold="-10" jump="1" repeats="1" repack="0" confidence="0" scorefxn="NOV15"/>
 
     ### ddG w/ and w/o repack VDW score function
-    <Ddg name="ddg_fa_atr"  threshold=-10 jump=1 repeats=5 repack=1 relax_mover=min confidence=0 scorefxn=VDW />
-    <Ddg name="ddg_fa_atr_norepack"  threshold=-10 jump=1 repeats=1 repack=0 confidence=0 scorefxn=VDW/>
+    <Ddg name="ddg_fa_atr"  threshold="-10" jump="1" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="VDW" />
+    <Ddg name="ddg_fa_atr_norepack"  threshold="-10" jump="1" repeats="1" repack="0" confidence="0" scorefxn="VDW"/>
     
     ### determine holes across the interface
     InterfaceHoles name="interface_holes" confidence=0 jump=1/>
 
     ### Computes the sasa specifically in the interface: total, hydrophobic, and polar
-    <Sasa name="interface_buried_sasa" confidence=0/>
-    <Sasa name="interface_hydrophobic_sasa" confidence=0 hydrophobic=True/>
-    <Sasa name="interface_polar_sasa" confidence=0 polar=True/>
+    <Sasa name="interface_buried_sasa" confidence="0"/>
+    <Sasa name="interface_hydrophobic_sasa" confidence="0" hydrophobic="True"/>
+    <Sasa name="interface_polar_sasa" confidence="0" polar="True"/>
 
 
     ### two different types of buried unsatisfied H bond metrics
-    <BuriedUnsatHbonds name="interface_unsat_hbond1" confidence=0 jump_number=1/>
-    <BuriedUnsatHbonds2 name="interface_unsat_hbond2" confidence=0 jump_number=1/>
+    <BuriedUnsatHbonds name="interface_unsat_hbond1" confidence="0" jump_number="1"/>
+    <BuriedUnsatHbonds2 name="interface_unsat_hbond2" confidence="0" jump_number="1"/>
 
     ### total sasa takes all solvent-accessible residues into account, hydrophobic in this case
-    <TotalSasa name="exposed_hydrophobics_complex" confidence="0" hydrophobic=True />
+    <TotalSasa name="exposed_hydrophobics_complex" confidence="0" hydrophobic="True" />
     ### calculate the exposed hydropobic by protein chain
-    <MoveBeforeFilter name=exposed_np_chain1 mover=chain1only filter=exposed_hydrophobics_complex/>
-    <MoveBeforeFilter name=exposed_np_chain2 mover=chain2only filter=exposed_hydrophobics_complex/>
+    <MoveBeforeFilter name="exposed_np_chain1" mover="chain1only" filter="exposed_hydrophobics_complex"/>
+    <MoveBeforeFilter name="exposed_np_chain2" mover="chain2only" filter="exposed_hydrophobics_complex"/>
 
     ### approximation of fraction of non-polar buried/ exposed residues chain 1; assuming buried nps are equally distributed among both chains 
     <CalculatorFilter name="fxn_np_chain1_buried_approx" equation="(sasa  / 2) / (np+0.01)" threshold="1" confidence="0">
-        <VAR name="sasa" filter="interface_hydrophobic_sasa"/>
-        <VAR name="np" filter="exposed_np_chain1"/>
+        <Var name="sasa" filter="interface_hydrophobic_sasa"/>
+        <Var name="np" filter="exposed_np_chain1"/>
     </CalculatorFilter>
 
     ### approximation of fraction of non-polar buried/ exposed residues chain 2; assuming buried nps are equally distributed among both chains
     <CalculatorFilter name="fxn_np_chain2_buried_approx" equation="(sasa / 2) / (np+0.01)" threshold="1" confidence="0">
-        <VAR name="sasa" filter="interface_hydrophobic_sasa"/>
-        <VAR name="np" filter="exposed_np_chain2"/>
+        <Var name="sasa" filter="interface_hydrophobic_sasa"/>
+        <Var name="np" filter="exposed_np_chain2"/>
     </CalculatorFilter>
 
     ### difference of total exposed hydrophobics (np) of chain 1 and the hydrophobics of chain 1 at the interface (approximate since assuming that the hydrophobics at the interface are qually contributed by chain 1 and chain 2)
     <CalculatorFilter name="np_chain1_exposed_approx" equation="np - (sasa / 2)" threshold="1" confidence="0">
-        <VAR name="sasa" filter="interface_hydrophobic_sasa"/>
-        <VAR name="np" filter="exposed_np_chain1"/>
+        <Var name="sasa" filter="interface_hydrophobic_sasa"/>
+        <Var name="np" filter="exposed_np_chain1"/>
     </CalculatorFilter>
 
      ### difference of total exposed hydrophobics (np) of chain 2 and the hydrophobics of chain 1 at the interface (approximate since assuming that the hydrophobics at the interface are qually contributed by chain 1 and chain 2)
     <CalculatorFilter name="np_chain2_exposed_approx" equation="np - (sasa / 2)" threshold="1" confidence="0">
-        <VAR name="sasa" filter="interface_hydrophobic_sasa"/>
-        <VAR name="np" filter="exposed_np_chain2"/>
+        <Var name="sasa" filter="interface_hydrophobic_sasa"/>
+        <Var name="np" filter="exposed_np_chain2"/>
     </CalculatorFilter>
 
     #### min/repack ddG per 1000 square Angstrom NOV15 score function
     <CalculatorFilter name="ddg_per_1000sasa" equation="1000 * ddg / (sasa+0.01)" threshold="1" confidence="0">
-        <VAR name="ddg" filter="ddg"/>
-        <VAR name="sasa" filter="interface_buried_sasa"/>
+        <Var name="ddg" filter="ddg"/>
+        <Var name="sasa" filter="interface_buried_sasa"/>
     </CalculatorFilter>
 
     #### ddG per 1000 square Angstrom NOV15 score function
     <CalculatorFilter name="ddg_norepack_per_1000sasa" equation="1000 * ddg / (sasa+0.01)" threshold="1" confidence="0">
-        <VAR name="ddg" filter="ddg_norepack"/>
-        <VAR name="sasa" filter="interface_buried_sasa"/>
+        <Var name="ddg" filter="ddg_norepack"/>
+        <Var name="sasa" filter="interface_buried_sasa"/>
     </CalculatorFilter>
     
      #### min/repack ddG per 1000 square Angstrom VDW score function
     <CalculatorFilter name="ddg_fa_atr_per_1000sasa" equation="1000 * ddg / (sasa+0.01)" threshold="1" confidence="0">
-        <VAR name="ddg" filter="ddg_fa_atr"/>
-        <VAR name="sasa" filter="interface_buried_sasa"/>
+        <Var name="ddg" filter="ddg_fa_atr"/>
+        <Var name="sasa" filter="interface_buried_sasa"/>
     </CalculatorFilter>
 
     #### ddG per 1000 square Angstrom VDW score function
     <CalculatorFilter name="ddg_fa_atr_norepack_per_1000sasa" equation="1000 * ddg / (sasa+0.01)" threshold="1" confidence="0">
-        <VAR name="ddg" filter="ddg_fa_atr_norepack"/>
-        <VAR name="sasa" filter="interface_buried_sasa"/>
+        <Var name="ddg" filter="ddg_fa_atr_norepack"/>
+        <Var name="sasa" filter="interface_buried_sasa"/>
     </CalculatorFilter>
 
     ### fraction of the interface that is hydrophobic
     <CalculatorFilter name="interface_fxn_hydrophobic" equation="hydrophobic / (sasa + 0.01)" threshold="1" confidence="0">
-        <VAR name="hydrophobic" filter="interface_hydrophobic_sasa"/>
-        <VAR name="sasa" filter="interface_buried_sasa"/>
+        <Var name="hydrophobic" filter="interface_hydrophobic_sasa"/>
+        <Var name="sasa" filter="interface_buried_sasa"/>
     </CalculatorFilter>
 
     ### interface average desgree for chain2
-    <AverageDegree name="interface_averageDegree_chA" threshold="8.3" task_operations=chain1_interface confidence="0"/>
-    <AverageDegree name="interface_averageDegree_chB" threshold="8.3" task_operations=chain2_interface confidence="0"/>
+    <AverageDegree name="interface_averageDegree_chA" threshold="8.3" task_operations="chain1_interface" confidence="0"/>
+    <AverageDegree name="interface_averageDegree_chB" threshold="8.3" task_operations="chain2_interface" confidence="0"/>
 
 
     ### interface shape complementarity
-    <ShapeComplementarity name="interface_sc" verbose=0 min_sc=0.55 write_int_area=1 jump=1 confidence=0/>
+    <ShapeComplementarity name="interface_sc" verbose="0" min_sc="0.55" write_int_area="1" jump="1" confidence="0"/>
     ### normal interface atomic contact count
     <AtomicContactCount name="interface_contactcount" task_operations="restrict_to_interface" confidence="0" />
 
     ### NetChargeFilter
-    <NetCharge name=NetCharge_binder min=-100 max=100 chain=2 />
-    <NetCharge name=NetCharge_target min=-100 max=100 chain=1 />
+    <NetCharge name="NetCharge_binder" min="-100" max="100" chain="2" />
+    <NetCharge name="NetCharge_target" min="-100" max="100" chain="1" />
 
     ### filter to obtain interface residues from tracer
-    <DesignableResidues name=des_res_chA task_operations=init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst/>
-    <DesignableResidues name=des_res_chB task_operations=init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst />
+    <DesignableResidues name="des_res_chA" task_operations="init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst"/>
+    <DesignableResidues name="des_res_chB" task_operations="init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst" />
 
     ### rmsd filters will be computed relative to in-file native pose
-    <Rmsd confidence=0 name=rmsdB chains="B" superimpose="1" />
-    <Rmsd confidence=0 name=rmsdA chains="A" superimpose="1" />
-    <Rmsd confidence=0 name=rmsdcomplex  superimpose="1" />
+    <Rmsd confidence="0" name="rmsdB" chains="B" superimpose="1" />
+    <Rmsd confidence="0" name="rmsdA" chains="A" superimpose="1" />
+    <Rmsd confidence="0" name="rmsdcomplex"  superimpose="1" />
 
-    <Rmsd confidence=0 name=rmsdA_relax_MBF chains="A" superimpose="1" />
-    <MoveBeforeFilter name=rmsdA_relax mover=delete_target_and_fastrelax_monomer filter=rmsdA_relax_MBF />
+    <Rmsd confidence="0" name="rmsdA_relax_MBF" chains="A" superimpose="1" />
+    <MoveBeforeFilter name="rmsdA_relax" mover="delete_target_and_fastrelax_monomer" filter="rmsdA_relax_MBF" />
 
-    <Rmsd confidence=0 name=rmsdcomplex_relax_MBF  superimpose="1" />
-    <MoveBeforeFilter name=rmsdcomplex_relax mover=FastRelax_Monomer filter=rmsdcomplex_relax_MBF />
+    <Rmsd confidence="0" name="rmsdcomplex_relax_MBF"  superimpose="1" />
+    <MoveBeforeFilter name="rmsdcomplex_relax" mover="FastRelax_Monomer" filter="rmsdcomplex_relax_MBF" />
 
 
-    <RotamerBoltzmannWeight2 name=RotamerBoltzmannWeightInterface residue_selector=AB_interface scorefxn=NOV15 probability_type="BOLTZMANN_SUM" score_type="MEAN_PROBABILITY"  />
+    <RotamerBoltzmannWeight2 name="RotamerBoltzmannWeightInterface" residue_selector="AB_interface" scorefxn="NOV15" probability_type="BOLTZMANN_SUM" score_type="MEAN_PROBABILITY"  />
 
     ### dG filter
     <ScoreType name="totalscore" scorefxn="NOV15" score_type="total_score" threshold="0" confidence="0" />
     <MoveBeforeFilter name="G_of_binding_conformation" mover="delete_target" filter="totalscore" />
     <MoveBeforeFilter name="G_of_monomeric_conformation" mover="delete_target_and_fastrelax" filter="totalscore" />
     <CalculatorFilter name="dG_of_assuming_binding_conformation" equation="bound - unbound" threshold="0" confidence="0" >
-        <VAR name="bound" filter="G_of_binding_conformation" />
-        <VAR name="unbound" filter="G_of_monomeric_conformation" />
+        <Var name="bound" filter="G_of_binding_conformation" />
+        <Var name="unbound" filter="G_of_monomeric_conformation" />
     </CalculatorFilter>
 
   ###############################################
@@ -293,180 +294,180 @@
   ###############################################
 
     ### score function monomer terms
-    <ScoreType name=total_score_MBF scorefxn=NOV15 score_type=total_score threshold=0 confidence=0 />
-    <MoveBeforeFilter name=total_score_monomer mover=chain1only filter=total_score_MBF confidence=0 />
-    <ScoreType name=cart_bonded_MBF scorefxn=NOV15 score_type=cart_bonded threshold=0 confidence=0 />
-    <MoveBeforeFilter name=cart_bonded_monomer mover=chain1only filter=cart_bonded_MBF confidence=0 />
-    <ScoreType name=dslf_fa13_MBF scorefxn=NOV15 score_type=dslf_fa13 threshold=0 confidence=0 />
-    <MoveBeforeFilter name=dslf_fa13_monomer mover=chain1only filter=dslf_fa13_MBF confidence=0 />
-    <ScoreType name=fa_atr_MBF scorefxn=NOV15 score_type=fa_atr threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_atr_monomer mover=chain1only filter=fa_atr_MBF confidence=0 />
-    <ScoreType name=fa_dun_MBF scorefxn=NOV15 score_type=fa_dun threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_dun_monomer mover=chain1only filter=fa_dun_MBF confidence=0 />
-    <ScoreType name=fa_elec_MBF scorefxn=NOV15 score_type=fa_elec threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_elec_monomer mover=chain1only filter=fa_elec_MBF confidence=0 />
-    <ScoreType name=fa_intra_rep_MBF scorefxn=NOV15 score_type=fa_intra_rep threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_intra_rep_monomer mover=chain1only filter=fa_intra_rep_MBF confidence=0 />
-    <ScoreType name=fa_intra_sol_xover4_MBF scorefxn=NOV15 score_type=fa_intra_sol_xover4 threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_intra_sol_xover4_monomer mover=chain1only filter=fa_intra_sol_xover4_MBF confidence=0 />
-    <ScoreType name=fa_rep_MBF scorefxn=NOV15 score_type=fa_rep threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_rep_monomer mover=chain1only filter=fa_rep_MBF confidence=0 />
-    <ScoreType name=fa_sol_MBF scorefxn=NOV15 score_type=fa_sol threshold=0 confidence=0 />
-    <MoveBeforeFilter name=fa_sol_monomer mover=chain1only filter=fa_sol_MBF confidence=0 />
-    <ScoreType name=hbond_bb_sc_MBF scorefxn=NOV15 score_type=hbond_bb_sc threshold=0 confidence=0 />
-    <MoveBeforeFilter name=hbond_bb_sc_monomer mover=chain1only filter=hbond_bb_sc_MBF confidence=0 />
-    <ScoreType name=hbond_lr_bb_MBF scorefxn=NOV15 score_type=hbond_lr_bb threshold=0 confidence=0 />
-    <MoveBeforeFilter name=hbond_lr_bb_monomer mover=chain1only filter=hbond_lr_bb_MBF confidence=0 />
-    <ScoreType name=hbond_sc_MBF scorefxn=NOV15 score_type=hbond_sc threshold=0 confidence=0 />
-    <MoveBeforeFilter name=hbond_sc_monomer mover=chain1only filter=hbond_sc_MBF confidence=0 />
-    <ScoreType name=hbond_sr_bb_MBF scorefxn=NOV15 score_type=hbond_sr_bb threshold=0 confidence=0 />
-    <MoveBeforeFilter name=hbond_sr_bb_monomer mover=chain1only filter=hbond_sr_bb_MBF confidence=0 />
-    <ScoreType name=lk_ball_wtd_MBF scorefxn=NOV15 score_type=lk_ball_wtd threshold=0 confidence=0 />
-    <MoveBeforeFilter name=lk_ball_wtd_monomer mover=chain1only filter=lk_ball_wtd_MBF confidence=0 />
-    <ScoreType name=omega_MBF scorefxn=NOV15 score_type=omega threshold=0 confidence=0 />
-    <MoveBeforeFilter name=omega_monomer mover=chain1only filter=omega_MBF confidence=0 />
-    <ScoreType name=p_aa_pp_MBF scorefxn=NOV15 score_type=p_aa_pp threshold=0 confidence=0 />
-    <MoveBeforeFilter name=p_aa_pp_monomer mover=chain1only filter=p_aa_pp_MBF confidence=0 />
-    <ScoreType name=rama_prepro_MBF scorefxn=NOV15 score_type=rama_prepro threshold=0 confidence=0 />
-    <MoveBeforeFilter name=rama_prepro_monomer mover=chain1only filter=rama_prepro_MBF confidence=0 />
-    <ScoreType name=ref_MBF scorefxn=NOV15 score_type=ref threshold=0 confidence=0 />
-    <MoveBeforeFilter name=ref_monomer mover=chain1only filter=ref_MBF confidence=0 />
-    <ScoreType name=yhh_planarity_MBF scorefxn=NOV15 score_type=yhh_planarity threshold=0 confidence=0 />
-    <MoveBeforeFilter name=yhh_planarity_monomer mover=chain1only filter=yhh_planarity_MBF confidence=0 />
+    <ScoreType name="total_score_MBF" scorefxn="NOV15" score_type="total_score" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="total_score_monomer" mover="chain1only" filter="total_score_MBF" confidence="0" />
+    <ScoreType name="cart_bonded_MBF" scorefxn="NOV15" score_type="cart_bonded" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="cart_bonded_monomer" mover="chain1only" filter="cart_bonded_MBF" confidence="0" />
+    <ScoreType name="dslf_fa13_MBF" scorefxn="NOV15" score_type="dslf_fa13" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="dslf_fa13_monomer" mover="chain1only" filter="dslf_fa13_MBF" confidence="0" />
+    <ScoreType name="fa_atr_MBF" scorefxn="NOV15" score_type="fa_atr" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_atr_monomer" mover="chain1only" filter="fa_atr_MBF" confidence="0" />
+    <ScoreType name="fa_dun_MBF" scorefxn="NOV15" score_type="fa_dun" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_dun_monomer" mover="chain1only" filter="fa_dun_MBF" confidence="0" />
+    <ScoreType name="fa_elec_MBF" scorefxn="NOV15" score_type="fa_elec" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_elec_monomer" mover="chain1only" filter="fa_elec_MBF" confidence="0" />
+    <ScoreType name="fa_intra_rep_MBF" scorefxn="NOV15" score_type="fa_intra_rep" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_intra_rep_monomer" mover="chain1only" filter="fa_intra_rep_MBF" confidence="0" />
+    <ScoreType name="fa_intra_sol_xover4_MBF" scorefxn="NOV15" score_type="fa_intra_sol_xover4" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_intra_sol_xover4_monomer" mover="chain1only" filter="fa_intra_sol_xover4_MBF" confidence="0" />
+    <ScoreType name="fa_rep_MBF" scorefxn="NOV15" score_type="fa_rep" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_rep_monomer" mover="chain1only" filter="fa_rep_MBF" confidence="0" />
+    <ScoreType name="fa_sol_MBF" scorefxn="NOV15" score_type="fa_sol" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="fa_sol_monomer" mover="chain1only" filter="fa_sol_MBF" confidence="0" />
+    <ScoreType name="hbond_bb_sc_MBF" scorefxn="NOV15" score_type="hbond_bb_sc" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="hbond_bb_sc_monomer" mover="chain1only" filter="hbond_bb_sc_MBF" confidence="0" />
+    <ScoreType name="hbond_lr_bb_MBF" scorefxn="NOV15" score_type="hbond_lr_bb" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="hbond_lr_bb_monomer" mover="chain1only" filter="hbond_lr_bb_MBF" confidence="0" />
+    <ScoreType name="hbond_sc_MBF" scorefxn="NOV15" score_type="hbond_sc" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="hbond_sc_monomer" mover="chain1only" filter="hbond_sc_MBF" confidence="0" />
+    <ScoreType name="hbond_sr_bb_MBF" scorefxn="NOV15" score_type="hbond_sr_bb" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="hbond_sr_bb_monomer" mover="chain1only" filter="hbond_sr_bb_MBF" confidence="0" />
+    <ScoreType name="lk_ball_wtd_MBF" scorefxn="NOV15" score_type="lk_ball_wtd" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="lk_ball_wtd_monomer" mover="chain1only" filter="lk_ball_wtd_MBF" confidence="0" />
+    <ScoreType name="omega_MBF" scorefxn="NOV15" score_type="omega" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="omega_monomer" mover="chain1only" filter="omega_MBF" confidence="0" />
+    <ScoreType name="p_aa_pp_MBF" scorefxn="NOV15" score_type="p_aa_pp" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="p_aa_pp_monomer" mover="chain1only" filter="p_aa_pp_MBF" confidence="0" />
+    <ScoreType name="rama_prepro_MBF" scorefxn="NOV15" score_type="rama_prepro" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="rama_prepro_monomer" mover="chain1only" filter="rama_prepro_MBF" confidence="0" />
+    <ScoreType name="ref_MBF" scorefxn="NOV15" score_type="ref" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="ref_monomer" mover="chain1only" filter="ref_MBF" confidence="0" />
+    <ScoreType name="yhh_planarity_MBF" scorefxn="NOV15" score_type="yhh_planarity" threshold="0" confidence="0" />
+    <MoveBeforeFilter name="yhh_planarity_monomer" mover="chain1only" filter="yhh_planarity_MBF" confidence="0" />
 
 
 
     <AverageDegree name="degree_core_SCN_MBF" task_operations="layer_core_SCN" confidence="0" threshold="9.4" />
-    <MoveBeforeFilter name=degree_core_SCN mover=chain1only filter=degree_core_SCN_MBF />
+    <MoveBeforeFilter name="degree_core_SCN" mover="chain1only" filter="degree_core_SCN_MBF" />
 
     <AverageDegree name="degree_core_SASA_MBF" task_operations="layer_core_SASA" confidence="0" threshold="9.4" />
-    <MoveBeforeFilter name=degree_core_SASA mover=chain1only filter="degree_core_SASA_MBF" />
+    <MoveBeforeFilter name="degree_core_SASA" mover="chain1only" filter="degree_core_SASA_MBF" />
 
-    <AverageDegree name=degree_MBF confidence=0 threshold=9.5/>
-    <MoveBeforeFilter name=degree mover=chain1only filter=degree_MBF />
+    <AverageDegree name="degree_MBF" confidence="0" threshold="9.5"/>
+    <MoveBeforeFilter name="degree" mover="chain1only" filter="degree_MBF" />
 
 
     <ResidueCount name="res_count_all_MBF" max_residue_count="9999" confidence="0"/>
-    <MoveBeforeFilter name="res_count_all" mover=chain1only filter=res_count_all_MBF />
+    <MoveBeforeFilter name="res_count_all" mover="chain1only" filter="res_count_all_MBF" />
 
     <ResidueCount name="res_count_core_SCN_MBF" task_operations="layer_core_SCN,no_ala_disulf" max_residue_count="9999" confidence="0"/>
-    <MoveBeforeFilter name="res_count_core_SCN" mover=chain1only filter=res_count_core_SCN_MBF />
+    <MoveBeforeFilter name="res_count_core_SCN" mover="chain1only" filter="res_count_core_SCN_MBF" />
 
 
     <ResidueCount name="res_count_core_SASA_MBF" task_operations="layer_core_SASA,no_ala_disulf" max_residue_count="9999" confidence="0"/>
-    <MoveBeforeFilter name="res_count_core_SASA" mover=chain1only filter=res_count_core_SASA_MBF />
+    <MoveBeforeFilter name="res_count_core_SASA" mover="chain1only" filter="res_count_core_SASA_MBF" />
 
     <ResidueCount name="nres_cys_MBF" residue_types="CYS" confidence="0" />
-    <MoveBeforeFilter name="nres_cys" mover=chain1only filter=nres_cys_MBF />
+    <MoveBeforeFilter name="nres_cys" mover="chain1only" filter="nres_cys_MBF" />
 
     <ResidueCount name="AlaCount_MBF" residue_types="ALA" max_residue_count="9999" confidence="0"/>
-    <MoveBeforeFilter name="AlaCount" mover=chain1only filter=AlaCount_MBF />
+    <MoveBeforeFilter name="AlaCount" mover="chain1only" filter="AlaCount_MBF" />
 
 
     <TotalSasa name="total_sasa_MBF" threshold="1" upper_threshold="1000000000000000" report_per_residue_sasa="False" confidence="0" />
-    <MoveBeforeFilter name="total_sasa" mover=chain1only filter=total_sasa_MBF />
+    <MoveBeforeFilter name="total_sasa" mover="chain1only" filter="total_sasa_MBF" />
   
     <CalculatorFilter name="mean_sasa_MBF" equation="Tsasa / (rescount2 + 0.01)" threshold="-0.30" confidence="0" >
-        <VAR name="Tsasa" filter="total_sasa"/>
-        <VAR name="rescount2" filter="res_count_all"/>
+        <Var name="Tsasa" filter="total_sasa"/>
+        <Var name="rescount2" filter="res_count_all"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="mean_sasa" mover=chain1only filter=mean_sasa_MBF />
+    <MoveBeforeFilter name="mean_sasa" mover="chain1only" filter="mean_sasa_MBF" />
 
     <CalculatorFilter name="percent_core_SCN_MBF" equation="rescount_coreSCN / (rescount3 + 0.01)" threshold="-0.35" confidence="0" >
-        <VAR name="rescount3" filter="res_count_all"/>
-        <VAR name="rescount_coreSCN" filter="res_count_core_SCN"/>
+        <Var name="rescount3" filter="res_count_all"/>
+        <Var name="rescount_coreSCN" filter="res_count_core_SCN"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="percent_core_SCN" mover=chain1only filter=percent_core_SCN_MBF />
+    <MoveBeforeFilter name="percent_core_SCN" mover="chain1only" filter="percent_core_SCN_MBF" />
 
     <CalculatorFilter name="percent_core_SASA_MBF" equation="rescount_coreSASA / (rescount4 + 0.01)" threshold="-0.35" confidence="0" >
-        <VAR name="rescount4" filter="res_count_all"/>
-        <VAR name="rescount_coreSASA" filter="res_count_core_SASA"/>
+        <Var name="rescount4" filter="res_count_all"/>
+        <Var name="rescount_coreSASA" filter="res_count_core_SASA"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="percent_core_SASA" mover=chain1only filter=percent_core_SASA_MBF />
+    <MoveBeforeFilter name="percent_core_SASA" mover="chain1only" filter="percent_core_SASA_MBF" />
 
     <AtomicContactCount name="contact_all_MBF" confidence="0" />
-    <MoveBeforeFilter name="contact_all" mover=chain1only filter=contact_all_MBF />
+    <MoveBeforeFilter name="contact_all" mover="chain1only" filter="contact_all_MBF" />
 
     <AtomicContactCount name="contact_core_SCN_MBF" task_operations="layer_core_SCN" confidence="0" />
-    <MoveBeforeFilter name="contact_core_SCN" mover=chain1only filter=contact_core_SCN_MBF />
+    <MoveBeforeFilter name="contact_core_SCN" mover="chain1only" filter="contact_core_SCN_MBF" />
 
     <AtomicContactCount name="contact_core_SASA_MBF" task_operations="layer_core_SASA" confidence="0" />
-    <MoveBeforeFilter name="contact_core_SASA" mover=chain1only filter=contact_core_SASA_MBF />
+    <MoveBeforeFilter name="contact_core_SASA" mover="chain1only" filter="contact_core_SASA_MBF" />
 
     <ResidueCount name="nres_MBF" confidence="0" />
-    <MoveBeforeFilter name="nres" mover=chain1only filter=nres_MBF />
+    <MoveBeforeFilter name="nres" mover="chain1only" filter="nres_MBF" />
 
-    <CalculatorFilter name=mean_dslf_MBF equation="dslf / (cyscount+0.01)" threshold="-0.35" confidence=0>
-      <VAR name="dslf" filter="dslf_fa13_monomer"/>
-      <VAR name="cyscount" filter="nres_cys"/>
+    <CalculatorFilter name="mean_dslf_MBF" equation="dslf / (cyscount+0.01)" threshold="-0.35" confidence="0">
+      <Var name="dslf" filter="dslf_fa13_monomer"/>
+      <Var name="cyscount" filter="nres_cys"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="mean_dslf" mover=chain1only filter=mean_dslf_MBF />
+    <MoveBeforeFilter name="mean_dslf" mover="chain1only" filter="mean_dslf_MBF" />
 
     <DisulfideEntropy name="entropy_MBF" lower_bound="0" tightness="2" confidence="0"/>
-    <MoveBeforeFilter name="entropy" mover=chain1only filter=entropy_MBF />
+    <MoveBeforeFilter name="entropy" mover="chain1only" filter="entropy_MBF" />
 
     <TaskAwareScoreType name="dslf_quality_check_MBF" task_operations="no_repack_non-disulf" score_type="dslf_fa13"  mode="individual" threshold="-0.27" confidence="0" />
-    <MoveBeforeFilter name="dslf_quality_check" mover=chain1only filter=dslf_quality_check_MBF />
+    <MoveBeforeFilter name="dslf_quality_check" mover="chain1only" filter="dslf_quality_check_MBF" />
 
-    <ScoreType name="hbond_sfn_MBF" scorefxn=NOV15 score_type=hbond_lr_bb threshold=0/>
-    <MoveBeforeFilter name="hbond_sfn" mover=chain1only filter=hbond_sfn_MBF />
+    <ScoreType name="hbond_sfn_MBF" scorefxn="NOV15" score_type="hbond_lr_bb" threshold="0"/>
+    <MoveBeforeFilter name="hbond_sfn" mover="chain1only" filter="hbond_sfn_MBF" />
 
     <SSShapeComplementarity name="ss_sc_MBF" verbose="0" confidence="0" />
-    <MoveBeforeFilter name="ss_sc" mover=chain1only filter=ss_sc_MBF />
+    <MoveBeforeFilter name="ss_sc" mover="chain1only" filter="ss_sc_MBF" />
 
     <SSShapeComplementarity name="helix_sc_MBF" verbose="1" loops="0" helices="1" confidence="0" />
-    <MoveBeforeFilter name="helix_sc" mover=chain1only filter=helix_sc_MBF />
+    <MoveBeforeFilter name="helix_sc" mover="chain1only" filter="helix_sc_MBF" />
 
     <SSShapeComplementarity name="loop_sc_MBF" verbose="1" loops="1" helices="0" confidence="0" />
-    <MoveBeforeFilter name="loop_sc" mover=chain1only filter=loop_sc_MBF />
+    <MoveBeforeFilter name="loop_sc" mover="chain1only" filter="loop_sc_MBF" />
     
-    <TotalSasa name="exposed_hydrophobics_MBF" confidence="0" hydrophobic=True />
-    <MoveBeforeFilter name="exposed_hydrophobics" mover=chain1only filter=exposed_hydrophobics_MBF />
+    <TotalSasa name="exposed_hydrophobics_MBF" confidence="0" hydrophobic="True" />
+    <MoveBeforeFilter name="exposed_hydrophobics" mover="chain1only" filter="exposed_hydrophobics_MBF" />
 
     <TotalSasa name="exposed_total_MBF" confidence="0"/>
-    <MoveBeforeFilter name="exposed_total" mover=chain1only filter=exposed_total_MBF />
+    <MoveBeforeFilter name="exposed_total" mover="chain1only" filter="exposed_total_MBF" />
 
-    <TotalSasa name="exposed_polars_MBF" confidence="0" polar=True />
-    <MoveBeforeFilter name="exposed_polars" mover=chain1only filter=exposed_polars_MBF />
+    <TotalSasa name="exposed_polars_MBF" confidence="0" polar="True" />
+    <MoveBeforeFilter name="exposed_polars" mover="chain1only" filter="exposed_polars_MBF" />
     
-    <CalculatorFilter name="fxn_exposed_is_np_MBF" equation="exposed / total" threshold="1" confidence=0>
-        <VAR name="total" filter="exposed_total"/>
-        <VAR name="exposed" filter="exposed_hydrophobics"/>
+    <CalculatorFilter name="fxn_exposed_is_np_MBF" equation="exposed / total" threshold="1" confidence="0">
+        <Var name="total" filter="exposed_total"/>
+        <Var name="exposed" filter="exposed_hydrophobics"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="fxn_exposed_is_np" mover=chain1only filter=fxn_exposed_is_np_MBF />
+    <MoveBeforeFilter name="fxn_exposed_is_np" mover="chain1only" filter="fxn_exposed_is_np_MBF" />
 
-    <ScoreType name="total_hydrophobic_MBF" scorefxn=TotalHydrophobic threshold=0/>
-    <MoveBeforeFilter name="total_hydrophobic" mover=chain1only filter=total_hydrophobic_MBF />
+    <ScoreType name="total_hydrophobic_MBF" scorefxn="TotalHydrophobic" threshold="0"/>
+    <MoveBeforeFilter name="total_hydrophobic" mover="chain1only" filter="total_hydrophobic_MBF" />
 
-    <CalculatorFilter name=buried_np_MBF equation="total - exposed" threshold="1" confidence=0>
-        <VAR name="total" filter="total_hydrophobic"/>
-        <VAR name="exposed" filter="exposed_hydrophobics"/>
+    <CalculatorFilter name="buried_np_MBF" equation="total - exposed" threshold="1" confidence="0">
+        <Var name="total" filter="total_hydrophobic"/>
+        <Var name="exposed" filter="exposed_hydrophobics"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="buried_np" mover=chain1only filter=buried_np_MBF />
+    <MoveBeforeFilter name="buried_np" mover="chain1only" filter="buried_np_MBF" />
 
-    <CalculatorFilter name=buried_over_exposed_MBF equation="buried / (exposed+0.01)" threshold="1" confidence=0>
-        <VAR name="buried" filter="buried_np"/>
-        <VAR name="exposed" filter="exposed_hydrophobics"/>
+    <CalculatorFilter name="buried_over_exposed_MBF" equation="buried / (exposed+0.01)" threshold="1" confidence="0">
+        <Var name="buried" filter="buried_np"/>
+        <Var name="exposed" filter="exposed_hydrophobics"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="buried_over_exposed" mover=chain1only filter=buried_over_exposed_MBF />
+    <MoveBeforeFilter name="buried_over_exposed" mover="chain1only" filter="buried_over_exposed_MBF" />
 
-    <CalculatorFilter name=buried_minus_exposed_MBF equation="buried - exposed" threshold="1" confidence=0>
-        <VAR name="buried" filter="buried_np"/>
-        <VAR name="exposed" filter="exposed_hydrophobics"/>
+    <CalculatorFilter name="buried_minus_exposed_MBF" equation="buried - exposed" threshold="1" confidence="0">
+        <Var name="buried" filter="buried_np"/>
+        <Var name="exposed" filter="exposed_hydrophobics"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="buried_minus_exposed" mover=chain1only filter=buried_minus_exposed_MBF />
+    <MoveBeforeFilter name="buried_minus_exposed" mover="chain1only" filter="buried_minus_exposed_MBF" />
 
-    <CalculatorFilter name=hbond_per_res_MBF equation="hbond / (rescount+0.01)" threshold="-0.23" confidence=0>
-        <VAR name="hbond" filter="hbond_sfn"/>
-        <VAR name="rescount" filter="nres"/>
+    <CalculatorFilter name="hbond_per_res_MBF" equation="hbond / (rescount+0.01)" threshold="-0.23" confidence="0">
+        <Var name="hbond" filter="hbond_sfn"/>
+        <Var name="rescount" filter="nres"/>
     </CalculatorFilter>
-    <MoveBeforeFilter name="hbond_per_res" mover=chain1only filter=hbond_per_res_MBF />
+    <MoveBeforeFilter name="hbond_per_res" mover="chain1only" filter="hbond_per_res_MBF" />
 
     <CavityVolume name="cavity_volume_MBF" />
-    <MoveBeforeFilter name="cavity_volume" mover=chain1only filter=cavity_volume_MBF />
+    <MoveBeforeFilter name="cavity_volume" mover="chain1only" filter="cavity_volume_MBF" />
 
-    <PackStat name=packable_MBF confidence=0/>
-    <MoveBeforeFilter name="packable" mover=chain1only filter=packable_MBF />
+    <PackStat name="packable_MBF" confidence="0"/>
+    <MoveBeforeFilter name="packable" mover="chain1only" filter="packable_MBF" />
 
     Holes name="holes_MBF" confidence=0/>
     MoveBeforeFilter name="holes" mover=chain1only filter=holes_MBF />
@@ -474,26 +475,26 @@
     SSPrediction name="mismatch_probability_MBF" confidence="0" cmd=" /gscratch/baker/tlinsky/Rosetta/tools/fragment_tools/psipred/runpsipred_single" use_probability="1" mismatch_probability="1" use_svm="0" />
     MoveBeforeFilter name="mismatch_probability" mover=chain1only filter=mismatch_probability_MBF />
 
-    <BuriedUnsatHbonds2 name="unsat_hbond2_monomer_MBF" confidence=0 jump_number=0/>
-    <MoveBeforeFilter name="unsat_hbond2_monomer" mover=chain1only filter=unsat_hbond2_monomer_MBF />
+    <BuriedUnsatHbonds2 name="unsat_hbond2_monomer_MBF" confidence="0" jump_number="0"/>
+    <MoveBeforeFilter name="unsat_hbond2_monomer" mover="chain1only" filter="unsat_hbond2_monomer_MBF" />
 
     <SecondaryStructureHasResidue name="one_core_each_MBF" secstruct_fraction_threshold="1.0" res_check_task_operations="layer_core_SCN" required_restypes="VILMFYW" nres_required_per_secstruct="1" filter_helix="1" filter_sheet="1" filter_loop="0" min_helix_length="4" min_sheet_length="3" min_loop_length="1" confidence="0" />
-    <MoveBeforeFilter name="one_core_each" mover=chain1only filter=one_core_each_MBF />
+    <MoveBeforeFilter name="one_core_each" mover="chain1only" filter="one_core_each_MBF" />
 
     <SecondaryStructureHasResidue name="two_core_each_MBF" secstruct_fraction_threshold="1.0" res_check_task_operations="layer_core_SCN" required_restypes="VILMFYW" nres_required_per_secstruct="2" filter_helix="1" filter_sheet="1" filter_loop="0" min_helix_length="4" min_sheet_length="3" min_loop_length="1" confidence="0" />
-    <MoveBeforeFilter name="two_core_each" mover=chain1only filter=two_core_each_MBF />
+    <MoveBeforeFilter name="two_core_each" mover="chain1only" filter="two_core_each_MBF" />
 
     <SecondaryStructureHasResidue name="ss_contributes_core_MBF" secstruct_fraction_threshold="1.0" res_check_task_operations="layer_core_boundary_SCN" required_restypes="VILMFYW" nres_required_per_secstruct="1" filter_helix="1" filter_sheet="1" filter_loop="0" min_helix_length="4" min_sheet_length="3" min_loop_length="1" confidence="0" />
-    <MoveBeforeFilter name="ss_contributes_core" mover=chain1only filter=ss_contributes_core_MBF />
+    <MoveBeforeFilter name="ss_contributes_core" mover="chain1only" filter="ss_contributes_core_MBF" />
 
     <RotamerBoltzmannWeight name="rotamer_boltz_core_avg_MBF"  skip_ala_scan="1" no_modified_ddG="1" confidence="0" unbound="0" />
-    <MoveBeforeFilter name="rotamer_boltz_core_avg" mover=chain1only filter=rotamer_boltz_core_avg_MBF />
+    <MoveBeforeFilter name="rotamer_boltz_core_avg" mover="chain1only" filter="rotamer_boltz_core_avg_MBF" />
 
     RotamerBoltzmannWeight2 name=RotamerBoltzmannWeightMonomer_MBF residue_selector=chainA scorefxn=NOV15 probability_type="BOLTZMANN_SUM" score_type="MEAN_PROBABILITY"  />
     MoveBeforeFilter name="RotamerBoltzmannWeightMonomer" mover=chain1only filter=RotamerBoltzmannWeightMonomer_MBF />
 
-    <RotamerBoltzmannWeight2 name=RotamerBoltzmannWeightMonomer_MBF residue_selector=interface_chA scorefxn=NOV15 probability_type="BOLTZMANN_SUM" score_type="MEAN_PROBABILITY"  />
-    <MoveBeforeFilter name="RotamerBoltzmannWeightMonomer" mover=chain1only filter=RotamerBoltzmannWeightMonomer_MBF />
+    <RotamerBoltzmannWeight2 name="RotamerBoltzmannWeightMonomer_MBF" residue_selector="interface_chA" scorefxn="NOV15" probability_type="BOLTZMANN_SUM" score_type="MEAN_PROBABILITY"  />
+    <MoveBeforeFilter name="RotamerBoltzmannWeightMonomer" mover="chain1only" filter="RotamerBoltzmannWeightMonomer_MBF" />
     FragmentLookupFilter name="faulty_fragments_tolerant_MBF" lookup_name="source_fragments_4_mer_tolerant" store_path="/lab/databases/VALL_clustered/backbone_profiler_database_06032014" lookup_mode="first" chain="2" threshold="999999" confidence="0" />
     MoveBeforeFilter name="faulty_fragments_tolerant" mover=chain1only filter=faulty_fragments_tolerant_MBF />
 
@@ -506,7 +507,7 @@
     MoveBeforeFilter name="sspred_chainA" mover="chain1only" filter=sspred_overall confidence="0" />
 
     ### calculate mutations compared to input pose
-    <Mutations confidence=0 name=mutations rate_threshold=0.0 mutation_threshold=20 report_mutations=1 packable=1 verbose=1 write2pdb=0/>
+    <Mutations confidence="0" name="mutations" rate_threshold="0.0" mutation_threshold="20" report_mutations="1" packable="1" verbose="1" write2pdb="0"/>
 
     ### Generates constraints with "gen_coord_csts" and returns the constraint energy 
     <ConstraintScore name="coord_cst_score" constraint_generators="chainA_cst" confidence="0" />
@@ -515,28 +516,28 @@
 <MOVERS>
 
 ### add/remove a virtual root so that coordinate rmsd calculations and coordinate constraints are computed within the scaffold as a reference frame and not for translation in space
-<VirtualRoot name=add_virtual_root removable=true remove=false />
-<VirtualRoot name=remove_virtual_root removable=true remove=true />
+<VirtualRoot name="add_virtual_root" removable="true" remove="false" />
+<VirtualRoot name="remove_virtual_root" removable="true" remove="true" />
 
 ### FastDesign with restricting design to the interface residues of the scaffold, and restricting the target to repacking only, keep rif residues completely fixed
-<FastDesign name="FastDesign" scorefxn=NOV15 repeats=5 task_operations=init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst
-  batch=false ramp_down_constraints=false
-  cartesian=false bondangle=false bondlength=false
-  min_type=dfpmin_armijo_nonmonotone >
-   <MoveMap name=MM >
-      <Chain number=1 chi=true bb=true/>
-      <Chain number=2 chi=true bb=false/>
-      <Jump number=1 setting=true/>
+<FastDesign name="FastDesign" scorefxn="NOV15" repeats="5" task_operations="init,current,limitchi2,ex1_ex2,ex1,all_layers,restrict_to_interface,restrict_target2repacking,disallow_GLY,disallow_PRO,keep_rif_cst"
+  batch="false" ramp_down_constraints="false"
+  cartesian="false" bondangle="false" bondlength="false"
+  min_type="dfpmin_armijo_nonmonotone" >
+   <MoveMap name="MM" >
+      <Chain number="1" chi="true" bb="true"/>
+      <Chain number="2" chi="true" bb="false"/>
+      <Jump number="1" setting="true"/>
    </MoveMap>
 </FastDesign>
 
 ### FastDesign with no target backbone movement at all and constrained scaffold bb movement per coordinate constraints applied earlier, do not apply general coordinate constraints because that will prevent minimization over the jump=1
 ### decided during PPI meeting not to add RIF constraints to FastRelax step in case of RIF docking
-<FastRelax name=FastRelax scorefxn=NOV15 repeats=1 batch=false ramp_down_constraints=false cartesian=false bondangle=false bondlength=false min_type=dfpmin_armijo_nonmonotone task_operations=restrict_target,limitchi2 >
-   <MoveMap name=MM >
-      <Chain number=1 chi=true bb=true/>
-      <Chain number=2 chi=true bb=false/>
-      <Jump number=1 setting=true/>
+<FastRelax name="FastRelax" scorefxn="NOV15" repeats="1" batch="false" ramp_down_constraints="false" cartesian="false" bondangle="false" bondlength="false" min_type="dfpmin_armijo_nonmonotone" task_operations="restrict_target,limitchi2" >
+   <MoveMap name="MM" >
+      <Chain number="1" chi="true" bb="true"/>
+      <Chain number="2" chi="true" bb="false"/>
+      <Jump number="1" setting="true"/>
    </MoveMap>
 </FastRelax>
 
@@ -554,38 +555,39 @@
   Add mover_name=FastDesign />
 
   ### save conformation after FastDesign
-  <Add mover_name=save_RMSDreference_conformation_FD />
+  <Add mover_name="save_RMSDreference_conformation_FD" />
 
   ### Relax Mover
-  <Add mover_name=FastRelax />
+  <Add mover_name="FastRelax" />
 
   ### apply virtual root
   <Add mover_name="remove_virtual_root" />
 
   ### remove all coordinate constraints before filtering
-  <add mover_name= "remove_coordinate_constraints" />
+  <Add mover_name="remove_coordinate_constraints" />
 
   ### NOV15 score function term for monomers
-  <Add filter_name=  "total_score_monomer" />
-  <Add filter_name=  "cart_bonded_monomer" />
-  <Add filter_name=  "dslf_fa13_monomer" />
-  <Add filter_name=  "fa_atr_monomer" />
-  <Add filter_name=  "fa_dun_monomer" />
-  <Add filter_name=  "fa_elec_monomer" />
-  <Add filter_name=  "fa_intra_rep_monomer" />
-  <Add filter_name=  "fa_intra_sol_xover4_monomer" />
-  <Add filter_name=  "fa_rep_monomer" />
-  <Add filter_name=  "fa_sol_monomer" />
-  <Add filter_name=  "hbond_bb_sc_monomer" />
-  <Add filter_name=  "hbond_lr_bb_monomer" />
-  <Add filter_name=  "hbond_sc_monomer" />
-  <Add filter_name=  "hbond_sr_bb_monomer" />
-  <Add filter_name=  "lk_ball_wtd_monomer" />
-  <Add filter_name=  "omega_monomer" />
-  <Add filter_name=  "p_aa_pp_monomer" />
-  <Add filter_name=  "rama_prepro_monomer" />
-  <Add filter_name=  "ref_monomer" />
-  <Add filter_name=  "yhh_planarity_monomer" />
+  <Add filter_name="total_score_monomer" />
+  <Add filter_name="cart_bonded_monomer" />
+  <Add filter_name="dslf_fa13_monomer" />
+  <Add filter_name="fa_atr_monomer" />
+  <Add filter_name="fa_dun_monomer" />
+  <Add filter_name="fa_elec_monomer" />
+  <Add filter_name="fa_intra_rep_monomer" />
+  <Add filter_name="fa_intra_sol_xover4_monomer" />
+  <Add filter_name="fa_rep_monomer" />
+  <Add filter_name="fa_sol_monomer" />
+  <Add filter_name="hbond_bb_sc_monomer" />
+  <Add filter_name="hbond_lr_bb_monomer" />
+  <Add filter_name="hbond_sc_monomer" />
+  <Add filter_name="hbond_sr_bb_monomer" />
+  <Add filter_name="lk_ball_wtd_monomer" />
+  <Add filter_name="omega_monomer" />
+  <Add filter_name="p_aa_pp_monomer" />
+  <Add filter_name="rama_prepro_monomer" />
+  <Add filter_name="ref_monomer" />
+  <Add filter_name="yhh_planarity_monomer" />
 
 </PROTOCOLS>
+
 </ROSETTASCRIPTS>

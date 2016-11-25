@@ -20,6 +20,9 @@
 #include <basic/Tracer.hh>
 #include <fstream>
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
@@ -28,11 +31,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.FileExistFilter" );
 
-protocols::filters::FilterOP
-FileExistFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileExistFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FileExistFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileExistFilter ); }
 
-std::string
-FileExistFilterCreator::keyname() const { return "FileExist"; }
+// XRW TEMP std::string
+// XRW TEMP FileExistFilterCreator::keyname() const { return "FileExist"; }
 
 //default ctor
 FileExistFilter::FileExistFilter() :
@@ -97,6 +100,39 @@ std::string FileExistFilter::filename() const
 {
 	return filename_;
 }
+
+std::string FileExistFilter::name() const {
+	return class_name();
+}
+
+std::string FileExistFilter::class_name() {
+	return "FileExist";
+}
+
+void FileExistFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("filename", xs_string, "what filename to test?")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_zero_byte", xsct_rosetta_bool, "if true, files that are merely place holders (contain nothing) are treated as nonexistant (filter returns false).", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Does a file exist on disk? Useful to see whether we're recovering from a checkpoint", attlist );
+}
+
+std::string FileExistFilterCreator::keyname() const {
+	return FileExistFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FileExistFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FileExistFilter );
+}
+
+void FileExistFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FileExistFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

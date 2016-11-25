@@ -22,6 +22,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -35,35 +38,35 @@ using namespace conformation;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
 
-std::string
-SeparateDnaFromNonDnaCreator::keyname() const
-{
-	return SeparateDnaFromNonDnaCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeparateDnaFromNonDnaCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SeparateDnaFromNonDna::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SeparateDnaFromNonDnaCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SeparateDnaFromNonDnaCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
+// XRW TEMP }
 
-std::string
-SeparateDnaFromNonDnaCreator::mover_name()
-{
-	return "SeparateDnaFromNonDna";
-}
+// XRW TEMP std::string
+// XRW TEMP SeparateDnaFromNonDna::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SeparateDnaFromNonDna";
+// XRW TEMP }
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna()
-: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+: Mover( SeparateDnaFromNonDna::mover_name() ),
 	translation_( 1000, 0, 0 )
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( Real x, Real y, Real z )
-: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+: Mover( SeparateDnaFromNonDna::mover_name() ),
 	translation_( x, y, z )
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( numeric::xyzVector< Real > const & xyz )
-: Mover( SeparateDnaFromNonDnaCreator::mover_name() ),
+: Mover( SeparateDnaFromNonDna::mover_name() ),
 	translation_( xyz )
 {}
 
@@ -82,7 +85,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 {
 	TR << "old fold tree:\n" << pose.fold_tree() << std::endl;
 
-	// construct a new fold tree that links non-DNA chains together, then DNA chains together, then links non-DNA group to DNA group by a single jump
+	// construct a new fold tree that links non-DNA chains together, then DNA chaions together, then links non-DNA group to DNA group by a single jump
 	FoldTree fold_tree( pose.size() );
 
 	// collect non-DNA and DNA chain indices
@@ -173,10 +176,10 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-std::string
-SeparateDnaFromNonDna::get_name() const {
-	return SeparateDnaFromNonDnaCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeparateDnaFromNonDna::get_name() const {
+// XRW TEMP  return SeparateDnaFromNonDna::mover_name();
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void SeparateDnaFromNonDna::parse_my_tag(
@@ -201,6 +204,36 @@ SeparateDnaFromNonDna::clone() const
 {
 	return moves::MoverOP( new SeparateDnaFromNonDna( *this ) );
 }
+
+std::string SeparateDnaFromNonDna::get_name() const {
+	return mover_name();
+}
+
+std::string SeparateDnaFromNonDna::mover_name() {
+	return "SeparateDnaFromNonDna";
+}
+
+void SeparateDnaFromNonDna::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Moves DNA and non-DNA apart in the provided pose", attlist );
+}
+
+std::string SeparateDnaFromNonDnaCreator::keyname() const {
+	return SeparateDnaFromNonDna::mover_name();
+}
+
+protocols::moves::MoverOP
+SeparateDnaFromNonDnaCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
+}
+
+void SeparateDnaFromNonDnaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SeparateDnaFromNonDna::provide_xml_schema( xsd );
+}
+
 
 } // dna
 } // protocols

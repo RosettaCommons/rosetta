@@ -34,16 +34,20 @@
 //Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace antibody {
 
 
 
-/// @brief Geta boolean vector of CDRs from a RosettaScripts tag.
+/// @brief Geta boolean vector of CDRs from a RosettaScripts tag. Companion function for XSD generation: attributes_for_get_cdr_bool_from_tag
 utility::vector1<bool>
 get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool include_cdr4 = false);
 
+void
+attributes_for_get_cdr_bool_from_tag(utility::tag::AttributeList& attlist,
+	std::string const& tagname, std::string const& Description = "");
 
 /// @brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
 protocols::loops::LoopsOP

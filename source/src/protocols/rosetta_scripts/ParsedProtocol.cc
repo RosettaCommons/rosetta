@@ -28,6 +28,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/filters/FilterFactory.hh>
 
 #include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 
@@ -60,6 +61,9 @@
 #include <map>
 #include <string>
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -73,23 +77,6 @@ typedef core::pose::Pose Pose;
 
 using namespace core;
 using namespace std;
-
-std::string
-ParsedProtocolCreator::keyname() const
-{
-	return ParsedProtocolCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-ParsedProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ParsedProtocol );
-}
-
-std::string
-ParsedProtocolCreator::mover_name()
-{
-	return "ParsedProtocol";
-}
 
 ParsedProtocol::ParsedProtocol() :
 	protocols::moves::Mover( "ParsedProtocol" ),
@@ -187,10 +174,10 @@ ParsedProtocol::apply( Pose & pose )
 	}
 }
 
-std::string
-ParsedProtocol::get_name() const {
-	return ParsedProtocolCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ParsedProtocol::get_name() const {
+// XRW TEMP  return ParsedProtocol::mover_name();
+// XRW TEMP }
 
 void ParsedProtocol::final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 {
@@ -669,6 +656,103 @@ void ParsedProtocol::random_single_protocol(Pose & pose){
 	// we're done! mark as success
 	finish_protocol( pose );
 }
+
+std::string ParsedProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string ParsedProtocol::mover_name() {
+	return "ParsedProtocol";
+}
+
+std::string complex_type_name_for_parsed_protocol_subelement( std::string const & foo ) {
+	return "parsed_protocol_subelement_" + foo + "_complex_type";
+}
+
+void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction mode_enum;
+	mode_enum.name("mode_types");
+	mode_enum.base_type(xs_string);
+	mode_enum.add_restriction(xsr_enumeration, "sequence");
+	mode_enum.add_restriction(xsr_enumeration, "random_order");
+	mode_enum.add_restriction(xsr_enumeration, "single_random");
+	xsd.add_top_level_element(mode_enum);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mode", "mode_types",
+		"\"sequence\" (default) - perform the Mover/Filter pair in the specified sequence; "
+		"\"random_order\" - perform EACH of the defined Mover/Filter pairs one time in a random order; "
+		"\"single_random\" - randomly pick a SINGLE Mover/Filter pair from the list",
+		"sequence");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"filter_name", xs_string,
+		"XSD XRW: TO DO",
+		"true_filter");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"filter", xs_string,
+		"XSD XRW: TO DO",
+		"true_filter");
+
+	attlist + XMLSchemaAttribute(
+		"apply_probability", xsct_real,
+		"by default equal probability for all tags");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"report_at_end", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resume_support", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	XMLSchemaSimpleSubelementList ssl;
+	AttributeList add_subattlist;
+
+	// Either mover_name or mover.
+	add_subattlist + XMLSchemaAttribute( "mover_name", xs_string, "The mover whose execution is desired" )
+		+ XMLSchemaAttribute( "mover", xs_string, "The mover whose execution is desired" );
+	add_subattlist + XMLSchemaAttribute( "filter_name", xs_string, "The filter whose execution is desired" )
+		+ XMLSchemaAttribute( "filter", xs_string, "The filter whose execution is desired" );
+
+	ssl.add_simple_subelement( "Add", add_subattlist, "Elements that add a particular mover-filter pair to a ParsedProtocol"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & complex_type_name_for_parsed_protocol_subelement );
+
+	ssl.add_group_subelement( & protocols::filters::FilterFactory::filter_xml_schema_group_name );
+	ssl.add_group_subelement( & protocols::moves::MoverFactory::mover_xml_schema_group_name );
+
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"This is a special mover that allows making a single compound mover and filter vector "
+		"(just like protocols). The optional option mode changes the order of operations within "
+		"the protocol, as defined by the option. If undefined, mode defaults to the historical "
+		"functionality, which is operation of the Mover/Filter pairs in the defined order.",
+		attlist,
+		ssl );
+}
+
+std::string ParsedProtocolCreator::keyname() const {
+	return ParsedProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+ParsedProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ParsedProtocol );
+}
+
+void ParsedProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ParsedProtocol::provide_xml_schema( xsd );
+}
+
 
 } //rosetta_scripts
 } //protocols

@@ -53,6 +53,10 @@
 #include <iomanip>
 #include <ObjexxFCL/string.functions.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 // Unit Headers
 
 // C++ headers
@@ -70,26 +74,26 @@ using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
 
-std::string
-DockWithHotspotMoverCreator::keyname() const
-{
-	return DockWithHotspotMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DockWithHotspotMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockWithHotspotMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DockWithHotspotMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockWithHotspotMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockWithHotspotMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockWithHotspotMover );
+// XRW TEMP }
 
-std::string
-DockWithHotspotMoverCreator::mover_name()
-{
-	return "DockWithHotspotMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DockWithHotspotMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockWithHotspotMover";
+// XRW TEMP }
 
 /// @brief default ctor
 DockWithHotspotMover::DockWithHotspotMover() :
-	protocols::moves::Mover( DockWithHotspotMoverCreator::mover_name() )
+	protocols::moves::Mover( DockWithHotspotMover::mover_name() )
 {
 }
 
@@ -157,10 +161,10 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	set_last_move_status( protocols::moves::MS_SUCCESS);
 }
 
-std::string
-DockWithHotspotMover::get_name() const {
-	return DockWithHotspotMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DockWithHotspotMover::get_name() const {
+// XRW TEMP  return DockWithHotspotMover::mover_name();
+// XRW TEMP }
 
 
 /**
@@ -201,6 +205,76 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "centroid score filter: " << centroidscore_filter_ << std::endl;
 	TR << "hotspotcst_filter: " << hotspotcst_filter_ << std::endl;
 }
+
+std::string DockWithHotspotMover::get_name() const {
+	return mover_name();
+}
+
+std::string DockWithHotspotMover::mover_name() {
+	return "DockWithHotspotMover";
+}
+
+std::string dock_with_hotspot_subtag_naming_func( std::string const & foo ) {
+	return "dock_with_hotspot_subtag_" + foo + "_type";
+}
+
+std::string dock_with_hotspot_subsubtag_naming_func( std::string const & foo ) {
+	return "dock_with_hotspot_subsubtag_" + foo + "_type";
+}
+
+void DockWithHotspotMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "hotspot_score_weight", xsct_real, "Weight for the hotpot scoreterm", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "centroidscore_filter", xsct_real, "Threshold for the centroid score filter", "0" )
+		+ XMLSchemaAttribute::required_attribute( "hotspotcst_filter", xsct_real, "XRW TO DO");
+
+	AttributeList subsubattributes;
+	subsubattributes + XMLSchemaAttribute::required_attribute( "file_name", xs_string, "Filename for this hotspot file" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Weight on the CB atoms for these hotspot constraints", "1.0" );
+
+	// AMW: we don't know what these subelements are traditionally called
+	utility::tag::XMLSchemaComplexTypeGenerator hotspot_file_ct_gen;
+	hotspot_file_ct_gen.complex_type_naming_func( & dock_with_hotspot_subsubtag_naming_func )
+		.element_name( "HotspotFile" )
+		.description( "Wrapper tag for individual hotspot files" )
+		.add_attributes( subsubattributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList subsubelements;
+	subsubelements.add_already_defined_subelement( "HotspotFile", & dock_with_hotspot_subsubtag_naming_func/*, 0*/ );
+
+	utility::tag::XMLSchemaComplexTypeGenerator hotspot_files_ct_gen;
+	hotspot_files_ct_gen.complex_type_naming_func( & dock_with_hotspot_subtag_naming_func )
+		.element_name( "HotspotFiles" )
+		.description( "Wrapper tag for individual hotspot files" )
+		//.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( subsubelements )
+		.write_complex_type_to_schema( xsd );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_already_defined_subelement( "HotspotFiles", & dock_with_hotspot_subtag_naming_func/*, 0*/ );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string DockWithHotspotMoverCreator::keyname() const {
+	return DockWithHotspotMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DockWithHotspotMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockWithHotspotMover );
+}
+
+void DockWithHotspotMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DockWithHotspotMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

@@ -60,6 +60,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ReportEffectivePKA" );
 
@@ -237,22 +240,54 @@ ReportEffectivePKA::parse_my_tag(
 	}
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ReportEffectivePKACreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ReportEffectivePKA );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ReportEffectivePKACreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ReportEffectivePKA::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ReportEffectivePKA::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ReportEffectivePKA";
+// XRW TEMP }
+
+std::string ReportEffectivePKA::get_name() const {
+	return mover_name();
+}
+
+std::string ReportEffectivePKA::mover_name() {
+	return "ReportEffectivePKA";
+}
+
+void ReportEffectivePKA::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ReportEffectivePKACreator::keyname() const {
+	return ReportEffectivePKA::mover_name();
+}
+
 protocols::moves::MoverOP
 ReportEffectivePKACreator::create_mover() const {
 	return protocols::moves::MoverOP( new ReportEffectivePKA );
 }
 
-std::string
-ReportEffectivePKACreator::keyname() const
+void ReportEffectivePKACreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return ReportEffectivePKACreator::mover_name();
+	ReportEffectivePKA::provide_xml_schema( xsd );
 }
 
-std::string
-ReportEffectivePKACreator::mover_name()
-{
-	return "ReportEffectivePKA";
-}
 
 }
 }

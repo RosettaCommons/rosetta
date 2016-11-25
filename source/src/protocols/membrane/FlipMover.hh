@@ -106,7 +106,7 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this Mover (FlipMover)
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Flip the downstream partner in the membrane
 	void apply( core::pose::Pose & pose ) override;
@@ -118,6 +118,18 @@ public:
 	/// @brief Set angle range
 	/// @details Maximum angle deviation from 180 degrees
 	void set_range( core::Real max_angle_dev );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 

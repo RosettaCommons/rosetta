@@ -37,6 +37,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinBackboneAtomAtomPairFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -63,8 +67,8 @@ ProteinBackboneAtomAtomPairFeatures::ProteinBackboneAtomAtomPairFeatures( Protei
 
 ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures()= default;
 
-string
-ProteinBackboneAtomAtomPairFeatures::type_name() const { return "ProteinBackboneAtomAtomPairFeatures"; }
+// XRW TEMP string
+// XRW TEMP ProteinBackboneAtomAtomPairFeatures::type_name() const { return "ProteinBackboneAtomAtomPairFeatures"; }
 
 void
 ProteinBackboneAtomAtomPairFeatures::write_schema_to_db(
@@ -256,5 +260,35 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 	} //res1
 	return 0;
 }
+
+std::string ProteinBackboneAtomAtomPairFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinBackboneAtomAtomPairFeatures::class_name() {
+	return "ProteinBackboneAtomAtomPairFeatures";
+}
+
+void ProteinBackboneAtomAtomPairFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Records all the distances between backbone atoms -- all possible pairs! -- for each possible residue pair, as features.", attlist );
+}
+
+std::string ProteinBackboneAtomAtomPairFeaturesCreator::type_name() const {
+	return ProteinBackboneAtomAtomPairFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
+}
+
+void ProteinBackboneAtomAtomPairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinBackboneAtomAtomPairFeatures::provide_xml_schema( xsd );
+}
+
 } // namesapce
 } // namespace

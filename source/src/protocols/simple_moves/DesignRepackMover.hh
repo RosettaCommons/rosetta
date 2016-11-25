@@ -33,6 +33,7 @@
 #include <protocols/simple_moves/DesignRepackMover.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 namespace protocols {
@@ -45,8 +46,8 @@ public:
 	DesignRepackMover();
 	DesignRepackMover( std::string const & name );
 	void setup_packer_and_movemap( core::pose::Pose const & pose );
-	protocols::moves::MoverOP clone() const override = 0; // this is a pure virtual class that cannot be instantiated
-	protocols::moves::MoverOP fresh_instance() const override = 0;
+	//protocols::moves::MoverOP clone() const = 0; // this is a pure virtual class that cannot be instantiated
+	//virtual protocols::moves::MoverOP fresh_instance() const = 0;
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	// managing minimization options
 	void min_rb( utility::vector1< bool > const & min_rb ) { min_rb_ = min_rb; min_rb_set_ = true;}
@@ -87,6 +88,8 @@ public:
 	core::pack::task::TaskFactoryOP & task_factory();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	~DesignRepackMover() override;
+
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP get_xsd_complex_type();
 
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;

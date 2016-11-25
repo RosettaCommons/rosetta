@@ -78,19 +78,31 @@ public:
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
 	void setup_rotamer_set(core::pose::Pose & pose);
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	core::pack::rotamer_set::Rotamers::const_iterator begin() const { return rotset_->begin(); }
 	core::pack::rotamer_set::Rotamers::const_iterator end() const { return rotset_->end(); }
 
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new TryRotamers( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new TryRotamers ); }
+	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new TryRotamers( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new TryRotamers ); }
 	virtual ~TryRotamers();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::pack::rotamer_set::Rotamers::const_iterator rotamer_it_;

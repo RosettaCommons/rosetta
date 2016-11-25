@@ -31,6 +31,9 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -40,23 +43,23 @@ static basic::Tracer TR( "protocols.sewing.sampling.MonteCarloAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-MonteCarloAssemblyMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new MonteCarloAssemblyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MonteCarloAssemblyMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new MonteCarloAssemblyMover );
+// XRW TEMP }
 
-std::string
-MonteCarloAssemblyMoverCreator::keyname() const
-{
-	return MonteCarloAssemblyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloAssemblyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MonteCarloAssemblyMover::mover_name();
+// XRW TEMP }
 
-std::string
-MonteCarloAssemblyMoverCreator::mover_name()
-{
-	return "MonteCarloAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloAssemblyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MonteCarloAssemblyMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 MonteCarloAssemblyMover::clone() const {
@@ -68,10 +71,10 @@ MonteCarloAssemblyMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MonteCarloAssemblyMover );
 }
 
-std::string
-MonteCarloAssemblyMover::get_name() const {
-	return "MonteCarloAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloAssemblyMover::get_name() const {
+// XRW TEMP  return "MonteCarloAssemblyMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  MonteCarloAssemblyMover function   //////////////////////////////////
@@ -521,6 +524,38 @@ MonteCarloAssemblyMover::parse_my_tag(
 		remove_non_contiguous_assembly_ = tag->getOption<bool>("remove_non_contiguous_assembly");
 	}
 }
+
+std::string MonteCarloAssemblyMover::get_name() const {
+	return mover_name();
+}
+
+std::string MonteCarloAssemblyMover::mover_name() {
+	return "MonteCarloAssemblyMover";
+}
+
+void MonteCarloAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string MonteCarloAssemblyMoverCreator::keyname() const {
+	return MonteCarloAssemblyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MonteCarloAssemblyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MonteCarloAssemblyMover );
+}
+
+void MonteCarloAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MonteCarloAssemblyMover::provide_xml_schema( xsd );
+}
+
 
 } //sewing
 } //protocols

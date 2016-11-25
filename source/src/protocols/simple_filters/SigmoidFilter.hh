@@ -58,6 +58,22 @@ public:
 	void threshold( core::Real const t ){ threshold_ = t; }
 	void baseline_checkpointing_filename( std::string const & s ) { baseline_checkpointing_filename_ = s; }
 	std::string baseline_checkpointing_filename() const{ return baseline_checkpointing_filename_; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void
+	attributes( utility::tag::AttributeList & attlist );
+
 private:
 	protocols::filters::FilterOP filter_; /// dflt NULL
 	core::Real steepness_; //dflt 1

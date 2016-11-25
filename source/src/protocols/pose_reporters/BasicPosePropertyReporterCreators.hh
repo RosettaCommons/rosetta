@@ -24,18 +24,21 @@ class EnergyReporterCreator : public protocols::rosetta_scripts::PosePropertyRep
 public:
 	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
 	std::string keyname() const override { return "EnergyReporter"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class FilterReporterCreator : public protocols::rosetta_scripts::PosePropertyReporterCreator {
 public:
 	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
 	std::string keyname() const override { return "FilterReporter"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RMSDReporterCreator : public protocols::rosetta_scripts::PosePropertyReporterCreator {
 public:
 	protocols::rosetta_scripts::PosePropertyReporterOP create_reporter() const override;
 	std::string keyname() const override { return "RMSDReporter"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

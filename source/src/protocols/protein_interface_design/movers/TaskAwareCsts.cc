@@ -34,31 +34,34 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/selection.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.TaskAwareCsts" );
-std::string
-TaskAwareCstsCreator::keyname() const
-{
-	return TaskAwareCstsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareCstsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TaskAwareCsts::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TaskAwareCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareCsts );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TaskAwareCstsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareCsts );
+// XRW TEMP }
 
-std::string
-TaskAwareCstsCreator::mover_name()
-{
-	return "TaskAwareCsts";
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareCsts::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TaskAwareCsts";
+// XRW TEMP }
 
 TaskAwareCsts::TaskAwareCsts() :
-	Mover( TaskAwareCstsCreator::mover_name() ),
+	Mover( TaskAwareCsts::mover_name() ),
 	task_factory_( /* NULL */ ),
 	cst_type_( "coordinate" ),
 	anchor_resnum_( "" )
@@ -93,10 +96,10 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	pose.add_constraints( cst );
 }
 
-std::string
-TaskAwareCsts::get_name() const {
-	return TaskAwareCstsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareCsts::get_name() const {
+// XRW TEMP  return TaskAwareCsts::mover_name();
+// XRW TEMP }
 
 void
 TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
@@ -119,6 +122,40 @@ TaskAwareCsts::task_factory() const{ return task_factory_; }
 
 void
 TaskAwareCsts::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+
+std::string TaskAwareCsts::get_name() const {
+	return mover_name();
+}
+
+std::string TaskAwareCsts::mover_name() {
+	return "TaskAwareCsts";
+}
+
+void TaskAwareCsts::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "cst_type", xs_string, "What type of constraint you intend to apply", "coordinate" )
+		+ XMLSchemaAttribute( "anchor_resnum", xs_string, "What residue number ought to serve as anchor (relevant for coordinate constraints -- please specify if so -- and less so otherwise." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string TaskAwareCstsCreator::keyname() const {
+	return TaskAwareCsts::mover_name();
+}
+
+protocols::moves::MoverOP
+TaskAwareCstsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TaskAwareCsts );
+}
+
+void TaskAwareCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskAwareCsts::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

@@ -45,6 +45,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -478,11 +481,55 @@ ShapeComplementarityFilter::print_sc_results(
 	tr << "Interface seperation: " << r.distance << std::endl;
 }
 
-filters::FilterOP
-ShapeComplementarityFilterCreator::create_filter() const { return filters::FilterOP( new ShapeComplementarityFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP ShapeComplementarityFilterCreator::create_filter() const { return filters::FilterOP( new ShapeComplementarityFilter ); }
 
-std::string
-ShapeComplementarityFilterCreator::keyname() const { return "ShapeComplementarity"; }
+// XRW TEMP std::string
+// XRW TEMP ShapeComplementarityFilterCreator::keyname() const { return "ShapeComplementarity"; }
+
+std::string ShapeComplementarityFilter::name() const {
+	return class_name();
+}
+
+std::string ShapeComplementarityFilter::class_name() {
+	return "ShapeComplementarity";
+}
+
+void ShapeComplementarityFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "min_sc" , xsct_real , "The filter fails if the calculated sc is less than the given value." , "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_interface" , xsct_real , "The filter fails is the calculated interface area is less than the given value." , "0" )
+		// The default value for min_interface is strange. I feel like it should be '9999' so that things do not automatically fail if the user does not specificy the filter.
+		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If true, print extra calculation details to the tracer." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "quick" , xsct_rosetta_bool , "If true, do a quicker, less accurate calculation by reducing the density." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "For non-symmetric poses, which jump over which to calculate the interface." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "write_int_area" , xsct_rosetta_bool , "If true, write interface area to scorefile." , "false" )
+		+ XMLSchemaAttribute( "sym_dof_name" , xs_string , "For symmetric poses, which dof over which to calculate the interface." )
+		+ XMLSchemaAttribute::attribute_w_default( "multicomp" , xsct_rosetta_bool , "If true, multiple component system. If false, single component system." , "false" )
+		+ XMLSchemaAttribute( "residues1" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
+		+ XMLSchemaAttribute( "residues2" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
+		+ XMLSchemaAttribute( "residue_selector1" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
+		+ XMLSchemaAttribute( "residues_selector2" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates the Lawrence and Coleman shape complementarity using a port of the original Fortran code from CCP4's sc. Symmetry aware. Can be calculated across a jump (default behavior) or the two surfaces can be specified by explicitly providing lists of the residues making up each surface.", attlist );
+}
+
+std::string ShapeComplementarityFilterCreator::keyname() const {
+	return ShapeComplementarityFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ShapeComplementarityFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ShapeComplementarityFilter );
+}
+
+void ShapeComplementarityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ShapeComplementarityFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

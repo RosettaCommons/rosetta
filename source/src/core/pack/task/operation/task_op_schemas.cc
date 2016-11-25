@@ -47,13 +47,15 @@ complex_type_name_for_res_filter( std::string const & res_filter_name )
 void
 task_op_schema_empty(
 	utility::tag::XMLSchemaDefinition & xsd,
-	std::string const & task_op_name
+	std::string const & task_op_name,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_task_op( task_op_name ));
-	append_required_name_and_attributes_to_complex_type( AttributeList(), task_op_def );
+	task_op_def.description( description ) ;
+	append_name_and_attributes_to_complex_type( AttributeList(), task_op_def );
 	xsd.add_top_level_element( task_op_def );
 }
 
@@ -61,25 +63,29 @@ void
 task_op_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & task_op_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_task_op( task_op_name ));
-	append_required_name_and_attributes_to_complex_type( attributes, task_op_def );
+	task_op_def.description ( description ) ;
+	append_name_and_attributes_to_complex_type( attributes, task_op_def );
 	xsd.add_top_level_element( task_op_def );
 }
 
 void
 res_lvl_task_op_schema_empty(
 	utility::tag::XMLSchemaDefinition & xsd,
-	std::string const & task_op_name
+	std::string const & task_op_name,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
+	task_op_def.description( description ) ;
 	xsd.add_top_level_element( task_op_def );
 }
 
@@ -87,15 +93,16 @@ void
 res_lvl_task_op_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & task_op_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
-	for ( AttributeList::const_iterator iter = attributes.begin(), iter_end = attributes.end();
-			iter != iter_end; ++iter ) {
-		task_op_def.add_attribute( *iter );
+	task_op_def.description ( description ) ;
+	for ( auto const & attribute : attributes ) {
+		task_op_def.add_attribute( attribute );
 	}
 	xsd.add_top_level_element( task_op_def );
 }
@@ -104,15 +111,16 @@ void
 res_filter_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & res_filter_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description
 )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexType res_filter_def;
 	res_filter_def.name( complex_type_name_for_res_filter( res_filter_name ));
-	for ( AttributeList::const_iterator iter = attributes.begin(), iter_end = attributes.end();
-			iter != iter_end; ++iter ) {
-		res_filter_def.add_attribute( *iter );
+	res_filter_def.description ( description ) ;
+	for ( auto const & attribute : attributes ) {
+		res_filter_def.add_attribute( attribute );
 	}
 	xsd.add_top_level_element( res_filter_def );
 }

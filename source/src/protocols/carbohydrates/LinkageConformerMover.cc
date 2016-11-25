@@ -47,6 +47,9 @@
 
 // Utility header
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.LinkageConformerMover" );
@@ -158,10 +161,10 @@ LinkageConformerMover::fresh_instance() const
 	return protocols::moves::MoverOP( new LinkageConformerMover );
 }
 
-std::string
-LinkageConformerMover::get_name() const {
-	return "LinkageConformerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LinkageConformerMover::get_name() const {
+// XRW TEMP  return "LinkageConformerMover";
+// XRW TEMP }
 
 void
 LinkageConformerMover::show(std::ostream & output) const
@@ -329,20 +332,58 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LinkageConformerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LinkageConformerMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LinkageConformerMoverCreator::keyname() const {
+// XRW TEMP  return LinkageConformerMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LinkageConformerMover::mover_name(){
+// XRW TEMP  return "LinkageConformerMover";
+// XRW TEMP }
+
+std::string LinkageConformerMover::get_name() const {
+	return mover_name();
+}
+
+std::string LinkageConformerMover::mover_name() {
+	return "LinkageConformerMover";
+}
+
+void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("upper_resnum", xsct_non_negative_integer, "XRW TO DO")
+		+ XMLSchemaAttribute("x_sds", xsct_real, "Standard deviation for sampling")
+		+ XMLSchemaAttribute("use_sugar_bb_if_needed", xsct_rosetta_bool, "Use sugar backbone data if needed?")
+		+ XMLSchemaAttribute("idealize_torsions", xsct_rosetta_bool, "Idealize torsion angles before run?")
+		+ XMLSchemaAttribute("prob_sd_sampling", xsct_rosetta_bool, "Use standard deviation as probability")
+		+ XMLSchemaAttribute("sample_protein_linkage", xsct_rosetta_bool, "Also sample linkage between glycan and protein")
+		+ XMLSchemaAttribute("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to sample glycan linkages", attlist );
+}
+
+std::string LinkageConformerMoverCreator::keyname() const {
+	return LinkageConformerMover::mover_name();
+}
+
 protocols::moves::MoverOP
 LinkageConformerMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new LinkageConformerMover );
 }
 
-std::string
-LinkageConformerMoverCreator::keyname() const {
-	return LinkageConformerMoverCreator::mover_name();
+void LinkageConformerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LinkageConformerMover::provide_xml_schema( xsd );
 }
 
-std::string
-LinkageConformerMoverCreator::mover_name(){
-	return "LinkageConformerMover";
-}
 
 } //carbohydrates
 } //protocols

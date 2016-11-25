@@ -41,7 +41,7 @@ public:
 	void fold_tree(core::kinematics::FoldTreeOP ft );
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -70,6 +70,18 @@ public:
 	void set_anchor_res( utility::vector1< core::Size > anchor );
 	void anchor_specified( bool anchor_specified );
 	bool anchor_specified();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// newly generated foldtree OP

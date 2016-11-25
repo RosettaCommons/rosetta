@@ -35,7 +35,7 @@ public:
 	LoadPDBMover();
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -52,6 +52,18 @@ public:
 
 	bool append() const { return append_; };
 	void append( bool setting ){ append_ = setting; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string filename_;
 	bool append_;

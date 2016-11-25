@@ -41,12 +41,11 @@ public:
 	SetChiMover();
 	virtual ~SetChiMover();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	void apply( core::pose::Pose & pose ) override;
+	protocols::moves::MoverOP clone() const  override{
 		return (protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SetChiMover( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new SetChiMover );
 	}
 
@@ -54,13 +53,25 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	core::Real angle() const { return angle_; }
 	core::Size resnum() const { return resnum_; }
 	core::Size chinum() const { return chinum_; }
 	void angle( core::Real const a ){ angle_ = a; }
 	void resnum( core::Size const r ){ resnum_ = r; }
 	void chinum( core::Size const c ){ chinum_ = c; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real angle_;

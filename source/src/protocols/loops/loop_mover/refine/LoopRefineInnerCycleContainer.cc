@@ -33,6 +33,9 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycleContainer" );
 
@@ -72,10 +75,10 @@ LoopRefineInnerCycleContainer & LoopRefineInnerCycleContainer::operator=( LoopRe
 LoopRefineInnerCycleContainer::~LoopRefineInnerCycleContainer() {}
 
 /// @brief Each derived class must specify its name.
-std::string LoopRefineInnerCycleContainer::get_name() const
-{
-	return type();
-}
+// XRW TEMP std::string LoopRefineInnerCycleContainer::get_name() const
+// XRW TEMP {
+// XRW TEMP  return type();
+// XRW TEMP }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
@@ -225,15 +228,49 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 	return out;
 }
 
-LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
+// XRW TEMP LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
 
-moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
-	return moves::MoverOP( new LoopRefineInnerCycleContainer() );
+// XRW TEMP moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopRefineInnerCycleContainer() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopRefineInnerCycleContainerCreator::keyname() const {
+// XRW TEMP  return "LoopRefineInnerCycleContainer";
+// XRW TEMP }
+
+std::string LoopRefineInnerCycleContainer::get_name() const {
+	return mover_name();
+}
+
+std::string LoopRefineInnerCycleContainer::mover_name() {
+	return "LoopRefineInnerCycleContainer";
+}
+
+void LoopRefineInnerCycleContainer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"This class is a LoopRefineInnerCycle that contains one or more other LoopRefineInnerCycles"
+		" to allow a developer to quickly string together existing LoopRefineInnerCycles"
+		" in new ways to create new loop refinement protocols."
+		, attlist );
 }
 
 std::string LoopRefineInnerCycleContainerCreator::keyname() const {
-	return "LoopRefineInnerCycleContainer";
+	return LoopRefineInnerCycleContainer::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopRefineInnerCycleContainerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer );
+}
+
+void LoopRefineInnerCycleContainerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopRefineInnerCycleContainer::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

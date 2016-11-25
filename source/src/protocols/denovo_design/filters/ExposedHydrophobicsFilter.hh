@@ -56,20 +56,32 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::filters::FilterOP clone() const;
+	protocols::filters::FilterOP clone() const override;
 
 	/// @brief Apply the ExposedHydrophobicsFilter. Overloaded apply function from filter base class.
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP fresh_instance() const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP fresh_instance() const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:   // options
 	/// @brief If total calculated filter score is <= theshold_, the filter passes, otherwise it fails.

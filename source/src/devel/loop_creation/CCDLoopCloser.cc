@@ -41,6 +41,9 @@
 
 //utility
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace loop_creation {
@@ -48,22 +51,22 @@ namespace loop_creation {
 static THREAD_LOCAL basic::Tracer TR( "devel.loop_creation.CCDLoopCloser" );
 
 //****CREATOR METHODS****//
-std::string
-CCDLoopCloserCreator::keyname() const
-{
-	return CCDLoopCloserCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CCDLoopCloserCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CCDLoopCloser::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CCDLoopCloserCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CCDLoopCloser );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CCDLoopCloserCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CCDLoopCloser );
+// XRW TEMP }
 
-std::string
-CCDLoopCloserCreator::mover_name()
-{
-	return "CCDLoopCloser";
-}
+// XRW TEMP std::string
+// XRW TEMP CCDLoopCloser::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CCDLoopCloser";
+// XRW TEMP }
 //****END CREATOR METHODS****//
 
 
@@ -115,10 +118,10 @@ CCDLoopCloser::fresh_instance() const {
 	return protocols::moves::MoverOP( new CCDLoopCloser );
 }
 
-std::string
-CCDLoopCloser::get_name() const {
-	return "CCDLoopCloser";
-}
+// XRW TEMP std::string
+// XRW TEMP CCDLoopCloser::get_name() const {
+// XRW TEMP  return "CCDLoopCloser";
+// XRW TEMP }
 
 void
 CCDLoopCloser::init(){
@@ -276,6 +279,46 @@ CCDLoopCloser::parse_my_tag(
 		early_exit_cutoff_ = tag->getOption< Real >("early_exit_cutoff");
 	}
 }
+
+std::string CCDLoopCloser::get_name() const {
+	return mover_name();
+}
+
+std::string CCDLoopCloser::mover_name() {
+	return "CCDLoopCloser";
+}
+
+void CCDLoopCloser::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "prevent_nonloop_modification", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_ccd_moves_per_closure_attempt", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "tolerance", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_closure_attempts", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_rama_score_increase", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_total_delta_helix", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_total_delta_strand", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_total_delta_loop", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "early_exit_cutoff", xsct_real, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string CCDLoopCloserCreator::keyname() const {
+	return CCDLoopCloser::mover_name();
+}
+
+protocols::moves::MoverOP
+CCDLoopCloserCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CCDLoopCloser );
+}
+
+void CCDLoopCloserCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CCDLoopCloser::provide_xml_schema( xsd );
+}
+
 
 } //loop creation
 } //devel

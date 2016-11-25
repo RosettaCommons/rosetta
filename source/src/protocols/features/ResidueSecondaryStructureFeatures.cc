@@ -39,6 +39,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueSecondaryStructureFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -64,8 +68,8 @@ ResidueSecondaryStructureFeatures::ResidueSecondaryStructureFeatures(ResidueSeco
 
 ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() = default;
 
-string
-ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }
 
 void
 ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -163,6 +167,39 @@ ResidueSecondaryStructureFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string ResidueSecondaryStructureFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueSecondaryStructureFeatures::class_name() {
+	return "ResidueSecondaryStructureFeatures";
+}
+
+void ResidueSecondaryStructureFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report ResidueSecondaryStructure geometry and scores to features Statistics Scientific Benchmark",
+		attlist );
+}
+
+std::string ResidueSecondaryStructureFeaturesCreator::type_name() const {
+	return ResidueSecondaryStructureFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueSecondaryStructureFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueSecondaryStructureFeatures );
+}
+
+void ResidueSecondaryStructureFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueSecondaryStructureFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

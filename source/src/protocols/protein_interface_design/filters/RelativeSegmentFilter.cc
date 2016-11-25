@@ -20,6 +20,9 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -29,11 +32,11 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filter
 
 using core::pose::Pose;
 
-protocols::filters::FilterOP
-RelativeSegmentFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativeSegmentFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP RelativeSegmentFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativeSegmentFilter ); }
 
-std::string
-RelativeSegmentFilterCreator::keyname() const { return "RelativeSegment"; }
+// XRW TEMP std::string
+// XRW TEMP RelativeSegmentFilterCreator::keyname() const { return "RelativeSegment"; }
 
 bool
 RelativeSegmentFilter::apply( Pose const & pose ) const {
@@ -78,6 +81,39 @@ RelativeSegmentFilter::report_sm( core::pose::Pose const & ) const {
 }
 
 RelativeSegmentFilter::~RelativeSegmentFilter() {}
+
+std::string RelativeSegmentFilter::name() const {
+	return class_name();
+}
+
+std::string RelativeSegmentFilter::class_name() {
+	return "RelativeSegment";
+}
+
+void RelativeSegmentFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "source_pose", xs_string, "PDB file storing the pose to which to align. The two poses should be superimposed prior to running. This filter will not superimpose." )
+		+ XMLSchemaAttribute::required_attribute( "start_res", xsct_non_negative_integer, "Starting residue for alignment. Rosetta numbering only" )
+		+ XMLSchemaAttribute::required_attribute( "end_res", xsct_non_negative_integer, "Ending residue for alignment. Rosetta numbering only" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Reports the numbers of residues that align with a segment on source pose.", attlist );
+}
+
+std::string RelativeSegmentFilterCreator::keyname() const {
+	return RelativeSegmentFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RelativeSegmentFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RelativeSegmentFilter );
+}
+
+void RelativeSegmentFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RelativeSegmentFilter::provide_xml_schema( xsd );
+}
+
 
 }
 } // protein_interface_design

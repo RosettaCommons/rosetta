@@ -52,6 +52,10 @@
 #include <core/pose/util.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/loop_build/LoopMover_SlidingWindowCreator.hh>
 
 
 namespace protocols {
@@ -193,15 +197,45 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	return loops::loop_mover::Success;
 }
 
-std::string
-LoopMover_SlidingWindow::get_name() const {
-	return "LoopMover_SlidingWindow";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_SlidingWindow::get_name() const {
+// XRW TEMP  return "LoopMover_SlidingWindow";
+// XRW TEMP }
 
 basic::Tracer & LoopMover_SlidingWindow::tr() const
 {
 	return TR;
 }
+
+std::string LoopMover_SlidingWindow::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_SlidingWindow::mover_name() {
+	return "LoopMover_SlidingWindow";
+}
+
+void LoopMover_SlidingWindow::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "LoopMover utilizing fragment insertion, ccd loop closure, and minimization", attlist );
+}
+
+std::string LoopMover_SlidingWindowCreator::keyname() const {
+	return LoopMover_SlidingWindow::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopMover_SlidingWindowCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_SlidingWindow );
+}
+
+void LoopMover_SlidingWindowCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_SlidingWindow::provide_xml_schema( xsd );
+}
+
 
 } // namespace loop_build
 } // namespace protocols

@@ -37,17 +37,20 @@
 #include <core/pose/PDBInfo.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.SSMotifFinder" );
 
-protocols::filters::FilterOP
-SSMotifFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SSMotifFinder ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SSMotifFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SSMotifFinder ); }
 
-std::string
-SSMotifFinderFilterCreator::keyname() const { return "SSMotifFinder"; }
+// XRW TEMP std::string
+// XRW TEMP SSMotifFinderFilterCreator::keyname() const { return "SSMotifFinder"; }
 
 //default ctor
 SSMotifFinder::SSMotifFinder() :
@@ -302,6 +305,45 @@ SSMotifFinder::compute_jump( core::pose::Pose const & pose, core::Size const sta
 	TR<<"Template ft: "<<copy_pose.fold_tree()<<std::endl;
 	return( copy_pose.jump( 1 ) );
 }
+
+std::string SSMotifFinder::name() const {
+	return class_name();
+}
+
+std::string SSMotifFinder::class_name() {
+	return "SSMotifFinder";
+}
+
+void SSMotifFinder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("from_res", xsct_non_negative_integer, "Starting residue number; default to 0")
+		+ XMLSchemaAttribute::required_attribute("to_res", xsct_non_negative_integer, "Ending residue number; default to 0")
+		+ XMLSchemaAttribute::required_attribute("rmsd", xsct_real, "RMSD to base filter on")
+		+ XMLSchemaAttribute::required_attribute("filename", xs_string, "file name to write to")
+		+ XMLSchemaAttribute::required_attribute("pdb_name", xs_string, "name of input pdb")
+		+ XMLSchemaAttribute::required_attribute("template_pose", xs_string, "filename of input template")
+		+ XMLSchemaAttribute::attribute_w_default("template_stem1", xsct_refpose_enabled_residue_number, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("template_stem2", xsct_refpose_enabled_residue_number, "XRW TO DO", "0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SSMotifFinderFilterCreator::keyname() const {
+	return SSMotifFinder::class_name();
+}
+
+protocols::filters::FilterOP
+SSMotifFinderFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SSMotifFinder );
+}
+
+void SSMotifFinderFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SSMotifFinder::provide_xml_schema( xsd );
+}
+
 
 }
 }

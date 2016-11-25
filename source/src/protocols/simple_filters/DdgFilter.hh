@@ -66,6 +66,18 @@ public:
 
 	void extreme_value_removal( bool const b ) { extreme_value_removal_ = b; }
 	bool extreme_value_removal() const{ return extreme_value_removal_; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 
 	// initialize PB related features

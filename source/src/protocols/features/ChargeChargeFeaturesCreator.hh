@@ -29,11 +29,14 @@ namespace features {
 class ChargeChargeFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	ChargeChargeFeaturesCreator();
-	~ChargeChargeFeaturesCreator() override;
+	// XRW TEMP  ChargeChargeFeaturesCreator();
+	// XRW TEMP  ~ChargeChargeFeaturesCreator() override;
 
-	FeaturesReporterOP create_features_reporter() const override;
+	// XRW TEMP  FeaturesReporterOP create_features_reporter() const override;
+	// XRW TEMP  std::string type_name() const override;
+	protocols::features::FeaturesReporterOP create_features_reporter() const override;
 	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace features

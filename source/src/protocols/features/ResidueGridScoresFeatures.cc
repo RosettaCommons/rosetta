@@ -31,26 +31,29 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
 
 namespace protocols {
 namespace features {
 
-ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
-{
+// XRW TEMP ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
+// XRW TEMP {
+// XRW TEMP
+// XRW TEMP }
 
-}
+// XRW TEMP ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator() = default;
 
-ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator() = default;
+// XRW TEMP protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
+// XRW TEMP {
+// XRW TEMP  return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
+// XRW TEMP }
 
-protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
-{
-	return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
-}
-
-std::string ResidueGridScoresFeaturesCreator::type_name() const
-{
-	return "ResidueGridScoresFeatures";
-}
+// XRW TEMP std::string ResidueGridScoresFeaturesCreator::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "ResidueGridScoresFeatures";
+// XRW TEMP }
 
 ResidueGridScoresFeatures::ResidueGridScoresFeatures() : chain_(' ')
 {
@@ -62,10 +65,10 @@ ResidueGridScoresFeatures::ResidueGridScoresFeatures(ResidueGridScoresFeatures c
 
 ResidueGridScoresFeatures::~ResidueGridScoresFeatures() = default;
 
-std::string ResidueGridScoresFeatures::type_name() const
-{
-	return "ResidueGridScoresFeatures";
-}
+// XRW TEMP std::string ResidueGridScoresFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "ResidueGridScoresFeatures";
+// XRW TEMP }
 
 void ResidueGridScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
@@ -178,6 +181,43 @@ void ResidueGridScoresFeatures::parse_my_tag(
 	chain_ = tag->getOption<char>("chain");
 
 }
+
+std::string ResidueGridScoresFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueGridScoresFeatures::class_name() {
+	return "ResidueGridScoresFeatures";
+}
+
+void ResidueGridScoresFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"chain", xsct_char,
+		"required chain name tag (single character)");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"detailed per atom scores of Scoring Grids",
+		attlist );
+}
+
+std::string ResidueGridScoresFeaturesCreator::type_name() const {
+	return ResidueGridScoresFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueGridScoresFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
+}
+
+void ResidueGridScoresFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueGridScoresFeatures::provide_xml_schema( xsd );
+}
+
 
 }
 }

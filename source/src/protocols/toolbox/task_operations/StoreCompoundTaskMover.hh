@@ -48,10 +48,10 @@ public:
 	void CompoundDesignableTask( core::pose::Pose const & pose, core::Size & total_residue, core::pack::task::PackerTaskOP & task );
 	// void CompoundAminoAcidSetTask( core::Size & total_residue, core::pack::task::PackerTaskOP & task ); TODO (Jacob)
 
-	virtual void apply( core::pose::Pose & pose  );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose  ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void task_clear();
 	task_iterator task_begin();
@@ -78,7 +78,19 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	CompoundTask compound_task_;

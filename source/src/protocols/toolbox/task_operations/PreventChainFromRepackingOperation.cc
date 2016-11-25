@@ -116,8 +116,8 @@ PreventChainFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 void PreventChainFromRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + XMLSchemaAttribute::attribute_w_default(  "chain", xsct_positive_integer, "XRW TO DO",  "1"  );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 } //namespace protocols

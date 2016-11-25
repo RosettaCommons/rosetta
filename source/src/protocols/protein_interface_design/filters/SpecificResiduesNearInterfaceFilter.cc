@@ -29,6 +29,9 @@
 // C++ Headers
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -51,15 +54,15 @@ using utility::vector1;
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
 
 ////////////  Creator ////////////////////////
-FilterOP
-SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
-	return FilterOP( new SpecificResiduesNearInterfaceFilter );
-}
+// XRW TEMP FilterOP
+// XRW TEMP SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
+// XRW TEMP  return FilterOP( new SpecificResiduesNearInterfaceFilter );
+// XRW TEMP }
 
-string
-SpecificResiduesNearInterfaceFilterCreator::keyname() const {
-	return "SpecificResiduesNearInterface";
-}
+// XRW TEMP string
+// XRW TEMP SpecificResiduesNearInterfaceFilterCreator::keyname() const {
+// XRW TEMP  return "SpecificResiduesNearInterface";
+// XRW TEMP }
 /////////// End Creator /////////////////////
 
 
@@ -191,6 +194,39 @@ SpecificResiduesNearInterfaceFilter::report_sm(
 ) const {
 	return(static_cast<Real>(compute(pose)));
 }
+
+std::string SpecificResiduesNearInterfaceFilter::name() const {
+	return class_name();
+}
+
+std::string SpecificResiduesNearInterfaceFilter::class_name() {
+	return "SpecificResiduesNearInterface";
+}
+
+void SpecificResiduesNearInterfaceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "Jump across which to define the interface", "1" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "A filter to pluck out whether the residues from a set of task operations occur at the interface", attlist );
+}
+
+std::string SpecificResiduesNearInterfaceFilterCreator::keyname() const {
+	return SpecificResiduesNearInterfaceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SpecificResiduesNearInterfaceFilter );
+}
+
+void SpecificResiduesNearInterfaceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SpecificResiduesNearInterfaceFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

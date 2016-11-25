@@ -247,17 +247,16 @@ void RestrictNativeResiduesOperation::provide_xml_schema( utility::tag::XMLSchem
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "false" )
+		+ XMLSchemaAttribute::attribute_w_default(  "verbose", xsct_rosetta_bool, "XRW TO DO",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xsct_rosetta_bool, "XRW TO DO",  "false"  )
 
 		// This is required if a command line option isn't set AMW TODO
-		+ XMLSchemaAttribute( "pdbname", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "invert", xs_boolean, "false" );
+		+ XMLSchemaAttribute( "pdbname", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "invert", xsct_rosetta_bool, "XRW TO DO",  "false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 } // TaskOperations
 } // toolbox
 } // protocols
-

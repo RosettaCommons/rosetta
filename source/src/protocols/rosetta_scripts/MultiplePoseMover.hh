@@ -62,7 +62,7 @@ public:
 
 	void apply(core::pose::Pose& pose) override;
 	core::pose::PoseOP get_additional_output() override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
@@ -71,6 +71,18 @@ public:
 
 	/// @brief sets rosettascripts tag
 	void set_rosetta_scripts_tag( utility::tag::TagCOP tag );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );

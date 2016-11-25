@@ -108,7 +108,7 @@ void AlternativePairings::show( std::ostream& out ) const {
 	out << "\n\n Set of alternative strand pairings: \n";
 	for ( auto const & pairing : pairings_ ) {
 		out << pairing.weight() << " " << pairing.pairing() << " ";
-		for (const auto & mit : pairing.models()) {
+		for ( const auto & mit : pairing.models() ) {
 			out << mit << " ";
 		}
 		out << "\n";

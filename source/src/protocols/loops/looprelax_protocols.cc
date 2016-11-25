@@ -510,7 +510,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint+1 );
 		pose.conformation().declare_chemical_bond( cutpoint, pose.residue( cutpoint ).atom_name( pose.residue( cutpoint ).upper_connect_atom() ),
-																							 cutpoint + 1, pose.residue( cutpoint + 1 ).atom_name( pose.residue( cutpoint + 1 ).lower_connect_atom() ) );
+			cutpoint + 1, pose.residue( cutpoint + 1 ).atom_name( pose.residue( cutpoint + 1 ).lower_connect_atom() ) );
 	}
 
 	(*scorefxn_)(pose);

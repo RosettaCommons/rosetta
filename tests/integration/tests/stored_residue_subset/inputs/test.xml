@@ -20,4 +20,5 @@
 		<Add mover="store_subset" />
 		<Add mover="fastdes" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

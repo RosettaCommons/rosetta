@@ -105,8 +105,9 @@ private:
 
 class DummyMultipleOutputMoverCreator : public protocols::moves::MoverCreator {
 public:
-	protocols::moves::MoverOP create_mover() const { return protocols::moves::MoverOP( new DummyMultipleOutputMover ); }
-	std::string keyname() const { return mover_name(); }
+	protocols::moves::MoverOP create_mover() const override { return protocols::moves::MoverOP( new DummyMultipleOutputMover ); }
+	std::string keyname() const override { return mover_name(); }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
 	static std::string mover_name() { return "DummyMultipleOutputMover"; }
 };
 
@@ -114,8 +115,9 @@ class DummyFilter : public protocols::filters::TrueFilter { };
 
 class DummyFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyFilter ); }
-	std::string keyname() const { return "DummyFilter"; }
+	protocols::filters::FilterOP create_filter() const override { return protocols::filters::FilterOP( new DummyFilter ); }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
+	std::string keyname() const override { return "DummyFilter"; }
 };
 
 class DummyHalfFilter : public protocols::filters::Filter {
@@ -134,8 +136,9 @@ public:
 
 class DummyHalfFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
-	std::string keyname() const { return "DummyHalfFilter"; }
+	protocols::filters::FilterOP create_filter() const override { return protocols::filters::FilterOP( new DummyHalfFilter ); }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override {}
+	std::string keyname() const override { return "DummyHalfFilter"; }
 };
 
 //using namespace basic::resource_manager;

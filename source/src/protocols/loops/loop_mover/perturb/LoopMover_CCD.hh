@@ -73,25 +73,37 @@ public:
 	//destructor
 	~LoopMover_Perturb_CCD();
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual void show(std::ostream & output=std::cout) const;
+	void show(std::ostream & output=std::cout) const override;
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void set_default_settings(){}
 	virtual protocols::loops::LoopsCOP get_loops() const;
 	virtual core::scoring::ScoreFunctionOP get_scorefxn() const;
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 
 protected:
 	std::vector< core::fragment::FragSetOP > frag_libs_;
 
-	virtual loop_mover::LoopResult model_loop( core::pose::Pose & pose,
-		protocols::loops::Loop const & loop );
+	loop_mover::LoopResult model_loop( core::pose::Pose & pose,
+		protocols::loops::Loop const & loop ) override;
 
-	virtual basic::Tracer & tr() const;
+	basic::Tracer & tr() const override;
 };
 
 std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_CCD const &mover );

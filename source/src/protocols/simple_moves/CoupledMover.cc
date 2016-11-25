@@ -41,6 +41,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/xyz.functions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -52,20 +55,20 @@ static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.CoupledMover");
 namespace protocols {
 namespace simple_moves {
 
-std::string
-CoupledMoverCreator::keyname() const {
-	return CoupledMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CoupledMoverCreator::keyname() const {
+// XRW TEMP  return CoupledMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CoupledMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoupledMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CoupledMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CoupledMover );
+// XRW TEMP }
 
-std::string
-CoupledMoverCreator::mover_name() {
-	return "CoupledMover";
-}
+// XRW TEMP std::string
+// XRW TEMP CoupledMover::mover_name() {
+// XRW TEMP  return "CoupledMover";
+// XRW TEMP }
 
 // default constructor
 CoupledMover::CoupledMover() : protocols::moves::Mover()
@@ -215,10 +218,10 @@ CoupledMover::apply( core::pose::Pose & pose )
 
 }
 
-std::string
-CoupledMover::get_name() const {
-	return "CoupledMover";
-}
+// XRW TEMP std::string
+// XRW TEMP CoupledMover::get_name() const {
+// XRW TEMP  return "CoupledMover";
+// XRW TEMP }
 
 // setters
 void CoupledMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }
@@ -359,6 +362,37 @@ CoupledMover::parse_my_tag(
 {
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover( core::pose::PoseOP( new core::pose::Pose( pose ) ) ) );
 }
+
+std::string CoupledMover::get_name() const {
+	return mover_name();
+}
+
+std::string CoupledMover::mover_name() {
+	return "CoupledMover";
+}
+
+void CoupledMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Runs a Coupled Move.  There are no XML attributes", attlist );
+}
+
+std::string CoupledMoverCreator::keyname() const {
+	return CoupledMover::mover_name();
+}
+
+protocols::moves::MoverOP
+CoupledMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CoupledMover );
+}
+
+void CoupledMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoupledMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

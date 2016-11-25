@@ -98,7 +98,7 @@ MPIWorkPartitionJobDistributor::get_new_job_id()
 	JobOutputterOP outputter = job_outputter();
 
 	// if the overwrite flag is false, advance to the next jobs we should work on
-	if ( !basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ){
+	if ( !basic::options::option[ basic::options::OptionKeys::out::overwrite ].value() ) {
 		while ( next_job_to_try_assigning_ <= jobs.size() && outputter->job_has_completed( jobs[ next_job_to_try_assigning_ ] ) ) {
 			next_job_to_try_assigning_ += npes_;
 		}

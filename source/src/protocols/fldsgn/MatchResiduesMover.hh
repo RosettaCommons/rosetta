@@ -69,7 +69,7 @@ public:// constructor/destructor
 	MoverOP fresh_instance() const override;
 
 	// @brief get name of this mover
-	std::string get_name() const override { return "MatchResiduesMover"; }
+	// XRW TEMP  std::string get_name() const override { return "MatchResiduesMover"; }
 
 
 	void parse_my_tag( TagCOP tag,
@@ -79,6 +79,18 @@ public:// constructor/destructor
 		Pose const & pose) override;
 
 	void  apply( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	bool superimpose_;

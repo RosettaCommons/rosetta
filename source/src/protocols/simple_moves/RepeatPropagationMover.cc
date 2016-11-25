@@ -85,6 +85,9 @@
 #include <numeric/xyz.functions.hh>
 
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -96,23 +99,30 @@ using utility::vector1;
 namespace protocols {
 namespace simple_moves {
 static basic::Tracer TR( "protocols.simple_moves.RepeatPropagationMover" );
-std::string RepeatPropagationMoverCreator::keyname() const
-{
-	return RepeatPropagationMoverCreator::mover_name();
-}
+// XRW TEMP std::string RepeatPropagationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RepeatPropagationMover::mover_name();
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-RepeatPropagationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepeatPropagationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RepeatPropagationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RepeatPropagationMover );
+// XRW TEMP }
 
 
-std::string RepeatPropagationMoverCreator::mover_name(){
-	return "RepeatPropagationMover";
-}
+// XRW TEMP std::string RepeatPropagationMover::mover_name(){
+// XRW TEMP  return "RepeatPropagation";
+// XRW TEMP }
 
-RepeatPropagationMover::RepeatPropagationMover():moves::Mover("RepeatPropagationMover"){}
+// apl note -- this appeared in master around 9/28?std::string RepeatPropagationMoverCreator::mover_name(){
+// apl note -- this appeared in master around 9/28? return "RepeatPropagationMover";
+// apl note -- this appeared in master around 9/28?}
+
+
+RepeatPropagationMover::RepeatPropagationMover() :
+	moves::Mover( mover_name() )
+{}
 
 void RepeatPropagationMover::apply(core::pose::Pose & pose) {
 	if ( pose.size()== last_res_ ) {
@@ -460,12 +470,12 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	}
 	//debug print out first and last residues to constrain
 	EnzdesCstParamCacheOP extra_res_param_cache = EnzdesCstParamCacheOP( new EnzdesCstParamCache());
-	for (auto & first_repeat_constrained_re : first_repeat_constrained_res) {
+	for ( auto & first_repeat_constrained_re : first_repeat_constrained_res ) {
 		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( first_repeat_constrained_re.first );
 		TR <<"Constraining additional residue" <<  first_repeat_constrained_re.first << std::endl;
 
 	}
-	for (auto & last_repeat_constrained_re : last_repeat_constrained_res) {
+	for ( auto & last_repeat_constrained_re : last_repeat_constrained_res ) {
 		extra_res_param_cache->template_res_cache( 1 )->add_position_in_pose( last_repeat_constrained_re.first );
 		TR <<"Constraining additional residue" <<  last_repeat_constrained_re.first << std::endl;
 	}
@@ -664,6 +674,7 @@ void RepeatPropagationMover::generate_overlap(Pose & pose, Pose & parent_pose, s
 	renumber_pdbinfo_based_on_conf_chains(pose);
 }
 
+// XRW TEMP std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
 
 void RepeatPropagationMover::detect_last_repeat_residue(const Pose & pose){
 	int length_change = pose.total_residue()-orig_pdb_length_;
@@ -690,7 +701,7 @@ void RepeatPropagationMover::trim_back_repeat_to_repair_scar(Pose & pose){
 }
 
 
-std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
+// XRW TEMP std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
 
 void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -735,6 +746,46 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 		cTerm_cap_size_ = tag->getOption<Size>("cTerm_cap_size");
 	}
 }
+
+std::string RepeatPropagationMover::get_name() const {
+	return mover_name();
+}
+
+std::string RepeatPropagationMover::mover_name() {
+	return "RepeatPropagationMover";
+}
+
+void RepeatPropagationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "first_template_res", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "last_template_res", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "detect_repeat_length_change", xsct_size_cs_pair, "XRW TO DO", "9999,9999" )
+		+ XMLSchemaAttribute::required_attribute( "numb_repeats", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "repeat_without_replacing_pose", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "maintain_cap", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "maintain_ligand", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute( "nTerm_cap_size", xsct_non_negative_integer, "XRW TO DO")
+		+ XMLSchemaAttribute( "cTerm_cap_size", xsct_non_negative_integer, "XRW TO DO" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RepeatPropagationMoverCreator::keyname() const {
+	return RepeatPropagationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RepeatPropagationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RepeatPropagationMover );
+}
+
+void RepeatPropagationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepeatPropagationMover::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

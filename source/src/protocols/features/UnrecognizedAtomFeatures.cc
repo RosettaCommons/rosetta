@@ -51,6 +51,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/UnrecognizedAtomFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -104,8 +108,8 @@ UnrecognizedAtomFeatures::UnrecognizedAtomFeatures(
 
 UnrecognizedAtomFeatures::~UnrecognizedAtomFeatures() = default;
 
-string
-UnrecognizedAtomFeatures::type_name() const { return "UnrecognizedAtomFeatures"; }
+// XRW TEMP string
+// XRW TEMP UnrecognizedAtomFeatures::type_name() const { return "UnrecognizedAtomFeatures"; }
 
 void
 UnrecognizedAtomFeatures::write_schema_to_db(
@@ -397,6 +401,38 @@ UnrecognizedAtomFeatures::delete_record(
 	delete_records_from_table("unrecognized_atoms", struct_id, db_session);
 	delete_records_from_table("unrecognized_neighbors", struct_id, db_session);
 }
+
+std::string UnrecognizedAtomFeatures::type_name() const {
+	return class_name();
+}
+
+std::string UnrecognizedAtomFeatures::class_name() {
+	return "UnrecognizedAtomFeatures";
+}
+
+void UnrecognizedAtomFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("neighbor_distance_cutoff", xsct_real, "Neighbor distance cutoff", "12.0");
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "report unrecognized atoms features to features Statistics Scientific Benchmark", attlist );
+}
+
+std::string UnrecognizedAtomFeaturesCreator::type_name() const {
+	return UnrecognizedAtomFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new UnrecognizedAtomFeatures );
+}
+
+void UnrecognizedAtomFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UnrecognizedAtomFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

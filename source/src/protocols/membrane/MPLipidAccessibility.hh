@@ -37,98 +37,110 @@ namespace membrane {
 class MPLipidAccessibility : public protocols::moves::Mover {
 
 public:
-	
+
 	/////////////////////
 	/// Constructors  ///
 	/////////////////////
-	
+
 	/// @brief Default constructor
 	MPLipidAccessibility();
-	
+
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	//	MPLipidAccessibility( MPLipidAccessibility const & src );
-	
+	// MPLipidAccessibility( MPLipidAccessibility const & src );
+
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~MPLipidAccessibility();
-	
+
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
-	
+
 public:
 	/// @brief Apply the mover
-	virtual void
-	apply( core::pose::Pose & pose );
-	
-	virtual void
-	show( std::ostream & output = std::cout ) const;
-	
+	void
+	apply( core::pose::Pose & pose ) override;
+
+	void
+	show( std::ostream & output = std::cout ) const override;
+
 	/// @brief Get the name of the Mover
-	virtual std::string
-	get_name() const;
-	
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
+
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
 	///////////////////////////////
-	
+
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
-				 utility::tag::TagCOP tag,
-				 basic::datacache::DataMap & data,
-				 protocols::filters::Filters_map const & filters,
-				 protocols::moves::Movers_map const & movers,
-				 core::pose::Pose const & pose );
-	
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose ) override;
+
 	//MPLipidAccessibility & operator=( MPLipidAccessibility const & src );
-	
+
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
-	
+	protocols::moves::MoverOP
+	fresh_instance() const override;
+
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
-	
+	protocols::moves::MoverOP
+	clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private: // methods
-	
+
 	/// @brief set defaults
 	void set_defaults();
-	
+
 	/// @brief Register Options from Command Line
 	void register_options();
-	
+
 	/// @brief Initialize from commandline
 	void init_from_cmd();
-	
+
 	/// @brief finalize setup
 	void finalize_setup( Pose & pose );
-	
+
 	/// @brief check whether protein is in membrane
 	bool protein_in_membrane( Pose & pose );
-	
+
 	/// @brief fill up slice arrays with protein data
 	void fill_up_slices( Pose & pose );
-	
+
 	/// @brief compute slice COM
 	void compute_slice_com();
-	
+
 private: // data
-	
+
 	/// @brief original data from first implementation
 	core::Real angle_cutoff_;
 	core::Real slice_width_;
 	core::Real shell_radius_;
 	core::Real dist_cutoff_;
 	bool tm_alpha_;
-	
+
 	// define variables, the outer vector goes through the slices
 	// inner vector goes through residues in each slice
 	utility::vector1< utility::vector1< core::Size > > resi_;
 	utility::vector1< utility::vector1< core::Vector > > ca_coord_, cb_coord_;
 	utility::vector1< core::Vector > slice_com_;
 	utility::vector1< core::Real > slice_zmin_;
-	
+
 };
 
 } //protocols

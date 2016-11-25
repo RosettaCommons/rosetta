@@ -34,6 +34,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
@@ -58,16 +59,86 @@ EnvClaimOP EnvClaim::make_claim( std::string const& name,
 	if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
 	else if ( name == "JumpClaim" )    return EnvClaimOP( new JumpClaim( owner, tag, datamap ) );
 	else if ( name == "TorsionClaim" ) return EnvClaimOP( new TorsionClaim( owner, tag, datamap ) );
-	else if ( name == "VrtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
+	else if ( name == "VirtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
 	else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
-	else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+	else {
+		tr << "NOTE: The VrtResClaim is now called VirtResClaim. Please alter your scripts accordingly." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
+	}
 }
+
+std::string
+EnvClaim::envclaim_ct_namer( std::string tag_name ){
+	return "envclaim_" + tag_name + "_complex_type";
+}
+
+std::string
+EnvClaim::envclaim_group_name(){
+	return "envclaim";
+}
+
+
+void
+EnvClaim::define_envclaim_schema_group( utility::tag::XMLSchemaDefinition & xsd ){
+	//NOTE: Since there is no factory system or creators for EnvClaims, these are just defined manually here.
+	//Ideally these should be set up with a factory system and creators registered in protocols/init
+	using namespace utility::tag;
+	CutBiasClaim::provide_xml_schema( xsd );
+	JumpClaim::provide_xml_schema( xsd );
+	TorsionClaim::provide_xml_schema( xsd );
+	VirtResClaim::provide_xml_schema( xsd );
+	XYZClaim::provide_xml_schema( xsd );
+
+
+	XMLSchemaElementOP cutbias_element( new XMLSchemaElement );
+	cutbias_element->name( CutBiasClaim::class_name() );
+	cutbias_element->type_name( envclaim_ct_namer( CutBiasClaim::class_name() ) );
+
+	XMLSchemaElementOP jump_element( new XMLSchemaElement );
+	jump_element->name( JumpClaim::class_name() );
+	jump_element->type_name( envclaim_ct_namer( JumpClaim::class_name() ) );
+
+	XMLSchemaElementOP torsion_element( new XMLSchemaElement );
+	torsion_element->name( TorsionClaim::class_name() );
+	torsion_element->type_name( envclaim_ct_namer( TorsionClaim::class_name() ) );
+
+	XMLSchemaElementOP vrt_element( new XMLSchemaElement );
+	vrt_element->name( VirtResClaim::class_name() );
+	vrt_element->type_name( envclaim_ct_namer( VirtResClaim::class_name() ) );
+
+	XMLSchemaElementOP xyz_element( new XMLSchemaElement );
+	xyz_element->name( XYZClaim::class_name() );
+	xyz_element->type_name( envclaim_ct_namer( XYZClaim::class_name() ) );
+
+	XMLSchemaModelGroupOP envclaim_choice( new XMLSchemaModelGroup );
+	envclaim_choice->type( xsmgt_choice );
+	envclaim_choice->append_particle( cutbias_element );
+	envclaim_choice->append_particle( jump_element );
+	envclaim_choice->append_particle( torsion_element );
+	envclaim_choice->append_particle( vrt_element );
+	envclaim_choice->append_particle( xyz_element );
+
+	XMLSchemaModelGroup envclaim_group;
+	envclaim_group.group_name( envclaim_group_name() );
+	envclaim_group.append_particle( envclaim_choice );
+	xsd.add_top_level_element( envclaim_group );
+}
+
+
+
+
+
+
+
+
+
+
 
 bool EnvClaim::is_claim( std::string const& name ) {
 	if      ( name == "CutBiasClaim" ) return true;
 	else if ( name == "JumpClaim" )    return true;
 	else if ( name == "TorsionClaim" ) return true;
-	else if ( name == "VrtResClaim" )  return true;
+	else if ( name == "VirtResClaim" )  return true;
 	else if ( name == "XYZClaim" )     return true;
 	else return false;
 }

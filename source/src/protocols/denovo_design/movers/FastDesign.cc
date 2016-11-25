@@ -44,6 +44,9 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //C++ Headers
 
@@ -68,17 +71,17 @@ namespace denovo_design {
 namespace movers {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string
-FastDesignCreator::keyname() const
-{
-	return FastDesign::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FastDesignCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FastDesign::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FastDesignCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new FastDesign() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FastDesignCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new FastDesign() );
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  FastDesign main code:
@@ -115,17 +118,17 @@ FastDesign::FastDesign(
 FastDesign::~FastDesign()
 {}
 
-std::string
-FastDesign::class_name()
-{
-	return "FastDesign";
-}
+// XRW TEMP std::string
+// XRW TEMP FastDesign::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FastDesign";
+// XRW TEMP }
 
-std::string
-FastDesign::get_name() const
-{
-	return FastDesign::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FastDesign::get_name() const
+// XRW TEMP {
+// XRW TEMP  return FastDesign::mover_name();
+// XRW TEMP }
 
 /// @brief return an blank version of ourselves
 protocols::moves::MoverOP
@@ -370,6 +373,48 @@ FastDesign::modify_scripts_for_alternative_scorefunctions()
 		FastRelax::set_script_from_lines( filelines );
 	}
 }
+
+std::string FastDesign::get_name() const {
+	return mover_name();
+}
+
+std::string FastDesign::mover_name() {
+	return "FastDesign";
+}
+
+void FastDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = FastRelax::complex_type_generator_for_fast_relax( xsd );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "clear_designable_residues", xsct_rosetta_bool, "Clear the set of designable residues?")
+		+ XMLSchemaAttribute( "cgs", xs_string, "Names of previously specified constraint generators to apply during this run");
+
+	ct_gen->add_attributes( attlist )
+		.element_name( mover_name() )
+		.description( "FastRelax mover used for design that can take constraint generators" )
+		.write_complex_type_to_schema( xsd );
+
+
+}
+
+std::string FastDesignCreator::keyname() const {
+	return FastDesign::mover_name();
+}
+
+protocols::moves::MoverOP
+FastDesignCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FastDesign );
+}
+
+void FastDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FastDesign::provide_xml_schema( xsd );
+}
+
 
 } // namespace movers
 } // namespace denovo_design

@@ -92,6 +92,18 @@ public:
 	void write2pdb( bool const write );
 	core::Real compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const;
 	void write_to_pdb( core::Size const residue, std::string const & residue_name, core::Real const boltzmann_weight ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real compute_boltz_probability() const;
 private:

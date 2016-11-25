@@ -49,6 +49,9 @@ public:
 	/// @brief Create a DataLoader given its identifying string
 	DataLoaderOP newDataLoader( std::string const & ) const;
 
+	LoaderMap const & loader_map() const;
+	static std::string data_loader_ct_namer( std::string const & loader_name );
+
 private:
 	DataLoaderFactory();
 

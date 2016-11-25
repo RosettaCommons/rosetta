@@ -35,6 +35,9 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.HSSTripletFilter" );
@@ -457,11 +460,61 @@ HSSTripletFilter::get_hss3s( Pose const & pose ) const
 	return HSSTriplets();
 }
 
-protocols::filters::FilterOP
-HSSTripletFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HSSTripletFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HSSTripletFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HSSTripletFilter ); }
 
-std::string
-HSSTripletFilterCreator::keyname() const { return "HSSTriplet"; }
+// XRW TEMP std::string
+// XRW TEMP HSSTripletFilterCreator::keyname() const { return "HSSTriplet"; }
+
+std::string HSSTripletFilter::name() const {
+	return class_name();
+}
+
+std::string HSSTripletFilter::class_name() {
+	return "HSSTriplet";
+}
+
+void HSSTripletFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	//format for hsstriplets?
+	XMLSchemaRestriction out_type;
+	out_type.name( "hss_triplet_output_type" );
+	out_type.base_type( xs_string );
+	out_type.add_restriction( xsr_enumeration, "dist" );
+	out_type.add_restriction( xsr_enumeration, "angle" );
+	xsd.add_top_level_element( out_type );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "hsstriplets", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "min_dist", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_dist", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "min_angle", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_angle", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "ignore_helix_direction", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "output_id", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "output_type", "hss_triplet_output_type", "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string HSSTripletFilterCreator::keyname() const {
+	return HSSTripletFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HSSTripletFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HSSTripletFilter );
+}
+
+void HSSTripletFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HSSTripletFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // fldsgn

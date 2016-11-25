@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -86,6 +87,9 @@ public:
 	SerializedLoopList
 	apply(
 		core::pose::Pose const &);
+
+	static std::string class_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	utility::sql_database::sessionOP db_session_;

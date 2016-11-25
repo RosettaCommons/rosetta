@@ -58,6 +58,9 @@
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.FlxbbDesign" );
 
@@ -72,22 +75,22 @@ namespace protocols {
 namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string
-FlxbbDesignCreator::keyname() const
-{
-	return FlxbbDesignCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FlxbbDesignCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FlxbbDesign::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FlxbbDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FlxbbDesign );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FlxbbDesignCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FlxbbDesign );
+// XRW TEMP }
 
-std::string
-FlxbbDesignCreator::mover_name()
-{
-	return "FlxbbDesign";
-}
+// XRW TEMP std::string
+// XRW TEMP FlxbbDesign::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FlxbbDesign";
+// XRW TEMP }
 
 /// @brief default constructor
 FlxbbDesignPack::FlxbbDesignPack() :
@@ -607,10 +610,10 @@ void FlxbbDesign::apply( pose::Pose & pose )
 
 } // FlxbbDesign::apply
 
-std::string
-FlxbbDesign::get_name() const {
-	return FlxbbDesignCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FlxbbDesign::get_name() const {
+// XRW TEMP  return FlxbbDesign::mover_name();
+// XRW TEMP }
 
 /// @brief parse xml
 void
@@ -698,6 +701,62 @@ FlxbbDesign::parse_my_tag(
 	read_options();
 
 }
+
+std::string FlxbbDesign::get_name() const {
+	return mover_name();
+}
+
+std::string FlxbbDesign::mover_name() {
+	return "FlxbbDesign";
+}
+
+void FlxbbDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW TODO
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "sfxn_design" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "sfxn_relax" );
+	attlist + XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "ncycles", xsct_non_negative_integer, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute( "layer_mode", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_original_seq", xsct_rosetta_bool, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_trial", xsct_non_negative_integer, "XRW TO DO", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_type", xs_string, "XRW TO DO", "packstat" )
+		+ XMLSchemaAttribute::attribute_w_default( "no_relax", xsct_rosetta_bool, "XRW TO DO", "0" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	rosetta_scripts::append_subelement_for_parse_movemap( xsd, ssl );
+	attlist + XMLSchemaAttribute::attribute_w_default( "no_design", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "clear_all_residues", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute( "resfile", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "constraints_NtoC", xsct_real, "XRW TO DO", "-1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "constraints_sheet", xsct_real, "XRW TO DO", "-1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "constraints_to_backbone", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "movemap_from_blueprint", xsct_rosetta_bool, "XRW TO DO", "0" );
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "fast_relax", xsct_rosetta_bool, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "limit_aroma_chi2", xsct_rosetta_bool, "XRW TO DO", "1" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string FlxbbDesignCreator::keyname() const {
+	return FlxbbDesign::mover_name();
+}
+
+protocols::moves::MoverOP
+FlxbbDesignCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FlxbbDesign );
+}
+
+void FlxbbDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FlxbbDesign::provide_xml_schema( xsd );
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

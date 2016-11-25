@@ -324,13 +324,13 @@ DesignBySecondaryStructureOperation::provide_xml_schema( utility::tag::XMLSchema
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "region_shell", xs_decimal )
-		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer )
-		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer )
+		+ XMLSchemaAttribute( "region_shell", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "regions_to_design", xsct_non_negative_integer , "XRW TO DO" )
+		+ XMLSchemaAttribute( "repack_non_selected", xsct_non_negative_integer , "XRW TO DO" )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "blueprint", xs_string, "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "prevent_bad_point_mutations", xs_string, "" )
-		+ XMLSchemaAttribute( "cmd", xs_boolean );
+		+ XMLSchemaAttribute::attribute_w_default(  "blueprint", xs_string, "XRW TO DO",  ""  )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_bad_point_mutations", xs_string, "XRW TO DO",  ""  )
+		+ XMLSchemaAttribute( "cmd", xsct_rosetta_bool , "XRW TO DO" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

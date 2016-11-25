@@ -46,6 +46,10 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/OrbitalsFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -79,8 +83,8 @@ OrbitalsFeatures::OrbitalsFeatures( OrbitalsFeatures const & ) :
 
 OrbitalsFeatures::~OrbitalsFeatures()= default;
 
-string
-OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
+// XRW TEMP string
+// XRW TEMP OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
 void
 OrbitalsFeatures::write_schema_to_db(
 	sessionOP db_session
@@ -789,6 +793,36 @@ OrbitalsFeatures::set_OrbOrb_features_data(
 	*/
 
 }
+
+std::string OrbitalsFeatures::type_name() const {
+	return class_name();
+}
+
+std::string OrbitalsFeatures::class_name() {
+	return "OrbitalsFeatures";
+}
+
+void OrbitalsFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Report features about the positioning and energies of orbitals (use the orbitals scorefunction!)", attlist );
+}
+
+std::string OrbitalsFeaturesCreator::type_name() const {
+	return OrbitalsFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+OrbitalsFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new OrbitalsFeatures );
+}
+
+void OrbitalsFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OrbitalsFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

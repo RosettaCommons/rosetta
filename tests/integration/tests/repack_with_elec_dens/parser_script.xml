@@ -1,29 +1,29 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-	        <scfxn_dens_repack weights=score12_full symmetric=1>
-	                <Reweight scoretype=cart_bonded weight=0.5/>
-	                <Reweight scoretype=elec_dens_fast weight=100.0/>
-	        </scfxn_dens_repack>
-	        <scfxn_dens_score weights=score12_full symmetric=1>
-	                <Reweight scoretype=cart_bonded weight=0.5/>
-	                <Reweight scoretype=elec_dens_fast weight=1.0/>
-	        </scfxn_dens_score>
+	        <ScoreFunction name="scfxn_dens_repack" weights="score12_full" symmetric="1">
+	                <Reweight scoretype="cart_bonded" weight="0.5"/>
+	                <Reweight scoretype="elec_dens_fast" weight="100.0"/>
+	        </ScoreFunction>
+	        <ScoreFunction name="scfxn_dens_score" weights="score12_full" symmetric="1">
+	                <Reweight scoretype="cart_bonded" weight="0.5"/>
+	                <Reweight scoretype="elec_dens_fast" weight="1.0"/>
+	        </ScoreFunction>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-	            <RestrictToRepacking name=restrict/>
-	            <IncludeCurrent name=keep_curr/>
+	            <RestrictToRepacking name="restrict"/>
+	            <IncludeCurrent name="keep_curr"/>
 	</TASKOPERATIONS>
 	<MOVERS>
-	        <SetupForSymmetry name=setup_symm definition="%%symmdef%%"/>
-	        <SymPackRotamersMover name=repack_dens scorefxn=scfxn_dens_repack task_operations=restrict,keep_curr/>
-		<ReportToDB name=report_scores database_name="scores.db3" batch_description="repack_with_elec_dens">
-			<feature name=ScoreTypeFeatures/>
-			<feature name=StructureScoresFeatures scorefxn=scfxn_dens_score/>
+	        <SetupForSymmetry name="setup_symm" definition="%%symmdef%%"/>
+	        <SymPackRotamersMover name="repack_dens" scorefxn="scfxn_dens_repack" task_operations="restrict,keep_curr"/>
+		<ReportToDB name="report_scores" database_name="scores.db3" batch_description="repack_with_elec_dens">
+			<ScoreTypeFeatures/>
+			<StructureScoresFeatures scorefxn="scfxn_dens_score"/>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-	        <Add mover=setup_symm/>
-	        <Add mover=repack_dens/>
-		<Add mover=report_scores/>
+	        <Add mover="setup_symm"/>
+	        <Add mover="repack_dens"/>
+		<Add mover="report_scores"/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>

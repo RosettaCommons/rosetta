@@ -55,6 +55,9 @@
 #include <sstream>
 #include <iomanip>
 #include <limits>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -275,10 +278,10 @@ LoopAnalyzerMover::clone() const
 	return protocols::moves::MoverOP( new LoopAnalyzerMover( *this ) );
 }
 
-std::string
-LoopAnalyzerMover::get_name() const {
-	return "LoopAnalyzerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopAnalyzerMover::get_name() const {
+// XRW TEMP  return "LoopAnalyzerMover";
+// XRW TEMP }
 
 //////////////////////////getters, setters/////////////////////
 /// @brief set loops object, because public setters/getters are a rule
@@ -377,22 +380,72 @@ void LoopAnalyzerMover::calculate_all_chainbreaks( core::pose::Pose & pose )
 
 ////////////////////creator/////////////////////////////
 
-std::string
-LoopAnalyzerMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP LoopAnalyzerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopAnalyzerMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopAnalyzerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopAnalyzerMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP LoopAnalyzerMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopAnalyzerMover";
+// XRW TEMP }
+
+std::string LoopAnalyzerMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoopAnalyzerMover::mover_name() {
+	return "LoopAnalyzerMover";
+}
+
+std::string LoopAnalyzerMover_subelement_ct_name( std::string const & name ) {
+	return "LoopAnalyzerMover_Loop_subelement_" + name + "Type";
+}
+
+void LoopAnalyzerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return LoopAnalyzerMoverCreator::mover_name();
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_tracer", xsct_rosetta_bool, "report output to a Tracer", "false" );
+
+	//empty SubelementList for MoveMap util function
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & LoopAnalyzerMover_subelement_ct_name );
+	loop_modeling::utilities::append_subelement_and_attributes_for_parse_loops_from_tag(xsd, subelements, attlist);
+
+	moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd,
+		mover_name(),
+		"This mover reports scores and statistics useful for judging the quality of loops",
+		attlist,
+		subelements);
+
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover reports scores and statistics useful for judging the quality of loops", attlist );
+}
+
+std::string LoopAnalyzerMoverCreator::keyname() const {
+	return LoopAnalyzerMover::mover_name();
 }
 
 protocols::moves::MoverOP
 LoopAnalyzerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopAnalyzerMover() );
+	return protocols::moves::MoverOP( new LoopAnalyzerMover );
 }
 
-std::string
-LoopAnalyzerMoverCreator::mover_name()
+void LoopAnalyzerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "LoopAnalyzerMover";
+	LoopAnalyzerMover::provide_xml_schema( xsd );
 }
+
 
 
 }//analysis

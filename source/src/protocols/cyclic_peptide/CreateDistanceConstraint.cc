@@ -43,6 +43,9 @@
 #include <basic/Tracer.hh>
 
 #include <istream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CreateDistanceConstraint" );
 
@@ -131,27 +134,67 @@ CreateDistanceConstraint::parse_my_tag(
 moves::MoverOP CreateDistanceConstraint::clone() const { return moves::MoverOP( new CreateDistanceConstraint( *this ) ); }
 moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return moves::MoverOP( new CreateDistanceConstraint ); }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CreateDistanceConstraintCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CreateDistanceConstraint );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateDistanceConstraintCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CreateDistanceConstraint::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateDistanceConstraint::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CreateDistanceConstraint";
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CreateDistanceConstraint::get_name() const {
+// XRW TEMP  return "CreateDistanceConstraint";
+// XRW TEMP }
+
+std::string CreateDistanceConstraint::get_name() const {
+	return mover_name();
+}
+
+std::string CreateDistanceConstraint::mover_name() {
+	return "CreateDistanceConstraint";
+}
+
+void CreateDistanceConstraint::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute::required_attribute( "res1", xsct_non_negative_integer, "First residue to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "First atom to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "res2", xsct_non_negative_integer, "Second residue to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "Second atom to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "cst_func", xs_string, "Function for distance constraint" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_simple_subelement( "Add", subelement_attlist, "Specifies a distance constraint between res1,atom1 and res2,atom2" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Adds distance constraints to a pose", attlist, subelements );
+}
+
+std::string CreateDistanceConstraintCreator::keyname() const {
+	return CreateDistanceConstraint::mover_name();
+}
+
 protocols::moves::MoverOP
 CreateDistanceConstraintCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CreateDistanceConstraint );
 }
 
-std::string
-CreateDistanceConstraintCreator::keyname() const
+void CreateDistanceConstraintCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return CreateDistanceConstraintCreator::mover_name();
+	CreateDistanceConstraint::provide_xml_schema( xsd );
 }
 
-std::string
-CreateDistanceConstraintCreator::mover_name()
-{
-	return "CreateDistanceConstraint";
-}
-
-std::string
-CreateDistanceConstraint::get_name() const {
-	return "CreateDistanceConstraint";
-}
 
 } // moves
 } // protocols

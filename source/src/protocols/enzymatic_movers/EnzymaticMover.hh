@@ -65,11 +65,11 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	virtual moves::MoverOP fresh_instance() const = 0;
 
 	virtual void parse_my_tag(
-			TagCOP tag,
-			basic::datacache::DataMap & data,
-			Filters_map const & /*filters*/,
-			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & pose );
+		TagCOP tag,
+		basic::datacache::DataMap & data,
+		Filters_map const & /*filters*/,
+		moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & pose );
 
 	/// @brief  Apply the corresponding move to <input_pose>.
 	virtual void apply( core::pose::Pose & input_pose );

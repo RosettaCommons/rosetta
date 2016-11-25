@@ -49,7 +49,7 @@ bool is_undefined( platform::Size const & val) {
 /// @brief Get a numeric value for Real that represents an "undefined" value
 inline
 platform::Real get_undefined_real() {
-	if( std::numeric_limits< platform::Real >::has_quiet_NaN ) {
+	if ( std::numeric_limits< platform::Real >::has_quiet_NaN ) {
 		return std::numeric_limits< platform::Real >::quiet_NaN(); // Choice of value same as the BCL (Meiler Lab)
 	} else {
 		return std::numeric_limits< platform::Real >::max(); // Fall back

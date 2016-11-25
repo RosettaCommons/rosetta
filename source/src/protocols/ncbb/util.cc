@@ -53,6 +53,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
@@ -576,6 +577,30 @@ init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	} else {
 		keep_history_ = false;
 	}
+}
+
+using namespace utility::tag;
+void add_attributes_for_common_options( AttributeList & attlist ) {
+	attlist + XMLSchemaAttribute::attribute_w_default( "mc_temp", xsct_real, "Temperature of Monte Carlo simulation", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_mc_temp", xsct_real, "Temperature of Monte Carlo simulation for the perturbation stage", "0.8" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_dock_rot_mag", xsct_real, "Size of rotations for docking", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_dock_trans_mag", xsct_real, "Size of translations for docking", "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_small_temp", xsct_real, "Temperature of Monte Carlo simulation for peptide small moves", "0.8" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_small_H", xsct_real, "Size of small moves on helices", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_small_L", xsct_real, "Size of small moves on loops", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_small_E", xsct_real, "Size of small moves on strands", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_shear_temp", xsct_real, "Temperature of Monte Carlo simulation for peptide shear moves", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_shear_H", xsct_real, "Size of small moves on helices", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_shear_L", xsct_real, "Size of small moves on loops", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_shear_E", xsct_real, "Size of small moves on strands", "2.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_pep_num_rep", xsct_non_negative_integer, "Number of peptide moves per cycle", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "pert_num", xsct_non_negative_integer, "Rounds of perturbation", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "no_design", xsct_rosetta_bool, "Turn off design", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "final_design_min", xsct_rosetta_bool, "Minimize after design", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_soft_rep", xsct_rosetta_bool, "Use a soft-repulsive scoring function", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "mc_initial_pose", xsct_rosetta_bool, "Run a simple MC simulation on the initial pose", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "pymol", xsct_rosetta_bool, "Use the pymol mover", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_history", xsct_rosetta_bool, "Keep the history of the simulation", "false" );
 }
 
 }

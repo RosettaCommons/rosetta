@@ -31,28 +31,31 @@ static THREAD_LOCAL basic::Tracer TR( "devel.splice.AlignEndsMover" );
 #include <numeric/xyzVector.hh>
 #include <algorithm>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace splice {
 
 using namespace::protocols;
 
-std::string
-AlignEndsMoverCreator::keyname() const
-{
-	return AlignEndsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AlignEndsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AlignEndsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AlignEndsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignEndsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AlignEndsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AlignEndsMover );
+// XRW TEMP }
 
-std::string
-AlignEndsMoverCreator::mover_name()
-{
-	return "AlignEnds";
-}
+// XRW TEMP std::string
+// XRW TEMP AlignEndsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AlignEnds";
+// XRW TEMP }
 
 AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	distance_threshold_( 18.0 ),
@@ -245,10 +248,10 @@ AlignEndsMover::apply( Pose & pose ){
 	apply_superposition_transform( pose, rotation, to_init_center, to_fit_center );
 }
 
-std::string
-AlignEndsMover::get_name() const {
-	return AlignEndsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AlignEndsMover::get_name() const {
+// XRW TEMP  return AlignEndsMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 AlignEndsMover::clone() const
@@ -301,6 +304,52 @@ AlignEndsMover::parse_my_tag(
 
 	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<" chain: "<<chain()<<" sequence_separation: "<<sequence_separation()<<std::endl;
 }
+
+std::string AlignEndsMover::get_name() const {
+	return mover_name();
+}
+
+std::string AlignEndsMover::mover_name() {
+	return "AlignEnds";
+}
+
+void AlignEndsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW TODO
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "parallel", xsct_rosetta_bool, "Align ends in a parallel orientation", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_threshold", xsct_real, "XRW TO DO", "18.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "neighbors", xsct_non_negative_integer, "XRW TO DO", "6" )
+		+ XMLSchemaAttribute::attribute_w_default( "N_terminal_count", xsct_non_negative_integer, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "odd", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "even", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "template_pose", xs_string, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "stagger", xsct_non_negative_integer, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "strand_length", xsct_non_negative_integer, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_strands", xsct_non_negative_integer, "XRW TO DO", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "chains", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "sequence_separation", xsct_non_negative_integer, "XRW TO DO", "15" )
+		+ XMLSchemaAttribute( "residues_to_align_on_pose", xs_string, "+ separated list of non-negative integers" )
+		+ XMLSchemaAttribute( "residues_to_align_on_template", xs_string, "+ separated list of non-negative integers" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AlignEndsMoverCreator::keyname() const {
+	return AlignEndsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AlignEndsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AlignEndsMover );
+}
+
+void AlignEndsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AlignEndsMover::provide_xml_schema( xsd );
+}
+
 } // simple_moves
 } // protocols
 

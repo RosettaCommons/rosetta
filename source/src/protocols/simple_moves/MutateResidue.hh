@@ -54,7 +54,7 @@ public:
 	~MutateResidue() override = default;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::MutateResidue( *this ) ) );
 	}
@@ -86,7 +86,7 @@ public:
 	void set_res_name( std::string const &name_in ) { res_name_ = name_in; }
 
 	void set_res_name( core::chemical::AA const & aa);
-	
+
 	/// @brief Set whether this mover updates polymer-dependent atoms in the residue that it mutates.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void set_update_polymer_dependent( bool const setting ) { update_polymer_dependent_ = setting; }
@@ -108,6 +108,18 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 
 	/// @brief The index of the residue to mutate.
@@ -124,7 +136,7 @@ private:
 
 	/// @brief If true, mutates the residue to itself, ie. Ala -> Ala. This fixes some problems with TerCards being attached to residues that shouldn't have them for RotamerLinks.
 	bool mutate_self_;
-	
+
 	/// @brief If true, updates polymer-dependent atoms.
 	/// @details false by default.
 	bool update_polymer_dependent_;

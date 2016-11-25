@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ProteinBackboneAtomAtomPairFeaturesCreator::ProteinBackboneAtomAtomPairFeaturesCreator() {}
-ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() = default;
-FeaturesReporterOP ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
-}
+// XRW TEMP ProteinBackboneAtomAtomPairFeaturesCreator::ProteinBackboneAtomAtomPairFeaturesCreator() {}
+// XRW TEMP ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
+// XRW TEMP }
 
-std::string ProteinBackboneAtomAtomPairFeaturesCreator::type_name() const {
-	return "ProteinBackboneAtomAtomPairFeatures";
-}
+// XRW TEMP std::string ProteinBackboneAtomAtomPairFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinBackboneAtomAtomPairFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

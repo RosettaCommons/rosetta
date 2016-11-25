@@ -34,6 +34,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverContainer" );
 
@@ -201,22 +205,6 @@ SequenceMover::get_name() const {
 	return "SequenceMover";
 }
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////// Random Mover ////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-std::string RandomMoverCreator::mover_name() {
-	return "RandomMover";
-}
-
-std::string RandomMoverCreator::keyname() const {
-	return mover_name();
-}
-
-protocols::moves::MoverOP RandomMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomMover() );
-}
-
 void RandomMover::apply( core::pose::Pose & pose )
 {
 	Real weight_sum(0.0);
@@ -269,11 +257,6 @@ RandomMover::fresh_instance() const {
 	return MoverOP( new RandomMover() );
 }
 
-std::string
-RandomMover::get_name() const {
-	return "RandomMover";
-}
-
 void
 RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -305,6 +288,49 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 core::Real RandomMover::last_proposal_density_ratio(){
 	return last_proposal_density_ratio_;
 }
+
+std::string RandomMover::get_name() const {
+	return mover_name();
+}
+
+std::string RandomMover::mover_name() {
+	return "RandomMover";
+}
+
+void RandomMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"movers", xs_string,
+		"The movers tag takes a comma separated list of mover names" );
+	attlist + XMLSchemaAttribute(
+		"weights", xsct_real_cslist_w_ws,
+		"NO SPACES between commas and values! The weights tag takes a comma separate list of weights that sum to 1" );
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"repeats", xsct_non_negative_integer,
+		"Number of times the movers are being applied XDW TO DO",
+		"1");
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Randomly apply a mover from a list given probability weights", attlist );
+}
+
+std::string RandomMoverCreator::keyname() const {
+	return RandomMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RandomMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RandomMover );
+}
+
+void RandomMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RandomMover::provide_xml_schema( xsd );
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

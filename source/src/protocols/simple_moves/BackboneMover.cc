@@ -19,6 +19,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
@@ -47,6 +48,9 @@
 
 // C++ headers
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -364,6 +368,49 @@ bool BackboneMover::check_rama() {
 	return( true );
 }
 
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+BackboneMover::complex_type_generator_for_backbone_mover( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"temperature", xsct_real,
+		"What MC acceptance temperature to use (tests only the rama score, so not a full MC)" )
+		+ XMLSchemaAttribute(
+		"nmoves", xsct_non_negative_integer,
+		"How many consecutive moves to make" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"angle_max", xsct_real,
+		"By how much to perturb the backbone",
+		"6.0" )
+		+ XMLSchemaAttribute(
+		"preserve_detailed_balance", xsct_rosetta_bool,
+		"If set to true, does not test the MC acceptance criterion, and instead always accepts");
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "residue_selector",
+		"An optional, previously-defined ResidueSelector, specifying the subset "
+		"of residues to which the mover will be applied. If not provided, "
+		"the mover is applied to the whole pose. "
+		"(Alternatively, a MoveMap may be used -- see below)" );
+	//get subelement for parse movemap
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+
+
+	ct_gen->complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.set_subelements_repeatable( subelements )
+		.add_attributes( attlist )
+		.add_optional_name_attribute(
+		"BackboneMover class has elements of the MC temperature to do repetitions of bb moves "
+		"(small, shear, wobble, etc.)");
+
+	return ct_gen;
+}
+
 core::select::residue_selector::ResidueSubset
 BackboneMover::compute_selected_residues( core::pose::Pose const & pose ) const
 {
@@ -381,20 +428,20 @@ std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
 }
 
 
-std::string
-SmallMoverCreator::keyname() const {
-	return SmallMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SmallMoverCreator::keyname() const {
+// XRW TEMP  return SmallMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SmallMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SmallMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SmallMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SmallMover );
+// XRW TEMP }
 
-std::string
-SmallMoverCreator::mover_name() {
-	return "Small";
-}
+// XRW TEMP std::string
+// XRW TEMP SmallMover::mover_name() {
+// XRW TEMP  return "Small";
+// XRW TEMP }
 
 
 //constructor
@@ -413,10 +460,10 @@ SmallMover::SmallMover(
 //destructor
 SmallMover::~SmallMover() = default;
 
-std::string
-SmallMover::get_name() const {
-	return "Small";
-}
+// XRW TEMP std::string
+// XRW TEMP SmallMover::get_name() const {
+// XRW TEMP  return "Small";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 SmallMover::clone() const {
@@ -571,20 +618,62 @@ void SmallMover::test_move( core::pose::Pose & pose)
 	apply(pose);
 }
 
+std::string SmallMover::get_name() const {
+	return mover_name();
+}
+
+std::string SmallMover::mover_name() {
+	return "Small";
+}
+
+void SmallMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = BackboneMover::complex_type_generator_for_backbone_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.description( "Small-move style backbone-torsion moves that, unlike shear, do not minimize downstream propagation." )
+		.write_complex_type_to_schema( xsd );
+
+	//protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+}
+
+// AMW: this is probably unnecessarily + a curse
 std::string
-ShearMoverCreator::keyname() const {
-	return protocols::simple_moves::ShearMoverCreator::mover_name();
+BackboneMover::backbone_mover_complex_type_namer( std::string tag_name ){
+	return "backbone_mover_" + tag_name + "_complex_type";
+}
+
+
+std::string SmallMoverCreator::keyname() const {
+	return SmallMover::mover_name();
 }
 
 protocols::moves::MoverOP
-ShearMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover );
+SmallMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SmallMover );
 }
 
-std::string
-ShearMoverCreator::mover_name() {
-	return "Shear";
+void SmallMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SmallMover::provide_xml_schema( xsd );
 }
+
+
+// XRW TEMP std::string
+// XRW TEMP ShearMoverCreator::keyname() const {
+// XRW TEMP  return protocols::simple_moves::ShearMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ShearMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ShearMover::mover_name() {
+// XRW TEMP  return "Shear";
+// XRW TEMP }
 
 //constructor
 
@@ -603,10 +692,10 @@ ShearMover::ShearMover(
 //destructor
 ShearMover::~ShearMover() = default;
 
-std::string
-ShearMover::get_name() const {
-	return "Shear";
-}
+// XRW TEMP std::string
+// XRW TEMP ShearMover::get_name() const {
+// XRW TEMP  return "Shear";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 ShearMover::clone() const {
@@ -743,6 +832,41 @@ ShearMover::move_with_rama( core::pose::Pose & pose )
 
 	return true;
 }
+
+std::string ShearMover::get_name() const {
+	return mover_name();
+}
+
+std::string ShearMover::mover_name() {
+	return "Shear";
+}
+
+void ShearMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = BackboneMover::complex_type_generator_for_backbone_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.description( "Shear style backbone-torsion moves that minimize downstream propagation" )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+std::string ShearMoverCreator::keyname() const {
+	return ShearMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ShearMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ShearMover );
+}
+
+void ShearMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ShearMover::provide_xml_schema( xsd );
+}
+
 
 bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 {

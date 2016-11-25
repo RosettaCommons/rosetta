@@ -75,6 +75,9 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.thermal_sampling.ThermalSamplingMover" );
 
@@ -104,7 +107,7 @@ Size find_likely_first_chain_ending( Pose const & pose ) {
 
 /// @brief Default constructor
 ThermalSamplingMover::ThermalSamplingMover():
-	protocols::moves::Mover( ThermalSamplingMover::class_name() ),
+	protocols::moves::Mover( ThermalSamplingMover::mover_name() ),
 	residues_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::sample_residues ]() ),
 	free_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::free_residues ]() ),
 	loop_rsd_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::loop_residues ]() ),
@@ -292,7 +295,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 				suite_sampler_1->set_sample_upper_nucleoside( false );
 				suite_sampler_1->set_pucker_flip_rate( 0 );
 				suite_sampler_1->set_sample_near_a_form( sample_near_a_form );
-				// We don't consider the possibility that this is a loop residue that deserves aggressive sampling, because 
+				// We don't consider the possibility that this is a loop residue that deserves aggressive sampling, because
 				// if it were, it would be getting added as a sampler in the clause below!
 				//suite_sampler_1->set_angle_range_from_init( is_loop[ i ] ? angle_range_loop_bb_ : angle_range_bb_ );
 				//suite_sampler_1->set_angle_range_from_init( angle_range_bb_ );
@@ -396,11 +399,11 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			++pct;
 			std::cout << pct << "% complete." << std::endl;
 		}
-		
+
 		did_move = true;
 		// Sampler updates
 		bool boltz = false;
-		
+
 		if ( recces_turner_mode_ ) {
 			standard_sampler.set_angle( pose );
 			++standard_sampler;
@@ -644,17 +647,17 @@ ThermalSamplingMover::clone() const
 	return protocols::moves::MoverOP( new ThermalSamplingMover( *this ) );
 }
 
-std::string
-ThermalSamplingMover::get_name() const
-{
-	return ThermalSamplingMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ThermalSamplingMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return ThermalSamplingMover::mover_name();
+// XRW TEMP }
 
-std::string
-ThermalSamplingMover::class_name()
-{
-	return "ThermalSamplingMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ThermalSamplingMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ThermalSamplingMover";
+// XRW TEMP }
 
 void
 ThermalSamplingMover::show( std::ostream & output ) const
@@ -671,17 +674,48 @@ operator<<( std::ostream & os, ThermalSamplingMover const & mover )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-ThermalSamplingMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ThermalSamplingMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new ThermalSamplingMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ThermalSamplingMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ThermalSamplingMover::mover_name();
+// XRW TEMP }
+
+std::string ThermalSamplingMover::get_name() const {
+	return mover_name();
+}
+
+std::string ThermalSamplingMover::mover_name() {
+	return "ThermalSamplingMover";
+}
+
+void ThermalSamplingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	//No attributes!
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ThermalSamplingMoverCreator::keyname() const {
+	return ThermalSamplingMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ThermalSamplingMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new ThermalSamplingMover );
 }
 
-std::string
-ThermalSamplingMoverCreator::keyname() const
+void ThermalSamplingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return ThermalSamplingMover::class_name();
+	ThermalSamplingMover::provide_xml_schema( xsd );
 }
+
 
 
 } //protocols

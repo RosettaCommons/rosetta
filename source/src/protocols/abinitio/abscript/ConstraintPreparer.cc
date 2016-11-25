@@ -46,6 +46,9 @@
 
 //Req'd on WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.ConstraintPreparer", basic::t_info );
 
@@ -57,20 +60,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-ConstraintPreparerCreator::keyname() const {
-	return ConstraintPreparerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConstraintPreparerCreator::keyname() const {
+// XRW TEMP  return ConstraintPreparer::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ConstraintPreparerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConstraintPreparer );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConstraintPreparerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ConstraintPreparer );
+// XRW TEMP }
 
-std::string
-ConstraintPreparerCreator::mover_name() {
-	return "ConstraintPreparer";
-}
+// XRW TEMP std::string
+// XRW TEMP ConstraintPreparer::mover_name() {
+// XRW TEMP  return "ConstraintPreparer";
+// XRW TEMP }
 
 ConstraintPreparer::ConstraintPreparer():
 	Parent(),
@@ -162,7 +165,7 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
 		skip_redundant( false );
 	}
 
-	tag->getOption< bool >( "reprepare", false );
+	reprepare_ = tag->getOption< bool >( "reprepare", false );
 
 	tr.Debug << "Set skip_redundant to " << skip_redundant() << " with width "
 		<< skip_redundant_width() << std::endl;
@@ -211,9 +214,58 @@ void ConstraintPreparer::combine_exclude_file( std::string const& filename ){
 	rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 }
 
+// XRW TEMP std::string ConstraintPreparer::get_name() const {
+// XRW TEMP  return "ConstraintPreparer";
+// XRW TEMP }
+
 std::string ConstraintPreparer::get_name() const {
+	return mover_name();
+}
+
+std::string ConstraintPreparer::mover_name() {
 	return "ConstraintPreparer";
 }
+
+void ConstraintPreparer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"skip_redundant", xsct_non_negative_integer,
+		"Skip redundant constraints? Corresponds to skip_redundant_width option", "1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"name", xs_string,
+		"Name identifying this ConstraintPreparer", "null");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"reprepare", xsct_rosetta_bool,
+		"Should constraints be reprepared if some have already been set?", "false");
+	attlist + XMLSchemaAttribute(
+		"cst_file", xs_string,
+		"Name of file containing constraints to apply to pose");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"combine_ratio", xsct_non_negative_integer,
+		"If greater than 1, it will randomly combine constraints into multiplets of this size with OR logic", "1");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"StagePreparer that adds the specified constraints to the constraint set.",
+		attlist );
+}
+
+std::string ConstraintPreparerCreator::keyname() const {
+	return ConstraintPreparer::mover_name();
+}
+
+protocols::moves::MoverOP
+ConstraintPreparerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConstraintPreparer );
+}
+
+void ConstraintPreparerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConstraintPreparer::provide_xml_schema( xsd );
+}
+
 
 
 } // abscript

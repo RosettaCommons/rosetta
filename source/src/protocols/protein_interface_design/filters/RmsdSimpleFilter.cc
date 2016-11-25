@@ -56,6 +56,9 @@
 
 //Include ObjexxFCL
 #include <ObjexxFCL/FArray.all.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -349,26 +352,59 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 		TR.Warning << "Threshold option not specified, using default" << threshold_ << std::endl;
 	}
 	if ( tag->hasOption("align") ) {
-		do_align_ = tag->getOption<core::Size>( "align");
-		if ( do_align_ == 0 ) {
+		do_align_ = tag->getOption<bool>( "align");
+		if ( !do_align_ ) {
 			TR.Info << "Align mode is disabled, therefore the result will be the euclidean distance" << std::endl;
-		} else if ( do_align_ == 1 ) {
-			TR.Info << "Align mode is enabled, therefore the result will be RMSD" << std::endl;
 		} else {
-			utility_exit_with_message("Align option is boolean, allowed values are 0 and 1 (deactivated/activated)");
+			TR.Info << "Align mode is enabled, therefore the result will be RMSD" << std::endl;
 		}
 	} else {
 		TR.Warning << "Align option not specified, using default (activated)" << threshold_ << std::endl;
 	}
 }
 
-protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new RmsdSimpleFilter );
+// XRW TEMP protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new RmsdSimpleFilter );
+// XRW TEMP }
+
+// XRW TEMP std::string RmsdSimpleFilterCreator::keyname() const {
+// XRW TEMP  return "RmsdSimple";
+// XRW TEMP }
+
+std::string RmsdSimpleFilter::name() const {
+	return class_name();
+}
+
+std::string RmsdSimpleFilter::class_name() {
+	return "RmsdSimple";
+}
+
+void RmsdSimpleFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	attlist + XMLSchemaAttribute( "chain", xsct_char, "Chain for RMSD calculation" )
+		+ XMLSchemaAttribute( "threshold", xsct_real, "Threshold of RMSD above which the filter fails" )
+		+ XMLSchemaAttribute( "align", xsct_rosetta_bool, "If align is true, we do RMSD; if it is false, we don't actually do any alignment, just calculating the distance between pose and reference." );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Simple RMSD filter for the whole pose, or at least a single chain", attlist );
 }
 
 std::string RmsdSimpleFilterCreator::keyname() const {
-	return "RmsdSimple";
+	return RmsdSimpleFilter::class_name();
 }
+
+protocols::filters::FilterOP
+RmsdSimpleFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RmsdSimpleFilter );
+}
+
+void RmsdSimpleFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RmsdSimpleFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

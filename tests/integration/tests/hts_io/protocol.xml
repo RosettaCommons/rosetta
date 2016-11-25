@@ -1,30 +1,30 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ligand_soft_rep weights="orbitals_talaris2013_softrep"/>
-		<hard_rep weights="orbitals_talaris2013"/>
+		<ScoreFunction name="ligand_soft_rep" weights="orbitals_talaris2013_softrep"/>
+		<ScoreFunction name="hard_rep" weights="orbitals_talaris2013"/>
 	</SCOREFXNS>
 	
 	<LIGAND_AREAS>
-		<docking_sidechain chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
-		<final_sidechain chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
-		<final_backbone chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
+		<LigandArea name="docking_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
+		<LigandArea name="final_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+		<LigandArea name="final_backbone" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
 	</LIGAND_AREAS>
 	
 	<INTERFACE_BUILDERS>
-		<side_chain_for_docking ligand_areas="docking_sidechain"/>
-		<side_chain_for_final ligand_areas="final_sidechain"/>
-		<backbone ligand_areas="final_backbone" extension_window="3"/>
+		<InterfaceBuilder name="side_chain_for_docking" ligand_areas="docking_sidechain"/>
+		<InterfaceBuilder name="side_chain_for_final" ligand_areas="final_sidechain"/>
+		<InterfaceBuilder name="backbone" ligand_areas="final_backbone" extension_window="3"/>
 	</INTERFACE_BUILDERS>
 	
 	<MOVEMAP_BUILDERS>
-		<docking sc_interface="side_chain_for_docking" minimize_water="true"/>
-		<final sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
+		<MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="true"/>
+		<MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
 	</MOVEMAP_BUILDERS>
 	
 	<SCORINGGRIDS ligand_chain="X" width="15">
-		<vdw grid_type="VdwGrid" weight="1.0"/>
-		<hba grid_type="HbaGrid" weight="50"/>
-		<hbd grid_type="HbdGrid" weight="50"/>
+		<VdwGrid grid_name="vdw" weight="1.0"/>
+		<HbaGrid grid_name="hba" weight="50"/>
+		<HbdGrid grid_name="hbd" weight="50"/>
 	</SCORINGGRIDS>
 	
 	<MOVERS>
@@ -32,7 +32,8 @@
 		<Transform
 			name="transform" 
 			chain="X"
-			box_size="5.0"move_distance="0.1"
+			box_size="5.0"
+			move_distance="0.1"
 			angle="5"
 			cycles="8000"
 			repeats="5"
@@ -41,20 +42,20 @@
 		
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
 		<ComputeLigandRDF name="rdf_compute_pocket" ligand_chain="X" mode="pocket">
-			<RDF name="RDFEtableFunction" scorefxn="hard_rep"/>
-			<RDF name="RDFElecFunction" scorefxn="hard_rep"/>
-			<RDF name="RDFHbondFunction"/>
-			<RDF name="RDFBinaryHbondFunction"/>
-			<RDF name="RDFOrbitalFunction"/>
-			<RDF name="RDFBinaryOrbitalFunction"/>
+			<RDFEtableFunction scorefxn="hard_rep"/>
+			<RDFElecFunction scorefxn="hard_rep"/>
+			<RDFHbondFunction/>
+			<RDFBinaryHbondFunction/>
+			<RDFOrbitalFunction/>
+			<RDFBinaryOrbitalFunction/>
 		</ComputeLigandRDF>
 		<ComputeLigandRDF name="rdf_compute_interface" ligand_chain="X" mode="interface">
-			<RDF name="RDFEtableFunction" scorefxn="hard_rep"/>
-			<RDF name="RDFElecFunction" scorefxn="hard_rep"/>
-			<RDF name="RDFHbondFunction"/>
-			<RDF name="RDFBinaryHbondFunction"/>
-			<RDF name="RDFOrbitalFunction"/>
-			<RDF name="RDFBinaryOrbitalFunction"/>
+			<RDFEtableFunction scorefxn="hard_rep"/>
+			<RDFElecFunction scorefxn="hard_rep"/>
+			<RDFHbondFunction/>
+			<RDFBinaryHbondFunction/>
+			<RDFOrbitalFunction/>
+			<RDFBinaryOrbitalFunction/>
 		</ComputeLigandRDF>
 		<AddJobPairData name="test_string" key="test_string" value_type="string" value_from_ligand_chain="X"/>
 		<AddJobPairData name="test_value" key="test_value" value_type="real" value_from_ligand_chain="X"/>
@@ -79,4 +80,5 @@
 		<Add mover_name="reporting"/>
 	</PROTOCOLS>
 	
+
 </ROSETTASCRIPTS>

@@ -26,6 +26,8 @@
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.fwd.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -39,8 +41,8 @@ public:
 	~LoopAnchorFeatures() override;
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
@@ -90,6 +92,18 @@ public:
 
 	void
 	set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue ) const;

@@ -48,6 +48,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #ifdef WIN_PYROSETTA
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
@@ -66,20 +69,20 @@ namespace protocols {
 namespace simple_moves {
 namespace sidechain_moves {
 
-std::string
-SidechainMCMoverCreator::keyname() const {
-	return SidechainMCMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMCMoverCreator::keyname() const {
+// XRW TEMP  return SidechainMCMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SidechainMCMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SidechainMCMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SidechainMCMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SidechainMCMover );
+// XRW TEMP }
 
-std::string
-SidechainMCMoverCreator::mover_name() {
-	return "SidechainMC";
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMCMover::mover_name() {
+// XRW TEMP  return "SidechainMC";
+// XRW TEMP }
 
 SidechainMCMover::SidechainMCMover():
 	protocols::simple_moves::sidechain_moves::SidechainMover(),
@@ -304,10 +307,10 @@ SidechainMCMover::apply(
 	type("sc_mc");
 }
 
-std::string
-SidechainMCMover::get_name() const {
-	return "SidechainMCMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SidechainMCMover::get_name() const {
+// XRW TEMP  return "SidechainMCMover";
+// XRW TEMP }
 
 bool
 SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_proposal_density_ratio ){
@@ -400,6 +403,46 @@ SidechainMCMover::initialize_simulation(
 		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}
 }
+
+std::string SidechainMCMover::get_name() const {
+	return mover_name();
+}
+
+std::string SidechainMCMover::mover_name() {
+	return "SidechainMC";
+}
+
+void SidechainMCMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("ntrials", xsct_non_negative_integer, "Number of trials.", "10000" )
+		+ XMLSchemaAttribute::attribute_w_default("preserve_detailed_balance", xsct_rosetta_bool, "Should the simulation preserve detailed balance?", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("temperature", xsct_real, "Simulation temperature.", "1.0" )
+		+ XMLSchemaAttribute( "inherit_scorefxn_temperature", xsct_rosetta_bool, "Should the simulation inherit the temperature provided by the scorefunction?" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_uniform", xsct_real, "The probability of uniform chi sampling.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_withinrot", xsct_real, "The probability of sampling within-rotamer.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("prob_random_pert_current", xsct_real, "The probability of making a random perturbation to the current chi value.", "0.0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "In a Monte Carlo simulation, moves the side chain for a set of residues identified by a task operation in a manner that can be totally independent of rotamer assignments", attlist );
+}
+
+std::string SidechainMCMoverCreator::keyname() const {
+	return SidechainMCMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SidechainMCMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SidechainMCMover );
+}
+
+void SidechainMCMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SidechainMCMover::provide_xml_schema( xsd );
+}
+
 
 
 } // sidechain_moves

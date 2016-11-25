@@ -73,7 +73,7 @@ public:
 	~LoopBuilder() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const override { return "LoopBuilder"; }
+	// XRW TEMP  string get_name() const override { return "LoopBuilder"; }
 
 public:
 
@@ -103,6 +103,20 @@ public:
 
 	/// @brief Set the score function to be used on the next call to apply().
 	void set_score_function(core::scoring::ScoreFunctionOP score_function);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static void
+	get_score_function_attributes( utility::tag::AttributeList & attlist );
 
 protected:
 

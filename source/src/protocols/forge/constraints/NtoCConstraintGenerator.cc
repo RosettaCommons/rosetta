@@ -25,6 +25,9 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // boost headers
 
@@ -34,22 +37,22 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-std::string
-NtoCConstraintGeneratorCreator::keyname() const
-{
-	return NtoCConstraintGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NtoCConstraintGeneratorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return NtoCConstraintGenerator::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-NtoCConstraintGeneratorCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP NtoCConstraintGeneratorCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new NtoCConstraintGenerator() );
+// XRW TEMP }
 
-std::string
-NtoCConstraintGeneratorCreator::mover_name()
-{
-	return "NtoCConstraintGenerator";
-}
+// XRW TEMP std::string
+// XRW TEMP NtoCConstraintGenerator::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "NtoCConstraintGenerator";
+// XRW TEMP }
 
 /// @brief
 NtoCConstraintGenerator::NtoCConstraintGenerator():
@@ -82,11 +85,11 @@ NtoCConstraintGenerator::parse_my_tag( TagCOP const tag,
 	cg_.set_max_distance( tag->getOption< core::Real >( "dist", cg_.max_distance() ) );
 }
 
-std::string
-NtoCConstraintGenerator::get_name() const
-{
-	return NtoCConstraintGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NtoCConstraintGenerator::get_name() const
+// XRW TEMP {
+// XRW TEMP  return NtoCConstraintGenerator::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 NtoCConstraintGenerator::fresh_instance() const
@@ -123,6 +126,41 @@ NtoCConstraintGenerator::generate_remodel_constraints( Pose const & pose )
 {
 	add_constraints( cg_.apply( pose ) );
 } //generate constraints
+
+std::string NtoCConstraintGenerator::get_name() const {
+	return mover_name();
+}
+
+std::string NtoCConstraintGenerator::mover_name() {
+	return "NtoCConstraintGenerator";
+}
+
+void NtoCConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	RemodelConstraintGenerator::attributes_for_remodel_constraint_generator( attlist );
+	//Holds a TerminiConstraintGenerator
+	attlist
+		+ XMLSchemaAttribute( "weight", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "dist", xsct_real, "XRW TO DO" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string NtoCConstraintGeneratorCreator::keyname() const {
+	return NtoCConstraintGenerator::mover_name();
+}
+
+protocols::moves::MoverOP
+NtoCConstraintGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NtoCConstraintGenerator );
+}
+
+void NtoCConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NtoCConstraintGenerator::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace constraints

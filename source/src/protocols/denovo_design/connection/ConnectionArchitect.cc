@@ -29,6 +29,7 @@
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
 #include <boost/algorithm/string/predicate.hpp>
@@ -92,6 +93,52 @@ ConnectionArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		bool const extend_ss = tag->getOption< bool >( "extend_ss", true );
 		set_ideal_abego( use_ideal_abego, extend_ss );
 	}
+}
+
+void ConnectionArchitect::attributes_for_parse_my_tag(utility::tag::AttributeList& attlist) {
+	using namespace utility::tag;
+
+	architects::StructureArchitect::attributes_for_parse_my_tag(attlist);
+
+	attlist + XMLSchemaAttribute(
+		"chain1", xsct_non_negative_integer,
+		"Indicates the chain which is to be located at the N-terminal end of the new fragment. "
+		"Building will begin at the C-terminal residue of the jump.");
+
+	attlist + XMLSchemaAttribute(
+		"chain2", xsct_non_negative_integer,
+		"Indicates the chain which is to be located at the C-terminal end of the new fragment.");
+
+	attlist + XMLSchemaAttribute(
+		"segment1", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"segment2", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"motif", xs_string,
+		"The secondary structure + abego to be used for the backbone region to be rebuilt. "
+		"Taken from input pose if not specified. The format of this string is: "
+		"\"[Length][SS][ABEGO]-[Length2][SS2][ABEGO2]-...-[LengthN][SSN][ABEGON]\" "
+		"For example, \"1LX-5HA-1LB-1LA-1LB-6EB\" will build a one residue loop of any abego, "
+		"followed by a 5-residue helix, followed by a 3-residue loop of ABEGO BAB, "
+		"followed by a 6-residue strand.");
+
+	attlist + XMLSchemaAttribute(
+		"cutpoint", xs_string,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ideal_abego", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"extend_ss", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"true");
 }
 
 void

@@ -53,6 +53,15 @@ public:
 		core::pose::Pose const &
 	) override;
 
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	core::pose::PoseOP reference_pose_;
 	bool restore_pose_; //determines whether this mover saves or restores a pose

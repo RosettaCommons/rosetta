@@ -25,12 +25,15 @@ namespace refine {
 /// @brief creator for the SmallMinCCDTrial class
 class SmallMinCCDTrialCreator : public moves::MoverCreator {
 public:
-	SmallMinCCDTrialCreator() {}
-	virtual ~SmallMinCCDTrialCreator();
+	// XRW TEMP  SmallMinCCDTrialCreator() {}
+	// XRW TEMP  virtual ~SmallMinCCDTrialCreator();
 
-	virtual moves::MoverOP create_mover() const;
+	// XRW TEMP  virtual moves::MoverOP create_mover() const;
 
-	virtual std::string keyname() const;
+	// XRW TEMP  virtual std::string keyname() const;
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

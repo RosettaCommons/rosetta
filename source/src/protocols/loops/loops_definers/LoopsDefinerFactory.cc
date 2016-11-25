@@ -13,8 +13,11 @@
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefinerFactory.hh>
+
+// Package headers
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
+#include <protocols/loops/loops_definers/util.hh>
 
 // Package Headers
 #include <basic/Tracer.hh>
@@ -24,6 +27,8 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -101,6 +106,27 @@ LoopsDefinerFactory::get_all_loops_definer_names(
 		++iter;
 	}
 	return collection;
+}
+
+void LoopsDefinerFactory::define_loop_definer_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			types_,
+			loop_definer_xml_schema_group_name(),
+			& complex_type_name_for_loop_definer,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for LoopDefiner from LoopDefinerFactory; offending class"
+			" must call protocols::loops::loop_definers::complex_type_name_for_loop_definer when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+
+std::string LoopsDefinerFactory::loop_definer_xml_schema_group_name()
+{
+	return "loop_definer";
 }
 
 

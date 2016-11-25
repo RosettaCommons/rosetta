@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-TaskOperationFeaturesCreator::TaskOperationFeaturesCreator() {}
-TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() = default;
-FeaturesReporterOP TaskOperationFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new TaskOperationFeatures );
-}
+// XRW TEMP TaskOperationFeaturesCreator::TaskOperationFeaturesCreator() {}
+// XRW TEMP TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP TaskOperationFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new TaskOperationFeatures );
+// XRW TEMP }
 
-std::string TaskOperationFeaturesCreator::type_name() const {
-	return "TaskOperationFeatures";
-}
+// XRW TEMP std::string TaskOperationFeaturesCreator::type_name() const {
+// XRW TEMP  return "TaskOperationFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

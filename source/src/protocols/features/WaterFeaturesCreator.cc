@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-WaterFeaturesCreator::WaterFeaturesCreator() {}
-WaterFeaturesCreator::~WaterFeaturesCreator() = default;
-FeaturesReporterOP WaterFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new WaterFeatures );
-}
+// XRW TEMP WaterFeaturesCreator::WaterFeaturesCreator() {}
+// XRW TEMP WaterFeaturesCreator::~WaterFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP WaterFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new WaterFeatures );
+// XRW TEMP }
 
-std::string WaterFeaturesCreator::type_name() const {
-	return "WaterFeatures";
-}
+// XRW TEMP std::string WaterFeaturesCreator::type_name() const {
+// XRW TEMP  return "WaterFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

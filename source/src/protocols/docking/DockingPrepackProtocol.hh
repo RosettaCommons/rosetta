@@ -57,11 +57,23 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Scores and outputs the pose - jd2 compatible.
 	void score_and_output(std::string filename,core::pose::Pose &);
 	void set_dock_ppk(bool dock_ppk);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// add @brief for members

@@ -52,6 +52,18 @@ public:
 	bool comment_exists() const { return comment_exists_; }
 	void comment_exists( bool const c ){ comment_exists_ = c; }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	std::string comment_name_; //dflt ""; define the comment name
 	std::string comment_value_; //dflt ""; define the comment value

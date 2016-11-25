@@ -46,6 +46,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/TrajectoryMapFeaturesCreator.hh>
 
 // C++ Headers
 //#include <cmath>
@@ -78,8 +82,8 @@ TrajectoryMapFeatures::TrajectoryMapFeatures( TrajectoryMapFeatures const & src)
 
 TrajectoryMapFeatures::~TrajectoryMapFeatures() = default;
 
-string
-TrajectoryMapFeatures::type_name() const { return "TrajectoryMapFeatures"; }
+// XRW TEMP string
+// XRW TEMP TrajectoryMapFeatures::type_name() const { return "TrajectoryMapFeatures"; }
 
 void
 TrajectoryMapFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -150,6 +154,36 @@ TrajectoryMapFeatures::get_current_cycle () const
 {
 	return current_cycle_;
 }
+
+std::string TrajectoryMapFeatures::type_name() const {
+	return class_name();
+}
+
+std::string TrajectoryMapFeatures::class_name() {
+	return "TrajectoryMapFeatures";
+}
+
+void TrajectoryMapFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Map trajectory structure_ids to cycle number", attlist );
+}
+
+std::string TrajectoryMapFeaturesCreator::type_name() const {
+	return TrajectoryMapFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+TrajectoryMapFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new TrajectoryMapFeatures );
+}
+
+void TrajectoryMapFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TrajectoryMapFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

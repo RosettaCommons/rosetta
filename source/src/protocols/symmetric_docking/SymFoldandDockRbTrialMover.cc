@@ -39,6 +39,9 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -163,26 +166,62 @@ SymFoldandDockRbTrialMover::parse_my_tag(
 	}
 }
 
-std::string
-SymFoldandDockRbTrialMover::get_name() const {
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockRbTrialMover::get_name() const {
+// XRW TEMP  return "SymFoldandDockRbTrialMover";
+// XRW TEMP }
+
+
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockRbTrialMoverCreator::keyname() const {
+// XRW TEMP  return SymFoldandDockRbTrialMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymFoldandDockRbTrialMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockRbTrialMover::mover_name() {
+// XRW TEMP  return "SymFoldandDockRbTrialMover";
+// XRW TEMP }
+
+std::string SymFoldandDockRbTrialMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymFoldandDockRbTrialMover::mover_name() {
 	return "SymFoldandDockRbTrialMover";
 }
 
+void SymFoldandDockRbTrialMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "rot_mag", xs_decimal, "Rotational perturbation size." )
+		+ XMLSchemaAttribute( "trans_mag", xs_decimal, "Translation perturbation size." )
+		+ XMLSchemaAttribute( "cycles", xsct_non_negative_integer, "Number of cycles." )
+		+ XMLSchemaAttribute( "use_mc", xsct_rosetta_bool, "Use Monte Carlo?" )
+		+ XMLSchemaAttribute( "rotate_anchor_to_x", xsct_rosetta_bool, "Rotate the anchor residue to the x-axis before applying rigid body transformations." ) ;
 
-std::string
-SymFoldandDockRbTrialMoverCreator::keyname() const {
-	return SymFoldandDockRbTrialMoverCreator::mover_name();
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Something else for setting up symmetric fold and dock.", attlist );
+}
+
+std::string SymFoldandDockRbTrialMoverCreator::keyname() const {
+	return SymFoldandDockRbTrialMover::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockRbTrialMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover );
 }
 
-std::string
-SymFoldandDockRbTrialMoverCreator::mover_name() {
-	return "SymFoldandDockRbTrialMover";
+void SymFoldandDockRbTrialMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymFoldandDockRbTrialMover::provide_xml_schema( xsd );
 }
+
 
 
 } // symmetric_docking

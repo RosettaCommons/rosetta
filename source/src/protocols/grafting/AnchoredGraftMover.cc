@@ -62,6 +62,9 @@
 #include <map>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
 namespace protocols {
@@ -177,8 +180,8 @@ AnchoredGraftMover::clone() const{
 	return protocols::moves::MoverOP( new AnchoredGraftMover(*this) );
 }
 
-std::string
-AnchoredGraftMover::get_name() const { return "AnchoredGraftMover"; }
+// XRW TEMP std::string
+// XRW TEMP AnchoredGraftMover::get_name() const { return "AnchoredGraftMover"; }
 
 protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
@@ -505,20 +508,20 @@ AnchoredGraftMover::final_repack(){
 	return final_repack_;
 }
 
-protocols::moves::MoverOP
-AnchoredGraftMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AnchoredGraftMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AnchoredGraftMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AnchoredGraftMover );
+// XRW TEMP }
 
-std::string
-AnchoredGraftMoverCreator::keyname() const {
-	return AnchoredGraftMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AnchoredGraftMoverCreator::keyname() const {
+// XRW TEMP  return AnchoredGraftMover::mover_name();
+// XRW TEMP }
 
-std::string
-AnchoredGraftMoverCreator::mover_name(){
-	return "AnchoredGraftMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AnchoredGraftMover::mover_name(){
+// XRW TEMP  return "AnchoredGraftMover";
+// XRW TEMP }
 
 void
 AnchoredGraftMover::set_loops(protocols::loops::LoopsOP loops){
@@ -714,6 +717,76 @@ core::Real AnchoredGraftMover::neighbor_dis() const {
 utility::tag::TagCOP AnchoredGraftMover::tag() const {
 	return tag_;
 }
+
+std::string AnchoredGraftMover::get_name() const {
+	return mover_name();
+}
+
+std::string AnchoredGraftMover::mover_name() {
+	return "AnchoredGraftMover";
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( utility::tag::XMLSchemaDefinition & xsd ) {
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "cycles", xsct_non_negative_integer, "Number of ccd cycles to perform" )
+		+ XMLSchemaAttribute( "final_repack", xsct_rosetta_bool, "perform a final repack of the grafted residues and neighbors" )
+		+ XMLSchemaAttribute( "stop_at_closure", xsct_rosetta_bool, "Stop once chainbreaks are closed" )
+		+ XMLSchemaAttribute( "neighbor_dis", xsct_real, "Distance used to identify neighbors" )
+		+ XMLSchemaAttribute( "skip_sampling", xsct_rosetta_bool, "Skip sampling of backbone torsion angles" )
+		+ XMLSchemaAttribute( "mintype", xsct_minimizer_type, "Type of minimizer to use" )
+		+ XMLSchemaAttribute( "copy_pdbinfo", xsct_rosetta_bool, "Copy PDBInfo from the pose" )
+		+ XMLSchemaAttribute( "scaffold_flex_Nter", xsct_non_negative_integer, "How many residues to the N terminus of the grafted location in the scaffold should be flexible?" )
+		+ XMLSchemaAttribute( "scaffold_flex_Cter", xsct_non_negative_integer, "How many residues to the C terminus of the grafted location in the scaffold should be flexible?" )
+		+ XMLSchemaAttribute( "insert_flex_Nter", xsct_non_negative_integer, "How many residues in the N terminus of the graft should be flexible?" )
+		+ XMLSchemaAttribute( "insert_flex_Cter", xsct_non_negative_integer, "How many residues in the C terminus of the graft should be flexible?" )
+		+ XMLSchemaAttribute( "Nter_overhang", xsct_non_negative_integer, "Desired size of N terminal overhang" )
+		+ XMLSchemaAttribute( "Cter_overhang", xsct_non_negative_integer, "Desired size of C terminal overhang" )
+		+ XMLSchemaAttribute::required_attribute( "start_", xsct_refpose_enabled_residue_number, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "end_", xsct_refpose_enabled_residue_number, "XRW_TODO" )
+		+ XMLSchemaAttribute( "cen_scorefxn", xs_string, "Centroid score function to use" )
+		+ XMLSchemaAttribute( "fa_scorefxn", xs_string, "Full atom score function to use" );
+
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	XMLSchemaSimpleSubelementList movemaps;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, movemaps ); //we can just call this once and set that you need 2 or 0
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->
+		add_attributes( attlist )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.set_subelements_repeatable( movemaps, 0, 2 );
+	return ct_gen;
+
+}
+
+void AnchoredGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_anchored_graft_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Class to graft a piece onto a pose" )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string AnchoredGraftMoverCreator::keyname() const {
+	return AnchoredGraftMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AnchoredGraftMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AnchoredGraftMover );
+}
+
+void AnchoredGraftMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AnchoredGraftMover::provide_xml_schema( xsd );
+}
+
 
 } //Grafting
 } //Protocols

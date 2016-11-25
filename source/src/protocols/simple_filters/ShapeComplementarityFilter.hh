@@ -78,7 +78,7 @@ public:// virtual constructor
 
 public:// accessor
 	// @brief get name of this filter
-	std::string name() const override { return "ShapeComplementarity"; }
+	// XRW TEMP  std::string name() const override { return "ShapeComplementarity"; }
 
 public:// mutator
 	void filtered_sc( Real const & filtered_sc );
@@ -118,6 +118,18 @@ public:
 	/// @returns ShapeComplementarityCalculator::RESULTS object
 	ShapeComplementarityCalculatorResults
 	compute( Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief Uses residue selectors to set up the ShapeComplementarityCalculator

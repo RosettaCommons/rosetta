@@ -94,7 +94,7 @@ WeightedSampler::random_sample(
 ) const {
 	assert(randnum >= 0);
 	assert(randnum <= 1);
-	
+
 	if  ( !cumulative_distribution_valid_ ) update_cumulative_distribution();
 
 	for ( numeric::Size i = 1; i <= cumulative_distribution_.size(); ++i ) {

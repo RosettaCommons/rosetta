@@ -20,6 +20,7 @@
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/SeparateDnaFromNonDna.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
@@ -60,6 +61,9 @@
 #include <vector> // for rot_to_pack
 #include <iostream>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
@@ -111,22 +115,22 @@ static THREAD_LOCAL basic::Tracer TR_spec( "protocols.dna.Specificity" );
 
 // for comparing ResTypeSequence, which contain ResidueTypeCOP pointers (must dereference for sorting purposes)
 
-std::string
-DnaInterfacePackerCreator::keyname() const
-{
-	return DnaInterfacePackerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DnaInterfacePackerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DnaInterfacePacker::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DnaInterfacePackerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfacePacker );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DnaInterfacePackerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DnaInterfacePacker );
+// XRW TEMP }
 
-std::string
-DnaInterfacePackerCreator::mover_name()
-{
-	return "DnaInterfacePacker";
-}
+// XRW TEMP std::string
+// XRW TEMP DnaInterfacePacker::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DnaInterfacePacker";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief lightweight default constructor
@@ -209,10 +213,10 @@ DnaInterfacePacker::clone() const
 	return moves::MoverOP( new DnaInterfacePacker( *this ) );
 }
 
-std::string
-DnaInterfacePacker::get_name() const {
-	return DnaInterfacePackerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DnaInterfacePacker::get_name() const {
+// XRW TEMP  return DnaInterfacePacker::mover_name();
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief runs the packer, with support for efficiently looping over multiple explicit DNA sequences (provided that they can be represented by the RotamerSets/InteractionGraph)
@@ -771,7 +775,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 			single_sequence.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 		// alter dna types according to this dna sequence
-		for (const auto & it : dna_sequence) {
+		for ( const auto & it : dna_sequence ) {
 			single_sequence[ it.first ] = it.second;
 		}
 		// populate rot_to_pack with only the rotamers that reflect single_sequence
@@ -1312,6 +1316,82 @@ DnaInterfacePacker::current_dna_design_string( Pose const & pose ) const
 {
 	return dna_seq_tag( pose, current_working_sequence( pose ) );
 }
+
+std::string DnaInterfacePacker::get_name() const {
+	return mover_name();
+}
+
+std::string DnaInterfacePacker::mover_name() {
+	return "DnaInterfacePacker";
+}
+
+void DnaInterfacePacker::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"binding", xsct_rosetta_bool,
+		"calculate binding energy");
+
+	attlist + XMLSchemaAttribute(
+		"base_only", xsct_rosetta_bool,
+		"consider only interaction with the DNA bases");
+
+	attlist + XMLSchemaAttribute(
+		"minimize", xsct_rosetta_bool,
+		"minimize protein side chains at the interface");
+
+	attlist + XMLSchemaAttribute(
+		"reversion_scan", xsct_rosetta_bool,
+		"revert mutations that do not contribute to the specificity score");
+
+	attlist + XMLSchemaAttribute(
+		"probe_specificity", xsct_non_negative_integer,
+		"calculate binding energy of designed protein for alternative DNA "
+		"targets and calculate a specificity score");
+
+	attlist + XMLSchemaAttribute(
+		"pdb_output", xsct_rosetta_bool,
+		"write out unbound pose to verify proper interface separation");
+
+	attlist + XMLSchemaAttribute(
+		"protein_scan", xsct_rosetta_bool,
+		"brief runs a single-residue scan of user-defined amino acid possibilities to "
+		"estimate affinity and specificity of single mutants w/ respect to relevant DNA");
+
+	attlist + XMLSchemaAttribute(
+		"allowed_types", xsct_rosetta_bool,
+		"allowed residue types for design. default: ACDEFGHIKLMNPQRSTVWY; ");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Intended to perform anything one would want to do in a DNA interface that uses a single "
+		"incarnation of the RotamerSets/InteractionGraph combo. For basic packing/designing, "
+		"the more basic PackRotamersMover can be used instead, provided it receives the appropriate "
+		"TaskFactory/TaskOperations. This derived class, however, takes advantage of the reusability "
+		"of packer data to accomplish some higher-level functions, such as rapid estimations of "
+		"multi-state specificity, reversions, and mutational scanning.",
+		attlist );
+}
+
+std::string DnaInterfacePackerCreator::keyname() const {
+	return DnaInterfacePacker::mover_name();
+}
+
+protocols::moves::MoverOP
+DnaInterfacePackerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DnaInterfacePacker );
+}
+
+void DnaInterfacePackerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DnaInterfacePacker::provide_xml_schema( xsd );
+}
+
 
 } // namespace dna
 } // namespace protocols

@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ProteinBackboneTorsionAngleFeaturesCreator::ProteinBackboneTorsionAngleFeaturesCreator() {}
-ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() = default;
-FeaturesReporterOP ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
-}
+// XRW TEMP ProteinBackboneTorsionAngleFeaturesCreator::ProteinBackboneTorsionAngleFeaturesCreator() {}
+// XRW TEMP ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
+// XRW TEMP }
 
-std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {
-	return "ProteinBackboneTorsionAngleFeatures";
-}
+// XRW TEMP std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinBackboneTorsionAngleFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

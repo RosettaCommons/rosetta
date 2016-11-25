@@ -51,7 +51,7 @@ public:
 	~MembraneTopology() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::simple_moves::MembraneTopology( *this ) ) );
 	}
@@ -66,6 +66,18 @@ public:
 		core::pose::Pose const & ) override;
 	std::string span_file() const { return span_file_; }
 	void span_file( std::string const & s ){ span_file_ = s; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string span_file_;

@@ -62,6 +62,8 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 ///////////////////////////////////////////////////
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GenericMonteCarloMover" );
 static THREAD_LOCAL basic::Tracer TR_energies( "protocols.simple_moves.GenericMonteCarloMover.individual_energies" );
@@ -73,23 +75,6 @@ namespace protocols {
 namespace simple_moves {
 
 using namespace ObjexxFCL::format;
-
-std::string
-GenericMonteCarloMoverCreator::keyname() const
-{
-	return GenericMonteCarloMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-GenericMonteCarloMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GenericMonteCarloMover );
-}
-
-std::string
-GenericMonteCarloMoverCreator::mover_name()
-{
-	return "GenericMonteCarlo";
-}
 
 /// @brief default constructor
 GenericMonteCarloMover::GenericMonteCarloMover():
@@ -950,11 +935,6 @@ GenericMonteCarloMover::generate_random() const {
 	return randoms;
 }
 
-std::string
-GenericMonteCarloMover::get_name() const {
-	return GenericMonteCarloMoverCreator::mover_name();
-}
-
 /// @brief parse xml file
 void
 GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
@@ -1016,7 +996,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 
 	parse_task_operations( tag, data, filters, movers );
 
-	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_name or scorefxn_name for MC criteria." );
+	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_nam2e or scorefxn_name for MC criteria." );
 
 	if ( filters_.size() == 0 ) {
 		TR << "Apply mover of " << user_defined_mover_name_ << ", and evaluate score by " << sfxn
@@ -1163,5 +1143,245 @@ void
 GenericMonteCarloMover::saved_trial_number_file( std::string const s ){
 	saved_trial_number_file_ = s;
 }
+
+std::string GenericMonteCarloMover::get_name() const {
+	return mover_name();
+}
+
+std::string GenericMonteCarloMover::mover_name() {
+	return "GenericMonteCarlo";
+}
+
+std::string gen_mc_ct_namer( std::string const & element_name ) {
+	return "generic_monte_carlo_" + element_name + "_type";
+}
+
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attlist;
+
+	attlist + Attr::attribute_w_default(
+		"trials", xsct_non_negative_integer,
+		"The number of trials in a GenericMonteCarlo run. "
+		"Will be automatically calculated when a task is included. "
+		"See task_scaling for more information. ",
+		"10" )
+		+ Attr::attribute_w_default(
+		"temperature", xsct_real,
+		"Temperature value which affects the acceptance of new solutions "
+		"according to the MC criterion",
+		"0.0" )
+		+ Attr::attribute_w_default(
+		"task_scaling", xsct_non_negative_integer,
+		"If a task is included, the number of designable residues will "
+		"be calculated and the number of trials will be automatically "
+		"set as task_scaling * (number designable residues). "
+		"For example, if there are 10 designable residues and "
+		"task_scaling is 5 (the default) the number of trials will be 50.",
+		"5" )
+		+ Attr::attribute_w_default(
+		"adaptive_movers", xsct_rosetta_bool,
+		"If the mover you call or a submover of that mover is of type "
+		"ParsedProtocol with mode single-random, then GenericMonteCarlo "
+		"can 'learn' the best sampling strategy by adapting the apply "
+		"probabilities of individual movers within that ParsedProtocol. "
+		"For each adaptation period (say 20 mover applies) the number "
+		"of accepts of each submover is recorded (with pseudocounts of "
+		"1 for each mover) and during the next adaptation period the apply "
+		"probabilities of the submovers in the ParsedProtocol are adjusted "
+		"according in proportion to the acceptance probabilities of the "
+		"previous stage. Due to the pseudocounts, all movers have at "
+		"least some chance of being called.",
+		"false" )
+		+ Attr(
+		"adaptation_period", xsct_non_negative_integer,
+		"goes together with adaptive_movers, defined above. Defaults to "
+		"max( max_trials/10, 10 ) but can be set to any integer." )
+		+ Attr(
+		"mover_name", xs_string,
+		"Mover to be used for sampling." )
+		+ Attr::attribute_w_default(
+		"filter_name", xs_string,
+		"Single filter case. See Filters subcategory for applying multiple filters.",
+		"true_filter" )
+		+ Attr::attribute_w_default(
+		"adaptive", xsct_rosetta_bool,
+		"If the mover you call or a submover of that mover is of type "
+		"ParsedProtocol with mode single-random, then GenericMonteCarlo can "
+		"'learn' the best sampling strategy by adapting the apply "
+		"probabilities of individual movers within that ParsedProtocol. "
+		"For each adaptation period (say 20 mover applies) the number of "
+		"'accepts of each submover is recorded (with pseudocounts of 1 for "
+		"each mover) and during the next adaptation period the apply "
+		"probabilities of the submovers in the ParsedProtocol are "
+		"adjusted according in proportion to the acceptance probabilities "
+		"of the previous stage. Due to the pseudocounts, all movers have "
+		"at least some chance of being called.",
+		"true" )
+		+ Attr::attribute_w_default(
+		"sample_type", xs_string,
+		"low - MC samples by minimizing the structure score "
+		"(REU: the more negative the better); "
+		"high - MC samples by maximizing the structure score",
+		"low" )
+		+ Attr(
+		"scorefxn_name", xs_string,
+		"As alternative to scoring by filters (See Filters subcategory), "
+		"structures may be scored by a given scoring function." );
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + Attr::attribute_w_default(
+		"stopping_condition", xs_string,
+		"stops before trials are done if a filter evaluates to true",
+		"false_filter" )
+		+ Attr::attribute_w_default(
+		"drift", xsct_rosetta_bool,
+		"true - the state of the pose at the end of the previous iteration "
+		"will be the starting state for the next iteration; false - the state "
+		"of the pose at the start of each iteration will be reset to the "
+		"state when the mover is first called ( Of course, this is not MC ).",
+		"true" )
+		+ Attr::attribute_w_default(
+		"preapply", xsct_rosetta_bool,
+		"true - Automatically accept the first application of the sub-mover, "
+		"ignoring the Boltzmann criterion. false - apply Boltzmann accept/reject "
+		"to all applications of the mover. Though defaulting to true for "
+		"historical reasons, it is highly recommended to set this to false "
+		"unless you know you need it to be true.",
+		"true" )
+		+ Attr::attribute_w_default(
+		"recover_low", xsct_rosetta_bool,
+		"true - at the end of application, the pose is set to the lowest "
+		"(or highest if sample_type=\"high\") scoring pose; false - the "
+		"pose after apply completes is the last accepted pose",
+		"true" )
+		+ Attr::attribute_w_default(
+		"bolz_rank", xsct_rosetta_bool,
+		"For use with multiple filters. If no sub-filters are set with "
+		"rank=1, the first filter is used for ranking. As a special case, "
+		"if boltz_rank is set to true, the ranking score is a temperature-"
+		"weighted sum of all filter values. (This value is equivalent to the "
+		"effective value optimized by the MC protocol.) This boltz_rank score "
+		"is computed by the equation SUM( multiplier * filter_value / filter_"
+		"temperature ) over all filter values, where filter_value is the value "
+		"returned by the filter and multiplier is 1 if the filter sample_type "
+		"is low and -1 if the filter sample_type is high.",
+		"false" )
+		+ Attr(
+		"saved_accept_file_name", xs_string,
+		"save the most recent accepted structure in a temporary PDB? This allows "
+		"recovery by checkpointing. Note that different processes would need to "
+		"work from different directories or somehow control the checkpointing "
+		"file name, else confusion will reign." )
+		+ Attr(
+		"saved_trial_number_file", xs_string,
+		"Checkpointing file for the current trial number. "
+		"Allows the mover to recover after failure." )
+		+ Attr(
+		"mover_tag", xs_string,
+		"this is used by the called movers to set a certain tag. If saved_accept_file_name_ is set, then at exit the tag coming from the chosen mover is written to disk as, {saved_accept_file_name}.mover_tag. To work, mover_tag_ must be exposed to the movers being called.")
+		+ Attr::attribute_w_default(
+		"reset_baselines", xsct_rosetta_bool,
+		"If the filter is of type Sigmoid/Operator/CompoundStatement, look for "
+		"all subfilters of type Sigmoid and reset their baseline to the pose's "
+		"current filter evaluation at trial=1. Useful in cases where you want "
+		"to set the thresholds relative to the pose's evaluation at the start "
+		"of the MC trajectory.",
+		"true" )
+		+ Attr(
+		"progress_file", xs_string,
+		"If specified opens a file in which each trial's outcome is reported "
+		"(trial number, accept/reject, filter value, and pose sequence). "
+		"Useful to monitor progress in MC" );
+
+	// Subelements!
+	// Filters
+	AttributeList filter_attributes;
+	filter_attributes
+		+ Attr( "filter_name", xs_string, "name of the filter declaration" )
+		+ Attr::attribute_w_default(
+		"temperature", xsct_real,
+		"Filter specific temperature",
+		"1" )
+		+ Attr::attribute_w_default(
+		"adaptive", xsct_rosetta_bool,
+		"Incorporate this filter when using adaptive scores.",
+		"true" )
+		+ Attr::attribute_w_default(
+		"sample_type", xs_string,
+		"high - the filter evalutas good structures with positive scores; "
+		"low - the filter evaulates good structures with negative scores",
+		"low" )
+		+ Attr::attribute_w_default(
+		"rank", xsct_rosetta_bool,
+		"Give this filter a rank of 1. Can only be applied for one filter. "
+		"A filter with rank 1 will score the structure solitarily.",
+		"false" );
+	XMLSchemaSimpleSubelementList filters_subelement;
+	filters_subelement.add_simple_subelement(
+		"AND", filter_attributes,
+		"Filter that may be used as ensemble to score the strucutres." );
+
+	XMLSchemaComplexTypeGenerator filters_ct_gen;
+	// no attributes, not even a name attribute
+	filters_ct_gen.element_name( "Filters" )
+		.complex_type_naming_func( & gen_mc_ct_namer )
+		.set_subelements_repeatable( filters_subelement )
+		.description(
+		"Multiple filters can be defined for an MC mover. These filters are then applied "
+		"sequentially in the order listed and only if the pose passes the Metropolis "
+		"criterion for all filters is it accepted. This allows the extension of MC to a "
+		"multicriterion framework where more than one criterion is optimized, say the total "
+		"score and the binding energy. See demos/rosetta_scripts/experimental/computational_"
+		"affinity_maturation_strategy2 for an example. "
+		"It's recommended to list the computationally expensive filters last, "
+		"as later filters will only be calculated if the earlier filters all pass." );
+
+	filters_ct_gen.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList genmc_subelements;
+	genmc_subelements.add_already_defined_subelement( "Filters", & gen_mc_ct_namer );
+	XMLSchemaComplexTypeGeneratorOP genmc_ct_gen( new XMLSchemaComplexTypeGenerator);
+	genmc_ct_gen->element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.description(
+		"Allows sampling structures by MonteCarlo with a mover. "
+		"The score evaluation of pose during MC are done by Filters that can do "
+		"report_sm(), not only ScoreFunctions")
+		.set_subelements_repeatable( genmc_subelements );
+
+	return genmc_ct_gen;
+}
+
+
+void GenericMonteCarloMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
+	ct_gen->element_name( mover_name() )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string GenericMonteCarloMoverCreator::keyname() const {
+	return GenericMonteCarloMover::mover_name();
+}
+
+protocols::moves::MoverOP
+GenericMonteCarloMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GenericMonteCarloMover );
+}
+
+void GenericMonteCarloMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GenericMonteCarloMover::provide_xml_schema( xsd );
+}
+
 } // ns simple_moves
 } // ns protocols

@@ -23,6 +23,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -255,11 +258,11 @@ DeltaFilter::clone() const{
 	return protocols::filters::FilterOP( new DeltaFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-DeltaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DeltaFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP DeltaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DeltaFilter ); }
 
-std::string
-DeltaFilterCreator::keyname() const { return "Delta"; }
+// XRW TEMP std::string
+// XRW TEMP DeltaFilterCreator::keyname() const { return "Delta"; }
 
 protocols::moves::MoverOP
 DeltaFilter::relax_mover() const{
@@ -276,6 +279,53 @@ DeltaFilter::scorefxn( core::scoring::ScoreFunctionOP s ){ scorefxn_ = s; }
 
 core::scoring::ScoreFunctionOP
 DeltaFilter::scorefxn() const{ return scorefxn_; }
+
+std::string DeltaFilter::name() const {
+	return class_name();
+}
+
+std::string DeltaFilter::class_name() {
+	return "Delta";
+}
+
+void DeltaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("range", xsct_real, "how much above/below the baseline to allow?", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("lower", xsct_rosetta_bool, "the threshold is upper/lower? Use both if the threshold is an exact value.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("upper", xsct_rosetta_bool, "the threshold is upper/lower? Use both if the threshold is an exact value.", "true")
+		+ XMLSchemaAttribute::required_attribute("filter", xs_string, "the name of a predefined filter for evaluation.")
+		+ XMLSchemaAttribute::attribute_w_default("relax_mover", xs_string, "called at parse-time before setting the baseline.", "null")
+		+ XMLSchemaAttribute::attribute_w_default("unbound", xsct_rosetta_bool, "translates the partners by 10000A before evaluating the baseline and the filters. Allows evaluation of the unbound pose.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("relax_unbound", xsct_rosetta_bool, "relax the unbound state w/ relax mover?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("changing_baseline", xsct_rosetta_bool, "reset baseline value to current value after every accept", "false");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("jump", xsct_non_negative_integer, "if unbound is set, this can be used to set the jump along which to translate.", "1");
+
+	protocols::rosetta_scripts::attributes_for_saved_reference_pose( attlist, "reference_name");
+
+	attlist + XMLSchemaAttribute::attribute_w_default("reference_pdb", xs_string, "use reference pose from disk", "XRW TO DO");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the difference in a filter's value compared to the input structure", attlist );
+}
+
+std::string DeltaFilterCreator::keyname() const {
+	return DeltaFilter::class_name();
+}
+
+protocols::filters::FilterOP
+DeltaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DeltaFilter );
+}
+
+void DeltaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DeltaFilter::provide_xml_schema( xsd );
+}
+
 
 } // simple_filters
 } // protocols

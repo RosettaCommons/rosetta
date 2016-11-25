@@ -42,6 +42,9 @@
 
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbe.hh>
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbeCreator.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols
@@ -237,22 +240,74 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 	refinement_pattern_ = initialize_refinement_pattern();
 }
 
-protocols::moves::MoverOP
-PlaceSurfaceProbeCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlaceSurfaceProbeCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP PlaceSurfaceProbeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return "PlaceSurfaceProbe";
+// XRW TEMP }
+
+// XRW TEMP std::string PlaceSurfaceProbe::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PlaceSurfaceProbeMover";
+// XRW TEMP }
+
+std::string PlaceSurfaceProbe::get_name() const {
+	return mover_name();
 }
 
-std::string
-PlaceSurfaceProbeCreator::keyname() const
-{
+std::string PlaceSurfaceProbe::mover_name() {
 	return "PlaceSurfaceProbe";
 }
 
-std::string PlaceSurfaceProbeCreator::mover_name()
+void PlaceSurfaceProbe::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return "PlaceSurfaceProbeMover";
+	using namespace utility::tag;
+	XMLSchemaRestriction mode_spec_type;
+	mode_spec_type.name( "mode_spec_type");
+	mode_spec_type.base_type( xs_string );
+	mode_spec_type.add_restriction( xsr_enumeration, "all" );
+	mode_spec_type.add_restriction( xsr_enumeration, "one" );
+	xsd.add_top_level_element( mode_spec_type );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "residue_name", xs_string, "Residue to use as a surface probe" )
+		+ XMLSchemaAttribute::attribute_w_default( "search_partition", xsct_non_negative_integer, "Which search partition to use", "0")
+		+ XMLSchemaAttribute::attribute_w_default( "total_search_partition", xsct_non_negative_integer, "Number of total search partitions", "1")
+		+ XMLSchemaAttribute::attribute_w_default( "mode_specification", "mode_spec_type", "Which mode to use when placing probes?", "all" )
+		+ XMLSchemaAttribute::attribute_w_default( "search_density", xsct_real, "Density of grid for probe placement", "1.0" )
+		+ XMLSchemaAttribute::required_attribute( "coarse_angle_sampling", xsct_real, "Bin size for coarse angle sampling" )
+		+ XMLSchemaAttribute::required_attribute( "coarse_sampling", xsct_real, "Bin size for coarse sampling" )
+		+ XMLSchemaAttribute::required_attribute( "refinement_angle_sampling", xsct_real, "Bin size for angle sampling during refinement" )
+		+ XMLSchemaAttribute::required_attribute( "refinement_sampling", xsct_real, "Bin size for sampling during refinement" )
+		+ XMLSchemaAttribute::required_attribute( "refinement_distance", xsct_real, "Distance to use during refinement stageof search" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Uses a probe of the specified type to probe the surface of the pose", attlist );
+
 }
+
+std::string PlaceSurfaceProbeCreator::keyname() const {
+	return PlaceSurfaceProbe::mover_name();
+}
+
+protocols::moves::MoverOP
+PlaceSurfaceProbeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlaceSurfaceProbe );
+}
+
+void PlaceSurfaceProbeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlaceSurfaceProbe::provide_xml_schema( xsd );
+}
+
 
 }
 }

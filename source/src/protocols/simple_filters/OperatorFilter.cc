@@ -32,17 +32,20 @@
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <limits>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.Operator" );
 using namespace protocols::filters;
 
-protocols::filters::FilterOP
-OperatorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Operator ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP OperatorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Operator ); }
 
-std::string
-OperatorFilterCreator::keyname() const { return "Operator"; }
+// XRW TEMP std::string
+// XRW TEMP OperatorFilterCreator::keyname() const { return "Operator"; }
 
 //default ctor
 Operator::Operator() :
@@ -104,11 +107,11 @@ Operator::modify_relative_filters_pdb_names(){
 	erase_filters.clear();
 	for ( FilterOP filter : filters_ ) {
 		if ( filter->get_type() != "Sigmoid" ) continue;
-		
+
 		SigmoidOP sigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Sigmoid > ( filter ) );
 		runtime_assert( sigmoid_filter != nullptr );
 		if ( sigmoid_filter->filter()->get_type() != "RelativePose" ) continue;
-	
+
 		TR<<"Replicating and changing RelativePose's filter pdb fname. File names: ";
 		for ( std::string const fname : relative_pose_names_ ) {
 			SigmoidOP new_sigmoid( sigmoid_filter );
@@ -318,5 +321,48 @@ Operator::filters() const{ return filters_; }
 
 void
 Operator::add_filter( protocols::filters::FilterOP f ){ filters_.push_back( f ); }
+
+std::string Operator::name() const {
+	return class_name();
+}
+
+std::string Operator::class_name() {
+	return "Operator";
+}
+
+void Operator::attributes( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute::required_attribute("operation", xs_string, "operation to perform: sum, product, min, or max")
+		+ XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "filter threshold", "0")
+		+ XMLSchemaAttribute::attribute_w_default("negate", xsct_rosetta_bool, "multiply return value by -1. Useful in optimization", "false")
+		+ XMLSchemaAttribute::attribute_w_default("report_subvalues", xsct_rosetta_bool, "report subvalues?", "false")
+		+ XMLSchemaAttribute("filters", xs_string, "list of previously defined filters on which to carry out the operation")
+		+ XMLSchemaAttribute::attribute_w_default("multi_relative", xsct_rosetta_bool, "If set, duplicates filters to include relative_pose_names.", "false")
+		+ XMLSchemaAttribute("relative_pose_names", xs_string, "Comma seperated list of pose names")
+		+ XMLSchemaAttribute::attribute_w_default("logarithm", xsct_rosetta_bool, " take the log(x) value of the resulting operator.", "false");
+}
+
+void Operator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	Operator::attributes( attlist );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Part of the fuzzy-logic design algorithm.", attlist );
+}
+
+std::string OperatorFilterCreator::keyname() const {
+	return Operator::class_name();
+}
+
+protocols::filters::FilterOP
+OperatorFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new Operator );
+}
+
+void OperatorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Operator::provide_xml_schema( xsd );
+}
+
 }
 }

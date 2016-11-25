@@ -51,6 +51,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
 
@@ -126,22 +129,22 @@ AddMPLigandMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-AddMPLigandMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddMPLigandMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddMPLigandMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddMPLigandMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-AddMPLigandMoverCreator::keyname() const {
-	return AddMPLigandMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddMPLigandMoverCreator::keyname() const {
+// XRW TEMP  return AddMPLigandMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-AddMPLigandMoverCreator::mover_name() {
-	return "AddMPLigandMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddMPLigandMover::mover_name() {
+// XRW TEMP  return "AddMPLigandMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -224,10 +227,43 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 }
 
 /// @brief Show the name of this mvoer
-std::string
-AddMPLigandMover::get_name() const {
+// XRW TEMP std::string
+// XRW TEMP AddMPLigandMover::get_name() const {
+// XRW TEMP  return "AddMPLigandMover";
+// XRW TEMP }
+
+std::string AddMPLigandMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddMPLigandMover::mover_name() {
 	return "AddMPLigandMover";
 }
+
+void AddMPLigandMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "closest_rsd", xsct_positive_integer, "Index of closest residue to ligand" )
+		+ XMLSchemaAttribute( "ligand_seqpos", xsct_positive_integer, "Rosetta sequence position of ligand. Note the ligand should be in a separate chain." );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add a ligand to a membrane protein", attlist );
+}
+
+std::string AddMPLigandMoverCreator::keyname() const {
+	return AddMPLigandMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddMPLigandMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddMPLigandMover );
+}
+
+void AddMPLigandMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddMPLigandMover::provide_xml_schema( xsd );
+}
+
 
 } // membrane
 } // protocols

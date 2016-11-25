@@ -36,6 +36,9 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/io/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace matdes {
@@ -307,11 +310,48 @@ InterfacePackingFilter::clone() const{
 	return protocols::filters::FilterOP( new InterfacePackingFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-InterfacePackingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfacePackingFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP InterfacePackingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfacePackingFilter ); }
 
-std::string
-InterfacePackingFilterCreator::keyname() const { return "InterfacePacking"; }
+// XRW TEMP std::string
+// XRW TEMP InterfacePackingFilterCreator::keyname() const { return "InterfacePacking"; }
+
+std::string InterfacePackingFilter::name() const {
+	return class_name();
+}
+
+std::string InterfacePackingFilter::class_name() {
+	return "InterfacePacking";
+}
+
+void InterfacePackingFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "distance_cutoff" , xsct_real , "Maximum distance between heavy atoms of the primary subunit(s) and neighboring subunits in order for the holes score to be included in the calculation." , "9.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "contact_dist" , xsct_real , "Maximum distance between CA or CB atoms of the primary subunit(s) and the other subunits to be included in the subpose used for the holes calculations. (Should this be change to heavy atoms and set to be the same value as distance_cutoff?)" , "10.0")
+		+ XMLSchemaAttribute::attribute_w_default( "lower_cutoff" , xsct_real , "Minimum passing holes score." , "-5" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_cutoff" , xsct_real , "Maximum passing holes score." , "5" )
+		+ XMLSchemaAttribute::required_attribute( "sym_dof_names" , xs_string , "Must be provided. Name(s) of the sym_dof(s) corresponding to the building block(s) for which to calculate the holes score(s)." )
+		+ XMLSchemaAttribute::attribute_w_default( "multicomp" , xsct_rosetta_bool , "When set to true, means that the system has multiple components. When set to false, the system has a single component." , "0" ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates Will Sheffler's holes score for atoms at inter-building block interfaces.. Works with symmetric assemblies with one or more building blocks. Be sure to set the -holes:dalphaball option!", attlist );
+}
+
+std::string InterfacePackingFilterCreator::keyname() const {
+	return InterfacePackingFilter::class_name();
+}
+
+protocols::filters::FilterOP
+InterfacePackingFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new InterfacePackingFilter );
+}
+
+void InterfacePackingFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfacePackingFilter::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // protocols

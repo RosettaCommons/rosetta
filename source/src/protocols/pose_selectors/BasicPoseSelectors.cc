@@ -31,6 +31,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/sort_predicates.hh>
 #include <basic/Tracer.hh>
 
@@ -50,7 +51,29 @@ LogicalSelector::LogicalSelector()
 {
 }
 
+
 LogicalSelector::~LogicalSelector() = default;
+
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+LogicalSelector::complex_type_generator_for_logical_selector( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	rosetta_scripts::PoseSelectorFactory::get_instance()->define_pose_selector_group( xsd );
+	//AttributeList attlist;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & rosetta_scripts::PoseSelectorFactory::pose_selector_group_name );
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen
+		->set_subelements_repeatable( subelements )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PoseSelectorFactory::complex_type_name_for_pose_selector );
+
+	return ct_gen;
+	//The children of this tag are other pose selectors
+
+}
 
 protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 {
@@ -131,6 +154,22 @@ protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector()
 	return protocols::rosetta_scripts::PoseSelectorOP( new AndSelector() );
 }
 
+void
+AndSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	AndSelector::provide_xml_schema( xsd );
+}
+
+// Selector
+void
+AndSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = LogicalSelector::complex_type_generator_for_logical_selector( xsd );
+	ct_gen->element_name( name() )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+}
+
+
 ////////////////////////////////////////////////////////////////////////
 // OrSelector
 
@@ -139,6 +178,21 @@ protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() 
 	return protocols::rosetta_scripts::PoseSelectorOP( new OrSelector() );
 }
 
+void
+OrSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	OrSelector::provide_xml_schema( xsd );
+}
+
+
+void
+OrSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = LogicalSelector::complex_type_generator_for_logical_selector( xsd );
+	ct_gen->element_name( name() )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+}
 ////////////////////////////////////////////////////////////////////////
 // TopNByProperty
 
@@ -147,11 +201,52 @@ protocols::rosetta_scripts::PoseSelectorOP TopNByPropertyCreator::create_selecto
 	return protocols::rosetta_scripts::PoseSelectorOP( new TopNByProperty() );
 }
 
+
+void
+TopNByPropertyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TopNByProperty::provide_xml_schema( xsd );
+}
+
 // Selector
 TopNByProperty::TopNByProperty() :
 	reporter_(/* NULL */),
 	order_(1)
 {
+}
+void
+TopNByProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+
+	rosetta_scripts::PosePropertyReporterFactory::get_instance()->define_pose_reporter_group( xsd );
+
+	XMLSchemaRestriction order_string;
+	order_string.name( "order_string");
+	order_string.base_type( xs_string );
+	order_string.add_restriction( xsr_enumeration, "asc" );
+	order_string.add_restriction( xsr_enumeration, "ascending" );
+	order_string.add_restriction( xsr_enumeration, "desc" );
+	order_string.add_restriction( xsr_enumeration, "descending" );
+	xsd.add_top_level_element( order_string );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "n", xsct_non_negative_integer, "Selection limit" )
+		+ XMLSchemaAttribute( "order", "order_string", "Ascending or descending order?" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_group_subelement( & rosetta_scripts::PosePropertyReporterFactory::pose_reporter_group_name );
+
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen
+		.element_name( name() )
+		.set_subelements_repeatable( subelements, 1, 1 )
+		.add_attributes( attlist )
+		.description( "XRW TO DO" )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PoseSelectorFactory::complex_type_name_for_pose_selector )
+		.write_complex_type_to_schema( xsd );
+
 }
 
 void TopNByProperty::parse_my_tag(
@@ -246,10 +341,38 @@ protocols::rosetta_scripts::PoseSelectorOP FilterCreator::create_selector() cons
 	return protocols::rosetta_scripts::PoseSelectorOP( new Filter() );
 }
 
+
+void
+FilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	Filter::provide_xml_schema( xsd );
+}
+
 // Selector
 Filter::Filter() :
 	filter_(/* NULL */)
 {
+}
+
+void
+Filter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	protocols::filters::FilterFactory::get_instance()->define_filter_xml_schema( xsd );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "filter", xs_string, "Name attribute of a filter that was defined earlier in the RosettaScript.");
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & filters::FilterFactory::filter_xml_schema_group_name );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen
+		.element_name( name() )
+		.set_subelements_repeatable( subelements, 0, 1 )
+		.add_attributes( attlist )
+		.description( "XRW TO DO" )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PoseSelectorFactory::complex_type_name_for_pose_selector )
+		.write_complex_type_to_schema( xsd );
+
 }
 
 void Filter::parse_my_tag(

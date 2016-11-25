@@ -35,11 +35,11 @@ public:
 		rb_jump_ = rb_jump;
 		threshold_ = threshold;
 	}
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new InterfaceHolesFilter( *this ) );
 	}
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override {
 		return protocols::filters::FilterOP( new InterfaceHolesFilter() );
 	}
 	InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
@@ -49,11 +49,23 @@ public:
 		rb_jump_ = init.rb_jump_;
 		threshold_ = init.threshold_;
 	};
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~InterfaceHolesFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size rb_jump_;
 	core::Real threshold_;

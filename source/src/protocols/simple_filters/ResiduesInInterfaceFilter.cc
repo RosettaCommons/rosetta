@@ -62,6 +62,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -69,11 +72,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
 
-protocols::filters::FilterOP
-ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }
 
-std::string
-ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }
+// XRW TEMP std::string
+// XRW TEMP ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }
 
 ResiduesInInterfaceFilter::~ResiduesInInterfaceFilter() = default;
 
@@ -130,6 +133,39 @@ ResiduesInInterfaceFilter::report_sm( core::pose::Pose const & pose ) const {
 	core::Size const interface_res( compute( pose ));
 	return( (core::Real) interface_res );
 }
+
+std::string ResiduesInInterfaceFilter::name() const {
+	return class_name();
+}
+
+std::string ResiduesInInterfaceFilter::class_name() {
+	return "ResInInterface";
+}
+
+void ResiduesInInterfaceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("residues", xsct_non_negative_integer, "Threshold number of residues in the interface.", "20")
+		+ XMLSchemaAttribute::attribute_w_default("jump_number", xsct_non_negative_integer, "jump number", "1");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters based upon the number of residues in the interface.", attlist );
+}
+
+std::string ResiduesInInterfaceFilterCreator::keyname() const {
+	return ResiduesInInterfaceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResiduesInInterfaceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResiduesInInterfaceFilter );
+}
+
+void ResiduesInInterfaceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResiduesInInterfaceFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

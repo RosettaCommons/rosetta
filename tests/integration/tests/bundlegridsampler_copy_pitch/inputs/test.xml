@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" />
+		<ScoreFunction name="tala" weights="talaris2014.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
@@ -8,18 +8,19 @@
 	</FILTERS>
 	<MOVERS>
 
-		<BundleGridSampler name="bgs1" helix_length=240 scorefxn="tala"
-				r0=8 omega0=0.1 delta_omega0=0 delta_omega1=0 delta_t=0 dump_pdbs=true z0_offset=0 pdb_prefix="bgs1" >
-			<Helix invert=false/>
-			<Helix delta_omega0=1.57079632679 pitch_from_helix=1 r0_min=6 r0_max=16 r0_samples=20 invert=true />
-			<Helix delta_omega0=3.141592654 invert=false pitch_from_helix=1 r0_copies_helix=2 />
-			<Helix delta_omega0=4.71238898038 invert=true />
+		<BundleGridSampler name="bgs1" helix_length="240" scorefxn="tala"
+				r0="8" omega0="0.1" delta_omega0="0" delta_omega1="0" delta_t="0" dump_pdbs="true" z0_offset="0" pdb_prefix="bgs1" >
+			<Helix invert="false"/>
+			<Helix delta_omega0="1.57079632679" pitch_from_helix="1" r0_min="6" r0_max="16" r0_samples="20" invert="true" />
+			<Helix delta_omega0="3.141592654" invert="false" pitch_from_helix="1" r0_copies_helix="2" />
+			<Helix delta_omega0="4.71238898038" invert="true" />
 		</BundleGridSampler>
 
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=bgs1 />
+		<Add mover="bgs1" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

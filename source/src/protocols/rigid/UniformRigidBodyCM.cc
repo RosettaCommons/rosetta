@@ -42,6 +42,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
@@ -63,20 +66,20 @@ using namespace core::environment;
 using namespace protocols::environment;
 
 // creator
-std::string
-UniformRigidBodyCMCreator::keyname() const {
-	return UniformRigidBodyCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP UniformRigidBodyCMCreator::keyname() const {
+// XRW TEMP  return UniformRigidBodyCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-UniformRigidBodyCMCreator::create_mover() const {
-	return ClientMoverOP( new UniformRigidBodyCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP UniformRigidBodyCMCreator::create_mover() const {
+// XRW TEMP  return ClientMoverOP( new UniformRigidBodyCM );
+// XRW TEMP }
 
-std::string
-UniformRigidBodyCMCreator::mover_name() {
-	return "UniformRigidBodyCM";
-}
+// XRW TEMP std::string
+// XRW TEMP UniformRigidBodyCM::mover_name() {
+// XRW TEMP  return "UniformRigidBodyCM";
+// XRW TEMP }
 
 UniformRigidBodyCM::UniformRigidBodyCM():
 	ClientMover(),
@@ -162,11 +165,11 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
 	return claim_list;
 }
 
-std::string UniformRigidBodyCM::get_name() const {
-	std::ostringstream name;
-	name << "UniformRigidBodyCM" << mobile_label_;
-	return name.str();
-}
+// XRW TEMP std::string UniformRigidBodyCM::get_name() const {
+// XRW TEMP  std::ostringstream name;
+// XRW TEMP  name << "UniformRigidBodyCM" << mobile_label_;
+// XRW TEMP  return name.str();
+// XRW TEMP }
 
 moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
 	return ClientMoverOP( new UniformRigidBodyCM() );
@@ -175,6 +178,48 @@ moves::MoverOP UniformRigidBodyCM::fresh_instance() const {
 moves::MoverOP UniformRigidBodyCM::clone() const{
 	return ClientMoverOP( new UniformRigidBodyCM( *this ) );
 }
+
+std::string UniformRigidBodyCM::get_name() const {
+	return mover_name();
+}
+
+std::string UniformRigidBodyCM::mover_name() {
+	return "UniformRigidBodyCM";
+}
+
+void UniformRigidBodyCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute::required_attribute("mobile", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::required_attribute("stationary", xs_string, "XRW TO DO");
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = UniformRigidBodyMover::complex_type_gen();
+	ct_gen->description( "XRW TO DO" );
+	ct_gen->element_name( mover_name() );
+	ct_gen->add_attributes( attlist );
+	ct_gen->write_complex_type_to_schema( xsd );
+
+	//protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+////////////////////////////////////
+
+std::string UniformRigidBodyCMCreator::keyname() const {
+	return UniformRigidBodyCM::mover_name();
+}
+
+protocols::moves::MoverOP
+UniformRigidBodyCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new UniformRigidBodyCM );
+}
+
+void UniformRigidBodyCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UniformRigidBodyCM::provide_xml_schema( xsd );
+}
+
 
 } // rigid
 } // protocols

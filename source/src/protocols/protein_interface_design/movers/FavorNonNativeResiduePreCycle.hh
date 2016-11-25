@@ -33,16 +33,28 @@ class FavorNonNativeResiduePreCycle : public protocols::moves::Mover
 public:
 	FavorNonNativeResiduePreCycle( core::Real const bonus = -1.5 ) : protocols::moves::Mover( "favor_non_native_residue" ), bonus_( bonus ) {
 	}
-	void apply( core::pose::Pose & pose ) {
+	void apply( core::pose::Pose & pose ) override {
 		FavorNonNativeResidue fnr( pose, bonus_ );
 	}
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const {
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle( bonus_ ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~FavorNonNativeResiduePreCycle();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real bonus_;
 };

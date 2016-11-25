@@ -29,11 +29,14 @@ namespace strand_assembly {
 class SandwichFeaturesCreator : public FeaturesReporterCreator
 {
 public:
-	SandwichFeaturesCreator();
-	virtual ~SandwichFeaturesCreator();
+	// XRW TEMP  SandwichFeaturesCreator();
+	// XRW TEMP  virtual ~SandwichFeaturesCreator();
 
-	virtual FeaturesReporterOP create_features_reporter() const;
-	virtual std::string type_name() const;
+	// XRW TEMP  virtual FeaturesReporterOP create_features_reporter() const;
+	// XRW TEMP  virtual std::string type_name() const;
+	protocols::features::FeaturesReporterOP create_features_reporter() const override;
+	std::string type_name() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace strand_assembly

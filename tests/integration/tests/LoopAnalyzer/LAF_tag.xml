@@ -4,9 +4,9 @@
   <SCOREFXNS>
   </SCOREFXNS>
   <FILTERS>
-    <LoopAnalyzerFilter name=LAF_tag use_tracer=true>
-      <Loop start=54 stop=64 cut=0 skip_rate=0.0 rebuild=false/>
-      <Loop start=74 stop=79 cut=0 skip_rate=0.0 rebuild=false/>
+    <LoopAnalyzerFilter name="LAF_tag" use_tracer="true">
+      <Loop start="54" stop="64" cut="0" skip_rate="0.0" rebuild="false"/>
+      <Loop start="74" stop="79" cut="0" skip_rate="0.0" rebuild="false"/>
     </LoopAnalyzerFilter>
   </FILTERS>
   <MOVERS>
@@ -14,6 +14,7 @@
   <APPLY_TO_POSE>
   </APPLY_TO_POSE>
   <PROTOCOLS>
-    <Add filter=LAF_tag/>
+    <Add filter="LAF_tag"/>
   </PROTOCOLS>
+
 </ROSETTASCRIPTS>

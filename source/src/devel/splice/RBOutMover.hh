@@ -35,7 +35,7 @@ public:
 
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -55,6 +55,18 @@ public:
 
 	bool jump_from_foldtree() const{ return jump_from_foldtree_; }
 	void jump_from_foldtree( bool const jfft ){ jump_from_foldtree_ = jfft;}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string template_pdb_fname_;

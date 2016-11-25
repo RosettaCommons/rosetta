@@ -36,13 +36,25 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const override { return "ScaleMapIntensities"; }
+	// XRW TEMP  std::string get_name() const override { return "ScaleMapIntensities"; }
 
 	moves::MoverOP clone() const override { return moves::MoverOP( new ScaleMapIntensities( *this ) ); }
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ScaleMapIntensities ); }
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real res_low_, res_high_, fade_width_, b_sharpen_;

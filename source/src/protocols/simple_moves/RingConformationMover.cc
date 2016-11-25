@@ -40,6 +40,9 @@
 // C++ headers
 #include <string>
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Construct tracers.
@@ -136,12 +139,6 @@ RingConformationMover::show(std::ostream & output) const
 
 
 // Mover methods
-std::string
-RingConformationMover::get_name() const
-{
-	return type();
-}
-
 protocols::moves::MoverOP
 RingConformationMover::clone() const
 {
@@ -308,25 +305,56 @@ RingConformationMover::setup_residue_list( core::pose::Pose & pose )
 
 // Creator methods ////////////////////////////////////////////////////////////
 // Return an up-casted owning pointer (MoverOP) to the mover.
-protocols::moves::MoverOP
-RingConformationMoverCreator::create_mover() const
-{
-	return moves::MoverOP( new RingConformationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RingConformationMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return moves::MoverOP( new RingConformationMover );
+// XRW TEMP }
 
 // Return the string identifier for the associated Mover (RingConformationMover).
-std::string
-RingConformationMoverCreator::keyname() const
-{
-	return RingConformationMoverCreator::mover_name();
+std::string RingConformationMover::get_name() const {
+	return mover_name();
 }
 
-// Static method that returns the keyname for performance reasons.
-std::string
-RingConformationMoverCreator::mover_name()
-{
+std::string RingConformationMover::mover_name() {
 	return "RingConformationMover";
 }
+
+void RingConformationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( [] (std::string const& name) {
+		return "RingConformationMover_subelement_" + name + "Type";
+		});
+	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"sample_high_energy_conformers", xsct_rosetta_bool,
+		"XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"Based on a given MoveMap, this mover selects movable cyclic residues and "
+		"flips their rings to an idealized ring conformer",
+		attlist, subelements );
+}
+
+std::string RingConformationMoverCreator::keyname() const {
+	return RingConformationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RingConformationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RingConformationMover );
+}
+
+void RingConformationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RingConformationMover::provide_xml_schema( xsd );
+}
+
 
 
 // Helper methods /////////////////////////////////////////////////////////////

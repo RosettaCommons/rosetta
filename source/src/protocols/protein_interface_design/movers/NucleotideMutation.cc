@@ -53,6 +53,9 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -64,25 +67,25 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.NucleotideMutation" );
 
-std::string
-NucleotideMutationCreator::keyname() const
-{
-	return NucleotideMutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NucleotideMutationCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return NucleotideMutation::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-NucleotideMutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NucleotideMutation );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP NucleotideMutationCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new NucleotideMutation );
+// XRW TEMP }
 
-std::string
-NucleotideMutationCreator::mover_name()
-{
-	return "NucleotideMutation";
-}
+// XRW TEMP std::string
+// XRW TEMP NucleotideMutation::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "NucleotideMutation";
+// XRW TEMP }
 
 NucleotideMutation::NucleotideMutation() :
-	Mover( NucleotideMutationCreator::mover_name() ),
+	Mover( NucleotideMutation::mover_name() ),
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
 	init_sequence_(""),
@@ -349,10 +352,10 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-NucleotideMutation::get_name() const {
-	return NucleotideMutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP NucleotideMutation::get_name() const {
+// XRW TEMP  return NucleotideMutation::mover_name();
+// XRW TEMP }
 
 void
 NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
@@ -409,6 +412,46 @@ bool NucleotideMutation::cache_task() const {
 void NucleotideMutation::cache_task( bool cache ) {
 	cache_task_ = cache;
 }
+
+std::string NucleotideMutation::get_name() const {
+	return mover_name();
+}
+
+std::string NucleotideMutation::mover_name() {
+	return "NucleotideMutation";
+}
+
+void NucleotideMutation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute( "init_sequence", xs_string, "Initial sequence" )
+		+ XMLSchemaAttribute::attribute_w_default( "continue_if_silent", xsct_rosetta_bool, "Make another mutation if the first mutation is silent", "true" )
+		// AMW XRW TODO: do we have a helper for reference pose parsing?
+		+ XMLSchemaAttribute( "reference_name", xs_string, "Saved reference pose" )
+		+ XMLSchemaAttribute( "reference_pdb_file", xs_string, "Saved reference pdb" )
+		+ XMLSchemaAttribute::attribute_w_default( "cache_task", xsct_rosetta_bool, "Cache the initially calculated packer task", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string NucleotideMutationCreator::keyname() const {
+	return NucleotideMutation::mover_name();
+}
+
+protocols::moves::MoverOP
+NucleotideMutationCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NucleotideMutation );
+}
+
+void NucleotideMutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NucleotideMutation::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

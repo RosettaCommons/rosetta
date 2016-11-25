@@ -56,31 +56,31 @@ public:
 
 	~InvrotTreeRCG();
 
-	virtual void
+	void
 	parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual void
-	generate_remodel_constraints( core::pose::Pose const & pose );
+	void
+	generate_remodel_constraints( core::pose::Pose const & pose ) override;
 
 	/// @brief sets up the allowed sequence positions for enzdes geometric constraints
-	virtual void
-	init( core::pose::Pose const & pose );
+	void
+	init( core::pose::Pose const & pose ) override;
 
 public:
 	// non-virtual member functions
@@ -90,6 +90,18 @@ public:
 
 	/// @brief sets up the invrot_tree_ and enzcst_io_ from an enzdes constraint filename.
 	void set_cstfile( std::string const & cstfilename );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 

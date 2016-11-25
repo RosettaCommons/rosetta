@@ -211,7 +211,7 @@ RNA_KinematicCloser::figure_out_dof_ids_and_offsets() {
 	/////////////////////////////////////////
 	// pivot 2
 	/////////////////////////////////////////
-	
+
 	id1 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c4prime_atom_index(), chainbreak_suite_ );
 	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ );
 	id3 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ );
@@ -219,7 +219,7 @@ RNA_KinematicCloser::figure_out_dof_ids_and_offsets() {
 		chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id( id1, id2, id3, id4 );
 	figure_out_offset( dof_id, dt_ang_[3 * 2 + 1] );
-	
+
 	id1 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().c3prime_atom_index(), chainbreak_suite_ );
 	id2 = AtomID( pose.residue_type( chainbreak_suite_ ).RNA_type().o3prime_atom_index(), chainbreak_suite_ );
 	id3 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index( "OVL1" ),

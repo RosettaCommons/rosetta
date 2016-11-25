@@ -60,7 +60,7 @@ public :
 	void initialize();
 
 	// @brief get name of this filter
-	std::string name() const override { return "DdGScan"; }
+	// XRW TEMP  std::string name() const override { return "DdGScan"; }
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
@@ -106,6 +106,18 @@ public :
 	) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	utility::vector1< ddG_data_tuple > calculate( std::ostream & out, core::pose::Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

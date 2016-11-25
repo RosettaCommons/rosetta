@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -40,35 +43,35 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
 
-std::string SpinMoverCreator::keyname() const
-{
-	return SpinMoverCreator::mover_name();
-}
+// XRW TEMP std::string SpinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SpinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SpinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SpinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SpinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SpinMover );
+// XRW TEMP }
 
-std::string
-SpinMoverCreator::mover_name() {
-	return "SpinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SpinMover::mover_name() {
+// XRW TEMP  return "SpinMover";
+// XRW TEMP }
 
 SpinMover::SpinMover( ) :
-	protocols::moves::Mover( SpinMoverCreator::mover_name()  )
+	protocols::moves::Mover( SpinMover::mover_name()  )
 	//protocols::moves::Mover ( "SpinMover" )
 { }
 
 SpinMover::SpinMover( core::Size jump_num ) :
-	protocols::moves::Mover( SpinMoverCreator::mover_name()  ),
+	protocols::moves::Mover( SpinMover::mover_name()  ),
 	// protocols::moves::Mover ( "SpinMover" ),
 	jump_num_(jump_num)
 { }
 
-std::string SpinMover::get_name() const {
-	return SpinMoverCreator::mover_name();
-}
+// XRW TEMP std::string SpinMover::get_name() const {
+// XRW TEMP  return SpinMover::mover_name();
+// XRW TEMP }
 
 void
 SpinMover::apply( core::pose::Pose & pose )
@@ -110,6 +113,37 @@ SpinMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & /*data*/,
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
 	TR<<"SpinMover was instantiated "<<std::endl;
 }
+
+std::string SpinMover::get_name() const {
+	return mover_name();
+}
+
+std::string SpinMover::mover_name() {
+	return "SpinMover";
+}
+
+void SpinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_num", xsct_non_negative_integer, "Jump across which to spin, numbered sequentially from 1", "1" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Spin one chain relative to another", attlist );
+}
+
+std::string SpinMoverCreator::keyname() const {
+	return SpinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SpinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SpinMover );
+}
+
+void SpinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SpinMover::provide_xml_schema( xsd );
+}
+
 
 
 }//movers

@@ -1,134 +1,135 @@
+<ROSETTASCRIPTS>
 This protocol first places one hot-spot residue by the place-scaffold approach and then uses the placesimultaneously approach to position two more hot-spot residues. To make it work quickly, the stub library only contains one sidechain from the native
 
-<dock_design>
 	<TASKOPERATIONS>
-		<PreventChainFromRepacking name=pr chain=2/>
+		<PreventChainFromRepacking name="pr" chain="2"/>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<stub_docking_low weights=interchain_cen hs_hash=10.0/>
-		<ddg_scorefxn weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0/>
-		<score12_coord_cst weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0>
-			<Reweight scoretype="coordinate_constraint" weight=1.0/>
-		</score12_coord_cst>
+		<ScoreFunction name="stub_docking_low" weights="interchain_cen" hs_hash="10.0"/>
+		<ScoreFunction name="ddg_scorefxn" weights="pre_talaris_2013_standard" patch="score12" hs_hash="0.0"/>
+		<ScoreFunction name="score12_coord_cst" weights="pre_talaris_2013_standard" patch="score12" hs_hash="0.0">
+			<Reweight scoretype="coordinate_constraint" weight="1.0"/>
+		</ScoreFunction>
   </SCOREFXNS>
   <FILTERS>
-		<Ddg name=ddg threshold=-10 scorefxn=ddg_scorefxn confidence=1.0/> recommended to use at least -15, but slower ###
-		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 residue=15A energy_cutoff=-0.001/>
-		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 residue=17A energy_cutoff=-0.001/>
-		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 residue=198A energy_cutoff=-0.001/>
-		<CompoundStatement name=either_hbond>
-			<OR filter_name=hbonds_15/>
-			<OR filter_name=hbonds_17/>
-			<OR filter_name=hbonds_198/>
+		<Ddg name="ddg" threshold="-10" scorefxn="ddg_scorefxn" confidence="1.0"/> recommended to use at least -15, but slower ###
+		<HbondsToResidue name="hbonds_15" partners="1" backbone="1" sidechain="1" residue="15A" energy_cutoff="-0.001"/>
+		<HbondsToResidue name="hbonds_17" partners="1" backbone="1" sidechain="1" residue="17A" energy_cutoff="-0.001"/>
+		<HbondsToResidue name="hbonds_198" partners="1" backbone="1" sidechain="1" residue="198A" energy_cutoff="-0.001"/>
+		<CompoundStatement name="either_hbond">
+			<OR filter_name="hbonds_15"/>
+			<OR filter_name="hbonds_17"/>
+			<OR filter_name="hbonds_198"/>
 		</CompoundStatement>
-		<CompoundStatement name=all_hbond>
-			<AND filter_name=hbonds_15/>
-			<AND filter_name=hbonds_17/>
-			<AND filter_name=hbonds_198/>
+		<CompoundStatement name="all_hbond">
+			<AND filter_name="hbonds_15"/>
+			<AND filter_name="hbonds_17"/>
+			<AND filter_name="hbonds_198"/>
 		</CompoundStatement>
-		<Sasa name=sasa threshold=800/>
+		<Sasa name="sasa" threshold="800"/>
 
-		<CompoundStatement name=hbond_ddg_sasa>
-			<AND filter_name=ddg/>
-			<AND filter_name=either_hbond/> should be all_hbond but too slow ###
-			<AND filter_name=sasa/>
+		<CompoundStatement name="hbond_ddg_sasa">
+			<AND filter_name="ddg"/>
+			<AND filter_name="either_hbond"/> should be all_hbond but too slow ###
+			<AND filter_name="sasa"/>
 		</CompoundStatement>
-		<CompoundStatement name=not_hbond_ddg_sasa>
-			<AND filter_name=true_filter/>
-			<ANDNOT filter_name=hbond_ddg_sasa/>
+		<CompoundStatement name="not_hbond_ddg_sasa">
+			<AND filter_name="true_filter"/>
+			<ANDNOT filter_name="hbond_ddg_sasa"/>
 		</CompoundStatement>
-		<AtomicContact name=at1 residue1=199A distance=6.5/> the following two interact with F216 in protA
-		<AtomicContact name=at2 residue1=17A distance=6.5/>
-		<AtomicContact name=at3 residue1=200A distance=5.5/> for pos1 Y200
-		<AtomicContact name=at4 residue1=16A distance=6.5/> for pos1 M16
+		<AtomicContact name="at1" residue1="199A" distance="6.5"/> the following two interact with F216 in protA
+		<AtomicContact name="at2" residue1="17A" distance="6.5"/>
+		<AtomicContact name="at3" residue1="200A" distance="5.5"/> for pos1 Y200
+		<AtomicContact name="at4" residue1="16A" distance="6.5"/> for pos1 M16
 		<CompoundStatement name="touch_phe_cleft">
-			<AND filter_name=at1/>
-			<AND filter_name=at2/>
+			<AND filter_name="at1"/>
+			<AND filter_name="at2"/>
 		</CompoundStatement>
 		<CompoundStatement name="touch_met_tyr">
-			<AND filter_name=at3/>
-			<AND filter_name=at4/>
+			<AND filter_name="at3"/>
+			<AND filter_name="at4"/>
 		</CompoundStatement>
-		<StubScore name=stub_score_filter>
+		<StubScore name="stub_score_filter">
 			<StubSets>
 				Add stubfile=1l6x.pos1_stubs.pdb/> This stubset is removed to save time ###
-				<Add stubfile=1l6x.pos3_stubs.pdb/>
-				<Add stubfile=1l6x.pos4_stubs.pdb/>
+				<Add stubfile="1l6x.pos3_stubs.pdb"/>
+				<Add stubfile="1l6x.pos4_stubs.pdb"/>
 			</StubSets>
 		</StubScore>
 
 
   </FILTERS>
   <MOVERS>
-    		<Docking name=dock fullatom=0 local_refine=0 score_low=stub_docking_low/>
-    		<Docking name=dockfa task_operations=pr fullatom=1 local_refine=1 optimize_fold_tree=0 score_high=score12_coord_cst/>
-		<If name=dock_if_not_pass filter_name=not_hbond_ddg_sasa true_mover_name=dockfa/>
-		<BackrubDD name=br scorefxn=score12 interface_distance_cutoff=10.0 moves=1000/>
-		<RepackMinimize name=des1 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 scorefxn_repack=soft_rep scorefxn_minimize=score_docking interface_cutoff_distance=10.0/>
-		<RepackMinimize name=des2 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>
-		<RepackMinimize name=des3 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>### It's recommended to use minimize_bb=1 here but too slow
-		<SaveAndRetrieveSidechains name=srsc/>
-		<Auction name=auction_mover>
+    		<Docking name="dock" fullatom="0" local_refine="0" score_low="stub_docking_low"/>
+    		<Docking name="dockfa" task_operations="pr" fullatom="1" local_refine="1" optimize_fold_tree="0" score_high="score12_coord_cst"/>
+		<If name="dock_if_not_pass" filter_name="not_hbond_ddg_sasa" true_mover_name="dockfa"/>
+		<BackrubDD name="br" scorefxn="score12" interface_distance_cutoff="10.0" moves="1000"/>
+		<RepackMinimize name="des1" minimize_bb="0" minimize_rb="1" scorefxn_repack="score12" scorefxn_minimize="score12" interface_cutoff_distance="10.0"/>
+		<RepackMinimize name="des2" scorefxn_repack="score12" scorefxn_minimize="score12" minimize_bb="0" minimize_rb="1" interface_cutoff_distance="10.0"/>
+		<RepackMinimize name="des3" scorefxn_repack="score12" scorefxn_minimize="score12" minimize_bb="0" minimize_rb="1" interface_cutoff_distance="10.0"/>### It's recommended to use minimize_bb=1 here but too slow
+		<SaveAndRetrieveSidechains name="srsc"/>
+		<Auction name="auction_mover">
 			<StubSets>
 				Add stubfile=1l6x.pos1_stubs.pdb/> removed to save time ###
-				<Add stubfile=1l6x.pos3_stubs.pdb/> filter_name=touch_phe_clef
-				<Add stubfile=1l6x.pos4_stubs.pdb/>
+				<Add stubfile="1l6x.pos3_stubs.pdb"/> filter_name=touch_phe_clef
+				<Add stubfile="1l6x.pos4_stubs.pdb"/>
 			</StubSets>
 		</Auction>
 
-		<PlacementMinimization name=placement_min>
+		<PlacementMinimization name="placement_min">
 			<StubSets>
 				Add stubfile=1l6x.pos1_stubs.pdb/>  removed to save time ###
-				<Add stubfile=1l6x.pos3_stubs.pdb/>
-				<Add stubfile=1l6x.pos4_stubs.pdb/>
+				<Add stubfile="1l6x.pos3_stubs.pdb"/>
+				<Add stubfile="1l6x.pos4_stubs.pdb"/>
 			</StubSets>
 		</PlacementMinimization>
 
-		<PlaceSimultaneously name=place_sim optimize_fold_tree=0 minimize_rb=1>
-			<StubSets explosion=3> #Name all the hotspot files below
+		<PlaceSimultaneously name="place_sim" optimize_fold_tree="0" minimize_rb="1">
+			<StubSets explosion="3"> #Name all the hotspot files below
 				Add stubfile=1l6x.pos1_stubs.pdb filter_name=touch_met_tyr/>### removed to save time
-				<Add stubfile=1l6x.pos3_stubs.pdb/>
-				<Add stubfile=1l6x.pos4_stubs.pdb/>
+				<Add stubfile="1l6x.pos3_stubs.pdb"/>
+				<Add stubfile="1l6x.pos4_stubs.pdb"/>
 			</StubSets>
-			<StubMinimize min_repeats_after_placement=2 >
+			<StubMinimize min_repeats_after_placement="2" >
 				Add mover_name=br/> save time ####
 			</StubMinimize>
 			<DesignMovers>
-				<Add mover_name=srsc/>
-				<Add mover_name=des1 coord_cst_std=1.0/>
-				<Add mover_name=des2 coord_cst_std=1.5/>
+				<Add mover_name="srsc"/>
+				<Add mover_name="des1" coord_cst_std="1.0"/>
+				<Add mover_name="des2" coord_cst_std="1.5"/>
 				Add mover_name=br/> #no need to specify user_constraints=0, it's implied
-				<Add mover_name=des3/>
+				<Add mover_name="des3"/>
 			</DesignMovers>
 		</PlaceSimultaneously>
-		<PlaceStub name=place_gln stubfile=1l6x.pos2_stubs.pdb add_constraints=1 place_scaffold=1 hurry=1 score_threshold=0 leave_coord_csts=1 post_placement_sdev=1>
+		<PlaceStub name="place_gln" stubfile="1l6x.pos2_stubs.pdb" add_constraints="1" place_scaffold="1" hurry="1" score_threshold="0" leave_coord_csts="1" post_placement_sdev="1">
 			<DesignMovers>
 			</DesignMovers>
 			<StubMinimize>
 			</StubMinimize>
 			<NotifyMovers> specify which downstream movers should be aware of the stub that was placed (to prevent repacking
-				<Add mover_name=place_sim/>
-				<Add mover_name=auction/>
-				<Add mover_name=placement_min/>
+				<Add mover_name="place_sim"/>
+				<Add mover_name="auction"/>
+				<Add mover_name="placement_min"/>
 			</NotifyMovers>
 		</PlaceStub>
-		<ParsedProtocol name=aggregate>
-			<Add mover_name=place_sim filter_name=either_hbond/>
-			<Add mover_name=dock_if_not_pass filter_name=either_hbond/>
+		<ParsedProtocol name="aggregate">
+			<Add mover_name="place_sim" filter_name="either_hbond"/>
+			<Add mover_name="dock_if_not_pass" filter_name="either_hbond"/>
 		</ParsedProtocol>
-		<LoopOver name=loopy mover_name=aggregate iterations=30 filter_name=hbond_ddg_sasa drift=0/> Use GenericMonteCarlo to identify low-ddg structures (slower) ###
+		<LoopOver name="loopy" mover_name="aggregate" iterations="30" filter_name="hbond_ddg_sasa" drift="0"/> Use GenericMonteCarlo to identify low-ddg structures (slower) ###
   </MOVERS>
   <APPLY_TO_POSE>
-      <SetupHotspotConstraints stubfile=1l6x.all_stubs.pdb cb_force=0.5/>
+      <SetupHotspotConstraints stubfile="1l6x.all_stubs.pdb" cb_force="0.5"/>
   </APPLY_TO_POSE>
   <PROTOCOLS>
 		Add mover_name=dock/> save time ###
-		<Add mover_name=place_gln/>
-		<Add filter_name=stub_score_filter/>
-		<Add mover_name=placement_min/>
-		<Add mover_name=auction_mover/>
-		<Add mover_name=place_sim/> ### Here it's better to use loopy, but takes more time
-		<Add filter_name=ddg/>
-		<Add filter_name=sasa/>
+		<Add mover_name="place_gln"/>
+		<Add filter_name="stub_score_filter"/>
+		<Add mover_name="placement_min"/>
+		<Add mover_name="auction_mover"/>
+		<Add mover_name="place_sim"/> ### Here it's better to use loopy, but takes more time
+		<Add filter_name="ddg"/>
+		<Add filter_name="sasa"/>
   </PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

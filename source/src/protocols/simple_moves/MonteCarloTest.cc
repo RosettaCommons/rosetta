@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility headers
@@ -44,27 +47,27 @@ using namespace protocols::moves;
 namespace protocols {
 namespace simple_moves {
 
-std::string
-MonteCarloTestCreator::keyname() const
-{
-	return MonteCarloTestCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloTestCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MonteCarloTest::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MonteCarloTestCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloTest );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MonteCarloTestCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MonteCarloTest );
+// XRW TEMP }
 
-std::string
-MonteCarloTestCreator::mover_name()
-{
-	return "MonteCarloTest";
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloTest::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MonteCarloTest";
+// XRW TEMP }
 
-std::string
-MonteCarloTest::get_name() const {
-	return MonteCarloTestCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloTest::get_name() const {
+// XRW TEMP  return MonteCarloTest::mover_name();
+// XRW TEMP }
 
 
 /// @brief default constructor
@@ -121,6 +124,48 @@ MonteCarloTest::apply( core::pose::Pose & pose ){
 	bool const accept( MC_mover_->boltzmann( pose ) );
 	TR<<"MC mover accept="<<accept<<std::endl;
 }
+
+std::string MonteCarloTest::get_name() const {
+	return mover_name();
+}
+
+std::string MonteCarloTest::mover_name() {
+	return "MonteCarloTest";
+}
+
+void MonteCarloTest::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"MC_name", xsct_rosetta_bool,
+		"name of a previously defined GenericMonteCarloMover");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Associated with GenericMonteCarlo. Simply test the MC criterion of the specified "
+		"GenericMonteCarloMover and save the current pose if accept. "
+		"Useful in conjunction with MonteCarloRecover (below) if you're running a trajectory consisting "
+		"of many different sorts of movers, and would like at each point to decide whether the pose has "
+		"made an improvement.",
+		attlist );
+}
+
+std::string MonteCarloTestCreator::keyname() const {
+	return MonteCarloTest::mover_name();
+}
+
+protocols::moves::MoverOP
+MonteCarloTestCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MonteCarloTest );
+}
+
+void MonteCarloTestCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MonteCarloTest::provide_xml_schema( xsd );
+}
+
 
 } // ns simple_moves
 } // ns protocols

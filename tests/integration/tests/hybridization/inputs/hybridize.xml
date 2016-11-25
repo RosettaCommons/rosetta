@@ -1,33 +1,34 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-	<stage1 weights="score3" symmetric=1>
-		<Reweight scoretype=elec_dens_fast weight=2.0/>
-		<Reweight scoretype=atom_pair_constraint weight=0.5/>
-	</stage1>
-	<stage2 weights="score4_smooth_cart" symmetric=1>
-		<Reweight scoretype=elec_dens_fast weight=2.0/>
-		<Reweight scoretype=atom_pair_constraint weight=0.5/>
-	</stage2>
-	<fullatom weights="talaris2013" symmetric=1>
-		<Reweight scoretype=pro_close weight=0.0/>
-		<Reweight scoretype=cart_bonded weight=0.5/>
-		<Reweight scoretype=atom_pair_constraint weight=0.3/>
-	</fullatom>
+	<ScoreFunction name="stage1" weights="score3" symmetric="1">
+		<Reweight scoretype="elec_dens_fast" weight="2.0"/>
+		<Reweight scoretype="atom_pair_constraint" weight="0.5"/>
+	</ScoreFunction>
+	<ScoreFunction name="stage2" weights="score4_smooth_cart" symmetric="1">
+		<Reweight scoretype="elec_dens_fast" weight="2.0"/>
+		<Reweight scoretype="atom_pair_constraint" weight="0.5"/>
+	</ScoreFunction>
+	<ScoreFunction name="fullatom" weights="talaris2013" symmetric="1">
+		<Reweight scoretype="pro_close" weight="0.0"/>
+		<Reweight scoretype="cart_bonded" weight="0.5"/>
+		<Reweight scoretype="atom_pair_constraint" weight="0.3"/>
+	</ScoreFunction>
 	</SCOREFXNS>
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<Hybridize name=hybridize stage1_scorefxn=stage1 stage2_scorefxn=stage2 fa_scorefxn=fullatom batch=1 stage1_increase_cycles=0.05 stage2_increase_cycles=0.05 stage2.5_increase_cycles=0.05 linmin_only=1 add_hetatm=1>
-			<Fragments 3mers="inputs/1bbh.3mers_trim5" 9mers="inputs/1bbh.9mers_trim5"/>
-			<Template pdb="inputs/model1.pdb" weight=0.27 symmdef="inputs/1bbh.symm"/>
-			<Template pdb="inputs/model2.pdb" weight=0.25 symmdef="inputs/1bbh.symm"/>
+		<Hybridize name="hybridize" stage1_scorefxn="stage1" stage2_scorefxn="stage2" fa_scorefxn="fullatom" batch="1" stage1_increase_cycles="0.05" stage2_increase_cycles="0.05" stage2.5_increase_cycles="0.05" linmin_only="1" add_hetatm="1">
+			<Fragments three_mers="inputs/1bbh.3mers_trim5" nine_mers="inputs/1bbh.9mers_trim5"/>
+			<Template pdb="inputs/model1.pdb" weight="0.27" symmdef="inputs/1bbh.symm"/>
+			<Template pdb="inputs/model2.pdb" weight="0.25" symmdef="inputs/1bbh.symm"/>
 		</Hybridize>
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=hybridize/>
+		<Add mover="hybridize"/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

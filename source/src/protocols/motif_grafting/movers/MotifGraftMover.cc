@@ -74,6 +74,9 @@
 //Include my headers
 #include <protocols/motif_grafting/movers/MotifGraftMover.hh>
 #include <protocols/motif_grafting/movers/MotifGraftCreator.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 /**@brief This is a protocol... **/
@@ -1931,23 +1934,166 @@ protocols::moves::MoverOP MotifGraftMover::clone() const
 	return protocols::moves::MoverOP( new MotifGraftMover( *this ) );
 }
 
-/**@brief class instance creator**/
-protocols::moves::MoverOP MotifGraftCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new MotifGraftMover );
+std::string MotifGraftMover::get_name() const {
+	return mover_name();
 }
 
-/**@brief Function that sets the key used to call the mover from RosettaScripts**/
-std::string MotifGraftCreator::keyname() const
-{
+std::string MotifGraftMover::mover_name() {
 	return "MotifGraft";
 }
 
-/**@brief Function that sets the mover name**/
-std::string MotifGraftCreator::mover_name()
+void MotifGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return "MotifGraftMover";
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"context_structure", xs_string,
+		"The path/name of the context structure pdb");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"motif_structure", xs_string,
+		"The path/name of the motif pdb "
+		"(can contain multiple discontiguos motif separated by the keyword TER)");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"RMSD_tolerance", xsct_real,
+		"The maximum RMSD tolerance (Angstrom) for the alignment");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"NC_points_RMSD_tolerance", xsct_real,
+		"The maximum RMSD tolerance (Angstrom) for the alignment",
+		std::to_string(std::numeric_limits<float>::max()));
+	attlist + XMLSchemaAttribute::required_attribute(
+		"clash_score_cutoff", xsct_non_negative_integer,
+		"The maximum number of atomic clashes that are tolerated. "
+		"The number of atom clashes are = (motif vs scaffold) + (scaffold vs pose), "
+		"after the translation and mutation (to the \"clash_test_residue\") of the scaffold. "
+		"Recommended: \"5\"");
+	attlist + XMLSchemaAttribute(
+		"combinatory_fragment_size_delta", xs_string,
+		"Is a string separated by a colon that defines the "
+		"maximum number of amino acids in which the Motif size "
+		"can be variated in the N- and C-terminal regions "
+		"(e.g. \"positive-int:positive-int\"). If several fragments are "
+		"present the values should be specified by the addition of a "
+		"comma (eg. 0:0, 1:2, 0:3). "
+		"All the possible combinations in deltas of 1 amino acid will be tested");
+	attlist + XMLSchemaAttribute(
+		"max_fragment_replacement_size_delta", xs_string,
+		"Is a string separated by a semicolon that specifies a range with "
+		"the minimum and maximum size difference of the fragment that can "
+		"be replaced in the scaffold. For example: \"-1:2\", means that the "
+		"fragment replaced in the scaffold can be in the range of motifSize-1"
+		"to motifSize+2, practically: if the motif size is 10a.a., in this "
+		"example the motif can replace a fragment in the scaffold of 9,10 "
+		"or 11 amino acids. (possible values: negative-int:positive-int). "
+		"If several fragments are present the values should be specified by "
+		"the addition of a comma (eg. -1:0, -1:2, 0:3). This option has "
+		"effect only if the alignment mode is set to full_motif_bb_alignment=\"0\"");
+
+	XMLSchemaRestriction clash_test_residue_enum;
+	clash_test_residue_enum.name("clash_test_residue_names");
+	clash_test_residue_enum.base_type(xs_string);
+	clash_test_residue_enum.add_restriction( xsr_enumeration, "GLY" );
+	clash_test_residue_enum.add_restriction( xsr_enumeration, "ALA" );
+	clash_test_residue_enum.add_restriction( xsr_enumeration, "VAL" );
+	clash_test_residue_enum.add_restriction( xsr_enumeration, "NATIVE" );
+	xsd.add_top_level_element(clash_test_residue_enum);
+
+	attlist + XMLSchemaAttribute(
+		"clash_test_residue", "clash_test_residue_names",
+		"The Motif will be mutated before test for clashes (possible values: "
+		"\"GLY\", \"ALA\", \"VAL\", \"NATIVE\"), "
+		"except if the option \"NATIVE\" is specified. "
+		"It is recommended to use \"GLY\" or \"ALA\"");
+
+	attlist + XMLSchemaAttribute(
+		"hotspots", xs_string,
+		"Is a string separated by a semicolon that defines the index of "
+		"the aminoacids that are considered hotspots. "
+		"i.e. that this positions will not be mutated for clash check "
+		"and will be labeled in the PDBinfo. The format is "
+		"\"index1:index2:...:indexN\"). If several fragments are present "
+		"the values should be specified by the addition of a comma "
+		"\"(eg. 0:1:3,1:2,0:3:5)\"");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"full_motif_bb_alignment", xsct_rosetta_bool,
+		"Boolean that defines the motif fragment(s) alignment mode is "
+		"full Backbone or not (i.e. only N-C- points)", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"allow_independent_alignment_per_fragment", xsct_rosetta_bool,
+		"**EXPERIMENTAL** When more that one fragment is present, "
+		"after the global alignment, this option will allow each fragment "
+		"to re-align independently to the scaffold. "
+		"In most cases you want this option to be turned OFF", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"graft_only_hotspots_by_replacement", xsct_rosetta_bool,
+		"Analogous to the old multigraft code option \"fragment replacement\", "
+		"this option will only align the scaffold, and then copy the side-chains "
+		"identities and torsions (only for hotspots). No BB will be modified. "
+		"This option is useful only if the RMSD between the motif and the "
+		"target fragment in the scaffold is very low (e.g. less than 0.3 A), "
+		"otherwise you can expect extraneous results", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"only_allow_if_N_point_match_aa_identity", xsct_rosetta_bool,
+		"This option will only perform grafts if the N-/C- point amino acids "
+		"in the motif match the amino acids to be replaced in the target "
+		"Scaffold fragment. This can be useful if for example one is looking "
+		"to replace a fragment that starts in a S-S bridge", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"only_allow_if_C_point_match_aa_identity", xsct_rosetta_bool,
+		"This option will only perform grafts if the N-/C- point amino acids "
+		"in the motif match the amino acids to be replaced in the target "
+		"Scaffold fragment. This can be useful if for example one is looking "
+		"to replace a fragment that starts in a S-S bridge", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"revert_graft_to_native_sequence", xsct_rosetta_bool,
+		"This option will revert/transform/modify the sequence of the graft "
+		"piece(s) in the sequence of the native scaffold, except the hotspots. "
+		"This option only can work in conjunction with the full_bb alignment "
+		"mode (full_motif_bb_alignment=\"1\") and, of course, it only makes "
+		"sense if you are replacing fragments in the target scaffold that "
+		"are of the same size of your motif, which is the default "
+		"behavior for full_bb alignment.", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"allow_repeat_same_graft_output", xsct_rosetta_bool,
+		"If turned on it will prevent the generation of repeated outputs, "
+		"in combination with a large number of -nstruc (e.g. 100), it can "
+		"be useful to extract all the matches without repetition, since when "
+		"the last n-graft match is reached the mover will stop. "
+		"if turned off, the usual -nstruct behavior will happen, that is: "
+		"rosetta will stop only when -nstructs are generated "
+		"(even if it has to repeat n-times the same result) or if the mover "
+		"fails (i.e. no graft matches at all).", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd,
+		mover_name(),
+		"MotifGraft is a new implementation of the well know motif grafting protocol. "
+		"The protocol can recapitulate previous grafts made by the previous "
+		"Fortran protocol (de novo loop insertions has not been implemented yet). "
+		"The current protocol ONLY performs the GRAFT of the fragment(s), "
+		"hence invariably, at least, it MUST be followed by design and minimization/repacking steps",
+		attlist );
 }
+
+std::string MotifGraftCreator::keyname() const {
+	return MotifGraftMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MotifGraftCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MotifGraftMover );
+}
+
+void MotifGraftCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MotifGraftMover::provide_xml_schema( xsd );
+}
+
 
 
 

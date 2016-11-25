@@ -1,5 +1,5 @@
     <PROTOCOLS>
-        <Add mover=terminal_bond1/>
-        <Add mover=terminal_bond2/>
-        <Add mover=packer/>
+        <Add mover="terminal_bond1"/>
+        <Add mover="terminal_bond2"/>
+        <Add mover="packer"/>
     </PROTOCOLS>

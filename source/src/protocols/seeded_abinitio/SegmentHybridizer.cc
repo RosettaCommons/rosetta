@@ -91,6 +91,9 @@
 
 #include <basic/Tracer.hh>
 #include <boost/unordered/unordered_map.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace seeded_abinitio {
@@ -98,26 +101,8 @@ namespace seeded_abinitio {
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.movers.SegmentHybridizer" );
 static THREAD_LOCAL basic::Tracer TR_ccd( "protocols.seeded_abinitio.movers.SegmentHybridizer_ccd" );
 
-std::string
-SegmentHybridizerCreator::keyname() const
-{
-	return SegmentHybridizerCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-SegmentHybridizerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SegmentHybridizer );
-}
-
-std::string
-SegmentHybridizerCreator::mover_name()
-{
-	return "SegmentHybridizer";
-}
-
-
 SegmentHybridizer::SegmentHybridizer() :
-	Mover( SegmentHybridizerCreator::mover_name() ),
+	Mover( SegmentHybridizer::mover_name() ),
 	cartfrag_overlap_(2)
 	/*big_( 9 ),
 	small_( 3 ),
@@ -546,12 +531,6 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 	}
 }
 
-std::string
-SegmentHybridizer::get_name() const {
-	return SegmentHybridizerCreator::mover_name();
-}
-
-
 void
 SegmentHybridizer::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
@@ -588,7 +567,7 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 		//need an assertion for the presence of these or at least for the option file
 		if ( btag->getName() != "Span" ) continue;
-		
+
 		std::string const beginS( btag->getOption<std::string>( "begin" ) );
 		std::string const endS( btag->getOption<std::string>( "end" ) );
 
@@ -605,6 +584,143 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 	}//end b-tags
 }//end parse tag
+
+std::string SegmentHybridizer::get_name() const {
+	return mover_name();
+}
+
+std::string SegmentHybridizer::mover_name() {
+	return "SegmentHybridizer";
+}
+
+void SegmentHybridizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "fa_scorefxn");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"frag_big", xsct_non_negative_integer,
+		"what fragment size should be used to close the gaps?",
+		"9");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"frag_smal", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"3");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"nfrags", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"50");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cartfrag_overlap", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"2");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_seq", xsct_rosetta_bool,
+		"how to pick the fragments, as in either only secondary structure dependent or secondary structure and sequence dependent",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"rms_frags", xsct_real,
+		"at what size of a break to use the cartesian minimizer to close the gap",
+		"0.5");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"auto_mm", xsct_rosetta_bool,
+		"should the movemap (defines what should be allowed to minimize) be set automatically?",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"frag_tries", xs_integer,
+		"how many fragments should be tried?",
+		"100");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mc_cycles", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"200");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"temp", xsct_real,
+		"XSD XRW: TO DO",
+		"2.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_frags", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_cycles", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"5");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"all_movable", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"extra_min", xsct_rosetta_bool,
+		"XSD XRW: TO DO",
+		"false");
+
+	XMLSchemaSimpleSubelementList ssl;
+	AttributeList ssl_attlist;
+	ssl_attlist + XMLSchemaAttribute(
+		"begin", xs_string,
+		"XSD XRW: TO DO");
+
+	ssl_attlist + XMLSchemaAttribute(
+		"end", xs_string,
+		"XSD XRW: TO DO");
+
+	ssl_attlist + XMLSchemaAttribute::attribute_w_default(
+		"extend_outside", xsct_non_negative_integer,
+		" how far to go outside of the loop to allow fragement hybridization for loop closure (note, if you go too far out it might not close the loop...)",
+		"5");
+
+	ssl_attlist + XMLSchemaAttribute::attribute_w_default(
+		"extend_inside", xsct_non_negative_integer,
+		"XSD XRW: TO DO",
+		"1");
+
+	ssl.add_simple_subelement(
+		"Span", ssl_attlist,
+		"pan defines the loop of interest, can be automated or "
+		"everything can be used and then it will just try to "
+		"fix every possible gap");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"SegmentHybridize takes the principle from the cartesian hybridize protocol "
+		"to close loops. it will align fragments to the broken section until the ends "
+		"are close enough (as defined through rms_frags) to use the cartesian "
+		"minimizer for closure. The principle is to allow small breaks to close "
+		"one big gap, with the idea of closing the small ones through minimization. "
+		"Can be used for loop closure or grafting (still very experimental).",
+		attlist, ssl);
+}
+
+std::string SegmentHybridizerCreator::keyname() const {
+	return SegmentHybridizer::mover_name();
+}
+
+protocols::moves::MoverOP
+SegmentHybridizerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SegmentHybridizer );
+}
+
+void SegmentHybridizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SegmentHybridizer::provide_xml_schema( xsd );
+}
+
 
 } //seeded_abinitio
 } //protocols

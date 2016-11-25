@@ -31,6 +31,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.NcontactsFilter" );
@@ -121,11 +124,54 @@ NcontactsFilter::parse_my_tag(
 	filter_value_ = tag->getOption< Real >( "value", 0.0 );
 }
 
-protocols::filters::FilterOP
-NcontactsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NcontactsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP NcontactsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NcontactsFilter ); }
 
-std::string
-NcontactsFilterCreator::keyname() const { return "Ncontacts"; }
+// XRW TEMP std::string
+// XRW TEMP NcontactsFilterCreator::keyname() const { return "Ncontacts"; }
+
+std::string NcontactsFilter::name() const {
+	return class_name();
+}
+
+std::string NcontactsFilter::class_name() {
+	return "Ncontacts";
+}
+
+void NcontactsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction type;
+	type.name( "ncontacts_filter_type" );
+	type.base_type( xs_string );
+	type.add_restriction( xsr_enumeration, "sidechain_heavy_apolar_atm" );
+	type.add_restriction( xsr_enumeration, "all_heavy_atm" );
+	type.add_restriction( xsr_enumeration, "sidechain_heavy_atm_apolar_aa" );
+	type.add_restriction( xsr_enumeration, "ss_entropy" );
+	xsd.add_top_level_element( type );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "type", "ncontacts_filter_type", "XRW TO DO", "sidechain_heavy_apolar_atm" )
+		+ XMLSchemaAttribute::attribute_w_default( "value", xsct_real, "XRW TO DO", "0.0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string NcontactsFilterCreator::keyname() const {
+	return NcontactsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+NcontactsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new NcontactsFilter );
+}
+
+void NcontactsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NcontactsFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

@@ -63,6 +63,7 @@
 // C++ headers
 #include <map>
 
+#include <core/select/residue_selector/util.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
@@ -71,6 +72,9 @@
 
 //Auto Headers
 #include <protocols/simple_filters/DdgFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 using namespace core;
@@ -85,11 +89,11 @@ namespace filters {
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToResidueFilter" );
 using core::pose::Pose;
 
-protocols::filters::FilterOP
-HbondsToResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToResidueFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HbondsToResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToResidueFilter ); }
 
-std::string
-HbondsToResidueFilterCreator::keyname() const { return "HbondsToResidue"; }
+// XRW TEMP std::string
+// XRW TEMP HbondsToResidueFilterCreator::keyname() const { return "HbondsToResidue"; }
 
 /// @brief Default constructor.
 ///
@@ -289,6 +293,49 @@ HbondsToResidueFilter::set_selector(
 }
 
 HbondsToResidueFilter::~HbondsToResidueFilter() {}
+
+std::string HbondsToResidueFilter::name() const {
+	return class_name();
+}
+
+std::string HbondsToResidueFilter::class_name() {
+	return "HbondsToResidue";
+}
+
+void HbondsToResidueFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "partners", xsct_non_negative_integer, "H-bonding partner threshold for passing" )
+		+ XMLSchemaAttribute::attribute_w_default( "energy_cutoff", xsct_real, "Energy below which a H-bond counts", "-0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb_bb", xsct_rosetta_bool, "Count backbone-backbone H-bonds", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "backbone", xsct_rosetta_bool, "Count backbone H-bonds", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "sidechain", xsct_rosetta_bool, "Count sidechain H-bonds", "1" )
+		+ XMLSchemaAttribute( "residue", xsct_refpose_enabled_residue_number, "Particular residue of interest" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "from_same_chain", xsct_rosetta_bool, "Count residues from the same chain in H-bonds", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "from_other_chains", xsct_rosetta_bool, "Count residues from the other chains in H-bonds", "true" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter counts the number of residues that form sufficiently energetically favorable H-bonds to a selected residue", attlist );
+}
+
+std::string HbondsToResidueFilterCreator::keyname() const {
+	return HbondsToResidueFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HbondsToResidueFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HbondsToResidueFilter );
+}
+
+void HbondsToResidueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HbondsToResidueFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

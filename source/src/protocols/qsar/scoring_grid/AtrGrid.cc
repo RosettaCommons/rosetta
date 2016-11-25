@@ -14,10 +14,13 @@
 #include <protocols/qsar/scoring_grid/AtrGrid.hh>
 #include <protocols/qsar/scoring_grid/AtrGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
@@ -30,7 +33,7 @@ namespace scoring_grid {
 
 std::string AtrGridCreator::keyname()const
 {
-	return AtrGridCreator::grid_name();
+	return AtrGrid::grid_name();
 }
 
 GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -48,10 +51,9 @@ GridBaseOP AtrGridCreator::create_grid() const
 	return GridBaseOP( new AtrGrid() );
 }
 
-
-std::string AtrGridCreator::grid_name()
+void AtrGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "AtrGrid";
+	AtrGrid::provide_xml_schema( xsd );
 }
 
 
@@ -173,6 +175,27 @@ void AtrGrid::refresh(
 		}
 		// else don't add this ligand to the grid
 	}
+
+}
+
+std::string AtrGrid::grid_name()
+{
+	return "AtrGrid";
+}
+
+void AtrGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" )
+		+ XMLSchemaAttribute( "bb", xsct_real, "The value assigned to the grid for backbone atoms; negative values are considered favorable. If provided, then both 'sc' and 'ligand' attributes need to be provided also" )
+		+ XMLSchemaAttribute( "sc", xsct_real, "The value assigned to the grid for sidechain atoms; negative values are considered favorable. If provided, then both 'bb' and 'ligand' attributes need to be provided also" )
+		+ XMLSchemaAttribute( "ligand", xsct_real, "The value assigned to the grid for ligand atoms; negative values are considered favorable. If provided, then both 'bb' and 'sc' attributes need to be provided also" )
+		+ XMLSchemaAttribute( "inner_radius", xsct_real, "The size of the inner radius used when defining the grid, in Angstroms; if provided, then 'outer_radius' attribute must be provided also; a default value of 2.25A is used if not provided" )
+		+ XMLSchemaAttribute( "outer_radius", xsct_real, "The size of hte outer radius used when defining the grid, in Angstroms; if provided, then the 'inner_radius' attribute must be provided also; a default value of 4.75A" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that gives bonuses for being within a certain distance range of an atom -- that is, between the inner radius to outer radius distances", attributes );
 
 }
 

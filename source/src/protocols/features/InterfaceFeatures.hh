@@ -18,6 +18,8 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <core/scoring/ScoreFunction.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -44,8 +46,8 @@ public:
 	~InterfaceFeatures() override;
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
@@ -163,6 +165,18 @@ public:
 	/// @brief Gets all possible interface combinations of a given pose.
 	void
 	make_interface_combos(core::pose::Pose const & pose, utility::vector1<std::string> & interfaces);
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

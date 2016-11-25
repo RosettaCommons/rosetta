@@ -41,7 +41,9 @@
 #include <utility/excn/Exceptions.hh>
 #include <ObjexxFCL/format.hh>
 
-// Boost Headers
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.StoreCompoundTaskMover" );
 
@@ -350,14 +352,14 @@ StoreCompoundTaskMover::parse_my_tag(
 }
 
 // @brief Identification
-std::string StoreCompoundTaskMoverCreator::keyname() const { return StoreCompoundTaskMoverCreator::mover_name(); }
-std::string StoreCompoundTaskMoverCreator::mover_name() { return "StoreCompoundTaskMover"; }
-std::string StoreCompoundTaskMover::get_name() const { return "StoreCompoundTaskMover"; }
+// XRW TEMP std::string StoreCompoundTaskMoverCreator::keyname() const { return StoreCompoundTaskMover::mover_name(); }
+// XRW TEMP std::string StoreCompoundTaskMover::mover_name() { return "StoreCompoundTaskMover"; }
+// XRW TEMP std::string StoreCompoundTaskMover::get_name() const { return "StoreCompoundTaskMover"; }
 
-protocols::moves::MoverOP
-StoreCompoundTaskMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StoreCompoundTaskMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StoreCompoundTaskMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::clone() const {
@@ -368,6 +370,83 @@ protocols::moves::MoverOP
 StoreCompoundTaskMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
 }
+
+std::string StoreCompoundTaskMover::get_name() const {
+	return mover_name();
+}
+
+std::string StoreCompoundTaskMover::mover_name() {
+	return "StoreCompoundTaskMover";
+}
+
+void StoreCompoundTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction compound_task_behavior;
+	compound_task_behavior.name( "compound_task_behavior" );
+	compound_task_behavior.base_type( xs_string );
+	compound_task_behavior.add_restriction( xsr_enumeration, "" );
+	compound_task_behavior.add_restriction( xsr_enumeration, "prevent_repacking" );
+	compound_task_behavior.add_restriction( xsr_enumeration, "restrict_to_repacking" );
+	xsd.add_top_level_element( compound_task_behavior );
+
+
+	XMLSchemaRestriction compound_task_mode;
+	compound_task_mode.name( "compound_task_mode" );
+	compound_task_mode.base_type( xs_string );
+	compound_task_mode.add_restriction( xsr_enumeration, "packable" );
+	compound_task_mode.add_restriction( xsr_enumeration, "designable" );
+	xsd.add_top_level_element( compound_task_mode );
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "task_name", xs_string, "XRW_TODO" )
+		//I'm calling these defaults since the empty string is a valid setting
+		+ XMLSchemaAttribute::attribute_w_default( "true_behavior", "compound_task_behavior", "XRW TO DO", "")
+		+ XMLSchemaAttribute::attribute_w_default( "false_behavior", "compound_task_behavior", "XRW TO DO",  "")
+		+ XMLSchemaAttribute::attribute_w_default( "mode", "compound_task_mode", "XRW TO DO", "packable" )
+		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	AttributeList subtag_attributes;
+	//All subtags have the same possible attributes
+	subtag_attributes
+		//This doesn't use parse_task_operations for whatever reason
+		//takes a cslist of task operations
+		+ XMLSchemaAttribute( "task_operations", xs_string, "XRW_TODO" );
+
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "AND", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "OR", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "XOR", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "NOR", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "NAND", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "ORNOT", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "ANDNOT", subtag_attributes, "XRW_TODO" )
+		.add_simple_subelement( "NOT", subtag_attributes, "XRW_TODO" );
+
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW_TODO", attlist, subelements );
+}
+
+std::string StoreCompoundTaskMoverCreator::keyname() const {
+	return StoreCompoundTaskMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StoreCompoundTaskMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
+}
+
+void StoreCompoundTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StoreCompoundTaskMover::provide_xml_schema( xsd );
+}
+
 
 } // task_operations
 } // toolbox

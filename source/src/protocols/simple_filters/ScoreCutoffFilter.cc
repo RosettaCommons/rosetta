@@ -41,6 +41,9 @@
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -257,11 +260,45 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 
 }
 
-filters::FilterOP
-ScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new ScoreCutoffFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP ScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new ScoreCutoffFilter ); }
 
-std::string
-ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }
+// XRW TEMP std::string
+// XRW TEMP ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }
+
+std::string ScoreCutoffFilter::name() const {
+	return class_name();
+}
+
+std::string ScoreCutoffFilter::class_name() {
+	return "ScoreCutoffFilter";
+}
+
+void ScoreCutoffFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("report_residue_pair_energies", xsct_non_negative_integer, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::attribute_w_default("cutoff", xsct_real, "XRW TO DO", "10000.0")
+		+ XMLSchemaAttribute::attribute_w_default("pdb_numbering", xsct_rosetta_bool, "XRW TO DO", "true");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ScoreCutoffFilterCreator::keyname() const {
+	return ScoreCutoffFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ScoreCutoffFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ScoreCutoffFilter );
+}
+
+void ScoreCutoffFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreCutoffFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

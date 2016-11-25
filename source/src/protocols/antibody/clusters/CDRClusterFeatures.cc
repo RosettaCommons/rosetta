@@ -35,6 +35,10 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/datacache/DataMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
 
 namespace protocols {
 namespace antibody {
@@ -61,10 +65,10 @@ CDRClusterFeatures::CDRClusterFeatures():
 
 CDRClusterFeatures::~CDRClusterFeatures(){}
 
-std::string
-CDRClusterFeatures::type_name() const {
-	return "CDRClusterFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP CDRClusterFeatures::type_name() const {
+// XRW TEMP  return "CDRClusterFeatures";
+// XRW TEMP }
 
 void
 CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {
@@ -190,6 +194,40 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 	}
 	return 0;
 }
+
+std::string CDRClusterFeatures::type_name() const {
+	return class_name();
+}
+
+std::string CDRClusterFeatures::class_name() {
+	return "CDRClusterFeatures";
+}
+
+void CDRClusterFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "cdrs", xs_string, "Comma-separated list of CDRs for which to report features", "L1,L2,L3,H1,H2,H3" )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string, "Numbering scheme for input antibody" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Reports clusters for the specified CDRs", attlist );
+}
+
+std::string CDRClusterFeaturesCreator::type_name() const {
+	return CDRClusterFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+CDRClusterFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new CDRClusterFeatures );
+}
+
+void CDRClusterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CDRClusterFeatures::provide_xml_schema( xsd );
+}
+
 
 
 

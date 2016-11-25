@@ -110,6 +110,9 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //#include <devel/matdes/RestrictIdentitiesOperation.hh>
 
@@ -130,20 +133,20 @@ namespace hbnet {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.hbnet.HBNetStapleInterface" );
 
-std::string
-HBNetStapleInterfaceCreator::keyname() const {
-	return HBNetStapleInterfaceCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HBNetStapleInterfaceCreator::keyname() const {
+// XRW TEMP  return HBNetStapleInterface::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HBNetStapleInterfaceCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HBNetStapleInterface );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HBNetStapleInterfaceCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HBNetStapleInterface );
+// XRW TEMP }
 
-std::string
-HBNetStapleInterfaceCreator::mover_name() {
-	return "HBNetStapleInterface";
-}
+// XRW TEMP std::string
+// XRW TEMP HBNetStapleInterface::mover_name() {
+// XRW TEMP  return "HBNetStapleInterface";
+// XRW TEMP }
 
 HBNetStapleInterface::HBNetStapleInterface( ) :
 	HBNet( "HBNetStapleInterface" ),
@@ -156,9 +159,9 @@ HBNetStapleInterface::HBNetStapleInterface( ) :
 	boundary_his_must_to_hbond_pos_charge_(0),
 	runcount_(0),
 	//min_staples_per_interface_(1),
-    min_networks_per_pose_(1),
+	min_networks_per_pose_(1),
 	//max_staples_per_interface_(1),
-    max_networks_per_pose_(1),
+	max_networks_per_pose_(1),
 	combos_(1),
 	min_intermolecular_hbonds_(1),
 	min_helices_contacted_by_network_(0),
@@ -177,10 +180,10 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 	pH_His_(0),
 	boundary_his_must_to_hbond_pos_charge_(0),
 	runcount_(0),
-    //min_staples_per_interface_(1),
-    min_networks_per_pose_(1),
-    //max_staples_per_interface_(1),
-    max_networks_per_pose_(1),
+	//min_staples_per_interface_(1),
+	min_networks_per_pose_(1),
+	//max_staples_per_interface_(1),
+	max_networks_per_pose_(1),
 	combos_(1),
 	min_intermolecular_hbonds_(1),
 	min_helices_contacted_by_network_(0),
@@ -197,10 +200,10 @@ HBNetStapleInterface::HBNetStapleInterface( core::scoring::ScoreFunctionCOP scor
 	Size max_network_size, /* 15 */
 	std::string des_residues, /* "STRKHYWNQDE" */
 	bool find_native, /*false*/
-    bool only_native, /*false*/
-    bool keep_existing, /*false*/
-    bool extend_existing, /*false*/
-    bool only_extend /*false*/
+	bool only_native, /*false*/
+	bool keep_existing, /*false*/
+	bool extend_existing, /*false*/
+	bool only_extend /*false*/
 ) :
 	HBNet( scorefxn, max_unsat, min_network_size, hb_threshold, max_network_size, des_residues, find_native, only_native, keep_existing, extend_existing, only_extend ),
 	all_helices_(0),
@@ -240,9 +243,9 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	HBNet::parse_my_tag( tag, data, fmap, mmap, pose);
 
 	max_networks_per_pose_ = tag->getOption<Size>("max_staples_per_interface",1); //legacy, should be deprecated
-    max_networks_per_pose_ = tag->getOption<Size>("max_networks_per_pose",1);
+	max_networks_per_pose_ = tag->getOption<Size>("max_networks_per_pose",1);
 	min_networks_per_pose_ = tag->getOption<Size>("min_staples_per_interface",1); //legacy, should be deprecated
-    min_networks_per_pose_ = tag->getOption<Size>("min_networks_per_pose",1);
+	min_networks_per_pose_ = tag->getOption<Size>("min_networks_per_pose",1);
 	combos_ = tag->getOption<Size>("combos",1);
 	min_intermolecular_hbonds_ = tag->getOption<Size>("min_intermolecular_hbonds",1);
 	min_helices_contacted_by_network_ = tag->getOption<Size>("min_helices_contacted_by_network",0);
@@ -268,7 +271,7 @@ HBNetStapleInterface::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		jump_nums_.clear();
 		std::string str = tag->getOption< std::string >( "jump", "" );
 		utility::vector1<std::string> const jumps( utility::string_split( str , ',' ) );
-		for (const auto & jump : jumps) {
+		for ( const auto & jump : jumps ) {
 			jump_nums_.push_back(utility::string2int(jump));
 		}
 	}
@@ -302,7 +305,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 			}
 		}
 	} else {
-		for (unsigned long & jump_num : jump_nums_) {
+		for ( unsigned long & jump_num : jump_nums_ ) {
 			if ( pose.num_jump() < jump_num ) {
 				if ( TR.visible() ) {
 					TR.flush();
@@ -343,7 +346,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 
 	if ( no_init_taskfactory ) {
 		if ( get_start_res_vec().empty() ) {
-			for (unsigned long & jump_num : jump_nums_) {
+			for ( unsigned long & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
@@ -428,7 +431,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 		//task_factory_ = new TaskFactory;
 		protocols::toolbox::task_operations::DesignAroundOperationOP desaround = protocols::toolbox::task_operations::DesignAroundOperationOP( new protocols::toolbox::task_operations::DesignAroundOperation() );
 		std::set< core::Size > temp_start_vec( get_start_res_vec() );
-		for (unsigned long it : temp_start_vec) {
+		for ( unsigned long it : temp_start_vec ) {
 			desaround->include_residue(it);
 		}
 		desaround->repack_shell(12.0);
@@ -439,7 +442,7 @@ HBNetStapleInterface::setup( core::pose::Pose & pose )
 	} else {
 		set_task( create_ptask(pose) ); //temp task
 		if ( get_start_res_vec().empty() ) {
-			for (unsigned long & jump_num : jump_nums_) {
+			for ( unsigned long & jump_num : jump_nums_ ) {
 				protocols::scoring::InterfaceOP interf = protocols::scoring::InterfaceOP( new protocols::scoring::Interface( jump_num ) );
 				interf->distance(interf_distance_);
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
@@ -658,7 +661,7 @@ void
 HBNetStapleInterface::prepare_output()
 {
 	output_networks((min_networks_per_pose_ == 1)); //will add single networks to output vector
-    if ( get_extend_existing_networks() ) std::sort( get_net_vec().begin(), get_net_vec().end(), compare_net_vec() ); //sort all networks to put extended first
+	if ( get_extend_existing_networks() ) std::sort( get_net_vec().begin(), get_net_vec().end(), compare_net_vec() ); //sort all networks to put extended first
 	if ( max_networks_per_pose_ > 1 ) { //add multiple network sets to output vector
 		//use_jd2_out_num_=0;
 		for ( std::vector< HBondNetStructOP >::const_iterator netit = get_net_vec().begin(); netit != get_net_vec().end(); ++netit ) {
@@ -667,9 +670,9 @@ HBNetStapleInterface::prepare_output()
 
 			HBondNetStructOP new_network = *netit;
 			//rec_add_staple(netit, new_network, 1);
-            std::vector< Size > net_ids(0);
-            net_ids.push_back( new_network->id );
-            rec_add_staple( netit, net_ids, 1 );
+			std::vector< Size > net_ids(0);
+			net_ids.push_back( new_network->id );
+			rec_add_staple( netit, net_ids, 1 );
 		}
 	}
 }
@@ -694,13 +697,13 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 {
 	Size num_helices(0);
 	utility::vector1< bool > helix_has_hbond_residue( helix_boundaries_.size(), false );
-	for (const auto & residue : residues) {
+	for ( const auto & residue : residues ) {
 		Size helix_id( get_helix_id( residue->resnum ) ); //returns 0 if residues is not part of a helix
 		if ( helix_id > 0 ) {
 			helix_has_hbond_residue[ helix_id ] = true;
 		}
 	}
-	for (auto && hel : helix_has_hbond_residue) {
+	for ( auto && hel : helix_has_hbond_residue ) {
 		if ( hel ) {
 			num_helices++;
 		}
@@ -712,52 +715,52 @@ void
 //HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, Size staple_count )
 HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< Size > net_ids, Size staple_count )
 {
-    //runtime_assert( get_network_by_id(new_network_id) != nullptr );
+	//runtime_assert( get_network_by_id(new_network_id) != nullptr );
 	//numeric::xyzVector<core::Real> const & first_begin_coordinates = (*netit)->rotlist.front()->atom("CA").xyz();
 	//numeric::xyzVector<core::Real> const & first_end_coordinates = (*netit)->rotlist.back()->atom("CA").xyz();
 	Size combo_count(1);
 	auto next_netit(netit);
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
-    { //number of combinations of multiple networks to try (default = 1)
-        bool compatible( true );
-        for (unsigned long & net_id : net_ids){
-            runtime_assert( get_network_by_id(net_id) != nullptr );
-            bool branch(false);
-//            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
-//                && !branch && !(net_clash( *(get_network_by_id(*net_id)), **next_netit )) ) {
-            if ( is_sub_residues( (get_network_by_id(net_id))->residues, (get_network_by_id((*next_netit)->id)->residues), branch )
-                || branch || net_clash( *(get_network_by_id(net_id)), **next_netit ) ) {
-                compatible = false;
-                break;
-            }
-        }
-        if (compatible ){
-            //Size net_index1 = next_netit - get_net_vec().begin();
-            std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), (*next_netit)->residues) ) : (print_list_to_string( (*next_netit)->residues) ) );
-            if ( TR.visible() ) TR << "; and " << (*next_netit)->id << ": " << network;
-            net_ids.push_back( (*next_netit)->id );
-            std::vector< Size > new_net_ids( net_ids );
-            
-            //			HBondNetStructOP merged_nets( new hbond_net_struct() );
-            //            //TODO NEED BETTER SOLUTION FOR COMBINING NETWORKS THAN MERGING INTO SINGLE NETWORK
-            //			merge_2_networks( *new_network, **next_netit, merged_nets );
-            //			merged_nets->score = (new_network->score + (*next_netit)->score)/2;
-            //			//Size net_index2 = next_netit - network_vector_.begin();
-            //			HBondNetStructOP new_out_struct( new hbond_net_struct(*merged_nets) );
-            
-            staple_count++;
-            
-            if ( staple_count >= min_networks_per_pose_ ) {
-                //get_output_net_vec().push_back( new_out_struct );
-                get_output_vector().push_back( new_net_ids );
-            }
-            
-            if ( staple_count < max_networks_per_pose_ ) {
-                rec_add_staple(next_netit, net_ids, staple_count);
-                staple_count--;
-            }
-            combo_count++;
-        }
+			{ //number of combinations of multiple networks to try (default = 1)
+		bool compatible( true );
+		for ( unsigned long & net_id : net_ids ) {
+			runtime_assert( get_network_by_id(net_id) != nullptr );
+			bool branch(false);
+			//            if ( !(is_sub_residues( (get_network_by_id(*net_id))->residues, (get_network_by_id(*net_id))->residues, branch ))
+			//                && !branch && !(net_clash( *(get_network_by_id(*net_id)), **next_netit )) ) {
+			if ( is_sub_residues( (get_network_by_id(net_id))->residues, (get_network_by_id((*next_netit)->id)->residues), branch )
+					|| branch || net_clash( *(get_network_by_id(net_id)), **next_netit ) ) {
+				compatible = false;
+				break;
+			}
+		}
+		if ( compatible ) {
+			//Size net_index1 = next_netit - get_net_vec().begin();
+			std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), (*next_netit)->residues) ) : (print_list_to_string( (*next_netit)->residues) ) );
+			if ( TR.visible() ) TR << "; and " << (*next_netit)->id << ": " << network;
+			net_ids.push_back( (*next_netit)->id );
+			std::vector< Size > new_net_ids( net_ids );
+
+			//   HBondNetStructOP merged_nets( new hbond_net_struct() );
+			//            //TODO NEED BETTER SOLUTION FOR COMBINING NETWORKS THAN MERGING INTO SINGLE NETWORK
+			//   merge_2_networks( *new_network, **next_netit, merged_nets );
+			//   merged_nets->score = (new_network->score + (*next_netit)->score)/2;
+			//   //Size net_index2 = next_netit - network_vector_.begin();
+			//   HBondNetStructOP new_out_struct( new hbond_net_struct(*merged_nets) );
+
+			staple_count++;
+
+			if ( staple_count >= min_networks_per_pose_ ) {
+				//get_output_net_vec().push_back( new_out_struct );
+				get_output_vector().push_back( new_net_ids );
+			}
+
+			if ( staple_count < max_networks_per_pose_ ) {
+				rec_add_staple(next_netit, net_ids, staple_count);
+				staple_count--;
+			}
+			combo_count++;
+		}
 	}
 	TR.flush();
 }
@@ -765,7 +768,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 bool
 HBNetStapleInterface::same_helix(utility::vector1< std::pair<Size,Size> > helix_boundaries, Size r1, Size r2)
 {
-	for (auto & helix_boundarie : helix_boundaries) {
+	for ( auto & helix_boundarie : helix_boundaries ) {
 		if ( (r1 >= helix_boundarie.first && r1 <= helix_boundarie.second) && (r2 >= helix_boundarie.first && r2 <= helix_boundarie.second) ) {
 			return true;
 		}
@@ -845,6 +848,54 @@ HBNetStapleInterface::num_intermolecular_hbonds( hbond_net_struct & i, core::pos
 	}
 	return num_intermol_hbs;
 }
+
+std::string HBNetStapleInterface::get_name() const {
+	return mover_name();
+}
+
+std::string HBNetStapleInterface::mover_name() {
+	return "HBNetStapleInterface";
+}
+
+void HBNetStapleInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	HBNet::attributes_for_hbnet( attlist );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "combos", xsct_non_negative_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default( "max_staples_per_interface", xsct_non_negative_integer, "Maximum number of hydrogen bond networks stapling the interface", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_networks_per_pose", xsct_non_negative_integer, "Maximum number of networks to make in a pose", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_staples_per_interface", xsct_non_negative_integer, "Minimum number of hydrogen bond networks stapling the interface", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_networks_per_pose", xsct_non_negative_integer, "Minimum number of hydrogen bonds to generate per pose", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_intermolecular_hbonds", xsct_non_negative_integer, "Minimum number of intermolecular hydrogen bonds to form", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_helices_contacted_by_network", xsct_non_negative_integer, "Minimum number of helices the formed network should contact", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "span_all_helices", xsct_rosetta_bool, "Must the network span all helices in the pose?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "allow_onebody_networks", xsct_rosetta_bool, "Allow networks within a pose", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "his_tyr", xsct_rosetta_bool, "Include histidine and tyrosine in the network", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "pH_His", xsct_rosetta_bool, "Identify and handle pH-sensitive histidines", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "all_helical_interfaces", xsct_rosetta_bool, "Interfaces must be composed of helices", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "only_symm_interfaces", xsct_rosetta_bool, "Only staple symmetric interfaces", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_distance", xsct_real, "Desired distance between partners at interface", "8.0" )
+		+ XMLSchemaAttribute( "jump", xs_string, "A comma-separated list of jumps across interface" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Staples interfaces with a hydrogen bond network.", attlist );
+}
+
+std::string HBNetStapleInterfaceCreator::keyname() const {
+	return HBNetStapleInterface::mover_name();
+}
+
+protocols::moves::MoverOP
+HBNetStapleInterfaceCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HBNetStapleInterface );
+}
+
+void HBNetStapleInterfaceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HBNetStapleInterface::provide_xml_schema( xsd );
+}
+
 
 } //hbnet
 } //protocols

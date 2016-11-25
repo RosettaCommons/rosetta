@@ -177,7 +177,7 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 // parse tag not defined
 void RestrictInterGroupVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO" );
 }
 
 }//task_operations

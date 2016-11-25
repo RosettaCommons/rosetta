@@ -23,6 +23,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -31,22 +34,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadUnboundRotMove
 namespace protocols {
 namespace simple_moves {
 
-std::string
-LoadUnboundRotMoverCreator::keyname() const
-{
-	return LoadUnboundRotMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoadUnboundRotMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoadUnboundRotMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoadUnboundRotMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoadUnboundRotMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoadUnboundRotMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoadUnboundRotMover );
+// XRW TEMP }
 
-std::string
-LoadUnboundRotMoverCreator::mover_name()
-{ //this is the string name that was hardcoded into the Parser at SVN 46190
-	return "load_unbound_rot";
-}
+// XRW TEMP std::string
+// XRW TEMP LoadUnboundRotMover::mover_name()
+// XRW TEMP { //this is the string name that was hardcoded into the Parser at SVN 46190
+// XRW TEMP  return "load_unbound_rot";
+// XRW TEMP }
 
 LoadUnboundRotMover::LoadUnboundRotMover()
 : protocols::moves::Mover("LoadUnboundRotMover")
@@ -60,10 +63,10 @@ void LoadUnboundRotMover::apply( core::pose::Pose & pose ){
 	return;
 }//apply
 
-std::string
-LoadUnboundRotMover::get_name() const {
-	return LoadUnboundRotMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoadUnboundRotMover::get_name() const {
+// XRW TEMP  return LoadUnboundRotMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return protocols::moves::MoverOP( new LoadUnboundRotMover ); }
 protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return protocols::moves::MoverOP( new LoadUnboundRotMover( *this ) ); }
@@ -78,6 +81,40 @@ LoadUnboundRotMover::parse_my_tag(
 	Pose const &
 )
 {}
+
+std::string LoadUnboundRotMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoadUnboundRotMover::mover_name() {
+	return "load_unbound_rot";
+}
+
+void LoadUnboundRotMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Add the rotamers of the specified structure to the rotamer library "
+		"(usually used to include rotamers of unbound monomer)",
+		attlist );
+}
+
+std::string LoadUnboundRotMoverCreator::keyname() const {
+	return LoadUnboundRotMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoadUnboundRotMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoadUnboundRotMover );
+}
+
+void LoadUnboundRotMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoadUnboundRotMover::provide_xml_schema( xsd );
+}
+
 
 }//simple_moves
 }//protocols

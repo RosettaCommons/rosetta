@@ -48,6 +48,9 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -68,22 +71,22 @@ ConformerSwitchMover::ConformerSwitchMover() :
 }
 
 
-std::string
-ConformerSwitchMoverCreator::keyname() const
-{
-	return ConformerSwitchMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ConformerSwitchMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ConformerSwitchMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ConformerSwitchMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ConformerSwitchMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ConformerSwitchMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ConformerSwitchMover );
+// XRW TEMP }
 
-std::string
-ConformerSwitchMoverCreator::mover_name()
-{
-	return "ConformerSwitchMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ConformerSwitchMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ConformerSwitchMover";
+// XRW TEMP }
 
 //constructor with arguments
 ConformerSwitchMover::ConformerSwitchMover(
@@ -225,9 +228,41 @@ void ConformerSwitchMover::switch_conformer(
 	pose.copy_segment( ensemble_->conf_size(), new_conf, ensemble_->start_res(), 1);
 }
 
+// XRW TEMP std::string ConformerSwitchMover::get_name() const {
+// XRW TEMP  return ConformerSwitchMover::mover_name();
+// XRW TEMP }
+
 std::string ConformerSwitchMover::get_name() const {
-	return ConformerSwitchMoverCreator::mover_name();
+	return mover_name();
 }
+
+std::string ConformerSwitchMover::mover_name() {
+	return "ConformerSwitchMover";
+}
+
+void ConformerSwitchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Switches between conformers during docking. Does not parse any attributes from tag.", attlist );
+}
+
+std::string ConformerSwitchMoverCreator::keyname() const {
+	return ConformerSwitchMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ConformerSwitchMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ConformerSwitchMover );
+}
+
+void ConformerSwitchMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ConformerSwitchMover::provide_xml_schema( xsd );
+}
+
 
 std::ostream &operator<< (std::ostream & output, ConformerSwitchMover const & mover)
 {

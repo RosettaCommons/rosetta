@@ -20,26 +20,29 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.FavorSymmetricSequence" );
 
-std::string FavorSymmetricSequenceCreator::keyname() const
-{
-	return FavorSymmetricSequenceCreator::mover_name();
-}
+// XRW TEMP std::string FavorSymmetricSequenceCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FavorSymmetricSequence::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP FavorSymmetricSequenceCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new FavorSymmetricSequence );
-}
+// XRW TEMP protocols::moves::MoverOP FavorSymmetricSequenceCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new FavorSymmetricSequence );
+// XRW TEMP }
 
-std::string FavorSymmetricSequenceCreator::mover_name()
-{
-	return "FavorSymmetricSequence";
-}
+// XRW TEMP std::string FavorSymmetricSequence::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FavorSymmetricSequence";
+// XRW TEMP }
 
 FavorSymmetricSequence::FavorSymmetricSequence() : symmetric_units_(0), penalty_(0.0)
 {
@@ -74,10 +77,10 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 	}
 }
 
-std::string FavorSymmetricSequence::get_name() const
-{
-	return "FavorSymmetricSequence";
-}
+// XRW TEMP std::string FavorSymmetricSequence::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "FavorSymmetricSequence";
+// XRW TEMP }
 
 void FavorSymmetricSequence::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -107,6 +110,40 @@ void FavorSymmetricSequence::parse_my_tag(
 	TR<<std::endl;
 }
 
-}
+std::string FavorSymmetricSequence::get_name() const {
+	return mover_name();
 }
 
+std::string FavorSymmetricSequence::mover_name() {
+	return "FavorSymmetricSequence";
+}
+
+void FavorSymmetricSequence::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "penalty", xsct_real, "Penalty applied to a pair of asymmetric residues" )
+		+ XMLSchemaAttribute::required_attribute( "symmetric_units", xsct_positive_integer,
+		"Number of symmetric units in the sequence. It should be a value of 2 or greater" ); //XRW TODO needs a restriction
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Add ResidueTypeLinkingConstraints to the pose such that a symmetric sequence (CATCATCAT)"
+		"will be favored during design. You should add this mover before sequence design is performed.", attlist );
+}
+
+std::string FavorSymmetricSequenceCreator::keyname() const {
+	return FavorSymmetricSequence::mover_name();
+}
+
+protocols::moves::MoverOP
+FavorSymmetricSequenceCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FavorSymmetricSequence );
+}
+
+void FavorSymmetricSequenceCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FavorSymmetricSequence::provide_xml_schema( xsd );
+}
+
+
+}
+}

@@ -32,6 +32,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -71,11 +74,45 @@ HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 }
 
-protocols::filters::FilterOP
-HeavyAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HeavyAtomFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HeavyAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HeavyAtomFilter ); }
 
-std::string
-HeavyAtomFilterCreator::keyname() const { return "HeavyAtom"; }
+// XRW TEMP std::string
+// XRW TEMP HeavyAtomFilterCreator::keyname() const { return "HeavyAtom"; }
+
+std::string HeavyAtomFilter::name() const {
+	return class_name();
+}
+
+std::string HeavyAtomFilter::class_name() {
+	return "HeavyAtom";
+}
+
+void HeavyAtomFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chain", xsct_char, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "heavy_atom_limit", xsct_non_negative_integer, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string HeavyAtomFilterCreator::keyname() const {
+	return HeavyAtomFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HeavyAtomFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HeavyAtomFilter );
+}
+
+void HeavyAtomFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HeavyAtomFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // ligand_docking

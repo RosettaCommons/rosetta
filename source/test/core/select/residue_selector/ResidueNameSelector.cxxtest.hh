@@ -49,7 +49,7 @@ public:
 	/// @brief Test NotResidueSelector::parse_my_tag
 	void test_ResidueNameSelector_parse_my_tag() {
 		std::stringstream ss;
-		ss << "<ResidueName name=allala residue_names=ASP,SER:CtermProteinFull,LEU,CYS />";
+		ss << "<ResidueName name=\"allala\" residue_names=\"ASP,SER:CtermProteinFull,LEU,CYS\" />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
@@ -79,7 +79,7 @@ public:
 	/// @brief Test NotResidueSelector::parse_my_tag
 	void test_ResidueNameSelector_name3() {
 		std::stringstream ss;
-		ss << "<ResidueName name=allala residue_name3=ASP,SER,CYS />";
+		ss << "<ResidueName name=\"allala\" residue_name3=\"ASP,SER,CYS\" />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
@@ -110,7 +110,7 @@ public:
 	/// @brief Test NotResidueSelector::parse_my_tag
 	void test_ResidueNameSelector_name_and_name3() {
 		std::stringstream ss;
-		ss << "<ResidueName name=allala residue_names=SER:CtermProteinFull residue_name3=ASP,LEU,CYS />";
+		ss << "<ResidueName name=\"allala\" residue_names=\"SER:CtermProteinFull\" residue_name3=\"ASP,LEU,CYS\" />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
@@ -141,7 +141,7 @@ public:
 	// make sure we fail if no selection string is provided
 	void test_NeighbohoodResidueSelector_fail_no_resnums() {
 		std::stringstream ss;
-		ss << "<ResidueName name=I_should_fail />";
+		ss << "<ResidueName name=\"I_should_fail\" />";
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;

@@ -47,6 +47,10 @@
 #include <core/conformation/Residue.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/kinematics/Jump.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
 
@@ -77,9 +81,9 @@ void ExtendedPoseMover::apply(core::pose::Pose& pose) {
 	}
 }
 
-std::string ExtendedPoseMover::get_name() const {
-	return "ExtendedPoseMover";
-}
+// XRW TEMP std::string ExtendedPoseMover::get_name() const {
+// XRW TEMP  return "ExtendedPoseMover";
+// XRW TEMP }
 
 const std::string& ExtendedPoseMover::sequence() const {
 	return sequence_;
@@ -140,6 +144,45 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
 		throw utility::excn::EXCN_RosettaScriptsOption( chain()+" is an invalid chain code in "+tag->getOption< string >( "name" )+"." );
 	}
 }
+
+std::string ExtendedPoseMover::get_name() const {
+	return mover_name();
+}
+
+std::string ExtendedPoseMover::mover_name() {
+	return "ExtendedPoseMover";
+}
+
+void ExtendedPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attlist;
+	attlist
+		+ Attr( "fasta", xs_string, "Fasta file name (complete sequence?)" )
+		+ Attr( "sequence", xs_string, "Sequence string" )
+		+ Attr::attribute_w_default( "use_fasta", xsct_rosetta_bool, "Take sequence from fasta file as specified in comandline option \"-fasta\"", "false" )
+		+ Attr( "residue_type_set", xs_string, "Residue representation, centroid, fa_standard, centroid_rot ...." )
+		+ Attr( "chain", xsct_char, "Chain ID" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Creates an extended, idealized pose from the sequence and"
+		"residue type set specified in the constructor.", attlist );
+}
+
+std::string ExtendedPoseMoverCreator::keyname() const {
+	return ExtendedPoseMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ExtendedPoseMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ExtendedPoseMover );
+}
+
+void ExtendedPoseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExtendedPoseMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace simple_moves
 }  // namespace protocols

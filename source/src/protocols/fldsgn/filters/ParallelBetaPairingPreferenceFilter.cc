@@ -37,6 +37,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <boost/lexical_cast.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.filters.ParallelBetaPairingPreferenceFilter" );
@@ -221,11 +224,44 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 	verbose_ = tag->getOption<bool>( "verbose", 0 );
 }
 
-protocols::filters::FilterOP
-ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter ); }
 
-std::string
-ParallelBetaPairingPreferenceFilterCreator::keyname() const { return "ParallelBetaPairingPreference"; }
+// XRW TEMP std::string
+// XRW TEMP ParallelBetaPairingPreferenceFilterCreator::keyname() const { return "ParallelBetaPairingPreference"; }
+
+std::string ParallelBetaPairingPreferenceFilter::name() const {
+	return class_name();
+}
+
+std::string ParallelBetaPairingPreferenceFilter::class_name() {
+	return "ParallelBetaPairingPreference";
+}
+
+void ParallelBetaPairingPreferenceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ParallelBetaPairingPreferenceFilterCreator::keyname() const {
+	return ParallelBetaPairingPreferenceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ParallelBetaPairingPreferenceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter );
+}
+
+void ParallelBetaPairingPreferenceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ParallelBetaPairingPreferenceFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

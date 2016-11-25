@@ -57,6 +57,18 @@ public:
 	core::Real filter_val() const{ return filter_val_; }
 	std::string checkpointing_file() const{ return checkpointing_file_; }
 	void checkpointing_file( std::string const & s ){ checkpointing_file_ = s ;}
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	void checkpoint_read() const; // read from a checkpoint
 	void checkpoint_write() const; // write from a checkpoint

@@ -33,6 +33,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -47,22 +50,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
 
-std::string
-RandomConformersCreator::keyname() const
-{
-	return RandomConformersCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RandomConformersCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RandomConformers::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RandomConformersCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomConformers );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RandomConformersCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RandomConformers );
+// XRW TEMP }
 
-std::string
-RandomConformersCreator::mover_name()
-{
-	return "RandomConformers";
-}
+// XRW TEMP std::string
+// XRW TEMP RandomConformers::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RandomConformers";
+// XRW TEMP }
 
 RandomConformers::RandomConformers():
 	//utility::pointer::ReferenceCount(),
@@ -85,9 +88,9 @@ protocols::moves::MoverOP RandomConformers::fresh_instance() const {
 	return protocols::moves::MoverOP( new RandomConformers );
 }
 
-std::string RandomConformers::get_name() const{
-	return "RandomConformers";
-}
+// XRW TEMP std::string RandomConformers::get_name() const{
+// XRW TEMP  return "RandomConformers";
+// XRW TEMP }
 
 //void RandomConformers::set_chain(std::string chain)
 //{
@@ -132,6 +135,38 @@ void RandomConformers::apply_residue(core::Size const residue_id, core::pose::Po
 	//   new UnconstrainedTorsionsMover(rcm, ligand_torsion_restraints_);
 	// utm->apply(pose);
 }
+
+std::string RandomConformers::get_name() const {
+	return mover_name();
+}
+
+std::string RandomConformers::mover_name() {
+	return "RandomConformers";
+}
+
+void RandomConformers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("chain", xs_string, "Chain ID");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Replace all residues in a chain "
+		"with a randomly selected conformer from its respective rotamer library.", attlist );
+}
+
+std::string RandomConformersCreator::keyname() const {
+	return RandomConformers::mover_name();
+}
+
+protocols::moves::MoverOP
+RandomConformersCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RandomConformers );
+}
+
+void RandomConformersCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RandomConformers::provide_xml_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

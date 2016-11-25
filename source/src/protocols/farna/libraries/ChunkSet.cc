@@ -191,17 +191,17 @@ ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AtomID_Mapper cons
 	// // debug
 	// using namespace core::id;
 	// for ( std::map< AtomID, AtomID >::const_iterator
-	// 				it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
-	// 	AtomID const & target_atom_id = it->first;
-	// 	AtomID const & source_atom_id = it->second;
-	// 	if ( target_atom_id.rsd() != 1 ) continue;
-	// 	TR << "Will map: " <<
-	// 		pose.residue( target_atom_id.rsd() ).name() << " " <<
-	// 		pose.residue( target_atom_id.rsd() ).atom_name( target_atom_id.atomno() ) <<
-	// 		" to " <<
-	// 		//mini_pose_list_[1]->residue( source_atom_id.rsd() ).name() << " " <<
-	// 		//mini_pose_list_[1]->residue( source_atom_id.rsd() ).atom_name( source_atom_id.atomno() ) <<
-	// 		std::endl;
+	//     it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
+	//  AtomID const & target_atom_id = it->first;
+	//  AtomID const & source_atom_id = it->second;
+	//  if ( target_atom_id.rsd() != 1 ) continue;
+	//  TR << "Will map: " <<
+	//   pose.residue( target_atom_id.rsd() ).name() << " " <<
+	//   pose.residue( target_atom_id.rsd() ).atom_name( target_atom_id.atomno() ) <<
+	//   " to " <<
+	//   //mini_pose_list_[1]->residue( source_atom_id.rsd() ).name() << " " <<
+	//   //mini_pose_list_[1]->residue( source_atom_id.rsd() ).atom_name( source_atom_id.atomno() ) <<
+	//   std::endl;
 	// }
 	// // end debug
 

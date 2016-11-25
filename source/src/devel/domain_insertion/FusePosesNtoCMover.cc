@@ -50,6 +50,12 @@
 
 // C++ headers
 #include <set>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace devel {
@@ -84,11 +90,11 @@ FusePosesNtoCMover::clone() const{
 }
 
 
-std::string
-FusePosesNtoCMover::get_name() const
-{
-	return "FusePosesNtoCMover";
-}
+// XRW TEMP std::string
+// XRW TEMP FusePosesNtoCMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "FusePosesNtoCMover";
+// XRW TEMP }
 
 
 /// @details
@@ -717,10 +723,60 @@ set_superpose_residues_in_atom_map(
 }
 
 
-std::string
-FusePosesNtoCMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP FusePosesNtoCMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FusePosesNtoCMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FusePosesNtoCMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FusePosesNtoCMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP FusePosesNtoCMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FusePosesNtoCMover";
+// XRW TEMP }
+
+std::string FusePosesNtoCMover::get_name() const {
+	return mover_name();
+}
+
+std::string FusePosesNtoCMover::mover_name() {
+	return "FusePosesNtoCMover";
+}
+
+void FusePosesNtoCMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return FusePosesNtoCMoverCreator::mover_name();
+	using namespace utility::tag;
+
+	XMLSchemaRestriction chain_string;
+	chain_string.name( "chain_string" );
+	chain_string.base_type( xs_string );
+	chain_string.add_restriction( xsr_pattern, "[" + chr_chains_nonrepeated() + "]*" );
+	xsd.add_top_level_element( chain_string );
+
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "fuse_pose", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "chains", "chain_string", "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "nterm_span", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "cterm_span", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "superpose_window", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "relax_window", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_number_allowed_clashes", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "hardsphere_clash_limit", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_allowed_rms", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "debugmode", xsct_rosetta_bool, "XRW TO DO" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string FusePosesNtoCMoverCreator::keyname() const {
+	return FusePosesNtoCMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -728,11 +784,11 @@ FusePosesNtoCMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new FusePosesNtoCMover );
 }
 
-std::string
-FusePosesNtoCMoverCreator::mover_name()
+void FusePosesNtoCMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "FusePosesNtoCMover";
+	FusePosesNtoCMover::provide_xml_schema( xsd );
 }
+
 
 
 SetupCoiledCoilFoldTreeMover::SetupCoiledCoilFoldTreeMover()
@@ -751,11 +807,11 @@ SetupCoiledCoilFoldTreeMover::clone() const{
 }
 
 
-std::string
-SetupCoiledCoilFoldTreeMover::get_name() const
-{
-	return "SetupCoiledCoilFoldTreeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SetupCoiledCoilFoldTreeMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "SetupCoiledCoilFoldTreeMover";
+// XRW TEMP }
 
 
 /// @details
@@ -852,22 +908,66 @@ SetupCoiledCoilFoldTreeMover::parse_my_tag(
 }
 
 
-std::string
-SetupCoiledCoilFoldTreeMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP SetupCoiledCoilFoldTreeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetupCoiledCoilFoldTreeMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SetupCoiledCoilFoldTreeMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetupCoiledCoilFoldTreeMover";
+// XRW TEMP }
+
+std::string SetupCoiledCoilFoldTreeMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetupCoiledCoilFoldTreeMover::mover_name() {
+	return "SetupCoiledCoilFoldTreeMover";
+}
+
+void SetupCoiledCoilFoldTreeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return SetupCoiledCoilFoldTreeMoverCreator::mover_name();
+
+	using namespace utility::tag;
+
+	// AMW namespacing for safety because otherwise kill me
+	XMLSchemaRestriction chain_string;
+	chain_string.name( "SetupCoiledCoilFoldTreeMover_chain_string" );
+	chain_string.base_type( xs_string );
+	chain_string.add_restriction( xsr_pattern, "[" + chr_chains_nonrepeated() + "]*" );
+	xsd.add_top_level_element( chain_string );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "chains", "SetupCoiledCoilFoldTreeMover_chain_string", "XRW TO DO" )
+		+ XMLSchemaAttribute( "chain2_cutpos", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "add_chainbreak_variants", xsct_rosetta_bool, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SetupCoiledCoilFoldTreeMoverCreator::keyname() const {
+	return SetupCoiledCoilFoldTreeMover::mover_name();
 }
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover() );
+	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover );
 }
 
-std::string
-SetupCoiledCoilFoldTreeMoverCreator::mover_name()
+void SetupCoiledCoilFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "SetupCoiledCoilFoldTreeMover";
+	SetupCoiledCoilFoldTreeMover::provide_xml_schema( xsd );
 }
+
 
 
 /// @details effin stooopid that this is necessary

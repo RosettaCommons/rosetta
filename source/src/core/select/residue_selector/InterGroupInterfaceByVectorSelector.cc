@@ -277,13 +277,13 @@ InterGroupInterfaceByVectorSelector::provide_xml_schema( utility::tag::XMLSchema
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default( "cb_dist_cut",      xs_decimal, "11.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "nearby_atom_cut",  xs_decimal, "5.5"  )
-		+ XMLSchemaAttribute::attribute_w_default( "vector_angle_cut", xs_decimal, "75.0" )
-		+ XMLSchemaAttribute::attribute_w_default( "vector_dist_cut",  xs_decimal, "9.0"  )
-		+ XMLSchemaAttribute( "grp1_selector",    xs_string  )
-		+ XMLSchemaAttribute( "grp2_selector",    xs_string  );
-	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), 0, 2, attributes );
+		+ XMLSchemaAttribute::attribute_w_default( "cb_dist_cut",      xsct_real, "XRW TO DO",  "11.0"  )
+		+ XMLSchemaAttribute::attribute_w_default( "nearby_atom_cut",  xsct_real, "XRW TO DO",  "5.5"   )
+		+ XMLSchemaAttribute::attribute_w_default( "vector_angle_cut", xsct_real, "XRW TO DO",  "75.0"  )
+		+ XMLSchemaAttribute::attribute_w_default( "vector_dist_cut",  xsct_real, "XRW TO DO",  "9.0"   )
+		+ XMLSchemaAttribute( "grp1_selector",    xs_string  , "XRW TO DO" )
+		+ XMLSchemaAttribute( "grp2_selector",    xs_string  , "XRW TO DO" );
+	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), "XRW TO DO", 0, 2, attributes );
 }
 
 

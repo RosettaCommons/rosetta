@@ -52,6 +52,10 @@
 #include <string>
 #include <map>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/PoseCommentsFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -74,8 +78,8 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-string
-PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
+// XRW TEMP string
+// XRW TEMP PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
 
 void
 PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -179,6 +183,36 @@ PoseCommentsFeatures::load_into_pose(
 		add_comment(pose, key, value);
 	}
 }
+
+std::string PoseCommentsFeatures::type_name() const {
+	return class_name();
+}
+
+std::string PoseCommentsFeatures::class_name() {
+	return "PoseCommentsFeatures";
+}
+
+void PoseCommentsFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record all the pose comments as features", attlist );
+}
+
+std::string PoseCommentsFeaturesCreator::type_name() const {
+	return PoseCommentsFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+PoseCommentsFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new PoseCommentsFeatures );
+}
+
+void PoseCommentsFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PoseCommentsFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

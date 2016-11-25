@@ -32,6 +32,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static basic::Tracer tr("protocols.filters.IntraRepeatContactFilter");
@@ -120,14 +123,49 @@ IntraRepeatContactFilter::parse_my_tag(
 	filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );
 	numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
 	sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
-	distThresh_ = tag->getOption<Size>("distanceThreshold",10.0);
+	distThresh_ = tag->getOption<Real>("distanceThreshold",10.0);
 	tr << "Structures which have IntraRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
-filters::FilterOP
-IntraRepeatContactFilterCreator::create_filter() const { return protocols::filters::FilterOP(new IntraRepeatContactFilter);}
+// XRW TEMP filters::FilterOP
+// XRW TEMP IntraRepeatContactFilterCreator::create_filter() const { return protocols::filters::FilterOP(new IntraRepeatContactFilter);}
 
-std::string
-IntraRepeatContactFilterCreator::keyname() const { return "IntraRepeatContactsPerResidue"; }
+// XRW TEMP std::string
+// XRW TEMP IntraRepeatContactFilterCreator::keyname() const { return "IntraRepeatContactsPerResidue"; }
+
+std::string IntraRepeatContactFilter::name() const {
+	return class_name();
+}
+
+std::string IntraRepeatContactFilter::class_name() {
+	return "IntraRepeatContactsPerResidue";
+}
+
+void IntraRepeatContactFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "Filter threshold", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("numb_repeats", xsct_non_negative_integer, "number of repeats", "4")
+		+ XMLSchemaAttribute::attribute_w_default("sequenceSeperation", xsct_non_negative_integer, "seperation in the sequence", "6")
+		+ XMLSchemaAttribute::attribute_w_default("distanceThreshold", xsct_real, "max distance between two CA atoms being compared", "10.0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "filter based upon the intra repeat contacts", attlist );
+}
+
+std::string IntraRepeatContactFilterCreator::keyname() const {
+	return IntraRepeatContactFilter::class_name();
+}
+
+protocols::filters::FilterOP
+IntraRepeatContactFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new IntraRepeatContactFilter );
+}
+
+void IntraRepeatContactFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IntraRepeatContactFilter::provide_xml_schema( xsd );
+}
+
 } // filters
 } // protocols

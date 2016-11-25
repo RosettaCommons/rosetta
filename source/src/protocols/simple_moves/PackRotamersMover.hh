@@ -202,6 +202,11 @@ public:
 	RotamerSetsCOP rotamer_sets() const;
 	AnnealableGraphBaseCOP ig() const;
 
+	//std::string get_name() const override { return mover_name(); }
+	static std::string mover_name();
+
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_pack_rotamers_mover( utility::tag::XMLSchemaDefinition & xsd );
+	// The above was added so that this could be called in SymPackRotamersMover
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static void list_options_read( utility::options::OptionKeyList & opts );
 

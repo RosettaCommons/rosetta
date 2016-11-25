@@ -118,8 +118,17 @@ void
 JumpUpstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "jump", xs_integer ));
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute::required_attribute(
+		"jump", xs_integer,
+		"The integer given for the \"jump\" argument should refer to a Jump that is present in the Pose." );
+
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The JumpUpstreamSelector sets the positions corresponding to all of the "
+		"residues that are upstream of the indicated jump to true, and all the "
+		"other positions to false. This selector is logically equivalent to a "
+		"NotSelector applied to the JumpDownstreamSelector for the same jump.",
+		attributes );
 }
 
 

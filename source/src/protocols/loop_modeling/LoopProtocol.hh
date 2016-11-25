@@ -69,7 +69,7 @@ public:
 	~LoopProtocol() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const override { return "LoopProtocol"; }
+	// XRW TEMP  string get_name() const override { return "LoopProtocol"; }
 
 protected:
 
@@ -263,6 +263,18 @@ public:
 	/// @details The temperature will be linearly interpolated between these
 	/// values during the simulation.
 	void set_temperature_schedule(Real start, Real stop);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	friend class ::LoopModelerTests;
 

@@ -61,13 +61,13 @@ public:
 	typedef std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuction;
 public:
 	PlaceSimultaneouslyMover();
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
 	}
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	/// @brief minimize towards clouds of stubs made up of all the stub sets
 	/// @brief if bb_cst score is 0 return false, o/w true
 	bool minimize_no_bb( core::pose::Pose & pose ) const;
@@ -81,11 +81,11 @@ public:
 	void design( core::pose::Pose & pose );
 	/// @brief will be removed
 	bool place_stubs( core::pose::Pose & pose ) const;
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	void final_cleanup( core::pose::Pose & pose );
 	/// @brief removes and reinstates coordinate constraints for all placed hotspots according to coord_sdev
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev );
@@ -95,6 +95,18 @@ public:
 	void stub_sets( utility::vector1< StubSetStubPos > const sets ) { stub_sets_ = sets; }
 	void host_chain( core::Size const host_chain ) { host_chain_ = host_chain; }
 	virtual ~PlaceSimultaneouslyMover();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	///where is the stub to be placed

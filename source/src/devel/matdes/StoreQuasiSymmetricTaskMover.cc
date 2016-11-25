@@ -38,6 +38,9 @@
 #include <ObjexxFCL/format.hh>
 
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -300,15 +303,15 @@ StoreQuasiSymmetricTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::
 }
 
 // @brief Identification
-std::string StoreQuasiSymmetricTaskMoverCreator::keyname() const { return StoreQuasiSymmetricTaskMoverCreator::mover_name(); }
-std::string StoreQuasiSymmetricTaskMoverCreator::mover_name() { return "StoreQuasiSymmetricTaskMover"; }
-std::string StoreQuasiSymmetricTaskMover::get_name() const { return "StoreQuasiSymmetricTaskMover"; }
+// XRW TEMP std::string StoreQuasiSymmetricTaskMoverCreator::keyname() const { return StoreQuasiSymmetricTaskMover::mover_name(); }
+// XRW TEMP std::string StoreQuasiSymmetricTaskMover::mover_name() { return "StoreQuasiSymmetricTaskMover"; }
+// XRW TEMP std::string StoreQuasiSymmetricTaskMover::get_name() const { return "StoreQuasiSymmetricTaskMover"; }
 
-protocols::moves::MoverOP
-StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
-	//return new StoreQuasiSymmetricTaskMover;
-	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
+// XRW TEMP  //return new StoreQuasiSymmetricTaskMover;
+// XRW TEMP  return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreQuasiSymmetricTaskMover::clone() const {
@@ -321,6 +324,45 @@ StoreQuasiSymmetricTaskMover::fresh_instance() const {
 	//return new StoreQuasiSymmetricTaskMover;
 	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
 }
+
+std::string StoreQuasiSymmetricTaskMover::get_name() const {
+	return mover_name();
+}
+
+std::string StoreQuasiSymmetricTaskMover::mover_name() {
+	return "StoreQuasiSymmetricTaskMover";
+}
+
+void StoreQuasiSymmetricTaskMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute( "task_name", xs_string, "The name of the stored task." )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "Will overwrite the old stored task.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "quasi_symm_comp", xs_string, "Which component (if multi-component, A or B), is going to be quasi-equivalent." , "B" )
+		+ XMLSchemaAttribute::attribute_w_default( "num_quasi_repeats", xsct_non_negative_integer, "How many subunits your quasi-equivalent building block consists of. For example, a trimer would be 3.", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "offset_resis", xsct_non_negative_integer, "If your building block is non-quasi-equivalent domains, this number denotes the number of residues to skip. Currently needs to be resis 1-x, the skipped portion must be on the N-terminus.", "0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover creates a stored task that links selected residues with RotamerLinks. The residues will remain identical in identity when the packer is called, but their rotamers are free to be packed differently. This mover was designed to take a shot at the quasi-equivalent design problem, where identical residues need to satisfy multiple interfaces at the same time. It is essentially a multi-state design problem.", attlist );
+}
+
+std::string StoreQuasiSymmetricTaskMoverCreator::keyname() const {
+	return StoreQuasiSymmetricTaskMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StoreQuasiSymmetricTaskMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StoreQuasiSymmetricTaskMover );
+}
+
+void StoreQuasiSymmetricTaskMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StoreQuasiSymmetricTaskMover::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // devel

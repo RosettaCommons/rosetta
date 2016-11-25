@@ -89,23 +89,23 @@ public:
 	set_defaults();
 
 	/// @brief Parse my tag for RosettaScripts.  Main RS interface to full antibody design protocol.
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
-	virtual void
-	apply(core::pose::Pose & pose);
-
-	protocols::moves::MoverOP
-	clone() const;
+	void
+	apply(core::pose::Pose & pose) override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	clone() const override;
+
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 
 public:
@@ -217,10 +217,22 @@ public:
 
 public:
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual void
-	show(std::ostream & output=std::cout) const;
+	void
+	show(std::ostream & output=std::cout) const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

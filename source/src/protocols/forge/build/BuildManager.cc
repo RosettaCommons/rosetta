@@ -237,7 +237,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, second_start-1);
 		core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, second_start);
 		pose.conformation().declare_chemical_bond( second_start-1, pose.residue( second_start-1 ).atom_name( pose.residue( second_start-1 ).upper_connect_atom() ),
-																							 second_start, pose.residue( second_start ).atom_name( pose.residue( second_start ).lower_connect_atom() ) );
+			second_start, pose.residue( second_start ).atom_name( pose.residue( second_start ).lower_connect_atom() ) );
 
 
 		protocols::loops::Loops chain_def_loops;

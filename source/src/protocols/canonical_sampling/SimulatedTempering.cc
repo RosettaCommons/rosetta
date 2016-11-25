@@ -56,6 +56,9 @@
 
 // C++ Headers
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // cmd-line options
 OPT_2GRP_KEY( Integer, tempering, reweight, stride )
@@ -86,20 +89,20 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-std::string
-SimulatedTemperingCreator::keyname() const {
-	return SimulatedTemperingCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SimulatedTemperingCreator::keyname() const {
+// XRW TEMP  return SimulatedTempering::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SimulatedTemperingCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SimulatedTempering );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SimulatedTemperingCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SimulatedTempering );
+// XRW TEMP }
 
-std::string
-SimulatedTemperingCreator::mover_name() {
-	return "SimulatedTempering";
-}
+// XRW TEMP std::string
+// XRW TEMP SimulatedTempering::mover_name() {
+// XRW TEMP  return "SimulatedTempering";
+// XRW TEMP }
 
 SimulatedTempering::SimulatedTempering() {
 	set_defaults();
@@ -211,11 +214,11 @@ SimulatedTempering::temperature_move( core::Real score ) {
 }
 
 
-std::string
-SimulatedTempering::get_name() const
-{
-	return "SimulatedTempering";
-}
+// XRW TEMP std::string
+// XRW TEMP SimulatedTempering::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "SimulatedTempering";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 SimulatedTempering::clone() const
@@ -365,6 +368,41 @@ void SimulatedTempering::write_to_file( std::string const& file_in, std::string 
 		}
 	}
 }
+
+std::string SimulatedTempering::get_name() const {
+	return mover_name();
+}
+
+std::string SimulatedTempering::mover_name() {
+	return "SimulatedTempering";
+}
+
+void SimulatedTempering::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	TemperingBase::attributes_for_tempering_base( attlist, xsd );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "score_offset", xsct_real, "Offset for score (scales all weights)", "40.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature_jumps", xsct_rosetta_bool, "Jump to any temperature, not just by one level", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "reweight_stride", xsct_rosetta_bool, "How many trials between automatic reweighting", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Single process switching stochastically between temperature levels", attlist );
+}
+
+std::string SimulatedTemperingCreator::keyname() const {
+	return SimulatedTempering::mover_name();
+}
+
+protocols::moves::MoverOP
+SimulatedTemperingCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SimulatedTempering );
+}
+
+void SimulatedTemperingCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SimulatedTempering::provide_xml_schema( xsd );
+}
+
 
 
 } //moves

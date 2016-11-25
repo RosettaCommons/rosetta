@@ -55,6 +55,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -62,11 +65,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TerminusDistanceFilter" );
 
-protocols::filters::FilterOP
-TerminusDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TerminusDistanceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP TerminusDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TerminusDistanceFilter ); }
 
-std::string
-TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }
+// XRW TEMP std::string
+// XRW TEMP TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }
 
 TerminusDistanceFilter::~TerminusDistanceFilter()= default;
 
@@ -130,6 +133,39 @@ TerminusDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	}
 	return( min_dist );
 }
+
+std::string TerminusDistanceFilter::name() const {
+	return class_name();
+}
+
+std::string TerminusDistanceFilter::class_name() {
+	return "TerminusDistance";
+}
+
+void TerminusDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number" , xsct_positive_integer , "Which jump to use for calculating the interface?" , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance" , xsct_non_negative_integer , "How many residues must each interface residue be from a terminus in sequence distance?" , "5" ) ;
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "True, if all residues in the interface are more than n residues from the N or C terminus --i.e. distance in sequence space. If fails, reports how far failing residue was from the terminus. If passes, returns '1000'.", attlist );
+}
+
+std::string TerminusDistanceFilterCreator::keyname() const {
+	return TerminusDistanceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+TerminusDistanceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new TerminusDistanceFilter );
+}
+
+void TerminusDistanceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TerminusDistanceFilter::provide_xml_schema( xsd );
+}
+
 
 
 }

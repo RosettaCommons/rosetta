@@ -35,6 +35,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -46,22 +49,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
 
-std::string
-FitSimpleHelixCreator::keyname() const
-{
-	return FitSimpleHelixCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FitSimpleHelixCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FitSimpleHelix::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FitSimpleHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FitSimpleHelix );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FitSimpleHelixCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FitSimpleHelix );
+// XRW TEMP }
 
-std::string
-FitSimpleHelixCreator::mover_name()
-{
-	return "FitSimpleHelix";
-}
+// XRW TEMP std::string
+// XRW TEMP FitSimpleHelix::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FitSimpleHelix";
+// XRW TEMP }
 
 
 /// @brief Creator for FitSimpleHelix mover.
@@ -273,9 +276,9 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("FitSimpleHelix").
-std::string FitSimpleHelix::get_name() const{
-	return "FitSimpleHelix";
-}
+// XRW TEMP std::string FitSimpleHelix::get_name() const{
+// XRW TEMP  return "FitSimpleHelix";
+// XRW TEMP }
 
 /// @brief Function to retrieve the final values of the helical parameters, post-fit.
 /// @details Call this function after the "apply" function, and pass it containers for
@@ -323,6 +326,47 @@ FitSimpleHelix::parse_my_tag(
 	set_reference_residue( tag->getOption<core::Size>("reference_residue", 1 ) );
 	set_residues_per_repeat( tag->getOption<core::Size>("residues_per_repeat", 1 ) );
 }
+
+std::string FitSimpleHelix::get_name() const {
+	return mover_name();
+}
+
+std::string FitSimpleHelix::mover_name() {
+	return "FitSimpleHelix";
+}
+
+void FitSimpleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "r1_initial", xsct_real, "Initial value for the r1 Crick parameter", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega1_initial", xsct_real, "Initial value for the omega1 Crick parameter", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "dz1_initial", xsct_real, "Initial value for the dz1 Crick parameter", "1.0" )
+		+ XMLSchemaAttribute::required_attribute( "start_index", xsct_positive_integer, "First residue number in the bundle" )
+		+ XMLSchemaAttribute::required_attribute( "end_index", xsct_positive_integer, "Last residue number in the bundle" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_type", xsct_minimizer_type, "Minimizer type", "lbfgs_armijo_nonmonotone" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_tolerance", xsct_real, "Minimization tolerance", "0.00000001" )
+		+ XMLSchemaAttribute::attribute_w_default( "reference_atom", xs_string, "Atom name to use as a reference position", "CA" )
+		+ XMLSchemaAttribute::attribute_w_default( "reference_residue", xsct_positive_integer, "Residue to use as a reference position", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "residues_per_repeat", xsct_positive_integer, "Helical bundles can be constructed from multi-residue repeats; how many residues are there per repeat?", "1" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Fit Crick parameters for a single helix.", attlist );
+}
+
+std::string FitSimpleHelixCreator::keyname() const {
+	return FitSimpleHelix::mover_name();
+}
+
+protocols::moves::MoverOP
+FitSimpleHelixCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FitSimpleHelix );
+}
+
+void FitSimpleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FitSimpleHelix::provide_xml_schema( xsd );
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,6 +17,8 @@
 
 //Utility
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+
 
 //C++
 #include <set>
@@ -52,6 +54,13 @@ LoopInserter::loop_anchor(
 	core::Size loop_anchor
 ){
 	loop_anchor_=loop_anchor;
+}
+
+void
+LoopInserter::attributes_for_parse_loop_anchor(
+	utility::tag::AttributeList & attlist
+) {
+	attlist + utility::tag::XMLSchemaAttribute( "loop_anchor", utility::tag::xsct_positive_integer, "Loop anchor residue" );
 }
 
 void

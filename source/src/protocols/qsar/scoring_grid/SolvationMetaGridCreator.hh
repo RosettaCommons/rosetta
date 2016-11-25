@@ -27,7 +27,8 @@ public:
 	virtual GridBaseOP create_grid(utility::tag::TagCOP tag) const;
 	virtual GridBaseOP create_grid() const;
 	virtual std::string keyname() const;
-	static std::string grid_name();
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	//static std::string grid_name();
 };
 
 

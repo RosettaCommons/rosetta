@@ -35,6 +35,9 @@
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -127,11 +130,47 @@ StubScoreFilter::clone() const{
 	return protocols::filters::FilterOP( new StubScoreFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-StubScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP StubScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreFilter ); }
 
-std::string
-StubScoreFilterCreator::keyname() const { return "StubScore"; }
+// XRW TEMP std::string
+// XRW TEMP StubScoreFilterCreator::keyname() const { return "StubScore"; }
+
+std::string StubScoreFilter::name() const {
+	return class_name();
+}
+
+std::string StubScoreFilter::class_name() {
+	return "StubScore";
+}
+
+void StubScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	protein_interface_design::movers::add_subelement_for_parse_stub_sets( ssl, xsd );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "This filter checks whether in the current configuration the scaffold is 'feeling' any of the hotspot stub constraints. This is useful for quick triaging of hopeless configuration. If used in conjunction with the Mover PlaceSimultaneously, don't bother setting flags -- the Mover will take care of it.", attlist, ssl );
+}
+
+std::string StubScoreFilterCreator::keyname() const {
+	return StubScoreFilter::class_name();
+}
+
+protocols::filters::FilterOP
+StubScoreFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new StubScoreFilter );
+}
+
+void StubScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StubScoreFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

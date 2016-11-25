@@ -43,6 +43,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 
@@ -530,17 +533,53 @@ find_pairing_idx( topology::StrandPairingSet & spairset, core::Size const s1, co
 	return 0;
 }
 
-protocols::filters::FilterOP
-SheetTopologyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SheetTopologyFilter ); }
-
-std::string
-SheetTopologyFilterCreator::keyname() const { return "SheetTopology"; }
+//protocols::filters::FilterOP
+//SheetTopologyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SheetTopologyFilter ); }
 
 void
 SheetTopologyFilter::set_secstruct( std::string const & ss )
 {
 	secstruct_input_ = ss;
 }
+
+std::string SheetTopologyFilter::name() const {
+	return class_name();
+}
+
+std::string SheetTopologyFilter::class_name() {
+	return "SheetTopology";
+}
+
+void SheetTopologyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "ignore_register_shift", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "topology", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "XRW TO DO" )
+		//If no blueprint is provided, dssp will be used
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SheetTopologyFilterCreator::keyname() const {
+	return SheetTopologyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SheetTopologyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SheetTopologyFilter );
+}
+
+void SheetTopologyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SheetTopologyFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

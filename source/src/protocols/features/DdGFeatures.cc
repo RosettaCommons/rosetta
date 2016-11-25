@@ -51,6 +51,10 @@
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/DdGFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -95,8 +99,8 @@ DdGFeatures::DdGFeatures( DdGFeatures const & ) = default;
 
 DdGFeatures::~DdGFeatures() = default;
 
-string
-DdGFeatures::type_name() const { return "DdGFeatures"; }
+// XRW TEMP string
+// XRW TEMP DdGFeatures::type_name() const { return "DdGFeatures"; }
 
 void
 DdGFeatures::write_schema_to_db(
@@ -210,6 +214,38 @@ DdGFeatures::insert_ddG_rows(
 	}
 
 } // End function body
+
+std::string DdGFeatures::type_name() const {
+	return class_name();
+}
+
+std::string DdGFeatures::class_name() {
+	return "DdGFeatures";
+}
+
+void DdGFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "ddG_scan_mover", xs_string, "Mover with which to scan mutations" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record features of the ddgs for a set of mutations, performed with a particular Mover", attlist );
+}
+
+std::string DdGFeaturesCreator::type_name() const {
+	return DdGFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+DdGFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new DdGFeatures );
+}
+
+void DdGFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DdGFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

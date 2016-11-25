@@ -29,6 +29,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.aa_composition.ClearCompositionConstraintsMover" );
 
@@ -40,28 +43,28 @@ using namespace core::scoring;
 using namespace constraints;
 using namespace utility::tag;
 
-std::string
-ClearCompositionConstraintsMoverCreator::keyname() const
-{
-	return ClearCompositionConstraintsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ClearCompositionConstraintsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ClearCompositionConstraintsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ClearCompositionConstraintsMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new ClearCompositionConstraintsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ClearCompositionConstraintsMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new ClearCompositionConstraintsMover );
+// XRW TEMP }
 
-std::string
-ClearCompositionConstraintsMoverCreator::mover_name()
-{
-	return "ClearCompositionConstraintsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ClearCompositionConstraintsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ClearCompositionConstraintsMover";
+// XRW TEMP }
 
 /// @brief Default Constructor
 ///
 ClearCompositionConstraintsMover::ClearCompositionConstraintsMover():
-	protocols::moves::Mover( ClearCompositionConstraintsMoverCreator::mover_name() )
+	protocols::moves::Mover( ClearCompositionConstraintsMover::mover_name() )
 	//TODO initialize variables here
 {
 }
@@ -69,7 +72,7 @@ ClearCompositionConstraintsMover::ClearCompositionConstraintsMover():
 /// @brief Copy Constructor
 ///
 ClearCompositionConstraintsMover::ClearCompositionConstraintsMover( ClearCompositionConstraintsMover const &/*src*/ ):
-	protocols::moves::Mover( ClearCompositionConstraintsMoverCreator::mover_name() )
+	protocols::moves::Mover( ClearCompositionConstraintsMover::mover_name() )
 	//TODO initialize variables here
 {
 }
@@ -89,10 +92,10 @@ protocols::moves::MoverOP ClearCompositionConstraintsMover::fresh_instance() con
 
 /// @brief Returns the name of this mover ("ClearCompositionConstraintsMover").
 ///
-std::string
-ClearCompositionConstraintsMover::get_name() const {
-	return ClearCompositionConstraintsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ClearCompositionConstraintsMover::get_name() const {
+// XRW TEMP  return ClearCompositionConstraintsMover::mover_name();
+// XRW TEMP }
 
 /// @brief Actually apply the mover to a pose.
 ///
@@ -121,6 +124,36 @@ ClearCompositionConstraintsMover::parse_my_tag(
 	//This mover takes no options.
 	return;
 }
+
+std::string ClearCompositionConstraintsMover::get_name() const {
+	return mover_name();
+}
+
+std::string ClearCompositionConstraintsMover::mover_name() {
+	return "ClearCompositionConstraintsMover";
+}
+
+void ClearCompositionConstraintsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Clear composition constraints from the pose", attlist );
+}
+
+std::string ClearCompositionConstraintsMoverCreator::keyname() const {
+	return ClearCompositionConstraintsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ClearCompositionConstraintsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ClearCompositionConstraintsMover );
+}
+
+void ClearCompositionConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ClearCompositionConstraintsMover::provide_xml_schema( xsd );
+}
+
 
 } // aa_composition
 } // protocols

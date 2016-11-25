@@ -59,12 +59,12 @@ public:
 	DisulfideMover( utility::vector1<core::Size> const& targetResidues );
 	virtual ~DisulfideMover();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	virtual void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new DisulfideMover( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	virtual protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new DisulfideMover );
 	}
 
@@ -72,7 +72,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 public:
 	/// @brief Find all residues which could disulfide bond to a target
 	/// @return pairs of residues (target, host) from the target protein and the
@@ -82,6 +82,18 @@ public:
 	static void disulfide_list( core::pose::Pose const & pose,
 		utility::vector1< core::Size > const& targets, Size rb_jump,
 		utility::vector1< std::pair<core::Size,core::Size> > & disulfides);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	/// @brief Modify the pose to define a disulfide bond between the two specified
 	///   residues.

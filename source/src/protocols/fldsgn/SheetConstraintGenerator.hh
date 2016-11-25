@@ -32,6 +32,7 @@
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace fldsgn {
@@ -67,6 +68,14 @@ public:
 	core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & pose ) const override;
 
+	static std::string
+	class_name();
+
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static void
+	attributes_for_sheet_constraint_generator( utility::tag::AttributeList & );
 protected:
 	void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) override;

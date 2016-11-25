@@ -27,6 +27,9 @@
 #include <protocols/simple_filters/OperatorFilter.hh>
 #include <protocols/simple_filters/RelativePoseFilter.hh>
 #include <protocols/rosetta_scripts/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -35,11 +38,11 @@ namespace simple_filters {
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.MultipleSigmoids" );
 using namespace protocols::filters;
 
-protocols::filters::FilterOP
-MultipleSigmoidsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MultipleSigmoids ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP MultipleSigmoidsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MultipleSigmoids ); }
 
-std::string
-MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
+// XRW TEMP std::string
+// XRW TEMP MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
 
 MultipleSigmoids::MultipleSigmoids() :
 	protocols::filters::Filter( "MultipleSigmoids" ),
@@ -145,6 +148,58 @@ protocols::filters::FilterOP
 MultipleSigmoids::fresh_instance() const{
 	return protocols::filters::FilterOP( new MultipleSigmoids() );
 }
+
+std::string MultipleSigmoids::name() const {
+	return class_name();
+}
+
+std::string MultipleSigmoids::class_name() {
+	return "MultipleSigmoids";
+}
+
+std::string subtag_for_multiple_sigmoids( std::string const & foo ) {
+	return "multiple_sigmoids_subtag_" + foo + "_type";
+}
+
+void MultipleSigmoids::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// FUCK
+	using namespace utility::tag;
+	AttributeList attlist;
+	// THIS
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Value above which the filter fails", "0" )
+		+ XMLSchemaAttribute( "file_names", xs_string, "PDBs to apply to" );
+	// NOISE
+
+	AttributeList relative_pose_subtag_attributes, sigmoid_subtag_attributes, operator_subtag_attributes;
+
+	RelativePoseFilter::attributes( relative_pose_subtag_attributes );
+	Sigmoid::attributes( sigmoid_subtag_attributes );
+	Operator::attributes( operator_subtag_attributes );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "RelativePose", relative_pose_subtag_attributes, "Tags describing RelativePose filters to be applied"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "Sigmoid", sigmoid_subtag_attributes, "Tags describing Sigmoid filters to be applied"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "Operator", operator_subtag_attributes, "Tags describing Operators to be applied"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_multiple_sigmoids );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "Apply an architecture of sigmoid and relative pose filters to a set of PDBs", attlist, ssl );
+}
+
+std::string MultipleSigmoidsFilterCreator::keyname() const {
+	return MultipleSigmoids::class_name();
+}
+
+protocols::filters::FilterOP
+MultipleSigmoidsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new MultipleSigmoids );
+}
+
+void MultipleSigmoidsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MultipleSigmoids::provide_xml_schema( xsd );
+}
+
 
 }
 }

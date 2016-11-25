@@ -162,14 +162,14 @@ void RestrictIdentitiesAtAlignedPositionsOperation::provide_xml_schema( utility:
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist )
-		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_only_target_residues", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "keep_aas", xs_string, "ACDEFGHIKLMNPQRSTVWY" );
+		+ XMLSchemaAttribute::required_attribute( "source_pdb", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default(  "chain", xsct_non_negative_integer, "XRW TO DO",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "design_only_target_residues", xsct_rosetta_bool, "XRW TO DO",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "prevent_repacking", xsct_rosetta_bool, "XRW TO DO",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "keep_aas", xs_string, "XRW TO DO",  "ACDEFGHIKLMNPQRSTVWY"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

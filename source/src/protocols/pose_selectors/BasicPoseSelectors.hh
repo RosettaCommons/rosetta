@@ -28,6 +28,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -47,6 +48,7 @@ protected:
 
 public:
 	static std::string name() { return "LogicalSelector"; }
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_logical_selector( utility::tag::XMLSchemaDefinition & );
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override;
 
@@ -81,6 +83,7 @@ public:
 	~AndSelector() override = default;
 
 	static std::string name() { return "AndSelector"; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 	std::string get_name() const override { return name(); }
 
 protected:
@@ -96,7 +99,7 @@ class OrSelector : public LogicalSelector {
 public:
 	OrSelector() {}
 	~OrSelector() override = default;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 	static std::string name() { return "OrSelector"; }
 	std::string get_name() const override { return name(); }
 
@@ -113,7 +116,7 @@ class TopNByProperty : public protocols::rosetta_scripts::PoseSelector {
 public:
 	TopNByProperty();
 	~TopNByProperty() override = default;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 	static std::string name() { return "TopNByProperty"; }
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
@@ -146,7 +149,7 @@ class Filter : public protocols::rosetta_scripts::PoseSelector {
 public:
 	Filter();
 	~Filter() override = default;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & );
 	static std::string name() { return "Filter"; }
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NONE; }

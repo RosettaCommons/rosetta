@@ -85,7 +85,7 @@ public:
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void set_move_map(core::kinematics::MoveMapOP movemap );
 	void set_second_cycle(Size const & num);
@@ -93,6 +93,18 @@ public:
 
 	core::scoring::ScoreFunctionCOP scorefxn_docking() const;
 	core::scoring::ScoreFunctionCOP scorefxn_packing() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
 
 private:

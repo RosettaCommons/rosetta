@@ -70,7 +70,7 @@ public:
 	/////////////////////
 
 	/// @brief Get the name of this mover
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Apply Rotation/Translation to Membrane
 	/// @brief Translate the membrane position in this pose
@@ -95,6 +95,17 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

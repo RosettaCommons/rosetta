@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ProteinResidueConformationFeaturesCreator::ProteinResidueConformationFeaturesCreator() {}
-ProteinResidueConformationFeaturesCreator::~ProteinResidueConformationFeaturesCreator() = default;
-FeaturesReporterOP ProteinResidueConformationFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinResidueConformationFeatures );
-}
+// XRW TEMP ProteinResidueConformationFeaturesCreator::ProteinResidueConformationFeaturesCreator() {}
+// XRW TEMP ProteinResidueConformationFeaturesCreator::~ProteinResidueConformationFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinResidueConformationFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinResidueConformationFeatures );
+// XRW TEMP }
 
-std::string ProteinResidueConformationFeaturesCreator::type_name() const {
-	return "ProteinResidueConformationFeatures";
-}
+// XRW TEMP std::string ProteinResidueConformationFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinResidueConformationFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

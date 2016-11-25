@@ -38,27 +38,30 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMo
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-SwitchChainOrderMoverCreator::keyname() const
-{
-	return SwitchChainOrderMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchChainOrderMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SwitchChainOrderMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SwitchChainOrderMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SwitchChainOrderMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SwitchChainOrderMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SwitchChainOrderMover );
+// XRW TEMP }
 
-std::string
-SwitchChainOrderMoverCreator::mover_name()
-{
-	return "SwitchChainOrder";
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchChainOrderMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SwitchChainOrder";
+// XRW TEMP }
 
 SwitchChainOrderMover::SwitchChainOrderMover()
 : moves::Mover("SwitchChainOrder"),
@@ -133,10 +136,10 @@ SwitchChainOrderMover::apply( Pose & pose )
 	}
 }
 
-std::string
-SwitchChainOrderMover::get_name() const {
-	return SwitchChainOrderMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SwitchChainOrderMover::get_name() const {
+// XRW TEMP  return SwitchChainOrderMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 SwitchChainOrderMover::clone() const
@@ -221,6 +224,43 @@ SwitchChainOrderMover::scorefxn( core::scoring::ScoreFunctionOP s ) { scorefxn_ 
 
 core::scoring::ScoreFunctionOP
 SwitchChainOrderMover::scorefxn() const { return scorefxn_; }
+
+std::string SwitchChainOrderMover::get_name() const {
+	return mover_name();
+}
+
+std::string SwitchChainOrderMover::mover_name() {
+	return "SwitchChainOrder";
+}
+
+void SwitchChainOrderMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "chain_order", xs_string, "Order of final chains" )
+		+ XMLSchemaAttribute( "chain_num", xsct_nnegative_int_cslist, "List of final chain positions, to be correlated to chain_name" )
+		+ XMLSchemaAttribute( "chain_name", xsct_chain_cslist, "List of final chain names, to be correlated to chain_num" )
+		+ XMLSchemaAttribute::attribute_w_default( "invert_chains", xsct_chain_cslist, "List of final chain names, to be correlated to chain_num", "0" )
+		+ XMLSchemaAttribute( "residue_numbers_setter", xs_string, "List of final chain names, to be correlated to chain_num" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SwitchChainOrderMoverCreator::keyname() const {
+	return SwitchChainOrderMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SwitchChainOrderMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SwitchChainOrderMover );
+}
+
+void SwitchChainOrderMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SwitchChainOrderMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

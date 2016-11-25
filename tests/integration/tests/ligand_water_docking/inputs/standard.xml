@@ -1,47 +1,48 @@
 <ROSETTASCRIPTS>
         <SCOREFXNS>
-                <ligand_soft_rep weights=ligand_soft_rep>
-                        <Reweight scoretype=fa_elec weight=0.42/>
-                        <Reweight scoretype=hbond_bb_sc weight=1.3/>
-                        <Reweight scoretype=hbond_sc weight=1.3/>
-                        <Reweight scoretype=rama weight=0.2/>
-                </ligand_soft_rep>
-                <hard_rep weights=ligand>
-                        <Reweight scoretype=fa_intra_rep weight=0.004/>
-                        <Reweight scoretype=fa_elec weight=0.42/>
-                        <Reweight scoretype=hbond_bb_sc weight=1.3/>
-                        <Reweight scoretype=hbond_sc weight=1.3/>
-                        <Reweight scoretype=rama weight=0.2/>
-                </hard_rep>
+                <ScoreFunction name="ligand_soft_rep" weights="ligand_soft_rep">
+                        <Reweight scoretype="fa_elec" weight="0.42"/>
+                        <Reweight scoretype="hbond_bb_sc" weight="1.3"/>
+                        <Reweight scoretype="hbond_sc" weight="1.3"/>
+                        <Reweight scoretype="rama" weight="0.2"/>
+                </ScoreFunction>
+                <ScoreFunction name="hard_rep" weights="ligand">
+                        <Reweight scoretype="fa_intra_rep" weight="0.004"/>
+                        <Reweight scoretype="fa_elec" weight="0.42"/>
+                        <Reweight scoretype="hbond_bb_sc" weight="1.3"/>
+                        <Reweight scoretype="hbond_sc" weight="1.3"/>
+                        <Reweight scoretype="rama" weight="0.2"/>
+                </ScoreFunction>
         </SCOREFXNS>
         <LIGAND_AREAS>
-                <inhibitor_dock_sc chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true/>
-                <inhibitor_final_sc chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true/>
-                <inhibitor_final_bb chain=X cutoff=7.0 add_nbr_radius=false all_atom_mode=true Calpha_restraints=0.3/>
+                <LigandArea name="inhibitor_dock_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+                <LigandArea name="inhibitor_final_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+                <LigandArea name="inhibitor_final_bb" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
         </LIGAND_AREAS>
         <INTERFACE_BUILDERS>
-                <side_chain_for_docking ligand_areas=inhibitor_dock_sc/>
-                <side_chain_for_final ligand_areas=inhibitor_final_sc/>
-                <backbone ligand_areas=inhibitor_final_bb extension_window=3/>
+                <InterfaceBuilder name="side_chain_for_docking" ligand_areas="inhibitor_dock_sc"/>
+                <InterfaceBuilder name="side_chain_for_final" ligand_areas="inhibitor_final_sc"/>
+                <InterfaceBuilder name="backbone" ligand_areas="inhibitor_final_bb" extension_window="3"/>
         </INTERFACE_BUILDERS>
         <MOVEMAP_BUILDERS>
-                <docking sc_interface=side_chain_for_docking minimize_water=false/>
-                <final sc_interface=side_chain_for_final bb_interface=backbone minimize_water=false/>
+                <MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="false"/>
+                <MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="false"/>
         </MOVEMAP_BUILDERS>
         <MOVERS>
-                <Translate name=translate chain=X distribution=uniform angstroms=5 cycles=50 force=true/> first place the ligand
-                <Rotate name=rotate chain=X distribution=uniform degrees=360 cycles=800/>
-                <SlideTogether name=slide_together chains=X/>
-                <HighResDocker name=high_res_docker cycles=6 repack_every_Nth=3 scorefxn=ligand_soft_rep movemap_builder=docking/>
-                <FinalMinimizer name=final scorefxn=hard_rep movemap_builder=final/>
-                <InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep/>
+                <Translate name="translate" chain="X" distribution="uniform" angstroms="5" cycles="50" force="true"/> first place the ligand
+                <Rotate name="rotate" chain="X" distribution="uniform" degrees="360" cycles="800"/>
+                <SlideTogether name="slide_together" chains="X"/>
+                <HighResDocker name="high_res_docker" cycles="6" repack_every_Nth="3" scorefxn="ligand_soft_rep" movemap_builder="docking"/>
+                <FinalMinimizer name="final" scorefxn="hard_rep" movemap_builder="final"/>
+                <InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
         </MOVERS>
         <PROTOCOLS>
-                <Add mover_name=translate/>
-                <Add mover_name=rotate/>
-                <Add mover_name=slide_together/>
-          <Add mover_name=high_res_docker/>
-                <Add mover_name=final/>
-                <Add mover_name=add_scores/>
+                <Add mover_name="translate"/>
+                <Add mover_name="rotate"/>
+                <Add mover_name="slide_together"/>
+          <Add mover_name="high_res_docker"/>
+                <Add mover_name="final"/>
+                <Add mover_name="add_scores"/>
         </PROTOCOLS>
+
 </ROSETTASCRIPTS>

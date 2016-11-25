@@ -29,6 +29,11 @@
 
 #include <utility/excn/Exceptions.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
+
 //Auto Headers
 using basic::T;
 using basic::Error;
@@ -40,22 +45,22 @@ namespace ligand_docking {
 static THREAD_LOCAL basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
 
 
-std::string
-CompoundTranslateCreator::keyname() const
-{
-	return CompoundTranslateCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CompoundTranslateCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CompoundTranslate::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CompoundTranslateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CompoundTranslate );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CompoundTranslateCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CompoundTranslate );
+// XRW TEMP }
 
-std::string
-CompoundTranslateCreator::mover_name()
-{
-	return "CompoundTranslate";
-}
+// XRW TEMP std::string
+// XRW TEMP CompoundTranslate::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CompoundTranslate";
+// XRW TEMP }
 
 /// @brief
 CompoundTranslate::CompoundTranslate():
@@ -81,9 +86,9 @@ protocols::moves::MoverOP CompoundTranslate::fresh_instance() const {
 	return protocols::moves::MoverOP( new CompoundTranslate );
 }
 
-std::string CompoundTranslate::get_name() const{
-	return "CompoundTranslate";
-}
+// XRW TEMP std::string CompoundTranslate::get_name() const{
+// XRW TEMP  return "CompoundTranslate";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -104,21 +109,20 @@ CompoundTranslate::parse_my_tag(
 	if ( ! tag->hasOption("allow_overlap") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("CompoundTranslate needs an 'allow_overlap' option");
 	}
-	{// parsing randomize_order tag
-		std::string allow_overlap_string= tag->getOption<std::string>("randomize_order");
-		if ( allow_overlap_string == "true" || allow_overlap_string == "True" ) {
-			randomize_order_= true;
-		} else if ( allow_overlap_string == "false" || allow_overlap_string == "False" ) {
-			randomize_order_= false;
-		} else throw utility::excn::EXCN_RosettaScriptsOption("'randomize_order' option takes arguments 'true' or 'false'");
+
+	// parsing randomize_order tag
+	bool randomize = tag->getOption< bool >("randomize_order");
+	if ( randomize ) {
+		randomize_order_= true;
+	} else {
+		randomize_order_= false;
 	}
-	{// parsing allow_overlap tag
-		std::string allow_overlap_string= tag->getOption<std::string>("allow_overlap");
-		if ( allow_overlap_string == "true" || allow_overlap_string == "True" ) {
-			allow_overlap_= true;
-		} else if ( allow_overlap_string == "false" || allow_overlap_string == "False" ) {
-			allow_overlap_= false;
-		} else throw utility::excn::EXCN_RosettaScriptsOption("'allow_overlap' option takes arguments 'true' or 'false'");
+	// parsing allow_overlap tag
+	bool allow_overlap = tag->getOption< bool >("allow_overlap");
+	if ( allow_overlap ) {
+		allow_overlap_= true;
+	} else {
+		allow_overlap_= false;
 	}
 
 	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
@@ -145,10 +149,8 @@ CompoundTranslate::parse_my_tag(
 				translate_info.angstroms = subtag->getOption<core::Real>("angstroms");
 				translate_info.cycles = subtag->getOption<core::Size>("cycles");
 				if ( subtag->hasOption("force") ) {
-					if ( subtag->getOption<std::string>("force") == "true" ) {
+					if ( subtag->getOption< bool >("force") ) {
 						translate_info.force= true;
-					} else if ( subtag->getOption<std::string>("force") != "false" ) {
-						throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
 					}
 				}
 				translates_.push_back(protocols::ligand_docking::TranslateOP( new Translate(translate_info) ));
@@ -188,6 +190,63 @@ void CompoundTranslate::apply(core::pose::Pose & pose) {
 		}
 	}
 }
+
+std::string CompoundTranslate::get_name() const {
+	return mover_name();
+}
+
+std::string CompoundTranslate::mover_name() {
+	return "CompoundTranslate";
+}
+
+void CompoundTranslate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// Main attributes
+
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "distribution_string" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "uniform|gaussian" );
+	xsd.add_top_level_element( restriction_type );
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("randomize_order", xs_string, "Randomize order of perturbations.")
+		+ XMLSchemaAttribute::required_attribute("allow_overlap", xs_string, "XRW TO DO");
+
+	// Subelements
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("chain", xs_string, "Chain to be translated.")
+		+ XMLSchemaAttribute::required_attribute("distribution", "distribution_string", "Distribution from which to sample distances. Valid options are uniform or gaussian")
+		+ XMLSchemaAttribute::required_attribute("angstroms", xsct_real, "Uniform translations of up to X angstroms")
+		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer, "Number of cycles to run.")
+		+ XMLSchemaAttribute("force", xsct_rosetta_bool, "Force neighbor atoms to move if clashing, default=false");
+
+	XMLSchemaSimpleSubelementList subelement_list;
+
+	subelement_list.add_simple_subelement("Translate", subelement_attributes, "Configure a Translation element that can be used together with others.")
+		.add_simple_subelement( "Translates", subelement_attributes, "Configure a Translation element that can be used together with others.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Combines multiple individually configurable Translate movers", attlist, subelement_list );
+}
+
+std::string CompoundTranslateCreator::keyname() const {
+	return CompoundTranslate::mover_name();
+}
+
+protocols::moves::MoverOP
+CompoundTranslateCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CompoundTranslate );
+}
+
+void CompoundTranslateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CompoundTranslate::provide_xml_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

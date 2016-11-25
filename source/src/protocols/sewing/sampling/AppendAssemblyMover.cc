@@ -57,6 +57,9 @@
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -66,23 +69,23 @@ static basic::Tracer TR( "protocols.sewing.AppendAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-AppendAssemblyMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new AppendAssemblyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AppendAssemblyMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AppendAssemblyMover );
+// XRW TEMP }
 
-std::string
-AppendAssemblyMoverCreator::keyname() const
-{
-	return AppendAssemblyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AppendAssemblyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AppendAssemblyMover::mover_name();
+// XRW TEMP }
 
-std::string
-AppendAssemblyMoverCreator::mover_name()
-{
-	return "AppendAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AppendAssemblyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AppendAssemblyMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 AppendAssemblyMover::clone() const {
@@ -93,10 +96,10 @@ AppendAssemblyMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new AppendAssemblyMover );
 }
 
-std::string
-AppendAssemblyMover::get_name() const {
-	return "AppendAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AppendAssemblyMover::get_name() const {
+// XRW TEMP  return "AppendAssemblyMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  AppendAssemblyMover function   //////////////////////////////////
@@ -368,6 +371,38 @@ AppendAssemblyMover::parse_my_tag(
 
 	parent::parse_my_tag(tag, data, filters, movers, pose);
 }
+
+std::string AppendAssemblyMover::get_name() const {
+	return mover_name();
+}
+
+std::string AppendAssemblyMover::mover_name() {
+	return "AppendAssemblyMover";
+}
+
+void AppendAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AppendAssemblyMoverCreator::keyname() const {
+	return AppendAssemblyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AppendAssemblyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AppendAssemblyMover );
+}
+
+void AppendAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AppendAssemblyMover::provide_xml_schema( xsd );
+}
+
 
 
 } //sewing

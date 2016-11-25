@@ -52,8 +52,8 @@ public:
 	std::string const & prefix() const { return prefix_; }
 	bool recursive() const { return recursive_; }
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	void
 	add_info_for_csts( core::scoring::constraints::ConstraintCOPs const & cstlist, core::pose::Pose & pose, std::string const & tag ) const;
@@ -65,11 +65,11 @@ public:
 	get_constraints_from_pose( core::pose::Pose const & pose ) const;
 
 public:
-	virtual void
-	show( std::ostream & output=std::cout ) const;
+	void
+	show( std::ostream & output=std::cout ) const override;
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void parse_my_tag(
@@ -77,17 +77,29 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//CstInfoMover & operator=( CstInfoMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual moves::MoverOP
-	fresh_instance() const;
+	moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

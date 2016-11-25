@@ -102,7 +102,7 @@ public:
 
 	using moves::Mover::last_proposal_density_ratio;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief get the ratio of proposal densities for the last move
 	Real last_proposal_density_ratio() override;
@@ -118,6 +118,18 @@ public:
 
 	// for kic
 	void init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	void setup_list(Pose const &);

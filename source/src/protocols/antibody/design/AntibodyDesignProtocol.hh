@@ -49,30 +49,30 @@ public:
 
 	virtual ~AntibodyDesignProtocol();
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	virtual bool
-	reinitialize_for_new_input() const {
+	bool
+	reinitialize_for_new_input() const  override{
 		return true;
 	}
 
 	/// @brief Parse my tag for RosettaScripts.  Main RS interface is in AntibodyDesignMover.
 	/// This is just a small implementation, controlled mainly through cmd-line flags.
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 	////////////////////////////////////////////////////////////////////////////
 	// Optional Custom Settings
@@ -113,8 +113,20 @@ public:
 	//
 	//
 
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 
@@ -131,8 +143,6 @@ private:
 
 	////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
-
-
 
 	/// @brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
 	void

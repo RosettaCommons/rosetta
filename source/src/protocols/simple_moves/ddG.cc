@@ -75,6 +75,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <boost/functional/hash.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -88,27 +91,27 @@ using basic::Warning;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
 
-moves::MoverOP ddGCreator::create_mover() const
-{
-	return moves::MoverOP( new ddG );
-}
+// XRW TEMP moves::MoverOP ddGCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return moves::MoverOP( new ddG );
+// XRW TEMP }
 
-std::string ddGCreator::mover_name()
-{
-	return "ddG";
-}
+// XRW TEMP std::string ddG::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ddG";
+// XRW TEMP }
 
-std::string ddGCreator::keyname() const
-{
-	return ddGCreator::mover_name();
-}
+// XRW TEMP std::string ddGCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ddG::mover_name();
+// XRW TEMP }
 
 using namespace core;
 using namespace protocols::simple_moves;
 using namespace core::scoring;
 
 ddG::ddG() :
-	moves::Mover(ddGCreator::mover_name()),
+	moves::Mover(ddG::mover_name()),
 	bound_total_energy_(0.0),
 	unbound_total_energy_(0.0),
 	repeats_(0),
@@ -130,7 +133,7 @@ ddG::ddG() :
 
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Size const jump/*=1*/) :
-	moves::Mover(ddGCreator::mover_name()),
+	moves::Mover(ddG::mover_name()),
 	bound_total_energy_(0.0),
 	unbound_total_energy_(0.0),
 	repeats_(1),
@@ -164,7 +167,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	core::Size const jump/*=1*/,
 	utility::vector1<core::Size> const & chain_ids) :
-	moves::Mover(ddGCreator::mover_name()),
+	moves::Mover(ddG::mover_name()),
 	bound_total_energy_(0.0),
 	unbound_total_energy_(0.0),
 	repeats_(1),
@@ -212,7 +215,7 @@ void ddG::parse_my_tag(
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",1);
-	relax_bound_ = tag->getOption<bool>("relax_bound",0);
+	relax_bound_ = tag->getOption<bool>("relax_bound",false);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
@@ -592,15 +595,115 @@ ddG::filter() const {
 	return filter_;
 }
 
-std::string
-ddG::get_name() const {
-	return "ddG";
-}
+// XRW TEMP std::string
+// XRW TEMP ddG::get_name() const {
+// XRW TEMP  return "ddG";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 ddG::clone() const {
 	return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG( *this ) );
 }
+
+std::string ddG::get_name() const {
+	return mover_name();
+}
+
+std::string ddG::mover_name() {
+	return "ddG";
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+ddG::define_ddG_schema() {
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"jump", xsct_non_negative_integer,
+		"XSD XRW TO DO",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"per_residue_ddg", xsct_rosetta_bool,
+		"XSD XRW TO DO",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"repack_unbound", xsct_rosetta_bool,
+		"XSD XRW TO DO",
+		"false");
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"repack_bound", xsct_rosetta_bool,
+		"XSD XRW TO DO",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"relax_bound", xsct_rosetta_bool,
+		"XSD XRW TO DO",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"translate_by", xs_decimal,
+		"XSD XRW TO DO",
+		"1000");
+
+	attlist + XMLSchemaAttribute(
+		"relax_mover", xs_string,
+		"XSD XRW TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"filter", xs_string,
+		"XSD XRW TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"chain_num", xs_string,
+		"XSD XRW TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"chain_name", xs_string,
+		"XSD XRW TO DO");
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+
+	ct_gen->complex_type_naming_func(&moves::complex_type_name_for_mover)
+		.element_name(mover_name())
+		.description(
+		"This mover is useful for reporting the total or per-residue "
+		"ddgs in cases where you don't want to use the ddG filter for "
+		"some reason. (also, the ddg filter can't currently do per-residue "
+		"ddgs). Ddg scores are reported as string-real pairs in the job. "
+		"The total ddg score has the tag \"ddg\" and the each per residue ddg has the tag "
+		"\"residue_ddg_n\" where n is the residue number.")
+		.add_attributes( attlist )
+		.add_optional_name_attribute();
+	return ct_gen;
+}
+
+void ddG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	auto ct_gen = define_ddG_schema();
+	ct_gen->write_complex_type_to_schema(xsd);
+}
+
+std::string ddGCreator::keyname() const {
+	return ddG::mover_name();
+}
+
+protocols::moves::MoverOP
+ddGCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ddG );
+}
+
+void ddGCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ddG::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protocols

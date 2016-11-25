@@ -176,14 +176,37 @@ void RestrictDesignToProteinDNAInterface::provide_xml_schema( utility::tag::XMLS
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute( "dna_defs", xs_string )
-		+ XMLSchemaAttribute( "base_only", xs_boolean )
-		+ XMLSchemaAttribute( "z_cutoff", xs_decimal )
-		+ XMLSchemaAttribute( "close_threshold", xs_decimal )
-		+ XMLSchemaAttribute( "contact_threshold", xs_decimal )
-		+ XMLSchemaAttribute( "forget_chains_and_interface", xs_boolean );
+		+ XMLSchemaAttribute(
+		"dna_defs", xs_string,
+		"dna positions to design around, separated by comma (e.g. C.405.THY,C.406.GUA). "
+		"The definitions should refer only to one DNA chain, the complementary bases are "
+		"automatically retrieved. Bases are ADE, CYT, GUA, THY. The base "
+		"(and its complementary) in the starting structure will be mutated according to "
+		"the definition, if not prevented from another task operation.")
+		+ XMLSchemaAttribute(
+		"base_only", xsct_rosetta_bool,
+		"only residues within reach of the DNA bases are considered" )
+		+ XMLSchemaAttribute(
+		"z_cutoff", xsct_real,
+		"limit the protein interface positions to the ones that have a projection of their "
+		"distance vector on DNA axis lower than this threshold. It prevents designs that "
+		"are too far away along the helical axis" )
+		+ XMLSchemaAttribute(
+		"close_threshold", xsct_real,
+		"C-Beta (except Glycine) to baes atom-atom distance threshold "
+		"not including ribose or phosphate backbone. "
+		"Used to determine residues close to DNA" )
+		+ XMLSchemaAttribute(
+		"contact_threshold", xsct_real,
+		"Threshold of contacting residues with DNA" )
+		+ XMLSchemaAttribute(
+		"forget_chains_and_interface", xsct_rosetta_bool,
+		"Abandon existing dna chains and interface info to prevent "
+		"accumulation of state" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Restrict Design and repacking to protein residues around the defined DNA bases");
 }
 
 /// @brief determines the DNA interface residues and informs a PackerTask of their appropriate packing behavior

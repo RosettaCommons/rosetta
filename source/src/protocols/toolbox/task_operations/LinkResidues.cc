@@ -209,15 +209,37 @@ void LinkResidues::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( & linkres_subelement_ctname );
-	AttributeList subattributes; subattributes.push_back( XMLSchemaAttribute::required_attribute( "group", xs_string ));
-	subelements.add_simple_subelement( "LinkGroup", subattributes );
-	subelements.add_simple_subelement( "linkgroup", subattributes );
+	AttributeList subattributes;
+	subattributes
+		+ XMLSchemaAttribute::required_attribute( "group", xs_string, "group amino acids that should mutate together" );
+
+	subelements.add_simple_subelement(
+		"LinkGroup", subattributes ,
+		"A group of residues should keep the same amino acid identity. "
+		"Use the group=(some string) option to specify a comma-separated list of residue numbers "
+		"(in rosetta numbering) which residues make up the group. For example, group=\"1,2\" "
+		"ensures that the first and second residues will keep the same identity. "
+		"You can make as many groups as you like by specifying multiple LinkGroup subtags.");
+	subelements.add_simple_subelement(
+		"linkgroup", subattributes ,
+		"A group of residues should keep the same amino acid identity. Use the group=(some string) "
+		"option to specify a comma-separated list of residue numbers (in rosetta numbering) "
+		"which residues make up the group. For example, group=\"1,2\" ensures that the first "
+		"and second residues will keep the same identity. You can make as many groups as you "
+		"like by specifying multiple LinkGroup subtags.");
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen
 		.element_name( keyname() )
+		.description( "Specify groups of residues that should be mutated together. "
+		"For example, if one residue in the group is mutated to Cys, "
+		"all the residues in that group will be mutated to Cys. "
+		"This task operation is meant for situations where you want "
+		"to design a homo-multimer, but you don't want to use symmetry "
+		"mode (perhaps because your monomers aren't geometrically symmetrical)." )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.add_attribute( optional_name_attribute() )
+		.add_attribute( XMLSchemaAttribute::attribute_w_default( "template_group", xs_string, "XRW TO DO", "" ) )
 		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );
 }

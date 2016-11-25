@@ -39,6 +39,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 using basic::T;
@@ -50,22 +53,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer rotate_tracer( "protocols.ligand_docking.ligand_options.rotate", basic::t_debug );
 
-std::string
-RotateCreator::keyname() const
-{
-	return RotateCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RotateCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return Rotate::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RotateCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Rotate );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RotateCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new Rotate );
+// XRW TEMP }
 
-std::string
-RotateCreator::mover_name()
-{
-	return "Rotate";
-}
+// XRW TEMP std::string
+// XRW TEMP Rotate::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Rotate";
+// XRW TEMP }
 
 Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
@@ -110,9 +113,9 @@ protocols::moves::MoverOP Rotate::fresh_instance() const {
 	return protocols::moves::MoverOP( new Rotate );
 }
 
-std::string Rotate::get_name() const{
-	return "Rotate";
-}
+// XRW TEMP std::string Rotate::get_name() const{
+// XRW TEMP  return "Rotate";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -295,6 +298,52 @@ Ligand_info Rotate::create_random_rotation(
 	}
 	return ligand_info;
 }
+
+std::string Rotate::get_name() const {
+	return mover_name();
+}
+
+std::string Rotate::mover_name() {
+	return "Rotate";
+}
+
+void Rotate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// Restriction for the distribution attribute
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "distribution_string" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "uniform|gaussian" );
+	xsd.add_top_level_element( restriction_type );
+	// Attributes
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("distribution", xs_string, "Sampling distribution; Either \"uniform\" or \"gaussian\"")
+		+ XMLSchemaAttribute::required_attribute("degrees", xsct_non_negative_integer, "How degrees should be rotated around. Recommended=360")
+		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer, "Number of cycles. Recommended: 1000")
+		+ XMLSchemaAttribute("chain", xs_string, "Chain ID. MUST be a completely connected single chain.")
+		+ XMLSchemaAttribute("tag_along_chains", xs_string,
+		"Comma separated list of chains to be moved together with the rotating chain. E.g. metals or water.");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform a course random rotation "
+		" throughout all rotational degrees of freedom", attlist );
+}
+
+std::string RotateCreator::keyname() const {
+	return Rotate::mover_name();
+}
+
+protocols::moves::MoverOP
+RotateCreator::create_mover() const {
+	return protocols::moves::MoverOP( new Rotate );
+}
+
+void RotateCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Rotate::provide_xml_schema( xsd );
+}
+
 
 void add_ligand_conditionally(
 	Ligand_info const & ligand_info,

@@ -56,6 +56,9 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -69,25 +72,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
 
-std::string
-PlaceOnLoopCreator::keyname() const
-{
-	return PlaceOnLoopCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceOnLoopCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PlaceOnLoop::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PlaceOnLoopCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlaceOnLoop );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlaceOnLoopCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PlaceOnLoop );
+// XRW TEMP }
 
-std::string
-PlaceOnLoopCreator::mover_name()
-{
-	return "PlaceOnLoop";
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceOnLoop::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PlaceOnLoop";
+// XRW TEMP }
 
 PlaceOnLoop::PlaceOnLoop() :
-	simple_moves::DesignRepackMover( PlaceOnLoopCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlaceOnLoop::mover_name() ),
 	loop_begin_( 0 ), loop_end_( 0 ),
 	hires_scorefxn_( /* NULL */ ), lores_scorefxn_( NULL ),
 	chain_closing_attempts_( 100 ), host_chain_( 2 ), stub_set_( /* NULL */ ), minimize_toward_stub_( true )
@@ -261,10 +264,10 @@ PlaceOnLoop::apply( Pose & pose )
 	else set_last_move_status( FAIL_RETRY );
 }
 
-std::string
-PlaceOnLoop::get_name() const {
-	return PlaceOnLoopCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlaceOnLoop::get_name() const {
+// XRW TEMP  return PlaceOnLoop::mover_name();
+// XRW TEMP }
 
 void
 PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
@@ -321,6 +324,50 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	for ( int const i : delta_length_ ) TR<<i<<", ";
 	TR<<std::endl;
 }
+
+std::string PlaceOnLoop::get_name() const {
+	return mover_name();
+}
+
+std::string PlaceOnLoop::mover_name() {
+	return "PlaceOnLoop";
+}
+
+void PlaceOnLoop::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "host_chain", xsct_non_negative_integer, "Chain where hotspot stub residues should be placed on a loop, numbered from 1 sequentially", "2" )
+		+ XMLSchemaAttribute( "loop_begin", xsct_non_negative_integer, "Beginning residue of loop, in seqpos (Rosetta) numbering" )
+		+ XMLSchemaAttribute( "loop_end", xsct_non_negative_integer, "Ending residue of loop, in seqpos (Rosetta) numbering" )
+		+ XMLSchemaAttribute::attribute_w_default( "minimize_toward_stub", xsct_rosetta_bool, "reclose the loop using minimization to get the stub exactly right", "1" )
+		+ XMLSchemaAttribute( "stubfile", xsct_rosetta_bool, "Input stubfile from which to draw samples" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "score_high" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "score_low" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "closing_attempts", xsct_non_negative_integer, "Attempt to close the loop this many times before giving up", "100" )
+		+ XMLSchemaAttribute( "shorten_by", xsct_int_cslist, "Shorten loop by this many residues (multiple options may be provided, will be selected randomly)" )
+		+ XMLSchemaAttribute( "lengthen_by", xsct_int_cslist, "Lengthen loop by this many residues (multiple options may be provided, will be selected randomly)" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string PlaceOnLoopCreator::keyname() const {
+	return PlaceOnLoop::mover_name();
+}
+
+protocols::moves::MoverOP
+PlaceOnLoopCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlaceOnLoop );
+}
+
+void PlaceOnLoopCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlaceOnLoop::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

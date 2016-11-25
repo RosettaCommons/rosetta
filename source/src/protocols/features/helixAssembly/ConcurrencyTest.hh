@@ -44,6 +44,8 @@
 //Basic
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 //#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 
 namespace protocols {
@@ -57,25 +59,36 @@ public:
 
 	ConcurrencyTest(){}
 
-	virtual
-	std::string
-	type_name() const  {
-		return "HelixBundleFeatures";
-	}
+	// XRW TEMP  virtual
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const  {
+	// XRW TEMP   return "HelixBundleFeatures";
+	// XRW TEMP  }
 
 	/// @brief generate the table schemas and write them to the database
-	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
 	/// @brief collect all the feature data for the pose
-	virtual
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 }

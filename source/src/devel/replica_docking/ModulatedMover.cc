@@ -24,6 +24,9 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
@@ -31,20 +34,20 @@ static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
 namespace devel {
 namespace replica_docking {
 
-std::string
-ModulatedMoverCreator::keyname() const {
-	return ModulatedMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ModulatedMoverCreator::keyname() const {
+// XRW TEMP  return ModulatedMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ModulatedMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ModulatedMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ModulatedMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ModulatedMover );
+// XRW TEMP }
 
-std::string
-ModulatedMoverCreator::mover_name() {
-	return "ModulatedMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ModulatedMover::mover_name() {
+// XRW TEMP  return "ModulatedMover";
+// XRW TEMP }
 
 ModulatedMover::ModulatedMover() :
 	tempering_( /* NULL */ )
@@ -61,11 +64,11 @@ ModulatedMover::ModulatedMover( ModulatedMover const& other ) : ThermodynamicMov
 
 ModulatedMover::~ModulatedMover() = default;
 
-std::string
-ModulatedMover::get_name() const
-{
-	return "ModulatedMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ModulatedMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "ModulatedMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 ModulatedMover::clone() const
@@ -87,34 +90,46 @@ ModulatedMover::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
+	using namespace utility::tag;
+
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
 	tempering_ = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::HamiltonianExchange > ( mover );
 	if ( !tempering_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
 	}
 	//  n_temp_levels_ = tempering_->n_temp_levels();
-	if ( tag->hasOption( "type" ) ) {
-		mover_name_ = tag->getOption< std::string >( "type" );
-		set_type( mover_name_ ); //for proper reporting in trial_counters
+	//if ( tag->hasOption( "type" ) ) {
+	// mover_name_ = tag->getOption< std::string >( "type" );
+	// set_type( mover_name_ ); //for proper reporting in trial_counters
+	//}
+
+	// OK. First subtag is the Mover that we'll be making many copies of
+	// Save its tag
+	utility::vector1< TagCOP > subtags = tag->getTags();
+	if ( subtags.size() == 0 ) {
+		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires at least a single subtag: the Mover that it is going to modulate. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
+	}
+	utility::tag::TagCOP initial_mover_tag = subtags[0];
+	mover_name_ = subtags[ 0 ]->getName();
+	if ( protocols::moves::MoverFactory::get_instance()->mover_creator_map().count( "mover_name_" ) == 0 ) {
+		throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover's first subtag must be the ThermodynamicMover that will be modulated. Have you used the rewrite_rosetta_script.py utility that lives in tools/xsd_xrw/ since the XSD XRW?" );
 	}
 
-	std::map< std::string, std::string > common_options;
-	if ( tag->hasTag( "common" ) ) {
-		utility::tag::TagCOP common_tag( tag->getTag( "common" ) );
-		common_options = common_tag->getOptions();
-		// have to go through all the options in this tag, otherwise Tag::die_for_unaccessed_options()
-		std::map< std::string, std::string >::const_iterator option=common_options.begin();
-		for ( ; option != common_options.end(); ++option ) {
-			common_tag->getOption< std::string>( option->first );
+	// have to go through all the options in the mover tag, to avoid Tag::die_for_unaccessed_options()
+	{ // scope
+		std::map< std::string, std::string > mover_options;
+		mover_options = initial_mover_tag->getOptions();
+		std::map< std::string, std::string >::const_iterator option=mover_options.begin();
+		for ( ; option != mover_options.end(); ++option ) {
+			initial_mover_tag->getOption< std::string>( option->first );
 		}
 	}
 
 	//  utility::vector1< std::string > interpolated_options;
-	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 	utility::vector1< std::string > keys;
 
-
-	for ( auto subtag : subtags ) {
+	for ( core::Size ii = 1 /* skip position 0 */; ii < subtags.size(); ++ii ) {
+		TagCOP subtag = subtags[ii];
 		Interpolators interpolators;
 		tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
 		if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) { //// weight is interpreted in TempWeightedMetropolisHastingsMover
@@ -128,10 +143,12 @@ ModulatedMover::parse_my_tag(
 
 			keys.push_back( subtag->getOption< std::string >( "key" ) );
 		} else {
+			// Should this just throw an exception now that we're ignoring the first subtag?
 			tr.Warning << "Cannot interpret subtag "<<subtag->getName() << std::endl;
 		}
 	}
-	/// for debug
+
+	// for debug
 	for ( auto & key : keys ) {
 		tr.Debug << "check if key " << key << " is provided" << std::endl;
 
@@ -154,27 +171,29 @@ ModulatedMover::parse_my_tag(
 	for ( core::Size temp_level = 1; temp_level <= tempering_->n_temp_levels(); ++temp_level ) {
 		tr.Debug << "generating mover tag for level " << temp_level << std::endl;
 		//have a method that creates a tag for a certain temperature level
-		utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name, common_options );
+		utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name, initial_mover_tag );
 		using namespace protocols::moves;
 		using namespace protocols::canonical_sampling;
 		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
 		if ( !new_mover ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "you suck" );
+			throw utility::excn::EXCN_RosettaScriptsOption( "Failed to instantiate a Mover with name \"" + mover_name_ + "\" from the ModulatedMover" );
 		}
 		ThermodynamicMoverOP th_mover( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicMover > ( new_mover ) );
 		if ( !th_mover ) {
-			throw utility::excn::EXCN_RosettaScriptsOption( "you still suck: Class "+mover_name_+"is not a ThermodynamicMover" );
+			throw utility::excn::EXCN_RosettaScriptsOption( "The \""+mover_name_+"\" requested in the ModulatedMover does not inherit from ThermodynamicMover" );
 		}
 		movers_.push_back( th_mover ); //
 	} // end of for ( temp_level )
 }
 
 utility::tag::TagCOP
-ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix, std::map< std::string, std::string > const& common_options ) const {
+ModulatedMover::generate_mover_tag(
+	core::Size temp_level,
+	std::string const& prefix,
+	utility::tag::TagCOP initial_mover_tag
+) const {
 	using namespace utility::tag;
-	TagOP tag( new Tag() );
-	tag->setName(mover_name_);
-	tag->setOptions( common_options );
+	TagOP tag( initial_mover_tag->clone() );
 
 	GridCoord grid_coord( tempering_->level_2_grid_coord( temp_level ) );
 	if ( grid_coord.size()==1 ) grid_coord.push_back(1);
@@ -238,6 +257,60 @@ void ModulatedMover::finalize_simulation(
 	}
 	tr.Debug << "Modulated movers' finalize_simulation done" << std::endl;
 }
+
+std::string ModulatedMover::get_name() const {
+	return mover_name();
+}
+
+std::string ModulatedMover::mover_name() {
+	return "ModulatedMover";
+}
+
+void ModulatedMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attlist;
+	attlist + Attr::required_attribute( "tempering", xs_string, "The previously declared HamiltonianExchange mover that will be used manage temperature and scorefunction exchanging" )
+		+ required_name_attribute();
+
+	// The Interp sub-tag
+	AttributeList interp_attributes;
+	interp_attributes
+		+ Attr::required_attribute( "key", xs_string, "key to look up this Interpolator in the mover prototype map" )
+		+ Attr::attribute_w_default( "dim", xsct_non_negative_integer, "exchange happens between neighbouring cells in a 'dim' dimensional grid; in temperature replica-exchange usually D=1.", "1" );
+	TempInterpolatorFactory::attributes_for_interpolators( xsd, interp_attributes );
+
+	// Now let's put together the CTGen for the ModulatedMover
+	XMLSchemaSimpleSubelementList mover_subelement;
+	mover_subelement.add_group_subelement( & protocols::moves::MoverFactory::mover_xml_schema_group_name );
+	XMLSchemaSimpleSubelementList interp_subelement;
+	interp_subelement.add_simple_subelement( "Interp", interp_attributes, "XRW TODO" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( mover_name() )
+		.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.add_ordered_subelement_set_as_required( mover_subelement )
+		.add_ordered_subelement_set_as_repeatable( interp_subelement )
+		.add_attributes( attlist )
+		.description( "Used in replica docking.  This is a rigid body mover container, for n-replica docking.  Each modulatedMover holds n rigid body movers with different step sizes, and applies them according to the current temperature." )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string ModulatedMoverCreator::keyname() const {
+	return ModulatedMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ModulatedMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ModulatedMover );
+}
+
+void ModulatedMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ModulatedMover::provide_xml_schema( xsd );
+}
+
 
 // void ModulatedMover::observe_after_metropolis(
 //   protocols::canonical_sampling::MetropolisHastingsMover const & mhm

@@ -52,11 +52,6 @@ protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
 	return i->second;
 }
 
-std::string
-complex_type_name_for_mover( std::string const & mover_name )
-{
-	return "mover_" + mover_name + "_type";
-}
 
 }  // namespace moves
 }  // namespace protocols

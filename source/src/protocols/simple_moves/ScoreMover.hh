@@ -72,7 +72,7 @@ public:
 	void insert_rms( core::Real rms ) { score_map_["rms"] = rms; }
 
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void test_move( Pose & pose ) override
 	{
 		apply(pose);
@@ -83,6 +83,18 @@ public:
 	ScoreFunctionOP score_function() const;
 
 	void set_score_file( std::string scorefile ) { scorefile_ = scorefile; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	ScoreFunctionOP score_function_;

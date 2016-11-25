@@ -19,6 +19,8 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <protocols/antibody/metrics.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace antibody {
@@ -37,8 +39,8 @@ public:
 
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
@@ -136,6 +138,18 @@ public:
 	/// @brief Any other chains, use InterfaceFeatures.
 	void
 	set_interface_chains(utility::vector1< std::string > const & intermediate_interfaces) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

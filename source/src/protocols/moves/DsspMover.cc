@@ -28,6 +28,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.DsspMover" );
@@ -35,25 +38,8 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.DsspMover" );
 namespace protocols {
 namespace moves {
 
-std::string
-DsspMoverCreator::keyname() const
-{
-	return DsspMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-DsspMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DsspMover );
-}
-
-std::string
-DsspMoverCreator::mover_name()
-{
-	return "Dssp";
-}
-
 DsspMover::DsspMover():
-	Mover( DsspMoverCreator::mover_name() ),
+	Mover( DsspMover::mover_name() ),
 	reduced_IG_as_L_(0)
 {}
 
@@ -86,11 +72,6 @@ void DsspMover::apply( Pose & pose )
 	}
 }
 
-std::string
-DsspMover::get_name() const {
-	return DsspMoverCreator::mover_name();
-}
-
 /// @brief parse xml
 void
 DsspMover::parse_my_tag(
@@ -103,6 +84,45 @@ DsspMover::parse_my_tag(
 	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , 0 );
 	TR << "DsspMover loaded." << std::endl;
 }
+
+std::string DsspMover::get_name() const {
+	return mover_name();
+}
+
+std::string DsspMover::mover_name() {
+	return "Dssp";
+}
+
+void DsspMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"reduced_IG_as_L", xs_integer,
+		"if set to be 1, will convert IG from Dssp definition as L rather than H",
+		"0");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Calculate secondary structures based on dssp algorithm, "
+		"and load the information onto Pose",
+		attlist );
+}
+
+std::string DsspMoverCreator::keyname() const {
+	return DsspMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DsspMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DsspMover );
+}
+
+void DsspMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DsspMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace moves
 }  // namespace protocols

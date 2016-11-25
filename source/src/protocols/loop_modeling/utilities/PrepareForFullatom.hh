@@ -54,10 +54,10 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "PrepareForFullatom"; }
+	// XRW TEMP  string get_name() const { return "PrepareForFullatom"; }
 
 	/// @brief Set the original pose.  This must be called before apply().
 	void set_original_pose(Pose const & pose);
@@ -71,10 +71,22 @@ public:
 	/// @brief Guarantee the pose is repacked before the fullatom stage.
 	void set_force_repack(bool value);
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 
 	/// @brief Convert the given pose to centroid mode.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 

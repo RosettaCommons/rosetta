@@ -53,6 +53,9 @@
 #include <sstream>
 #include <fstream>
 #include <utility/fixedsizearray1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using namespace core;
 using namespace core::pose;
 
@@ -66,20 +69,20 @@ using namespace chemical;
 using namespace conformation;
 
 
-std::string
-PerturbChiSidechainMoverCreator::keyname() const {
-	return PerturbChiSidechainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbChiSidechainMoverCreator::keyname() const {
+// XRW TEMP  return PerturbChiSidechainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PerturbChiSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbChiSidechainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PerturbChiSidechainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PerturbChiSidechainMover );
+// XRW TEMP }
 
-std::string
-PerturbChiSidechainMoverCreator::mover_name() {
-	return "PerturbChiSidechain";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbChiSidechainMover::mover_name() {
+// XRW TEMP  return "PerturbChiSidechain";
+// XRW TEMP }
 
 
 PerturbChiSidechainMover::PerturbChiSidechainMover() {
@@ -122,10 +125,10 @@ PerturbChiSidechainMover::parse_my_tag(
 	gaussian_ = tag->getOption<bool>( "gaussian", gaussian_ );
 }
 
-std::string
-PerturbChiSidechainMover::get_name() const {
-	return "PerturbChiSidechainMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbChiSidechainMover::get_name() const {
+// XRW TEMP  return "PerturbChiSidechainMover";
+// XRW TEMP }
 
 void
 PerturbChiSidechainMover::make_chi_move(
@@ -143,6 +146,39 @@ PerturbChiSidechainMover::make_chi_move(
 		}
 	}
 }
+
+std::string PerturbChiSidechainMover::get_name() const {
+	return mover_name();
+}
+
+std::string PerturbChiSidechainMover::mover_name() {
+	return "PerturbChiSidechain";
+}
+
+void PerturbChiSidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// AMW: "effective default" issue
+	attlist + XMLSchemaAttribute::attribute_w_default("magnitude", xsct_real, "Size of chi perturbations.", "10" )
+		+ XMLSchemaAttribute::attribute_w_default("gaussian", xsct_rosetta_bool, "Sample from a normal distribution (true) or uniformly (false).", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sample side chain chi angles.", attlist );
+}
+
+std::string PerturbChiSidechainMoverCreator::keyname() const {
+	return PerturbChiSidechainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PerturbChiSidechainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PerturbChiSidechainMover );
+}
+
+void PerturbChiSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PerturbChiSidechainMover::provide_xml_schema( xsd );
+}
+
 
 } // sidechain_moves
 } // simple_moves

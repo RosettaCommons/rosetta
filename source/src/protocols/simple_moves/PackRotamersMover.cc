@@ -17,7 +17,7 @@
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/util.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -65,7 +65,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PackRotamersMover"
 std::string
 PackRotamersMoverCreator::keyname() const
 {
-	return PackRotamersMoverCreator::mover_name();
+	return PackRotamersMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -73,11 +73,15 @@ PackRotamersMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new PackRotamersMover );
 }
 
-std::string
-PackRotamersMoverCreator::mover_name()
-{
-	return "PackRotamersMover";
+void PackRotamersMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	PackRotamersMover::provide_xml_schema( xsd );
 }
+
+//std::string
+//PackRotamersMoverCreator::mover_name()
+//{
+// return "PackRotamersMover";
+//}
 
 PackRotamersMover::PackRotamersMover() :
 	protocols::moves::Mover("PackRotamersMover"),
@@ -173,7 +177,15 @@ PackRotamersMover::apply( Pose & pose )
 }
 
 std::string
-PackRotamersMover::get_name() const {
+PackRotamersMover::get_name() const { return mover_name(); }
+
+std::string
+PackRotamersMoverCreator::mover_name() {
+	return "PackRotamersMover";
+}
+
+std::string
+PackRotamersMover::mover_name() {
 	return PackRotamersMoverCreator::mover_name();
 }
 
@@ -351,19 +363,35 @@ TaskFactoryCOP PackRotamersMover::task_factory() const { return task_factory_; }
 rotamer_set::RotamerSetsCOP PackRotamersMover::rotamer_sets() const { return rotamer_sets_; }
 interaction_graph::AnnealableGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
 
-void PackRotamersMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+PackRotamersMover::complex_type_generator_for_pack_rotamers_mover( utility::tag::XMLSchemaDefinition & )
 {
+
 	using namespace utility::tag;
 	AttributeList attributes;
 
-	attributes + XMLSchemaAttribute::attribute_w_default(  "nloop", xsct_non_negative_integer, "1" );
+	attributes + XMLSchemaAttribute::attribute_w_default(  "nloop", xsct_non_negative_integer, "Equivalent to \"-ndruns\"."
+		"Number of complete packing runs before an output (best score) is produced.",  "1"  );
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 	rosetta_scripts::attributes_for_parse_task_operations( attributes );
 
-	XMLSchemaComplexTypeGenerator ct_gen;
-	ct_gen.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.element_name( PackRotamersMoverCreator::mover_name() )
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attributes )
+		.add_optional_name_attribute();
+	return ct_gen;
+}
+
+
+
+void PackRotamersMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_pack_rotamers_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Repacks sidechains with user-supplied options, including TaskOperations." )
 		.write_complex_type_to_schema( xsd );
 }
 

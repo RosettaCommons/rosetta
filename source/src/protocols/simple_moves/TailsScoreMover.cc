@@ -343,7 +343,7 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 		//Clean visits array
 		// TR<< "Updating array of visits..." <<  std::endl;
 		for ( auto & array_of_visit : array_of_visits ) {
-			for (int & j : array_of_visit) {
+			for ( int & j : array_of_visit ) {
 				if ( j==HILL ) {
 					// TR<< "Hill at" << "    " << i<< "   " << j << std::endl;
 					j = PREVIOUS_HILL;

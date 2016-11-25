@@ -69,6 +69,19 @@ DataLoaderFactory::newDataLoader( std::string const & loader_type ) const
 
 }
 
+DataLoaderFactory::LoaderMap const &
+DataLoaderFactory::loader_map() const
+{
+	return dataloader_creator_map_;
+}
+
+std::string
+DataLoaderFactory::data_loader_ct_namer( std::string const & loader_name )
+{
+	return "data_loader_" + loader_name + "_type";
+}
+
+
 DataLoaderFactory::DataLoaderFactory() {}
 
 } //namespace parser

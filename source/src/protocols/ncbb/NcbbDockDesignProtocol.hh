@@ -81,10 +81,22 @@ public:
 
 	//methods
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override { return "NcbbDockDesignProtocol"; }
+	// XRW TEMP  std::string get_name() const override { return "NcbbDockDesignProtocol"; }
 	protocols::moves::MoverOP fresh_instance() const override { return NcbbDockDesignProtocolOP( new NcbbDockDesignProtocol ); }
 	protocols::moves::MoverOP clone() const override;
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;

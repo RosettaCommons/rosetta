@@ -30,6 +30,7 @@
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/SingletonBase.hh>
 
 // c++ headers
@@ -75,10 +76,10 @@ public:
 
 	void factory_register( FilterCreatorOP creator );
 
-	/// @brief Create a mover given its identifying string
+	/// @brief Create a filter given its identifying string
 	FilterOP newFilter( std::string const & );
 
-	/// @brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
+	/// @brief return new Filter by Tag parsing; the identifying string for the Filter is in the Tag
 	FilterOP
 	newFilter(
 		TagCOP,
@@ -87,6 +88,12 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const &
 	);
+
+	/// @brief Read access to the set of all FilterCreators; for unit testing purposes
+	FilterMap const & filter_creator_map() const;
+
+	void define_filter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	static std::string filter_xml_schema_group_name();
 
 private:
 	FilterFactory();

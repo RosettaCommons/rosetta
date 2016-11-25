@@ -46,7 +46,7 @@ public:
 	~SeparateDnaFromNonDna() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	numeric::xyzVector< core::Real > translation() const { return translation_; }
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -60,6 +60,18 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	numeric::xyzVector< core::Real > translation_;

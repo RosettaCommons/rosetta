@@ -293,7 +293,7 @@ public:
 	/// @brief dtor
 	~PyMolMover() override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void apply( Pose & ) override;
 
 	using protocols::moves::Mover::apply;
@@ -369,6 +369,18 @@ public:
 
 	std::string
 	get_PyMol_model_name(Pose const & pose) const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);

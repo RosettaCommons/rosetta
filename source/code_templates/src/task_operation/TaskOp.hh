@@ -22,7 +22,6 @@
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 
-
 --namespace--
 
 ///@brief --brief--
@@ -33,23 +32,21 @@ public:
 
 	--class--(--class-- const & src);
 
-	virtual ~--class--();
+	~--class--() override;
 
 	core::pack::task::operation::TaskOperationOP
 	clone() const;
 
 	/// @brief Configure from a RosettaScripts XML tag.
-	virtual void
+	void
 	parse_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & );
-
+		basic::datacache::DataMap & ) override;
 
 	//////////////////////
 
-	virtual
 	void
-	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const override;
 
 	/// @brief Return the name used to construct this TaskOperation from an XML file
 	static std::string keyname();
@@ -62,10 +59,6 @@ private:
 
 };
 
-
-
 --end_namespace--
 
-
 #endif //INCLUDED_--path--_--class--_fwd_hh
-

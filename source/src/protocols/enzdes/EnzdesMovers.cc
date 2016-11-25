@@ -55,6 +55,12 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -180,24 +186,6 @@ EnzdesConstraintReporter::add_constrained_nonligand_atom(
 	}
 }
 
-
-moves::MoverOP
-PredesignPerturbMoverCreator::create_mover() const
-{
-	return moves::MoverOP( new PredesignPerturbMover );
-}
-
-std::string
-PredesignPerturbMoverCreator::keyname() const
-{
-	return PredesignPerturbMoverCreator::mover_name();
-}
-
-std::string
-PredesignPerturbMoverCreator::mover_name()
-{
-	return "PredesignPerturbMover";
-}
 
 //-------------PredesignPerturbMover-----------------//
 
@@ -361,11 +349,59 @@ PredesignPerturbMover::fresh_instance() const
 	return protocols::moves::MoverOP( new PredesignPerturbMover );
 }
 
-std::string
-PredesignPerturbMover::get_name() const
-{
+std::string PredesignPerturbMover::get_name() const {
+	return mover_name();
+}
+
+std::string PredesignPerturbMover::mover_name() {
 	return "PredesignPerturbMover";
 }
+
+void PredesignPerturbMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"trans_magnitude", xsct_real,
+		"how large (stdev of a gaussian) a random translation step to take in each of x, y, and z (angstrom)",
+		"0.1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"rot_magnitude", xsct_real,
+		"how large (stdev of a gaussian) a random rotational step to take in each of the Euler angles (degrees)",
+		"2.0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dock_trials", xsct_non_negative_integer,
+		"the number of Monte Carlo steps to attempt",
+		"100");
+
+	rosetta_scripts::attributes_for_parse_task_operations_w_factory(attlist);
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"PredesignPerturbMover randomly perturbs a ligand in a protein active site. "
+		"The input protein will be transformed to a polyalanine context for residues surrounding "
+		"the ligand. A number of random rotation+translation moves are made and then accepted/rejected "
+		"based on the Boltzmann criteria with a modified (no attractive) score function (enzdes_polyA_min.wts).",
+		attlist );
+}
+
+std::string PredesignPerturbMoverCreator::keyname() const {
+	return PredesignPerturbMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PredesignPerturbMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PredesignPerturbMover );
+}
+
+void PredesignPerturbMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PredesignPerturbMover::provide_xml_schema( xsd );
+}
+
 
 //-------RepackLigandSiteWithoutLigandMover----------//
 
@@ -534,24 +570,6 @@ RepackLigandSiteWithoutLigandMover::get_ptask() const {
 
 //-------UpdateEnzdesHeaderMover----------//
 
-moves::MoverOP
-UpdateEnzdesHeaderMoverCreator::create_mover() const
-{
-	return moves::MoverOP( new UpdateEnzdesHeaderMover() );
-}
-
-std::string
-UpdateEnzdesHeaderMoverCreator::keyname() const
-{
-	return UpdateEnzdesHeaderMoverCreator::mover_name();
-}
-
-std::string
-UpdateEnzdesHeaderMoverCreator::mover_name()
-{
-	return "UpdateEnzdesHeader";
-}
-
 UpdateEnzdesHeaderMover::UpdateEnzdesHeaderMover(){}
 
 UpdateEnzdesHeaderMover::~UpdateEnzdesHeaderMover()= default;
@@ -563,16 +581,44 @@ UpdateEnzdesHeaderMover::apply(
 	enzutil::create_remark_headers_from_cstcache( pose );
 }
 
-std::string
-UpdateEnzdesHeaderMover::get_name() const {
-	return UpdateEnzdesHeaderMoverCreator::mover_name();
-}
-
 protocols::moves::MoverOP
 UpdateEnzdesHeaderMover::clone() const
 {
 	return protocols::moves::MoverOP( new UpdateEnzdesHeaderMover( *this ) );
 }
+
+std::string UpdateEnzdesHeaderMover::get_name() const {
+	return mover_name();
+}
+
+std::string UpdateEnzdesHeaderMover::mover_name() {
+	return "UpdateEnzdesHeader";
+}
+
+void UpdateEnzdesHeaderMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XRW TO DO",
+		attlist );
+}
+
+std::string UpdateEnzdesHeaderMoverCreator::keyname() const {
+	return UpdateEnzdesHeaderMover::mover_name();
+}
+
+protocols::moves::MoverOP
+UpdateEnzdesHeaderMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new UpdateEnzdesHeaderMover );
+}
+
+void UpdateEnzdesHeaderMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	UpdateEnzdesHeaderMover::provide_xml_schema( xsd );
+}
+
 
 } //enzdes
 } //protocols

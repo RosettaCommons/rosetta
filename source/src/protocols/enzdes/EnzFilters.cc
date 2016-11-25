@@ -80,6 +80,11 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+
 #include <utility/numbers.hh>
 
 using namespace core;
@@ -1379,53 +1384,358 @@ ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) c
 }
 
 
-filters::FilterOP
-DiffAtomSasaFilterCreator::create_filter() const { return filters::FilterOP( new DiffAtomSasaFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP DiffAtomSasaFilterCreator::create_filter() const { return filters::FilterOP( new DiffAtomSasaFilter ); }
 
-std::string
-DiffAtomSasaFilterCreator::keyname() const { return "DiffAtomBurial"; }
+// XRW TEMP std::string
+// XRW TEMP DiffAtomSasaFilterCreator::keyname() const { return "DiffAtomBurial"; }
 
-filters::FilterOP
-EnzScoreFilterCreator::create_filter() const { return filters::FilterOP( new EnzScoreFilter ); }
+std::string DiffAtomSasaFilter::name() const {
+	return class_name();
+}
 
-std::string
-EnzScoreFilterCreator::keyname() const { return "EnzScore"; }
+std::string DiffAtomSasaFilter::class_name() {
+	return "DiffAtomBurial";
+}
 
-filters::FilterOP
-LigBurialFilterCreator::create_filter() const { return filters::FilterOP( new LigBurialFilter ); }
+void DiffAtomSasaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	//attlist
+	// + XMLSchemaAttribute::attribute_w_default("res1_res_num", xsct_non_negative_integer, "number of the residue for res1", "0")
+	//+ XMLSchemaAttribute::attribute_w_default("res2_res_num", xsct_non_negative_integer, "number of the residue for res2", "0");
 
-std::string
-LigBurialFilterCreator::keyname() const { return "LigBurial"; }
+	core::pose::attributes_for_get_resnum( attlist, "res1_" );
+	core::pose::attributes_for_get_resnum( attlist, "res2_" );
 
-filters::FilterOP
-LigDSasaFilterCreator::create_filter() const { return filters::FilterOP( new LigDSasaFilter ); }
+	attlist + XMLSchemaAttribute::attribute_w_default("atomname1", xs_string, "name of atom 1 (given as a string); defaults to CA on res1", "CA")
+		+ XMLSchemaAttribute::attribute_w_default("atomname2", xs_string, "name of atom 2 (given as a string); defaults to CA on res2", "CA")
+		+ XMLSchemaAttribute::attribute_w_default("sample_type", xs_string, "can be either 'more' (atom1 less than atom2) or 'less' (atom1 less than atom2", "more");
 
-std::string
-LigDSasaFilterCreator::keyname() const { return "DSasa"; }
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter compares the SASA upon ligand binding for two different atoms", attlist );
+}
 
-filters::FilterOP
-LigInterfaceEnergyFilterCreator::create_filter() const { return filters::FilterOP( new LigInterfaceEnergyFilter ); }
+std::string DiffAtomSasaFilterCreator::keyname() const {
+	return DiffAtomSasaFilter::class_name();
+}
 
-std::string
-LigInterfaceEnergyFilterCreator::keyname() const { return "LigInterfaceEnergy"; }
+protocols::filters::FilterOP
+DiffAtomSasaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DiffAtomSasaFilter );
+}
 
-filters::FilterOP
-RepackWithoutLigandFilterCreator::create_filter() const { return filters::FilterOP( new RepackWithoutLigandFilter ); }
+void DiffAtomSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DiffAtomSasaFilter::provide_xml_schema( xsd );
+}
 
-std::string
-RepackWithoutLigandFilterCreator::keyname() const { return "RepackWithoutLigand"; }
 
-filters::FilterOP
-EnzdesScorefileFilterCreator::create_filter() const { return filters::FilterOP( new EnzdesScorefileFilter ); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP EnzScoreFilterCreator::create_filter() const { return filters::FilterOP( new EnzScoreFilter ); }
 
-std::string
-EnzdesScorefileFilterCreator::keyname() const { return "EnzdesScorefileFilter"; }
+// XRW TEMP std::string
+// XRW TEMP EnzScoreFilterCreator::keyname() const { return "EnzScore"; }
 
-filters::FilterOP
-ResidueConformerFilterCreator::create_filter() const { return filters::FilterOP( new ResidueConformerFilter ); }
+std::string EnzScoreFilter::name() const {
+	return class_name();
+}
 
-std::string
-ResidueConformerFilterCreator::keyname() const { return "ResidueConformerFilter"; }
+std::string EnzScoreFilter::class_name() {
+	return "EnzScore";
+}
+
+void EnzScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute("cstid", xs_string, "Expects cstid string to be of format [0-9]+[A-Z], where the number is constraint number and trailing letter is temlplate id i.e. either A or B");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("score_type", xs_string, "type of score to be evaluated; default is total_score", "total_score")
+		+ XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "filters the energy based upon this cutoff value", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("whole_pose", xsct_rosetta_bool, "determines whether to evalue the score based upon the whole pose or not", "0");
+	core::pose::attributes_for_get_resnum( attlist );
+	// can't add sfxn again
+	//protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "filter that calculates the energy based upon either the ligand (speficified with resnum), a set of cstid, or the whole pose; one of these must be specified", attlist );
+}
+
+std::string EnzScoreFilterCreator::keyname() const {
+	return EnzScoreFilter::class_name();
+}
+
+protocols::filters::FilterOP
+EnzScoreFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new EnzScoreFilter );
+}
+
+void EnzScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnzScoreFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP LigBurialFilterCreator::create_filter() const { return filters::FilterOP( new LigBurialFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP LigBurialFilterCreator::keyname() const { return "LigBurial"; }
+
+std::string LigBurialFilter::name() const {
+	return class_name();
+}
+
+std::string LigBurialFilter::class_name() {
+	return "LigBurial";
+}
+
+void LigBurialFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("lig_id", xsct_non_negative_integer, "an input other than 0 (or no input at all) indicates no ligand present", "0")
+		+ XMLSchemaAttribute::attribute_w_default("distance", xsct_real, "distance around which the ligand to count neighboring atoms", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("neighbors", xsct_non_negative_integer, "integer representing the number of neighbors count", "0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "this filter basically works exactly as ResidueBurialFilter, but with the advantage that it has the capability to figure out resid of the ligand", attlist );
+}
+
+std::string LigBurialFilterCreator::keyname() const {
+	return LigBurialFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LigBurialFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LigBurialFilter );
+}
+
+void LigBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LigBurialFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP LigDSasaFilterCreator::create_filter() const { return filters::FilterOP( new LigDSasaFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP LigDSasaFilterCreator::keyname() const { return "DSasa"; }
+
+std::string LigDSasaFilter::name() const {
+	return class_name();
+}
+
+std::string LigDSasaFilter::class_name() {
+	return "DSasa";
+}
+
+void LigDSasaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("lower_threshold", xsct_real, "lower bound on dsasa", "0")
+		+ XMLSchemaAttribute::attribute_w_default("upper_threshold", xsct_real, "upper bound on dsasa", "1");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "filters based upon whether the dsasa is between a set of bounds", attlist );
+}
+
+std::string LigDSasaFilterCreator::keyname() const {
+	return LigDSasaFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LigDSasaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LigDSasaFilter );
+}
+
+void LigDSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LigDSasaFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP LigInterfaceEnergyFilterCreator::create_filter() const { return filters::FilterOP( new LigInterfaceEnergyFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP LigInterfaceEnergyFilterCreator::keyname() const { return "LigInterfaceEnergy"; }
+
+std::string LigInterfaceEnergyFilter::name() const {
+	return class_name();
+}
+
+std::string LigInterfaceEnergyFilter::class_name() {
+	return "LigInterfaceEnergy";
+}
+
+void LigInterfaceEnergyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("energy_cutoff", xsct_real, "energy threshold for filter", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("include_cstE", xsct_rosetta_bool, "boolean as to whether to include the cstE", "0")
+		+ XMLSchemaAttribute::attribute_w_default("jump_number", xsct_non_negative_integer, "If rb_jump_ is unset, determine jump number according to the number of jumps currently in the pose previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML is parsed", "0")
+		+ XMLSchemaAttribute::attribute_w_default("interface_distance_cutoff", xsct_real, "used to determine if the ligand is in the interface?", "8.0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "filters energies where ligand is in the interface", attlist );
+}
+
+std::string LigInterfaceEnergyFilterCreator::keyname() const {
+	return LigInterfaceEnergyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LigInterfaceEnergyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LigInterfaceEnergyFilter );
+}
+
+void LigInterfaceEnergyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LigInterfaceEnergyFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP RepackWithoutLigandFilterCreator::create_filter() const { return filters::FilterOP( new RepackWithoutLigandFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP RepackWithoutLigandFilterCreator::keyname() const { return "RepackWithoutLigand"; }
+
+std::string RepackWithoutLigandFilter::name() const {
+	return class_name();
+}
+
+std::string RepackWithoutLigandFilter::class_name() {
+	return "RepackWithoutLigand";
+}
+
+void RepackWithoutLigandFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("rms_threshold", xsct_real, "rmsd threshold", "0.5");
+
+	// Can't use attributes_for_get_resnum_list because the whole thing can also be
+	// "all_repacked"
+	std::string resnum_list_regex = "all_repacked|(" + refpose_enabled_residue_number_string() + ")([,\\-](" + refpose_enabled_residue_number_string() + "))*";
+	XMLSchemaRestriction restriction;
+	restriction.name( "resnum_list_with_ranges_or_target_res" );
+	restriction.base_type( xs_string );
+	restriction.add_restriction( xsr_pattern, resnum_list_regex );
+	xsd.add_top_level_element( restriction );
+	attlist + XMLSchemaAttribute( "target_res", "resnum_list_with_ranges_or_target_res", "List of residue numbers to use" );
+
+	attlist + XMLSchemaAttribute("target_cstids", xs_string, "alternative to target_res; comma seperated list of residues")
+		+ XMLSchemaAttribute::attribute_w_default("energy_threshold", xsct_real, "energy threshold", "0.0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "determines whether to repack with ligand based upon either rmsd and/or energy", attlist );
+}
+
+std::string RepackWithoutLigandFilterCreator::keyname() const {
+	return RepackWithoutLigandFilter::class_name();
+}
+
+protocols::filters::FilterOP
+RepackWithoutLigandFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new RepackWithoutLigandFilter );
+}
+
+void RepackWithoutLigandFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepackWithoutLigandFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP EnzdesScorefileFilterCreator::create_filter() const { return filters::FilterOP( new EnzdesScorefileFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP EnzdesScorefileFilterCreator::keyname() const { return "EnzdesScorefileFilter"; }
+
+std::string EnzdesScorefileFilter::name() const {
+	return class_name();
+}
+
+std::string EnzdesScorefileFilter::class_name() {
+	return "EnzdesScorefileFilter";
+}
+
+void EnzdesScorefileFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("requirements", xs_string, "requirements file name; contains all of the parameters required for this filter");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "according to author, this function hasn't been fully implemented yet", attlist );
+}
+
+std::string EnzdesScorefileFilterCreator::keyname() const {
+	return EnzdesScorefileFilter::class_name();
+}
+
+protocols::filters::FilterOP
+EnzdesScorefileFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new EnzdesScorefileFilter );
+}
+
+void EnzdesScorefileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnzdesScorefileFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP filters::FilterOP
+// XRW TEMP ResidueConformerFilterCreator::create_filter() const { return filters::FilterOP( new ResidueConformerFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP ResidueConformerFilterCreator::keyname() const { return "ResidueConformerFilter"; }
+
+std::string ResidueConformerFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueConformerFilter::class_name() {
+	return "ResidueConformerFilter";
+}
+
+void ResidueConformerFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("restype", xs_string, "the type of residue to be used - must be set for this filter to work")
+		+ XMLSchemaAttribute("relevent_atoms", xs_string, "comma seperated list of strings made up of the atom names to be used")
+		+ XMLSchemaAttribute::attribute_w_default("desired_conformer", xsct_non_negative_integer, "indicates which conformer to look at; if set to 0, the conformer used is the current conformer of the pose", "0")
+		+ XMLSchemaAttribute::attribute_w_default("seqpos", xsct_non_negative_integer, "specific residue to be looked at; if set to 0, looks at all possible residues in pose", "0")
+		+ XMLSchemaAttribute::attribute_w_default("max_rms", xsct_real, "maximum rsmd for the filter; initilized in the constructor to be 0.5; not sure why the parse_my_tag includes a default", "0.0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "filters based upon whether the desired residue conformer is set", attlist );
+}
+
+std::string ResidueConformerFilterCreator::keyname() const {
+	return ResidueConformerFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueConformerFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueConformerFilter );
+}
+
+void ResidueConformerFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueConformerFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // enzdes

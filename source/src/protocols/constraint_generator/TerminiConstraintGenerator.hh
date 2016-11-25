@@ -25,6 +25,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -44,6 +45,10 @@ public:
 
 	core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & pose ) const override;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void
 	set_min_distance( core::Real const dist );

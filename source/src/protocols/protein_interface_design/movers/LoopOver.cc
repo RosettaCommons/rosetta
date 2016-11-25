@@ -21,6 +21,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -33,25 +36,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
 
-std::string
-LoopOverCreator::keyname() const
-{
-	return LoopOverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopOverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopOver::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopOverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopOver );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopOverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopOver );
+// XRW TEMP }
 
-std::string
-LoopOverCreator::mover_name()
-{
-	return "LoopOver";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopOver::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopOver";
+// XRW TEMP }
 
 LoopOver::LoopOver():
-	protocols::moves::Mover( LoopOverCreator::mover_name() ),
+	protocols::moves::Mover( LoopOver::mover_name() ),
 	max_iterations_( 10 ),
 	ms_whenfail_( protocols::moves::MS_SUCCESS )
 {}
@@ -62,7 +65,7 @@ LoopOver::LoopOver(
 	protocols::filters::FilterCOP condition,
 	protocols::moves::MoverStatus ms_whenfail
 ):
-	protocols::moves::Mover( LoopOverCreator::mover_name() ),
+	protocols::moves::Mover( LoopOver::mover_name() ),
 	max_iterations_( max_iterations ),
 	mover_( mover->clone() ),
 	condition_( condition->clone() ),
@@ -112,10 +115,10 @@ LoopOver::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-LoopOver::get_name() const {
-	return LoopOverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopOver::get_name() const {
+// XRW TEMP  return LoopOver::mover_name();
+// XRW TEMP }
 
 void
 LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &filters, protocols::moves::Movers_map const &movers, core::pose::Pose const & )
@@ -146,6 +149,53 @@ LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols
 	TR << "with mover \"" << mover_name << "\" and filter \"" << filter_name << "\" and  " << max_iterations_<< " max iterations\n";
 	TR.flush();
 }
+
+std::string LoopOver::get_name() const {
+	return mover_name();
+}
+
+std::string LoopOver::mover_name() {
+	return "LoopOver";
+}
+
+void LoopOver::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction mover_status;
+	mover_status.name( "mover_status" );
+	mover_status.base_type( xs_string );
+	mover_status.add_restriction( xsr_enumeration, "MS_SUCCESS" );
+	mover_status.add_restriction( xsr_enumeration, "FAIL_RETRY" );
+	mover_status.add_restriction( xsr_enumeration, "FAIL_DO_NOT_RETRY" );
+	mover_status.add_restriction( xsr_enumeration, "FAIL_BAD_INPUT" );
+	mover_status.add_restriction( xsr_enumeration, "FAIL" );
+	xsd.add_top_level_element( mover_status );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "drift", xsct_rosetta_bool, "Avoid repeatedly restoring from a saved pose (which is intended to prevent drift)", "1" )
+		+ XMLSchemaAttribute( "mover_name", xs_string, "Mover to use" )
+		+ XMLSchemaAttribute( "filter_name", xs_string, "Filter to use" )
+		+ XMLSchemaAttribute::attribute_w_default( "iterations", xsct_non_negative_integer, "Number of iterations", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "ms_whenfail", "mover_status", "Mover status to emit upon failure", "MS_SUCCESS" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopOverCreator::keyname() const {
+	return LoopOver::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopOverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopOver );
+}
+
+void LoopOverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopOver::provide_xml_schema( xsd );
+}
+
 
 
 } //movers

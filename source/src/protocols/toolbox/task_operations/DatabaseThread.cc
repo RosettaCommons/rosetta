@@ -203,17 +203,58 @@ void DatabaseThread::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "target_sequence", xs_string, "" )
-		+ XMLSchemaAttribute::required_attribute( "template_file", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "database", xs_string, "" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"target_sequence", xs_string,
+		"The desired sequence if there is only one desired sequence "
+		"(this can happen if the pose is changed during design such that the start "
+		"and end positions are not constant. In such cases ThreadSequence is not useful). "
+		"The task operation expects either a database or a target sequence and will "
+		"fail if neither are provided. If both are provided the database will be ignored.",
+		"")
+		+ XMLSchemaAttribute::required_attribute(
+		"template_file", xs_string,
+		"a pdb that serves as a constant template to map the start and end residues onto "
+		"the pose in case that the length of the pose is altered during design" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"database", xs_string,
+		"The database should be a text file with a list of single letter amino acids (not fasta)",
+		""  )
 
-		+ XMLSchemaAttribute::required_attribute( "start_res", xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "end_res", xsct_non_negative_integer )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_design_around", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "design_residues", xs_string, "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "keep_original_identity", xs_string, "" );
+		+ XMLSchemaAttribute::required_attribute(
+		"start_res", xsct_non_negative_integer,
+		"the residue to start threading from. This is a residue in the template pdb. "
+		"It is used to find the closest residue on the source pdb." )
+		+ XMLSchemaAttribute::required_attribute(
+		"end_res", xsct_non_negative_integer,
+		"the residue to end the threading. This is a residue in the template pdb. "
+		"It is used to find the closest residue on the source pdb. "
+		"The delta between the end and start residue is used to find the desired "
+		"sequence length in the database." )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"allow_design_around", xsct_rosetta_bool,
+		"if set to false, only design the region that is threaded. The rest is set to repack.",
+		"true"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"design_residues", xs_string,
+		"the same as placing 'X' in the target sequence. This trumps the sequence in the "
+		"database so if a residue has a different identity in the database it is changed to 'X'.",
+		""  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"keep_original_identity", xs_string,
+		"the same as placing a ' ' or a '_' in the sequence. The pose residue is marked "
+		"for repacking only. This trumps both the database sequence and the list from design_residues.",
+		""  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"This task operation is designed to deal with situations in which a pose is "
+		"changed in a way that adds or removes residues. This creates a problem for "
+		"normal threading that requires a constant start and stop positions. This "
+		"task operation can use a database of sequences or a single target sequence. "
+		"It also need a template pdb to find on the pose a user defined start and end residues. "
+		"A sequence length and threading start position are calculated and then a "
+		"correct length sequence is randomly chosen from the "
+		"database and threaded onto the pose.");
 }
 
 

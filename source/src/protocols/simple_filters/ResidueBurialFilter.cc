@@ -25,6 +25,12 @@
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -46,11 +52,11 @@ neighbors_( neighbors ),
 distance_threshold_( distance_threshold ),
 task_factory_( NULL ) {}
 */
-protocols::filters::FilterOP
-ResidueBurialFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueBurialFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueBurialFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueBurialFilter ); }
 
-std::string
-ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
 
 ResidueBurialFilter::~ResidueBurialFilter()= default;
 
@@ -162,6 +168,44 @@ filters::FilterOP
 ResidueBurialFilter::fresh_instance() const{
 	return filters::FilterOP( new ResidueBurialFilter() );
 }
+
+std::string ResidueBurialFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueBurialFilter::class_name() {
+	return "ResidueBurial";
+}
+
+void ResidueBurialFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("pdb_num", xs_string, "PDB identifier of residue of interest", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("distance", xsct_real, "Distance cutoff", "8.0")
+		+ XMLSchemaAttribute::attribute_w_default("neighbors", xsct_non_negative_integer, "When used with neighbors=1 this degenerates to just checking whether or not a residue is at the interface.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("residue_fraction_buried", xsct_real, "what fraction of the total residues defined as designable by the taskfactory should actually be buried in order to return false. The default (0.0001) effectively means that 1 suffices. Set to 1.0 if you want all residues to be buried.", "0.001");
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "How many residues are within an interaction distance of target_residue across the interface.", attlist );
+}
+
+std::string ResidueBurialFilterCreator::keyname() const {
+	return ResidueBurialFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueBurialFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueBurialFilter );
+}
+
+void ResidueBurialFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueBurialFilter::provide_xml_schema( xsd );
+}
+
+
 
 }
 }

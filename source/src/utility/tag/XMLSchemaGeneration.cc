@@ -24,16 +24,59 @@
 namespace utility {
 namespace tag {
 
+bool
+string_contains_gt_or_lt( std::string const & str )
+{
+	for ( char ch : str ) {
+		if ( ch == '<' || ch == '>' ) return true;
+	}
+	return false;
+}
+
+bool
+string_contains_ampersand( std::string const & str )
+{
+	for ( char ch : str ) {
+		if ( ch == '&' ) return true;
+	}
+	return false;
+}
+
+// AMW: This is a drop-in replacement for chr_chains_nonrepeated, which has <>
+// In order to avoid the recompile, we're not editing the header
+// Eventually, we should!
+// temp no amp
+std::string chr_chains_nonrepeated() {
+	return "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$.?\\]{}|\\-_\\\\~=%zyxwvutsrqponmlkjihgfedcba";
+}
+
 std::string name_for_common_type( XMLSchemaCommonType common_type )
 {
 	switch ( common_type ) {
 	case xsct_int_cslist : return "int_cslist";
 	case xsct_int_wsslist : return "int_wsslist";
+	case xsct_nnegative_int_cslist : return "nnegative_int_cslist";
+	case xsct_nnegative_int_wsslist : return "nnegative_int_wsslist";
+	case xsct_real : return "real";
 	case xsct_real_cslist : return "real_cslist";
+	case xsct_real_cslist_w_ws : return "xsct_real_cslist_w_ws";
 	case xsct_real_wsslist : return "real_wsslist";
 	case xsct_non_negative_integer : return "non_negative_integer";
+	case xsct_residue_number : return "residue_number";
+	case xsct_residue_number_cslist : return "residue_number_cslist";
+	case xsct_positive_integer : return "positive_integer";
+	case xsct_positive_integer_cslist : return "positive_integer_cslist";
+	case xsct_positive_integer_wsslist : return "positive_integer_wsslist";
+	case xsct_refpose_enabled_residue_number : return "refpose_enabled_residue_number";
+	case xsct_refpose_enabled_residue_number_cslist : return "refpose_enabled_residue_number_cslist";
 	case xsct_rosetta_bool : return "rosetta_bool";
+	case xsct_bool_cslist : return "bool_cslist";
 	case xsct_bool_wsslist : return "bool_wsslist";
+	case xsct_char : return "char";
+	case xsct_minimizer_type : return "minimizer_type";
+	case xsct_size_cs_pair : return "size_cs_pair";
+	case xsct_chain_cslist : return "chain_cslist";
+	case xsct_dssp_string : return "dssp_string";
 	case xsct_none :
 		throw utility::excn::EXCN_Msg_Exception( "Error in requesting name for xsct_none;" );
 		break;
@@ -120,12 +163,21 @@ XMLSchemaAttribute::XMLSchemaAttribute() :
 
 XMLSchemaAttribute::XMLSchemaAttribute(
 	std::string const & name,
-	XMLSchemaType type
+	XMLSchemaType type,
+	std::string const & description
 ) :
 	name_( name ),
 	type_( type ),
-	is_required_( false )
-{}
+	is_required_( false ),
+	description_( description )
+{
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+}
 
 // XMLSchemaAttribute::XMLSchemaAttribute(
 //  std::string const & name,
@@ -138,15 +190,15 @@ XMLSchemaAttribute::XMLSchemaAttribute(
 //  is_required_( false )
 // {}
 
-XMLSchemaAttribute XMLSchemaAttribute::required_attribute(
-	std::string const & name,
-	XMLSchemaType type
-)
-{
-	XMLSchemaAttribute attribute( name, type );
-	attribute.is_required_ = true;
-	return attribute;
-}
+//XMLSchemaAttribute XMLSchemaAttribute::required_attribute(
+// std::string const & name,
+// XMLSchemaType type
+//)
+//{
+// XMLSchemaAttribute attribute( name, type );
+// attribute.is_required_ = true;
+// return attribute;
+//}
 
 XMLSchemaAttribute
 XMLSchemaAttribute::required_attribute(
@@ -155,35 +207,34 @@ XMLSchemaAttribute::required_attribute(
 	std::string const & description
 )
 {
-	XMLSchemaAttribute attribute( name, type );
-	attribute.is_required( true ).description( description );
+	XMLSchemaAttribute attribute( name, type, description );
+	attribute.is_required( true );
 	return attribute;
 }
+
+//XMLSchemaAttribute
+//XMLSchemaAttribute::attribute_w_default(
+// std::string const & name,
+// XMLSchemaType type,
+// std::string const & default_value
+//)
+//{
+// XMLSchemaAttribute attribute( name, type );
+// attribute.default_value( default_value );
+// return attribute;
+//}
 
 
 XMLSchemaAttribute
 XMLSchemaAttribute::attribute_w_default(
 	std::string const & name,
 	XMLSchemaType type,
+	std::string const & description,
 	std::string const & default_value
 )
 {
-	XMLSchemaAttribute attribute( name, type );
+	XMLSchemaAttribute attribute( name, type, description );
 	attribute.default_value( default_value );
-	return attribute;
-}
-
-
-XMLSchemaAttribute
-XMLSchemaAttribute::attribute_w_default(
-	std::string const & name,
-	XMLSchemaType type,
-	std::string const & default_value,
-	std::string const & description
-)
-{
-	XMLSchemaAttribute attribute( name, type );
-	attribute.default_value( default_value ).description( description );
 	return attribute;
 }
 
@@ -191,7 +242,17 @@ XMLSchemaAttribute & XMLSchemaAttribute::name( std::string const & setting ) { n
 XMLSchemaAttribute & XMLSchemaAttribute::type( XMLSchemaType setting ) { type_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::is_required( bool setting ) { is_required_ = setting; return *this; }
 XMLSchemaAttribute & XMLSchemaAttribute::default_value( std::string const & setting ) { default_value_ = setting; return *this; }
-XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting ) { description_ = setting; return *this; }
+XMLSchemaAttribute & XMLSchemaAttribute::description( std::string const & setting ) {
+	description_ = setting;
+	if ( string_contains_gt_or_lt( description_ ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + description_ );
+	}
+	if ( string_contains_ampersand( description_ ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for attribute \"" + name_ + "\" may not contain '&'. Offending string: " + description_ );
+	}
+
+	return *this;
+}
 
 XMLSchemaType const &
 XMLSchemaAttribute::type() const { return type_; }
@@ -207,17 +268,56 @@ void XMLSchemaAttribute::write_definition( int indentation, std::ostream & os ) 
 	os << "\"";
 	if ( default_value_ != "" ) os << " default=\"" << default_value_ << "\"";
 	if ( is_required_ ) os << " use=\"required\"";
-	if ( description_ != "" ) os << " desc=\"" << description_ << "\"";
-	os << "/>\n";
+	if ( description_ != "" ) {
+		os << ">\n";
+		indent_w_spaces( indentation+1, os );
+		os << "<xs:annotation><xs:documentation xml:lang=\"en\">\n";
+		indent_w_spaces( indentation+2, os );
+		os << description_ << "\n";
+		//os << " desc=\"" << description_ << "\"";
+		indent_w_spaces( indentation+2, os );
+		os << "</xs:documentation></xs:annotation>\n";
+		indent_w_spaces( indentation, os );
+		os << "</xs:attribute>\n";
+	} else {
+		os << "/>\n";
+	}
 }
 
 std::string real_regex_pattern() {
-	return "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?";
+	return "[-+]?[0-9]*\\.?[0-9]*([eE][-+]?[0-9]+)?";
 }
 
 /// @brief the set of all strings recognized as booleans according to Rosetta (in utility/string_util.cc)
 std::string rosetta_bool_string() {
-	return "true|True|TRUE|t|1|on|On|ON|y|Y|yes|Yes|YES|false|False|FALSE|f|F|0|off|Off|OFF|n|N|no|No|NO";
+	return "true|True|TRUE|t|T|1|on|On|ON|y|Y|yes|Yes|YES|false|False|FALSE|f|F|0|off|Off|OFF|n|N|no|No|NO";
+}
+
+std::string  chain_cslist_string() {
+	return "[" + chr_chains_nonrepeated() + "](,[" + chr_chains_nonrepeated() + "])*";
+}
+
+std::string residue_number_string(){
+	return "[0-9]+|[0-9]+[A-Za-z]";
+}
+
+std::string residue_number_cslist_string(){
+	return "[0-9]+|[0-9]+[A-Za-z](,[0-9]+|[0-9]+[A-Za-z])*";
+}
+
+
+std::string refpose_enabled_residue_number_string() {
+	// Note that chains recognized by this type of format cannot use numbered chain IDs.
+	// This is because this supports the archaic Rosetta format for chain - residue number identification
+	// From left to right: seqpos (just a number); chain-seqpos, refpose without an offset, refpose with offset.
+	return "[0-9]+|[0-9]+[A-Za-z]|refpose(.*,[0-9]+)|refpose(.*,[0-9]+)[+\\-][0-9]+";
+}
+
+std::string refpose_enabled_residue_number_cslist_string() {
+	// Note that chains recognized by this type of format cannot use numbered chain IDs.
+	// Note that this is basically $refpose_enabled_residue_number_string,($refpose_enabled_residue_number_string)*
+	//return "[0-9]+|[0-9]+[A-Za-z]|refpose(.*,[0-9]+)|refpose(.*,[0-9]+)[+-][0-9]+(,[0-9]+|[0-9]+[A-Za-z]|refpose(.*,[0-9]+)|refpose(.*,[0-9]+)[+-][0-9]+)*";
+	return "(" + refpose_enabled_residue_number_string() + ")(,(" + refpose_enabled_residue_number_string() + "))*";
 }
 
 void
@@ -240,18 +340,46 @@ activate_common_simple_type(
 		int_wsslist.add_restriction( xsr_pattern, "[-+]?[0-9]+(\\s+[-+]?[0-9]+)*" );
 
 		xsd.add_top_level_element( int_wsslist );
+	} else if ( common_type == xsct_nnegative_int_cslist ) {
+		XMLSchemaRestriction nnegative_int_cslist;
+		nnegative_int_cslist.name( name_for_common_type( common_type ));
+		nnegative_int_cslist.base_type( xs_string );
+		nnegative_int_cslist.add_restriction( xsr_pattern, "[+]?[0-9]+(,[-+]?[0-9]+)*" );
+
+		xsd.add_top_level_element( nnegative_int_cslist );
+	} else  if ( common_type == xsct_nnegative_int_wsslist ) {
+		XMLSchemaRestriction nnegative_int_wsslist;
+		nnegative_int_wsslist.name( name_for_common_type( common_type ));
+		nnegative_int_wsslist.base_type( xs_string );
+		nnegative_int_wsslist.add_restriction( xsr_pattern, "[+]?[0-9]+(\\s+[-+]?[0-9]+)*" );
+
+		xsd.add_top_level_element( nnegative_int_wsslist );
+	} else if ( common_type == xsct_real ) {
+		XMLSchemaRestriction real;
+		real.name( name_for_common_type( common_type ));
+		real.base_type( xs_string );
+		real.add_restriction( xsr_pattern, real_regex_pattern() );
+		xsd.add_top_level_element( real );
 	} else if ( common_type == xsct_real_cslist ) {
 		XMLSchemaRestriction real_cslist;
 		real_cslist.name( name_for_common_type( common_type ));
 		real_cslist.base_type( xs_string );
 		//real_cslist.add_restriction( xsr_pattern, "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(,[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)" );
-		real_cslist.add_restriction( xsr_pattern, real_regex_pattern() + "(," + real_regex_pattern() + ")" );
+		real_cslist.add_restriction( xsr_pattern, real_regex_pattern() + "(," + real_regex_pattern() + ")*" );
+		xsd.add_top_level_element( real_cslist );
+	} else if ( common_type == xsct_real_cslist_w_ws ) {
+		// Comma separated list of reals, but you can also have whitespace (spaces or tabs) after the commas, before the reals themselves
+		XMLSchemaRestriction real_cslist;
+		real_cslist.name( name_for_common_type( common_type ));
+		real_cslist.base_type( xs_string );
+		//real_cslist.add_restriction( xsr_pattern, "[ \t]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(,[ \t]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)" );
+		real_cslist.add_restriction( xsr_pattern, "[ \t]*" + real_regex_pattern() + "(,[ \t]*" + real_regex_pattern() + ")*" );
 		xsd.add_top_level_element( real_cslist );
 	} else if ( common_type == xsct_real_wsslist ) {
 		XMLSchemaRestriction real_wsslist;
 		real_wsslist.name( name_for_common_type( common_type ));
 		real_wsslist.base_type( xs_string );
-		real_wsslist.add_restriction( xsr_pattern, real_regex_pattern() + "(\\s+" + real_regex_pattern() + ")" );
+		real_wsslist.add_restriction( xsr_pattern, real_regex_pattern() + "(\\s+" + real_regex_pattern() + ")*" );
 		xsd.add_top_level_element( real_wsslist );
 	} else if ( common_type == xsct_bool_wsslist ) {
 		XMLSchemaRestriction bool_wsslist;
@@ -259,6 +387,12 @@ activate_common_simple_type(
 		bool_wsslist.base_type( xs_string );
 		bool_wsslist.add_restriction( xsr_pattern, rosetta_bool_string() + "(\\s+" + rosetta_bool_string() + ")" );
 		xsd.add_top_level_element( bool_wsslist );
+	} else if ( common_type == xsct_bool_cslist ) {
+		XMLSchemaRestriction bool_cslist;
+		bool_cslist.name( name_for_common_type( common_type ));
+		bool_cslist.base_type( xs_string );
+		bool_cslist.add_restriction( xsr_pattern, rosetta_bool_string() + "(\\s+" + rosetta_bool_string() + ")" );
+		xsd.add_top_level_element( bool_cslist );
 	} else if ( common_type == xsct_non_negative_integer ) {
 		XMLSchemaRestriction nonneg_int;
 		nonneg_int.name( name_for_common_type( common_type ));
@@ -271,8 +405,96 @@ activate_common_simple_type(
 		boolean.base_type( xs_string );
 		boolean.add_restriction( xsr_pattern, rosetta_bool_string() );
 		xsd.add_top_level_element( boolean );
+	} else if ( common_type == xsct_refpose_enabled_residue_number ) {
+		XMLSchemaRestriction refpose_resnum;
+		refpose_resnum.name( name_for_common_type( common_type ));
+		refpose_resnum.base_type( xs_string );
+		refpose_resnum.add_restriction( xsr_pattern, refpose_enabled_residue_number_string() );
+		xsd.add_top_level_element( refpose_resnum );
+	} else if ( common_type == xsct_refpose_enabled_residue_number_cslist ) {
+		XMLSchemaRestriction refpose_resnum_cslist;
+		refpose_resnum_cslist.name( name_for_common_type( common_type ));
+		refpose_resnum_cslist.base_type( xs_string );
+		refpose_resnum_cslist.add_restriction( xsr_pattern, refpose_enabled_residue_number_cslist_string() );
+		xsd.add_top_level_element( refpose_resnum_cslist );
+	} else if ( common_type == xsct_char ) {
+		XMLSchemaRestriction char_type;
+		char_type.name( name_for_common_type( common_type ));
+		char_type.base_type( xs_string );
+		char_type.add_restriction( xsr_maxLength, "1" );
+		xsd.add_top_level_element( char_type );
+	} else if ( common_type == xsct_residue_number ) {
+		XMLSchemaRestriction residue_number;
+		residue_number.name( name_for_common_type( common_type ) );
+		residue_number.base_type( xs_string );
+		residue_number.add_restriction( xsr_pattern, residue_number_string() );
+		xsd.add_top_level_element( residue_number );
+	} else if ( common_type == xsct_residue_number_cslist ) {
+		XMLSchemaRestriction residue_number_cslist;
+		residue_number_cslist.name( name_for_common_type( common_type ) );
+		residue_number_cslist.base_type( xs_string );
+		residue_number_cslist.add_restriction( xsr_pattern, residue_number_cslist_string() );
+		xsd.add_top_level_element( residue_number_cslist );
+	} else if ( common_type == xsct_chain_cslist ) {
+		XMLSchemaRestriction chain_cslist;
+		chain_cslist.name( name_for_common_type( common_type ) );
+		chain_cslist.base_type( xs_string );
+		chain_cslist.add_restriction( xsr_pattern, chain_cslist_string() );
+		xsd.add_top_level_element( chain_cslist );
+	} else if ( common_type == xsct_minimizer_type ) {
+		XMLSchemaRestriction minimizer_type;
+		minimizer_type.name( name_for_common_type( common_type ) );
+		minimizer_type.base_type( xs_string );
+		minimizer_type.add_restriction( xsr_enumeration, "linmin_iterated");
+		minimizer_type.add_restriction( xsr_enumeration, "linmin_iterated_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo_nonmonotone");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_armijo_nonmonotone_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_stronge_wolfe");
+		minimizer_type.add_restriction( xsr_enumeration, "dfpmin_stronge_wolfe_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_rescored");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_nonmonotone");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_armijo_nonmonotone_atol");
+		minimizer_type.add_restriction( xsr_enumeration, "lbfgs_stronge_wolfe");
+		minimizer_type.add_restriction( xsr_enumeration, "GA");
+		xsd.add_top_level_element( minimizer_type );
+	} else if ( common_type == xsct_size_cs_pair ) {
+		XMLSchemaRestriction size_cs_pair;
+		size_cs_pair.name( name_for_common_type( common_type ) );
+		size_cs_pair.base_type( xs_string );
+		size_cs_pair.add_restriction( xsr_pattern, "[+]?[0-9]+,[+]?[0-9]+" );
+		xsd.add_top_level_element( size_cs_pair );
+	} else if ( common_type == xsct_positive_integer ) {
+		XMLSchemaRestriction positive_integer;
+		positive_integer.name( name_for_common_type( common_type ) );
+		positive_integer.base_type( xs_integer );
+		positive_integer.add_restriction( xsr_minInclusive, "1" );
+		xsd.add_top_level_element( positive_integer );
+	} else if ( common_type == xsct_positive_integer_cslist ) {
+		XMLSchemaRestriction positive_integer_cslist;
+		positive_integer_cslist.name( name_for_common_type( common_type ));
+		positive_integer_cslist.base_type( xs_string );
+		positive_integer_cslist.add_restriction( xsr_pattern, "[+]?[1-9]+(,[-+]?[0-9]+)*" );
+		xsd.add_top_level_element( positive_integer_cslist );
+	} else if ( common_type == xsct_positive_integer_wsslist ) {
+		XMLSchemaRestriction positive_integer_wsslist;
+		positive_integer_wsslist.name( name_for_common_type( common_type ));
+		positive_integer_wsslist.base_type( xs_string );
+		positive_integer_wsslist.add_restriction( xsr_pattern, "[+]?[1-9]+(\\s+[-+]?[0-9]+)*" );
+		xsd.add_top_level_element( positive_integer_wsslist );
+	} else if ( common_type == xsct_dssp_string ) {
+		XMLSchemaRestriction dssp_string;
+		dssp_string.name( name_for_common_type( common_type ) );
+		dssp_string.base_type( xs_string );
+		dssp_string.add_restriction( xsr_pattern, "[ HELITGBSU_]*" );
+		xsd.add_top_level_element( dssp_string );
 	}
-
 	/* else if ( common_type == xsct_zero_or_one ) {
 	XMLSchemaRestriction zero_or_one;
 	zero_or_one.name( name_for_common_type( common_type ));
@@ -283,7 +505,6 @@ activate_common_simple_type(
 	}*/
 
 }
-
 
 void XMLSchemaAttribute::prepare_for_output( XMLSchemaDefinition & xsd ) const
 {
@@ -550,6 +771,17 @@ std::ostream & operator << ( std::ostream & os, XMLSchemaModelGroupType type ) {
 XMLSchemaComplexType::XMLSchemaComplexType() {}
 
 XMLSchemaComplexType & XMLSchemaComplexType::name( std::string const & setting ) { name_ = setting; return *this; }
+XMLSchemaComplexType & XMLSchemaComplexType::description( std::string const & setting ) {
+	desc_ = setting;
+	if ( string_contains_gt_or_lt( desc_ ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType \"" + name_ + "\" may not contain either '<' or '>'. Offending string: " + setting );
+	}
+	if ( string_contains_ampersand( desc_ ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType \"" + name_ + "\" may not contain '&'. Offending string: " + setting );
+	}
+
+	return *this;
+}
 XMLSchemaComplexType & XMLSchemaComplexType::set_model_group( XMLSchemaModelGroupCOP model_group ) { model_group_ = model_group; return *this; }
 XMLSchemaComplexType & XMLSchemaComplexType::add_attribute( XMLSchemaAttribute attribute ) { attributes_.push_back( attribute ); return *this; }
 XMLSchemaComplexType & XMLSchemaComplexType::add_attributes( AttributeList const & attributes ) {
@@ -569,10 +801,16 @@ void XMLSchemaComplexType::write_definition( int indentation, std::ostream & os 
 	// write out header
 	indent_w_spaces( indentation, os );
 	os << "<xs:complexType";
-	if ( name_ != "" ) {
-		os << " name=\"" << name_ << "\"";
-	}
+	if ( name_ != "" ) os << " name=\"" << name_ << "\"";
 	os << " mixed=\"true\">\n";
+	if ( desc_ != "" ) {
+		indent_w_spaces( indentation+1, os );
+		os << "<xs:annotation><xs:documentation xml:lang=\"en\">\n";
+		indent_w_spaces( indentation+2, os );
+		os << desc_ << "\n";
+		indent_w_spaces( indentation+1, os );
+		os << "</xs:documentation></xs:annotation>\n";
+	}
 
 	// write out model group
 	if ( model_group_ ) {
@@ -616,6 +854,7 @@ std::string const & XMLSchemaElement::element_name() const {
 }
 
 void XMLSchemaElement::write_definition( int indentation, std::ostream & os ) const {
+	assert( name_ != "" );
 	if ( category_ == xs_element_is_abstract ) {
 		indent_w_spaces( indentation, os );
 		os << "<xs:element name=\"" << name_ << "\" abstract=\"true\"/>\n";
@@ -667,11 +906,13 @@ void XMLSchemaDefinition::add_top_level_element( XMLSchemaTopLevelElement const 
 	element.write_definition( 0, oss );
 	std::string definition = oss.str();
 
+
 	validate_new_top_level_element( element.element_name(), definition );
 	if ( top_level_elements_.find( element.element_name() ) == top_level_elements_.end() ) {
 		top_level_elements_[ element.element_name() ] = definition;
 		elements_in_order_.push_back( element.element_name() );
 	} else if ( top_level_elements_[ element.element_name() ] != definition ) {
+
 		throw utility::excn::EXCN_Msg_Exception( "Name collision in creation of XML Schema definition: top level element with name \"" +
 			element.element_name() + "\" already has been defined.\nOld definition:\n" + top_level_elements_[ element.element_name() ] +
 			"New definition:\n" + definition );
@@ -709,6 +950,13 @@ void XMLSchemaDefinition::validate_new_top_level_element( std::string const & el
 	}
 }
 
+XMLSchemaSimpleSubelementList::ElementSummary::ElementSummary() :
+	element_type( ct_simple ),
+	min_or_max_occurs_set( false ),
+	min_occurs( xsminmax_unspecified ),
+	max_occurs( xsminmax_unspecified )
+{}
+
 XMLSchemaSimpleSubelementList::XMLSchemaSimpleSubelementList() {}
 
 XMLSchemaSimpleSubelementList::~XMLSchemaSimpleSubelementList() = default;
@@ -735,17 +983,23 @@ XMLSchemaSimpleSubelementList::complex_type_naming_func( DerivedNameFunction con
 	return *this;
 }
 
+
+
 XMLSchemaSimpleSubelementList &
-XMLSchemaSimpleSubelementList::add_simple_subelement( std::string const & name, AttributeList const & attributes )
+XMLSchemaSimpleSubelementList::add_simple_subelement(
+	std::string const & name,
+	AttributeList const & attributes,
+	std::string const & description
+)
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_simple;
-	summary.element_name = name;
-	summary.ct_name = "";
-	summary.attributes = attributes;
-	summary.min_or_max_occurs_set = false;
-	summary.min_occurs = xsminmax_unspecified;
-	summary.max_occurs = xsminmax_unspecified;
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+
+	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description );
 	elements_.push_back( summary );
 	return *this;
 }
@@ -754,18 +1008,19 @@ XMLSchemaSimpleSubelementList &
 XMLSchemaSimpleSubelementList::add_simple_subelement(
 	std::string const & name,
 	AttributeList const & attributes,
+	std::string const & description,
 	int min_occurs,
 	int max_occurs
 )
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_simple;
-	summary.element_name = name;
-	summary.ct_name = "";
-	summary.attributes = attributes;
-	summary.min_or_max_occurs_set = true;
-	summary.min_occurs = min_occurs;
-	summary.max_occurs = max_occurs;
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+
+	ElementSummary summary = element_summary_as_simple_subelement( name, attributes, description, min_occurs, max_occurs );
 	elements_.push_back( summary );
 	return *this;
 }
@@ -776,13 +1031,7 @@ XMLSchemaSimpleSubelementList::add_already_defined_subelement(
 	DerivedNameFunction const & ct_naming_function
 )
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_ref;
-	summary.element_name = name;
-	summary.ct_name = ct_naming_function( name );
-	summary.min_or_max_occurs_set = false;
-	summary.min_occurs = xsminmax_unspecified;
-	summary.max_occurs = xsminmax_unspecified;
+	ElementSummary summary = element_summary_as_already_defined_subelement( name, ct_naming_function );
 	elements_.push_back( summary );
 	return *this;
 }
@@ -795,13 +1044,36 @@ XMLSchemaSimpleSubelementList::add_already_defined_subelement(
 	int max_occurs
 )
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_ref;
-	summary.element_name = name;
-	summary.ct_name = ct_naming_function( name );
-	summary.min_or_max_occurs_set = true;
-	summary.min_occurs = min_occurs;
-	summary.max_occurs = max_occurs;
+	ElementSummary summary = element_summary_as_already_defined_subelement(
+		name, ct_naming_function, min_occurs, max_occurs );
+	elements_.push_back( summary );
+	return *this;
+}
+
+XMLSchemaSimpleSubelementList &
+XMLSchemaSimpleSubelementList::add_already_defined_subelement_w_alt_element_name(
+	std::string const & alt_element_name, // the new element that you want to add
+	std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+	DerivedNameFunction const & ct_naming_function
+)
+{
+	ElementSummary summary = element_summary_as_already_defined_subelement_w_alt_element_name(
+		alt_element_name, reference_element_name, ct_naming_function );
+	elements_.push_back( summary );
+	return *this;
+}
+
+XMLSchemaSimpleSubelementList &
+XMLSchemaSimpleSubelementList::add_already_defined_subelement_w_alt_element_name(
+	std::string const & alt_element_name, // the new element that you want to add
+	std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+	DerivedNameFunction const & ct_naming_function,
+	int min_occurs,
+	int max_occurs /*= xsminmax_unspecified*/
+)
+{
+	ElementSummary summary = element_summary_as_already_defined_subelement_w_alt_element_name(
+		alt_element_name, reference_element_name, ct_naming_function, min_occurs, max_occurs );
 	elements_.push_back( summary );
 	return *this;
 }
@@ -811,13 +1083,7 @@ XMLSchemaSimpleSubelementList::add_group_subelement(
 	NameFunction const & group_name_function
 )
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_group;
-	summary.element_name = "";
-	summary.ct_name = group_name_function();
-	summary.min_or_max_occurs_set = false;
-	summary.min_occurs = xsminmax_unspecified;
-	summary.max_occurs = xsminmax_unspecified;
+	ElementSummary summary = element_summary_as_group_subelement( group_name_function );
 	elements_.push_back( summary );
 	return *this;
 }
@@ -829,13 +1095,16 @@ XMLSchemaSimpleSubelementList::add_group_subelement(
 	int max_occurs
 )
 {
-	ElementSummary summary;
-	summary.element_type = ElementSummary::ct_group;
-	summary.element_name = "";
-	summary.ct_name = group_name_function();
-	summary.min_or_max_occurs_set = true;
-	summary.min_occurs = min_occurs;
-	summary.max_occurs = max_occurs;
+	ElementSummary summary = element_summary_as_group_subelement( group_name_function, min_occurs, max_occurs );
+	elements_.push_back( summary );
+	return *this;
+}
+
+XMLSchemaSimpleSubelementList &
+XMLSchemaSimpleSubelementList::add_subelement(
+	ElementSummary const & summary
+)
+{
 	elements_.push_back( summary );
 	return *this;
 }
@@ -864,6 +1133,166 @@ XMLSchemaSimpleSubelementList::element_list() const
 	return elements_;
 }
 
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
+	std::string const & name,
+	AttributeList const & attributes,
+	std::string const & description
+)
+{
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+
+
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_simple;
+	summary.element_name = name;
+	summary.ct_name = "";
+	summary.description = description;
+	summary.attributes = attributes;
+	summary.min_or_max_occurs_set = false;
+	summary.min_occurs = xsminmax_unspecified;
+	summary.max_occurs = xsminmax_unspecified;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
+	std::string const & name,
+	AttributeList const & attributes,
+	std::string const & description,
+	int min_occurs,
+	int max_occurs
+)
+{
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for simple subelement \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+
+
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_simple;
+	summary.element_name = name;
+	summary.ct_name = "";
+	summary.description = description;
+	summary.attributes = attributes;
+	summary.min_or_max_occurs_set = true;
+	summary.min_occurs = min_occurs;
+	summary.max_occurs = max_occurs;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
+	std::string const & name,
+	DerivedNameFunction const & ct_naming_function
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_ref;
+	summary.element_name = name;
+	summary.ct_name = ct_naming_function( name );
+	summary.min_or_max_occurs_set = false;
+	summary.min_occurs = xsminmax_unspecified;
+	summary.max_occurs = xsminmax_unspecified;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
+	std::string const & name,
+	DerivedNameFunction const & ct_naming_function,
+	int min_occurs,
+	int max_occurs
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_ref;
+	summary.element_name = name;
+	summary.ct_name = ct_naming_function( name );
+	summary.min_or_max_occurs_set = true;
+	summary.min_occurs = min_occurs;
+	summary.max_occurs = max_occurs;
+	return summary;
+}
+
+
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement_w_alt_element_name(
+	std::string const & alt_element_name, // the new element that you want to add
+	std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+	DerivedNameFunction const & ct_naming_function
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_ref;
+	summary.element_name = alt_element_name;
+	summary.ct_name = ct_naming_function( reference_element_name );
+	summary.min_or_max_occurs_set = false;
+	summary.min_occurs = xsminmax_unspecified;
+	summary.max_occurs = xsminmax_unspecified;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement_w_alt_element_name(
+	std::string const & alt_element_name, // the new element that you want to add
+	std::string const & reference_element_name, // the original name that when combined with the ct_naming_function gives the correct complex type name
+	DerivedNameFunction const & ct_naming_function,
+	int min_occurs,
+	int max_occurs /*= xsminmax_unspecified*/
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_ref;
+	summary.element_name = alt_element_name;
+	summary.ct_name = ct_naming_function( reference_element_name );
+	summary.min_or_max_occurs_set = true;
+	summary.min_occurs = min_occurs;
+	summary.max_occurs = max_occurs;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_group_subelement(
+	NameFunction const & group_name_function
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_group;
+	summary.element_name = "";
+	summary.ct_name = group_name_function();
+	summary.min_or_max_occurs_set = false;
+	summary.min_occurs = xsminmax_unspecified;
+	summary.max_occurs = xsminmax_unspecified;
+	return summary;
+}
+
+XMLSchemaSimpleSubelementList::ElementSummary
+XMLSchemaSimpleSubelementList::element_summary_as_group_subelement(
+	NameFunction const & group_name_function,
+	int min_occurs,
+	int max_occurs
+)
+{
+	ElementSummary summary;
+	summary.element_type = ElementSummary::ct_group;
+	summary.element_name = "";
+	summary.ct_name = group_name_function();
+	summary.min_or_max_occurs_set = true;
+	summary.min_occurs = min_occurs;
+	summary.max_occurs = max_occurs;
+	return summary;
+}
+
 
 class XMLSchemaComplexTypeGeneratorImpl : public utility::pointer::ReferenceCount
 {
@@ -881,6 +1310,7 @@ public:
 	~XMLSchemaComplexTypeGeneratorImpl() override;
 
 	void element_name( std::string const & );
+	void description( std::string const & );
 	void complex_type_naming_func( DerivedNameFunction const & naming_function );
 	void add_attribute( XMLSchemaAttribute const & attribute );
 	void add_attributes( AttributeList const & attributes );
@@ -974,6 +1404,7 @@ private:
 
 	CTGenSubelementBehavior subelement_behavior_;
 	std::string element_name_;
+	std::string description_;
 	DerivedNameFunction complex_type_naming_function_;
 
 	XMLSchemaSimpleSubelementList subelements_;
@@ -986,6 +1417,7 @@ private:
 
 XMLSchemaComplexTypeGeneratorImpl::XMLSchemaComplexTypeGeneratorImpl() :
 	subelement_behavior_( se_none ),
+	description_( "(not yet set)" ),
 	repeatable_min_occurs_( 0 ),
 	repeatable_max_occurs_( xsminmax_unbounded )
 {}
@@ -995,6 +1427,18 @@ XMLSchemaComplexTypeGeneratorImpl::~XMLSchemaComplexTypeGeneratorImpl() = defaul
 
 void XMLSchemaComplexTypeGeneratorImpl::element_name( std::string const & element_name ) {
 	element_name_ = element_name;
+}
+
+void XMLSchemaComplexTypeGeneratorImpl::description( std::string const & desc ) {
+	if ( string_contains_gt_or_lt( desc ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType for element \"" + element_name_ + "\" may not contain either '<' or '>'. Offending string: " + desc );
+	}
+	if ( string_contains_ampersand( desc ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for complexType for element \"" + element_name_ + "\" may not contain '&'. Offending string: " + desc );
+	}
+
+
+	description_ = desc;
 }
 
 void XMLSchemaComplexTypeGeneratorImpl::complex_type_naming_func(
@@ -1164,6 +1608,13 @@ XMLSchemaComplexTypeGeneratorImpl::write_complex_type_to_schema( XMLSchemaDefini
 
 	XMLSchemaComplexType complex_type;
 	complex_type.name( complex_type_naming_function_( element_name_ ));
+	if ( description_ == "(not yet set)" ) {
+		std::ostringstream oss;
+		oss << "You have not provided a description for " << element_name_ << "; all complexTypes must have descriptions, even if they are the empty string" << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	} else {
+		complex_type.description( description_ );
+	}
 
 	switch ( subelement_behavior_ ) {
 	case se_none :
@@ -1520,6 +1971,7 @@ XMLSchemaParticleOP XMLSchemaComplexTypeGeneratorImpl::create_subelement(
 			XMLSchemaComplexTypeGenerator ctgen;
 			ctgen
 				.element_name( summary.element_name )
+				.description( summary.description )
 				.complex_type_naming_func( subelements_.naming_func() )
 				.add_attributes( summary.attributes );
 			ctgen.write_complex_type_to_schema( xsd );
@@ -1570,22 +2022,28 @@ XMLSchemaParticleOP XMLSchemaComplexTypeGeneratorImpl::create_subelement(
 
 XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator() : pimpl_( new XMLSchemaComplexTypeGeneratorImpl ) {}
 XMLSchemaComplexTypeGenerator::~XMLSchemaComplexTypeGenerator() { delete pimpl_; }
-XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src ) :
-	pimpl_( new XMLSchemaComplexTypeGeneratorImpl( *src.pimpl_ ))
-{
-}
-
-XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::operator= ( XMLSchemaComplexTypeGenerator const & rhs )
-{
-	if ( this != & rhs ) {
-		*pimpl_ = *rhs.pimpl_;
-	}
-	return *this;
-}
+//XMLSchemaComplexTypeGenerator::XMLSchemaComplexTypeGenerator( XMLSchemaComplexTypeGenerator const & src ) :
+// pimpl_( new XMLSchemaComplexTypeGeneratorImpl( *src.pimpl_ ))
+//{
+//}
+//
+//XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::operator= ( XMLSchemaComplexTypeGenerator const & rhs )
+//{
+// if ( this != & rhs ) {
+//  *pimpl_ = *rhs.pimpl_;
+// }
+// return *this;
+//}
 
 XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::element_name( std::string const & name )
 {
 	pimpl_->element_name( name );
+	return *this;
+}
+
+XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::description( std::string const & desc )
+{
+	pimpl_->description( desc );
 	return *this;
 }
 
@@ -1603,13 +2061,15 @@ XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_attribute( XM
 	return *this;
 }
 
-XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_required_name_attribute() {
-	pimpl_->add_attribute( required_name_attribute() );
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_required_name_attribute( std::string const & description ) {
+	pimpl_->add_attribute( required_name_attribute( description ) );
 	return *this;
 }
 
-XMLSchemaComplexTypeGenerator & XMLSchemaComplexTypeGenerator::add_optional_name_attribute() {
-	pimpl_->add_attribute( optional_name_attribute() );
+XMLSchemaComplexTypeGenerator &
+XMLSchemaComplexTypeGenerator::add_optional_name_attribute( std::string const & description ) {
+	pimpl_->add_attribute( optional_name_attribute( description ) );
 	return *this;
 }
 
@@ -1759,6 +2219,186 @@ CTGenSubelementBehavior XMLSchemaComplexTypeGenerator::subelement_behavior() con
 }
 
 
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+XMLSchemaRepeatableCTNode::XMLSchemaRepeatableCTNode() {}
+XMLSchemaRepeatableCTNode::~XMLSchemaRepeatableCTNode() = default;
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_element_w_attributes(
+	std::string const & name,
+	AttributeList const & attributes,
+	std::string const & description
+)
+{
+	if ( string_contains_gt_or_lt( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for CTNode \"" + name + "\" may not contain either '<' or '>'. Offending string: " + description );
+	}
+	if ( string_contains_ampersand( description ) ) {
+		throw utility::excn::EXCN_Msg_Exception( "Desciption for CTNode \"" + name + "\" may not contain '&'. Offending string: " + description );
+	}
+
+	element_ = XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
+		name, attributes, description );
+	return *this;
+}
+
+//XMLSchemaRepeatableCTNode &
+//XMLSchemaRepeatableCTNode::set_element_w_attributes(
+// std::string const & name,
+// AttributeList const & atts,
+// std::string const & description,
+// int min_occurs,
+// int max_occurs
+//)
+//{
+// element_ = XMLSchemaSimpleSubelementList::element_summary_as_simple_subelement(
+//  name, attributes, description, min_occurs, max_occurs );
+// return *this;
+//}
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_already_defined_element(
+	std::string const & name,
+	DerivedNameFunction const & naming_func
+)
+{
+	element_ = XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
+		name, naming_func );
+	return *this;
+}
+
+//XMLSchemaRepeatableCTNode &
+//XMLSchemaRepeatableCTNode::set_already_defined_element(
+// std::string const & name,
+// DerivedNameFunction const & naming_func,
+// int min_occurs,
+// int max_occurs
+//)
+//{
+// element_ = XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
+//  name, naming_func, min_occurs, max_occurs );
+// return *this;
+//}
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_already_defined_element_w_alt_name(
+	std::string const & name,
+	std::string const & reference_element_name,
+	DerivedNameFunction const & naming_func
+)
+{
+	element_ = XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement_w_alt_element_name(
+		name, reference_element_name, naming_func );
+	return *this;
+}
+
+//XMLSchemaRepeatableCTNode &
+//XMLSchemaRepeatableCTNode::set_already_defined_element_w_alt_name(
+// std::string const & name,
+// DerivedNameFunction const & naming_func,
+// int min_occurs,
+// int max_occurs
+//)
+//{
+// element_ = XMLSchemaSimpleSubelementList::element_summary_as_element_w_alt_name(
+//  name, naming_func, min_occurs, max_occurs );
+// return *this;
+//}
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_group_subelement(
+	NameFunction const & group_name_function
+)
+{
+	element_ = XMLSchemaSimpleSubelementList::element_summary_as_group_subelement( group_name_function );
+	return *this;
+}
+
+//XMLSchemaRepeatableCTNode &
+//XMLSchemaRepeatableCTNode::set_group_subelement(
+// NameFunction const & group_name_function,
+// int min_occurs,
+// int max_occurs
+//)
+//{
+// element_ = element_summary_as_group_subelement( group_name_function, min_occurs, max_occurs );
+// return *this;
+//}
+
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_kids_naming_func( DerivedNameFunction const & naming_func )
+{
+	//assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
+	kids_ct_naming_func_ = naming_func;
+	return *this;
+}
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::set_root_node_naming_func( DerivedNameFunction const & naming_func )
+{
+	my_naming_func_ = naming_func;
+	return *this;
+}
+
+XMLSchemaRepeatableCTNode &
+XMLSchemaRepeatableCTNode::add_child( XMLSchemaRepeatableCTNodeOP child_element )
+{
+	//assert( element_.element_name == "unspecified" || element_.element_type == "simple" );
+	children_.push_back( child_element );
+	child_element->parent_ = get_self_weak_ptr();
+	return *this;
+}
+
+void
+XMLSchemaRepeatableCTNode::recursively_write_ct_to_schema( XMLSchemaDefinition & xsd )
+{
+
+	XMLSchemaSimpleSubelementList my_subelements;
+	bool any_have_children = false;
+	for ( auto child : children_ ) {
+		if ( child->children_.empty() ) {
+			my_subelements.add_subelement( child->element_ );
+		} else {
+			if ( child->element_.element_type == XMLSchemaSimpleSubelementList::ElementSummary::ct_ref ) {
+				my_subelements.add_subelement( child->element_ );
+			} else {
+				debug_assert( ! kids_ct_naming_func_.empty() );
+				my_subelements.add_subelement( XMLSchemaSimpleSubelementList::element_summary_as_already_defined_subelement(
+					child->element_.element_name,
+					kids_ct_naming_func_ ));
+			}
+			child->recursively_write_ct_to_schema( xsd );
+			any_have_children = true;
+		}
+	}
+
+	// if there are any grand children, then the mangling function for kid nodes
+	// needs to be set.
+	assert( ! any_have_children || ! kids_ct_naming_func_.empty() );
+
+
+	// OK: create simple subelement list w/ all children where each child is an
+	// already-defined subelement
+	if ( any_have_children ) my_subelements.complex_type_naming_func( kids_ct_naming_func_ );
+
+	XMLSchemaRepeatableCTNodeOP parent = parent_.lock();
+	assert( parent || ! my_naming_func_.empty() );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( element_.element_name )
+		.add_attributes( element_.attributes )
+		.description( element_.description )
+		.complex_type_naming_func( parent ? parent->kids_ct_naming_func_ : my_naming_func_ );
+	if ( ! children_.empty() ) ct_gen.set_subelements_repeatable( my_subelements );
+
+	ct_gen.write_complex_type_to_schema( xsd );
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
 XMLSchemaRestriction
 integer_range_restriction( std::string const & name, int lower, int upper )
 {
@@ -1772,15 +2412,23 @@ integer_range_restriction( std::string const & name, int lower, int upper )
 
 
 XMLSchemaAttribute
-required_name_attribute()
+optional_name_attribute( std::string const & desc /* = "" */ )
 {
-	return XMLSchemaAttribute::required_attribute( "name", xs_string );
+	if ( desc == "" ) {
+		return XMLSchemaAttribute( "name", xs_string, "The name given to this instance" );
+	} else {
+		return XMLSchemaAttribute( "name", xs_string, desc );
+	}
 }
 
 XMLSchemaAttribute
-optional_name_attribute()
+required_name_attribute( std::string const & desc /* = "" */ )
 {
-	return XMLSchemaAttribute( "name", xs_string );
+	if ( desc == "" ) {
+		return XMLSchemaAttribute::required_attribute( "name", xs_string, "The named given to this instance" );
+	} else {
+		return XMLSchemaAttribute::required_attribute( "name", xs_string, desc );
+	}
 }
 
 
@@ -1808,5 +2456,17 @@ append_required_name_and_attributes_to_complex_type(
 	type_definition.add_attributes( attributes );
 }
 
+bool
+attribute_w_name_in_attribute_list(std::string const& attname,
+	AttributeList const& attlist) {
+	auto found = std::find_if(
+		attlist.begin(), attlist.end(),
+		[&] (const XMLSchemaAttribute& attribute) {
+		return attribute.element_name() == attname;
+		});
+
+	return found != attlist.end();
 }
-}
+
+}  // namespace tag
+}  // namespace utility

@@ -13,7 +13,10 @@
 #include <protocols/qsar/scoring_grid/SolvationGrid.hh>
 #include <protocols/qsar/scoring_grid/SolvationGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
@@ -33,7 +36,7 @@ namespace scoring_grid {
 
 std::string SolvationGridCreator::keyname() const
 {
-	return SolvationGridCreator::grid_name();
+	return SolvationGrid::grid_name();
 }
 
 GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -50,11 +53,17 @@ GridBaseOP SolvationGridCreator::create_grid() const
 	return GridBaseOP( new SolvationGrid() );
 }
 
-
-std::string SolvationGridCreator::grid_name()
+void SolvationGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "SolvationGrid";
+	SolvationGrid::provide_xml_schema( xsd );
 }
+
+
+
+//std::string SolvationGridCreator::grid_name()
+//{
+// return "SolvationGrid";
+//}
 
 SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
 {
@@ -160,6 +169,20 @@ void SolvationGrid::set_probe_atom_type(core::ShortSize const & atom_type)
 	probe_atom_type_ = atom_type;
 }
 
+std::string SolvationGrid::grid_name()
+{
+	return "SolvationGrid";
+}
+
+void SolvationGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid based on the EEF1 (aka Lazaridis Karplus) solvation energy for a probe atom for this grid. DO NOT USE! The probe atom is not correctly initialized and this will give you garbage. Contact Sam Deluca for advice.", attributes );
+}
 
 }
 }

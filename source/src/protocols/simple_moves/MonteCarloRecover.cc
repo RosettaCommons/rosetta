@@ -29,6 +29,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility headers
@@ -43,27 +46,27 @@ using namespace protocols::moves;
 namespace protocols {
 namespace simple_moves {
 
-std::string
-MonteCarloRecoverCreator::keyname() const
-{
-	return MonteCarloRecoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloRecoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MonteCarloRecover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MonteCarloRecoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MonteCarloRecover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MonteCarloRecoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MonteCarloRecover );
+// XRW TEMP }
 
-std::string
-MonteCarloRecoverCreator::mover_name()
-{
-	return "MonteCarloRecover";
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloRecover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MonteCarloRecover";
+// XRW TEMP }
 
-std::string
-MonteCarloRecover::get_name() const {
-	return MonteCarloRecoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MonteCarloRecover::get_name() const {
+// XRW TEMP  return MonteCarloRecover::mover_name();
+// XRW TEMP }
 
 
 /// @brief default constructor
@@ -135,6 +138,53 @@ void
 MonteCarloRecover::recover_low( bool const recover ){
 	recover_low_ = recover;
 }
+
+std::string MonteCarloRecover::get_name() const {
+	return mover_name();
+}
+
+std::string MonteCarloRecover::mover_name() {
+	return "MonteCarloRecover";
+}
+
+void MonteCarloRecover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"MC_name", xs_string,
+		"name of a previously defined GenericMonteCarloMover");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"recover_low", xsct_rosetta_bool,
+		"recover the lowest-energy pose, or the last pose.",
+		"true");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd,
+		mover_name(),
+		"Associated with GenericMonteCarlo and MonteCarloTest. Recover a pose from a GenericMonteCarloMover. "
+		"Useful in conjunction with MonteCarloRecover (below) if you're running a trajectory consisting "
+		"of many different sorts of movers, and would like at each point to decide whether the pose has "
+		"made an improvement.",
+		attlist );
+}
+
+std::string MonteCarloRecoverCreator::keyname() const {
+	return MonteCarloRecover::mover_name();
+}
+
+protocols::moves::MoverOP
+MonteCarloRecoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MonteCarloRecover );
+}
+
+void MonteCarloRecoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MonteCarloRecover::provide_xml_schema( xsd );
+}
+
 
 } // ns simple_moves
 } // ns protocols

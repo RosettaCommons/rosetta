@@ -24,7 +24,7 @@
 	# is valine)
 	##############################################
 	<SCOREFXNS>
-		<centroid_scorefunction weights="fldsgn_cen" />
+		<ScoreFunction name="centroid_scorefunction" weights="fldsgn_cen" />
 	</SCOREFXNS>
 
 	<MOVERS>
@@ -48,5 +48,6 @@
 		<Add mover_name="connect"/>
 		<Add mover_name="design_mc"/>
 	</PROTOCOLS>
+
 
 </ROSETTASCRIPTS>

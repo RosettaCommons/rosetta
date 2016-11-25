@@ -1,13 +1,14 @@
-<dock_design>
+<ROSETTASCRIPTS>
       <SCOREFXNS>
-		<myscore1 weights=enzdes_2.5.wts/>
+		<ScoreFunction name="myscore1" weights="enzdes_2.5.wts"/>
       </SCOREFXNS>
       <MOVERS>
-	      <EnzRepackMinimize name=desmin1 design=1 cst_opt=0 repack_only=0 scorefxn_repack=myscore1  scorefxn_minimize=myscore1 minimize_rb=0 minimize_sc=1 minimize_bb=0 cycles=1 minimize_lig=0 min_in_stages=0 backrub=0 minimize_prot_jumps=0/>
+	      <EnzRepackMinimize name="desmin1" design="1" cst_opt="0" repack_only="0" scorefxn_repack="myscore1"  scorefxn_minimize="myscore1" minimize_rb="0" minimize_sc="1" minimize_bb="0" cycles="1" minimize_lig="0" min_in_stages="0" backrub="0" minimize_prot_jumps="0"/>
       </MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
       <PROTOCOLS>
-              <Add mover_name=desmin1/>
+              <Add mover_name="desmin1"/>
       </PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

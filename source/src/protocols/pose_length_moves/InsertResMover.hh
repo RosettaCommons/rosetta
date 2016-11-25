@@ -49,10 +49,22 @@ public:
 	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
 	void extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size length);
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	moves::MoverOP clone() const override { return moves::MoverOP( new InsertResMover( *this ) ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	core::pose::PoseOP get_additional_output() override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1<core::pose::PoseOP> posesToOutput_;
 	utility::vector1<bool> posesOutputed_;

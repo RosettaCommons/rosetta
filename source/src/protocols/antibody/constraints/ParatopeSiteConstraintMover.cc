@@ -28,6 +28,9 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.ParatopeSiteConstraintMover");
 
@@ -263,21 +266,70 @@ ParatopeSiteConstraintMover::setup_constraints(core::pose::Pose const & pose, co
 
 }
 
-protocols::moves::MoverOP
-ParatopeSiteConstraintMoverCreator::create_mover() const {
-	ParatopeSiteConstraintMoverOP ptr(new ParatopeSiteConstraintMover);
-	return ptr;
+std::string ParatopeSiteConstraintMover::get_name() const {
+	return mover_name();
 }
 
-std::string
-ParatopeSiteConstraintMoverCreator::keyname() const {
-	return ParatopeSiteConstraintMoverCreator::mover_name();
-}
-
-std::string
-ParatopeSiteConstraintMoverCreator::mover_name() {
+std::string ParatopeSiteConstraintMover::mover_name() {
 	return "ParatopeSiteConstraintMover";
 }
+
+void ParatopeSiteConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attributes_for_get_cdr_bool_from_tag(
+		attlist, "paratope_cdrs",
+		"Specifically set the paratope as these CDR.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"interface_distance", xsct_real,
+		"Distance in Angstroms for the interface, which effects when the SiteConstraint penalty begins.",
+		"10.0");
+
+	attlist + XMLSchemaAttribute(
+		"antigen_chains", xs_string,
+		"Specify the particular antigen to create the SiteConstraint to");
+
+	attlist + XMLSchemaAttribute(
+		"paratope_residues_pdb", xs_string,
+		"Set specific residues as the paratope. (Ex: 24L,26L-32L, 44H-44H:A). "
+		"Can specify ranges or individual residues as well as insertion codes "
+		"(Ex: 44H:A with A being insertion code).");
+
+	attlist + XMLSchemaAttribute(
+		"paratope_residues", xs_string,
+		"Set paratope_residues instead of paratope_residues_pdb as the internal "
+		"rosetta residue numbers (Ex: 14,25,26). Internal rosetta numbering "
+		"parsing does not currently support ranges.");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Adds SiteConstraints from the Antibody Paratope to the antigen, "
+		"defined for simplicity as the CDRs. Individual residues of the paratope can be set, "
+		"or specific CDRs of the paratope can be set as well. These help to keep only the "
+		"paratope in contact with the antigen (as apposed to the framework) during rigid-body "
+		"movement. See the Constraint File Overview for more information on manually adding "
+		"SiteConstraints. Do not forget to add the atom_pair_constraint term to your scorefunction. "
+		"A weight of .01 for the SiteConstraints seems optimum. "
+		"Default paratope is defined as all 6 CDRs (or 3 if working with a camelid antibody).",
+		attlist );
+}
+
+std::string ParatopeSiteConstraintMoverCreator::keyname() const {
+	return ParatopeSiteConstraintMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ParatopeSiteConstraintMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ParatopeSiteConstraintMover );
+}
+
+void ParatopeSiteConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ParatopeSiteConstraintMover::provide_xml_schema( xsd );
+}
+
 
 } //constraints
 } //antibody

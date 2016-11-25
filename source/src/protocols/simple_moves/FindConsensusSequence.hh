@@ -57,7 +57,7 @@ public:
 	std::string
 	resfile_at ( core::Size index );
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	core::scoring::ScoreFunctionOP score_function() const;
 
@@ -68,6 +68,18 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP );
 
 	void resfiles ( utility::vector1< std::string > & resfiles );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	utility::vector1< utility::vector1< core::Size > > res_links ();
 

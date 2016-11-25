@@ -15,7 +15,7 @@
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
-
+#include <protocols/features/feature_schemas.hh>
 // Package Headers
 #include <basic/Tracer.hh>
 
@@ -29,6 +29,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -106,20 +108,41 @@ FeaturesReporterFactory::get_features_reporter(
 	Movers_map const & movers,
 	Pose const & pose
 ) {
-	assert(tag->getName() == "feature");
+	//assert(tag->getName() == "feature");
 
-	string type_name;
+	string type_name = tag->getName();
+	/*
 	if ( !tag->hasOption("name") ) {
-		utility_exit_with_message("'feature' tags require a name field");
+	utility_exit_with_message("'feature' tags require a name field");
 	} else {
-		type_name = tag->getOption<string>("name");
+	type_name = tag->getOption<string>("name");
 	}
-
+	*/
 	FeaturesReporterOP features_reporter(get_features_reporter(type_name));
 
 	features_reporter->parse_my_tag(tag, data, filters, movers, pose);
 	return features_reporter;
 }
+void
+FeaturesReporterFactory::define_features_reporter_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const{
+	try{
+		utility::tag::define_xml_schema_group(
+			types_,
+			features_reporter_xml_schema_group_name(),
+			& complex_type_name_for_features_reporter,
+			xsd );
+	} catch( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for FeaturesReporter from FeaturesReporterFactory; offending class"
+			" must call protocols::features::complex_type_name_for_features_reporter when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+}
+
+std::string
+FeaturesReporterFactory::features_reporter_xml_schema_group_name(){
+	return "features_reporter";
+}
+
 
 } // namespace
 } // namespace

@@ -43,11 +43,23 @@ public:
 	LegacyKicSampler();
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "LegacyKicSampler"; }
+	// XRW TEMP  string get_name() const { return "LegacyKicSampler"; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	/// @brief Apply the legacy KinematicMover algorithm.
-	bool do_apply(Pose & pose, Loop const & loop);
+	bool do_apply(Pose & pose, Loop const & loop) override;
 
 private:
 	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP mover_;

@@ -29,58 +29,82 @@ namespace enzdes {
 class DiffAtomSasaFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 
 class EnzScoreFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class LigBurialFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class LigDSasaFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class LigInterfaceEnergyFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class RepackWithoutLigandFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class EnzdesScorefileFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class ResidueConformerFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

@@ -41,11 +41,11 @@ public:
 	/// @brief default ctor
 	DesignableResiduesFilter();
 	/// @brief Constructor with a single target residue
-	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~DesignableResiduesFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -54,7 +54,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	core::Size lower_threshold() const;
 	core::Size upper_threshold() const;
@@ -64,6 +64,18 @@ public:
 	void upper_threshold( core::Size const u );
 	void packable( bool const p );
 	void designable( bool const d );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Size lower_threshold_, upper_threshold_; // how many design positions should be allowed for a passing design

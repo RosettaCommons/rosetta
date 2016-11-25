@@ -17,7 +17,7 @@
 
 // Protocol headers
 #include <protocols/constraint_generator/util.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
@@ -27,7 +27,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
 #include <boost/assign.hpp>
 
@@ -162,6 +162,25 @@ TerminiConstraintGenerator::max_distance() const
 {
 	return max_distance_;
 }
+
+void
+TerminiConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	TerminiConstraintGenerator::provide_xml_schema( xsd );
+}
+
+void
+TerminiConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	//No attributes set in parse_tag!
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Adds distance constraint between termini",
+		attlist );
+}
+
 
 } //protocols
 } //constraint_generator

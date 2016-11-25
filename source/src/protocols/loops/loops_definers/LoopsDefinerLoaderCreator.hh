@@ -30,6 +30,8 @@ class LoopsDefinerLoaderCreator : public jd2::parser::DataLoaderCreator
 public:
 	virtual jd2::parser::DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
+	virtual DerivedNameFunction schema_ct_naming_function() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 

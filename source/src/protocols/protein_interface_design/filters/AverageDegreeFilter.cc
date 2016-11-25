@@ -23,6 +23,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -148,11 +151,45 @@ AverageDegreeFilter::clone() const{
 	return protocols::filters::FilterOP( new AverageDegreeFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-AverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AverageDegreeFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AverageDegreeFilter ); }
 
-std::string
-AverageDegreeFilterCreator::keyname() const { return "AverageDegree"; }
+// XRW TEMP std::string
+// XRW TEMP AverageDegreeFilterCreator::keyname() const { return "AverageDegree"; }
+
+std::string AverageDegreeFilter::name() const {
+	return class_name();
+}
+
+std::string AverageDegreeFilter::class_name() {
+	return "AverageDegree";
+}
+
+void AverageDegreeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Lower limit below which the filter fails", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_threshold", xsct_real, "Count neighbors for residues closer than this distance", "8.0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "What is the average degree connectivity of a subset of residues? Found to be useful for discriminating non-interacting designs from natural complexes.", attlist );
+}
+
+std::string AverageDegreeFilterCreator::keyname() const {
+	return AverageDegreeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+AverageDegreeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AverageDegreeFilter );
+}
+
+void AverageDegreeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AverageDegreeFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

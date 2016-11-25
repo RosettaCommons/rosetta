@@ -37,8 +37,9 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaValidation.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -47,6 +48,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Pose Metric Calculators for filters
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
@@ -100,6 +102,7 @@ typedef utility::vector0< TagCOP > TagCOPs;
 /// this XML file includes.  At the end of this operation, fin contains the contents
 /// of the XML file, with all xi:includes replaced with the contents of included XML
 /// files.  Files are opened and closed here.
+///
 /// @details Note that filenames_encountered is passed by copy rather than by reference
 /// DELIBERATELY.  This is so that it remains a list of parent files, so that only
 /// circular dependencies (attempts to include one's own parent, grandparent, etc.) are
@@ -223,8 +226,12 @@ RosettaScriptsParser::generate_mover_from_pose(
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 
-	std::stringstream fin; //The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().  After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
-	utility::vector1 < std::string > filenames_encountered; //A list of all of the files that have been included, which is checked whenever a new file is included to prevent circular dependencies.
+	// The input string.  Input files are opened and closed by read_in_and_recursively_replace_includes().
+	// After calling this function, fin will contain the XML with includes replaced by whatever XML they include.
+	std::stringstream fin;
+	// A list of all of the files that have been included, which is checked whenever a
+	// new file is included to prevent circular dependencies.
+	utility::vector1 < std::string > filenames_encountered;
 	read_in_and_recursively_replace_includes( dock_design_filename, fin, filenames_encountered ); //Actually read the input XML, reading in all included XML files as well.  No interpretation is done yet (except for recognizing xi:include).
 
 	//fin.open(dock_design_filename.c_str() );
@@ -232,14 +239,17 @@ RosettaScriptsParser::generate_mover_from_pose(
 	// utility_exit_with_message("Unable to open Rosetta Scripts XML file: '" + dock_design_filename + "'.");
 	//}
 
-	TagCOP tag;
 	if ( option[ OptionKeys::parser::script_vars ].user() ) {
 		std::stringstream fin_sub;
 		substitute_variables_in_stream(fin, option[ OptionKeys::parser::script_vars ], fin_sub);
-		tag = utility::tag::Tag::create( fin_sub );
-	} else {
-		tag = utility::tag::Tag::create(fin);
+		fin.clear();
+		fin.str( fin_sub.str() );
 	}
+
+	// Validate the input script against the XSD for RosettaScripts.
+	validate_input_script_against_xsd( dock_design_filename, fin );
+
+	TagCOP tag = utility::tag::Tag::create(fin);
 
 	//fin.close();
 	TR << "Parsed script:" << "\n";
@@ -810,6 +820,234 @@ RosettaScriptsParser::has_double_percent_signs(
 
 }
 
+void
+RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fname, std::stringstream const & input_xml ) const
+{
+	using namespace utility::tag;
+	std::string schema = xsd_for_rosetta_scripts();
 
-}//jd2
-}//protocols
+	TR << "Validating input script..." << std::endl;
+
+	if ( basic::options::option[ basic::options::OptionKeys::parser::output_schema ].user() ) {
+		std::ofstream ofs( basic::options::option[ basic::options::OptionKeys::parser::output_schema ] );
+		ofs << schema << std::endl;
+		exit( 0 );
+	}
+	//std::cout << "Rosetta scripts schema!\n" << schema << std::endl;
+	//utility_exit_with_message( "temp temp temp" );
+
+	std::string xml_file = input_xml.str();
+
+	std::ostringstream oss;
+	oss << "Input rosetta scripts XML file \"" << fname << "\" failed to validate against"
+		" the rosetta scripts schema. Use the option -parser::output_schema <output filename> to output"
+		" the schema to a file to see all valid options.\n";
+
+	std::string const long_error_string("Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:\n\n1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction) - fix it.\n2) If you haven’t run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/$LIKELY_PERMANENT_PATH) XRW TODO on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction=\"talaris2014\") is a good indicator that this is your problem.\n3) If you are a developer and neither 1 nor 2 worked - email the developer’s mailing list or try Slack.\n4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum\n5) If there is an error message immediately above stating that the schema failed to validate, and errors below that look like 'real XML' with lots of <xs:something> tags and NOT like your XML input, then you have a global schema validation error not an XML input validation error.  Read the message above and fix your schema in the C++ code. \n\n");
+
+	oss << long_error_string << "\n\n";
+
+	XMLValidationOutput validator_output;
+	try {
+		validator_output = validate_xml_against_xsd( xml_file, schema );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		oss << e.msg() << "\n";
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	}
+
+	if ( ! validator_output.valid() ) {
+		//I don't think this part actually works - these messages are always empty and there is a matching "does this work?" comment in XMLSchemaValidation.cc XRW TODO
+		oss << "Error messages were: " << validator_output.error_messages() << "\n";
+		oss << "Warning messages were: " << validator_output.warning_messages() << "\n";
+		throw utility::excn::EXCN_Msg_Exception( oss.str() );
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::parser::validate_and_exit ] ) {
+		TR << "Validation succeeded. Exiting" << std::endl;
+		exit( 0 );
+	}
+
+	TR << "...done" << std::endl;
+}
+
+std::string
+RosettaScriptsParser::xsd_for_rosetta_scripts()
+{
+	TR << "Generating XML Schema for rosetta_scripts..." << std::endl;
+	using namespace utility::tag;
+	XMLSchemaDefinition xsd;
+
+	write_ROSETTASCRIPTS_complex_type( xsd );
+
+	// Finally, the root of the tree.
+	// TO DO: separate the definition of the ROSETTA_SCRIPTS complex type and everything
+	// that goes inside of it into its own function so that the ROSETTA_SCRIPTS element
+	// becomes optional.
+	XMLSchemaElement rosetta_scripts_element;
+	rosetta_scripts_element.name( rosetta_scripts_element_name() )
+		.type_name( rosetta_scripts_complex_type_naming_func( rosetta_scripts_element_name() ));
+	xsd.add_top_level_element( rosetta_scripts_element );
+
+	TR << "...done" << std::endl;
+
+	return xsd.full_definition();
+
+}
+
+void
+RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	// early exit if we've been here already
+	if ( xsd.has_top_level_element( rosetta_scripts_complex_type_naming_func( rosetta_scripts_element_name() ) ) ) return;
+
+	// We have lots of complexTypes to define; we need them for the following elements:
+	//
+	// MOVERS
+	// FILTERS
+	// All the data loaders, (TASKOPERATIONS, SCOREFXNS, etc.)
+	// IMPORT
+	// PROTOCOLS -- PROTOCOLS subelement is just the complexType for the ParsedProtocol mover!
+	// OUTPUT
+	// APPLY_TO_POSE ??
+	// ROSETTASCRIPTS
+	//
+	// Then we need complexTypes defined from all of the DataLoaders -- we'll ask the
+	// DataLoaderFactory for these.
+
+	// Do the ROSETTASCRIPTS complex type first, so that if we recurse here, we can
+	// quit
+	XMLSchemaSimpleSubelementList rosetta_scripts_initial_subelements;
+	for ( auto data_loader_pair : parser::DataLoaderFactory::get_instance()->loader_map() ) {
+		rosetta_scripts_initial_subelements.add_already_defined_subelement(
+			data_loader_pair.first, data_loader_pair.second->schema_ct_naming_function() );
+	}
+	rosetta_scripts_initial_subelements.add_already_defined_subelement(
+		"MOVERS", & parser::DataLoaderFactory::data_loader_ct_namer );
+	rosetta_scripts_initial_subelements.add_already_defined_subelement(
+		"FILTERS", & parser::DataLoaderFactory::data_loader_ct_namer );
+	rosetta_scripts_initial_subelements.add_already_defined_subelement(
+		"APPLY_TO_POSE", & rosetta_scripts_complex_type_naming_func );
+	rosetta_scripts_initial_subelements.add_already_defined_subelement(
+		"IMPORT", & rosetta_scripts_complex_type_naming_func );
+
+	XMLSchemaSimpleSubelementList rosetta_scripts_protocols_subelement;
+	rosetta_scripts_protocols_subelement.add_already_defined_subelement_w_alt_element_name(
+		"PROTOCOLS", ParsedProtocol::mover_name(), & moves::complex_type_name_for_mover );
+
+	XMLSchemaSimpleSubelementList rosetta_scripts_output_subelement;
+	rosetta_scripts_output_subelement.add_already_defined_subelement(
+		"OUTPUT", & rosetta_scripts_complex_type_naming_func );
+
+	XMLSchemaComplexTypeGenerator rosetta_scripts_ct;
+	rosetta_scripts_ct.element_name( rosetta_scripts_element_name() )
+		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
+		.description( "The main ROSETTASCRIPTS block allows the definition of many different types of objects which can be generated"
+		" from a text file. The combination of Movers and Filters can define an end-to-end protocol, and the use of the MultiplePoseMover"
+		" can define pseudo-parallel diversification and pruning of a set of structures." )
+		.add_ordered_subelement_set_as_repeatable( rosetta_scripts_initial_subelements )
+		.add_ordered_subelement_set_as_required( rosetta_scripts_protocols_subelement )
+		.add_ordered_subelement_set_as_optional( rosetta_scripts_output_subelement )
+		.write_complex_type_to_schema( xsd );
+
+
+	// Make sure the schemas for the DataLoaders, for all of the Movers, and all of the Filters are
+	// written to the XSD.
+	for ( auto data_loader_pair : parser::DataLoaderFactory::get_instance()->loader_map() ) {
+		data_loader_pair.second->provide_xml_schema( xsd );
+	}
+	moves::MoverFactory::get_instance()->define_mover_xml_schema( xsd );
+	filters::FilterFactory::get_instance()->define_filter_xml_schema( xsd );
+
+	// MOVERS
+	XMLSchemaSimpleSubelementList movers_subelements;
+	movers_subelements.add_group_subelement( & moves::MoverFactory::mover_xml_schema_group_name );
+	XMLSchemaComplexTypeGenerator movers_ct_gen;
+	movers_ct_gen.element_name( "MOVERS" )
+		.complex_type_naming_func( & parser::DataLoaderFactory::data_loader_ct_namer )
+		.description( "The set of all of the Movers that are to be used in the script" )
+		.set_subelements_repeatable( movers_subelements )
+		.write_complex_type_to_schema( xsd );
+
+	// FILTERS
+	XMLSchemaSimpleSubelementList filters_subelements;
+	filters_subelements.add_group_subelement( & filters::FilterFactory::filter_xml_schema_group_name );
+	XMLSchemaComplexTypeGenerator filters_ct_gen;
+	filters_ct_gen.element_name( "FILTERS" )
+		.complex_type_naming_func( & parser::DataLoaderFactory::data_loader_ct_namer )
+		.description( "The set of all of the Filters that are to be used in the script" )
+		.set_subelements_repeatable( filters_subelements )
+		.write_complex_type_to_schema( xsd );
+
+	// IMPORT
+	AttributeList import_attributes;
+	import_attributes
+		+ XMLSchemaAttribute( "taskoperations", xs_string, "A comma separated list of TaskOperations that have been"
+		" defined at a higher level than the MultiplePoseMover that this IMPORT statement is inside of" )
+		+ XMLSchemaAttribute( "movers", xs_string, "A comma separated list of Movers that have been"
+		" defined at a higher level than the MultiplePoseMover that this IMPORT statement is inside of" )
+		+ XMLSchemaAttribute( "filters", xs_string, "A comma separated list of Filters that have been"
+		" defined at a higher level than the MultiplePoseMover that this IMPORT statement is inside of" );
+	XMLSchemaComplexTypeGenerator import_ct_gen;
+	import_ct_gen.element_name( "IMPORT" )
+		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
+		.description( "The IMPORT statement is meant to be used in conjuction with the MultiplePoseMover. It allows"
+		" users who have defined Movers, Filters, and TaskOperations at a higher level of the protocol to avoid"
+		" having to redefine them in order to use them within the MultiplePoseMover. The classes that are imported"
+		" will be re-parsed within the inner context. This parsing occurs before any of sub-elements of the"
+		" ROSETTASCRIPTS block are loaded, reguardless of the order in which the IMPORT statement appears. Multiple"
+		" IMPORT statements may be needed, e.g. if certain TaskOperations must be loaded before other Movers which"
+		" require those TaskOperations are parsed." )
+		.add_attributes( import_attributes )
+		.write_complex_type_to_schema( xsd );
+
+	// OUTPUT
+	// Output element only contains attributes defined by parse_score_function
+	XMLSchemaComplexTypeGenerator output_ct;
+	AttributeList attributes;
+	rosetta_scripts::attributes_for_parse_score_function( attributes );
+	output_ct
+		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
+		.element_name( "OUTPUT" )
+		.add_attributes( attributes )
+		.description( "The OUTPUT element controls the final score function that is used by RosettaScripts before outputting a Pose."
+		" If for example you have been using a score function with constraints in your protocol, but at the end, want to output the"
+		" unconstrained scores, then you can set the score function in the OUTPUT element to some ScoreFunction that has constraint"
+		" weights of zero and then RosettaScripts will rescore the Pose with that ScoreFunction right before writing the scores to"
+		" disk." )
+		.write_complex_type_to_schema( xsd );
+
+	// APPLY_TO_POSE
+	// This section is just a bunch of movers
+	XMLSchemaSimpleSubelementList apply_to_pose_subelements;
+	apply_to_pose_subelements.add_group_subelement( & moves::MoverFactory::mover_xml_schema_group_name );
+	XMLSchemaComplexTypeGenerator apply_to_pose_ct;
+	apply_to_pose_ct.element_name( "APPLY_TO_POSE" )
+		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
+		.description( "The APPLY_TO_POSE block is an odd duck, and is deprecated, and you should not use it. What it allows you to do is"
+		" define a set of movers, which the MOVERS block also allows you to do, and then to have the apply() method for these movers"
+		" called immediately. As the Pose is handed to Movers and Filters in their parse_my_tag() methods, the Movers in this block"
+		" have the ability to change the Pose before it is handed to the the parse_my_tag() methods of other objects. The upshot,"
+		" however, is that the movers in the APPLY_TO_POSE block are going to run in the master thread, and will represent a bottleneck"
+		" in multithreaded protocols. It also is just weird that the APPLY_TO_POSE block is taking over some of the functionality of"
+		" the PROTOCOLS block. The original justification for why the APPLY_TO_POSE block is needed was so that you could add constraints"
+		" to a Pose or change data in the DataMap, but both of these things are possible by adding Movers to the PROTOCOLS block." )
+		.set_subelements_repeatable( apply_to_pose_subelements )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+std::string
+RosettaScriptsParser::rosetta_scripts_element_name()
+{
+	return "ROSETTASCRIPTS";
+}
+
+std::string
+RosettaScriptsParser::rosetta_scripts_complex_type_naming_func( std::string const & element_name )
+{
+	return "rosetta_scripts_parser_" + element_name + "_type";
+}
+
+} // namespace rosetta_scripts
+} // namespace protocols

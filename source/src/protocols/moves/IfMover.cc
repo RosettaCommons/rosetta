@@ -35,24 +35,15 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
 namespace moves {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.moves.IfMover" );
-
-std::string IfMoverCreator::mover_name() {
-	return "If";
-}
-
-std::string IfMoverCreator::keyname() const {
-	return mover_name();
-}
-
-protocols::moves::MoverOP IfMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IfMover() );
-}
 
 void IfMover::apply(core::pose::Pose& pose) {
 	moves::MoverStatus status;
@@ -82,9 +73,9 @@ core::pose::PoseOP IfMover::get_additional_output() {
 	return get_additional_output_true_mover();
 }
 
-std::string IfMover::get_name() const {
-	return IfMoverCreator::mover_name();
-}
+// XRW TEMP std::string IfMover::get_name() const {
+// XRW TEMP  return IfMover::mover_name();
+// XRW TEMP }
 
 void IfMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -108,6 +99,51 @@ void IfMover::parse_my_tag( utility::tag::TagCOP tag,
 		<< "\" filter \"" << filter_name
 		<< std::endl;
 }
+
+std::string IfMover::get_name() const {
+	return mover_name();
+}
+
+std::string IfMover::mover_name() {
+	return "If";
+}
+
+void IfMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"filter_name", xs_string,
+		"Filter used for the if else statement");
+	attlist + XMLSchemaAttribute::required_attribute(
+		"true_mover_name", xs_string,
+		"Mover to be execuated when filter returns true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"false_mover_name", xs_string,
+		"Mover to be execuated when filter returns false",
+		"null");
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Implements a simple "
+		"IF (filter(pose)) THEN true_mover(pose) ELSE false_mover(pose). "
+		"true_mover is required, false_mover is not",
+		attlist );
+}
+
+std::string IfMoverCreator::keyname() const {
+	return IfMover::mover_name();
+}
+
+protocols::moves::MoverOP
+IfMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new IfMover );
+}
+
+void IfMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IfMover::provide_xml_schema( xsd );
+}
+
 
 } //moves
 } //protocols

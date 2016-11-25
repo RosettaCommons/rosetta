@@ -93,6 +93,9 @@
 //#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::Error;
@@ -568,7 +571,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
 			// TODO: Why are we still relying on DockingHighResLegacy for ANYTHING let alone for design?
 			// We gotta find a way to move this functionality into the DockingHighRes base class (which would require some testing)
-			
+
 			// FIXME: This one line is the reason we have to #include the DockingHighResLegacy header >:O
 			DockingHighResLegacyOP legacy_mover = utility::pointer::dynamic_pointer_cast< protocols::docking::DockingHighResLegacy > ( docking_highres_mover_ );
 			legacy_mover->design( design_ );
@@ -1187,22 +1190,61 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 }//end parse_my_tag
 
 
-std::string
-DockingProtocolCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP DockingProtocolCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockingProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockingProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockingProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockingProtocol::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockingProtocol";
+// XRW TEMP }
+
+std::string DockingProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string DockingProtocol::mover_name() {
+	return "DockingProtocol";
+}
+
+void DockingProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockingProtocolCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "docking_score_low", xs_string, "Low-resolution docking score function" )
+		+ XMLSchemaAttribute( "docking_score_high", xs_string, "High-resolution docking score function" )
+		+ XMLSchemaAttribute( "partners", xs_string, "String specifying docking patners; underscore should separate the partners e.g. AB_C" )
+		+ XMLSchemaAttribute::attribute_w_default( "low_res_protocol_only", xsct_rosetta_bool, "Only perform low-resolution docking", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "docking_local_refine", xsct_rosetta_bool, "Only perform high-resolution docking", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dock_min", xsct_rosetta_bool, "Use the DockMinMover", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_default_docking_task", xsct_rosetta_bool, "Ignore the default docking task and define your own. Unless this is specified, task operations will be appended to the default docking task.", "false" );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover used for protein-protein docking.", attlist );
+}
+
+std::string DockingProtocolCreator::keyname() const {
+	return DockingProtocol::mover_name();
 }
 
 protocols::moves::MoverOP
 DockingProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingProtocol() );
+	return protocols::moves::MoverOP( new DockingProtocol );
 }
 
-std::string
-DockingProtocolCreator::mover_name()
+void DockingProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockingProtocol";
+	DockingProtocol::provide_xml_schema( xsd );
 }
+
 
 std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
 {

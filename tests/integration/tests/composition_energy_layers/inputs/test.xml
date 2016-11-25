@@ -1,41 +1,41 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" >
-			<Reweight scoretype=aa_composition weight=1.0 />
+		<ScoreFunction name="tala" weights="talaris2014.wts" >
+			<Reweight scoretype="aa_composition" weight="1.0" />
 			<Set aa_composition_setup_file="inputs/fifty_charged.comp" />
-			<Reweight scoretype=fa_rep weight=0.01 /> #Turn this way down so that clashes have a negligible effect.
-		</tala>
+			<Reweight scoretype="fa_rep" weight="0.01" /> #Turn this way down so that clashes have a negligible effect.
+		</ScoreFunction>
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
-		<Layer name=corelayer select_core=true core_cutoff=0.5 surface_cutoff=0.25 />
-		<Layer name=surflayer select_boundary=true select_surface=true core_cutoff=0.5 surface_cutoff=0.25 />
+		<Layer name="corelayer" select_core="true" core_cutoff="0.5" surface_cutoff="0.25" />
+		<Layer name="surflayer" select_boundary="true" select_surface="true" core_cutoff="0.5" surface_cutoff="0.25" />
 	</RESIDUE_SELECTORS>
 	<TASKOPERATIONS>
-		<ReadResfile name=only_DRVA filename="inputs/resfile1.txt" />
+		<ReadResfile name="only_DRVA" filename="inputs/resfile1.txt" />
 	</TASKOPERATIONS>
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
 
-		<BundleGridSampler name="bgs1" helix_length=15 scorefxn="tala" set_bondlengths=true set_bondangles=true set_dihedrals=true
-				r0_min=4.0 r0_max=6.0 r0_samples=5 omega0=0.13 delta_omega0=0 delta_omega1=0 delta_t=0 nstruct_mode=true >
+		<BundleGridSampler name="bgs1" helix_length="15" scorefxn="tala" set_bondlengths="true" set_bondangles="true" set_dihedrals="true"
+				r0_min="4.0" r0_max="6.0" r0_samples="5" omega0="0.13" delta_omega0="0" delta_omega1="0" delta_t="0" nstruct_mode="true" >
 			<Helix />
-			<Helix invert=true delta_omega0=3.141592654 r0_copies_helix=1 />
+			<Helix invert="true" delta_omega0="3.141592654" r0_copies_helix="1" />
 		</BundleGridSampler>
 		
-		<DeclareBond name=add_termini atom1=C atom2=N res1=1 res2=2 add_termini=true />
+		<DeclareBond name="add_termini" atom1="C" atom2="N" res1="1" res2="2" add_termini="true" />
 		
-		<AtomTree name=foldtree1 fold_tree_file="inputs/foldtree1.txt" />
+		<AtomTree name="foldtree1" fold_tree_file="inputs/foldtree1.txt" />
 
-		<AddCompositionConstraintMover name=addcomp1 filename="inputs/bad_compfile.comp" />
-		<ClearCompositionConstraintsMover name=clear_comp />
-		<AddCompositionConstraintMover name=addcomp2 filename="inputs/fifty_fifty_core.comp" selector=corelayer />		
-		<AddCompositionConstraintMover name=addcomp3 filename="inputs/fifty_fifty_surf.comp" selector=surflayer />
+		<AddCompositionConstraintMover name="addcomp1" filename="inputs/bad_compfile.comp" />
+		<ClearCompositionConstraintsMover name="clear_comp" />
+		<AddCompositionConstraintMover name="addcomp2" filename="inputs/fifty_fifty_core.comp" selector="corelayer" />		
+		<AddCompositionConstraintMover name="addcomp3" filename="inputs/fifty_fifty_surf.comp" selector="surflayer" />
 		
-		<FastDesign name=fdes1 scorefxn=tala repeats=2 task_operations=only_DRVA >
-			<MoveMap name=fdes1_mm>
-				<Span begin=1 end=30 chi=1 bb=0 />
-				<Jump number=1 setting=0 />
+		<FastDesign name="fdes1" scorefxn="tala" repeats="2" task_operations="only_DRVA" >
+			<MoveMap name="fdes1_mm">
+				<Span begin="1" end="30" chi="1" bb="0" />
+				<Jump number="1" setting="0" />
 			</MoveMap>
 		</FastDesign>
 
@@ -43,14 +43,15 @@
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=bgs1 />
-		<Add mover=add_termini />
-		<Add mover=foldtree1 />
-		<Add mover=addcomp1 />
-		<Add mover=clear_comp />
-		<Add mover=addcomp2 />
-		<Add mover=addcomp3 />
-		<Add mover=fdes1 />
+		<Add mover="bgs1" />
+		<Add mover="add_termini" />
+		<Add mover="foldtree1" />
+		<Add mover="addcomp1" />
+		<Add mover="clear_comp" />
+		<Add mover="addcomp2" />
+		<Add mover="addcomp3" />
+		<Add mover="fdes1" />
 	</PROTOCOLS>
-	<OUTPUT scorefxn=tala />
+	<OUTPUT scorefxn="tala" />
+
 </ROSETTASCRIPTS>

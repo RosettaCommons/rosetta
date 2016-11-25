@@ -79,6 +79,18 @@ public:
 	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Real const score ) const;
 	bool individual_hbonds() const;
 	void individual_hbonds( bool const individual_hbonds );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;

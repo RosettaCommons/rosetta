@@ -11,28 +11,34 @@
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
+// Unit Headers
+#include <protocols/ligand_docking/InterfaceBuilder.hh>
+
+// Package headers
+#include <protocols/ligand_docking/ligand_options/Interface.hh>
+#include <protocols/ligand_docking/ligand_options/interface_distance_functions.hh>
+#include <protocols/ligand_docking/LigandDockingLoaders.hh>
+#include <protocols/ligand_docking/LigandArea.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
-
-// Unit Headers
-#include <protocols/ligand_docking/InterfaceBuilder.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.hh>
-#include <protocols/ligand_docking/ligand_options/interface_distance_functions.hh>
 #include <core/pose/util.hh>
+
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 
-#include <protocols/ligand_docking/LigandArea.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace ligand_docking {
@@ -184,6 +190,24 @@ void InterfaceBuilder::enforce_minimum_length(
 LigandAreas
 InterfaceBuilder::get_ligand_areas() const{
 	return ligand_areas_;
+}
+
+std::string InterfaceBuilder::element_name() { return "InterfaceBuilder"; }
+void InterfaceBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attributes;
+	attributes + Attr( "extension_window", xsct_non_negative_integer, "XRW TO DO" )
+		+ Attr::required_attribute( "ligand_areas", xs_string, "The comma-separated list of ligand areas, which are read out of the datamap" )
+		+ required_name_attribute();
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( element_name() )
+		.complex_type_naming_func( & InterfaceBuilderLoader::interface_builder_ct_namer )
+		.description( "Each interface builder is composed from one or more ligand areas, which must have been previously defined" )
+		.add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
 }
 
 } //namespace ligand_docking

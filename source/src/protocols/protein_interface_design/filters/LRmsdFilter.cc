@@ -33,6 +33,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -115,11 +118,44 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	movable_jumps_.push_back(jump_num);
 }
 
-protocols::filters::FilterOP
-LRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LRmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP LRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LRmsdFilter ); }
 
-std::string
-LRmsdFilterCreator::keyname() const { return "LRmsd"; }
+// XRW TEMP std::string
+// XRW TEMP LRmsdFilterCreator::keyname() const { return "LRmsd"; }
+
+std::string LRmsdFilter::name() const {
+	return class_name();
+}
+
+std::string LRmsdFilter::class_name() {
+	return "LRmsd";
+}
+
+void LRmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_non_negative_integer, "Holes score threshold above which we fail the filter", "200" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which to evaluate the holes score, numbered sequentially from 1", "1" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string LRmsdFilterCreator::keyname() const {
+	return LRmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LRmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LRmsdFilter );
+}
+
+void LRmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LRmsdFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

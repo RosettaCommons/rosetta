@@ -2,16 +2,16 @@
     
 <SCOREFXNS>
     
-     <SFXN_STD weights= "talaris2014.wts" />
+     <ScoreFunction name="SFXN_STD" weights="talaris2014.wts" />
      
  </SCOREFXNS>
 
 <TASKOPERATIONS>
-    <ReadResfile name=resfile filename="xml/resfile.txt" />
+    <ReadResfile name="resfile" filename="xml/resfile.txt" />
     
     <OperateOnCertainResidues name="no_design_DPRO" >
-        <RestrictToRepackingRLT />
         <ResidueName3Is name3="DPR" />
+        <RestrictToRepackingRLT />
     </OperateOnCertainResidues>
   
     <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
@@ -31,7 +31,7 @@
 </FILTERS>
 <MOVERS>
     
-    <PeptideStubMover name=intial_stub reset=true>
+    <PeptideStubMover name="intial_stub" reset="true">
         <Append resname="ALA" />
         <Append resname="VAL" />
         <Append resname="GLY" />
@@ -46,20 +46,20 @@
         
     </PeptideStubMover>
 
-    <MutateResidue name=mutate_res5 target="5" new_res="DPRO" />
+    <MutateResidue name="mutate_res5" target="5" new_res="DPRO" />
     
-    <SetTorsion name=torsion1>
-        <Torsion residue=ALL torsion_name=omega angle=180.0 />
-        <Torsion residue=ALL torsion_name=rama angle=rama_biased/>
-        <Torsion residue=3,5,7,9 torsion_name=phi angle=60.0/>
-        <Torsion residue=3,5,7,9 torsion_name=psi angle=30.0/>
+    <SetTorsion name="torsion1">
+        <Torsion residue="ALL" torsion_name="omega" angle="180.0" />
+        <Torsion residue="ALL" torsion_name="rama" angle="rama_biased"/>
+        <Torsion residue="3,5,7,9" torsion_name="phi" angle="60.0"/>
+        <Torsion residue="3,5,7,9" torsion_name="psi" angle="30.0"/>
     </SetTorsion>
     
 
-    <FastDesign name=fdesign4 scorefxn=SFXN_STD repeats=4 task_operations=layer_all,resfile,no_design_DPRO ramp_down_constraints=false>
+    <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="4" task_operations="layer_all,resfile,no_design_DPRO" ramp_down_constraints="false">
                     
-        <MoveMap name=fdesign_mm>
-            <Chain number=1 chi=true bb=true />
+        <MoveMap name="fdesign_mm">
+            <Chain number="1" chi="true" bb="true" />
                         
         </MoveMap>
                     
@@ -71,11 +71,12 @@
 
 </MOVERS>
 <PROTOCOLS>
-    <Add mover=intial_stub />
-    <Add mover=mutate_res5 />
-    <Add mover=torsion1 />
-    <Add mover=fdesign4 />
+    <Add mover="intial_stub" />
+    <Add mover="mutate_res5" />
+    <Add mover="torsion1" />
+    <Add mover="fdesign4" />
     
 </PROTOCOLS>
+
 
 </ROSETTASCRIPTS>

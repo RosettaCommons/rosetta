@@ -25,26 +25,29 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AlignChainMover" )
 #include <core/import_pose/import_pose.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-std::string
-AlignChainMoverCreator::keyname() const
-{
-	return AlignChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AlignChainMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AlignChainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AlignChainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AlignChainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AlignChainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AlignChainMover );
+// XRW TEMP }
 
-std::string
-AlignChainMoverCreator::mover_name()
-{
-	return "AlignChain";
-}
+// XRW TEMP std::string
+// XRW TEMP AlignChainMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AlignChain";
+// XRW TEMP }
 
 AlignChainMover::AlignChainMover()
 : moves::Mover("AlignChain"),
@@ -101,10 +104,10 @@ AlignChainMover::apply( Pose & in_pose )
 	apply_superposition_transform( in_pose, rotation, to_init_center, to_fit_center );
 }
 
-std::string
-AlignChainMover::get_name() const {
-	return AlignChainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AlignChainMover::get_name() const {
+// XRW TEMP  return AlignChainMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 AlignChainMover::clone() const
@@ -134,6 +137,53 @@ AlignChainMover::parse_my_tag(
 
 	TR<<"source_chain: "<<source_chain()<<" target_chain: "<<target_chain()<<" pdb name: "<<fname<<std::endl;
 }
+
+std::string AlignChainMover::get_name() const {
+	return mover_name();
+}
+
+std::string AlignChainMover::mover_name() {
+	return "AlignChain";
+}
+
+void AlignChainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"target_name", xs_string,
+		"file name of the target pose on disk. "
+		"The pose will be read just once at the start of the run and saved in memory to save I/O");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"source_chain", xsct_non_negative_integer,
+		"the chain number in the working pose. 0 means the entire pose", "0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"target_chain", xsct_non_negative_integer,
+		"the chain number in the target pose. 0 means the entire pose", "0");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Align a chain in the working pose to a chain in a pose on disk (CA superposition). "
+		"All chains in the moving pose are rotated into the new coordinate frame, "
+		"but the rotation is calculated on the specified chain. Specifying the 0th chain "
+		"results in a whole-Pose alignment. target and source chains must have the same length of residues.",
+		attlist );
+}
+
+std::string AlignChainMoverCreator::keyname() const {
+	return AlignChainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AlignChainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AlignChainMover );
+}
+
+void AlignChainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AlignChainMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

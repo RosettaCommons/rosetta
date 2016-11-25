@@ -66,6 +66,9 @@
 
 #include <protocols/simple_filters/DdGScan.hh>
 #include <protocols/simple_filters/DdGScanCreator.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdGScan" );
 
@@ -301,11 +304,51 @@ void DdGScan::write_to_pdb(
 
 }
 
-protocols::filters::FilterOP
-DdGScanCreator::create_filter() const { return protocols::filters::FilterOP( new DdGScan ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP DdGScanCreator::create_filter() const { return protocols::filters::FilterOP( new DdGScan ); }
 
-std::string
-DdGScanCreator::keyname() const { return "DdGScan"; }
+// XRW TEMP std::string
+// XRW TEMP DdGScanCreator::keyname() const { return "DdGScan"; }
+
+std::string DdGScan::name() const {
+	return class_name();
+}
+
+std::string DdGScan::class_name() {
+	return "DdGScan";
+}
+
+void DdGScan::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "repeats" , xsct_non_negative_integer , "How many times to repeat the ddg calculations; the average of all the repeats is returned." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_diffs" , xsct_rosetta_bool , "Whether to report the changes in binding energy upon mutation (pass true), or the total binding energy for the mutated structure (pass false)." , "1" )
+		+ XMLSchemaAttribute( "ddG_mover" , xs_string, "Handle definition of a special ddG mover." ) //XRW TO DO: should this be an attributes_for_parse_mover??
+		+ XMLSchemaAttribute::attribute_w_default( "write2pdb" , xsct_rosetta_bool , "Whether to write the residue-specific ddG information to the output .pdb file." , "0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;
+	//The score function used for the calculations. If a ddG mover is defined, this score function will be used in that mover as well, overriding any different score function defined in that mover.
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+	//The task operations to use to identify which residues to scan. Designable or packable residues are scanned.
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Takes a set of task operations from the user in order to more precisely specify a set of residues to analyze via ddG scanning. Individually mutates each of the residues to alanine (or whatever other residue is defined in the task operations) and calculates the change in binding energy (ddG).", attlist );
+}
+
+std::string DdGScanCreator::keyname() const {
+	return DdGScan::class_name();
+}
+
+protocols::filters::FilterOP
+DdGScanCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DdGScan );
+}
+
+void DdGScanCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DdGScan::provide_xml_schema( xsd );
+}
+
 
 } // simple_filters
 } // protocols

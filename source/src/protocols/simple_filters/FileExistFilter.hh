@@ -51,6 +51,18 @@ public:
 	std::string filename() const;
 	bool ignore_zero_byte() const{ return ignore_zero_byte_; }
 	void ignore_zero_byte( bool const i ){ ignore_zero_byte_ = i; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	std::string filename_;
 	bool ignore_zero_byte_; // dflt false; if the file is 0b then it counts as if the file doesn't exist

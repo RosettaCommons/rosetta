@@ -187,18 +187,18 @@ void AddCDRProfilesOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	// Check if this is the real default with Jared: all I know is that the functional default is "six trues"
 	// for cdrs_.
 	attributes
-		+ XMLSchemaAttribute( "cdrs", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "fallback_strategy", xs_string, "seq_design_conservative" )
-		+ XMLSchemaAttribute::attribute_w_default(  "add_to_current", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "include_native_restype", xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "picking_rounds", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "force_north_paper_db", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_outliers", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "stats_cutoff", xsct_non_negative_integer, "10" )
-		+ XMLSchemaAttribute::attribute_w_default(  "sample_zero_probs_at", xs_decimal, "0.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "cons_design_data_source", xs_string, "blosum62" )
-		+ XMLSchemaAttribute( "input_ab_scheme", xs_string )
-		+ XMLSchemaAttribute( "cdr_definition", xs_string );
+		+ XMLSchemaAttribute( "cdrs", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "fallback_strategy", xs_string, "XRW TO DO", "seq_design_conservative" )
+		+ XMLSchemaAttribute::attribute_w_default( "add_to_current", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "include_native_restype", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "picking_rounds", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "force_north_paper_db", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_outliers", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stats_cutoff", xsct_non_negative_integer, "XRW TO DO", "10" )
+		+ XMLSchemaAttribute::attribute_w_default( "sample_zero_probs_at", xsct_real, "XRW TO DO", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cons_design_data_source", xs_string, "XRW TO DO", "blosum62" )
+		+ XMLSchemaAttribute( "input_ab_scheme", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "cdr_definition", xs_string , "XRW TO DO" );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes );
 }

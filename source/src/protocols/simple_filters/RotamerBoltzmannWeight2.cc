@@ -28,11 +28,15 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight2" );
 
@@ -132,7 +136,7 @@ RotamerBoltzmannWeight2::fresh_instance() const
 std::string
 RotamerBoltzmannWeight2::get_name() const
 {
-	return RotamerBoltzmannWeight2Creator::filter_name();
+	return RotamerBoltzmannWeight2::class_name();
 }
 
 bool
@@ -326,7 +330,7 @@ RotamerBoltzmannWeight2::new_calculator_id()
 {
 	core::Size const id = IdManager< core::Size >::get_instance()->register_new_id();
 	std::stringstream calc_id;
-	calc_id << RotamerBoltzmannWeight2Creator::filter_name() << "_" << id;
+	calc_id << RotamerBoltzmannWeight2::class_name() << "_" << id;
 	return calc_id.str();
 }
 
@@ -338,23 +342,60 @@ RotamerBoltzmannWeight2::calculator_id() const
 
 /////////////// Creator ///////////////
 
-protocols::filters::FilterOP
-RotamerBoltzmannWeight2Creator::create_filter() const
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP RotamerBoltzmannWeight2Creator::create_filter() const
+// XRW TEMP {
+// XRW TEMP  return protocols::filters::FilterOP( new RotamerBoltzmannWeight2 );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RotamerBoltzmannWeight2Creator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RotamerBoltzmannWeight2::class_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RotamerBoltzmannWeight2::class_name()
+// XRW TEMP {
+// XRW TEMP  return "RotamerBoltzmannWeight2";
+// XRW TEMP }
+
+std::string RotamerBoltzmannWeight2::name() const {
+	return class_name();
+}
+
+std::string RotamerBoltzmannWeight2::class_name() {
+	return "RotamerBoltzmannWeight2";
+}
+
+void RotamerBoltzmannWeight2::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "probability_type", xs_string, "XRW TO DO", "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "score_type", xs_string, "XRW TO DO", "XRW TO DO");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "XRW TO DO");
+
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string RotamerBoltzmannWeight2Creator::keyname() const {
+	return RotamerBoltzmannWeight2::class_name();
+}
+
+protocols::filters::FilterOP
+RotamerBoltzmannWeight2Creator::create_filter() const {
 	return protocols::filters::FilterOP( new RotamerBoltzmannWeight2 );
 }
 
-std::string
-RotamerBoltzmannWeight2Creator::keyname() const
+void RotamerBoltzmannWeight2Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return RotamerBoltzmannWeight2Creator::filter_name();
+	RotamerBoltzmannWeight2::provide_xml_schema( xsd );
 }
 
-std::string
-RotamerBoltzmannWeight2Creator::filter_name()
-{
-	return "RotamerBoltzmannWeight2";
-}
 
 //////////////// Calculator id management /////////////////////
 

@@ -48,6 +48,9 @@
 #include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -63,32 +66,32 @@ using namespace protocols::forge::components;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 
-std::string
-VLBCreator::keyname() const
-{
-	return VLBCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP VLBCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return VLB::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-VLBCreator::create_mover() const {
-	return protocols::moves::MoverOP( new VLB );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP VLBCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new VLB );
+// XRW TEMP }
 
-std::string
-VLBCreator::mover_name()
-{
-	return "VLB";
-}
+// XRW TEMP std::string
+// XRW TEMP VLB::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "VLB";
+// XRW TEMP }
 
 VLB::VLB() :
-	protocols::moves::Mover( VLBCreator::mover_name() )
+	protocols::moves::Mover( VLB::mover_name() )
 {
 	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager );
 	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 } // default ctor//design_ = true;
 
 VLB::VLB( BuildManagerCOP manager, ScoreFunctionCOP scorefxn ) :
-	protocols::moves::Mover( VLBCreator::mover_name() )
+	protocols::moves::Mover( VLB::mover_name() )
 {
 	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager( *manager ) );
 	scorefxn_ = scorefxn->clone();
@@ -119,10 +122,10 @@ VLB::apply( pose::Pose & pose ) {
 
 }
 
-std::string
-VLB::get_name() const {
-	return VLBCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP VLB::get_name() const {
+// XRW TEMP  return VLB::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP VLB::clone() const {
 	return( protocols::moves::MoverOP( new VLB( *this ) ));
@@ -304,6 +307,87 @@ VLB::parse_my_tag(
 	runtime_assert( manager_->compatibility_check() );
 	TR<<"defined VLB mover with " << manager_->size() << " instructions." << std::endl;
 }
+
+std::string VLB::get_name() const {
+	return mover_name();
+}
+
+std::string VLB::mover_name() {
+	return "VLB";
+}
+
+std::string mangled_name_for_VLB( std::string const & foo ) {
+	return "VLB_subtag_" + foo + "_type";
+}
+
+void VLB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "scorefxn", xs_string, "Scorefunction to be used", "score4L" );
+
+	AttributeList bridge_subtag_attlist;
+	bridge_subtag_attlist + XMLSchemaAttribute::required_attribute( "left", xsct_refpose_enabled_residue_number, "Left residue" )
+		+ XMLSchemaAttribute::required_attribute( "right", xsct_refpose_enabled_residue_number, "Right residue" )
+		+ XMLSchemaAttribute::required_attribute( "ss", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "aa", xs_string, "XRW TO DO" );
+
+	AttributeList connectright_subtag_attlist;
+	connectright_subtag_attlist + XMLSchemaAttribute::required_attribute( "left", xsct_refpose_enabled_residue_number, "Left residue" )
+		+ XMLSchemaAttribute::required_attribute( "right", xsct_refpose_enabled_residue_number, "Right residue" )
+		+ XMLSchemaAttribute::required_attribute( "pdb", xs_string, "PDB file name to be read in" );
+
+	AttributeList grow_subtag_attlist;
+	grow_subtag_attlist + XMLSchemaAttribute::required_attribute( "pos", xsct_refpose_enabled_residue_number, "The single residue from which to build" )
+		+ XMLSchemaAttribute::required_attribute( "ss", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "aa", xs_string, "XRW TO DO" );
+
+	AttributeList segmentinsert_subtag_attlist;
+	segmentinsert_subtag_attlist + XMLSchemaAttribute::required_attribute( "left", xsct_refpose_enabled_residue_number, "Left residue" )
+		+ XMLSchemaAttribute::required_attribute( "right", xsct_refpose_enabled_residue_number, "Right residue" )
+		+ XMLSchemaAttribute::required_attribute( "ss", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_bb_torsions", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::required_attribute( "pdb", xs_string, "PDB file name to be read in" )
+		+ XMLSchemaAttribute::required_attribute( "side", xs_string, "XRW TO DO" );
+
+	AttributeList segmentrebuild_subtag_attlist;
+	segmentrebuild_subtag_attlist+ XMLSchemaAttribute::required_attribute( "left", xsct_refpose_enabled_residue_number, "Left residue" )
+		+ XMLSchemaAttribute::required_attribute( "right", xsct_refpose_enabled_residue_number, "Right residue" )
+		+ XMLSchemaAttribute::required_attribute( "ss", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "aa", xs_string, "XRW TO DO" );
+
+	AttributeList segmentswap_subtag_attlist;
+	segmentswap_subtag_attlist+ XMLSchemaAttribute::required_attribute( "left", xsct_refpose_enabled_residue_number, "Left residue" )
+		+ XMLSchemaAttribute::required_attribute( "right", xsct_refpose_enabled_residue_number, "Right residue" )
+		+ XMLSchemaAttribute::required_attribute( "pdb", xs_string, "PDB file name to be read in" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Bridge", bridge_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "ConnectRight", connectright_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "GrowLeft", grow_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "GrowRight", grow_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "SegmentInsert", segmentinsert_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "SegmentRebuild", segmentrebuild_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "SegmentSwap", segmentswap_subtag_attlist, "XRW TODO"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & mangled_name_for_VLB );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string VLBCreator::keyname() const {
+	return VLB::mover_name();
+}
+
+protocols::moves::MoverOP
+VLBCreator::create_mover() const {
+	return protocols::moves::MoverOP( new VLB );
+}
+
+void VLBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	VLB::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

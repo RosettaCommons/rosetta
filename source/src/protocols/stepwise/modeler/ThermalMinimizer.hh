@@ -62,47 +62,59 @@ public:
 
 public:
 	/// @brief Apply the mover
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
 	/// @brief Show the contents of the Mover
-	static std::string
-	class_name();
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name();
 
-	virtual void
-	show( std::ostream & output = std::cout ) const;
+	void
+	show( std::ostream & output = std::cout ) const override;
 
 	/// @brief Get the name of the Mover
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
 	///////////////////////////////
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	//ThermalMinimizer & operator=( ThermalMinimizer const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	void set_n_cycle( Size const setting ) { n_cycle_ = setting; }
 	void set_temp( Real const temp ) { temp_ = temp; }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { score_fxn_ = scorefxn; }
 	void set_mm( core::kinematics::MoveMapOP mm ) { mm_ = mm; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	//void set_residue_sampling_from_pose_and_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );
 

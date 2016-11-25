@@ -44,6 +44,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/membrane/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MPLipidAccessibility" );
 
@@ -56,7 +59,7 @@ namespace membrane {
 
 /// @brief Default constructor
 MPLipidAccessibility::MPLipidAccessibility() : protocols::moves::Mover() {
-	
+
 	set_defaults();
 	register_options();
 	init_from_cmd();
@@ -65,7 +68,7 @@ MPLipidAccessibility::MPLipidAccessibility() : protocols::moves::Mover() {
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
 //MPLipidAccessibility::MPLipidAccessibility( MPLipidAccessibility const & src ):
-//	protocols::moves::Mover( src )
+// protocols::moves::Mover( src )
 //{
 //
 //}
@@ -83,10 +86,10 @@ MPLipidAccessibility::show(std::ostream & output) const
 }
 
 /// @brief Get the name of the Mover
-std::string
-MPLipidAccessibility::get_name() const {
-	return "MPLipidAccessibility";
-}
+// XRW TEMP std::string
+// XRW TEMP MPLipidAccessibility::get_name() const {
+// XRW TEMP  return "MPLipidAccessibility";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Rosetta Scripts Support ///
@@ -95,13 +98,13 @@ MPLipidAccessibility::get_name() const {
 /// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 void
 MPLipidAccessibility::parse_my_tag(
-								   utility::tag::TagCOP ,
-								   basic::datacache::DataMap& ,
-								   protocols::filters::Filters_map const & ,
-								   protocols::moves::Movers_map const & ,
-								   core::pose::Pose const & )
+	utility::tag::TagCOP ,
+	basic::datacache::DataMap& ,
+	protocols::filters::Filters_map const & ,
+	protocols::moves::Movers_map const & ,
+	core::pose::Pose const & )
 {
-	
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,44 +126,44 @@ MPLipidAccessibility::clone() const
 /// MOVER METHODS ///
 /////////////////////
 void MPLipidAccessibility::apply( core::pose::Pose & pose ){
-	
+
 	using namespace core::id;
 	using namespace core::pose;
-	
+
 	// finalize setup
 	finalize_setup( pose );
-	
+
 	////////////////// SET B-FACTOR TO ZERO FOR ALL ATOMS //////////////////
-	
+
 	for ( core::Size r = 1; r <= nres_protein( pose ); ++r ) {
 		for ( core::Size a = 1; a <= pose.residue( r ).natoms(); ++a ) {
 			pose.pdb_info()->bfactor( r, a, 0 );
 		}
 	}
-	
+
 	//////////////////////// COMPUTE SASA //////////////////////////////////
-	
+
 	// compute relative SASA for the protein,
 	// be aware: the SASA vector goes over all residues
-	//	utility::vector1< core::Real > rel_res_sasa = core::scoring::sasa::rel_per_res_sc_sasa( pose );
-	
-	
+	// utility::vector1< core::Real > rel_res_sasa = core::scoring::sasa::rel_per_res_sc_sasa( pose );
+
+
 	//////////////////////// COMPUTE HULL///// /////////////////////////////
-	
+
 	// compute concave hull with membrane boundary
 	core::Real minz = - pose.conformation().membrane_info()->membrane_thickness();
 	core::Real maxz =   pose.conformation().membrane_info()->membrane_thickness();
-	
+
 	// compute the outer shell
 	// default parameters are a little different for smaller proteins, like GPCRs
 	core::id::AtomID_Map< bool > shell = core::membrane::concave_shell( pose, minz, maxz, slice_width_, shell_radius_, dist_cutoff_ );
-	
+
 	//////////////////////// GO THROUGH SLICES /////////////////////////////
 
 	// get lipid-exposed residues from the AtomID_map
 	utility::vector1< core::Size > boundary;
 	for ( core::Size r = 1; r <= nres_protein( pose ); ++r ) {
-		
+
 		// create AtomID for CA atom
 		AtomID aid = AtomID( 2, r );
 
@@ -171,45 +174,45 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 			boundary.push_back( r );
 		}
 	}
-	
+
 	// go through slices
 	for ( core::Size s = 1; s < slice_zmin_.size(); ++s ) {
-		
+
 		// go through residues
 		for ( core::Size r = 1; r <= resi_[ s ].size(); ++r ) {
-			
+
 			bool lipid_exposed( false );
-			
+
 			// if residues are on boundary, then lipid exposed
 			if ( boundary.has_value( resi_[ s ][ r ] ) ) {
 				lipid_exposed = true;
 			}
-			
+
 			// if angle between COM-CA-CB is smaller than cutoff, then not lipid-exposed
 			// compute angle between COM-CA-CB
 			// if angle < angle_cutoff, then sidechain face COM
 			// if angle >= angle_cutoff, then sidechain faces away from COM
 			core::Real angle = numeric::angle_degrees( slice_com_[ s ], ca_coord_[ s ][ r ], cb_coord_[ s ][ r ] );
-			
+
 			// go through atoms in residue and set B-factor
 			for ( core::Size a = 1; a <= pose.residue( resi_[ s ][ r ] ).natoms(); ++a ) {
-				
+
 				// is this a 2TM protein? if yes, all residues are lipid exposed
 				if ( pose.conformation().membrane_info()->spanning_topology()->nspans() <= 2 ) {
 					pose.pdb_info()->bfactor( resi_[ s ][ r ], a, 50.0 );
 				}
-				
+
 				// if lipid exposed and COM-CA-CB larger than cutoff, i.e. facing outwards
 				if ( ( lipid_exposed == true && tm_alpha_ == true )
-					|| ( lipid_exposed == true && tm_alpha_ == false && angle > angle_cutoff_ ) ) {
+						|| ( lipid_exposed == true && tm_alpha_ == false && angle > angle_cutoff_ ) ) {
 					pose.pdb_info()->bfactor( resi_[ s ][ r ], a, 50.0 );
 				}
 			} // atoms
 		} // residues
 	} // slices
-	
+
 	TR << "tm alpha? " << tm_alpha_ << " (helical proteins with <= 7 TMs will show up as 'not helical')" << std::endl;
-	
+
 }// apply
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -218,36 +221,36 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 
 /// @brief set defaults
 void MPLipidAccessibility::set_defaults() {
-	
+
 	angle_cutoff_ = 65.0;
-	
+
 	// slices from hull data
 	slice_width_ = 10.0;
 	shell_radius_ = 6.0;
 	dist_cutoff_ = 10.0;
 	tm_alpha_ = true;
-	
+
 }// set defaults
 
 //////////////////////////////////////////
 /// @brief Register Options from Command Line
 void MPLipidAccessibility::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::lipid_acc::angle_cutoff );
 	option.add_relevant( OptionKeys::mp::lipid_acc::slice_width );
 	option.add_relevant( OptionKeys::mp::lipid_acc::shell_radius );
 	option.add_relevant( OptionKeys::mp::lipid_acc::dist_cutoff );
 	option.add_relevant( OptionKeys::mp::lipid_acc::tm_alpha );
-	
+
 }// register options
 
 //////////////////////////////////////////
 /// @brief Initialize from commandline
 void MPLipidAccessibility::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	if ( option[ OptionKeys::mp::lipid_acc::angle_cutoff ].user() ) {
 		angle_cutoff_ = option[ OptionKeys::mp::lipid_acc::angle_cutoff ]();
 	}
@@ -273,7 +276,7 @@ void MPLipidAccessibility::init_from_cmd() {
 //////////////////////////////////////////
 /// @brief finalize setup
 void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
-	
+
 	using namespace basic::options;
 	using namespace protocols::membrane;
 
@@ -281,17 +284,17 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 	using namespace protocols::simple_moves;
 	SwitchResidueTypeSetMoverOP full_atom( new SwitchResidueTypeSetMover( "fa_standard" ) );
 	full_atom->apply( pose );
-	
+
 	// add membrane
 	if ( ! pose.conformation().is_membrane() ) {
 		AddMembraneMoverOP addmem( new AddMembraneMover() );
 		addmem->apply( pose );
 	}
-	
+
 	// check whether protein is in membrane
 	if ( ! protein_in_membrane( pose ) ) {
 		TR << "WARNING: YOUR PROTEIN DOES NOT SPAN THE MEMBRANE! EITHER YOU KNOW WHAT YOU ARE DOING OR YOUR PROTEIN IS NOT TRANSFORMED INTO MEMBRANE COORDINATES!!!" << std::endl;
-		//		utility_exit_with_message( "Your protein is not transformed into membrane coordinates! Cannot compute lipid accessibility. Quitting." );
+		//  utility_exit_with_message( "Your protein is not transformed into membrane coordinates! Cannot compute lipid accessibility. Quitting." );
 	}
 
 	// fill up secondary structure information in the pose
@@ -305,26 +308,26 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 		if ( pose.conformation().membrane_info()->in_membrane( pose.conformation(), i ) ) {
 			nmem++;
-			
+
 			if ( secstruct[ i ] == 'E' ) {
 				nbeta++;
 			}
 		}
 	}
-	
+
 	// helical or barrel?
 	core::Real beta = static_cast< core::Real >( nbeta ) / static_cast< core::Real >( nmem );
 	TR << "nbeta: " << nbeta << " nmem: " << nmem << " beta: " << beta << std::endl;
 	if ( nmem > 0 && ! option[ OptionKeys::mp::lipid_acc::tm_alpha ].user() && beta >= 0.5 ) {
 		tm_alpha_ = false;
 	}
-	
+
 	// fill up the data in the slices
 	fill_up_slices( pose );
-	
+
 	// set different default parameters for smaller proteins, like GPCRs
 	if ( pose.conformation().membrane_info()->spanning_topology()->nspans() <= 7 ) {
-		
+
 		// this flag only specifies whether we want to use an angle cutoff:
 		// beta-barrels have one but helical ones don't
 		// this breaks down for smaller proteins though
@@ -333,149 +336,166 @@ void MPLipidAccessibility::finalize_setup( core::pose::Pose & pose ){
 			angle_cutoff_ = 45.0;
 		}
 	}
-	
+
 }// finalize setup
 
 //////////////////////////////////////////
 /// @brief check whether protein is transformed into membrane
 bool MPLipidAccessibility::protein_in_membrane( core::pose::Pose & pose ){
-	
+
 	bool in_membrane( true );
-	
+
 	// get minimum and maximum z-coordinate
 	// check whether structure is transformed into membrane, get CA position
 	core::Real min_z( 10000 );
 	core::Real max_z( -10000 );
-	
+
 	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		// skip for membrane residue
 		if ( pose.residue( i ).name3() == "MEM" ) {
 			continue;
 		}
-		
+
 		if ( pose.residue( i ).xyz( "CA" ).z() < min_z ) {
 			min_z = pose.residue( i ).xyz( "CA" ).z();
 		} else if ( pose.residue( i ).xyz( "CA" ).z() > max_z ) {
 			max_z = pose.residue( i ).xyz( "CA" ).z();
 		}
 	}
-	
+
 	// crude check: if no CA atoms with positive AND negative z-coordinates,
 	// then the protein doesn't span the membrane
 	if ( !( min_z < 0 && max_z > 0 ) ) {
 		in_membrane = false;
 	}
 	return in_membrane;
-	
+
 }// protein in membrane?
 
 //////////////////////////////////////////
 /// @brief fill up slice arrays with protein data
 void MPLipidAccessibility::fill_up_slices( core::pose::Pose & pose ) {
-	
+
 	using namespace core::pose;
 
 	// check for membrane protein
 	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Something went wrong, the AddMembraneMover still didn't make it a membrane protein. Quitting..." );
 	}
-	
+
 	core::Real iter = - pose.conformation().membrane_info()->membrane_thickness();
-	
+
 	// go through protein in the membrane and get slices and arrays for them
 	while ( iter <= pose.conformation().membrane_info()->membrane_thickness() ) {
-		
+
 		slice_zmin_.push_back( iter );
-		
+
 		// temp utility vectors for each slice
 		utility::vector1< core::Size > slice_res;
 		utility::vector1< core::Vector > slice_ca, slice_cb;
-		
+
 		// go through protein residues
 		for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
-			
+
 			// skip membrane residue
 			if ( pose.residue( i ).name3() == "MEM" ) {
 				continue;
 			}
-			
+
 			// get CA and CB coordinates
 			core::Vector ca = pose.residue( i ).xyz( "CA" );
 			core::Vector cb;
-			
+
 			// use 2HA instead of CB for glycine
 			if ( pose.residue( i ).name3() == "GLY" ) {
 				cb = pose.residue( i ).xyz( "2HA" );
 			} else {
 				cb = pose.residue( i ).xyz( "CB" );
 			}
-			
+
 			// if CA-coordinate is within slice, add resi, CA and CB to arrays
 			if ( ( ca.z() >= iter && ca.z() < iter + slice_width_ ) or
-				( cb.z() >= iter && cb.z() < iter + slice_width_ ) ) {
-				
+					( cb.z() >= iter && cb.z() < iter + slice_width_ ) ) {
+
 				slice_res.push_back( i );
 				slice_ca.push_back( ca );
 				slice_cb.push_back( cb );
-				
+
 			}
 		}
-		
+
 		// push back into slices
 		resi_.push_back( slice_res );
 		ca_coord_.push_back( slice_ca );
 		cb_coord_.push_back( slice_cb );
-		
+
 		// go to next slice
 		iter += slice_width_;
-		
+
 	} // get arrays of slices
-	
+
 	// compute slice COMs
 	compute_slice_com();
-	
+
 }// fill up slice data
 
 //////////////////////////////////////////
 /// @brief compute slice COM
 void MPLipidAccessibility::compute_slice_com(){
-	
+
 	// go through slices and compute COMs
 	for ( core::Size s = 1; s < slice_zmin_.size(); ++s ) {
-		
+
 		core::Vector com( 0, 0, 0 );
-		
+
 		// go through residues, compute COM per slice
 		for ( core::Size r = 1; r <= resi_[ s ].size(); ++r ) {
 			com += ca_coord_[ s ][ r ];
 		}
 		com /= resi_[ s ].size();
-		
+
 		TR.Debug << "slice " << s << " com " << com.to_string() << std::endl;
-		
+
 		slice_com_.push_back( com );
 	}
-	
+
 }// compute slice COM
 
-//////////////////////////////////////////
+std::string MPLipidAccessibility::get_name() const {
+	return mover_name();
+}
+
+std::string MPLipidAccessibility::mover_name() {
+	return "MPLipidAccessibility";
+}
+
+void MPLipidAccessibility::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Mover that computes which residues are lipid accessible and puts that information "
+		"into the B-factors: 50 is lipid accessible, 0 is lipid INaccessible",
+		attlist );
+}
+
+std::string MPLipidAccessibilityCreator::keyname() const {
+	return MPLipidAccessibility::mover_name();
+}
 
 protocols::moves::MoverOP
 MPLipidAccessibilityCreator::create_mover() const {
 	return protocols::moves::MoverOP( new MPLipidAccessibility );
 }
 
-std::string
-MPLipidAccessibilityCreator::keyname() const {
-	return MPLipidAccessibilityCreator::mover_name();
+void MPLipidAccessibilityCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MPLipidAccessibility::provide_xml_schema( xsd );
 }
 
-std::string
-MPLipidAccessibilityCreator::mover_name(){
-	return "MPLipidAccessibility";
-}
-	
+
 } //protocols
 } //membrane
 

@@ -67,25 +67,25 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureCountFilter( *this ) ); }
+	FilterOP clone() const override { return FilterOP( new SecondaryStructureCountFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const { return FilterOP( new SecondaryStructureCountFilter() ); }
+	FilterOP fresh_instance() const override { return FilterOP( new SecondaryStructureCountFilter() ); }
 
 public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "SecondaryStructureCountFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "SecondaryStructureCountFilter"; }
 
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
-		Pose const & );
+		Pose const & ) override;
 
 
 public:// main operation
@@ -93,10 +93,22 @@ public:// main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	bool apply( Pose const & pose ) const;
-	core::Real report_sm( Pose const & pose ) const;
-	void report( std::ostream & out,  Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
+	core::Real report_sm( Pose const & pose ) const override;
+	void report( std::ostream & out,  Pose const & pose ) const override;
 	core::Size compute( Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 
 	mutable core::Size num_helix_pose_;

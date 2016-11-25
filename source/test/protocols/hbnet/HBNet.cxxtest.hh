@@ -56,28 +56,28 @@ public:
 		TR << "Start Test 1" << std::endl;
 
 		//Import the test scaffold
-    TR << "Importing Pose" << std::endl;
-    core::pose::Pose testPose;
-    core::import_pose::pose_from_file( testPose, "protocols/hbnet/SB13.pdb" , core::import_pose::PDB_file);
+		TR << "Importing Pose" << std::endl;
+		core::pose::Pose testPose;
+		core::import_pose::pose_from_file( testPose, "protocols/hbnet/SB13.pdb" , core::import_pose::PDB_file);
 
-    //protocols::simple_moves::symmetry::DetectSymmetry detect_symm;
-    //detect_symm.apply(testPose);
+		//protocols::simple_moves::symmetry::DetectSymmetry detect_symm;
+		//detect_symm.apply(testPose);
 
 		//Create the mover
 		TR << "Creating mover" << std::endl;
 		//HBNet hbnet_mover;
 		HBNetStapleInterface hbnet_mover;
 		TR << "Intializing mover" << std::endl;
-    //std::set< Size > const start{46};
-    //hbnet_mover.set_start_resnums( start );
+		//std::set< Size > const start{46};
+		//hbnet_mover.set_start_resnums( start );
 		hbnet_mover.set_find_only_native(true);
-    hbnet_mover.set_min_networks_size( 4 );
-    hbnet_mover.set_max_unsat( 3 );
+		hbnet_mover.set_min_networks_size( 4 );
+		hbnet_mover.set_max_unsat( 3 );
 
 		TR << "Applying mover" << std::endl;
 		//Apply the mover
 		hbnet_mover.apply(testPose);
-		
+
 		//checks
 		//check that we found netowrks and mover was applied correctly
 		TS_ASSERT( hbnet_mover.get_native_vec().size() > 0 );

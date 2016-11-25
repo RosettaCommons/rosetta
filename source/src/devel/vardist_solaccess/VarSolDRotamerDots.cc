@@ -16,6 +16,8 @@
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 
+#include <protocols/moves/mover_schemas.hh>
+
 // Project headers
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -48,6 +50,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ Headers
 #include <vector>
@@ -847,9 +850,15 @@ LoadVarSolDistSasaCalculatorMoverCreator::create_mover() const
 {
 	return protocols::moves::MoverOP( new LoadVarSolDistSasaCalculatorMover );
 }
+void
+LoadVarSolDistSasaCalculatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoadVarSolDistSasaCalculatorMover::provide_xml_schema( xsd );
+}
+
 std::string LoadVarSolDistSasaCalculatorMoverCreator::keyname() const
 {
-	return "LoadVarSolDistSasaCalculatorMover";
+	return  LoadVarSolDistSasaCalculatorMover::mover_name();
 }
 
 LoadVarSolDistSasaCalculatorMover::LoadVarSolDistSasaCalculatorMover(Real /*probe_radius*/, Real /*wobble*/) :
@@ -866,7 +875,19 @@ LoadVarSolDistSasaCalculatorMover::clone() const {
 }
 
 std::string
-LoadVarSolDistSasaCalculatorMover::get_name() const { return "LoadVarSolDistSasaCalculatorMover"; }
+LoadVarSolDistSasaCalculatorMover::get_name() const { return mover_name(); }
+
+std::string
+LoadVarSolDistSasaCalculatorMover::mover_name() { return "LoadVarSolDistSasaCalculatorMover"; }
+
+void
+LoadVarSolDistSasaCalculatorMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attr; //No attributes!
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Stupid class that modifies"
+		" global data to interface with the global-data-heavy PoseMetricFactory in order to change the way"
+		" solvent accessible surface areas are calculated", attr );
+}
 
 void
 LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )

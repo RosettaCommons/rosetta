@@ -65,7 +65,7 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override { return "SecStructMinimizeMover"; }
+	// XRW TEMP  std::string get_name() const override { return "SecStructMinimizeMover"; }
 
 	void set_scorefunction( core::scoring::ScoreFunctionOP const & score_fxn ) {
 		score_fxn_ = score_fxn;
@@ -111,6 +111,18 @@ public:
 	get_constrain() {
 		return constrain_;
 	}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

@@ -115,6 +115,12 @@
 // C++ headers
 #include <fstream>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 #ifdef    SERIALIZATION
@@ -948,16 +954,16 @@ FindZnCoordinatingResidues::closest_distance_to_desired_vrt(
 }
 /////////////////////////////////////////////////////////////////////
 
-protocols::moves::MoverOP
-InsertZincCoordinationRemarkLinesCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InsertZincCoordinationRemarkLinesCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines );
+// XRW TEMP }
 
-std::string InsertZincCoordinationRemarkLinesCreator::keyname() const
-{
-	return "InsertZincCoordinationRemarkLines";
-}
+// XRW TEMP std::string InsertZincCoordinationRemarkLinesCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return "InsertZincCoordinationRemarkLines";
+// XRW TEMP }
 
 
 /////////////////////////////////////////////////////////////////////
@@ -968,8 +974,8 @@ InsertZincCoordinationRemarkLines::~InsertZincCoordinationRemarkLines() = defaul
 protocols::moves::MoverOP
 InsertZincCoordinationRemarkLines::clone() const { return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines ); }
 
-std::string
-InsertZincCoordinationRemarkLines::get_name() const { return "InsertZincCoordinationRemarkLines"; }
+// XRW TEMP std::string
+// XRW TEMP InsertZincCoordinationRemarkLines::get_name() const { return "InsertZincCoordinationRemarkLines"; }
 
 void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 {
@@ -1031,6 +1037,37 @@ void InsertZincCoordinationRemarkLines::parse_my_tag(
 {
 	//noop
 }
+
+std::string InsertZincCoordinationRemarkLines::get_name() const {
+	return mover_name();
+}
+
+std::string InsertZincCoordinationRemarkLines::mover_name() {
+	return "InsertZincCoordinationRemarkLines";
+}
+
+void InsertZincCoordinationRemarkLines::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist; //No attributes!
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string InsertZincCoordinationRemarkLinesCreator::keyname() const {
+	return InsertZincCoordinationRemarkLines::mover_name();
+}
+
+protocols::moves::MoverOP
+InsertZincCoordinationRemarkLinesCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InsertZincCoordinationRemarkLines );
+}
+
+void InsertZincCoordinationRemarkLinesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InsertZincCoordinationRemarkLines::provide_xml_schema( xsd );
+}
+
 
 
 /////////////////////////////////////////////////////////////////////
@@ -1212,15 +1249,15 @@ ZnCoordNumHbondCalculator::recompute( core::pose::Pose const & this_pose )
 
 /////////////////////////////////////////////////////////////////////////////////
 
-protocols::moves::MoverOP
-LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
-}
-std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const
-{
-	return "LoadZnCoordNumHbondCalculatorMover";
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
+// XRW TEMP }
+// XRW TEMP std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return "LoadZnCoordNumHbondCalculatorMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -1235,8 +1272,8 @@ LoadZnCoordNumHbondCalculatorMover::clone() const {
 	return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
 }
 
-std::string
-LoadZnCoordNumHbondCalculatorMover::get_name() const { return "LoadZnCoordNumHbondCalculatorMover"; }
+// XRW TEMP std::string
+// XRW TEMP LoadZnCoordNumHbondCalculatorMover::get_name() const { return "LoadZnCoordNumHbondCalculatorMover"; }
 
 void
 LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
@@ -1257,6 +1294,36 @@ void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {}
+
+std::string LoadZnCoordNumHbondCalculatorMover::get_name() const {
+	return mover_name();
+}
+
+std::string LoadZnCoordNumHbondCalculatorMover::mover_name() {
+	return "LoadZnCoordNumHbondCalculatorMover";
+}
+
+void LoadZnCoordNumHbondCalculatorMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; // No attributes
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoadZnCoordNumHbondCalculatorMoverCreator::keyname() const {
+	return LoadZnCoordNumHbondCalculatorMover::mover_name();
+}
+
+protocols::moves::MoverOP
+LoadZnCoordNumHbondCalculatorMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoadZnCoordNumHbondCalculatorMover );
+}
+
+void LoadZnCoordNumHbondCalculatorMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoadZnCoordNumHbondCalculatorMover::provide_xml_schema( xsd );
+}
+
 
 
 }

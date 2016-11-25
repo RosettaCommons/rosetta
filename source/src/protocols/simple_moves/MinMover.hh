@@ -118,7 +118,8 @@ public:
 	///     MinMover.movemap
 	///     MinMover.score_function
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	std::string get_name() const override { return mover_name(); }
+	static std::string mover_name();
 	void show(std::ostream & output=std::cout) const override;
 
 	inline void cartesian( bool newval ) { cartesian_ = newval; }
@@ -209,6 +210,8 @@ public:
 	bool omega() const{ return omega_; }
 	void omega( bool const b ){ omega_ = b; }
 
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_min_mover( utility::tag::XMLSchemaDefinition & xsd );
+	// The above was added so that this could be called in SymMinMover
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 protected:

@@ -53,31 +53,42 @@ public:
 
 	virtual ~AbscriptLoopCloserCM() {};
 
-	virtual EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
+	void broking_finished( environment::EnvClaimBroker::BrokerResult const& ) override;
 
 	core::select::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
 
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual void apply( core::pose::Pose& );
+	void apply( core::pose::Pose& ) override;
 
-	virtual void
+	void
 	parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
-	virtual void passport_updated();
+	void passport_updated() override;
 
 private:
 	void attempt_idealize( core::pose::Pose& );

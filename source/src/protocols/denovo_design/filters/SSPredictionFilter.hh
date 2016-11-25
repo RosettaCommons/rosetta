@@ -42,11 +42,11 @@ public:
 		bool const use_probability,
 		bool const mismatch_probability );
 	virtual ~SSPredictionFilter();
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	void parse_my_tag(
@@ -54,7 +54,19 @@ public:
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const & filters_map,
 		protocols::moves::Movers_map const & movers_map,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief computes the weighted boltzmann sum of the passed vector

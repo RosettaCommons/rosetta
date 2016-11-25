@@ -61,7 +61,7 @@ public:
 
 	//parser stuff
 	void apply( core::pose::Pose &pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -93,6 +93,18 @@ public:
 	//task stuff
 	core::pack::task::PackerTaskOP create_ptask( core::pose::Pose & pose );
 	void task_factory( core::pack::task::TaskFactoryOP p );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;

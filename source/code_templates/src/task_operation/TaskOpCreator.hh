@@ -23,9 +23,9 @@
 
 class --class--Creator : public core::pack::task::operation::TaskOperationCreator {
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const;
-	virtual void provide_xml_schema( XMLSchemaDefinition & xsd );
+	core::pack::task::operation::TaskOperationOP create_task_operation() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( XMLSchemaDefinition & xsd ) override;
 };
 
 
@@ -34,4 +34,3 @@ public:
 
 
 #endif //INCLUDED_--path--_--class--_hh
-

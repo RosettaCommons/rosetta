@@ -206,11 +206,12 @@ SecondaryStructureSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "overlap",                xs_integer )
-		+ XMLSchemaAttribute( "include_terminal_loops", xs_boolean )
-		+ XMLSchemaAttribute( "pose_secstruct",         xs_string )
-		+ XMLSchemaAttribute::required_attribute( "ss", xs_string );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute( "overlap",                xs_integer , "XRW TO DO" )
+		+ XMLSchemaAttribute( "include_terminal_loops", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "use_dssp", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "pose_secstruct",         xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "ss", xs_string , "XRW TO DO" );
+	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
 }
 
 bool
@@ -238,37 +239,37 @@ SecondaryStructureSelector::add_overlap(
 	std::string const & ss ) const
 {
 	ResidueRanges intervals( matching_ss );
-	for ( ResidueRanges::iterator range=intervals.begin(); range!=intervals.end(); ++range ) {
+	for ( auto & range : intervals ) {
 		Size count = Size( 0 );
-		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range->start() ) ) {
-			range->set_start( range->start() - 1 );
-			matching_ss[ range->start() ] = true;
+		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range.start() ) ) {
+			range.set_start( range.start() - 1 );
+			matching_ss[ range.start() ] = true;
 			count += 1;
 		}
 		count = Size( 0 );
-		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range->stop() ) ) {
-			range->set_stop( range->stop() + 1 );
-			matching_ss[ range->stop() ] = true;
+		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, range.stop() ) ) {
+			range.set_stop( range.stop() + 1 );
+			matching_ss[ range.stop() ] = true;
 			count += 1;
 		}
-		TR.Debug << "Interval: " << range->start() << " " << range->stop() << " " << ss[ range->start() - 1 ] << std::endl;
+		TR.Debug << "Interval: " << range.start() << " " << range.stop() << " " << ss[ range.start() - 1 ] << std::endl;
 
 		// get rid of one-residue terminal "loops"
 		if ( include_terminal_loops_ ) {
 			continue;
 		}
 
-		if ( ( range->start() == range->stop() ) && ( ss[ range->start() - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, range->start() ) ) ) {
-			matching_ss[ range->start() ] = false;
+		if ( ( range.start() == range.stop() ) && ( ss[ range.start() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range.start() ) ) ) {
+			matching_ss[ range.start() ] = false;
 		}
-		if ( ( range->start() + 1 == range->stop() ) && ( ss[ range->start() - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, range->start() ) ) ) {
-			matching_ss[ range->start() ] = false;
+		if ( ( range.start() + 1 == range.stop() ) && ( ss[ range.start() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range.start() ) ) ) {
+			matching_ss[ range.start() ] = false;
 		}
-		if ( ( range->start() + 1 == range->stop() ) && ( ss[ range->stop() - 1 ] == 'L' )
-				&& ( pose::pose_residue_is_terminal( pose, range->stop() ) ) ) {
-			matching_ss[ range->stop() ] = false;
+		if ( ( range.start() + 1 == range.stop() ) && ( ss[ range.stop() - 1 ] == 'L' )
+				&& ( pose::pose_residue_is_terminal( pose, range.stop() ) ) ) {
+			matching_ss[ range.stop() ] = false;
 		}
 	}
 }

@@ -272,7 +272,7 @@ void Sparta::SpartaLib::init() {
 	for ( auto & Entrie : B62.Entries ) {
 		//int index=it->first;
 		string aa = (Entrie.second)["RESNAME"];
-		for (auto & itS : (Entrie.second)) {
+		for ( auto & itS : (Entrie.second) ) {
 			if ( itS.first == "RESNAME" ) continue;
 			size_t index( AAlist.find( itS.first ) );
 			runtime_assert( index  != string::npos);

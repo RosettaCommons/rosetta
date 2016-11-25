@@ -1,45 +1,46 @@
-<dock_design> //Only things within "less-than" and "greater-than" signs are read
+<ROSETTASCRIPTS> //Only things within "less-than" and "greater-than" signs are read
         <SCOREFXNS>
-		<enzdes weights=enzdes/> //name is enzdes, weights=X where X is a .wts file from database
-                <softpack weights=ligand_soft_rep >
-                        <Reweight scoretype=coordinate_constraint weight=1.0 />
-                        <Reweight scoretype=atom_pair_constraint weight=1.0 />
-                        <Reweight scoretype=angle_constraint weight=1.0 />
-                        <Reweight scoretype=dihedral_constraint weight=1.0 />
-                        <Reweight scoretype=hbond_sc weight=1.3 />
-                        <Reweight scoretype=hbond_bb_sc weight=1.3 />
-                </softpack>
+		<ScoreFunction name="enzdes" weights="enzdes"/> //name is enzdes, weights=X where X is a .wts file from database
+                <ScoreFunction name="softpack" weights="ligand_soft_rep" >
+                        <Reweight scoretype="coordinate_constraint" weight="1.0" />
+                        <Reweight scoretype="atom_pair_constraint" weight="1.0" />
+                        <Reweight scoretype="angle_constraint" weight="1.0" />
+                        <Reweight scoretype="dihedral_constraint" weight="1.0" />
+                        <Reweight scoretype="hbond_sc" weight="1.3" />
+                        <Reweight scoretype="hbond_bb_sc" weight="1.3" />
+                </ScoreFunction>
         </SCOREFXNS>
 	<TASKOPERATIONS>
-		<DetectProteinLigandInterface name="interf_resfile" cut1=0.0 cut2=0.0 cut3=10 cut4=12 segment_interface=1 catres_interface=1 resfile="inputs/mockinvtest.resfile" />
-  		<DetectProteinLigandInterface name="interf_repack" cut1=0.0 cut2=0.0 cut3=10 cut4=12 segment_interface=1 catres_interface=1 repack_only=1 design=0 />
+		<DetectProteinLigandInterface name="interf_resfile" cut1="0.0" cut2="0.0" cut3="10" cut4="12" segment_interface="1" catres_interface="1" resfile="inputs/mockinvtest.resfile" />
+  		<DetectProteinLigandInterface name="interf_repack" cut1="0.0" cut2="0.0" cut3="10" cut4="12" segment_interface="1" catres_interface="1" repack_only="1" design="0" />
 		<AddRigidBodyLigandConfs name="ligandrb" />
 		<SetCatalyticResPackBehavior name="catrespack" />
 		<LimitAromaChi2 name="limaro2" />
 		<InitializeFromCommandline name="cmdline" />
 	</TASKOPERATIONS>
 	<FILTERS> //define filters here; order of definition is NOT important
-		<Rmsd name="looprms" threshold=1.5 superimpose=0 reference_name=refpose1 rms_residues_from_pose_cache=1 />
+		<Rmsd name="looprms" threshold="1.5" superimpose="0" reference_name="refpose1" rms_residues_from_pose_cache="1" />
   	</FILTERS>
 
       <MOVERS>//define movers; order of definition is NOT important
-	      <EnzRepackMinimize name=desmin design=1 scorefxn_minimize=enzdes scorefxn_repack=enzdes minimize_rb=1 minimize_sc=1 minimize_bb=1 cycles=1 task_operations=interf_resfile,ligandrb,catrespack,limaro2 />
-              <EnzRepackMinimize name=softdesmin design=1 scorefxn_minimize=enzdes scorefxn_repack=softpack minimize_rb=1 minimize_sc=1 minimize_bb=1 cycles=1 task_operations=interf_resfile,ligandrb,catrespack,limaro2 />
-	      <EnzRepackMinimize name=repackmin repack_only=1 scorefxn_minimize=enzdes scorefxn_repack=enzdes minimize_rb=1 minimize_sc=1 minimize_bb=1 cycles=1 task_operations=interf_repack,ligandrb,limaro2 /> 
-	      <SavePoseMover name=ref_setter reference_name=refpose1 />	
-	      <AddOrRemoveMatchCsts name=cstaddnew cst_instruction="add_new" accept_blocks_missing_header=1 />
-	      <AddOrRemoveMatchCsts name=cstadd cst_instruction="add_pregenerated"/>
-	      <AddOrRemoveMatchCsts name=cstremove cst_instruction="remove" keep_covalent=1/>
-	      <EnzdesRemodelMover name=enzremodel />
-	      <LoopMover_Refine_CCD name=loopccd_validate scorefxn=enzdes loops_from_cache=1 task_operations=cmdline,interf_repack,ligandrb,limaro2 outer_cycles=2 max_inner_cycles=100 />
-              <LoopMover_Refine_CCD name=loopccd_design scorefxn=enzdes loops_from_cache=1 task_operations=cmdline,interf_resfile,catrespack,ligandrb,limaro2 outer_cycles=1 max_inner_cycles=100  />
- 	      <ScoreMover name=score scorefxn=enzdes verbose=0 />
+	      <EnzRepackMinimize name="desmin" design="1" scorefxn_minimize="enzdes" scorefxn_repack="enzdes" minimize_rb="1" minimize_sc="1" minimize_bb="1" cycles="1" task_operations="interf_resfile,ligandrb,catrespack,limaro2" />
+              <EnzRepackMinimize name="softdesmin" design="1" scorefxn_minimize="enzdes" scorefxn_repack="softpack" minimize_rb="1" minimize_sc="1" minimize_bb="1" cycles="1" task_operations="interf_resfile,ligandrb,catrespack,limaro2" />
+	      <EnzRepackMinimize name="repackmin" repack_only="1" scorefxn_minimize="enzdes" scorefxn_repack="enzdes" minimize_rb="1" minimize_sc="1" minimize_bb="1" cycles="1" task_operations="interf_repack,ligandrb,limaro2" /> 
+	      <SavePoseMover name="ref_setter" reference_name="refpose1" />	
+	      <AddOrRemoveMatchCsts name="cstaddnew" cst_instruction="add_new" accept_blocks_missing_header="1" />
+	      <AddOrRemoveMatchCsts name="cstadd" cst_instruction="add_pregenerated"/>
+	      <AddOrRemoveMatchCsts name="cstremove" cst_instruction="remove" keep_covalent="1"/>
+	      <EnzdesRemodelMover name="enzremodel" />
+	      <LoopMover_Refine_CCD name="loopccd_validate" scorefxn="enzdes" loops_from_cache="1" task_operations="cmdline,interf_repack,ligandrb,limaro2" outer_cycles="2" max_inner_cycles="100" />
+              <LoopMover_Refine_CCD name="loopccd_design" scorefxn="enzdes" loops_from_cache="1" task_operations="cmdline,interf_resfile,catrespack,ligandrb,limaro2" outer_cycles="1" max_inner_cycles="100"  />
+ 	      <ScoreMover name="score" scorefxn="enzdes" verbose="0" />
       </MOVERS>
       <APPLY_TO_POSE>
       </APPLY_TO_POSE>
       <PROTOCOLS>// construct your own protocol; order of definition IS important. It determines workflow
-              <Add mover_name=cstaddnew/>
-	      <Add mover_name=enzremodel/>
-	      <Add mover_name=softdesmin />
+              <Add mover_name="cstaddnew"/>
+	      <Add mover_name="enzremodel"/>
+	      <Add mover_name="softdesmin" />
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

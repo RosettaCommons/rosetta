@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-DdGFeaturesCreator::DdGFeaturesCreator() {}
-DdGFeaturesCreator::~DdGFeaturesCreator() = default;
-FeaturesReporterOP DdGFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new DdGFeatures );
-}
+// XRW TEMP DdGFeaturesCreator::DdGFeaturesCreator() {}
+// XRW TEMP DdGFeaturesCreator::~DdGFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP DdGFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new DdGFeatures );
+// XRW TEMP }
 
-std::string DdGFeaturesCreator::type_name() const {
-	return "DdGFeatures";
-}
+// XRW TEMP std::string DdGFeaturesCreator::type_name() const {
+// XRW TEMP  return "DdGFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

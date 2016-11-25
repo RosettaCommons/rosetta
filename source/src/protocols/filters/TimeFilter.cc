@@ -22,6 +22,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -78,11 +81,48 @@ TimeFilter::apply( core::pose::Pose const & p ) const{
 	return true;
 }
 
-FilterOP
-TimeFilterCreator::create_filter() const { return FilterOP( new TimeFilter ); }
+// XRW TEMP FilterOP
+// XRW TEMP TimeFilterCreator::create_filter() const { return FilterOP( new TimeFilter ); }
 
-std::string
-TimeFilterCreator::keyname() const { return "Time"; }
+// XRW TEMP std::string
+// XRW TEMP TimeFilterCreator::keyname() const { return "Time"; }
+
+std::string TimeFilter::name() const {
+	return class_name();
+}
+
+std::string TimeFilter::class_name() {
+	return "Time";
+}
+
+void TimeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report how long a sequence of movers/filters takes. Within the "
+		"protocol, you need to call time at least twice, once, when you "
+		"want to start the timer, and then, when you want to stop. "
+		"The reported time is that between the first and last calls.",
+		attlist );
+}
+
+std::string TimeFilterCreator::keyname() const {
+	return TimeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+TimeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new TimeFilter );
+}
+
+void TimeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TimeFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protocols

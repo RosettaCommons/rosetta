@@ -10,15 +10,19 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"mmt_msd" : [
-		"MMTMinPackingJob",
-		"MMTDriver",
-		"MMTReceiver",
+	"init" : [
+		"filter_creators",
+		"mover_creators",
 	],
 	"denovo_design" : [
 		"BuildBetaSheet",
 		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
+	],
+	"mmt_msd" : [
+		"MMTMinPackingJob",
+		"MMTDriver",
+		"MMTReceiver",
 	],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",

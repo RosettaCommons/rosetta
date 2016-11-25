@@ -29,6 +29,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/sort_predicates.hh>
 #include <basic/Tracer.hh>
 
@@ -60,6 +61,48 @@ ClusterPoseSelector::ClusterPoseSelector() :
 	remove_singletons_(false)
 {
 }
+
+
+void
+ClusterPoseSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	ClusterPoseSelector::provide_xml_schema( xsd );
+}
+
+void
+ClusterPoseSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	rosetta_scripts::PosePropertyReporterFactory::get_instance()->define_pose_reporter_group( xsd );
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "radius", xsct_non_negative_integer, "Cluster radius" )
+		+ XMLSchemaAttribute::attribute_w_default( "structures_per_cluster", xsct_non_negative_integer, "Number of structures from each cluster to select", "1" )
+		+ XMLSchemaAttribute( "max_cluster_size", xsct_non_negative_integer, "Maximum number of structures in a cluster. Default is no limit." )
+		+ XMLSchemaAttribute( "max_clusters", xsct_non_negative_integer, "Maximum number of clusters. Default is no limit" )
+		+ XMLSchemaAttribute( "initial_cluster_set_size", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "remove_singletons", xsct_rosetta_bool, "Remove structures that are alone in their own clusters?" );
+
+	XMLSchemaSimpleSubelementList subelements;
+
+	subelements
+		.add_group_subelement( & rosetta_scripts::PosePropertyReporterFactory::pose_reporter_group_name );
+
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen
+		.element_name( name() )
+		.set_subelements_repeatable( subelements, 1, 1 )
+		.add_attributes( attlist )
+		.description( "XRW TO DO" )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PoseSelectorFactory::complex_type_name_for_pose_selector )
+		.write_complex_type_to_schema( xsd );
+}
+
+
+
 
 void ClusterPoseSelector::parse_my_tag(
 	utility::tag::TagCOP tag,

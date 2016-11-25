@@ -1,66 +1,66 @@
-This protocol will simply do low-resolution followed by high-resolution docking.
+<ROSETTASCRIPTS>This protocol will simply do low-resolution followed by high-resolution docking.
 It will also report the binding energy (ddg) and buried-surface area (sasa) in the score file.
-<ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<ligand_soft_rep weights=ligand_soft_rep>
-			<Reweight scoretype=fa_elec weight=0.42/>
-			<Reweight scoretype=hbond_bb_sc weight=1.3/>
-			<Reweight scoretype=hbond_sc weight=1.3/>
-			<Reweight scoretype=rama weight=0.2/>
-		</ligand_soft_rep>
-		<hard_rep weights=ligand>
-			<Reweight scoretype=fa_intra_rep weight=0.004/>
-			<Reweight scoretype=fa_elec weight=0.42/>
-			<Reweight scoretype=hbond_bb_sc weight=1.3/>
-			<Reweight scoretype=hbond_sc weight=1.3/>
-			<Reweight scoretype=rama weight=0.2/>
-		</hard_rep>
+		<ScoreFunction name="ligand_soft_rep" weights="ligand_soft_rep">
+			<Reweight scoretype="fa_elec" weight="0.42"/>
+			<Reweight scoretype="hbond_bb_sc" weight="1.3"/>
+			<Reweight scoretype="hbond_sc" weight="1.3"/>
+			<Reweight scoretype="rama" weight="0.2"/>
+		</ScoreFunction>
+		<ScoreFunction name="hard_rep" weights="ligand">
+			<Reweight scoretype="fa_intra_rep" weight="0.004"/>
+			<Reweight scoretype="fa_elec" weight="0.42"/>
+			<Reweight scoretype="hbond_bb_sc" weight="1.3"/>
+			<Reweight scoretype="hbond_sc" weight="1.3"/>
+			<Reweight scoretype="rama" weight="0.2"/>
+		</ScoreFunction>
 	</SCOREFXNS>
 	<LIGAND_AREAS>
-		<docking_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true minimize_ligand=10/>
-		<final_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true/>
-		<final_backbone chain=X cutoff=7.0 add_nbr_radius=false all_atom_mode=true Calpha_restraints=0.3/>
+		<LigandArea name="docking_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true" minimize_ligand="10"/>
+		<LigandArea name="final_sidechain" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="true"/>
+		<LigandArea name="final_backbone" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
 	</LIGAND_AREAS>
 	<INTERFACE_BUILDERS>
-		<side_chain_for_docking ligand_areas=docking_sidechain/>
-		<side_chain_for_final ligand_areas=final_sidechain/>
-		<backbone ligand_areas=final_backbone extension_window=3/>
+		<InterfaceBuilder name="side_chain_for_docking" ligand_areas="docking_sidechain"/>
+		<InterfaceBuilder name="side_chain_for_final" ligand_areas="final_sidechain"/>
+		<InterfaceBuilder name="backbone" ligand_areas="final_backbone" extension_window="3"/>
 	</INTERFACE_BUILDERS>
 	<MOVEMAP_BUILDERS>
-		<docking sc_interface=side_chain_for_docking minimize_water=true/>
-		<final sc_interface=side_chain_for_final bb_interface=backbone minimize_water=true/>
+		<MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="true"/>
+		<MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
 	</MOVEMAP_BUILDERS>
 	<MOVERS>
 	single movers		
-		<StartFrom name=start_from chain=X>
-			<Coordinates x=-1.731 y=32.589 z=-5.039/>
+		<StartFrom name="start_from" chain="X">
+			<Coordinates x="-1.731" y="32.589" z="-5.039"/>
 		</StartFrom>
-		<CompoundTranslate name=compound_translate randomize_order=false allow_overlap=false>
-			<Translate chain=X distribution=uniform angstroms=5.0 cycles=50/>
-			<Translate chain=Z distribution=gaussian angstroms=1.3 cycles=20/>
-			<Translates chain=W distribution=gaussian angstroms=1.3 cycles=20/>
+		<CompoundTranslate name="compound_translate" randomize_order="false" allow_overlap="false">
+			<Translate chain="X" distribution="uniform" angstroms="5.0" cycles="50"/>
+			<Translate chain="Z" distribution="gaussian" angstroms="1.3" cycles="20"/>
+			<Translates chain="W" distribution="gaussian" angstroms="1.3" cycles="20"/>
 		</CompoundTranslate>
-		<Rotate name=rotate chain=X distribution=uniform degrees=360 cycles=500/>
-		<Rotates name=rotates chain=W distribution=uniform degrees=360 cycles=15/> rotate each water molecule
-		<SlideTogether name=slide_together chains=X/>
-		<HighResDocker name=high_res_docker cycles=6 repack_every_Nth=3 scorefxn=ligand_soft_rep movemap_builder=docking/>
-		<FinalMinimizer name=final scorefxn=hard_rep movemap_builder=final/>
-		<InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep native="inputs/7cpa_native.pdb.gz"/>
+		<Rotate name="rotate" chain="X" distribution="uniform" degrees="360" cycles="500"/>
+		<Rotates name="rotates" chain="W" distribution="uniform" degrees="360" cycles="15"/> rotate each water molecule
+		<SlideTogether name="slide_together" chains="X"/>
+		<HighResDocker name="high_res_docker" cycles="6" repack_every_Nth="3" scorefxn="ligand_soft_rep" movemap_builder="docking"/>
+		<FinalMinimizer name="final" scorefxn="hard_rep" movemap_builder="final"/>
+		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep" native="inputs/7cpa_native.pdb.gz"/>
 	compound movers
-		<ParsedProtocol name=low_res_dock>
-			<Add mover_name=start_from/>
-			<Add mover_name=compound_translate/>
-			<Add mover_name=rotate/>
-			<Add mover_name=slide_together/>
+		<ParsedProtocol name="low_res_dock">
+			<Add mover_name="start_from"/>
+			<Add mover_name="compound_translate"/>
+			<Add mover_name="rotate"/>
+			<Add mover_name="slide_together"/>
 		</ParsedProtocol>
-		<ParsedProtocol name=high_res_dock>
-			<Add mover_name=high_res_docker/>
-			<Add mover_name=final/>
+		<ParsedProtocol name="high_res_dock">
+			<Add mover_name="high_res_docker"/>
+			<Add mover_name="final"/>
 		</ParsedProtocol>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=low_res_dock/>
-	  <Add mover_name=high_res_dock/>
-		<Add mover_name=add_scores/>
+		<Add mover_name="low_res_dock"/>
+	  <Add mover_name="high_res_dock"/>
+		<Add mover_name="add_scores"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

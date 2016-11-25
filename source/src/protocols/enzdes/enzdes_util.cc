@@ -449,19 +449,19 @@ get_pdb_code_from_pose_tag( core::pose::Pose const & pose ){
 		//ok, no boost regex, so clumsy implementation to look for pdb code in string
 		if ( std::regex_match( cand_str, pdb_regex ) ) pdb_matches.push_back( cand_str );
 		/*if ( std::is_digit( cand_str[0]) ) {
-			if ( std::is_digit( cand_str[1]) && std::is_digit( cand_str[2]) && std::is_digit( cand_str[3] ) ) continue;
+		if ( std::is_digit( cand_str[1]) && std::is_digit( cand_str[2]) && std::is_digit( cand_str[3] ) ) continue;
 
-			if ( (( std::is_upper( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
-					&& ( std::is_upper( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
-					&& ( std::is_upper( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
-					||(( std::is_lower( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
-					&& ( std::is_lower( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
-					&& ( std::is_lower( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
-					) {
+		if ( (( std::is_upper( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
+		&& ( std::is_upper( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
+		&& ( std::is_upper( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
+		||(( std::is_lower( cand_str[1] )|| std::is_digit( & cand_str[1] ) )
+		&& ( std::is_lower( cand_str[2] )|| std::is_digit( & cand_str[2] ) )
+		&& ( std::is_lower( cand_str[3] )|| std::is_digit( & cand_str[3] ) ) )
+		) {
 
-				//std::cerr << "yeah, found putative pdb code " << cand_str << std::endl;
-				pdb_matches.push_back( cand_str );
-			}
+		//std::cerr << "yeah, found putative pdb code " << cand_str << std::endl;
+		pdb_matches.push_back( cand_str );
+		}
 		}*/
 	}
 	/*

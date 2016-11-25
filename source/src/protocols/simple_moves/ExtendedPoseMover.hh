@@ -44,7 +44,7 @@ public:
 	void apply(core::pose::Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	string get_name() const override;
+	// XRW TEMP  string get_name() const override;
 
 	/// @brief Returns true if this instance is valid (i.e. contains a sequence).
 	/// Since RosettaScripts mandates the existence of a no-argument constructor,
@@ -82,6 +82,18 @@ public:
 	string chain() const { return chain_; }
 
 	void chain( string const& setting ) { chain_ = setting; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	string sequence_;

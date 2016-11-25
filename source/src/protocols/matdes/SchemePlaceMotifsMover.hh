@@ -38,7 +38,7 @@ class SchemePlaceMotifsMover : public protocols::moves::Mover {
 
 public:
 	SchemePlaceMotifsMover();
-	std::string get_name() const override { return "SchemePlaceMotifs"; }
+	// XRW TEMP  std::string get_name() const override { return "SchemePlaceMotifs"; }
 	void apply(Pose& pose) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -50,6 +50,18 @@ public:
 		protocols::moves::Movers_map const & movermap,
 		core::pose::Pose const & pose
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1<std::string> motif_sets_;

@@ -2,7 +2,7 @@
 	<SCOREFXNS>
 	</SCOREFXNS>
 	<SCORINGGRIDS>
-		<atr grid_type="AtrGrid" weight="1.0"/>
+		<AtrGrid grid_name="atr" weight="1.0"/>
 	</SCORINGGRIDS>
 	<MOVERS>
 		<StartFrom name="start_from" chain="X">
@@ -10,9 +10,9 @@
 		</StartFrom>
 		<SlideTogether name="slide_together" chains="X"/>
 		<ReportToDB name="features_reporter" database_name="residue_grids.db3" batch_description="Test the Residue Grid Reporter">
-			<feature name="ResidueFeatures"/>
-			<feature name="ResidueConformationFeatures"/>
-			<feature name="ResidueGridScoresFeatures" chain = "X"/>
+			<ResidueFeatures/>
+			<ResidueConformationFeatures/>
+			<ResidueGridScoresFeatures chain="X"/>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
@@ -20,4 +20,5 @@
 		<Add mover_name="slide_together"/>
 		<Add mover_name="features_reporter"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

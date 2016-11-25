@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-RotamerFeaturesCreator::RotamerFeaturesCreator() {}
-RotamerFeaturesCreator::~RotamerFeaturesCreator() = default;
-FeaturesReporterOP RotamerFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new RotamerFeatures );
-}
+// XRW TEMP RotamerFeaturesCreator::RotamerFeaturesCreator() {}
+// XRW TEMP RotamerFeaturesCreator::~RotamerFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP RotamerFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new RotamerFeatures );
+// XRW TEMP }
 
-std::string RotamerFeaturesCreator::type_name() const {
-	return "RotamerFeatures";
-}
+// XRW TEMP std::string RotamerFeaturesCreator::type_name() const {
+// XRW TEMP  return "RotamerFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

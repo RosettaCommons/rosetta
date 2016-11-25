@@ -91,12 +91,12 @@ NumNeighborsSelector::apply( core::pose::Pose const & pose ) const
 	} else {
 		utility::vector1< Size > non_water_neighbor_count( pose.size(), 0 );
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			if ( pose.residue(ii).aa() == chemical::aa_h2o ) continue;
+			if ( pose.residue_type(ii).aa() == chemical::aa_h2o ) continue;
 			for ( conformation::PointGraph::VertexClass::UpperEdgeListIter
 					iter = pg->get_vertex(ii).upper_edge_list_begin(),
 					iter_end = pg->get_vertex(ii).upper_edge_list_end();
 					iter != iter_end; ++iter ) {
-				if ( pose.residue( iter->upper_vertex() ).aa() != chemical::aa_h2o ) {
+				if ( pose.residue_type( iter->upper_vertex() ).aa() != chemical::aa_h2o ) {
 					++non_water_neighbor_count[ ii ];
 					++non_water_neighbor_count[ iter->upper_vertex() ];
 				}
@@ -132,10 +132,10 @@ NumNeighborsSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "count_water",     xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "threshold",       xs_integer, "17"    )
-		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xs_decimal, "10.0"  );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute::attribute_w_default(  "count_water", xsct_rosetta_bool, "XRW TO DO",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "threshold", xsct_non_negative_integer, "XRW TO DO",  "17"     )
+		+ XMLSchemaAttribute::attribute_w_default(  "distance_cutoff", xsct_real, "XRW TO DO",  "10.0"   );
+	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
 }
 
 

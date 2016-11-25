@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>
 
@@ -35,7 +35,8 @@ public:
 	/// @brief Return a string that will be used to instantiate the particular ConstraintGenerator
 	virtual std::string
 	keyname() const = 0;
-
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const =0;
 };
 
 

@@ -84,7 +84,7 @@ public:
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -301,6 +301,18 @@ public:
 	/// @brief Get whether user input is in degrees (true) or radians (false).
 	///
 	bool use_degrees() const { return use_degrees_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

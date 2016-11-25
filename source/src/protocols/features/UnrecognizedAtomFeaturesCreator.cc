@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-UnrecognizedAtomFeaturesCreator::UnrecognizedAtomFeaturesCreator() {}
-UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() = default;
-FeaturesReporterOP UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new UnrecognizedAtomFeatures );
-}
+// XRW TEMP UnrecognizedAtomFeaturesCreator::UnrecognizedAtomFeaturesCreator() {}
+// XRW TEMP UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new UnrecognizedAtomFeatures );
+// XRW TEMP }
 
-std::string UnrecognizedAtomFeaturesCreator::type_name() const {
-	return "UnrecognizedAtomFeatures";
-}
+// XRW TEMP std::string UnrecognizedAtomFeaturesCreator::type_name() const {
+// XRW TEMP  return "UnrecognizedAtomFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

@@ -543,7 +543,7 @@ void  SSHashedFragmentStore::get_hits_below_rms(pose::Pose const pose, Size resi
 			FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(ss_index);
 			FragmentLookupOP selected_fragLookupOP = selected_fragStoreOP->get_fragmentLookup();
 			vector<FragmentLookupResult> lookupResults = selected_fragLookupOP->lookup_close_fragments(&coordinates[0], rms_threshold);
-			for (auto & lookupResult : lookupResults) {
+			for ( auto & lookupResult : lookupResults ) {
 				hits_rms.push_back(lookupResult.match_rmsd);
 				std::vector<Real> cen_list_frag = selected_fragStoreOP->realVector_groups["cen"][lookupResult.match_index];
 				hits_cen.push_back(cen_list_frag);

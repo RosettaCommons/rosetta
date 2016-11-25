@@ -31,7 +31,13 @@ LoopsFileDefinerCreator::create_loops_definer() const {
 
 string
 LoopsFileDefinerCreator::type_name() const {
-	return "LoopsFile";
+	// return "LoopsFile";
+	return LoopsFileDefiner::class_name();
+}
+
+void LoopsFileDefinerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopsFileDefiner::provide_xml_schema( xsd );
 }
 
 } //namespace

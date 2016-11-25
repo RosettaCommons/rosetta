@@ -33,7 +33,7 @@ public:
 	CutOutDomain();
 	~CutOutDomain() override;
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override {
 		return( protocols::moves::MoverOP( new CutOutDomain( *this ) ) );
 	}
@@ -44,6 +44,18 @@ public:
 	void suffix(std::string suf) {suffix_ = suf;}
 	void source_pdb_name(std::string name) {source_pdb_name_ = name;}
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size start_res_;//where the domain will be cut from
 	core::Size end_res_;//where the domain will be cut to

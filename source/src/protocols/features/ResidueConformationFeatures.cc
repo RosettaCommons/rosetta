@@ -53,6 +53,10 @@
 // C++ Headers
 #include <cmath>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueConformationFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -83,10 +87,10 @@ ResidueConformationFeatures::ResidueConformationFeatures(
 	compact_residue_schema_ = basic::options::option[basic::options::OptionKeys::inout::dbms::use_compact_residue_schema]();
 }
 
-string
-ResidueConformationFeatures::type_name() const {
-	return "ResidueConformationFeatures";
-}
+// XRW TEMP string
+// XRW TEMP ResidueConformationFeatures::type_name() const {
+// XRW TEMP  return "ResidueConformationFeatures";
+// XRW TEMP }
 
 void
 ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -522,6 +526,36 @@ ResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 		}
 	}
 }
+
+std::string ResidueConformationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueConformationFeatures::class_name() {
+	return "ResidueConformationFeatures";
+}
+
+void ResidueConformationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Report diverse conformational features on a per-residue basis for a Pose", attlist );
+}
+
+std::string ResidueConformationFeaturesCreator::type_name() const {
+	return ResidueConformationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueConformationFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueConformationFeatures );
+}
+
+void ResidueConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueConformationFeatures::provide_xml_schema( xsd );
+}
+
 
 } // features
 } // protocols

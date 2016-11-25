@@ -39,6 +39,9 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -98,10 +101,10 @@ SymFoldandDockSlideTrialMover::apply( core::pose::Pose & pose ) {
 
 }
 
-std::string
-SymFoldandDockSlideTrialMover::get_name() const {
-	return "SymFoldandDockSlideTrialMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockSlideTrialMover::get_name() const {
+// XRW TEMP  return "SymFoldandDockSlideTrialMover";
+// XRW TEMP }
 
 void
 SymFoldandDockSlideTrialMover::parse_my_tag(
@@ -119,20 +122,52 @@ SymFoldandDockSlideTrialMover::parse_my_tag(
 }
 
 
-std::string
-SymFoldandDockSlideTrialMoverCreator::keyname() const {
-	return SymFoldandDockSlideTrialMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockSlideTrialMoverCreator::keyname() const {
+// XRW TEMP  return SymFoldandDockSlideTrialMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymFoldandDockSlideTrialMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SymFoldandDockSlideTrialMover::mover_name() {
+// XRW TEMP  return "SymFoldandDockSlideTrialMover";
+// XRW TEMP }
+
+std::string SymFoldandDockSlideTrialMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymFoldandDockSlideTrialMover::mover_name() {
+	return "SymFoldandDockSlideTrialMover";
+}
+
+void SymFoldandDockSlideTrialMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "rotate_anchor_to_x", xsct_rosetta_bool, "Rotate the anchor residue to the x-axis before applying rigid body transformations." ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Setting up what types of slides to make during symmetric fold and dock?", attlist );
+}
+
+std::string SymFoldandDockSlideTrialMoverCreator::keyname() const {
+	return SymFoldandDockSlideTrialMover::mover_name();
 }
 
 protocols::moves::MoverOP
 SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
+	return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover );
 }
 
-std::string
-SymFoldandDockSlideTrialMoverCreator::mover_name() {
-	return "SymFoldandDockSlideTrialMover";
+void SymFoldandDockSlideTrialMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymFoldandDockSlideTrialMover::provide_xml_schema( xsd );
 }
+
 
 } // symmetric_docking
 } // protocols

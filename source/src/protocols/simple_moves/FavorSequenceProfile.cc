@@ -41,6 +41,9 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -51,20 +54,20 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
 
-std::string FavorSequenceProfileCreator::keyname() const
-{
-	return FavorSequenceProfileCreator::mover_name();
-}
+// XRW TEMP std::string FavorSequenceProfileCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FavorSequenceProfile::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FavorSequenceProfileCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorSequenceProfile );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FavorSequenceProfileCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FavorSequenceProfile );
+// XRW TEMP }
 
-std::string
-FavorSequenceProfileCreator::mover_name() {
-	return "FavorSequenceProfile";
-}
+// XRW TEMP std::string
+// XRW TEMP FavorSequenceProfile::mover_name() {
+// XRW TEMP  return "FavorSequenceProfile";
+// XRW TEMP }
 
 
 FavorSequenceProfile::FavorSequenceProfile( ) :
@@ -244,7 +247,67 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	}
 }
 
+std::string FavorSequenceProfile::get_name() const {
+	return mover_name();
+}
+
+std::string FavorSequenceProfile::mover_name() {
+	return "FavorSequenceProfile";
+}
+
+void FavorSequenceProfile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	typedef XMLSchemaAttribute Attr;
+
+	XMLSchemaRestriction scaling_type;
+	scaling_type.name( "favor_seqprof_scaling_type" );
+	scaling_type.add_restriction( xsr_enumeration, "prob" );
+	scaling_type.add_restriction( xsr_enumeration, "none" );
+	scaling_type.add_restriction( xsr_enumeration, "global" );
+	xsd.add_top_level_element( scaling_type );
+
+	AttributeList attlist;
+	attlist
+		+ Attr::attribute_w_default( "weight", xsct_real, "Adjust the post-scaling strength of the constraints.", "1" )
+		+ Attr( "scorefxns", xs_string,
+		"Convenience feature to automatically set res_type_constraint to 1"
+		"in the listed functions where it is currently turned off." )
+		+ Attr( "use_native", xsct_rosetta_bool, "use the structure specified by -in:file:native as reference" )
+		+ Attr( "use_fasta", xsct_rosetta_bool, "use a native FASTA sequence specified by the -in:file:fasta as reference" )
+		+ Attr( "use_starting", xsct_rosetta_bool, "use the starting input structure (e.g. one passed to -s) as reference" )
+		+ Attr( "use_current", xsct_rosetta_bool, "use the current structure (the one passed to apply) as the reference" )
+		+ Attr( "pdbname", xsct_rosetta_bool, "use the structure specified by the filename as the reference" )
+		+ Attr( "pssm", xs_string, "a filename of a blast formatted pssm file containing the sequence profile to use" )
+		+ Attr( "chain", xsct_non_negative_integer, "0 is all chains, otherwise if a sequence is added, align it to the specified chain" )
+		+ Attr::attribute_w_default( "scaling", "favor_seqprof_scaling_type",
+		"Set how to scale the given values."
+		"\"prob\"=Boltzmann-weighted probability based on the profile score"
+		"\"global\"= global linear fixed-zero rescaling"
+		"such that all (pre-weighted) values fall in the range of -1.0 to 1.0"
+		"\"none\" does no adjustment of values.", "prob" )
+		+ Attr::attribute_w_default( "matrix", xs_string, "Set substitution matrix; valid:  BLOSUM62,MATCH,IDENTITY", "BLOSUM62" )
+		+ Attr( "exclude_resnums", xs_string, "Exclude residues from being contrained." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Sets residue type constraints (SequenceProfileConstraint) on the pose according to the given profile and weight.", attlist );
+}
+
+std::string FavorSequenceProfileCreator::keyname() const {
+	return FavorSequenceProfile::mover_name();
+}
+
+protocols::moves::MoverOP
+FavorSequenceProfileCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FavorSequenceProfile );
+}
+
+void FavorSequenceProfileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FavorSequenceProfile::provide_xml_schema( xsd );
+}
+
+
 
 } //moves
 } //protocols
-

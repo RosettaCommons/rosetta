@@ -57,6 +57,21 @@ public:
 	void
 	add_creator( DeNovoArchitectCreatorOP creator );
 
+	void define_architect_group( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	//All of these may move to a new file for schema generation
+
+	static std::string architect_group_name();
+	static std::string
+	complex_type_name_for_architect( std::string const & constraint_name );
+
+	static void
+	xsd_architect_type_definition_w_attributes(
+		utility::tag::XMLSchemaDefinition & xsd,
+		std::string const & constraint_type,
+		std::string const & description,
+		utility::tag::AttributeList const & attributes);
+
 private:
 	ArchitectCreatorMap creators_;
 

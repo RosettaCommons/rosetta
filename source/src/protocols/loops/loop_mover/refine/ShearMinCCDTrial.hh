@@ -65,19 +65,31 @@ public: // boiler plate / virtuals
 	// destructor
 	~ShearMinCCDTrial();
 
-	virtual void apply( Pose & pose );
-	virtual std::string get_name() const;
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_new_input() const override;
 
 	// clone and fresh instance
-	virtual moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	friend std::ostream & operator<<(std::ostream& out, ShearMinCCDTrial const & loop_refine_shear_CCD_min_trial_inner_cycle );
 
 public: // class-specific public methods

@@ -37,13 +37,25 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const override { return "ReportFSC"; }
+	// XRW TEMP  std::string get_name() const override { return "ReportFSC"; }
 
 	moves::MoverOP clone() const override { return moves::MoverOP( new ReportFSC( *this ) ); }
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ReportFSC ); }
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real res_low_, res_high_;

@@ -12,4 +12,5 @@
 		<Add mover="repack" />
 		<Add mover="minimize" />
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

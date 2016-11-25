@@ -69,7 +69,7 @@ public:
 
 	std::string const& partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 
-	std::string get_name() const override { return "DockSetupMover"; }
+	// XRW TEMP  std::string get_name() const override { return "DockSetupMover"; }
 
 	// DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
 	// DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
@@ -89,6 +89,18 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	void copy( DockSetupMover & lhs, DockSetupMover const & rhs);

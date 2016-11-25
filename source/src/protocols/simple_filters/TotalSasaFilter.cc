@@ -32,17 +32,20 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <core/types.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
-protocols::filters::FilterOP
-TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }
 
-std::string
-TotalSasaFilterCreator::keyname() const { return "TotalSasa"; }
+// XRW TEMP std::string
+// XRW TEMP TotalSasaFilterCreator::keyname() const { return "TotalSasa"; }
 
 
 TotalSasaFilter::TotalSasaFilter() :
@@ -241,6 +244,46 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 	utility_exit_with_message( "Execution should never have reached this point." );
 	return( 0 );
 }
+
+std::string TotalSasaFilter::name() const {
+	return class_name();
+}
+
+std::string TotalSasaFilter::class_name() {
+	return "TotalSasa";
+}
+
+void TotalSasaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "If it is **higher** than threshold, it passes. " , "800" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_threshold" , xsct_real , "Fails if it is above the upper_threshold." , "1000000" )
+		+ XMLSchemaAttribute::attribute_w_default( "hydrophobic" , xsct_rosetta_bool , "Compute hydrophobic-only SASA." , "false" )
+		// Hydrophobic/polar are computed by discriminating each atom into polar (acceptor/donor or polar hydrogen)
+		// or hydrophobic (all else) and summing the SASA over each category.
+		+ XMLSchemaAttribute::attribute_w_default( "polar" , xsct_rosetta_bool , "Compute polar_only SASA." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_per_residue_sasa" , xsct_rosetta_bool , "Add the per-residue SASA to the tracer output." , "false" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ; //Only report the SASA for those residues specified as packable for the given taskoperations. If not specified, compute over all residues.
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the overall sasa of the pose.", attlist );
+}
+
+std::string TotalSasaFilterCreator::keyname() const {
+	return TotalSasaFilter::class_name();
+}
+
+protocols::filters::FilterOP
+TotalSasaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new TotalSasaFilter );
+}
+
+void TotalSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TotalSasaFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

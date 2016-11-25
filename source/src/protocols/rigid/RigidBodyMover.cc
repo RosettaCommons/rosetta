@@ -58,6 +58,15 @@
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -356,20 +365,20 @@ RigidBodyPerturbNoCenterMover::parse_my_tag(
 	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );
 }
 
-std::string
-RigidBodyPerturbNoCenterMoverCreator::keyname() const {
-	return RigidBodyPerturbNoCenterMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RigidBodyPerturbNoCenterMoverCreator::keyname() const {
+// XRW TEMP  return RigidBodyPerturbNoCenterMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
+// XRW TEMP }
 
-std::string
-RigidBodyPerturbNoCenterMoverCreator::mover_name() {
-	return "RigidBodyPerturbNoCenter";
-}
+// XRW TEMP std::string
+// XRW TEMP RigidBodyPerturbNoCenterMover::mover_name() {
+// XRW TEMP  return "RigidBodyPerturbNoCenter";
+// XRW TEMP }
 
 moves::MoverOP
 RigidBodyPerturbNoCenterMover::clone() const {
@@ -467,10 +476,44 @@ RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 	pose.set_jump( rb_jump_, flexible_jump );
 }
 
-std::string
-RigidBodyPerturbNoCenterMover::get_name() const {
-	return "RigidBodyPerturbNoCenterMover";
+// XRW TEMP std::string
+// XRW TEMP RigidBodyPerturbNoCenterMover::get_name() const {
+// XRW TEMP  return "RigidBodyPerturbNoCenterMover";
+// XRW TEMP }
+
+std::string RigidBodyPerturbNoCenterMover::get_name() const {
+	return mover_name();
 }
+
+std::string RigidBodyPerturbNoCenterMover::mover_name() {
+	return "RigidBodyPerturbNoCenter";
+}
+
+void RigidBodyPerturbNoCenterMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default("rot_mag", xsct_real, "XRW TO DO", "0.1")
+		+ XMLSchemaAttribute::attribute_w_default("trans_mag", xsct_real, "XRW TO DO", "0.4");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RigidBodyPerturbNoCenterMoverCreator::keyname() const {
+	return RigidBodyPerturbNoCenterMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
+}
+
+void RigidBodyPerturbNoCenterMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RigidBodyPerturbNoCenterMover::provide_xml_schema( xsd );
+}
+
 
 
 RigidBodyRandomizeMover::RigidBodyRandomizeMover() :
@@ -838,10 +881,10 @@ core::Vector RigidBodyTiltMover::find_tilt_center(
 }
 
 
-std::string
-RigidBodyTiltMover::get_name() const {
-	return "RigidBodyTiltMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTiltMover::get_name() const {
+// XRW TEMP  return "RigidBodyTiltMover";
+// XRW TEMP }
 
 void
 RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -883,9 +926,48 @@ RigidBodyTiltMover::fresh_instance() const {
 	return moves::MoverOP( new RigidBodyTiltMover );
 }
 
-std::string
-RigidBodyTiltMoverCreator::keyname() const {
-	return RigidBodyTiltMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTiltMoverCreator::keyname() const {
+// XRW TEMP  return RigidBodyTiltMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RigidBodyTiltMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyTiltMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTiltMover::mover_name() {
+// XRW TEMP  return "RigidBodyTiltMover";
+// XRW TEMP }
+
+std::string RigidBodyTiltMover::get_name() const {
+	return mover_name();
+}
+
+std::string RigidBodyTiltMover::mover_name() {
+	return "RigidBodyTiltMover";
+}
+
+void RigidBodyTiltMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute::attribute_w_default("jump", xs_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default("x", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("y", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("z", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("tilt1_mag", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("tilt2_mag", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute("tilt1_center", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute("tilt2_center", xs_string, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RigidBodyTiltMoverCreator::keyname() const {
+	return RigidBodyTiltMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -893,10 +975,11 @@ RigidBodyTiltMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RigidBodyTiltMover );
 }
 
-std::string
-RigidBodyTiltMoverCreator::mover_name() {
-	return "RigidBodyTiltMover";
+void RigidBodyTiltMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RigidBodyTiltMover::provide_xml_schema( xsd );
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -989,10 +1072,10 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 
 /////////////////// ROSETTA SCRIPTS STUFF //////////////////////////////
 
-std::string
-RigidBodyTransMover::get_name() const {
-	return "RigidBodyTransMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTransMover::get_name() const {
+// XRW TEMP  return "RigidBodyTransMover";
+// XRW TEMP }
 
 void
 RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
@@ -1018,9 +1101,46 @@ RigidBodyTransMover::fresh_instance() const {
 	return moves::MoverOP( new RigidBodyTransMover );
 }
 
-std::string
-RigidBodyTransMoverCreator::keyname() const {
-	return RigidBodyTransMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTransMoverCreator::keyname() const {
+// XRW TEMP  return RigidBodyTransMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RigidBodyTransMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RigidBodyTransMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RigidBodyTransMover::mover_name() {
+// XRW TEMP  return "RigidBodyTransMover";
+// XRW TEMP }
+
+std::string RigidBodyTransMover::get_name() const {
+	return mover_name();
+}
+
+std::string RigidBodyTransMover::mover_name() {
+	return "RigidBodyTransMover";
+}
+
+void RigidBodyTransMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute::attribute_w_default("distance", xsct_real, "XRW TO DO", "1.0")
+		+ XMLSchemaAttribute::attribute_w_default("jump", xs_integer, "XRW TO DO", "1")
+		+ XMLSchemaAttribute::attribute_w_default("x", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("y", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("z", xsct_real, "XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("vary_stepsize", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RigidBodyTransMoverCreator::keyname() const {
+	return RigidBodyTransMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -1028,10 +1148,11 @@ RigidBodyTransMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RigidBodyTransMover );
 }
 
-std::string
-RigidBodyTransMoverCreator::mover_name() {
-	return "RigidBodyTransMover";
+void RigidBodyTransMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RigidBodyTransMover::provide_xml_schema( xsd );
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

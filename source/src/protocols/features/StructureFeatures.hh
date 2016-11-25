@@ -29,6 +29,8 @@
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -42,8 +44,8 @@ public:
 	~StructureFeatures() override;
 
 	/// @brief return string with class name
-	std::string
-	type_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override;
 
 	/// @brief generate the table schemas and write them to the database
 	void
@@ -111,6 +113,18 @@ public:
 		std::string const & tag,
 		core::Size const & protocol_id
 	);
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 };
 

@@ -52,33 +52,45 @@ public: // boiler plate / virtuals
 	// destructor
 	virtual ~LoopRefineInnerCycleContainer();
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_new_input() const override;
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycleContainer class
 	static void register_options();
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const & loop_refine_inner_cycle_container );
 
 public: // class-specific public methods
 	void add_inner_cycle_step( LoopRefineInnerCycleOP inner_cycle_step );
 
 	// overriden methods: Not 'virtual' in the sense that subclasses ought to override them. This is a special case.
-	virtual void set_mc( moves::MonteCarloOP mc);
-	virtual void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
-	virtual void set_task_factory( core::pack::task::TaskFactoryOP tf );
-	virtual void set_loop_mover( LoopMover_Refine_CCDAP new_owner_in_town );
+	void set_mc( moves::MonteCarloOP mc) override;
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn) override;
+	void set_task_factory( core::pack::task::TaskFactoryOP tf ) override;
+	void set_loop_mover( LoopMover_Refine_CCDAP new_owner_in_town ) override;
 
 	// This one comes from moves::Mover
-	virtual void set_native_pose( PoseCOP pose );
+	void set_native_pose( PoseCOP pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 	void setup_objects( Pose const & pose );

@@ -41,6 +41,7 @@
 #include <core/pose/util.tmpl.hh>
 #include <protocols/helical_bundle/PerturbBundleOptions.fwd.hh>
 #include <protocols/helical_bundle/PerturbBundleOptions.hh>
+#include <protocols/helical_bundle/util.hh>
 
 //JD2:
 #include <protocols/jd2/JobDistributor.hh>
@@ -57,6 +58,9 @@
 // C output headers:
 #include <cstdio>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -67,22 +71,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.BundleGridSampler");
 
-std::string
-BundleGridSamplerCreator::keyname() const
-{
-	return BundleGridSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BundleGridSamplerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BundleGridSampler::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BundleGridSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BundleGridSampler );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BundleGridSamplerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BundleGridSampler );
+// XRW TEMP }
 
-std::string
-BundleGridSamplerCreator::mover_name()
-{
-	return "BundleGridSampler";
-}
+// XRW TEMP std::string
+// XRW TEMP BundleGridSampler::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BundleGridSampler";
+// XRW TEMP }
 
 
 /// @brief Creator for BundleGridSampler mover.
@@ -574,9 +578,9 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("BundleGridSampler").
-std::string BundleGridSampler::get_name() const{
-	return "BundleGridSampler";
-}
+// XRW TEMP std::string BundleGridSampler::get_name() const{
+// XRW TEMP  return "BundleGridSampler";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -1488,6 +1492,188 @@ core::Size BundleGridSampler::calculate_total_samples() const {
 
 	return total_samples;
 }
+
+std::string BundleGridSampler::get_name() const {
+	return mover_name();
+}
+
+std::string BundleGridSampler::mover_name() {
+	return "BundleGridSampler";
+}
+
+std::string subtag_for_bundgrid( std::string const & subtag ) {
+	return "stfbundg_" + subtag;
+}
+
+void BundleGridSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction lohigh;
+	lohigh.name( "BundleGridSampler_lohigh" );
+	lohigh.base_type( xs_string );
+	lohigh.add_restriction( xsr_enumeration, "low" );
+	lohigh.add_restriction( xsr_enumeration, "high" );
+	xsd.add_top_level_element( lohigh );
+
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "max_samples", xsct_non_negative_integer, "Maximum number of total backbone combinations to be sampled.", "10000" )
+		+ XMLSchemaAttribute("selection_type", "BundleGridSampler_lohigh", "Score criterion for selection: \"high\" or \"low\"." )
+		+ XMLSchemaAttribute("pre_scoring_mover", xs_string, "A mover to apply after backbone torsions are set but before final scoring and evaluation (like a min mover or something similar)." )
+		+ XMLSchemaAttribute("pre_scoring_filter", xs_string, "A filter to apply before scoring, which could help avoid wasteful scoring of bad conformations (like a bump check filter)." )
+		+ XMLSchemaAttribute("pre_selection_mover", xs_string, "A mover to apply before final solution selection (like a min mover or something similar)." )
+		+ XMLSchemaAttribute("pre_selection_filter", xs_string, "A filter to apply before final solution selection, which could help avoid wasteful scoring of bad conformations (like a bump check filter)." )
+		+ XMLSchemaAttribute::attribute_w_default("dump_pdbs", xsct_rosetta_bool, "Dump all PDBs, if true; otherwise, there will be no PDB output at all.", "false" )
+		+ XMLSchemaAttribute("pdb_prefix", xs_string, "A prefix to apply to all output PDBs." )
+		+ XMLSchemaAttribute::attribute_w_default("use_degrees", xsct_rosetta_bool, "Interpret input values as degrees, not radians.", "false" );
+
+	add_attributes_for_make_bundle_symmetry( attlist );
+	add_attributes_for_make_bundle_dofs( attlist );
+	add_attributes_for_make_bundle_other_defaults( attlist );
+	add_attributes_for_make_bundle_minorhelix_defaults( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("reset", xsct_rosetta_bool, "Sets 'reset mode'.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("nstruct_mode", xsct_rosetta_bool, "If true, sample a different set of mainchain torsions for each job; if false, each job consists of the whole mainchain sampling effort.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("nstruct_repeats", xsct_non_negative_integer, "Number of repeats to perform for each nstruct.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("r0", xsct_real, "A fixed value for r0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("r0_min", xsct_real, "Minimum value for r0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("r0_max", xsct_real, "Maximum value for r0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("r0_samples", xsct_non_negative_integer, "Samples for r0", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("omega0", xsct_real, "A fixed value for omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("omega0_min", xsct_real, "Minimum value for omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("omega0_max", xsct_real, "Maximum value for omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("omega0_samples", xsct_non_negative_integer, "Samples for omega0", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega0", xsct_real, "A fixed value for delta_omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega0_min", xsct_real, "Minimum value for delta_omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega0_max", xsct_real, "Maximum value for delta_omega0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega0_samples", xsct_non_negative_integer, "Samples for delta_omega0", "0" );
+	if ( ! attribute_w_name_in_attribute_list( "delta_omega1", attlist ) ) {
+		attlist + XMLSchemaAttribute::attribute_w_default("delta_omega1", xsct_real, "A fixed value for delta_omega1", "0.0" );
+	}
+	attlist + XMLSchemaAttribute::attribute_w_default("delta_omega1_min", xsct_real, "Minimum value for delta_omega1", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega1_max", xsct_real, "Maximum value for delta_omega1", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_omega1_samples", xsct_non_negative_integer, "Samples for delta_omega1", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_t", xsct_real, "A fixed value for delta_t", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_t_min", xsct_real, "Minimum value for delta_t", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_t_max", xsct_real, "Maximum value for delta_t", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("delta_t_samples", xsct_non_negative_integer, "Samples for delta_t", "0" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default("z1_offset", xsct_real, "Minimum value for z1_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z1_offset_min", xsct_real, "Maximum value for z1_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z1_offset_max", xsct_real, "Maximum value for z1_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z1_offset_samples", xsct_non_negative_integer, "Samples for z1_offset", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_offset", xsct_real, "A fixed value for z0_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_offset_min", xsct_real, "Minimum value for z0_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_offset_max", xsct_real, "Maximum value for z0_offset", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_offset_samples", xsct_non_negative_integer, "Samples for z0_offset", "0" );
+	if ( ! attribute_w_name_in_attribute_list( "z1", attlist ) ) {
+		attlist + XMLSchemaAttribute::attribute_w_default("z1", xsct_real, "A fixed value for z1", "0.0" );
+	}
+	attlist + XMLSchemaAttribute::attribute_w_default("z1_min", xsct_real, "Minimum value for z1", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z1_max", xsct_real, "Maximum value for z1", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z1_samples", xsct_non_negative_integer, "Samples for z1", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0", xsct_real, "A fixed value for z0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_min", xsct_real, "Minimum value for z0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_max", xsct_real, "Maximum value for z0", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("z0_samples", xsct_non_negative_integer, "Samples for z0", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("epsilon", xsct_real, "A fixed value for epsilon", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("epsilon_min", xsct_real, "Minimum value for epsilon", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("epsilon_max", xsct_real, "Maximum value for epsilon", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("epsilon_samples", xsct_non_negative_integer, "Samples for epsilon", "0" );
+
+	AttributeList subtag_attributes;
+
+	add_attributes_for_helix_params( subtag_attributes );
+	add_attributes_for_minor_helix_params( subtag_attributes );
+	add_attributes_for_other_helix_params( subtag_attributes );
+
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "r0", xsct_real, "Single value for r0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_copies_helix", xsct_non_negative_integer, "Helix index from which r0 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_min", xsct_real, "Minimum value for r0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_max", xsct_real, "Maximum value for r0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_samples", xsct_non_negative_integer, "Number of samples for r0.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "omega0", xsct_real, "Single value for omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_copies_helix", xsct_non_negative_integer, "Helix index from which omega0 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_min", xsct_real, "Minimum value for omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_max", xsct_real, "Maximum value for omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_samples", xsct_non_negative_integer, "Number of samples for delta_omega0.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0", xsct_real, "Single value for delta_omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_copies_helix", xsct_non_negative_integer, "Helix index from which delta_omega0 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_min", xsct_real, "Minimum value for delta_omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_max", xsct_real, "Maximum value for delta_omega0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_samples", xsct_non_negative_integer, "Number of samples for delta_omega0.", "0" );
+	if ( ! attribute_w_name_in_attribute_list( "delta_omega1", subtag_attributes ) ) {
+		subtag_attributes + XMLSchemaAttribute::attribute_w_default( "delta_omega1", xsct_real, "Single value for delta_omega1.", "0.0" );
+	}
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "delta_omega1_copies_helix", xsct_non_negative_integer, "Helix index from which delta_omega1 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_min", xsct_real, "Minimum value for delta_omega1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_max", xsct_real, "Maximum value for delta_omega1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_samples", xsct_non_negative_integer, "Number of samples for delta_omega1.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t", xsct_real, "Single value for delta_t.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_copies_helix", xsct_non_negative_integer, "Helix index from which delta_t should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_min", xsct_real, "Minimum value for delta_t.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_max", xsct_real, "Maximum value for delta_t.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_samples", xsct_non_negative_integer, "Number of samples for delta_t.", "0" );
+	if ( ! attribute_w_name_in_attribute_list( "z1", attlist ) ) {
+		subtag_attributes + XMLSchemaAttribute::attribute_w_default( "z1", xsct_real, "Single value for z1.", "0.0" );
+	}
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "z1_copies_helix", xsct_non_negative_integer, "Helix index from which z1 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_min", xsct_real, "Minimum value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_max", xsct_real, "Maximum value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_samples", xsct_non_negative_integer, "Number of samples for z1.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "z0", xsct_real, "Single value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_copies_helix", xsct_non_negative_integer, "Helix index from which z0 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_min", xsct_real, "Minimum value for z0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_max", xsct_real, "Maximum value for z0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_samples", xsct_non_negative_integer, "Number of samples for z0.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset", xsct_real, "Single value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_copies_helix", xsct_non_negative_integer, "Helix index from which z1 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_min", xsct_real, "Minimum value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_max", xsct_real, "Maximum value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_samples", xsct_non_negative_integer, "Number of samples for z1.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset", xsct_real, "Single value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_copies_helix", xsct_non_negative_integer, "Helix index from which z0 should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_min", xsct_real, "Minimum value for z0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_max", xsct_real, "Maximum value for z0.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_samples", xsct_non_negative_integer, "Number of samples for z0.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon", xsct_real, "Single value for z1.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_copies_helix", xsct_non_negative_integer, "Helix index from which epsilon should be copied.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_min", xsct_real, "Minimum value for epsilon.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_max", xsct_real, "Maximum value for epsilon.", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_samples", xsct_non_negative_integer, "Number of samples for epsilon.", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "pitch_from_helix", xsct_non_negative_integer, "Helix index from which pitch should be copied.", "0" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing individual helices in the bundle"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_bundgrid );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string BundleGridSamplerCreator::keyname() const {
+	return BundleGridSampler::mover_name();
+}
+
+protocols::moves::MoverOP
+BundleGridSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BundleGridSampler );
+}
+
+void BundleGridSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BundleGridSampler::provide_xml_schema( xsd );
+}
+
 
 } //namespace helical_bundle
 } //namespace protocols

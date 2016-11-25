@@ -13,6 +13,7 @@
 
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // Package headers
 #include <protocols/filters/BasicFilters.hh>
@@ -21,6 +22,8 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
@@ -125,6 +128,29 @@ FilterFactory::newFilter(
 	return filter;
 }
 
+
+FilterFactory::FilterMap const & FilterFactory::filter_creator_map() const { return filter_creator_map_; }
+
+void FilterFactory::define_filter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	try {
+		utility::tag::define_xml_schema_group(
+			filter_creator_map_,
+			filter_xml_schema_group_name(),
+			& complex_type_name_for_filter,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for Filters from FilterFactory; offending class"
+			" must call protocols::filters::complex_type_name_for_filter when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+
+}
+
+std::string FilterFactory::filter_xml_schema_group_name()
+{
+	return "filter";
+}
 
 } //namespace filters
 } //namespace protocols

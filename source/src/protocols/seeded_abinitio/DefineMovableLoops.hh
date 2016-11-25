@@ -34,7 +34,7 @@ public:
 
 	~DefineMovableLoops() override;
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new DefineMovableLoops( *this ) ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new DefineMovableLoops ); }
 
@@ -43,6 +43,18 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private: ///functions

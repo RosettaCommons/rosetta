@@ -293,6 +293,10 @@ validate_xml_against_xsd(
 		output.valid( false );
 		output.errors( handler1.errors() );
 		output.warnings( handler1.warnings() );
+
+		//SML adding error clarification; unsure if this is a great place.  I think we're in no-Tracers land so I guess cerr?
+		std::cerr << "Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be exposed until runtime.  You’ve edited some class’s provide_XML_schema function recently in such a way that it is now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute’s description.  Email the devel list if the error message below does not help you locate and fix the problem." << std::endl;
+
 		return output;
 	}
 
@@ -315,6 +319,7 @@ validate_xml_against_xsd(
 		output.valid( false );
 		output.errors( handler3.errors() );
 		output.warnings( handler3.warnings() );
+		//errors here (I think) are annotated with a human-readable message in RosettaScriptsParser.cc
 		return output;
 	}
 

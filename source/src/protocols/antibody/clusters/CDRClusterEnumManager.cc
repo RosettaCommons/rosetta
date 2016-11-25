@@ -443,6 +443,16 @@ CDRClusterEnumManager::cdr_cluster_is_present(std::string const & cluster) const
 	return iter != string_to_enum_.end();
 }
 
+utility::vector1<std::string>
+CDRClusterEnumManager::get_recognized_cluster_definitions() const {
+	utility::vector1<std::string> recognized_clusters;
+	for ( auto& cluster : string_to_enum_ ) {
+		recognized_clusters.push_back(cluster.first);
+	}
+
+	return recognized_clusters;
+}
+
 }//clusters
 }//Antibody
 }//Protocols

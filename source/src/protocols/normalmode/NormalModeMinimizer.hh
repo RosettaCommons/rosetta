@@ -76,9 +76,21 @@ public:
 		Pose const & ) override;
 
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void

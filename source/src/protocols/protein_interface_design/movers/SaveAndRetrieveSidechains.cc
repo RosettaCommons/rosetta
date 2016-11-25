@@ -38,6 +38,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -50,25 +53,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
 
-std::string
-SaveAndRetrieveSidechainsCreator::keyname() const
-{
-	return SaveAndRetrieveSidechainsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SaveAndRetrieveSidechainsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SaveAndRetrieveSidechains::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SaveAndRetrieveSidechainsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SaveAndRetrieveSidechainsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
+// XRW TEMP }
 
-std::string
-SaveAndRetrieveSidechainsCreator::mover_name()
-{
-	return "SaveAndRetrieveSidechains";
-}
+// XRW TEMP std::string
+// XRW TEMP SaveAndRetrieveSidechains::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SaveAndRetrieveSidechains";
+// XRW TEMP }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
-	simple_moves::DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() )
+	simple_moves::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() )
 {
 	allsc_ = false; // default
 	jumpid_ = 1; //default
@@ -86,7 +89,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	bool const ensure_variant_matching /*=false*/,
 	core::Size const jumpid /*=1*/
 ) :
-	simple_moves::DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() ),
+	simple_moves::DesignRepackMover( SaveAndRetrieveSidechains::mover_name() ),
 	allsc_( allsc ),
 	ensure_variant_matching_(ensure_variant_matching),
 	jumpid_( jumpid )
@@ -169,10 +172,10 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	TR.flush();
 }
 
-std::string
-SaveAndRetrieveSidechains::get_name() const {
-	return SaveAndRetrieveSidechainsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SaveAndRetrieveSidechains::get_name() const {
+// XRW TEMP  return SaveAndRetrieveSidechains::mover_name();
+// XRW TEMP }
 
 void
 SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
@@ -191,6 +194,42 @@ protocols::moves::MoverOP
 SaveAndRetrieveSidechains::clone() const {
 	return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this ) ));
 }
+
+std::string SaveAndRetrieveSidechains::get_name() const {
+	return mover_name();
+}
+
+std::string SaveAndRetrieveSidechains::mover_name() {
+	return "SaveAndRetrieveSidechains";
+}
+
+void SaveAndRetrieveSidechains::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "allsc", xsct_rosetta_bool, "Save and retrieve all sidechains", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "multi_use", xsct_rosetta_bool, "Set up so that we can use this multiple times", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "two_step", xsct_rosetta_bool, "Save and retrieve in two steps", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "jumpid", xsct_non_negative_integer, "Jump ID to keep track of", "1" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SaveAndRetrieveSidechainsCreator::keyname() const {
+	return SaveAndRetrieveSidechains::mover_name();
+}
+
+protocols::moves::MoverOP
+SaveAndRetrieveSidechainsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
+}
+
+void SaveAndRetrieveSidechainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SaveAndRetrieveSidechains::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

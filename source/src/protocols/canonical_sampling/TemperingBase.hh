@@ -29,6 +29,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -68,6 +69,9 @@ public:
 	std::string
 	get_name() const override;
 
+	static
+	void
+	attributes_for_tempering_base( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition &  );
 
 	void
 	parse_my_tag(

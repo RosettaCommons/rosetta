@@ -42,6 +42,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -134,8 +137,8 @@ ReadNativeRotamersFile::parse_tag( TagCOP tag , DataMap & )
 void ReadNativeRotamersFile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "filename", xs_string ) );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "filename", xs_string , "XRW TO DO" ) );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO: not sure if this is necessary bc going to be deprecated with sewing movers" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +204,7 @@ std::string ReadRepeatNativeRotamersFile::keyname() { return "ReadRepeatNativeRo
 
 void ReadRepeatNativeRotamersFile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname() , "XRW TO DO" );
 }
 
 core::pack::task::operation::TaskOperationOP
@@ -221,23 +224,23 @@ void ReadRepeatNativeRotamersFileCreator::provide_xml_schema( utility::tag::XMLS
 ////////////////////////  Boiler Plate Mover Code   ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-protocols::moves::MoverOP
-AssemblyConstraintsMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new AssemblyConstraintsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AssemblyConstraintsMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AssemblyConstraintsMover );
+// XRW TEMP }
 
-std::string
-AssemblyConstraintsMoverCreator::keyname() const
-{
-	return AssemblyConstraintsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AssemblyConstraintsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AssemblyConstraintsMover::mover_name();
+// XRW TEMP }
 
-std::string
-AssemblyConstraintsMoverCreator::mover_name()
-{
-	return "AssemblyConstraintsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AssemblyConstraintsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AssemblyConstraintsMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 AssemblyConstraintsMover::clone() const {
@@ -249,10 +252,10 @@ AssemblyConstraintsMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new AssemblyConstraintsMover );
 }
 
-std::string
-AssemblyConstraintsMover::get_name() const {
-	return "AssemblyConstraintsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AssemblyConstraintsMover::get_name() const {
+// XRW TEMP  return "AssemblyConstraintsMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Mover  Functions   ////////////////////////////////////
@@ -420,6 +423,38 @@ AssemblyConstraintsMover::parse_my_tag(
 		base_native_pro_bonus_ = tag->getOption<core::Real>("native_pro_bonus");
 	}
 }
+
+std::string AssemblyConstraintsMover::get_name() const {
+	return mover_name();
+}
+
+std::string AssemblyConstraintsMover::mover_name() {
+	return "AssemblyConstraintsMover";
+}
+
+void AssemblyConstraintsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AssemblyConstraintsMoverCreator::keyname() const {
+	return AssemblyConstraintsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AssemblyConstraintsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AssemblyConstraintsMover );
+}
+
+void AssemblyConstraintsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AssemblyConstraintsMover::provide_xml_schema( xsd );
+}
+
 
 
 

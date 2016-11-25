@@ -26,6 +26,7 @@
 #include <protocols/membrane/TranslationRotationMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/util.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 
@@ -59,6 +60,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.membrane.TransformIntoMembraneMover" );
 
@@ -208,22 +212,22 @@ TransformIntoMembraneMover::parse_my_tag(
 } // parse my tag
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-TransformIntoMembraneMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TransformIntoMembraneMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TransformIntoMembraneMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TransformIntoMembraneMover() );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-TransformIntoMembraneMoverCreator::keyname() const {
-	return TransformIntoMembraneMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TransformIntoMembraneMoverCreator::keyname() const {
+// XRW TEMP  return TransformIntoMembraneMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-TransformIntoMembraneMoverCreator::mover_name() {
-	return "TransformIntoMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP TransformIntoMembraneMover::mover_name() {
+// XRW TEMP  return "TransformIntoMembraneMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover Methods ///
@@ -236,10 +240,10 @@ void TransformIntoMembraneMover::use_default_membrane( bool truefalse ) {
 }
 
 /// @brief Get the name of this Mover (TransformIntoMembraneMover)
-std::string
-TransformIntoMembraneMover::get_name() const {
-	return "TransformIntoMembraneMover";
-}
+// XRW TEMP std::string
+// XRW TEMP TransformIntoMembraneMover::get_name() const {
+// XRW TEMP  return "TransformIntoMembraneMover";
+// XRW TEMP }
 
 /// @brief Move the pose into membrane coordinate frame
 void
@@ -363,6 +367,43 @@ void TransformIntoMembraneMover::init_from_cmd() {
 	read_center_normal_from_cmd( new_mem_cntr_, new_mem_norm_ );
 
 }// init from cmd
+
+std::string TransformIntoMembraneMover::get_name() const {
+	return mover_name();
+}
+
+std::string TransformIntoMembraneMover::mover_name() {
+	return "TransformIntoMembraneMover";
+}
+
+void TransformIntoMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute("jump", xsct_non_negative_integer, "Jump to use for the transformation")
+		+ XMLSchemaAttribute("use_default_membrane", xsct_rosetta_bool, "Use the default membrane (if one is not specified by the user)? If both this attribute and user_defined_membrane are false, membrane position is taken from the pose.")
+		+ XMLSchemaAttribute("user_defined_membrane", xsct_rosetta_bool, "Use a membrane defined by the user?");
+
+	protocols::membrane::AddMembraneMover::attributes_for_parse_center_normal_from_tag( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Transform a pose into the membrane.", attlist );
+}
+
+std::string TransformIntoMembraneMoverCreator::keyname() const {
+	return TransformIntoMembraneMover::mover_name();
+}
+
+protocols::moves::MoverOP
+TransformIntoMembraneMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TransformIntoMembraneMover );
+}
+
+void TransformIntoMembraneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TransformIntoMembraneMover::provide_xml_schema( xsd );
+}
+
 
 
 } // membrane

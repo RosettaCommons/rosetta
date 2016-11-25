@@ -86,7 +86,7 @@ public:// virtual constructor
 public:// accessor
 
 	// @brief get name of this filter
-	std::string name() const override { return "OligomericAverageDegree"; }
+	// XRW TEMP  std::string name() const override { return "OligomericAverageDegree"; }
 
 public:// setters
 
@@ -131,6 +131,18 @@ public:// virtual main operation
 	/// @brief calc oligomeric AverageDegree
 	core::Real compute( core::pose::Pose const & pose, bool const & verbose, bool const & write ) const;
 	void write_to_pdb( core::pose::Pose const & pose, core::Size const residue, std::string const & residue_name, core::Size const neighbors ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

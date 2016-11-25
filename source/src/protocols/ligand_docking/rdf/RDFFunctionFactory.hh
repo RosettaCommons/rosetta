@@ -29,7 +29,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/SingletonBase.hh>
 
 // C++ Headers
@@ -69,6 +69,11 @@ public:
 		basic::datacache::DataMap & data);
 
 	utility::vector1<std::string> get_all_function_names();
+
+	void define_rdf_function_group( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string rdf_function_group_name();
+	static std::string rdf_function_ct_namer( std::string );
+	static void xsd_type_definition_w_attributes( utility::tag::XMLSchemaDefinition & xsd, std::string name, utility::tag::AttributeList & attlist, std::string description );
 
 private:
 

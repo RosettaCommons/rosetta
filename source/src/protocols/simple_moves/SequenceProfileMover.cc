@@ -39,6 +39,9 @@
 
 #include <basic/Tracer.hh>
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SequenceProfileMover" );
 
@@ -66,10 +69,10 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 	TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
 }
 
-std::string
-SequenceProfileMover::get_name() const {
-	return SequenceProfileMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SequenceProfileMover::get_name() const {
+// XRW TEMP  return SequenceProfileMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 SequenceProfileMover::clone() const{
@@ -107,10 +110,44 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	TR << "Changed all scorefxns to have profile weights of " << profile_wgt_ << std::endl;
 } //end parse_my_tag
 
-std::string
-SequenceProfileMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP SequenceProfileMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SequenceProfileMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SequenceProfileMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SequenceProfileMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP SequenceProfileMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "profile";
+// XRW TEMP }
+
+std::string SequenceProfileMover::get_name() const {
+	return mover_name();
+}
+
+std::string SequenceProfileMover::mover_name() {
+	return "profile";
+}
+
+void SequenceProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return SequenceProfileMoverCreator::mover_name();
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "file_name", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "XRW TO DO", "0.25" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW_TODO", attlist );
+}
+
+std::string SequenceProfileMoverCreator::keyname() const {
+	return SequenceProfileMover::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -118,11 +155,11 @@ SequenceProfileMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SequenceProfileMover );
 }
 
-std::string
-SequenceProfileMoverCreator::mover_name()
+void SequenceProfileMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "profile";
+	SequenceProfileMover::provide_xml_schema( xsd );
 }
+
 
 
 } // simple_moves

@@ -47,7 +47,7 @@ public:
 
 	~UniformRigidBodyMover() override = default;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void apply( core::pose::Pose& ) override;
 
@@ -78,6 +78,22 @@ public:
 
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	complex_type_gen();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	JumpNumber target_jump_;

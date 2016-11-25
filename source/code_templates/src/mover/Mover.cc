@@ -21,6 +21,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -98,25 +101,23 @@ protocols::moves::MoverOP
 	return protocols::moves::MoverOP( new --class--( *this ) );
 }
 
-/// @brief Get the name of the Mover
-std::string
---class--::get_name() const
-{
-	return --class--::class_name();
+std::string --class--::get_name() const {
+	return mover_name();
 }
 
-std::string
---class--::class_name()
-{
+std::string --class--::mover_name() {
 	return "--class--";
 }
 
-
-std::ostream &
-operator<<( std::ostream & os, --class-- const & mover )
+void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	mover.show(os);
-	return os;
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "DOCUMENTATION STRING", attlist );
 }
 
 /////////////// Creator ///////////////
@@ -133,9 +134,21 @@ std::string
 	return --class--::class_name();
 }
 
+void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	--class--::provide_xml_schema( xsd );
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 	/// private methods ///
 	///////////////////////
 
---end_namespace--
 
+	std::ostream &
+	operator<<( std::ostream & os, --class-- const & mover )
+	{
+		mover.show(os);
+		return os;
+	}
+
+--end_namespace--

@@ -33,6 +33,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/BetaTurnDetectionFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -54,8 +58,8 @@ BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures 
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() = default;
 
-string
-BetaTurnDetectionFeatures::type_name() const { return "BetaTurnDetectionFeatures"; }
+// XRW TEMP string
+// XRW TEMP BetaTurnDetectionFeatures::type_name() const { return "BetaTurnDetectionFeatures"; }
 
 void
 BetaTurnDetectionFeatures::write_schema_to_db(
@@ -134,6 +138,37 @@ BetaTurnDetectionFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string BetaTurnDetectionFeatures::type_name() const {
+	return class_name();
+}
+
+std::string BetaTurnDetectionFeatures::class_name() {
+	return "BetaTurnDetectionFeatures";
+}
+
+void BetaTurnDetectionFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Gives features about beta turn geometry", attlist );
+}
+
+std::string BetaTurnDetectionFeaturesCreator::type_name() const {
+	return BetaTurnDetectionFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new BetaTurnDetectionFeatures );
+}
+
+void BetaTurnDetectionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BetaTurnDetectionFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce features
 } // namespace protocols

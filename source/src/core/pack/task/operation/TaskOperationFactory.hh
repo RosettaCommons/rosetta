@@ -85,6 +85,9 @@ public:
 	/// are responsible for creating.
 	void define_task_op_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 
+	/// @brief Read access to the map of creator names to creators -- for unit testing purposes only
+	TaskOperationCreatorMap const & creator_map() const;
+
 	static std::string task_operation_xml_schema_group_name();
 
 private:

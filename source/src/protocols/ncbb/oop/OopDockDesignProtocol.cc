@@ -80,6 +80,9 @@
 // C++ headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces
@@ -562,144 +565,59 @@ OopDockDesignProtocol::parse_my_tag
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
-
-	//score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
-
 	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_, pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_,pert_pep_num_rep_, pert_num_, dock_design_loop_num_, no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
-
-	/*if(tag->hasOption( "scorefxn"))
-	{
-	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
-	if ( ! data.has( "scorefxns", scorefxn_key ) )
-	throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
-	score_fxn_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_key );
-	}
-
-	if(tag->hasOption( "mc_temp"))
-	this->mc_temp_ = tag->getOption<core::Real>("mc_temp", mc_temp_);
-	else
-	mc_temp_ = 1.0;
-
-	if(tag->hasOption( "pert_mc_temp"))
-	pert_mc_temp_ = tag->getOption<core::Real>("pert_mc_temp", pert_mc_temp_);
-	else
-	pert_mc_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_dock_rot_mag"))
-	pert_dock_rot_mag_ = tag->getOption<core::Real>("pert_dock_rot_mag", pert_dock_rot_mag_);
-	else
-	pert_dock_rot_mag_ = 1.0;
-
-	if(tag->hasOption( "pert_dock_trans_mag"))
-	pert_dock_trans_mag_ = tag->getOption<core::Real>("pert_dock_trans_mag", pert_dock_trans_mag_);
-	else
-	pert_dock_trans_mag_ = 0.5;
-
-	if(tag->hasOption( "pert_pep_small_temp"))
-	pert_pep_small_temp_ = tag->getOption<core::Real>("pert_pep_small_temp", pert_pep_small_temp_);
-	else
-	pert_pep_small_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_pep_small_H"))
-	pert_pep_small_H_ = tag->getOption<core::Real>("pert_pep_small_H", pert_pep_small_H_);
-	else
-	pert_pep_small_H_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_small_L"))
-	pert_pep_small_L_ = tag->getOption<core::Real>("pert_pep_small_L", pert_pep_small_L_);
-	else
-	pert_pep_small_L_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_small_E"))
-	pert_pep_small_E_ = tag->getOption<core::Real>("pert_pep_small_E", pert_pep_small_E_);
-	else
-	pert_pep_small_E_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_temp"))
-	pert_pep_shear_temp_ = tag->getOption<core::Real>("pert_pep_shear_temp", pert_pep_shear_temp_);
-	else
-	pert_pep_shear_temp_ = 0.8;
-
-	if(tag->hasOption( "pert_pep_shear_H"))
-	pert_pep_shear_H_ = tag->getOption<core::Real>("pert_pep_shear_H", pert_pep_shear_H_);
-	else
-	pert_pep_shear_H_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_L"))
-	pert_pep_shear_L_ = tag->getOption<core::Real>("pert_pep_shear_L", pert_pep_shear_L_);
-	else
-	pert_pep_shear_L_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_shear_E"))
-	pert_pep_shear_E_ = tag->getOption<core::Real>("pert_pep_shear_E", pert_pep_shear_E_);
-	else
-	pert_pep_shear_E_ = 2.0;
-
-	if(tag->hasOption( "pert_pep_num_rep"))
-	pert_pep_num_rep_ = tag->getOption<core::Size>("pert_pep_num_rep", pert_pep_num_rep_);
-	else
-	pert_pep_num_rep_ = 100;
-
-	if(tag->hasOption( "pert_num"))
-	pert_num_ = tag->getOption<core::Size>("pert_num", pert_num_);
-	else
-	pert_num_ = 10;
-
-	if(tag->hasOption( "dock_design_loop_num"))
-	dock_design_loop_num_ = tag->getOption<core::Size>("dock_design_loop_num", dock_design_loop_num_);
-	else
-	dock_design_loop_num_ = 10;
-
-	if(tag->hasOption( "no_design"))
-	no_design_ = tag->getOption<bool>("no_design", no_design_);
-	else
-	no_design_ = false;
-
-	if(tag->hasOption( "final_design_min"))
-	final_design_min_ = tag->getOption<bool>("final_design_min", final_design_min_);
-	else
-	final_design_min_ = true;
-
-	if(tag->hasOption( "use_soft_rep"))
-	use_soft_rep_ = tag->getOption<bool>("use_soft_rep", use_soft_rep_);
-	else
-	use_soft_rep_ = false;
-
-	if(tag->hasOption( "mc_initial_pose"))
-	mc_initial_pose_ = tag->getOption<bool>("mc_initial_pose", mc_initial_pose_);
-	else
-	mc_initial_pose_ = false;*/
 
 	if ( tag->hasOption( "oop_design_first") ) {
 		oop_design_first_ = tag->getOption<bool>("oop_design_first", oop_design_first_);
 	} else {
 		oop_design_first_ = false;
 	}
-
-	/*if(tag->hasOption( "pymol"))
-	pymol_ = tag->getOption<bool>("pymol", pymol_);
-	else
-	pymol_ = false;
-
-	if(tag->hasOption( "keep_history"))
-	keep_history_ = tag->getOption<bool>("keep_history", keep_history_);
-	else
-	keep_history_ = false;*/
-
 }
 
 // MoverCreator
-moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
-	return moves::MoverOP( new OopDockDesignProtocol() );
+// XRW TEMP moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new OopDockDesignProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string OopDockDesignProtocolCreator::keyname() const {
+// XRW TEMP  return OopDockDesignProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string OopDockDesignProtocol::mover_name(){
+// XRW TEMP  return "OopDockDesign";
+// XRW TEMP }
+
+std::string OopDockDesignProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string OopDockDesignProtocol::mover_name() {
+	return "OopDockDesign";
+}
+
+void OopDockDesignProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	add_attributes_for_common_options( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "oop_design_first", xsct_rosetta_bool, "First optimize sequence of the oop ligand", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 
 std::string OopDockDesignProtocolCreator::keyname() const {
-	return OopDockDesignProtocolCreator::mover_name();
+	return OopDockDesignProtocol::mover_name();
 }
 
-std::string OopDockDesignProtocolCreator::mover_name(){
-	return "OopDockDesign";
+protocols::moves::MoverOP
+OopDockDesignProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new OopDockDesignProtocol );
 }
+
+void OopDockDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OopDockDesignProtocol::provide_xml_schema( xsd );
+}
+
 
 }
 }

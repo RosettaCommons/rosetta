@@ -55,6 +55,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Vector.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 
@@ -262,25 +265,56 @@ void LoopMover_Refine_Backrub::apply(
 
 }
 
-std::string
-LoopMover_Refine_Backrub::get_name() const {
-	return "LoopMover_Refine_Backrub";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Refine_Backrub::get_name() const {
+// XRW TEMP  return "LoopMover_Refine_Backrub";
+// XRW TEMP }
 
 basic::Tracer & LoopMover_Refine_Backrub::tr() const
 {
 	return TR;
 }
 
-LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
+// XRW TEMP LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
 
-moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Refine_Backrub() );
+// XRW TEMP moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_Backrub() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopMover_Refine_BackrubCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Refine_Backrub";
+// XRW TEMP }
+
+std::string LoopMover_Refine_Backrub::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Refine_Backrub::mover_name() {
+	return "LoopMover_Refine_Backrub";
+}
+
+void LoopMover_Refine_Backrub::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Performs loop refinement using backrub moves. Reads only commandline options.", attlist );
 }
 
 std::string LoopMover_Refine_BackrubCreator::keyname() const {
-	return "LoopMover_Refine_Backrub";
+	return LoopMover_Refine_Backrub::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopMover_Refine_BackrubCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Refine_Backrub );
+}
+
+void LoopMover_Refine_BackrubCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Refine_Backrub::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

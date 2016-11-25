@@ -101,7 +101,13 @@ std::string RestrictChainToRepackingOperation::keyname() { return "RestrictChain
 
 void RestrictChainToRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	using namespace::utility::tag;
+	AttributeList attributes;
+
+	attributes + XMLSchemaAttribute::attribute_w_default( "chain", xsct_non_negative_integer, "XRW TO DO", "1");
+
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
+
 }
 
 core::pack::task::operation::TaskOperationOP

@@ -38,24 +38,36 @@ public:
 		core::Real const threshold,
 		core::pose::PoseOP reference_pose
 	);
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const{
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override {
 		return protocols::filters::FilterOP( new RmsdFilter() );
 	}
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }
 	void selection( std::list< core::Size > const & sele ) { selection_ = sele; }
 	void superimpose( bool s ) { superimpose_ = s; }
 	bool superimpose( ) const { return superimpose_; }
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~RmsdFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose ) override;
 	void superimpose_on_all( bool const b ){ superimpose_on_all_ = b; }
 	bool superimpose_on_all() const{ return superimpose_on_all_; }
 	void by_aln( bool s) { by_aln_ = s; }
 	bool by_aln() const{ return by_aln_; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::list< core::Size > selection_;

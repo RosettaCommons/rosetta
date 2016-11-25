@@ -59,6 +59,9 @@
 //utility
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace devel {
@@ -67,22 +70,22 @@ namespace loop_creation {
 static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 
 //****CREATOR METHODS****//
-std::string
-FragmentLoopInserterCreator::keyname() const
-{
-	return FragmentLoopInserterCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentLoopInserterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FragmentLoopInserter::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FragmentLoopInserterCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentLoopInserter );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FragmentLoopInserterCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FragmentLoopInserter );
+// XRW TEMP }
 
-std::string
-FragmentLoopInserterCreator::mover_name()
-{
-	return "FragmentLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentLoopInserter::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "FragmentLoopInserter";
+// XRW TEMP }
 //****END CREATOR METHODS****//
 
 FragmentLoopInserter::FragmentLoopInserter():
@@ -124,10 +127,10 @@ FragmentLoopInserter::fresh_instance() const {
 	return protocols::moves::MoverOP( new FragmentLoopInserter );
 }
 
-std::string
-FragmentLoopInserter::get_name() const {
-	return "FragmentLoopInserter";
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentLoopInserter::get_name() const {
+// XRW TEMP  return "FragmentLoopInserter";
+// XRW TEMP }
 
 void
 FragmentLoopInserter::apply(
@@ -423,6 +426,39 @@ FragmentLoopInserter::parse_my_tag(
 		utility_exit_with_message("You must specify the maximum rmsd of flanking regions using max_rms");
 	}
 }
+
+std::string FragmentLoopInserter::get_name() const {
+	return mover_name();
+}
+
+std::string FragmentLoopInserter::mover_name() {
+	return "FragmentLoopInserter";
+}
+
+void FragmentLoopInserter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attributes_for_parse_loop_anchor( attlist );
+	attlist + XMLSchemaAttribute::required_attribute( "max_rms", xsct_real, "maximum rmsd of flanking regions" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string FragmentLoopInserterCreator::keyname() const {
+	return FragmentLoopInserter::mover_name();
+}
+
+protocols::moves::MoverOP
+FragmentLoopInserterCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FragmentLoopInserter );
+}
+
+void FragmentLoopInserterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FragmentLoopInserter::provide_xml_schema( xsd );
+}
+
 
 } //loop creation
 } //devel

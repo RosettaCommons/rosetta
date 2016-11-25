@@ -1865,6 +1865,8 @@ read_center_normal_from_tag( core::Vector & center, core::Vector & normal, utili
 	}
 }
 
+
+
 /// @brief Read in a user provided center/normal pair from the commandline, safetly
 /// @details Read the membrane setup center & normal options form the command line
 /// from mp:setup:center and mp:setup:normal. Intended to reduce IO code duplication

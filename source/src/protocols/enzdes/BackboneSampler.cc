@@ -53,6 +53,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -60,23 +63,22 @@ namespace enzdes {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
-std::string
-BackboneSamplerCreator::keyname() const
-{
-	return BackboneSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BackboneSamplerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BackboneSampler::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BackboneSamplerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackboneSampler() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BackboneSamplerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BackboneSampler() );
+// XRW TEMP }
 
-std::string
-BackboneSamplerCreator::mover_name()
-{
-	return "BackboneSampler";
-}
-
+// XRW TEMP std::string
+// XRW TEMP BackboneSampler::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BackboneSampler";
+// XRW TEMP }
 BackboneSampler::BackboneSampler() :
 	LigandBaseProtocol(),
 	bb_moves_( 1000 ),
@@ -186,10 +188,10 @@ BackboneSampler::apply( Pose & pose )
 	//  pose.dump_pdb("BBG_pose.pdb");
 }
 
-std::string
-BackboneSampler::get_name() const {
-	return BackboneSamplerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BackboneSampler::get_name() const {
+// XRW TEMP  return BackboneSampler::mover_name();
+// XRW TEMP }
 
 void BackboneSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -199,8 +201,49 @@ void BackboneSampler::parse_my_tag(
 	Pose const & )
 {
 	bb_moves_ = tag->getOption<core::Size>( "moves", 1000 );
+	mc_kt_ = tag->getOption< core::Real>( "kT", 0.6 );
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
 }
+
+std::string BackboneSampler::get_name() const {
+	return mover_name();
+}
+
+std::string BackboneSampler::mover_name() {
+	return "BackboneSampler";
+}
+
+void BackboneSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	//Structure for this mover ( no documentation available)
+	//bb_moves_ option (core::Size, number of backbone moves to make, default 1000)
+	//scorefxn_repack_ (just calls parse_score_function)
+	attlist + XMLSchemaAttribute::attribute_w_default( "moves", xsct_non_negative_integer, "number of backbone moves to make", "1000" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "kT", xsct_real, "Temperature parameter (kT) for Monte Carlo sampling", "0.6" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	// If it takes a score function/TOs, use rosetta_scripts::attributes_for_parse_score_function( attributes) / attributes_for_parse_task_operations( attributes )
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adapted from the protein interface design backrub mover. Mover that makes a given number of Monte Carlo steps attempting backrub-like Gaussian backbone moves to the provided protein. May be used to generate an ensemble of backbones.", attlist );
+}
+
+std::string BackboneSamplerCreator::keyname() const {
+	return BackboneSampler::mover_name();
+}
+
+protocols::moves::MoverOP
+BackboneSamplerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackboneSampler );
+}
+
+void BackboneSamplerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackboneSampler::provide_xml_schema( xsd );
+}
+
 
 
 } //enzdes

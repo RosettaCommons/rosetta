@@ -1,20 +1,21 @@
 <ROSETTASCRIPTS>
         <SCOREFXNS>
-	  <s12_prime weights="score12prime"/>
+	  <ScoreFunction name="s12_prime" weights="score12prime"/>
         </SCOREFXNS>
 	<TASKOPERATIONS>
-	  <InitializeFromCommandline name=cmdTask/>
+	  <InitializeFromCommandline name="cmdTask"/>
 	</TASKOPERATIONS>
         <FILTERS>
 	</FILTERS>
         <MOVERS>
-	  <FavorNativeResidue name=favor bonus=0.5/>
-	  <PackRotamersMover name=pack scorefxn=s12_prime task_operations=cmdTask />
+	  <FavorNativeResidue name="favor" bonus="0.5"/>
+	  <PackRotamersMover name="pack" scorefxn="s12_prime" task_operations="cmdTask" />
         </MOVERS>
         <APPLY_TO_POSE>
         </APPLY_TO_POSE>
         <PROTOCOLS>
-	  <Add mover_name=favor/>
-	  <Add mover_name=pack/>
+	  <Add mover_name="favor"/>
+	  <Add mover_name="pack"/>
         </PROTOCOLS>
+
 </ROSETTASCRIPTS>

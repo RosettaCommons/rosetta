@@ -86,7 +86,7 @@ public:
 
 	// Getters/Setters
 	std::string name() override { return "TrajectoryReportToDB"; }
-	std::string get_name() const override { return "TrajectoryReportToDB"; }
+	// XRW TEMP  std::string get_name() const override { return "TrajectoryReportToDB"; }
 
 	void
 	set_stride(
@@ -95,6 +95,18 @@ public:
 
 	core::Size
 	get_stride () const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @details Probably only needed for unit testing
 	std::map<std::string, core::Size>

@@ -29,6 +29,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.aa_composition.AddCompositionConstraintMover" );
 
@@ -40,28 +43,28 @@ using namespace core::scoring;
 using namespace constraints;
 using namespace utility::tag;
 
-std::string
-AddCompositionConstraintMoverCreator::keyname() const
-{
-	return AddCompositionConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddCompositionConstraintMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddCompositionConstraintMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AddCompositionConstraintMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new AddCompositionConstraintMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddCompositionConstraintMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AddCompositionConstraintMover );
+// XRW TEMP }
 
-std::string
-AddCompositionConstraintMoverCreator::mover_name()
-{
-	return "AddCompositionConstraintMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddCompositionConstraintMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddCompositionConstraintMover";
+// XRW TEMP }
 
 /// @brief Default Constructor
 ///
 AddCompositionConstraintMover::AddCompositionConstraintMover():
-	protocols::moves::Mover( AddCompositionConstraintMoverCreator::mover_name() ),
+	protocols::moves::Mover( AddCompositionConstraintMover::mover_name() ),
 	//TODO initialize variables here
 	constraint_()
 {
@@ -70,7 +73,7 @@ AddCompositionConstraintMover::AddCompositionConstraintMover():
 /// @brief Copy Constructor
 ///
 AddCompositionConstraintMover::AddCompositionConstraintMover( AddCompositionConstraintMover const &src ):
-	protocols::moves::Mover( AddCompositionConstraintMoverCreator::mover_name() ),
+	protocols::moves::Mover( AddCompositionConstraintMover::mover_name() ),
 	//TODO initialize variables here
 	constraint_( src.constraint_ )
 {
@@ -91,10 +94,10 @@ protocols::moves::MoverOP AddCompositionConstraintMover::fresh_instance() const 
 
 /// @brief Returns the name of this mover ("AddCompositionConstraintMover").
 ///
-std::string
-AddCompositionConstraintMover::get_name() const {
-	return AddCompositionConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddCompositionConstraintMover::get_name() const {
+// XRW TEMP  return AddCompositionConstraintMover::mover_name();
+// XRW TEMP }
 
 /// @brief Actually apply the mover to a pose.
 ///
@@ -178,6 +181,40 @@ AddCompositionConstraintMover::add_residue_selector( core::select::residue_selec
 	constraint_->set_selector( selector_in );
 	return;
 }
+
+std::string AddCompositionConstraintMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddCompositionConstraintMover::mover_name() {
+	return "AddCompositionConstraintMover";
+}
+
+void AddCompositionConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of composition constraint file" );
+	// I would consider a complex type that ends in .pdb, but I want users to be
+	// able to provide cifs! Or name their files whatever!
+	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add composition constraints from the provided file to the selected region", attlist );
+}
+
+std::string AddCompositionConstraintMoverCreator::keyname() const {
+	return AddCompositionConstraintMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddCompositionConstraintMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddCompositionConstraintMover );
+}
+
+void AddCompositionConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddCompositionConstraintMover::provide_xml_schema( xsd );
+}
+
 
 } // aa_composition
 } // protocols

@@ -62,6 +62,9 @@
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -95,10 +98,10 @@ LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves(
 {
 }
 
-std::string
-LoopMover_Perturb_QuickCCD_Moves::get_name() const {
-	return "LoopMover_Perturb_QuickCCD_Moves";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Perturb_QuickCCD_Moves::get_name() const {
+// XRW TEMP  return "LoopMover_Perturb_QuickCCD_Moves";
+// XRW TEMP }
 
 LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::pose::Pose & pose,
@@ -145,7 +148,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, loop.cut() );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, loop.cut()+1 );
 		pose.conformation().declare_chemical_bond( loop.cut(), pose.residue( loop.cut() ).atom_name( pose.residue( loop.cut() ).upper_connect_atom() ),
-																							 loop.cut() + 1, pose.residue( loop.cut() + 1 ).atom_name( pose.residue( loop.cut() + 1 ).lower_connect_atom() ) );
+			loop.cut() + 1, pose.residue( loop.cut() + 1 ).atom_name( pose.residue( loop.cut() + 1 ).lower_connect_atom() ) );
 	}
 
 	( *scorefxn() )(pose);
@@ -313,16 +316,46 @@ basic::Tracer & LoopMover_Perturb_QuickCCD_Moves::tr() const
 	return TR;
 }
 
-LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreator() {}
+// XRW TEMP LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreator() {}
 
 
-moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
+// XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Perturb_QuickCCD_Moves";
+// XRW TEMP }
+
+std::string LoopMover_Perturb_QuickCCD_Moves::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Perturb_QuickCCD_Moves::mover_name() {
+	return "LoopMover_Perturb_QuickCCD_Moves";
+}
+
+void LoopMover_Perturb_QuickCCD_Moves::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Kinematic loop closure main protocol.", attlist );
 }
 
 std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {
-	return "LoopMover_Perturb_QuickCCD_Moves";
+	return LoopMover_Perturb_QuickCCD_Moves::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves );
+}
+
+void LoopMover_Perturb_QuickCCD_MovesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Perturb_QuickCCD_Moves::provide_xml_schema( xsd );
+}
+
 
 } // namespace perturb
 } // namespace loop_mover

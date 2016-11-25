@@ -39,6 +39,9 @@
 
 // C++ headers
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -53,13 +56,13 @@ using utility::sql_database::sessionOP;
 namespace protocols {
 namespace features {
 
-FeaturesReporterOP RuntimeFeaturesCreator::create_features_reporter() const { // {{{1
-	return FeaturesReporterOP( new RuntimeFeatures );
-}
+// XRW TEMP FeaturesReporterOP RuntimeFeaturesCreator::create_features_reporter() const { // {{{1
+// XRW TEMP  return FeaturesReporterOP( new RuntimeFeatures );
+// XRW TEMP }
 
-string RuntimeFeaturesCreator::type_name() const { // {{{1
-	return "RuntimeFeatures";
-}
+// XRW TEMP string RuntimeFeaturesCreator::type_name() const { // {{{1
+// XRW TEMP  return "RuntimeFeatures";
+// XRW TEMP }
 // }}}1
 
 RuntimeFeatures::RuntimeFeatures() {} // {{{1
@@ -110,6 +113,39 @@ Size RuntimeFeatures::report_features( // {{{1
 	basic::database::safely_write_to_database(statement);
 	return 0;
 }
+
+std::string RuntimeFeatures::type_name() const {
+	return class_name();
+}
+
+std::string RuntimeFeatures::class_name() {
+	return "RuntimeFeatures";
+}
+
+void RuntimeFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report runtime information for the current job",
+		attlist );
+}
+
+std::string RuntimeFeaturesCreator::type_name() const {
+	return RuntimeFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+RuntimeFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new RuntimeFeatures );
+}
+
+void RuntimeFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RuntimeFeatures::provide_xml_schema( xsd );
+}
+
 // }}}1
 
 }

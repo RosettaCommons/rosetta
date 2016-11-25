@@ -28,6 +28,9 @@
 #include <numeric/util.hh>
 
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace filters {
@@ -135,11 +138,69 @@ ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 }
 
-FilterOP
-ReplicateFilterCreator::create_filter() const { return FilterOP( new ReplicateFilter ); }
+// XRW TEMP FilterOP
+// XRW TEMP ReplicateFilterCreator::create_filter() const { return FilterOP( new ReplicateFilter ); }
 
-std::string
-ReplicateFilterCreator::keyname() const { return "ReplicateFilter"; }
+// XRW TEMP std::string
+// XRW TEMP ReplicateFilterCreator::keyname() const { return "ReplicateFilter"; }
+
+std::string ReplicateFilter::name() const {
+	return class_name();
+}
+
+std::string ReplicateFilter::class_name() {
+	return "ReplicateFilter";
+}
+
+void ReplicateFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute(
+		"filter_name", xs_string,
+		"Name of the filter to be applied multiple times." )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"replicates", xsct_non_negative_integer,
+		"Number of replicates.",
+		"1" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"upper_cut", xsct_real,
+		"Trim of the highest value bye upper_cut.",
+		"0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"lower_cut", xsct_real,
+		"Trim of the lowest value bye lower_cut.",
+		"0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"median", xsct_rosetta_bool,
+		"If true, calculate the median instead of the average.",
+		"false" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"threshold", xsct_real,
+		"Filter returns true of calculated value is less than threshold.",
+		"0" );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Repeat a filter multiple times and average.",
+		attlist );
+}
+
+std::string ReplicateFilterCreator::keyname() const {
+	return ReplicateFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ReplicateFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ReplicateFilter );
+}
+
+void ReplicateFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ReplicateFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protocols

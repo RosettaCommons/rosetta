@@ -47,6 +47,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -76,13 +79,13 @@ namespace protocols {
 namespace loop_modeling {
 namespace utilities {
 
-moves::MoverOP PrepareForFullatomCreator::create_mover() const { // {{{1
-	return moves::MoverOP( new PrepareForFullatom );
-}
+// XRW TEMP moves::MoverOP PrepareForFullatomCreator::create_mover() const { // {{{1
+// XRW TEMP  return moves::MoverOP( new PrepareForFullatom );
+// XRW TEMP }
 
-string PrepareForFullatomCreator::keyname() const { // {{{1
-	return "PrepareForFullatom";
-}
+// XRW TEMP string PrepareForFullatomCreator::keyname() const { // {{{1
+// XRW TEMP  return "PrepareForFullatom";
+// XRW TEMP }
 // }}}1
 
 PrepareForFullatom::PrepareForFullatom() // {{{1
@@ -205,6 +208,46 @@ void PrepareForFullatom::set_score_function(ScoreFunctionOP score_function) { //
 void PrepareForFullatom::set_force_repack(bool value) { // {{{1
 	force_repack_ = value;
 }
+
+std::string PrepareForFullatom::get_name() const {
+	return mover_name();
+}
+
+std::string PrepareForFullatom::mover_name() {
+	return "PrepareForFullatom";
+}
+
+void PrepareForFullatom::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// add score function tags
+	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	XMLSchemaComplexTypeGenerator ct_gen;
+	// subelement_list for the LoopMover subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+	ct_gen.element_name( mover_name() )
+		.description( "Switch from centroid to full atom representation." )
+		.add_attribute( XMLSchemaAttribute("force_repack", xsct_rosetta_bool, "Enforce side chain repackig")  )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string PrepareForFullatomCreator::keyname() const {
+	return PrepareForFullatom::mover_name();
+}
+
+protocols::moves::MoverOP
+PrepareForFullatomCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PrepareForFullatom );
+}
+
+void PrepareForFullatomCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PrepareForFullatom::provide_xml_schema( xsd );
+}
+
 // }}}1
 
 }

@@ -40,21 +40,21 @@ namespace enzymes {
 // Return the consensus sequence of the requested enzyme.
 std::string const &
 EnzymeManager::get_consensus_sequence(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->
-			enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_sequence;
+		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_sequence;
 }
 
 // Return the consensus sequence type of the requested enzyme.
 /// @return  a ConsensusSequenceType enum value
 ConsensusSequenceType
 EnzymeManager::get_consensus_sequence_type(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.cs_type;
 }
@@ -62,9 +62,9 @@ EnzymeManager::get_consensus_sequence_type(
 // Return the efficiency of the requested enzyme.
 core::Real
 EnzymeManager::get_efficiency(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.efficiency;
 }
@@ -74,12 +74,12 @@ EnzymeManager::get_efficiency(
 /// possible byproducts, respectively.
 utility::vector1< std::string > const &
 EnzymeManager::get_second_substrates_or_byproducts(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->
-			second.second_substrates_or_byproducts;
+		second.second_substrates_or_byproducts;
 }
 
 
@@ -87,20 +87,20 @@ EnzymeManager::get_second_substrates_or_byproducts(
 /// @return  a vector of vectors of strings, because each position may have more than one possible match.
 utility::vector1< utility::vector1< std::string > > const &
 EnzymeManager::get_consensus_residues(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->
-			enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_residues;
+		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.consensus_residues;
 }
 
 // Return the position in the consensus sequence of the reactive residue.
 core::uint
 EnzymeManager::get_reactive_residue_consensus_sequence_position(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.cs_resnum;
 }
@@ -108,12 +108,12 @@ EnzymeManager::get_reactive_residue_consensus_sequence_position(
 // Return the name of the reactive site atom.
 std::string const &
 EnzymeManager::get_reactive_atom(
-		std::string const & family,
-		std::string const & species,
-		std::string const & enzyme )
+	std::string const & family,
+	std::string const & species,
+	std::string const & enzyme )
 {
 	return get_instance()->
-			enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.atom_to_modify;
+		enzymes_.find( family )->second.find( species )->second.find( enzyme )->second.atom_to_modify;
 }
 
 
@@ -123,7 +123,7 @@ EnzymeManager::EnzymeManager()
 {
 	// TODO: Refactor to lazily load based on the requested family-species-name combos in a thread-safe manner.
 	EnzymeData enzyme_data( read_enzyme_data_from_file( basic::database::full_name(
-			"virtual_enzymes/glycosyltransferases/h_sapiens/generic_N-glycosyltransferase" ) ) );  // TEMP
+		"virtual_enzymes/glycosyltransferases/h_sapiens/generic_N-glycosyltransferase" ) ) );  // TEMP
 
 	parse_consensus_sequence( enzyme_data );
 
@@ -138,15 +138,15 @@ EnzymeManager::parse_consensus_sequence( EnzymeData & enzyme_data ) const
 	std::string const & consensus( enzyme_data.consensus_sequence );
 
 	switch ( enzyme_data.cs_type ) {
-		case AA:
-			enzyme_data.consensus_residues = get_3_letter_codes_from_peptide_consensus_sequence( consensus );
-			break;
-		case NA:
-			enzyme_data.consensus_residues = get_codes_from_NA_consensus_sequence( consensus );
-			break;
-		case SACCHARIDE:
-			enzyme_data.consensus_residues = get_codes_from_saccharide_consensus_sequence( consensus );
-			break;
+	case AA :
+		enzyme_data.consensus_residues = get_3_letter_codes_from_peptide_consensus_sequence( consensus );
+		break;
+	case NA :
+		enzyme_data.consensus_residues = get_codes_from_NA_consensus_sequence( consensus );
+		break;
+	case SACCHARIDE :
+		enzyme_data.consensus_residues = get_codes_from_saccharide_consensus_sequence( consensus );
+		break;
 	}
 }
 

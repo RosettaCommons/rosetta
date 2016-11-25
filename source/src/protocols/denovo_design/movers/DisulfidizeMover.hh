@@ -58,13 +58,13 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	/// @brief Return the name of this mover.
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const override;
 
 	// public methods
 public:
@@ -211,11 +211,23 @@ public: //mutators
 	/// @brief If true, PRO --> CYS mutations will be allowed. Default=false
 	void set_mutate_pro( bool const mutate_pro );
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 	/// @brief Identifies disulfides for a given input pose
-	virtual bool process_pose(
+	bool process_pose(
 		core::pose::Pose & pose,
-		utility::vector1 < core::pose::PoseOP > & additional_poses );
+		utility::vector1 < core::pose::PoseOP > & additional_poses ) override;
 
 	/// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
 	/// duplicates.

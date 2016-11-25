@@ -85,6 +85,21 @@ public:
 
 	utility::vector1< std::string > copy_comments() const{ return copy_comments_; }
 	void copy_comments( utility::vector1< std::string > const & s ){ copy_comments_ = s; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void attributes( utility::tag::AttributeList & attlist );
+
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.

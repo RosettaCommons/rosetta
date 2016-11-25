@@ -88,6 +88,9 @@ using basic::T;
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::Error;
@@ -699,28 +702,58 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 	//DockingHighRes::set_task_factory( local_tf );
 }
 
-std::string
-DockingHighResLegacy::get_name() const {
+// XRW TEMP std::string
+// XRW TEMP DockingHighResLegacy::get_name() const {
+// XRW TEMP  return "DockingHighResLegacy";
+// XRW TEMP }
+
+// creator methods
+// XRW TEMP std::string
+// XRW TEMP DockingHighResLegacyCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockingHighResLegacy::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockingHighResLegacyCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockingHighResLegacy() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockingHighResLegacy::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockingHighResLegacy";
+// XRW TEMP }
+
+std::string DockingHighResLegacy::get_name() const {
+	return mover_name();
+}
+
+std::string DockingHighResLegacy::mover_name() {
 	return "DockingHighResLegacy";
 }
 
-// creator methods
-std::string
-DockingHighResLegacyCreator::keyname() const
+void DockingHighResLegacy::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockingHighResLegacyCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs the legacy high resolution docking protocol", attlist );
+}
+
+std::string DockingHighResLegacyCreator::keyname() const {
+	return DockingHighResLegacy::mover_name();
 }
 
 protocols::moves::MoverOP
 DockingHighResLegacyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingHighResLegacy() );
+	return protocols::moves::MoverOP( new DockingHighResLegacy );
 }
 
-std::string
-DockingHighResLegacyCreator::mover_name()
+void DockingHighResLegacyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockingHighResLegacy";
+	DockingHighResLegacy::provide_xml_schema( xsd );
 }
+
 
 
 } // namespace docking

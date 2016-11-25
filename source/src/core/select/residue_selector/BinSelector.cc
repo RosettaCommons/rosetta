@@ -91,11 +91,13 @@ BinSelector::apply(
 	core::Size const nres( pose.size() ); //Number of residues in the pose
 	ResidueSubset outvect( nres, false ); //Output vector, initialized to a vector of "false".
 	for ( core::Size i=1; i<=nres; ++i ) {
-		if ( !pose.residue(i).type().is_polymer() ) continue; //Ignore ligands.
-		if ( select_only_alpha_aas() && !pose.residue(i).type().is_alpha_aa() ) continue; //Ignore non-alpha amino acids, if set to do so.
-		if ( !pose.residue(i).has_lower_connect() || !pose.residue(i).has_upper_connect() ) continue; //Ignore residues with no lower or upper connection.
-		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().lower_connect_id() ) ) continue; //Ignore residues with a lower connection, but nothing there.
-		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue(i).type().upper_connect_id() ) ) continue; //Ignore residues with an upper connection, but nothing there.
+		// Ignore ligands, non-alpha AAs (if instructed), residues without a
+		// LOWER or UPPER, and residues with broken LOWER or UPPER.
+		if ( !pose.residue_type( i ).is_polymer() ) continue;
+		if ( select_only_alpha_aas() && !pose.residue_type(i).is_alpha_aa() ) continue;
+		if ( !pose.residue(i).has_lower_connect() || !pose.residue(i).has_upper_connect() ) continue;
+		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).lower_connect_id() ) ) continue;
+		if ( !pose.residue(i).connected_residue_at_resconn( pose.residue_type(i).upper_connect_id() ) ) continue;
 
 		core::Size data(0), bin(0);
 		bin_transition_calculator_->find_data_and_bin( bin_name(), pose.residue(i), data, bin, false);
@@ -109,7 +111,7 @@ BinSelector::apply(
 		TR.Debug << "BinSelector has selected:" << std::endl;
 		for ( core::Size i=1, imax=outvect.size(); i<=imax; ++i ) {
 			TR.Debug << i << "\t" << (outvect[i] ? "TRUE" : "FALSE");
-			if ( pose.residue(i).type().is_alpha_aa() ) {
+			if ( pose.residue_type(i).is_alpha_aa() ) {
 				TR.Debug << "\tphi:" << pose.phi(i) << "\tpsi:" << pose.psi(i) << "\tomega:" << pose.omega(i) << std::endl;
 			}
 			TR.Debug << std::endl;
@@ -217,10 +219,33 @@ void
 BinSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "bin_params_file", xs_string, "ABEGO" ) );
-	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "bin", xs_string, "" ));
-	attributes.push_back( XMLSchemaAttribute::attribute_w_default( "select_only_alpha_aas", xs_boolean, "true" ));
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(
+		"bin_params_file", xs_string,
+		"The filename of a bin_params file that defines a set of torsion bins. "
+		"Current options include \"ABEGO\", \"ABBA\" (a symmetric version of "
+		"the ABEGO nomenclature useful for mixed D/L design), and \"PRO_DPRO\" "
+		"(which defines bins \"LPRO\" and \"DPRO\" corresponding to the regions "
+		"of Ramachandran space accessible to L- and D-proline, respectively). "
+		"Predefined bin_params files are in database/protocol_data/generalizedKIC/bin_params/. "
+		"A custom-written bin_params file may also be provided with its relative "
+		"path from the execution directory.",
+		"ABEGO"  ) );
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(
+		"bin", xs_string,
+		"The name of the mainchain torsion bin.",
+		""));
+	attributes.push_back( XMLSchemaAttribute::attribute_w_default(
+		"select_only_alpha_aas", xsct_rosetta_bool,
+		"If true, only alpha-amino acids are selected. If false, "
+		"any polymeric type allowed by the bin definitions file is selected.",
+		"true"  ));
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The BinSelector selects residues that fall in a named mainchain torsion bin "
+		"(e.g. the \"A\" bin, corresponding to alpha-helical residues by the \"ABEGO\" "
+		"nomenclature). Non-polymeric residues are ignored. By default, only "
+		"alpha-amino acids are selected, though this can be disabled.",
+		attributes );
 }
 
 core::select::residue_selector::ResidueSelectorOP

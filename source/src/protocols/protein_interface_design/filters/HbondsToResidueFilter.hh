@@ -72,22 +72,22 @@ public :
 	HbondsToResidueFilter( HbondsToResidueFilter const &src );
 
 
-	bool apply( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
+	bool apply( core::pose::Pose const & pose ) const override;
+	protocols::filters::FilterOP clone() const override {
 		return protocols::filters::FilterOP( new HbondsToResidueFilter( *this ) );
 	}
-	protocols::filters::FilterOP fresh_instance() const{
+	protocols::filters::FilterOP fresh_instance() const override {
 		return protocols::filters::FilterOP( new HbondsToResidueFilter() );
 	}
 
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
 	/// @brief Actually compute the number of hydrogen bonds to the target residue.
 	///
 	core::Size compute( core::pose::Pose const & pose, core::Size const resnum_rosetta ) const;
 	virtual ~HbondsToResidueFilter();
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.
 	///
@@ -177,6 +177,18 @@ public :
 	/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
 	/// if a ResidueSelector is provided.
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

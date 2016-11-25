@@ -30,6 +30,7 @@
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -64,7 +65,11 @@ find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
 parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data );
 
+void
+add_subelement_for_parse_stub_sets( utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );
+
 core::scoring::ScoreFunctionOP make_stub_scorefxn();
+
 } //movers
 } //protein_interface_design
 } //protocols

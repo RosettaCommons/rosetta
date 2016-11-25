@@ -44,6 +44,9 @@
 
 // C++ headers
 #include <iomanip>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Operating system headers
 
@@ -68,20 +71,20 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-std::string
-SilentTrajectoryRecorderCreator::keyname() const {
-	return SilentTrajectoryRecorderCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SilentTrajectoryRecorderCreator::keyname() const {
+// XRW TEMP  return SilentTrajectoryRecorder::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SilentTrajectoryRecorderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SilentTrajectoryRecorderCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
+// XRW TEMP }
 
-std::string
-SilentTrajectoryRecorderCreator::mover_name() {
-	return "SilentTrajectoryRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP SilentTrajectoryRecorder::mover_name() {
+// XRW TEMP  return "SilentTrajectoryRecorder";
+// XRW TEMP }
 
 SilentTrajectoryRecorder::SilentTrajectoryRecorder() {
 	using namespace basic::options;
@@ -110,11 +113,11 @@ SilentTrajectoryRecorder::fresh_instance() const
 	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
 }
 
-std::string
-SilentTrajectoryRecorder::get_name() const
-{
-	return "SilentTrajectoryRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP SilentTrajectoryRecorder::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "SilentTrajectoryRecorder";
+// XRW TEMP }
 
 void
 SilentTrajectoryRecorder::parse_my_tag(
@@ -235,6 +238,44 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 
 	Parent::observe_after_metropolis(metropolis_hastings_mover);
 }
+
+std::string SilentTrajectoryRecorder::get_name() const {
+	return mover_name();
+}
+
+std::string SilentTrajectoryRecorder::mover_name() {
+	return "SilentTrajectoryRecorder";
+}
+
+void SilentTrajectoryRecorder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist;
+	TrajectoryRecorder::attributes_for_trajectory_recorder( attlist );
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "score_stride", xsct_non_negative_integer, "How often (in terms of cycles) to take snapshots and store output?", "100" )
+		+ XMLSchemaAttribute::attribute_w_default( "silent_struct_type", xs_string, "Type of silent structure to use for output", "any")
+		+ XMLSchemaAttribute::attribute_w_default( "write_extra_scores", xsct_rosetta_bool, "Write a separate score file", "false" );
+
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Stores trajectory outputs to a silent file", attlist );
+}
+
+std::string SilentTrajectoryRecorderCreator::keyname() const {
+	return SilentTrajectoryRecorder::mover_name();
+}
+
+protocols::moves::MoverOP
+SilentTrajectoryRecorderCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
+}
+
+void SilentTrajectoryRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SilentTrajectoryRecorder::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace canonical_sampling

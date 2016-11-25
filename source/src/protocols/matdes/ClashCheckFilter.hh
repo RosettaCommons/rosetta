@@ -80,7 +80,7 @@ public:// virtual constructor
 public:// accessor
 
 	// @brief get name of this filter
-	std::string name() const override { return "ClashCheck"; }
+	// XRW TEMP  std::string name() const override { return "ClashCheck"; }
 
 public:// setters
 
@@ -124,6 +124,18 @@ public:// virtual main operation
 
 	void write_to_pdb( core::pose::Pose const & pose, std::string const & residue_name, core::Size const residue, std::string const & atom_name ) const;
 	void write_pymol_string_to_pdb( std::string const & pymol_selection ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

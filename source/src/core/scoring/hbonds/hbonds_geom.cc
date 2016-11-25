@@ -488,7 +488,7 @@ get_hb_acc_chem_type(
 ) {
 	using namespace chemical;
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
-	
+
 	chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_type();
 
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime

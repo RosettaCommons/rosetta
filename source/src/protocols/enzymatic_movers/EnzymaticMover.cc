@@ -119,11 +119,11 @@ EnzymaticMover::show( std::ostream & output ) const
 
 void
 EnzymaticMover::parse_my_tag(
-		TagCOP /*tag*/,
-		basic::datacache::DataMap & /*data*/,
-		Filters_map const & /*filters*/,
-		moves::Movers_map const & /*movers*/,
-		Pose const & /*pose*/ )
+	TagCOP /*tag*/,
+	basic::datacache::DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	moves::Movers_map const & /*movers*/,
+	Pose const & /*pose*/ )
 {}
 
 
@@ -155,7 +155,7 @@ EnzymaticMover::apply( Pose & input_pose )
 			j = core::uint( numeric::random::rg().uniform() * get_n_co_substrates() + 1 );
 		}
 		//ConsensusSequenceType const sequence_type(
-		//		EnzymeManager::get_consensus_sequence_type( species_name_, enzyme_name_ ) );
+		//  EnzymeManager::get_consensus_sequence_type( species_name_, enzyme_name_ ) );
 		perform_reaction( input_pose, i, get_co_substrate( j ) );
 	}
 
@@ -237,9 +237,9 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 
 	string const & consensus( EnzymeManager::get_consensus_sequence( enzyme_family_, species_name_, enzyme_name_ ) );
 	vector1< vector1< string > > const & consensus_residues(
-			EnzymeManager::get_consensus_residues( enzyme_family_, species_name_, enzyme_name_ ) );
+		EnzymeManager::get_consensus_residues( enzyme_family_, species_name_, enzyme_name_ ) );
 	core::uint const site_residue_position( EnzymeManager::get_reactive_residue_consensus_sequence_position(
-			enzyme_family_, species_name_, enzyme_name_ ) );
+		enzyme_family_, species_name_, enzyme_name_ ) );
 	vector1< string > const & site_residues( consensus_residues[ site_residue_position ] );  // could be more than one
 	Size const n_consensus_residues( site_residues.size() );
 	Size const n_residues_left_of_site( site_residue_position - 1 );
@@ -343,7 +343,7 @@ void
 EnzymaticMover::set_available_co_substrates()
 {
 	co_substrates_ = core::enzymes::EnzymeManager::get_second_substrates_or_byproducts(
-			enzyme_family_, species_name_, enzyme_name_ );
+		enzyme_family_, species_name_, enzyme_name_ );
 }
 
 }  // namespace enzymatic_movers

@@ -50,6 +50,9 @@
 #include <utility/vector1.hh>
 
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -61,22 +64,22 @@ namespace match {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.match.MatcherMover" );
 
-std::string
-MatcherMoverCreator::keyname() const
-{
-	return MatcherMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MatcherMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MatcherMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MatcherMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MatcherMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MatcherMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MatcherMover );
+// XRW TEMP }
 
-std::string
-MatcherMoverCreator::mover_name()
-{
-	return "MatcherMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MatcherMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MatcherMover";
+// XRW TEMP }
 
 MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	protocols::rosetta_scripts::MultiplePoseMover(),
@@ -233,11 +236,11 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	return true;
 } //MatcherMover::process_pose function
 
-std::string
-MatcherMover::get_name() const
-{
-	return "MatcherMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MatcherMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "MatcherMover";
+// XRW TEMP }
 
 void
 MatcherMover::setup_seqpos_from_selectors( protocols::match::MatcherTask & mtask, core::pose::Pose const & pose ) const
@@ -337,6 +340,40 @@ MatcherMover::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 	}
 }
+
+std::string MatcherMover::get_name() const {
+	return mover_name();
+}
+
+std::string MatcherMover::mover_name() {
+	return "MatcherMover";
+}
+
+void MatcherMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	//residues_for_geomcsts: comma-separated list of residue selectors
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "incorporate_matches_into_pose", xsct_rosetta_bool, "Incorporate the identified matches into the input pose", "true" )
+		+ XMLSchemaAttribute( "residues_for_geomcsts", xs_string, "A comma-separated list of residue selectors specifying residues to be used in geometric constraints" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Wrapper mover for the matcher. Constraints must be specified on the command line.", attlist );
+}
+
+std::string MatcherMoverCreator::keyname() const {
+	return MatcherMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MatcherMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MatcherMover );
+}
+
+void MatcherMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MatcherMover::provide_xml_schema( xsd );
+}
+
 
 void
 set_ligpose_rotamer( core::pose::Pose & ligpose )

@@ -1,4 +1,4 @@
-#### EnzRevert ####
+<ROSETTASCRIPTS>#### EnzRevert ####
 # Consider only the designed amino acid and the wild-type at each position. E.g. if position 5 was A in native.pdb and S in design.pdb, the algorithm only allows A or S at position 5. Accept best amino acid at each position in a "greedy" fashion. Greedy here means that the best mutation is put in, followed by second best, making sure that they are mutually compatible.
 
 #To be run as the following:
@@ -32,81 +32,81 @@ rosetta_scripts.linuxgccrelease -database ~/minirosetta_database -extra_res_fa l
 
 #Note that this script assumes that there is only one protein chain and one ligand. If not, adjust the various jump parameters accordingly
 
-<ROSETTASCRIPTS>
         <TASKOPERATIONS>
-                <InitializeFromCommandline name=init/>
-		<DetectProteinLigandInterface name=LigInterface cut1=6 cut2=8 cut3=10 cut4=12 design=1 /> Add resfile, if necessary
+                <InitializeFromCommandline name="init"/>
+		<DetectProteinLigandInterface name="LigInterface" cut1="6" cut2="8" cut3="10" cut4="12" design="1" /> Add resfile, if necessary
 
 	# If you don't want a full scan, choose one of the following mutation schemes (add angle brackets as appropriate):
 	# (Also remember to add it to the task_operation= parameter of GreedyOptMutationMover.)
 	        # To do a simple revert to native:
-		<JointSequence name=joint use_current=1 use_native=1 />
+		<JointSequence name="joint" use_current="1" use_native="1" />
 		# If you have a PSSM-format MSA for your template
 		SeqprofConsensus name=seqprof filename=profile.pssm /
 		# If you want to restrict particular identities
                 RestrictAbsentCanonicalAAS name=allaa keep_aas="ACDEFGHIKLMNPQRSTVWY"/
 	# (Note that more complicated possibilities are possible)
 
-		<SetCatalyticResPackBehavior name="catrespack" fix_catalytic_aa=1 /> Don't allow catalytic residues to mutate
-		<RestrictToRepacking name=repack_only /> Don't design when repacking.
+		<SetCatalyticResPackBehavior name="catrespack" fix_catalytic_aa="1" /> Don't allow catalytic residues to mutate
+		<RestrictToRepacking name="repack_only" /> Don't design when repacking.
         </TASKOPERATIONS>
         <SCOREFXNS>
-	        <enzdes weights=enzdes />
-	        <soft weights=ligand_soft_rep />
+	        <ScoreFunction name="enzdes" weights="enzdes" />
+	        <ScoreFunction name="soft" weights="ligand_soft_rep" />
         </SCOREFXNS>
         <FILTERS>
-	        <LigInterfaceEnergy name=ddg  scorefxn=enzdes jump_number=1 confidence=0/>
+	        <LigInterfaceEnergy name="ddg"  scorefxn="enzdes" jump_number="1" confidence="0"/>
 	        #Ddg name=ddg scorefxn=enzdes threshold=0 jump=1 repeats=3 repack=1 confidence=0/
-                <ScoreType name=resid scorefxn=enzdes score_type=res_type_constraint threshold=0 confidence=0/>
+                <ScoreType name="resid" scorefxn="enzdes" score_type="res_type_constraint" threshold="0" confidence="0"/>
 
-                <ScoreType name=total_score scorefxn=enzdes score_type=total_score threshold=0 confidence=0/> Also will contain res_type_constraint values
+                <ScoreType name="total_score" scorefxn="enzdes" score_type="total_score" threshold="0" confidence="0"/> Also will contain res_type_constraint values
 
 		#Like the revert_design_to_native, allow a small drop in ddg for going back to the native identity
-		<CombinedValue name=ddg_res confidence=0>
-		  <Add filter_name=ddg factor=1/>
-		  <Add filter_name=resid factor=1/>
+		<CombinedValue name="ddg_res" confidence="0">
+		  <Add filter_name="ddg" factor="1"/>
+		  <Add filter_name="resid" factor="1"/>
 		</CombinedValue>
 
-		<CombinedValue name=ddg_res_total confidence=0>
-		  <Add filter_name=ddg factor=1/>
+		<CombinedValue name="ddg_res_total" confidence="0">
+		  <Add filter_name="ddg" factor="1"/>
 		  Add filter_name=resid factor=1
-		  <Add filter_name=total_score factor=1.0/> Already will contain res_type_constraint
+		  <Add filter_name="total_score" factor="1.0"/> Already will contain res_type_constraint
 		</CombinedValue>
 
         </FILTERS>
         <MOVERS>
-	        <AddOrRemoveMatchCsts name=addcst cst_instruction=add_new />
-                <AddOrRemoveMatchCsts name=cst_readd cst_instruction="add_pregenerated"/>
-	        <AddOrRemoveMatchCsts name=cst_remove cst_instruction="remove" keep_covalent=1/>
-		<ScoreMover name=score scorefxn=enzdes verbose=0 />
-		<PackRotamersMover name=repack scorefxn=score12 task_operations=init,LigInterface,catrespack,repack_only/>
+	        <AddOrRemoveMatchCsts name="addcst" cst_instruction="add_new" />
+                <AddOrRemoveMatchCsts name="cst_readd" cst_instruction="add_pregenerated"/>
+	        <AddOrRemoveMatchCsts name="cst_remove" cst_instruction="remove" keep_covalent="1"/>
+		<ScoreMover name="score" scorefxn="enzdes" verbose="0" />
+		<PackRotamersMover name="repack" scorefxn="score12" task_operations="init,LigInterface,catrespack,repack_only"/>
 	        #A native residue score bump. IDENTITY with weight of 1 gives -1 to native, 0 to all others
                 # Set to give roughtly -0.05 to native and 0 to others, to match the old cst5 behavior, need to test
-		<FavorSequenceProfile name=fsp scaling=prob use_native=1 matrix=IDENTITY weight=0.05 scorefxns=enzdes />
+		<FavorSequenceProfile name="fsp" scaling="prob" use_native="1" matrix="IDENTITY" weight="0.05" scorefxns="enzdes" />
 
 		#Sidechain and rigid body minimization only - adjust as appropriate if you want more flexibility
-                <TaskAwareMinMover name=min bb=0 chi=1 jump=1 scorefxn=enzdes task_operations=LigInterface/>
+                <TaskAwareMinMover name="min" bb="0" chi="1" jump="1" scorefxn="enzdes" task_operations="LigInterface"/>
 
-   		<ParsedProtocol name=repack_min>
-                        <Add mover=repack/>
-                        <Add mover=min/>
+   		<ParsedProtocol name="repack_min">
+                        <Add mover="repack"/>
+                        <Add mover="min"/>
                 </ParsedProtocol>
 
-        	<GreedyOptMutationMover name=greedyscan relax_mover=min filter=total_score task_operations=init,joint,LigInterface,catrespack scorefxn=soft/>
+        	<GreedyOptMutationMover name="greedyscan" relax_mover="min" filter="total_score" task_operations="init,joint,LigInterface,catrespack" scorefxn="soft"/>
 	</MOVERS>
         <APPLY_TO_POSE>
         </APPLY_TO_POSE>
         <PROTOCOLS>
-	        <Add mover=addcst/>
+	        <Add mover="addcst"/>
 	# Remove the following if you don't want to add a bonus for the native identity
-	        <Add mover=fsp/>
-		<Add mover=greedyscan/>
+	        <Add mover="fsp"/>
+		<Add mover="greedyscan"/>
 ##### NOCSTREPACK #### comment out this block to get rid of nocst repack  #####
-		<Add mover=cst_remove />
-		<Add mover=repack_min />
-		<Add mover=cst_readd />
+		<Add mover="cst_remove" />
+		<Add mover="repack_min" />
+		<Add mover="cst_readd" />
 ##### END_NOCSTREPACK ## ######################################################
-		<Add mover=score/>
-		<Add filter=ddg/>
+		<Add mover="score"/>
+		<Add filter="ddg"/>
         </PROTOCOLS>
+
 </ROSETTASCRIPTS>

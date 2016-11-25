@@ -31,11 +31,11 @@ public:
 	typedef core::pose::Pose Pose;
 public:
 	TaskAwareCsts();
-	void apply( Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new TaskAwareCsts ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new TaskAwareCsts ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	virtual ~TaskAwareCsts();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
@@ -44,6 +44,18 @@ public:
 
 	std::string anchor_resnum() const { return anchor_resnum_; }
 	void anchor_resnum( std::string const & c ) { anchor_resnum_ = c; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_; /// dflt NULL (design all); designable residues will have the constraints applied to them.
 	std::string cst_type_; //dflt coordinate;

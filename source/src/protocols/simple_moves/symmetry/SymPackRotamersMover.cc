@@ -47,6 +47,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.SymPackRo
 #include <utility/vector0.hh>
 
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -63,20 +66,20 @@ using namespace operation;
 using namespace scoring;
 
 // creator
-std::string
-SymPackRotamersMoverCreator::keyname() const {
-	return SymPackRotamersMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymPackRotamersMoverCreator::keyname() const {
+// XRW TEMP  return SymPackRotamersMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SymPackRotamersMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SymPackRotamersMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymPackRotamersMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SymPackRotamersMover );
+// XRW TEMP }
 
-std::string
-SymPackRotamersMoverCreator::mover_name() {
-	return "SymPackRotamersMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymPackRotamersMover::mover_name() {
+// XRW TEMP  return "SymPackRotamersMover";
+// XRW TEMP }
 
 //////////////////////////
 /// PackRotamersMover
@@ -122,10 +125,10 @@ this->run( pose );
 
 }*/
 
-std::string
-SymPackRotamersMover::get_name() const {
-	return "SymPackRotamersMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SymPackRotamersMover::get_name() const {
+// XRW TEMP  return "SymPackRotamersMover";
+// XRW TEMP }
 
 void SymPackRotamersMover::setup( pose::Pose & pose )
 {
@@ -201,6 +204,41 @@ SymPackRotamersMover::parse_my_tag(
 {
 	PackRotamersMover::parse_my_tag( tag,data,fm,mm,pose );
 }
+
+std::string SymPackRotamersMover::get_name() const {
+	return mover_name();
+}
+
+std::string SymPackRotamersMover::mover_name() {
+	return "SymPackRotamersMover";
+}
+
+void SymPackRotamersMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexTypeGeneratorOP ct_gen = complex_type_generator_for_pack_rotamers_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Repacks sidechains with user-supplied options, including TaskOperations." )
+		.write_complex_type_to_schema( xsd );
+
+	//SymPackRotamersMover description: The symmetric versions of pack rotamers and rotamer trials movers (they take the same tags as asymmetric versions)
+}
+
+std::string SymPackRotamersMoverCreator::keyname() const {
+	return SymPackRotamersMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SymPackRotamersMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SymPackRotamersMover );
+}
+
+void SymPackRotamersMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SymPackRotamersMover::provide_xml_schema( xsd );
+}
+
 
 }
 } // moves

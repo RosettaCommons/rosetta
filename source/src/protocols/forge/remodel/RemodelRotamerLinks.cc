@@ -79,7 +79,7 @@ RemodelRotamerLinks::parse_tag( TagCOP /*tag*/ , DataMap & )
 
 void RemodelRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: no documentation online, setup RemodelRotamerLinks." );
 }
 
 void

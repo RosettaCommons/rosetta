@@ -32,6 +32,9 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -39,22 +42,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer add_hydrogens_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
-std::string
-AddHydrogensCreator::keyname() const
-{
-	return AddHydrogensCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddHydrogensCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddHydrogens::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AddHydrogensCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddHydrogens );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddHydrogensCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddHydrogens );
+// XRW TEMP }
 
-std::string
-AddHydrogensCreator::mover_name()
-{
-	return "AddHydrogens";
-}
+// XRW TEMP std::string
+// XRW TEMP AddHydrogens::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddHydrogens";
+// XRW TEMP }
 
 AddHydrogens::AddHydrogens():
 	//utility::pointer::ReferenceCount(),
@@ -80,9 +83,9 @@ protocols::moves::MoverOP AddHydrogens::fresh_instance() const {
 	return protocols::moves::MoverOP( new AddHydrogens );
 }
 
-std::string AddHydrogens::get_name() const{
-	return "AddHydrogens";
-}
+// XRW TEMP std::string AddHydrogens::get_name() const{
+// XRW TEMP  return "AddHydrogens";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -117,6 +120,37 @@ AddHydrogens::apply( core::pose::Pose & pose )
 		}
 	}
 }
+
+std::string AddHydrogens::get_name() const {
+	return mover_name();
+}
+
+std::string AddHydrogens::mover_name() {
+	return "AddHydrogens";
+}
+
+void AddHydrogens::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("chain", xs_string, "PDB-file chain ID");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Saturates the incomplete connections with H", attlist );
+}
+
+std::string AddHydrogensCreator::keyname() const {
+	return AddHydrogens::mover_name();
+}
+
+protocols::moves::MoverOP
+AddHydrogensCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddHydrogens );
+}
+
+void AddHydrogensCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddHydrogens::provide_xml_schema( xsd );
+}
+
 
 } // namespace ligand_docking
 } // namespace protocols

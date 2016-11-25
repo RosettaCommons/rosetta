@@ -81,13 +81,13 @@ void find_cutpoint_variants(
 /// helper function for looking at residue connections to get lower/upper partners
 bool
 lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
-																			 core::conformation::Residue const & upper_rsd )
+	core::conformation::Residue const & upper_rsd )
 {
 	if ( lower_rsd.connect_atom( upper_rsd ) == lower_rsd.upper_connect_atom() ) {
-			runtime_assert( upper_rsd.connect_atom( lower_rsd ) == upper_rsd.lower_connect_atom() );
-			runtime_assert( lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) );
-			runtime_assert( upper_rsd.has_variant_type( core::chemical::CUTPOINT_UPPER ) );
-			return true;
+		runtime_assert( upper_rsd.connect_atom( lower_rsd ) == upper_rsd.lower_connect_atom() );
+		runtime_assert( lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) );
+		runtime_assert( upper_rsd.has_variant_type( core::chemical::CUTPOINT_UPPER ) );
+		return true;
 	}
 	return false;
 }
@@ -109,7 +109,7 @@ get_upper_cutpoint_partner_for_lower( pose::Pose const & pose, Size const lower_
 		}
 	}
 	if ( upper_cutpoint_partner == 0 &&
-			 pose.residue_type( lower_res + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+			pose.residue_type( lower_res + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
 		utility_exit_with_message( "Did you mean to specify a chainbreak at " + ObjexxFCL::string_of( lower_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( lower_res + 1 ) + ". See, e.g., core/pose/util.cc:correctly_add_cutpoint_variants()."  );
 	}
 	return upper_cutpoint_partner;
@@ -130,7 +130,7 @@ get_lower_cutpoint_partner_for_upper( pose::Pose const & pose, Size const upper_
 		}
 	}
 	if ( lower_cutpoint_partner == 0 &&
-			 pose.residue_type( upper_res - 1 ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
+			pose.residue_type( upper_res - 1 ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 		utility_exit_with_message( "Did you mean to specify a chainbreak before " + ObjexxFCL::string_of( upper_res ) + "? If so, specify a chemical bond to " + ObjexxFCL::string_of( upper_res - 1 ) + ". See, e.g., core/pose/correctly_add_cutpoint_variants()."  );
 	}
 	return lower_cutpoint_partner;

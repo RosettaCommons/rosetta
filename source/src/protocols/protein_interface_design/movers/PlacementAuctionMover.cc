@@ -55,6 +55,9 @@
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace protocols::protein_interface_design;
@@ -68,25 +71,25 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-PlacementAuctionMoverCreator::keyname() const
-{
-	return PlacementAuctionMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlacementAuctionMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PlacementAuctionMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PlacementAuctionMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PlacementAuctionMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PlacementAuctionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PlacementAuctionMover );
+// XRW TEMP }
 
-std::string
-PlacementAuctionMoverCreator::mover_name()
-{
-	return "Auction";
-}
+// XRW TEMP std::string
+// XRW TEMP PlacementAuctionMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Auction";
+// XRW TEMP }
 
 PlacementAuctionMover::PlacementAuctionMover() :
-	simple_moves::DesignRepackMover( PlacementAuctionMoverCreator::mover_name() )
+	simple_moves::DesignRepackMover( PlacementAuctionMover::mover_name() )
 {}
 
 PlacementAuctionMover::~PlacementAuctionMover() {}
@@ -325,10 +328,10 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	TR.flush();
 }
 
-std::string
-PlacementAuctionMover::get_name() const {
-	return PlacementAuctionMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PlacementAuctionMover::get_name() const {
+// XRW TEMP  return PlacementAuctionMover::mover_name();
+// XRW TEMP }
 
 void
 PlacementAuctionMover::host_chain( core::Size const hc ){
@@ -385,6 +388,45 @@ PlacementAuctionMover::parse_my_tag( TagCOP const tag,
 	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<" and cb_force to "<<cb_force_<< " stub energy function" << stub_energy_fxn_ << '\n';
 	TR<<"PlacementAuction mover on chain "<<host_chain_<<" with repack_non_ala set to "<<std::endl;
 }
+
+std::string PlacementAuctionMover::get_name() const {
+	return mover_name();
+}
+
+std::string PlacementAuctionMover::mover_name() {
+	return "Auction";
+}
+
+void PlacementAuctionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain where design ought to be performed, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms", "0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "stubscorefxn", xs_string, "Scoring function to apply to the stubs being placed", "backbone_stub_constraint" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	add_subelement_for_parse_stub_sets( ssl, xsd );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "A PlacementAuctionMover pays increasing prices to put hotspots in place on a chain", attlist, ssl );
+}
+
+std::string PlacementAuctionMoverCreator::keyname() const {
+	return PlacementAuctionMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PlacementAuctionMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PlacementAuctionMover );
+}
+
+void PlacementAuctionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PlacementAuctionMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

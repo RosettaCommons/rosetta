@@ -1,20 +1,21 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<TASKOPERATIONS>
-		<ReadResfile name=RRF/>
-		<OperateOnCertainResidues name=fixDNA>
+		<ReadResfile name="RRF"/>
+		<OperateOnCertainResidues name="fixDNA">
+			<ResidueHasProperty property="DNA"/>
 			<PreventRepackingRLT/>
-			<ResidueHasProperty property=DNA/>
 		</OperateOnCertainResidues>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<DNA weights=dna/>
+		<ScoreFunction name="DNA" weights="dna"/>
 	</SCOREFXNS>
 	<MOVERS>
-		<ConstraintSetMover name=cstloader cst_file=constraints/>
-		<PackRotamersMover name=packrot scorefxn=DNA task_operations=RRF,fixDNA/>
+		<ConstraintSetMover name="cstloader" cst_file="constraints"/>
+		<PackRotamersMover name="packrot" scorefxn="DNA" task_operations="RRF,fixDNA"/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=cstloader/>
-		<Add mover_name=packrot/>
+		<Add mover_name="cstloader"/>
+		<Add mover_name="packrot"/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

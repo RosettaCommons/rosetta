@@ -47,6 +47,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
 
@@ -588,22 +591,77 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	}
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BfactorFittingMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BfactorFittingMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP BfactorFittingMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BfactorFittingMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP BfactorFittingMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BfactorFitting";
+// XRW TEMP }
+
+std::string BfactorFittingMover::get_name() const {
+	return mover_name();
+}
+
+std::string BfactorFittingMover::mover_name() {
+	return "BfactorFitting";
+}
+
+void BfactorFittingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("wt_adp", xsct_real, "Weight on enforcing nearby atoms to take the same B factors. "
+		"0.0005 is generally well-behaved, default=0.001")
+		+ XMLSchemaAttribute("wt_dens", xsct_real, "Weight on density contraints, default=1.0.")
+		+ XMLSchemaAttribute("rmax", xsct_real, "XRW TO DO, default=5.0")
+		+ XMLSchemaAttribute("scale", xsct_real, "Scaling factor. Is multiplied with the weighted scores "
+		"after wt_adp and wt_dens are applied, default=5000")
+		+ XMLSchemaAttribute("radius_exp", xsct_non_negative_integer, "XRW TO DO, default=1")
+		+ XMLSchemaAttribute("max_iter", xsct_non_negative_integer, "Maximum nr of round before exiting, default=200.")
+		+ XMLSchemaAttribute("minimizer", xs_string, "Minimizer used for energy minimization. default=lbfgs_armijo_nonmonotone_atol")
+		+ XMLSchemaAttribute("init", xsct_rosetta_bool,
+		"init=1 means to do a quick scan of overall B factors before beginning refinement; "
+		"if there is more than one call to this mover in a single trajectory, "
+		"then only the first needs to have init=1")
+		+ XMLSchemaAttribute("exact", xsct_rosetta_bool,
+		"Exact B-factor refinement - recommended. default=false "
+		"Approximate version can behave poorly and is memory intensive.")
+		+ XMLSchemaAttribute("verbose", xsct_rosetta_bool, "Increase level of output information. default=false")
+		+ XMLSchemaAttribute("deriv_check", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("res_low", xsct_real, "Low resultion cut off (Angstroms)")
+		+ XMLSchemaAttribute("res_high", xsct_real, "High resolution cut off (Angstrom)")
+		+ XMLSchemaAttribute("nresbins", xsct_non_negative_integer, "This option is not used.")
+		+ XMLSchemaAttribute("weights_to_scan", xsct_real_cslist, "List of ??? weights to scan. Finds the optimum one to be used. Default=\"10,20,...,300\"");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Fit atomic B factors to maximize model-map correlation.",
+		attlist );
+}
+
+std::string BfactorFittingMoverCreator::keyname() const {
+	return BfactorFittingMover::mover_name();
+}
+
 protocols::moves::MoverOP
 BfactorFittingMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new BfactorFittingMover );
 }
 
-std::string
-BfactorFittingMoverCreator::keyname() const
+void BfactorFittingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return BfactorFittingMoverCreator::mover_name();
+	BfactorFittingMover::provide_xml_schema( xsd );
 }
 
-std::string
-BfactorFittingMoverCreator::mover_name()
-{
-	return "BfactorFitting";
-}
 
 }
 }

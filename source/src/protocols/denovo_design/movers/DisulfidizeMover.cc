@@ -53,6 +53,9 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //C++ Headers
 
@@ -63,24 +66,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover"
 namespace protocols {
 namespace denovo_design {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-std::string
-DisulfidizeMoverCreator::keyname() const
-{
-	return DisulfidizeMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-DisulfidizeMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new DisulfidizeMover() );
-}
-
-std::string
-DisulfidizeMoverCreator::mover_name()
-{
-	return "Disulfidize";
-}
 
 ///  ---------------------------------------------------------------------------------
 ///  DisulfidizeMover main code:
@@ -139,12 +124,6 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 /// @brief destructor - this class has no dynamic allocation, so
 DisulfidizeMover::~DisulfidizeMover()
 {
-}
-
-std::string
-DisulfidizeMover::get_name() const
-{
-	return DisulfidizeMoverCreator::mover_name();
 }
 
 /// Return a copy of ourselves
@@ -868,6 +847,133 @@ bool DisulfidizeMover::mixed_disulfide (
 
 	return false;
 }
+
+std::string DisulfidizeMover::get_name() const {
+	return mover_name();
+}
+
+std::string DisulfidizeMover::mover_name() {
+	return "Disulfidize";
+}
+
+void DisulfidizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"match_rt_limit", xsct_real,
+		"distance in 6D-space (rotation/translation) which is allowed from native disulfides. "
+		"Lower values increase the stringency of the requirement that disulfides be similar to "
+		"native disulfides.",
+		"2.0");
+
+	attlist + XMLSchemaAttribute(
+		"min_disulfides", xsct_non_negative_integer,
+		"Smallest allowable number of disulfides.");
+
+	attlist + XMLSchemaAttribute(
+		"max_disulfides", xsct_non_negative_integer,
+		"Largest allowable number of disulfides.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"keep_current_disulfides", xsct_rosetta_bool,
+		"If true, all current disulfides are preserved. If false, existing disulfides containing "
+		"a CYS residue within either set1 or set2 are mutated to alanine. Disulfides with both CYS "
+		"residues outside of the union of the selected residue sets will not be affected. "
+		"False by default.",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"include_current_disulfides", xsct_rosetta_bool,
+		"If true, current disulfides are included in the possible disulfide combinations to try. "
+		"False by default (only new disulfide combinations tried).",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_loop", xsct_non_negative_integer,
+		"Minimum distance between disulfide residues in primary sequence space.",
+		"8");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_disulf_score", xsct_real,
+		"Highest allowable per-disulfide dslf_fa13 score. Reducing this requires that disulfide geometry be more ideal.",
+		"1.5");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mutate_gly", xsct_rosetta_bool,
+		"Should the mover ignore glycine positions (false) or allow mutations to cysteine at these positions (true)? Default false (ignore gly positions).",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mutate_pro", xsct_rosetta_bool,
+		"Should the mover ignore D/L-proline positions (false) or allow mutations to cysteine at these positions (true)? Default false (ignore pro/dpr positions).",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_cb_dist", xsct_real,
+		"Maximum Cb Cb disulfide distance.",
+		"5");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"score_or_matchrt", xsct_rosetta_bool,
+		"If true, disulfides are accepted if they pass the match_rt (rigid-body transform) criterion "
+		"OR the full-atom disulfide score criterion. If false, disulfides must pass BOTH criteria. "
+		"False by default (both criteria must pass).",
+		"false");
+
+	attlist + XMLSchemaAttribute(
+		"set1", xs_string,
+		"Name of a residue selector which identifies a pool of residues which can connect to residues in set2. (Default: all residues)");
+
+	attlist + XMLSchemaAttribute(
+		"set2", xs_string,
+		"Name of a residue selector which identifies a pool of residues which can connect to residues in set1. (Default: all residues)");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_l_cys", xsct_rosetta_bool,
+		"Should the mover consider placing L-cysteine? True by default.",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_d_cys", xsct_rosetta_bool,
+		"Should the mover consider placing D-cysteine? False by default. "
+		"(Note that at least one of use_l_cys and use_d_cys must be set to \"true\".)",
+		"false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Scans a protein and builds disulfides that join residues in one set of residues "
+		"with those in another set. By default, non-protein, GLY, and PRO (or DPRO) residues "
+		"are ignored. Residues to be joined must be min_loop residues apart in primary sequence. "
+		"Potential disulfides are first identified by CB-CB distance, then by mutating the pair to "
+		"CYS, forming a disulfide, and performing energy minimization. If the energy is less than "
+		"the user-specified cutoff, it is compared with a set of rotations and translations for "
+		"all known disulfides. If the \"distance\" resulting from this rotation and translation is "
+		"less than the user-specified match_rt_limit, the pairing is considered a valid disulfide bond. "
+		"Once valid disulfides are found, they are combinatorially added. For example, if disulfides "
+		"are identified between residues 3 and 16 and also between residues 23 and 50, the following "
+		"configurations will be found: 1. [3,16] 2. [23,50] 3. [3,16],[23,50] "
+		"The mover is now able to place D-cysteine disulfides and mixed D/L disulfides.",
+		attlist );
+}
+
+std::string DisulfidizeMoverCreator::keyname() const {
+	return DisulfidizeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DisulfidizeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DisulfidizeMover );
+}
+
+void DisulfidizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisulfidizeMover::provide_xml_schema( xsd );
+}
+
 
 } // namespace denovo_design
 } // namespace protocols

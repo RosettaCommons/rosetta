@@ -33,6 +33,9 @@
 
 // C++ headers
 #include <iomanip>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Operating system headers
 
@@ -42,20 +45,20 @@
 namespace protocols {
 namespace canonical_sampling {
 
-std::string
-PDBTrajectoryRecorderCreator::keyname() const {
-	return PDBTrajectoryRecorderCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PDBTrajectoryRecorderCreator::keyname() const {
+// XRW TEMP  return PDBTrajectoryRecorder::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PDBTrajectoryRecorderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PDBTrajectoryRecorderCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
+// XRW TEMP }
 
-std::string
-PDBTrajectoryRecorderCreator::mover_name() {
-	return "PDBTrajectoryRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP PDBTrajectoryRecorder::mover_name() {
+// XRW TEMP  return "PDBTrajectoryRecorder";
+// XRW TEMP }
 
 PDBTrajectoryRecorder::PDBTrajectoryRecorder()
 {
@@ -88,11 +91,11 @@ PDBTrajectoryRecorder::fresh_instance() const
 	return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
 }
 
-std::string
-PDBTrajectoryRecorder::get_name() const
-{
-	return "PDBTrajectoryRecorder";
-}
+// XRW TEMP std::string
+// XRW TEMP PDBTrajectoryRecorder::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "PDBTrajectoryRecorder";
+// XRW TEMP }
 
 void
 PDBTrajectoryRecorder::parse_my_tag(
@@ -167,6 +170,37 @@ PDBTrajectoryRecorder::finalize_simulation(
 	Parent::finalize_simulation( pose, metropolis_hastings_mover );
 	trajectory_stream_.close();
 }
+
+std::string PDBTrajectoryRecorder::get_name() const {
+	return mover_name();
+}
+
+std::string PDBTrajectoryRecorder::mover_name() {
+	return "PDBTrajectoryRecorder";
+}
+
+void PDBTrajectoryRecorder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	TrajectoryRecorder::attributes_for_trajectory_recorder( attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Stores trajectory output to PDB files", attlist );
+}
+
+std::string PDBTrajectoryRecorderCreator::keyname() const {
+	return PDBTrajectoryRecorder::mover_name();
+}
+
+protocols::moves::MoverOP
+PDBTrajectoryRecorderCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
+}
+
+void PDBTrajectoryRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PDBTrajectoryRecorder::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace canonical_sampling

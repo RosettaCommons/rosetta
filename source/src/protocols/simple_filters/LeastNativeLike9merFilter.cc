@@ -44,6 +44,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -164,10 +167,45 @@ LeastNativeLike9merFilter::parse_my_tag(
 
 }
 
-filters::FilterOP
-LeastNativeLike9merFilterCreator::create_filter() const { return protocols::filters::FilterOP(new LeastNativeLike9merFilter); }
+// XRW TEMP filters::FilterOP
+// XRW TEMP LeastNativeLike9merFilterCreator::create_filter() const { return protocols::filters::FilterOP(new LeastNativeLike9merFilter); }
 
-std::string
-LeastNativeLike9merFilterCreator::keyname() const { return "worst9mer"; }
+// XRW TEMP std::string
+// XRW TEMP LeastNativeLike9merFilterCreator::keyname() const { return "worst9mer"; }
+
+std::string LeastNativeLike9merFilter::name() const {
+	return class_name();
+}
+
+std::string LeastNativeLike9merFilter::class_name() {
+	return "worst9mer";
+}
+
+void LeastNativeLike9merFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "filter threshold", "99.0")
+		+ XMLSchemaAttribute::attribute_w_default("rmsd_lookup_threshold", xsct_real, "if the filtered threshold is not 99, the filtered threshold is equal to the rmsd_lookup_threshold; else it is the default value of 0.40", "0.40")
+		+ XMLSchemaAttribute::attribute_w_default("only_helices", xsct_rosetta_bool, "look at only helices?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("ignore_terminal_resiude", xsct_rosetta_bool, "ignore the terminal residue?", "true");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters out structures that don't have good fragment RMSD at the worst position.", attlist );
+}
+
+std::string LeastNativeLike9merFilterCreator::keyname() const {
+	return LeastNativeLike9merFilter::class_name();
+}
+
+protocols::filters::FilterOP
+LeastNativeLike9merFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new LeastNativeLike9merFilter );
+}
+
+void LeastNativeLike9merFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LeastNativeLike9merFilter::provide_xml_schema( xsd );
+}
+
 } // filters
 } // protocols

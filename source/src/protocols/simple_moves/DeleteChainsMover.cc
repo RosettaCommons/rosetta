@@ -24,6 +24,9 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DeleteChainsMover" );
@@ -146,28 +149,28 @@ DeleteChainsMover::apply( Pose & pose )
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string
-DeleteChainsMoverCreator::keyname() const
-{
-	return DeleteChainsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainsMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DeleteChainsMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DeleteChainsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DeleteChainsMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DeleteChainsMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DeleteChainsMover );
+// XRW TEMP }
 
-std::string
-DeleteChainsMoverCreator::mover_name()
-{
-	return "DeleteChainsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DeleteChainsMover";
+// XRW TEMP }
 
 
-std::string
-DeleteChainsMover::get_name() const {
-	return DeleteChainsMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DeleteChainsMover::get_name() const {
+// XRW TEMP  return DeleteChainsMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 DeleteChainsMover::clone() const
@@ -180,6 +183,43 @@ DeleteChainsMover::fresh_instance() const
 {
 	return moves::MoverOP( new DeleteChainsMover );
 }
+
+std::string DeleteChainsMover::get_name() const {
+	return mover_name();
+}
+
+std::string DeleteChainsMover::mover_name() {
+	return "DeleteChainsMover";
+}
+
+void DeleteChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chains", xs_string, "delete these chains.  The format appears to be unseparated chain letters, like 'AHLR'") //XRW TODO, I guess this could have a restriction, but it's not clear that the PDB rules for what you can put in the chain column are really that valid here
+		+ XMLSchemaAttribute( "detect_bonds", xsct_rosetta_bool, "detect and delete broken bonds afterwards")
+		+ XMLSchemaAttribute( "detect_pseudobonds", xsct_rosetta_bool, "detect and delete broken pseudobonds afterwards");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "remove chains from a pose", attlist );
+}
+
+std::string DeleteChainsMoverCreator::keyname() const {
+	return DeleteChainsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DeleteChainsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DeleteChainsMover );
+}
+
+void DeleteChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DeleteChainsMover::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

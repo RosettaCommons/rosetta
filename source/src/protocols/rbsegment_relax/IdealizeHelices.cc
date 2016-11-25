@@ -63,6 +63,9 @@
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -83,20 +86,20 @@ using namespace core;
 /// creator
 
 
-std::string
-IdealizeHelicesMoverCreator::keyname() const {
-	return IdealizeHelicesMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP IdealizeHelicesMoverCreator::keyname() const {
+// XRW TEMP  return IdealizeHelicesMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-IdealizeHelicesMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new IdealizeHelicesMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP IdealizeHelicesMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new IdealizeHelicesMover );
+// XRW TEMP }
 
-std::string
-IdealizeHelicesMoverCreator::mover_name() {
-	return "IdealizeHelices";
-}
+// XRW TEMP std::string
+// XRW TEMP IdealizeHelicesMover::mover_name() {
+// XRW TEMP  return "IdealizeHelices";
+// XRW TEMP }
 
 
 //////////////////
@@ -355,6 +358,50 @@ void IdealizeHelicesMover::parse_my_tag(
 		}
 	}
 }
+
+std::string IdealizeHelicesMover::get_name() const {
+	return mover_name();
+}
+
+std::string IdealizeHelicesMover::mover_name() {
+	return "IdealizeHelices";
+}
+
+void IdealizeHelicesMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "Score function to use for minimization" )
+		+ XMLSchemaAttribute( "cst_weight", xsct_real, "Weight for coordinate constraints" )
+		+ XMLSchemaAttribute::attribute_w_default( "cst_width", xsct_real, "Width for bound function for coordinate constraints", "0.0" );
+
+	//Subelements
+	AttributeList helix_attributes;
+	helix_attributes
+		+ XMLSchemaAttribute::required_attribute( "start", xsct_residue_number, "First residue in helix to idealize" )
+		+ XMLSchemaAttribute::required_attribute( "end", xsct_residue_number, "Last residue in helix to idealize" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "Helix", helix_attributes, "Subelement specifying the span of a helix" );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Builds ideal helices in the specified residue spans", attlist, subelements );
+}
+
+std::string IdealizeHelicesMoverCreator::keyname() const {
+	return IdealizeHelicesMover::mover_name();
+}
+
+protocols::moves::MoverOP
+IdealizeHelicesMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new IdealizeHelicesMover );
+}
+
+void IdealizeHelicesMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IdealizeHelicesMover::provide_xml_schema( xsd );
+}
+
 
 }
 }

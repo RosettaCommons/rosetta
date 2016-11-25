@@ -27,6 +27,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ResidueTypeConstraintMover" );
 
@@ -40,26 +43,26 @@ using namespace constraints;
 
 using namespace utility::tag;
 
-std::string
-ResidueTypeConstraintMoverCreator::keyname() const
-{
-	return ResidueTypeConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueTypeConstraintMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ResidueTypeConstraintMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ResidueTypeConstraintMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ResidueTypeConstraintMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
+// XRW TEMP }
 
-std::string
-ResidueTypeConstraintMoverCreator::mover_name()
-{
-	return "ResidueTypeConstraintMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueTypeConstraintMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ResidueTypeConstraintMover";
+// XRW TEMP }
 
 // constructors
 ResidueTypeConstraintMover::ResidueTypeConstraintMover()
-: protocols::moves::Mover( ResidueTypeConstraintMoverCreator::mover_name() )
+: protocols::moves::Mover( ResidueTypeConstraintMover::mover_name() )
 {
 }
 
@@ -93,10 +96,10 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 	}
 }
 
-std::string
-ResidueTypeConstraintMover::get_name() const {
-	return ResidueTypeConstraintMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueTypeConstraintMover::get_name() const {
+// XRW TEMP  return ResidueTypeConstraintMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::ResidueTypeConstraintMover( *this ) ); }
 protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new ResidueTypeConstraintMover ); }
@@ -120,5 +123,38 @@ ResidueTypeConstraintMover::parse_my_tag(
 	// positively higher bonus gives more favorable selection to (a) specified residue(s)
 
 }
+
+std::string ResidueTypeConstraintMover::get_name() const {
+	return mover_name();
+}
+
+std::string ResidueTypeConstraintMover::mover_name() {
+	return "ResidueTypeConstraintMover";
+}
+
+void ResidueTypeConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "AA_name3", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "favor_bonus", xsct_real, "XRW TO DO", "0.5" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ResidueTypeConstraintMoverCreator::keyname() const {
+	return ResidueTypeConstraintMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ResidueTypeConstraintMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
+}
+
+void ResidueTypeConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueTypeConstraintMover::provide_xml_schema( xsd );
+}
+
 } // moves
 } // protocols

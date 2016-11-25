@@ -20,8 +20,10 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
+#include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
 #include <protocols/simple_moves/ddG.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -42,6 +44,9 @@
 #include <string>
 #include <fstream> // for ifstream
 #include <cstdio> // for remove()
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace pb_potential {
@@ -52,35 +57,15 @@ typedef core::Size Size;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
 
-SetupPBCreator::SetupPoissonBoltzmannPotentialCreator()
-{}
-SetupPBCreator::~SetupPoissonBoltzmannPotentialCreator()
-= default;
-protocols::moves::MoverOP
-SetupPBCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
-}
-std::string
-SetupPBCreator::keyname() const
-{
-	return SetupPBCreator::mover_name();
-}
-std::string
-SetupPBCreator::mover_name()
-{
-	return "SetupPoissonBoltzmannPotential";
-}
+const std::string SetupPoissonBoltzmannPotential::DEFAULT_APBS_PATH = "apbs";
 
-const std::string SetupPB::DEFAULT_APBS_PATH = "apbs";
-
-SetupPB::SetupPoissonBoltzmannPotential()
+SetupPoissonBoltzmannPotential::SetupPoissonBoltzmannPotential()
 {}
 
-SetupPB::~SetupPoissonBoltzmannPotential() = default;
+SetupPoissonBoltzmannPotential::~SetupPoissonBoltzmannPotential() = default;
 
 void
-SetupPB::apply(core::pose::Pose & pose ) {
+SetupPoissonBoltzmannPotential::apply(core::pose::Pose & pose ) {
 
 	using namespace core;
 	using namespace scoring;
@@ -109,17 +94,13 @@ SetupPB::apply(core::pose::Pose & pose ) {
 
 }
 
-std::string
-SetupPB::get_name() const {
-	return "SetupPoissonBoltzmannPotential";
-}
 protocols::moves::MoverOP
-SetupPB::clone() const {
+SetupPoissonBoltzmannPotential::clone() const {
 	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential( *this ) );
 }
 
 void
-SetupPB::parse_my_tag( utility::tag::TagCOP tag,
+SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & filters_map,
 	protocols::moves::Movers_map const & movers_map,
@@ -215,9 +196,80 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 
 }
 protocols::moves::MoverOP
-SetupPB::fresh_instance() const {
+SetupPoissonBoltzmannPotential::fresh_instance() const {
 
 	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential() );
 }
+
+std::string SetupPoissonBoltzmannPotential::get_name() const {
+	return mover_name();
+}
+
+std::string SetupPoissonBoltzmannPotential::mover_name() {
+	return "SetupPoissonBoltzmannPotential";
+}
+
+void SetupPoissonBoltzmannPotential::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"apbs_path", xs_string,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"charged_chains", xs_string,
+		"Comma delimited list of charged chainnumbers ( greater than or equal to 1). "
+		"e.g. charged_chains=1,2,3 for chains 1, 2 and 3. "
+		"No extra whitespace is permitted");
+	attlist + XMLSchemaAttribute(
+		"revamp_near_chain", xs_string,
+		"Comma delimited list of chain numbers. "
+		"Scale down PB interactions if near the given chain(s). Default to none");
+	attlist + XMLSchemaAttribute(
+		"potential_cap", xsct_real,
+		"Upper limit for PB potential input. Default to 20.0");
+	attlist + XMLSchemaAttribute(
+		"sidechain_only", xsct_rosetta_bool,
+		"Set \"true\" to limit calculation of interactions to sidechain. Default to \"false\"");
+	attlist + XMLSchemaAttribute(
+		"epsilon", xsct_real,
+		"mutation tolerance in Angstrom. "
+		"Potential is re-computed only when | Ca1 - Ca2 | greater than epsilon, "
+		"for all Ca1 in Alpha-carbon in previous pose and "
+		"all Ca2 in the current pose. The default is 2.0 A");
+	attlist + XMLSchemaAttribute(
+		"calcenergy", xsct_rosetta_bool,
+		"Set \"true\" to calculate energy. Not yet implemented. Default to false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"apbs_debug", xs_integer,
+		"APBS debug level [0-6]. Default to 2", "2");
+
+	//rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	auto ct_gen = simple_moves::ddG::define_ddG_schema();
+	ct_gen->element_name(mover_name())
+		.description(
+		"Initialize the runtime environment for Poisson-Boltzmann solver. "
+		"It allows keeping track of protein mutations to minimize the number of PB evaluations.")
+		.add_attributes(attlist)
+		.write_complex_type_to_schema(xsd);
+}
+
+std::string SetupPoissonBoltzmannPotentialCreator::keyname() const {
+	return SetupPoissonBoltzmannPotential::mover_name();
+}
+
+protocols::moves::MoverOP
+SetupPoissonBoltzmannPotentialCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
+}
+
+void SetupPoissonBoltzmannPotentialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetupPoissonBoltzmannPotential::provide_xml_schema( xsd );
+}
+
+
+
 }
 }

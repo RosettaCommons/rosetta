@@ -23,9 +23,12 @@ namespace filters {
 class CavityVolumeFilterCreator : public protocols::filters::FilterCreator {
 
 public:
-	virtual protocols::filters::FilterOP create_filter() const;
-	virtual std::string keyname() const;
-	static  std::string filter_name();
+	// XRW TEMP  virtual protocols::filters::FilterOP create_filter() const;
+	// XRW TEMP  virtual std::string keyname() const;
+	// XRW TEMP  static  std::string filter_name();
+	protocols::filters::FilterOP create_filter() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 
 };
 

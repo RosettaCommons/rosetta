@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -72,11 +75,44 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::dataca
 	chain_ = tag->getOption<std::string>("chain");
 }
 
-protocols::filters::FilterOP
-CompleteConnectionsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CompleteConnectionsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP CompleteConnectionsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CompleteConnectionsFilter ); }
 
-std::string
-CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }
+// XRW TEMP std::string
+// XRW TEMP CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }
+
+std::string CompleteConnectionsFilter::name() const {
+	return class_name();
+}
+
+std::string CompleteConnectionsFilter::class_name() {
+	return "CompleteConnections";
+}
+
+void CompleteConnectionsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chain", xsct_char, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string CompleteConnectionsFilterCreator::keyname() const {
+	return CompleteConnectionsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CompleteConnectionsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CompleteConnectionsFilter );
+}
+
+void CompleteConnectionsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CompleteConnectionsFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // ligand_docking

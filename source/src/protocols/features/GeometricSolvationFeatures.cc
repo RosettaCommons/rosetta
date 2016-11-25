@@ -19,6 +19,7 @@
 // Platform Headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -42,6 +43,10 @@
 
 // C++ Headers
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/GeometricSolvationFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -72,8 +77,8 @@ GeometricSolvationFeatures::GeometricSolvationFeatures(
 	geo_sol_energy_(src.geo_sol_energy_)
 {}
 
-string
-GeometricSolvationFeatures::type_name() const { return "GeometricSolvationFeatures"; }
+// XRW TEMP string
+// XRW TEMP GeometricSolvationFeatures::type_name() const { return "GeometricSolvationFeatures"; }
 
 void
 GeometricSolvationFeatures::write_schema_to_db(
@@ -162,6 +167,38 @@ GeometricSolvationFeatures::report_features(
 
 	return 0;
 }
+
+std::string GeometricSolvationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string GeometricSolvationFeatures::class_name() {
+	return "GeometricSolvationFeatures";
+}
+
+void GeometricSolvationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Records features about the geometric solvation score around particular hydrogen bonding sites in a Pose", attlist );
+}
+
+std::string GeometricSolvationFeaturesCreator::type_name() const {
+	return GeometricSolvationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+GeometricSolvationFeaturesCreator::create_features_reporter() const {
+	core::scoring::methods::EnergyMethodOptions options;
+	return FeaturesReporterOP( new GeometricSolvationFeatures(options) );
+}
+
+void GeometricSolvationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GeometricSolvationFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

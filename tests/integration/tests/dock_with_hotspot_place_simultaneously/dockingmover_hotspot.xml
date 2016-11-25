@@ -1,36 +1,36 @@
-<dock_design>
+<ROSETTASCRIPTS>
 
     <APPLY_TO_POSE>
     </APPLY_TO_POSE>
 
     <TASKOPERATIONS>
-        <ProteinInterfaceDesign name=pido design_chain1=0 design_chain2=0 interface_distance_cutoff=8/>	
+        <ProteinInterfaceDesign name="pido" design_chain1="0" design_chain2="0" interface_distance_cutoff="8"/>	
         <InitializeFromCommandline name="init"/> 
-	<LimitAromaChi2 name=limitchi2/>
+	<LimitAromaChi2 name="limitchi2"/>
     </TASKOPERATIONS>
 
 
     <SCOREFXNS>
-        <stub_docking_low weights="interchain_cen">
+        <ScoreFunction name="stub_docking_low" weights="interchain_cen">
             <Reweight scoretype="backbone_stub_linear_constraint" weight="10"/>
-        </stub_docking_low>
+        </ScoreFunction>
 
-        <lowddg_scorefxn weights="interchain_cen" hs_hash="0.0"/>
+        <ScoreFunction name="lowddg_scorefxn" weights="interchain_cen" hs_hash="0.0"/>
 
-        <hotspot_scorefxn weights="empty">
+        <ScoreFunction name="hotspot_scorefxn" weights="empty">
             <Reweight scoretype="backbone_stub_linear_constraint" weight="10"/>
-        </hotspot_scorefxn>
+        </ScoreFunction>
 
-        <hard_scorefxn weights="score12prime" hs_hash="0.0"/>
-        <score12prime_coordcst weights="score12prime" hs_hash="0.0">
+        <ScoreFunction name="hard_scorefxn" weights="score12prime" hs_hash="0.0"/>
+        <ScoreFunction name="score12prime_coordcst" weights="score12prime" hs_hash="0.0">
             <Reweight scoretype="coordinate_constraint" weight="1.0"/>
-        </score12prime_coordcst>
+        </ScoreFunction>
     </SCOREFXNS>
 
 
     <FILTERS>
         <Ddg name="Isc" threshold="0" scorefxn="lowddg_scorefxn" repeats="1" repack="0" confidence="1"/>
-	<ShapeComplementarity name="shape" verbose="1" jump="1" min_sc="0.6" confidence=1 />
+	<ShapeComplementarity name="shape" verbose="1" jump="1" min_sc="0.6" confidence="1" />
     </FILTERS>
 
 
@@ -38,11 +38,11 @@
 
 	<DockWithHotspotMover name="hotspotdock" hotspot_score_weight="10" centroidscore_filter="0" hotspotcst_filter="300">
             <HotspotFiles>
-                <Add file_name="hotspot1.pdb" cb_force="1.0"/>
-                <Add file_name="hotspot2.pdb" cb_force="1.0"/>
+                <HotspotFile file_name="hotspot1.pdb" cb_force="1.0"/>
+                <HotspotFile file_name="hotspot2.pdb" cb_force="1.0"/>
             </HotspotFiles>
 	</DockWithHotspotMover>
-        <SaveAndRetrieveSidechains name="srsc" allsc=1 />
+        <SaveAndRetrieveSidechains name="srsc" allsc="1" />
 
         <RepackMinimize name="des1" minimize_bb="0" minimize_rb="1" scorefxn_repack="soft_rep" scorefxn_minimize="hard_scorefxn" interface_cutoff_distance="10.0" task_operations="limitchi2"/>
         <RepackMinimize name="des2" minimize_bb="0" minimize_rb="1" scorefxn_repack="score12" scorefxn_minimize="score12" interface_cutoff_distance="10.0" task_operations="limitchi2"/>
@@ -69,4 +69,5 @@
         <Add mover_name="place_hotspot_all"/>
 
     </PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

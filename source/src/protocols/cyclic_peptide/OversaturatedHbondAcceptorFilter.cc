@@ -20,6 +20,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -32,6 +33,9 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter" );
 
@@ -97,7 +101,7 @@ OversaturatedHbondAcceptorFilter::fresh_instance() const
 std::string
 OversaturatedHbondAcceptorFilter::get_name() const
 {
-	return OversaturatedHbondAcceptorFilterCreator::filter_name();
+	return OversaturatedHbondAcceptorFilter::class_name();
 }
 
 /// @brief Returns true if the structure passes the filter, false otherwise.
@@ -381,24 +385,84 @@ OversaturatedHbondAcceptorFilter::compute(
 
 /////////////// Creator ///////////////
 
-protocols::filters::FilterOP
-OversaturatedHbondAcceptorFilterCreator::create_filter() const
-{
-	return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP OversaturatedHbondAcceptorFilterCreator::create_filter() const
+// XRW TEMP {
+// XRW TEMP  return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP OversaturatedHbondAcceptorFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return OversaturatedHbondAcceptorFilter::class_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP OversaturatedHbondAcceptorFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "OversaturatedHbondAcceptorFilter";
+// XRW TEMP }
+
+std::string OversaturatedHbondAcceptorFilter::name() const {
+	return class_name();
 }
 
-std::string
-OversaturatedHbondAcceptorFilterCreator::keyname() const
-{
-	return OversaturatedHbondAcceptorFilterCreator::filter_name();
-}
-
-std::string
-OversaturatedHbondAcceptorFilterCreator::filter_name()
-{
+std::string OversaturatedHbondAcceptorFilter::class_name() {
 	return "OversaturatedHbondAcceptorFilter";
 }
 
+void OversaturatedHbondAcceptorFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"max_allowed_oversaturated", xsct_non_negative_integer,
+		"How many oversaturated acceptors are allowed before the filter fails? "
+		"Default 0 (filter fails if any oversaturated acceptors are found)." )
+		+ XMLSchemaAttribute(
+		"hbond_energy_cutoff", xsct_real,
+		"A hydrogen bond must have energy less than or equal to this threshold "
+		"in order to be counted. Default -0.1 Rosetta energy units." )
+		+ XMLSchemaAttribute(
+		"consider_mainchain_only", xsct_rosetta_bool,
+		"If true (the default), only mainchain-mainchain hydrogen bonds are "
+		"considered. If false, all hydrogen bonds are considered." );
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "acceptor_selector",
+		"Selector that defines the hydrogen bond acceptor" );
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "donor_selector",
+		"Selector that defines the hydrogen bond donor" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "scorefxn" );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"This filter counts the number of hydrogen bond acceptors that are "
+		"receiving hydrogen bonds from more than the allowed number of donors. "
+		"If the count is greater than a threshold value (default 0), the filter fails. "
+		"This filter is intended to address a limitation of Rosetta's pairwise-"
+		"decomposible hydrogen bond score terms: it is not possible for a score term "
+		"that is examining the interaction between only two residues to know that a "
+		"third is also interacting with one of the residues, creating artifacts in "
+		"which too many hydrogen bond donors are all forming hydrogen bonds to the same acceptor.",
+		attlist );
+}
+
+std::string OversaturatedHbondAcceptorFilterCreator::keyname() const {
+	return OversaturatedHbondAcceptorFilter::class_name();
+}
+
+protocols::filters::FilterOP
+OversaturatedHbondAcceptorFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new OversaturatedHbondAcceptorFilter );
+}
+
+void OversaturatedHbondAcceptorFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	OversaturatedHbondAcceptorFilter::provide_xml_schema( xsd );
+}
+
+
 } //protocols
 } //cyclic_peptide
-

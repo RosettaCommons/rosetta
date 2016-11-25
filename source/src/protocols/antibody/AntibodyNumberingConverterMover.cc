@@ -33,6 +33,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/string_constants.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyNumberingConverterMover" );
 
@@ -40,7 +43,7 @@ namespace protocols {
 namespace antibody {
 
 AntibodyNumberingConverterMover::AntibodyNumberingConverterMover():
-	protocols::moves::Mover( AntibodyNumberingConverterMover::class_name() )
+	protocols::moves::Mover( AntibodyNumberingConverterMover::mover_name() )
 {
 	set_defaults();
 }
@@ -49,7 +52,7 @@ AntibodyNumberingConverterMover::AntibodyNumberingConverterMover(
 	AntibodyNumberingSchemeEnum from,
 	AntibodyNumberingSchemeEnum to
 ):
-	protocols::moves::Mover( AntibodyNumberingConverterMover::class_name() )
+	protocols::moves::Mover( AntibodyNumberingConverterMover::mover_name() )
 {
 	set_defaults();
 	from_scheme_ = from;
@@ -295,17 +298,17 @@ AntibodyNumberingConverterMover::fresh_instance() const
 	return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
 }
 
-std::string
-AntibodyNumberingConverterMover::get_name() const
-{
-	return AntibodyNumberingConverterMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyNumberingConverterMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return AntibodyNumberingConverterMover::mover_name();
+// XRW TEMP }
 
-std::string
-AntibodyNumberingConverterMover::class_name()
-{
-	return "AntibodyNumberingConverterMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyNumberingConverterMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AntibodyNumberingConverterMover";
+// XRW TEMP }
 
 void
 AntibodyNumberingConverterMover::show( std::ostream & output ) const
@@ -324,17 +327,70 @@ operator<<( std::ostream & os, AntibodyNumberingConverterMover const & mover )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-AntibodyNumberingConverterMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AntibodyNumberingConverterMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AntibodyNumberingConverterMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AntibodyNumberingConverterMover::mover_name();
+// XRW TEMP }
+
+std::string AntibodyNumberingConverterMover::get_name() const {
+	return mover_name();
+}
+
+std::string AntibodyNumberingConverterMover::mover_name() {
+	return "AntibodyNumberingConverterMover";
+}
+
+void AntibodyNumberingConverterMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction ABnumbering_enum;
+	ABnumbering_enum.name("ab_numbering_schemes");
+	ABnumbering_enum.base_type(xs_string);
+
+	AntibodyEnumManager ABnumbering_manager;
+	for ( auto& ABnumbering : ABnumbering_manager.get_recognized_numbering_schemes() ) {
+		ABnumbering_enum.add_restriction(xsr_enumeration, ABnumbering);
+	}
+	xsd.add_top_level_element(ABnumbering_enum);
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"from", "ab_numbering_schemes",
+		"Current numbering scheme");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"to", "ab_numbering_schemes",
+		"Numbering scheme to be converter to");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Converts numbering schemes of an antibody, independent of AntibodyInfo. "
+		"By default, works on a SINGLE antibody FAB with chains L and H, as the rest of Rosetta",
+		attlist );
+}
+
+std::string AntibodyNumberingConverterMoverCreator::keyname() const {
+	return AntibodyNumberingConverterMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AntibodyNumberingConverterMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AntibodyNumberingConverterMover );
 }
 
-std::string
-AntibodyNumberingConverterMoverCreator::keyname() const
+void AntibodyNumberingConverterMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return AntibodyNumberingConverterMover::class_name();
+	AntibodyNumberingConverterMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //antibody

@@ -65,6 +65,9 @@
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
 
@@ -137,10 +140,10 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 //destructors
 LoopMover_Perturb_QuickCCD::~LoopMover_Perturb_QuickCCD(){}
 
-std::string
-LoopMover_Perturb_QuickCCD::get_name() const {
-	return "LoopMover_Perturb_QuickCCD";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Perturb_QuickCCD::get_name() const {
+// XRW TEMP  return "LoopMover_Perturb_QuickCCD";
+// XRW TEMP }
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_QuickCCD::clone() const {
@@ -203,7 +206,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 			pose, chemical::CUTPOINT_UPPER, loop.cut()+1
 		);
 		pose.conformation().declare_chemical_bond( loop.cut(), pose.residue( loop.cut() ).atom_name( pose.residue( loop.cut() ).upper_connect_atom() ),
-																							 loop.cut() + 1, pose.residue( loop.cut() + 1 ).atom_name( pose.residue( loop.cut() + 1 ).lower_connect_atom() ) );
+			loop.cut() + 1, pose.residue( loop.cut() + 1 ).atom_name( pose.residue( loop.cut() + 1 ).lower_connect_atom() ) );
 	}
 
 
@@ -375,15 +378,46 @@ basic::Tracer & LoopMover_Perturb_QuickCCD::tr() const
 	return TR;
 }
 
-LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
+// XRW TEMP LoopMover_Perturb_QuickCCDCreator::~LoopMover_Perturb_QuickCCDCreator() {}
 
-moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Perturb_QuickCCD() );
+// XRW TEMP moves::MoverOP LoopMover_Perturb_QuickCCDCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Perturb_QuickCCD() );
+// XRW TEMP }
+
+// XRW TEMP std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Perturb_QuickCCD";
+// XRW TEMP }
+
+std::string LoopMover_Perturb_QuickCCD::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Perturb_QuickCCD::mover_name() {
+	return "LoopMover_Perturb_QuickCCD";
+}
+
+void LoopMover_Perturb_QuickCCD::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Perform quickCCD loop closure. Reads only commandline options.", attlist );
 }
 
 std::string LoopMover_Perturb_QuickCCDCreator::keyname() const {
-	return "LoopMover_Perturb_QuickCCD";
+	return LoopMover_Perturb_QuickCCD::mover_name();
 }
+
+protocols::moves::MoverOP
+LoopMover_Perturb_QuickCCDCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD );
+}
+
+void LoopMover_Perturb_QuickCCDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Perturb_QuickCCD::provide_xml_schema( xsd );
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////

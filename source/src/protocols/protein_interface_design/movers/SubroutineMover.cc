@@ -29,6 +29,9 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace protocols::protein_interface_design;
@@ -42,22 +45,22 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-SubroutineMoverCreator::keyname() const
-{
-	return SubroutineMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SubroutineMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SubroutineMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SubroutineMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SubroutineMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SubroutineMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SubroutineMover );
+// XRW TEMP }
 
-std::string
-SubroutineMoverCreator::mover_name()
-{
-	return "Subroutine";
-}
+// XRW TEMP std::string
+// XRW TEMP SubroutineMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Subroutine";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 SubroutineMover::clone() const {
@@ -99,14 +102,46 @@ SubroutineMover::fresh_instance() const {
 SubroutineMover::~SubroutineMover(){}
 
 SubroutineMover::SubroutineMover() :
-	Mover( SubroutineMoverCreator::mover_name() ),
+	Mover( SubroutineMover::mover_name() ),
 	mover_( /* NULL */ )
 {}
 
-std::string
-SubroutineMover::get_name() const {
-	return SubroutineMoverCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP SubroutineMover::get_name() const {
+// XRW TEMP  return SubroutineMover::mover_name();
+// XRW TEMP }
+
+std::string SubroutineMover::get_name() const {
+	return mover_name();
 }
+
+std::string SubroutineMover::mover_name() {
+	return "Subroutine";
+}
+
+void SubroutineMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "xml_fname", xs_string, "Filename for the XML to execute" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string SubroutineMoverCreator::keyname() const {
+	return SubroutineMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SubroutineMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SubroutineMover );
+}
+
+void SubroutineMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SubroutineMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

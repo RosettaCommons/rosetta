@@ -57,6 +57,8 @@ public:
 	virtual StructureDataOP
 	design( core::pose::Pose const & pose, core::Real & random ) const;
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 protected:
 	virtual void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );

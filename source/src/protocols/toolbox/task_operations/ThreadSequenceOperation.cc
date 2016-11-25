@@ -144,11 +144,11 @@ void ThreadSequenceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "target_sequence", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_non_negative_integer, "1" )
-		+ XMLSchemaAttribute::attribute_w_default(  "allow_design_around", xs_boolean, "true" );
+		+ XMLSchemaAttribute::required_attribute( "target_sequence", xs_string , "The target sequence can contain two types of 'wildcards'. Placing 'x' in the sequence results in design at this position: target_sequence='TFYxxxHFS' will thread the two specified tripeptides and allow design in the intervening tripeptide. Placing ' ' (space) or '_' (underscore), however, restricts this position to repacking: the string 'TFY HFS' (three spaces between the two triplets) will thread the two tripeptides and will repack the pose's original intervening tripeptide. The string 'TFY___HFS' -three underscores between the two triplets- will also only repack the original intervening tripeptide." )
+		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_positive_integer, "Residue at which to start." , "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "allow_design_around", xsct_rosetta_bool, "If set to false, only design the region that is threaded. The rest is set to repack.",  "true"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Threads a single letter sequence onto the source pdb." );
 }
 
 } //namespace protocols

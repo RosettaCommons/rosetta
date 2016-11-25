@@ -130,7 +130,7 @@ public:
 	void set_to_default();
 
 	/// @brief Return the name of this mover.
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override;
@@ -149,6 +149,20 @@ public:
 	///
 	inline void set_enable_design( bool const val ) { enable_design_ = val; }
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinition &);
 protected:
 
 	void cmd_accept_to_best(

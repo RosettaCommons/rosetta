@@ -4,23 +4,24 @@
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
 	<MOVERS>
-		<FragmentLoopInserter name=frag_inserter loop_anchor=14 max_rms=1.0/>
-		<CCDLoopCloser name=ccd
-			max_closure_attempts=1
-			max_ccd_moves_per_closure_attempt=10
-			tolerance=100
+		<FragmentLoopInserter name="frag_inserter" loop_anchor="14" max_rms="1.0"/>
+		<CCDLoopCloser name="ccd"
+			max_closure_attempts="1"
+			max_ccd_moves_per_closure_attempt="10"
+			tolerance="100"
 		/>
-		<LoopCreationMover name=lcm 
-			loop_inserter=frag_inserter
-			loop_closer=ccd
-			minimize_loops=0
-			design_loops=0
-			include_neighbors=0
-			filter_by_lam=0
+		<LoopCreationMover name="lcm" 
+			loop_inserter="frag_inserter"
+			loop_closer="ccd"
+			minimize_loops="0"
+			design_loops="0"
+			include_neighbors="0"
+			filter_by_lam="0"
 		/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=lcm />
+		<Add mover_name="lcm" />
 	</PROTOCOLS>
-</ROSETTASCRIPTS>
 
+
+</ROSETTASCRIPTS>

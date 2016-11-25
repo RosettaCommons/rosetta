@@ -42,28 +42,37 @@ class LoopCM: public protocols::environment::ClientMover {
 public:
 	LoopCM();
 
-	virtual ~LoopCM() {}
+	~LoopCM() override {}
 
-	virtual
-	void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual
 	void parse_my_tag( TagCOP,
 		basic::datacache::DataMap&,
 		Filters_map const&,
 		moves::Movers_map const&,
-		Pose const& );
+		Pose const& ) override;
 
-	virtual
 	EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual void passport_updated();
+	void passport_updated() override;
 
-	virtual void initialize( core::pose::Pose& ) {}
+	void initialize( core::pose::Pose& ) override {}
 
-	virtual
-	std::string get_name() const;
+	// XRW TEMP  virtual
+	// XRW TEMP  std::string get_name() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void build_mover( LoopsOP loops );

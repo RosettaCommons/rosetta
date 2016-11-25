@@ -49,6 +49,9 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -59,25 +62,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
 
-std::string
-LoopFinderCreator::keyname() const
-{
-	return LoopFinderCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopFinderCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopFinder::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopFinderCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopFinder );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopFinderCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopFinder );
+// XRW TEMP }
 
-std::string
-LoopFinderCreator::mover_name()
-{
-	return "LoopFinder";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopFinder::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopFinder";
+// XRW TEMP }
 
 LoopFinder::LoopFinder() :
-	simple_moves::DesignRepackMover( LoopFinderCreator::mover_name() )
+	simple_moves::DesignRepackMover( LoopFinder::mover_name() )
 {}
 
 LoopFinder::LoopFinder(
@@ -92,7 +95,7 @@ LoopFinder::LoopFinder(
 	core::Real const iface_cutoff,
 	protocols::loops::LoopsOP loops
 ) :
-	simple_moves::DesignRepackMover( LoopFinderCreator::mover_name() ),
+	simple_moves::DesignRepackMover( LoopFinder::mover_name() ),
 	interface_(interface),
 	ch1_(ch1),
 	ch2_(ch2),
@@ -189,10 +192,10 @@ LoopFinder::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-LoopFinder::get_name() const {
-	return LoopFinderCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopFinder::get_name() const {
+// XRW TEMP  return LoopFinder::mover_name();
+// XRW TEMP }
 
 
 void
@@ -226,6 +229,48 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 		" max_length="<<max_length_<< std::endl;
 
 }
+
+std::string LoopFinder::get_name() const {
+	return mover_name();
+}
+
+std::string LoopFinder::mover_name() {
+	return "LoopFinder";
+}
+
+void LoopFinder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "interface", xsct_non_negative_integer, "Interface in jump numbering of interest; this numbering is sequential.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "ch1", xsct_non_negative_integer, "Interested in loops from 'chain 1' of the jump?", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "ch2", xsct_non_negative_integer, "Interested in loops from 'chain 2' of the jump?", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_length", xsct_non_negative_integer, "Minimum loop length of interest", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_length", xsct_non_negative_integer, "Maximum loop length of interest", "1000" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_cutoff", xsct_real, "Distance over which to consider the 'interface' between chains", "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "mingap", xsct_non_negative_integer, "How far away from other loops must new loops be?", "1" )
+		+ XMLSchemaAttribute( "resnum", xsct_refpose_enabled_residue_number, "Residue number to define distance cutoff; use this or pdb_num" )
+		+ XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Residue number to define distance cutoff; use this or resnum" )
+		+ XMLSchemaAttribute::attribute_w_default( "CA_CA_distance", xsct_real, "Distance cutoff from user-defined residue", "15" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopFinderCreator::keyname() const {
+	return LoopFinder::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopFinderCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopFinder );
+}
+
+void LoopFinderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopFinder::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

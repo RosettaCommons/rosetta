@@ -44,6 +44,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -56,25 +59,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
 
-std::string
-DomainAssemblyCreator::keyname() const
-{
-	return DomainAssemblyCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DomainAssemblyCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DomainAssembly::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DomainAssemblyCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DomainAssembly );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DomainAssemblyCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DomainAssembly );
+// XRW TEMP }
 
-std::string
-DomainAssemblyCreator::mover_name()
-{
-	return "DomainAssembly";
-}
+// XRW TEMP std::string
+// XRW TEMP DomainAssembly::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DomainAssembly";
+// XRW TEMP }
 
 DomainAssembly::DomainAssembly() :
-	protocols::moves::Mover( DomainAssemblyCreator::mover_name() )
+	protocols::moves::Mover( DomainAssembly::mover_name() )
 {}
 
 DomainAssembly::DomainAssembly(
@@ -83,7 +86,7 @@ DomainAssembly::DomainAssembly(
 	FragSetOP fragset_large,
 	FragSetOP fragset_small
 ) :
-	protocols::moves::Mover( DomainAssemblyCreator::mover_name() ),
+	protocols::moves::Mover( DomainAssembly::mover_name() ),
 	linker_start_( linker_start ),
 	linker_end_( linker_end ),
 	fragset_large_(std::move( fragset_large )),
@@ -201,10 +204,10 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 }
 
-std::string
-DomainAssembly::get_name() const {
-	return DomainAssemblyCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DomainAssembly::get_name() const {
+// XRW TEMP  return DomainAssembly::mover_name();
+// XRW TEMP }
 
 void
 DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
@@ -224,6 +227,42 @@ DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, pro
 	fragset_small_ = FragmentIO(option[ OptionKeys::abinitio::number_3mer_frags ] ).read_data( frag_small_fname );
 	fragments_set_ = true;
 }
+
+std::string DomainAssembly::get_name() const {
+	return mover_name();
+}
+
+std::string DomainAssembly::mover_name() {
+	return "DomainAssembly";
+}
+
+void DomainAssembly::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "frag9", xs_string, "Path to fragment file containing 9mers", "frag9" )
+		+ XMLSchemaAttribute::attribute_w_default( "frag3", xs_string, "Path to fragment file containing 3mers", "frag3" );
+
+	core::pose::attributes_for_get_resnum( attlist, "linker_start_" );
+	core::pose::attributes_for_get_resnum( attlist, "linker_end_" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Do domain assembly sampling by fragment insertion in a linker region", attlist );
+}
+
+std::string DomainAssemblyCreator::keyname() const {
+	return DomainAssembly::mover_name();
+}
+
+protocols::moves::MoverOP
+DomainAssemblyCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DomainAssembly );
+}
+
+void DomainAssemblyCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DomainAssembly::provide_xml_schema( xsd );
+}
+
 
 } // abinitio
 } // protocols

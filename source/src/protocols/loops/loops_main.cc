@@ -395,7 +395,7 @@ set_loop_cutpoint_in_pose_fold_tree(
 	core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, new_cutpoint   );
 	core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, new_cutpoint+1 );
 	pose.conformation().declare_chemical_bond( new_cutpoint, pose.residue( new_cutpoint ).atom_name( pose.residue( new_cutpoint ).upper_connect_atom() ),
-																						 new_cutpoint + 1, pose.residue( new_cutpoint ).atom_name( pose.residue(  new_cutpoint + 1 ).lower_connect_atom() ) );
+		new_cutpoint + 1, pose.residue( new_cutpoint ).atom_name( pose.residue(  new_cutpoint + 1 ).lower_connect_atom() ) );
 
 }
 
@@ -515,7 +515,7 @@ add_single_cutpoint_variant( core::pose::Pose & pose, const core::uint cutpoint 
 
 	if ( pose_changed ) {
 		pose.conformation().declare_chemical_bond( cutpoint, pose.residue( cutpoint ).atom_name( pose.residue( cutpoint ).upper_connect_atom() ),
-																							 cutpoint + 1, pose.residue( cutpoint + 1 ).atom_name( pose.residue( cutpoint + 1 ).lower_connect_atom() ) );
+			cutpoint + 1, pose.residue( cutpoint + 1 ).atom_name( pose.residue( cutpoint + 1 ).lower_connect_atom() ) );
 		pose.constraint_set( init_pose.constraint_set()->remapped_clone( init_pose, pose ) );
 	}
 }

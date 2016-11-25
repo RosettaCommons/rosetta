@@ -21,6 +21,9 @@
 #include <utility/vector1.hh>
 
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 using ObjexxFCL::format::F;
 
 
@@ -231,11 +234,49 @@ BoltzmannFilter::clone() const{
 	return protocols::filters::FilterOP( new BoltzmannFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-BoltzmannFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BoltzmannFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP BoltzmannFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BoltzmannFilter ); }
 
-std::string
-BoltzmannFilterCreator::keyname() const { return "Boltzmann"; }
+// XRW TEMP std::string
+// XRW TEMP BoltzmannFilterCreator::keyname() const { return "Boltzmann"; }
+
+std::string BoltzmannFilter::name() const {
+	return class_name();
+}
+
+std::string BoltzmannFilter::class_name() {
+	return "Boltzmann";
+}
+
+void BoltzmannFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "fitness_threshold", xsct_real, "Threshold below which fitness must fall", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "Boltzmann temperature for simulation (kT)", "0.6" )
+		+ XMLSchemaAttribute::attribute_w_default( "triage_threshold", xsct_real, "Above this value (e.g. delta score/delta ddg), a negative state will be counted in the Boltzmann fitness calculation. This prevents the dilution of negative states", "-9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "norm_neg", xsct_rosetta_bool, "normalize the fitness of the mutation state in relative to the original state. When triage_threshold is used the number of negative states is changed, therefore norm_neg is needed in order to compare mutations in the same position.", "false" )
+		+ XMLSchemaAttribute( "positive_filter_names", xs_string, "Names of positive filters" )
+		+ XMLSchemaAttribute( "negative_filter_names", xs_string, "Names of negative filters" )
+		+ XMLSchemaAttribute( "anchors", xsct_real_cslist, "Threshold energy values above which positive states really hurt" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Compute the boltzmann-weighted sum of positive and negative filter values.", attlist );
+}
+
+std::string BoltzmannFilterCreator::keyname() const {
+	return BoltzmannFilter::class_name();
+}
+
+protocols::filters::FilterOP
+BoltzmannFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new BoltzmannFilter );
+}
+
+void BoltzmannFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BoltzmannFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

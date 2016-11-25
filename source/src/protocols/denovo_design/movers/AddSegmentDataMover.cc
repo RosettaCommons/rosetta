@@ -26,6 +26,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.AddSegmentDataMover" );
 
@@ -34,7 +37,7 @@ namespace denovo_design {
 namespace movers {
 
 AddSegmentDataMover::AddSegmentDataMover():
-	protocols::moves::Mover( AddSegmentDataMover::class_name() ),
+	protocols::moves::Mover( AddSegmentDataMover::mover_name() ),
 	segment_name_( "" ),
 	secstruct_( "" ),
 	abego_( "" )
@@ -84,17 +87,17 @@ AddSegmentDataMover::fresh_instance() const
 	return protocols::moves::MoverOP( new AddSegmentDataMover );
 }
 
-std::string
-AddSegmentDataMover::get_name() const
-{
-	return AddSegmentDataMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddSegmentDataMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return AddSegmentDataMover::mover_name();
+// XRW TEMP }
 
-std::string
-AddSegmentDataMover::class_name()
-{
-	return "AddSegmentDataMover";
-}
+// XRW TEMP std::string
+// XRW TEMP AddSegmentDataMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddSegmentDataMover";
+// XRW TEMP }
 
 void
 AddSegmentDataMover::show( std::ostream & output ) const
@@ -143,17 +146,51 @@ AddSegmentDataMover::create_segment( components::StructureData & perm ) const
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-AddSegmentDataMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddSegmentDataMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AddSegmentDataMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AddSegmentDataMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddSegmentDataMover::mover_name();
+// XRW TEMP }
+
+std::string AddSegmentDataMover::get_name() const {
+	return mover_name();
+}
+
+std::string AddSegmentDataMover::mover_name() {
+	return "AddSegmentDataMover";
+}
+
+void AddSegmentDataMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute( "segment_name", xs_string, "Name of new segment")
+		+ XMLSchemaAttribute::required_attribute( "abego", xs_string, "ABEGO of new segment")
+		+ XMLSchemaAttribute::required_attribute( "secstruct", xsct_dssp_string, "Secondary structure of new segment. Must be same length as ABEGO string."); //there is a dependency between abego and ss (must be same length)
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds a segment to the StructureData", attlist );
+
+}
+
+std::string AddSegmentDataMoverCreator::keyname() const {
+	return AddSegmentDataMover::mover_name();
+}
+
+protocols::moves::MoverOP
+AddSegmentDataMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AddSegmentDataMover );
 }
 
-std::string
-AddSegmentDataMoverCreator::keyname() const
+void AddSegmentDataMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return AddSegmentDataMover::class_name();
+	AddSegmentDataMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //denovo_design

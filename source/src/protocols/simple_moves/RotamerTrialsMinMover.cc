@@ -38,6 +38,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -103,10 +106,10 @@ RotamerTrialsMinMover::apply( core::pose::Pose & pose )
 	RTMin.rtmin( pose, *scorefxn_, task(pose) );
 }
 
-std::string
-RotamerTrialsMinMover::get_name() const {
-	return "RotamerTrialsMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMinMover::get_name() const {
+// XRW TEMP  return "RotamerTrialsMinMover";
+// XRW TEMP }
 
 void
 RotamerTrialsMinMover::show(std::ostream & output) const
@@ -184,23 +187,59 @@ RotamerTrialsMinMover::clone() const
 	return protocols::moves::MoverOP( new protocols::simple_moves::RotamerTrialsMinMover( *this ) );
 }
 
-std::string
-RotamerTrialsMinMoverCreator::keyname() const
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RotamerTrialsMinMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RotamerTrialsMinMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new RotamerTrialsMinMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RotamerTrialsMinMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RotamerTrialsMinMover";
+// XRW TEMP }
+
+std::string RotamerTrialsMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string RotamerTrialsMinMover::mover_name() {
+	return "RotamerTrialsMinMover";
+}
+
+void RotamerTrialsMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return RotamerTrialsMinMoverCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "nonideal", xsct_rosetta_bool, "XRW_TODO" )
+		+ XMLSchemaAttribute( "cartesian", xsct_rosetta_bool, "XRW_TODO" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RotamerTrialsMinMoverCreator::keyname() const {
+	return RotamerTrialsMinMover::mover_name();
 }
 
 protocols::moves::MoverOP
-RotamerTrialsMinMoverCreator::create_mover() const
-{
+RotamerTrialsMinMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
 }
 
-std::string
-RotamerTrialsMinMoverCreator::mover_name()
+void RotamerTrialsMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "RotamerTrialsMinMover";
+	RotamerTrialsMinMover::provide_xml_schema( xsd );
 }
+
 
 std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover)
 {

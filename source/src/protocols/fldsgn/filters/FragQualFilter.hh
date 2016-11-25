@@ -77,10 +77,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return FilterOP( new FragQualFilter( *this ) ); }
+	FilterOP clone() const override { return FilterOP( new FragQualFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const { return FilterOP( new FragQualFilter() ); }
+	FilterOP fresh_instance() const override { return FilterOP( new FragQualFilter() ); }
 
 
 public:// mutator
@@ -97,16 +97,16 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "FragQualFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "FragQualFilter"; }
 
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
-		Pose const & pose );
+		Pose const & pose ) override;
 
 
 public:// virtual main operation
@@ -114,16 +114,28 @@ public:// virtual main operation
 
 	// @brief returns true if the given pose passes the filter, false otherwise.
 	// In this case, the test is whether the give pose is the topology we want.
-	virtual bool apply( Pose const & pose ) const;
+	bool apply( Pose const & pose ) const override;
 
 	/// @brief
-	virtual Real report_sm( Pose const & pose ) const;
+	Real report_sm( Pose const & pose ) const override;
 
 	/// @brief used to report score
-	virtual void report( std::ostream & out, Pose const & pose ) const;
+	void report( std::ostream & out, Pose const & pose ) const override;
 
 	/// @brief
 	Real compute( Pose const & pose ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

@@ -52,23 +52,35 @@ public:
 		core::scoring::ScoreFunctionOP  scorefxn
 	);
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
+	protocols::moves::MoverOP clone() const override {
 		return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves(*this) );
 	}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 
 protected:
 
-	virtual LoopResult model_loop(
+	LoopResult model_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop
-	);
+	) override;
 
-	virtual basic::Tracer & tr() const;
+	basic::Tracer & tr() const override;
 };
 
 } //namespace perturb

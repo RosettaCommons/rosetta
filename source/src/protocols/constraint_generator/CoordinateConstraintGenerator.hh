@@ -18,7 +18,7 @@
 // Unit headers
 #include <protocols/constraint_generator/CoordinateConstraintGenerator.fwd.hh>
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -31,7 +31,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 namespace protocols {
 namespace constraint_generator {
 
@@ -79,6 +79,9 @@ public:
 	void
 	set_reference_pose( core::pose::PoseCOP refpose );
 
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 private:
 	core::pose::Pose const &
 	select_constraint_target_pose( core::pose::Pose const & pose ) const;
@@ -120,6 +123,7 @@ private:
 		core::pose::Pose & reference,
 		core::pose::Pose const & input_pose,
 		core::id::SequenceMapping const & seq_map ) const;
+
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;

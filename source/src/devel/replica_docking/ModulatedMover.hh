@@ -48,7 +48,7 @@ public:
 	~ModulatedMover() override;
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 
@@ -72,8 +72,8 @@ public:
 
 	utility::tag::TagCOP generate_mover_tag(
 		core::Size temp_level,
-		std::string const& prefix,
-		std::map< std::string, std::string > const& common_options
+		std::string const & prefix,
+		utility::tag::TagCOP initial_mover_tag
 	) const;
 
 	void
@@ -88,6 +88,18 @@ public:
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & mhm
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	//   virtual void
 	//   observe_after_metropolis(

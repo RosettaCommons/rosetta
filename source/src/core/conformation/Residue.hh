@@ -2003,7 +2003,7 @@ public:
 	{
 		return rsd_type_.icoor( atm );
 	}
-	
+
 	/// @brief Does this atom depend on the LOWER_CONNECT?
 	/// @details If recursive is set to true (the default), the dependencies are traced back and the function returns
 	/// true if ANY atom that this atom depends on is dependent on LOWER_CONNECT.  If false, only the immediate stub1, stub2, and
@@ -2201,7 +2201,7 @@ private:
 	/// coordinates; invoked from within the constructors.
 	void
 	assign_orbitals();
-	
+
 	/// @brief Does this atom depend on the LOWER_CONNECT?  Checks recursively.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool atom_depends_on_lower( core::Size const atom_index, utility::vector1< core::Size > visited_atoms ) const;

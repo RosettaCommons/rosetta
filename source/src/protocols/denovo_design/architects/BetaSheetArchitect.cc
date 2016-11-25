@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/denovo_design/architects/BetaSheetArchitect.hh>
 #include <protocols/denovo_design/architects/BetaSheetArchitectCreator.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
@@ -32,7 +32,7 @@
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
 #include <boost/assign.hpp>
 
@@ -71,6 +71,11 @@ BetaSheetArchitect::type() const
 }
 
 void
+BetaSheetArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	BetaSheetArchitect::provide_xml_schema( xsd );
+}
+
+void
 BetaSheetArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	std::string const sheet_db_str = tag->getOption< std::string >( "sheet_db", "" );
@@ -104,6 +109,33 @@ BetaSheetArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 
 	if ( !updated_ ) enumerate_permutations();
 }
+
+void
+BetaSheetArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "sheet_db", xs_string, "Path to detabase of beta sheets" )
+		+ XMLSchemaAttribute( "strand_extensions", xs_string, "Semicolon-separated string specifying strand extensions. Each extension should be a comma-separated pair of name and length" );
+
+	//The subelements are StrandArchitects
+	StrandArchitect::provide_xml_schema( xsd );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_already_defined_subelement( "StrandArchitect", & DeNovoArchitectFactory::complex_type_name_for_architect );
+	//StrandArchitect
+
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & DeNovoArchitectFactory::complex_type_name_for_architect )
+		.element_name( class_name() )
+		.description( "Architect used to construct beta sheets" )
+		.add_attributes( attlist )
+		.set_subelements_repeatable( subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
 
 BetaSheetArchitect::StructureDataOP
 BetaSheetArchitect::design( core::pose::Pose const &, core::Real & random ) const

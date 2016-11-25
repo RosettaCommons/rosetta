@@ -66,15 +66,16 @@ print_list_to_string( utility::vector1< HBondResStructCOP > const & residues, bo
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/ )
 {
 	std::stringstream ret_str;
-    Size count(0);
-	for (const auto & residue : residues) {
-        if ( count > 0 )
-            ret_str << ",";
+	Size count(0);
+	for ( const auto & residue : residues ) {
+		if ( count > 0 ) {
+			ret_str << ",";
+		}
 		if ( chainid ) {
 			ret_str << residue->chainid << "_";
 		}
 		ret_str << residue->aa  << "_" << residue->resnum << ",";
-        count++;
+		count++;
 	}
 	if ( term_w_bb ) {
 		ret_str << "backbone, ";
@@ -100,11 +101,12 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 	//            total = symm_info->num_independent_residues();
 	//        }
 	std::stringstream ret_str;
-    Size count(0);
-	for (const auto & residue : residues) {
-		if ( count > 0 )
-            ret_str << ",";
-        if ( chainid ) {
+	Size count(0);
+	for ( const auto & residue : residues ) {
+		if ( count > 0 ) {
+			ret_str << ",";
+		}
+		if ( chainid ) {
 			ret_str << residue->chainid << "_";
 		}
 		ret_str << residue->aa << "_";
@@ -113,7 +115,7 @@ print_list_to_string( Pose const & pose, utility::vector1< HBondResStructCOP > c
 		} else {
 			ret_str << residue->resnum;
 		}
-        count++;
+		count++;
 	}
 	if ( term_w_bb ) {
 		ret_str << "backbone, ";
@@ -133,11 +135,11 @@ print_network( hbond_net_struct & i, bool chainid /* true */ )
 {
 	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
 	//utility::vector1< HBondResStructCOP > const residues( i.residues );
-    std::string net_prefix("");
-    if ( i.is_native ) net_prefix = "native";
-    else if ( i.is_extended ) net_prefix = "extended";
-    std::stringstream output;
-    output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
+	std::string net_prefix("");
+	if ( i.is_native ) net_prefix = "native";
+	else if ( i.is_extended ) net_prefix = "extended";
+	std::stringstream output;
+	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
 
@@ -146,10 +148,10 @@ print_network_w_pdb_numbering( Pose const & pose, hbond_net_struct const & i, bo
 {
 	utility::vector1< HBondResStructCOP > const residues( (i.asymm_residues.empty()) ? i.residues : i.asymm_residues );
 	//utility::vector1< HBondResStructCOP > const & residues( (i.residues ) );
-    std::string net_prefix("");
-    if ( i.is_native ) net_prefix = "native";
-    else if ( i.is_extended ) net_prefix = "extended";
-    std::stringstream output;
+	std::string net_prefix("");
+	if ( i.is_native ) net_prefix = "native";
+	else if ( i.is_extended ) net_prefix = "extended";
+	std::stringstream output;
 	output << net_prefix << "network_" << i.id << "\t" << print_list_to_string( pose, residues, chainid, i.term_w_start, i.term_w_cycle, i.term_w_bb ) << "\t"<< residues.size() << "\t" << i.score << "\t" << i.total_hbonds << "\t" << i.connectivity << "\t" << i.num_unsat << "\t";
 	return output.str();
 }
@@ -198,7 +200,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 
 		//std::cout << "getting hbonds for residue " << res_i;
 		utility::vector1< HBondCOP > hbonds_for_res_i( full_hbond_set->residue_hbonds(res_i, false) );
-		for (auto & ih : hbonds_for_res_i) {
+		for ( auto & ih : hbonds_for_res_i ) {
 			//std::cout << ": arsd = " << (*ih)->acc_res() << "; drsd = " << (*ih)->don_res();
 			// NEED TO FIX; may need to uncomment
 			//if ( ((*ih)->acc_atm_is_protein_backbone() && (*ih)->acc_res() == res_i) || ((*ih)->don_hatm_is_protein_backbone() && (*ih)->don_res() == res_i) ) {
@@ -235,7 +237,7 @@ get_hbond_atom_pairs( hbond_net_struct & network, Pose & pose, bool bb_exclusion
 bool
 hbond_exists_in_vector( utility::vector1<HBondCOP> const & hbond_vec, HBondCOP h2 )
 {
-	for (const auto & h1 : hbond_vec) {
+	for ( const auto & h1 : hbond_vec ) {
 		if ( h1->acc_res() == h2->acc_res() && h1->don_res() == h2->don_res() && h1->acc_atm() == h2->acc_atm() && h1->don_hatm() == h2->don_hatm() ) {
 			return true;
 		}
@@ -395,7 +397,7 @@ network_contains_aa( char aa_one_letter, hbond_net_struct const & i )
 bool
 network_contains_aa( char aa_one_letter, utility::vector1< HBondResStructCOP > const & residues )
 {
-	for (const auto & residue : residues) {
+	for ( const auto & residue : residues ) {
 		if ( residue->aa == aa_one_letter ) {
 			return true;
 		}

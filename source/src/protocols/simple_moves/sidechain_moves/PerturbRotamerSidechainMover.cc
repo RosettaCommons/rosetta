@@ -54,6 +54,9 @@
 #include <sstream>
 #include <fstream>
 #include <utility/fixedsizearray1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 using namespace core;
 using namespace core::pose;
 
@@ -67,20 +70,20 @@ using namespace chemical;
 using namespace conformation;
 
 
-std::string
-PerturbRotamerSidechainMoverCreator::keyname() const {
-	return PerturbRotamerSidechainMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbRotamerSidechainMoverCreator::keyname() const {
+// XRW TEMP  return PerturbRotamerSidechainMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PerturbRotamerSidechainMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PerturbRotamerSidechainMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
+// XRW TEMP }
 
-std::string
-PerturbRotamerSidechainMoverCreator::mover_name() {
-	return "PerturbRotamerSidechain";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbRotamerSidechainMover::mover_name() {
+// XRW TEMP  return "PerturbRotamerSidechain";
+// XRW TEMP }
 
 
 PerturbRotamerSidechainMover::PerturbRotamerSidechainMover() {
@@ -122,10 +125,10 @@ PerturbRotamerSidechainMover::parse_my_tag(
 
 }
 
-std::string
-PerturbRotamerSidechainMover::get_name() const {
-	return "PerturbRotamerSidechainMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbRotamerSidechainMover::get_name() const {
+// XRW TEMP  return "PerturbRotamerSidechainMover";
+// XRW TEMP }
 
 void
 PerturbRotamerSidechainMover::make_chi_move(
@@ -263,6 +266,38 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 	}
 	within_rot_density = max_new_rot_prob;
 }
+
+std::string PerturbRotamerSidechainMover::get_name() const {
+	return mover_name();
+}
+
+std::string PerturbRotamerSidechainMover::mover_name() {
+	return "PerturbRotamerSidechain";
+}
+
+void PerturbRotamerSidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW EMPTY
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"non-discrete side chain sampling using Dunbrack rotamer probabilities/distributions", attlist );
+}
+
+std::string PerturbRotamerSidechainMoverCreator::keyname() const {
+	return PerturbRotamerSidechainMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PerturbRotamerSidechainMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
+}
+
+void PerturbRotamerSidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PerturbRotamerSidechainMover::provide_xml_schema( xsd );
+}
+
 
 
 } // sidechain_moves

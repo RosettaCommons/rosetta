@@ -159,10 +159,10 @@ void RestrictResiduesToRepackingOperation::provide_xml_schema( utility::tag::XML
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "reference_pdb_id", xs_string, "" )
-		+ XMLSchemaAttribute( "residues", xs_string );
+		+ XMLSchemaAttribute( "reference_pdb_id", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "residues", xs_string, "XRW TO DO" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 } //namespace protocols

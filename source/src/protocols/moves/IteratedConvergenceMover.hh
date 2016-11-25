@@ -50,7 +50,7 @@ public:
 
 	// methods
 	void apply( Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(
@@ -79,6 +79,18 @@ public:
 	core::Real delta() const;
 	core::Size cycles() const;
 	core::Size maxcycles() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	MoverOP submover_;

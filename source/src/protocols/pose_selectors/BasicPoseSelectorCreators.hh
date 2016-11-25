@@ -24,24 +24,28 @@ class AndSelectorCreator : public protocols::rosetta_scripts::PoseSelectorCreato
 public:
 	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
 	std::string keyname() const override { return "AndSelector"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 class OrSelectorCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
 	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
 	std::string keyname() const override { return "OrSelector"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 class TopNByPropertyCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
 	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
 	std::string keyname() const override { return "TopNByProperty"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 class FilterCreator : public protocols::rosetta_scripts::PoseSelectorCreator {
 public:
 	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
 	std::string keyname() const override { return "Filter"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
 }

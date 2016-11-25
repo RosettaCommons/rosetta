@@ -63,30 +63,15 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace fldsgn {
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
-
-std::string
-BluePrintBDRCreator::keyname() const
-{
-	return BluePrintBDRCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-BluePrintBDRCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BluePrintBDR );
-}
-
-std::string
-BluePrintBDRCreator::mover_name()
-{
-	return "BluePrintBDR";
-}
-
 
 /// @brief default constructor
 BluePrintBDR::BluePrintBDR() :
@@ -505,12 +490,6 @@ BluePrintBDR::apply( Pose & pose )
 	}
 }
 
-
-std::string
-BluePrintBDR::get_name() const {
-	return BluePrintBDRCreator::mover_name();
-}
-
 /// @brief run the centroid level build stage
 /// @return true if loop closed, false otherwise
 bool BluePrintBDR::centroid_build(
@@ -753,6 +732,84 @@ BluePrintBDR::parse_my_tag(
 
 	}
 }
+
+std::string BluePrintBDR::get_name() const {
+	return mover_name();
+}
+
+std::string BluePrintBDR::mover_name() {
+	return "BluePrintBDR";
+}
+
+void BluePrintBDR::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"blueprint", xs_string, "Name of blueprint file.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ss_from_blueprint", xsct_rosetta_bool, "Use secondary structure assignment in blueprint file.", "true");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_sequence_bias", xsct_rosetta_bool, "pick fragment using sequence information", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_abego_bias", xsct_rosetta_bool,"pick fragment using abego torsion information", "false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"constraints_NtoC", xsct_real, "constrain N- and C- terminal", "-1.0" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"constraint_sheet", xsct_real, "constrain Ca atoms in beta-sheet", "-1.0" );
+
+	attlist + XMLSchemaAttribute(
+		"constraint_file", xs_string,"Coordinate constraint file name.");
+
+	attlist + XMLSchemaAttribute(
+		"dump_pdb_when_fail", xs_string,"Output pdb when the protocol fails");
+
+	attlist + XMLSchemaAttribute(
+		"loop_mover", xs_string,"Loop mover for rebuilding loops");
+
+	attlist + XMLSchemaAttribute::attribute_w_default("rmdl_attempts", xsct_non_negative_integer,
+		"number of allowed closure attempts of RemodelLoopMover","1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_poly_val", xsct_non_negative_integer,
+		"entire sequence except for rebuilding parts become poly-Valine","1");
+
+	attlist + XMLSchemaAttribute(
+		"constraint_generators", xs_string, "Use previously defined ConstraintGenerator movers");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"keep_fold_tree", xsct_rosetta_bool,"Keep fold tree during variable length building.",
+		"false");
+
+	attlist + XMLSchemaAttribute(
+		"invrot_tree", xs_string,"Invert rotamers, if folding up around a ligand. Like in enzyme design.");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(), "Build a structure in centroid from a blueprint given an input pdb.",
+		attlist );
+}
+
+std::string BluePrintBDRCreator::keyname() const {
+	return BluePrintBDR::mover_name();
+}
+
+protocols::moves::MoverOP
+BluePrintBDRCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BluePrintBDR );
+}
+
+void BluePrintBDRCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BluePrintBDR::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace fldsgn

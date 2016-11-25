@@ -35,6 +35,7 @@ public:
 
 	virtual LoopsDefinerOP create_loops_definer() const;
 	virtual std::string type_name() const;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 };
 
 } //namespace

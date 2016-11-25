@@ -37,17 +37,20 @@
 // Basic headers
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.InterfaceBindingEnergyDensityFilter" );
 
-protocols::filters::FilterOP
-InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter ); }
 
-std::string
-InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceBindingEnergyDensityFilter"; }
+// XRW TEMP std::string
+// XRW TEMP InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceBindingEnergyDensityFilter"; }
 
 
 InterfaceBindingEnergyDensityFilter::InterfaceBindingEnergyDensityFilter() :
@@ -170,6 +173,40 @@ InterfaceBindingEnergyDensityFilter::compute( core::pose::Pose const & pose ) co
 
 	return binding_energy_density;
 }
+
+std::string InterfaceBindingEnergyDensityFilter::name() const {
+	return class_name();
+}
+
+std::string InterfaceBindingEnergyDensityFilter::class_name() {
+	return "InterfaceBindingEnergyDensityFilter";
+}
+
+void InterfaceBindingEnergyDensityFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("sasa_filter", xs_string, "the name of a previously defined Sasa filter")
+		+ XMLSchemaAttribute::required_attribute("ddG_filter", xs_string, "the name of a previously defined Ddg filter")
+		+ XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "sets the fail condition for the filter, this filter fails if Ddg/Sasa is not below the threshold.", "-0.015");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Takes two other filters: Ddg and Sasa. Computes Ddg/Sasa and returns the value. Fails if the value is not below some threshold.", attlist );
+}
+
+std::string InterfaceBindingEnergyDensityFilterCreator::keyname() const {
+	return InterfaceBindingEnergyDensityFilter::class_name();
+}
+
+protocols::filters::FilterOP
+InterfaceBindingEnergyDensityFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter );
+}
+
+void InterfaceBindingEnergyDensityFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceBindingEnergyDensityFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

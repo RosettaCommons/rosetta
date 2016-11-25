@@ -37,6 +37,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/dssp/Dssp.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -260,11 +263,56 @@ void SecondaryStructureHasResidueFilter::report( std::ostream & out, core::pose:
 	out << "See SecondaryStructureHasResidueFilter tracer log for report" << std::endl;
 }
 
-protocols::filters::FilterOP
-SecondaryStructureHasResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SecondaryStructureHasResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter ); }
 
-std::string
-SecondaryStructureHasResidueFilterCreator::keyname() const { return "SecondaryStructureHasResidue"; }
+// XRW TEMP std::string
+// XRW TEMP SecondaryStructureHasResidueFilterCreator::keyname() const { return "SecondaryStructureHasResidue"; }
+
+std::string SecondaryStructureHasResidueFilter::name() const {
+	return class_name();
+}
+
+std::string SecondaryStructureHasResidueFilter::class_name() {
+	return "SecondaryStructureHasResidue";
+}
+
+void SecondaryStructureHasResidueFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "min_helix_length", xsct_non_negative_integer, "XRW TO DO", "4" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_sheet_length", xsct_non_negative_integer, "XRW TO DO", "3" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_loop_length", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_helix_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_sheet_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_loop_length", xsct_non_negative_integer, "XRW TO DO", "9999" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_helix", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_sheet", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_loop", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "required_restypes", xs_string, "XRW TO DO", "VILMFYW" )
+		+ XMLSchemaAttribute::attribute_w_default( "secstruct_fraction_threshold", xsct_real, "XRW TO DO", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "nres_required_per_secstruct", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute( "res_check_task_operations", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "ss_select_task_operations", xs_string, "XRW TO DO" );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SecondaryStructureHasResidueFilterCreator::keyname() const {
+	return SecondaryStructureHasResidueFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SecondaryStructureHasResidueFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter );
+}
+
+void SecondaryStructureHasResidueFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SecondaryStructureHasResidueFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

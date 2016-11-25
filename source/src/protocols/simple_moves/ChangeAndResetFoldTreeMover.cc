@@ -20,6 +20,9 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR("ChangeAndResetFoldTreeMover");
@@ -86,25 +89,25 @@ ChangeAndResetFoldTreeMover::fresh_instance() const {
 	return MoverOP( new ChangeAndResetFoldTreeMover );
 }
 
-std::string
-ChangeAndResetFoldTreeMover::get_name() const {
-	return "ChangeAndResetFoldTreeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ChangeAndResetFoldTreeMover::get_name() const {
+// XRW TEMP  return "ChangeAndResetFoldTreeMover";
+// XRW TEMP }
 
-MoverOP
-ChangeAndResetFoldTreeMoverCreator::create_mover() const {
-	return MoverOP( new ChangeAndResetFoldTreeMover );
-}
+// XRW TEMP MoverOP
+// XRW TEMP ChangeAndResetFoldTreeMoverCreator::create_mover() const {
+// XRW TEMP  return MoverOP( new ChangeAndResetFoldTreeMover );
+// XRW TEMP }
 
-std::string
-ChangeAndResetFoldTreeMoverCreator::keyname() const {
-	return ChangeAndResetFoldTreeMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ChangeAndResetFoldTreeMoverCreator::keyname() const {
+// XRW TEMP  return ChangeAndResetFoldTreeMover::mover_name();
+// XRW TEMP }
 
-std::string
-ChangeAndResetFoldTreeMoverCreator::mover_name() {
-	return "ChangeAndResetFoldTreeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ChangeAndResetFoldTreeMover::mover_name() {
+// XRW TEMP  return "ChangeAndResetFoldTreeMover";
+// XRW TEMP }
 
 //void
 //ChangeAndResetFoldTreeMover::parse_my_tag(
@@ -175,6 +178,38 @@ ChangeAndResetFoldTreeMover::apply(core::pose::Pose& pose) {
 
 
 }
+
+std::string ChangeAndResetFoldTreeMover::get_name() const {
+	return mover_name();
+}
+
+std::string ChangeAndResetFoldTreeMover::mover_name() {
+	return "ChangeAndResetFoldTreeMover";
+}
+
+void ChangeAndResetFoldTreeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Not valid for use with RosettaScripts; don't use it", attlist );
+}
+
+std::string ChangeAndResetFoldTreeMoverCreator::keyname() const {
+	return ChangeAndResetFoldTreeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ChangeAndResetFoldTreeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ChangeAndResetFoldTreeMover );
+}
+
+void ChangeAndResetFoldTreeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ChangeAndResetFoldTreeMover::provide_xml_schema( xsd );
+}
+
 
 
 } //simple_moves

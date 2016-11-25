@@ -38,6 +38,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/xyz.functions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -50,20 +53,20 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover"
 namespace protocols {
 namespace simple_moves {
 
-std::string
-ShortBackrubMoverCreator::keyname() const {
-	return ShortBackrubMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ShortBackrubMoverCreator::keyname() const {
+// XRW TEMP  return ShortBackrubMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-ShortBackrubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ShortBackrubMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ShortBackrubMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ShortBackrubMover );
+// XRW TEMP }
 
-std::string
-ShortBackrubMoverCreator::mover_name() {
-	return "ShortBackrubMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ShortBackrubMover::mover_name() {
+// XRW TEMP  return "ShortBackrubMover";
+// XRW TEMP }
 
 // default constructor
 ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
@@ -214,10 +217,10 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-ShortBackrubMover::get_name() const {
-	return "ShortBackrubMover";
-}
+// XRW TEMP std::string
+// XRW TEMP ShortBackrubMover::get_name() const {
+// XRW TEMP  return "ShortBackrubMover";
+// XRW TEMP }
 
 // setters
 void ShortBackrubMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }
@@ -263,6 +266,36 @@ ShortBackrubMover::parse_my_tag(
 	backrubmover_->add_mainchain_segments();
 	backrubmover_->branchopt().read_database();
 }
+
+std::string ShortBackrubMover::get_name() const {
+	return mover_name();
+}
+
+std::string ShortBackrubMover::mover_name() {
+	return "ShortBackrubMover";
+}
+
+void ShortBackrubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ShortBackrubMoverCreator::keyname() const {
+	return ShortBackrubMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ShortBackrubMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ShortBackrubMover );
+}
+
+void ShortBackrubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ShortBackrubMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

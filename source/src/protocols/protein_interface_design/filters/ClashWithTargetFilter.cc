@@ -49,6 +49,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -185,11 +188,50 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 
 }
 
-protocols::filters::FilterOP
-ClashWithTargetFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashWithTargetFilter() ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ClashWithTargetFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashWithTargetFilter() ); }
 
-std::string
-ClashWithTargetFilterCreator::keyname() const { return "ClashWithTarget"; }
+// XRW TEMP std::string
+// XRW TEMP ClashWithTargetFilterCreator::keyname() const { return "ClashWithTarget"; }
+
+std::string ClashWithTargetFilter::name() const {
+	return class_name();
+}
+
+std::string ClashWithTargetFilter::class_name() {
+	return "ClashWithTarget";
+}
+
+void ClashWithTargetFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "align_to_pdbname", xs_string, "PDB name to which to align" )
+		+ XMLSchemaAttribute::required_attribute( "context_pdbname", xs_string, "PDB name of the potentially-clashing target" )
+		+ XMLSchemaAttribute::required_attribute( "clash_score_cutoff", xsct_non_negative_integer, "PDB name of the potentially-clashing target" )
+		+ XMLSchemaAttribute::attribute_w_default( "clash_residues", xs_string, "Compute clash as though the target pose residues are this type (by name3)", "ALA" )
+		+ XMLSchemaAttribute( "ref_start", xsct_non_negative_integer, "Start residue in the target pose" )
+		+ XMLSchemaAttribute( "ref_end", xsct_non_negative_integer, "End residue in the target pose" )
+		+ XMLSchemaAttribute( "pose_start", xsct_non_negative_integer, "Start residue in the main pose" )
+		+ XMLSchemaAttribute( "pose_end", xsct_non_negative_integer, "End residue in the main pose" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter on number of clashes with a target pose", attlist );
+}
+
+std::string ClashWithTargetFilterCreator::keyname() const {
+	return ClashWithTargetFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ClashWithTargetFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ClashWithTargetFilter );
+}
+
+void ClashWithTargetFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ClashWithTargetFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

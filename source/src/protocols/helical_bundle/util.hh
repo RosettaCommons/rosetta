@@ -33,12 +33,21 @@
 #include <set>
 
 #include <core/grid/CartGrid.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////
 
 namespace protocols {
 namespace helical_bundle {
+
+void add_attributes_for_make_bundle_symmetry( utility::tag::AttributeList & attlist );
+void add_attributes_for_make_bundle_dofs( utility::tag::AttributeList & attlist );
+void add_attributes_for_make_bundle_other_defaults( utility::tag::AttributeList & attlist );
+void add_attributes_for_make_bundle_minorhelix_defaults( utility::tag::AttributeList & attlist );
+void add_attributes_for_helix_params( utility::tag::AttributeList & subtag_attributes );
+void add_attributes_for_minor_helix_params( utility::tag::AttributeList & subtag_attributes );
+void add_attributes_for_other_helix_params( utility::tag::AttributeList & subtag_attributes );
 
 /// @brief Actual write of the crick_params file data.
 /// @details Called by both write_minor_helix_params variants.

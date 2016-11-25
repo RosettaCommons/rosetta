@@ -47,7 +47,7 @@ public:
 	DnaInterfaceMultiStateDesign();
 	~DnaInterfaceMultiStateDesign() override;
 	void apply( Pose & ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void copy_dna_chains( DnaChainsOP );
 	void copy_targeted_dna( DnaDesignDefOPs const & );
 	void output_results( Pose & );
@@ -63,6 +63,18 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void initialize( Pose & );

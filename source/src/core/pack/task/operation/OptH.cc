@@ -109,7 +109,7 @@ void OptH::use_multicool_annealer( bool const flag ) {
 std::string OptH::keyname() { return "OptH"; }
 
 void OptH::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "Optimize hydrogen placement at the time of a PDB load." );
 }
 
 TaskOperationOP OptHCreator::create_task_operation() const

@@ -44,17 +44,17 @@ public:
 
 	~SetupForSymmetryMover();
 
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetupForSymmetryMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new SetupForSymmetryMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	// setter
 	void slide_into_contact(bool val) { slide_ = val; }
@@ -65,6 +65,18 @@ public:
 	///                           If false, input pose's datacache is cleared (default = false)
 	void
 	set_preserve_datacache( bool const preserve_cache );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void process_symmdef_file(std::string tag);
@@ -94,17 +106,17 @@ public:
 
 	~ExtractAsymmetricUnitMover();
 
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ExtractAsymmetricUnitMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ExtractAsymmetricUnitMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 public:
 	/// @brief if keep_virtual_residues is true, virtual residues will remain in the pose, otherwise
@@ -120,6 +132,18 @@ public:
 	///          ignored.  The keep_unknown_aas defaults to false for historical reasons.
 	void
 	set_keep_unknown_aas( bool const keep_unk );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief if keep_virtual_residues is true, virtual residues will remain in the pose, otherwise
@@ -140,17 +164,29 @@ public:
 
 	~ExtractAsymmetricPoseMover();
 
-	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ExtractAsymmetricPoseMover( *this ) ) ); }
+	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new ExtractAsymmetricPoseMover( *this ) ) ); }
 
-	virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose ) override;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 };
 
 

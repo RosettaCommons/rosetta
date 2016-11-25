@@ -69,6 +69,9 @@
 
 //Auto Headers
 #include <protocols/simple_filters/DdgFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 using namespace core;
@@ -83,11 +86,11 @@ namespace filters {
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
 using core::pose::Pose;
 
-protocols::filters::FilterOP
-HbondsToAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToAtomFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP HbondsToAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToAtomFilter ); }
 
-std::string
-HbondsToAtomFilterCreator::keyname() const { return "HbondsToAtom"; }
+// XRW TEMP std::string
+// XRW TEMP HbondsToAtomFilterCreator::keyname() const { return "HbondsToAtom"; }
 
 bool
 HbondsToAtomFilter::apply( Pose const & pose ) const {
@@ -159,6 +162,45 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 }
 
 HbondsToAtomFilter::~HbondsToAtomFilter() {}
+
+std::string HbondsToAtomFilter::name() const {
+	return class_name();
+}
+
+std::string HbondsToAtomFilter::class_name() {
+	return "HbondsToAtom";
+}
+
+void HbondsToAtomFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "partners", xsct_non_negative_integer, "H-bonding partner expectation, below which counts as failure" )
+		+ XMLSchemaAttribute::attribute_w_default( "energy_cutoff", xsct_real, "Energy below which a H-bond counts", "-0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb_bb", xsct_rosetta_bool, "Count backbone-backbone H-bonds", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "backbone", xsct_rosetta_bool, "Count backbone H-bonds", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "sidechain", xsct_rosetta_bool, "Count sidechain H-bonds", "1" )
+		+ XMLSchemaAttribute( "pdb_num", xsct_refpose_enabled_residue_number, "Particular residue of interest" )
+		+ XMLSchemaAttribute::required_attribute( "atomname", xs_string, "Atom name to which to examine H-bonds" );
+
+	core::pose::attributes_for_get_resnum( attlist ) ;
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter counts the number of residues that form sufficiently energetically favorable H-bonds to a selected atom", attlist );
+}
+
+std::string HbondsToAtomFilterCreator::keyname() const {
+	return HbondsToAtomFilter::class_name();
+}
+
+protocols::filters::FilterOP
+HbondsToAtomFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new HbondsToAtomFilter );
+}
+
+void HbondsToAtomFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HbondsToAtomFilter::provide_xml_schema( xsd );
+}
+
 
 }
 } // protein_interface_design

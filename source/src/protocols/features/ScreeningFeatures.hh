@@ -19,6 +19,8 @@
 
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/json_spirit/json_spirit_value.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -33,7 +35,7 @@ public:
 
 	~ScreeningFeatures() override;
 
-	std::string type_name() const override;
+	// XRW TEMP  std::string type_name() const override;
 
 	void write_schema_to_db(utility::sql_database::sessionOP db_session) const override;
 
@@ -54,6 +56,18 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::vector<utility::json_spirit::Pair> get_desriptor_data() const;

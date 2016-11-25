@@ -33,6 +33,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 // Project Headers
 
 
@@ -41,11 +44,11 @@ static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
 namespace devel {
 namespace replica_docking {
 
-protocols::filters::FilterOP
-IrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IrmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP IrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IrmsdFilter ); }
 
-std::string
-IrmsdFilterCreator::keyname() const { return "Irms"; }
+// XRW TEMP std::string
+// XRW TEMP IrmsdFilterCreator::keyname() const { return "Irms"; }
 
 void IrmsdFilter::register_options() {
 	using namespace basic::options;
@@ -179,6 +182,41 @@ IrmsdFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real irms = protocols::docking::calc_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
 	return( irms );
 }
+
+std::string IrmsdFilter::name() const {
+	return class_name();
+}
+
+std::string IrmsdFilter::class_name() {
+	return "Irms";
+}
+
+void IrmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold below which the interaction score filter fails", "-30" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_threshold", xsct_real, "Threshold above which the interaction score filter fails", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_positive_integer, "Jump across which the interface is defined, numbered sequentially from 1", "1" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string IrmsdFilterCreator::keyname() const {
+	return IrmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+IrmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new IrmsdFilter );
+}
+
+void IrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IrmsdFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -40,15 +40,15 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	~AddConstraints() override;
 
-	static std::string
-	class_name() { return "AddConstraints"; }
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name() { return "AddConstraints"; }
 
 	void
 	apply( core::pose::Pose & pose ) override;
 
 public:
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
 	void
@@ -70,6 +70,18 @@ public:
 public:
 	void
 	add_generator( ConstraintGeneratorCOP cst_generator );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	ConstraintGeneratorCOPs generators_;

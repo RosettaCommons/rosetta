@@ -62,6 +62,21 @@ public:
 
 	void report_subvalues( bool const report ){ report_subvalues_ = report; }
 	bool report_subvalues() const { return report_subvalues_; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void attributes( utility::tag::AttributeList & attlist );
+
 private:
 	utility::vector1< protocols::filters::FilterOP > filters_;
 	Operation operation_; // dflt PRODUCT

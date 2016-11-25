@@ -25,11 +25,16 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+
 //Basic Headers
 #include <basic/Tracer.hh>
 //Utility Headers
 #include <utility/string_util.hh>
 #include <protocols/rosetta_scripts/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -39,11 +44,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
-protocols::filters::FilterOP
-ResidueCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueCountFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueCountFilter ); }
 
-std::string
-ResidueCountFilterCreator::keyname() const { return "ResidueCount"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueCountFilterCreator::keyname() const { return "ResidueCount"; }
 
 //default ctor
 ResidueCountFilter::ResidueCountFilter() :
@@ -340,6 +345,68 @@ ResidueCountFilter::add_residue_type_by_name(
 	res_types_.push_back( res_type_input );
 	return true;
 }
+
+std::string ResidueCountFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueCountFilter::class_name() {
+	return "ResidueCount";
+}
+
+void ResidueCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"max_residue_count", xsct_non_negative_integer,
+		"Is the total number of residues less than or equal to the maximum allowable residue count?")
+		+ XMLSchemaAttribute(
+		"min_residue_count", xsct_non_negative_integer,
+		"Is the total number of residues more than or equal to the minimum allowable residue count?")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"count_as_percentage", xsct_rosetta_bool,
+		"If this is true, count residues as percentage (=100*raw_number_of_specified_residue/"
+		"total_residue) instead of counting raw number of it, also max_residue_count"
+		"/min_residue_count are assumed to be entered as percentage",
+		"false")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"residue_types", xs_string,
+		"Comma-separated list of which residue type names. (e.g. \"CYS,SER,HIS_D\" ). "
+		"Only residues with type names matching those in the list will be counted.",
+		"");
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "residue_selector",
+		"Restrict counting to a set of residues");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"packable", xsct_rosetta_bool,
+		"? This parameter seems to do nothing at all ?",
+		"false");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Filters structures based on the total number of residues in the structure.",
+		attlist );
+}
+
+std::string ResidueCountFilterCreator::keyname() const {
+	return ResidueCountFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueCountFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueCountFilter );
+}
+
+void ResidueCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueCountFilter::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

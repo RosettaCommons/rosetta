@@ -18,12 +18,13 @@
 #include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.fwd.hh>
 
+// Project headers
+#include <core/types.hh>
+
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
-
-#include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {
@@ -38,6 +39,11 @@ public:
 
 	virtual LoopsDefinerOP create_loops_definer() const = 0;
 	virtual std::string type_name() const = 0;
+
+	/// @brief Define the structure of the XML file for the LoopDefiner that this
+	/// %LoopDefinerCreator instantiates using the XML Schema language.
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const = 0;
+
 };
 
 } //namespace

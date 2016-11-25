@@ -30,6 +30,9 @@
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -89,11 +92,48 @@ StubScoreLoopsFilter::clone() const{
 	return protocols::filters::FilterOP( new StubScoreLoopsFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-StubScoreLoopsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreLoopsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP StubScoreLoopsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreLoopsFilter ); }
 
-std::string
-StubScoreLoopsFilterCreator::keyname() const { return "StubScoreLoops"; }
+// XRW TEMP std::string
+// XRW TEMP StubScoreLoopsFilterCreator::keyname() const { return "StubScoreLoops"; }
+
+std::string StubScoreLoopsFilter::name() const {
+	return class_name();
+}
+
+std::string StubScoreLoopsFilter::class_name() {
+	return "StubScoreLoops";
+}
+
+void StubScoreLoopsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::required_attribute( "start", xsct_positive_integer, "Starting residue of loop" )
+		+ XMLSchemaAttribute::required_attribute( "stop", xsct_positive_integer, "Ending residue of loop" )
+		+ XMLSchemaAttribute::required_attribute( "stubfile", xs_string, "Stub file filename" )
+		+ XMLSchemaAttribute::attribute_w_default( "resfile", xs_string, "Resfile filename", "NONE" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "This filter checks whether in the current configuration the scaffold is 'feeling' any of the hotspot stub constraints. This is useful for quick triaging of hopeless configuration. If used in conjunction with the Mover PlaceSimultaneously, don't bother setting flags -- the Mover will take care of it.", attlist );
+}
+
+std::string StubScoreLoopsFilterCreator::keyname() const {
+	return StubScoreLoopsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+StubScoreLoopsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new StubScoreLoopsFilter );
+}
+
+void StubScoreLoopsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StubScoreLoopsFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

@@ -339,16 +339,16 @@ void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSc
 {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "chain1_num", xsct_int_cslist )
-		+ XMLSchemaAttribute( "chain2_num", xsct_int_cslist )
-		+ XMLSchemaAttribute( "jump",       xsct_int_cslist )
+		+ XMLSchemaAttribute( "chain1_num", xsct_int_cslist , "XRW TO DO" )
+		+ XMLSchemaAttribute( "chain2_num", xsct_int_cslist , "XRW TO DO" )
+		+ XMLSchemaAttribute( "jump",       xsct_int_cslist , "XRW TO DO" )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "CB_dist_cutoff", xs_decimal, "10.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "nearby_atom_cutoff", xs_decimal, "5.5" )
-		+ XMLSchemaAttribute::attribute_w_default(  "vector_angle_cutoff", xs_decimal, "75.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "vector_dist_cutoff", xs_decimal, "9.0" );
+		+ XMLSchemaAttribute::attribute_w_default(  "CB_dist_cutoff", xsct_real, "XRW TO DO",  "10.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "nearby_atom_cutoff", xsct_real, "XRW TO DO",  "5.5"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "vector_angle_cutoff", xsct_real, "XRW TO DO",  "75.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "vector_dist_cutoff", xsct_real, "XRW TO DO",  "9.0"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

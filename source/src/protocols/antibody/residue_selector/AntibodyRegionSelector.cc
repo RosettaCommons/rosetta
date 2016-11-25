@@ -158,13 +158,20 @@ void AntibodyRegionSelector::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 
 	using namespace utility::tag;
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "region_string" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern, "cdr_region|framework_region|antigen_region" );
+	xsd.add_top_level_element( restriction_type );
+
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "region",      xs_boolean, "true" )
-		+ XMLSchemaAttribute::attribute_w_default(  "cdr_definition", xs_string, option [OptionKeys::antibody::cdr_definition]() )
-		+ XMLSchemaAttribute::attribute_w_default(  "input_ab_scheme", xs_string, option [OptionKeys::antibody::input_ab_scheme]());
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
-
+		+ XMLSchemaAttribute(  "region", "region_string", "Select the region you wish to disable. Options: cdr_region, framework_region, antigen_region"  )
+		+ XMLSchemaAttribute(  "cdr_definition", xs_string, "Set the cdr definition you want to use. Requires the input_ab_scheme option")
+		+ XMLSchemaAttribute(  "input_ab_scheme", xs_string,
+		"Set the antibody numbering scheme. Requires the cdr_definition XML option. "
+		"Both options can also be set through the command line (recommended). ");
+	xsd_type_definition_w_attributes( xsd, class_name(), "Select residues of particular antibody regions.", attributes );
 }
 
 ResidueSelectorOP

@@ -32,6 +32,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/lu.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace bnu = boost::numeric::ublas;
 
@@ -44,11 +47,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
 
-protocols::filters::FilterOP
-DisulfideEntropyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideEntropyFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP DisulfideEntropyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideEntropyFilter ); }
 
-std::string
-DisulfideEntropyFilterCreator::keyname() const { return "DisulfideEntropy"; }
+// XRW TEMP std::string
+// XRW TEMP DisulfideEntropyFilterCreator::keyname() const { return "DisulfideEntropy"; }
 
 
 //default ctor
@@ -314,6 +317,39 @@ DisulfideEntropyFilter::compute(
 
 
 }
+
+std::string DisulfideEntropyFilter::name() const {
+	return class_name();
+}
+
+std::string DisulfideEntropyFilter::class_name() {
+	return "DisulfideEntropy";
+}
+
+void DisulfideEntropyFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("tightness", xsct_real, "Larger values for tightness lead to a higher (and thus looser) threshold.", "0")
+		+ XMLSchemaAttribute::attribute_w_default("lower_bound", xsct_real, "Fixed threshold", "0");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the change in deltaSconf_folding caused by formation of the disulfide bonds in a given topology. S_conf refers to the configurational entropy of the protein chain only.", attlist );
+}
+
+std::string DisulfideEntropyFilterCreator::keyname() const {
+	return DisulfideEntropyFilter::class_name();
+}
+
+protocols::filters::FilterOP
+DisulfideEntropyFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new DisulfideEntropyFilter );
+}
+
+void DisulfideEntropyFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DisulfideEntropyFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

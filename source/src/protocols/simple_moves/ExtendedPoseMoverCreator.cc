@@ -26,17 +26,17 @@
 namespace protocols {
 namespace simple_moves {
 
-protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
-}
+// XRW TEMP protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
+// XRW TEMP }
 
-std::string ExtendedPoseMoverCreator::keyname() const {
-	return mover_name();
-}
+// XRW TEMP std::string ExtendedPoseMoverCreator::keyname() const {
+// XRW TEMP  return mover_name();
+// XRW TEMP }
 
-std::string ExtendedPoseMoverCreator::mover_name() {
-	return "ExtendedPoseMover";
-}
+// XRW TEMP std::string ExtendedPoseMoverCreator::mover_name() {
+// XRW TEMP  return "ExtendedPoseMover";
+// XRW TEMP }
 
 }  // namespace simple_moves
 }  // namespace protocols

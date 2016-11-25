@@ -62,6 +62,10 @@
 // C++ Headers
 #include <cmath>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/PoseConformationFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -101,8 +105,8 @@ using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;
 
-string
-PoseConformationFeatures::type_name() const { return "PoseConformationFeatures"; }
+// XRW TEMP string
+// XRW TEMP PoseConformationFeatures::type_name() const { return "PoseConformationFeatures"; }
 
 void
 PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
@@ -571,6 +575,36 @@ PoseConformationFeatures::load_chain_endings(
 
 	TR.Debug << "Chain endings loaded" << std::endl;
 }
+
+std::string PoseConformationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string PoseConformationFeatures::class_name() {
+	return "PoseConformationFeatures";
+}
+
+void PoseConformationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Records all the chain endings (the final residue of each chain, including the final residue of the Pose overall) as features", attlist );
+}
+
+std::string PoseConformationFeaturesCreator::type_name() const {
+	return PoseConformationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+PoseConformationFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new PoseConformationFeatures );
+}
+
+void PoseConformationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PoseConformationFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

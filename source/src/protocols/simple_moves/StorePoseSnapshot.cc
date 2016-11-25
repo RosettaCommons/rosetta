@@ -38,6 +38,9 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility Headers
@@ -60,22 +63,22 @@ using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
-std::string
-StorePoseSnapshotCreator::keyname() const
-{
-	return StorePoseSnapshotCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP StorePoseSnapshotCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return StorePoseSnapshot::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-StorePoseSnapshotCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StorePoseSnapshot );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StorePoseSnapshotCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StorePoseSnapshot );
+// XRW TEMP }
 
-std::string
-StorePoseSnapshotCreator::mover_name()
-{
-	return "StorePoseSnapshot";
-}
+// XRW TEMP std::string
+// XRW TEMP StorePoseSnapshot::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "StorePoseSnapshot";
+// XRW TEMP }
 
 StorePoseSnapshot::~StorePoseSnapshot() = default;
 
@@ -108,10 +111,10 @@ void StorePoseSnapshot::apply( Pose & pose ) {
 
 /// @brief Get the mover name.
 ///
-std::string
-StorePoseSnapshot::get_name() const {
-	return StorePoseSnapshotCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP StorePoseSnapshot::get_name() const {
+// XRW TEMP  return StorePoseSnapshot::mover_name();
+// XRW TEMP }
 
 /// @brief Parse RosettaScripts XML to set up this mover.
 /// @details This is called at script initialization, long before the apply()
@@ -128,7 +131,7 @@ void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
 	set_reference_pose_name( tag->getOption< std::string >( "reference_pose_name", "" ) );
 	if ( TR.visible() ) TR << "Set reference pose name to " << reference_pose_name() << "." << std::endl;
 
-	overwrite_current_refpose_ = tag->getOption("override_current", overwrite_current_refpose_);
+	overwrite_current_refpose_ = tag->getOption< bool >("override_current", overwrite_current_refpose_);
 
 	if ( TR.visible() ) TR.flush();
 	return;
@@ -145,6 +148,56 @@ void StorePoseSnapshot::set_reference_pose_name( std::string const &name_in ) {
 /// @brief Return the name of the reference pose object that will be created and stored in the pose.
 ///
 std::string StorePoseSnapshot::reference_pose_name( ) const { return reference_pose_name_; }
+
+std::string StorePoseSnapshot::get_name() const {
+	return mover_name();
+}
+
+std::string StorePoseSnapshot::mover_name() {
+	return "StorePoseSnapshot";
+}
+
+void StorePoseSnapshot::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute(
+		"reference_pose_name", xs_string,
+		"The name of the snapshot or reference pose object. Many different "
+		"snapshots may be stored (by applying different StorePoseSnapshot movers "
+		"at different points in the protocol), and may subsequently be "
+		"referred to by different names")
+		+ XMLSchemaAttribute(
+		"override_current", xsct_rosetta_bool,
+		"If there already exists a reference pose, overwrite it." );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Rosetta's sequential residue numbering can create headaches in protocols "
+		"in which residues are to be inserted or deleted, and in which one wishes "
+		"subsequently to refer to residues past the insertion or deletion point. "
+		"The StorePoseSnapshot mover is intended as a means of permitting a user "
+		"to store a named snapshot or \"reference pose\" at a particular point in a "
+		"protocol, then use the residue numbering of the pose at that point in the "
+		"protocol for movers and filters that might be applied sometime later, "
+		"after pose indices may have been altered by insertions or deletions.",
+		attlist );
+}
+
+std::string StorePoseSnapshotCreator::keyname() const {
+	return StorePoseSnapshot::mover_name();
+}
+
+protocols::moves::MoverOP
+StorePoseSnapshotCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StorePoseSnapshot );
+}
+
+void StorePoseSnapshotCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StorePoseSnapshot::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

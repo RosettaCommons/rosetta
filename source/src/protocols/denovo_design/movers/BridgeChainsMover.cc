@@ -31,6 +31,12 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.movers.BridgeChainsMover" );
 
@@ -39,7 +45,7 @@ namespace denovo_design {
 namespace movers {
 
 BridgeChainsMover::BridgeChainsMover():
-	protocols::moves::Mover( BridgeChainsMover::class_name() ),
+	protocols::moves::Mover( BridgeChainsMover::mover_name() ),
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
 	scorefxn_(),
 	overlap_( 1 ),
@@ -48,8 +54,8 @@ BridgeChainsMover::BridgeChainsMover():
 {
 }
 
-BridgeChainsMover::BridgeChainsMover( std::string const & class_name ):
-	protocols::moves::Mover( class_name ),
+BridgeChainsMover::BridgeChainsMover( std::string const & mover_name ):
+	protocols::moves::Mover( mover_name ),
 	architect_( new connection::ConnectionArchitect( "BridgeChainsArchitect" ) ),
 	scorefxn_(),
 	overlap_( 1 ),
@@ -72,7 +78,7 @@ BridgeChainsMover::parse_my_tag(
 	architect_->set_bridge( true );
 	architect_->parse_my_tag( tag, data );
 	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
-	set_dry_run( tag->getOption< core::Size >( "dry_run", dry_run_ ) );
+	set_dry_run( tag->getOption< bool >( "dry_run", dry_run_ ) );
 	iterations_ = tag->getOption< core::Size >( "trials", iterations_ );
 
 	core::scoring::ScoreFunctionCOP sfxn = protocols::rosetta_scripts::parse_score_function( tag, data );
@@ -91,17 +97,17 @@ BridgeChainsMover::fresh_instance() const
 	return protocols::moves::MoverOP( new BridgeChainsMover );
 }
 
-std::string
-BridgeChainsMover::get_name() const
-{
-	return BridgeChainsMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BridgeChainsMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return BridgeChainsMover::mover_name();
+// XRW TEMP }
 
-std::string
-BridgeChainsMover::class_name()
-{
-	return "BridgeChainsMover";
-}
+// XRW TEMP std::string
+// XRW TEMP BridgeChainsMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BridgeChainsMover";
+// XRW TEMP }
 
 void
 BridgeChainsMover::show( std::ostream & output ) const
@@ -212,17 +218,64 @@ BridgeChainsMover::set_dry_run( bool const dry_run )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-BridgeChainsMoverCreator::create_mover() const
+std::string BridgeChainsMover::get_name() const {
+	return mover_name();
+}
+
+std::string BridgeChainsMover::mover_name() {
+	return "BridgeChains";
+}
+
+void BridgeChainsMover::setup_attlist_for_derived_classes( utility::tag::AttributeList & attlist ) {
+	using namespace utility::tag;
+	connection::ConnectionArchitect::attributes_for_parse_my_tag(attlist);
+
+	attlist + XMLSchemaAttribute(
+		"overlap", xsct_non_negative_integer,
+		"Build overlap of nested BuildDeNovoBackboneMover");
+
+	attlist + XMLSchemaAttribute(
+		"dry_run", xsct_non_negative_integer,
+		"Sets folder of BuildDeNovoBackboneMover to RandomTorsionPoseFolder "
+		"instead of RemodelLoopMoverPoseFolde");
+
+	attlist + XMLSchemaAttribute(
+		"trials", xsct_non_negative_integer,
+		"iterations per phase of nested BuildDeNovoBackboneMover");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+}
+
+void BridgeChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	BridgeChainsMover::setup_attlist_for_derived_classes( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Given a pose with a jump, this mover uses a fragment insertion monte carlo to connect "
+		"the specified termini. The new fragment will connect the C-terminal residue of jump1 to "
+		"the N-terminal residue of jump2, and will have secondary structure and ramachandran space "
+		"given by \"motif.\" This mover uses the VarLengthBuild code. The input pose must have at least "
+		"two chains (jumps) to connect, or it will fail.",
+		attlist );
+}
+
+std::string BridgeChainsMoverCreator::keyname() const {
+	return BridgeChainsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BridgeChainsMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new BridgeChainsMover );
 }
 
-std::string
-BridgeChainsMoverCreator::keyname() const
+void BridgeChainsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return BridgeChainsMover::class_name();
+	BridgeChainsMover::provide_xml_schema( xsd );
 }
+
 
 /// this one is to keep compatibility with Kuhlman, Jacobs, and Linsky 2016 book chapter
 protocols::moves::MoverOP
@@ -237,7 +290,34 @@ BridgeChainsCreator::keyname() const
 	return "BridgeChains";
 }
 
+//std::string BridgeChainsMover::mover_name() {
+// return "BridgeChains";
+//}
+//
+//void BridgeChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+//{
+//// TO DO!
+// using namespace utility::tag;
+// AttributeList attlist; // TO DO: add attributes to this list
+// // TO DO: perhaps this is not the right function to call? -- also, delete this comment
+// protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+//}
+//
+//std::string BridgeChainsCreator::keyname() const {
+// return BridgeChainsMover::mover_name();
+//}
+//
+//protocols::moves::MoverOP
+//BridgeChainsCreator::create_mover() const {
+// return protocols::moves::MoverOP( new BridgeChainsMover );
+//}
+
+void BridgeChainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BridgeChainsMover::provide_xml_schema( xsd );
+}
+
+
 } //protocols
 } //denovo_design
 } //movers
-

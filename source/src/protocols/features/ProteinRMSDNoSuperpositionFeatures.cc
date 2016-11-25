@@ -60,6 +60,10 @@
 #include <sstream>
 
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinRMSDNoSuperpositionFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -84,8 +88,8 @@ using cppdb::statement;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.features.ProteinRMSDNoSuperpositionFeatures" );
 
-string
-ProteinRMSDNoSuperpositionFeatures::type_name() const { return "ProteinRMSDNoSuperpositionFeatures"; }
+// XRW TEMP string
+// XRW TEMP ProteinRMSDNoSuperpositionFeatures::type_name() const { return "ProteinRMSDNoSuperpositionFeatures"; }
 
 
 PoseCOP
@@ -234,6 +238,40 @@ ProteinRMSDNoSuperpositionFeatures::report_features(
 
 	return 0;
 }
+
+std::string ProteinRMSDNoSuperpositionFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinRMSDNoSuperpositionFeatures::class_name() {
+	return "ProteinRMSDNoSuperpositionFeatures";
+}
+
+void ProteinRMSDNoSuperpositionFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record RMSD, the reference ID to which RMSD was computed as well as dummy variables determining what type of protein RMSD was computed; for this FeaturesReporter, no superposition is performed", attlist );
+}
+
+std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {
+	return ProteinRMSDNoSuperpositionFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
+}
+
+void ProteinRMSDNoSuperpositionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinRMSDNoSuperpositionFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

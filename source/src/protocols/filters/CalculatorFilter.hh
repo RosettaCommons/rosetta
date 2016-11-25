@@ -65,6 +65,18 @@ public:
 
 	void add_constant( std::string name, core::Real value );
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	numeric::CalculatorOP calc_;
 	std::map<std::string, core::Real> values_;

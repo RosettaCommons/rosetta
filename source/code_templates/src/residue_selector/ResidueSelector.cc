@@ -95,8 +95,8 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & )
 	//using namespace utility::tag;
 	//AttributeList attributes;
 	//attributes
-	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xs_boolean, "true" )
-	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xs_boolean, "true" );
+	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
+	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
 	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
 
 }

@@ -42,6 +42,9 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -59,20 +62,20 @@ bool compare_values(
 namespace protocols {
 namespace simple_moves {
 
-std::string
-BoltzmannRotamerMoverCreator::keyname() const {
-	return BoltzmannRotamerMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BoltzmannRotamerMoverCreator::keyname() const {
+// XRW TEMP  return BoltzmannRotamerMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BoltzmannRotamerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BoltzmannRotamerMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BoltzmannRotamerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BoltzmannRotamerMover );
+// XRW TEMP }
 
-std::string
-BoltzmannRotamerMoverCreator::mover_name() {
-	return "BoltzmannRotamerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP BoltzmannRotamerMover::mover_name() {
+// XRW TEMP  return "BoltzmannRotamerMover";
+// XRW TEMP }
 
 // default constructor
 BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
@@ -298,10 +301,10 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 }
 
-std::string
-BoltzmannRotamerMover::get_name() const {
-	return "BoltzmannRotamerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP BoltzmannRotamerMover::get_name() const {
+// XRW TEMP  return "BoltzmannRotamerMover";
+// XRW TEMP }
 
 void
 BoltzmannRotamerMover::show(std::ostream & output) const
@@ -419,6 +422,42 @@ BoltzmannRotamerMover::parse_my_tag(
 	show_packer_task_ = tag->getOption<bool>( "show_packer_task", 0 );
 	set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }
+
+std::string BoltzmannRotamerMover::get_name() const {
+	return mover_name();
+}
+
+std::string BoltzmannRotamerMover::mover_name() {
+	return "BoltzmannRotamerMover";
+}
+
+void BoltzmannRotamerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+	attlist + XMLSchemaAttribute( "show_packer_task", xsct_rosetta_bool, "show the PackerTask to be used at the beginning of apply");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Part of CoupledMoves. Replaces a single rotamer based on the Boltzmann probabilities of its rotamers", attlist );
+}
+
+std::string BoltzmannRotamerMoverCreator::keyname() const {
+	return BoltzmannRotamerMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BoltzmannRotamerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BoltzmannRotamerMover );
+}
+
+void BoltzmannRotamerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BoltzmannRotamerMover::provide_xml_schema( xsd );
+}
+
 
 std::ostream &operator<< (std::ostream &os, BoltzmannRotamerMover const &mover)
 {

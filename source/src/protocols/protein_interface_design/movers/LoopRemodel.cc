@@ -83,6 +83,9 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -93,22 +96,22 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopRemodel" );
 
-std::string
-LoopRemodelCreator::keyname() const
-{
-	return LoopRemodelCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopRemodelCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopRemodel::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopRemodelCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopRemodel );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopRemodelCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopRemodel );
+// XRW TEMP }
 
-std::string
-LoopRemodelCreator::mover_name()
-{
-	return "LoopRemodel";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopRemodel::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopRemodel";
+// XRW TEMP }
 
 LoopRemodel::~LoopRemodel() {}
 
@@ -118,7 +121,7 @@ LoopRemodel::clone() const {
 }
 
 LoopRemodel::LoopRemodel() :
-	simple_moves::DesignRepackMover( LoopRemodelCreator::mover_name() )
+	simple_moves::DesignRepackMover( LoopRemodel::mover_name() )
 {}
 
 LoopRemodel::LoopRemodel(
@@ -138,7 +141,7 @@ LoopRemodel::LoopRemodel(
 	core::fragment::FragSetOP frag3,
 	core::fragment::FragSetOP frag9
 ) :
-	simple_moves::DesignRepackMover( LoopRemodelCreator::mover_name() ),
+	simple_moves::DesignRepackMover( LoopRemodel::mover_name() ),
 	protocol_( protocol ),
 	loop_start_( loop_start ),
 	loop_end_( loop_end ),
@@ -362,10 +365,10 @@ LoopRemodel::apply( core::pose::Pose & pose )
 	} else TR << "No loops found!" << std::endl;
 }
 
-std::string
-LoopRemodel::get_name() const {
-	return LoopRemodelCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopRemodel::get_name() const {
+// XRW TEMP  return LoopRemodel::mover_name();
+// XRW TEMP }
 
 // true if all fragments picked.
 // false if something went wrong
@@ -479,6 +482,68 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	TR << "LoopRemodel mover: auto_loops="<<auto_loops_<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<
 		" perturb="<<perturb_<<" refine="<<refine_<<" hurry=" <<hurry_<< " cycles=" << cycles_ <<" hires_score="<< rosetta_scripts::get_score_function_name(tag, "refine_score") << std::endl;
 }
+
+std::string LoopRemodel::get_name() const {
+	return mover_name();
+}
+
+std::string LoopRemodel::mover_name() {
+	return "LoopRemodel";
+}
+
+void LoopRemodel::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	XMLSchemaRestriction closuremethod;
+	closuremethod.name( "closuremethod" );
+	closuremethod.base_type( xs_string );
+	closuremethod.add_restriction( xsr_enumeration, "ccd" );
+	closuremethod.add_restriction( xsr_enumeration, "automatic" );
+	closuremethod.add_restriction( xsr_enumeration, "kinematic" );
+	xsd.add_top_level_element( closuremethod );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "protocol", "closuremethod", "Method for loop closure", "ccd" )
+		+ XMLSchemaAttribute::attribute_w_default( "perturb", xsct_rosetta_bool, "Perturb before closure?", "1" )
+		// Unlike in LoopMoverFromCommandLine, refine has a default value independent of the
+		// value of protocol. HUH?
+		+ XMLSchemaAttribute::attribute_w_default( "refine", xsct_rosetta_bool, "Use a refinement protocol?", "1" );
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "refine_score" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist, "perturb_score" );
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "auto_loops", xsct_rosetta_bool, "Automatically detect/assign loops", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "Do design!", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "hurry", xsct_rosetta_bool, "Fast mode", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "cycles", xsct_non_negative_integer, "cycles", "10" );
+
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "loop_file", xs_string, "File from which loops definitions might be read", "loops.loops" )
+		+ XMLSchemaAttribute( "loop_start_pdb_num", xsct_refpose_enabled_residue_number, "Loop start, in PDB/seqpos/reference pose numbering" )
+		+ XMLSchemaAttribute( "loop_start_resnum", xsct_refpose_enabled_residue_number, "Loop start, in PDB/seqpos/reference pose numbering" )
+		+ XMLSchemaAttribute( "loop_end_pdb_num", xsct_refpose_enabled_residue_number, "Loop end, in PDB/seqpos/reference pose numbering" )
+
+		+ XMLSchemaAttribute( "loop_end_pdbnum", xsct_refpose_enabled_residue_number, "Loop end, in PDB/seqpos/reference pose numbering" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopRemodelCreator::keyname() const {
+	return LoopRemodel::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopRemodelCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopRemodel );
+}
+
+void LoopRemodelCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopRemodel::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

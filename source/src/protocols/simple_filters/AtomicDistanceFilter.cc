@@ -32,6 +32,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -176,11 +179,49 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"AtomicDistance filter between residue "<<residue1_<<" atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and residue "<<residue2_<<" atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" with distance cutoff of "<<distance_<<std::endl;
 }
 
-protocols::filters::FilterOP
-AtomicDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicDistanceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AtomicDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicDistanceFilter ); }
 
-std::string
-AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }
+// XRW TEMP std::string
+// XRW TEMP AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }
+
+std::string AtomicDistanceFilter::name() const {
+	return class_name();
+}
+
+std::string AtomicDistanceFilter::class_name() {
+	return "AtomicDistance";
+}
+
+void AtomicDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "distance", xsct_real, "Distance threshold between atoms in question", "4.0" )
+		+ XMLSchemaAttribute( "residue1", xsct_refpose_enabled_residue_number, "First residue" )
+		+ XMLSchemaAttribute( "residue2", xsct_refpose_enabled_residue_number, "Second residue" )
+		+ XMLSchemaAttribute( "atomtype1", xs_string, "Type desired for first atom" )
+		+ XMLSchemaAttribute( "atomtype2", xs_string, "Type of second atom" )
+		+ XMLSchemaAttribute::attribute_w_default( "atomname1", xs_string, "Name desired for first atom", "CB" )
+		+ XMLSchemaAttribute::attribute_w_default( "atomname2", xs_string, "Name of second atom", "CB" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters on the distance between two specific atoms or the minimal distance between atoms of two specific types, on one or two residues.", attlist );
+}
+
+std::string AtomicDistanceFilterCreator::keyname() const {
+	return AtomicDistanceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+AtomicDistanceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AtomicDistanceFilter );
+}
+
+void AtomicDistanceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomicDistanceFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

@@ -39,6 +39,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );
@@ -675,41 +677,327 @@ TrueFilterCreator::create_filter() const { return FilterOP( new TrueFilter ); }
 std::string
 TrueFilterCreator::keyname() const { return "TrueFilter"; }
 
-FilterOP
-FalseFilterCreator::create_filter() const { return FilterOP( new FalseFilter ); }
+std::string FalseFilter::name() const {
+	return class_name();
+}
 
-std::string
-FalseFilterCreator::keyname() const { return "FalseFilter"; }
+std::string FalseFilter::class_name() {
+	return "FalseFilter";
+}
 
-FilterOP
-StochasticFilterCreator::create_filter() const { return FilterOP( new StochasticFilter ); }
+void FalseFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; // No attributes
 
-std::string
-StochasticFilterCreator::keyname() const { return "Stochastic"; }
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter that always returns false", attlist );
+}
 
-FilterOP
-CompoundFilterCreator::create_filter() const { return FilterOP( new CompoundFilter ); }
+std::string FalseFilterCreator::keyname() const {
+	return FalseFilter::class_name();
+}
 
-std::string
-CompoundFilterCreator::keyname() const { return "CompoundStatement"; }
+protocols::filters::FilterOP
+FalseFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FalseFilter );
+}
 
-FilterOP
-CombinedFilterCreator::create_filter() const { return FilterOP( new CombinedFilter ); }
+void FalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FalseFilter::provide_xml_schema( xsd );
+}
 
-std::string
-CombinedFilterCreator::keyname() const { return "CombinedValue"; }
 
-FilterOP
-MoveBeforeFilterCreator::create_filter() const { return FilterOP( new MoveBeforeFilter ); }
+// XRW TEMP StochasticFilterCreator::create_filter() const { return FilterOP( new StochasticFilter ); }
 
-std::string
-MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
 
-FilterOP
-IfThenFilterCreator::create_filter() const { return FilterOP( new IfThenFilter ); }
+std::string StochasticFilter::name() const {
+	return class_name();
+}
 
-std::string
-IfThenFilterCreator::keyname() const { return "IfThenFilter"; }
+std::string StochasticFilter::class_name() {
+	return "Stochastic";
+}
+
+void StochasticFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "confidence", xsct_real, "XRW TO DO", "1.0" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string StochasticFilterCreator::keyname() const {
+	return StochasticFilter::class_name();
+}
+
+protocols::filters::FilterOP
+StochasticFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new StochasticFilter );
+}
+
+void StochasticFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StochasticFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP FilterOP
+// XRW TEMP CompoundFilterCreator::create_filter() const { return FilterOP( new CompoundFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP CompoundFilterCreator::keyname() const { return "CompoundStatement"; }
+
+std::string CompoundFilter::name() const {
+	return class_name();
+}
+
+std::string CompoundFilter::class_name() {
+	return "CompoundStatement";
+}
+
+void CompoundFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "XRW TO DO", "false" );
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute::required_attribute( "filter_name", xs_string, "XRW TO DO" );
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "AND", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "OR", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "XOR", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "NOR", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "NAND", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "ORNOT", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "ANDNOT", subelement_attlist, "XRW TO DO" )
+		.add_simple_subelement( "NOT", subelement_attlist, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string CompoundFilterCreator::keyname() const {
+	return CompoundFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CompoundFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CompoundFilter );
+}
+
+void CompoundFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CompoundFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP FilterOP
+// XRW TEMP CombinedFilterCreator::create_filter() const { return FilterOP( new CombinedFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP CombinedFilterCreator::keyname() const { return "CombinedValue"; }
+
+std::string CombinedFilter::name() const {
+	return class_name();
+}
+
+std::string CombinedFilter::class_name() {
+	return "CombinedValue";
+}
+
+void CombinedFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	AttributeList subelement_attlist;
+	subelement_attlist
+		+ XMLSchemaAttribute( "factor", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute( "temp", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "filter_name", xs_string, "XRW TO DO" );
+
+	subelements.add_simple_subelement( "Add", subelement_attlist, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string CombinedFilterCreator::keyname() const {
+	return CombinedFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CombinedFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CombinedFilter );
+}
+
+void CombinedFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CombinedFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP FilterOP
+// XRW TEMP MoveBeforeFilterCreator::create_filter() const { return FilterOP( new MoveBeforeFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
+
+std::string MoveBeforeFilter::name() const {
+	return class_name();
+}
+
+std::string MoveBeforeFilter::class_name() {
+	return "MoveBeforeFilter";
+}
+
+void MoveBeforeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"mover", xs_string,
+		"Name of the mover to be applied in advance of filter execution" )
+		+ XMLSchemaAttribute(
+		"mover_name", xs_string,
+		"Name of the mover to be applied in advance of filter execution" )
+		+ XMLSchemaAttribute(
+		"filter", xs_string,
+		"Filter succeeded by the mover" )
+		+ XMLSchemaAttribute(
+		"filter_name", xs_string,
+		"Filter succeeded by the mover" );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Apply a given mover to the pose before calculating the results from another "
+		"filter. Note that, like all filters, MoveBeforeFilter cannot change the input "
+		"pose - the results of the submover will only be used for the subfilter "
+		"calculation and then discarded.",
+		attlist );
+}
+
+std::string MoveBeforeFilterCreator::keyname() const {
+	return MoveBeforeFilter::class_name();
+}
+
+protocols::filters::FilterOP
+MoveBeforeFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new MoveBeforeFilter );
+}
+
+void MoveBeforeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MoveBeforeFilter::provide_xml_schema( xsd );
+}
+
+
+// XRW TEMP FilterOP
+// XRW TEMP IfThenFilterCreator::create_filter() const { return FilterOP( new IfThenFilter ); }
+
+// XRW TEMP std::string
+// XRW TEMP IfThenFilterCreator::keyname() const { return "IfThenFilter"; }
+
+std::string IfThenFilter::name() const {
+	return class_name();
+}
+
+std::string IfThenFilter::class_name() {
+	return "IfThenFilter";
+}
+
+void IfThenFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "lower_threshold", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	AttributeList if_elif_attlist;
+	if_elif_attlist
+		+ XMLSchemaAttribute( "valuefilter", xs_string, "XRW TODO" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"value", xsct_real,
+		"Value of the filter used when returned true",
+		"0.0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"weight", xsct_real,
+		"The value will be multiplied with weight in case of true",
+		"1.0" )
+		+ XMLSchemaAttribute::required_attribute(
+		"testfilter", xs_string,
+		"If testfilter returns true its value will be multiplied by the weight as final result" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"inverttest", xsct_rosetta_bool,
+		"Inverses the filter result",
+		"false" );
+
+	AttributeList else_attlist;
+	else_attlist
+		+ XMLSchemaAttribute(
+		"valuefilter", xs_string,
+		"If all all the testfilters failed, the return value is the value of the "
+		"valuefilter multiplied by its weight" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"value", xsct_real,
+		"Value of the valuefilter",
+		"0.0" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"weight", xsct_real,
+		"Weight of the valuefilter",
+		"1.0" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_simple_subelement( "IF", if_elif_attlist,
+		"If clause" )
+		.add_simple_subelement( "ELIF", if_elif_attlist,
+		"else if clause" )
+		.add_simple_subelement( "ELSE", else_attlist,
+		"else statement" );
+
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, class_name(),
+		"Evaluate to a value contingent on the true/false value of other filters. "
+		"Each of the IF clauses are evaluated in order. If the testfilter evaluates "
+		"to true, the real-valued result of the IfThenFilter is the real-valued return "
+		"value of the valuefilter, multiplied by the corresponding weight. (If "
+		"inverttest is true, a false testfilter will cause valuefilter evaluation.) "
+		"Alternatively, you can omit the valuefilter, and give a literal value with "
+		"the value parameter (which will also be multiplied by the given weight). If "
+		"none of the IF clauses return true for their testfilters, then the real-"
+		"valued result of the ELSE clause valuefilter (or the corresponding literal "
+		"value) multiplied by the weight is used as the value instead. For truth value "
+		"testing, the default is to return true if the value is less than or equal to "
+		"the given threshold. If lower_threshold is true, then IfThenFilter returns "
+		"true if the value is greater than or equal to the threshold.",
+		attlist, subelements );
+
+}
+
+std::string IfThenFilterCreator::keyname() const {
+	return IfThenFilter::class_name();
+}
+
+protocols::filters::FilterOP
+IfThenFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new IfThenFilter );
+}
+
+void IfThenFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	IfThenFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

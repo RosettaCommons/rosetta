@@ -16,8 +16,13 @@
 
 #include <core/types.hh>
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
+
+// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+// C++ headers
 #include <string>
 
 namespace protocols {
@@ -35,6 +40,7 @@ public:
 	virtual GridBaseOP create_grid(utility::tag::TagCOP tag) const = 0;
 	virtual GridBaseOP create_grid() const = 0;
 	virtual std::string keyname() const = 0;
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Real weight_;

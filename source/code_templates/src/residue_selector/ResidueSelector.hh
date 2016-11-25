@@ -49,33 +49,31 @@ public:
 public:
 
 	/// @brief Destructor.
-	virtual
-	~--class--();
+	~--class--() override;
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
 	/// to the copy.  All ResidueSelectors must implement this.
-	virtual
-	ResidueSelectorOP clone() const;
+
+	ResidueSelectorOP clone() const override;
 
 	/// @brief "Apply" function.
 	/// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 	/// indicating whether each residue is selected ("true") or not ("false").
-	virtual
-	ResidueSubset apply( core::pose::Pose const & pose ) const;
+
+	ResidueSubset apply( core::pose::Pose const & pose ) const override;
 
 	/// @brief XML parse.
 	/// @details Parse RosettaScripts tags and set up this mover.
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
-	);
+	) override;
 
 	/// @brief Get the mover class name.
-	virtual
 	std::string
-	get_name() const;
+	get_name() const override;
 
 	/// @brief Get the mover class name.
 	static std::string

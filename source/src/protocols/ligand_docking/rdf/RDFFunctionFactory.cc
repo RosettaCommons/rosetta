@@ -23,7 +23,8 @@
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector0.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/xml_schema_group_initialization.hh>
 // C++ Headers
 #include <sstream>
 
@@ -98,15 +99,17 @@ RDFBaseOP
 RDFFunctionFactory::get_rdf_function(
 	TagCOP const tag,
 	basic::datacache::DataMap & data
-) {
-	assert(tag->getName() == "RDF");
+)
+{
+	/*assert(tag->getName() == "RDF");
 
 	string type_name;
 	if ( !tag->hasOption("name") ) {
-		utility_exit_with_message("'RDF' tags require a name field");
+	utility_exit_with_message("'RDF' tags require a name field");
 	} else {
-		type_name = tag->getOption<string>("name");
-	}
+	*/
+	std::string type_name;
+	type_name = tag->getName();
 
 	RDFBaseOP rdf_function(get_rdf_function(type_name));
 
@@ -114,6 +117,48 @@ RDFFunctionFactory::get_rdf_function(
 	return rdf_function;
 }
 
+void
+RDFFunctionFactory::define_rdf_function_group( utility::tag::XMLSchemaDefinition & xsd ){
+	try {
+		utility::tag::define_xml_schema_group(
+			types_,
+			rdf_function_group_name(),
+			& rdf_function_ct_namer,
+			xsd );
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Could not generate an XML Schema for RDFFunction from RDFFunctionFactory; offending class"
+			" must call protocols::ligand_docking::rdf::rdf_function_ct_namer when defining"
+			" its XML Schema\n" + e.msg() );
+	}
+
+
 }
+std::string
+RDFFunctionFactory::rdf_function_group_name(){
+	return "rdf_function";
+}
+std::string
+RDFFunctionFactory::rdf_function_ct_namer( std::string tag_name ){
+	return "rdf_function_" + tag_name + "_complex_type";
+}
+
+void
+RDFFunctionFactory::xsd_type_definition_w_attributes( utility::tag::XMLSchemaDefinition & xsd, std::string name, utility::tag::AttributeList & attlist, std::string description )
+{
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & rdf_function_ct_namer )
+		.element_name( name )
+		.add_optional_name_attribute( "Optional identifier for this RDFFunction" )
+		.description( description )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+
+
+
+}
+
+
+
+} // namespace
 } // namespace
 } // namespace

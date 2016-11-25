@@ -67,6 +67,9 @@
 // C++ Headers
 #include <utility/excn/Exceptions.hh>
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using basic::T;
@@ -90,20 +93,20 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-std::string
-HamiltonianExchangeCreator::keyname() const {
-	return HamiltonianExchangeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HamiltonianExchangeCreator::keyname() const {
+// XRW TEMP  return HamiltonianExchange::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HamiltonianExchangeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HamiltonianExchange );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HamiltonianExchangeCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HamiltonianExchange );
+// XRW TEMP }
 
-std::string
-HamiltonianExchangeCreator::mover_name() {
-	return "HamiltonianExchange";
-}
+// XRW TEMP std::string
+// XRW TEMP HamiltonianExchange::mover_name() {
+// XRW TEMP  return "HamiltonianExchange";
+// XRW TEMP }
 
 HamiltonianExchange::HamiltonianExchange() :
 	exchange_grid_dimension_( 1 ),
@@ -147,11 +150,11 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 HamiltonianExchange::~HamiltonianExchange() = default;
 
 
-std::string
-HamiltonianExchange::get_name() const
-{
-	return "HamiltonianExchange";
-}
+// XRW TEMP std::string
+// XRW TEMP HamiltonianExchange::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "HamiltonianExchange";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 HamiltonianExchange::clone() const
@@ -711,6 +714,39 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 	// Close the box I have drawn
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 }
+
+std::string HamiltonianExchange::get_name() const {
+	return mover_name();
+}
+
+std::string HamiltonianExchange::mover_name() {
+	return "HamiltonianExchange";
+}
+
+void HamiltonianExchange::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	TemperingBase::attributes_for_tempering_base( attlist, xsd );
+	attlist
+		+ XMLSchemaAttribute( "exchange_schedule", xs_string, "File specifying exchange schedule" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Implements replica exchange in the MetropolisHastingsMover framework", attlist );
+}
+
+std::string HamiltonianExchangeCreator::keyname() const {
+	return HamiltonianExchange::mover_name();
+}
+
+protocols::moves::MoverOP
+HamiltonianExchangeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HamiltonianExchange );
+}
+
+void HamiltonianExchangeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HamiltonianExchange::provide_xml_schema( xsd );
+}
+
 
 std::ostream& operator << ( std::ostream & os, HamiltonianExchange const& obj ) {
 	obj.show( os );

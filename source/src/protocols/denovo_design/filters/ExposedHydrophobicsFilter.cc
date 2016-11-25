@@ -27,6 +27,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -56,22 +59,22 @@ namespace filters {
 
 std::string const ExposedHydrophobicsFilter::hydrophobic_residues_ = "MLIVFAWY";
 
-std::string
-ExposedHydrophobicsFilterCreator::keyname() const
-{
-	return ExposedHydrophobicsFilterCreator::filter_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ExposedHydrophobicsFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ExposedHydrophobicsFilter::class_name();
+// XRW TEMP }
 
-protocols::filters::FilterOP
-ExposedHydrophobicsFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ExposedHydrophobicsFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
+// XRW TEMP }
 
-std::string
-ExposedHydrophobicsFilterCreator::filter_name()
-{
-	return "ExposedHydrophobics";
-}
+// XRW TEMP std::string
+// XRW TEMP ExposedHydrophobicsFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "ExposedHydrophobics";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  ExposedHydrophobicsFilter main code:
@@ -173,9 +176,57 @@ ExposedHydrophobicsFilter::apply( core::pose::Pose const & pose ) const
 	}
 }
 
+std::string ExposedHydrophobicsFilter::name() const {
+	return class_name();
+}
+
+std::string ExposedHydrophobicsFilter::class_name() {
+	return "ExposedHydrophobics";
+}
+
+void ExposedHydrophobicsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"sasa_cutoff", xsct_real,
+		"If a residue has SASA lower than this value, it is considered buried "
+		"and does not affect the score returned by the ExposedHydrophobics filter." )
+		+ XMLSchemaAttribute(
+		"threshold", xsct_real,
+		"If a protein has an ExposedHydrophobics total score below this value, "
+		"it passes the filter. If a negative threshold is specified, "
+		"the filter will always pass." );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Computes the SASA for each hydrophobic residue (A, F, I, M, L, W, V, Y). "
+		"The score returned reflects both the number of solvent-exposed hydrophobic "
+		"residues and the degree to which they are exposed. The score is calculated as "
+		"follows. For each hydrophobic residue, if the SASA is above a certain cutoff "
+		"value (default=20), then the value of ( SASA - sasa_cutoff ) is added to the "
+		"calculated score. The filter passes if the calculated score is less than the "
+		"user-specified threshold.",
+		attlist );
+}
+
+std::string ExposedHydrophobicsFilterCreator::keyname() const {
+	return ExposedHydrophobicsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ExposedHydrophobicsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter );
+}
+
+void ExposedHydrophobicsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ExposedHydrophobicsFilter::provide_xml_schema( xsd );
+}
+
+
 
 } // namespace filters
 } // namespace denovo_design
 } // namespace protocols
-
-

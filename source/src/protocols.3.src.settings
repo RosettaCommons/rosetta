@@ -384,14 +384,15 @@ sources = {
 		"ChargeGrid",
 		"HbaGrid",
 		"HbdGrid",
-		"RepGrid",
 		"LigandPropertyScore",
+		"schema_util",
 		"ScoringGridLoader",
 		"ScoreNormalization",
-		"VdwGrid",
 		"ShapeGrid",
 		"SolvationGrid",
-		"SolvationMetaGrid"
+		"SolvationMetaGrid",
+		"RepGrid",
+		"VdwGrid",
 	],
 	"protocols/relax": [
 		"AtomCoordinateCstMover",

@@ -118,6 +118,18 @@ public:
 	std::string const &
 	calculator_id() const;
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	core::Real
 	compute_score(

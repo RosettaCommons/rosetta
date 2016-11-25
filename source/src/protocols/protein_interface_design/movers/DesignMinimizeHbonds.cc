@@ -35,6 +35,9 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -48,25 +51,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
 
-std::string
-DesignMinimizeHbondsCreator::keyname() const
-{
-	return DesignMinimizeHbondsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DesignMinimizeHbondsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DesignMinimizeHbonds::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DesignMinimizeHbondsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DesignMinimizeHbonds );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DesignMinimizeHbondsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DesignMinimizeHbonds );
+// XRW TEMP }
 
-std::string
-DesignMinimizeHbondsCreator::mover_name()
-{
-	return "DesignMinimizeHbonds";
-}
+// XRW TEMP std::string
+// XRW TEMP DesignMinimizeHbonds::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DesignMinimizeHbonds";
+// XRW TEMP }
 
 DesignMinimizeHbonds::DesignMinimizeHbonds() :
-	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbonds::mover_name() )
 {
 	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
@@ -86,7 +89,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	bool const repack_partner2/*=false*/,
 	bool const repack_non_ala/* = true*/
 ) :
-	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbonds::mover_name() )
 {
 	scorefxn_repack_ = scorefxn_repack->clone();
 	scorefxn_minimize_ = scorefxn_minimize->clone();
@@ -120,7 +123,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	bool const repack_partner2/*=false*/,
 	bool const repack_non_ala/*=true*/
 ) :
-	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbonds::mover_name() )
 {
 	scorefxn_repack_ = scorefxn_repack;
 	scorefxn_minimize_ = scorefxn_minimize;
@@ -263,10 +266,10 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-std::string
-DesignMinimizeHbonds::get_name() const {
-	return DesignMinimizeHbondsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DesignMinimizeHbonds::get_name() const {
+// XRW TEMP  return DesignMinimizeHbonds::mover_name();
+// XRW TEMP }
 
 void
 DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )
@@ -304,6 +307,45 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 		TR<<"WARNING WARNING: no target residue defined for hbond design minimize"<<std::endl;
 	}
 }
+
+std::string DesignMinimizeHbonds::get_name() const {
+	return mover_name();
+}
+
+std::string DesignMinimizeHbonds::mover_name() {
+	return "DesignMinimizeHbonds";
+}
+
+void DesignMinimizeHbonds::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "hbond_weight", xsct_real, "Weight to score H-bonds with", "3.0" )
+		+ XMLSchemaAttribute( "donors", xsct_rosetta_bool, "Design in donor residue types" )
+		+ XMLSchemaAttribute( "acceptors", xsct_rosetta_bool, "Design in acceptor residue types" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb_hbond", xsct_rosetta_bool, "Optimize backbone H-bonds", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "sc_hbond", xsct_rosetta_bool, "Optimize sidechain H-bonds", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "hbond_energy", xsct_real, "Energy at which we consider an H-bond is taking place", "-0.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "interface_cutoff_distance", xsct_real, "Distance from partner chain where the interface is defined to exist", "8.0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string DesignMinimizeHbondsCreator::keyname() const {
+	return DesignMinimizeHbonds::mover_name();
+}
+
+protocols::moves::MoverOP
+DesignMinimizeHbondsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DesignMinimizeHbonds );
+}
+
+void DesignMinimizeHbondsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DesignMinimizeHbonds::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

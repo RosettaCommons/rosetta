@@ -55,16 +55,28 @@ public:
 	virtual ~SaveAndRetrieveSidechains();
 	bool allsc() const { return allsc_; }
 	void allsc( bool const allsc ) { allsc_ = allsc; }
-	void apply( Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SaveAndRetrieveSidechains ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new SaveAndRetrieveSidechains ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	bool two_step() const{ return two_step_; }
 	void two_step( bool const b ) { two_step_ = b; }
 
 	bool multi_use() const{ return multi_use_; }
 	void multi_use( bool const b ) { multi_use_ = b; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	PoseOP init_pose_;
 	bool allsc_, ensure_variant_matching_, two_step_,multi_use_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.

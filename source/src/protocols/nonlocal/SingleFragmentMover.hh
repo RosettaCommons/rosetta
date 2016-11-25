@@ -92,7 +92,7 @@ public:
 	void apply(Pose& pose) override;
 
 	/// @brief Returns the name of this mover
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Creates a new instance using the copy constructor
 	MoverOP clone() const override;
@@ -109,6 +109,18 @@ public:
 
 	/// @brief Returns true if this instance is in a usable state, false otherwise
 	bool valid() const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

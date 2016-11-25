@@ -89,7 +89,7 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	std::string name() const override { return "RangeFilter"; }
+	// XRW TEMP  std::string name() const override { return "RangeFilter"; }
 
 
 public:// parser
@@ -110,6 +110,18 @@ public:// virtual main operation
 
 	/// @brief used to report score
 	void report( std::ostream & out, Pose const & pose ) const override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	FilterOP filter_;

@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
@@ -49,7 +50,9 @@ void MonteCarloLoader::load_data(
 	TagCOPs const montecarlo_tags( tag->getTags() );
 
 	for ( TagCOP montecarlo_tag : montecarlo_tags ) {
-		std::string const mc_name( montecarlo_tag->getName() );
+		runtime_assert( montecarlo_tag->getName() == "MonteCarlo" );
+		//std::string const mc_name( montecarlo_tag->getName() );
+		std::string const mc_name( montecarlo_tag->getOption< std::string >( "name" ));
 		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
 		core::scoring::ScoreFunctionOP scorefxn =
 			rosetta_scripts::parse_score_function( montecarlo_tag, data )->clone();
@@ -63,11 +66,63 @@ void MonteCarloLoader::load_data(
 	TR.flush();
 }
 
+std::string
+MonteCarloLoader::loader_name()
+{
+	return "MONTECARLOS";
+}
+
+
+std::string
+MonteCarloLoader::monte_carlo_loader_ct_namer( std::string const & element_name )
+{
+	return "monte_carlo_loader_" + element_name + "_type";
+}
+
+void
+MonteCarloLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// attributs for each MonteCarlo tag; so far, there's only a temperature and a scorefxn attribue.
+	AttributeList mc_attributes;
+	mc_attributes + required_name_attribute( "The name for the MonteCarlo object that will be used for lookup in the DataMap" )
+		+ XMLSchemaAttribute::attribute_w_default( "temperature", xsct_real, "The temperature for the MonteCarlo object to operate at, interpretted in units of kT (e.g. 0.6 = room temperature)", "2.0" );
+	rosetta_scripts::attributes_for_parse_score_function( mc_attributes );
+
+	XMLSchemaSimpleSubelementList monte_carlo_subelements;
+	monte_carlo_subelements.add_simple_subelement( "MonteCarlo", mc_attributes,
+		"Each MonteCarlo object will be loaded into the data map so that it can be retrieved by Movers and Filters."
+		" Note that a MonteCarlo object creates a deep copy of the ScoreFunction it is given, so changes to the ScoreFunction "
+		" object the MonteCarlo object was initialized with after its creation will not be noticed by it." );
+
+	XMLSchemaComplexTypeGenerator mc_loader_type;
+	mc_loader_type.element_name( loader_name() )
+		.complex_type_naming_func( & monte_carlo_loader_ct_namer )
+		.description( "Data loader for MonteCarlo objects that can be created and then added to the"
+		" data map so that they could be shared between multiple movers, if desired; superceded by"
+		" the GenericMonteCarlo mover, and I believe, currently unused by any mover" )
+		.set_subelements_repeatable( monte_carlo_subelements )
+		.write_complex_type_to_schema( xsd );
+}
+
+
 DataLoaderOP
 MonteCarloLoaderCreator::create_loader() const { return DataLoaderOP( new MonteCarloLoader ); }
 
 std::string
-MonteCarloLoaderCreator::keyname() const { return "MONTECARLOS"; }
+MonteCarloLoaderCreator::keyname() const { return MonteCarloLoader::loader_name(); }
+
+MonteCarloLoaderCreator::DerivedNameFunction
+MonteCarloLoaderCreator::schema_ct_naming_function() const
+{
+	return & MonteCarloLoader::monte_carlo_loader_ct_namer;
+}
+
+void MonteCarloLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MonteCarloLoader::provide_xml_schema( xsd );
+}
 
 
 } //namespace parser

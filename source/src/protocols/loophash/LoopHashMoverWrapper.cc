@@ -54,6 +54,9 @@
 
 //Auto Headers
 #include <core/id/AtomID.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loophash {
@@ -69,26 +72,26 @@ using core::scoring::ScoreFunctionOP;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
 
-std::string
-LoopHashMoverWrapperCreator::keyname() const
-{
-	return LoopHashMoverWrapperCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashMoverWrapperCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopHashMoverWrapper::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopHashMoverWrapperCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopHashMoverWrapper );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopHashMoverWrapperCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopHashMoverWrapper );
+// XRW TEMP }
 
-std::string
-LoopHashMoverWrapperCreator::mover_name()
-{
-	return "LoopHash";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashMoverWrapper::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopHash";
+// XRW TEMP }
 
 
 LoopHashMoverWrapper::LoopHashMoverWrapper() :
-	protocols::moves::Mover( LoopHashMoverWrapperCreator::mover_name() ),
+	protocols::moves::Mover( LoopHashMoverWrapper::mover_name() ),
 	library_( /* NULL */ ),
 	fastrelax_( /* NULL */ ),
 	min_bbrms_( 0 ),
@@ -293,10 +296,10 @@ LoopHashMoverWrapper::get_additional_output() {
 }
 
 
-std::string
-LoopHashMoverWrapper::get_name() const {
-	return LoopHashMoverWrapperCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopHashMoverWrapper::get_name() const {
+// XRW TEMP  return LoopHashMoverWrapper::mover_name();
+// XRW TEMP }
 
 void
 LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
@@ -479,6 +482,67 @@ LoopHashMoverWrapper::add_loop_size( Size const loop_size ){
 	loop_sizes_.push_back( loop_size );
 }
 
+std::string LoopHashMoverWrapper::get_name() const {
+	return mover_name();
+}
+
+std::string LoopHashMoverWrapper::mover_name() {
+	return "LoopHash";
+}
+
+void LoopHashMoverWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("min_bbrms", xsct_real, "Min backbone torsion angle rmsd for the loop window", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("max_bbrms", xsct_real, "Min backbone torsion angle rmsd for the loop window", "100000" )
+		+ XMLSchemaAttribute::attribute_w_default("min_rms", xsct_real, "Min Anstrom Rmsd cuttofs for loophash generated structures", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default("max_rms", xsct_real, "Max Anstrom Rmsd cuttofs for loophash generated structures", "4.0" )
+		+ XMLSchemaAttribute::attribute_w_default("max_nstruct", xsct_positive_integer,
+		"Max models to create in loophash", "1000000" )
+		+ XMLSchemaAttribute::attribute_w_default("max_radius", xsct_non_negative_integer, "max loophash radius", "4" )
+		+ XMLSchemaAttribute::attribute_w_default("max_struct_per_radius", xsct_positive_integer,
+		"For each radius in radius list, generate n structures.", "10" )
+		+ XMLSchemaAttribute::attribute_w_default("ideal", xsct_rosetta_bool, "Save space and assume structure is ideal?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("filter_by_phipsi", xsct_rosetta_bool, "Filter-out non-ideal phipsi.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("sample_weight_const", xsct_real, "sets the same sample weight throughout the pose", "1.0" );
+
+	core::pose::attributes_for_get_resnum( attlist, "start_" );
+	core::pose::attributes_for_get_resnum( attlist, "stop_" );
+	attlist
+		+ XMLSchemaAttribute::required_attribute("loop_sizes", xsct_nnegative_int_cslist, "Sizes of loops for loophash" )
+		+ XMLSchemaAttribute("db_path", xs_string, "path to DB -- if not specified then command-line flag is used" )
+		+ XMLSchemaAttribute::attribute_w_default("nprefilter", xsct_non_negative_integer, "OSOLETE", "0" )
+		+ XMLSchemaAttribute("prefilter_scorefxn", xs_string, "Score function for pre-filtering step." )
+		+ XMLSchemaAttribute::attribute_w_default("ncentroid", xsct_non_negative_integer,
+		"number of structures to carry over to subsequent stages", "0" )
+		+ XMLSchemaAttribute("nfullatom", xsct_non_negative_integer, "number of structures to carry over to subsequent stages" )
+		+ XMLSchemaAttribute::attribute_w_default("centroid_filter", xs_string, "Filter after centroid stages.", "true_filter" )
+		+ XMLSchemaAttribute("ranking_cenfilter", xs_string, "Filter for ranking in centroid mode" )
+		+ XMLSchemaAttribute("relax_mover", xs_string, "Relax mover applied in batches" )
+		+ XMLSchemaAttribute::attribute_w_default("batch_size", xsct_non_negative_integer, "batch relax batch size", "32" )
+		+ XMLSchemaAttribute::attribute_w_default("fullatom_filter", xs_string,
+		"uses the filter's report_sm method to rank and report the best decoys", "true_filter" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to perform full loop hash. (more explanation?)", attlist );
+}
+
+
+std::string LoopHashMoverWrapperCreator::keyname() const {
+	return LoopHashMoverWrapper::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopHashMoverWrapperCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopHashMoverWrapper );
+}
+
+void LoopHashMoverWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopHashMoverWrapper::provide_xml_schema( xsd );
+}
+
+
 } //loophash
 } //protocols
-

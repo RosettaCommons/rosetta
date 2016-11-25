@@ -26,6 +26,7 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -57,6 +58,10 @@ compute_nres_in_asymmetric_unit( core::pose::Pose const & pose );
 /// returns vector of ConstraintGeneratorCOPs
 ConstraintGeneratorCOPs
 parse_constraint_generators( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
+
+/// @brief Appends the attributes read by parse_constraint_generators
+void
+attributes_for_parse_constraint_generators( utility::tag::AttributeList & attributes ) ;
 
 } //protocols
 } //constraint_generator

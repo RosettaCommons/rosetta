@@ -66,11 +66,11 @@ public:
 	bool get_task_factory();
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	void show(std::ostream & output=std::cout) const override;
 
 	/// @brief update the vector of movemaps, one for each loop in loops_
 	void
@@ -98,11 +98,23 @@ public:
 		Size kic_start,
 		Size kic_end );
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 
 	core::pack::task::TaskFactoryOP task_factory;
 	bool redesign_loop_;
-	virtual basic::Tracer & tr() const;
+	basic::Tracer & tr() const override;
 
 private:
 

@@ -36,6 +36,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -55,22 +58,22 @@ using basic::t_debug;
 using basic::t_trace;
 static THREAD_LOCAL basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 
-std::string
-DnaInterfaceMinMoverCreator::keyname() const
-{
-	return DnaInterfaceMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DnaInterfaceMinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DnaInterfaceMinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DnaInterfaceMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DnaInterfaceMinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DnaInterfaceMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DnaInterfaceMinMover );
+// XRW TEMP }
 
-std::string
-DnaInterfaceMinMoverCreator::mover_name()
-{
-	return "DnaInterfaceMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP DnaInterfaceMinMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DnaInterfaceMinMover";
+// XRW TEMP }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
 : protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
@@ -156,11 +159,6 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 	minimizer.run( pose, *movemap(), *score_function(), *min_options() );
 }
 
-std::string
-DnaInterfaceMinMover::get_name() const {
-	return DnaInterfaceMinMoverCreator::mover_name();
-}
-
 /// @brief parse XML (in the context of the parser/scripting scheme)
 void
 DnaInterfaceMinMover::parse_my_tag(
@@ -209,6 +207,56 @@ DnaInterfaceMinMover::clone() const
 {
 	return MoverOP( new DnaInterfaceMinMover( *this ) );
 }
+
+std::string DnaInterfaceMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string DnaInterfaceMinMover::mover_name() {
+	return "DnaInterfaceMinMover";
+}
+
+void DnaInterfaceMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"scorefunction name");
+
+	attlist + XMLSchemaAttribute(
+		"dna_interface_finder", xs_string,
+		"Name previously used to identify DNAInterfaceFinder in the script");
+
+	attlist + XMLSchemaAttribute(
+		"min_type", xsct_minimizer_type,
+		"Type of minimizer to use");
+
+	attlist + XMLSchemaAttribute(
+		"tolerance", xsct_real,
+		"Tolerance for the minimizer");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"MinMover for DNA interfaces",
+		attlist );
+}
+
+std::string DnaInterfaceMinMoverCreator::keyname() const {
+	return DnaInterfaceMinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+DnaInterfaceMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DnaInterfaceMinMover );
+}
+
+void DnaInterfaceMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DnaInterfaceMinMover::provide_xml_schema( xsd );
+}
+
 
 } // namespace dna
 } // namespace protocols

@@ -35,6 +35,9 @@
 #include <utility/vector1.hh>
 
 #include <algorithm> // for min
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -44,23 +47,23 @@ static basic::Tracer TR( "protocols.sewing.sampling.EnumerateAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-EnumerateAssemblyMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new EnumerateAssemblyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP EnumerateAssemblyMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new EnumerateAssemblyMover );
+// XRW TEMP }
 
-std::string
-EnumerateAssemblyMoverCreator::keyname() const
-{
-	return EnumerateAssemblyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EnumerateAssemblyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return EnumerateAssemblyMover::mover_name();
+// XRW TEMP }
 
-std::string
-EnumerateAssemblyMoverCreator::mover_name()
-{
-	return "EnumerateAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP EnumerateAssemblyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "EnumerateAssemblyMover";
+// XRW TEMP }
 
 
 protocols::moves::MoverOP
@@ -73,10 +76,10 @@ EnumerateAssemblyMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new EnumerateAssemblyMover );
 }
 
-std::string
-EnumerateAssemblyMover::get_name() const {
-	return "EnumerateAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP EnumerateAssemblyMover::get_name() const {
+// XRW TEMP  return "EnumerateAssemblyMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  EnumerateAssemblyMover function   //////////////////////////////////
@@ -395,6 +398,38 @@ EnumerateAssemblyMover::parse_my_tag(
 	}
 
 } //parse_my_tag
+
+std::string EnumerateAssemblyMover::get_name() const {
+	return mover_name();
+}
+
+std::string EnumerateAssemblyMover::mover_name() {
+	return "EnumerateAssemblyMover";
+}
+
+void EnumerateAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string EnumerateAssemblyMoverCreator::keyname() const {
+	return EnumerateAssemblyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+EnumerateAssemblyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new EnumerateAssemblyMover );
+}
+
+void EnumerateAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnumerateAssemblyMover::provide_xml_schema( xsd );
+}
+
 
 } //sewing
 } //protocols

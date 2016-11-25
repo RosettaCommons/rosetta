@@ -116,8 +116,8 @@ RetrieveStoredTaskOperation::parse_tag( TagCOP tag , DataMap & )
 void RetrieveStoredTaskOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "task_name", xs_string );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + XMLSchemaAttribute( "task_name", xs_string , "XRW TO DO" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 

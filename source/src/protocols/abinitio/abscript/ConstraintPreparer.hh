@@ -45,13 +45,13 @@ class ConstraintPreparer : public StagePreparer {
 public:
 	ConstraintPreparer();
 
-	void prepare( core::pose::Pose& pose, core::Real progress );
+	void prepare( core::pose::Pose& pose, core::Real progress ) override;
 
 	void parse_my_tag( utility::tag::TagCOP,
 		basic::datacache::DataMap&,
 		protocols::filters::Filters_map const&,
 		protocols::moves::Movers_map const&,
-		core::pose::Pose const& );
+		core::pose::Pose const& ) override;
 
 	void cst_file( std::string const& );
 
@@ -72,21 +72,29 @@ public:
 	utility::vector1< bool > const& combine_exclude_res() const { return combine_exclude_res_; }
 	void combine_exclude_file( std::string const& filename );
 
-	std::string get_name() const;
+	// XRW TEMP  std::string get_name() const;
 
-	virtual
-	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ConstraintPreparer() ); }
+	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new ConstraintPreparer() ); }
 
-	virtual
-	moves::MoverOP clone() const { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
 
 	//prepares use the prepare method instead of apply
-	virtual
-	void apply( core::pose::Pose& ) { assert(false); };
+	void apply( core::pose::Pose& ) override { assert(false); };
 
-	virtual
 	EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+		basic::datacache::WriteableCacheableMapOP ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 protected:

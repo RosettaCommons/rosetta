@@ -1,0 +1,1 @@
+FeaturesReporter templates are a little odd in that there is not a FeaturesReporterGenerator standalone template file; the Generator only gets partly templated. FYI.

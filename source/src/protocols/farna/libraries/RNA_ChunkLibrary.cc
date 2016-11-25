@@ -300,9 +300,9 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 				if ( !atom_level_domain_map_->has_domain( atom_id ) ) {
 					// hack to get DNA/RNA compatibility -- has to do with using "vanilla" pose in atom_id_mapper as reference pose -- need to fix that.
 					// why not just do name based lookup? -- rhiju, nov 2016.
-				 	TR.Debug << TR.Cyan << "problem setting domain for " << rsd_i.name() << " " << rsd_i.atom_name( atom_id.atomno() ) << std::endl;
-				 	continue;
-				 }
+					TR.Debug << TR.Cyan << "problem setting domain for " << rsd_i.name() << " " << rsd_i.atom_name( atom_id.atomno() ) << std::endl;
+					continue;
+				}
 				// special case: base pair steps should not overwrite user input domain
 				if ( domain_num == ROSETTA_LIBRARY_DOMAIN &&
 						atom_level_domain_map_->get_domain( atom_id ) > 0 ) continue;
@@ -394,7 +394,7 @@ RNA_ChunkLibrary::get_alignment_domain( pose::Pose const & pose ) const
 		Size anchor_domain = atom_level_domain_map_->get_domain( anchor_rsd );
 		if ( anchor_domain > 0 ) alignment_domain = anchor_domain;
 	}
-	//	TR << TR.Red << "alignment_domain: " << alignment_domain << " anchor_rsd " << anchor_rsd << std::endl;
+	// TR << TR.Red << "alignment_domain: " << alignment_domain << " anchor_rsd " << anchor_rsd << std::endl;
 	return alignment_domain;
 }
 

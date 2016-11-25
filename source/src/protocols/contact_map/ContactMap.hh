@@ -62,7 +62,7 @@ public:
 
 	void apply( Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void test_move( Pose & pose ) override{
 		apply(pose);
 	}
@@ -113,6 +113,18 @@ public:
 	/// The identity contact (the contact of a residue with itself)
 	/// is shared between all identity contacts. (The last identity contact in region.)
 	Contact const & get_contact( core::Size row, core::Size col);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	// utility::vector1<Contact> const & contacts() { return contacts_; }
 	// utility::vector1<core::Size> const & output_matrix() { return output_matrix_; }

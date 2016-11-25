@@ -91,7 +91,7 @@ std::string RestrictToRepacking::keyname() { return "RestrictToRepacking"; }
 
 void RestrictToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "Only allow residues to repack. No design at any position." );
 }
 
 TaskOperationOP RestrictToRepackingCreator::create_task_operation() const
@@ -144,8 +144,8 @@ std::string RestrictResidueToRepacking::keyname() { return "RestrictResidueToRep
 void RestrictResidueToRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + XMLSchemaAttribute::required_attribute(  "resnum", xsct_positive_integer, "Single residue number." );
+	task_op_schema_w_attributes( xsd, keyname(), attributes , "Restrict a single residue to repacking. No design." );
 }
 
 TaskOperationOP RestrictResidueToRepackingCreator::create_task_operation() const
@@ -246,9 +246,9 @@ std::string RestrictAbsentCanonicalAAS::keyname() { return "RestrictAbsentCanoni
 void RestrictAbsentCanonicalAAS::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute( "keep_aas", utility::tag::xs_string );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "Restrict design to user-specified residues. If =0, all residues.",  "0"  )
+		+ XMLSchemaAttribute( "keep_aas", utility::tag::xs_string , "Canonical amino acids to keep." );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Restrict design to user-specified residues. If resnum is left as 0, the restriction will apply throughout the pose." );
 }
 
 TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
@@ -367,9 +367,9 @@ std::string DisallowIfNonnative::keyname() { return "DisallowIfNonnative"; }
 void DisallowIfNonnative::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "0" )
-		+ XMLSchemaAttribute( "disallow_aas", xs_string );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+		+ XMLSchemaAttribute::attribute_w_default(  "resnum", xsct_non_negative_integer, "If resnum is left as 0, the restriction will apply throughout the pose.",  "0"  )
+		+ XMLSchemaAttribute( "disallow_aas", xs_string , "Disallow_aas takes a string of one letter amino acid codes, no separation needed. For example disallow_aas=GCP would prevent Gly, Cys, and Pro from being designed unless they were the native amino acid at a position." );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Restrict design to not include a residue as an possibility in the task at a position unless it is the starting residue." );
 }
 
 TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
@@ -445,9 +445,9 @@ std::string RotamerExplosion::keyname() { return "RotamerExplosionCreator"; }
 void RotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "resnum", xsct_non_negative_integer )
-		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_non_negative_integer );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+		+ XMLSchemaAttribute::required_attribute( "resnum", xsct_positive_integer , "Residue number." )
+		+ XMLSchemaAttribute::required_attribute( "chi",    xsct_non_negative_integer , "Chi level 0-3?" );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Sample residue chi angles much more finely during packing. Currently hardcoded to use three 1/3 step standard deviation." );
 
 }
 
@@ -489,7 +489,7 @@ std::string InitializeFromCommandline::keyname() { return "InitializeFromCommand
 
 void InitializeFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "Reads commandline options. For example, -ex1 -ex2 (does not read resfile from command line options) This taskoperation will complain about an unimplemented method, but you can safely ignore the message." );
 }
 
 TaskOperationOP InitializeFromCommandlineCreator::create_task_operation() const
@@ -560,8 +560,8 @@ void InitializeFromOptionCollection::provide_xml_schema( utility::tag::XMLSchema
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::attribute_w_default(  "option_collection", xs_string, "job_options" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + XMLSchemaAttribute::attribute_w_default(  "option_collection", xs_string, "Options in datamap.",  "job_options"  );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO: No documentation online. Initialize from option collection." );
 }
 
 TaskOperationOP InitializeFromOptionCollectionCreator::create_task_operation() const
@@ -596,7 +596,7 @@ InitializeExtraRotsFromCommandline::apply( pose::Pose const &, PackerTask & task
 std::string InitializeExtraRotsFromCommandline::keyname() { return "InitializeExtraRotsFromCommandline"; }
 
 void InitializeExtraRotsFromCommandline::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
@@ -634,7 +634,7 @@ IncludeCurrent::apply( pose::Pose const &, PackerTask & task ) const
 std::string IncludeCurrent::keyname() { return "IncludeCurrent"; }
 
 void IncludeCurrent::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "Includes current rotamers (eg - from input pdb) in the rotamer set. These rotamers will be lost after a packing run, so they are only effective upon initial loading of a pdb!" );
 }
 
 TaskOperationOP IncludeCurrentCreator::create_task_operation() const
@@ -765,7 +765,7 @@ std::string ExtraRotamersGeneric::keyname() { return "ExtraRotamersGeneric"; }
 
 void ExtraRotamersGeneric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	AttributeList attributes = rotamer_sampling_data_xml_schema_attributes( xsd );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "During packing, extra rotamers can be used to increase sampling. Use this TaskOperation to specify for all residues at once what extra rotamers should be used." );
 }
 
 TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
@@ -825,25 +825,25 @@ rotamer_sampling_data_xml_schema_attributes( XMLSchemaDefinition & xsd )
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex3", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex4", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed", xsct_rosetta_bool, "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed", xsct_rosetta_bool, "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed", xsct_rosetta_bool, "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed", xsct_rosetta_bool, "XRW TO DO",  "0"  )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex3_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex4_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed_sample_level", "exchi_sample_level", "0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed_sample_level", "exchi_sample_level", "0" )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex3_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex4_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex1aro_exposed_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "ex2aro_exposed_sample_level", "exchi_sample_level", "XRW TO DO",  "0"  )
 
-		+ XMLSchemaAttribute::attribute_w_default(  "extrachi_cutoff", xsct_non_negative_integer, utility::to_string( EXTRACHI_CUTOFF_LIMIT ));
+		+ XMLSchemaAttribute::attribute_w_default(  "extrachi_cutoff", xsct_non_negative_integer, "XRW TO DO",  utility::to_string( EXTRACHI_CUTOFF_LIMIT  ));
 
 	return attributes;
 }
@@ -1086,14 +1086,14 @@ utility::tag::AttributeList
 ReadResfile::xml_schema_attributes() {
 	utility::tag::AttributeList attributes;
 	attributes
-		+ utility::tag::XMLSchemaAttribute( "filename", "xs:string" )
-		+ utility::tag::XMLSchemaAttribute( "selector", "xs:string" );
+		+ utility::tag::XMLSchemaAttribute( "filename", xs_string , "If a filename is given, read from that file. Otherwise, read the file specified on the commandline with -packing:resfile." )
+		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "Optionally, a previously-defined ResidueSelector may be specified using the selector=(some string) option. If this is used, then the ResidueSelector is used as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, even if the resfile lists other residues as well." );
 	return attributes;
 }
 
 void ReadResfile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes = xml_schema_attributes();
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Read a resfile." );
 }
 
 void ReadResfile::list_options_read( utility::options::OptionKeyList & options )
@@ -1184,10 +1184,8 @@ ReadResfileAndObeyLengthEvents::apply(
 
 		std::list< ResfileCommandCOP > const & ii_command_list( this->resfile_commands( ii_resfile_seqpos, contents, ptask) );
 
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( ptask, ii );
+		for ( auto const & command : ii_command_list ) {
+			command->residue_action( ptask, ii );
 		}
 	} //loop over all task residues
 
@@ -1221,8 +1219,8 @@ std::string ReadResfileAndObeyLengthEvents::keyname() { return "ReadResfileAndOb
 
 void ReadResfileAndObeyLengthEvents::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes = parent::xml_schema_attributes();
-	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "default_commands_for_inserts", "xs:boolean", "1" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "default_commands_for_inserts", xsct_rosetta_bool , "apply the ResfileCommands to the remapped seqpos.",  "1"  );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Read resfile and obey length events. IMPORTANT: only use this if any length changes are not reflected in the pose's pdb info, such as seems to be the case after vlb not quite certain on the ideal approach yet. it's prolly best to parse the resfile, and then apply the ResfileCommands to the remapped residues. this necessitates getting the ResfileContents. the code under 2. here is some duplication of ResfileReader::parse_resfile/parse_resfile_string, ideally this and ResfileReader should be refactored a bit." );
 }
 
 TaskOperationOP ReadResfileAndObeyLengthEventsCreator::create_task_operation() const
@@ -1280,7 +1278,7 @@ SetRotamerCouplings::set_couplings( rotamer_set::RotamerCouplingsOP couplings )
 std::string SetRotamerCouplings::keyname() { return "SetRotamerCouplings"; }
 
 void SetRotamerCouplings::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO:Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
@@ -1339,7 +1337,7 @@ SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
 std::string SetRotamerLinks::keyname() { return "SetRotamerLinks"; }
 
 void SetRotamerLinks::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Set rotamer links" );
 }
 
 TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
@@ -1395,7 +1393,7 @@ AppendRotamer::set_rotamer_operation(
 std::string AppendRotamer::keyname() { return "AppendRotamer"; }
 
 void AppendRotamer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP AppendRotamerCreator::create_task_operation() const
@@ -1451,7 +1449,7 @@ AppendRotamerSet::set_rotamer_set_operation(
 std::string AppendRotamerSet::keyname() { return "AppendRotamerSet"; }
 
 void AppendRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
@@ -1518,7 +1516,7 @@ AppendResidueRotamerSet::set_rotamer_set_operation( rotamer_set::RotamerSetOpera
 std::string AppendResidueRotamerSet::keyname() { return "AppendResidueRotamerSet"; }
 
 void AppendResidueRotamerSet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO: no documentation online" );
 }
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
@@ -1554,7 +1552,7 @@ PreserveCBeta::apply( pose::Pose const &, PackerTask & task ) const
 std::string PreserveCBeta::keyname() { return "PreserveCBeta"; }
 
 void PreserveCBeta::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP PreserveCBetaCreator::create_task_operation() const
@@ -1609,8 +1607,8 @@ std::string PreventRepacking::keyname() { return "PreventRepacking"; }
 
 void PreventRepacking::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "resnum", "xs:string", "0" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute::attribute_w_default(  "resnum", xs_string, "Residues numbers to apply PreventRepacking on.",  "0"  ); //XRW TO DO: maybe this shouldn't be a string
+	task_op_schema_w_attributes( xsd, keyname(), attributes , "Do not allow repacking at all for the specified residue. Freezes residues." );
 }
 
 TaskOperationOP PreventRepackingCreator::create_task_operation() const
@@ -1662,7 +1660,7 @@ RestrictYSDesign::include_gly( bool const gly ) { gly_switch_ = gly; }
 std::string RestrictYSDesign::keyname() { return "RestrictYSDesign"; }
 
 void RestrictYSDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname() , "Restrict amino acid choices during design to Tyr and Ser. This is similar to the restricted YS alphabet used by Sidhu's group during in vitro evolution experiments. Under development and untested. Use at your own risk." );
 }
 
 TaskOperationOP RestrictYSDesignCreator::create_task_operation() const
@@ -1756,10 +1754,10 @@ void ExtraRotamers::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	utility::tag::AttributeList attributes;
 	attributes
-		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "0" )
-		+ utility::tag::XMLSchemaAttribute::required_attribute( "chi", "one_to_four" )
-		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "level", "exchi_sample_level", "0" );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "Apply to specific residues, or =0, apply to all residues.",  "0"  )
+		+ utility::tag::XMLSchemaAttribute::required_attribute( "chi", "one_to_four" , "Chi value between 1 and 4." )
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "level", "exchi_sample_level", "The level of extra rotamers you want.",  "0"  );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "The ability to add various levels of extra rotamers to specific or all residues." );
 }
 
 TaskOperationOP ExtraRotamersCreator::create_task_operation() const
@@ -1829,9 +1827,9 @@ void ExtraChiCutoff::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	utility::tag::AttributeList attributes;
 	attributes
-		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "0" )
-		+ utility::tag::XMLSchemaAttribute::required_attribute( "extrachi_cutoff", xsct_non_negative_integer );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+		+ utility::tag::XMLSchemaAttribute::attribute_w_default(  "resid", xsct_non_negative_integer, "Residue ID of specific residues or =0, all residues.",  "0"  )
+		+ utility::tag::XMLSchemaAttribute::required_attribute( "extrachi_cutoff", xsct_non_negative_integer , "Extra rotamers chi cutoff." );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Assign a chi cutoff to specific or all residues." );
 }
 
 TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const

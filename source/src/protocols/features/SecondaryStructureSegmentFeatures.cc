@@ -38,6 +38,10 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/SecondaryStructureSegmentFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -57,11 +61,11 @@ SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
 SecondaryStructureSegmentFeatures::~SecondaryStructureSegmentFeatures()= default;
 
 /// @brief return string with class name
-std::string
-SecondaryStructureSegmentFeatures::type_name() const
-{
-	return "SecondaryStructureSegmentFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP SecondaryStructureSegmentFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "SecondaryStructureSegmentFeatures";
+// XRW TEMP }
 
 /// @brief generate the table schemas and write them to the database
 void
@@ -241,6 +245,39 @@ SecondaryStructureSegmentFeatures::report_features(
 
 	return 0;
 }
+
+std::string SecondaryStructureSegmentFeatures::type_name() const {
+	return class_name();
+}
+
+std::string SecondaryStructureSegmentFeatures::class_name() {
+	return "SecondaryStructureSegmentFeatures";
+}
+
+void SecondaryStructureSegmentFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report residue and residue secstruct features besides for a secondary structure segment",
+		attlist );
+}
+
+std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {
+	return SecondaryStructureSegmentFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
+}
+
+void SecondaryStructureSegmentFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SecondaryStructureSegmentFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

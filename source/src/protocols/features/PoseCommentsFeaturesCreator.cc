@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-PoseCommentsFeaturesCreator::PoseCommentsFeaturesCreator() {}
-PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() = default;
-FeaturesReporterOP PoseCommentsFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new PoseCommentsFeatures );
-}
+// XRW TEMP PoseCommentsFeaturesCreator::PoseCommentsFeaturesCreator() {}
+// XRW TEMP PoseCommentsFeaturesCreator::~PoseCommentsFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP PoseCommentsFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new PoseCommentsFeatures );
+// XRW TEMP }
 
-std::string PoseCommentsFeaturesCreator::type_name() const {
-	return "PoseCommentsFeatures";
-}
+// XRW TEMP std::string PoseCommentsFeaturesCreator::type_name() const {
+// XRW TEMP  return "PoseCommentsFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

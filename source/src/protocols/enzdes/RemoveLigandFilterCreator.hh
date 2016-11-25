@@ -29,8 +29,11 @@ namespace enzdes {
 class RemoveLigandFilterCreator : public filters::FilterCreator
 {
 public:
-	filters::FilterOP create_filter() const override;
+	// XRW TEMP  filters::FilterOP create_filter() const override;
+	// XRW TEMP  std::string keyname() const override;
+	protocols::filters::FilterOP create_filter() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 

@@ -50,11 +50,11 @@ public:
 
 public:
 	PlacementAuctionMover();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	ResidueAuction auction_results() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const {
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new PlacementAuctionMover );
 	}
 	void insert( ResidueAuctionItem const & item );
@@ -65,11 +65,11 @@ public:
 	iterator end();
 	const_iterator begin() const;
 	const_iterator end() const;
-	virtual void parse_my_tag( utility::tag::TagCOP tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 	//// mutators for Placement movers to copy their internals onto auctionMover
 	void host_chain( core::Size const hc );
 	void max_cb_cb_dist( core::Real const mccd );
@@ -79,6 +79,18 @@ public:
 	utility::vector1< StubSetStubPos > const & stub_sets() const;
 	utility::vector1< StubSetStubPos > & stub_sets();
 	~PlacementAuctionMover();
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	ResidueAuction auction_results_;

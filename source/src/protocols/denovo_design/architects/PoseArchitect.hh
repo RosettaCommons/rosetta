@@ -44,6 +44,8 @@ public:
 	virtual components::StructureDataOP
 	design( core::pose::Pose const & pose, core::Real & random ) const;
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 protected:
 	/// @brief Configuration by XML
 	virtual void

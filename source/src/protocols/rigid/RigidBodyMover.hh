@@ -266,7 +266,7 @@ public:
 	~RigidBodyPerturbNoCenterMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
@@ -274,6 +274,18 @@ public:
 	void clear_jumps();
 
 	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	/// perturbation magnitudes (rotational and translational)
@@ -410,7 +422,7 @@ public:
 	void tilt2_center(core::Size const tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -421,6 +433,18 @@ public:
 	) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:
@@ -483,7 +507,7 @@ public:
 	void vary_stepsize( bool vary ) { vary_stepsize_ = vary; }
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
@@ -492,6 +516,18 @@ public:
 		core::pose::Pose const &) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Vector centroid_axis(core::pose::Pose const & pose_in) const;

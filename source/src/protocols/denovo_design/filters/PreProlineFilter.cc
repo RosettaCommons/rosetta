@@ -22,6 +22,7 @@
 
 // Core Headers
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/sequence/ABEGOManager.hh>
@@ -33,6 +34,9 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -46,22 +50,22 @@ namespace protocols {
 namespace denovo_design {
 namespace filters {
 
-std::string
-PreProlineFilterCreator::keyname() const
-{
-	return PreProlineFilterCreator::filter_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PreProlineFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PreProlineFilter::class_name();
+// XRW TEMP }
 
-protocols::filters::FilterOP
-PreProlineFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new PreProlineFilter() );
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP PreProlineFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new PreProlineFilter() );
+// XRW TEMP }
 
-std::string
-PreProlineFilterCreator::filter_name()
-{
-	return "PreProline";
-}
+// XRW TEMP std::string
+// XRW TEMP PreProlineFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "PreProline";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  PreProlineFilter main code:
@@ -310,8 +314,59 @@ PreProlineFilter::set_use_statistical_potential( bool const use_stat )
 	use_statistical_potential_ = use_stat;
 }
 
+std::string PreProlineFilter::name() const {
+	return class_name();
+}
+
+std::string PreProlineFilter::class_name() {
+	return "PreProline";
+}
+
+void PreProlineFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"threshold", xsct_real,
+		"Returns true if the value of the spline function is less than or equal to the threshold" )
+		+ XMLSchemaAttribute(
+		"use_statistical_potential", xsct_rosetta_bool,
+		"If true, the bicublic spline fit to the statistical potential of "
+		"Ramachandran space will be used to evaluate the torsions. If false, "
+		"residues in potentially bad torsion bins will be counted. "
+		"(default = false)" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Helical space (ABEGO type A) is strongly disfavored before a proline, "
+		"and Rosetta energy may not capture this effect. In the default mode, "
+		"the filter simply checks the ABEGO of all residues before prolines and "
+		"counts the residues that have non-B, non-E abego types (lower = better)"
+		". With the \"use_statistical_potential\" option, the filter uses a "
+		"bicubic spline fit to the data attached to guess at the favorability of "
+		"a preproline residue with the given phi/psi angles -- this favorability "
+		"is then returned as the filter score (lower = better).",
+		attlist );
+}
+
+std::string PreProlineFilterCreator::keyname() const {
+	return PreProlineFilter::class_name();
+}
+
+protocols::filters::FilterOP
+PreProlineFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new PreProlineFilter );
+}
+
+void PreProlineFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PreProlineFilter::provide_xml_schema( xsd );
+}
+
+
 } // namespace filters
 } // namespace denovo_design
 } // namespace protocols
-
-

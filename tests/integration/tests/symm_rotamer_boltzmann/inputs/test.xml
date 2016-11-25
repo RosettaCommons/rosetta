@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="talaris2014.wts" symmetric=false />
-		<tala_symm weights="talaris2014.wts" symmetric=true />
+		<ScoreFunction name="tala" weights="talaris2014.wts" symmetric="false" />
+		<ScoreFunction name="tala_symm" weights="talaris2014.wts" symmetric="true" />
 	</SCOREFXNS>
 	<RESIDUE_SELECTORS>
 		<Index name="cool_residues" resnums="1-10" />
@@ -21,4 +21,5 @@
 		<Add filter="rot_boltz" />
 	</PROTOCOLS>
 	<OUTPUT scorefxn="tala_symm" />
+
 </ROSETTASCRIPTS>

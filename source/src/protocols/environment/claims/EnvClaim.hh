@@ -39,6 +39,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -70,6 +71,20 @@ public:
 
 	static
 	bool is_claim( std::string const& name );
+
+
+	static
+	void
+	define_envclaim_schema_group( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	std::string
+	envclaim_ct_namer( std::string );
+
+	static
+	std::string
+	envclaim_group_name();
+
 
 	/// @brief Virtual destructor
 	virtual ~EnvClaim();

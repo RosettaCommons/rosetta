@@ -33,6 +33,9 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -46,22 +49,22 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.RepackMinimize" );
 
-std::string
-RepackMinimizeCreator::keyname() const
-{
-	return RepackMinimizeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RepackMinimizeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RepackMinimize::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RepackMinimizeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RepackMinimize );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RepackMinimizeCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RepackMinimize );
+// XRW TEMP }
 
-std::string
-RepackMinimizeCreator::mover_name()
-{
-	return "RepackMinimize";
-}
+// XRW TEMP std::string
+// XRW TEMP RepackMinimize::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RepackMinimize";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 RepackMinimize::clone() const {
@@ -69,7 +72,7 @@ RepackMinimize::clone() const {
 }
 
 RepackMinimize::RepackMinimize() :
-	simple_moves::DesignRepackMover( RepackMinimizeCreator::mover_name() )
+	simple_moves::DesignRepackMover( RepackMinimize::mover_name() )
 {
 	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
@@ -85,7 +88,7 @@ RepackMinimize::RepackMinimize(
 	core::Real const interface_distance_cutoff/*=8.0*/,
 	bool const repack_non_ala/*=true*/
 ) :
-	simple_moves::DesignRepackMover( RepackMinimizeCreator::mover_name() )
+	simple_moves::DesignRepackMover( RepackMinimize::mover_name() )
 {
 	repack_partner2_ = repack_partner2;
 	repack_partner1_ = repack_partner1;
@@ -139,10 +142,10 @@ RepackMinimize::apply( pose::Pose & pose )
 	(*scorefxn_minimize_)( pose );
 }
 
-std::string
-RepackMinimize::get_name() const {
-	return RepackMinimizeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RepackMinimize::get_name() const {
+// XRW TEMP  return RepackMinimize::mover_name();
+// XRW TEMP }
 
 
 void
@@ -151,6 +154,39 @@ RepackMinimize::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 	TR<<"repack minimize mover with the following parameters:"<<std::endl;
 	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
 }
+
+std::string RepackMinimize::get_name() const {
+	return mover_name();
+}
+
+std::string RepackMinimize::mover_name() {
+	return "RepackMinimize";
+}
+
+void RepackMinimize::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = simple_moves::DesignRepackMover::get_xsd_complex_type();
+
+	ct_gen->description( "RepackMinimizeMover performs extensive interface remodeling" );
+	ct_gen->element_name( mover_name() );
+	ct_gen->write_complex_type_to_schema( xsd );
+}
+
+std::string RepackMinimizeCreator::keyname() const {
+	return RepackMinimize::mover_name();
+}
+
+protocols::moves::MoverOP
+RepackMinimizeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RepackMinimize );
+}
+
+void RepackMinimizeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RepackMinimize::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

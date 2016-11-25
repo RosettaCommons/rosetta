@@ -29,6 +29,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -36,6 +37,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -49,22 +53,22 @@ namespace devel {
 namespace denovo_design {
 namespace filters {
 
-std::string
-CoreResiduesPerElementFilterCreator::keyname() const
-{
-	return CoreResiduesPerElementFilterCreator::filter_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CoreResiduesPerElementFilterCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CoreResiduesPerElementFilter::class_name();
+// XRW TEMP }
 
-protocols::filters::FilterOP
-CoreResiduesPerElementFilterCreator::create_filter() const {
-	return protocols::filters::FilterOP( new CoreResiduesPerElementFilter() );
-}
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP CoreResiduesPerElementFilterCreator::create_filter() const {
+// XRW TEMP  return protocols::filters::FilterOP( new CoreResiduesPerElementFilter() );
+// XRW TEMP }
 
-std::string
-CoreResiduesPerElementFilterCreator::filter_name()
-{
-	return "CoreResiduesPerElement";
-}
+// XRW TEMP std::string
+// XRW TEMP CoreResiduesPerElementFilter::class_name()
+// XRW TEMP {
+// XRW TEMP  return "CoreResiduesPerElement";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  CoreResiduesPerElementFilter main code:
@@ -116,7 +120,7 @@ CoreResiduesPerElementFilter::parse_my_tag(
 std::string
 CoreResiduesPerElementFilter::get_name() const
 {
-	return CoreResiduesPerElementFilterCreator::filter_name();
+	return CoreResiduesPerElementFilter::class_name();
 }
 
 
@@ -263,7 +267,46 @@ CoreResiduesPerElementFilter::set_core_cutoff( core::Real const core_cutoff )
 	core_cutoff_ = core_cutoff;
 }
 
+std::string CoreResiduesPerElementFilter::name() const {
+	return class_name();
+}
+
+std::string CoreResiduesPerElementFilter::class_name() {
+	return "CoreResiduesPerElement";
+}
+
+void CoreResiduesPerElementFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute(
+		"core_cutoff", xsct_real,
+		"XSD XRW: TO DO");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist);
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"XSD XRW TO DO",
+		attlist );
+}
+
+std::string CoreResiduesPerElementFilterCreator::keyname() const {
+	return CoreResiduesPerElementFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CoreResiduesPerElementFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CoreResiduesPerElementFilter );
+}
+
+void CoreResiduesPerElementFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoreResiduesPerElementFilter::provide_xml_schema( xsd );
+}
+
+
 } // namespace filters
 } // namespace denovo_design
 } // namespace devel
-

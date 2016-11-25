@@ -62,6 +62,9 @@
 
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
 namespace protocols {
@@ -95,25 +98,25 @@ AntibodyDesignProtocol::AntibodyDesignProtocol() : protocols::moves::Mover(),
 
 AntibodyDesignProtocol::~AntibodyDesignProtocol(){}
 
-protocols::moves::MoverOP
-AntibodyDesignProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AntibodyDesignProtocol );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AntibodyDesignProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AntibodyDesignProtocol );
+// XRW TEMP }
 
-std::string
-AntibodyDesignProtocolCreator::keyname() const {
-	return AntibodyDesignProtocolCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyDesignProtocolCreator::keyname() const {
+// XRW TEMP  return AntibodyDesignProtocol::mover_name();
+// XRW TEMP }
 
-std::string
-AntibodyDesignProtocolCreator::mover_name(){
-	return "AntibodyDesignProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyDesignProtocol::mover_name(){
+// XRW TEMP  return "AntibodyDesignProtocol";
+// XRW TEMP }
 
-std::string
-AntibodyDesignProtocol::get_name() const {
-	return "AntibodyDesignProtocol";
-}
+// XRW TEMP std::string
+// XRW TEMP AntibodyDesignProtocol::get_name() const {
+// XRW TEMP  return "AntibodyDesignProtocol";
+// XRW TEMP }
 
 //protocols::moves::MoverOP
 //AntibodyDesignProtocol::clone() const {
@@ -454,6 +457,78 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 
 }
+
+std::string AntibodyDesignProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string AntibodyDesignProtocol::mover_name() {
+	return "AntibodyDesignProtocol";
+}
+
+void AntibodyDesignProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+
+	attributes_for_get_ab_design_global_scorefxn(attlist);
+	attributes_for_get_ab_design_min_scorefxn(attlist);
+
+	XMLSchemaRestriction ABcdr_enum;
+	ABcdr_enum.name("ABcdr_definitions");
+	ABcdr_enum.base_type(xs_string);
+	AntibodyEnumManager ABenum_manager;
+	for ( auto& cdr_def : ABenum_manager.get_recognized_cdr_definitions() ) {
+		ABcdr_enum.add_restriction(xsr_enumeration, cdr_def);
+	}
+	xsd.add_top_level_element(ABcdr_enum);
+
+	attlist + XMLSchemaAttribute(
+		"design_cdrs", "ABcdr_definitions",
+		"CDR regions to be designed");
+
+	attlist + XMLSchemaAttribute(
+		"instruction_file", xs_string,
+		"XSD XRW: TO DO");
+	attlist + XMLSchemaAttribute(
+		"instructions_file", xs_string,
+		"used if not instruction_file attribute specified");
+	attlist + XMLSchemaAttribute(
+		"cdr_instructions_file", xs_string,
+		"used if not instructions_file attribute specififed");
+
+	attlist + XMLSchemaAttribute(
+		"run_snugdock", xsct_rosetta_bool,
+		"Run snugdock at the end");
+	attlist + XMLSchemaAttribute(
+		"run_relax", xsct_rosetta_bool,
+		"Run relax at the end and after snugdock (optional)");
+	attlist + XMLSchemaAttribute(
+		"remove_antigen", xsct_rosetta_bool,
+		"Removes antigen at the very beginning of the protocol");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Main AntibodyDesignProtocol, tieing together individual movers and classes. "
+		"Main mover for application.",
+		attlist );
+}
+
+std::string AntibodyDesignProtocolCreator::keyname() const {
+	return AntibodyDesignProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+AntibodyDesignProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AntibodyDesignProtocol );
+}
+
+void AntibodyDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AntibodyDesignProtocol::provide_xml_schema( xsd );
+}
+
 
 
 } //Design

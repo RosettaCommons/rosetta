@@ -90,7 +90,7 @@ public:// accessor
 
 
 	// @brief get name of this filter
-	std::string name() const override { return "SSElementMotifContactFilter"; }
+	// XRW TEMP  std::string name() const override { return "SSElementMotifContactFilter"; }
 
 
 public:// virtual main operation
@@ -113,6 +113,18 @@ public:// parser
 		filters::Filters_map const &,
 		Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

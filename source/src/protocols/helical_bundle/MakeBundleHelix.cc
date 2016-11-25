@@ -37,6 +37,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -49,22 +52,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
 
-std::string
-MakeBundleHelixCreator::keyname() const
-{
-	return MakeBundleHelixCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MakeBundleHelixCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MakeBundleHelix::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MakeBundleHelixCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MakeBundleHelix );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MakeBundleHelixCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MakeBundleHelix );
+// XRW TEMP }
 
-std::string
-MakeBundleHelixCreator::mover_name()
-{
-	return "MakeBundleHelix";
-}
+// XRW TEMP std::string
+// XRW TEMP MakeBundleHelix::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MakeBundleHelix";
+// XRW TEMP }
 
 
 /// @brief Constructor for MakeBundleHelix mover.
@@ -226,9 +229,9 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 
 
 /// @brief Returns the name of this mover ("MakeBundleHelix").
-std::string MakeBundleHelix::get_name() const{
-	return "MakeBundleHelix";
-}
+// XRW TEMP std::string MakeBundleHelix::get_name() const{
+// XRW TEMP  return "MakeBundleHelix";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -300,6 +303,38 @@ void MakeBundleHelix::add_parameter_info_to_pose( core::pose::Pose &pose )
 
 	return;
 }
+
+std::string MakeBundleHelix::get_name() const {
+	return mover_name();
+}
+
+std::string MakeBundleHelix::mover_name() {
+	return "MakeBundleHelix";
+}
+
+void MakeBundleHelix::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string MakeBundleHelixCreator::keyname() const {
+	return MakeBundleHelix::mover_name();
+}
+
+protocols::moves::MoverOP
+MakeBundleHelixCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MakeBundleHelix );
+}
+
+void MakeBundleHelixCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MakeBundleHelix::provide_xml_schema( xsd );
+}
+
 
 } //namespace helical_bundle
 } //namespace protocols

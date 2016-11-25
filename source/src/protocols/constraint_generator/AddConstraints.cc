@@ -26,6 +26,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.constraint_generator.AddConstraints" );
 
@@ -33,13 +36,13 @@ namespace protocols {
 namespace constraint_generator {
 
 AddConstraints::AddConstraints():
-	protocols::moves::Mover( AddConstraints::class_name() ),
+	protocols::moves::Mover( AddConstraints::mover_name() ),
 	generators_()
 {
 }
 
 AddConstraints::AddConstraints( ConstraintGeneratorCOPs const & generators ):
-	protocols::moves::Mover( AddConstraints::class_name() ),
+	protocols::moves::Mover( AddConstraints::mover_name() ),
 	generators_( generators )
 {
 }
@@ -74,11 +77,11 @@ AddConstraints::fresh_instance() const
 	return protocols::moves::MoverOP( new AddConstraints );
 }
 
-std::string
-AddConstraints::get_name() const
-{
-	return AddConstraints::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddConstraints::get_name() const
+// XRW TEMP {
+// XRW TEMP  return AddConstraints::mover_name();
+// XRW TEMP }
 
 void
 AddConstraints::apply( core::pose::Pose & pose )
@@ -112,17 +115,51 @@ AddConstraints::add_generator( ConstraintGeneratorCOP cst_generator )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-AddConstraintsCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddConstraintsCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new AddConstraints );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP AddConstraintsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddConstraints::mover_name();
+// XRW TEMP }
+
+std::string AddConstraints::get_name() const {
+	return mover_name();
+}
+
+std::string AddConstraints::mover_name() {
+	return "AddConstraints";
+}
+
+void AddConstraints::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	ConstraintGeneratorFactory::get_instance()->define_constraint_generator_xml_schema_group( xsd );
+	AttributeList attlist; //No attributes, just subelements
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & ConstraintGeneratorFactory::constraint_generator_xml_schema_group_name );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Add constraints from the specified constraint generators to the pose", attlist, subelements );
+}
+
+std::string AddConstraintsCreator::keyname() const {
+	return AddConstraints::mover_name();
+}
+
+protocols::moves::MoverOP
+AddConstraintsCreator::create_mover() const {
 	return protocols::moves::MoverOP( new AddConstraints );
 }
 
-std::string
-AddConstraintsCreator::keyname() const
+void AddConstraintsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return AddConstraints::class_name();
+	AddConstraints::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //constraint_generator

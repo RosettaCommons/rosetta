@@ -52,7 +52,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // C++ Headers
 #include <cmath>
 
@@ -171,7 +171,32 @@ TemperingBase::parse_my_tag(
 	instance_initialized_ = true;
 }
 
+void
+TemperingBase::attributes_for_tempering_base(  utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd ) {
 
+	using namespace utility::tag;
+
+	//define simple type from interpolation_type_string_to_enum
+	XMLSchemaRestriction interpolation_type;
+	interpolation_type.name( "interpolation_type" );
+	interpolation_type.base_type( xs_string );
+	interpolation_type.add_restriction( xsr_enumeration, "linear" );
+	interpolation_type.add_restriction( xsr_enumeration, "exponential" );
+	xsd.add_top_level_element( interpolation_type );
+	attlist
+		+ XMLSchemaAttribute( "temp_file", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::attribute_w_default( "temp_low", xsct_real, "XRW_TODO", "0.6" )
+		+ XMLSchemaAttribute::attribute_w_default( "temp_high", xsct_real, "XRW TO DO", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "temp_levels", xsct_non_negative_integer, "XRW TO DO","10" )
+		+ XMLSchemaAttribute::attribute_w_default( "temp_interpolation", "interpolation_type", "XRW TO DO", "linear" )
+		+ XMLSchemaAttribute::attribute_w_default( "temp_stride", xsct_non_negative_integer, "XRW TO DO","100" )
+		+ XMLSchemaAttribute::attribute_w_default( "io_stride", xsct_non_negative_integer, "XRW TO DO","10000" )
+		+ XMLSchemaAttribute::attribute_w_default( "trust_current_temp", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "stats_line_output", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stats_silent_output", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "stats_file", xs_string, "XRW TO DO", "tempering.stats");
+
+}
 /// handling of options including command-line
 void TemperingBase::set_defaults() {
 	//are we the only object controlling temperature in the MC object ?!

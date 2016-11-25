@@ -45,6 +45,9 @@
 #include <utility/string_util.hh>
 #include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // ObjexxFCL Headers
 
@@ -70,22 +73,22 @@ static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.RestrictRegion" );
 namespace devel {
 namespace denovo_design {
 
-std::string
-RestrictRegionCreator::keyname() const
-{
-	return RestrictRegionCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RestrictRegionCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RestrictRegion::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RestrictRegionCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RestrictRegion() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RestrictRegionCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RestrictRegion() );
+// XRW TEMP }
 
-std::string
-RestrictRegionCreator::mover_name()
-{
-	return "RestrictRegion";
-}
+// XRW TEMP std::string
+// XRW TEMP RestrictRegion::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RestrictRegion";
+// XRW TEMP }
 
 ///  ---------------------------------------------------------------------------------
 ///  RestrictRegion main code:
@@ -203,11 +206,11 @@ RestrictRegion::parse_my_tag(
 	}
 }
 
-std::string
-RestrictRegion::get_name() const
-{
-	return "RestrictRegion";
-}
+// XRW TEMP std::string
+// XRW TEMP RestrictRegion::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "RestrictRegion";
+// XRW TEMP }
 
 /// @brief Does the RestrictRegion moves
 void
@@ -579,6 +582,57 @@ RestrictRegion::residues_allowed( core::pack::task::PackerTaskCOP task, core::Si
 	}
 	return aas;
 }
+
+std::string RestrictRegion::get_name() const {
+	return mover_name();
+}
+
+std::string RestrictRegion::mover_name() {
+	return "RestrictRegion";
+}
+
+void RestrictRegion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction restrict_region_modes;
+	restrict_region_modes.name( "restrict_region_modes" );
+	restrict_region_modes.base_type( xs_string );
+	restrict_region_modes.add_restriction( xsr_enumeration, "psipred" );
+	restrict_region_modes.add_restriction( xsr_enumeration, "random" );
+	restrict_region_modes.add_restriction( xsr_enumeration, "score" );
+	restrict_region_modes.add_restriction( xsr_enumeration, "packstat" );
+	restrict_region_modes.add_restriction( xsr_enumeration, "random_mutation" );
+	xsd.add_top_level_element( restrict_region_modes );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "type", "restrict_region_modes", "'Enum' of possible mover modes." )
+		+ XMLSchemaAttribute( "resfile", xs_string, "File name of resfile" )
+		+ XMLSchemaAttribute( "psipred_cmd", xs_string, "Command for running psipred" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "Blueprint file" );
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute( "num_regions", xs_string, "Number of regions to mutate" )
+		+ XMLSchemaAttribute( "permanent_restriction", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "max_trp", xsct_non_negative_integer, "Maximum number of tryptophans" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RestrictRegionCreator::keyname() const {
+	return RestrictRegion::mover_name();
+}
+
+protocols::moves::MoverOP
+RestrictRegionCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RestrictRegion );
+}
+
+void RestrictRegionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RestrictRegion::provide_xml_schema( xsd );
+}
+
 
 /// @brief alter the resfile line such that the amino acid given is listed as allowed and return the modified version
 std::string

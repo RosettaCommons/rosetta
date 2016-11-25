@@ -69,6 +69,9 @@ public:
 		std::pair< core::Size, core::Size > const& range,
 		core::Real bias );
 
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	static std::string class_name();
+
 	virtual void yield_elements( FoldTreeSketch const& fts, CutBiasElements& elements ) const;
 
 	EnvClaimOP clone() const;

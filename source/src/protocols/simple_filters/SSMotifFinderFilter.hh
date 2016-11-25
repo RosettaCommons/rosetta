@@ -64,6 +64,18 @@ public:
 	void filename( std::string const s ){ filename_ = s;}
 	std::string pdbname() const{ return pdbname_; }
 	void pdbname ( std::string const s ){ pdbname_ = s;}
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size from_res_, to_res_; // dflt 0,0; minimal and maximal sequence separation for motif search
 	core::pose::PoseOP template_pose_; // dflt NULL

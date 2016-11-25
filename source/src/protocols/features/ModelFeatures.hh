@@ -29,6 +29,8 @@
 
 //External
 #include <boost/graph/undirected_graph.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -80,10 +82,10 @@ public:
 	ModelFeatures();
 
 
-	std::string
-	type_name() const override  {
-		return "ModelFeatures";
-	};
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const override  {
+	// XRW TEMP   return "ModelFeatures";
+	// XRW TEMP  };
 
 
 	/// @brief return the set of features reporters that are required to
@@ -139,6 +141,18 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
 	) override;
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

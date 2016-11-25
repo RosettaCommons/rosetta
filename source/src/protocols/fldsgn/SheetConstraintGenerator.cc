@@ -25,7 +25,7 @@
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/id/SequenceMapping.hh>
@@ -52,7 +52,7 @@
 #include <numeric/constants.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // C++ headers
 #include <boost/assign.hpp>
 #include <cmath>
@@ -232,6 +232,57 @@ SheetConstraintGenerator::initialize_from_blueprint( std::string const & bluepri
 	initialize_from_blueprint( bp );
 	TR << "Using blueprint " << blueprint_file << " for constraint generation." << std::endl;
 }
+
+
+std::string
+SheetConstraintGenerator::class_name(){
+	return SheetConstraintGeneratorCreator::constraint_generator_name();
+}
+
+void
+SheetConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	SheetConstraintGenerator::provide_xml_schema( xsd );
+}
+
+void
+SheetConstraintGenerator::attributes_for_sheet_constraint_generator( utility::tag::AttributeList & attlist ){
+	using namespace utility::tag;
+	attlist
+		+ XMLSchemaAttribute( "blueprint", xs_string, "Path to blueprint file specifying strand pairing" )
+		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "String specifying secondary structure for the pose" )
+		+ XMLSchemaAttribute( "spairs", xs_string, "String specifying strand pairing" )
+		+ XMLSchemaAttribute::attribute_w_default( "flat_bottom_constraints", xsct_rosetta_bool, "Use flat-bottom constraints?", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "dist", xsct_real, "Desired distance between strands", "5.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "dist_tolerance", xsct_real, "Tolerance in distance between strands", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "angle_tolerance", xsct_real, "Tolerance in angle between strands", "0.35" )
+		+ XMLSchemaAttribute::attribute_w_default( "cacb_dihedral_tolerance", xsct_real, "Tolerance in Ca-Cb dihedral angle (in radians)", "0.9" )
+		+ XMLSchemaAttribute::attribute_w_default( "bb_dihedral_tolerance", xsct_real, "Tolerance in backbone dihedral angle constraint (in radians)", "0.52" )
+		+ XMLSchemaAttribute::attribute_w_default( "weight", xsct_real, "Weight to use for these constraints", "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_dssp", xsct_rosetta_bool, "Use DSSP to determine secondary structure?", "true" );
+
+}
+
+
+
+
+void
+SheetConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attributes_for_sheet_constraint_generator( attlist );
+
+	constraint_generator::ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Adds constraints specifying strand pairs in beta sheets",
+		attlist );
+
+
+
+
+}
+
 
 void
 SheetConstraintGenerator::initialize_from_blueprint( protocols::jd2::parser::BluePrintCOP bp )

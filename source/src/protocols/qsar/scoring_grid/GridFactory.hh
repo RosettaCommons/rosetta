@@ -63,6 +63,9 @@ public:
 	/// @brief create Grid given a serialized grid object
 	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;
 
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	static std::string scoring_grid_xml_schema_group_name();
+
 private:
 	GridFactory();
 	//unimplemented -- uncopyable

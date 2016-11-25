@@ -40,6 +40,9 @@
 #include <sstream>
 
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace std;
@@ -55,22 +58,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBGaussianMover" )
 namespace protocols {
 namespace simple_moves {
 
-std::string
-BBGaussianMoverCreator::keyname() const
-{
-	return BBGaussianMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP BBGaussianMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return BBGaussianMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-BBGaussianMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BBGaussianMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BBGaussianMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BBGaussianMover );
+// XRW TEMP }
 
-std::string
-BBGaussianMoverCreator::mover_name()
-{
-	return "BBGaussian";
-}
+// XRW TEMP std::string
+// XRW TEMP BBGaussianMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "BBGaussian";
+// XRW TEMP }
 
 ///////////////////////////////////////////////////
 BBGaussianMover::BBGaussianMover()
@@ -108,9 +111,9 @@ BBGaussianMover::clone() const {
 	return static_cast< protocols::moves::MoverOP >(mp);
 }
 
-std::string BBGaussianMover::get_name() const {
-	return "BBGaussianMover";
-}
+// XRW TEMP std::string BBGaussianMover::get_name() const {
+// XRW TEMP  return "BBGaussianMover";
+// XRW TEMP }
 
 void BBGaussianMover::resize(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
 {
@@ -742,6 +745,70 @@ bool BBGaussianMover::preserve_detailed_balance() const
 {
 	return preserve_detailed_balance_;
 }
+
+std::string BBGaussianMover::get_name() const {
+	return mover_name();
+}
+
+std::string BBGaussianMover::mover_name() {
+	return "BBGaussian";
+}
+
+void BBGaussianMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"factorA", xsct_real,
+		"XRW TO DO", "1.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"factorB", xsct_real,
+		"XRW TO DO", "10.0");
+	attlist + XMLSchemaAttribute(
+		"end_atoms", xs_string,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dof", xsct_non_negative_integer,
+		"XRW TO DO", "8");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"pivot", xsct_non_negative_integer,
+		"XRW TO DO", "4");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"shrink", xsct_rosetta_bool,
+		"XRW TO DO", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"autoA", xsct_rosetta_bool,
+		"XRW TO DO", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fix_tail", xsct_rosetta_bool,
+		"XRW TO DO overwrite option[bbg::fix_short_segment]", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Monte Carlo update for chain molecules: Biased Gaussian steps in torsional space "
+		"The Journal of Chemical Physics, Vol. 114, No. 18. (2001), pp. 8154-8158. "
+		"Two steps for perturbing the backbone and keeping the geometry constrain "
+		"Step 1: Gaussian Biased steps in torsional space: "
+		"the end atoms of the moving segment should be choosen by user "
+		"and to keep the geometry constrain(6), the DOF of the moving segment greater than 6 "
+		"Step 2: pivot update the bb conformation, or followed by a chainclosure method (BBConRot)",
+		attlist );
+}
+
+std::string BBGaussianMoverCreator::keyname() const {
+	return BBGaussianMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BBGaussianMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BBGaussianMover );
+}
+
+void BBGaussianMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BBGaussianMover::provide_xml_schema( xsd );
+}
+
 
 ////////////////////////////////////////////
 // BBG8T3AMover

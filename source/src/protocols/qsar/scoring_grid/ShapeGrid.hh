@@ -15,14 +15,17 @@
 
 #include <protocols/qsar/scoring_grid/ShapeGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
+
+#include <core/grid/CartGrid.hh>
+
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/kdtree/KDPointList.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/grid/CartGrid.hh>
-#include <boost/unordered/unordered_map.hpp>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <boost/unordered/unordered_map.hpp>
 
 namespace protocols {
 namespace qsar {
@@ -53,6 +56,9 @@ public:
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize the grid information
 	virtual void deserialize(utility::json_spirit::mObject data);
+
+	static std::string grid_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 

@@ -31,6 +31,9 @@
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -170,11 +173,11 @@ BindingStrainFilter::clone() const{
 	return protocols::filters::FilterOP( new BindingStrainFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-BindingStrainFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BindingStrainFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP BindingStrainFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BindingStrainFilter ); }
 
-std::string
-BindingStrainFilterCreator::keyname() const { return "BindingStrain"; }
+// XRW TEMP std::string
+// XRW TEMP BindingStrainFilterCreator::keyname() const { return "BindingStrain"; }
 
 protocols::moves::MoverOP
 BindingStrainFilter::relax_mover() const{
@@ -185,6 +188,42 @@ void
 BindingStrainFilter::relax_mover( protocols::moves::MoverOP const m ){
 	relax_mover_ = m;
 }
+
+std::string BindingStrainFilter::name() const {
+	return class_name();
+}
+
+std::string BindingStrainFilter::class_name() {
+	return "BindingStrain";
+}
+
+void BindingStrainFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which to compute binding", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Strain must be less than this value to pass", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_mover", xs_string, "Relax mover employed to relieve the unbound state", "null" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the energetic strain in a bound monomer. Automatically respects symmetry", attlist );
+}
+
+std::string BindingStrainFilterCreator::keyname() const {
+	return BindingStrainFilter::class_name();
+}
+
+protocols::filters::FilterOP
+BindingStrainFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new BindingStrainFilter );
+}
+
+void BindingStrainFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BindingStrainFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

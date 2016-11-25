@@ -43,6 +43,9 @@
 #include <utility/string_util.hh>
 
 #include <numeric/random/random.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -50,22 +53,22 @@ namespace bin_transitions {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
 
-std::string
-PerturbByBinsCreator::keyname() const
-{
-	return PerturbByBinsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbByBinsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PerturbByBins::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PerturbByBinsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbByBins );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PerturbByBinsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PerturbByBins );
+// XRW TEMP }
 
-std::string
-PerturbByBinsCreator::mover_name()
-{
-	return "PerturbByBins";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbByBins::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PerturbByBins";
+// XRW TEMP }
 
 /// @brief Default constructor
 ///
@@ -97,10 +100,10 @@ PerturbByBins::PerturbByBins( PerturbByBins const &src ) :
 ///
 PerturbByBins::~PerturbByBins() {}
 
-std::string
-PerturbByBins::get_name() const {
-	return PerturbByBinsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbByBins::get_name() const {
+// XRW TEMP  return PerturbByBins::mover_name();
+// XRW TEMP }
 
 /// @brief Apply the mover to a pose.
 ///
@@ -242,6 +245,44 @@ void PerturbByBins::set_must_switch_bins( bool const val ) {
 	}
 	return;
 } //set_must_switch_bins()
+
+std::string PerturbByBins::get_name() const {
+	return mover_name();
+}
+
+std::string PerturbByBins::mover_name() {
+	return "PerturbByBins";
+}
+
+void PerturbByBins::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("bin_params_file", xs_string, "File identifier indicating which set of bin parameters is desired.", "ABBA" )
+		+ XMLSchemaAttribute::attribute_w_default("start", xsct_non_negative_integer, "First residue of the backbone stretch to be perturbed.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("end", xsct_non_negative_integer, "Last residue of the backbone stretch to be perturbed.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("repeats", xsct_non_negative_integer, "Number of rounds of perturbation.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default("must_switch_bins", xsct_rosetta_bool,
+		"Should EVERY perturbation change bins, or is remaining in the same bin acceptable?", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Perturb mainchain torsions based on the probability of occurance"
+		"given the torsion angles of the preceeding amino acid.", attlist );
+}
+
+std::string PerturbByBinsCreator::keyname() const {
+	return PerturbByBins::mover_name();
+}
+
+protocols::moves::MoverOP
+PerturbByBinsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PerturbByBins );
+}
+
+void PerturbByBinsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PerturbByBins::provide_xml_schema( xsd );
+}
+
 
 } // bin_transitions
 } // simple_moves

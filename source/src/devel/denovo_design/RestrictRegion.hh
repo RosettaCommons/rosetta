@@ -67,7 +67,7 @@ public:
 	) override;
 
 	/// @brief Return the name of this mover.
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief return a fresh instance of this class in an owning pointer
 	protocols::moves::MoverOP clone() const override;
@@ -86,6 +86,18 @@ public:
 	/// @brief Permanently restricts design at the specified position such that the existing amino acid is not allowed.
 	static void
 	permanently_restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, core::Size const seqpos );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // private methods
 	/// @brief initialize the resfile -- takes an input resfile, but converts it to a resfile in the output directory

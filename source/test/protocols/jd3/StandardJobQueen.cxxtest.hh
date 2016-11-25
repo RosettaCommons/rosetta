@@ -71,7 +71,7 @@ public:
 	typedef StandardJobQueen parent;
 
 	using parent::note_job_completed;
-	
+
 
 public:
 	DummyJobQueen()
@@ -327,10 +327,10 @@ public:
 	{
 		using namespace utility::tag;
 		AttributeList attributes;
-		attributes + XMLSchemaAttribute( "foo", xs_string ) + XMLSchemaAttribute( "bar", xs_integer );
+		attributes + XMLSchemaAttribute( "foo", xs_string , "" ) + XMLSchemaAttribute( "bar", xs_integer , "" );
 
 		XMLSchemaSimpleSubelementList subelements;
-		subelements.add_simple_subelement( "Hoo", attributes ).add_simple_subelement( "Ville", attributes );
+		subelements.add_simple_subelement( "Hoo", attributes, "There once was a" ).add_simple_subelement( "Ville", attributes, "grinch" );
 		ctgen.add_ordered_subelement_set_as_pick_one( subelements );
 	}
 

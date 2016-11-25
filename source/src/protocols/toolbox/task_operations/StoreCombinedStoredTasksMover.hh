@@ -39,10 +39,10 @@ public:
 	StoreCombinedStoredTasksMover();
 	~StoreCombinedStoredTasksMover();
 
-	virtual void apply( core::pose::Pose & pose  );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const;
+	void apply( core::pose::Pose & pose  ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
 	parse_my_tag(
@@ -51,7 +51,19 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	std::string task1_, task2_, task_name_, operator_;

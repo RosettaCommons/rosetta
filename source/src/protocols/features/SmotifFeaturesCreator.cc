@@ -24,15 +24,15 @@
 namespace protocols {
 namespace features {
 
-SmotifFeaturesCreator::SmotifFeaturesCreator() {}
-SmotifFeaturesCreator::~SmotifFeaturesCreator() = default;
-FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new SmotifFeatures );
-}
+// XRW TEMP SmotifFeaturesCreator::SmotifFeaturesCreator() {}
+// XRW TEMP SmotifFeaturesCreator::~SmotifFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new SmotifFeatures );
+// XRW TEMP }
 
-std::string SmotifFeaturesCreator::type_name() const {
-	return "SmotifFeatures";
-}
+// XRW TEMP std::string SmotifFeaturesCreator::type_name() const {
+// XRW TEMP  return "SmotifFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

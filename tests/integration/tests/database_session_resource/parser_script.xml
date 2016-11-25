@@ -1,14 +1,15 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-	        <s weights=score12prime/>
+	        <ScoreFunction name="s" weights="score12prime"/>
 	</SCOREFXNS>
 	<MOVERS>
-		<ReportToDB name=report_scores resource_description=database_session batch_description="Test using database_session resource">
-			<feature name=ScoreTypeFeatures/>
-			<feature name=StructureScoresFeatures scorefxn=score12/>
+		<ReportToDB name="report_scores" resource_description="database_session" batch_description="Test using database_session resource">
+			<ScoreTypeFeatures/>
+			<StructureScoresFeatures scorefxn="score12"/>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover=report_scores/>
+		<Add mover="report_scores"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

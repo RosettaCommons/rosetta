@@ -16,6 +16,7 @@
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
 #include <core/pose/util.hh>
 #include <protocols/ligand_docking/InterfaceBuilder.hh>
+#include <protocols/ligand_docking/LigandDockingLoaders.hh>
 
 //Project Headers
 #include <core/kinematics/MoveMap.hh>
@@ -33,6 +34,7 @@
 
 // Scripter Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <protocols/ligand_docking/LigandArea.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
@@ -109,10 +111,8 @@ MoveMapBuilder::parse_my_tag(
 	}
 
 	if ( tag->hasOption("minimize_water") ) {
-		if ( tag->getOption<std::string>("minimize_water") == "true" ) {
+		if ( tag->getOption< bool >( "minimize_water" ) ) {
 			minimize_water_= true;
-		} else if ( tag->getOption<std::string>("minimize_water") != "false" ) {
-			throw utility::excn::EXCN_RosettaScriptsOption("'minimize_water' option is true or false");
 		}
 	}
 }
@@ -204,6 +204,26 @@ MoveMapBuilder::minimize_backbone(){
 	return (bool) bb_interface_builder_;
 }
 
+std::string MoveMapBuilder::element_name() { return "MoveMapBuilder"; }
+void MoveMapBuilder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes + XMLSchemaAttribute( "sc_interface", xs_string, "The name of the previously declared"
+		" interface builder to use when deciding what sidechains to allow to move when building a MoveMap" )
+		+ XMLSchemaAttribute( "bb_interface", xs_string, "The name of the previously declared interface"
+		" builder to use when deciding what backbone torsions to allow to move when building a MoveMap" )
+		+ XMLSchemaAttribute( "minimize_water", xsct_rosetta_bool, "Should water residues be allowed to move?" )
+		+ required_name_attribute();
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( element_name() )
+		.complex_type_naming_func( & MoveMapBuilderLoader::movemap_builder_ct_namer )
+		.description( "Movemap builders can build on previousy-defined InterfaceBuilders to define the"
+		" flexible sidechain and backbone dihedrals by creating a MoveMap." )
+		.add_attributes( attributes )
+		.write_complex_type_to_schema( xsd );
+}
 
 } //namespace ligand_docking
 } //namespace protocols

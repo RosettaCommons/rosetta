@@ -23,6 +23,9 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ResetFoldTree" );
 
@@ -32,22 +35,6 @@ namespace simple_moves {
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
-std::string
-ResetFoldTreeCreator::keyname() const
-{
-	return ResetFoldTreeCreator::mover_name();
-}
-
-protocols::moves::MoverOP ResetFoldTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new ResetFoldTree );
-}
-
-std::string
-ResetFoldTreeCreator::mover_name()
-{
-	return "ResetFoldTree";
-}
 
 void
 ResetFoldTree::apply( Pose & pose )
@@ -60,11 +47,6 @@ ResetFoldTree::apply( Pose & pose )
 	ft.add_edge(1,pose.total_residue(),core::kinematics::Edge::PEPTIDE);
 	pose.fold_tree(ft);
 
-}
-
-std::string
-ResetFoldTree::get_name() const {
-	return ResetFoldTreeCreator::mover_name();
 }
 
 moves::MoverOP
@@ -89,6 +71,39 @@ ResetFoldTree::parse_my_tag(
 {
 	TR << "nothing to parse";
 }
+
+std::string ResetFoldTree::get_name() const {
+	return mover_name();
+}
+
+std::string ResetFoldTree::mover_name() {
+	return "ResetFoldTree";
+}
+
+void ResetFoldTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"wipes out a fold tree making the first residue 0 and the last residue the length of the protein",
+		attlist );
+}
+
+std::string ResetFoldTreeCreator::keyname() const {
+	return ResetFoldTree::mover_name();
+}
+
+protocols::moves::MoverOP
+ResetFoldTreeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ResetFoldTree );
+}
+
+void ResetFoldTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResetFoldTree::provide_xml_schema( xsd );
+}
+
 
 } // simple_moves
 } // protocols

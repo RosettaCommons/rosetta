@@ -55,6 +55,18 @@ public:
 	core::Real compute( core::pose::Pose const &pose ) const;
 	~ResidueSetChainEnergyFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real score_type_threshold_;
 	core::scoring::ScoreType score_type_;

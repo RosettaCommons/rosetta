@@ -37,6 +37,10 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <utility/tools/make_vector.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ScreeningFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -55,10 +59,10 @@ ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & ) = default;
 
 ScreeningFeatures::~ScreeningFeatures() = default;
 
-std::string ScreeningFeatures::type_name() const
-{
-	return "ScreeningFeatures";
-}
+// XRW TEMP std::string ScreeningFeatures::type_name() const
+// XRW TEMP {
+// XRW TEMP  return "ScreeningFeatures";
+// XRW TEMP }
 
 void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
@@ -223,6 +227,51 @@ std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data()
 
 
 }
+
+std::string ScreeningFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ScreeningFeatures::class_name() {
+	return "ScreeningFeatures";
+}
+
+void ScreeningFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"chain", xs_string,
+		"chain tag");
+
+	AttributeList descriptor_attlist;
+	descriptor_attlist + XMLSchemaAttribute::required_attribute(
+		"type", xs_string,
+		"descriptor type");
+
+	XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement("descriptor", descriptor_attlist, "");
+
+	protocols::features::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, class_name(),
+		"report JSON object with information needed for vHTS postprocessing",
+		attlist, ssl );
+}
+
+std::string ScreeningFeaturesCreator::type_name() const {
+	return ScreeningFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ScreeningFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ScreeningFeatures );
+}
+
+void ScreeningFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScreeningFeatures::provide_xml_schema( xsd );
+}
+
 
 
 }

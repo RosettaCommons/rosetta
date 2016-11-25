@@ -54,6 +54,10 @@
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -129,8 +133,8 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 
 RotamerRecoveryFeatures::~RotamerRecoveryFeatures() = default;
 
-string
-RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
+// XRW TEMP string
+// XRW TEMP RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
 
 vector1<string>
 RotamerRecoveryFeatures::features_reporter_dependencies() const {
@@ -309,6 +313,81 @@ RotamerRecoveryFeatures::report_features(
 
 	return 0;
 }
+
+std::string RotamerRecoveryFeatures::type_name() const {
+	return class_name();
+}
+
+std::string RotamerRecoveryFeatures::class_name() {
+	return "RotamerRecoveryFeatures";
+}
+
+void RotamerRecoveryFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	attlist + XMLSchemaAttribute(
+		"mover_name", xs_string,
+		"mover_name and reference_name are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"mover", xs_string,
+		"mover and reference_name are mutually exclusive");
+
+	attlist + XMLSchemaAttribute(
+		"reference_name", xs_string,
+		"mover and reference_name are mutually exclusive");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"protocol", xs_string,
+		"mover and protocol are mutually exclusive",
+		"RRProtocolMinPack");
+
+	attlist + XMLSchemaAttribute(
+		"nonideal", xsct_rosetta_bool,
+		"sets RRProtocolRTMin or RRProtocolRelax to nonideal");
+
+	attlist + XMLSchemaAttribute(
+		"cartesian", xsct_rosetta_bool,
+		"sets RRProtocolRTMin or RRProtocolRelax to cartesian");
+
+	attlist + XMLSchemaAttribute(
+		"comparer", xs_string,
+		"Rotamer recovery comparer");
+
+	attlist + XMLSchemaAttribute(
+		"recovery_threshold", xsct_rosetta_bool,
+		"recovery threshold of the comparer");
+
+	rosetta_scripts::attributes_for_parse_task_operations(attlist);
+
+	attlist + XMLSchemaAttribute(
+		"predicted_features_reporter", xs_string,
+		"feature reporter that reports to db of type ReportToDB");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"report rotamer recover features and scores to features Statistics Scientific Benchmark",
+		attlist );
+}
+
+std::string RotamerRecoveryFeaturesCreator::type_name() const {
+	return RotamerRecoveryFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+RotamerRecoveryFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new RotamerRecoveryFeatures );
+}
+
+void RotamerRecoveryFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerRecoveryFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

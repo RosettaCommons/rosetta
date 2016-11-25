@@ -65,15 +65,13 @@ void ResFilterComposition::parse_sub_filters_tag(TagCOP tag)
 {
 	utility::vector0< TagCOP > const & subtags( tag->getTags() );
 
-	for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
-			subtag != end;
-			++subtag ) {
-		std::string const type( (*subtag)->getName() );
+	for ( auto const & subtag : subtags ) {
+		std::string const & type( subtag->getName() );
 
 		ResFilterFactory * res_filter_factory = ResFilterFactory::get_instance();
 		if ( res_filter_factory && res_filter_factory->has_type( type ) ) {
 			ResFilterOP filter = res_filter_factory->newResFilter( type );
-			filter->parse_tag( *subtag );
+			filter->parse_tag( subtag );
 			sub_filters_.push_back(filter);
 
 			continue;
@@ -108,8 +106,8 @@ ResFilterOP AnyResFilter::clone() const { return ResFilterOP( new AnyResFilter( 
 
 bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
-		if ( (*(sub_filters_[i]))(pose, index) ) {
+	for ( auto const & sub_filter : sub_filters_ ) {
+		if ( (*sub_filter)(pose, index) ) {
 			return true;
 		}
 	}
@@ -121,8 +119,9 @@ std::string AnyResFilter::keyname() { return "AnyResFilter"; }
 
 void AnyResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
-	ct_gen->element_name( keyname() );
-	ct_gen->write_complex_type_to_schema( xsd );
+	ct_gen->element_name( keyname() )
+		.description( "Compound filter. Any number of subfilters may be declared." )
+		.write_complex_type_to_schema( xsd );
 }
 
 ResFilterOP AnyResFilterCreator::create_res_filter() const
@@ -148,8 +147,8 @@ ResFilterOP AllResFilter::clone() const { return ResFilterOP( new AllResFilter( 
 
 bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
-		if ( !(*(sub_filters_[i]))(pose, index) ) {
+	for ( auto const & sub_filter : sub_filters_ ) {
+		if ( !(*sub_filter)(pose, index) ) {
 			return false;
 		}
 	}
@@ -161,8 +160,9 @@ std::string AllResFilter::keyname() { return "AllResFilter"; }
 
 void AllResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {using namespace utility::tag;
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
-	ct_gen->element_name( keyname() );
-	ct_gen->write_complex_type_to_schema( xsd );
+	ct_gen->element_name( keyname() )
+		.description( "Compound filter. Select all residues." )
+		.write_complex_type_to_schema( xsd );
 }
 
 ResFilterOP AllResFilterCreator::create_res_filter() const
@@ -188,8 +188,8 @@ ResFilterOP NoResFilter::clone() const { return ResFilterOP( new NoResFilter( *t
 
 bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 {
-	for ( core::Size i = 1; i <= sub_filters_.size(); ++i ) {
-		if ( (*(sub_filters_[i]))(pose, index) ) {
+	for ( auto const & sub_filter : sub_filters_ ) {
+		if ( (*sub_filter)(pose, index) ) {
 			return false;
 		}
 	}
@@ -201,8 +201,9 @@ std::string NoResFilter::keyname() { return "NoResFilter"; }
 
 void NoResFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = define_composition_schema( xsd );
-	ct_gen->element_name( keyname() );
-	ct_gen->write_complex_type_to_schema( xsd );
+	ct_gen->element_name( keyname() )
+		.description( "Compound filter. Excludes residues specified in sub-tags from a task." )
+		.write_complex_type_to_schema( xsd );
 }
 
 ResFilterOP NoResFilterCreator::create_res_filter() const
@@ -254,10 +255,10 @@ void ResidueTypeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "polar",    xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "apolar",   xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "aromatic", xsct_rosetta_bool )
-		+ XMLSchemaAttribute::required_attribute( "charged",  xsct_rosetta_bool );
+		+ XMLSchemaAttribute::required_attribute( "polar",    xsct_rosetta_bool , "Select polar residues." )
+		+ XMLSchemaAttribute::required_attribute( "apolar",   xsct_rosetta_bool , "Select apolar residues." )
+		+ XMLSchemaAttribute::required_attribute( "aromatic", xsct_rosetta_bool , "Select aromatic residues." )
+		+ XMLSchemaAttribute::required_attribute( "charged",  xsct_rosetta_bool , "Select chared residues." );
 
 	res_filter_schema_w_attributes( xsd, keyname(), attributes );
 }
@@ -310,7 +311,7 @@ utility::tag::AttributeList
 ResidueHasProperty::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string , "Select residues based on the give properties (DNA, PROTEIN, POLAR, CHARGED))" );
 	return attributes;
 }
 
@@ -394,7 +395,7 @@ utility::tag::AttributeList
 ResiduePDBInfoHasLabel::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "property", utility::tag::xs_string , "Select residues based on ther pose::ResidueRecord.label" );
 	return attributes;
 }
 
@@ -492,7 +493,7 @@ utility::tag::AttributeList
 ResidueName3Is::get_xml_schema_attributes()
 {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute( "name3", utility::tag::xs_string );
+	attributes + utility::tag::XMLSchemaAttribute( "name3", utility::tag::xs_string , "Select resides by three letter code, e.g ARG,LYS" );
 	return attributes;
 }
 
@@ -579,9 +580,8 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 		indices_.clear();
 		std::string field( tag->getOption<std::string>("indices") );
 		utility::vector1< std::string > values( utility::string_split( field, ',' ) );
-		for ( utility::vector1< std::string >::const_iterator it( values.begin() ),
-				end( values.end() ); it != end; ++it ) {
-			std::istringstream ss( *it );
+		for ( std::string const & value : values ) {
+			std::istringstream ss( value );
 			Size index;
 			ss >> index;
 			indices_.push_back( index );
@@ -589,9 +589,8 @@ void ResidueIndexIs::parse_tag( TagCOP tag )
 	}
 
 	TR << "ResidueIndex with indices:";
-	for ( utility::vector1< Size >::const_iterator it( indices_.begin() ), end( indices_.end() );
-			it != end; ++it ) {
-		TR << " " << *it;
+	for ( Size const index : indices_ ) {
+		TR << " " << index;
 	}
 	TR << std::endl;
 
@@ -608,7 +607,7 @@ ResidueIndexIs::get_xml_schema_attributes()
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "indices", xsct_int_cslist );
+	attributes + XMLSchemaAttribute( "indices", xsct_int_cslist , "Comma-separated list of residues to be selected." );
 	return attributes;
 }
 
@@ -706,11 +705,10 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 		std::string field( tag->getOption<std::string>("indices") );
 		// split option value by comma
 		utility::vector1< std::string > values( utility::string_split( field, ',' ) );
-		for ( utility::vector1< std::string >::const_iterator it( values.begin() ),
-				end( values.end() ); it != end; ++it ) {
+		for ( std::string const & value : values ) {
 			// split pdb chain.pos token by '.'
-			utility::vector1< std::string > chainposstr( utility::string_split( *it, '.' ) );
-			if ( chainposstr.size() != 2 ) utility_exit_with_message("can't parse pdb index " + *it);
+			utility::vector1< std::string > chainposstr( utility::string_split( value, '.' ) );
+			if ( chainposstr.size() != 2 ) utility_exit_with_message("can't parse pdb index " + value);
 			char chain( *chainposstr.front().begin() );
 			std::istringstream ss( chainposstr.back() );
 			int pdbnum;
@@ -720,9 +718,8 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 	}
 
 	TR << "ResiduePDBIndex with indices:";
-	for ( utility::vector1< ChainPos >::const_iterator it( indices_.begin() ), end( indices_.end() );
-			it != end; ++it ) {
-		TR << " " << it->chain_ << '.' << it->pos_;
+	for ( auto const & chainpos : indices_ ) {
+		TR << " " << chainpos.chain_ << '.' << chainpos.pos_;
 	}
 	TR << std::endl;
 
@@ -731,7 +728,7 @@ void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 std::string ResiduePDBIndexIs::keyname() { return "ResiduePDBIndexIs"; }
 
 void ResiduePDBIndexIs::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	res_filter_schema_w_attributes( xsd, keyname(),get_xml_schema_attributes( xsd ) );
+	res_filter_schema_w_attributes( xsd, keyname(), get_xml_schema_attributes( xsd ) );
 }
 
 utility::tag::AttributeList
@@ -745,9 +742,11 @@ ResiduePDBIndexIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition 
 	pdb_index_cslist.add_restriction( xsr_pattern, "[a-zA-Z]\\.-?[0-9]+(,[a-zA-Z]\\.-?[0-9]+)*" );
 
 	xsd.add_top_level_element( pdb_index_cslist );
+	std::cout << xsd.full_definition() << std::endl;
 
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "indices", "period_separated_pdb_index_cslist" );
+	attributes + XMLSchemaAttribute( "indices", "period_separated_pdb_index_cslist" , "Select residues as \" chainID \".\" residue pdb number \", "
+		"e.g. A.2 means chain A, residue at position 2." );
 	return attributes;
 }
 
@@ -845,7 +844,7 @@ ChainIs::get_xml_schema_attributes( utility::tag::XMLSchemaDefinition & xsd )
 	xsd.add_top_level_element( chain_character );
 
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::required_attribute( "property", "chain_character" );
+	attributes + XMLSchemaAttribute::required_attribute( "chain", "chain_character" , "Select chain by chain ID." );
 	return attributes;
 }
 

@@ -188,19 +188,19 @@ public:
 	~MotifGraftMover();
 
 	/**@brief Apply mover function**/
-	virtual void apply( Pose & );
+	void apply( Pose & ) override;
 
 	/**@brief Iterate over the results to get additional matches in the queue**/
-	virtual core::pose::PoseOP get_additional_output();
+	core::pose::PoseOP get_additional_output() override;
 
 	/**@brief Function used by roseta to create clones of movers**/
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	/**@brief Header only mover get_name**/
-	virtual std::string get_name() const
-	{
-		return "MotifGraft";
-	}
+	// XRW TEMP  virtual std::string get_name() const
+	// XRW TEMP  {
+	// XRW TEMP   return "MotifGraft";
+	// XRW TEMP  }
 
 	/** @brief As the name suggests in generates all the permutations of a vector of vectors of pairs (Alex: we should templatize this! Maybe alrready there?)**/
 	void permutate_n_vv_of_pairs(
@@ -222,7 +222,7 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
+		core::pose::Pose const &) override;
 
 	/**@brief Identify all potential matches for the given target scaffold (this is where the motif grafting code is called)**/
 	std::priority_queue<MotifMatch> generate_scaffold_matches(
@@ -409,6 +409,18 @@ public:
 		bool        const & b_only_allow_if_C_point_match_aa_identity,
 		bool        const & b_revert_graft_to_native_sequence,
 		bool        const & b_allow_repeat_same_graft_output);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	core::pose::PoseOP gp_p_contextStructure_;

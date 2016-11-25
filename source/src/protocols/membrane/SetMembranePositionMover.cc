@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
-
+#include <protocols/membrane/AddMembraneMover.hh>
 // Project Headers
 #include <protocols/membrane/util.hh>
 #include <protocols/moves/Mover.hh>
@@ -44,6 +44,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.SetMembranePositionMover" );
 
@@ -98,10 +101,10 @@ SetMembranePositionMover::~SetMembranePositionMover() = default;
 /////////////////////
 
 /// @brief Get the name of this mover
-std::string
-SetMembranePositionMover::get_name() const {
-	return "SetMembranePositionMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SetMembranePositionMover::get_name() const {
+// XRW TEMP  return "SetMembranePositionMover";
+// XRW TEMP }
 
 /// @brief Apply Rotation/Translation to Membrane
 /// @brief Translate the membrane position in this pose
@@ -165,22 +168,54 @@ SetMembranePositionMover::parse_my_tag(
 }
 
 /// @brief Create a new copy of this mover
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetMembranePositionMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetMembranePositionMover );
+// XRW TEMP }
+
+/// @brief Return the Name of this mover (as seen by Rscripts)
+// XRW TEMP std::string
+// XRW TEMP SetMembranePositionMoverCreator::keyname() const {
+// XRW TEMP  return SetMembranePositionMover::mover_name();
+// XRW TEMP }
+
+/// @brief Mover name for Rosetta Scripts
+// XRW TEMP std::string
+// XRW TEMP SetMembranePositionMover::mover_name() {
+// XRW TEMP  return "SetMembranePositionMover";
+// XRW TEMP }
+
+std::string SetMembranePositionMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetMembranePositionMover::mover_name() {
+	return "SetMembranePositionMover";
+}
+
+void SetMembranePositionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::membrane::AddMembraneMover::attributes_for_parse_center_normal_from_tag( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sets the center position and normal vector of the membrane", attlist );
+}
+
+std::string SetMembranePositionMoverCreator::keyname() const {
+	return SetMembranePositionMover::mover_name();
+}
+
 protocols::moves::MoverOP
 SetMembranePositionMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new SetMembranePositionMover );
 }
 
-/// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-SetMembranePositionMoverCreator::keyname() const {
-	return SetMembranePositionMoverCreator::mover_name();
+void SetMembranePositionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetMembranePositionMover::provide_xml_schema( xsd );
 }
 
-/// @brief Mover name for Rosetta Scripts
-std::string
-SetMembranePositionMoverCreator::mover_name() {
-	return "SetMembranePositionMover";
-}
 
 // SetMembraneNormalMover /////////////////////////////////////////////////////////////////
 

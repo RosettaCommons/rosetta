@@ -44,6 +44,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -57,25 +60,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
 
-std::string
-PrepackMoverCreator::keyname() const
-{
-	return PrepackMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PrepackMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PrepackMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PrepackMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PrepackMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PrepackMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PrepackMover );
+// XRW TEMP }
 
-std::string
-PrepackMoverCreator::mover_name()
-{
-	return "Prepack";
-}
+// XRW TEMP std::string
+// XRW TEMP PrepackMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Prepack";
+// XRW TEMP }
 
 PrepackMover::PrepackMover() :
-	protocols::simple_moves::PackRotamersMover( PrepackMoverCreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( PrepackMover::mover_name() ),
 	scorefxn_( /* NULL */ ),
 	jump_num_( 0 ),
 	min_bb_( false ),
@@ -86,7 +89,7 @@ PrepackMover::PrepackMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::Size jump_num
 ) :
-	protocols::simple_moves::PackRotamersMover( PrepackMoverCreator::mover_name() ),
+	protocols::simple_moves::PackRotamersMover( PrepackMover::mover_name() ),
 	scorefxn_( scorefxn ),
 	jump_num_( jump_num )
 {}
@@ -198,10 +201,10 @@ void PrepackMover::apply( pose::Pose & pose )
 	TR.flush();
 }
 
-std::string
-PrepackMover::get_name() const {
-	return PrepackMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PrepackMover::get_name() const {
+// XRW TEMP  return PrepackMover::mover_name();
+// XRW TEMP }
 
 void
 PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
@@ -238,6 +241,46 @@ void
 PrepackMover::mm( core::kinematics::MoveMapOP mm ){
 	mm_ = mm;
 }
+
+std::string PrepackMover::get_name() const {
+	return mover_name();
+}
+
+std::string PrepackMover::mover_name() {
+	return "Prepack";
+}
+
+void PrepackMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "Number of the jump interface to prepack", "1" );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "min_bb", xsct_rosetta_bool, "Minimize the backbone", "0" );
+
+	XMLSchemaSimpleSubelementList ssl;
+	rosetta_scripts::append_subelement_for_parse_movemap( xsd, ssl );
+
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string PrepackMoverCreator::keyname() const {
+	return PrepackMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PrepackMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PrepackMover );
+}
+
+void PrepackMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PrepackMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

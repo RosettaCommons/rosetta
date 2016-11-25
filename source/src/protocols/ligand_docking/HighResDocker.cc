@@ -68,28 +68,31 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_options.Protocol", basic::t_debug );
 
-std::string
-HighResDockerCreator::keyname() const
-{
-	return HighResDockerCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP HighResDockerCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return HighResDocker::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-HighResDockerCreator::create_mover() const {
-	return protocols::moves::MoverOP( new HighResDocker );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP HighResDockerCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new HighResDocker );
+// XRW TEMP }
 
-std::string
-HighResDockerCreator::mover_name()
-{
-	return "HighResDocker";
-}
+// XRW TEMP std::string
+// XRW TEMP HighResDocker::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "HighResDocker";
+// XRW TEMP }
 
 /// @brief
 HighResDocker::HighResDocker():
@@ -137,9 +140,9 @@ protocols::moves::MoverOP HighResDocker::fresh_instance() const {
 	return protocols::moves::MoverOP( new HighResDocker );
 }
 
-std::string HighResDocker::get_name() const{
-	return "HighResDocker";
-}
+// XRW TEMP std::string HighResDocker::get_name() const{
+// XRW TEMP  return "HighResDocker";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -413,6 +416,42 @@ void HighResDocker::apply_rigid_body_moves(
 		rigid_body_mover->apply(pose);
 	}
 }
+
+std::string HighResDocker::get_name() const {
+	return mover_name();
+}
+
+std::string HighResDocker::mover_name() {
+	return "HighResDocker";
+}
+
+void HighResDocker::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("scorefxn", xs_string, "Score function to be used.")
+		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMaoBuilder.")
+		+ XMLSchemaAttribute("resfile", xs_string, "Name (path to) the resfile.")
+		+ XMLSchemaAttribute("cycles", xsct_non_negative_integer, "Number of cycles to run.")
+		+ XMLSchemaAttribute("repack_every_Nth", xsct_non_negative_integer, "Perform side chain repacking every Nth cycle.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Randomly connects a fragment from the library to the growing ligand.", attlist );
+}
+
+std::string HighResDockerCreator::keyname() const {
+	return HighResDocker::mover_name();
+}
+
+protocols::moves::MoverOP
+HighResDockerCreator::create_mover() const {
+	return protocols::moves::MoverOP( new HighResDocker );
+}
+
+void HighResDockerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HighResDocker::provide_xml_schema( xsd );
+}
+
 
 /// Non-member functions
 

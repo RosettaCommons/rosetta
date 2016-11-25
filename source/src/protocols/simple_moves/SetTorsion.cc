@@ -49,6 +49,9 @@
 #include <numeric/conversions.hh>
 
 #include <boost/lexical_cast.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // Utility Headers
@@ -71,22 +74,22 @@ using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
-std::string
-SetTorsionCreator::keyname() const
-{
-	return SetTorsionCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetTorsionCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetTorsion::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetTorsionCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetTorsion );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetTorsionCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetTorsion );
+// XRW TEMP }
 
-std::string
-SetTorsionCreator::mover_name()
-{
-	return "SetTorsion";
-}
+// XRW TEMP std::string
+// XRW TEMP SetTorsion::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetTorsion";
+// XRW TEMP }
 
 SetTorsion::~SetTorsion() = default;
 
@@ -278,10 +281,10 @@ void SetTorsion::apply( Pose & pose ) {
 	pose.update_residue_neighbors();
 }
 
-std::string
-SetTorsion::get_name() const {
-	return SetTorsionCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetTorsion::get_name() const {
+// XRW TEMP  return SetTorsion::mover_name();
+// XRW TEMP }
 
 void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -331,6 +334,78 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 		}
 	}
 }
+
+std::string SetTorsion::get_name() const {
+	return mover_name();
+}
+
+std::string SetTorsion::mover_name() {
+	return "SetTorsion";
+}
+
+void SetTorsion::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "random", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "foldtree_root", xsct_non_negative_integer, "XRW TO DO", "0" );
+
+	AttributeList atom_attributes;
+	atom_attributes
+		+ XMLSchemaAttribute::required_attribute( "atom", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "residue", xsct_non_negative_integer, "XRW TO DO" );
+	XMLSchemaSimpleSubelementList torsion_subelements;
+	torsion_subelements
+		.add_simple_subelement( "Atom1", atom_attributes, "XRW TO DO" )
+		.add_simple_subelement( "Atom2", atom_attributes, "XRW TO DO" )
+		.add_simple_subelement( "Atom3", atom_attributes, "XRW TO DO" )
+		.add_simple_subelement( "Atom4", atom_attributes, "XRW TO DO" );
+	//Torsion: string angle (required), string perturbation_type ("gaussian"), real perturbation_magnitude( 1.0), string residue( required), string torsion_name(""), string custom_rama_table( ""), size extending( 0)
+	AttributeList torsion_attributes;
+	torsion_attributes
+		+ XMLSchemaAttribute::required_attribute("angle", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default("perturbation_type", xs_string, "XRW TO DO", "gaussian" )
+		+ XMLSchemaAttribute::attribute_w_default("perturbation_magnitude", xsct_real, "XRW TO DO", "1.0" )
+		+ XMLSchemaAttribute::required_attribute("residue", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "torsion_name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "custom_rama_table", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "extending", xsct_non_negative_integer, "XRW TO DO", "0" );
+
+	//Define the complex type for the Torsion subelement
+	XMLSchemaComplexTypeGenerator torsion_ct_gen;
+	torsion_ct_gen.element_name( "Torsion" )
+		.complex_type_naming_func( & torsion_ct_name )
+		.description( "XRW TO DO" )
+		.add_attributes( torsion_attributes )
+		.set_subelements_repeatable( torsion_subelements )
+		.write_complex_type_to_schema( xsd );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements
+		.add_already_defined_subelement( "Torsion", & torsion_ct_name );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
+}
+
+std::string SetTorsion::torsion_ct_name( std::string tag_name ){
+	return "torsion_" + tag_name + "_complex_type";
+}
+
+std::string SetTorsionCreator::keyname() const {
+	return SetTorsion::mover_name();
+}
+
+protocols::moves::MoverOP
+SetTorsionCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetTorsion );
+}
+
+void SetTorsionCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetTorsion::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

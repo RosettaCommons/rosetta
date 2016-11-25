@@ -34,6 +34,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );
 
@@ -111,23 +114,23 @@ ResidueVicinityInfo::set_lt_dih( core::scoring::func::FuncOP lt_dih ){
 
 
 //ResidueVicinityConstraintsCreator Functions
-protocols::moves::MoverOP
-ResidueVicinityCstGeneratorCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new ResidueVicinityRCG() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ResidueVicinityCstGeneratorCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new ResidueVicinityRCG() );
+// XRW TEMP }
 
-std::string
-ResidueVicinityCstGeneratorCreator::keyname() const
-{
-	return ResidueVicinityCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueVicinityCstGeneratorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ResidueVicinityRCG::mover_name();
+// XRW TEMP }
 
-std::string
-ResidueVicinityCstGeneratorCreator::mover_name()
-{
-	return "ResidueVicinityCstCreator";
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueVicinityRCG::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ResidueVicinityCstCreator";
+// XRW TEMP }
 
 ResidueVicinityRCG::ResidueVicinityRCG()
 : RemodelConstraintGenerator(),
@@ -170,11 +173,11 @@ ResidueVicinityRCG::parse_my_tag( TagCOP const tag,
 	}
 }
 
-std::string
-ResidueVicinityRCG::get_name() const
-{
-	return ResidueVicinityCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP ResidueVicinityRCG::get_name() const
+// XRW TEMP {
+// XRW TEMP  return ResidueVicinityRCG::mover_name();
+// XRW TEMP }
 
 
 protocols::moves::MoverOP
@@ -349,6 +352,39 @@ ResidueVicinityRCG::set_rv_infos( utility::vector1< ResidueVicinityInfoOP > cons
 {
 	rv_infos_ = rv_infos;
 }
+
+std::string ResidueVicinityRCG::get_name() const {
+	return mover_name();
+}
+
+std::string ResidueVicinityRCG::mover_name() {
+	return "ResidueVicinityCstCreator";
+}
+
+void ResidueVicinityRCG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	RemodelConstraintGenerator::attributes_for_remodel_constraint_generator( attlist );
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "lstart", xsct_non_negative_integer, "XRW TO DO" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string ResidueVicinityCstGeneratorCreator::keyname() const {
+	return ResidueVicinityRCG::mover_name();
+}
+
+protocols::moves::MoverOP
+ResidueVicinityCstGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ResidueVicinityRCG );
+}
+
+void ResidueVicinityCstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueVicinityRCG::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace remodel

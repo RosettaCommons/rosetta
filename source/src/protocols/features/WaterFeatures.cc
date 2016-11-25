@@ -53,6 +53,10 @@
 #include <cppdb/frontend.h>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/WaterFeaturesCreator.hh>
 using basic::Tracer;
 static THREAD_LOCAL basic::Tracer TR( "protocols.features.WaterFeatures" );
 
@@ -101,8 +105,8 @@ WaterFeatures::WaterFeatures(
 	don_dist_cutoff_(src.don_dist_cutoff_)
 {}
 
-std::string
-WaterFeatures::type_name() const { return "WaterFeatures"; }
+// XRW TEMP std::string
+// XRW TEMP WaterFeatures::type_name() const { return "WaterFeatures"; }
 
 void
 WaterFeatures::write_schema_to_db(
@@ -434,6 +438,44 @@ WaterFeatures::report_features(
 
 	return 0;
 }
+
+std::string WaterFeatures::type_name() const {
+	return class_name();
+}
+
+std::string WaterFeatures::class_name() {
+	return "WaterFeatures";
+}
+
+void WaterFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	//targets is a comma-separated list of water names
+	//Each water name has a resname and an atom name separated by a colon
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "targets", xs_string, "Comma-separated list of water names to use" )
+		+ XMLSchemaAttribute::attribute_w_default( "acc_dist_cutoff", xsct_real, "Hydrogen bond acceptor distance cutoff", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "don_dist_cutoff", xsct_real, "Hydrogen bond donor distance cutoff", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "ahd_cutoff", xsct_real, "Lower cutoff for acceptor-hydrogen-donor angle", "90.0" );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Report geometry between water molecules and hydrogen bond donors/acceptors", attlist );
+}
+
+std::string WaterFeaturesCreator::type_name() const {
+	return WaterFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+WaterFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new WaterFeatures );
+}
+
+void WaterFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	WaterFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

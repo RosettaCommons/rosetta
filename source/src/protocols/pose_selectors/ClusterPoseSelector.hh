@@ -28,7 +28,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ Headers
 #include <string>
 #include <vector>
@@ -45,6 +45,7 @@ public:
 	~ClusterPoseSelector() override = default;
 
 	static std::string name() { return "ClusterPoseSelector"; }
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	std::string get_name() const override { return name(); }
 	rosetta_scripts::PoseSelectorFlags get_flags() const override { return rosetta_scripts::PSF_NEED_FULL_POSE_SET; }
 

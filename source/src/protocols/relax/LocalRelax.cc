@@ -115,6 +115,9 @@
 #include <sstream>
 #include <string>
 #include <queue>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -126,20 +129,20 @@ using namespace core;
 static basic::Tracer TR("LocalRelax");
 
 
-std::string
-LocalRelaxCreator::keyname() const {
-	return LocalRelaxCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LocalRelaxCreator::keyname() const {
+// XRW TEMP  return LocalRelax::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LocalRelaxCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LocalRelax() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LocalRelaxCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LocalRelax() );
+// XRW TEMP }
 
-std::string
-LocalRelaxCreator::mover_name() {
-	return "LocalRelax";
-}
+// XRW TEMP std::string
+// XRW TEMP LocalRelax::mover_name() {
+// XRW TEMP  return "LocalRelax";
+// XRW TEMP }
 
 
 LocalRelax::LocalRelax() {
@@ -491,6 +494,48 @@ LocalRelax::apply( core::pose::Pose & pose) {
 		}
 	}
 }
+
+std::string LocalRelax::get_name() const {
+	return mover_name();
+}
+
+std::string LocalRelax::mover_name() {
+	return "LocalRelax";
+}
+
+void LocalRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute( "pack_scorefxn", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute( "min_scorefxn", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute( "ncyc", xs_integer, "XRW TO DO")
+		+ XMLSchemaAttribute( "nexp", xs_integer, "XRW TO DO")
+		+ XMLSchemaAttribute( "K", xs_integer, "XRW TO DO")
+		+ XMLSchemaAttribute( "max_iter", xs_integer, "XRW TO DO")
+		+ XMLSchemaAttribute( "ramp_schedule", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "ramp_cart", xsct_rosetta_bool, "XRW TO DO", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LocalRelaxCreator::keyname() const {
+	return LocalRelax::mover_name();
+}
+
+protocols::moves::MoverOP
+LocalRelaxCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LocalRelax );
+}
+
+void LocalRelaxCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LocalRelax::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -56,6 +56,9 @@
 
 // C++ headers
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -68,24 +71,24 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" );
 
-std::string
-MapHotspotCreator::keyname() const
-{
-	return MapHotspotCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MapHotspotCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MapHotspot::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MapHotspotCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MapHotspot );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MapHotspotCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MapHotspot );
+// XRW TEMP }
 
-std::string
-MapHotspotCreator::mover_name()
-{
-	return "MapHotspot";
-}
+// XRW TEMP std::string
+// XRW TEMP MapHotspot::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MapHotspot";
+// XRW TEMP }
 
-MapHotspot::MapHotspot() : protocols::moves::Mover( MapHotspotCreator::mover_name() ) {}
+MapHotspot::MapHotspot() : protocols::moves::Mover( MapHotspot::mover_name() ) {}
 
 MapHotspot::~MapHotspot() {}
 
@@ -271,10 +274,10 @@ MapHotspot::apply( core::pose::Pose & pose ){
 	set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 }
 
-std::string
-MapHotspot::get_name() const {
-	return MapHotspotCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MapHotspot::get_name() const {
+// XRW TEMP  return MapHotspot::mover_name();
+// XRW TEMP }
 
 void
 MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
@@ -327,6 +330,77 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 		}
 	}//foreach branch_tag
 }
+
+std::string MapHotspot::get_name() const {
+	return mover_name();
+}
+
+std::string MapHotspot::mover_name() {
+	return "MapHotspot";
+}
+
+std::string jumpfunc( std::string const & manglee ) {
+	return "jumpfuncmangled_" + manglee + "_type";
+}
+
+std::string jumpsfunc( std::string const & manglee ) {
+	return "jumpsfuncmangled_" + manglee + "_type";
+}
+
+void MapHotspot::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "clash_check", xsct_rosetta_bool, "Perform a clash check", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "file_name_prefix", xs_string, "Prefix for filenames", "map_hs" );
+
+	AttributeList subtag_attributes;
+	subtag_attributes + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Jump in question" );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "explosion", xsct_non_negative_integer, "Degree of extensive sampling at this jump", "0" );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "filter_name", xs_string, "filter with which to eliminate bad solutions", "true_filter" );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "mover_name", xs_string, "mover for additional sampling", "null" );
+	subtag_attributes + XMLSchemaAttribute::attribute_w_default( "allowed_aas", xs_string, "amino acids allowed in design", "ADEFIKLMNQRSTVWY" );
+	rosetta_scripts::attributes_for_parse_score_function( subtag_attributes, "scorefxn_minimize" );
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen_jump;
+	ct_gen_jump.complex_type_naming_func( & jumpfunc )
+		.element_name( "Jump" )
+		.description( "Define a jump container" )
+		.add_attributes( subtag_attributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+
+	utility::tag::XMLSchemaSimpleSubelementList jump_ssl;
+	jump_ssl.add_already_defined_subelement( "Jump", & jumpfunc );
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen_jumps;
+	ct_gen_jumps.complex_type_naming_func( & jumpsfunc )
+		.element_name( "Jumps" )
+		.description( "Map a hotspot conformation from a source to a target pose" )
+		.set_subelements_repeatable( jump_ssl )
+		.write_complex_type_to_schema( xsd );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Jumps", subtag_attributes, "XRW TODO"/*, 0 minoccurs*/ );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string MapHotspotCreator::keyname() const {
+	return MapHotspot::mover_name();
+}
+
+protocols::moves::MoverOP
+MapHotspotCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MapHotspot );
+}
+
+void MapHotspotCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MapHotspot::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

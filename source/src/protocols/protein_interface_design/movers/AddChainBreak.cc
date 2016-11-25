@@ -28,6 +28,9 @@
 //Auto Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -41,25 +44,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.AddChainBreak" );
 
-std::string
-AddChainBreakCreator::keyname() const
-{
-	return AddChainBreakCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddChainBreakCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddChainBreak::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AddChainBreakCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddChainBreak );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddChainBreakCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddChainBreak );
+// XRW TEMP }
 
-std::string
-AddChainBreakCreator::mover_name()
-{
-	return "AddChainBreak";
-}
+// XRW TEMP std::string
+// XRW TEMP AddChainBreak::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddChainBreak";
+// XRW TEMP }
 
 AddChainBreak::AddChainBreak() :
-	protocols::moves::Mover( AddChainBreakCreator::mover_name() ),
+	protocols::moves::Mover( AddChainBreak::mover_name() ),
 	resnum_( "" ),
 	change_foldtree_( true ),
 	find_automatically_( false ),
@@ -139,10 +142,51 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	}
 }
 
-std::string
-AddChainBreak::get_name() const {
-	return AddChainBreakCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP AddChainBreak::get_name() const {
+// XRW TEMP  return AddChainBreak::mover_name();
+// XRW TEMP }
+
+std::string AddChainBreak::get_name() const {
+	return mover_name();
 }
+
+std::string AddChainBreak::mover_name() {
+	return "AddChainBreak";
+}
+
+void AddChainBreak::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default(
+		"remove", xsct_rosetta_bool, "Residue numbering (pdb); provide this or resnum",
+		"false")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"change_foldtree", xsct_rosetta_bool, "Residue numbering (pdb); provide this or resnum",
+		"true")
+		+ XMLSchemaAttribute( "resnum", xs_string, "Residue numbering (pdb); provide this or resnum" )
+		+ XMLSchemaAttribute( "find_automatically", xsct_rosetta_bool, "Automatically find chain breaks" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_cutoff", xsct_real, "Distance cutoff past which chain breaks will be automatically assigned", "2.5" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AddChainBreakCreator::keyname() const {
+	return AddChainBreak::mover_name();
+}
+
+protocols::moves::MoverOP
+AddChainBreakCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddChainBreak );
+}
+
+void AddChainBreakCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddChainBreak::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

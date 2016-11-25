@@ -37,6 +37,9 @@
 // utility
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.Tumble" );
 
@@ -140,9 +143,38 @@ moves::MoverOP Tumble::fresh_instance() const {
 	return moves::MoverOP( new Tumble );
 }
 
-std::string
-Tumble::get_name() const {
+std::string Tumble::get_name() const {
+	return mover_name();
+}
+
+std::string Tumble::mover_name() {
 	return "Tumble";
+}
+
+void Tumble::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"chain_number", xsct_non_negative_integer,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"start_res", xsct_non_negative_integer,
+		"XSD XRW: TO DO");
+
+	attlist + XMLSchemaAttribute(
+		"stop_res", xsct_non_negative_integer,
+		"XSD XRW: TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XSD XRW: TO DO",
+		attlist );
+}
+
+std::string TumbleCreator::keyname() const {
+	return Tumble::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -150,15 +182,11 @@ TumbleCreator::create_mover() const {
 	return protocols::moves::MoverOP( new Tumble );
 }
 
-std::string
-TumbleCreator::keyname() const {
-	return TumbleCreator::mover_name();
+void TumbleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Tumble::provide_xml_schema( xsd );
 }
 
-std::string
-TumbleCreator::mover_name() {
-	return "Tumble";
-}
 
 } // moves
 } // protocols

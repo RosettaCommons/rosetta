@@ -52,6 +52,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace design_opt {
@@ -64,7 +67,7 @@ using std::pair;
 
 /// @brief default ctor
 GreedyOptMutationMover::GreedyOptMutationMover() :
-	Mover( GreedyOptMutationMoverCreator::mover_name() ),
+	Mover( GreedyOptMutationMover::mover_name() ),
 	task_factory_( /* NULL */ ),
 	// filters_( NULL ), /* how set default vecgtor of NULLs? */
 	// sample_type_( "low" ),
@@ -102,7 +105,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	bool incl_nonopt,
 	protocols::filters::FilterOP stopping_condition
 ) :
-	Mover( GreedyOptMutationMoverCreator::mover_name() )
+	Mover( GreedyOptMutationMover::mover_name() )
 {
 	task_factory_ = task_factory;
 	filters_ = filters;
@@ -126,10 +129,10 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 GreedyOptMutationMover::~GreedyOptMutationMover()= default;
 
 //creators
-protocols::moves::MoverOP
-GreedyOptMutationMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GreedyOptMutationMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GreedyOptMutationMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GreedyOptMutationMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 GreedyOptMutationMover::clone() const{
@@ -137,22 +140,22 @@ GreedyOptMutationMover::clone() const{
 }
 
 //name getters
-std::string
-GreedyOptMutationMoverCreator::keyname() const
-{
-	return GreedyOptMutationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyOptMutationMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GreedyOptMutationMover::mover_name();
+// XRW TEMP }
 
-std::string
-GreedyOptMutationMoverCreator::mover_name()
-{
-	return "GreedyOptMutationMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyOptMutationMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GreedyOptMutationMover";
+// XRW TEMP }
 
-std::string
-GreedyOptMutationMover::get_name() const {
-	return GreedyOptMutationMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GreedyOptMutationMover::get_name() const {
+// XRW TEMP  return GreedyOptMutationMover::mover_name();
+// XRW TEMP }
 
 // setter - getter pairs
 void
@@ -903,6 +906,111 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	incl_nonopt( tag->getOption< bool >( "incl_nonopt", false ) );
 
 }
+
+std::string GreedyOptMutationMover::get_name() const {
+	return mover_name();
+}
+
+std::string GreedyOptMutationMover::mover_name() {
+	return "GreedyOptMutationMover";
+}
+
+void GreedyOptMutationMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist1;
+	XMLSchemaRepeatableCTNodeOP node1( GreedyOptMutationMover::root_node_for_greedy_opt( attlist1, xsd ) );
+	node1->set_element_w_attributes( mover_name(), attlist1, "This mover will first attempt isolated/independent mutations defined in the input task operation, score/filter them all, rank them by score, then attempt to combine them, starting with the best scoring single mutation, accepting the mutation only if the filter score decreases (see skip_best_check for optional exception), and working down the list to the end. Optionally test one of the top N mutations at each positions instead of just the best." );
+	node1->recursively_write_ct_to_schema( xsd );
+
+}
+
+
+std::string
+GreedyOptMutationMover::subelement_ct_namer( std::string tag_name ){
+	return "greedy_opt_subelement_" + tag_name + "_complex_type";
+}
+
+std::string
+GreedyOptMutationMover::subsubelement_ct_namer( std::string tag_name ){
+	return "greedy_opt_sub_subelement_" + tag_name + "_complex_type";
+}
+
+
+utility::tag::XMLSchemaRepeatableCTNodeOP
+GreedyOptMutationMover::root_node_for_greedy_opt( utility::tag::AttributeList & attlist1, utility::tag::XMLSchemaDefinition & xsd ){
+
+	using namespace utility::tag ;
+
+	XMLSchemaRestriction sample_type_enumeration;
+	sample_type_enumeration.name( "choices_for_sample_types" ) ;
+	sample_type_enumeration.base_type( xs_string ) ;
+	sample_type_enumeration.add_restriction( xsr_enumeration , "low" ) ;
+	sample_type_enumeration.add_restriction( xsr_enumeration , "high" ) ;
+	xsd.add_top_level_element( sample_type_enumeration ) ; // for sample_types "high" "low"
+
+	AttributeList attlist2, attlist3 , attlist4;
+	attlist1 + XMLSchemaAttribute::attribute_w_default( "relax_mover" , xs_string , "A mover for post-repacking relaxation (e.g. minimization)" , "null" )
+		+ XMLSchemaAttribute::attribute_w_default( "dump_pdb" , xsct_rosetta_bool , "If you want to see a pdb of every trial mutation, add 'dump_pdb=1'." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dump_table" , xsct_rosetta_bool , "If true, will save to a file the table of amino acids/filter values over which it is operating." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "parallel" , xsct_rosetta_bool , "Run the point mutation calculator in parallel, use in conjunction with openMPI." , "false" )
+		+ XMLSchemaAttribute( "stopping_condition" , xs_string , "Stops before trials are done if a filter evaluates to true (accepting the last mutation that caused the filter to evaluate to true by default. See stop_before_condition to change this behavior)." )
+		+ XMLSchemaAttribute::attribute_w_default( "design_shell" , xsct_real , "Default is set to -1, so there is no design. Set a positive value to determine the radius of design shell. This might be useful in case of reversion to native where more than one mutation is needed to revert." , "-1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "repack_shell" , xsct_real , "The radius around which we repack around each tested/designed mutation." , "8.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "stop_before_condition" , xsct_rosetta_bool , "Default = false. Stop mover once the stopping_condition is reached and do not accept the last mutation (ie, reject the mutation that set the stopping_condition to true)." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "skip_best_check" , xsct_rosetta_bool , "Default = false. Accept mutations during the combining stage as long as they pass the filter(s), regardless of whether or not the value is the best so far." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin" , xsct_rosetta_bool , "Do rtmin following repack." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "shuffle_order" , xsct_rosetta_bool , "Randomize sequence position order of mutations." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "diversify" , xsct_rosetta_bool , "Diversify solutions to pareto front calculation." , "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "incl_nonopt" , xsct_rosetta_bool , "Default = false. Use with filter_delta. This option modifies filter_delta behavior such that all mutations that score within N filter points of the best are attempted in the combinatorial design stage." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter" , xs_string , "Name of a single filter you wish you process." , "true_filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "sample_type" , "choices_for_sample_types" , "If your filter values are such that higher = better, use 'sample_type=high'" , "low" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_delta" , xsct_real , "Add sequence diversity; useful with nstruct greater than 1; randomly try any mutation that scores wit     hin N filter points of the best-scoring mutation at each position instead of just the first, e.g. filter_delta=0.5 for attempting any mutation within 0.5 filter points of the best one." , "0.0" )
+		+ optional_name_attribute();
+	/// below are attempts at using test/utility/tag/XMLSchemaGeneration.cxxtest.hh descriptions for nested subelements
+
+
+	attlist3 + XMLSchemaAttribute::required_attribute( "filter_name" , xs_string , "Name of the filter you want to apply. Load multiple filters from branch tags." ) //should this be required or optional?
+		+ XMLSchemaAttribute::attribute_w_default( "sample_type" , "choices_for_sample_types" , "If your filter values are such that higher = better, use 'sample_type=high'" , "low" ) //is this something that should have an enumeration? low vs high?
+		+ XMLSchemaAttribute::attribute_w_default( "filter_delta" , xsct_real , "Add sequence diversity; useful with nstruct greater than 1; randomly try any mutation that scores within N filter points of the best-scoring mutation at each position instead of just the first, e.g. filter_delta=0.5 for attempting any mutation within 0.5 filter points of the best one." , "0.0" ) ;
+
+
+	attlist4 + XMLSchemaAttribute::attribute_w_default( "filter" , xs_string , "Name of a single filter you wish you process." , "true_filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "sample_type" , "choices_for_sample_types" , "If your filter values are such that higher = better, use 'sample_type=high'" , "low" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter_delta" , xsct_real , "Add sequence diversity; useful with nstruct greater than 1; randomly try any mutation that scores wit     hin N filter points of the best-scoring mutation at each position instead of just the first, e.g. filter_delta=0.5 for attempting any mutation within 0.5 filter points of the best one." , "0.0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist1 ) ;
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist1 ) ;
+	XMLSchemaRepeatableCTNodeOP node1( new XMLSchemaRepeatableCTNode );
+	XMLSchemaRepeatableCTNodeOP node2( new XMLSchemaRepeatableCTNode );
+	XMLSchemaRepeatableCTNodeOP node3( new XMLSchemaRepeatableCTNode );
+	XMLSchemaRepeatableCTNodeOP node4( new XMLSchemaRepeatableCTNode );
+
+	node1->set_kids_naming_func( & subelement_ct_namer ).set_root_node_naming_func( & moves::complex_type_name_for_mover );
+	node2->set_element_w_attributes( "Filters", attlist2, "These are the names of the filters being input into GreedyOptMutationMover." ).set_kids_naming_func( & subsubelement_ct_namer );
+	node3->set_element_w_attributes( "AND", attlist3, "These are the attributes of mulitple filters being optimized together." ) ;
+	node4->set_element_w_attributes( "Filter", attlist4, "These are the attributes of a single filter being optimized." ) ;
+
+	node1->add_child( node2 ).add_child( node4 ) ;
+	node2->add_child( node3 ) ;
+
+	return node1;
+}
+
+std::string GreedyOptMutationMoverCreator::keyname() const {
+	return GreedyOptMutationMover::mover_name();
+}
+
+protocols::moves::MoverOP
+GreedyOptMutationMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GreedyOptMutationMover );
+}
+
+void GreedyOptMutationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GreedyOptMutationMover::provide_xml_schema( xsd );
+}
+
 
 
 } // moves

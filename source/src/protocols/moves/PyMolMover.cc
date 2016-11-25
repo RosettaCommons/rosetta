@@ -74,7 +74,11 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 
 #ifndef _WIN32
 #include "pthread.h"
+// XSD XRW Includes
 #endif
+
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -248,10 +252,10 @@ PyMolMover::PyMolMover( PyMolMover const & ) = default;
 
 PyMolMover::~PyMolMover() = default;
 
-std::string PyMolMover::get_name() const
-{
-	return "PyMOL_Mover";
-}
+// XRW TEMP std::string PyMolMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "PyMOL_Mover";
+// XRW TEMP }
 
 void PyMolMover::set_PyMol_model_name( std::string name ){
 	pymol_name_ = name;
@@ -691,19 +695,19 @@ PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_
 }
 
 /// @brief PyMolMoverCreator interface, name of the mover
-std::string PyMolMoverCreator::mover_name() {
-	return "PyMolMover";
-}
+// XRW TEMP std::string PyMolMover::mover_name() {
+// XRW TEMP  return "PyMolMover";
+// XRW TEMP }
 
 /// @brief PyMolMoverCreator interface, returns a unique key name to be used in xml file
-std::string PyMolMoverCreator::keyname() const {
-	return PyMolMoverCreator::mover_name();
-}
+// XRW TEMP std::string PyMolMoverCreator::keyname() const {
+// XRW TEMP  return PyMolMover::mover_name();
+// XRW TEMP }
 
 /// @brief PyMolMoverCreator interface, return a new instance
-protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PyMolMover() );
-}
+// XRW TEMP protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PyMolMover() );
+// XRW TEMP }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
 void
@@ -730,6 +734,49 @@ PyMolMover::clone() const
 {
 	return protocols::moves::MoverOP( new protocols::moves::PyMolMover( *this ) );
 }
+
+std::string PyMolMover::get_name() const {
+	return mover_name();
+}
+
+std::string PyMolMover::mover_name() {
+	return "PyMolMover";
+}
+
+void PyMolMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"keep_history", xsct_rosetta_bool,
+		"Each call to the mover stores the pose in a new state/frame of "
+		"an object in PyMol rather than overwriting it. Frames can then be "
+		"played back like a movie to visualize the flow of a protocol.",
+		"0");
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"PyMolMover will send a pose to an instance of the PyMol "
+		"molecular visualization software running on the local host. "
+		"Each call of the mover overwrites the object in PyMol. "
+		"It is not a full featured as the version built in to PyRosetta "
+		"but is extremely useful for visualizing the flow of a protocol "
+		"or generating a frames for a movie of a protocol.", attlist );
+}
+
+std::string PyMolMoverCreator::keyname() const {
+	return PyMolMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PyMolMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PyMolMover );
+}
+
+void PyMolMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PyMolMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

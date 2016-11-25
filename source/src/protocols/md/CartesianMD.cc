@@ -78,6 +78,9 @@
 #include <time.h>
 #else
 #include <sys/time.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 #endif
 
 namespace protocols {
@@ -91,22 +94,22 @@ using namespace core;
 using namespace ObjexxFCL::format;
 
 // creator
-std::string
-CartesianMDCreator::keyname() const
-{
-	return CartesianMDCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CartesianMDCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CartesianMD::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CartesianMDCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CartesianMD );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CartesianMDCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CartesianMD );
+// XRW TEMP }
 
-std::string
-CartesianMDCreator::mover_name()
-{
-	return "CartesianMD";
-}
+// XRW TEMP std::string
+// XRW TEMP CartesianMD::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CartesianMD";
+// XRW TEMP }
 
 
 // mover
@@ -231,10 +234,10 @@ void CartesianMD::set_movemap(
 	movemap_ = movemap->clone();
 }
 
-std::string CartesianMD::get_name() const
-{
-	return "CartesianMD";
-}
+// XRW TEMP std::string CartesianMD::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "CartesianMD";
+// XRW TEMP }
 
 void CartesianMD::get_native_info( core::pose::Pose const &pose )
 {
@@ -982,6 +985,77 @@ void CartesianMD::parse_movemap(
 
 	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
 }
+
+std::string CartesianMD::get_name() const {
+	return mover_name();
+}
+
+std::string CartesianMD::mover_name() {
+	return "CartesianMD";
+}
+
+void CartesianMD::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "rattle", xsct_rosetta_bool,
+		"Use Rattle algorithm to constraint hydrogen locations. "
+		"This automatically sets integration step = 2fs. "
+		"Otherwise uses integration step = 1fs" );
+	attlist + XMLSchemaAttribute( "scorefxns", xs_string,
+		"Specify a scorefunction to run MD simulation with" );
+	attlist + XMLSchemaAttribute( "scorefxn_obj", xs_string,
+		"Optional, identical to scorefxn unless specified. "
+		"Specify a scorefunction to use as objective function "
+		"for selecting a pose from trajectory. "
+		"This will be used only when selectmode=\"minobj\"" );
+	attlist + XMLSchemaAttribute( "nstep", xs_integer,
+		"Number of steps to simulate. "
+		"With Rattle on (default) each step is 2fs, "
+		"and hence, nstep=10000 will be 20ps" );
+	attlist + XMLSchemaAttribute( "temp", xsct_real,
+		"Reference temperature for constant temperature simulation. "
+		"Recommended values: "
+		"150~200K for talaris2014_cart and ~250 for beta_nov15_cart" );
+	attlist + XMLSchemaAttribute( "premin", xs_integer,
+		"Steps of Cartesian minimization before MD simulation" );
+	attlist + XMLSchemaAttribute( "postmin", xs_integer,
+		"Steps of Cartesian minimization after MD simulation" );
+	attlist + XMLSchemaAttribute( "report", xs_integer,
+		"By how often the mover reports the simulation status to log" );
+	attlist + XMLSchemaAttribute( "report_scorecomp", xsct_rosetta_bool,
+		"Whether to report score components to log" );
+	attlist + XMLSchemaAttribute( "selectmode", xs_string,
+		"How to select single pose from the trajectory. "
+		"\"final\" to take the final pose, \"minobj\" to take the "
+		"lowest objective function (by scorefxn_obj) pose" );
+	attlist + XMLSchemaAttribute( "schfile", xs_string,
+		"Use user-defined schedule file. "
+		"This overrides any other flags or options. "
+		"Syntax: \"sch [temperature] [nsteps]\" to run simulation, "
+		"or \"repack\" to repack side-chains" );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"CartesianMD calls Molecular Dynamics simulation in Rosetta "
+		"with user-defined energy function. Runs NVT simulation "
+		"(constant volume and temperature) with Berendsen thermostat. "
+		"Integrator uses Velocity Verlet algorithm", attlist );
+}
+
+std::string CartesianMDCreator::keyname() const {
+	return CartesianMD::mover_name();
+}
+
+protocols::moves::MoverOP
+CartesianMDCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CartesianMD );
+}
+
+void CartesianMDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CartesianMD::provide_xml_schema( xsd );
+}
+
 
 }
 }

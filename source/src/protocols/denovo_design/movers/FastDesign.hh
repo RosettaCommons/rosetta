@@ -73,46 +73,58 @@ public:
 	/// @brief virtual constructor to allow derivation
 	virtual ~FastDesign();
 
-	static std::string
-	class_name();
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name();
 
 	/// @brief Create the default task factory.  Must be called before design can occur.
 	void set_up_default_task_factory();
 
 	/// @brief Parses the FastDesignTags
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/// @brief Return the name of this mover.
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief return a copy of this class in an owning pointer
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 	/// @brief Apply the FastDesign. Overloaded apply function from mover base class.
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	/// @brief sets constraint weights -- used with constraint ramping
-	virtual void
+	void
 	set_constraint_weight(
 		core::scoring::ScoreFunctionOP local_scorefxn,
 		core::scoring::EnergyMap const & full_weights,
 		core::Real const weight,
-		core::pose::Pose & pose ) const;
+		core::pose::Pose & pose ) const override;
 
 private:
 	void

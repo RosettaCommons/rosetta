@@ -31,6 +31,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -51,8 +55,8 @@ RadiusOfGyrationFeatures::RadiusOfGyrationFeatures( RadiusOfGyrationFeatures con
 
 RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures()= default;
 
-string
-RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }
+// XRW TEMP string
+// XRW TEMP RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }
 
 void
 RadiusOfGyrationFeatures::write_schema_to_db(
@@ -110,6 +114,36 @@ RadiusOfGyrationFeatures::report_features(
 	basic::database::safely_write_to_database(stmt);
 	return 0;
 }
+
+std::string RadiusOfGyrationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string RadiusOfGyrationFeatures::class_name() {
+	return "RadiusOfGyrationFeatures";
+}
+
+void RadiusOfGyrationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record radius of gyration for each structure as a feature", attlist );
+}
+
+std::string RadiusOfGyrationFeaturesCreator::type_name() const {
+	return RadiusOfGyrationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new RadiusOfGyrationFeatures );
+}
+
+void RadiusOfGyrationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RadiusOfGyrationFeatures::provide_xml_schema( xsd );
+}
+
 
 } // features namesapce
 } // protocols namespace

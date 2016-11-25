@@ -3,9 +3,9 @@
 	    <SymmData file="1xu1FH_D.symm"/>
 	</Resources>
 	<Jobs>
-		<Job name=1xu1FH_D>
-			<Data desc=startstruct pdb="1xu1FH_D.pdb"/>
-			<Data desc=symmdata resource_tag=1xu1FH_D.symm/>
+		<Job name="1xu1FH_D">
+			<Data desc="startstruct" pdb="1xu1FH_D.pdb"/>
+			<Data desc="symmdata" resource_tag="1xu1FH_D.symm"/>
 		</Job>
 	</Jobs>
 </JD2ResourceManagerJobInputter>

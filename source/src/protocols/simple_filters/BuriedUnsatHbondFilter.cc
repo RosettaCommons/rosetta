@@ -26,17 +26,20 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer buried_unsat_hbond_filter_tracer( "protocols.simple_filters.BuriedUnsatHbondFilter" );
 
-protocols::filters::FilterOP
-BuriedUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP BuriedUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter ); }
 
-std::string
-BuriedUnsatHbondFilterCreator::keyname() const { return "BuriedUnsatHbonds"; }
+// XRW TEMP std::string
+// XRW TEMP BuriedUnsatHbondFilterCreator::keyname() const { return "BuriedUnsatHbonds"; }
 
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold, core::Size const jump_num ) :
 	Filter( "BuriedUnsatHbonds" ),
@@ -182,6 +185,41 @@ core::pack::task::TaskFactoryOP
 BuriedUnsatHbondFilter::task_factory() const {
 	return task_factory_;
 }
+
+std::string BuriedUnsatHbondFilter::name() const {
+	return class_name();
+}
+
+std::string BuriedUnsatHbondFilter::class_name() {
+	return "BuriedUnsatHbonds";
+}
+
+void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "The jump over which to evaluate the filter", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "The upper threshold for buried unsat H-bonds above which the filter fails", "20" );
+	rosetta_scripts::attributes_for_get_score_function_name( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string BuriedUnsatHbondFilterCreator::keyname() const {
+	return BuriedUnsatHbondFilter::class_name();
+}
+
+protocols::filters::FilterOP
+BuriedUnsatHbondFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter );
+}
+
+void BuriedUnsatHbondFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BuriedUnsatHbondFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

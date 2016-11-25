@@ -1,4 +1,4 @@
-<dock_design>
+<ROSETTASCRIPTS>
         <SCOREFXNS>
         </SCOREFXNS>
         <TASKOPERATIONS>
@@ -6,12 +6,13 @@
         <FILTERS>
         </FILTERS>
         <MOVERS>
-		<Prepack name=ppk jump_number=0/>
+		<Prepack name="ppk" jump_number="0"/>
         </MOVERS>
         <APPLY_TO_POSE>
         </APPLY_TO_POSE>
         <PROTOCOLS>
-		<Add mover=ppk/>
+		<Add mover="ppk"/>
         </PROTOCOLS>
-</dock_design>
 
+
+</ROSETTASCRIPTS>

@@ -44,6 +44,9 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
 using namespace core;
@@ -84,10 +87,10 @@ ShearMinCCDTrial & ShearMinCCDTrial::operator=( ShearMinCCDTrial const & rhs ){
 ShearMinCCDTrial::~ShearMinCCDTrial() {}
 
 /// @brief Each derived class must specify its name.
-std::string ShearMinCCDTrial::get_name() const
-{
-	return type();
-}
+// XRW TEMP std::string ShearMinCCDTrial::get_name() const
+// XRW TEMP {
+// XRW TEMP  return type();
+// XRW TEMP }
 
 moves::MoverOP ShearMinCCDTrial::clone() const
 {
@@ -216,15 +219,46 @@ void ShearMinCCDTrial::setup_objects( Pose const & pose )
 	LoopRefineInnerCycle::setup_objects( pose );
 }
 
-ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
+// XRW TEMP ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
 
-moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
-	return moves::MoverOP( new ShearMinCCDTrial() );
+// XRW TEMP moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new ShearMinCCDTrial() );
+// XRW TEMP }
+
+// XRW TEMP std::string ShearMinCCDTrialCreator::keyname() const {
+// XRW TEMP  return "ShearMinCCDTrial";
+// XRW TEMP }
+
+std::string ShearMinCCDTrial::get_name() const {
+	return mover_name();
+}
+
+std::string ShearMinCCDTrial::mover_name() {
+	return "ShearMinCCDTrial";
+}
+
+void ShearMinCCDTrial::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Implements the CCD min trial flavor of inner cycle refinement.", attlist );
 }
 
 std::string ShearMinCCDTrialCreator::keyname() const {
-	return "ShearMinCCDTrial";
+	return ShearMinCCDTrial::mover_name();
 }
+
+protocols::moves::MoverOP
+ShearMinCCDTrialCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ShearMinCCDTrial );
+}
+
+void ShearMinCCDTrialCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ShearMinCCDTrial::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

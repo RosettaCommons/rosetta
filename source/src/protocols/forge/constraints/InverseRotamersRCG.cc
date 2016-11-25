@@ -32,6 +32,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
@@ -40,23 +43,23 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-protocols::moves::MoverOP
-InverseRotamersCstGeneratorCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new InverseRotamersRCG() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InverseRotamersCstGeneratorCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new InverseRotamersRCG() );
+// XRW TEMP }
 
-std::string
-InverseRotamersCstGeneratorCreator::keyname() const
-{
-	return InverseRotamersCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InverseRotamersCstGeneratorCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InverseRotamersRCG::mover_name();
+// XRW TEMP }
 
-std::string
-InverseRotamersCstGeneratorCreator::mover_name()
-{
-	return "InverseRotamersCstGenerator";
-}
+// XRW TEMP std::string
+// XRW TEMP InverseRotamersRCG::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InverseRotamersCstGenerator";
+// XRW TEMP }
 
 InverseRotamersRCG::InverseRotamersRCG()
 : RemodelConstraintGenerator(),
@@ -94,11 +97,11 @@ InverseRotamersRCG::parse_my_tag( TagCOP const tag,
 	//nothing here right now
 }
 
-std::string
-InverseRotamersRCG::get_name() const
-{
-	return InverseRotamersCstGeneratorCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InverseRotamersRCG::get_name() const
+// XRW TEMP {
+// XRW TEMP  return InverseRotamersRCG::mover_name();
+// XRW TEMP }
 
 
 protocols::moves::MoverOP
@@ -175,6 +178,38 @@ InverseRotamersRCG::init( core::Size const lstart,
 		inverse_rotamers_.push_back( *rot_it );
 	}
 }
+
+std::string InverseRotamersRCG::get_name() const {
+	return mover_name();
+}
+
+std::string InverseRotamersRCG::mover_name() {
+	return "InverseRotamersCstGenerator";
+}
+
+void InverseRotamersRCG::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	RemodelConstraintGenerator::attributes_for_remodel_constraint_generator( attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string InverseRotamersCstGeneratorCreator::keyname() const {
+	return InverseRotamersRCG::mover_name();
+}
+
+protocols::moves::MoverOP
+InverseRotamersCstGeneratorCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InverseRotamersRCG );
+}
+
+void InverseRotamersCstGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InverseRotamersRCG::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace remodel

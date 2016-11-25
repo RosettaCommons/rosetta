@@ -50,6 +50,18 @@ public:
 	core::Size seconds() const;
 	void seconds( core::Size const s );
 	core::Size start_time() const; // the time at start
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Size seconds_;
 	core::Size start_time_;

@@ -192,7 +192,7 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 		chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
 		chem_shift_scorefxn_ = chem_shift_scorefxn;
 	}
-	if ( options_->output_score_frequency() > 0) {
+	if ( options_->output_score_frequency() > 0 ) {
 		TR << "Opening file for output of running scores every " << options_->output_score_frequency() << " cycles: " << options_->output_score_file() << std::endl;
 		running_score_output_.open_append( options_->output_score_file() );
 	}
@@ -878,10 +878,10 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::output_score_if_desired( Size const & r,
-																								 Size const & i,
-																								 pose::Pose & pose )
+	Size const & i,
+	pose::Pose & pose )
 {
-	if ( options_->output_score_frequency() == 0) return;
+	if ( options_->output_score_frequency() == 0 ) return;
 	if ( i % options_->output_score_frequency() == 0 ) {
 		running_score_output_ << r << ' ' << i << " " << ( *working_denovo_scorefxn_ )( pose ) << std::endl;
 	}

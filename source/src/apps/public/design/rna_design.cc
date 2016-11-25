@@ -109,7 +109,7 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 		for ( Size i = 1; i <= nres; i++ ) {
 			// For noncanonicals
 			if ( (pose_list[n])->residue(i).name3() == pose.residue(i).name3() ) {
-			//if ( (pose_list[n])->residue(i).aa() == pose.residue(i).aa() ) {
+				//if ( (pose_list[n])->residue(i).aa() == pose.residue(i).aa() ) {
 				recovery( i ) += 1.0;
 			}
 		}
@@ -195,7 +195,7 @@ rna_design_test()
 		auto const RNA_rsd_types = ResidueTypeFinder( *rsd_set ).base_property( RNA ).get_all_possible_residue_types();
 		for ( auto const & type : RNA_rsd_types ) { names.emplace_back( type->name3() ); }
 	}
-	
+
 	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 		pack::task::parse_resfile(pose, *task);
 	} else {

@@ -23,6 +23,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CopyRotamerMover" );
 
@@ -35,7 +38,7 @@ namespace simple_moves {
 
 /// @brief Default constructor
 CopyRotamerMover::CopyRotamerMover():
-	protocols::moves::Mover( CopyRotamerMover::class_name() ),
+	protocols::moves::Mover( CopyRotamerMover::mover_name() ),
 	template_res_index_(0),
 	target_res_index_(0),
 	copy_identity_(true),
@@ -230,17 +233,17 @@ TR << "Set mover NOT to copy residue side-chain bond lengths." << std::endl;
 }*/
 
 /// @brief Get the name of the Mover
-std::string
-CopyRotamerMover::get_name() const
-{
-	return CopyRotamerMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CopyRotamerMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return CopyRotamerMover::mover_name();
+// XRW TEMP }
 
-std::string
-CopyRotamerMover::class_name()
-{
-	return "CopyRotamer";
-}
+// XRW TEMP std::string
+// XRW TEMP CopyRotamerMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CopyRotamer";
+// XRW TEMP }
 
 std::ostream &
 operator<<( std::ostream & os, CopyRotamerMover const & mover )
@@ -251,17 +254,72 @@ operator<<( std::ostream & os, CopyRotamerMover const & mover )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-CopyRotamerMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CopyRotamerMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new CopyRotamerMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP CopyRotamerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CopyRotamerMover::mover_name();
+// XRW TEMP }
+
+std::string CopyRotamerMover::get_name() const {
+	return mover_name();
+}
+
+std::string CopyRotamerMover::mover_name() {
+	return "CopyRotamer";
+}
+
+void CopyRotamerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute(
+		"template_res_index", xsct_non_negative_integer,
+		"The index, in Rosetta pose numbering, of the residue from which the "
+		"side-chain will be copied. This residue is not altered by this operation." )
+		+ XMLSchemaAttribute::required_attribute(
+		"target_res_index", xsct_non_negative_integer,
+		"The index, in Rosetta pose numbering, of the residue to which the "
+		"side-chain will be copied. The identity and/or conformation of this "
+		"residue's sidechain is altered by this operation." )
+		+ XMLSchemaAttribute(
+		"copy_identity", xsct_rosetta_bool,
+		"Should the identity of the template residue by copied to the target? "
+		"Default true. If false, only side-chain torsion values will be copied. "
+		"This can create strange results if the template and target residues "
+		"have different numbers of side-chain chi angles, or if they have "
+		"significantly different side-chain structures." )
+		+ XMLSchemaAttribute(
+		"copy_torsions", xsct_rosetta_bool,
+		"Should the side-chain dihedral values of the template residue be "
+		"copied to the target? Default true." );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"This is a very simple mover that copies the residue identity and/or sidechain "
+		"conformation from one residue in a pose (the template) to another (the target).",
+		attlist );
+}
+
+std::string CopyRotamerMoverCreator::keyname() const {
+	return CopyRotamerMover::mover_name();
+}
+
+protocols::moves::MoverOP
+CopyRotamerMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new CopyRotamerMover );
 }
 
-std::string
-CopyRotamerMoverCreator::keyname() const
+void CopyRotamerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return CopyRotamerMover::class_name();
+	CopyRotamerMover::provide_xml_schema( xsd );
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// private methods ///

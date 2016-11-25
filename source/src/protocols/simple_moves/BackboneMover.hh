@@ -151,6 +151,13 @@ public:
 	/// @details Clones the input.
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	complex_type_generator_for_backbone_mover( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	std::string
+	backbone_mover_complex_type_namer( std::string tag_name );
 
 	void
 	parse_my_tag(
@@ -248,7 +255,7 @@ public:
 	//destructor
 	~SmallMover() override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -271,6 +278,18 @@ public:
 	dof_id_ranges(
 		core::pose::Pose & pose
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	bool move_with_scorefxn( core::pose::Pose & pose );
@@ -311,7 +330,7 @@ public:
 	//destructor
 	~ShearMover() override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -334,6 +353,18 @@ public:
 	dof_id_ranges(
 		core::pose::Pose & pose
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	bool move_with_scorefxn( core::pose::Pose & pose );

@@ -36,7 +36,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -196,6 +196,38 @@ void XYZClaim::strength( ControlStrength const& c_str, ControlStrength const& i_
 EnvClaimOP XYZClaim::clone() const {
 	return EnvClaimOP( new XYZClaim( *this ) );
 }
+
+
+std::string
+XYZClaim::class_name(){
+	return "XYZClaim";
+}
+
+void
+XYZClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	XMLSchemaRestriction restr;
+	restr.name( "envclaim_ctrl_str" );
+	restr.base_type( xs_string );
+	restr.add_restriction( xsr_pattern, "((([Dd][Oo][Ee][Ss]_[Nn][Oo][Tt])|([Cc][Aa][Nn])|([Mm][Uu][Ss][Tt]))_[Cc][Oo][Nn][Tt][Rr][Oo][Ll])|([Ee][Xx][Cc][Ll][Uu][Ss][Ii][Vv][Ee])" );
+	xsd.add_top_level_element( restr );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "control_strength", "envclaim_ctrl_str", "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "initialization_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" )
+		+ XMLSchemaAttribute::attribute_w_default( "relative_only", xsct_rosetta_bool, "XRW TO DO", "false" )
+		+ XMLSchemaAttribute::required_attribute( "selection", xs_string, "XRW TO DO" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( class_name() )
+		.complex_type_naming_func ( & EnvClaim::envclaim_ct_namer )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+}
+
 
 std::string XYZClaim::type() const {
 	return "XYZClaim";

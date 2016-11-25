@@ -53,6 +53,10 @@
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ScoreFunctionFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -115,8 +119,8 @@ ScoreFunctionFeatures::ScoreFunctionFeatures(
 
 ScoreFunctionFeatures::~ScoreFunctionFeatures() = default;
 
-string
-ScoreFunctionFeatures::type_name() const { return "ScoreFunctionFeatures"; }
+// XRW TEMP string
+// XRW TEMP ScoreFunctionFeatures::type_name() const { return "ScoreFunctionFeatures"; }
 
 void
 ScoreFunctionFeatures::write_schema_to_db(
@@ -240,6 +244,43 @@ ScoreFunctionFeatures::insert_score_function_weights_rows(
 
 	}
 }
+
+std::string ScoreFunctionFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ScoreFunctionFeatures::class_name() {
+	return "ScoreFunctionFeatures";
+}
+
+void ScoreFunctionFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"Score function name");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Add score function parameters to a features database",
+		attlist );
+}
+
+std::string ScoreFunctionFeaturesCreator::type_name() const {
+	return ScoreFunctionFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ScoreFunctionFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ScoreFunctionFeatures );
+}
+
+void ScoreFunctionFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreFunctionFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

@@ -19,6 +19,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
 #include <string>
@@ -39,6 +40,9 @@ public:
 
 	/// @brief Return the tag name associated with this factory.
 	virtual std::string keyname() const = 0;
+
+	/// @brief Describe the schema for the Mover that this Creator is responsible for
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
 typedef utility::pointer::shared_ptr< MoverCreator > MoverCreatorOP;

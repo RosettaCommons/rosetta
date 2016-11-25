@@ -79,7 +79,7 @@ bool RestrictToCDRH3Loop::residue_is_in_h3_loop( Pose const & pose, Size residue
 // No parse_tag or other data?
 void RestrictToCDRH3Loop::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty( xsd, keyname(), "XRW TO DO" );
 }
 
 

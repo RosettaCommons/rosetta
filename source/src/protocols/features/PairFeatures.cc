@@ -38,6 +38,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/PairFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -63,8 +67,8 @@ PairFeatures::PairFeatures( PairFeatures const & ) :
 
 PairFeatures::~PairFeatures()= default;
 
-string
-PairFeatures::type_name() const { return "PairFeatures"; }
+// XRW TEMP string
+// XRW TEMP PairFeatures::type_name() const { return "PairFeatures"; }
 
 void
 PairFeatures::write_schema_to_db(
@@ -200,6 +204,36 @@ PairFeatures::report_residue_pairs(
 		}
 	}
 }
+
+std::string PairFeatures::type_name() const {
+	return class_name();
+}
+
+std::string PairFeatures::class_name() {
+	return "PairFeatures";
+}
+
+void PairFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Records details about all pairs of residues, such as their neighbors within 10A, their distance, and their sequence distance", attlist );
+}
+
+std::string PairFeaturesCreator::type_name() const {
+	return PairFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+PairFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new PairFeatures );
+}
+
+void PairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PairFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

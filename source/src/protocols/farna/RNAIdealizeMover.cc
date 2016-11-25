@@ -56,6 +56,9 @@
 #include <utility/tag/Tag.hh>
 
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNAIdealizeMover" );
 
@@ -70,7 +73,7 @@ using namespace scoring::constraints;
 using namespace scoring::func;
 
 RNAIdealizeMover::RNAIdealizeMover():
-	protocols::moves::Mover( RNAIdealizeMover::class_name() ),
+	protocols::moves::Mover( RNAIdealizeMover::mover_name() ),
 	iterations_( 100 ),
 	noise_( false ),
 	final_minimize_( false )
@@ -103,17 +106,17 @@ RNAIdealizeMover::fresh_instance() const
 	return protocols::moves::MoverOP( new RNAIdealizeMover );
 }
 
-std::string
-RNAIdealizeMover::get_name() const
-{
-	return RNAIdealizeMover::class_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RNAIdealizeMover::get_name() const
+// XRW TEMP {
+// XRW TEMP  return RNAIdealizeMover::mover_name();
+// XRW TEMP }
 
-std::string
-RNAIdealizeMover::class_name()
-{
-	return "RNAIdealizeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP RNAIdealizeMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RNAIdealizeMover";
+// XRW TEMP }
 
 void
 RNAIdealizeMover::show( std::ostream & output ) const
@@ -452,17 +455,51 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-RNAIdealizeMoverCreator::create_mover() const
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RNAIdealizeMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new RNAIdealizeMover );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP RNAIdealizeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RNAIdealizeMover::mover_name();
+// XRW TEMP }
+
+std::string RNAIdealizeMover::get_name() const {
+	return mover_name();
+}
+
+std::string RNAIdealizeMover::mover_name() {
+	return "RNAIdealizeMover";
+}
+
+void RNAIdealizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "iterations", xsct_positive_integer, "Number of iterations over which to spread idealization" )
+		+ XMLSchemaAttribute( "noise", xsct_rosetta_bool, "Salt initial pose with some Gaussian noise" )
+		+ XMLSchemaAttribute( "final_minimize", xsct_rosetta_bool, "Minimize the whole pose at once at the end" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Idealize a pose, moving its bond lengths and angles towards ideal values by repeated relaxation", attlist );
+}
+
+std::string RNAIdealizeMoverCreator::keyname() const {
+	return RNAIdealizeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RNAIdealizeMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RNAIdealizeMover );
 }
 
-std::string
-RNAIdealizeMoverCreator::keyname() const
+void RNAIdealizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return RNAIdealizeMover::class_name();
+	RNAIdealizeMover::provide_xml_schema( xsd );
 }
+
 
 } //protocols
 } //farna

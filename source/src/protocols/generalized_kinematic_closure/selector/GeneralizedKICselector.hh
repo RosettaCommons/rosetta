@@ -21,6 +21,7 @@
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -147,6 +148,8 @@ public:
 		bool const low_memory_mode,
 		utility::vector1 <core::Real> const &energies_for_solution
 	) const;
+
+	static void define_valid_selector_name_enumeration( utility::tag::XMLSchemaDefinition & xsd );
 
 
 private:

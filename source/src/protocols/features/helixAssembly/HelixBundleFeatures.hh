@@ -26,6 +26,8 @@
 
 //Utility
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace features {
@@ -73,20 +75,18 @@ public:
 
 	HelixBundleFeatures();
 
-	virtual
-	std::string
-	type_name() const  {
-		return "HelixBundleFeatures";
-	};
+	// XRW TEMP  virtual
+	// XRW TEMP  std::string
+	// XRW TEMP  type_name() const  {
+	// XRW TEMP   return "HelixBundleFeatures";
+	// XRW TEMP  };
 
 	/// @brief generate the table schemas and write them to the database
-	virtual
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
-	) const;
+	) const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -94,22 +94,21 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
-	features_reporter_dependencies() const;
+	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
-	virtual
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
-	);
+	) override;
 
 	utility::vector1<HelicalFragmentOP>
 	get_helices(
@@ -129,6 +128,18 @@ public:
 		utility::sql_database::sessionOP db_session,
 		utility::vector1<HelicalFragment> const & bundle
 	);
+
+	std::string
+	type_name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

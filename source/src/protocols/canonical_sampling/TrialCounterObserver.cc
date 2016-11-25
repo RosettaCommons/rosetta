@@ -32,6 +32,9 @@
 
 // C++ Headers
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TrialCounter" );
 
@@ -39,20 +42,20 @@ namespace protocols {
 namespace canonical_sampling {
 
 
-std::string
-TrialCounterObserverCreator::keyname() const {
-	return TrialCounterObserverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TrialCounterObserverCreator::keyname() const {
+// XRW TEMP  return TrialCounterObserver::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TrialCounterObserverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TrialCounterObserver );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TrialCounterObserverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TrialCounterObserver );
+// XRW TEMP }
 
-std::string
-TrialCounterObserverCreator::mover_name() {
-	return "TrialCounterObserver";
-}
+// XRW TEMP std::string
+// XRW TEMP TrialCounterObserver::mover_name() {
+// XRW TEMP  return "TrialCounterObserver";
+// XRW TEMP }
 
 
 TrialCounterObserver::TrialCounterObserver(
@@ -63,9 +66,9 @@ TrialCounterObserver::TrialCounterObserver(
 
 TrialCounterObserver::~TrialCounterObserver() = default;
 
-std::string TrialCounterObserver::get_name() const {
-	return "TrialCounterObserver";
-}
+// XRW TEMP std::string TrialCounterObserver::get_name() const {
+// XRW TEMP  return "TrialCounterObserver";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 TrialCounterObserver::clone() const {
@@ -125,6 +128,39 @@ TrialCounterObserver::finalize_simulation(
 	counters_.show( tr.Info );
 	counters_.write_to_file( file_, mhm.output_name() );
 }
+
+std::string TrialCounterObserver::get_name() const {
+	return mover_name();
+}
+
+std::string TrialCounterObserver::mover_name() {
+	return "TrialCounterObserver";
+}
+
+void TrialCounterObserver::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "file", xs_string, "Output file for this observer", "trial.stats" )
+		+ XMLSchemaAttribute::attribute_w_default( "stride", xsct_non_negative_integer, "How many steps between outputs", "10000" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "observes acceptance rates of various moves at different temperatures", attlist );
+}
+
+std::string TrialCounterObserverCreator::keyname() const {
+	return TrialCounterObserver::mover_name();
+}
+
+protocols::moves::MoverOP
+TrialCounterObserverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TrialCounterObserver );
+}
+
+void TrialCounterObserverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TrialCounterObserver::provide_xml_schema( xsd );
+}
+
 
 } //moves
 } //protocols

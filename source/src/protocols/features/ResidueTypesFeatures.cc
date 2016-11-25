@@ -34,6 +34,10 @@
 // C++ Headers
 #include <set>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ResidueTypesFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -63,8 +67,8 @@ ResidueTypesFeatures::ResidueTypesFeatures()
 
 ResidueTypesFeatures::~ResidueTypesFeatures() = default;
 
-string
-ResidueTypesFeatures::type_name() const { return "ResidueTypesFeatures"; }
+// XRW TEMP string
+// XRW TEMP ResidueTypesFeatures::type_name() const { return "ResidueTypesFeatures"; }
 
 void
 ResidueTypesFeatures::write_schema_to_db(
@@ -108,6 +112,39 @@ ResidueTypesFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string ResidueTypesFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ResidueTypesFeatures::class_name() {
+	return "ResidueTypesFeatures";
+}
+
+void ResidueTypesFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report ResidueTypes features Statistics Scientific Benchmark",
+		attlist );
+}
+
+std::string ResidueTypesFeaturesCreator::type_name() const {
+	return ResidueTypesFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ResidueTypesFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ResidueTypesFeatures );
+}
+
+void ResidueTypesFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueTypesFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

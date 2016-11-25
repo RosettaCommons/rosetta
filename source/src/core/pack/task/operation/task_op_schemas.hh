@@ -38,34 +38,39 @@ complex_type_name_for_res_filter( std::string const & res_filter_name );
 void
 task_op_schema_empty(
 	utility::tag::XMLSchemaDefinition & xsd,
-	std::string const & task_op_name
+	std::string const & task_op_name,
+	std::string const & description = "XRW TO DO"
 );
 
 void
 task_op_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & task_op_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description = "XRW TO DO"
 );
 
 void
 res_lvl_task_op_schema_empty(
 	utility::tag::XMLSchemaDefinition & xsd,
-	std::string const & task_op_name
+	std::string const & task_op_name,
+	std::string const & description = "XRW TO DO"
 );
 
 void
 res_lvl_task_op_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & task_op_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description = "XRW TO DO"
 );
 
 void
 res_filter_schema_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & res_filter_name,
-	utility::tag::AttributeList const & attributes
+	utility::tag::AttributeList const & attributes,
+	std::string const & description = "XRW TO DO"
 );
 
 }

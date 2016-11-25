@@ -36,28 +36,33 @@ static THREAD_LOCAL basic::Tracer TR( "devel.splice.RBInMover" );
 #include <algorithm>
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
+#include <boost/foreach.hpp>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace splice {
 
 using namespace::protocols;
 
-std::string
-RBInMoverCreator::keyname() const
-{
-	return RBInMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RBInMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RBInMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RBInMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RBInMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RBInMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RBInMover );
+// XRW TEMP }
 
-std::string
-RBInMoverCreator::mover_name()
-{
-	return "RBIn";
-}
+// XRW TEMP std::string
+// XRW TEMP RBInMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RBIn";
+// XRW TEMP }
 
 RBInMover::RBInMover(): moves::Mover("RBIn"),
 	RB_dbase_(""),
@@ -207,10 +212,10 @@ RBInMover::apply( Pose & pose ){
 	checkpoint();
 }
 
-std::string
-RBInMover::get_name() const {
-	return RBInMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RBInMover::get_name() const {
+// XRW TEMP  return RBInMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 RBInMover::clone() const
@@ -242,6 +247,44 @@ RBInMover::parse_my_tag(
 	runtime_assert( from_entry() <= to_entry() && from_entry() >= 1 );
 	TR<<"RB_dbase: "<<RB_dbase()<<" from_entry: "<<from_entry()<<" to_entry: "<<to_entry()<<" randomize: "<<randomize()<<" checkpointing file: "<<checkpointing_file()<<" modify_foldtree: "<<modify_foldtree()<<std::endl;
 }
+
+std::string RBInMover::get_name() const {
+	return mover_name();
+}
+
+std::string RBInMover::mover_name() {
+	return "RBIn";
+}
+
+void RBInMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW TODO
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "rigid_body_dbase", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "from_entry", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "to_entry", xsct_non_negative_integer, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "randomize", xsct_rosetta_bool, "XRW TO DO", "true" )
+		+ XMLSchemaAttribute( "checkpointing_file", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "modify_foldtree", xsct_rosetta_bool, "XRW TO DO", "true" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RBInMoverCreator::keyname() const {
+	return RBInMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RBInMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RBInMover );
+}
+
+void RBInMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RBInMover::provide_xml_schema( xsd );
+}
+
 } // simple_moves
 } // protocols
 

@@ -45,8 +45,8 @@ public:
 public:
 	ProteinInterfaceMultiStateDesignMover();
 	virtual ~ProteinInterfaceMultiStateDesignMover();
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	void output_results( Pose & );
 
 	virtual void parse_my_tag(
@@ -54,12 +54,24 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
-		Pose const & );
-	virtual moves::MoverOP fresh_instance() const;
-	virtual moves::MoverOP clone() const;
+		Pose const & ) override;
+	virtual moves::MoverOP fresh_instance() const override;
+	virtual moves::MoverOP clone() const override;
 	void restrict_sequence_profile( core::pose::Pose const & pose, core::pack::task::PackerTaskOP const ptask ) const;
 	unsigned long sequence_space( core::pack::task::PackerTaskCOP ptask ) const;
 	void output_alternative_states( core::pose::Pose const & output_pose ) const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	void initialize( Pose & );

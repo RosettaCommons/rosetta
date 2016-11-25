@@ -34,6 +34,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <string>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 using namespace core;
 using namespace std;
@@ -44,11 +47,11 @@ namespace simple_filters {
 typedef numeric::xyzTransform<double> Xform;
 static basic::Tracer TR( "protocols.simple_moves.MotifScoreFilter" );
 
-protocols::filters::FilterOP
-MotifScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MotifScoreFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP MotifScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MotifScoreFilter ); }
 
-std::string
-MotifScoreFilterCreator::keyname() const { return "MotifScore"; }
+// XRW TEMP std::string
+// XRW TEMP MotifScoreFilterCreator::keyname() const { return "MotifScore"; }
 
 MotifScoreFilter::MotifScoreFilter(){
 	mman_ = core::scoring::motif::MotifHashManager::get_instance();
@@ -120,6 +123,38 @@ void MotifScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
 		score_threshold_ = tag->getOption<core::Real>( "threshold" );
 	}
 }
+
+std::string MotifScoreFilter::name() const {
+	return class_name();
+}
+
+std::string MotifScoreFilter::class_name() {
+	return "MotifScore";
+}
+
+void MotifScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold above which the filter fails", "999" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter on the motif score developed by Will Scheffler", attlist );
+}
+
+std::string MotifScoreFilterCreator::keyname() const {
+	return MotifScoreFilter::class_name();
+}
+
+protocols::filters::FilterOP
+MotifScoreFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new MotifScoreFilter );
+}
+
+void MotifScoreFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MotifScoreFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protocols

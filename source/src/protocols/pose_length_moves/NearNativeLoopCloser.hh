@@ -115,17 +115,28 @@ public:
 	NearNativeLoopCloser();
 	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
 		char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback");
-	virtual std::string get_name() const;
-	moves::MoverOP clone() const { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
+	moves::MoverOP clone() const override { return moves::MoverOP( new NearNativeLoopCloser( *this ) ); }
 	core::Real close_loop(Pose & pose);
-	virtual void apply( Pose & pose );
+	void apply( Pose & pose ) override;
 	void combine_chains(Pose & pose);
 	void extendRegion(bool towardCTerm, Size resStart, char neighborResType, Size numberAddRes,core::pose::PoseOP & poseOP);
 	core::pose::PoseOP create_maximum_length_pose(char resTypeBeforeLoop, char resTypeAfterLoop, core::pose::Pose pose);
 	utility::vector1<PossibleLoopOP> create_potential_loops(core::pose::Pose pose);
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	core::pose::PoseOP get_additional_output();
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	core::pose::PoseOP get_additional_output() override;
 	core::pose::PoseOP get_additional_output_with_rmsd(core::Real & return_rmsd);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	int resAdjustmentStartLow_;
 	int resAdjustmentStartHigh_;

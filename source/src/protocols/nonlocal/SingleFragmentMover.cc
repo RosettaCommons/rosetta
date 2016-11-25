@@ -41,6 +41,10 @@
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 
 typedef protocols::moves::Mover Parent;
 
@@ -125,9 +129,9 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 	TR.Debug << "Inserted fragment at position " << insertion_pos << std::endl;
 }
 
-std::string SingleFragmentMover::get_name() const {
-	return "SingleFragmentMover";
-}
+// XRW TEMP std::string SingleFragmentMover::get_name() const {
+// XRW TEMP  return "SingleFragmentMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP SingleFragmentMover::clone() const {
 	return protocols::moves::MoverOP( new SingleFragmentMover(*this) );
@@ -265,6 +269,62 @@ bool SingleFragmentMover::to_centroid(core::pose::Pose* pose) const {
 	}
 	return false;
 }
+
+std::string SingleFragmentMover::get_name() const {
+	return mover_name();
+}
+
+std::string SingleFragmentMover::mover_name() {
+	return "SingleFragmentMover";
+}
+
+void SingleFragmentMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( [] (std::string const& name) {
+		return "SingleFragmentMover_subelement_" + name + "Type";
+		});
+	rosetta_scripts::append_subelement_for_parse_movemap(xsd, subelements);
+
+	XMLSchemaRestriction policy_type_enum;
+	policy_type_enum.name("policy_type");
+	policy_type_enum.base_type( xs_string );
+	policy_type_enum.add_restriction( xsr_enumeration, "uniform" );
+	policy_type_enum.add_restriction( xsr_enumeration, "smooth" );
+	xsd.add_top_level_element(policy_type_enum);
+
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"fragments", xs_string,
+		"Fragment file. Fragments are used in the assembly of proteins whether for structure prediction or design, to cut down on the size of the protein-folding search space. They are a core part of the Rosetta design. : Fragment libraries are used by many protocols but are a core part of ab initio.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"policy", "policy_type",
+		"Policy object is responsible for choosing from among the possible fragments contained in the fragment file. Currently, two policies are supported-- 'uniform' and 'smooth.' The former chooses uniformly amongst the set of possibilities. The latter chooses the fragment that, if applied, causes minimal distortion to the pose.",
+		"uniform");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"Performs a single fragment insertion move on the pose. Respects the restrictions imposed by the user-supplied MoveMap and underlying kinematics of the pose -i.e. FoldTree . By default, all backbone torsions are movable. ",
+		attlist, subelements );
+}
+
+std::string SingleFragmentMoverCreator::keyname() const {
+	return SingleFragmentMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SingleFragmentMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SingleFragmentMover );
+}
+
+void SingleFragmentMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SingleFragmentMover::provide_xml_schema( xsd );
+}
+
 
 }  // namespace nonlocal
 }  // namespace protocols

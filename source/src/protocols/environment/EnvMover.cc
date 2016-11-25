@@ -27,6 +27,9 @@
 
 // tracer
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -38,20 +41,20 @@ namespace protocols {
 namespace environment {
 
 // creator
-std::string
-EnvMoverCreator::keyname() const {
-	return EnvMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EnvMoverCreator::keyname() const {
+// XRW TEMP  return EnvMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-EnvMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EnvMover() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP EnvMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new EnvMover() );
+// XRW TEMP }
 
-std::string
-EnvMoverCreator::mover_name() {
-	return "Environment";
-}
+// XRW TEMP std::string
+// XRW TEMP EnvMover::mover_name() {
+// XRW TEMP  return "Environment";
+// XRW TEMP }
 
 EnvMover::EnvMover():
 	Mover(),
@@ -204,13 +207,75 @@ void EnvMover::add_registered_mover( protocols::moves::MoverOP mover_in ) {
 }
 
 
-std::string EnvMover::get_name() const {
-	return "EnvMover("+env_->name()+")";
-}
+// XRW TEMP std::string EnvMover::get_name() const {
+// XRW TEMP  return "EnvMover("+env_->name()+")";
+// XRW TEMP }
 
 moves::MoverOP EnvMover::clone() const {
 	return moves::MoverOP( new EnvMover( *this ) );
 }
+
+std::string EnvMover::get_name() const {
+	return mover_name();
+}
+
+std::string EnvMover::mover_name() {
+	return "Environment";
+}
+
+void EnvMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"auto_cut", xsct_rosetta_bool,
+		"XSD_XRW: TO DO");
+	attlist + XMLSchemaAttribute(
+		"inherit_cuts", xsct_rosetta_bool,
+		"XSD_XRW: TO DO");
+	attlist + XMLSchemaAttribute(
+		"allow_pure_movers", xsct_rosetta_bool,
+		"XSD_XRW: TO DO");
+
+	XMLSchemaSimpleSubelementList ssl;
+	AttributeList ssl_attlist;
+	// Either name or mover must be provided
+	ssl_attlist + XMLSchemaAttribute(
+		"name", xs_string,
+		"XSD_XRW: TO DO");
+	ssl_attlist + XMLSchemaAttribute(
+		"mover", xs_string,
+		"XSD_XRW: TO DO");
+	ssl.add_simple_subelement("Register", ssl_attlist, "XSD_XRW: TO DO");
+
+	AttributeList ssl_attlist2;
+	ssl_attlist2 + XMLSchemaAttribute(
+		"name", xs_string, "XSD XRW TO DO");
+	ssl_attlist2 + XMLSchemaAttribute(
+		"mover", xs_string,
+		"XSD_XRW: TO DO");
+	ssl.add_simple_subelement("Apply", ssl_attlist2, "XSD_XRW: TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"XSD_RW: TO DO",
+		attlist, ssl);
+}
+
+std::string EnvMoverCreator::keyname() const {
+	return EnvMover::mover_name();
+}
+
+protocols::moves::MoverOP
+EnvMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new EnvMover );
+}
+
+void EnvMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnvMover::provide_xml_schema( xsd );
+}
+
 
 } // environment
 } // protocols

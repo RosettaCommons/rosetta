@@ -19,6 +19,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -32,26 +35,26 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer favor_nonnative_residue_tracer( "protocols.protein_interface_design.movers.FavorNonNativeResiduePreCycle" );
 
-std::string FavorNonNativeResiduePreCycleCreator::keyname() const
-{
-	return FavorNonNativeResiduePreCycleCreator::mover_name();
-}
+// XRW TEMP std::string FavorNonNativeResiduePreCycleCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return FavorNonNativeResiduePreCycle::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FavorNonNativeResiduePreCycleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FavorNonNativeResiduePreCycleCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
+// XRW TEMP }
 
-std::string
-FavorNonNativeResiduePreCycleCreator::mover_name() {
-	return "FavorNonNativeResidue";
-}
+// XRW TEMP std::string
+// XRW TEMP FavorNonNativeResiduePreCycle::mover_name() {
+// XRW TEMP  return "FavorNonNativeResidue";
+// XRW TEMP }
 
 
-std::string
-FavorNonNativeResiduePreCycle::get_name() const {
-	return "FavorNonNativeResiduePreCycle";
-}
+// XRW TEMP std::string
+// XRW TEMP FavorNonNativeResiduePreCycle::get_name() const {
+// XRW TEMP  return "FavorNonNativeResiduePreCycle";
+// XRW TEMP }
 
 FavorNonNativeResiduePreCycle::~FavorNonNativeResiduePreCycle() {}
 
@@ -75,8 +78,40 @@ FavorNonNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache:
 	favor_nonnative_residue_tracer<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';
 	}
 	*/
-	favor_nonnative_residue_tracer<<"applying favor native residue to pose with weight: "<<bonus_<<std::endl;
+	favor_nonnative_residue_tracer<<"applying favor nonnative residue to pose with weight: "<<bonus_<<std::endl;
 }
+
+std::string FavorNonNativeResiduePreCycle::get_name() const {
+	return mover_name();
+}
+
+std::string FavorNonNativeResiduePreCycle::mover_name() {
+	return "FavorNonNativeResidue";
+}
+
+void FavorNonNativeResiduePreCycle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "bonus", xsct_real, "Bonus for the native residue", "-1.5" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string FavorNonNativeResiduePreCycleCreator::keyname() const {
+	return FavorNonNativeResiduePreCycle::mover_name();
+}
+
+protocols::moves::MoverOP
+FavorNonNativeResiduePreCycleCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
+}
+
+void FavorNonNativeResiduePreCycleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FavorNonNativeResiduePreCycle::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

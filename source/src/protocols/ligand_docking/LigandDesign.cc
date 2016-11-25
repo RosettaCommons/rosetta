@@ -43,6 +43,9 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -50,22 +53,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer ligand_design_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
-std::string
-LigandDesignCreator::keyname() const
-{
-	return LigandDesignCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LigandDesignCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LigandDesign::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LigandDesignCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LigandDesign );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LigandDesignCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LigandDesign );
+// XRW TEMP }
 
-std::string
-LigandDesignCreator::mover_name()
-{
-	return "LigandDesign";
-}
+// XRW TEMP std::string
+// XRW TEMP LigandDesign::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LigandDesign";
+// XRW TEMP }
 
 LigandDesign::LigandDesign(): Mover("LigandDesign"){
 	Mover::type( "LigandDesign" );
@@ -104,9 +107,9 @@ protocols::moves::MoverOP LigandDesign::fresh_instance() const {
 	return protocols::moves::MoverOP( new LigandDesign );
 }
 
-std::string LigandDesign::get_name() const{
-	return "LigandDesign";
-}
+// XRW TEMP std::string LigandDesign::get_name() const{
+// XRW TEMP  return "LigandDesign";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -254,6 +257,37 @@ void LigandDesign::add_scores_to_job(
 	// }
 	// job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
 }
+
+std::string LigandDesign::get_name() const {
+	return mover_name();
+}
+
+std::string LigandDesign::mover_name() {
+	return "LigandDesign";
+}
+
+void LigandDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("option_file", xs_string, "Option file name.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform ligand design", attlist );
+}
+
+std::string LigandDesignCreator::keyname() const {
+	return LigandDesign::mover_name();
+}
+
+protocols::moves::MoverOP
+LigandDesignCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LigandDesign );
+}
+
+void LigandDesignCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LigandDesign::provide_xml_schema( xsd );
+}
+
 
 } // namespace ligand_docking
 } // namespace protocols

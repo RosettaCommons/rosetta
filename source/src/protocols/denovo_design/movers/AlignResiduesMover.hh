@@ -46,36 +46,36 @@ public:
 	// destructor (important for properly forward-declaring smart-pointer members)
 	virtual ~AlignResiduesMover();
 
-	static std::string
-	class_name();
+	// XRW TEMP  static std::string
+	// XRW TEMP  class_name();
 
 public:
 	// mover virtual API
-	virtual void
-	apply( core::pose::Pose & pose );
+	void
+	apply( core::pose::Pose & pose ) override;
 
-	virtual void
-	show( std::ostream & output = std::cout ) const;
+	void
+	show( std::ostream & output = std::cout ) const override;
 
-	virtual std::string
-	get_name() const;
+	// XRW TEMP  virtual std::string
+	// XRW TEMP  get_name() const;
 
 	/// @brief parse XML tag (to use this Mover in Rosetta Scripts)
-	virtual void
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	fresh_instance() const;
+	protocols::moves::MoverOP
+	fresh_instance() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
-	virtual protocols::moves::MoverOP
-	clone() const;
+	protocols::moves::MoverOP
+	clone() const override;
 
 public:
 	void
@@ -86,6 +86,18 @@ public:
 
 	void
 	add_target_selector( core::select::residue_selector::ResidueSelector const & selector );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// @brief aligns residues from template and target subsets

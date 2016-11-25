@@ -68,11 +68,22 @@ void ModifyAnnealer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "disallow_quench", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "high_temp", xs_decimal, "100.0" )
-		+ XMLSchemaAttribute::attribute_w_default(  "low_temp", xs_decimal, "0.3" );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"disallow_quench", xsct_rosetta_bool,
+		"quench accepts every change that lowers the energy. If you want more diversity it could be prudent to disallow the quench step. Quench is on by default.",
+		"false"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"high_temp", xsct_real,
+		" the starting high temperature for the annealer",
+		"100.0"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"low_temp", xsct_real,
+		"the temperature that the annealer cools to",
+		"0.3"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Allows modification of the temperatures and quench used by the annealer during packing.");
 }
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const

@@ -31,12 +31,24 @@ public:
 	PrepareForCentroid();
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "PrepareForCentroid"; }
+	// XRW TEMP  string get_name() const { return "PrepareForCentroid"; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 
 	/// @brief Convert the given pose to centroid mode.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 };
 

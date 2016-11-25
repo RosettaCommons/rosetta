@@ -36,7 +36,10 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -45,20 +48,20 @@ namespace symmetry {
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 
 // creators
-std::string
-DetectSymmetryMoverCreator::keyname() const {
-	return DetectSymmetryMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DetectSymmetryMoverCreator::keyname() const {
+// XRW TEMP  return DetectSymmetry::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DetectSymmetryMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DetectSymmetry );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DetectSymmetryMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DetectSymmetry );
+// XRW TEMP }
 
-std::string
-DetectSymmetryMoverCreator::mover_name() {
-	return "DetectSymmetry";
-}
+// XRW TEMP std::string
+// XRW TEMP DetectSymmetry::mover_name() {
+// XRW TEMP  return "DetectSymmetry";
+// XRW TEMP }
 
 ////////////////////
 DetectSymmetry::DetectSymmetry():
@@ -162,6 +165,40 @@ DetectSymmetry::parse_my_tag(
 	subunit_tolerance_ = tag->getOption< core::Real >("subunit_tolerance", 0.01);
 	plane_tolerance_ = tag->getOption< core::Real >("plane_tolerance",1e-3);
 }
+
+std::string DetectSymmetry::get_name() const {
+	return mover_name();
+}
+
+std::string DetectSymmetry::mover_name() {
+	return "DetectSymmetry";
+}
+
+void DetectSymmetry::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	// XRW TO DO: check this
+	attlist + XMLSchemaAttribute::attribute_w_default( "subunit_tolerance" , xsct_real , "Maximum tolerated CA-rmsd between the chains." , "0.01" )
+		+ XMLSchemaAttribute::attribute_w_default( "plane_tolerance" , xsct_real , "Maximum accepted displacement(angstroms) of the center of mass of the whole pose from the xy-plane." , "1e-3" ) ;
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This mover takes a non-symmetric pose composed of symmetric chains and transforms it into a symmetric system. It only works with cyclic symmetries from C2 to C99.", attlist );
+}
+
+std::string DetectSymmetryMoverCreator::keyname() const {
+	return DetectSymmetry::mover_name();
+}
+
+protocols::moves::MoverOP
+DetectSymmetryMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DetectSymmetry );
+}
+
+void DetectSymmetryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DetectSymmetry::provide_xml_schema( xsd );
+}
+
 
 
 } // symmetry

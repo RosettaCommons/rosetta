@@ -63,7 +63,7 @@ public: // test functions
 		Pose pose1 = Pose();
 		pose_from_file( pose1, "protocols/membrane/1U19__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile1 = "protocols/membrane/1U19__tr.span";
-		
+
 		AddMembraneMoverOP mem1( new AddMembraneMover( spanfile1 ) );
 		MPLipidAccessibilityOP lipid1( new MPLipidAccessibility() );
 		mem1->apply( pose1 );
@@ -79,12 +79,12 @@ public: // test functions
 		Pose pose2 = Pose();
 		pose_from_file( pose2, "protocols/membrane/4DXW__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile2 = "protocols/membrane/4DXW__tr.span";
-		
+
 		AddMembraneMoverOP mem2( new AddMembraneMover( spanfile2 ) );
 		MPLipidAccessibilityOP lipid2( new MPLipidAccessibility() );
 		mem2->apply( pose2 );
 		lipid2->apply( pose2 );
-		
+
 		TS_ASSERT_EQUALS( pose2.pdb_info()->bfactor( 108, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose2.pdb_info()->bfactor( 780, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose2.pdb_info()->bfactor( 575, 2 ), 0.0 );
@@ -95,12 +95,12 @@ public: // test functions
 		Pose pose3 = Pose();
 		pose_from_file( pose3, "protocols/membrane/4ENE__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile3 = "protocols/membrane/4ENE__tr.span";
-		
+
 		AddMembraneMoverOP mem3( new AddMembraneMover( spanfile3 ) );
 		MPLipidAccessibilityOP lipid3( new MPLipidAccessibility() );
 		mem3->apply( pose3 );
 		lipid3->apply( pose3 );
-		
+
 		TS_ASSERT_EQUALS( pose3.pdb_info()->bfactor( 203, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose3.pdb_info()->bfactor( 141, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose3.pdb_info()->bfactor( 120, 2 ), 50.0 );
@@ -111,12 +111,12 @@ public: // test functions
 		Pose pose4 = Pose();
 		pose_from_file( pose4, "protocols/membrane/3TUI__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile4 = "protocols/membrane/3TUI__tr.span";
-		
+
 		AddMembraneMoverOP mem4( new AddMembraneMover( spanfile4 ) );
 		MPLipidAccessibilityOP lipid4( new MPLipidAccessibility() );
 		mem4->apply( pose4 );
 		lipid4->apply( pose4 );
-		
+
 		TS_ASSERT_EQUALS( pose4.pdb_info()->bfactor( 148, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose4.pdb_info()->bfactor( 319, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose4.pdb_info()->bfactor( 368, 2 ), 0.0 );
@@ -127,12 +127,12 @@ public: // test functions
 		Pose pose5 = Pose();
 		pose_from_file( pose5, "protocols/membrane/3CSL__tr.pdb" , core::import_pose::PDB_file );
 		std::string spanfile5 = "protocols/membrane/3CSL__tr.span";
-		
+
 		AddMembraneMoverOP mem5( new AddMembraneMover( spanfile5 ) );
 		MPLipidAccessibilityOP lipid5( new MPLipidAccessibility() );
 		mem5->apply( pose5 );
 		lipid5->apply( pose5 );
-		
+
 		TS_ASSERT_EQUALS( pose5.pdb_info()->bfactor( 753, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose5.pdb_info()->bfactor( 667, 2 ), 50.0 );
 		TS_ASSERT_EQUALS( pose5.pdb_info()->bfactor( 720, 2 ), 50.0 );

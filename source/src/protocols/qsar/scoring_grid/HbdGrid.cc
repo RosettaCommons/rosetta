@@ -13,6 +13,8 @@
 #include <protocols/qsar/scoring_grid/HbdGrid.hh>
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/chemical/AtomType.hh>
@@ -20,6 +22,7 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/mpistream.hh>
@@ -35,7 +38,7 @@ namespace scoring_grid {
 
 std::string HbdGridCreator::keyname() const
 {
-	return HbdGridCreator::grid_name();
+	return HbdGrid::grid_name();
 }
 
 GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -52,11 +55,16 @@ GridBaseOP HbdGridCreator::create_grid() const
 	return GridBaseOP( new HbdGrid() );
 }
 
-
-std::string HbdGridCreator::grid_name()
+void HbdGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "HbdGrid";
+	HbdGrid::provide_xml_schema( xsd );
 }
+
+
+//std::string HbdGridCreator::grid_name()
+//{
+// return "HbdGrid";
+//}
 
 HbdGrid::HbdGrid(): SingleGrid ("HbdGrid")
 {
@@ -198,6 +206,22 @@ core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core
 		}
 	}
 	return 0;
+}
+
+std::string HbdGrid::grid_name()
+{
+	return "HbdGrid";
+}
+
+void HbdGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that computes the hydrogen-bonding energy as given by the location of hydrogen-bond donors -- acceptor atoms can be queried against this grid; no parameters may be customized currently", attributes );
+
 }
 
 }

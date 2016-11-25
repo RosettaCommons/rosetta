@@ -20,18 +20,18 @@ namespace antibody {
 namespace clusters {
 using namespace protocols::features;
 
-CDRClusterFeaturesCreator::CDRClusterFeaturesCreator(){}
-CDRClusterFeaturesCreator::~CDRClusterFeaturesCreator(){}
+// XRW TEMP CDRClusterFeaturesCreator::CDRClusterFeaturesCreator(){}
+// XRW TEMP CDRClusterFeaturesCreator::~CDRClusterFeaturesCreator(){}
 
-FeaturesReporterOP
-CDRClusterFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new CDRClusterFeatures );
-}
+// XRW TEMP FeaturesReporterOP
+// XRW TEMP CDRClusterFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new CDRClusterFeatures );
+// XRW TEMP }
 
-std::string
-CDRClusterFeaturesCreator::type_name() const {
-	return "CDRClusterFeatures";
-}
+// XRW TEMP std::string
+// XRW TEMP CDRClusterFeaturesCreator::type_name() const {
+// XRW TEMP  return "CDRClusterFeatures";
+// XRW TEMP }
 
 
 }

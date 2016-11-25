@@ -50,6 +50,9 @@
 #include <utility>
 #include <basic/Tracer.hh>
 #include <protocols/simple_filters/AlaScan.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace core::scoring;
@@ -63,33 +66,33 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-SeedFoldTreeCreator::keyname() const
-{
-	return SeedFoldTreeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeedFoldTreeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SeedFoldTree::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SeedFoldTreeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SeedFoldTree );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SeedFoldTreeCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SeedFoldTree );
+// XRW TEMP }
 
-std::string
-SeedFoldTreeCreator::mover_name()
-{
-	return "SeedFoldTree";
-}
+// XRW TEMP std::string
+// XRW TEMP SeedFoldTree::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SeedFoldTree";
+// XRW TEMP }
 
 SeedFoldTree::~SeedFoldTree() = default;
 
 SeedFoldTree::SeedFoldTree() :
-	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() ),
+	protocols::moves::Mover( SeedFoldTree::mover_name() ),
 	fold_tree_( /* NULL */ ),
 	scorefxn_( /* NULL */ )
 {}
 
 SeedFoldTree::SeedFoldTree( core::kinematics::FoldTreeOP ft ) :
-	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() )
+	protocols::moves::Mover( SeedFoldTree::mover_name() )
 {
 	fold_tree_ = ft;
 	pdb_contains_target_ = false;
@@ -709,10 +712,10 @@ SeedFoldTree::get_cutpoints(){ return cut_points_ ;}
 std::set< core::Size >
 SeedFoldTree::get_folding_vertices(){ return folding_vertices_;}
 
-std::string
-SeedFoldTree::get_name() const {
-	return SeedFoldTreeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SeedFoldTree::get_name() const {
+// XRW TEMP  return SeedFoldTree::mover_name();
+// XRW TEMP }
 
 
 void
@@ -779,5 +782,56 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 
 }//end parse my tag
+
+std::string SeedFoldTree::get_name() const {
+	return mover_name();
+}
+
+std::string SeedFoldTree::mover_name() {
+	return "SeedFoldTree";
+}
+
+void SeedFoldTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("ddg_based", xsct_rosetta_bool, "XRW TO DO", "0")
+		+ XMLSchemaAttribute::required_attribute("template_pdb", xs_string, "XRW TO DO");
+
+	// Subelements
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "XRW TO DO")
+		+ XMLSchemaAttribute::attribute_w_default("anchor", xsct_non_negative_integer, "XRW TO DO", "0");
+
+	AttributeList jump_attributes;
+	jump_attributes
+		+ XMLSchemaAttribute::attribute_w_default("from", xsct_non_negative_integer, "XRW TO DO","0")
+		+ XMLSchemaAttribute::attribute_w_default("to", xsct_non_negative_integer, "XRW TO DO","0");
+
+
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "XRW TO DO");
+	subelement_list.add_simple_subelement("Jump", jump_attributes, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelement_list );
+}
+
+std::string SeedFoldTreeCreator::keyname() const {
+	return SeedFoldTree::mover_name();
+}
+
+protocols::moves::MoverOP
+SeedFoldTreeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SeedFoldTree );
+}
+
+void SeedFoldTreeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SeedFoldTree::provide_xml_schema( xsd );
+}
+
 }//end seeded_abinitio
 }//end protocols

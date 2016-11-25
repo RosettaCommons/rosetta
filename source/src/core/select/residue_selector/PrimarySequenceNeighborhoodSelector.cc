@@ -74,10 +74,10 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 
 	core::select::residue_selector::ResidueSubset retval( pose.size(), false );
 	TR << "Intervals: [";
-	for ( ResidueRanges::const_iterator range=ranges.begin(); range!=ranges.end(); ++range ) {
-		TR << " " << range->start() << "->" << range->stop() << ",";
-		Size start = range->start();
-		Size end = range->stop();
+	for ( auto const & range : ranges ) {
+		TR << " " << range.start() << "->" << range.stop() << ",";
+		Size start = range.start();
+		Size end = range.stop();
 		Size count = 0;
 		while ( ( count < lower_residues_ ) && !pose::is_lower_terminus( pose, start ) ) {
 			++count;
@@ -124,12 +124,9 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 		debug_assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
 	} else if ( tag->getTags().size() ) {
-		for ( utility::vector0< utility::tag::TagCOP >::const_iterator t = tag->getTags().begin();
-				t != tag->getTags().end(); ++t ) {
+		for ( auto const & t : tag->getTags() ) {
 			ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-				(*t)->getName(),
-				(*t),
-				data );
+				t->getName(), t, data );
 			if ( rs ) {
 				debug_assert( !selector_ );
 				set_selector( rs );
@@ -180,10 +177,10 @@ PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchema
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "lower", xsct_non_negative_integer )
-		+ XMLSchemaAttribute( "upper", xsct_non_negative_integer )
-		+ XMLSchemaAttribute( "selector", xs_string );
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute( "lower", xsct_non_negative_integer , "XRW TO DO" )
+		+ XMLSchemaAttribute( "upper", xsct_non_negative_integer , "XRW TO DO" )
+		+ XMLSchemaAttribute( "selector", xs_string , "XRW TO DO" );
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
 }
 
 ResidueSelectorOP

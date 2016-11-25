@@ -135,7 +135,7 @@ public: // virtual main operation
 	/// @brief mover apply
 	void apply( Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 public:// mutators
 
@@ -204,6 +204,18 @@ public:// parser
 		Filters_map const &,
 		Movers_map const &,
 		Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:// helper functions

@@ -93,6 +93,9 @@ static basic::Tracer TR("protocols.moves.PeriodicBoxMover");
 
 #include <fstream>
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -109,20 +112,20 @@ numeric::xyzMatrix<core::Real> random_rotation(core::Real magnitude) {
 	return (numeric::rotation_matrix_degrees( axis, magnitude ));
 }
 
-std::string
-PeriodicBoxMoverCreator::keyname() const {
-	return PeriodicBoxMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PeriodicBoxMoverCreator::keyname() const {
+// XRW TEMP  return PeriodicBoxMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PeriodicBoxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeriodicBoxMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PeriodicBoxMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PeriodicBoxMover );
+// XRW TEMP }
 
-std::string
-PeriodicBoxMoverCreator::mover_name() {
-	return "PeriodicBoxMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PeriodicBoxMover::mover_name() {
+// XRW TEMP  return "PeriodicBoxMover";
+// XRW TEMP }
 
 PeriodicBoxMover::PeriodicBoxMover()
 : Mover("PeriodicBoxMover") {
@@ -166,10 +169,10 @@ PeriodicBoxMover::PeriodicBoxMover()
 	sf_ = core::scoring::get_score_function();
 }
 
-std::string
-PeriodicBoxMover::get_name() const {
-	return PeriodicBoxMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PeriodicBoxMover::get_name() const {
+// XRW TEMP  return PeriodicBoxMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 PeriodicBoxMover::clone() const {
@@ -1184,6 +1187,120 @@ PeriodicBoxMover::parse_my_tag(
 	}
 	*/
 }
+
+std::string PeriodicBoxMover::get_name() const {
+	return mover_name();
+}
+
+std::string PeriodicBoxMover::mover_name() {
+	return "PeriodicBoxMover";
+}
+
+void PeriodicBoxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"scorefxn", xs_string,
+		"weights file for the simulation");
+	attlist + XMLSchemaAttribute(
+		"nmol_side", xsct_real,
+		"number of molecules per each dimension; total molecules = nmol_side^3");
+	attlist + XMLSchemaAttribute(
+		"initial_density", xsct_real,
+		"initial density of small molecules in g/cm^3. initial guess is 1.0 from water, "
+		"but in general other small molecules have lower densities");
+	attlist + XMLSchemaAttribute(
+		"temp", xsct_real,
+		"temperature in Kelvin");
+	attlist + XMLSchemaAttribute(
+		"vol_step", xsct_real,
+		"maximum magnitude of the rotational movement");
+	attlist + XMLSchemaAttribute(
+		"trans_step", xsct_real,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"rot_step", xsct_real,
+		"maximum magnitude of the rotational movement");
+	attlist + XMLSchemaAttribute(
+		"tor_step", xsct_real,
+		"maximum magnitude of the torsion movement. "
+		"Will try to rotate the torsions given in the residue file");
+	attlist + XMLSchemaAttribute(
+		"probability_rigid", xsct_real,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"resize_vol_every", xsct_non_negative_integer,
+		"how often volume movement is called during MC. "
+		"Otherwise will randomly call either rotation or torsion movement");
+	attlist + XMLSchemaAttribute(
+		"report_every", xsct_non_negative_integer,
+		"how often will dump the energy components to score file");
+	attlist + XMLSchemaAttribute(
+		"report_silent", xs_string,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"report_scorefile", xs_string,
+		"name of the file to report energy components along the trajectory");
+	attlist + XMLSchemaAttribute(
+		"dump_every", xsct_non_negative_integer,
+		"dump_every - how often will dump the silent file (if requested)");
+	attlist + XMLSchemaAttribute(
+		"nsteps_equilibrate", xsct_non_negative_integer,
+		"Number of MC steps for equilibration");
+	attlist + XMLSchemaAttribute(
+		"nsteps_sim", xsct_non_negative_integer,
+		"Number of MC steps for production simulation");
+	attlist + XMLSchemaAttribute(
+		"istart", xsct_non_negative_integer,
+		"simulation step to begin with; used for continuing simulation");
+	attlist + XMLSchemaAttribute(
+		"central_molecule_pdb", xs_string,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"correct_LJtruncation", xsct_rosetta_bool,
+		"whether to add the correction coming from long-range LJ interaction "
+		"(by integrating over the distance from fa_max_dis to infinity); "
+		"should be turned on for liquid simulation");
+	attlist + XMLSchemaAttribute(
+		"report_thermodynamics", xsct_rosetta_bool,
+		"how often will report thermodynamic properties -- currently not very useful");
+	attlist + XMLSchemaAttribute(
+		"pressure", xsct_real,
+		"Pressure in atm");
+	attlist + XMLSchemaAttribute(
+		"rg_atom1", xs_string,
+		"XRW TO DO");
+	attlist + XMLSchemaAttribute(
+		"rg_atom2", xs_string,
+		"XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"This mover runs Monte Carlo (MC) simulation in isothermal-isobaric (NPT) "
+		"condition on a periodic boundary box. Can be applied to a broad range of "
+		"(small molecules) to extract their thermodynamic properties. Currently it "
+		"has been applied to running liquid-state simulation of small molecules; "
+		"see Park et al (2016), \"Simultaneous optimization of biomolecular energy "
+		"function on features from small molecules and macromolecules\", JCTC. "
+		"Details will be added more in near future.",
+		attlist );
+}
+
+std::string PeriodicBoxMoverCreator::keyname() const {
+	return PeriodicBoxMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PeriodicBoxMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PeriodicBoxMover );
+}
+
+void PeriodicBoxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PeriodicBoxMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

@@ -54,6 +54,9 @@
 
 // C++ header
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -64,22 +67,22 @@ namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
-std::string
-StartFromCreator::keyname() const
-{
-	return StartFromCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP StartFromCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return StartFrom::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-StartFromCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StartFrom );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StartFromCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StartFrom );
+// XRW TEMP }
 
-std::string
-StartFromCreator::mover_name()
-{
-	return "StartFrom";
-}
+// XRW TEMP std::string
+// XRW TEMP StartFrom::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "StartFrom";
+// XRW TEMP }
 
 /// @brief
 StartFrom::StartFrom():
@@ -100,9 +103,9 @@ protocols::moves::MoverOP StartFrom::fresh_instance() const {
 	return protocols::moves::MoverOP( new StartFrom );
 }
 
-std::string StartFrom::get_name() const{
-	return "StartFrom";
-}
+// XRW TEMP std::string StartFrom::get_name() const{
+// XRW TEMP  return "StartFrom";
+// XRW TEMP }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -349,6 +352,70 @@ void StartFrom::parse_pdb_file(std::string const & filename, std::string const &
 		}
 	}
 }
+
+std::string StartFrom::get_name() const {
+	return mover_name();
+}
+
+std::string StartFrom::mover_name() {
+	return "StartFrom";
+}
+
+void StartFrom::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute("chain", xs_string, "Chain ID")
+		+ XMLSchemaAttribute::attribute_w_default("use_nbr", xsct_rosetta_bool,
+		"Place neighbor atom (the atom which is superimposed during "
+		"conformer repacking) at the given location", "false");
+
+	// subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	AttributeList Coordinates_attributes;
+	Coordinates_attributes
+		+ XMLSchemaAttribute::required_attribute("x", xsct_real, "x coordinate of the desired start coordinate.")
+		+ XMLSchemaAttribute::required_attribute("y", xsct_real, "y coordinate of the desired start coordinate.")
+		+ XMLSchemaAttribute::required_attribute("z", xsct_real, "z coordinate of the desired start coordinate.")
+		+ XMLSchemaAttribute::attribute_w_default("pdb_tag", xs_string, "Job-tag of a pdb.", "default");
+	subelement_list.add_simple_subelement("Coordinates", Coordinates_attributes, "Set x,y and z coordinates, where to put the chain.");
+
+	AttributeList File_attributes;
+	File_attributes
+		+ XMLSchemaAttribute("struct_identifier", xs_string, "pdb_tag, file_name, or hash")
+		+ XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of SON formatted file containing starting positions");
+	subelement_list.add_simple_subelement("File", File_attributes, "Provide a JSON formatted file containing starting positions");
+
+	AttributeList PDB_attributes;
+	PDB_attributes
+		+ XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of pdb file")
+		+ XMLSchemaAttribute("atom_name", xs_string, "Use only the positions of atoms matching that atom name.")
+		+ XMLSchemaAttribute::attribute_w_default("pdb_tag", xs_string, "XRW TO DO", "default");
+	subelement_list.add_simple_subelement("PDB", PDB_attributes,
+		"The starting coordinates are provided as the heavy atom positions in a PDB file.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Move a chain (normally a ligand) to a specified coordinate."
+		"By default the centroid of the specified chain (the average position "
+		"of all atoms/residues) is centered on the given coordinate",
+		attlist, subelement_list );
+}
+
+std::string StartFromCreator::keyname() const {
+	return StartFrom::mover_name();
+}
+
+protocols::moves::MoverOP
+StartFromCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StartFrom );
+}
+
+void StartFromCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StartFrom::provide_xml_schema( xsd );
+}
+
 
 } //namespace ligand_docking
 } //namespace protocols

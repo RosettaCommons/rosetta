@@ -916,7 +916,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 				!(rsd_type_.atom_name(i) == "HO2'") &&
 				!( atom_depends_on_lower(i, rsd_type_.has_polymer_dependent_groups()) ) &&
 				!( atom_depends_on_upper(i, rsd_type_.has_polymer_dependent_groups()) )
-		) {
+				) {
 			continue;
 		}
 		if ( src.has( rsd_type_.atom_name(i) ) &&
@@ -1387,11 +1387,11 @@ Residue::atom_depends_on_lower(
 	core::Size const atom_index,
 	bool const recursive
 ) const {
-	if(!recursive) { return icoor(atom_index).depends_on_polymer_lower(); }
+	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_lower(); }
 
 	utility::vector1 < core::Size > visited;
 	visited.push_back(atom_index);
-	return atom_depends_on_lower( atom_index, visited );	
+	return atom_depends_on_lower( atom_index, visited );
 }
 
 /// @brief Does this atom depend on the UPPER_CONNECT?
@@ -1404,13 +1404,13 @@ Residue::atom_depends_on_upper(
 	core::Size const atom_index,
 	bool const recursive
 ) const {
-	if(!recursive) { return icoor(atom_index).depends_on_polymer_upper(); }
+	if ( !recursive ) { return icoor(atom_index).depends_on_polymer_upper(); }
 
 	utility::vector1 < core::Size > visited;
 	visited.push_back(atom_index);
-	return atom_depends_on_upper( atom_index, visited );	
+	return atom_depends_on_upper( atom_index, visited );
 }
-	
+
 // fpd bondlength analog to set_chi
 //    like set_chi, assumes changes propagate to atomtree
 //    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
@@ -1811,17 +1811,17 @@ Residue::atom_depends_on_lower(
 	core::Size const atom_index,
 	utility::vector1< core::Size > visited_atoms
 ) const {
-	if(icoor(atom_index).depends_on_polymer_lower()) return true;
-	
+	if ( icoor(atom_index).depends_on_polymer_lower() ) return true;
+
 	visited_atoms.push_back( atom_index );
 
 	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
 	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_lower( stub1_index, visited_atoms )  );
-	if( stub1 ) return true;
+	if ( stub1 ) return true;
 
 	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
 	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_lower( stub2_index, visited_atoms )  );
-	if( stub2 ) return true;
+	if ( stub2 ) return true;
 
 	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
 	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_lower( stub3_index, visited_atoms )  );
@@ -1835,17 +1835,17 @@ Residue::atom_depends_on_upper(
 	core::Size const atom_index,
 	utility::vector1< core::Size > visited_atoms
 ) const {
-	if(icoor(atom_index).depends_on_polymer_upper()) return true;
-	
+	if ( icoor(atom_index).depends_on_polymer_upper() ) return true;
+
 	visited_atoms.push_back( atom_index );
 
 	core::Size const stub1_index( icoor( atom_index ).stub_atom1().atomno() );
 	bool const stub1( stub1_index == 0 || in_list( stub1_index, visited_atoms ) ? false : atom_depends_on_upper( stub1_index, visited_atoms )  );
-	if( stub1 ) return true;
+	if ( stub1 ) return true;
 
 	core::Size const stub2_index( icoor( atom_index ).stub_atom2().atomno() );
 	bool const stub2( stub2_index == 0 || in_list( stub2_index, visited_atoms )  ? false : atom_depends_on_upper( stub2_index, visited_atoms )  );
-	if( stub2 ) return true;
+	if ( stub2 ) return true;
 
 	core::Size const stub3_index( icoor( atom_index ).stub_atom3().atomno() );
 	bool const stub3( stub3_index == 0 || in_list( stub3_index, visited_atoms )  ? false : atom_depends_on_upper( stub3_index, visited_atoms )  );
@@ -1859,10 +1859,10 @@ Residue::in_list(
 	core::Size const val,
 	utility::vector1< core::Size > const &vect
 ) const {
-	for( core::Size i=1, imax=vect.size(); i<=imax; ++i) { if( vect[i] == val ) return true; }
+	for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) { if ( vect[i] == val ) return true; }
 	return false;
 }
-	
+
 ////////////////////////////////////////////////////////////////////////////////
 //ja
 std::ostream & operator << ( std::ostream & os, Residue const & res )

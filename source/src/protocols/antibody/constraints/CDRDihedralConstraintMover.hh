@@ -51,14 +51,14 @@ public:
 
 	virtual~CDRDihedralConstraintMover();
 
-	virtual void
+	void
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
 		Pose const & pose
-	);
+	) override;
 
 
 
@@ -80,8 +80,8 @@ public:
 	void
 	set_cdr(CDRNameEnum cdr);
 
-	virtual void
-	apply(core::pose::Pose & pose);
+	void
+	apply(core::pose::Pose & pose) override;
 
 public:
 
@@ -122,17 +122,29 @@ public:
 	set_ignore_pose_datacache(bool ignore_pose_datacache);
 public:
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	//CDRDihedralConstraintMover & operator=(CDRDihedralConstraintMover const & src);
 
-	virtual moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

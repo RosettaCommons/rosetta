@@ -44,7 +44,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void parse_my_tag(  utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
@@ -55,6 +55,18 @@ public:
 	void hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop);
 	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 	void check_and_create_fragments( core::pose::Pose & pose, core::Size insert_start, core::Size insert_stop );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// to output and score full atom again

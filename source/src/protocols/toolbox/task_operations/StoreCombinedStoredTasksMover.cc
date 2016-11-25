@@ -38,6 +38,9 @@
 
 #include <utility/tag/Tag.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -158,14 +161,14 @@ StoreCombinedStoredTasksMover::parse_my_tag( TagCOP const tag, basic::datacache:
 }
 
 // @brief Identification
-std::string StoreCombinedStoredTasksMoverCreator::keyname() const { return StoreCombinedStoredTasksMoverCreator::mover_name(); }
-std::string StoreCombinedStoredTasksMoverCreator::mover_name() { return "StoreCombinedStoredTasksMover"; }
-std::string StoreCombinedStoredTasksMover::get_name() const { return "StoreCombinedStoredTasksMover"; }
+// XRW TEMP std::string StoreCombinedStoredTasksMoverCreator::keyname() const { return StoreCombinedStoredTasksMover::mover_name(); }
+// XRW TEMP std::string StoreCombinedStoredTasksMover::mover_name() { return "StoreCombinedStoredTasksMover"; }
+// XRW TEMP std::string StoreCombinedStoredTasksMover::get_name() const { return "StoreCombinedStoredTasksMover"; }
 
-protocols::moves::MoverOP
-StoreCombinedStoredTasksMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP StoreCombinedStoredTasksMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
+// XRW TEMP }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::clone() const {
@@ -176,6 +179,55 @@ protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
 }
+
+std::string StoreCombinedStoredTasksMover::get_name() const {
+	return mover_name();
+}
+
+std::string StoreCombinedStoredTasksMover::mover_name() {
+	return "StoreCombinedStoredTasksMover";
+}
+
+void StoreCombinedStoredTasksMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	//possible operators
+	//AND
+	//OR
+	//NOT
+
+	using namespace utility::tag;
+	XMLSchemaRestriction operator_type;
+	operator_type.name( "operator_type" );
+	operator_type.base_type( xs_string );
+	operator_type.add_restriction( xsr_enumeration, "AND" );
+	operator_type.add_restriction( xsr_enumeration, "OR" );
+	operator_type.add_restriction( xsr_enumeration, "NOT" );
+	xsd.add_top_level_element( operator_type );
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "task1", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "task2", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "operator", "operator_type", "XRW_TODO" )
+		+ XMLSchemaAttribute::required_attribute( "task_name", xs_string, "XRW_TODO" )
+		+ XMLSchemaAttribute::attribute_w_default( "overwrite", xsct_rosetta_bool, "XRW TO DO",  "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "XRW TO DO", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW_TODO", attlist );
+}
+
+std::string StoreCombinedStoredTasksMoverCreator::keyname() const {
+	return StoreCombinedStoredTasksMover::mover_name();
+}
+
+protocols::moves::MoverOP
+StoreCombinedStoredTasksMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
+}
+
+void StoreCombinedStoredTasksMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StoreCombinedStoredTasksMover::provide_xml_schema( xsd );
+}
+
 
 } // task_operations
 } // toolbox

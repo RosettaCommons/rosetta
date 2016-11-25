@@ -60,7 +60,7 @@ public:
 
 	/// @brief Returns the name of this mover ("AddCompositionConstraintMover").
 	///
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Actually apply the mover to a pose.
 	///
@@ -86,6 +86,18 @@ public:
 	/// @brief Add a ResidueSelector to the constraint to use as a mask.
 	/// @details The constraint must already have been created with the create_constraint_from_file() function before this function is called.
 	void add_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	//Private member variables:

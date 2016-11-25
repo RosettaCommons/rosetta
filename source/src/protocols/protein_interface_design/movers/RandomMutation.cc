@@ -37,6 +37,9 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -48,25 +51,25 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
 
-std::string
-RandomMutationCreator::keyname() const
-{
-	return RandomMutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RandomMutationCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RandomMutation::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RandomMutationCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RandomMutation );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RandomMutationCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RandomMutation );
+// XRW TEMP }
 
-std::string
-RandomMutationCreator::mover_name()
-{
-	return "RandomMutation";
-}
+// XRW TEMP std::string
+// XRW TEMP RandomMutation::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RandomMutation";
+// XRW TEMP }
 
 RandomMutation::RandomMutation() :
-	Mover( RandomMutationCreator::mover_name() ),
+	Mover( RandomMutation::mover_name() ),
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ )
 {
@@ -147,10 +150,10 @@ RandomMutation::apply( core::pose::Pose & pose )
 	(*scorefxn())(pose);
 }
 
-std::string
-RandomMutation::get_name() const {
-	return RandomMutationCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RandomMutation::get_name() const {
+// XRW TEMP  return RandomMutation::mover_name();
+// XRW TEMP }
 
 void
 RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
@@ -193,6 +196,40 @@ bool RandomMutation::cache_task() const {
 void RandomMutation::cache_task( bool cache ) {
 	cache_task_ = cache;
 }
+
+std::string RandomMutation::get_name() const {
+	return mover_name();
+}
+
+std::string RandomMutation::mover_name() {
+	return "RandomMutation";
+}
+
+void RandomMutation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "cache_task", xsct_rosetta_bool, "Cache the packer task every time", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RandomMutationCreator::keyname() const {
+	return RandomMutation::mover_name();
+}
+
+protocols::moves::MoverOP
+RandomMutationCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RandomMutation );
+}
+
+void RandomMutationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RandomMutation::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

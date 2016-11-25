@@ -152,10 +152,17 @@ void PreventResiduesFromRepackingOperation::provide_xml_schema( utility::tag::XM
 {
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "reference_pdb_id", xs_string, "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "residues", xs_string, "" );
+		+ XMLSchemaAttribute::attribute_w_default(
+		"reference_pdb_id", xs_string,
+		"translate residues to reference pose",
+		"")
+		+ XMLSchemaAttribute::required_attribute(
+		"residues", xs_string,
+		"Comma delimited list of residues");
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Do not allow repacking at all for a string of residues to repacking. Use comma-delimited list of residues");
 }
 
 

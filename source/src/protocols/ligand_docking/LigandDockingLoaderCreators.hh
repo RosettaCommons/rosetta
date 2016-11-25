@@ -28,6 +28,8 @@ class InterfaceBuilderLoaderCreator : public jd2::parser::DataLoaderCreator
 public:
 	jd2::parser::DataLoaderOP create_loader() const override;
 	std::string keyname() const override;
+	DerivedNameFunction schema_ct_naming_function() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class MoveMapBuilderLoaderCreator : public jd2::parser::DataLoaderCreator
@@ -35,6 +37,8 @@ class MoveMapBuilderLoaderCreator : public jd2::parser::DataLoaderCreator
 public:
 	jd2::parser::DataLoaderOP create_loader() const override;
 	std::string keyname() const override;
+	DerivedNameFunction schema_ct_naming_function() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class LigandAreaLoaderCreator : public jd2::parser::DataLoaderCreator
@@ -42,6 +46,8 @@ class LigandAreaLoaderCreator : public jd2::parser::DataLoaderCreator
 public:
 	jd2::parser::DataLoaderOP create_loader() const override;
 	std::string keyname() const override;
+	DerivedNameFunction schema_ct_naming_function() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //namespace ligand_docking

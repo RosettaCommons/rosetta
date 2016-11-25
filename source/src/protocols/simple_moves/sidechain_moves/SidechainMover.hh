@@ -66,11 +66,9 @@ public:
 
 	~SidechainMover();
 
-	virtual
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -78,7 +76,7 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
 	/// @brief initialize the packer task if necessary
 	void
@@ -86,13 +84,12 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	virtual
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
-	);
+	) override;
 
 	core::conformation::ResidueOP
 	make_move( core::conformation::ResidueOP res );
@@ -102,9 +99,9 @@ public:
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
 	core::Real
 	proposal_density(
@@ -118,7 +115,7 @@ public:
 	void
 	test_move(
 		core::pose::Pose &
-	);
+	) override;
 
 	/// @brief idealize sidechains that might be altered
 	void
@@ -162,13 +159,13 @@ public:
 
 	/// @brief get whether detailed balance is preserved (i.e. proposal density ratio calculated)
 	bool
-	preserve_detailed_balance() const;
+	preserve_detailed_balance() const override;
 
 	/// @brief set whether detailed balance is preserved (i.e. proposal density ratio calculated)
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
-	);
+	) override;
 
 	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	bool
@@ -181,18 +178,16 @@ public:
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-	virtual
 	utility::vector1<core::id::TorsionID_Range>
 	torsion_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-	virtual
 	utility::vector1<core::id::DOF_ID_Range>
 	dof_id_ranges(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	/// @brief get the probability of sampling within the same rotamer
 	core::Real
@@ -247,9 +242,8 @@ public:
 	last_withinrot() const;
 
 	/// @brief get the ratio of proposal densities for the last move
-	virtual
 	core::Real
-	last_proposal_density_ratio();
+	last_proposal_density_ratio() override;
 
 
 	/// @brief update string describing the move type
@@ -266,6 +260,18 @@ public:
 	sampling_temperature(){
 		return sampling_temperature_;
 	}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

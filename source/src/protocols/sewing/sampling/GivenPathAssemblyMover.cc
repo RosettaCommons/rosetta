@@ -30,6 +30,9 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -39,23 +42,23 @@ static basic::Tracer TR( "protocols.sewing.sampling.GivenPathAssemblyMover" );
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-protocols::moves::MoverOP
-GivenPathAssemblyMoverCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new GivenPathAssemblyMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GivenPathAssemblyMoverCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new GivenPathAssemblyMover );
+// XRW TEMP }
 
-std::string
-GivenPathAssemblyMoverCreator::keyname() const
-{
-	return GivenPathAssemblyMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GivenPathAssemblyMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GivenPathAssemblyMover::mover_name();
+// XRW TEMP }
 
-std::string
-GivenPathAssemblyMoverCreator::mover_name()
-{
-	return "GivenPathAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GivenPathAssemblyMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GivenPathAssemblyMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 GivenPathAssemblyMover::clone() const {
@@ -66,10 +69,10 @@ GivenPathAssemblyMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new GivenPathAssemblyMover );
 }
 
-std::string
-GivenPathAssemblyMover::get_name() const {
-	return "GivenPathAssemblyMover";
-}
+// XRW TEMP std::string
+// XRW TEMP GivenPathAssemblyMover::get_name() const {
+// XRW TEMP  return "GivenPathAssemblyMover";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////  GivenPathAssemblyMover function   //////////////////////////////////
@@ -161,6 +164,38 @@ GivenPathAssemblyMover::parse_my_tag(
 		utility_exit_with_message("You must specify a path in the GivenPathAssemblyMover tag");
 	}
 }
+
+std::string GivenPathAssemblyMover::get_name() const {
+	return mover_name();
+}
+
+std::string GivenPathAssemblyMover::mover_name() {
+	return "GivenPathAssemblyMover";
+}
+
+void GivenPathAssemblyMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string GivenPathAssemblyMoverCreator::keyname() const {
+	return GivenPathAssemblyMover::mover_name();
+}
+
+protocols::moves::MoverOP
+GivenPathAssemblyMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GivenPathAssemblyMover );
+}
+
+void GivenPathAssemblyMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GivenPathAssemblyMover::provide_xml_schema( xsd );
+}
+
 
 } //sewing
 } //protocols

@@ -164,7 +164,7 @@ public:
 	MoverOP clone() const override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tags,
@@ -178,6 +178,18 @@ public:
 	void end_weight  ( core::Real end_weight_in   );
 
 	void set_func_for_weight( core::scoring::ScoreType scoretype, RampingFuncOP func );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

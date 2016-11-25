@@ -43,6 +43,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
 
@@ -231,22 +234,65 @@ ScaleMapIntensities::parse_my_tag(
 	}
 }
 
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP ScaleMapIntensitiesCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new ScaleMapIntensities );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ScaleMapIntensitiesCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return ScaleMapIntensities::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP ScaleMapIntensities::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "ScaleMapIntensities";
+// XRW TEMP }
+
+std::string ScaleMapIntensities::get_name() const {
+	return mover_name();
+}
+
+std::string ScaleMapIntensities::mover_name() {
+	return "ScaleMapIntensities";
+}
+
+void ScaleMapIntensities::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("res_low", xsct_real, "Low resolution cut off (Angstroms), default=10000")
+		+ XMLSchemaAttribute("res_high", xsct_real, "High resolution cut off (Angstroms), default=0")
+		+ XMLSchemaAttribute("b_sharpen", xsct_real, "XRW TO DO, default=0.0")
+		+ XMLSchemaAttribute("truncate_only", xsct_real, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("fade_width", xsct_real, "XRW TO DO, default=0.1")
+		+ XMLSchemaAttribute("mask", xsct_rosetta_bool, "XRW TO DO, default=true")
+		+ XMLSchemaAttribute("mask_output", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("asymm_only", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("ignore_bs", xsct_rosetta_bool, "XRW TO DO, default=false")
+		+ XMLSchemaAttribute("bin_squared", xsct_rosetta_bool, "XRW TO DO,default=false")
+		+ XMLSchemaAttribute("nresbins", xsct_non_negative_integer, "XRW TO DO, default=50")
+		+ XMLSchemaAttribute("outmap", xs_string, "File name for output map.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "scale density map intensities to match a pose\'s", attlist );
+}
+
+std::string ScaleMapIntensitiesCreator::keyname() const {
+	return ScaleMapIntensities::mover_name();
+}
+
 protocols::moves::MoverOP
 ScaleMapIntensitiesCreator::create_mover() const {
 	return protocols::moves::MoverOP( new ScaleMapIntensities );
 }
 
-std::string
-ScaleMapIntensitiesCreator::keyname() const
+void ScaleMapIntensitiesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return ScaleMapIntensitiesCreator::mover_name();
+	ScaleMapIntensities::provide_xml_schema( xsd );
 }
 
-std::string
-ScaleMapIntensitiesCreator::mover_name()
-{
-	return "ScaleMapIntensities";
-}
 
 }
 }

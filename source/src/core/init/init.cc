@@ -662,8 +662,8 @@ static ResFilterRegistrator< ResidueName3IsCreator > ResidueName3IsCreator_regis
 static ResFilterRegistrator< ResidueName3IsntCreator > ResidueName3IsntCreator_registrator;
 static ResFilterRegistrator< ResidueIndexIsCreator > ResidueIndexIsCreator_registrator;
 static ResFilterRegistrator< ResidueIndexIsntCreator > ResidueIndexIsntCreator_registrator;
-static ResFilterRegistrator< ResiduePDBIndexIsCreator > ResiduePDBIndexIsCreator_registrator;
-static ResFilterRegistrator< ResiduePDBIndexIsntCreator > ResiduePDBIndexIsntCreator_registrator;
+//static ResFilterRegistrator< ResiduePDBIndexIsCreator > ResiduePDBIndexIsCreator_registrator;
+//static ResFilterRegistrator< ResiduePDBIndexIsntCreator > ResiduePDBIndexIsntCreator_registrator;
 static ResFilterRegistrator< ChainIsCreator > ChainIsCreator_registrator;
 static ResFilterRegistrator< ChainIsntCreator > ChainIsntCreator_registrator;
 static ResFilterRegistrator< AnyResFilterCreator > AnyResFilterCreator_registrator;

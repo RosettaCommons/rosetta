@@ -92,7 +92,7 @@ public:
 		TS_ASSERT_EQUALS( jg.get_node_actual_range_begin( 3 ), 41 );
 		TS_ASSERT_EQUALS( jg.get_node_actual_range_end(   3 ), 60 );
 
-		for ( core::Size ii =  1; ii <= 10; ++ii ) { TS_ASSERT_EQUALS( jg.node_for_jobid( ii ), 1 );	}
+		for ( core::Size ii =  1; ii <= 10; ++ii ) { TS_ASSERT_EQUALS( jg.node_for_jobid( ii ), 1 ); }
 		for ( core::Size ii = 11; ii <= 40; ++ii ) { TS_ASSERT_EQUALS( jg.node_for_jobid( ii ), 2 ); }
 		for ( core::Size ii = 41; ii <= 60; ++ii ) { TS_ASSERT_EQUALS( jg.node_for_jobid( ii ), 3 ); }
 
@@ -137,7 +137,7 @@ public:
 		TS_ASSERT( res1.empty() );
 
 		std::list< core::Size > to_discard2 = {
-			11, 13, 14, 15, 16, 17, 18, 19, 20,	21, 22, 24, 25, 26,
+			11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26,
 			27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
 		for ( auto ii : to_discard2 ) jg.note_job_discarded( ii );
 
@@ -148,7 +148,7 @@ public:
 
 		std::list< core::Size > to_discard3 = {
 			10, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-		  51, 52, 53, 54, 56, 57, 58, 59, 60 };
+			51, 52, 53, 54, 56, 57, 58, 59, 60 };
 		for ( auto ii : to_discard3 ) jg.note_job_discarded( ii );
 
 		std::list< core::Size > res3a = jg.find_descendentless_jobs_backwards_from_node( 3 );

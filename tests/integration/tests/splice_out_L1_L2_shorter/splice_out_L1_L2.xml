@@ -1,30 +1,31 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<TASKOPERATIONS>
-		<InitializeFromCommandline name=init/>
-		<RestrictToRepacking name=rtr/>
-		<SeqprofConsensus name=seqprofcons min_aa_probability=2 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1/>
+		<InitializeFromCommandline name="init"/>
+		<RestrictToRepacking name="rtr"/>
+		<SeqprofConsensus name="seqprofcons" min_aa_probability="2" probability_larger_than_current="0" ignore_pose_profile_length_mismatch="1"/>
 	</TASKOPERATIONS>
 	<SCOREFXNS>
-		<sc12_w_correction weights=talaris2013_calibrated>
-			<Reweight scoretype="res_type_constraint" weight=0.5/>
-			<Reweight scoretype="coordinate_constraint" weight=3/>
-			<Reweight scoretype="dihedral_constraint" weight=1/>
-		</sc12_w_correction>
-  		<score12_chainbreak weights=talaris2013_calibrated>
-        		<Reweight scoretype=chainbreak weight=1/>
-        	</score12_chainbreak>
+		<ScoreFunction name="sc12_w_correction" weights="talaris2013_calibrated">
+			<Reweight scoretype="res_type_constraint" weight="0.5"/>
+			<Reweight scoretype="coordinate_constraint" weight="3"/>
+			<Reweight scoretype="dihedral_constraint" weight="1"/>
+		</ScoreFunction>
+  		<ScoreFunction name="score12_chainbreak" weights="talaris2013_calibrated">
+        		<Reweight scoretype="chainbreak" weight="1"/>
+        	</ScoreFunction>
 	</SCOREFXNS>
 	<FILTERS>
-		<ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=10/> this will lead to a reduction of approx 30% of the output from a cutoff of 0.5... But the structures will be nice.
+		<ScoreType name="chainbreak_val" scorefxn="score12_chainbreak" score_type="chainbreak" threshold="10"/> this will lead to a reduction of approx 30% of the output from a cutoff of 0.5... But the structures will be nice.
 	</FILTERS>
 	<MOVERS>
-		<Splice name=splice debug=0 rtmin=0 loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="H1_H2.%%entry_name%%.db" scorefxn=sc12_w_correction ccd=1  randomize_cut=1 cut_secondarystruc=0 rms_cutoff=1.0 splice_filter=chainbreak_val thread_ala=0 template_file="%%source_pdb%%" design_task_operations=init,rtr design_shell=0 repack_shell=0 design=0 protein_family="antibodies" segment=L1_L2 tail_segment="n" thread_original_sequence=1 CG_const=1 tolerance=100> //using the disulfide as start and end points for the segment
+		<Splice name="splice" debug="0" rtmin="0" loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="H1_H2.%%entry_name%%.db" scorefxn="sc12_w_correction" ccd="1"  randomize_cut="1" cut_secondarystruc="0" rms_cutoff="1.0" splice_filter="chainbreak_val" thread_ala="0" template_file="%%source_pdb%%" design_task_operations="init,rtr" design_shell="0" repack_shell="0" design="0" protein_family="antibodies" segment="L1_L2" tail_segment="n" thread_original_sequence="1" CG_const="1" tolerance="100"> //using the disulfide as start and end points for the segment
 		</Splice>
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>
 	<PROTOCOLS>
-		<Add mover=splice/> 
+		<Add mover="splice"/> 
 		Add filter=designable/>
 	</PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

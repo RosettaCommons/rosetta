@@ -60,20 +60,20 @@ public: // boiler plate / virtuals
 		core::pack::task::TaskFactoryOP tf
 	);
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_new_input() const override;
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycle class
 	static void register_options();
 
 public: // printing methods
-	virtual void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, SmallMinCCDTrial const & small_min_ccd_trial );
 
 public: // class-specific public methods
@@ -82,6 +82,18 @@ public: // class-specific public methods
 
 	core::optimization::MinimizerOptionsOP minimizer_options() const;
 	void set_minimizer_options( core::optimization::MinimizerOptionsOP minimizer_options );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private: // methods
 	void setup_objects( Pose const & pose );

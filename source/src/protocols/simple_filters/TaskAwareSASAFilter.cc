@@ -43,6 +43,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 //// C++ headers
@@ -203,11 +206,49 @@ TaskAwareSASAFilter::report( std::ostream & out, core::pose::Pose const & pose )
 	out << "TaskAwareSASAFilter returns " << compute( pose, false ) << std::endl;
 }
 
-protocols::filters::FilterOP
-TaskAwareSASAFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareSASAFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP TaskAwareSASAFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareSASAFilter ); }
 
-std::string
-TaskAwareSASAFilterCreator::keyname() const { return "TaskAwareSASA"; }
+// XRW TEMP std::string
+// XRW TEMP TaskAwareSASAFilterCreator::keyname() const { return "TaskAwareSASA"; }
+
+std::string TaskAwareSASAFilter::name() const {
+	return class_name();
+}
+
+std::string TaskAwareSASAFilter::class_name() {
+	return "TaskAwareSASA";
+}
+
+void TaskAwareSASAFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "Returns true if the set of residues defined by the TaskOperations have a combined SASA higher than the threshold, false otherwise. Default threshold is 0 so that all structures will pass if a threshold is not explicitly specified." , "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "designable_only" , xsct_rosetta_bool , "If true, only designable positions are calculated...?" , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "sc_only" , xsct_rosetta_bool , "Make backbone atoms virtual to find sidechain-only values?" , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "probe_radius" , xsct_real , "Probe radius for calculating the solvent accessible surface area. Note: the default is larger than the typical used to represent water of 1.4 angstroms, but has been found to work well with the other default parameters for protein redesign purposes." , "2.2" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_non_negative_integer , "If a jump has been provided by the user, separate the pose by that jump." , "0" ) ;
+
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates SASA for a set of residues defined by TaskOperations.", attlist );
+}
+
+std::string TaskAwareSASAFilterCreator::keyname() const {
+	return TaskAwareSASAFilter::class_name();
+}
+
+protocols::filters::FilterOP
+TaskAwareSASAFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new TaskAwareSASAFilter );
+}
+
+void TaskAwareSASAFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskAwareSASAFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // simple_filters

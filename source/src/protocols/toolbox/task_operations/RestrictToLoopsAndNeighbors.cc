@@ -112,11 +112,11 @@ void RestrictToLoopsAndNeighbors::provide_xml_schema( utility::tag::XMLSchemaDef
 	// From parent.
 	RestrictToLoops::provide_attributes( attributes );
 	attributes
-		+ XMLSchemaAttribute( "include_neighbors", xs_boolean )
-		+ XMLSchemaAttribute( "design_neighbors", xs_boolean )
-		+ XMLSchemaAttribute( "cutoff_dist", xs_decimal );
+		+ XMLSchemaAttribute( "include_neighbors", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "design_neighbors", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "cutoff_dist", xsct_real , "XRW TO DO" );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const

@@ -166,6 +166,14 @@ AntibodyDesignEnumManager::design_protocol_is_present(std::string const & design
 	return iter != design_protocol_to_enum_.end();
 }
 
+utility::vector1<std::string>
+AntibodyDesignEnumManager::get_recognized_design_protocols() const {
+	utility::vector1<std::string> recognized_design_protocols;
+	for ( auto protocol : design_protocol_to_enum_ ) {
+		recognized_design_protocols.push_back(protocol.first);
+	}
+	return recognized_design_protocols;
+}
 
 MinTypeEnum
 AntibodyDesignEnumManager::min_type_string_to_enum(std::string const & min_type) const {

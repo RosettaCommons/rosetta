@@ -85,8 +85,8 @@ public:
 	apply(
 		core::pose::Pose & pose ) override;
 
-	std::string
-	get_name() const override;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
 
 	void
 	set_ligres(
@@ -101,6 +101,18 @@ public:
 	/// to return all matches
 	void
 	set_return_single_random_match( bool const single_random );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 	bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & ) override;

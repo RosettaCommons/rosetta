@@ -44,6 +44,9 @@
 #include <map>
 #include <set>
 #include <ctime>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.FixAllLoopsMover" );
@@ -57,21 +60,6 @@ using utility::vector1;
 
 
 FixAllLoopsMover::FixAllLoopsMover():moves::Mover("FixAllLoopsMover"){}
-
-std::string FixAllLoopsMoverCreator::keyname() const
-{
-	return FixAllLoopsMoverCreator::mover_name();
-}
-
-std::string FixAllLoopsMoverCreator::mover_name(){
-	return "FixAllLoopsMover";
-}
-
-
-protocols::moves::MoverOP
-FixAllLoopsMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FixAllLoopsMover );
-}
 
 protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pose){
 	protocols::loops::Loops pose_loops;
@@ -164,11 +152,6 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 	//  //std::cout << "total_time" << end_time-start_time_ << std::endl;
 }
 
-
-std::string FixAllLoopsMover::get_name() const {
-	return "FixAllLoopsMover";
-}
-
 void
 FixAllLoopsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -243,6 +226,72 @@ FixAllLoopsMover::parse_my_tag(
 	TR << "database loaded!!" << std::endl;
 	std::cout << resAdjustmentStartLow_ <<"," << resAdjustmentStartHigh_ << ",:," << resAdjustmentStopLow_ << "," << resAdjustmentStopHigh_ << ",:," << loopLengthRangeLow_ <<"," << loopLengthRangeHigh_ << std::endl;
 }
+
+std::string FixAllLoopsMover::get_name() const {
+	return mover_name();
+}
+
+std::string FixAllLoopsMover::mover_name() {
+	return "FixAllLoopsMover";
+}
+
+void FixAllLoopsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"loopLengthRange", xs_string,
+		"XSD_XRW: TO DO", "1,4");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"RMSthreshold", xsct_real,
+		"XSD_XRW: TO DO", "0.4");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide1", xs_string,
+		"XSD_XRW: TO DO", "-3,3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide2", xs_string,
+		"XSD_XRW: TO DO", "-3,3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide1_sheet", xs_string,
+		"XSD_XRW: TO DO", "-1,1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide2_sheet", xs_string,
+		"XSD_XRW: TO DO", "-1,1");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"residue_range", xs_string,
+		"XSD_XRW: TO DO", "1,999999");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_vdw_change", xsct_real,
+		"XSD_XRW: TO DO", "10.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ideal", xsct_rosetta_bool,
+		"XSD_XRW: TO DO", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"reject_failed_loops", xsct_rosetta_bool,
+		"XSD_XRW: TO DO", "true");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Connects chains using a very fast RMSD lookback. "
+		"Only works for chains less than 5 residues. Designed to make loops look within .4 RMSD "
+		"to naturally occuring loops",
+		attlist );
+}
+
+std::string FixAllLoopsMoverCreator::keyname() const {
+	return FixAllLoopsMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FixAllLoopsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FixAllLoopsMover );
+}
+
+void FixAllLoopsMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FixAllLoopsMover::provide_xml_schema( xsd );
+}
+
 
 }//pose_length_moves
 }//protocols

@@ -52,10 +52,14 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
+
+// Utility headers
+#include <utility/excn/Exceptions.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+
 
 using basic::T;
 using basic::Error;
@@ -183,6 +187,8 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 
 	return returnstring;
 }
+
+
 
 /// @brief Sets the effect of this perturber.
 void GeneralizedKICperturber::set_perturber_effect( perturber_effect const &effect )
@@ -981,17 +987,17 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 			loop_pose_copy.residue(loopindex).has_lower_connect() && loop_pose_copy.residue(loopindex).has_upper_connect(),
 			"Unable to apply randomize_backbone_by_rama_prepro perturbation.  The residue must be connected at both its lower and upper connections." );
 		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type(
-				loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
+			loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
 			).get_self_ptr()
 		);
 		rama.random_mainchain_torsions( loop_pose_copy.residue_type(loopindex).get_self_ptr(), following_rsd, rand_torsions );
-		
+
 		core::Size const ntors( rand_torsions.size() );
-		
-		for(core::Size i=1; i<=ntors; ++i) {
+
+		for ( core::Size i=1; i<=ntors; ++i ) {
 			loop_pose_copy.set_torsion( core::id::TorsionID( loopindex, core::id::BB, i ), rand_torsions[i] );
 		}
-	
+
 		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
 #ifdef BOINC_GRAPHICS
 		if ( attach_boinc_ghost_observer() ) {
@@ -1005,10 +1011,10 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 		//Finding and setting mainchain torsions:
 		utility::vector1 < std::string > at1list;
 		utility::vector1 < std::string > at2list;
-		for(core::Size j=1; j<=ntors; ++j) {
+		for ( core::Size j=1; j<=ntors; ++j ) {
 			at1list.push_back( loop_pose_copy.residue( loopindex ).atom_name(j) ); at2list.push_back( loop_pose_copy.residue( loopindex ).atom_name(j+1) );
 		}
-		
+
 		for ( core::Size j=1; j<=ntors; ++j ) {
 			for ( core::Size ia=4, iamax=atomlist.size()-3; ia<=iamax; ++ia ) {
 				if ( atomlist[ia].first.rsd()!=loopindex ) continue;
@@ -1017,7 +1023,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 					if ( ia<iamax &&
 							atomlist[ia+1].first.rsd()==loopindex &&
 							atomlist[ia+1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j])
-					) { //Torsion going forward
+							) { //Torsion going forward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia-1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -1029,7 +1035,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 					} else if ( ia>4 &&
 							atomlist[ia-1].first.rsd()==loopindex &&
 							atomlist[ia-1].first.atomno()==loop_pose_copy.residue(loopindex).atom_index(at2list[j])
-					) { //Torsion going backward
+							) { //Torsion going backward
 						numeric::dihedral_degrees (
 							loop_pose_copy.xyz(atomlist[ia+1].first),
 							loop_pose_copy.xyz(atomlist[ia].first),
@@ -1050,7 +1056,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 	if ( TR.Warning.visible() ) TR.Warning.flush();
 	if ( TR.Debug.visible() ) TR.Debug.flush();
 	if ( TR.visible() ) TR.flush();
-	
+
 } //apply_randomize_backbone_by_rama_prepro
 
 
@@ -1310,6 +1316,31 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 	if ( TR.Debug.visible() ) TR.Debug.flush();
 
 	return;
+}
+
+void
+GeneralizedKICperturber::define_valid_perturber_name_enumeration( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaRestriction genkic_perturber_name;
+	genkic_perturber_name.name( "genkic_perturber_name" );
+	genkic_perturber_name.base_type( xs_string );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "no_effect" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "set_dihedral" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "set_bondangle" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "set_bondlength" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "set_backbone_bin" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_dihedral" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_alpha_backbone_by_rama" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_backbone_by_rama_prepro" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_backbone_by_bins" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_dihedral" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_dihedral_bbg" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_backbone_by_bins" );
+	genkic_perturber_name.add_restriction( xsr_enumeration, "sample_cis_peptide_bond" );
+	// genkic_perturber_name.add_restriction( xsr_enumeration, "unknown_effect" );
+	xsd.add_top_level_element( genkic_perturber_name );
+
 }
 
 } //namespace perturber

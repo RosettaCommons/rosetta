@@ -64,6 +64,9 @@
 // utility
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
 
@@ -397,9 +400,63 @@ moves::MoverOP BackboneTorsionPerturbation::fresh_instance() const {
 	return moves::MoverOP( new BackboneTorsionPerturbation );
 }
 
-std::string
-BackboneTorsionPerturbation::get_name() const {
+// XRW TEMP std::string
+// XRW TEMP BackboneTorsionPerturbation::get_name() const {
+// XRW TEMP  return "BackboneTorsionPerturbation";
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP BackboneTorsionPerturbationCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new BackboneTorsionPerturbation );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP BackboneTorsionPerturbationCreator::keyname() const {
+// XRW TEMP  return BackboneTorsionPerturbation::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP BackboneTorsionPerturbation::mover_name() {
+// XRW TEMP  return "BackboneTorsionPerturbation";
+// XRW TEMP }
+
+std::string BackboneTorsionPerturbation::get_name() const {
+	return mover_name();
+}
+
+std::string BackboneTorsionPerturbation::mover_name() {
 	return "BackboneTorsionPerturbation";
+}
+
+void BackboneTorsionPerturbation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute( "start_res", xsct_positive_integer, "nominally lower bound for a region to sample, but it looks like it's ignored in the code. effectively defaults to 1")
+		+ XMLSchemaAttribute( "stop_res", xsct_positive_integer, "nominally upper bound for a region to sample, but it looks like it's ignored in the code. effectively defaults to the size of the Pose at parse_my_tag time")
+		+ XMLSchemaAttribute( "native", xs_string, "file path to native pose, used to calculate gdtmm")
+		+ XMLSchemaAttribute( "increase_cycles", xsct_real, "multiply cycle count by this")
+		+ XMLSchemaAttribute( "recover_low", xsct_rosetta_bool, "recover the lowest-energy structure seen in the Monte Carlo trajectory at the end?")
+		+ XMLSchemaAttribute( "temp", xs_decimal, "Monte Carlo temperature")
+		+ XMLSchemaAttribute( "scorefxn", xs_string, "use this scorefunction (from the SCOREFXN section)");
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	std::string const dump_snapshots_warning(" Note that dump_snapshots must be set to make snapshot_prefix or snapshot_interval active");
+
+	attlist
+		+ XMLSchemaAttribute( "dump_snapshots", xsct_non_negative_integer, "dump structures during sampling," + dump_snapshots_warning)
+		+ XMLSchemaAttribute::attribute_w_default( "snapshot_prefix", xs_string, "prefix for structures dumped during sampling," + dump_snapshots_warning, "snapshot")
+		+ XMLSchemaAttribute::attribute_w_default( "snapshot_interval", xsct_positive_integer, "how frequently to dump structures during sampling," + dump_snapshots_warning, "100");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Not documented.  Appears to be some sort of relax analogue.  Related to BackboneTorsionSampler", attlist );
+}
+
+std::string BackboneTorsionPerturbationCreator::keyname() const {
+	return BackboneTorsionPerturbation::mover_name();
 }
 
 protocols::moves::MoverOP
@@ -407,15 +464,11 @@ BackboneTorsionPerturbationCreator::create_mover() const {
 	return protocols::moves::MoverOP( new BackboneTorsionPerturbation );
 }
 
-std::string
-BackboneTorsionPerturbationCreator::keyname() const {
-	return BackboneTorsionPerturbationCreator::mover_name();
+void BackboneTorsionPerturbationCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackboneTorsionPerturbation::provide_xml_schema( xsd );
 }
 
-std::string
-BackboneTorsionPerturbationCreator::mover_name() {
-	return "BackboneTorsionPerturbation";
-}
 
 } // moves
 } // protocols

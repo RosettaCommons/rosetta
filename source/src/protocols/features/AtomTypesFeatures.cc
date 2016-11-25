@@ -37,6 +37,10 @@
 
 // C++ Headers
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/AtomTypesFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -61,8 +65,8 @@ AtomTypesFeatures::AtomTypesFeatures() {}
 
 AtomTypesFeatures::~AtomTypesFeatures() = default;
 
-string
-AtomTypesFeatures::type_name() const { return "AtomTypesFeatures"; }
+// XRW TEMP string
+// XRW TEMP AtomTypesFeatures::type_name() const { return "AtomTypesFeatures"; }
 
 void
 AtomTypesFeatures::write_schema_to_db(
@@ -96,6 +100,36 @@ AtomTypesFeatures::report_features(
 	atom_type_dbio_.write_atom_type_set_to_database(atom_type_set, db_session);
 	return 0;
 }
+
+std::string AtomTypesFeatures::type_name() const {
+	return class_name();
+}
+
+std::string AtomTypesFeatures::class_name() {
+	return "AtomTypesFeatures";
+}
+
+void AtomTypesFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Features for which atom type set is being used by a Pose", attlist );
+}
+
+std::string AtomTypesFeaturesCreator::type_name() const {
+	return AtomTypesFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+AtomTypesFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new AtomTypesFeatures );
+}
+
+void AtomTypesFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomTypesFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } // namesapce

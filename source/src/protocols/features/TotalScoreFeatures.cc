@@ -41,6 +41,9 @@
 // C++ headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
 
 namespace protocols {
 namespace features {
@@ -54,13 +57,13 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using utility::tools::make_vector;
 
-FeaturesReporterOP TotalScoreFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new TotalScoreFeatures );
-}
+// XRW TEMP FeaturesReporterOP TotalScoreFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new TotalScoreFeatures );
+// XRW TEMP }
 
-std::string TotalScoreFeaturesCreator::type_name() const {
-	return "TotalScoreFeatures";
-}
+// XRW TEMP std::string TotalScoreFeaturesCreator::type_name() const {
+// XRW TEMP  return "TotalScoreFeatures";
+// XRW TEMP }
 
 TotalScoreFeatures::TotalScoreFeatures()
 : scorefxn_(core::scoring::get_score_function()) {}
@@ -70,9 +73,9 @@ TotalScoreFeatures::TotalScoreFeatures(ScoreFunctionOP scorefxn)
 
 TotalScoreFeatures::~TotalScoreFeatures() = default;
 
-string TotalScoreFeatures::type_name() const {
-	return "TotalScoreFeatures";
-}
+// XRW TEMP string TotalScoreFeatures::type_name() const {
+// XRW TEMP  return "TotalScoreFeatures";
+// XRW TEMP }
 
 ScoreFunctionCOP TotalScoreFeatures::scorefxn() const {
 	return scorefxn_;
@@ -145,6 +148,38 @@ Size TotalScoreFeatures::report_features(
 
 	return 0;
 }
+
+std::string TotalScoreFeatures::type_name() const {
+	return class_name();
+}
+
+std::string TotalScoreFeatures::class_name() {
+	return "TotalScoreFeatures";
+}
+
+void TotalScoreFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("scorefxn", xs_string, "The name of the score function to report.");
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Report the total score for each structure using whatever score function you like.", attlist );
+}
+
+std::string TotalScoreFeaturesCreator::type_name() const {
+	return TotalScoreFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+TotalScoreFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new TotalScoreFeatures );
+}
+
+void TotalScoreFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TotalScoreFeatures::provide_xml_schema( xsd );
+}
+
 
 
 }

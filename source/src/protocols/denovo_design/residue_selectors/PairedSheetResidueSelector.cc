@@ -110,10 +110,15 @@ PairedSheetResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "secstruct",      xs_string,  "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "sheet_topology", xs_string,  "" )
-		+ XMLSchemaAttribute::attribute_w_default(  "use_dssp",       xs_boolean, "true" );
-	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute(  "secstruct",      xs_string, "Secondary structure, e.g. \"EEEELLEEEE\"."
+		" If undefined, sec struct will be chosen based on the value of the 'use_dssp' option" )
+		+ XMLSchemaAttribute(  "sheet_topology", xs_string, "String describing sheet topology, of the format A-B.P.R, "
+		"where A is the strand number of the first strand in primary space, "
+		"B is the strand number of the second strand in primary space, "
+		"P\t is 'P' for parallel and 'A' for antiparallel, and R is the register shift. "
+		"E.g. \"1-2.A.-1\"." )
+		+ XMLSchemaAttribute::attribute_w_default(  "use_dssp",       xsct_rosetta_bool, "Use dssp to aito-detect secondary structure.",  "true"  );
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Selects residues that are involved in strand-strand pairings.", attributes );
 }
 
 /// @brief Provide XSD information, allowing automatic evaluation of bad XML.

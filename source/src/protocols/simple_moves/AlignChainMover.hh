@@ -33,7 +33,7 @@ public:
 	AlignChainMover();
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -53,6 +53,18 @@ public:
 
 	core::Size target_chain() const { return target_chain_; }
 	void target_chain( core::Size const s ){ target_chain_ = s; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::pose::PoseOP pose_; //dflt NULL;
 	core::Size source_chain_, target_chain_ ; //dflt 0; which chains to align from source (current pose) on target (pose from disk). 0 means all chains

@@ -57,6 +57,10 @@
 #include <numeric/PCA.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.features.helixAssembly.HelixBundleFeatures" );
 
@@ -259,7 +263,7 @@ HelixBundleFeatures::parse_my_tag(
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/
 ){
-	runtime_assert(tag->getOption<string>("name") == type_name());
+	runtime_assert(tag->getName() == type_name());
 
 	if ( tag->hasOption("num_helices_per_bundle") ) {
 		num_helices_per_bundle_ = tag->getOption<core::Size>("num_helices_per_bundle");
@@ -499,6 +503,43 @@ HelixBundleFeatures::write_bundle_to_db(
 	}
 
 }
+
+std::string HelixBundleFeatures::type_name() const {
+	return class_name();
+}
+
+std::string HelixBundleFeatures::class_name() {
+	return "HelixBundleFeatures";
+}
+
+void HelixBundleFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute("num_helices_per_bundle", xsct_non_negative_integer, "Number of helices to put in each bundle")
+		+ XMLSchemaAttribute("min_helix_size", xsct_non_negative_integer, "Minimum size of helix to include in a bundle")
+		+ XMLSchemaAttribute("helix_cap_dist_cutoff", xsct_real, "Maximum distance between helix caps in the bundle")
+		+ XMLSchemaAttribute::attribute_w_default("min_per_residue_fa_attr", xsct_real, "Minimum fa_attr score per residue for a bundle", "0.2")
+		+ XMLSchemaAttribute::attribute_w_default("min_interacting_set_fraction", xsct_real, "Minimum fraction of residues in the bundle that interact with another helix", "0.4");
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Forms helical bundles from helices in a database and outputs bundles to a database", attlist );
+}
+
+std::string HelixBundleFeaturesCreator::type_name() const {
+	return HelixBundleFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+HelixBundleFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new HelixBundleFeatures );
+}
+
+void HelixBundleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	HelixBundleFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namespace helixAssembly
 } //namespace features

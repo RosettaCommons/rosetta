@@ -42,6 +42,9 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.ncbb.SecStructMinimizeMover" );
 
@@ -214,17 +217,52 @@ SecStructMinimizeMover::parse_my_tag(
 }
 
 // MoverCreator
-moves::MoverOP SecStructMinimizeMoverCreator::create_mover() const {
-	return moves::MoverOP( new SecStructMinimizeMover() );
+// XRW TEMP moves::MoverOP SecStructMinimizeMoverCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new SecStructMinimizeMover() );
+// XRW TEMP }
+
+// XRW TEMP std::string SecStructMinimizeMoverCreator::keyname() const {
+// XRW TEMP  return SecStructMinimizeMover::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string SecStructMinimizeMover::mover_name() {
+// XRW TEMP  return "SecStructMinimizeMover";
+// XRW TEMP }
+
+std::string SecStructMinimizeMover::get_name() const {
+	return mover_name();
+}
+
+std::string SecStructMinimizeMover::mover_name() {
+	return "SecStructMinimizeMover";
+}
+
+void SecStructMinimizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "alpha_beta_pattern", xs_string, "A string defining the 'mainchain torsion structure' of the heteropolymer of interest. If you are operating on a motif of three alpha residues followed by a beta residue, for example, your string here is AAAB.", "A" )
+		+ XMLSchemaAttribute::attribute_w_default( "constrain", xsct_rosetta_bool, "Constrain to input values to prevent excessive movement.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dihedral_pattern", xs_string, "A string defining the pattern of dihedral angles desired. For example, if you have an all alpha peptide but you want to require that adjacent peptide units have distinct dihedrals, alternating on down the chain, your string here is AB.", "A" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A minimization mover that searches a lower-dimensional dihedral space to find repeated secondary structure motifs.", attlist );
 }
 
 std::string SecStructMinimizeMoverCreator::keyname() const {
-	return SecStructMinimizeMoverCreator::mover_name();
+	return SecStructMinimizeMover::mover_name();
 }
 
-std::string SecStructMinimizeMoverCreator::mover_name() {
-	return "SecStructMinimizeMover";
+protocols::moves::MoverOP
+SecStructMinimizeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SecStructMinimizeMover );
 }
+
+void SecStructMinimizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SecStructMinimizeMover::provide_xml_schema( xsd );
+}
+
 
 } //ncbb
 } //protocols

@@ -108,6 +108,11 @@
 //output
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 //#include <unistd.h>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.pose_length_moves.NearNativeLoopCloser" );
@@ -782,20 +787,20 @@ void PossibleLoop::minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool id
 NearNativeLoopCloser::NearNativeLoopCloser():moves::Mover("NearNativeLoopCloser"){
 }
 
-std::string NearNativeLoopCloserCreator::keyname() const
-{
-	return NearNativeLoopCloserCreator::mover_name();
-}
+// XRW TEMP std::string NearNativeLoopCloserCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return NearNativeLoopCloser::mover_name();
+// XRW TEMP }
 
-std::string NearNativeLoopCloserCreator::mover_name(){
-	return "NearNativeLoopCloser";
-}
+// XRW TEMP std::string NearNativeLoopCloser::mover_name(){
+// XRW TEMP  return "NearNativeLoopCloser";
+// XRW TEMP }
 
 
-protocols::moves::MoverOP
-NearNativeLoopCloserCreator::create_mover() const {
-	return protocols::moves::MoverOP( new NearNativeLoopCloser );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP NearNativeLoopCloserCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new NearNativeLoopCloser );
+// XRW TEMP }
 
 
 NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,
@@ -828,9 +833,9 @@ NearNativeLoopCloser::NearNativeLoopCloser(int resAdjustmentStartLow,int resAdju
 	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
 }
 
-std::string NearNativeLoopCloser::get_name() const {
-	return "NearNativeLoopCloser";
-}
+// XRW TEMP std::string NearNativeLoopCloser::get_name() const {
+// XRW TEMP  return "NearNativeLoopCloser";
+// XRW TEMP }
 
 Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	//time_t start_time = time(NULL);
@@ -1256,6 +1261,79 @@ core::pose::PoseOP NearNativeLoopCloser::get_additional_output_with_rmsd(Real & 
 	return_rmsd = 9999;
 	return NULL;
 }
+
+std::string NearNativeLoopCloser::get_name() const {
+	return mover_name();
+}
+
+std::string NearNativeLoopCloser::mover_name() {
+	return "NearNativeLoopCloser";
+}
+
+void NearNativeLoopCloser::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"loopLengthRange", xs_string,
+		"XSD_XRW: TO DO", "1,5");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"RMSthreshold", xsct_real,
+		"XSD_XRW: TO DO", "0.4");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide1", xs_string,
+		"XSD_XRW: TO DO", "-3,3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"resAdjustmentRangeSide2", xs_string,
+		"XSD_XRW: TO DO", "-3,3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"chain", xs_string,
+		"XSD_XRW: TO DO", "A");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"chainBeforeLoop", xs_string,
+		"XSD_XRW: TO DO", "A");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"chainAfterLoop", xs_string,
+		"XSD_XRW: TO DO", "A");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"idealExtension", xsct_rosetta_bool,
+		"XSD_XRW: TO DO", "true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_vdw_change", xsct_real,
+		"XSD_XRW: TO DO", "8.0");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"ideal", xsct_rosetta_bool,
+		"XSD_XRW: TO DO", "false");
+	attlist + XMLSchemaAttribute(
+		"resBeforeLoop", xsct_non_negative_integer,
+		"XSD_XRW: TO DO");
+	attlist + XMLSchemaAttribute(
+		"resAfterLoop", xsct_non_negative_integer,
+		"XSD_XRW: TO DO");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"output_all", xsct_rosetta_bool,
+		"XSD_XRW: TO DO", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"XSD_XRW: TO DO",
+		attlist );
+}
+
+std::string NearNativeLoopCloserCreator::keyname() const {
+	return NearNativeLoopCloser::mover_name();
+}
+
+protocols::moves::MoverOP
+NearNativeLoopCloserCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NearNativeLoopCloser );
+}
+
+void NearNativeLoopCloserCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NearNativeLoopCloser::provide_xml_schema( xsd );
+}
+
 
 }//pose_length_moves
 }//protocols

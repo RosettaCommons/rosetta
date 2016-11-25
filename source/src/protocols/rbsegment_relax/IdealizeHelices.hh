@@ -39,7 +39,7 @@ public:
 		scorefxn_->set_weight( core::scoring::coordinate_constraint , cst_weight_ );
 	}
 
-	std::string get_name() const override { return IdealizeHelicesMoverCreator::mover_name(); }
+	// XRW TEMP  std::string get_name() const override { return IdealizeHelicesMoverCreator::mover_name(); }
 	moves::MoverOP clone() const override { return( protocols::moves::MoverOP( new IdealizeHelicesMover( *this ) ) ); }
 
 	void apply( core::pose::Pose & pose ) override;
@@ -50,6 +50,18 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;

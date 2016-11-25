@@ -55,6 +55,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <basic/Tracer.hh>
 
@@ -292,6 +293,7 @@ add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const
 
 /// @details common function to both grafting protocols for parsing out the movers that need to be task aware. Returns an empty task factory. If the tag is labeled TaskAware, all of the DesignRepackMovers within it will be assigned
 /// this task factory.
+///The preceding comment about TaskAware is probaby wrong - SML @ XSDXRW Nov 2016
 void
 generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory ){
 	using namespace utility::tag;
@@ -331,6 +333,31 @@ make_stub_scorefxn(){
 	stub_scorefxn->set_weight( coordinate_constraint, 1.0 );
 
 	return( stub_scorefxn );
+}
+
+std::string legolas_what_do_your_elf_eyes_see( std::string const & foo ) {
+	return "stubsets_sub_" + foo + "_type";
+}
+
+void
+add_subelement_for_parse_stub_sets( utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+
+	XMLSchemaSimpleSubelementList stubset_subelements;
+	AttributeList stubsets_tag_attributes, stubset_tag_attributes;
+	stubset_tag_attributes + XMLSchemaAttribute::required_attribute( "stubfile",  xs_string , "File that has stubs in it" );
+
+	stubset_subelements.add_simple_subelement( "Add", stubset_tag_attributes , "Set of hot spot stubs"); //  are actually anonymous
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & legolas_what_do_your_elf_eyes_see )
+		.element_name( "StubSets" )
+		.description( "A container for tags that indicate stubfiles to be loaded" )
+		.set_subelements_repeatable( stubset_subelements )
+		.add_attributes( stubsets_tag_attributes )
+		.write_complex_type_to_schema( xsd );
+
+	ssl.add_already_defined_subelement( "StubSets", & legolas_what_do_your_elf_eyes_see/*, 0*/ );
 }
 
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >

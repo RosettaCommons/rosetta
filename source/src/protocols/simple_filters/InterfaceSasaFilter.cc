@@ -35,6 +35,9 @@
 // Project Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -42,11 +45,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
-protocols::filters::FilterOP
-InterfaceSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceSasaFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP InterfaceSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceSasaFilter ); }
 
-std::string
-InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
+// XRW TEMP std::string
+// XRW TEMP InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
 
 
 InterfaceSasaFilter::InterfaceSasaFilter() :
@@ -342,6 +345,43 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	utility_exit_with_message( "Execution should never have reached this point." );
 	return( 0 );
 }
+
+std::string InterfaceSasaFilter::name() const {
+	return class_name();
+}
+
+std::string InterfaceSasaFilter::class_name() {
+	return "Sasa";
+}
+
+void InterfaceSasaFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "lower level threshold for filter", "800")
+		+ XMLSchemaAttribute::attribute_w_default("upper_threshold", xsct_real, "upper level threshold for filter", "1000000")
+		+ XMLSchemaAttribute("jump", xs_string, "jump number")
+		+ XMLSchemaAttribute("sym_dof_names", xs_string, "symmetric degrees of freedom")
+		+ XMLSchemaAttribute::attribute_w_default("hydrophobic", xsct_rosetta_bool, "hydrophobic?", "false")
+		+ XMLSchemaAttribute::attribute_w_default("polar", xsct_rosetta_bool, "polar?", "false");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters based upon interface SASA using either jumps or symmetric degrees of freedom", attlist );
+}
+
+std::string InterfaceSasaFilterCreator::keyname() const {
+	return InterfaceSasaFilter::class_name();
+}
+
+protocols::filters::FilterOP
+InterfaceSasaFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new InterfaceSasaFilter );
+}
+
+void InterfaceSasaFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceSasaFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

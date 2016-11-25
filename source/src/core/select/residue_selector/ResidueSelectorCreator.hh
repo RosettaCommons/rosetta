@@ -37,7 +37,7 @@ public:
 	/// from an XML file -- the name for the tag. E.g. "Neighborhood" for the NeighborhoodResidueSelector
 	virtual std::string keyname() const = 0;
 
-	/// @brief Define the structure of the XML file for a the ResidueSelector that this
+	/// @brief Define the structure of the XML file for the ResidueSelector that this
 	/// %ResidueSelectorCreator instantiates using the XML Schema language.
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const = 0;
 };

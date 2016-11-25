@@ -38,6 +38,9 @@ public:
 	virtual std::string
 	keyname() const;
 
+	virtual void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+
 };
 
 } //namespace architects

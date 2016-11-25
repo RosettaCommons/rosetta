@@ -50,6 +50,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/OptionKeys.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -569,11 +572,11 @@ FilterScanFilter::clone() const{
 	return protocols::filters::FilterOP( new FilterScanFilter( *this ) );
 }
 
-protocols::filters::FilterOP
-FilterScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FilterScanFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP FilterScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FilterScanFilter ); }
 
-std::string
-FilterScanFilterCreator::keyname() const { return "FilterScan"; }
+// XRW TEMP std::string
+// XRW TEMP FilterScanFilterCreator::keyname() const { return "FilterScan"; }
 
 void
 FilterScanFilter::dump_pdb( bool const d ){
@@ -584,6 +587,53 @@ bool
 FilterScanFilter::dump_pdb() const{
 	return dump_pdb_;
 }
+
+std::string FilterScanFilter::name() const {
+	return class_name();
+}
+
+std::string FilterScanFilter::class_name() {
+	return "FilterScan";
+}
+
+void FilterScanFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "triage_filter", xs_string, "If this filter evaluates to false, don't include the mutation in the resulting resfile", "true_filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "keep_native", xsct_rosetta_bool, "Keep the native conformation?", "false" )
+		+ XMLSchemaAttribute( "dump_pdb_name", xs_string, "Name to which to dump PDBs" )
+		+ XMLSchemaAttribute::attribute_w_default( "filter", xs_string, "The filter to be evaluated on every mutation passing triage_filter", "true_filter" )
+		+ XMLSchemaAttribute::attribute_w_default( "relax_mover", xs_string, "Mover with which to relax poses", "null" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta", xsct_rosetta_bool, "XRW TODO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "report_all", xsct_rosetta_bool, "Report all values", "false" );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute( "resfile_name", xs_string, "The output resfile name; if left unspecified, it will be the input PDB name plus .resfile" )
+		+ XMLSchemaAttribute::attribute_w_default( "resfile_general_property", xs_string, "Default resfile command", "nataa" )
+		+ XMLSchemaAttribute::attribute_w_default( "rtmin", xs_string, "Do rtmin on each residue prior to relaxation, which can lead to some energy noise but improves the fit of the mutated residue", "false" )
+		+ XMLSchemaAttribute( "score_log_file", xs_string, "Name of scorefile log" )
+		+ XMLSchemaAttribute::attribute_w_default( "dump_pdb", xsct_rosetta_bool, "Dump PDBs", "false" )
+		+ XMLSchemaAttribute( "delta_filters", xs_string, "Comma-separated list of filters to run" )
+		+ XMLSchemaAttribute( "delta_filter_thresholds", xsct_real_cslist, "Comma-separated list of filter thresholds" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Scan all mutations allowed by a particular set of TaskOperations and test them against a filter", attlist );
+}
+
+std::string FilterScanFilterCreator::keyname() const {
+	return FilterScanFilter::class_name();
+}
+
+protocols::filters::FilterOP
+FilterScanFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new FilterScanFilter );
+}
+
+void FilterScanFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FilterScanFilter::provide_xml_schema( xsd );
+}
+
 
 } // filters
 } // protein_interface_design

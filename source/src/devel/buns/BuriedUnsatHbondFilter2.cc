@@ -29,17 +29,22 @@
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
+#include <boost/foreach.hpp>
+
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace devel {
 namespace buns {
 
 static THREAD_LOCAL basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
-protocols::filters::FilterOP
-BuriedUnsatHbondFilter2Creator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP BuriedUnsatHbondFilter2Creator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 ); }
 
-std::string
-BuriedUnsatHbondFilter2Creator::keyname() const { return "BuriedUnsatHbonds2"; }
+// XRW TEMP std::string
+// XRW TEMP BuriedUnsatHbondFilter2Creator::keyname() const { return "BuriedUnsatHbonds2"; }
 
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_threshold, core::Size const jump_num ) :
 	protocols::filters::Filter( "BuriedUnsatHbonds2" ),
@@ -204,6 +209,48 @@ core::pack::task::TaskFactoryOP
 BuriedUnsatHbondFilter2::task_factory() const {
 	return task_factory_;
 }
+
+std::string BuriedUnsatHbondFilter2::name() const {
+	return class_name();
+}
+
+std::string BuriedUnsatHbondFilter2::class_name() {
+	return "BuriedUnsatHbonds2";
+}
+
+void BuriedUnsatHbondFilter2::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump_number", xsct_non_negative_integer, "Jump, numbered sequentially from 1, that defines the interface", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "cutoff", xsct_non_negative_integer, "Upper threshold beyond which the filter fails", "20" )
+		+ XMLSchemaAttribute::attribute_w_default( "generous_hbonds", xsct_rosetta_bool, "Use a generous definition of H-bonds", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "sasa_burial_cutoff", xsct_rosetta_bool, "Use a SASA threshold to define residue burial", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "AHD_cutoff", xsct_real, "Cutoff for AHD angle, in degrees, to define a hydrogen bond", "120" )
+		+ XMLSchemaAttribute::attribute_w_default( "dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond", "3.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "hxl_dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond to a hydroxyl", "3.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "sulph_dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond to a sulfur", "3.3" )
+		+ XMLSchemaAttribute::attribute_w_default( "metal_dist_cutoff", xsct_real, "Cutoff for distance, in Angstroms, to define a hydrogen bond to a metal", "2.7" );
+	protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
+	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string BuriedUnsatHbondFilter2Creator::keyname() const {
+	return BuriedUnsatHbondFilter2::class_name();
+}
+
+protocols::filters::FilterOP
+BuriedUnsatHbondFilter2Creator::create_filter() const {
+	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 );
+}
+
+void BuriedUnsatHbondFilter2Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BuriedUnsatHbondFilter2::provide_xml_schema( xsd );
+}
+
 
 }
 }

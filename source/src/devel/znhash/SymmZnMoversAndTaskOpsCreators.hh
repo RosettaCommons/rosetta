@@ -25,8 +25,11 @@ namespace znhash {
 class InsertZincCoordinationRemarkLinesCreator : public protocols::moves::MoverCreator
 {
 public:
+	// XRW TEMP  protocols::moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 class DisableZnCoordinationResiduesTaskOpCreator : public core::pack::task::operation::TaskOperationCreator
@@ -41,8 +44,11 @@ public:
 class LoadZnCoordNumHbondCalculatorMoverCreator : public protocols::moves::MoverCreator
 {
 public:
+	// XRW TEMP  protocols::moves::MoverOP create_mover() const override;
+	// XRW TEMP  std::string keyname() const override;
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

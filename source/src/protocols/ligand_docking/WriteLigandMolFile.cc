@@ -33,28 +33,31 @@
 #include <core/pose/util.hh>
 #include <map>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace ligand_docking {
 
 static THREAD_LOCAL basic::Tracer write_ligand_tracer( "protocols.ligand_docking.WriteLigandMolFile" );
 
-std::string
-WriteLigandMolFileCreator::keyname() const
-{
-	return WriteLigandMolFileCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP WriteLigandMolFileCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return WriteLigandMolFile::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-WriteLigandMolFileCreator::create_mover() const {
-	return protocols::moves::MoverOP( new WriteLigandMolFile );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP WriteLigandMolFileCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new WriteLigandMolFile );
+// XRW TEMP }
 
-std::string
-WriteLigandMolFileCreator::mover_name()
-{
-	return "WriteLigandMolFile";
-}
+// XRW TEMP std::string
+// XRW TEMP WriteLigandMolFile::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "WriteLigandMolFile";
+// XRW TEMP }
 
 WriteLigandMolFile::WriteLigandMolFile() :
 	Mover("WriteLigandMolFile"), chain_(""),directory_(""),prefix_(""),hash_file_names_(false)
@@ -83,10 +86,10 @@ protocols::moves::MoverOP WriteLigandMolFile::fresh_instance() const
 	return protocols::moves::MoverOP( new WriteLigandMolFile );
 }
 
-std::string WriteLigandMolFile::get_name() const
-{
-	return "WriteLigandMolFile";
-}
+// XRW TEMP std::string WriteLigandMolFile::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "WriteLigandMolFile";
+// XRW TEMP }
 
 void WriteLigandMolFile::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -166,6 +169,45 @@ void WriteLigandMolFile::apply(core::pose::Pose & pose)
 	mol_writer.output_residue(output,ligand_residue);
 
 }
+
+std::string WriteLigandMolFile::get_name() const {
+	return mover_name();
+}
+
+std::string WriteLigandMolFile::mover_name() {
+	return "WriteLigandMolFile";
+}
+
+void WriteLigandMolFile::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("hash_file_names", xs_string, "Seems to be unused.", "false")
+		+ XMLSchemaAttribute::required_attribute("chain", xs_string, "The PDB chain ID of the ligand to be output.")
+		+ XMLSchemaAttribute::required_attribute("directory", xs_string,
+		"The directory all mol records will be output to. "
+		"Directory will be created if it does not exist.")
+		+ XMLSchemaAttribute::required_attribute("prefix", xs_string, "Set a file prefix for the output files.");
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Output a V2000 mol file record containing all atoms of the specified ligand "
+		"chain and all data stored in the current Job for each processed pose", attlist );
+}
+
+std::string WriteLigandMolFileCreator::keyname() const {
+	return WriteLigandMolFile::mover_name();
+}
+
+protocols::moves::MoverOP
+WriteLigandMolFileCreator::create_mover() const {
+	return protocols::moves::MoverOP( new WriteLigandMolFile );
+}
+
+void WriteLigandMolFileCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	WriteLigandMolFile::provide_xml_schema( xsd );
+}
+
 
 }
 }

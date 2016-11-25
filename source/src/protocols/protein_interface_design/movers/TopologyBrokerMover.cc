@@ -50,6 +50,9 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <core/pose/PDBInfo.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -62,24 +65,24 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.TopologyBrokerMover" );
 
-std::string
-TopologyBrokerMoverCreator::keyname() const
-{
-	return TopologyBrokerMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TopologyBrokerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TopologyBrokerMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TopologyBrokerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TopologyBrokerMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TopologyBrokerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TopologyBrokerMover );
+// XRW TEMP }
 
-std::string
-TopologyBrokerMoverCreator::mover_name()
-{
-	return "TopologyBrokerMover";
-}
+// XRW TEMP std::string
+// XRW TEMP TopologyBrokerMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TopologyBrokerMover";
+// XRW TEMP }
 
-TopologyBrokerMover::TopologyBrokerMover() : simple_moves::DesignRepackMover( TopologyBrokerMoverCreator::mover_name() ) {}
+TopologyBrokerMover::TopologyBrokerMover() : simple_moves::DesignRepackMover( TopologyBrokerMover::mover_name() ) {}
 TopologyBrokerMover::~TopologyBrokerMover() {}
 
 void
@@ -138,10 +141,10 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 
 }
 
-std::string
-TopologyBrokerMover::get_name() const {
-	return TopologyBrokerMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TopologyBrokerMover::get_name() const {
+// XRW TEMP  return TopologyBrokerMover::mover_name();
+// XRW TEMP }
 
 void
 TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
@@ -174,6 +177,40 @@ protocols::moves::MoverOP
 TopologyBrokerMover::clone() const {
 	return( protocols::moves::MoverOP( new TopologyBrokerMover( *this ) ));
 }
+
+std::string TopologyBrokerMover::get_name() const {
+	return mover_name();
+}
+
+std::string TopologyBrokerMover::mover_name() {
+	return "TopologyBrokerMover";
+}
+
+void TopologyBrokerMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "realign", xsct_rosetta_bool, "Realign must be true, but its default is false. We are all children in the eyes of the Broker.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "rigid_start", xsct_positive_integer, "Rigid segment startend; must be on the second chain.", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "rigid_end", xsct_positive_integer, "Rigid segment end; must be on the second chain", "1" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string TopologyBrokerMoverCreator::keyname() const {
+	return TopologyBrokerMover::mover_name();
+}
+
+protocols::moves::MoverOP
+TopologyBrokerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TopologyBrokerMover );
+}
+
+void TopologyBrokerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TopologyBrokerMover::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

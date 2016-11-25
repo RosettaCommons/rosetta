@@ -40,6 +40,10 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/RotamerBoltzmannWeightFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -82,8 +86,8 @@ RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures(RotamerBoltzmannW
 
 RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures()= default;
 
-string
-RotamerBoltzmannWeightFeatures::type_name() const { return "RotamerBoltzmannWeightFeatures"; }
+// XRW TEMP string
+// XRW TEMP RotamerBoltzmannWeightFeatures::type_name() const { return "RotamerBoltzmannWeightFeatures"; }
 
 void
 RotamerBoltzmannWeightFeatures::write_schema_to_db(
@@ -175,6 +179,43 @@ RotamerBoltzmannWeightFeatures::report_features(
 	}
 	return 0;
 }
+
+std::string RotamerBoltzmannWeightFeatures::type_name() const {
+	return class_name();
+}
+
+std::string RotamerBoltzmannWeightFeatures::class_name() {
+	return "RotamerBoltzmannWeightFeatures";
+}
+
+void RotamerBoltzmannWeightFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"scorefxn", xs_string,
+		"score function name");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Report rotamer boltzmann weights to features Statistics Scientific Benchmark",
+		attlist );
+}
+
+std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {
+	return RotamerBoltzmannWeightFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
+}
+
+void RotamerBoltzmannWeightFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RotamerBoltzmannWeightFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namespace
 } // namespace

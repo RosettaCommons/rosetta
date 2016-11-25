@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/Tracer.hh>
 // C++ headers
@@ -104,6 +105,8 @@ init_common_options(
 	bool & pymol_,
 	bool & keep_history_
 );
+
+void add_attributes_for_common_options( utility::tag::AttributeList & attlist );
 
 void
 final_design_min( core::pose::Pose & pose, core::scoring::ScoreFunctionOP score_fxn_, core::pack::task::TaskFactoryOP desn_tf );

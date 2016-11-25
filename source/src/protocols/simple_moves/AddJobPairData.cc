@@ -19,24 +19,27 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
 
-std::string AddJobPairDataCreator::keyname() const
-{
-	return AddJobPairDataCreator::mover_name();
-}
+// XRW TEMP std::string AddJobPairDataCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddJobPairData::mover_name();
+// XRW TEMP }
 
-moves::MoverOP AddJobPairDataCreator::create_mover() const
-{
-	return moves::MoverOP( new AddJobPairData );
-}
+// XRW TEMP moves::MoverOP AddJobPairDataCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return moves::MoverOP( new AddJobPairData );
+// XRW TEMP }
 
-std::string AddJobPairDataCreator::mover_name()
-{
-	return "AddJobPairData";
-}
+// XRW TEMP std::string AddJobPairData::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddJobPairData";
+// XRW TEMP }
 
 AddJobPairData::AddJobPairData() :
 	string_key_(""),
@@ -84,10 +87,10 @@ void AddJobPairData::apply( Pose & pose)
 	}
 }
 
-std::string AddJobPairData::get_name() const
-{
-	return "AddJobPairData";
-}
+// XRW TEMP std::string AddJobPairData::get_name() const
+// XRW TEMP {
+// XRW TEMP  return "AddJobPairData";
+// XRW TEMP }
 
 moves::MoverOP AddJobPairData::clone() const
 {
@@ -143,6 +146,54 @@ void AddJobPairData::parse_my_tag(
 		}
 	}
 }
+
+std::string AddJobPairData::get_name() const {
+	return mover_name();
+}
+
+std::string AddJobPairData::mover_name() {
+	return "AddJobPairData";
+}
+
+void AddJobPairData::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//argument legality checker for "value_type":
+	XMLSchemaRestriction value_type_type;
+	value_type_type.name("value_type_type");
+	value_type_type.base_type( xs_string );
+	value_type_type.add_restriction( xsr_enumeration, "real");
+	value_type_type.add_restriction( xsr_enumeration, "string");
+	xsd.add_top_level_element( value_type_type );
+	attlist + XMLSchemaAttribute::required_attribute( "value_type", "value_type_type", "type of value to add; must be 'string' or 'real'");
+
+	attlist + XMLSchemaAttribute::required_attribute( "key", xs_string, "the string name for this item");
+
+	std::string const value_warning("Of 'value' and 'value_from_ligand_chain', you must specify exactly one.");
+
+	attlist + XMLSchemaAttribute( "value", xs_string, "Value to report; " + value_warning);
+	attlist + XMLSchemaAttribute( "value_from_ligand_chain", xsct_char, "This should be a single letter describing the chain to get a value from.  It queries using the key." + value_warning);
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Adds either a String/Real or String/String pair to the JD2 Job for output", attlist );
+}
+
+std::string AddJobPairDataCreator::keyname() const {
+	return AddJobPairData::mover_name();
+}
+
+protocols::moves::MoverOP
+AddJobPairDataCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddJobPairData );
+}
+
+void AddJobPairDataCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddJobPairData::provide_xml_schema( xsd );
+}
+
 
 }
 }

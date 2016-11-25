@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/select/residue_selector/util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -43,6 +44,9 @@
 
 #include <boost/algorithm/string.hpp>
 #include <utility/excn/Exceptions.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // ObjexxFCL Headers
@@ -77,7 +81,7 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 
 	for ( core::Size resi = 1, resimax = pose.total_residue() ; resi <= resimax; ++resi ) {
 		if ( ! selection[resi] ) continue;
-		
+
 		core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
 		core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
 
@@ -85,7 +89,7 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 			new_rsd_type = rsd_set->get_residue_type_with_variant_removed( *new_rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( remove_type ) ).get_self_ptr();
 		}
-			
+
 		for ( std::string const & add_type : add_target_types_ ) {
 			new_rsd_type = rsd_set->get_residue_type_with_variant_added( *new_rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( add_type ) ).get_self_ptr();
@@ -93,16 +97,16 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 
 		core::pose::replace_pose_residue_copying_existing_coordinates( pose, resi, *new_rsd_type );
 
-		if( update_polymer_bond_dependent_atoms() ) {
+		if ( update_polymer_bond_dependent_atoms() ) {
 			pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( resi );
 		}
 	}
 }
 
-std::string
-ModifyVariantTypeMover::get_name() const {
-	return "ModifyVariantType";
-}
+// XRW TEMP std::string
+// XRW TEMP ModifyVariantTypeMover::get_name() const {
+// XRW TEMP  return "ModifyVariantType";
+// XRW TEMP }
 
 moves::MoverOP
 ModifyVariantTypeMover::clone() const
@@ -134,7 +138,7 @@ void ModifyVariantTypeMover::parse_my_tag(
 	std::string remove_type_value = tag->getOption< std::string >( "remove_type", "");
 	//boost::split(remove_target_types_, remove_type_value, boost::is_any_of(","));
 	set_remove_target_types( utility::string_split<std::string>(remove_type_value,',',std::string()) );
-	
+
 	set_update_polymer_bond_dependent_atoms( tag->getOption< bool >( "update_polymer_bond_dependent_atoms", update_polymer_bond_dependent_atoms() ) );
 
 	if ( add_target_types_.size() == 0 && remove_target_types_.size() == 0 ) {
@@ -159,6 +163,7 @@ ModifyVariantTypeMover::set_residue_selector(
 	runtime_assert_string_msg( selector_in != nullptr , "Error in protocols::simple_moves::ModifyVariantTypeMover::set_residue_selector(): A null pointer was provided to this function." );
 	residue_selector_ = selector_in;
 }
+
 
 /// @brief Set the types to add.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -206,11 +211,53 @@ ModifyVariantTypeMover::set_update_polymer_bond_dependent_atoms(
 	update_polymer_bond_dependent_atoms_ = setting;
 }
 
-protocols::moves::MoverOP
-ModifyVariantTypeMoverCreator::create_mover() const { return protocols::moves::MoverOP( new ModifyVariantTypeMover ); }
 
-std::string
-ModifyVariantTypeMoverCreator::keyname() const { return "ModifyVariantType"; }
+std::string ModifyVariantTypeMover::get_name() const {
+	return mover_name();
+}
+
+std::string ModifyVariantTypeMover::mover_name() {
+	return "ModifyVariantType";
+}
+
+void ModifyVariantTypeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		//cslist of variant types to add
+		+ XMLSchemaAttribute(
+		"add_type", xs_string,
+		"Comma-separated list of variant types to add to the specified residues" )
+		+ XMLSchemaAttribute(
+		"remove_type", xs_string,
+		"Comma-separated list of variant types to remove from the specified residues" )
+		+ XMLSchemaAttribute(
+		"update_polymer_bond_dependent_atoms", xsct_rosetta_bool,
+		"Rebuilds the atoms that are depenent on polymer bonds for the specified residues." );
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "residue_selector",
+		"Select residues for modifying variant types" );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Add or remove variant types on specified residues.",
+		attlist );
+}
+
+std::string ModifyVariantTypeMoverCreator::keyname() const {
+	return ModifyVariantTypeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ModifyVariantTypeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ModifyVariantTypeMover );
+}
+
+void ModifyVariantTypeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ModifyVariantTypeMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

@@ -30,7 +30,7 @@ public:
 	~AlignEndsMover() override;
 
 	void apply( core::pose::Pose & pose ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -80,6 +80,18 @@ public:
 
 	void residues_to_align_on_pose( utility::vector1< core::Size > r ){ residues_to_align_on_pose_ = r; }
 	void residues_to_align_on_template( utility::vector1< core::Size > r ){ residues_to_align_on_template_ = r; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;

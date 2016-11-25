@@ -77,6 +77,9 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.ThermalMinimizer" );
 
@@ -138,7 +141,7 @@ void set_gaussian_stdevs(
 	}
 	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
 }
-	
+
 
 /////////////////////
 /// Constructors  ///
@@ -146,7 +149,7 @@ void set_gaussian_stdevs(
 
 /// @brief Default constructor
 ThermalMinimizer::ThermalMinimizer():
-	protocols::moves::Mover( ThermalMinimizer::class_name() ),
+	protocols::moves::Mover( ThermalMinimizer::mover_name() ),
 	n_cycle_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::n_cycle ] ),
 	angle_range_chi_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_chi ]() ),
 	angle_range_bb_( basic::options::option[ basic::options::OptionKeys::rna::farna::thermal_sampling::angle_range_bb ]() ),
@@ -164,10 +167,10 @@ ThermalMinimizer::ThermalMinimizer( ThermalMinimizer const & src ):
 // ii - 1 === moving, ii === chainbreak
 bool
 mm_compatible_with_kic( core::kinematics::MoveMapOP mm, Size const ii ) {
-	
+
 	// At the moment, let's just assume KIC is always wrong.
 	//return false;
-	
+
 	using namespace core::chemical::rna;
 	using namespace core::id;
 
@@ -227,7 +230,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 				|| mm_->get( core::id::TorsionID( ii, id::BB, 6 ) )
 				|| mm_->get( core::id::TorsionID( ii, id::CHI, 1 ) )
 				|| mm_->get( core::id::TorsionID( ii, id::CHI, 4 ) )
-		) {
+				) {
 			++total_sampled;
 			residues_sampled.push_back( ii );
 		}
@@ -241,11 +244,11 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	TR << "Score for the start pose: " << (*score_fxn_)( pose ) << std::endl;
 	score_fxn_->show( TR.Debug, pose );
 	Real const start_score = pose.energies().total_energy();
-	
+
 	auto const vec = figure_out_moving_cutpoints_closed_from_moving_res( pose, residues_sampled );
 	TR << "Residues sampled " << residues_sampled << std::endl;
 	//TR << "moving cutpoint res  " << vec << std::endl;
-	
+
 	//Size const total_len( pose.size() );
 	//bool const sample_near_a_form( false );
 
@@ -256,7 +259,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	utility::vector1<RNA_MC_KIC_SamplerOP> kic_sampler;
 	utility::vector1<MC_OneTorsionOP> tors_sampler;
 	//utility::vector1<RNA_MC_SugarOP> sugar_sampler;
-	
+
 	std::set< Size > sampled_by_kic;
 
 	if ( kic_sampling_ ) {
@@ -302,71 +305,71 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			tors_mc->set_angle_range( init_torsion - angle_range_chi_ , init_torsion + angle_range_chi_ );
 			tors_sampler.push_back( tors_mc );
 		}
-		
+
 		// Don't set up backbone OneTorsion samplers for which KIC could do the job.
 		if ( sampled_by_kic.find( ii ) != sampled_by_kic.end() ) continue;
 
 		continue;
 		/*
 		if ( !pose.residue_type(ii).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
-			// skip if movemap exists but dof off
-			tid = core::id::TorsionID( ii, id::BB, 1 );
-			if ( mm_->get( tid ) ) {
-				Real init_torsion = ref_pose->torsion( tid );
-				MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-				tors_mc->init();
-				tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-				tors_sampler.push_back( tors_mc );
-			}
-			tid = core::id::TorsionID( ii, id::BB, 2 );
-			if ( mm_->get( tid ) ) {
-				Real init_torsion = ref_pose->torsion( tid );
-				MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-				tors_mc->init();
-				tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-				tors_sampler.push_back( tors_mc );
-			}
-			tid = core::id::TorsionID( ii, id::BB, 3 );
-			if ( mm_->get( tid ) ) {
-				Real init_torsion = ref_pose->torsion( tid );
-				MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-				tors_mc->init();
-				tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-				tors_sampler.push_back( tors_mc );
-			}
+		// skip if movemap exists but dof off
+		tid = core::id::TorsionID( ii, id::BB, 1 );
+		if ( mm_->get( tid ) ) {
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
+		}
+		tid = core::id::TorsionID( ii, id::BB, 2 );
+		if ( mm_->get( tid ) ) {
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
+		}
+		tid = core::id::TorsionID( ii, id::BB, 3 );
+		if ( mm_->get( tid ) ) {
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
+		}
 		}
 		tid = core::id::TorsionID( ii, id::BB, 4 );
 		if ( mm_->get( tid ) ) {
-			Real init_torsion = ref_pose->torsion( tid );
-			MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-			tors_mc->init();
-			tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-			tors_sampler.push_back( tors_mc );
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
 		}
 		tid = core::id::TorsionID( ii, id::BB, 5 );
 		if ( mm_->get( tid ) ) {
-			Real init_torsion = ref_pose->torsion( tid );
-			MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-			tors_mc->init();
-			tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-			tors_sampler.push_back( tors_mc );
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
 		}
 		tid = core::id::TorsionID( ii, id::BB, 6 );
 		if ( mm_->get( tid ) ) {
-			Real init_torsion = ref_pose->torsion( tid );
-			MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
-			tors_mc->init();
-			tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
-			tors_sampler.push_back( tors_mc );
+		Real init_torsion = ref_pose->torsion( tid );
+		MC_OneTorsionOP tors_mc( new MC_OneTorsion( tid, init_torsion ) );
+		tors_mc->init();
+		tors_mc->set_angle_range( init_torsion - angle_range_bb_ , init_torsion + angle_range_bb_ );
+		tors_sampler.push_back( tors_mc );
 		}
 		*/
 	}
 
-	
+
 	for ( Size i = 1; i <= residues_sampled.size(); ++i ) {
 		if ( sampled_by_kic.find( residues_sampled[i]-1 ) == sampled_by_kic.end() &&residues_sampled[i] != 1 && ( i == 1 || residues_sampled[i] != residues_sampled[i-1]+1 ) ) {
 			//create samplers for [i]-1 and [i]
-		 
+
 			// Can't just have a continue condition because we might want to set up the second sampler
 			//TR << "Going to attempt to sample " << residues_sampled[i] - 1 << " with a RNA_MC_Suite and pose size is " << pose.size() << std::endl;
 			RNA_MC_SuiteOP suite_sampler_1( new RNA_MC_Suite( residues_sampled[i] - 1 ) );
@@ -379,11 +382,11 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 			suite_sampler_1->set_angle_range_from_init( 60 );
 			standard_sampler.add_external_loop_rotamer( suite_sampler_1 );
 		}
-		
+
 		// can't do this!
 		if ( residues_sampled[i] == pose.size() ) continue;
 		if ( sampled_by_kic.find( residues_sampled[i] ) != sampled_by_kic.end() ) continue;
-		
+
 		//TR << "Going to attempt to sample " << residues_sampled[i] << " with a RNA_MC_Suite\tand pose size is " << pose.size() << std::endl;
 		RNA_MC_SuiteOP suite_sampler( new RNA_MC_Suite( residues_sampled[i] ) );
 		suite_sampler->set_init_from_pose( pose );
@@ -396,12 +399,12 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		standard_sampler.add_external_loop_rotamer( suite_sampler );
 	}
 	//standard_sampler.init();
-	
+
 	//for ( Size i = 1; i <= residues_sampled.size(); ++i ) {
 	//RNA_MC_SugarOP sampler( new RNA_MC_Sugar( residues_sampled[i], 1, 0 /*ANY_PUCKER*/ ) );
 	// sugar_sampler.push_back( sampler );
 	// }
-	
+
 	// Min-score pose
 	Pose min_pose = pose;
 	Real min_score( 99999 );
@@ -427,33 +430,33 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 		bool boltz = false;
 		// Sampler updates
 		/*if ( (n % 100) == 0 ) {
-			// Pick from among samplers
-			index = numeric::random::rg().random_range(1,sugar_sampler.size());
-			++sugar_sampler[index];
-			sugar_sampler[index]->apply( pose );
-			//if ( !(sugar_sampler[index]->check_moved() ) ) {
-			//	did_move = false;
-			//}
-			++n_sugar;
-			if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
-				stored_pose_ = pose;
-				if ( n == n_cycle_ ) break;
-				sugar_sampler[index]->update( pose ); // don't think this is necessary
-				++n_accept_sugar;
-		 		boltz = true;
-			}
+		// Pick from among samplers
+		index = numeric::random::rg().random_range(1,sugar_sampler.size());
+		++sugar_sampler[index];
+		sugar_sampler[index]->apply( pose );
+		//if ( !(sugar_sampler[index]->check_moved() ) ) {
+		// did_move = false;
+		//}
+		++n_sugar;
+		if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+		stored_pose_ = pose;
+		if ( n == n_cycle_ ) break;
+		sugar_sampler[index]->update( pose ); // don't think this is necessary
+		++n_accept_sugar;
+		boltz = true;
+		}
 		} else if ( (n % 10) == 0 ) {
-			// Pick from among samplers
-			standard_sampler.set_angle( pose );
-			++standard_sampler;
-			standard_sampler.apply( pose );
-			++n_backbone;
-			if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
-				stored_pose_ = pose;
-				if ( n == n_cycle_ ) break;
-				boltz = true;
-				++n_accept_backbone;
-			}
+		// Pick from among samplers
+		standard_sampler.set_angle( pose );
+		++standard_sampler;
+		standard_sampler.apply( pose );
+		++n_backbone;
+		if ( ( tempering.boltzmann( pose ) && did_move ) || n == n_cycle_ ) {
+		stored_pose_ = pose;
+		if ( n == n_cycle_ ) break;
+		boltz = true;
+		++n_accept_backbone;
+		}
 		} else */if ( (n % 2) == 0 && kic_sampler.size() > 0 ) {
 			// Pick from among samplers
 			index = numeric::random::rg().random_range(1,kic_sampler.size());
@@ -503,12 +506,12 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	score_fxn_->show( TR.Debug, pose );
 	TR.Debug << "Score for the min pose" << std::endl;
 	score_fxn_->show( TR.Debug, min_pose );
-	
+
 	Real const end_score = pose.energies().total_energy();
 	Real const minned_score = min_pose.energies().total_energy();
 
 	TR << " start score " << start_score << " end " << end_score << " min " << minned_score << std::endl;
-	
+
 	TR << "n_cycles: " << n_cycle_ << std::endl;
 	TR << "Total accept rate:       " << double( n_accept_total ) / n_cycle_ << std::endl;
 	TR << "Suite accept rate:       " << double( n_accept_backbone ) / n_backbone << std::endl;
@@ -552,18 +555,6 @@ ThermalMinimizer::clone() const
 	return protocols::moves::MoverOP( new ThermalMinimizer( *this ) );
 }
 
-std::string
-ThermalMinimizer::get_name() const
-{
-	return ThermalMinimizer::class_name();
-}
-
-std::string
-ThermalMinimizer::class_name()
-{
-	return "ThermalMinimizer";
-}
-
 void
 ThermalMinimizer::show( std::ostream & output ) const
 {
@@ -579,17 +570,39 @@ operator<<( std::ostream & os, ThermalMinimizer const & mover )
 
 /////////////// Creator ///////////////
 
-protocols::moves::MoverOP
-ThermalMinimizerCreator::create_mover() const
+std::string ThermalMinimizer::get_name() const {
+	return mover_name();
+}
+
+std::string ThermalMinimizer::mover_name() {
+	return "ThermalMinimizer";
+}
+
+void ThermalMinimizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
+	//Doesn't parse anything!
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Use a simulated tempering simulation to refine a pose",
+		attlist );
+}
+
+std::string ThermalMinimizerCreator::keyname() const {
+	return ThermalMinimizer::mover_name();
+}
+
+protocols::moves::MoverOP
+ThermalMinimizerCreator::create_mover() const {
 	return protocols::moves::MoverOP( new ThermalMinimizer );
 }
 
-std::string
-ThermalMinimizerCreator::keyname() const
+void ThermalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return ThermalMinimizer::class_name();
+	ThermalMinimizer::provide_xml_schema( xsd );
 }
+
 
 
 } //modeler

@@ -27,17 +27,20 @@
 #include <utility/vector1.hh>
 #include <string>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 
-protocols::filters::FilterOP
-StemFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StemFinder ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP StemFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StemFinder ); }
 
-std::string
-StemFinderFilterCreator::keyname() const { return "StemFinder"; }
+// XRW TEMP std::string
+// XRW TEMP StemFinderFilterCreator::keyname() const { return "StemFinder"; }
 
 //default ctor
 StemFinder::StemFinder() :
@@ -269,6 +272,45 @@ core::Real
 StemFinder::report_sm( core::pose::Pose const & ) const {
 	return( 0.0 );
 }
+
+std::string StemFinder::name() const {
+	return class_name();
+}
+
+std::string StemFinder::class_name() {
+	return "StemFinder";
+}
+
+void StemFinder::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("from_res", xsct_non_negative_integer, "starting template position (in rosetta numbering) in which to search for stems", "1")
+		+ XMLSchemaAttribute("to_res", xsct_non_negative_integer, "ending template positions (in rosetta numbering) in which to search for stems")
+		+ XMLSchemaAttribute::attribute_w_default("rmsd", xsct_real, "cutoff for the average rmsd between a given position in the template and all of the closest positions in the homologs.", "0.7")
+		+ XMLSchemaAttribute::attribute_w_default("stems_on_sse", xsct_rosetta_bool, "demand that in each of the homologs the candidate stems are on 2ary structural elements", "false")
+		+ XMLSchemaAttribute::attribute_w_default("stems_are_neighbors", xsct_rosetta_bool, "should we eliminate stems that are farther than neighbor_distance from one another?", "true")
+		+ XMLSchemaAttribute::attribute_w_default("neighbor_distance", xsct_real, "minimal atomic distance between any pair of atoms on each of the residues", "4.0")
+		+ XMLSchemaAttribute::attribute_w_default("neighbor_seperation", xsct_non_negative_integer, "minimal aa separation between candidate stem sites", "10")
+		+ XMLSchemaAttribute::required_attribute("filenames", xs_string, "PDB structures that are well aligned to the template");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Compare a set of homologous but structurally heterogeneous PDBs to a template PDB and find structurally highly conserved sites that can serve as stems for splicing segments", attlist );
+}
+
+std::string StemFinderFilterCreator::keyname() const {
+	return StemFinder::class_name();
+}
+
+protocols::filters::FilterOP
+StemFinderFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new StemFinder );
+}
+
+void StemFinderFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StemFinder::provide_xml_schema( xsd );
+}
+
 
 }
 }

@@ -66,6 +66,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Vector.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 using namespace core;
@@ -76,22 +79,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.backrub.BackrubMover" );
 namespace protocols {
 namespace backrub {
 
-std::string
-protocols::backrub::BackrubMoverCreator::keyname() const {
-	return BackrubMoverCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-protocols::backrub::BackrubMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new BackrubMover );
-}
-
-std::string
-protocols::backrub::BackrubMoverCreator::mover_name() {
-	return "Backrub";
-}
-
-protocols::backrub::BackrubMover::BackrubMover() :
+BackrubMover::BackrubMover() :
 	pivot_atoms_(utility::vector1<std::string>(1, "CA")),
 	min_atoms_(3),
 	max_atoms_(34),
@@ -106,7 +94,7 @@ protocols::backrub::BackrubMover::BackrubMover() :
 	init_with_options();
 }
 
-protocols::backrub::BackrubMover::BackrubMover(
+BackrubMover::BackrubMover(
 	BackrubMover const & mover
 ) :
 	//utility::pointer::ReferenceCount(),
@@ -132,7 +120,7 @@ protocols::backrub::BackrubMover::BackrubMover(
 	custom_angle_(mover.custom_angle_)
 {}
 
-protocols::moves::MoverOP BackrubMover::clone() const { return protocols::moves::MoverOP( new protocols::backrub::BackrubMover( *this ) ); }
+protocols::moves::MoverOP BackrubMover::clone() const { return protocols::moves::MoverOP( new BackrubMover( *this ) ); }
 protocols::moves::MoverOP BackrubMover::fresh_instance() const { return protocols::moves::MoverOP( new BackrubMover ); }
 
 void
@@ -155,13 +143,13 @@ init_backrub_mover_with_options(
 }
 
 void
-protocols::backrub::BackrubMover::init_with_options()
+BackrubMover::init_with_options()
 {
 	init_backrub_mover_with_options(*this);
 }
 
 void
-protocols::backrub::BackrubMover::parse_my_tag(
+BackrubMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
@@ -195,7 +183,7 @@ protocols::backrub::BackrubMover::parse_my_tag(
 }
 
 void
-protocols::backrub::BackrubMover::initialize_simulation(
+BackrubMover::initialize_simulation(
 	core::pose::Pose & pose,
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size
@@ -234,7 +222,7 @@ protocols::backrub::BackrubMover::initialize_simulation(
 
 /// @details
 void
-protocols::backrub::BackrubMover::apply(
+BackrubMover::apply(
 	Pose & pose
 )
 {
@@ -296,10 +284,10 @@ protocols::backrub::BackrubMover::apply(
 	update_type();
 }
 
-std::string
-protocols::backrub::BackrubMover::get_name() const {
-	return "BackrubMover";
-}
+// XRW TEMP std::string
+// XRW TEMP BackrubMover::get_name() const {
+// XRW TEMP  return "BackrubMover";
+// XRW TEMP }
 
 // /// @details
 // void
@@ -340,7 +328,7 @@ int tree_distance(
 /// There has been absolutely no testing of how the code handles jumps! Use this
 /// with jumps at your own risk!
 Size
-protocols::backrub::BackrubMover::add_segment(
+BackrubMover::add_segment(
 	id::AtomID start_atomid,
 	id::AtomID end_atomid,
 	Real max_angle_disp // = 0
@@ -430,7 +418,7 @@ protocols::backrub::BackrubMover::add_segment(
 		}
 	}
 
-	segments_.push_back(protocols::backrub::BackrubSegment(start_atomid, start_atomid1, start_atomid2, end_atomid, tdist+1, max_angle_disp));
+	segments_.push_back(BackrubSegment(start_atomid, start_atomid1, start_atomid2, end_atomid, tdist+1, max_angle_disp));
 
 	Size segment_id = segments_.size();
 
@@ -530,7 +518,7 @@ connected_mainchain_atomids(
 }
 
 core::Size
-protocols::backrub::BackrubMover::add_mainchain_segments(
+BackrubMover::add_mainchain_segments(
 	utility::vector1<core::id::AtomID> atomids,
 	core::Size min_atoms,
 	core::Size max_atoms
@@ -588,7 +576,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 }
 
 core::Size
-protocols::backrub::BackrubMover::add_mainchain_segments(
+BackrubMover::add_mainchain_segments(
 	utility::vector1<core::Size> resnums,
 	utility::vector1<std::string> atomnames,
 	core::Size min_atoms,
@@ -651,7 +639,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 }
 
 core::Size
-protocols::backrub::BackrubMover::add_mainchain_segments()
+BackrubMover::add_mainchain_segments()
 {
 	utility::vector1<core::Size> resnums(pivot_residues_);
 	if ( resnums.size() == 0 ) {
@@ -664,7 +652,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments()
 }
 
 core::Size
-protocols::backrub::BackrubMover::add_mainchain_segments_from_options()
+BackrubMover::add_mainchain_segments_from_options()
 {
 	init_with_options();
 
@@ -672,7 +660,7 @@ protocols::backrub::BackrubMover::add_mainchain_segments_from_options()
 }
 
 void
-protocols::backrub::BackrubMover::optimize_branch_angles(
+BackrubMover::optimize_branch_angles(
 	Pose & pose
 )
 {
@@ -688,13 +676,13 @@ protocols::backrub::BackrubMover::optimize_branch_angles(
 }
 
 utility::vector1<core::Size> const &
-protocols::backrub::BackrubMover::pivot_residues() const
+BackrubMover::pivot_residues() const
 {
 	return pivot_residues_;
 }
 
 void
-protocols::backrub::BackrubMover::set_pivot_residues(
+BackrubMover::set_pivot_residues(
 	utility::vector1<core::Size> const & pivot_residues
 )
 {
@@ -702,18 +690,18 @@ protocols::backrub::BackrubMover::set_pivot_residues(
 }
 
 void
-protocols::backrub::BackrubMover::set_movemap(core::kinematics::MoveMapCOP movemap){
+BackrubMover::set_movemap(core::kinematics::MoveMapCOP movemap){
 	pivot_residues_ = get_pivot_residues_from_movemap(movemap);
 }
 
 utility::vector1<std::string> const &
-protocols::backrub::BackrubMover::pivot_atoms() const
+BackrubMover::pivot_atoms() const
 {
 	return pivot_atoms_;
 }
 
 void
-protocols::backrub::BackrubMover::set_pivot_atoms(
+BackrubMover::set_pivot_atoms(
 	utility::vector1<std::string> const & pivot_atoms
 )
 {
@@ -721,13 +709,13 @@ protocols::backrub::BackrubMover::set_pivot_atoms(
 }
 
 core::Size
-protocols::backrub::BackrubMover::min_atoms() const
+BackrubMover::min_atoms() const
 {
 	return min_atoms_;
 }
 
 void
-protocols::backrub::BackrubMover::set_min_atoms(
+BackrubMover::set_min_atoms(
 	core::Size min_atoms
 )
 {
@@ -735,13 +723,13 @@ protocols::backrub::BackrubMover::set_min_atoms(
 }
 
 core::Size
-protocols::backrub::BackrubMover::max_atoms() const
+BackrubMover::max_atoms() const
 {
 	return max_atoms_;
 }
 
 void
-protocols::backrub::BackrubMover::set_max_atoms(
+BackrubMover::set_max_atoms(
 	core::Size max_atoms
 )
 {
@@ -749,13 +737,13 @@ protocols::backrub::BackrubMover::set_max_atoms(
 }
 
 core::Real
-protocols::backrub::BackrubMover::max_angle_disp_4() const
+BackrubMover::max_angle_disp_4() const
 {
 	return max_angle_disp_4_;
 }
 
 void
-protocols::backrub::BackrubMover::set_max_angle_disp_4(
+BackrubMover::set_max_angle_disp_4(
 	core::Real max_angle_disp_4
 )
 {
@@ -763,13 +751,13 @@ protocols::backrub::BackrubMover::set_max_angle_disp_4(
 }
 
 core::Real
-protocols::backrub::BackrubMover::max_angle_disp_7() const
+BackrubMover::max_angle_disp_7() const
 {
 	return max_angle_disp_7_;
 }
 
 void
-protocols::backrub::BackrubMover::set_max_angle_disp_7(
+BackrubMover::set_max_angle_disp_7(
 	core::Real max_angle_disp_7
 )
 {
@@ -777,13 +765,13 @@ protocols::backrub::BackrubMover::set_max_angle_disp_7(
 }
 
 core::Real
-protocols::backrub::BackrubMover::max_angle_disp_slope() const
+BackrubMover::max_angle_disp_slope() const
 {
 	return max_angle_disp_slope_;
 }
 
 void
-protocols::backrub::BackrubMover::set_max_angle_disp_slope(
+BackrubMover::set_max_angle_disp_slope(
 	core::Real max_angle_disp_slope
 )
 {
@@ -791,13 +779,13 @@ protocols::backrub::BackrubMover::set_max_angle_disp_slope(
 }
 
 bool
-protocols::backrub::BackrubMover::custom_angle() const
+BackrubMover::custom_angle() const
 {
 	return custom_angle_;
 }
 
 void
-protocols::backrub::BackrubMover::set_custom_angle(
+BackrubMover::set_custom_angle(
 	bool custom_angle
 )
 {
@@ -805,13 +793,13 @@ protocols::backrub::BackrubMover::set_custom_angle(
 }
 
 bool
-protocols::backrub::BackrubMover::preserve_detailed_balance() const
+BackrubMover::preserve_detailed_balance() const
 {
 	return preserve_detailed_balance_;
 }
 
 void
-protocols::backrub::BackrubMover::set_preserve_detailed_balance(
+BackrubMover::set_preserve_detailed_balance(
 	bool preserve_detailed_balance
 )
 {
@@ -819,13 +807,13 @@ protocols::backrub::BackrubMover::set_preserve_detailed_balance(
 }
 
 bool
-protocols::backrub::BackrubMover::require_mm_bend() const
+BackrubMover::require_mm_bend() const
 {
 	return require_mm_bend_;
 }
 
 void
-protocols::backrub::BackrubMover::set_require_mm_bend(
+BackrubMover::set_require_mm_bend(
 	bool require_mm_bend
 )
 {
@@ -833,7 +821,7 @@ protocols::backrub::BackrubMover::set_require_mm_bend(
 }
 
 utility::vector1<core::id::TorsionID_Range>
-protocols::backrub::BackrubMover::torsion_id_ranges(
+BackrubMover::torsion_id_ranges(
 	core::pose::Pose & //pose
 )
 {
@@ -841,7 +829,7 @@ protocols::backrub::BackrubMover::torsion_id_ranges(
 }
 
 utility::vector1<core::id::DOF_ID_Range>
-protocols::backrub::BackrubMover::dof_id_ranges(
+BackrubMover::dof_id_ranges(
 	core::pose::Pose & pose
 )
 {
@@ -925,7 +913,7 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 }
 
 Real
-protocols::backrub::BackrubMover::random_angle(
+BackrubMover::random_angle(
 	Pose & pose,
 	Size segment_id,
 	utility::vector0<Real> & start_constants,
@@ -1037,7 +1025,7 @@ protocols::backrub::BackrubMover::random_angle(
 /// @details
 /// The code currently does not do any optimization of branching atom bond angles.
 void
-protocols::backrub::BackrubMover::rotate_segment(
+BackrubMover::rotate_segment(
 	Pose & pose,
 	Size segment_id,
 	Real angle,
@@ -1160,13 +1148,13 @@ protocols::backrub::BackrubMover::rotate_segment(
 }
 
 core::Size
-protocols::backrub::BackrubMover::next_segment_id() const
+BackrubMover::next_segment_id() const
 {
 	return next_segment_id_;
 }
 
 void
-protocols::backrub::BackrubMover::set_next_segment_id(
+BackrubMover::set_next_segment_id(
 	core::Size next_segment_id
 )
 {
@@ -1174,31 +1162,31 @@ protocols::backrub::BackrubMover::set_next_segment_id(
 }
 
 core::Size
-protocols::backrub::BackrubMover::last_segment_id() const
+BackrubMover::last_segment_id() const
 {
 	return last_segment_id_;
 }
 
 std::string
-protocols::backrub::BackrubMover::last_start_atom_name() const
+BackrubMover::last_start_atom_name() const
 {
 	return last_start_atom_name_;
 }
 
 std::string
-protocols::backrub::BackrubMover::last_end_atom_name() const
+BackrubMover::last_end_atom_name() const
 {
 	return last_end_atom_name_;
 }
 
 core::Real
-protocols::backrub::BackrubMover::next_angle() const
+BackrubMover::next_angle() const
 {
 	return next_angle_;
 }
 
 void
-protocols::backrub::BackrubMover::set_next_angle(
+BackrubMover::set_next_angle(
 	core::Real next_angle
 )
 {
@@ -1206,7 +1194,7 @@ protocols::backrub::BackrubMover::set_next_angle(
 }
 
 core::Real
-protocols::backrub::BackrubMover::last_angle() const
+BackrubMover::last_angle() const
 {
 	return last_angle_;
 }
@@ -1216,7 +1204,7 @@ protocols::backrub::BackrubMover::last_angle() const
 /// The next two sections indicates the names of the atoms at the start and end
 /// of the backrub segment. The last section gives the size of the segment.
 void
-protocols::backrub::BackrubMover::update_type()
+BackrubMover::update_type()
 {
 	std::stringstream mt;
 
@@ -1231,6 +1219,78 @@ protocols::backrub::BackrubMover::update_type()
 	std::string new_type(mt.str());
 	type(new_type);
 }
+
+std::string BackrubMover::get_name() const {
+	return mover_name();
+}
+
+std::string BackrubMover::mover_name() {
+	return "Backrub";
+}
+
+void BackrubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"pivot_residues", xs_string,
+		"residues for which contiguous stretches can contain segments "
+		"(comma separated) can use PDB numbers ([resnum][chain]) or "
+		"absolute Rosetta numbers (integer)");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"pivot_atoms", xs_string,
+		"main chain atoms usable as pivots (comma separated)",
+		"CA");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_atoms", xsct_non_negative_integer,
+		"minimum backrub segment size (atoms)",
+		"3");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_atoms", xsct_non_negative_integer,
+		"maximum backrub segment size (atoms)",
+		"34");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_angle_disp_4", xsct_real,
+		"maximum angular displacement for 4 atom segments (radians)",
+		std::to_string(numeric::conversions::radians(40.)));
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_angle_disp_7", xsct_real,
+		"maximum angular displacement for 7 atom segments (radians)",
+		std::to_string(numeric::conversions::radians(20.)));
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"max_angle_disp_slope", xsct_real,
+		"maximum angular displacement slope for other atom segments (radians)",
+		std::to_string(numeric::conversions::radians(-1./3.)));
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"perserve_detailed_balance", xsct_rosetta_bool,
+		"if set to true, does not change branching atom angles during apply and "
+		"sets ideal branch angles during initialization if used with MetropolisHastings",
+		"false");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"require_mm_bend", xsct_rosetta_bool,
+		"if true and used with MetropolisHastings, will exit if mm_bend is not in the score function",
+		"true");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Purely local moves using rotations around axes defined by two backbone atoms",
+		attlist );
+}
+
+std::string BackrubMoverCreator::keyname() const {
+	return BackrubMover::mover_name();
+}
+
+protocols::moves::MoverOP
+BackrubMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new BackrubMover );
+}
+
+void BackrubMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	BackrubMover::provide_xml_schema( xsd );
+}
+
 
 /// @details
 /// PM1 & PM2 are the parent and grandparent atoms (respectively) of the pivot

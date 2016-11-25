@@ -251,41 +251,43 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	// "Reweight" tag
 	AttributeList reweight_attributes;
 	reweight_attributes
-		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string )
-		+ XMLSchemaAttribute( "weight", xs_decimal );
+		+ XMLSchemaAttribute::required_attribute( "scoretype", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "weight", xsct_real , "XRW TO DO" );
 
 	// "Set" tag
 	AttributeList set_attributes;
 	core::scoring::hbonds::HBondOptions::append_schema_attributes( set_attributes );
 	core::scoring::etable::EtableOptions::append_schema_attributes( set_attributes );
 	set_attributes
-		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string )
-		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "fa_elec_min_dis", xs_decimal )
-		+ XMLSchemaAttribute( "fa_elec_max_dis", xs_decimal )
-		+ XMLSchemaAttribute( "fa_elec_dielectric", xs_decimal )
-		+ XMLSchemaAttribute( "fa_elec_no_dis_dep_die", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "exclude_protein_protein_fa_elec", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "exclude_DNA_DNA", xsct_rosetta_bool )
-		+ XMLSchemaAttribute( "pb_bound_tag", xs_string )
-		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string )
-		+ XMLSchemaAttribute( "scale_sc_dens", xs_decimal )
-		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_decimal );
+		+ XMLSchemaAttribute( "aa_composition_setup_file", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "softrep_etable", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "fa_elec_min_dis", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "fa_elec_max_dis", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "fa_elec_dielectric", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "fa_elec_no_dis_dep_die", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "exclude_protein_protein_fa_elec", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "exclude_DNA_DNA", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "pb_bound_tag", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "pb_unbound_tag", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "scale_sc_dens", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "scale_sc_dens_byres", xs_string , "XRW TO DO" );
 
 	// ScoreFunction complex type
 	AttributeList scorefunction_ct_attributes;
 	scorefunction_ct_attributes
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string )
-		+ XMLSchemaAttribute( "weights", xs_string )
-		+ XMLSchemaAttribute( "patch", xs_string )
-		+ XMLSchemaAttribute( "symmetric", xsct_rosetta_bool );
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "weights", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "patch", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "symmetric", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "hs_hash", xs_decimal, "XRW TO DO" );
 	XMLSchemaSimpleSubelementList subelements;
 	subelements
-		.add_simple_subelement( "Reweight", reweight_attributes )
-		.add_simple_subelement( "Set", set_attributes );
+		.add_simple_subelement( "Reweight", reweight_attributes , "")
+		.add_simple_subelement( "Set", set_attributes , "");
 	XMLSchemaComplexTypeGenerator scorefunction_ct_gen;
 	scorefunction_ct_gen
 		.element_name( "ScoreFunction" )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & score_function_loader_ct_namer )
 		.add_attributes( scorefunction_ct_attributes )
 		.set_subelements_repeatable( subelements )
@@ -297,6 +299,7 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	XMLSchemaComplexTypeGenerator loader_ct_gen;
 	loader_ct_gen
 		.element_name( loader_name() )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & score_function_loader_ct_namer )
 		.set_subelements_repeatable( loader_subelements )
 		.write_complex_type_to_schema( xsd );
@@ -313,6 +316,13 @@ ScoreFunctionLoaderCreator::schema_ct_naming_function() const
 {
 	return & ScoreFunctionLoader::score_function_loader_ct_namer;
 }
+
+void
+ScoreFunctionLoaderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ScoreFunctionLoader::provide_xml_schema( xsd );
+}
+
 
 } //namespace parser
 } //namespace jd2

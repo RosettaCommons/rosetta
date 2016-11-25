@@ -37,6 +37,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -54,22 +57,22 @@ using basic::t_warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MinPackMover" );
 
 
-std::string
-MinPackMoverCreator::keyname() const
-{
-	return MinPackMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MinPackMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return MinPackMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-MinPackMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MinPackMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MinPackMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MinPackMover );
+// XRW TEMP }
 
-std::string
-MinPackMoverCreator::mover_name()
-{
-	return "MinPackMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MinPackMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MinPackMover";
+// XRW TEMP }
 
 MinPackMover::MinPackMover() :
 	protocols::moves::Mover("MinPackMover"),
@@ -164,10 +167,10 @@ MinPackMover::apply( Pose & pose )
 
 }
 
-std::string
-MinPackMover::get_name() const {
-	return MinPackMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MinPackMover::get_name() const {
+// XRW TEMP  return MinPackMover::mover_name();
+// XRW TEMP }
 
 /// @brief when the PackerTask was not generated locally, verify compatibility with pose
 /// @details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
@@ -278,6 +281,58 @@ TaskFactoryCOP MinPackMover::task_factory() const { return task_factory_; }
 
 void MinPackMover::off_rotamer_pack( bool setting ) { off_rotamer_pack_ = setting; }
 bool MinPackMover::off_rotamer_pack() const { return off_rotamer_pack_; }
+
+std::string MinPackMover::get_name() const {
+	return mover_name();
+}
+
+std::string MinPackMover::mover_name() {
+	return "MinPackMover";
+}
+
+void MinPackMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute(
+		"nonideal", xsct_rosetta_bool,
+		"open up the bond-angle- and bond-length DOFs to minimization" )
+		+ XMLSchemaAttribute(
+		"cartesian", xsct_rosetta_bool,
+		"use cartesian minimization" )
+		+ XMLSchemaAttribute(
+		"off_rotamer_pack", xsct_rosetta_bool,
+		"instead of using core::pack::min_pack, use core::pack::off_rotamer_pack" );
+	rosetta_scripts::attributes_for_parse_score_function_w_description(
+		attlist,
+		"It is reccomended to change the weights you are using to the score12minpack weights. "
+		"These are the standard score12 weights with the reference energies refit for sequence "
+		"recovery profile when using the MinPackMover. Without these weights you will see a "
+		"lot of Tryptophan residues on the surface of a protein. default is score12");
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Packs then minimizes a sidechain before calling MonteCarlo on the change. "
+		"It can be modified with user supplied ScoreFunction or TaskOperation. "
+		"It does not do backbone, ridged body minimization.",
+		attlist );
+}
+
+std::string MinPackMoverCreator::keyname() const {
+	return MinPackMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MinPackMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MinPackMover );
+}
+
+void MinPackMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MinPackMover::provide_xml_schema( xsd );
+}
+
 
 } // moves
 } // protocols

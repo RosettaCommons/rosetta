@@ -64,11 +64,11 @@ void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(  "lin_mem_ig", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "lazy_ig", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "double_lazy_ig", xs_boolean, "false" );
+		+ XMLSchemaAttribute::attribute_w_default(  "lin_mem_ig", xsct_rosetta_bool, "Interaction graph type lin_mem-ig.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "lazy_ig", xsct_rosetta_bool, "Interaction graph type lazy_ig.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "double_lazy_ig", xsct_rosetta_bool, "Interaction graph type double_lazy_ig.",  "false"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "Task operation to set interaction graph type -linmem, lazy or double lazy." );
 }
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperationCreator::create_task_operation() const

@@ -20,6 +20,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -66,6 +67,9 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 //General construction
@@ -84,22 +88,22 @@ moves::MoverOP PeptideCyclizeMover::fresh_instance() const
 	return moves::MoverOP( new PeptideCyclizeMover );
 }
 
-protocols::moves::MoverOP
-PeptideCyclizeMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PeptideCyclizeMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PeptideCyclizeMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PeptideCyclizeMover );
+// XRW TEMP }
 
-std::string
-PeptideCyclizeMoverCreator::keyname() const
-{
-	return PeptideCyclizeMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideCyclizeMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PeptideCyclizeMover::mover_name();
+// XRW TEMP }
 
-std::string
-PeptideCyclizeMoverCreator::mover_name()
-{
-	return "PeptideCyclizeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideCyclizeMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PeptideCyclizeMover";
+// XRW TEMP }
 
 ///@brief destructor of the mover
 //
@@ -281,10 +285,10 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 
 /// @brief Returns the name of this mover ("PeptideCyclizeMover").
 
-std::string
-PeptideCyclizeMover::get_name() const {
-	return "PeptideCyclizeMover";
-}
+// XRW TEMP std::string
+// XRW TEMP PeptideCyclizeMover::get_name() const {
+// XRW TEMP  return "PeptideCyclizeMover";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -459,6 +463,82 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 	}
 
 }
+
+std::string PeptideCyclizeMover::get_name() const {
+	return mover_name();
+}
+
+std::string PeptideCyclizeMover::mover_name() {
+	return "PeptideCyclizeMover";
+}
+
+std::string subtag_for_cyclize( std::string const & foo ) {
+	return "subtag_for_cyclize_" + foo + "_complex_type";
+}
+
+void PeptideCyclizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist, bond_attributes, distance_attributes, angle_attributes, torsion_attributes;
+
+	XMLSchemaSimpleSubelementList ssl;
+
+	bond_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
+		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
+		+ XMLSchemaAttribute( "add_termini", xsct_rosetta_bool, "Add terminal types where necessary" )
+		+ XMLSchemaAttribute::attribute_w_default( "rebuild_fold_tree", xsct_rosetta_bool, "Rebuild the fold tree around this bond", "false" );
+
+	distance_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
+		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
+		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
+
+	angle_attributes + XMLSchemaAttribute( "res_center", xsct_non_negative_integer, "Central residue" )
+		+ XMLSchemaAttribute( "atom_center", xs_string, "Central atom" )
+		+ XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
+		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
+		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
+
+	torsion_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
+		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
+		+ XMLSchemaAttribute( "res3", xsct_non_negative_integer, "Residue three" )
+		+ XMLSchemaAttribute( "atom3", xs_string, "Atom three" )
+		+ XMLSchemaAttribute( "res4", xsct_non_negative_integer, "Residue four" )
+		+ XMLSchemaAttribute( "atom4", xs_string, "Atom four" )
+		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
+
+	ssl.add_simple_subelement( "Bond", bond_attributes, "Tags describing a bond from the macrocycle"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "Distance", distance_attributes, "Tags describing a distance from the macrocycle"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "Angle", angle_attributes, "Tags describing a angle from the macrocycle"/*, 0 minoccurs*/ )
+		.add_simple_subelement( "Torsion", torsion_attributes, "Tags describing a torsion from the macrocycle"/*, 0 minoccurs*/ )
+		.complex_type_naming_func( & subtag_for_cyclize );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+}
+
+std::string PeptideCyclizeMoverCreator::keyname() const {
+	return PeptideCyclizeMover::mover_name();
+}
+
+protocols::moves::MoverOP
+PeptideCyclizeMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PeptideCyclizeMover );
+}
+
+void PeptideCyclizeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PeptideCyclizeMover::provide_xml_schema( xsd );
+}
+
 
 
 

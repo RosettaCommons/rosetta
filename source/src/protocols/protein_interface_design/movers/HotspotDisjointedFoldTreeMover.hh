@@ -37,16 +37,16 @@ public:
 
 public:
 	HotspotDisjointedFoldTreeMover();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover ); }
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover ); }
 	virtual ~HotspotDisjointedFoldTreeMover();
 
 	void add_residue( core::Size const r );
@@ -60,6 +60,18 @@ public:
 	void interface_radius( core::Real const rad );
 	core::Real interface_radius() const;
 	core::kinematics::FoldTreeOP make_disjointed_foldtree( core::pose::Pose const & pose ) const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	core::Real ddG_threshold_; //dflt 1.0; ala-scan energy above which residues will be considered for the disjointed foldtree
 	std::set< core::Size > residues_; // the list of residues to make disjointed

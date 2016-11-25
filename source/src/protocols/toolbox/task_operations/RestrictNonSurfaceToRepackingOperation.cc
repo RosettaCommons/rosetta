@@ -143,8 +143,8 @@ void RestrictNonSurfaceToRepackingOperation::parse_tag( utility::tag::TagCOP tag
 void RestrictNonSurfaceToRepackingOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "surface_exposed_nb_count_cutoff", xsct_non_negative_integer ));
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	attributes.push_back( XMLSchemaAttribute::required_attribute( "surface_exposed_nb_count_cutoff", xsct_non_negative_integer , "XRW TO DO" ));
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 } //namespace protocols

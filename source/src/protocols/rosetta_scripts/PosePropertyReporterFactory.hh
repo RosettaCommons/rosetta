@@ -82,6 +82,13 @@ public:
 		core::pose::Pose const &
 	);
 
+	void define_pose_reporter_group( utility::tag::XMLSchemaDefinition & xsd ) const;
+
+	static std::string pose_reporter_group_name();
+
+	static std::string
+	complex_type_name_for_pose_reporter( std::string const & reporter_name );
+
 private:
 	PosePropertyReporterFactory();
 

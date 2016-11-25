@@ -38,6 +38,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 // C++ Headers
@@ -52,22 +55,22 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.TaskAwareMinMover"
 namespace protocols {
 namespace simple_moves {
 
-std::string
-TaskAwareMinMoverCreator::keyname() const
-{
-	return TaskAwareMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareMinMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return TaskAwareMinMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-TaskAwareMinMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new TaskAwareMinMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP TaskAwareMinMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new TaskAwareMinMover );
+// XRW TEMP }
 
-std::string
-TaskAwareMinMoverCreator::mover_name()
-{
-	return "TaskAwareMinMover";
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareMinMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "TaskAwareMinMover";
+// XRW TEMP }
 
 TaskAwareMinMover::TaskAwareMinMover()
 : protocols::moves::Mover("TaskAwareMinMover"),
@@ -141,10 +144,10 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 
 }//apply
 
-std::string
-TaskAwareMinMover::get_name() const {
-	return TaskAwareMinMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP TaskAwareMinMover::get_name() const {
+// XRW TEMP  return TaskAwareMinMover::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return protocols::moves::MoverOP( new TaskAwareMinMover ); }
 protocols::moves::MoverOP TaskAwareMinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::TaskAwareMinMover( *this ) ); }
@@ -195,6 +198,58 @@ TaskAwareMinMover::parse_task_operations(
 	if ( new_task_factory == nullptr ) return;
 	factory_ = new_task_factory;
 }
+
+std::string TaskAwareMinMover::get_name() const {
+	return mover_name();
+}
+
+std::string TaskAwareMinMover::mover_name() {
+	return "TaskAwareMinMover";
+}
+
+void TaskAwareMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW: Some of below relates to options parsed by MinMover::parse_opts
+	// which is called in this parse_my_tag in an effort to avoid reparsing
+	// chi and bb, which would NOT be a problem, but which IS a problem for the
+	// definition of the jump element, which is re-parsed by parse_opts as a real string
+	// that can have a lot of different values (basically ALL|\d+).
+	// Instead of opening that can of nasty, I am going to just provide a schema
+	// for the options supported
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "chi", xsct_rosetta_bool, "Allow chi degrees of freedom to minimize" )
+		+ XMLSchemaAttribute( "bb", xsct_rosetta_bool, "Allow bb degrees of freedom to minimize" )
+		+ XMLSchemaAttribute( "jump", xsct_rosetta_bool, "Allow jump degrees of freedom to minimize" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "max_iter", xsct_positive_integer, "Number of iterations", "200" )
+		+ XMLSchemaAttribute::attribute_w_default( "type", xsct_minimizer_type, "Minimizer type, chosen from a long list of algorithms", "lbfgs_armijo_nonmonotone" )
+		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "Minimization tolerance (absolute)", "0.01" )
+		+ XMLSchemaAttribute::attribute_w_default( "cartesian", xsct_rosetta_bool, "Use cartesian minimization (not internal coordinate)", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "bondangle", xsct_rosetta_bool, "Minimize bond angle degrees of freedom", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "bondlength", xsct_rosetta_bool, "Minimize bond length degrees of freedom", "0" );
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_parse_score_function( attlist );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string TaskAwareMinMoverCreator::keyname() const {
+	return TaskAwareMinMover::mover_name();
+}
+
+protocols::moves::MoverOP
+TaskAwareMinMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new TaskAwareMinMover );
+}
+
+void TaskAwareMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskAwareMinMover::provide_xml_schema( xsd );
+}
+
 
 }//moves
 }//protocols

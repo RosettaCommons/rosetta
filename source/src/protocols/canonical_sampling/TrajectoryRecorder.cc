@@ -22,7 +22,7 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // External library headers
 
 // C++ headers
@@ -119,6 +119,23 @@ TrajectoryRecorder::reset(
 	model_count_ = 0;
 	step_count_ = 0;
 }
+
+void
+TrajectoryRecorder::attributes_for_trajectory_recorder( utility::tag::AttributeList& attlist ){
+
+	using namespace utility::tag;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "stride", xsct_non_negative_integer,  "How often in terms of cycles to take a snapshot and output to file?", "100" )
+		+ XMLSchemaAttribute( "filename", xs_string, "Name of output file" )
+		+ XMLSchemaAttribute::attribute_w_default( "cache_limit", xsct_non_negative_integer, "How much information in kb to store in memory before writing to disk", "500" )
+		+ XMLSchemaAttribute::attribute_w_default( "cumulate_jobs", xsct_rosetta_bool, "Combine MPI jobs into a single file?", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "cumulate_replicas", xsct_rosetta_bool, "Combine replicas into a single file?", "false" );
+
+}
+
+
+
+
 
 void
 TrajectoryRecorder::update_after_boltzmann(

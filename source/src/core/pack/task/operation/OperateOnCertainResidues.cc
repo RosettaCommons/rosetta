@@ -137,20 +137,19 @@ Example Tag syntax for parser as of Summer 2009
 void OperateOnCertainResidues::parse_tag( TagCOP tag , DataMap & )
 {
 	utility::vector0< TagCOP > const & subtags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
-			subtag != end; ++subtag ) {
-		std::string const type( (*subtag)->getName() );
+	for ( auto const & subtag : subtags ) {
+		std::string const & type( subtag->getName() );
 		ResLvlTaskOperationFactory * rltof = ResLvlTaskOperationFactory::get_instance();
 		if ( rltof && rltof->has_type( type ) ) {
 			op_ = rltof->newRLTO( type );
-			op_->parse_tag( *subtag );
+			op_->parse_tag( subtag );
 			TR(t_debug) << "using ResLvlTaskOperation of type " << type << std::endl;
 			continue;
 		}
 		ResFilterFactory * res_filter_factory = ResFilterFactory::get_instance();
 		if ( res_filter_factory && res_filter_factory->has_type( type ) ) {
 			filter_ = res_filter_factory->newResFilter( type );
-			filter_->parse_tag( *subtag );
+			filter_->parse_tag( subtag );
 			TR(t_debug) << "using ResFilter of type " << type << std::endl;
 			continue;
 		}
@@ -173,6 +172,7 @@ void OperateOnCertainResidues::provide_xml_schema( utility::tag::XMLSchemaDefini
 	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
 	ct_gen.element_name( keyname() )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
+		.description( "XRW TO DO" )
 		.set_subelements_single_appearance_required_and_ordered( subelements )
 		.add_attribute( optional_name_attribute() )
 		.write_complex_type_to_schema( xsd );

@@ -68,44 +68,53 @@ public:
 		core::Size max_network_size=15,
 		std::string des_residues="STRKHYWNQDE",
 		bool find_native=false,
-        bool only_native=false,
-        bool keep_existing=false,
-        bool extend_existing=false,
-        bool only_extend=false
+		bool only_native=false,
+		bool keep_existing=false,
+		bool extend_existing=false,
+		bool only_extend=false
 	);
 
-	virtual std::string get_name() const { return "HBNetStapleInterface"; }
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	// XRW TEMP  virtual std::string get_name() const { return "HBNetStapleInterface"; }
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	//destructor
 	~HBNetStapleInterface();
 
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	//virtual void apply( core::pose::Pose & pose );
-	//virtual void benchmark_with_native( core::pose::Pose pose);
-	virtual void setup( core::pose::Pose & copy );
-	//virtual void run( core::pose::Pose & pose, core::graph::GraphOP & packer_neighbor_graph );
-	virtual void prepare_output();
-	virtual std::string print_additional_info_for_net( hbond_net_struct & i );
-	virtual std::string print_additional_headers();
-	virtual bool network_meets_criteria( core::pose::Pose & pose, hbond_net_struct & i );
-	virtual bool state_is_starting_aa_type( core::Size const res, core::Size const rot_id );
-	virtual bool pair_meets_starting_criteria( core::Size const res1, core::Size const rot1, core::Size const res2, core::Size const rot2 );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void setup( core::pose::Pose & copy ) override;
+	void prepare_output() override;
+	std::string print_additional_info_for_net( hbond_net_struct & i ) override;
+	std::string print_additional_headers() override;
+	bool network_meets_criteria( core::pose::Pose & pose, hbond_net_struct & i ) override;
+	bool state_is_starting_aa_type( core::Size const res, core::Size const rot_id ) override;
+	bool pair_meets_starting_criteria( core::Size const res1, core::Size const rot1, core::Size const res2, core::Size const rot2 ) override;
 
 	bool same_helix(utility::vector1< std::pair<core::Size,core::Size> > helix_boundaries, core::Size r1, core::Size r2);
 	bool interhelical_contact(utility::vector1< std::pair<core::Size,core::Size> > helix_boundaries, core::Size r1, core::Size r2, core::pose::Pose & pose);
 	core::Size get_helix_id( core::Size r1 );
 
 	//void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, HBondNetStructOP new_network, core::Size staple_count );
-    void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< core::Size > net_ids, core::Size staple_count );
-	
-    bool network_spans_all_helices( hbond_net_struct & i );
+	void rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::vector< core::Size > net_ids, core::Size staple_count );
+
+	bool network_spans_all_helices( hbond_net_struct & i );
 	core::Size num_helices_w_hbond( hbond_net_struct & i );
 	core::Size num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues );
 	bool has_pH_His( core::pose::Pose & pose, hbond_net_struct & i );
 
 	core::Size num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 	//core::Size symm_num_intermolecular_hbonds( hbond_net_struct & i, core::pose::Pose & pose );
 
 private:

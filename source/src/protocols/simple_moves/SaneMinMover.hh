@@ -58,7 +58,19 @@ public:
 	/// @brief Minimizes the DOFs of pose specified in the MoveMap
 	void apply( core::pose::Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// set reasonable defaults for scorefxn_, movemap_ and min_options_

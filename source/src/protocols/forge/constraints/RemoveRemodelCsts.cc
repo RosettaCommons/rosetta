@@ -29,6 +29,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.RemoveRemodelCsts" );
@@ -37,22 +40,22 @@ namespace protocols {
 namespace forge {
 namespace constraints {
 
-std::string
-RemoveRemodelCstsCreator::keyname() const
-{
-	return RemoveRemodelCstsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RemoveRemodelCstsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RemoveRemodelCsts::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RemoveRemodelCstsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RemoveRemodelCsts() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RemoveRemodelCstsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RemoveRemodelCsts() );
+// XRW TEMP }
 
-std::string
-RemoveRemodelCstsCreator::mover_name()
-{
-	return "RemoveRemodelCsts";
-}
+// XRW TEMP std::string
+// XRW TEMP RemoveRemodelCsts::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RemoveRemodelCsts";
+// XRW TEMP }
 
 /// @brief
 RemoveRemodelCsts::RemoveRemodelCsts()
@@ -99,11 +102,11 @@ RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
 	TR << "Cst generator =" << generator_->get_name() << " with name=" << generator_id_ << std::endl;
 }
 
-std::string
-RemoveRemodelCsts::get_name() const
-{
-	return RemoveRemodelCstsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RemoveRemodelCsts::get_name() const
+// XRW TEMP {
+// XRW TEMP  return RemoveRemodelCsts::mover_name();
+// XRW TEMP }
 
 protocols::moves::MoverOP
 RemoveRemodelCsts::fresh_instance() const
@@ -141,6 +144,38 @@ RemoveRemodelCsts::apply( core::pose::Pose & pose )
 		TR << "There are " << pose.constraint_set()->get_all_constraints().size() << " constraints remaining in the pose." << std::endl;
 	}
 }
+
+std::string RemoveRemodelCsts::get_name() const {
+	return mover_name();
+}
+
+std::string RemoveRemodelCsts::mover_name() {
+	return "RemoveRemodelCsts";
+}
+
+void RemoveRemodelCsts::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "generator", xs_string, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RemoveRemodelCstsCreator::keyname() const {
+	return RemoveRemodelCsts::mover_name();
+}
+
+protocols::moves::MoverOP
+RemoveRemodelCstsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RemoveRemodelCsts );
+}
+
+void RemoveRemodelCstsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RemoveRemodelCsts::provide_xml_schema( xsd );
+}
+
 
 } //namespace constraints
 } //namespace forge

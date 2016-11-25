@@ -97,6 +97,9 @@
 #include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/string_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace devel {
@@ -210,22 +213,22 @@ EnzdesRemodelProtocol::get_name() const {
 	return "EnzdesRemodelProtocol";
 }
 
-std::string
-EnzdesRemodelMoverCreator::keyname() const
-{
-	return EnzdesRemodelMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EnzdesRemodelMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return EnzdesRemodelMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-EnzdesRemodelMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new EnzdesRemodelMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP EnzdesRemodelMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new EnzdesRemodelMover );
+// XRW TEMP }
 
-std::string
-EnzdesRemodelMoverCreator::mover_name()
-{
-	return "EnzdesRemodelMover";
-}
+// XRW TEMP std::string
+// XRW TEMP EnzdesRemodelMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "EnzdesRemodelMover";
+// XRW TEMP }
 
 
 EnzdesRemodelMover::EnzdesRemodelMover()
@@ -417,10 +420,10 @@ EnzdesRemodelMover::apply(
 	orig_task_ = nullptr;
 }
 
-std::string
-EnzdesRemodelMover::get_name() const {
-	return "EnzdesRemodelMover";
-}
+// XRW TEMP std::string
+// XRW TEMP EnzdesRemodelMover::get_name() const {
+// XRW TEMP  return "EnzdesRemodelMover";
+// XRW TEMP }
 
 void
 EnzdesRemodelMover::parse_my_tag(
@@ -1357,6 +1360,42 @@ core::id::SequenceMappingCOP
 EnzdesRemodelMover::get_seq_mapping() const {
 	return start_to_current_smap_;
 }
+
+std::string EnzdesRemodelMover::get_name() const {
+	return mover_name();
+}
+
+std::string EnzdesRemodelMover::mover_name() {
+	return "EnzdesRemodelMover";
+}
+
+void EnzdesRemodelMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "remodel_secmatch", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "reinstate_foldtree", xsct_rosetta_bool, "XRW TO DO" )
+		+ XMLSchemaAttribute( "remodel_region", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute( "include_existing_conf_as_invrot_target", xsct_rosetta_bool, "XRW TO DO" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string EnzdesRemodelMoverCreator::keyname() const {
+	return EnzdesRemodelMover::mover_name();
+}
+
+protocols::moves::MoverOP
+EnzdesRemodelMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new EnzdesRemodelMover );
+}
+
+void EnzdesRemodelMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnzdesRemodelMover::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace enzdes

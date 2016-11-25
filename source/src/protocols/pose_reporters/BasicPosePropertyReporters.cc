@@ -18,7 +18,7 @@
 #include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 #include <protocols/pose_reporters/BasicPosePropertyReporters.hh>
 #include <protocols/pose_reporters/BasicPosePropertyReporterCreators.hh>
-
+#include <protocols/rosetta_scripts/PosePropertyReporterFactory.hh>
 // Package headers
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/filters/FilterFactory.hh>
@@ -39,7 +39,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // C++ Headers
 #include <string>
 
@@ -55,12 +55,33 @@ namespace pose_reporters {
 protocols::rosetta_scripts::PosePropertyReporterOP EnergyReporterCreator::create_reporter() const {
 	return protocols::rosetta_scripts::PosePropertyReporterOP( new EnergyReporter() );
 }
+void
+EnergyReporterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	EnergyReporter::provide_xml_schema( xsd );
+}
 
 // Reporter
 EnergyReporter::EnergyReporter() :
 	scorefxn_(/* NULL */),
 	scoretype_(core::scoring::dummy_score_type)
 {
+}
+
+void
+EnergyReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "scorefunction", xs_string, "Name of score function weights to use" )
+		+ XMLSchemaAttribute( "term", xs_string, "Score term to evaluate" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( name() )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PosePropertyReporterFactory::complex_type_name_for_pose_reporter )
+		.write_complex_type_to_schema( xsd );
 }
 
 core::Real EnergyReporter::report_property( core::pose::Pose & p ) const
@@ -102,6 +123,11 @@ protocols::rosetta_scripts::PosePropertyReporterOP FilterReporterCreator::create
 	return protocols::rosetta_scripts::PosePropertyReporterOP( new FilterReporter() );
 }
 
+void
+FilterReporterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	FilterReporter::provide_xml_schema( xsd );
+}
+
 // Reporter
 FilterReporter::FilterReporter() :
 	filter_(/* NULL */)
@@ -121,6 +147,32 @@ core::Real FilterReporter::report_property( core::pose::Pose & pose ) const
 
 	return r;
 }
+
+
+void
+FilterReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	protocols::filters::FilterFactory::get_instance()->define_filter_xml_schema( xsd );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "filter", xs_string, "Name attribute of filter defined previously in the RosettaScript" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_group_subelement( & filters::FilterFactory::filter_xml_schema_group_name );
+
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( name() )
+		.description( "XRW TO DO" )
+		.set_subelements_repeatable( subelements, 0, 1 )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PosePropertyReporterFactory::complex_type_name_for_pose_reporter )
+		.write_complex_type_to_schema( xsd );
+}
+
 
 void FilterReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -178,6 +230,12 @@ protocols::rosetta_scripts::PosePropertyReporterOP RMSDReporterCreator::create_r
 	return protocols::rosetta_scripts::PosePropertyReporterOP( new RMSDReporter() );
 }
 
+void
+RMSDReporterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	RMSDReporter::provide_xml_schema( xsd );
+}
+
+
 // Reporter
 RMSDReporter::RMSDReporter() :
 	mode_(MODE_NONE)
@@ -215,6 +273,35 @@ core::Real RMSDReporter::report_property( core::pose::Pose & p1, core::pose::Pos
 
 	return r;
 }
+
+
+void
+RMSDReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	XMLSchemaRestriction rmsd_mode;
+	rmsd_mode.name( "rmsd_mode" );
+	rmsd_mode.base_type( xs_string );
+	rmsd_mode.add_restriction( xsr_enumeration, "CA" );
+	rmsd_mode.add_restriction( xsr_enumeration, "all_atom" );
+	xsd.add_top_level_element( rmsd_mode );
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "mode", "rmsd_mode", "Calculate CA or all_atom RMSD?" );
+
+	core::pose::attributes_for_get_resnum_list( attlist, xsd, "residues" );
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( name() )
+		.description( "Reports the Calpha or full-atom RMSD of a pose (optionally within a specified residue range)" )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.complex_type_naming_func( & rosetta_scripts::PosePropertyReporterFactory::complex_type_name_for_pose_reporter )
+		.write_complex_type_to_schema( xsd );
+}
+
+
+
 
 void RMSDReporter::parse_my_tag(
 	utility::tag::TagCOP tag,

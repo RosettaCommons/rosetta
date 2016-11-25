@@ -24,6 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //// C++ headers
 
@@ -43,6 +44,10 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag
 	);
+
+	static std::string element_name();
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	char chain_;
 	core::Real cutoff_;// angstroms from ligand to interface residue

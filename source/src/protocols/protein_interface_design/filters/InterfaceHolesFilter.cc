@@ -26,6 +26,9 @@
 #include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -104,11 +107,44 @@ InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	TR<<"Using jump number " << rb_jump_ << " with threshold "<< threshold_ <<std::endl;
 }
 
-protocols::filters::FilterOP
-InterfaceHolesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceHolesFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP InterfaceHolesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceHolesFilter ); }
 
-std::string
-InterfaceHolesFilterCreator::keyname() const { return "InterfaceHoles"; }
+// XRW TEMP std::string
+// XRW TEMP InterfaceHolesFilterCreator::keyname() const { return "InterfaceHoles"; }
+
+std::string InterfaceHolesFilter::name() const {
+	return class_name();
+}
+
+std::string InterfaceHolesFilter::class_name() {
+	return "InterfaceHoles";
+}
+
+void InterfaceHolesFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_non_negative_integer, "Holes score threshold above which we fail the filter", "200" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which to evaluate the holes score, numbered sequentially from 1", "1" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string InterfaceHolesFilterCreator::keyname() const {
+	return InterfaceHolesFilter::class_name();
+}
+
+protocols::filters::FilterOP
+InterfaceHolesFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new InterfaceHolesFilter );
+}
+
+void InterfaceHolesFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterfaceHolesFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters

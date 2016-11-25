@@ -78,7 +78,7 @@ public:
 	~ParsedProtocol() override;
 	void apply( Pose & pose ) override;
 	core::pose::PoseOP get_additional_output( ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
@@ -128,6 +128,18 @@ public:
 	bool report_call_order() const { return report_call_order_; }
 	void report_call_order( bool const c ) { report_call_order_ = c; }
 	std::string call_order() const{ return call_order_; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	void finish_protocol(Pose & pose);
 

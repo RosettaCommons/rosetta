@@ -1,72 +1,73 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<s weights=score12_w_corrections>
-			<Set decompose_bb_hb_into_pair_energies=1/>
-		</s>	
+		<ScoreFunction name="s" weights="score12_w_corrections">
+			<Set decompose_bb_hb_into_pair_energies="1"/>
+		</ScoreFunction>	
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<ReadResfileFromDB name=all database_name=resfiles.db3 database_mode=sqlite3 database_table=resfiles/>
+		<ReadResfileFromDB name="all" database_name="resfiles.db3" database_mode="sqlite3" database_table="resfiles"/>
 	</TASKOPERATIONS>
 	<MOVERS>
-		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the whole feature generation code stack." task_operations=all>
+		<SavePoseMover name="init_struct" reference_name="init_struct"/>
+		<ReportToDB name="features_reporter" database_name="features_IntegrationTest.db3" batch_description="Test the whole feature generation code stack." task_operations="all">
 			Meta
-			<feature name=PoseCommentsFeatures/>
+			<PoseCommentsFeatures/>
 
 			Chemical
-			<feature name=AtomTypesFeatures/>
+			<AtomTypesFeatures/>
 
 			One-Body
-			<feature name=ResidueFeatures/>
-			<feature name=BetaTurnDetectionFeatures/>
-			<feature name=ProteinBackboneTorsionAngleFeatures/>
-			<feature name=ProteinResidueConformationFeatures/>
-			<feature name=ResidueBurialFeatures/>
-			<feature name=ResidueSecondaryStructureFeatures/>
-			<feature name=SecondaryStructureSegmentFeatures/>
-			<feature name=SmotifFeatures/> 
+			<ResidueFeatures/>
+			<BetaTurnDetectionFeatures/>
+			<ProteinBackboneTorsionAngleFeatures/>
+			<ProteinResidueConformationFeatures/>
+			<ResidueBurialFeatures/>
+			<ResidueSecondaryStructureFeatures/>
+			<SecondaryStructureSegmentFeatures/>
+			<SmotifFeatures/> 
 
 			Two-Body
-			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
-			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
-			<feature name=ChargeChargeFeatures/>
-			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>
-			<feature name=OrbitalsFeatures/>
-			<feature name=ProteinBackboneAtomAtomPairFeatures/>
-			<feature name=SaltBridgeFeatures/>
+			<AtomAtomPairFeatures min_dist="0" max_dist="3" nbins="2"/>
+			<HBondFeatures scorefxn="s" definition_type="AHdist" definition_threshold="1.8"/>
+			<ChargeChargeFeatures/>
+			<LoopAnchorFeatures min_loop_length="5" max_loop_length="7"/>
+			<OrbitalsFeatures/>
+			<ProteinBackboneAtomAtomPairFeatures/>
+			<SaltBridgeFeatures/>
 
 			Multi-Body
-			<feature name=GeometricSolvationFeatures/>
-			<feature name=HelixBundleFeatures/>
-			<feature name=PairFeatures/>
-			<feature name=PoseConformationFeatures/>
-			<feature name=RadiusOfGyrationFeatures/>
+			<GeometricSolvationFeatures/>
+			<HelixBundleFeatures/>
+			<PairFeatures/>
+			<PoseConformationFeatures/>
+			<RadiusOfGyrationFeatures/>
 
 			Multi-Structure
-			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
-			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
-			<feature name=SandwichFeatures/>
-			<feature name=StrandBundleFeatures/>
+			<ProteinRMSDFeatures reference_name="init_struct"/>
+			<RotamerRecoveryFeatures scorefxn="s" protocol="RRProtocolRTMin" comparer="RRComparerAutomorphicRMSD"/>
+			<SandwichFeatures/>
+			<StrandBundleFeatures/>
 
 			Energy-Function
-			<feature name=HBondParameterFeatures scorefxn=s/>
-			<feature name=ScoreTypeFeatures/>
-			<feature name=ResidueScoresFeatures scorefxn=s/>
-			<feature name=ResidueTotalScoresFeatures scorefxn=s/>
-			<feature name=StructureScoresFeatures scorefxn=s/>
-			<feature name=ScoreFunctionFeatures scorefxn=s/>
+			<HBondParameterFeatures scorefxn="s"/>
+			<ScoreTypeFeatures/>
+			<ResidueScoresFeatures scorefxn="s"/>
+			<ResidueTotalScoresFeatures scorefxn="s"/>
+			<StructureScoresFeatures scorefxn="s"/>
+			<ScoreFunctionFeatures scorefxn="s"/>
 
 			Experimental
-			<feature name=PdbDataFeatures/>
+			<PdbDataFeatures/>
 
     </ReportToDB>
-    <TrajectoryReportToDB name=trajectory_features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the trajectory report to db mover." task_operations=all stride=2>
+    <TrajectoryReportToDB name="trajectory_features_reporter" database_name="features_IntegrationTest.db3" batch_description="Test the trajectory report to db mover." task_operations="all" stride="2">
     </TrajectoryReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=init_struct/>
-		<Add mover_name=features_reporter/>
-		<Add mover_name=trajectory_features_reporter/>
+		<Add mover_name="init_struct"/>
+		<Add mover_name="features_reporter"/>
+		<Add mover_name="trajectory_features_reporter"/>
 	</PROTOCOLS>
-</ROSETTASCRIPTS>
 
+
+</ROSETTASCRIPTS>

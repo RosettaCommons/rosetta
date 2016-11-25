@@ -24,6 +24,9 @@
 //Utility Headers
 #include <utility/string_util.hh>
 #include <protocols/toolbox/NetworkAlgorithms.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -33,11 +36,11 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
-protocols::filters::FilterOP
-AveragePathLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AveragePathLengthFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AveragePathLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AveragePathLengthFilter ); }
 
-std::string
-AveragePathLengthFilterCreator::keyname() const { return "AveragePathLength"; }
+// XRW TEMP std::string
+// XRW TEMP AveragePathLengthFilterCreator::keyname() const { return "AveragePathLength"; }
 
 
 //default ctor
@@ -186,6 +189,39 @@ AveragePathLengthFilter::compute(
 
 	return network.average_shortest_path_length();
 }
+
+std::string AveragePathLengthFilter::name() const {
+	return class_name();
+}
+
+std::string AveragePathLengthFilter::class_name() {
+	return "AveragePathLength";
+}
+
+void AveragePathLengthFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "path_tightness", xsct_real, "Tightness of path length threshold; lower values are more stringent", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_path_length", xsct_real, "The absolute maximum, protein-size-independent, to pass the filter for path length.", "99999" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Computes the average shortest path length on the 'network' of the single-chain protein topology, considering residues as nodes and peptide and disulfide bonds as edges.", attlist );
+}
+
+std::string AveragePathLengthFilterCreator::keyname() const {
+	return AveragePathLengthFilter::class_name();
+}
+
+protocols::filters::FilterOP
+AveragePathLengthFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AveragePathLengthFilter );
+}
+
+void AveragePathLengthFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AveragePathLengthFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace

@@ -56,7 +56,7 @@ public:
 	//SymDofMover(const SymDofMover& rval);
 
 	// --- virtual functions from mover ---
-	std::string get_name() const override { return "SymDofMover"; }
+	// XRW TEMP  std::string get_name() const override { return "SymDofMover"; }
 	void apply(Pose& pose) override;
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
@@ -81,6 +81,18 @@ public:
 		Pose const & ) override;
 
 	void add_components_to_pose_if_necessary(Pose & pose);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1<std::string> get_sym_dof_names();

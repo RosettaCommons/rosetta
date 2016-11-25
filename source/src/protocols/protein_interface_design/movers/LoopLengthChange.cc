@@ -31,6 +31,9 @@
 #include <utility/vector1.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 //#include <time.h> // THIS IS USED FOR DEBUGGING!
 //#include <algorithm> // THIS IS USED FOR DEBUGGING!
 //#include <string> // THIS IS USED FOR DEBUGGING!
@@ -44,25 +47,25 @@ using namespace core::scoring;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopLengthChange" );
 
-std::string
-LoopLengthChangeCreator::keyname() const
-{
-	return LoopLengthChangeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopLengthChangeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return LoopLengthChange::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopLengthChangeCreator::create_mover() const {
-	return protocols::moves::MoverOP( new LoopLengthChange );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopLengthChangeCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new LoopLengthChange );
+// XRW TEMP }
 
-std::string
-LoopLengthChangeCreator::mover_name()
-{
-	return "LoopLengthChange";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopLengthChange::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "LoopLengthChange";
+// XRW TEMP }
 
 LoopLengthChange::LoopLengthChange() :
-	Mover( LoopLengthChangeCreator::mover_name() ),
+	Mover( LoopLengthChange::mover_name() ),
 	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false)
 {
 }
@@ -152,10 +155,10 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	pose.pdb_info()->obsolete( true );
 }
 
-std::string
-LoopLengthChange::get_name() const {
-	return LoopLengthChangeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopLengthChange::get_name() const {
+// XRW TEMP  return LoopLengthChange::mover_name();
+// XRW TEMP }
 
 void
 LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
@@ -217,6 +220,41 @@ void
 LoopLengthChange::tail( bool b ){
 	tail_segment_ = b;
 }
+
+std::string LoopLengthChange::get_name() const {
+	return mover_name();
+}
+
+std::string LoopLengthChange::mover_name() {
+	return "LoopLengthChange";
+}
+
+void LoopLengthChange::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute( "loop_start", xsct_refpose_enabled_residue_number, "Starting residue number for loop, formatted in seqpos or PDB or refpose numbering" )
+		+ XMLSchemaAttribute::required_attribute( "loop_end", xsct_refpose_enabled_residue_number, "Ending residue number for loop, formatted in seqpos or PDB or refpose numbering" )
+		+ XMLSchemaAttribute::required_attribute( "delta", xs_integer, "Number of residues to extend or contract the loop" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string LoopLengthChangeCreator::keyname() const {
+	return LoopLengthChange::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopLengthChangeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopLengthChange );
+}
+
+void LoopLengthChangeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopLengthChange::provide_xml_schema( xsd );
+}
+
 
 } //movers
 } //protein_interface_design

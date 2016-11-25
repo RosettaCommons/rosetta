@@ -51,12 +51,12 @@ public:
 	DockWithHotspotMover();
 	virtual ~DockWithHotspotMover();
 
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual protocols::moves::MoverOP clone() const {
+	virtual void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	virtual protocols::moves::MoverOP clone() const override {
 		return (protocols::moves::MoverOP( new protocols::protein_interface_design::movers::DockWithHotspotMover( *this ) ) );
 	}
-	virtual protocols::moves::MoverOP fresh_instance() const {
+	virtual protocols::moves::MoverOP fresh_instance() const override {
 		return protocols::moves::MoverOP( new DockWithHotspotMover );
 	}
 
@@ -64,7 +64,19 @@ public:
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	utility::vector1< std::string > hotspot_filenames_;

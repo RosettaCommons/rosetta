@@ -40,12 +40,12 @@ public:
 	AtomicContactCountFilter(core::Real distance_cutoff);
 	AtomicContactCountFilter( AtomicContactCountFilter const & copy );
 
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 	virtual ~AtomicContactCountFilter();
 
 	// @brief Filter name
-	virtual std::string name() const { return "AtomicContactCountFilter"; }
+	// XRW TEMP  virtual std::string name() const { return "AtomicContactCountFilter"; }
 
 	void initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 
@@ -53,16 +53,27 @@ public:
 
 	void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = NULL, bool normalize_by_carbon_count = false);
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
-	virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }
+	bool apply( core::pose::Pose const & /*pose*/ ) const override{ return true; }
 
 	/// @brief used to report filter internals through a score or silent file
 	// to determine that derived class has not overridden }
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const { return compute(pose); }
+	core::Real report_sm( core::pose::Pose const & pose ) const override { return compute(pose); }
 
 	core::Real compute( core::pose::Pose const &) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 	//TODO Alex Ford Add support for specified chain mode, need to add chain-id resolution to tag parsing.

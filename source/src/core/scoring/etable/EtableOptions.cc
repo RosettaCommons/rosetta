@@ -190,8 +190,8 @@ EtableOptions::append_schema_attributes( utility::tag::AttributeList & attribute
 {
 	using namespace utility::tag;
 	attributes
-		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xs_decimal )
-		+ XMLSchemaAttribute( "lj_hbond_hdis", xs_decimal );
+		+ XMLSchemaAttribute( "lj_hbond_OH_donor_dis", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute( "lj_hbond_hdis", xsct_real , "XRW TO DO" );
 }
 
 void

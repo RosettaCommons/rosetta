@@ -45,6 +45,9 @@
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilter.hh>
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -123,6 +126,7 @@ void AtomicContactCountFilter::parse_my_tag(
 {
 	distance_cutoff_ = tag->getOption< core::Real >( "distance", 4.5 );
 
+	// comedy idiom
 	std::string specified_mode = tag->getOption< std::string >( "partition", "none" );
 	std::string specified_normalized_by_sasa = tag->getOption< std::string >( "normalize_by_sasa", "0" );
 	bool normalize_by_sasa = tag->getOption< bool >( "normalize_by_sasa", false );
@@ -473,11 +477,62 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	}
 }
 
-protocols::filters::FilterOP
-AtomicContactCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicContactCountFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP AtomicContactCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicContactCountFilter ); }
 
-std::string
-AtomicContactCountFilterCreator::keyname() const { return "AtomicContactCount"; }
+// XRW TEMP std::string
+// XRW TEMP AtomicContactCountFilterCreator::keyname() const { return "AtomicContactCount"; }
+
+std::string AtomicContactCountFilter::name() const {
+	return class_name();
+}
+
+std::string AtomicContactCountFilter::class_name() {
+	return "AtomicContactCount";
+}
+
+void AtomicContactCountFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction partition_types;
+	partition_types.name( "partition_types" );
+	partition_types.base_type( xs_string );
+	// AMW: The documentation says "all" where it means "none"
+	partition_types.add_restriction( xsr_enumeration, "none" );
+	partition_types.add_restriction( xsr_enumeration, "jump" );
+	partition_types.add_restriction( xsr_enumeration, "chain" );
+	xsd.add_top_level_element( partition_types );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "distance", xsct_real, "Distance across which to count a contact", "4.5" )
+		+ XMLSchemaAttribute::attribute_w_default( "partition", "partition_types", "Partition across which to define contacts", "none" )
+		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_sasa", xsct_rosetta_bool, "Normalize contacts by sasa", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "normalize_by_carbon_count", xsct_rosetta_bool, "Normalize contacts by number of carbons", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "ss_only", xsct_rosetta_bool, "Only consider SS elements (i.e., non-L)", "0" )
+		+ XMLSchemaAttribute( "taskA", xs_string, "String-separated list of task operations" )
+		+ XMLSchemaAttribute( "taskB", xs_string, "String-separated list of task operations" );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "Jump across which to define contacts", "1" )
+		+ XMLSchemaAttribute( "sym_dof_name", xs_string, "Name of the sym dof -- a symmetry-aware jump identifier" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Counts sidechain carbon-carbon contacts among the specified residues under the given distance cutoff.", attlist );
+}
+
+std::string AtomicContactCountFilterCreator::keyname() const {
+	return AtomicContactCountFilter::class_name();
+}
+
+protocols::filters::FilterOP
+AtomicContactCountFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new AtomicContactCountFilter );
+}
+
+void AtomicContactCountFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomicContactCountFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

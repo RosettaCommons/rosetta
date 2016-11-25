@@ -1,15 +1,16 @@
 <ROSETTASCRIPTS>
   <SCOREFXNS>
-    <membrane07 weights=mpframework_fa_2007 />
-    <membrane12 weights=mpframework_smooth_fa_2012 />
-    <talaris weights=talaris2014 />
+    <ScoreFunction name="membrane07" weights="mpframework_fa_2007" />
+    <ScoreFunction name="membrane12" weights="mpframework_smooth_fa_2012" />
+    <ScoreFunction name="talaris" weights="talaris2014" />
     </SCOREFXNS>
   <MOVERS>
-    <AddMembraneMover name=add_memb/>
-    <SampleTiltAngles name=sample_tilt prefix="M13coat" ref1=talaris ref2=membrane07 ref3=membrane12/>
+    <AddMembraneMover name="add_memb"/>
+    <SampleTiltAngles name="sample_tilt" prefix="M13coat" ref1="talaris" ref2="membrane07" ref3="membrane12"/>
    </MOVERS>
   <PROTOCOLS>
-    <Add mover=add_memb/>
-    <Add mover=sample_tilt/>
+    <Add mover="add_memb"/>
+    <Add mover="sample_tilt"/>
    </PROTOCOLS>
+
 </ROSETTASCRIPTS>

@@ -58,6 +58,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 
@@ -282,27 +285,57 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	pose.dump_pdb( basename + ".prepack.pdb" );
 }
 
+// XRW TEMP std::string DockingPrepackProtocol::get_name() const {
+// XRW TEMP  return "DockingPrepackProtocol";
+// XRW TEMP }
+
+// creator methods
+// XRW TEMP std::string
+// XRW TEMP DockingPrepackProtocolCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockingPrepackProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockingPrepackProtocolCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockingPrepackProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string
+// XRW TEMP DockingPrepackProtocol::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DockingPrepackProtocol";
+// XRW TEMP }
+
 std::string DockingPrepackProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string DockingPrepackProtocol::mover_name() {
 	return "DockingPrepackProtocol";
 }
 
-// creator methods
-std::string
-DockingPrepackProtocolCreator::keyname() const
+void DockingPrepackProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	return DockingPrepackProtocolCreator::mover_name();
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Packs separated partners in preparation for docking", attlist );
+}
+
+std::string DockingPrepackProtocolCreator::keyname() const {
+	return DockingPrepackProtocol::mover_name();
 }
 
 protocols::moves::MoverOP
 DockingPrepackProtocolCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockingPrepackProtocol() );
+	return protocols::moves::MoverOP( new DockingPrepackProtocol );
 }
 
-std::string
-DockingPrepackProtocolCreator::mover_name()
+void DockingPrepackProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "DockingPrepackProtocol";
+	DockingPrepackProtocol::provide_xml_schema( xsd );
 }
+
 
 
 }

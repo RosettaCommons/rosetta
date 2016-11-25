@@ -66,7 +66,7 @@ public: // construct/destruct
 		core::scoring::ScoreFunctionOP scorefxn
 	);
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 public: // virtual constructors
 
@@ -106,6 +106,18 @@ public: // mutators
 	void set_default_settings() {
 		randomize_loop_ = true;
 	}
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 protected: // virtual loop operations

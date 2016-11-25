@@ -34,6 +34,10 @@
 #include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {
@@ -47,25 +51,25 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DockAndRetrieveSidechains" );
 
-std::string
-DockAndRetrieveSidechainsCreator::keyname() const
-{
-	return DockAndRetrieveSidechainsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DockAndRetrieveSidechainsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DockAndRetrieveSidechains::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DockAndRetrieveSidechainsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DockAndRetrieveSidechainsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
+// XRW TEMP }
 
-std::string
-DockAndRetrieveSidechainsCreator::mover_name()
-{
-	return "Docking";
-}
+// XRW TEMP std::string
+// XRW TEMP DockAndRetrieveSidechains::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Docking";
+// XRW TEMP }
 
 DockAndRetrieveSidechains::DockAndRetrieveSidechains() :
-	protocols::moves::Mover( DockAndRetrieveSidechainsCreator::mover_name() )
+	protocols::moves::Mover( DockAndRetrieveSidechains::mover_name() )
 {}
 
 DockAndRetrieveSidechains::~DockAndRetrieveSidechains() {}
@@ -112,10 +116,10 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 }
 
 
-std::string
-DockAndRetrieveSidechains::get_name() const {
-	return DockAndRetrieveSidechainsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DockAndRetrieveSidechains::get_name() const {
+// XRW TEMP  return DockAndRetrieveSidechains::mover_name();
+// XRW TEMP }
 
 void
 DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
@@ -174,6 +178,54 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	}
 	TR << " optimize fold tree="<<optimize_foldtree<<std::endl;
 }
+
+std::string DockAndRetrieveSidechains::get_name() const {
+	return mover_name();
+}
+
+std::string DockAndRetrieveSidechains::mover_name() {
+	return "Docking";
+}
+
+void DockAndRetrieveSidechains::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "score_low", xs_string, "Low-resolution scorefunction", "score_docking_low" )
+		+ XMLSchemaAttribute( "score_high", xs_string, "High-resolution scorefunction" )
+		+ XMLSchemaAttribute::attribute_w_default( "fullatom", xsct_rosetta_bool, "Run the high-resolution phase of the protocol", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "conserve_foldtree", xsct_rosetta_bool, "Keep the foldtree the same through the whole protocol", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "local_refine", xsct_rosetta_bool, "Do local refinement", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "view", xsct_rosetta_bool, "XRW TODO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "design", xsct_rosetta_bool, "XRW TODO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "symmetry", xsct_rosetta_bool, "Account for symmetry and associated information", "0" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "ignore_default_docking_task", xsct_rosetta_bool, "Ignore default docking task, instead using whatever is provided", "0" )
+		;
+
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "jumps", xsct_int_cslist, "list of jumps for docking", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "optimize_fold_tree", xsct_rosetta_bool, "Obtain an optimal foldtree given the desired docking jumps", "1" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string DockAndRetrieveSidechainsCreator::keyname() const {
+	return DockAndRetrieveSidechains::mover_name();
+}
+
+protocols::moves::MoverOP
+DockAndRetrieveSidechainsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
+}
+
+void DockAndRetrieveSidechainsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DockAndRetrieveSidechains::provide_xml_schema( xsd );
+}
+
 
 
 } //movers

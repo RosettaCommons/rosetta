@@ -168,7 +168,7 @@ public:
 	/// @brief returns the docking partners chain identifiers
 	std::string partners() const { return partners_;}
 
-	std::string get_name() const override { return "DockingProtocol"; }
+	// XRW TEMP  std::string get_name() const override { return "DockingProtocol"; }
 
 	/// @brief returns ref to the jumps vector for docking
 	DockJumps & movable_jumps(){ return movable_jumps_;}
@@ -216,6 +216,18 @@ public:
 
 	// function for the parser with lots of accessors
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	/// information about the mode

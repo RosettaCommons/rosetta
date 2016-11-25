@@ -19,6 +19,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
 #include <string>
@@ -36,6 +37,9 @@ public:
 
 	virtual FilterOP create_filter() const = 0;
 	virtual std::string keyname() const = 0;
+
+	/// @brief Describe the schema for the Filter that this Creator is responsible for
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
 typedef utility::pointer::shared_ptr< FilterCreator > FilterCreatorOP;

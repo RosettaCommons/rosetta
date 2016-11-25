@@ -151,12 +151,12 @@ void AlignedThreadOperation::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "alignment_file", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "query_name", xs_string )
-		+ XMLSchemaAttribute::required_attribute( "template_name", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_non_negative_integer, "1" );
+		+ XMLSchemaAttribute::required_attribute( "alignment_file", xs_string , "The name of the alignment file in FASTA format. Should be in the usual -'[right-pointing-angle-bracket]name_of_sequence' followed by the amino acid single letter sequence on the next line or lines- for this to work." )
+		+ XMLSchemaAttribute::required_attribute( "query_name", xs_string , "The name of the query sequence, as written in the alignment file." )
+		+ XMLSchemaAttribute::required_attribute( "template_name", xs_string , "The name of the template sequence, as written in the alignment file. the same sequence as that of the structure passed with -s." )
+		+ XMLSchemaAttribute::attribute_w_default(  "start_res", xsct_positive_integer, "The residue at which to start threading. Useful for threading the non-first chain.",  "1"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "A task operation that enables threading of aligned residues between a query and a template. receives a FASTA format sequence alignment (file may hold multiple sequences), and allows the threading only of residues that are aligned between query and structure. positions where either the template structure or the query sequence have a gap '-' are skipped. suitable for when you wish to model a sequence over a structure, and they are of different lengths" );
 }
 
 } //namespace protocols

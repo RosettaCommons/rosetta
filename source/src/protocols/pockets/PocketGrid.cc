@@ -1522,7 +1522,7 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) smallPocket=true;
 		else smallPocket=false;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1596,7 +1596,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		int ccount = 0;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( point.atom_type.compare("C") == 0 ) {
 				ccount++;
 			}
@@ -1605,7 +1605,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			continue;
 		}
 
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "HETATM";
 			std::stringstream  tmp;
@@ -1673,7 +1673,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 		for ( auto & cluster : clusters_.clusters_ ) {
 			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 			if ( !cluster.isTarget(numTargets_) ) continue;
-			for (auto & point : cluster.points_) {
+			for ( auto & point : cluster.points_ ) {
 				tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 			}
 		}
@@ -1694,7 +1694,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( minipock ) {
 				if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
 				if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;
@@ -1837,7 +1837,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			numeric::xyzVector<core::Real> coord(point.x,point.y,point.z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -1874,7 +1874,7 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			std::string concatenated_pdb_info;
 			concatenated_pdb_info += "ATOM  ";
 			std::stringstream  tmp;
@@ -1931,7 +1931,7 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( grid_[point.x][point.y][point.z]==TP_POCKET ) {
 				outstream << point.x << " " << point.y << " " << point.z << " TP_POCKET" << std::endl;
 			}
@@ -1954,7 +1954,7 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			numeric::xyzVector<core::Real> coord(xcorn_ + stepSize_ * point.x,ycorn_ + stepSize_ * point.y,zcorn_ + stepSize_ * point.z);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -2000,7 +2000,7 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			numeric::xyzVector<core::Real> coord(xcorn_ + point.x * stepSize_, ycorn_ + point.y * stepSize_, zcorn_ + point.z * stepSize_);
 			coord = rot1 * coord;
 			coord = rot2 * coord;
@@ -2581,7 +2581,7 @@ void PocketGrid::findClusters(){
 	//Change target clusters to target types on grid
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( !cluster.isTarget(numTargets_) ) {
-			for (auto & point : cluster.points_) {
+			for ( auto & point : cluster.points_ ) {
 				if ( grid_[point.x][point.y][point.z]==TP_POCKET ) grid_[point.x][point.y][point.z]=POCKET;
 				if ( grid_[point.x][point.y][point.z]==TP_SURF ) grid_[point.x][point.y][point.z]=PO_SURF;
 				if ( grid_[point.x][point.y][point.z]==TP_BURIED ) grid_[point.x][point.y][point.z]=PO_BURIED;
@@ -2590,7 +2590,7 @@ void PocketGrid::findClusters(){
 			continue;
 		}
 
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( grid_[point.x][point.y][point.z]==POCKET ) grid_[point.x][point.y][point.z]=TP_POCKET;
 			if ( grid_[point.x][point.y][point.z]==PO_SURF ) grid_[point.x][point.y][point.z]=TP_SURF;
 			if ( grid_[point.x][point.y][point.z]==PO_BURIED ) grid_[point.x][point.y][point.z]=TP_BURIED;
@@ -2621,7 +2621,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 		}
 	}
@@ -2918,7 +2918,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After Donors/Acceptors"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( point.atom_type.compare("C") == 0 ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -2941,7 +2941,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
 			if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;
 			if ( (tmpgrid_[point.x+2][point.y][point.z] != EMPTY && tmpgrid_[point.x-2][point.y][point.z] != EMPTY) &&
@@ -2977,7 +2977,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After shape"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( point.atom_type.compare("C") == 0 ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -2991,7 +2991,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 	std::cout<<std::endl<<"After clustering"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( point.atom_type.compare("C") == 0 ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -3034,7 +3034,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	}
 	std::cout<<std::endl<<"End of findExemplars"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( point.atom_type.compare("C") == 0 ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
@@ -3051,7 +3051,7 @@ void PocketGrid::findClustersByExemplars(){
 	//go through c clusters
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			for ( int x = -1* (int) (3/stepSize_)-1; x <= (int) (3/stepSize_)+1; x++ ) {
 				for ( int y = -1* (int) (3/stepSize_)-1; y <= (int) (3/stepSize_)+1; y++ ) {
 					for ( int z = -1* (int) (3/stepSize_)-1; z <= (int) (3/stepSize_)+1; z++ ) {
@@ -3162,7 +3162,7 @@ void PocketGrid::linkExemplarsThroughSolvent(){
 				for ( auto & cluster : clusters_.clusters_ ) {
 					if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 					if ( !cluster.isTarget(numTargets_) ) continue;
-					for (auto & point : cluster.points_) {
+					for ( auto & point : cluster.points_ ) {
 						tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 					}
 				}
@@ -3273,7 +3273,7 @@ utility::vector1<core::Real> PocketGrid::getBounds(){
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( grid_[point.x][point.y][point.z]==TP_POCKET || grid_[point.x][point.y][point.z]==TP_BURIED ||
 					grid_[point.x][point.y][point.z]==TP_EDGE ) {
 				if ( first ) {
@@ -4167,7 +4167,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	core::Size self_num_points = 0;
 	for ( auto const & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue; // this is a smallpocket
-		for (const auto & point : cluster.points_) {
+		for ( const auto & point : cluster.points_ ) {
 			if ( (grid_[point.x][point.y][point.z]==TP_POCKET) || (grid_[point.x][point.y][point.z]==TP_SURF) || (grid_[point.x][point.y][point.z]==TP_EDGE) || (grid_[point.x][point.y][point.z]==TP_BURIED) ) {
 				++self_num_points;
 			}
@@ -4278,7 +4278,7 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 		for ( auto & cluster : clusters_.clusters_ ) {
 			if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 			if ( !cluster.isTarget(numTargets_) ) continue;
-			for (auto & point : cluster.points_) {
+			for ( auto & point : cluster.points_ ) {
 				tmpgrid_[point.x][point.y][point.z] = grid_[point.x][point.y][point.z];
 			}
 		}
@@ -4306,7 +4306,7 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 	for ( auto & cluster : clusters_.clusters_ ) {
 		if ( cluster.points_.size()*pow(stepSize_,3)<minPockSize_ ) continue;
 		if ( !cluster.isTarget(numTargets_) ) continue;
-		for (auto & point : cluster.points_) {
+		for ( auto & point : cluster.points_ ) {
 			if ( minipock ) {
 				if ( tmpgrid_[point.x][point.y][point.z] == EMPTY ) continue;
 				if ( point.x < 2 || point.y < 2|| point.z < 2 || point.x > xdim_-3 || point.y > ydim_-3|| point.z > zdim_-3 ) continue;

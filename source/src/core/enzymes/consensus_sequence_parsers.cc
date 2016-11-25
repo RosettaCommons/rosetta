@@ -72,7 +72,7 @@ get_3_letter_codes_from_peptide_consensus_sequence( std::string const & sequence
 			} else {
 				// There is only one option for this position.  Convert to a 3-letter code and push back.
 				residues_in_consensus.push_back(
-						vector1< string >( 1, name_from_aa( aa_from_oneletter_code( one_letter_code ) ) ) );
+					vector1< string >( 1, name_from_aa( aa_from_oneletter_code( one_letter_code ) ) ) );
 			}
 		}
 	}

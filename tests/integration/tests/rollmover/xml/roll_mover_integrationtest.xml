@@ -1,8 +1,8 @@
-<dock_design>
+<ROSETTASCRIPTS>
 
 <SCOREFXNS>
-  <SFXN7 weights="talaris2014">
-  </SFXN7>
+  <ScoreFunction name="SFXN7" weights="talaris2014">
+  </ScoreFunction>
 </SCOREFXNS>
 
 <TASKOPERATIONS>
@@ -16,7 +16,7 @@
 
 <MOVERS>
 
-  <RollMover name="randomroll" chain=2 random_roll=1 random_roll_angle_mag=8.0 random_roll_trans_mag=2.0 />
+  <RollMover name="randomroll" chain="2" random_roll="1" random_roll_angle_mag="8.0" random_roll_trans_mag="2.0" />
 
 </MOVERS>
 
@@ -27,4 +27,5 @@
 
 </PROTOCOLS>
 
-</dock_design>
+
+</ROSETTASCRIPTS>

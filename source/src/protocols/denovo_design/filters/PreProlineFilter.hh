@@ -49,20 +49,20 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		core::pose::Pose const & );
+		core::pose::Pose const & ) override;
 
 	/// @brief Return the name of this mover.
 	virtual std::string get_name() const;
 
 	/// @brief return a fresh instance of this class in an owning pointer
-	virtual protocols::filters::FilterOP clone() const;
-	virtual protocols::filters::FilterOP fresh_instance() const;
+	protocols::filters::FilterOP clone() const override;
+	protocols::filters::FilterOP fresh_instance() const override;
 
 	/// @brief Apply the PreProlineFilter. Overloaded apply function from filter base class.
-	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	virtual core::Real compute( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	virtual bool apply( core::pose::Pose const & pose ) const;
+	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
+	bool apply( core::pose::Pose const & pose ) const override;
 
 	void set_use_statistical_potential( bool const use_stat );
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
@@ -76,6 +76,18 @@ public:
 	core::Real compute_spline(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & selection ) const;
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:   // options
 	/// @brief If total calculated filter score is <= theshold_, the filter passes, otherwise it fails.

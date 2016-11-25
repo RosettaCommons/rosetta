@@ -51,6 +51,10 @@
 #include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <algorithm>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/TaskOperationFeaturesCreator.hh>
 
 
 //Auto Headers
@@ -96,8 +100,8 @@ TaskOperationFeatures::TaskOperationFeatures(TaskOperationFeatures const &) :
 
 TaskOperationFeatures::~TaskOperationFeatures() = default;
 
-string
-TaskOperationFeatures::type_name() const { return "TaskOperationFeatures"; }
+// XRW TEMP string
+// XRW TEMP TaskOperationFeatures::type_name() const { return "TaskOperationFeatures"; }
 
 void
 TaskOperationFeatures::write_schema_to_db(
@@ -327,6 +331,44 @@ TaskOperationFeatures::insert_task_operation_residue_effects_row(
 	stmt.bind(5,design);
 	basic::database::safely_write_to_database(stmt);
 }
+
+std::string TaskOperationFeatures::type_name() const {
+	return class_name();
+}
+
+std::string TaskOperationFeatures::class_name() {
+	return "TaskOperationFeatures";
+}
+
+void TaskOperationFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"task_operation", xs_string,
+		"comma separated TaskOperation list");
+
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"TaskOperation feature reporter",
+		attlist );
+}
+
+std::string TaskOperationFeaturesCreator::type_name() const {
+	return TaskOperationFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+TaskOperationFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new TaskOperationFeatures );
+}
+
+void TaskOperationFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TaskOperationFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

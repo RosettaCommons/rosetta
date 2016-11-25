@@ -41,6 +41,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
 
 //Auto Headers
 namespace protocols {
@@ -69,8 +73,8 @@ AtomInResidueAtomInResiduePairFeatures::AtomInResidueAtomInResiduePairFeatures( 
 
 AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures()= default;
 
-string
-AtomInResidueAtomInResiduePairFeatures::type_name() const { return "AtomInResidueAtomInResiduePairFeatures"; }
+// XRW TEMP string
+// XRW TEMP AtomInResidueAtomInResiduePairFeatures::type_name() const { return "AtomInResidueAtomInResiduePairFeatures"; }
 
 void
 AtomInResidueAtomInResiduePairFeatures::write_schema_to_db(
@@ -225,6 +229,38 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 		}
 	}
 }
+
+std::string AtomInResidueAtomInResiduePairFeatures::type_name() const {
+	return class_name();
+}
+
+std::string AtomInResidueAtomInResiduePairFeatures::class_name() {
+	return "AtomInResidueAtomInResiduePairFeatures";
+}
+
+void AtomInResidueAtomInResiduePairFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	// TO DO: perhaps this is not the right function to call? -- also, delete this comment
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Atom pair features given a pair of residues of interest", attlist );
+}
+
+std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {
+	return AtomInResidueAtomInResiduePairFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
+}
+
+void AtomInResidueAtomInResiduePairFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AtomInResidueAtomInResiduePairFeatures::provide_xml_schema( xsd );
+}
+
 
 } // namesapce
 } // namespace

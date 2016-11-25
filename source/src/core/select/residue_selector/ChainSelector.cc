@@ -72,8 +72,7 @@ ChainSelector::apply(
 ) const
 {
 	ResidueSubset subset( pose.size(), false );
-	for ( core::Size ii = 1; ii <= chain_strings_.size(); ++ii ) {
-		std::string const & iichain_string = chain_strings_[ ii ];
+	for ( std::string const & iichain_string : chain_strings_ ) {
 		core::Size ii_num = 0;
 		try {
 			ii_num = boost::lexical_cast< core::Size > ( iichain_string );
@@ -121,16 +120,18 @@ void
 ChainSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 
-	// first define the chain_cslist restriction -- this could be moved elsewhere
-	XMLSchemaRestriction chain_cslist;
-	chain_cslist.name( "chain_cslist" );
-	chain_cslist.base_type( xs_string );
-	chain_cslist.add_restriction( xsr_pattern, "[A-Z](,[A-Z])*" );
-	xsd.add_top_level_element( chain_cslist);
-
 	utility::tag::AttributeList attributes;
-	attributes + XMLSchemaAttribute( "chains", "chain_cslist" );
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute(
+		"chains", xsct_chain_cslist,
+		"The string given for the \"chains\" option should be a "
+		"comma-separated list of chain identifiers. "
+		"Each chain identifier should be either an integer, so that the Pose "
+		"chain index will be used, or a single character, so that the PDB chain ID can be used.");
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The ChainSelector sets the positions corresponding to all the residues "
+		"in the given set of chains to true, and all the other positions to false.",
+		attributes );
 }
 
 utility::vector1< std::string > const &

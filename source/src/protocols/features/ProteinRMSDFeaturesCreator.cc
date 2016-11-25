@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-ProteinRMSDFeaturesCreator::ProteinRMSDFeaturesCreator() {}
-ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() = default;
-FeaturesReporterOP ProteinRMSDFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new ProteinRMSDFeatures );
-}
+// XRW TEMP ProteinRMSDFeaturesCreator::ProteinRMSDFeaturesCreator() {}
+// XRW TEMP ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP ProteinRMSDFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new ProteinRMSDFeatures );
+// XRW TEMP }
 
-std::string ProteinRMSDFeaturesCreator::type_name() const {
-	return "ProteinRMSDFeatures";
-}
+// XRW TEMP std::string ProteinRMSDFeaturesCreator::type_name() const {
+// XRW TEMP  return "ProteinRMSDFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

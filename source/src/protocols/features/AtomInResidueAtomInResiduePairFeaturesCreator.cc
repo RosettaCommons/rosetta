@@ -24,15 +24,15 @@
 namespace protocols {
 namespace features {
 
-AtomInResidueAtomInResiduePairFeaturesCreator::AtomInResidueAtomInResiduePairFeaturesCreator() {}
-AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() = default;
-FeaturesReporterOP AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
-}
+// XRW TEMP AtomInResidueAtomInResiduePairFeaturesCreator::AtomInResidueAtomInResiduePairFeaturesCreator() {}
+// XRW TEMP AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
+// XRW TEMP }
 
-std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {
-	return "AtomInResidueAtomInResiduePairFeatures";
-}
+// XRW TEMP std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {
+// XRW TEMP  return "AtomInResidueAtomInResiduePairFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

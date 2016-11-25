@@ -71,7 +71,7 @@ public:
 	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover ); }
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -128,6 +128,21 @@ public:
 	void reference_pose( core::pose::PoseOP const reference_pose );
 	bool keep_trying() const;
 	void keep_trying( bool const k );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	//static
+	//utility::tag::XMLSchemaRepeatableCTNodeOP
+	//root_node_for_greedy_opt( utility::tag::AttributeList & attlist1, utility::tag::XMLSchemaDefinition & xsd ) ;
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;

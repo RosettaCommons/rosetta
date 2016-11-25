@@ -33,7 +33,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.fwd.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Boost headers
 #include <boost/lexical_cast.hpp>
 
@@ -67,7 +67,16 @@ public:
 
 	virtual components::StructureDataOP
 	design( core::pose::Pose const & pose, core::Real & random ) const = 0;
+	/*
+	static std:string
+	class_name();
 
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	*/
+	static void
+	add_common_denovo_architect_attributes( utility::tag::AttributeList & attlist );
 protected:
 	virtual void
 	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) = 0;
@@ -101,6 +110,10 @@ public:
 
 	static std::string
 	architect_name() { return "DeNovoMotif"; }
+
+	static void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	virtual std::string
 	type() const;

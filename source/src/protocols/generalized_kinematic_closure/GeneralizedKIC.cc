@@ -52,6 +52,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -63,22 +66,22 @@ namespace generalized_kinematic_closure {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
-std::string
-GeneralizedKICCreator::keyname() const
-{
-	return GeneralizedKICCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP GeneralizedKICCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return GeneralizedKIC::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-GeneralizedKICCreator::create_mover() const {
-	return protocols::moves::MoverOP( new GeneralizedKIC );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP GeneralizedKICCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new GeneralizedKIC );
+// XRW TEMP }
 
-std::string
-GeneralizedKICCreator::mover_name()
-{
-	return "GeneralizedKIC";
-}
+// XRW TEMP std::string
+// XRW TEMP GeneralizedKIC::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "GeneralizedKIC";
+// XRW TEMP }
 
 /// @brief Constructor for GeneralizedKIC mover.
 ///
@@ -262,9 +265,9 @@ void GeneralizedKIC::apply ( core::pose::Pose & pose )
 
 
 /// @brief Returns the name of this mover ("GeneralizedKIC").
-std::string GeneralizedKIC::get_name() const{
-	return "GeneralizedKIC";
-}
+// XRW TEMP std::string GeneralizedKIC::get_name() const{
+// XRW TEMP  return "GeneralizedKIC";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -1610,7 +1613,7 @@ GeneralizedKIC::doKIC(
 			core::pose::PoseOP looppose( pose.clone() ); //Clone the loop pose.
 			set_loop_pose( *looppose, atomlist_, t_ang[iattempt][j], b_ang[iattempt][j], b_len[iattempt][j]);
 			copy_loop_pose_to_original( *curpose, *looppose, residue_map, tail_residue_map);
-			if( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( *curpose, residue_map );
+			if ( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( *curpose, residue_map );
 
 			//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
 #ifdef BOINC_GRAPHICS
@@ -2089,7 +2092,7 @@ GeneralizedKIC::set_final_solution(
 	debug_assert( low_memory_mode() );
 	set_loop_pose( looppose, atomlist_, torsions, bondangles, bondlengths);
 	copy_loop_pose_to_original( pose, looppose, residue_map, tail_residue_map);
-	if( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( pose, residue_map );
+	if ( correct_polymer_dependent_atoms() ) correct_polymer_dependent_atoms_in_pose_segment( pose, residue_map );
 	if ( preselection_mover_exists() ) {
 		TR << "Re-applying pre-selection mover to solution." << std::endl;
 		pre_selection_mover_->apply( pose );
@@ -2101,6 +2104,346 @@ GeneralizedKIC::set_final_solution(
 	}
 	return protocols::moves::MS_SUCCESS;
 }
+
+std::string GeneralizedKIC::get_name() const {
+	return mover_name();
+}
+
+std::string GeneralizedKIC::mover_name() {
+	return "GeneralizedKIC";
+}
+
+std::string gen_kic_subelement_mangler( std::string const & element_name )
+{
+	return "gen_kic_subelement_" + element_name + "_type";
+}
+
+std::string gen_kic_sample_cis_subelement_mangler( std::string const & element_name )
+{
+	return "gen_kic_sample_cis_subelement_" + element_name + "_type";
+}
+
+std::string gen_kic_add_pert_subelement_mangler( std::string const & element_name )
+{
+	return "gen_kic_add_pert_subelement_" + element_name + "_type";
+}
+
+std::string gen_kic_add_filter_subelement_mangler( std::string const & element_name )
+{
+	return "gen_kic_add_filter_subelement_" + element_name + "_type";
+}
+
+void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	selector::GeneralizedKICselector::define_valid_selector_name_enumeration( xsd );
+	perturber::GeneralizedKICperturber::define_valid_perturber_name_enumeration( xsd );
+	filter::GeneralizedKICfilter::define_valid_filter_name_enumeration( xsd );
+
+	typedef utility::tag::XMLSchemaAttribute Attr;
+	AttributeList attlist;
+
+	attlist + Attr( "low_memory_mode", xsct_rosetta_bool, "The low_memory_mode option can be used to limit the amount of information about each solution found that is stored, in order to reduce memory consumption. In this mode, only loop degree-of-freedom values are stored prior to selection. The drawback, however, is it can be risk to use low-memory mode with a preselection mover. Any changes to the pose made by the preselection mover will not be stored, so the preselection mover will have to be re-applied to the selected pose after selection. This costs additional time. In addition, if the preselection mover has any stochastic component to its behaviour, then the second application may not produce identical results to the first. This means that what might have been the lowest-energy pose when the preselection mover was first applied could now be a relatively high-energy pose, for example. For this reason, be judicious in the use of low-memory mode. The preferred course is to stop GenKIC when N solutions have been found to limit memory usage." )
+		+ Attr( "correct_polymer_dependent_atoms", xsct_rosetta_bool, "If set to true, atoms whose positions are dependent on polymer bonds, such as amino acid \"H\" and \"O\" atoms, will have their positions set to ideal coordinates after closure.  False by default." )
+		+ Attr( "dont_fail_if_no_solution_found", xsct_rosetta_bool, "By default, the GeneralizedKIC mover returns failure status if it fails to find a closed solution that passes filters.  Certain usage cases require that it does not fail.  If this option is set to true, it prevents GeneralizedKIC from returning a failure status, even if it finds no solution (in which case the input pose, which may have an open chain of atoms, is returned as the output pose).  This is necessary, for example, when GeneralizedKIC is used in conjunction with a ContingentFilter." )
+		+ Attr::required_attribute( "selector", "genkic_selector_name", "The GeneralizedKICselector to use to pick a solution.  Solutions may be picked randomly (\"random_selector\"), by energy (\"lowest_energy_selector\"), or by other criteria.  See the Rosetta help wiki for more information on GeneralizedKICselectors, and for the full range of options." )
+		+ Attr( "selector_scorefunction", xs_string, "XSD XRW TO DO")
+		+ Attr( "selector_kbt", xsct_real, "If the GeneralizedKICselector is set to \"boltzmann_energy_selector\", this is the Boltzmann temperature used when selecting a solution randomly, weighted by the Boltzmann probability of that solution." )
+		+ Attr::attribute_w_default( "stop_if_no_solution", xsct_non_negative_integer, "If this option is used and set to a positive integer N, GeneralizedKIC stops looking for closure solutions if no solution was found in the first N attempts.", "0" )
+		+ Attr( "closure_attempts", xsct_non_negative_integer, "The maximum number of times to try to find a solution.  Set this to zero to keep trying indefinitely (in which case the \"stop_when_n_solutions_found\" option should be used to prevent the mover from iterating forever)." )
+		+ Attr( "stop_when_n_solutions_found", xsct_non_negative_integer, "If this option is used and set to a positive integer N, GeneralizedKIC will stop looking for closure solutions as soon as at least N solutions have been found that pass filters.  Note that a GeneralizedKICselector must be specified even if this option is set to 1, because a single attempt can yield up to 16 solutions." )
+		+ Attr( "pre_selection_mover", xs_string, "As an optional alternative to restricting oneself to backbone-only score terms, GeneralizedKIC permits the user to specify a pre-selection mover defined prior to the GeneralizedKIC block. This permits side-chain moves, such as repacking or side-chain minimization, prior to scoring with the full energy function. Note that this mover will be applied to all candidate solutions passing filters, which makes this option potentially very computationally expensive!\nIf a pre-selection mover is specified, the mover may alter geometry outside of the loop to be closed, or may alter the FoldTree, in which case these alterations will carry through to the final pose returned by GeneralizedKIC. TaskOperations and MoveMaps may be used appropriately in the definition of the mover in question to restrict its effects to the loop on which GeneralizedKIC is operating if the user does not wish to alter geometry outside of this loop. If one wishes to apply more than one pre-selection mover (for example, a PackRotamersMover followed by a sidechain-only MinMover, to repack and minimize side-chains), they may be combined in a ParsedProtocol mover.\nAs a final note, a mover may return failure status, or may encapsulate filters that return failure status, in which case the solution to which the mover has been applied will be discarded." )
+		+ Attr( "contingent_filter", xs_string, " A ContingentFilter can also be used to record whether the mover failed. The ContingentFilter is a specialized filter that has its value set by a mover. GeneralizedKIC can set the value of a ContingentFilter, specified using the contingent_filter flag, to true or false depending on whether the closure was successful or unsuccessful. Subsequent application of the filter, possibly at a later point, can then abort trajectories involving unsuccessful loop closure.  Note that this is a largely deprecated feature that has been retained since a few users have found it useful in some cases; for most usage cases, one can simply rely on the fact that the mover returns failure status if no closed solution is found.  It will likely be necessary to use the \"dont_fail_if_no_solution_found\" option if a ContingentFilter is used." );
+
+	// AddResidue sub-element
+	AttributeList add_residue_attributes;
+	add_residue_attributes + Attr::required_attribute( "res_index", xsct_non_negative_integer, "The \"res_index\" option within an \"AddResidue\" sub-tag specifies the index, in Rosetta numbering, of the residue being added to the chain of residues to be closed." );
+	XMLSchemaComplexTypeGenerator add_residue_ct_gen;
+	add_residue_ct_gen.element_name( "AddResidue" )
+		.complex_type_naming_func( & gen_kic_subelement_mangler )
+		.add_attributes( add_residue_attributes )
+		.description( "\"AddResidue\" sub-tags are used to specify the residues that make up the chain of atoms to be closed, in order of connectivity." )
+		.write_complex_type_to_schema( xsd );
+
+	{
+		// AddTailResidue sub-element
+		AttributeList add_tail_residue_attributes;
+		add_tail_residue_attributes + Attr::required_attribute( "res_index", xsct_non_negative_integer, "The \"res_index\" option within an \"AddTailResidue\" sub-tag specifies the index, in Rosetta numbering, of the residue being added to the chain of residues constituting a \"tail\" that is intended to move with the chain to be closed." );
+		XMLSchemaComplexTypeGenerator add_tail_residue_ct_gen;
+		add_tail_residue_ct_gen.element_name( "AddTailResidue" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( add_tail_residue_attributes )
+			.description( "Loops to be closed might have other chains of residues attached to them.  By default, GeneralizedKIC fails to respect covalent bonds to any but the end residues in the chain to be closed, and can tear these bonds apart as residues move.  Users can optionally specify a list of \"tail\" residues that are covalently attached to, and move with, the chain of residues to be closed.  For example, one might have a series of glycans attached to a serine residue in a protein loop that's being closed with GenKIC.  If these residues are specified as tail residues, then they will remain attached to the serine residue even as the loop that contains the serine residue moves." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// SetPivots sub-element
+		AttributeList set_pivots_attributes;
+		set_pivots_attributes
+			+ Attr::required_attribute( "res1", xsct_non_negative_integer, "The first pivot residue (by Rosetta index). Currently, due to hard-coded assumptions in the kinematic closure numerical library, the first pivot must be the second atom in the chain to be closed." )
+			+ Attr::required_attribute( "atom1", xs_string, "The first pivot atom (by atom name). Currently, due to hard-coded assumptions in the kinematic closure numerical library, the first pivot must be the second atom in the chain to be closed." )
+			+ Attr::required_attribute( "res2", xsct_non_negative_integer, "The middle pivot residue (by Rosetta index)." )
+			+ Attr::required_attribute( "atom2", xs_string, "The middle pivot atom (by atom name)." )
+			+ Attr::required_attribute( "res3", xsct_non_negative_integer, "The last pivot residue (by Rosetta index). Currently, due to hard-coded assumptions in the kinematic closure numerical library, the last pivot must be the second-to-last atom in the chain to be closed." )
+			+ Attr::required_attribute( "atom3", xs_string, "The last pivot atom (by atom name). Currently, due to hard-coded assumptions in the kinematic closure numerical library, the last pivot must be the second-to-last atom in the chain to be closed." );
+		XMLSchemaComplexTypeGenerator set_pivots_ct_gen;
+		set_pivots_ct_gen.element_name( "SetPivots" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( set_pivots_attributes )
+			.description( "Pivots are atoms in the chain of atoms to be closed that are flanked by bonds whose dihedral values will be solved for analytically by the closure algorithm in order to close the loop. Currently, due to hard-coded assumptions in the kinematic closure numerical library, the first pivot must be the second atom in the chain to be closed, and the last pivot must be the second-to-last atom in the chain to be closed." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// SampleCisPeptideBond sub-element
+		// It itself has its own sub-element -- AddResidue
+		AttributeList sample_cis_peptide_bond_add_residue_attributes;
+		sample_cis_peptide_bond_add_residue_attributes
+			+ Attr::required_attribute( "index", xsct_non_negative_integer, "The index, in Rosetta numbering, of a residue whose omega value should sample 0." );
+		XMLSchemaSimpleSubelementList samp_cis_add_residue_subelement;
+		samp_cis_add_residue_subelement.complex_type_naming_func( & gen_kic_sample_cis_subelement_mangler )
+			.add_simple_subelement( "AddResidue", sample_cis_peptide_bond_add_residue_attributes, "\"AddResidue\" sub-sub-tags are used within a \"SampleCisPeptideBond\" sub-tag to list all of the residues at which cis-peptide bonds should be sampled." );
+
+		AttributeList sample_cis_peptide_bond_attributes;
+		sample_cis_peptide_bond_attributes
+			+ Attr::attribute_w_default( "cis_prob", xsct_real, "The probability of sampling a cis-peptide bond at a given position, where 1.0 means that cis is sampled 100% of the time, and 0.0 means that trans is sampled 100% of the time.", "0.1" );
+
+		XMLSchemaComplexTypeGenerator sample_cis_peptide_bond_ct_gen;
+		sample_cis_peptide_bond_ct_gen.element_name( "SampleCisPeptideBond" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( sample_cis_peptide_bond_attributes )
+			.set_subelements_repeatable( samp_cis_add_residue_subelement )
+			.description( "A \"SampleCisPeptideBond\" sub-tag is a shorthand for adding a sample_cis_peptide_bond GeneralizedKICperturber.  It tells the GeneralizedKIC mover to sample a cis-peptide bond at a particular residue some subset of the time." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// CloseBond subelement
+		AttributeList close_bond_attributes;
+		close_bond_attributes
+
+			+ Attr::required_attribute( "res1", xsct_non_negative_integer, "The residue (Rosetta numbering) containing the first atom in the bond to be closed." )
+			+ Attr::required_attribute( "atom1", xs_string, "The first atom (given as an atom name string) in the bond to be closed." )
+			+ Attr::required_attribute( "res2", xsct_non_negative_integer, "The residue (Rosetta numbering) containing the second atom in the bond to be closed." )
+			+ Attr::required_attribute( "atom2", xs_string, "The second atom (given as an atom name string) in the bond to be closed." )
+			+ Attr::required_attribute( "bondlength", xsct_real, "The length of the bond to be closed." )
+			+ Attr::required_attribute( "angle1", xsct_real, "The bond angle defined by B1, A1, A2, where A1 and A2 are the atoms in the bond to be closed and B1 is the last atom in the chain to be closed that's prior to the bond to be closed." )
+			+ Attr::required_attribute( "angle2", xsct_real, "The bond angle defined by A1, A2, B2, where A1 and A2 are the atoms in the bond to be closed and B2 is the first atom in the chain to be closed that's past the bond to be closed." )
+			+ Attr( "randomize_flanking_torsions", xsct_rosetta_bool, "If true, bonds flanking the bond to be closed will have their torsion values randomized.  If present, requires \"prioratom_res\" and \"followingatom_res\" attributes to be set." )
+			+ Attr( "prioratom_res", xsct_non_negative_integer, "The atom preceding the bond to be closed.  This is only required if the \"randomize_flanking_torsions\" option is used." )
+			+ Attr( "prioratom", xs_string, "The atom preceding the bond to be closed.  This is only required if the \"randomize_flanking_torsions\" option is used." )
+			+ Attr( "followingatom_res", xsct_non_negative_integer, "The atom following the bond to be closed.  This is only required if the \"randomize_flanking_torsions\" option is used." )
+			+ Attr( "followingatom", xs_string, "The atom following the bond to be closed.  This is only required if the \"randomize_flanking_torsions\" option is used." )
+			+ Attr( "torsion", xsct_real, "An optional torsion value for the bond to be closed.  If not specified, the input value persists." );
+
+		XMLSchemaComplexTypeGenerator close_bond_ct_gen;
+		close_bond_ct_gen.element_name( "CloseBond" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( close_bond_attributes )
+			.description( "A \"CloseBond\" sub-tag is a shorthand for set_bondangle and set_bondlength GeneralizedKICperturbers, as well as an optional pair of randomize_dihedral perturbers for the flanking dihedral angles, and an optional set_torsion perturber.  It is intended to be used to set the ideal geometry for an open bond in a loop that GeneralizedKIC should close." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// AddPerturber subelement
+		AttributeList add_perturber_attributes;
+		add_perturber_attributes + Attr::required_attribute( "effect", "genkic_perturber_name", "The name of the GeneralizedKICperturber (e.g. \"perturb_dihedral\", \"set_bondangle\", \"randomize_alpha_backbone_by_rama\", etc.).  See the Rosetta documentation wiki for a full list of available perturbers." )
+			+ Attr::attribute_w_default( "bin_params_file", xs_string, "The \"randomize_backbone_by_bins\" and \"perturb_backbone_by_bins\" perturbers require a bin definition file, set using this option.", "ABBA" )
+			+ Attr::attribute_w_default( "iterations", xsct_non_negative_integer, "The \"perturb_backbone_by_bins\" perturber requires that a number of iterations be set. If the number of iterations is set to 1, only one residue, randomly chosen from the list provided, will have its mainchain torsions perturbed. If it is set higher, the algorithm iteratively picks a residue at random and perturbs it.", "1" )
+			+ Attr::attribute_w_default( "must_switch_bins", xsct_rosetta_bool, "This option is only used by the \"perturb_backbone_by_bins\" perturber.  If \"must_switch_bins\" is set to true, the chosen residue is forced into a different torsion bin; if false, it has some probability of remaining in the same torson bin, in which case its mainchain torsion values will be chosen randomly (in a biased manner, if possible) from within that bin.", "false" )
+			+ Attr( "bin", xs_string, "The \"set_backbone_bin\" perturber draws random mainchain torsion values from a mainchain torsion bin defined in a bin params file.  The \"bin\" option names the bin from which the torsion values will be drawn.  Required for this perturber only." ) /*NOT an enum -- a bin name is read from a bin params file*/
+			+ Attr( "custom_rama_table", xs_string, "The \"randomize_alpha_backbone_by_rama\" perturber may optionally draw random phi and psi values from one of several custom Ramachandran tables that offer either flattened or more stringent distributions.  These are listed on the Rosetta help wiki." );
+
+		// This one has its own subelements!
+		//   1. AddResidue
+		AttributeList add_pert_subelement_add_residue_attrs;
+		add_pert_subelement_add_residue_attrs
+			+ Attr::required_attribute( "index", xsct_non_negative_integer, "The index, in Rosetta numbering, of a residue on which this perturber should act." );
+		XMLSchemaComplexTypeGenerator add_pert_subelement_add_residue_ct_gen;
+		add_pert_subelement_add_residue_ct_gen.element_name( "AddResidue" )
+			.complex_type_naming_func( gen_kic_add_pert_subelement_mangler )
+			.add_attributes( add_pert_subelement_add_residue_attrs )
+			.description( "The \"AddResidue\" sub-sub-tag in an \"AddPerturber\" sub-tag permits a residue to be defined on which the perturber may act.  Use multiple \"AddResidue\" tags to define more than one residue." )
+			.write_complex_type_to_schema( xsd );
+
+		//   2. AddAtoms
+		AttributeList add_pert_subelement_add_atoms_attrs;
+		add_pert_subelement_add_atoms_attrs
+			+ Attr::required_attribute( "res1", xsct_non_negative_integer, "The residue (specified using Rosetta numbering) containing the first atom." )
+			+ Attr::required_attribute( "atom1", xs_string, "The first atom, specified as an atom name string." )
+			+ Attr( "res2", xsct_non_negative_integer, "The residue (specified using Rosetta numbering) containing the second atom." )
+			+ Attr( "atom2", xs_string, "The second atom, specified as an atom name string." )
+			+ Attr( "res3", xsct_non_negative_integer, "The residue (specified using Rosetta numbering) containing the third atom." )
+			+ Attr( "atom3", xs_string, "The third atom, specified as an atom name string." )
+			+ Attr( "res4", xsct_non_negative_integer, "The residue (specified using Rosetta numbering) containing the fourth atom." )
+			+ Attr( "atom4", xs_string, "The fourth atom, specified as an atom name string." );
+		XMLSchemaComplexTypeGenerator add_pert_subelement_add_atoms_ct_gen;
+		add_pert_subelement_add_atoms_ct_gen.element_name( "AddAtoms" )
+			.complex_type_naming_func( gen_kic_add_pert_subelement_mangler )
+			.add_attributes( add_pert_subelement_add_atoms_attrs )
+			.description( "The \"AddAtoms\" sub-sub-tag in an \"AddPerturber\" sub-tag permits one or more atoms to be defined, on which the perturber may act.  A particular type of perturber may take a list of one, two, three, or four atoms, depending on what it acts on." )
+			.write_complex_type_to_schema( xsd );
+
+		//    3. AddValue
+		AttributeList add_pert_subelement_add_value_attrs;
+		add_pert_subelement_add_value_attrs
+			+ Attr::required_attribute( "value", xsct_real, "The value to pass to the perturber." );
+
+		XMLSchemaComplexTypeGenerator add_pert_subelement_add_value_ct_gen;
+		add_pert_subelement_add_value_ct_gen.element_name( "AddValue" )
+			.complex_type_naming_func( gen_kic_add_pert_subelement_mangler )
+			.add_attributes( add_pert_subelement_add_value_attrs )
+			.description( "The \"AddValue\" sub-sub-tag in an \"AddPerturber\" sub-tag permits a value to be set for those perturbers that take a value.  (An example of this is the \"set_dihedral\" perturber, which takes a value for the dihedral angle to set.)  Use multiple \"AddValue\" tags to specify more than one value." )
+			.write_complex_type_to_schema( xsd );
+
+		// Now the simple subelement list for the AddPerturber ct
+		XMLSchemaSimpleSubelementList add_pert_ssl;
+		add_pert_ssl
+			.add_already_defined_subelement( "AddResidue", gen_kic_add_pert_subelement_mangler )
+			.add_already_defined_subelement( "AddAtoms", gen_kic_add_pert_subelement_mangler )
+			.add_already_defined_subelement( "AddValue", gen_kic_add_pert_subelement_mangler );
+		XMLSchemaComplexTypeGenerator add_pert_ct_gen;
+		add_pert_ct_gen.element_name( "AddPerturber" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( add_perturber_attributes )
+			.set_subelements_repeatable( add_pert_ssl )
+			.description( "The \"AddPerturber\" sub-tag is used to add and configure GeneralizedKICperturbers.  GeneralizedKICperturbers alter the chain to be closed in some way prior to kinematic closure, allowing definition of a desired conformation or conformational sampling. They can only act on the chain to be closed, and have no effect on tail residues or on any other part of the input structure. Perturbers are applied in the order that they are defined. Different perturbers may alter the same degrees of freedom, sequentially." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// AddFilter subelement
+		AttributeList add_filter_attributes;
+		add_filter_attributes
+			+ Attr::required_attribute( "type", "genkic_filter_name", "The name of the GeneralizedKICfilter to apply (e.g. \"backbone_bin\", \"rama_prepro_check\", \"atom_pair_distance\", etc.).  See the Rosetta help wiki for a full list of avaliable filters." )
+			+ Attr( "residue", xsct_non_negative_integer, "A parameter required by several filters, including \"backbone_bin\", \"alpha_aa_rama_check\", and \"rama_prepro_check\": the index, in Rosetta numbering, of the residue that we're examining with this filter." )
+			+ Attr::attribute_w_default( "bin_params_file", xs_string, "A parameter specific for the \"backbone_bin\" filter: a filename for a file defining mainchain torsion bins.", "ABBA" )
+			+ Attr( "bin", xs_string, "A parameter specific for the \"backbone_bin\" filter: the mainchain torsion bin in which an amino acid residue must lie.  If the residue is not in this bin, the solution is discarded." )
+			+ Attr::attribute_w_default( "rama_cutoff_energy", xsct_real, "A parameter specific for the \"alpha_aa_rama_check\" and \"rama_prepro_check\" filters: the value for the rama or rama_prepro score terms above which solutions are discarded.", "0.3" );
+
+		// This one has its own subelements!
+		//   1. AddFilterParameterReal
+		AttributeList add_filter_subelement_add_filter_param_real_attrs;
+		add_filter_subelement_add_filter_param_real_attrs
+
+			+ Attr::required_attribute( "name", xs_string, "The name of the real-valued paramter.  (For example, \"distance\" for the \"atom_pair_distance\" filter.)" )
+			+ Attr::required_attribute( "value", xsct_real, "The value of the real-valued parameter." );
+
+		XMLSchemaComplexTypeGenerator add_filter_subelement_add_filter_param_real_ct_gen;
+		add_filter_subelement_add_filter_param_real_ct_gen.element_name( "AddFilterParameterReal" )
+			.complex_type_naming_func( gen_kic_add_filter_subelement_mangler )
+			.add_attributes( add_filter_subelement_add_filter_param_real_attrs )
+			.description( "An \"AddFilterParameterReal\" sub-sub-tag in an \"AddFilter\" tag sets a real-valued setting for a filter.  For example, the \"atom_pair_distance\" filter takes a real-valued parameter, called \"distance\", for the cutoff separation between two atoms used to discard solutions." )
+			.write_complex_type_to_schema( xsd );
+
+		//   2. AddFilterParameterInteger
+		AttributeList add_filter_subelement_add_filter_param_int_attrs;
+		add_filter_subelement_add_filter_param_int_attrs
+			+ Attr::required_attribute( "name", xs_string, "The name of the integer parameter.  (For example, \"res1\" or \"res2\" for the \"atom_pair_distance\" filter.)" )
+			+ Attr::required_attribute( "value", xsct_non_negative_integer, "The value of the integer parameter." );
+		XMLSchemaComplexTypeGenerator add_filter_subelement_add_filter_param_int_ct_gen;
+		add_filter_subelement_add_filter_param_int_ct_gen.element_name( "AddFilterParameterInteger" )
+			.complex_type_naming_func( gen_kic_add_filter_subelement_mangler )
+			.add_attributes( add_filter_subelement_add_filter_param_int_attrs )
+			.description( "An \"AddFilterParameterInteger\" sub-sub-tag in an \"AddFilter\" tag sets an integer setting for a filter.  For example, the \"atom_pair_distance\" filter takes two integer parameters, called \"res1\" and \"res2\", for the indices of the two residues containing the two atoms whose separation is to be measured." )
+			.write_complex_type_to_schema( xsd );
+
+		//   3. AddFilterParameterBoolean
+		AttributeList add_filter_subelement_add_filter_param_bool_attrs;
+		add_filter_subelement_add_filter_param_bool_attrs
+			+ Attr::required_attribute( "name", xs_string, "The name of the Boolean paramter.  (For example, \"greater_than\" for the \"atom_pair_distance\" filter.)" )
+			+ Attr::required_attribute( "value", xsct_rosetta_bool, "The value (\"true\" or \"false\") of the Boolean parameter." );
+		XMLSchemaComplexTypeGenerator add_filter_subelement_add_filter_param_bool_ct_gen;
+		add_filter_subelement_add_filter_param_bool_ct_gen.element_name( "AddFilterParameterBoolean" )
+			.complex_type_naming_func( gen_kic_add_filter_subelement_mangler )
+			.add_attributes( add_filter_subelement_add_filter_param_bool_attrs )
+			.description( "An \"AddFilterParameterBoolean\" sub-sub-tag in an \"AddFilter\" tag sets a Boolean setting for a filter.  For example, the \"atom_pair_distance\" filter has a Boolean parameter called \"greater_than\" which, when set to \"true\" selects for interatomic separation greater than a cutoff rather than less than the cutoff." )
+			.write_complex_type_to_schema( xsd );
+
+		//   4. AddFilterParameterString
+		AttributeList add_filter_subelement_add_filter_param_string_attrs;
+		add_filter_subelement_add_filter_param_string_attrs
+			+ Attr::required_attribute( "name", xs_string, "The name of the string paramter.  (For example, \"atom1\" or \"atom2\" for the \"atom_pair_distance\" filter.)" )
+			+ Attr::required_attribute( "value", xs_string, "The value of the string parameter." );
+		XMLSchemaComplexTypeGenerator add_filter_subelement_add_filter_param_string_ct_gen;
+		add_filter_subelement_add_filter_param_string_ct_gen.element_name( "AddFilterParameterString" )
+			.complex_type_naming_func( gen_kic_add_filter_subelement_mangler )
+			.add_attributes( add_filter_subelement_add_filter_param_string_attrs )
+			.description( "An \"AddFilterParameterString\" sub-sub-tag in an \"AddFilter\" tag sets a string setting for a filter.  For example, the \"atom_pair_distance\" filter takes two string parameters, called \"atom1\" and \"atom2\", for the names of the two atoms whose separation is to be measured." )
+			.write_complex_type_to_schema( xsd );
+
+		// Now the simple subelement list for the AddFilter ct
+		XMLSchemaSimpleSubelementList add_filter_ssl;
+		add_filter_ssl
+			.add_already_defined_subelement( "AddFilterParameterReal", gen_kic_add_filter_subelement_mangler )
+			.add_already_defined_subelement( "AddFilterParameterInteger", gen_kic_add_filter_subelement_mangler )
+			.add_already_defined_subelement( "AddFilterParameterBoolean", gen_kic_add_filter_subelement_mangler )
+			.add_already_defined_subelement( "AddFilterParameterString", gen_kic_add_filter_subelement_mangler );
+		XMLSchemaComplexTypeGenerator add_filter_ct_gen;
+		add_filter_ct_gen.element_name( "AddFilter" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( add_filter_attributes )
+			.set_subelements_repeatable( add_filter_ssl )
+			.description( "An \"AddFilter\" sub-tag adds a GeneralizedKICfilter, which discards solutions that do not pass certain criteria.  Generally, GeneralizedKICfilters are written to be considerably faster than conventional Rosetta filters, since they usually do not act on full poses.  They are applied before pre-selection movers." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	{
+		// AddAtomPairDistanceFilter
+		AttributeList atpair_filter_attrs;
+		atpair_filter_attrs
+			+ Attr::required_attribute( "res1", xsct_non_negative_integer, "The residue (Rosetta index) containing the first atom in the pair whose separation we will be measuring." )
+			+ Attr::required_attribute( "atom1", xs_string, "The first atom in the pair whose separation we will be measuring, specified as an atom name string." )
+			+ Attr::required_attribute( "res2", xsct_non_negative_integer, "The residue (Rosetta index) containing the second atom in the pair whose separation we will be measuring." )
+			+ Attr::required_attribute( "atom2", xs_string, "The second atom in the pair whose separation we will be measuring, specified as an atom name string." )
+			+ Attr::required_attribute( "distance", xsct_real, "The cutoff inter-atomic distance for discarding solutions." )
+			+ Attr( "greater_than", xsct_rosetta_bool, "If \"greater_than\" is set to true, the filter will discard any solution for which the atoms are not separated by AT LEAST the cutoff distance.  If it is false (the default), then any solution for which the atoms are separated by more than the cutoff distance is discarded." );
+
+		XMLSchemaComplexTypeGenerator atpair_filter_ct_gen;
+		atpair_filter_ct_gen.element_name( "AddAtomPairDistanceFilter" )
+			.complex_type_naming_func( & gen_kic_subelement_mangler )
+			.add_attributes( atpair_filter_attrs )
+			.description( "The \"AddAtomPairDistanceFilter\" sub-tag is a shorthand for adding an \"atom_pair_distance\" GeneralizedKICFilter.  It discards solutions if pairs of atoms are separated by more than a cutoff distance." )
+			.write_complex_type_to_schema( xsd );
+	}
+
+	// OK! Now for the GeneralizedKIC complex type itself!
+	XMLSchemaSimpleSubelementList genkic_ssl;
+	genkic_ssl.add_already_defined_subelement( "AddResidue", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "AddTailResidue", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "SetPivots", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "SampleCisPeptideBond", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "CloseBond", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "AddPerturber", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "AddFilter", & gen_kic_subelement_mangler )
+		.add_already_defined_subelement( "AddAtomPairDistanceFilter", & gen_kic_subelement_mangler );
+	XMLSchemaComplexTypeGenerator genkic_ct_gen;
+	genkic_ct_gen.element_name( mover_name() )
+		.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.set_subelements_repeatable( genkic_ssl )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.description( "The GeneralizedKIC mover allows a user to define a chain of atoms whose conformation is to be sampled or altered subject to the constraint that it remain closed, or that it be closed if it starts out open.  The mover has myriad options for controlling sampling and selection of a solution, and can invoke other movers to apply to each closed solution that it finds.  It has been written to be fully general, and can operate on chains of atoms that pass through backbones, side-chains, ligands, etc.  No assumptions about alpha-amino acid backbones are hard-coded, so GeneralizedKIC should be fully compatible with any non-canonical entity." )
+		.write_complex_type_to_schema( xsd );
+}
+
+
+std::string GeneralizedKICCreator::keyname() const {
+	return GeneralizedKIC::mover_name();
+}
+
+protocols::moves::MoverOP
+GeneralizedKICCreator::create_mover() const {
+	return protocols::moves::MoverOP( new GeneralizedKIC );
+}
+
+void GeneralizedKICCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	GeneralizedKIC::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace generalized_kinematic_closure

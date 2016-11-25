@@ -137,11 +137,12 @@ PDBPoseInputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	AttributeList input_pdb_attributes;
 	input_pdb_attributes
-		+ XMLSchemaAttribute( "filename", xs_string )
-		+ XMLSchemaAttribute( "listfile", xs_string )
-		+ XMLSchemaAttribute( "path", xs_string );
+		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "listfile", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
 	XMLSchemaComplexTypeGenerator input_pdb;
 	input_pdb.element_name( keyname() )
+		.description( "XRW TO DO" )
 		.complex_type_naming_func( & PoseInputterFactory::complex_type_name_for_pose_inputter )
 		.add_attributes( input_pdb_attributes )
 		.write_complex_type_to_schema( xsd );

@@ -121,13 +121,35 @@ void InteractingRotamerExplosion::provide_xml_schema( utility::tag::XMLSchemaDef
 	AttributeList attributes;
 
 	attributes
-		+ XMLSchemaAttribute::required_attribute( "target_seqpos", xs_string )
-		+ XMLSchemaAttribute::attribute_w_default(  "score_cutoff", xs_decimal, "-0.5" )
-		+ XMLSchemaAttribute::attribute_w_default(  "ex_level", xsct_non_negative_integer, "4" )
-		+ XMLSchemaAttribute::attribute_w_default(  "debug", xs_boolean, "false" )
-		+ XMLSchemaAttribute::attribute_w_default(  "exclude_radius", xs_decimal, "20.0" );
+		+ XMLSchemaAttribute::required_attribute(
+		"target_seqpos", xs_string ,
+		"target residue which interacts well with another residue" )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"score_cutoff", xsct_real,
+		"Minimum or better interaction score with target seqpos",
+		"-0.5"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"ex_level", xsct_non_negative_integer,
+		"rotamer sampling level",
+		"4"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"debug", xsct_rosetta_bool,
+		"write extra rotamers sampled to disk",
+		"false"  )
+		+ XMLSchemaAttribute::attribute_w_default(
+		"exclude_radius", xsct_real,
+		"distance from target residue ",
+		"20.0"  );
 
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes(
+		xsd, keyname(), attributes,
+		"Task Operation that oversamples rotamers that score well with a specified target residue "
+		"(or set thereof). Note that this TaskOP by itself does not select or deselect any residue "
+		"positions for design. Rather, it builds extra rotamers of the residue types and at "
+		"positions that were allowed by previously used TaskOPs. "
+		"This means that this TaskOP should be used in conjunction with other TaskOPs "
+		"that take care of which regions to design. This TaskOP can be considered "
+		"to work like the old rotamer explosion protocols in Rosetta 2.x");
 }
 
 core::pack::task::operation::TaskOperationOP

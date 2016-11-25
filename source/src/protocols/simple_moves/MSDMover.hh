@@ -60,7 +60,7 @@ public:
 
 	void setup_mover ( Pose & pose );
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP >
 	apply_linked_constraints( core::pose::Pose & pose );
@@ -85,6 +85,18 @@ public:
 	void update_packer_task ();
 
 	void set_current_pose ( core::Size current_pose );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	utility::vector1< utility::vector1< core::Size > > res_links ();
 

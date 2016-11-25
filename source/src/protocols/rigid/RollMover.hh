@@ -49,7 +49,7 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	void set_min_max_angles( core::Real min_angle, core::Real max_angle );
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP fresh_instance() const override;
@@ -65,6 +65,18 @@ public:
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & /*movers*/,
 		Pose const & /*pose*/) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

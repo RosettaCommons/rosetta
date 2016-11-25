@@ -30,7 +30,7 @@ class RotamerTrialsRefiner : public LoopMover {
 public:
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "RotamerTrialsRefiner"; }
+	// XRW TEMP  string get_name() const { return "RotamerTrialsRefiner"; }
 
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
@@ -38,7 +38,7 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 	/// @brief Get the score function to be used on the next call to apply().
 	core::scoring::ScoreFunctionOP get_score_function();
@@ -58,11 +58,23 @@ public:
 	/// @brief Set the task factory to be used on the next call to apply().
 	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 
 	/// @brief Use rotamer trials to refine the pose within 10A of the loops
 	/// being sampled.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 };
 

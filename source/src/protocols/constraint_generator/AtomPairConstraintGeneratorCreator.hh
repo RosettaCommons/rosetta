@@ -19,6 +19,7 @@
 
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -30,6 +31,9 @@ public:
 
 	std::string
 	keyname() const override;
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //protocols

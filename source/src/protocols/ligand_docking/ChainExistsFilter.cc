@@ -30,6 +30,9 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -62,11 +65,44 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	chain_ = tag->getOption<std::string>("chain");
 }
 
-protocols::filters::FilterOP
-ChainExistsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ChainExistsFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ChainExistsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ChainExistsFilter ); }
 
-std::string
-ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
+// XRW TEMP std::string
+// XRW TEMP ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
+
+std::string ChainExistsFilter::name() const {
+	return class_name();
+}
+
+std::string ChainExistsFilter::class_name() {
+	return "ChainExists";
+}
+
+void ChainExistsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "chain", xsct_char, "XRW TO DO" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ChainExistsFilterCreator::keyname() const {
+	return ChainExistsFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ChainExistsFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ChainExistsFilter );
+}
+
+void ChainExistsFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ChainExistsFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // ligand_docking

@@ -33,6 +33,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 // Project Headers
 
 
@@ -41,11 +44,11 @@ static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.CaIrmsdFilter" );
 namespace devel {
 namespace replica_docking {
 
-protocols::filters::FilterOP
-CaIrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CaIrmsdFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP CaIrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CaIrmsdFilter ); }
 
-std::string
-CaIrmsdFilterCreator::keyname() const { return "Ca_Irms"; }
+// XRW TEMP std::string
+// XRW TEMP CaIrmsdFilterCreator::keyname() const { return "Ca_Irms"; }
 
 void CaIrmsdFilter::register_options() {
 	using namespace basic::options;
@@ -178,6 +181,41 @@ CaIrmsdFilter::compute( core::pose::Pose const & pose ) const {
 	core::Real irms = protocols::docking::calc_CA_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
 	return( irms );
 }
+
+std::string CaIrmsdFilter::name() const {
+	return class_name();
+}
+
+std::string CaIrmsdFilter::class_name() {
+	return "Ca_Irms";
+}
+
+void CaIrmsdFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Threshold below which the interaction score filter fails", "-30" )
+		+ XMLSchemaAttribute::attribute_w_default( "upper_threshold", xsct_real, "Threshold above which the interaction score filter fails", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_positive_integer, "Jump across which the interface is defined, numbered sequentially from 1", "1" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string CaIrmsdFilterCreator::keyname() const {
+	return CaIrmsdFilter::class_name();
+}
+
+protocols::filters::FilterOP
+CaIrmsdFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new CaIrmsdFilter );
+}
+
+void CaIrmsdFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CaIrmsdFilter::provide_xml_schema( xsd );
+}
+
 
 }
 }

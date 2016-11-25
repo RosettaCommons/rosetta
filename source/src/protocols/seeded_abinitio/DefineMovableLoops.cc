@@ -49,6 +49,10 @@
 #include <utility/vector1.hh>
 #include <set>
 
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 
 using namespace core;
 using namespace protocols::seeded_abinitio;
@@ -61,27 +65,27 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
-std::string
-DefineMovableLoopsCreator::keyname() const
-{
-	return DefineMovableLoopsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DefineMovableLoopsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DefineMovableLoops::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DefineMovableLoopsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DefineMovableLoops() );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DefineMovableLoopsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DefineMovableLoops() );
+// XRW TEMP }
 
-std::string
-DefineMovableLoopsCreator::mover_name()
-{
-	return "DefineMovableLoops";
-}
+// XRW TEMP std::string
+// XRW TEMP DefineMovableLoops::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DefineMovableLoops";
+// XRW TEMP }
 
 DefineMovableLoops::~DefineMovableLoops() = default;
 
 DefineMovableLoops::DefineMovableLoops() :
-	protocols::moves::Mover( DefineMovableLoopsCreator::mover_name() )
+	protocols::moves::Mover( DefineMovableLoops::mover_name() )
 {
 	use_cutpoints_ = true;
 	secstructure_ = "";
@@ -258,10 +262,10 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 
 }
 
-std::string
-DefineMovableLoops::get_name() const {
-	return DefineMovableLoopsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DefineMovableLoops::get_name() const {
+// XRW TEMP  return DefineMovableLoops::mover_name();
+// XRW TEMP }
 
 void
 DefineMovableLoops::parse_my_tag(
@@ -347,5 +351,51 @@ DefineMovableLoops::parse_my_tag(
 		}//end seeds
 	}//end b-tags
 }//end parse_my_tag
+
+std::string DefineMovableLoops::get_name() const {
+	return mover_name();
+}
+
+std::string DefineMovableLoops::mover_name() {
+	return "DefineMovableLoops";
+}
+
+void DefineMovableLoops::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("add_chainbreakterm", xsct_rosetta_bool, "Penalize chain breaks.", "1")
+		+ XMLSchemaAttribute::attribute_w_default("cutpoint_based", xsct_rosetta_bool, "Use cutpoint in loop modeling.", "1")
+		+ XMLSchemaAttribute("secstrct", xs_string, "File containg sec struct assignments for all residues in \"chain_num\"")
+		+ XMLSchemaAttribute("template_pdb", xs_string, "Template pdb file")
+		+ XMLSchemaAttribute("chain_num", xs_string, "Comma-separated list of chain IDs. NOTE: chains have to be consecutive");
+
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "First residue of seed fragment.")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "Last residue of seed fragment.");
+	XMLSchemaSimpleSubelementList subelement_list;
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "Defines a seed fragment.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Specific to seeded abinitio protocol. Finds loops after seeded abinitio that should be closed.", attlist, subelement_list );
+}
+
+std::string DefineMovableLoopsCreator::keyname() const {
+	return DefineMovableLoops::mover_name();
+}
+
+protocols::moves::MoverOP
+DefineMovableLoopsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DefineMovableLoops );
+}
+
+void DefineMovableLoopsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DefineMovableLoops::provide_xml_schema( xsd );
+}
+
 }
 }

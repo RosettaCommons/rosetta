@@ -37,6 +37,9 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );
@@ -102,23 +105,23 @@ CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
 
 }
 
-std::string
-CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
+// XRW TEMP std::string
+// XRW TEMP CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 
-protocols::moves::MoverOP
-CCDEndsGraftMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CCDEndsGraftMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CCDEndsGraftMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CCDEndsGraftMover );
+// XRW TEMP }
 
-std::string
-CCDEndsGraftMoverCreator::keyname() const {
-	return CCDEndsGraftMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CCDEndsGraftMoverCreator::keyname() const {
+// XRW TEMP  return CCDEndsGraftMover::mover_name();
+// XRW TEMP }
 
-std::string
-CCDEndsGraftMoverCreator::mover_name(){
-	return "CCDEndsGraftMover";
-}
+// XRW TEMP std::string
+// XRW TEMP CCDEndsGraftMover::mover_name(){
+// XRW TEMP  return "CCDEndsGraftMover";
+// XRW TEMP }
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::clone() const{
@@ -329,6 +332,39 @@ CCDEndsGraftMover::apply(Pose & pose){
 	pose = combined;
 
 }
+
+std::string CCDEndsGraftMover::get_name() const {
+	return mover_name();
+}
+
+std::string CCDEndsGraftMover::mover_name() {
+	return "CCDEndsGraftMover";
+}
+
+void CCDEndsGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	XMLSchemaComplexTypeGeneratorOP ct_gen = AnchoredGraftMover::complex_type_generator_for_anchored_graft_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.description( "AnchoredGraftMover that uses CCD to close loops" )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string CCDEndsGraftMoverCreator::keyname() const {
+	return CCDEndsGraftMover::mover_name();
+}
+
+protocols::moves::MoverOP
+CCDEndsGraftMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CCDEndsGraftMover );
+}
+
+void CCDEndsGraftMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CCDEndsGraftMover::provide_xml_schema( xsd );
+}
+
 
 } //grafting
 } //protocols

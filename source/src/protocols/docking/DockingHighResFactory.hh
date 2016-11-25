@@ -26,7 +26,7 @@
 namespace protocols {
 namespace docking {
 
-/// @brief These are the valid names of classes that can be instantiated by DockingHighResFactory 
+/// @brief These are the valid names of classes that can be instantiated by DockingHighResFactory
 enum class DHR_Type {
 	DockingHighResLegacy,
 	DockingPrepackProtocol,
@@ -52,7 +52,7 @@ private:
 public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~DockingHighResFactory();
-	
+
 	/// @brief Create the specified DockingHighRes
 	DockingHighResOP
 	create_docking_high_res_mover(

@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <protocols/denovo_design/architects/DeNovoArchitect.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -24,6 +24,7 @@
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.DeNovoArchitect" );
 
@@ -68,6 +69,24 @@ DeNovoMotifArchitect::type() const
 {
 	return architect_name();
 }
+/*
+void
+DeNovoMotifArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+DeNovoMotifArchitect::provide_xml_schema( xsd );
+}
+*/
+void
+DeNovoMotifArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "motif", xs_string, "Comma-separated list of motifs to use for this architect. Each motif should be a hyphen-separated list of terms containing a number (number of residues), a dssp character, and an abego character.", "XRW TO DO" );
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+
+	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, architect_name(), "Architect that takes a string of motifs", attlist );
+}
+
+
 
 components::StructureDataOP
 DeNovoMotifArchitect::design( core::pose::Pose const &, core::Real & random ) const
@@ -105,6 +124,15 @@ DeNovoMotifArchitect::motifs_end() const
 {
 	return motifs_.end();
 }
+
+void
+DeNovoArchitect::add_common_denovo_architect_attributes( utility::tag::AttributeList & attlist ){
+	using namespace utility::tag;
+	attlist
+		+ required_name_attribute();
+}
+
+
 
 void
 DeNovoMotifArchitect::set_motifs( std::string const & motifs_str )

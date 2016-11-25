@@ -62,11 +62,9 @@ public:
 		PerturbRotamerSidechainMover const & mover
 	);
 
-	virtual
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -74,24 +72,24 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual void
+	void
 	make_chi_move(
 		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
-	);
+	) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual core::Real
+	core::Real
 	compute_proposal_density(
 		core::conformation::Residue const & new_residue,
 		core::Size const resnum,
 		core::chemical::ResidueType const & old_res_type,
 		ChiVector const & old_chi
-	) const;
+	) const override;
 
 	void set_temperature( core::Real setting ) {
 		temperature_ = setting;
@@ -118,6 +116,18 @@ public:
 		ChiVector const& new_chi,
 		core::Real& within_rot_density
 	) const;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 
 private:

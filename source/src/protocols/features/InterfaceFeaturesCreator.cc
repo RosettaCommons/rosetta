@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-InterfaceFeaturesCreator::InterfaceFeaturesCreator() {}
-InterfaceFeaturesCreator::~InterfaceFeaturesCreator() = default;
-FeaturesReporterOP InterfaceFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new InterfaceFeatures );
-}
+// XRW TEMP InterfaceFeaturesCreator::InterfaceFeaturesCreator() {}
+// XRW TEMP InterfaceFeaturesCreator::~InterfaceFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP InterfaceFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new InterfaceFeatures );
+// XRW TEMP }
 
-std::string InterfaceFeaturesCreator::type_name() const {
-	return "InterfaceFeatures";
-}
+// XRW TEMP std::string InterfaceFeaturesCreator::type_name() const {
+// XRW TEMP  return "InterfaceFeatures";
+// XRW TEMP }
 
 } //features
 } //protocols

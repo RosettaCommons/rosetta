@@ -56,6 +56,9 @@
 // C++ headers
 #include <iostream>
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -69,11 +72,11 @@ mycomp( const std::pair< core::Real, core::Size >& lhs,
 	const std::pair< core::Real, core::Size >& rhs )
 { return lhs.first < rhs.first; }
 
-protocols::filters::FilterOP
-ResidueDepthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDepthFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueDepthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDepthFilter ); }
 
-std::string
-ResidueDepthFilterCreator::keyname() const { return "ResidueDepth"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueDepthFilterCreator::keyname() const { return "ResidueDepth"; }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -1258,6 +1261,60 @@ ResidueDepthFilter::parse_my_tag( utility::tag::TagCOP tag,
 		}
 	}
 }
+
+std::string ResidueDepthFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueDepthFilter::class_name() {
+	return "ResidueDepth";
+}
+
+void ResidueDepthFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mindist", xsct_real,
+		"Minimal distance between sidechain atom and water molecule",
+		"0.0")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"maxdist", xsct_real,
+		"maximum distance between sidechain and water molecule",
+		"99.0")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"dcut1", xsct_real,
+		"XSD XRW TO DO",
+		"2.6")
+		+ XMLSchemaAttribute::attribute_w_default(
+		"dcut2", xsct_real,
+		"XRW TO DO",
+		"4.2")
+		+ XMLSchemaAttribute(
+		"evalres", xsct_bool_cslist,
+		"Residues to evalute");
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Filter for measuring minimum distance from any sidechain atom in a residue "
+		"to the closest water molecule",
+		attlist );
+}
+
+std::string ResidueDepthFilterCreator::keyname() const {
+	return ResidueDepthFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueDepthFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueDepthFilter );
+}
+
+void ResidueDepthFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueDepthFilter::provide_xml_schema( xsd );
+}
+
 
 } // namespace simple_filters
 } // namespace protocols

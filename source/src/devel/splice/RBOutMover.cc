@@ -37,6 +37,9 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 #include <fstream>
 #include <algorithm>
 #include <vector>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace devel {
@@ -45,22 +48,22 @@ namespace splice {
 
 using namespace::protocols;
 
-std::string
-RBOutMoverCreator::keyname() const
-{
-	return RBOutMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RBOutMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return RBOutMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-RBOutMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new RBOutMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP RBOutMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new RBOutMover );
+// XRW TEMP }
 
-std::string
-RBOutMoverCreator::mover_name()
-{
-	return "RBOut";
-}
+// XRW TEMP std::string
+// XRW TEMP RBOutMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "RBOut";
+// XRW TEMP }
 
 RBOutMover::RBOutMover(): moves::Mover("RBOut"),
 	template_pdb_fname_(""),
@@ -167,10 +170,10 @@ RBOutMover::apply( Pose & pose )
 	TR<<"Wrote jump info: "<<pose_disulf_jump<<std::endl;
 }
 
-std::string
-RBOutMover::get_name() const {
-	return RBOutMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP RBOutMover::get_name() const {
+// XRW TEMP  return RBOutMover::mover_name();
+// XRW TEMP }
 
 moves::MoverOP
 RBOutMover::clone() const
@@ -197,6 +200,40 @@ RBOutMover::parse_my_tag(
 	jump_from_foldtree( tag->getOption< bool >( "jump_from_foldtree", false ) );
 	TR<<"Template pdb fname: "<<template_pdb_fname()<<" jump_dbase_fname: "<<jump_dbase_fname()<<" jump_from_foldtree: "<<jump_from_foldtree()<<std::endl;
 }
+
+std::string RBOutMover::get_name() const {
+	return mover_name();
+}
+
+std::string RBOutMover::mover_name() {
+	return "RBOut";
+}
+
+void RBOutMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute( "template_fname", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute( "jump_dbase_fname", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_from_foldtree", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string RBOutMoverCreator::keyname() const {
+	return RBOutMover::mover_name();
+}
+
+protocols::moves::MoverOP
+RBOutMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RBOutMover );
+}
+
+void RBOutMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RBOutMover::provide_xml_schema( xsd );
+}
+
 
 } // splice
 } // devel

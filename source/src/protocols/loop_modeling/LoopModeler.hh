@@ -62,7 +62,7 @@ public:
 	~LoopModeler() override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const override { return "LoopModeler"; }
+	// XRW TEMP  string get_name() const override { return "LoopModeler"; }
 
 	/// @brief Return a shallow copy of this object.
 	moves::MoverOP clone() const override;
@@ -136,6 +136,18 @@ public:
 
 	/// @brief Set the score function to be used for the centroid stage.
 	void set_cen_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	friend class ::LoopModelerTests;
 

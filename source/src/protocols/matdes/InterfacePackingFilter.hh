@@ -67,6 +67,18 @@ public:
 	void sym_dof_names( std::string const s );
 	void multicomp( bool const multicomp );
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 
 	core::Real distance_cutoff_, contact_dist_, lower_threshold_, upper_threshold_; // distance within which atoms must be across interface in order to be scored. Lower and upper thresholds for the RosettaHoles score.

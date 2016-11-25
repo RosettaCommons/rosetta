@@ -89,13 +89,25 @@ public:
 
 	void apply( core::pose::Pose & ) override;
 
-	std::string get_name() const override { return "BfactorFitting"; }
+	// XRW TEMP  std::string get_name() const override { return "BfactorFitting"; }
 
 	moves::MoverOP clone() const override { return moves::MoverOP( new BfactorFittingMover( *this ) ); }
 	moves::MoverOP fresh_instance() const override { return moves::MoverOP( new BfactorFittingMover ); }
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	core::Real scorescale_;  // overall weighing on score

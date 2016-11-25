@@ -14,10 +14,18 @@
 #ifndef INCLUDED_protocols_loops_loops_definers_util_HH
 #define INCLUDED_protocols_loops_loops_definers_util_HH
 
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
+// Package headers
 #include <protocols/loops/Loops.fwd.hh>
+
+// Project headers
 #include <core/pose/Pose.fwd.hh>
+
+// basic headers
+#include <basic/datacache/DataMap.fwd.hh>
+
+// utility headers
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace loops {
@@ -27,10 +35,25 @@ LoopsOP
 load_loop_definitions(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
-	core::pose::Pose const & pose);
+	core::pose::Pose const & pose
+);
 
+std::string
+complex_type_name_for_loop_definer( std::string const & element_name );
 
-} // namespace
+void
+xsd_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & loop_definer_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes
+);
+
+/// @brief Appends the attributes read by load_loop_definitions
+void
+attributes_for_load_loop_definitions( utility::tag::AttributeList & attributes );
+
+} //namespace
 } // namespace
 } // namespace
 

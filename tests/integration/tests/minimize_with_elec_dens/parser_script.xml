@@ -1,30 +1,30 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-	        <scfxn_dens_min weights=score12_full symmetric=1>
+	        <ScoreFunction name="scfxn_dens_min" weights="score12_full" symmetric="1">
 	                Reweight scoretype=cart_bonded weight=0.5/>
-	                <Reweight scoretype=elec_dens_fast weight=100.0/>
-	        </scfxn_dens_min>
-	        <scfxn_dens_score weights=score12_full symmetric=1>
-	                <Reweight scoretype=cart_bonded weight=0.5/>
-	                <Reweight scoretype=elec_dens_fast weight=1.0/>
-	        </scfxn_dens_score>
+	                <Reweight scoretype="elec_dens_fast" weight="100.0"/>
+	        </ScoreFunction>
+	        <ScoreFunction name="scfxn_dens_score" weights="score12_full" symmetric="1">
+	                <Reweight scoretype="cart_bonded" weight="0.5"/>
+	                <Reweight scoretype="elec_dens_fast" weight="1.0"/>
+	        </ScoreFunction>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-	  <ReadResfile name=task filename="task.resfile"/>
+	  <ReadResfile name="task" filename="task.resfile"/>
 	</TASKOPERATIONS>
 	<MOVERS>
-	        <SetupForSymmetry name=setup_symm definition="%%symmdef%%"/>
-	        <SymMinMover name=min_dens scorefxn=scfxn_dens_min type=lbfgs_armijo_nonmonotone tolerance=0.1 bb=1 chi=1 jump=ALL bondlength=0 bondangle=0 bb_task_operations=task chi_task_operations=task/>
+	        <SetupForSymmetry name="setup_symm" definition="%%symmdef%%"/>
+	        <SymMinMover name="min_dens" scorefxn="scfxn_dens_min" type="lbfgs_armijo_nonmonotone" tolerance="0.1" bb="1" chi="1" jump="ALL" bondlength="0" bondangle="0" bb_task_operations="task" chi_task_operations="task"/>
 		  For a production run use tolerance .00001
 		  and minimize bondlengths and bondangles
-		<ReportToDB name=report_scores database_name="scores.db3" batch_description="repack_with_elec_dens" task_operations=task>
-			<feature name=ScoreTypeFeatures/>
-			<feature name=StructureScoresFeatures scorefxn=scfxn_dens_score/>
+		<ReportToDB name="report_scores" database_name="scores.db3" batch_description="repack_with_elec_dens" task_operations="task">
+			<ScoreTypeFeatures/>
+			<StructureScoresFeatures scorefxn="scfxn_dens_score"/>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-	        <Add mover=setup_symm/>
-	        <Add mover=min_dens/>
-		<Add mover=report_scores/>
+	        <Add mover="setup_symm"/>
+	        <Add mover="min_dens"/>
+		<Add mover="report_scores"/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>

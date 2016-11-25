@@ -56,6 +56,9 @@
 // C++ headers
 #include <string>
 #include <sstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces
@@ -506,17 +509,49 @@ NcbbDockDesignProtocol::parse_my_tag(
 }
 
 // MoverCreator
-moves::MoverOP NcbbDockDesignProtocolCreator::create_mover() const {
-	return moves::MoverOP( new NcbbDockDesignProtocol() );
+// XRW TEMP moves::MoverOP NcbbDockDesignProtocolCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new NcbbDockDesignProtocol() );
+// XRW TEMP }
+
+// XRW TEMP std::string NcbbDockDesignProtocolCreator::keyname() const {
+// XRW TEMP  return NcbbDockDesignProtocol::mover_name();
+// XRW TEMP }
+
+// XRW TEMP std::string NcbbDockDesignProtocol::mover_name(){
+// XRW TEMP  return "NcbbDockDesign";
+// XRW TEMP }
+
+std::string NcbbDockDesignProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string NcbbDockDesignProtocol::mover_name() {
+	return "NcbbDockDesign";
+}
+
+void NcbbDockDesignProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	add_attributes_for_common_options( attlist );
+	attlist + XMLSchemaAttribute::attribute_w_default( "ncbb_design_first", xsct_rosetta_bool, "First optimize sequence of the NCBB ligand", "false" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 
 std::string NcbbDockDesignProtocolCreator::keyname() const {
-	return NcbbDockDesignProtocolCreator::mover_name();
+	return NcbbDockDesignProtocol::mover_name();
 }
 
-std::string NcbbDockDesignProtocolCreator::mover_name(){
-	return "NcbbDockDesign";
+protocols::moves::MoverOP
+NcbbDockDesignProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new NcbbDockDesignProtocol );
 }
+
+void NcbbDockDesignProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	NcbbDockDesignProtocol::provide_xml_schema( xsd );
+}
+
 
 
 }

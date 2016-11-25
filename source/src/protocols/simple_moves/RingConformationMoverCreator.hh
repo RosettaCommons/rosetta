@@ -26,13 +26,16 @@ namespace simple_moves {
 class RingConformationMoverCreator: public protocols::moves::MoverCreator {
 public:
 	/// @brief  Return an up-casted owning pointer (MoverOP) to the mover.
-	protocols::moves::MoverOP create_mover() const override;
+	// XRW TEMP  protocols::moves::MoverOP create_mover() const override;
 
 	/// @brief  Return the string identifier for the associated Mover (RingConformationMover).
-	std::string keyname() const override;
+	// XRW TEMP  std::string keyname() const override;
 
 	/// @brief  Static method that returns the keyname for performance reasons.
-	static std::string mover_name();
+	// XRW TEMP  static std::string mover_name();
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }  // namespace simple_moves

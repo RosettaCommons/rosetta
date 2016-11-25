@@ -44,7 +44,7 @@ public:
 	FlipChiralityMover( FlipChiralityMover const &src );
 
 	void apply( core::pose::Pose & ) override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
@@ -55,6 +55,18 @@ public:
 	numeric::xyzVector <core::Real> const & get_normal();
 	numeric::xyzVector <core::Real> const & get_center(core::select::residue_selector::ResidueSubset, core::pose::Pose const &);
 	virtual void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	//Private functions:
 	numeric::xyzVector<core::Real> normal_;

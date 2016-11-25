@@ -41,6 +41,9 @@
 #include <utility/string_util.hh>
 
 #include <basic/datacache/DataMap.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 /// ObjexxFCL headers
 
@@ -53,20 +56,20 @@ namespace loop_mover {
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
 // creator
-std::string
-LoopCMCreator::keyname() const {
-	return LoopCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP LoopCMCreator::keyname() const {
+// XRW TEMP  return LoopCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-LoopCMCreator::create_mover() const {
-	return environment::ClientMoverOP( new LoopCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP LoopCMCreator::create_mover() const {
+// XRW TEMP  return environment::ClientMoverOP( new LoopCM );
+// XRW TEMP }
 
-std::string
-LoopCMCreator::mover_name() {
-	return "LoopCM";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopCM::mover_name() {
+// XRW TEMP  return "LoopCM";
+// XRW TEMP }
 
 std::string const CCD( "CCD" );
 std::string const KIC( "KIC" );
@@ -222,9 +225,60 @@ void LoopCM::passport_updated() {
 	}
 }
 
+// XRW TEMP std::string LoopCM::get_name() const {
+// XRW TEMP  return "LoopCM(" + algorithm_ + +"_" + style_ + ")";
+// XRW TEMP }
+
 std::string LoopCM::get_name() const {
-	return "LoopCM(" + algorithm_ + +"_" + style_ + ")";
+	return mover_name();
 }
+
+std::string LoopCM::mover_name() {
+	return "LoopCM";
+}
+
+void LoopCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	//Restrictions to attribute (aka options)
+	XMLSchemaRestriction algorythm_restriction_type;
+	algorythm_restriction_type.name( "KIC_or_CCD" );
+	algorythm_restriction_type.base_type( xs_string );
+	algorythm_restriction_type.add_restriction( xsr_pattern, "KIC|CCD" );
+	xsd.add_top_level_element( algorythm_restriction_type );
+	XMLSchemaRestriction style_restriction_type;
+	style_restriction_type.name( "PERTURB_or_REFINE" );
+	style_restriction_type.base_type( xs_string );
+	style_restriction_type.add_restriction( xsr_pattern, "perturb|refine" );
+	xsd.add_top_level_element( style_restriction_type );
+
+	attlist
+		+ XMLSchemaAttribute::required_attribute("algorithm", "KIC_or_CCD", "Choose whether to use \"KIC\" or \"CCD\" for loop modeling.")
+		+ XMLSchemaAttribute::required_attribute("style",
+		"PERTURB_or_REFINE", "Choose either \"perturb\" or \"refine\" to trigger large or only small torsion angle changes.")
+		+ XMLSchemaAttribute::required_attribute("selector", xs_string, "XRW TO DO");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"The LoopCM builds one of the following four movers:"
+		" LoopMover_Perturb_KIC, LoopMover_Refine_KIC, LoopMover_Perturb_CCD, LoopMover_Refine_CCD."
+		, attlist );
+}
+
+std::string LoopCMCreator::keyname() const {
+	return LoopCM::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopCM );
+}
+
+void LoopCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopCM::provide_xml_schema( xsd );
+}
+
 
 
 } // namespace loop_mover

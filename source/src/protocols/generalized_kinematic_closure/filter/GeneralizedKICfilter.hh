@@ -21,6 +21,7 @@
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -190,6 +191,10 @@ public:
 	/// @details Only does anything in the BOINC graphics build.
 	inline bool attach_boinc_ghost_observer() const { return attach_boinc_ghost_observer_; }
 
+	static
+	void
+	define_valid_filter_name_enumeration( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE VARIABLES                                                 //
@@ -198,7 +203,7 @@ private:
 
 	/// @brief The filter type for this filter (see the filter_type enum for all types).
 	filter_type filtertype_;
-	
+
 	/// @brief Real-valued filter parameters
 	utility::vector1 < std::pair<std::string, core::Real > > filter_params_real_;
 
@@ -344,7 +349,7 @@ private:
 		utility::vector1 < core::Real > const &bondangles,
 		utility::vector1 < core::Real > const &bondlengths
 	) const;
-	
+
 	/// @brief Calculates RamaPrePro energy for a residue based on its mainchain torsion values.
 	/// @details Returns "true" for pass (below threshhold) and "false" for fail.
 	/// @param[in] original_pose -- The full, initial pose.

@@ -226,7 +226,7 @@ RNA_LowResolutionPotential::initialize_rna_stagger(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
-	// AMW: this will never work in general because it's indexed on these specific names 
+	// AMW: this will never work in general because it's indexed on these specific names
 	RNA_backbone_oxygen_atoms_.clear();
 	RNA_backbone_oxygen_atoms_.push_back( " OP2" );
 	RNA_backbone_oxygen_atoms_.push_back( " OP1" );

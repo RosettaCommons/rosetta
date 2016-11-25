@@ -13,11 +13,16 @@
 #include <protocols/qsar/scoring_grid/LigandPropertyScore.hh>
 #include <protocols/qsar/scoring_grid/LigandPropertyScoreCreator.hh>
 
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tools/make_vector.hh>
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -36,13 +41,18 @@ GridBaseOP LigandPropertyScoreCreator::create_grid() const
 
 std::string LigandPropertyScoreCreator::keyname() const
 {
-	return grid_name();
+	return LigandPropertyScore::grid_name();
 }
 
-std::string LigandPropertyScoreCreator::grid_name()
+void LigandPropertyScoreCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "LigandPropertyScore";
+	LigandPropertyScore::provide_xml_schema( xsd );
 }
+
+//std::string LigandPropertyScoreCreator::grid_name()
+//{
+// return "LigandPropertyScore";
+//}
 
 LigandPropertyScore::LigandPropertyScore()
 {
@@ -73,7 +83,8 @@ core::Real LigandPropertyScore::score(core::conformation::Residue const & residu
 
 std::string LigandPropertyScore::get_type()
 {
-	return "LigandPropertyScore";
+	//return "LigandPropertyScore";
+	return grid_name();
 }
 
 utility::json_spirit::Value LigandPropertyScore::serialize()
@@ -90,6 +101,26 @@ utility::json_spirit::Value LigandPropertyScore::serialize()
 void LigandPropertyScore::deserialize(utility::json_spirit::mObject data)
 {
 	parameter_tag_ = data["parameter_tag"].get_str();
+}
+
+std::string LigandPropertyScore::grid_name()
+{
+	return "LigandPropertyScore";
+}
+
+void LigandPropertyScore::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute::required_attribute( "parameter", xs_string, "The numeric property that the"
+		" ResidueType of the incoming Residue holds that the LigandPropertyScore is going to query for" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that computes a score simply based"
+		" on a static property of the ligand's chemical composition. Not exactly a grid -- but still capable"
+		" of delivering a bonus or a penalty for a given ResidueType and fits smoothly within the scoring"
+		" grid machinery", attributes );
+
 }
 
 }

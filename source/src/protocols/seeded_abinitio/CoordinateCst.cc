@@ -51,6 +51,9 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -63,27 +66,27 @@ using namespace protocols::moves;
 static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
 static THREAD_LOCAL basic::Tracer TR_debug( "CoordinateCst.Debug" );
 
-std::string
-CoordinateCstCreator::keyname() const
-{
-	return CoordinateCstCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CoordinateCstCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return CoordinateCst::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-CoordinateCstCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CoordinateCst );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP CoordinateCstCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new CoordinateCst );
+// XRW TEMP }
 
-std::string
-CoordinateCstCreator::mover_name()
-{
-	return "CoordinateCst";
-}
+// XRW TEMP std::string
+// XRW TEMP CoordinateCst::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "CoordinateCst";
+// XRW TEMP }
 
 CoordinateCst::~CoordinateCst() = default;
 
 CoordinateCst::CoordinateCst() :
-	protocols::moves::Mover( CoordinateCstCreator::mover_name() )
+	protocols::moves::Mover( CoordinateCst::mover_name() )
 {
 	stddev_ =  3.0;
 	use_jumps_ = true;
@@ -272,10 +275,10 @@ CoordinateCst::apply( pose::Pose & pose )
 }//end apply
 
 
-std::string
-CoordinateCst::get_name() const {
-	return CoordinateCstCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP CoordinateCst::get_name() const {
+// XRW TEMP  return CoordinateCst::mover_name();
+// XRW TEMP }
 
 
 void
@@ -341,6 +344,59 @@ CoordinateCst::parse_my_tag(
 
 	}//end b-tags
 }//end parse my tag
+
+std::string CoordinateCst::get_name() const {
+	return mover_name();
+}
+
+std::string CoordinateCst::mover_name() {
+	return "CoordinateCst";
+}
+
+void CoordinateCst::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("stddev", xsct_real, "stedev for the constraint function", "0.5")
+		+ XMLSchemaAttribute::attribute_w_default("atom", xs_string, "which atom id on the moving residue to place the constraint onto", "CA")
+		+ XMLSchemaAttribute("anchor_atom", xs_string, "which atom on the anchor residue to place the constraint onto")
+		+ XMLSchemaAttribute("anchor_res", xs_string, "residue number to which the coordinate constraints are anchored to. Overrides \"jump\" option.")
+		+ XMLSchemaAttribute::attribute_w_default("jump", xsct_non_negative_integer, "Use jump atoms for anchor, that is the first one, for jump n", "0");
+
+	// Subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+	AttributeList subelement_attributes;
+	AttributeList residue_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::required_attribute("begin", xs_string, "Begin of seed fragment (residue number)")
+		+ XMLSchemaAttribute::required_attribute("end", xs_string, "End of seed fragment (residue number)");
+
+	subelement_list.add_simple_subelement("span", subelement_attributes, "Fragment to be contrained.");
+	subelement_list.add_simple_subelement("Seeds", subelement_attributes, "Defines a seed.");
+
+	residue_attributes + XMLSchemaAttribute::required_attribute("residue", xs_string, "XRW_TO_DO");
+	subelement_list.add_simple_subelement("residue", residue_attributes, "Add a single residue to be constrained.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Add coordinate constraints to the pose based on parsed spans or residues."
+		"Currently it only adds CA constraints", attlist, subelement_list );
+}
+
+std::string CoordinateCstCreator::keyname() const {
+	return CoordinateCst::mover_name();
+}
+
+protocols::moves::MoverOP
+CoordinateCstCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CoordinateCst );
+}
+
+void CoordinateCstCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CoordinateCst::provide_xml_schema( xsd );
+}
+
 
 }//seeded_abinitio/
 }//protocol

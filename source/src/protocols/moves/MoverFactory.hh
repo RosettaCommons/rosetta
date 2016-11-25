@@ -29,6 +29,7 @@
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
 #include <map>
@@ -79,6 +80,12 @@ public:
 		Movers_map const &,
 		Pose const &
 	);
+
+	/// @brief Read access to the set of all MoverCreators; for unit testing purposes
+	MoverMap const & mover_creator_map() const;
+
+	void define_mover_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
+	static std::string mover_xml_schema_group_name();
 
 private:
 	MoverFactory();

@@ -155,13 +155,13 @@ TaskSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "task_operations", xs_string )
-		+ XMLSchemaAttribute( "designable", xs_boolean )
-		+ XMLSchemaAttribute( "packable", xs_boolean )
-		+ XMLSchemaAttribute( "repackable", xs_boolean )
-		+ XMLSchemaAttribute( "fixed", xs_boolean );
+		+ XMLSchemaAttribute( "task_operations", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "designable", xsct_rosetta_bool , "Sample side chain identities." )
+		+ XMLSchemaAttribute( "packable", xsct_rosetta_bool , "Sample side chain conformations." )
+		+ XMLSchemaAttribute( "repackable", xsct_rosetta_bool , "Sample side chain conformations." )
+		+ XMLSchemaAttribute( "fixed", xsct_rosetta_bool , "Keep input side chain conformation and identity." );
 
-	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Selects residues to be repacked or design using a string containing residue names", attributes );
 
 }
 

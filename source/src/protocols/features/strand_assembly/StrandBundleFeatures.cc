@@ -58,6 +58,10 @@
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/strand_assembly/StrandBundleFeaturesCreator.hh>
 
 namespace protocols {
 namespace features {
@@ -1304,6 +1308,39 @@ StrandBundleFeatures::report_features(
 	// <end> sheet pairing
 	return 0;
 } //StrandBundleFeatures::report_features
+
+std::string StrandBundleFeatures::type_name() const {
+	return class_name();
+}
+
+std::string StrandBundleFeatures::class_name() {
+	return "StrandBundleFeatures";
+}
+
+void StrandBundleFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	protocols::features::xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"Extract beta strand, strand pairs, sandwiches in pdb file and writes it into database",
+		attlist );
+}
+
+std::string StrandBundleFeaturesCreator::type_name() const {
+	return StrandBundleFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+StrandBundleFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new StrandBundleFeatures );
+}
+
+void StrandBundleFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	StrandBundleFeatures::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace strand_assembly

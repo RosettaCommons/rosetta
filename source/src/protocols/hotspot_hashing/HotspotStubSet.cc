@@ -424,7 +424,7 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
 			Size i = 1;
-			for (const auto & stub_iter : ss_iter.second) {
+			for ( const auto & stub_iter : ss_iter.second ) {
 				if ( i <= n_return ) {
 					new_set->add_stub_( stub_iter.second );
 					++i;
@@ -449,7 +449,7 @@ HotspotStubSet::get_best_energy_stub() const {
 	HotspotStubOP ret( nullptr );
 	for ( auto const & hs_map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for (const auto & hs_it : hs_map_it.second) {
+		for ( const auto & hs_it : hs_map_it.second ) {
 			if ( min_energy > hs_it.first ) {
 				min_energy = hs_it.first;
 				ret = HotspotStubOP( new HotspotStub( *hs_it.second ) );
@@ -470,7 +470,7 @@ HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const
 	numeric::xyzVector< core::Real > const residue_CA( residue->xyz( "CA" ) );
 	for ( auto const & map_it : stub_set_ ) {
 		//typedef std::multimap< core::Real, HotspotStubOP > Hs_multimap;
-		for (const auto & stub_it : map_it.second) {
+		for ( const auto & stub_it : map_it.second ) {
 			numeric::xyzVector< core::Real > const stub_CA( stub_it.second->residue()->xyz( "CA" ) );
 
 			core::Real const distance( stub_CA.distance( residue_CA ) );
@@ -873,7 +873,7 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 	Size i = 0;
 	std::string tag( "" );
 	for ( auto const & it : stub_set_ ) {
-		for (const auto & stub_it : it.second) {
+		for ( const auto & stub_it : it.second ) {
 			tag = "S_" + stub_it.second->residue()->name3() + "_" + lead_zero_string_of( i, 9 );
 			write_stub( outstream, stub_it.second, tag );
 			++i;
@@ -909,7 +909,7 @@ void HotspotStubSet::pair_with_scaffold( core::pose::Pose const & pose, core::Si
 
 	core::pose::PoseOP nonconstpose( new core::pose::Pose( *pose_ ) );
 	for ( auto & set_it : stub_set_ ) {
-		for (auto & stub_it : set_it.second) {
+		for ( auto & stub_it : set_it.second ) {
 			// makes sure contained stubs know their StubSet parent
 			//   stub_it->second.set_stub_parent_( *this );
 			// readies stubs for setting of scaffold_status vector

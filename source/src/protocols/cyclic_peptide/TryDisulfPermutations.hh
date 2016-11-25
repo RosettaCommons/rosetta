@@ -61,7 +61,7 @@ public: //Constructors, destructors, clone operator, etc.
 	/// @brief Actually apply the mover to the pose.
 	void apply(core::pose::Pose & pose) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -98,6 +98,18 @@ public: //Constructors, destructors, clone operator, etc.
 	/// @brief Set the residue selector.
 	/// @details CLONES the input.
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

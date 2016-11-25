@@ -234,19 +234,18 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	if ( distance_ > 10.0 ) {
 		Real const dst_squared = distance_ * distance_;
-		
+
 		// go through each residue of the pose and check if it's near anything in the focus set
 		for ( Size ii = 1; ii < pose.size() ; ++ii ) {
 			if ( subset[ ii ] ) continue;
 			conformation::Residue const & r1( pose.residue( ii ) );
 
 			for ( core::Size focus_res : focus_residues ) {
-				
-				if (focus_res == ii){
-					if (include_focus_in_subset_ && ! subset[focus_res]){
+
+				if ( focus_res == ii ) {
+					if ( include_focus_in_subset_ && ! subset[focus_res] ) {
 						subset[focus_res] = true;
-					}
-					else {
+					} else {
 						continue;
 					}
 				}
@@ -285,10 +284,11 @@ void
 NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "selector", xs_string        )
-		+ XMLSchemaAttribute( "resnums",  "int_cslist"     )
-		+ XMLSchemaAttribute::required_attribute( "distance", xs_decimal );
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute( "selector", xs_string        , "XRW TO DO" )
+		+ XMLSchemaAttribute( "resnums",  xsct_int_cslist     , "XRW TO DO" )
+		+ XMLSchemaAttribute( "distance", xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default("include_focus_in_subset", xsct_rosetta_bool, "XRW TO DO", "true");
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
 }
 
 

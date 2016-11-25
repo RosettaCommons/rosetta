@@ -23,10 +23,14 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -34,11 +38,11 @@ namespace simple_filters {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.ResidueSelectionDistanceFilter" );
 
-protocols::filters::FilterOP
-ResidueSelectionDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSelectionDistanceFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP ResidueSelectionDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSelectionDistanceFilter ); }
 
-std::string
-ResidueSelectionDistanceFilterCreator::keyname() const { return "ResidueSelectionDistance"; }
+// XRW TEMP std::string
+// XRW TEMP ResidueSelectionDistanceFilterCreator::keyname() const { return "ResidueSelectionDistance"; }
 
 ResidueSelectionDistanceFilter::~ResidueSelectionDistanceFilter(){}
 
@@ -125,6 +129,42 @@ ResidueSelectionDistanceFilter::parse_my_tag(
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 99.0 );
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 }
+
+std::string ResidueSelectionDistanceFilter::name() const {
+	return class_name();
+}
+
+std::string ResidueSelectionDistanceFilter::class_name() {
+	return "ResidueSelectionDistance";
+}
+
+void ResidueSelectionDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute("atom", xs_string, "Atom of interest")
+		+ XMLSchemaAttribute::attribute_w_default("distance", xsct_real, "Distance threshold", "99.0");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "parses residue selector" );
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string ResidueSelectionDistanceFilterCreator::keyname() const {
+	return ResidueSelectionDistanceFilter::class_name();
+}
+
+protocols::filters::FilterOP
+ResidueSelectionDistanceFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new ResidueSelectionDistanceFilter );
+}
+
+void ResidueSelectionDistanceFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ResidueSelectionDistanceFilter::provide_xml_schema( xsd );
+}
+
+
 
 }
 }

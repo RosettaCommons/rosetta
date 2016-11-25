@@ -44,6 +44,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using basic::T;
 using basic::Error;
@@ -54,22 +57,22 @@ namespace helical_bundle {
 
 static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.PerturbBundle");
 
-std::string
-PerturbBundleCreator::keyname() const
-{
-	return PerturbBundleCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbBundleCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return PerturbBundle::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-PerturbBundleCreator::create_mover() const {
-	return protocols::moves::MoverOP( new PerturbBundle );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP PerturbBundleCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new PerturbBundle );
+// XRW TEMP }
 
-std::string
-PerturbBundleCreator::mover_name()
-{
-	return "PerturbBundle";
-}
+// XRW TEMP std::string
+// XRW TEMP PerturbBundle::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "PerturbBundle";
+// XRW TEMP }
 
 
 /// @brief Creator for PerturbBundle mover.
@@ -217,9 +220,9 @@ void PerturbBundle::apply( core::pose::Pose & pose )
 
 
 /// @brief Returns the name of this mover ("PerturbBundle").
-std::string PerturbBundle::get_name() const{
-	return "PerturbBundle";
-}
+// XRW TEMP std::string PerturbBundle::get_name() const{
+// XRW TEMP  return "PerturbBundle";
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
@@ -1219,6 +1222,97 @@ void PerturbBundle::write_report(
 
 	return;
 }
+
+std::string PerturbBundle::get_name() const {
+	return mover_name();
+}
+
+std::string PerturbBundle::mover_name() {
+	return "PerturbBundle";
+}
+
+void PerturbBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	XMLSchemaRestriction pert_type;
+	pert_type.name( "pert_type" );
+	pert_type.base_type( xs_string );
+	pert_type.add_restriction( xsr_enumeration, "gaussian" );
+	pert_type.add_restriction( xsr_enumeration, "uniform" );
+	pert_type.add_restriction( xsr_enumeration, "" ); // it can be the empty string
+	xsd.add_top_level_element( pert_type );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_degrees", xsct_rosetta_bool, "Interpret user-supplied angles as degrees rather than radians", "false" )
+		+ XMLSchemaAttribute( "default_perturbation_type", "pert_type", "Default type for perturbations to the bundle parameters, either uniform or gaussian" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_perturbation", xsct_real, "Magnitude of perturbation to r0", "0.0" )
+		+ XMLSchemaAttribute( "r0_perturbation_type", "pert_type", "Type of perturbation to r0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_perturbation", xsct_real, "Magnitude of perturbation to omega0", "0.0" )
+		+ XMLSchemaAttribute( "omega0_perturbation_type", "pert_type", "Type of perturbation to omega0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_perturbation", xsct_real, "Magnitude of perturbation to delta_omega0", "0.0" )
+		+ XMLSchemaAttribute( "delta_omega0_perturbation_type", "pert_type", "Type of perturbation to delta_omega0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_perturbation", xsct_real, "Magnitude of perturbation to delta_omega1", "0.0" )
+		+ XMLSchemaAttribute( "delta_omega1_perturbation_type", "pert_type", "Type of perturbation to delta_omega1" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_perturbation", xsct_real, "Magnitude of perturbation to delta_t", "0.0" )
+		+ XMLSchemaAttribute( "delta_t_perturbation_type", "pert_type", "Type of perturbation to delta_t" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_perturbation", xsct_real, "Magnitude of perturbation to z1", "0.0" )
+		+ XMLSchemaAttribute( "z1_perturbation_type", "pert_type", "Type of perturbation to z1" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_perturbation", xsct_real, "Magnitude of perturbation to z0", "0.0" )
+		+ XMLSchemaAttribute( "z0_perturbation_type", "pert_type", "Type of perturbation to z0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_perturbation", xsct_real, "Magnitude of perturbation to epsilon", "0.0" )
+		+ XMLSchemaAttribute( "epsilon_perturbation_type", "pert_type", "Type of perturbation to epsilon" );
+
+	AttributeList subtag_attributes;
+
+	subtag_attributes + XMLSchemaAttribute::required_attribute( "helix_index", xsct_positive_integer, "Numerical index for this particular helix" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its r0 parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "r0_perturbation", xsct_real, "Magnitude of perturbation to r0", "0.0" )
+		+ XMLSchemaAttribute( "r0_perturbation_type", "pert_type", "Type of perturbation to r0" )
+		+ XMLSchemaAttribute::attribute_w_default( "pitch_from_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its omega0 parameter as a pitch (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its omega0 parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "omega0_perturbation", xsct_real, "Magnitude of perturbation to omega0", "0.0" )
+		+ XMLSchemaAttribute( "omega0_perturbation_type", "pert_type", "Type of perturbation to omega0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its delta_omega0 parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega0_perturbation", xsct_real, "Magnitude of perturbation to delta_omega0", "0.0" )
+		+ XMLSchemaAttribute( "delta_omega0_perturbation_type", "pert_type", "Type of perturbation to delta_omega0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its delta_omega1 parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_omega1_perturbation", xsct_real, "Magnitude of perturbation to delta_omega1", "0.0" )
+		+ XMLSchemaAttribute( "delta_omega1_perturbation_type", "pert_type", "Type of perturbation to delta_omega1" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its delta_t parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "delta_t_perturbation", xsct_real, "Magnitude of perturbation to delta_t", "0.0" )
+		+ XMLSchemaAttribute( "delta_t_perturbation_type", "pert_type", "Type of perturbation to delta_t" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its z1_offset parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z1_offset_perturbation", xsct_real, "Magnitude of perturbation to delta_t", "0.0" )
+		+ XMLSchemaAttribute( "z1_offset_perturbation_type", "pert_type", "Type of perturbation to z1_offset" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its z0_offset parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "z0_offset_perturbation", xsct_real, "Magnitude of perturbation to delta_t", "0.0" )
+		+ XMLSchemaAttribute( "z0_offset_perturbation_type", "pert_type", "Type of perturbation to z0_offset" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_copies_helix", xsct_non_negative_integer, "Numerical index from which this particular helix copies its epsilon parameter (0, if it shouldn't copy anything at all, and by default)", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "epsilon_perturbation", xsct_real, "Magnitude of perturbation to delta_t", "0.0" )
+		+ XMLSchemaAttribute( "epsilon_perturbation_type", "pert_type", "Type of perturbation to epsilon" );
+
+	utility::tag::XMLSchemaSimpleSubelementList ssl;
+	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing individual helices in the bundle"/*, 0 minoccurs*/ );
+	//.complex_type_naming_func( & subtag_for_bundgrid );
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Perturb helical bundles by direct manipulation of their bundle parameters", attlist, ssl );
+}
+
+std::string PerturbBundleCreator::keyname() const {
+	return PerturbBundle::mover_name();
+}
+
+protocols::moves::MoverOP
+PerturbBundleCreator::create_mover() const {
+	return protocols::moves::MoverOP( new PerturbBundle );
+}
+
+void PerturbBundleCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	PerturbBundle::provide_xml_schema( xsd );
+}
+
 
 
 } //namespace helical_bundle

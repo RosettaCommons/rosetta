@@ -50,6 +50,9 @@
 #include <basic/datacache/DataMap.hh>
 
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 
@@ -66,20 +69,20 @@ using namespace environment;
 
 
 // creator
-std::string
-FragmentCMCreator::keyname() const {
-	return FragmentCMCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentCMCreator::keyname() const {
+// XRW TEMP  return FragmentCM::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-FragmentCMCreator::create_mover() const {
-	return protocols::moves::MoverOP( new FragmentCM );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP FragmentCMCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new FragmentCM );
+// XRW TEMP }
 
-std::string
-FragmentCMCreator::mover_name() {
-	return "FragmentCM";
-}
+// XRW TEMP std::string
+// XRW TEMP FragmentCM::mover_name() {
+// XRW TEMP  return "FragmentCM";
+// XRW TEMP }
 
 
 FragmentCM::FragmentCM():
@@ -265,9 +268,70 @@ void FragmentCM::passport_updated() {
 	}
 }
 
+// XRW TEMP std::string FragmentCM::get_name() const {
+// XRW TEMP  return "FragmentCM("+mover()->get_name()+")";
+// XRW TEMP }
+
 std::string FragmentCM::get_name() const {
-	return "FragmentCM("+mover()->get_name()+")";
+	return mover_name();
 }
+
+std::string FragmentCM::mover_name() {
+	return "FragmentCM";
+}
+
+void FragmentCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute(
+		"fragments", xs_string,
+		"Path to fragment file to use in this mover");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"nfrags", xsct_non_negative_integer,
+		"Number of fragments per position."
+		"The number of 3mers or 9mers can be specified using the command line.", "25");
+
+	XMLSchemaRestriction frag_type_enum;
+	frag_type_enum.name("frag_type_name");
+	frag_type_enum.base_type(xs_string);
+	frag_type_enum.add_restriction(xsr_enumeration, "classic");
+	frag_type_enum.add_restriction(xsr_enumeration, "smooth");
+	xsd.add_top_level_element(frag_type_enum);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"frag_type", "frag_type_name", "Should classic or smooth fragment insertion be performed?", "classic");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"initialize", xsct_rosetta_bool,
+		"Should the mover insert a fragment at every position after brokering is complete?",
+		"true");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"selector", xs_string,
+		"Residue selector which region this claim mover will be applied to");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Fragment Claim Mover performs fragment insertion on a specified region of the pose",
+		attlist );
+}
+
+std::string FragmentCMCreator::keyname() const {
+	return FragmentCM::mover_name();
+}
+
+protocols::moves::MoverOP
+FragmentCMCreator::create_mover() const {
+	return protocols::moves::MoverOP( new FragmentCM );
+}
+
+void FragmentCMCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FragmentCM::provide_xml_schema( xsd );
+}
+
 
 } // abscript
 } // abinitio

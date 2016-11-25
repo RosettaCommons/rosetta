@@ -33,11 +33,11 @@ class AddChainBreak : public protocols::moves::Mover
 public :
 	AddChainBreak();
 	virtual ~AddChainBreak();
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const;
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new AddChainBreak ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override { return protocols::moves::MoverOP( new AddChainBreak ); }
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	void resnum( std::string const & r ) { resnum_ = r; }
 	std::string resnum() const { return resnum_;}
 	void change_foldtree( bool const c ) { change_foldtree_ = c; }
@@ -49,6 +49,18 @@ public :
 
 	bool remove() const{ return remove_; }
 	void remove( bool const r ){ remove_ = r; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private :
 	std::string resnum_;
 	bool change_foldtree_; //dflt true; should we add a jump around the chainbreak?

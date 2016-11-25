@@ -171,8 +171,17 @@ void SymmetricalResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "selector", xs_string );
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), attributes );
+		+ XMLSchemaAttribute(
+		"selector",
+		xs_string,
+		"name of the selector" );
+	xsd_type_definition_w_attributes_and_optional_subselector(
+		xsd, class_name(),
+		"The SymmetricalResidueSelector, when given a selector, will return all symmetrical "
+		"copies (including the original selection) of those residues. While the packer is "
+		"symmetry aware, not all filters are. This selector is useful when you need to "
+		"explicitly give residue numbers but you are not sure which symmetry subunit you need.",
+		attributes );
 }
 
 
@@ -195,4 +204,3 @@ SymmetricalResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDe
 } //namespace residue_selector
 } //namespace select
 } //namespace core
-

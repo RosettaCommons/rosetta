@@ -109,14 +109,14 @@ void RestrictToLoops::provide_xml_schema( XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
 	provide_attributes( attributes );
-	task_op_schema_w_attributes( xsd, keyname(), attributes );
+	task_op_schema_w_attributes( xsd, keyname(), attributes, "XRW TO DO" );
 }
 
 void RestrictToLoops::provide_attributes( AttributeList & attributes ) {
 	attributes
-		+ XMLSchemaAttribute( "design", xs_boolean )
-		+ XMLSchemaAttribute( "restrict_only_design_to_loops", xs_boolean )
-		+ XMLSchemaAttribute( "loops_file", xs_string );
+		+ XMLSchemaAttribute( "design", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "restrict_only_design_to_loops", xsct_rosetta_bool , "XRW TO DO" )
+		+ XMLSchemaAttribute( "loops_file", xs_string , "XRW TO DO" );
 }
 
 void RestrictToLoops::init() {

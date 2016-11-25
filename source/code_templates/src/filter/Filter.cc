@@ -14,6 +14,10 @@
 #include <--path--/--class--.hh>
 #include <--path--/--class--Creator.hh>
 
+//XSD includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
+
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
@@ -54,12 +58,6 @@ protocols::filters::FilterOP
 	return protocols::filters::FilterOP( new --class-- );
 }
 
-std::string
---class--::get_name() const
-{
-	return --class--Creator::filter_name();
-}
-
 bool
 --class--::apply( core::pose::Pose const & ) const
 {
@@ -78,6 +76,28 @@ void
 
 }
 
+std::string --class--::name() const {
+	return class_name();
+}
+
+std::string --class--::class_name() {
+	return "--class--";
+}
+
+void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
+
+	protocols::filters::xsd_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"FILL IN THIS DOC STRING",
+		attlist );
+}
+
 /////////////// Creator ///////////////
 
 protocols::filters::FilterOP
@@ -89,14 +109,12 @@ protocols::filters::FilterOP
 std::string
 --class--Creator::keyname() const
 {
-	return --class--Creator::filter_name();
+	return --class--Creator::class_name();
 }
 
-std::string
---class--Creator::filter_name()
+void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "--class--";
+	--class--::provide_xml_schema( xsd );
 }
 
 --end_namespace--
-

@@ -73,6 +73,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using namespace ObjexxFCL::format;
 
@@ -147,10 +150,10 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 //destructor
 LoopMover_Refine_CCD::~LoopMover_Refine_CCD() {}
 
-std::string
-LoopMover_Refine_CCD::get_name() const {
-	return "LoopMover_Refine_CCD";
-}
+// XRW TEMP std::string
+// XRW TEMP LoopMover_Refine_CCD::get_name() const {
+// XRW TEMP  return "LoopMover_Refine_CCD";
+// XRW TEMP }
 
 void
 LoopMover_Refine_CCD::show(std::ostream & output) const
@@ -377,15 +380,15 @@ basic::Tracer & LoopMover_Refine_CCD::tr() const
 	return TR;
 }
 
-LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
+// XRW TEMP LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
 
-moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
-	return moves::MoverOP( new LoopMover_Refine_CCD() );
-}
+// XRW TEMP moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
+// XRW TEMP  return moves::MoverOP( new LoopMover_Refine_CCD() );
+// XRW TEMP }
 
-std::string LoopMover_Refine_CCDCreator::keyname() const {
-	return "LoopMover_Refine_CCD";
-}
+// XRW TEMP std::string LoopMover_Refine_CCDCreator::keyname() const {
+// XRW TEMP  return "LoopMover_Refine_CCD";
+// XRW TEMP }
 
 core::scoring::ScoreFunctionOP LoopMover_Refine_CCD::get_new_ramping_scorefxn()
 {
@@ -475,6 +478,58 @@ void LoopMover_Refine_CCD::debugging_output( core::pose::Pose & pose )
 		out << pose.energies();
 	}
 }
+
+std::string LoopMover_Refine_CCD::get_name() const {
+	return mover_name();
+}
+
+std::string LoopMover_Refine_CCD::mover_name() {
+	return "LoopMover_Refine_CCD";
+}
+
+void LoopMover_Refine_CCD::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default("set_fold_tree_from_loops", xsct_rosetta_bool,
+		"Set fold tree using loop info. Default = true","true" )
+		+ XMLSchemaAttribute("scorefxn", xs_string, "Set score function to be used." )
+		+ XMLSchemaAttribute::attribute_w_default("loops_from_cache", xsct_rosetta_bool,
+		"Allow the loops to be set from the segments stored in the poses observer cache."
+		"Makes it possible to have LoopMovers be part of parser protocols where the loops"
+		"were determined by some previous on the fly step . Default = true","1" )
+		+ XMLSchemaAttribute("outer_cycles", xsct_non_negative_integer, "Set number of outer cycles." )
+		+ XMLSchemaAttribute::attribute_w_default("max_inner_cycles", xsct_non_negative_integer,
+		"Finish inner cycles latest after n cycles. Default = 250", "250" )
+		+ XMLSchemaAttribute::attribute_w_default("temp_initial", xsct_real, "Initial Boltzman temperature. Default = 1.5", "1.5" )
+		+ XMLSchemaAttribute::attribute_w_default("temp_final", xsct_real, "Final Boltzman temperature. Default = 0.5", "0.5" );
+	loops_definers::attributes_for_load_loop_definitions( attlist );
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+
+	AttributeList subelement_attributes;
+	XMLSchemaSimpleSubelementList subelement_list;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelement_list );
+	subelement_list.add_simple_subelement("MoveMap", subelement_attributes, "Define the move map.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+		"Perform loop refinement using CCD for loop closure.", attlist, subelement_list );
+}
+
+std::string LoopMover_Refine_CCDCreator::keyname() const {
+	return LoopMover_Refine_CCD::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopMover_Refine_CCDCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopMover_Refine_CCD );
+}
+
+void LoopMover_Refine_CCDCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopMover_Refine_CCD::provide_xml_schema( xsd );
+}
+
 
 } // namespace refine
 } // namespace loop_mover

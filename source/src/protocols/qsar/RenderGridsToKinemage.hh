@@ -51,7 +51,7 @@ public:
 	RenderGridsToKinemage(RenderGridsToKinemage const & mover);
 	~RenderGridsToKinemage() override;
 	moves::MoverOP clone() const override;
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 	void apply(core::pose::Pose & pose) override;
 	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
@@ -59,6 +59,18 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 
 	void setup_colors();

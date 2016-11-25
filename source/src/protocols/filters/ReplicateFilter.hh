@@ -54,6 +54,18 @@ public:
 	void median(bool median) { median_ = median; }
 	void threshold( core::Real threshold) { threshold_ = threshold; }
 
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 	protocols::filters::FilterOP subfilter_;
 	core::Size replicates_;

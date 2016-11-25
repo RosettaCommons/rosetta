@@ -51,7 +51,7 @@ public:
 	std::string get_name() const override { return name(); }
 
 	core::Real report_property( core::pose::Pose & p ) const override;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -83,7 +83,7 @@ public:
 	std::string get_name() const override { return name(); }
 
 	core::Real report_property( core::pose::Pose & p ) const override;
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -118,7 +118,7 @@ public:
 
 	static std::string name() { return "RMSDReporter"; }
 	std::string get_name() const override { return name(); }
-
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	core::Real report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const override;
 
 

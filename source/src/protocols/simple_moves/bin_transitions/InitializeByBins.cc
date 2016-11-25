@@ -43,6 +43,9 @@
 #include <utility/string_util.hh>
 
 #include <numeric/random/random.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -50,22 +53,22 @@ namespace bin_transitions {
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bin_transitions.InitializeByBins" );
 
-std::string
-InitializeByBinsCreator::keyname() const
-{
-	return InitializeByBinsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InitializeByBinsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InitializeByBins::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-InitializeByBinsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InitializeByBins );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InitializeByBinsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InitializeByBins );
+// XRW TEMP }
 
-std::string
-InitializeByBinsCreator::mover_name()
-{
-	return "InitializeByBins";
-}
+// XRW TEMP std::string
+// XRW TEMP InitializeByBins::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InitializeByBins";
+// XRW TEMP }
 
 /// @brief Default constructor
 ///
@@ -93,10 +96,10 @@ InitializeByBins::InitializeByBins( InitializeByBins const &src ) :
 ///
 InitializeByBins::~InitializeByBins() {}
 
-std::string
-InitializeByBins::get_name() const {
-	return InitializeByBinsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InitializeByBins::get_name() const {
+// XRW TEMP  return InitializeByBins::mover_name();
+// XRW TEMP }
 
 /// @brief Apply the mover to a pose.
 ///
@@ -202,6 +205,42 @@ void InitializeByBins::set_residue_range( core::Size const start, core::Size con
 	}
 	return;
 } //set_residue_range
+
+std::string InitializeByBins::get_name() const {
+	return mover_name();
+}
+
+std::string InitializeByBins::mover_name() {
+	return "InitializeByBins";
+}
+
+void InitializeByBins::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("bin_params_file", xs_string,
+		"File identifier indicating which set of bin parameters is desired.", "ABBA" )
+		+ XMLSchemaAttribute::attribute_w_default("start", xsct_non_negative_integer, "First residue of the backbone stretch of interest.", "0" )
+		+ XMLSchemaAttribute::attribute_w_default("end", xsct_non_negative_integer, "Last residue of the backbone stretch of interest.", "0" );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+		"Set mainchain torsions based on the probability of occurance"
+		"given the torsion angles of the preceeding amino acid.", attlist );
+}
+
+std::string InitializeByBinsCreator::keyname() const {
+	return InitializeByBins::mover_name();
+}
+
+protocols::moves::MoverOP
+InitializeByBinsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InitializeByBins );
+}
+
+void InitializeByBinsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InitializeByBins::provide_xml_schema( xsd );
+}
+
 
 
 } // bin_transitions

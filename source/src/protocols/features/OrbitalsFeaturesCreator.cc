@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-OrbitalsFeaturesCreator::OrbitalsFeaturesCreator() {}
-OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() = default;
-FeaturesReporterOP OrbitalsFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new OrbitalsFeatures );
-}
+// XRW TEMP OrbitalsFeaturesCreator::OrbitalsFeaturesCreator() {}
+// XRW TEMP OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP OrbitalsFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new OrbitalsFeatures );
+// XRW TEMP }
 
-std::string OrbitalsFeaturesCreator::type_name() const {
-	return "OrbitalsFeatures";
-}
+// XRW TEMP std::string OrbitalsFeaturesCreator::type_name() const {
+// XRW TEMP  return "OrbitalsFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

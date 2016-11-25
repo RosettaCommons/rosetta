@@ -64,8 +64,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS( peptide.sequence(), "NASANASAZZZZZ" );
 		TS_ASSERT_EQUALS( peptide.fold_tree().to_string(),
-				"FOLD_TREE  EDGE 1 8 -1  "
-				"EDGE 1 9 -2  ND2  C1   EDGE 9 12 -1  EDGE 11 13 -2  O6   C1  " );
+			"FOLD_TREE  EDGE 1 8 -1  "
+			"EDGE 1 9 -2  ND2  C1   EDGE 9 12 -1  EDGE 11 13 -2  O6   C1  " );
 
 		utility::vector1< core::uint > const excluded_sites( 1, 1 );
 		utility::vector1< core::uint > const ensured_sites( 1, 5 );
@@ -76,8 +76,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS( peptide.sequence(), "NASANASAZZZZZZZZZZ" );
 		TS_ASSERT_EQUALS( peptide.fold_tree().to_string(),
-				"FOLD_TREE  EDGE 1 8 -1  "
-				"EDGE 1 9 -2  ND2  C1   EDGE 9 12 -1  EDGE 11 13 -2  O6   C1   "
-				"EDGE 5 14 -2  ND2  C1   EDGE 14 17 -1  EDGE 16 18 -2  O6   C1  ");
+			"FOLD_TREE  EDGE 1 8 -1  "
+			"EDGE 1 9 -2  ND2  C1   EDGE 9 12 -1  EDGE 11 13 -2  O6   C1   "
+			"EDGE 5 14 -2  ND2  C1   EDGE 14 17 -1  EDGE 16 18 -2  O6   C1  ");
 	}
 };  // class GlycosyltransferaseMoverTests

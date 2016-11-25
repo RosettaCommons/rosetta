@@ -45,10 +45,10 @@ public:
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		Pose const & pose);
+		Pose const & pose) override;
 
 	/// @copydoc LoopMover::get_name
-	string get_name() const { return "MinimizationRefiner"; }
+	// XRW TEMP  string get_name() const { return "MinimizationRefiner"; }
 
 	/// @brief Specify whether or not Cartesian minimization should be used.
 	void use_cartesian(bool setting);
@@ -72,11 +72,23 @@ public:
 	/// @brief Const access to the minimizer options.  May be NULL.
 	core::optimization::MinimizerOptionsCOP get_min_options() const;
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 
 	/// @brief Perform Cartesian minimization within 10A of the loops being
 	/// sampled.
-	bool do_apply(Pose & pose);
+	bool do_apply(Pose & pose) override;
 
 private:
 

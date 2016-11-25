@@ -30,6 +30,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {
@@ -42,26 +45,26 @@ using namespace protocols::moves;
 static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots" );
 static THREAD_LOCAL basic::Tracer TR_cst( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots_csts" );
 
-std::string
-AddSidechainConstraintsToHotspotsCreator::keyname() const
-{
-	return AddSidechainConstraintsToHotspotsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddSidechainConstraintsToHotspotsCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return AddSidechainConstraintsToHotspots::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-AddSidechainConstraintsToHotspotsCreator::create_mover() const {
-	return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP AddSidechainConstraintsToHotspotsCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
+// XRW TEMP }
 
-std::string
-AddSidechainConstraintsToHotspotsCreator::mover_name()
-{
-	return "AddSidechainConstraintsToHotspots";
-}
+// XRW TEMP std::string
+// XRW TEMP AddSidechainConstraintsToHotspots::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "AddSidechainConstraintsToHotspots";
+// XRW TEMP }
 
 
 AddSidechainConstraintsToHotspots::AddSidechainConstraintsToHotspots() :
-	protocols::moves::Mover( AddSidechainConstraintsToHotspotsCreator::mover_name() ),
+	protocols::moves::Mover( AddSidechainConstraintsToHotspots::mover_name() ),
 	chain_( 2 ),
 	coord_sdev_( 1.0 )
 { }
@@ -100,10 +103,10 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	TR.flush();
 }
 
-std::string
-AddSidechainConstraintsToHotspots::get_name() const {
-	return AddSidechainConstraintsToHotspotsCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP AddSidechainConstraintsToHotspots::get_name() const {
+// XRW TEMP  return AddSidechainConstraintsToHotspots::mover_name();
+// XRW TEMP }
 
 void
 AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
@@ -142,6 +145,40 @@ void
 AddSidechainConstraintsToHotspots::add_residue( core::Size const res ){
 	residues_.insert( res );
 }
+
+std::string AddSidechainConstraintsToHotspots::get_name() const {
+	return mover_name();
+}
+
+std::string AddSidechainConstraintsToHotspots::mover_name() {
+	return "AddSidechainConstraintsToHotspots";
+}
+
+void AddSidechainConstraintsToHotspots::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "chain", xsct_non_negative_integer, "Chain containing the relevant hotspots, numbered sequentially from 1", "2" )
+		+ XMLSchemaAttribute::attribute_w_default( "coord_sdev", xsct_real, "Size of coordinate standard deviations for constraints", "1.0" )
+		+ XMLSchemaAttribute( "resnums", xsct_residue_number_cslist, "List of residues in residue numbering" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string AddSidechainConstraintsToHotspotsCreator::keyname() const {
+	return AddSidechainConstraintsToHotspots::mover_name();
+}
+
+protocols::moves::MoverOP
+AddSidechainConstraintsToHotspotsCreator::create_mover() const {
+	return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
+}
+
+void AddSidechainConstraintsToHotspotsCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	AddSidechainConstraintsToHotspots::provide_xml_schema( xsd );
+}
+
 
 std::set< core::Size > const &
 AddSidechainConstraintsToHotspots::residues() const{

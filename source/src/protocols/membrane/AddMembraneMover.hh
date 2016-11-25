@@ -125,7 +125,7 @@ public: // Constructors & General Setup
 public: // Mover methods, getters & setters
 
 	/// @brief Get the name of this Mover (AddMembraneMover)
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Initialize the RosettaMP elements with this pose
 	void apply( core::pose::Pose & pose ) override;
@@ -166,6 +166,21 @@ public: // Rosetta Scripts Methods
 
 	/// @brief Helper Method - Add a membrane virtual residue
 	virtual Size add_membrane_virtual( core::pose::Pose & pose );
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void
+	attributes_for_parse_center_normal_from_tag( utility::tag::AttributeList & attributes );
 
 private: // Setup Methods
 

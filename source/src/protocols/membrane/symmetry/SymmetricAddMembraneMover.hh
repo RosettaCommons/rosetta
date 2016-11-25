@@ -100,11 +100,11 @@ public:
 
 	/// @brief Create a Clone of this mover
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	/// @brief Create a Fresh Instance of this Mover
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void
@@ -114,31 +114,41 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
-	);
+	) override;
 
 	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
 	/// @brief Get the name of this Mover (SymmetricAddMembraneMover)
-	virtual
-	std::string
-	get_name() const;
+	// XRW TEMP  virtual
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 	/// @brief Add a membrane virtual residue to the pose by inserting by jump
 	/// @details Adds a virtual residue to the pose by selecting the VRT_0_Base
 	/// as the anchoring residue and nres_complex+1 as tne new sequence position
 	/// Not equivalent to an append_by_jump!
-	virtual
 	core::Size
-	add_membrane_virtual( core::pose::Pose & pose );
+	add_membrane_virtual( core::pose::Pose & pose ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @brief Helper Method - Check for Membrane residue already in the PDB
 	/// @details If there is an MEM residue in the PDB at the end of the pose
 	/// with property MEMBRANE, return a vector of all of those residues.
-	virtual
 	utility::vector1< core::SSize >
-	check_pdb_for_mem( core::pose::Pose & pose );
+	check_pdb_for_mem( core::pose::Pose & pose ) override;
 
 private:
 

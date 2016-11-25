@@ -1,27 +1,28 @@
 <ROSETTASCRIPTS>
         <SCOREFXNS>
-		<score12_mh weights=score12_full>
-			<Reweight scoretype=mm_bend weight=1/>
-		</score12_mh>
+		<ScoreFunction name="score12_mh" weights="score12_full">
+			<Reweight scoretype="mm_bend" weight="1"/>
+		</ScoreFunction>
         </SCOREFXNS>
         <TASKOPERATIONS>
-		<RestrictToRepacking name=rtrp/>
-		<PreserveCBeta name=preserve_cb/>
+		<RestrictToRepacking name="rtrp"/>
+		<PreserveCBeta name="preserve_cb"/>
         </TASKOPERATIONS>
         <FILTERS>
         </FILTERS>
         <MOVERS>
-		<MetropolisHastings name=metropolis_hastings scorefxn=score12_mh trials=500>
-			<Backrub sampling_weight=0.5/>
-			<Small sampling_weight=0.1/>
-			<Shear sampling_weight=0.1/>
-			<Sidechain sampling_weight=0.3 task_operations=rtrp,preserve_cb prob_uniform=0.1 prob_withinrot=0.2/>
-			<PDBTrajectoryRecorder/>
+		<MetropolisHastings name="metropolis_hastings" scorefxn="score12_mh" trials="500">
+			<AddNew sampling_weight="0.5"> <Backrub/> </AddNew>
+			<AddNew sampling_weight="0.1"> <Small/> </AddNew>
+			<AddNew sampling_weight="0.1"> <Shear/> </AddNew>
+			<AddNew sampling_weight="0.3"> <Sidechain task_operations="rtrp,preserve_cb" prob_uniform="0.1" prob_withinrot="0.2"/> </AddNew>
+			<AddNew> <PDBTrajectoryRecorder/> </AddNew>
 		</MetropolisHastings>
         </MOVERS>
         <APPLY_TO_POSE>
         </APPLY_TO_POSE>
         <PROTOCOLS>
-		<Add mover_name=metropolis_hastings/>
+		<Add mover_name="metropolis_hastings"/>
         </PROTOCOLS>
+
 </ROSETTASCRIPTS>

@@ -62,11 +62,9 @@ public:
 		PerturbChiSidechainMover const & mover
 	);
 
-	virtual
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -74,25 +72,24 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
-	);
+	) override;
 
-	virtual
 	void
 	make_chi_move(
 		core::conformation::Residue const& residue,
 		ChiVector const& old_chi,
 		ChiVector&  new_chi
-	);
+	) override;
 
-	virtual std::string get_name() const;
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual core::Real
+	core::Real
 	compute_proposal_density(
 		core::conformation::Residue const &,
 		core::Size const,
 		core::chemical::ResidueType const &,
 		ChiVector const &
-	) const { return 1.0; };
+	) const override { return 1.0; };
 
 	void set_magnitude( core::Real setting ) {
 		magnitude_ = setting;
@@ -101,9 +98,23 @@ public:
 		gaussian_ = setting;
 	}
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 protected:
+
 	void set_defaults();
+
 private:
+
 	core::Real magnitude_;
 	bool gaussian_;
 }; //PerturbChiSidechainMover

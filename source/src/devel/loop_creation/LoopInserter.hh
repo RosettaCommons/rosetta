@@ -25,6 +25,7 @@
 
 //utility
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++
 #include <set>
@@ -60,6 +61,11 @@ public:
 	void
 	parse_loop_anchor(
 		utility::tag::TagCOP tag
+	);
+
+	static void
+	attributes_for_parse_loop_anchor(
+		utility::tag::AttributeList & attlist
 	);
 
 protected:

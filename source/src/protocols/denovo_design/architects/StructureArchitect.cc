@@ -24,6 +24,7 @@
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.StructureArchitect" );
 
@@ -51,6 +52,15 @@ StructureArchitect::parse_my_tag(
 {
 	id_ = tag->getOption< std::string >( "name" );
 	parse_tag( tag, data );
+}
+
+void
+StructureArchitect::attributes_for_parse_my_tag(utility::tag::AttributeList& attlist) {
+	using namespace utility::tag;
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"name", xs_string,
+		"name of the architect");
 }
 
 std::string const &

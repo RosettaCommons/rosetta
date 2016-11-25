@@ -12,13 +12,18 @@
 
 #include <protocols/qsar/scoring_grid/RepGrid.hh>
 #include <protocols/qsar/scoring_grid/RepGridCreator.hh>
+
 #include <protocols/qsar/qsarMap.fwd.hh>
+#include <protocols/qsar/scoring_grid/schema_util.hh>
+
 #include <core/conformation/Residue.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
+#include <core/pose/Pose.hh>
+
 #include <basic/Tracer.hh>
 
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector0.hh>
 
@@ -31,7 +36,7 @@ static THREAD_LOCAL basic::Tracer RepGridTracer( "protocols.ligand_docking.scori
 
 std::string RepGridCreator::keyname() const
 {
-	return RepGridCreator::grid_name();
+	return RepGrid::grid_name();
 }
 
 GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP tag) const
@@ -48,10 +53,16 @@ GridBaseOP RepGridCreator::create_grid() const
 	return GridBaseOP( new RepGrid() );
 }
 
-std::string RepGridCreator::grid_name()
+void RepGridCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	return "RepGrid";
+	RepGrid::provide_xml_schema( xsd );
 }
+
+
+//std::string RepGridCreator::grid_name()
+//{
+// return "RepGrid";
+//}
 
 RepGrid::RepGrid() : SingleGrid("RepGrid"), radius_(2.25), bb_(1), sc_(0), ligand_(1)
 {
@@ -135,6 +146,25 @@ void RepGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 {
 	//for the repulsive force, the case of no ligands and all ligands are identical
 	refresh(pose,center);
+}
+
+std::string RepGrid::grid_name()
+{
+	return "RepGrid";
+}
+
+void RepGrid::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes
+		+ XMLSchemaAttribute( "grid_name", xs_string, "The name used to insert the scoring grid into the GridManager" )
+		+ XMLSchemaAttribute( "bb", xsct_real, "The repulsive value assigned to the grid for backbone atoms; positive values are considered unfavorable. If provided, then both 'sc' and 'ligand' attributes need to be provided also" )
+		+ XMLSchemaAttribute( "sc", xsct_real, "The repulsive value assigned to the grid for sidechain atoms; positive values are considered unfavorable. If provided, then both 'bb' and 'ligand' attributes need to be provided also" )
+		+ XMLSchemaAttribute( "ligand", xsct_real, "The repulsive value assigned to the grid for ligand atoms; positive values are considered unfavorable. If provided, then both 'bb' and 'sc' attributes need to be provided also" );
+
+	xsd_type_definition_w_attributes( xsd, grid_name(), "A scoring grid that gives penalties for being too close to an atom; the too close distance is 2.25A", attributes );
+
 }
 
 

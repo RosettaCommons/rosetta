@@ -158,11 +158,12 @@ PDBPoseOutputter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) 
 
 	AttributeList output_pdb_attributes;
 	output_pdb_attributes
-		+ XMLSchemaAttribute( "filename", xs_string )
-		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign" )
-		+ XMLSchemaAttribute( "path", xs_string );
+		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )
+		+ XMLSchemaAttribute( "filename_pattern", "string_w_one_dollarsign" , "XRW TO DO" )
+		+ XMLSchemaAttribute( "path", xs_string , "XRW TO DO" );
 	XMLSchemaComplexTypeGenerator output_pdb;
 	output_pdb.element_name( keyname() )
+		.description("XRW TO DO")
 		.complex_type_naming_func( & PoseOutputterFactory::complex_type_name_for_pose_outputter )
 		.add_attributes( output_pdb_attributes )
 		.write_complex_type_to_schema( xsd );

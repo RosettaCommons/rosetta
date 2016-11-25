@@ -67,7 +67,7 @@ public:
 	~LoopMover_Refine_CCD();
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
 	void set_default_settings();
 
@@ -78,11 +78,11 @@ public:
 
 	core::pack::task::TaskFactoryCOP get_task_factory() const;
 
-	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 
-	void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void show(std::ostream & output=std::cout) const;
+	void apply( core::pose::Pose & pose ) override;
+	// XRW TEMP  virtual std::string get_name() const;
+	void show(std::ostream & output=std::cout) const override;
 
 	void outer_cycles( core::Size value ) { outer_cycles_ = value; }
 	void max_inner_cycles( core::Size value ) { max_inner_cycles_ = value; }
@@ -116,12 +116,24 @@ public:
 		core::kinematics::MoveMapOP & movemap
 	);
 
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 protected:
 	void read_options();
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool redesign_loop_;
-	virtual basic::Tracer & tr() const;
+	basic::Tracer & tr() const override;
 
 	// This private block was added by BDW during refactoring
 private:

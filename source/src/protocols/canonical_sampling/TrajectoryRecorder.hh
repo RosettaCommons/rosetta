@@ -25,7 +25,7 @@
 
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>
 
@@ -72,6 +72,11 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
+
+	static
+	void
+	attributes_for_trajectory_recorder( utility::tag::AttributeList & );
+
 
 	/// @brief Return the file name for the trajectory.
 	std::string const & file_name() const {

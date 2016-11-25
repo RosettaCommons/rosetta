@@ -28,6 +28,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -42,22 +45,22 @@ using core::conformation::Residue;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 
-std::string
-SetChiMoverCreator::keyname() const
-{
-	return SetChiMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetChiMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return SetChiMover::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SetChiMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new SetChiMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SetChiMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new SetChiMover );
+// XRW TEMP }
 
-std::string
-SetChiMoverCreator::mover_name()
-{
-	return "SetChiMover";
-}
+// XRW TEMP std::string
+// XRW TEMP SetChiMover::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "SetChiMover";
+// XRW TEMP }
 
 SetChiMover::~SetChiMover() {}
 
@@ -81,10 +84,10 @@ void SetChiMover::apply( Pose & pose ) {
 	pose.update_residue_neighbors();
 }
 
-std::string
-SetChiMover::get_name() const {
-	return SetChiMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SetChiMover::get_name() const {
+// XRW TEMP  return SetChiMover::mover_name();
+// XRW TEMP }
 
 void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
@@ -97,6 +100,41 @@ void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
 	chinum( tag->getOption< core::Size >( "chinum" ) );
 
 }
+
+std::string SetChiMover::get_name() const {
+	return mover_name();
+}
+
+std::string SetChiMover::mover_name() {
+	return "SetChiMover";
+}
+
+void SetChiMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// AMW no proper "defaults" but no requirement.
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attlist + XMLSchemaAttribute("angle", xsct_real, "Angle to which to set the chi." )
+		+ XMLSchemaAttribute("resnum", xsct_refpose_enabled_residue_number, "Residue with the chi in question." )
+		+ XMLSchemaAttribute("chinum", xsct_non_negative_integer, "Which chi is to be set." );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "A mover to change one chi angle.", attlist );
+}
+
+std::string SetChiMoverCreator::keyname() const {
+	return SetChiMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SetChiMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new SetChiMover );
+}
+
+void SetChiMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SetChiMover::provide_xml_schema( xsd );
+}
+
 
 
 } // sidechain_moves

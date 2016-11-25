@@ -30,6 +30,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Boost headers
 #include <boost/tuple/tuple.hpp>
@@ -70,6 +71,8 @@ public:// parser
 		Filters_map const &,
 		Movers_map const &,
 		Pose const & );
+
+	static void provide_attributes_and_subelements( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl );
 
 
 public:

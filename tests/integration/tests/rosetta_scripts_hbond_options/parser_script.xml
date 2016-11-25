@@ -1,56 +1,57 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<s_implicit weights=score12prime/>
+		<ScoreFunction name="s_implicit" weights="score12prime"/>
 
-		<s_explicit weights=score12prime>
+		<ScoreFunction name="s_explicit" weights="score12prime">
 		        Parameters options
-			<Set hbonds__params_database_tag=sp2_elec_params/>
+			<Set hbonds__params_database_tag="sp2_elec_params"/>
 
 			Functional form options
-			<Set hbonds__exclude_self_hbonds=true/>
-			<Set hbonds__smooth_hb_env_dep=true/>
-			<Set hbonds__bb_donor_acceptor_check=true/>
+			<Set hbonds__exclude_self_hbonds="true"/>
+			<Set hbonds__smooth_hb_env_dep="true"/>
+			<Set hbonds__bb_donor_acceptor_check="true"/>
 
 			Scoring options
-			<Set hbonds__decompose_bb_hb_into_pair_energies=false/>
+			<Set hbonds__decompose_bb_hb_into_pair_energies="false"/>
 
 		        nucleic acid options
-			<Set hbonds__exclude_DNA_DNA_hbond=true/>
-			<Set hbonds__use_hb_env_dep_DNA=true/>
-			<Set hbonds__exclude_intra_res_RNA=true/>
+			<Set hbonds__exclude_DNA_DNA_hbond="true"/>
+			<Set hbonds__use_hb_env_dep_DNA="true"/>
+			<Set hbonds__exclude_intra_res_RNA="true"/>
 
 			Membrane options
-			<Set hbonds__Mbhbond=false/>
+			<Set hbonds__Mbhbond="false"/>
 
 			Sp2 options
-			<Set hbonds__use_sp2_chi_penalty=true/>
-			<Set hbonds__sp2_BAH180_rise=.75/>
-			<Set hbonds__sp2_outer_width=0.357/>
-			<Set hbonds__measure_sp3acc_BAH_from_hvy=true/>
-			<Set hbonds__fade_energy=true/>
-		</s_explicit>	
+			<Set hbonds__use_sp2_chi_penalty="true"/>
+			<Set hbonds__sp2_BAH180_rise=".75"/>
+			<Set hbonds__sp2_outer_width="0.357"/>
+			<Set hbonds__measure_sp3acc_BAH_from_hvy="true"/>
+			<Set hbonds__fade_energy="true"/>
+		</ScoreFunction>	
 	</SCOREFXNS>
 	<MOVERS>
 		<ReportToDB
-			name=hb_implicit
+			name="hb_implicit"
 			database_name="features_hb_implicit.db3"
 			batch_description="Test implicit specification of hbond parameters.">
-			<feature name=ResidueFeatures/>
-			<feature name=HBondFeatures scorefxn=s_implicit/>
+			<ResidueFeatures/>
+			<HBondFeatures scorefxn="s_implicit"/>
 		</ReportToDB>
 
 		<ReportToDB
-			name=hb_explicit
+			name="hb_explicit"
 			database_name="features_hb_explicit.db3"
 			batch_description="Test explicit specification of default hbond parameters">
-			<feature name=ResidueFeatures/>
-			<feature name=HBondFeatures scorefxn=s_explicit/>
+			<ResidueFeatures/>
+			<HBondFeatures scorefxn="s_explicit"/>
 		</ReportToDB>
 
 
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=hb_implicit/>
-		<Add mover_name=hb_explicit/>
+		<Add mover_name="hb_implicit"/>
+		<Add mover_name="hb_explicit"/>
 	</PROTOCOLS>
+
 </ROSETTASCRIPTS>

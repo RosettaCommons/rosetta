@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/denovo_design/architects/PoseArchitect.hh>
 #include <protocols/denovo_design/architects/PoseArchitectCreator.hh>
-
+#include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -23,10 +23,11 @@
 
 // Core headers
 #include <core/select/residue_selector/TrueResidueSelector.hh>
-
+#include <core/select/residue_selector/util.hh>
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.architects.PoseArchitect" );
 
@@ -54,6 +55,28 @@ PoseArchitect::type() const
 {
 	return architect_name();
 }
+
+void
+PoseArchitectCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	PoseArchitect::provide_xml_schema( xsd );
+}
+
+void
+PoseArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute( "add_padding", xsct_rosetta_bool, "Add padding to segments?" )
+		+ XMLSchemaAttribute( "secstruct", xsct_dssp_string, "Desired secondary structure for the pose" );
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
+	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
+	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, architect_name(), "Design segments based on a pose", attlist );
+
+}
+
+
 
 void
 PoseArchitect::parse_tag(

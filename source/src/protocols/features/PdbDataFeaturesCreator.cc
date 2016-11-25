@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-PdbDataFeaturesCreator::PdbDataFeaturesCreator() {}
-PdbDataFeaturesCreator::~PdbDataFeaturesCreator() = default;
-FeaturesReporterOP PdbDataFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new PdbDataFeatures );
-}
+// XRW TEMP PdbDataFeaturesCreator::PdbDataFeaturesCreator() {}
+// XRW TEMP PdbDataFeaturesCreator::~PdbDataFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP PdbDataFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new PdbDataFeatures );
+// XRW TEMP }
 
-std::string PdbDataFeaturesCreator::type_name() const {
-	return "PdbDataFeatures";
-}
+// XRW TEMP std::string PdbDataFeaturesCreator::type_name() const {
+// XRW TEMP  return "PdbDataFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

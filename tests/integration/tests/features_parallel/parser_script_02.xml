@@ -1,14 +1,15 @@
-<dock_design>
+<ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<s weights=score12_w_corrections/>
+		<ScoreFunction name="s" weights="score12_w_corrections"/>
 	</SCOREFXNS>		
 	<MOVERS>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" batch_description="second node" database_partition=2>
-			<feature name=ResidueFeatures/>
+		<ReportToDB name="features_reporter" database_name="features_IntegrationTest.db3" batch_description="second node" database_partition="2">
+			<ResidueFeatures/>
                 </ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=features_reporter/>
+		<Add mover_name="features_reporter"/>
 	</PROTOCOLS>
-</dock_design>
 
+
+</ROSETTASCRIPTS>

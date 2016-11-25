@@ -196,8 +196,24 @@ public:
 		return *loops_;
 	};
 
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const override;
+
 	std::string
 	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP
+	complex_type_generator_for_anchored_graft_mover( utility::tag::XMLSchemaDefinition & );
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 protected:
 

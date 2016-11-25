@@ -50,6 +50,18 @@ public:
 	void file_names( utility::vector1< std::string > const & f );
 	bool delete_content_only() const{ return delete_content_only_; }
 	void delete_content_only( bool const b ){ delete_content_only_ = b; }
+
+	std::string
+	name() const override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	utility::vector1< std::string > file_names_;
 	bool delete_content_only_; //dflt false; if true, deletes the file but leaves a 0b placeholder for the file

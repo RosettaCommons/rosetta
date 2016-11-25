@@ -30,6 +30,9 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
 
@@ -324,21 +327,84 @@ ParatopeEpitopeSiteConstraintMover::setup_constraints(core::pose::Pose const & p
 	return atom_constraint;
 }
 
-protocols::moves::MoverOP
-ParatopeEpitopeSiteConstraintMoverCreator::create_mover() const {
-	ParatopeEpitopeSiteConstraintMoverOP ptr(new ParatopeEpitopeSiteConstraintMover);
-	return ptr;
+std::string ParatopeEpitopeSiteConstraintMover::get_name() const {
+	return mover_name();
 }
 
-std::string
-ParatopeEpitopeSiteConstraintMoverCreator::keyname() const {
-	return ParatopeEpitopeSiteConstraintMoverCreator::mover_name();
-}
-
-std::string
-ParatopeEpitopeSiteConstraintMoverCreator::mover_name() {
+std::string ParatopeEpitopeSiteConstraintMover::mover_name() {
 	return "ParatopeEpitopeConstraintMover";
 }
+
+void ParatopeEpitopeSiteConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	attributes_for_get_cdr_bool_from_tag(
+		attlist, "paratope_cdrs",
+		"Specifically set the paratope as these CDR.");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"interface_distance", xsct_real,
+		"Distance in Angstroms for the interface, which effects when the SiteConstraint penalty begins.",
+		"10.0");
+
+	attlist + XMLSchemaAttribute(
+		"paratope_residues_pdb", xs_string,
+		"Set specific residues as the paratope. (Ex: 24L,26L-32L, 44H-44H:A). "
+		"Can specify ranges or individual residues as well as insertion codes "
+		"(Ex: 44H:A with A being insertion code).");
+
+	attlist + XMLSchemaAttribute(
+		"paratope_residues", xs_string,
+		"Set paratope_residues instead of paratope_residues_pdb as the internal "
+		"rosetta residue numbers (Ex: 14,25,26). Internal rosetta numbering "
+		"parsing does not currently support ranges.");
+
+	attlist + XMLSchemaAttribute(
+		"epitope_residues_pdb", xs_string,
+		"Set specific residues as the epitope. (Ex: 24L,26L-32L, 44H-44H:A). "
+		"Can specify ranges or individual residues as well as insertion codes "
+		"(Ex: 44H:A with A being insertion code). Optionally set epitope_residues "
+		"instead of epitope_residues_pdb as the internal rosetta residue numbers "
+		"(Ex: 14,25,26). Internal rosetta numbering parsing does "
+		"not currently support ranges");
+
+	attlist + XMLSchemaAttribute(
+		"epitope_residues", xs_string,
+		"Optionally set epitope_residues instead of epitope_residues_pdb as "
+		"the internal rosetta residue numbers (Ex: 14,25,26). Internal rosetta "
+		"numbering parsing does not currently support ranges");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Adds SiteConstraints from the Antibody Paratope to the Epitope on the antigen. "
+		"Individual residues of the paratope can be set, or specific CDRs of the paratope "
+		"can be set as well. The Epitope is auto-detected within the set interface distance, "
+		"unless epitope residues are specified. These SiteConstraints help to keep only the "
+		"paratope in contact with the antigen epitope (as apposed to the framework or other "
+		"parts of the antigen) during rigid-body movement. See the Constraint File Overview "
+		"for more information on manually adding SiteConstraints. Do not forget to add the "
+		"atom_pair_constraint term to your scorefunction. A weight of .01 for the SiteConstraints "
+		"seems optimum. Default paratope is defined as all 6 CDRs "
+		"(or 3 if working with a camelid antibody).",
+		attlist );
+}
+
+std::string ParatopeEpitopeSiteConstraintMoverCreator::keyname() const {
+	return ParatopeEpitopeSiteConstraintMover::mover_name();
+}
+
+protocols::moves::MoverOP
+ParatopeEpitopeSiteConstraintMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ParatopeEpitopeSiteConstraintMover );
+}
+
+void ParatopeEpitopeSiteConstraintMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ParatopeEpitopeSiteConstraintMover::provide_xml_schema( xsd );
+}
+
 
 } //constraints
 } //antibody

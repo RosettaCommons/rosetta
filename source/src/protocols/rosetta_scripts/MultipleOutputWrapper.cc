@@ -45,6 +45,9 @@
 
 // C++ headers
 #include <iomanip>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -55,20 +58,20 @@ using namespace protocols::moves;
 
 ////////////////////////////////////////////////////////////////////////
 
-std::string MultipleOutputWrapperCreator::mover_name()
-{
-	return "MultipleOutputWrapper";
-}
+// XRW TEMP std::string MultipleOutputWrapper::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "MultipleOutputWrapper";
+// XRW TEMP }
 
-std::string MultipleOutputWrapperCreator::keyname() const
-{
-	return mover_name();
-}
+// XRW TEMP std::string MultipleOutputWrapperCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return mover_name();
+// XRW TEMP }
 
-MoverOP MultipleOutputWrapperCreator::create_mover() const
-{
-	return MoverOP( new MultipleOutputWrapper() );
-}
+// XRW TEMP MoverOP MultipleOutputWrapperCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return MoverOP( new MultipleOutputWrapper() );
+// XRW TEMP }
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -85,10 +88,10 @@ MultipleOutputWrapper::MultipleOutputWrapper() :
 {
 }
 
-std::string MultipleOutputWrapper::get_name() const
-{
-	return MultipleOutputWrapperCreator::mover_name();
-}
+// XRW TEMP std::string MultipleOutputWrapper::get_name() const
+// XRW TEMP {
+// XRW TEMP  return MultipleOutputWrapper::mover_name();
+// XRW TEMP }
 
 /// @brief Process all input poses (provided pose and from previous mover)
 void MultipleOutputWrapper::apply(core::pose::Pose& pose)
@@ -230,6 +233,58 @@ void MultipleOutputWrapper::parse_my_tag(
 		throw utility::excn::EXCN_Msg_Exception("Exception in MultipleOutputWrapper with name \"" + my_name + "\": " + e.msg());
 	}
 }
+
+std::string MultipleOutputWrapper::get_name() const {
+	return mover_name();
+}
+
+std::string MultipleOutputWrapper::mover_name() {
+	return "MultipleOutputWrapper";
+}
+
+void MultipleOutputWrapper::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( xsd );
+
+	typedef XMLSchemaAttribute Attr;
+	AttributeList attlist;
+	attlist
+		+ optional_name_attribute()
+		+ Attr( "max_output_poses", xsct_non_negative_integer, "XRW TO DO" )
+		+ Attr( "max_attempts", xsct_non_negative_integer, "XRW TO DO" )
+		+ Attr( "keep_mover_state", xsct_rosetta_bool, "XRW TO DO" );
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.add_already_defined_subelement(
+		RosettaScriptsParser::rosetta_scripts_element_name(),
+		& RosettaScriptsParser::rosetta_scripts_complex_type_naming_func );
+	subelements.add_group_subelement( & moves::MoverFactory::mover_xml_schema_group_name );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( mover_name() )
+		.complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_attributes( attlist )
+		.set_subelements_pick_one( subelements )
+		.description( "XRW TO DO" )
+		.write_complex_type_to_schema( xsd );
+
+}
+
+std::string MultipleOutputWrapperCreator::keyname() const {
+	return MultipleOutputWrapper::mover_name();
+}
+
+protocols::moves::MoverOP
+MultipleOutputWrapperCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MultipleOutputWrapper );
+}
+
+void MultipleOutputWrapperCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MultipleOutputWrapper::provide_xml_schema( xsd );
+}
+
 
 } //rosetta_scripts
 } //protocols

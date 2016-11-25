@@ -16,6 +16,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 // C++ headers
 #include <list>
@@ -69,6 +70,11 @@ class XMLSchemaComplexTypeGenerator;
 typedef utility::pointer::shared_ptr< XMLSchemaComplexTypeGenerator > XMLSchemaComplexTypeGeneratorOP;
 typedef utility::pointer::shared_ptr< XMLSchemaComplexTypeGenerator const > XMLSchemaComplexTypeGeneratorCOP;
 
+class XMLSchemaRepeatableCTNode;
+typedef utility::pointer::shared_ptr< XMLSchemaRepeatableCTNode > XMLSchemaRepeatableCTNodeOP;
+typedef utility::pointer::shared_ptr< XMLSchemaRepeatableCTNode const > XMLSchemaRepeatableCTNodeCOP;
+typedef utility::pointer::weak_ptr< XMLSchemaRepeatableCTNode > XMLSchemaRepeatableCTNodeAP;
+typedef utility::pointer::weak_ptr< XMLSchemaRepeatableCTNode const > XMLSchemaRepeatableCTNodeCAP;
 
 enum XMLSchemaDataType {
 	xs_string,

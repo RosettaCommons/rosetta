@@ -106,15 +106,15 @@ void FragmentStore::delete_homologs(){
 	//string_groups
 	inline_vector_delete(string_groups["aa"],residues_to_delete);
 	//realVector_groups
-	for (auto & realVector_group : realVector_groups) {
+	for ( auto & realVector_group : realVector_groups ) {
 		inline_vector_delete(realVector_group.second,residues_to_delete);
 	}
 	//real_groups
-	for (auto & real_group : real_groups) {
+	for ( auto & real_group : real_groups ) {
 		inline_vector_delete(real_group.second,residues_to_delete);
 	}
 	//int64_groups
-	for (auto & int64_group : int64_groups) {
+	for ( auto & int64_group : int64_groups ) {
 		inline_vector_delete(int64_group.second,residues_to_delete);
 	}
 	//fragment_threshold_distances

@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/constraint_generator/DistanceConstraintGenerator.hh>
 #include <protocols/constraint_generator/DistanceConstraintGeneratorCreator.hh>
-
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
@@ -29,6 +29,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
 #include <boost/assign.hpp>
@@ -170,6 +171,32 @@ DistanceConstraintGenerator::set_function( std::string const & func_str )
 	func_ = parse_func( func_str );
 	TR << "Created func: " << func_str << std::endl;
 }
+
+void
+DistanceConstraintGeneratorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const{
+	DistanceConstraintGenerator::provide_xml_schema( xsd );
+}
+
+void
+DistanceConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "residue_selector1", xs_string, "Selector specifying the first residue to constrain" )
+		+ XMLSchemaAttribute::required_attribute( "residue_selector2", xs_string, "Selector specifying the second residue to constrain" )
+		//The atoms default to the neighbor atom for that residue
+		+ XMLSchemaAttribute( "atom_name1", xs_string, "Atom in the first residue to constrain (defaults to neighbor atom)" )
+		+ XMLSchemaAttribute( "atom_name2", xs_string, "Atom in the second residue to constrain (defaults to neighbor atom)" )
+		+ XMLSchemaAttribute( "function", xs_string, "Function to use for the distance constraint; defaults to a harmonic function" ); //Appears to default to a harmonic function
+
+	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+		xsd,
+		class_name(),
+		"Forms a distance constraint between two specified atoms",
+		attlist );
+}
+
 
 } //protocols
 } //constraint_generator

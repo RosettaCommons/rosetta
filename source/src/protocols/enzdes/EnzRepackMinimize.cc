@@ -48,6 +48,9 @@
 
 //Auto Headers
 #include <boost/functional/hash.hpp>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 using namespace core;
 using namespace core::scoring;
@@ -58,23 +61,23 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
 namespace protocols {
 namespace enzdes {
 
-std::string
-EnzRepackMinimizeCreator::keyname() const
-{
-	return EnzRepackMinimizeCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP EnzRepackMinimizeCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return EnzRepackMinimize::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-EnzRepackMinimizeCreator::create_mover() const
-{
-	return protocols::moves::MoverOP( new EnzRepackMinimize );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP EnzRepackMinimizeCreator::create_mover() const
+// XRW TEMP {
+// XRW TEMP  return protocols::moves::MoverOP( new EnzRepackMinimize );
+// XRW TEMP }
 
-std::string
-EnzRepackMinimizeCreator::mover_name()
-{
-	return "EnzRepackMinimize";
-}
+// XRW TEMP std::string
+// XRW TEMP EnzRepackMinimize::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "EnzRepackMinimize";
+// XRW TEMP }
 
 EnzRepackMinimize::EnzRepackMinimize() :
 	protocols::moves::Mover( "EnzRepackMinimize" ),
@@ -165,11 +168,6 @@ EnzRepackMinimize::apply( pose::Pose & pose )
 		TR<<"Finished Cyle#"<< i <<" of EnzRepackMinimize"<<std::endl;
 	}
 	TR<<"Finished EnzRepackMinimize"<<std::endl;
-}
-
-std::string
-EnzRepackMinimize::get_name() const {
-	return EnzRepackMinimizeCreator::mover_name();
 }
 
 core::pack::task::PackerTaskOP
@@ -307,6 +305,127 @@ EnzRepackMinimize::rb_min_jumps() const{ return rb_min_jumps_; }
 void
 EnzRepackMinimize::rb_min_jumps( utility::vector1< core::Size > const v ){
 	rb_min_jumps_ = v; }
+
+std::string EnzRepackMinimize::get_name() const {
+	return mover_name();
+}
+
+std::string EnzRepackMinimize::mover_name() {
+	return "EnzRepackMinimize";
+}
+
+void EnzRepackMinimize::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+
+	rosetta_scripts::attributes_for_parse_task_operations_w_factory(attlist);
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cycles", xsct_non_negative_integer,
+		"number of cycles of repack-minimize (default=1 cycle) "
+		"(Note: In contrast to the enzyme_design application, all cycles use the provided scorefunction.)",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"min_in_stages", xsct_rosetta_bool,
+		"first minimize non-backbone dofs, followed by backbone dofs only, "
+		"and then everything together (default=0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"design", xsct_rosetta_bool,
+		"optimize sequence of residues spatially around the ligand "
+		"(detection of neighbors need to be specified in the flagfile or "
+		"resfile, default=0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"repack_only", xsct_rosetta_bool,
+		"if true, only repack sidechains without changing sequence. "
+		"(default =0) If both design and repack_only are false, don't repack at all, only minimize",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fix_catalytic", xsct_rosetta_bool,
+		"fix catalytic residues during repack/minimization (default =0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cst_opt", xsct_rosetta_bool,
+		"perform minimization of enzdes constraints with a reduced scorefunction and in a polyAla background. (default= 0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"backrub", xsct_rosetta_bool,
+		"use backrub to minimize (default=0).",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"minimize_rb", xsct_rosetta_bool,
+		"minimize rigid body orientation of ligand (default=1)",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"minimize_bb", xsct_rosetta_bool,
+		"minimize back bone conformation of backbone segments that surround the ligand "
+		"(contiguous neighbor segments of more than 3 residues are automatically chosen, default=0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"minimize_sc", xsct_rosetta_bool,
+		"minimize sidechains (default=1)",
+		"true");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"minimize_lig", xsct_rosetta_bool,
+		"minimize ligand internal torsion degrees of freedom (allowed deviation needs to be specified by flag, default =0)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"minimize_prot_jumps", xsct_rosetta_bool,
+		"Minimize all jumps",
+		"false");
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "scorefxn_repack");
+	rosetta_scripts::attributes_for_parse_score_function(attlist, "scorefxn_minimize");
+
+	attlist + XMLSchemaAttribute(
+		"rb_min_jumps", xsct_nnegative_int_cslist,
+		"specify which jumps to minimize. If this is specified it takes precedence "
+		"over minimize_rb above. Useful if you have more than one ligand in the system "
+		"and you only want to optimize one of the ligands, e.g., rb_min_jumps=1,2 "
+		"would minimize only across jumps 1 and 2.");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"EnzRepackMinimize, similar in spirit to RepackMinimizeMover, does the "
+		"design/repack followed by minimization of a protein-ligand (or TS "
+		"model) interface with enzyme design style constraints (if present, "
+		"see AddOrRemoveMatchCstsMover) using specified score functions and "
+		"minimization dofs. Only design/repack or minimization can be done by "
+		"setting appropriate tags. A shell of residues around the ligand are "
+		"repacked/designed and/or minimized. If constrained optimization or "
+		"cst_opt is specified, ligand neighbors are converted to Ala, "
+		"minimization performed, and original neighbor sidechains are "
+		"placed back.",
+		attlist );
+}
+
+std::string EnzRepackMinimizeCreator::keyname() const {
+	return EnzRepackMinimize::mover_name();
+}
+
+protocols::moves::MoverOP
+EnzRepackMinimizeCreator::create_mover() const {
+	return protocols::moves::MoverOP( new EnzRepackMinimize );
+}
+
+void EnzRepackMinimizeCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	EnzRepackMinimize::provide_xml_schema( xsd );
+}
+
 
 
 } //enzdes

@@ -24,6 +24,7 @@ public:
 	protocols::constraint_generator::ConstraintGeneratorOP create_constraint_generator() const override;
 	std::string keyname() const override;
 	static std::string constraint_generator_name();
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

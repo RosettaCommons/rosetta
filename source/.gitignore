@@ -63,3 +63,8 @@ _performance_
 run_membrane_utests.py
 *.bak
 *.hh.def
+#XRW TODO (to remember to remove at the end); these are relevant for the fast dirty compile system we'll use at the XSD XRW (see also tools/xsd_xrw)
+scons_one_auto.bash
+scons_one.bash
+big_scons_log
+temp_scons_stupid_mac_workaround

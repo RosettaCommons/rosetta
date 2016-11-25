@@ -25,15 +25,15 @@
 namespace protocols {
 namespace features {
 
-RotamerRecoveryFeaturesCreator::RotamerRecoveryFeaturesCreator() {}
-RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() = default;
-FeaturesReporterOP RotamerRecoveryFeaturesCreator::create_features_reporter() const {
-	return FeaturesReporterOP( new RotamerRecoveryFeatures );
-}
+// XRW TEMP RotamerRecoveryFeaturesCreator::RotamerRecoveryFeaturesCreator() {}
+// XRW TEMP RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() = default;
+// XRW TEMP FeaturesReporterOP RotamerRecoveryFeaturesCreator::create_features_reporter() const {
+// XRW TEMP  return FeaturesReporterOP( new RotamerRecoveryFeatures );
+// XRW TEMP }
 
-std::string RotamerRecoveryFeaturesCreator::type_name() const {
-	return "RotamerRecoveryFeatures";
-}
+// XRW TEMP std::string RotamerRecoveryFeaturesCreator::type_name() const {
+// XRW TEMP  return "RotamerRecoveryFeatures";
+// XRW TEMP }
 
 } //namespace features
 } //namespace protocols

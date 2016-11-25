@@ -45,28 +45,31 @@
 
 //Auto Headers
 #include <utility/graph/Graph.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
 namespace protocols {
 namespace flxbb {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string
-InterlockAromaCreator::keyname() const
-{
-	return InterlockAromaCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterlockAromaCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return InterlockAroma::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-InterlockAromaCreator::create_mover() const {
-	return protocols::moves::MoverOP( new InterlockAroma );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP InterlockAromaCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new InterlockAroma );
+// XRW TEMP }
 
-std::string
-InterlockAromaCreator::mover_name()
-{
-	return "InterlockAroma";
-}
+// XRW TEMP std::string
+// XRW TEMP InterlockAroma::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "InterlockAroma";
+// XRW TEMP }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 InterlockAroma::InterlockAroma() :
@@ -220,10 +223,10 @@ InterlockAroma::apply( Pose & pose )
 
 } // InterlockAroma::apply
 
-std::string
-InterlockAroma::get_name() const {
-	return InterlockAromaCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP InterlockAroma::get_name() const {
+// XRW TEMP  return InterlockAroma::mover_name();
+// XRW TEMP }
 
 /// @brief parse xml
 void
@@ -256,6 +259,44 @@ InterlockAroma::parse_my_tag(
 	verbose_     = tag->getOption<bool>( "verbose", 0 );
 
 }
+
+std::string InterlockAroma::get_name() const {
+	return mover_name();
+}
+
+std::string InterlockAroma::mover_name() {
+	return "InterlockAroma";
+}
+
+void InterlockAroma::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "scorefxn", xs_string, "XRW TO DO", "soft_rep" )
+		+ XMLSchemaAttribute::attribute_w_default( "max_repulsion_energy", xsct_real, "XRW TO DO", "30.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "min_env_energy", xsct_real, "XRW TO DO", "-0.5" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "limit_aroma_chi2", xsct_rosetta_bool, "XRW TO DO", "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "output_pdbs", xsct_rosetta_bool, "XRW TO DO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "0" );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string InterlockAromaCreator::keyname() const {
+	return InterlockAroma::mover_name();
+}
+
+protocols::moves::MoverOP
+InterlockAromaCreator::create_mover() const {
+	return protocols::moves::MoverOP( new InterlockAroma );
+}
+
+void InterlockAromaCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	InterlockAroma::provide_xml_schema( xsd );
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

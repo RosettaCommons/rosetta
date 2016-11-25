@@ -76,14 +76,13 @@ ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
-	for ( std::set< Size >::const_iterator it = res_set.begin();
-			it != res_set.end(); ++it ) {
-		if ( *it == 0 || *it > subset.size() ) {
+	for ( Size const res : res_set ) {
+		if ( res == 0 || res > subset.size() ) {
 			std::stringstream err_msg;
-			err_msg << "Residue " << *it << " not found in pose!\n";
+			err_msg << "Residue " << res << " not found in pose!\n";
 			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
 		}
-		subset[ *it ] = true;
+		subset[ res ] = true;
 	}
 	return subset;
 }
@@ -122,7 +121,7 @@ ResidueIndexSelector::append_index(
 	runtime_assert_string_msg( index_in > 0, "Error in core::select::residue_selector::ResidueIndexSelector::append_index(): The index must be greater than zero." );
 	std::stringstream this_str;
 	this_str << index_in;
-	if(index_str_.empty()) {
+	if ( index_str_.empty() ) {
 		index_str_ = this_str.str();
 	} else {
 		index_str_ += "," + this_str.str();
@@ -138,8 +137,20 @@ void
 ResidueIndexSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "resnums", xsct_int_cslist ));
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	/* attributes + XMLSchemaAttribute::required_attribute(
+	"resnums", xsct_int_cslist,
+	"an integer , so that the Pose numbering can be used; "
+	"two integers separated by a dash, designating a range of Pose-numbered residues; "
+	"an integer followed by a single character,  e.g. 12A, referring to the PDB numbering for residue 12 on chain A; "
+	"an integer followed by a single character, followed by a dash, followed by an integer followed by a single character, "
+	"e.g. 12A-47A, referring to residues 12 through 47 on chain A in PDB numbering. "
+	"(Note, residues that contain insertion codes cannot be properly identified by these PDB numbered schemes).");
+	*/
+	core::pose::attributes_for_get_resnum_list( attributes, xsd, "resnums" );
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The ResidueIndexSelector sets the positions corresponding to the residues given in the resnums string to true, and all other positions to false. Note that it does not support PDB insertion codes.",
+		attributes );
 }
 
 

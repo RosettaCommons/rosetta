@@ -29,7 +29,7 @@
 
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-
+#include <utility/tag/XMLSchemaGeneration.hh>
 // C++ headers
 
 // option key includes
@@ -112,6 +112,33 @@ void CutBiasClaim::yield_elements( FoldTreeSketch const&, CutBiasElements& eleme
 
 		elements.push_back( e );
 	}
+
+}
+
+std::string
+CutBiasClaim::class_name(){
+	return "CutBiasClaim";
+}
+
+
+
+void
+CutBiasClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::required_attribute( "label", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "bias", xsct_real, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "region_start", xsct_non_negative_integer, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "region_end", xsct_non_negative_integer, "XRW TO DO" );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.element_name( class_name() )
+		.complex_type_naming_func ( & EnvClaim::envclaim_ct_namer )
+		.description( "XRW TO DO" )
+		.add_attributes( attlist )
+		.write_complex_type_to_schema( xsd );
+
 
 }
 

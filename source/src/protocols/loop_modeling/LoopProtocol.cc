@@ -42,6 +42,9 @@
 // C++ headers
 #include <iostream>
 #include <cmath>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;
@@ -70,13 +73,13 @@ namespace loop_modeling {
 
 static basic::Tracer TR("protocols.loop_modeling.LoopProtocol");
 
-MoverOP LoopProtocolCreator::create_mover() const { // {{{1
-	return MoverOP( new LoopProtocol );
-}
+// XRW TEMP MoverOP LoopProtocolCreator::create_mover() const { // {{{1
+// XRW TEMP  return MoverOP( new LoopProtocol );
+// XRW TEMP }
 
-string LoopProtocolCreator::keyname() const { // {{{1
-	return "LoopProtocol";
-}
+// XRW TEMP string LoopProtocolCreator::keyname() const { // {{{1
+// XRW TEMP  return "LoopProtocol";
+// XRW TEMP }
 // }}}1
 
 LoopProtocol::LoopProtocol() { // {{{1
@@ -108,6 +111,7 @@ void LoopProtocol::parse_my_tag( // {{{1
 	Filters_map const & filters,
 	Movers_map const & movers,
 	Pose const & pose) {
+
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
@@ -415,6 +419,80 @@ void LoopProtocol::set_temperature_schedule(Real start, Real stop) { // {{{1
 	initial_temp_ = start;
 	final_temp_ = stop;
 }
+
+std::string LoopProtocol::get_name() const {
+	return mover_name();
+}
+
+std::string LoopProtocol::mover_name() {
+	return "LoopProtocol";
+}
+
+void LoopProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	utilities::attributes_for_set_scorefxn_from_tag( attlist );
+	attlist
+		+ XMLSchemaAttribute("sfxn_cycles", xsct_non_negative_integer, "Number of iterations to make in the sfxn loop.")
+		+ XMLSchemaAttribute("mover_cycles", xsct_non_negative_integer, "The number of iterations to make in the mover loop")
+		+ XMLSchemaAttribute("ramp_rama", xsct_rosetta_bool,
+		"If enabled, the Ramachandran weight will start near zero and"
+		" will finish at whatever it was in the original score function.")
+		+ XMLSchemaAttribute("ramp_rep", xsct_rosetta_bool,
+		"If enabled, the repulsive weight will start near zero and"
+		"will finish at whatever it was in the original score function")
+		+ XMLSchemaAttribute("ramp_temp", xsct_rosetta_bool, "Ramp the temperature during the temp loop.")
+		+ XMLSchemaAttribute("initial_temp", xsct_real, "Initial temperature. Ignored if temperature ramping is disabled.")
+		+ XMLSchemaAttribute("final_temp", xsct_real, "Final temperature. Ignored if temperature ramping is disabled.");
+	// Restriction for temp_cycles
+	XMLSchemaRestriction restriction_type;
+	restriction_type.name( "begin_w_int" );
+	restriction_type.base_type( xs_string );
+	restriction_type.add_restriction( xsr_pattern , "^[0-9]" );
+	xsd.add_top_level_element( restriction_type );
+	attlist
+		+ XMLSchemaAttribute("temp_cycles", "begin_w_int",
+		"The number of iterations to make in the temp loop. This number may optionally be followed by an \"x\","
+		"in which case the number of iterations will be the given number times the length of the loop being sampled.")
+		+ XMLSchemaAttribute::attribute_w_default("auto_refine", xsct_rosetta_bool,
+		"Invoke the built-in refiners after any user-specified movers.","true")
+		+ XMLSchemaAttribute::attribute_w_default("fast", xsct_rosetta_bool, "Test mode, reduces number of cycles.","false");
+
+	//subelements
+	XMLSchemaSimpleSubelementList subelement_list;
+
+	AttributeList subelement_attributes;
+	subelement_attributes
+		+ XMLSchemaAttribute::attribute_w_default("name", xs_string, "\"name\" attribute of mover after which to do AcceptanceCheck.", "loop_modeling");
+	subelement_list.add_simple_subelement("AcceptanceCheck", subelement_attributes,
+		"Add a Monte Carlo score function evaluation"
+		"and acceptance check between any of your movers.");
+
+	// Create a complex type and  get the LoopMover attributes, as parse_my_tag calls LoopMover::parse_my_tag
+	XMLSchemaComplexTypeGenerator ct_gen;
+	LoopMover::define_composition_schema( xsd, ct_gen, subelement_list );
+	ct_gen.element_name( mover_name() )
+		.description( "Optimizes a region of protein backbone using a simulated annealing MonteCarlo simulation." )
+		.add_attributes( attlist  )
+		.set_subelements_repeatable( subelement_list )
+		.write_complex_type_to_schema( xsd );
+}
+
+std::string LoopProtocolCreator::keyname() const {
+	return LoopProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopProtocolCreator::create_mover() const {
+	return protocols::moves::MoverOP( new LoopProtocol );
+}
+
+void LoopProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	LoopProtocol::provide_xml_schema( xsd );
+}
+
 // }}}1
 
 }

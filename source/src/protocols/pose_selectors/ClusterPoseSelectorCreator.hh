@@ -24,6 +24,7 @@ class ClusterPoseSelectorCreator : public protocols::rosetta_scripts::PoseSelect
 public:
 	protocols::rosetta_scripts::PoseSelectorOP create_selector() const override;
 	std::string keyname() const override { return "ClusterPoseSelector"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 }

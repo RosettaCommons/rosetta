@@ -48,6 +48,7 @@
 
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static basic::Tracer TR("protocols.antibody.design.util");
 
@@ -113,6 +114,37 @@ get_ab_design_global_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMa
 	return global_scorefxn;
 }
 
+void
+attributes_for_get_ab_design_global_scorefxn(utility::tag::AttributeList& attlist) {
+	using namespace utility::tag;
+
+	rosetta_scripts::attributes_for_parse_score_function(attlist);
+
+	if ( !attribute_w_name_in_attribute_list("atom_pair_cst_weight", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"atom_pair_cst_weight", xsct_real,
+			"Weight for atom pair constraints to use in the global antibody design score function" );
+	}
+
+	if ( !attribute_w_name_in_attribute_list("dihedral_cst_weight", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"dihedral_cst_weight", xsct_real,
+			"Weight for atom pair constraints to use in the global antibody design score function" );
+	}
+
+	if ( !attribute_w_name_in_attribute_list("global_atom_pair_cst_scoring", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"global_atom_pair_cst_scoring", xsct_rosetta_bool,
+			"Score atom pair constraints to use in the global antibody design score function?");
+	}
+
+	if ( !attribute_w_name_in_attribute_list("global_dihedral_cst_scoring", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"global_dihedral_cst_scoring", xsct_rosetta_bool,
+			"Score dihedral constraints to use in the global antibody design score function?");
+	}
+}
+
 ScoreFunctionOP
 get_ab_design_dock_high_scorefxn() {
 	ScoreFunctionOP docking_scorefxn_high = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
@@ -168,6 +200,32 @@ get_ab_design_min_scorefxn(utility::tag::TagCOP tag, basic::datacache::DataMap &
 	}
 	return min_scorefxn;
 
+}
+
+void
+attributes_for_get_ab_design_min_scorefxn(utility::tag::AttributeList& attlist) {
+	using namespace utility::tag;
+	attlist + XMLSchemaAttribute(
+		"min_scorefxn", xs_string,
+		"Name of score function to use for minimization");
+
+	if ( !attribute_w_name_in_attribute_list("atom_pair_cst_weight", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"atom_pair_cst_weight", xsct_real,
+			"Weight for atom pair constraints to use in the antibody design minimization score function" );
+	}
+
+	if ( !attribute_w_name_in_attribute_list("dihedral_cst_weight", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"dihedral_cst_weight", xsct_real,
+			"Weight for dihedral constraints to use in the antibody design minimization score function" );
+	}
+
+	if ( !attribute_w_name_in_attribute_list("global_atom_pair_cst_scoring", attlist) ) {
+		attlist + XMLSchemaAttribute(
+			"global_atom_pair_cst_scoring", xsct_rosetta_bool,
+			"Use atom pair constraints in the antibody design minimization score function?" );
+	}
 }
 
 void

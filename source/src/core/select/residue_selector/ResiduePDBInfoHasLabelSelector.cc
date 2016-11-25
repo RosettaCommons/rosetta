@@ -116,8 +116,18 @@ void
 ResiduePDBInfoHasLabelSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes.push_back( XMLSchemaAttribute::required_attribute( "property", xs_string ));
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	attributes + XMLSchemaAttribute::required_attribute(
+		"property", xs_string,
+		"Required. The PDB residue info label to be selected. "
+		"(e.g. \"DISULFIDIZE\"" );
+	xsd_type_definition_w_attributes(
+		xsd, class_name(),
+		"The ResiduePDBInfoHasLabel residue selector selects all residues with "
+		"the given PDB residue label. Some protocols (e.g. MotifGraft, "
+		"Disulfidize) use these labels to mark residues, and this selector "
+		"allows those residues to be selected without the user's "
+		"knowledge of which residues were marked.",
+		attributes );
 }
 
 ResidueSelectorOP

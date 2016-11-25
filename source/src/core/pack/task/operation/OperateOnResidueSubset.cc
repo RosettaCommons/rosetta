@@ -171,10 +171,8 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 
 	utility::vector0< TagCOP > const & subtags( tag->getTags() );
-	for ( utility::vector0< TagCOP >::const_iterator
-			subtag( subtags.begin() ), end( subtags.end() );
-			subtag != end; ++subtag ) {
-		std::string const type( (*subtag)->getName() );
+	for ( auto const & subtag : subtags ) {
+		std::string const & type( subtag->getName() );
 		ResLvlTaskOperationFactory * rltof = ResLvlTaskOperationFactory::get_instance();
 		if ( rltof && rltof->has_type( type ) ) {
 			if ( rltop ) {
@@ -182,7 +180,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 				throw utility::excn::EXCN_Msg_Exception( error_message );
 			}
 			rltop = rltof->newRLTO( type );
-			rltop->parse_tag( *subtag );
+			rltop->parse_tag( subtag );
 			TR(t_debug) << "using ResLvlTaskOperation of type " << type << std::endl;
 			continue;
 		}
@@ -192,7 +190,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 				std::string error_message = "Error from OperateOnResidueSubset::parse_tag: multiple residue selectors given; only one allowed\n";
 				throw utility::excn::EXCN_Msg_Exception( error_message );
 			}
-			selector = res_selector_factory->new_residue_selector( (*subtag)->getName(), *subtag, datamap );
+			selector = res_selector_factory->new_residue_selector( subtag->getName(), subtag, datamap );
 			TR(t_debug) << "using ResidueSelector of type " << type << std::endl;
 			continue;
 		}
@@ -226,7 +224,12 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	ResidueSelectorFactory::get_instance()->define_residue_selector_xml_schema( xsd );
 	ResLvlTaskOperationFactory::get_instance()->define_res_lvl_task_op_xml_schema( xsd );
 
-	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + optional_name_attribute();
+	attlist + XMLSchemaAttribute(
+		"selector", xs_string,
+		"XSD XRW: TO DO");
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	XMLSchemaSimpleSubelementList subelements;
 	// the ResidueSelector subelement is not required; it can be provided by name through the datamap; thus
@@ -234,9 +237,12 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	subelements.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name, 0 /*min_occurs*/ );
 	subelements.add_group_subelement( & ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name );
 	ct_gen.element_name( keyname() )
+		.description(
+		"OperateOnResidueSubset is a TaskOperation that applies a ResLevelTaskOperation "
+		"to the residues indicated by a ResidueSelector" )
 		.complex_type_naming_func( & complex_type_name_for_task_op )
 		.set_subelements_single_appearance_required_and_ordered( subelements )
-		.add_attribute( optional_name_attribute() )
+		.add_attributes( attlist )
 		.write_complex_type_to_schema( xsd );
 }
 

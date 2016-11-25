@@ -10,8 +10,8 @@
 /// @file protocols/moves/util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDED_PROTOCOLS_MOVES_UTIL_HH
-#define INCLUDED_PROTOCOLS_MOVES_UTIL_HH
+#ifndef INCLUDED_protocols_moves_util_HH
+#define INCLUDED_protocols_moves_util_HH
 
 // Project headers
 #include <core/types.hh>
@@ -45,10 +45,6 @@ find_filter_or_die(
 	utility::tag::TagCOP tag,
 	const protocols::filters::Filters_map& filters
 );
-
-std::string
-complex_type_name_for_mover( std::string const & mover_name );
-
 
 }  // namespace moves
 }  // namespace protocols

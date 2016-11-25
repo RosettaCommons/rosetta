@@ -59,6 +59,10 @@
 #include <sstream>
 
 #include <utility/vector0.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/features/feature_schemas.hh>
+#include <protocols/features/ProteinRMSDFeaturesCreator.hh>
 
 
 namespace protocols {
@@ -83,8 +87,8 @@ using cppdb::statement;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.features.ProteinRMSDFeatures" );
 
-string
-ProteinRMSDFeatures::type_name() const { return "ProteinRMSDFeatures"; }
+// XRW TEMP string
+// XRW TEMP ProteinRMSDFeatures::type_name() const { return "ProteinRMSDFeatures"; }
 
 
 PoseCOP
@@ -169,7 +173,7 @@ ProteinRMSDFeatures::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & pose
 ) {
-	runtime_assert(tag->getOption<string>("name") == type_name());
+	runtime_assert(tag->getName() == type_name());
 
 	if ( tag->hasOption("reference_name") ) {
 		// Use with SavePoseMover
@@ -228,6 +232,38 @@ ProteinRMSDFeatures::report_features(
 
 	return 0;
 }
+
+std::string ProteinRMSDFeatures::type_name() const {
+	return class_name();
+}
+
+std::string ProteinRMSDFeatures::class_name() {
+	return "ProteinRMSDFeatures";
+}
+
+void ProteinRMSDFeatures::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	rosetta_scripts::attributes_for_saved_reference_pose( attlist );
+
+	protocols::features::xsd_type_definition_w_attributes( xsd, class_name(), "Record RMSD, the reference ID to which RMSD was computed as well as dummy variables determining what type of protein RMSD was computed", attlist );
+}
+
+std::string ProteinRMSDFeaturesCreator::type_name() const {
+	return ProteinRMSDFeatures::class_name();
+}
+
+protocols::features::FeaturesReporterOP
+ProteinRMSDFeaturesCreator::create_features_reporter() const {
+	return protocols::features::FeaturesReporterOP( new ProteinRMSDFeatures );
+}
+
+void ProteinRMSDFeaturesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	ProteinRMSDFeatures::provide_xml_schema( xsd );
+}
+
 
 } //namesapce
 } //namespace

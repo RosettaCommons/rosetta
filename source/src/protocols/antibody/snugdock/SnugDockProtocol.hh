@@ -51,14 +51,14 @@ public: // boiler plate / virtuals
 	// destructor
 	virtual ~SnugDockProtocol();
 
-	virtual void apply( Pose & );
-	virtual std::string get_name() const;
+	void apply( Pose & ) override;
+	std::string get_name() const override;
 
-	virtual protocols::moves::MoverOP clone() const;
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-	virtual bool reinitialize_for_new_input() const;
+	bool reinitialize_for_new_input() const override;
 
 	/// @brief Associates relevant options with the SnugDockProtocol class
 	static void register_options();
@@ -72,7 +72,7 @@ public: // boiler plate / virtuals
 
 
 public:
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out=std::cout ) const override;
 	friend std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol );
 
 private: // methods

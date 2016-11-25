@@ -85,27 +85,25 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 		// residue appears to be a disulfide...?
 		// amw removing the check for aa_cys
 		// because we want this to be able to apply to NCAA disulfides
-		if ( res.has_variant_type( DISULFIDE ) ) {
+		if ( ! res.has_variant_type( DISULFIDE ) ) continue;
 
-			bool no_repack = true;
+		bool no_repack = true;
 
-			// try and double-check if possible
-			Size sg_index = res.atom_index( res.type().get_disulfide_atom_name() );
-			Size const sg_conn_index = res.type().residue_connection_id_for_atom( sg_index );
-			Residue const & partner_res = pose.residue( res.residue_connection_partner( sg_conn_index ) );
+		// try and double-check if possible
+		Size sg_index = res.atom_index( res.type().get_disulfide_atom_name() );
+		Size const sg_conn_index = res.type().residue_connection_id_for_atom( sg_index );
+		Residue const & partner_res = pose.residue( res.residue_connection_partner( sg_conn_index ) );
 
-			if ( !partner_res.has_variant_type( DISULFIDE ) ) {
-				no_repack = false;
-			}
+		if ( !partner_res.has_variant_type( DISULFIDE ) ) {
+			no_repack = false;
+		}
 
-			// set repack status
-			if ( no_repack ) {
-				TR.Debug << "found disulfide residue " << i << ", preventing repack at this position" << std::endl;
-				task.nonconst_residue_task( i ).prevent_repacking();
-			} else {
-				TR.Warning << "WARNING: residue " << i << " marked as disulfide but has no partner, allowing repack at this position" << std::endl;
-			}
-
+		// set repack status
+		if ( no_repack ) {
+			TR.Debug << "found disulfide residue " << i << ", preventing repack at this position" << std::endl;
+			task.nonconst_residue_task( i ).prevent_repacking();
+		} else {
+			TR.Warning << "WARNING: residue " << i << " marked as disulfide but has no partner, allowing repack at this position" << std::endl;
 		}
 
 	} // foreach residue
@@ -116,7 +114,9 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 std::string NoRepackDisulfides::keyname() { return "NoRepackDisulfides"; }
 
 void NoRepackDisulfides::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
-	task_op_schema_empty( xsd, keyname() );
+	task_op_schema_empty(
+		xsd, keyname(),
+		"Do not allow disulfides to repack.");
 }
 
 TaskOperationOP NoRepackDisulfidesCreator::create_task_operation() const

@@ -33,6 +33,9 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/vector1.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace denovo_design {
@@ -44,30 +47,30 @@ using namespace protocols::moves;
 
 static THREAD_LOCAL basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
 
-std::string
-DumpStatsSSCreator::keyname() const
-{
-	return DumpStatsSSCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP DumpStatsSSCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return DumpStatsSS::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-DumpStatsSSCreator::create_mover() const {
-	return protocols::moves::MoverOP( new DumpStatsSS );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP DumpStatsSSCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new DumpStatsSS );
+// XRW TEMP }
 
-std::string
-DumpStatsSSCreator::mover_name()
-{
-	return "DumpStatsSS";
-}
+// XRW TEMP std::string
+// XRW TEMP DumpStatsSS::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "DumpStatsSS";
+// XRW TEMP }
 
 DumpStatsSS::DumpStatsSS():
-	protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
+	protocols::moves::Mover( DumpStatsSS::mover_name() ),
 	scorefxn_(/* 0 */)
 {}
 
 DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
-	protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
+	protocols::moves::Mover( DumpStatsSS::mover_name() ),
 	fname_(rval.fname_),
 	output_(rval.output_),
 	scorefxn_(rval.scorefxn_->clone()),
@@ -166,10 +169,45 @@ DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 	*output_ << "score svmProb psiProb time sequence" << std::endl;
 }
 
-std::string
-DumpStatsSS::get_name() const {
-	return DumpStatsSSCreator::mover_name();
+// XRW TEMP std::string
+// XRW TEMP DumpStatsSS::get_name() const {
+// XRW TEMP  return DumpStatsSS::mover_name();
+// XRW TEMP }
+
+std::string DumpStatsSS::get_name() const {
+	return mover_name();
 }
+
+std::string DumpStatsSS::mover_name() {
+	return "DumpStatsSS";
+}
+
+void DumpStatsSS::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default( "fname", xs_string, "Secondary structure file to which to dump statistics", "SS_stats.txt" );
+	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
+	attlist + XMLSchemaAttribute( "cmd", xs_string, "Command to run psipred" )
+		+ XMLSchemaAttribute( "blueprint", xs_string, "Blueprint file that could be used to override DSSP secondary structure." );
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+std::string DumpStatsSSCreator::keyname() const {
+	return DumpStatsSS::mover_name();
+}
+
+protocols::moves::MoverOP
+DumpStatsSSCreator::create_mover() const {
+	return protocols::moves::MoverOP( new DumpStatsSS );
+}
+
+void DumpStatsSSCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	DumpStatsSS::provide_xml_schema( xsd );
+}
+
 }//devel
 }//denovo_design
 

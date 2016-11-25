@@ -29,6 +29,9 @@ public:
 
 	virtual std::string
 	keyname() const;
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 --end_namespace--

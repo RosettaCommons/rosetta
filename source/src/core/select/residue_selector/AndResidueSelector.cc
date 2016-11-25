@@ -78,11 +78,8 @@ AndResidueSelector::apply( core::pose::Pose const & pose ) const
 
 	// make subset neutral for AND operations
 	ResidueSubset subset( pose.size(), true );
-	for ( std::list< ResidueSelectorCOP >::const_iterator
-			rs = selectors_.begin();
-			rs != selectors_.end();
-			++rs ) {
-		ResidueSubset tmp = (*rs)->apply( pose );
+	for ( auto const & rs : selectors_ ) {
+		ResidueSubset tmp = rs->apply( pose );
 		apply_and_to_subset(tmp, subset);
 	}
 	return subset;
@@ -108,13 +105,13 @@ void AndResidueSelector::parse_my_tag(
 		}
 		utility::vector1< std::string > selector_names = utility::string_split( selectors_str, ',' );
 
-		for ( core::Size ii = 1; ii <= selector_names.size(); ++ii ) {
+		for ( std::string const & selector_name : selector_names ) {
 			try {
-				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_names[ ii ] );
+				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
 				local_selectors.push_back( selector );
 			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::stringstream error_msg;
-				error_msg << "Failed to find ResidueSelector named '" << selector_names[ ii ] << "' from the Datamap from AndResidueSelector::parse_my_tag.\n";
+				error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from AndResidueSelector::parse_my_tag.\n";
 				error_msg << e.msg();
 				throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 			}
@@ -122,11 +119,10 @@ void AndResidueSelector::parse_my_tag(
 	} // hasOption selectors
 
 	// add selectors from tags
-	for ( utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
-			itag != tag->getTags().end(); ++itag ) {
+	for ( auto const & itag : tag->getTags() ) {
 		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
-			(*itag)->getName(),
-			(*itag),
+			itag->getName(),
+			itag,
 			datamap
 		);
 		local_selectors.push_back( rs );
@@ -138,10 +134,8 @@ void AndResidueSelector::parse_my_tag(
 		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 	}
 
-	for ( std::list< ResidueSelectorCOP >::const_iterator
-			iter = local_selectors.begin(), iter_end = local_selectors.end();
-			iter != iter_end; ++iter ) {
-		add_residue_selector( *iter );
+	for ( auto const & local_selector : local_selectors ) {
+		add_residue_selector( local_selector );
 	}
 }
 
@@ -175,8 +169,16 @@ std::string AndResidueSelector::class_name() {
 void
 AndResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute( "selectors", utility::tag::xs_string );
-	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), attributes );
+	attributes + utility::tag::XMLSchemaAttribute(
+		"selectors", utility::tag::xs_string,
+		"Comma separated list of selected residues" );
+	xsd_type_definition_w_attributes_and_optional_subselectors(
+		xsd, class_name(),
+		"The AndResidueSelector combines the output of multiple ResidueSelectors using AND "
+		"logic, i.e., only residues selected by ALL contained ResidueSelectors will be selected. "
+		"ResidueSelecters can be pulled in from a DataMap, from subtags (for ResidueSelectors "
+		"known to the ResidueSelectorFactory) or programmatically through %add_residue_selector.",
+		attributes );
 }
 
 

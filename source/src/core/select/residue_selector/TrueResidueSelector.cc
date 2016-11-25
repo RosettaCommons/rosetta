@@ -85,7 +85,7 @@ void
 TrueResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
 }
 
 ResidueSelectorOP

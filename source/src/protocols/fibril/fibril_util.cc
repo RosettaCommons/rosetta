@@ -179,27 +179,19 @@ superimpose_pose_on_subset_bb(
 
 	for ( auto const & region : core ) {
 		for ( core::Size i=region.start(); i<= region.stop(); ++i ) {
-			core::id::AtomID dummy_atomid1( pose.residue(i).atom_index("CA"), i);
-			ids.push_back(dummy_atomid1);
-			core::id::AtomID dummy_atomid2( pose.residue(i).atom_index("N"), i);
-			ids.push_back(dummy_atomid2);
-			core::id::AtomID dummy_atomid3( pose.residue(i).atom_index("C"), i);
-			ids.push_back(dummy_atomid3);
-			core::id::AtomID dummy_atomid4( pose.residue(i).atom_index("O"), i);
-			ids.push_back(dummy_atomid4);
+			ids.emplace_back( pose.residue(i).atom_index("CA"), i );
+			ids.emplace_back( pose.residue(i).atom_index("N"), i );
+			ids.emplace_back( pose.residue(i).atom_index("C"), i );
+			ids.emplace_back( pose.residue(i).atom_index("O"), i );
 		}
 	}
 
 	for ( auto const & region : ref_core ) {
 		for ( core::Size i=region.start(); i<= region.stop(); ++i ) {
-			core::id::AtomID dummy_atomid1( ref_pose.residue(i).atom_index("CA"), i);
-			ref_ids.push_back(dummy_atomid1);
-			core::id::AtomID dummy_atomid2( ref_pose.residue(i).atom_index("N"), i);
-			ref_ids.push_back(dummy_atomid2);
-			core::id::AtomID dummy_atomid3( ref_pose.residue(i).atom_index("C"), i);
-			ref_ids.push_back(dummy_atomid3);
-			core::id::AtomID dummy_atomid4( ref_pose.residue(i).atom_index("O"), i);
-			ref_ids.push_back(dummy_atomid4);
+			ref_ids.emplace_back( ref_pose.residue(i).atom_index("CA"), i );
+			ref_ids.emplace_back( ref_pose.residue(i).atom_index("N"), i );
+			ref_ids.emplace_back( ref_pose.residue(i).atom_index("C"), i );
+			ref_ids.emplace_back( ref_pose.residue(i).atom_index("O"), i );
 		}
 	}
 	assert( ids.size()== ref_ids.size());

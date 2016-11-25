@@ -763,8 +763,8 @@ merge_two_poses( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
-																		 pose::Pose const & source_pose,
-																		 utility::vector1< Size > const & working_res )
+	pose::Pose const & source_pose,
+	utility::vector1< Size > const & working_res )
 {
 	utility::vector1< Size > source_res;
 	for ( Size n = 1; n <= source_pose.size(); n++ ) source_res.push_back( n );
@@ -777,9 +777,9 @@ declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
-																		 pose::Pose const & source_pose,
-																		 utility::vector1< Size > const & working_res,
-																		 utility::vector1< Size > const & source_working_res )
+	pose::Pose const & source_pose,
+	utility::vector1< Size > const & working_res,
+	utility::vector1< Size > const & source_working_res )
 {
 	using namespace core::chemical;
 	using namespace core::scoring::methods;
@@ -789,8 +789,8 @@ declare_chemical_bonds_at_cutpoints( pose::Pose & pose,
 			if ( !working_res.has_value( source_working_res[ n ] ) ) continue;
 			if ( !working_res.has_value( source_working_res[ next_res ] ) ) continue;
 			declare_cutpoint_chemical_bond( pose,
-																			working_res.index( source_working_res[ n ] ),
-																			working_res.index( source_working_res[ next_res ] ) );
+				working_res.index( source_working_res[ n ] ),
+				working_res.index( source_working_res[ next_res ] ) );
 		}
 	}
 }

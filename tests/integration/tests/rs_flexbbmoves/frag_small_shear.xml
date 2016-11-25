@@ -1,13 +1,12 @@
-﻿<dock_design>
-	<TASKOPERATIONS>
-		<ProteinInterfaceDesign name=pack_interface repack_chain1=1 repack_chain2=1 design_chain1=0 design_chain2=0/>
+<ROSETTASCRIPTS>	<TASKOPERATIONS>
+		<ProteinInterfaceDesign name="pack_interface" repack_chain1="1" repack_chain2="1" design_chain1="0" design_chain2="0"/>
 	</TASKOPERATIONS>
   <SCOREFXNS>
-    <score0 weights="score0"/>
-    <score1 weights="score1"/>
-    <score2 weights="score2"/>
-    <score3 weights="score3"/>
-    <score5 weights="score5"/>
+    <ScoreFunction name="score0" weights="score0"/>
+    <ScoreFunction name="score1" weights="score1"/>
+    <ScoreFunction name="score2" weights="score2"/>
+    <ScoreFunction name="score3" weights="score3"/>
+    <ScoreFunction name="score5" weights="score5"/>
   </SCOREFXNS>
   <FILTERS>
   </FILTERS>
@@ -15,68 +14,69 @@
     3-mers
     <SingleFragmentMover name="sfm3" fragments="input/aa1elw_03_05.200_v1_3.gz" policy="smooth">
       <MoveMap>
-	<Chain number=1 bb=0 chi=1/>
+	<Chain number="1" bb="0" chi="1"/>
       </MoveMap>
     </SingleFragmentMover>
 
     9-mers
     <SingleFragmentMover name="sfm9" fragments="input/aa1elw_09_05.200_v1_3.gz" policy="uniform">
       <MoveMap>
-	<Chain number=1 bb=0 chi=1/>
+	<Chain number="1" bb="0" chi="1"/>
       </MoveMap>
     </SingleFragmentMover>
 
     ClassicAbinitio
-    <GenericMonteCarlo name="stage1"  scorefxn_name="score0" mover_name="sfm3" temperature=0.8 trials=20/>
-    <GenericMonteCarlo name="stage2"  scorefxn_name="score1" mover_name="sfm3" temperature=0.7 trials=20/>
-    <GenericMonteCarlo name="stage3a" scorefxn_name="score2" mover_name="sfm3" temperature=0.6 trials=20/>
-    <GenericMonteCarlo name="stage3b" scorefxn_name="score5" mover_name="sfm3" temperature=0.5 trials=20/>
-    <GenericMonteCarlo name="stage4"  scorefxn_name="score5" mover_name="sfm3" temperature=0.4 trials=40/>
+    <GenericMonteCarlo name="stage1"  scorefxn_name="score0" mover_name="sfm3" temperature="0.8" trials="20"/>
+    <GenericMonteCarlo name="stage2"  scorefxn_name="score1" mover_name="sfm3" temperature="0.7" trials="20"/>
+    <GenericMonteCarlo name="stage3a" scorefxn_name="score2" mover_name="sfm3" temperature="0.6" trials="20"/>
+    <GenericMonteCarlo name="stage3b" scorefxn_name="score5" mover_name="sfm3" temperature="0.5" trials="20"/>
+    <GenericMonteCarlo name="stage4"  scorefxn_name="score5" mover_name="sfm3" temperature="0.4" trials="40"/>
 
     Required for scoring
-    <SwitchResidueTypeSetMover name=fullatom set=fa_standard/>
-    <SwitchResidueTypeSetMover name=centroid set=centroid/>
-		<AtomTree name=tree pdb_num=11C connect_from="C" anchor_res=43A/>
-		<Small name=small>
-			<MoveMap name=move_chain2>
-				<Chain number=1 bb=0 chi=0/>
-				<Chain number=2 bb=1 chi=1/>
+    <SwitchResidueTypeSetMover name="fullatom" set="fa_standard"/>
+    <SwitchResidueTypeSetMover name="centroid" set="centroid"/>
+		<AtomTree name="tree" pdb_num="11C" connect_from="C" anchor_res="43A"/>
+		<Small name="small">
+			<MoveMap name="move_chain2">
+				<Chain number="1" bb="0" chi="0"/>
+				<Chain number="2" bb="1" chi="1"/>
 			</MoveMap>
 		</Small>
-		<Shear name=shear>
-		  <MoveMap name=move_chain2/>
+		<Shear name="shear">
+		  <MoveMap name="move_chain2"/>
 		</Shear>
-		<PackRotamersMover name=pack scorefxn=score12 task_operations=pack_interface/>
-		<ParsedProtocol name=shear_small_pack mode=random_order>
-			<Add mover=shear/>
-			<Add mover=pack/>
-			<Add mover=small/>
+		<PackRotamersMover name="pack" scorefxn="score12" task_operations="pack_interface"/>
+		<ParsedProtocol name="shear_small_pack" mode="random_order">
+			<Add mover="shear"/>
+			<Add mover="pack"/>
+			<Add mover="small"/>
 		</ParsedProtocol>
-  	<GenericMonteCarlo name="small_mc_high_temp"  scorefxn_name="score12" mover_name="shear_small_pack" temperature=0.6 trials=5/>
-  	<GenericMonteCarlo name="small_mc_low_temp"  scorefxn_name="score12" mover_name="shear_small_pack" temperature=0.4 trials=5/>
-		<ParsedProtocol name=frag_shear_small>
-			<Add mover=centroid/>
-			<Add mover=stage1/>
-			<Add mover=stage2/>
-			<Add mover=stage3a/>
-			<Add mover=stage3b/>
-			<Add mover=stage4/>
-			<Add mover=fullatom/>
-			<Add mover=small_mc_high_temp/>
-			<Add mover=small_mc_low_temp/>
+  	<GenericMonteCarlo name="small_mc_high_temp"  scorefxn_name="score12" mover_name="shear_small_pack" temperature="0.6" trials="5"/>
+  	<GenericMonteCarlo name="small_mc_low_temp"  scorefxn_name="score12" mover_name="shear_small_pack" temperature="0.4" trials="5"/>
+		<ParsedProtocol name="frag_shear_small">
+			<Add mover="centroid"/>
+			<Add mover="stage1"/>
+			<Add mover="stage2"/>
+			<Add mover="stage3a"/>
+			<Add mover="stage3b"/>
+			<Add mover="stage4"/>
+			<Add mover="fullatom"/>
+			<Add mover="small_mc_high_temp"/>
+			<Add mover="small_mc_low_temp"/>
 		</ParsedProtocol>
-		<GenericMonteCarlo name=outer_loop scorefxn_name=score12 mover_name=frag_shear_small temperature=0.4 trials=5/>
-		<FastRelax name=relax_chainb scorefxn=score12>
+		<GenericMonteCarlo name="outer_loop" scorefxn_name="score12" mover_name="frag_shear_small" temperature="0.4" trials="5"/>
+		<FastRelax name="relax_chainb" scorefxn="score12">
 			<MoveMap>
-				<Chain number=1 bb=0 chi=0/>
-				<Chain number=2 bb=1 chi=1/>
+				<Chain number="1" bb="0" chi="0"/>
+				<Chain number="2" bb="1" chi="1"/>
 			</MoveMap>
 		</FastRelax>
   </MOVERS>
   <APPLY_TO_POSE>
   </APPLY_TO_POSE>
   <PROTOCOLS>
-		<Add mover=outer_loop/>
-		<Add mover=relax_chainb/>
+		<Add mover="outer_loop"/>
+		<Add mover="relax_chainb"/>
   </PROTOCOLS>
-</dock_design>
+
+</ROSETTASCRIPTS>

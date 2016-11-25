@@ -39,6 +39,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "devel.matdes.Symmetrizer" );
 
@@ -50,22 +53,22 @@ using namespace core;
 using namespace utility;
 
 // -------------  Mover Creator -------------
-std::string
-SymmetrizerMoverCreator::keyname() const
-{
-	return SymmetrizerMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP SymmetrizerMoverCreator::keyname() const
+// XRW TEMP {
+// XRW TEMP  return Symmetrizer::mover_name();
+// XRW TEMP }
 
-protocols::moves::MoverOP
-SymmetrizerMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new Symmetrizer );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP SymmetrizerMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new Symmetrizer );
+// XRW TEMP }
 
-std::string
-SymmetrizerMoverCreator::mover_name()
-{
-	return "Symmetrizer";
-}
+// XRW TEMP std::string
+// XRW TEMP Symmetrizer::mover_name()
+// XRW TEMP {
+// XRW TEMP  return "Symmetrizer";
+// XRW TEMP }
 // -------------  Mover Creator -------------
 
 Symmetrizer::Symmetrizer() :
@@ -223,6 +226,67 @@ Symmetrizer::parse_my_tag( TagCOP const tag,
 	angle_ = tag->getOption<Real>( "angle",0.0 );
 
 }
+
+std::string Symmetrizer::get_name() const {
+	return mover_name();
+}
+
+std::string Symmetrizer::mover_name() {
+	return "Symmetrizer";
+}
+
+void Symmetrizer::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	// Ultimately this should go in utility because it's used in multiple places
+	// To avoid a laborious recompile, we will instead 'namespace' it
+	XMLSchemaRestriction sampling_mode_enumeration;
+	sampling_mode_enumeration.name( "Symmetrizer_sampling_mode_choices" );
+	sampling_mode_enumeration.base_type( xs_string );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "grid" );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "uniform" );
+	sampling_mode_enumeration.add_restriction( xsr_enumeration, "gaussian" );
+	xsd.add_top_level_element( sampling_mode_enumeration );
+
+	XMLSchemaRestriction axis_pattern;
+	axis_pattern.name( "axis_char" );
+	axis_pattern.base_type( xsct_char );
+	axis_pattern.add_restriction( xsr_pattern,  "x|y|z" );
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("symm_file", xs_string, "Symmetry definition file to create fully symmetric pose from input asymmetric unit.")
+		+ XMLSchemaAttribute::attribute_w_default("axis", "axis_char" , "Axis around which to symmetrize.", "z")
+		+ XMLSchemaAttribute::attribute_w_default("angle_min", xsct_real, "For use with uniform sampling. ", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("angle_max", xsct_real, "For use with uniform sampling.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("sampling_mode", "Symmetrizer_sampling_mode_choices", "The default is 'uniform' , but this can also be 'grid' or 'gaussian'", "uniform")
+		+ XMLSchemaAttribute::attribute_w_default("grid", xsct_rosetta_bool, "XRW TODO (what does it DO?) The default is false; but if it is set to true, you must also set angle_step and radial_disp_step.", "false")
+		+ XMLSchemaAttribute("angle_step", xsct_real, "xRW TODO (what does it DO?) You must use this option when sampling_mode=grid OR when grid=true")
+		+ XMLSchemaAttribute("radial_disp_step", xsct_real, "You must use this option when sampling_mode=grid OR when grid=1")
+		+ XMLSchemaAttribute::attribute_w_default("angle_delta", xsct_real, "The default is '0.0', but when using sampling_mode=gaussian, but you change this value.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("radial_disp_min", xsct_real, "XSD XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("radial_disp_max", xsct_real, "XSD XRW TO DO", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("radial_disp_delta", xsct_real, "The default is '0.0', but when using sampling_mode=gaussian, but you change this value.", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("radial_disp", xsct_real, "Translation of asymmetric unit if necessary", "0.0")
+		+ XMLSchemaAttribute::attribute_w_default("angle", xsct_real, "Rotation angle of asymmetric unit if necessary.", "0.0");
+
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Functionally an optimization mover; will take a pose with sufficiently small deviations from symmetry and resolve them.", attlist );
+}
+
+std::string SymmetrizerMoverCreator::keyname() const {
+	return Symmetrizer::mover_name();
+}
+
+protocols::moves::MoverOP
+SymmetrizerMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new Symmetrizer );
+}
+
+void SymmetrizerMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	Symmetrizer::provide_xml_schema( xsd );
+}
+
 
 } // matdes
 } // devel

@@ -64,31 +64,43 @@ public:
 
 	AbscriptMover( AbscriptMover const& );
 
-	virtual void apply( core::pose::Pose& pose );
+	void apply( core::pose::Pose& pose ) override;
 
-	virtual std::string get_name() const;
+	static std::string
+	stage_complex_namer( std::string );
+	// XRW TEMP  virtual std::string get_name() const;
 
-	virtual EnvClaims yield_claims( core::pose::Pose const&,
-		basic::datacache::WriteableCacheableMapOP );
+	EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) override;
 
-	virtual void yield_submovers( std::set< ClientMoverOP >& ) const;
+	void yield_submovers( std::set< ClientMoverOP >& ) const override;
 
 	// the Abscript mover does not make any claims, and should never be given
 	// initialization rights
-	virtual void initialize( Pose& ){ runtime_assert( false ); }
+	void initialize( Pose& ) override { runtime_assert( false ); }
 
-	virtual void
+	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose );
+		core::pose::Pose const & pose ) override;
 
-	virtual
-	moves::MoverOP fresh_instance() const;
+	moves::MoverOP fresh_instance() const override;
 
-	virtual
-	moves::MoverOP clone() const;
+	moves::MoverOP clone() const override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

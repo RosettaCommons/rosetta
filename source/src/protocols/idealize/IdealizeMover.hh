@@ -106,7 +106,7 @@ public:
 	void
 	apply( Pose & pose ) override;
 
-	std::string get_name() const override;
+	// XRW TEMP  std::string get_name() const override;
 
 	/// @brief Sets the list of residue positions to idealize.
 	void set_pos_list( utility::vector1< Size > pos_list ) {
@@ -120,6 +120,18 @@ public:
 	bool impose_constraints() const{ return( impose_constraints_ ); }
 	bool constraints_only() const{ return constraints_only_; }
 	void constraints_only( bool const c ){ constraints_only_ = c; }
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 	// methods

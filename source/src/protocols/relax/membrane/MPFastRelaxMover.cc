@@ -54,6 +54,9 @@
 
 // C++ Headers
 #include <cstdlib>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.relax.membrane.MPFastRelaxMover" );
 
@@ -136,22 +139,22 @@ MPFastRelaxMover::parse_my_tag(
 {}
 
 /// @brief Create a new copy of this mover
-protocols::moves::MoverOP
-MPFastRelaxMoverCreator::create_mover() const {
-	return protocols::moves::MoverOP( new MPFastRelaxMover );
-}
+// XRW TEMP protocols::moves::MoverOP
+// XRW TEMP MPFastRelaxMoverCreator::create_mover() const {
+// XRW TEMP  return protocols::moves::MoverOP( new MPFastRelaxMover );
+// XRW TEMP }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
-std::string
-MPFastRelaxMoverCreator::keyname() const {
-	return MPFastRelaxMoverCreator::mover_name();
-}
+// XRW TEMP std::string
+// XRW TEMP MPFastRelaxMoverCreator::keyname() const {
+// XRW TEMP  return MPFastRelaxMover::mover_name();
+// XRW TEMP }
 
 /// @brief Mover name for Rosetta Scripts
-std::string
-MPFastRelaxMoverCreator::mover_name() {
-	return "MPFastRelaxMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPFastRelaxMover::mover_name() {
+// XRW TEMP  return "MPFastRelaxMover";
+// XRW TEMP }
 
 /////////////////////
 /// Mover methods ///
@@ -204,10 +207,10 @@ MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 
 /// @brief Get name (MPFastRelaxMover)
 /// @details Get the name of this mover
-std::string
-MPFastRelaxMover::get_name() const {
-	return "MPFastRelaxMover";
-}
+// XRW TEMP std::string
+// XRW TEMP MPFastRelaxMover::get_name() const {
+// XRW TEMP  return "MPFastRelaxMover";
+// XRW TEMP }
 
 /// @brief Create a custom foldtree anchored at the COM
 /// @details Generate a foldtree where the membrane residue
@@ -267,6 +270,36 @@ MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 	// Set a new foldtree in the pose
 	pose.fold_tree( ft );
 }
+
+std::string MPFastRelaxMover::get_name() const {
+	return mover_name();
+}
+
+std::string MPFastRelaxMover::mover_name() {
+	return "MPFastRelaxMover";
+}
+
+void MPFastRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist; //No attributes
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs FastRelax on membrane proteins", attlist );
+}
+
+std::string MPFastRelaxMoverCreator::keyname() const {
+	return MPFastRelaxMover::mover_name();
+}
+
+protocols::moves::MoverOP
+MPFastRelaxMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new MPFastRelaxMover );
+}
+
+void MPFastRelaxMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	MPFastRelaxMover::provide_xml_schema( xsd );
+}
+
 
 } // membrane
 } // relax

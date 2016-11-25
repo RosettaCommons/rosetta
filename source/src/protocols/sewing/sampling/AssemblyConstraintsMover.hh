@@ -41,16 +41,14 @@ public:
 	ReadNativeRotamersFile();
 	virtual ~ReadNativeRotamersFile();
 
-	virtual
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	apply(
 		core::pose::Pose const &,
 		core::pack::task::PackerTask &
-	) const;
+	) const override;
 
 	void native_rotamers_map(
 		NativeRotamersMap const & nat_ro_map
@@ -59,9 +57,9 @@ public:
 	NativeRotamersMap const &
 	native_rotamers_map() const;
 
-	virtual void parse_tag(
+	void parse_tag(
 		TagCOP, DataMap &
-	);
+	) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "ReadNativeRotamersFile"; }
@@ -82,16 +80,14 @@ public:
 	ReadRepeatNativeRotamersFile();
 	virtual ~ReadRepeatNativeRotamersFile();
 
-	virtual
 	core::pack::task::operation::TaskOperationOP
-	clone() const;
+	clone() const override;
 
-	virtual
 	void
 	apply(
 		core::pose::Pose const &,
 		core::pack::task::PackerTask &
-	) const;
+	) const override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname();
@@ -114,13 +110,13 @@ public:
 	);
 
 	protocols::moves::MoverOP
-	clone() const;
+	clone() const override;
 
 	protocols::moves::MoverOP
-	fresh_instance() const;
+	fresh_instance() const override;
 
-	std::string
-	get_name() const;
+	// XRW TEMP  std::string
+	// XRW TEMP  get_name() const;
 
 	void
 	nat_ro_map(
@@ -137,18 +133,16 @@ public:
 		core::Real base_native_bonus
 	);
 
-	virtual
 	void
 	apply(
 		core::pose::Pose & pose
-	);
+	) override;
 
 	void
 	apply_repeat(
 		core::pose::Pose & pose
 	);
 
-	virtual
 	void
 	parse_my_tag(
 		TagCOP tag,
@@ -156,7 +150,19 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
-	);
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 private:
 

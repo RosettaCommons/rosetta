@@ -49,28 +49,14 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.hh>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
 
 namespace devel {
 namespace cutoutdomain {
 
 static THREAD_LOCAL basic::Tracer TR( "devel.cutoutdomain.CutOutDomain" );
-
-std::string
-CutOutDomainCreator::keyname() const
-{
-	return CutOutDomainCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-CutOutDomainCreator::create_mover() const {
-	return protocols::moves::MoverOP( new CutOutDomain );
-}
-
-std::string
-CutOutDomainCreator::mover_name()
-{
-	return "CutOutDomain";
-}
 
 CutOutDomain::CutOutDomain()
 : protocols:: moves::Mover("CutOutDomain")
@@ -96,12 +82,6 @@ CutOutDomain::apply( core::pose::Pose & pose )
 	pose.conformation().delete_residue_range_slow( 1,from+1-delta_n_ter_ );
 	//hack so Rosetta doesn't call scoring function at the end
 	pose.dump_pdb(suffix_);
-}
-
-
-std::string
-CutOutDomain::get_name() const {
-	return CutOutDomainCreator::mover_name();
 }
 
 void
@@ -138,5 +118,67 @@ CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pos
 	if ( min_dist <= 10.0 ) return nearest_res;
 	else return 0;
 }
+
+std::string CutOutDomain::get_name() const {
+	return mover_name();
+}
+
+std::string CutOutDomain::mover_name() {
+	return "CutOutDomain";
+}
+
+void CutOutDomain::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"start_res", xsct_non_negative_integer,
+		"begin residue on the template pdb",
+		"1");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"end_res", xsct_non_negative_integer,
+		"end residue on the template pdb",
+		"1");
+
+	attlist + XMLSchemaAttribute::required_attribute(
+		"source_pdb", xs_string,
+		"name of the pdb to be cut");
+
+	attlist + XMLSchemaAttribute(
+		"suffix", xs_string,
+		"suffix of the outputted structure");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"delta_n_ter", xsct_non_negative_integer,
+		"do not delete n N-terminal residues",
+		"0");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"delta_c_ter", xsct_non_negative_integer,
+		"do not delete n C-terminal residues",
+		"0");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"This mover takes a template pdb and cuts the active pose accroding to "
+		"start and end position relative to the template pose",
+		attlist );
+}
+
+std::string CutOutDomainCreator::keyname() const {
+	return CutOutDomain::mover_name();
+}
+
+protocols::moves::MoverOP
+CutOutDomainCreator::create_mover() const {
+	return protocols::moves::MoverOP( new CutOutDomain );
+}
+
+void CutOutDomainCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	CutOutDomain::provide_xml_schema( xsd );
+}
+
 } //cutoutdomain
 } //devel

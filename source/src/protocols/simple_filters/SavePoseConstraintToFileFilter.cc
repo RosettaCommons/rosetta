@@ -28,6 +28,9 @@
 
 #include <fstream>
 #include <iostream>
+// XSD XRW Includes
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/filters/filter_schemas.hh>
 
 
 namespace protocols {
@@ -99,11 +102,44 @@ void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}//require a filename to be specified
 }
 
-protocols::filters::FilterOP
-SavePoseConstraintToFileFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter ); }
+// XRW TEMP protocols::filters::FilterOP
+// XRW TEMP SavePoseConstraintToFileFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter ); }
 
-std::string
-SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }
+// XRW TEMP std::string
+// XRW TEMP SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }
+
+std::string SavePoseConstraintToFileFilter::name() const {
+	return class_name();
+}
+
+std::string SavePoseConstraintToFileFilter::class_name() {
+	return "SavePoseConstraintToFile";
+}
+
+void SavePoseConstraintToFileFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::attribute_w_default("overwrite", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute("filename", xs_string, "XRW TO DO");
+
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+std::string SavePoseConstraintToFileFilterCreator::keyname() const {
+	return SavePoseConstraintToFileFilter::class_name();
+}
+
+protocols::filters::FilterOP
+SavePoseConstraintToFileFilterCreator::create_filter() const {
+	return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter );
+}
+
+void SavePoseConstraintToFileFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SavePoseConstraintToFileFilter::provide_xml_schema( xsd );
+}
+
 
 
 } // filters
