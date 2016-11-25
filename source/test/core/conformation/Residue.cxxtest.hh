@@ -19,6 +19,7 @@
 #include <core/conformation/PseudoBond.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -29,16 +30,16 @@
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
+// Basic Headers
+#include <basic/Tracer.hh>
+
 #ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-// Basic Headers
-#include <basic/Tracer.hh>
-
-static THREAD_LOCAL basic::Tracer TR("ResidueTest");
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.Residue.cxxtest" );
 
 using core::pose::Pose;
 using core::conformation::PseudoBond;
@@ -51,7 +52,7 @@ using core::conformation::ResidueOP;
 class ResidueTest : public CxxTest::TestSuite {
 public:
 	void setUp() {
-		core_init();
+		core_init_with_additional_options("-extra_res_fa core/chemical/params/U05.params");
 	}
 
 	void test_isDNA() {
@@ -219,7 +220,194 @@ public:
 #endif // SERIALIZATION
 	}
 
+	void test_fill_missing_atoms() {
+		core::chemical::ChemicalManager & chemman( *core::chemical::ChemicalManager::get_instance() );
+		core::chemical::ResidueType const & restype( chemman.residue_type_set(core::chemical::FA_STANDARD)->name_map( "U05" ) );
+		core::conformation::ResidueOP orig_res( new core::conformation::Residue(restype, true) );
+		core::Size root_index( restype.atom_index( restype.root_atom() ) ); // C21
+		core::Size stub2_index( restype.atom_index( "C13" ) );
+		core::Size stub3_index( restype.atom_index( "C4" ) );
 
+
+		// For a conformation
+		core::pose::PoseOP pose( new core::pose::Pose );
+		pose->append_residue_by_jump( *orig_res, 1 );
+		//pose->dump_pdb( std::cout );
+
+		TR << "All but stub rebuilding" << std::endl;
+		// Should be able to rebuild everything given the three atom stub
+		{
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),true);
+			missing[ root_index ] = false;
+			missing[ stub2_index ] = false;
+			missing[ stub3_index ] = false;
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				if ( ii != root_index && ii != stub2_index && ii != stub3_index ) {
+					residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
+				}
+			}
+			TSM_ASSERT_THROWS_NOTHING( "All rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+			}
+		}
+
+
+		TR << "Single Atom rebuilding" << std::endl;
+		// Can we rebuild each single atom? (This includes the root)
+		for( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),false);
+			residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
+			missing[ii] = true;
+			TSM_ASSERT_THROWS_NOTHING( "Single missing: " + restype.atom_name(ii), residue.fill_missing_atoms(missing, pose->conformation()) );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+		}
+
+		TR << "Atom and connection rebuilding" << std::endl;
+		// Can we rebuild atoms when they and all their connecting atoms are rebuilt?
+		for( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),false);
+			residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
+			missing[ii] = true;
+			core::chemical::AtomIndices nbrs( residue.bonded_neighbor( ii ) );
+			for( core::Size jj(1); jj <= nbrs.size(); ++jj ) {
+				missing[nbrs[jj]] = true;
+				residue.set_xyz(nbrs[jj], core::Vector( 0, 0, 0 ) );
+			}
+			TSM_ASSERT_THROWS_NOTHING( "Connects missing: " + restype.atom_name(ii), residue.fill_missing_atoms(missing, pose->conformation()) );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+			TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+		}
+
+		TR << "Distal stub rebuild" << std::endl;
+		// We have three connected atoms out in the distance - can we rebuild everything?
+		{
+			core::Size atom1( restype.atom_index( "C16" ) ), atom2( restype.atom_index( "C23" ) ), atom3( restype.atom_index( "N3" ) );
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),true);
+			missing[ atom1 ] = false;
+			missing[ atom2 ] = false;
+			missing[ atom3 ] = false;
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				if ( ii != atom1 && ii != atom2 && ii != atom3 ) {
+					residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
+				}
+			}
+			TSM_ASSERT_THROWS_NOTHING( "Distal rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+			}
+		}
+
+		TR << "Distal stub non-icoord rebuild" << std::endl;
+		// We have three atoms but not along icoord path - can we rebuild everything?
+		{
+			core::Size atom1( restype.atom_index( "C24" ) ), atom2( restype.atom_index( "C25" ) ), atom3( restype.atom_index( "C26" ) ); // Not in ICOORD path.
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),true);
+			missing[ atom1 ] = false;
+			missing[ atom2 ] = false;
+			missing[ atom3 ] = false;
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				if ( ii != atom1 && ii != atom2 && ii != atom3 ) {
+					residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
+				}
+			}
+			TSM_ASSERT_THROWS_NOTHING( "Distal rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+			}
+		}
+	}
+
+	void test_fill_missing_atoms_polymer() {
+		core::chemical::ChemicalManager & chemman( *core::chemical::ChemicalManager::get_instance() );
+		core::chemical::ResidueType const & restype( chemman.residue_type_set(core::chemical::FA_STANDARD)->name_map( "GLU" ) );
+		core::conformation::ResidueOP orig_res( new core::conformation::Residue(restype, true) );
+
+		// Form a conformation -- Note that the single residue is *not* a termini variant
+		core::pose::PoseOP pose( new core::pose::Pose );
+		pose->append_residue_by_jump( *orig_res, 1 );
+
+		// Backbone rebuild --
+		TR << "Single Residue backbone rebuild." << std::endl;
+		{
+			core::conformation::Residue residue( pose->residue(1) );
+			utility::vector1<bool> missing(residue.natoms(),false);
+			missing[ restype.atom_index( "N" ) ] = true;
+			missing[ restype.atom_index( "H" ) ] = true;
+			missing[ restype.atom_index( "CA" ) ] = true;
+			missing[ restype.atom_index( "C" ) ] = true;
+			missing[ restype.atom_index( "O" ) ] = true;
+			TSM_ASSERT_THROWS_NOTHING( "Backbone rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), orig_res->xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), orig_res->xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), orig_res->xyz(ii).z(), 0.0001 );
+			}
+		}
+
+		// Now make a 3 residue pose
+		TR << "Polymeric Residue backbone rebuild." << std::endl;
+		pose->append_residue_by_bond( *orig_res, true );
+		pose->append_residue_by_bond( *orig_res, true );
+		{
+			core::conformation::Residue residue( pose->residue(2) ); // Copy, so as not to modify the pose
+			utility::vector1<bool> missing(residue.natoms(),false);
+			missing[ restype.atom_index( "N" ) ] = true;
+			missing[ restype.atom_index( "H" ) ] = true;
+			missing[ restype.atom_index( "CA" ) ] = true;
+			missing[ restype.atom_index( "C" ) ] = true;
+			missing[ restype.atom_index( "O" ) ] = true;
+			TSM_ASSERT_THROWS_NOTHING( "Backbone rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= residue.natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), pose->residue(2).xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), pose->residue(2).xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), pose->residue(2).xyz(ii).z(), 0.0001 );
+			}
+		}
+
+		// Now make a 3 "chain" pose with cutpoints between each residue (again, none are termini/cutpoint variants)
+		core::kinematics::FoldTree ft( pose->fold_tree() );
+		ft.new_jump( 1, 2, 1 ); // make chainbreak between 1 and 2
+		ft.new_jump( 2, 3, 2 ); // make chainbreak between 2 and 3
+		pose->fold_tree( ft );
+		//pose->dump_pdb( std::cout );
+
+		TS_ASSERT( pose->fold_tree().is_cutpoint(1) );
+		TS_ASSERT( pose->fold_tree().is_cutpoint(2) );
+
+		TR << "Polymeric Residue cutpoint backbone rebuild." << std::endl;
+		pose->append_residue_by_bond( *orig_res, true );
+		pose->append_residue_by_bond( *orig_res, true );
+		{
+			core::conformation::Residue residue( pose->residue(2) ); // Copy, so as not to modify the pose
+			utility::vector1<bool> missing(residue.natoms(),false);
+			missing[ restype.atom_index( "N" ) ] = true;
+			missing[ restype.atom_index( "H" ) ] = true;
+			missing[ restype.atom_index( "CA" ) ] = true;
+			missing[ restype.atom_index( "C" ) ] = true;
+			missing[ restype.atom_index( "O" ) ] = true;
+			TSM_ASSERT_THROWS_NOTHING( "Backbone rebuild", residue.fill_missing_atoms(missing, pose->conformation()) );
+			for ( core::Size ii(1); ii <= residue.natoms(); ++ii ) {
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " X", residue.xyz(ii).x(), pose->residue(2).xyz(ii).x(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Y", residue.xyz(ii).y(), pose->residue(2).xyz(ii).y(), 0.0001 );
+				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), pose->residue(2).xyz(ii).z(), 0.0001 );
+			}
+		}
+
+	}
 };
-
 

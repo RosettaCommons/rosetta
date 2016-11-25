@@ -45,7 +45,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace core {
 namespace chemical {
 
-static THREAD_LOCAL basic::Tracer tw( "core.chemical.AtomICoor", basic::t_warning );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.AtomICoor" );
 
 ICoorAtomID::ICoorAtomID():
 	type_( INTERNAL ),
@@ -83,7 +83,7 @@ ICoorAtomID::ICoorAtomID(
 		vd_ = ResidueType::null_vertex;
 		debug_assert( atomno_ > 0 && atomno_ <= rsd_type.n_possible_residue_connections() );
 		if ( atomno_ > rsd_type.n_possible_residue_connections() ) { // using > is not a great check but it is better than !=
-			tw.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
+			TR.Warning << "The record for CONN" << atomno_ << " in the topology file for " << rsd_type.name() <<
 				" either has an incorrect index or is listed out of order in the file." << std::endl;
 		}
 	} else if ( name == "LOWER" ) {
@@ -128,65 +128,20 @@ ICoorAtomID::xyz(
 {
 	static Vector NullVector( 0, 0, 0 );
 
-	//std::cout << "ICoorAtomID::xyz " << rsd.name() << ' ' << type_ << ' ' << atomno_ << std::endl;
-	if ( type_ == INTERNAL ) {
-		//std::cout << "ICoorAtomID::xyz " << rsd.name() << ' ' << atomno_ << ' ' << rsd.atom_is_backbone(atomno_) <<
-		//' ' << rsd.atom_name( atomno_ ) << ' ' <<
-		//rsd.atom( atomno_ ).xyz()(1) << ' ' <<
-		//rsd.atom( atomno_ ).xyz()(2) << ' ' <<
-		//rsd.atom( atomno_ ).xyz()(3) << std::endl;
+	switch ( type_ ) {
+	case INTERNAL :
 		return rsd.atom( atomno_ ).xyz();
-	} else if ( type_ == POLYMER_LOWER ) {
-		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_LOWER connection is the i-1 residue in sequence; nor
-		//do we assume that that residue is connected via its upper terminus.
-		debug_assert(!rsd.is_lower_terminus());
-		core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
-		//debug_assert(!rsd.connection_incomplete( lowerID ));
-		core::Size const seqpos( rsd.connect_map( lowerID ).resid() ); //Get the index of the residue connected to this one at the lower connection.
-		if ( seqpos == 0 ) {
-			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
-			return NullVector;
+	case POLYMER_LOWER : // These three cases are deliberately combined
+	case POLYMER_UPPER :
+	case CONNECT :
+		{ // Variable scoping
+			id::AtomID connected_id( this->atom_id( rsd, conformation ) );
+			if ( connected_id == id::BOGUS_ATOM_ID ) {
+				return NullVector;
+			}
+			return conformation.xyz( connected_id );
 		}
-		core::Size const atomno( conformation.residue_type(seqpos).residue_connect_atom_index( rsd.connect_map( lowerID ).connid()  ) ); //Get the index of the atom on the other residue that forms a connection to the lower terminus of this residue.
-		//int const seqpos( rsd.seqpos() - 1 );
-		//int const atomno( conformation.residue_type( seqpos ).upper_connect_atom() );
-		return conformation.xyz( id::AtomID( atomno, seqpos ) );
-		//   Residue const & rsd_lower( conformation.residue( rsd.seqpos() - 1 ) );
-		//   return rsd_lower.atom( rsd_lower.upper_connect_atom() ).xyz();
-	} else if ( type_ == POLYMER_UPPER ) {
-		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_UPPER connection is the i+1 residue in sequence; nor
-		//do we assume that that residue is connected via its lower terminus.
-		debug_assert(!rsd.is_upper_terminus());
-		core::Size const upperID = rsd.type().upper_connect_id(); //The index of the upper connection of THIS residue.
-		//debug_assert(!rsd.connection_incomplete( upperID ));
-		core::Size const seqpos( rsd.connect_map( upperID ).resid() ); //Get the index of the residue connected to this one at the upper connection.
-		if ( seqpos == 0 ) {
-			tw << "Warning from IcoorAtomID::xyz(): Cannot get xyz for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS coords (null vector)." << std::endl;
-			return NullVector;
-		}
-		core::Size const atomno( conformation.residue_type(seqpos).residue_connect_atom_index( rsd.connect_map( upperID ).connid()  ) ); //Get the index of the atom on the other residue that forms a connection to the upper terminus of this residue.
-		//int const seqpos( rsd.seqpos() + 1 );
-		//int const atomno( conformation.residue_type( seqpos ).lower_connect_atom() );
-		return conformation.xyz( id::AtomID( atomno, seqpos ) );
-		//   Residue const & rsd_upper( conformation.residue( rsd.seqpos() + 1 ) );
-		//   return rsd_upper.atom( rsd_upper.lower_connect_atom() ).xyz();
-	} else if ( type_ == CONNECT ) {
-		// in this case atomno_ is the connection identifer (index)
-		Size connid( atomno_ );
-		if ( rsd.is_lower_terminus() ) --connid;
-		if ( rsd.is_upper_terminus() ) --connid;
-		//tw << "conid=" << connid << std::endl; tw.flush(); //DELETE ME
-		//debug_assert(!rsd.connection_incomplete( connid ) );
-		int const  partner_seqpos( rsd.residue_connection_partner( connid ) );
-		if ( partner_seqpos < 1 || partner_seqpos > int( conformation.size() ) ) {
-			tw << "Warning from IcoorAtomID::xyz(): ICoorAtomID xyz depends on invalid residue connection, returning BOGUS coords (null vector): this_rsd= " << rsd.name() <<
-				' ' << rsd.seqpos() << " connid= " << connid << " partner_seqpos= " << partner_seqpos << std::endl;
-			return NullVector;
-		}
-		Size const partner_connid( rsd.residue_connection_conn_id( connid ) );
-		Size const partner_atomno( conformation.residue_type( partner_seqpos ).residue_connect_atom_index( partner_connid));
-		return conformation.xyz( id::AtomID( partner_atomno, partner_seqpos ) );
-	} else {
+	default:
 		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 
@@ -240,28 +195,69 @@ ICoorAtomID::xyz( conformation::Residue const & rsd ) const
 	return Vector( 0.0 ); //get rid of compiler warnings.
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
 id::AtomID
-ICoorAtomID::atom_id( Size const seqpos, Conformation const & conformation ) const
+ICoorAtomID::atom_id( Residue const & rsd, Conformation const & conformation ) const
 {
 	using id::AtomID;
 	switch ( type_ ) {
 	case INTERNAL :
-		return AtomID( atomno_, seqpos );
+		return AtomID( atomno_, rsd.seqpos() );
 	case POLYMER_LOWER :
-		return AtomID( conformation.residue_type( seqpos-1 ).upper_connect_atom(), seqpos - 1 ); //TODO: take out the seqpos-1 / seqpos+1 assumption, here.
+		// Don't assume that the POLYMER_LOWER connection is to the i-1 residue in sequence,
+		// nor to the upper connect of the connection partner
+		{ // variable scoping
+			debug_assert( ! rsd.is_lower_terminus() );
+			core::Size const lowerID = rsd.type().lower_connect_id(); //The index of the lower connection of THIS residue.
+			core::Size const partner_seqpos( rsd.residue_connection_partner( lowerID ) ); //Get the index of the residue connected to this one at the lower connection.
+			if ( partner_seqpos == 0 || partner_seqpos > conformation.size() ) {
+				TR.Warning << "WARNING: IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue " << rsd.name() << " " << rsd.seqpos() << ".  Returning BOGUS ID instead." << std::endl;
+				return id::BOGUS_ATOM_ID;
+			}
+			//Get the index of the atom on the other residue that forms a connection to the lower terminus of this residue.
+			core::Size const atomno( conformation.residue_type(partner_seqpos).residue_connect_atom_index( rsd.connect_map( lowerID ).connid()  ) );
+			return AtomID( atomno, partner_seqpos );
+		}
 	case POLYMER_UPPER :
-		return AtomID( conformation.residue_type( seqpos+1 ).lower_connect_atom(), seqpos + 1 ); //TODO: take out the seqpos-1 / seqpos+1 assumption, here.
+		// Don't assume that the POLYMER_UPPER connection is to the i+1 residue in sequence,
+		// nor to the lower connect of the connection partner
+		{ // variable scoping
+			debug_assert(!rsd.is_upper_terminus());
+			core::Size const upperID = rsd.type().upper_connect_id(); //The index of the upper connection of THIS residue.
+			core::Size const partner_seqpos( rsd.residue_connection_partner( upperID ) ); //Get the index of the residue connected to this one at the upper connection.
+			if ( partner_seqpos == 0 || partner_seqpos > conformation.size() ) {
+				TR.Warning << "WARNING: IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_UPPER of residue " << rsd.name() << " " << rsd.seqpos() << ". BOGUS ID instead." << std::endl;
+				return id::BOGUS_ATOM_ID;
+			}
+			//Get the index of the atom on the other residue that forms a connection to the upper terminus of this residue.
+			core::Size const atomno( conformation.residue_type(partner_seqpos).residue_connect_atom_index( rsd.connect_map( upperID ).connid()  ) );
+			return id::AtomID( atomno, partner_seqpos );
+		}
 	case CONNECT :
-		// in this case atomno_ is the connection identifer (index)
-		return conformation.inter_residue_connection_partner( seqpos, atomno_ );
+		return rsd.inter_residue_connection_partner( atomno_, conformation );
 	default :
-		return id::BOGUS_ATOM_ID;
+		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
-	return id::BOGUS_ATOM_ID;
+	return id::BOGUS_ATOM_ID; // To appease the compiler
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+ICoorAtomID::buildable( Residue const & rsd, Conformation const & conformation ) const
+{
+	switch ( type_ ) {
+	case INTERNAL :
+		return (atomno_ != 0) && ( atomno_ <= rsd.natoms() );
+	case POLYMER_LOWER :
+	case POLYMER_UPPER :
+	case CONNECT :
+		return atom_id(rsd, conformation) != id::BOGUS_ATOM_ID;
+	default :
+		return false;
+	}
+	return false;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomICoor::AtomICoor():
@@ -352,14 +348,9 @@ AtomICoor::build(
 	conformation::Conformation const & conformation
 ) const
 {
-
-	debug_assert( kinematics::Stub( stub_atom1_.xyz( rsd, conformation ),
-		stub_atom2_.xyz( rsd, conformation ),
-		stub_atom3_.xyz( rsd, conformation ) ).is_orthogonal( 0.001 ) );
-
-	return kinematics::Stub( stub_atom1_.xyz( rsd, conformation ),
-		stub_atom2_.xyz( rsd, conformation ),
-		stub_atom3_.xyz( rsd, conformation ) ).spherical( phi_, theta_, d_ );
+	return build( stub_atom1_.xyz( rsd, conformation ),
+			stub_atom2_.xyz( rsd, conformation ),
+			stub_atom3_.xyz( rsd, conformation ) );
 }
 
 Vector
@@ -367,13 +358,9 @@ AtomICoor::build(
 	ResidueType const & rsd_type
 ) const
 {
-	debug_assert( kinematics::Stub( stub_atom1_.xyz( rsd_type ),
-		stub_atom2_.xyz( rsd_type ),
-		stub_atom3_.xyz( rsd_type ) ).is_orthogonal( 0.001 ) );
-
-	return kinematics::Stub( stub_atom1_.xyz( rsd_type ),
-		stub_atom2_.xyz( rsd_type ),
-		stub_atom3_.xyz( rsd_type ) ).spherical( phi_, theta_, d_ );
+	return build( stub_atom1_.xyz( rsd_type ),
+			stub_atom2_.xyz( rsd_type ),
+			stub_atom3_.xyz( rsd_type ) );
 }
 
 
@@ -386,15 +373,32 @@ AtomICoor::build(
 	conformation::Residue const & rsd
 ) const
 {
-	kinematics::Stub built_stub( stub_atom1_.xyz( rsd ),
+	return build( stub_atom1_.xyz( rsd ),
 		stub_atom2_.xyz( rsd ),
 		stub_atom3_.xyz( rsd ));
+}
+
+Vector
+AtomICoor::build(
+		Vector v1, Vector v2, Vector v3
+) const
+{
+	kinematics::Stub built_stub( v1, v2, v3 );
+
+	if ( ! built_stub.is_orthogonal( 0.001 ) ) {
+		// Throw in a tiny shift and try again.
+		core::Real delta = 1e-6;
+		kinematics::Stub delta_stub(
+				v1 + Vector( delta, 0, 0 ),
+				v2 + Vector( 0, delta, 0 ),
+				v3 + Vector( 0, 0, delta ) );
+		built_stub = delta_stub;
+	}
 
 	debug_assert( built_stub.is_orthogonal( 0.001 ) );
 
 	return built_stub.spherical( phi_, theta_, d_ );
 }
-
 
 typedef basic::datacache::DataMapObj< std::set< std::string > > AtomMemo;
 typedef utility::pointer::shared_ptr< AtomMemo > AtomMemoOP;

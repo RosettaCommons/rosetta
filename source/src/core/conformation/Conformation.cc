@@ -1556,9 +1556,7 @@ Conformation::inter_residue_connection_partner(
 	int const connection_index
 ) const
 {
-	Residue const & rsd( *residues_[ seqpos ] );
-	return id::AtomID( rsd.residue_connection  ( connection_index ).atomno(),
-		rsd.residue_connection_partner( connection_index ) );
+	return residues_[ seqpos ]->inter_residue_connection_partner( connection_index, *this );
 }
 
 /// @details virtual atoms are excluded by default
@@ -1633,7 +1631,7 @@ Conformation::fill_missing_atoms(
 						//NOTE: we assume that the coordinates of the root atom are never connection-dependent (which is true).
 						bool needed_atom_is_missing(false);
 						for ( core::Size ii=1; ii<=3; ++ii ) { //Check whether needed residues are missing, ignoring connections.
-							if ( !rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(i, *this)] ) {
+							if ( !rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(rsd, *this)] ) {
 								needed_atom_is_missing = true;
 								break;
 							}
@@ -1646,11 +1644,11 @@ Conformation::fill_missing_atoms(
 					} else { //if the coordinates of this atom do not depend on a residue connection
 						// check if our stub atoms are all present
 						AtomID const
-							stub_atom1( rsd.icoor( j ).stub_atom1().atom_id( i, *this ) ),
-							stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( i, *this ) ),
-							stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( i, *this ) );
+							stub_atom1( rsd.icoor( j ).stub_atom1().atom_id( rsd, *this ) ),
+							stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( rsd, *this ) ),
+							stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( rsd, *this ) );
 
-						if ( num_present < 3 && !missing[ stub_atom1 ] ) {
+						if ( num_present < 3 && stub_atom1 != id::BOGUS_ATOM_ID && !missing[ stub_atom1 ] ) {
 							// with < 3 atoms, we can't build any stubs, so we're stuck forever unless we punt:
 							//if ( rsd.natoms() == 3 && !missing[ stub_atom1 ] ) {
 							// special case, eg HOH water, O is present H's missing
@@ -1706,7 +1704,18 @@ Conformation::fill_missing_atoms(
 							} // root_atomno = 1,natoms
 						} else {
 							// typical case
-							if ( !missing[ stub_atom1 ] && !missing[ stub_atom2 ] && !missing[ stub_atom3 ] ) {
+							if ( stub_atom1 != id::BOGUS_ATOM_ID && !missing[ stub_atom1 ] &&
+									stub_atom2 != id::BOGUS_ATOM_ID && !missing[ stub_atom2 ] &&
+									stub_atom3 != id::BOGUS_ATOM_ID && !missing[ stub_atom3 ] ) {
+								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
+								missing[ id ] = false;
+								num_present += 1;
+							} else if ( tries > 10 &&
+									(stub_atom1 == id::BOGUS_ATOM_ID ||
+									stub_atom2 == id::BOGUS_ATOM_ID ||
+									stub_atom3 == id::BOGUS_ATOM_ID) ) {
+								// Emergency fallback, as we often can't build things with missing connections.
+								TR.Warning << "Building atom " << id << " with a null connection point." << std::endl;
 								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
 								missing[ id ] = false;
 								num_present += 1;

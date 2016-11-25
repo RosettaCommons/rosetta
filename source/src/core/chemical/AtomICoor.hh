@@ -153,11 +153,15 @@ public:
 public:
 
 
+	/// @brief What is the coordinates corresponding to this ICoorAtomID,
+	/// for the given residue and conformation
 	Vector const &
 	xyz( Residue const & rsd, Conformation const & conformation ) const;
 
 
-	Vector // const &
+	/// @brief What is the coordinates corresponding to this ICoorAtomID,
+	/// for the given idealized ResidueType
+	Vector
 	xyz( ResidueType const & rsd_type ) const;
 
 	/// @brief WARNING: Slightly dangerous function intended for black magic use only.
@@ -167,10 +171,14 @@ public:
 	Vector
 	xyz( conformation::Residue const & rsd ) const;
 
-
+	/// @brief This ICoorAtomID (for the given residue) corresponds to which id::AtomID in the conformation?
 	id::AtomID
-	atom_id( Size const seqpos, Conformation const & conformation ) const;
+	atom_id( Residue const & rsd, Conformation const & conformation ) const;
 
+	/// @brief Can valid coordinates be built for this ICoorAtomID,
+	/// given the residue and conformation?
+	bool
+	buildable( Residue const & rsd, Conformation const & conformation ) const;
 
 private:
 
@@ -379,6 +387,16 @@ public:
 	///    retrieved from connected residues via a conformation.
 	Vector
 	build( conformation::Residue const & rsd ) const;
+
+private:
+
+	/// @brief Internal, centralized implementation of the build() functions.
+	Vector
+	build(
+		Vector v1,
+		Vector v2,
+		Vector v3
+	) const;
 
 private:
 

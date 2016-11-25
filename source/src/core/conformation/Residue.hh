@@ -1260,6 +1260,14 @@ public:
 		return connect_map_[ resconnid ];
 	}
 
+	/// @brief  This returns the AtomID of the atom in the other residue to which the "connection_index"-th
+	/// connection of residue seqpos is connected to.
+	id::AtomID
+	inter_residue_connection_partner(
+		int connid,
+		Conformation const & conformation
+	) const;
+
 	/// @brief Returns the residue number of a residue connected to this residue
 	/// at this residue's connection resconn_index.
 	/// @details  For example, in a normally-connected pose made of alpha-amino
@@ -2067,10 +2075,16 @@ public:
 
 	/// @brief Builds coordinates for atoms missing from this residue
 	/// assuming ideal internal coordinates
-	void
+	/// @details If fail is false, will return true if we can fill all the missing atoms,
+	/// and false if we can't.
+	///
+	/// missing is passed by non-const ref: it will be updated for the atoms which are filled.
+	/// (If fail is false, it will end up all false, or you'll get a utility_exit()
+	bool
 	fill_missing_atoms(
-		utility::vector1< bool > missing,
-		Conformation const & conformation
+		utility::vector1< bool > & missing,
+		Conformation const & conformation,
+		bool fail = true // Exit if we can't fill all the missing atoms
 	);
 
 	/// @brief Selects three atoms for orienting this residue

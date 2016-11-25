@@ -12,6 +12,7 @@
 
 sources = {
 	"chemical" : [
+		"AtomICoor",
 		"AtomTests",
 		"AtomTypeDatabaseIOTests",
 		"AtomTypeSet",
@@ -526,6 +527,9 @@ testinputfiles = [
 	"chemical/1pqc.params",
 	"chemical/1pqc_test.patch",
 	"chemical/atom_properties.txt",
+	"chemical/ASX.params", # remove if the database version gets permanently enabled
+	"chemical/LYX.params", # remove if the database version gets permanently enabled
+	"chemical/conn.pdb",
 	"chemical/carbohydrates/amylopectin_fragment.pdb",
 	"chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb",
 	"chemical/carbohydrates/beta-psicose.pdb",

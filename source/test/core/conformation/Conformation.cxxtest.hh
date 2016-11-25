@@ -104,7 +104,8 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		//core_init();
+		core_init_with_additional_options("-extra_res_fa core/chemical/ASX.params core/chemical/LYX.params"); // Remove if database versions get permanently enabled
 
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 	}
@@ -274,5 +275,23 @@ public:
 		obs.g_count = 0;
 	}
 
+	void test_inter_residue_connection_partner() {
+		// A sidechain connection between residues 2 (ASX) & 5 (LYX)
+		core::pose::PoseOP pose( core::import_pose::pose_from_file("core/chemical/conn.pdb") );
+
+		utility::vector1< Size > const & r2_conns( pose->residue(2).connections_to_residue( pose->residue(5) ) );
+		utility::vector1< Size > const & r5_conns( pose->residue(5).connections_to_residue( pose->residue(2) ) );
+		TS_ASSERT_EQUALS( r2_conns.size(), 1 );
+		TS_ASSERT_EQUALS( r5_conns.size(), 1 );
+
+		core::id::AtomID partner2( pose->conformation().inter_residue_connection_partner(2, r2_conns[1]) );
+		core::id::AtomID partner5( pose->conformation().inter_residue_connection_partner(5, r5_conns[1]) );
+
+		TS_ASSERT_EQUALS( partner2.rsd(), 5 );
+		TS_ASSERT_EQUALS( partner2.atomno(), pose->residue(5).atom_index("NZ") );
+
+		TS_ASSERT_EQUALS( partner5.rsd(), 2 );
+		TS_ASSERT_EQUALS( partner5.atomno(), pose->residue(2).atom_index("CG") );
+	}
 
 };
