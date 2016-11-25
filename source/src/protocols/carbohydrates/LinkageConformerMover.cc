@@ -20,7 +20,6 @@
 // Package headers
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
 
 // Project headers
 #include <core/id/types.hh>

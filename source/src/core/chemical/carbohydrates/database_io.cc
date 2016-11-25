@@ -82,24 +82,25 @@ replace_underscores_with_spaces( std::string & phrase )
 
 // Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read from a
 // database file.
-std::map< std::string, std::string >
+std::map< std::string, std::pair< std::string, char > >
 read_codes_and_roots_from_database_file( std::string const & filename )
 {
 	using namespace std;
 	using namespace utility;
 
 	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
-	map< string, string > codes_to_roots;
+	map< string, pair< string, char > > codes_to_roots;
 
 	Size const n_lines( lines.size() );
 	for ( uint i( 1 ); i <= n_lines; ++i ) {
 		istringstream line_word_by_word( lines[ i ] );
 		string key;  // The map key is the 3-letter code, e.g., "Glc", for "glucose".
-		string value;  // The map value is the IUPAC root, e.g., "gluc", for " glucose".
+		string root;  // The IUPAC root, e.g., "gluc", for " glucose".
+		char stereochem;  // The default stereochemistry, L or D, or * for inherent.
 
-		line_word_by_word >> key >> value;
+		line_word_by_word >> key >> root >> stereochem;
 
-		codes_to_roots[ key ] = value;
+		codes_to_roots[ key ] = make_pair( root, stereochem );
 	}
 
 	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;

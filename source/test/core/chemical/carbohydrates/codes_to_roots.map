@@ -7,8 +7,8 @@
 
 # ALDOSES
 # Aldotriose
-Gly glycer  # TODO: Deal with this special case later.
+Gly glycer  D  # TODO: Deal with this special case later.
 
 # Aldotetroses
-Ery erythr
-Thr thre
+Ery erythr  D
+Thr thre  D

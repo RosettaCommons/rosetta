@@ -22,7 +22,7 @@
 #include <protocols/simple_moves/BBDihedralSamplerMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.hh>

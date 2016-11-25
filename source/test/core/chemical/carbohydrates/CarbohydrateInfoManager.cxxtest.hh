@@ -19,7 +19,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

@@ -1,21 +1,26 @@
 # A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the
-# corresponding root.
+# corresponding root and default stereochemistry.
 
-# A map is created from this data in which each key is a 3-letter code and the
-# map value is the IUPAC root for that sugar.  For example, the 3-letter code
-# for any glucose residue is Glc, and the corresponding root is "gluc", to
-# which suffixes such as "-ose" or "-osamine" are added, as appropriate to the
-# specific ResidueType.
+# * Some saccharides with trivial names include an astrerisk in the third column
+# to indicate that the stereochemistry (L or D) is inherent to this code or N/A.
+
+# Two maps are created from this data in which each key is a 3-letter code.
+
+# The value for each key of the 1st map is the IUPAC root for that sugar.  For
+# example, the 3-letter code for any glucose residue is Glc, and the corres-
+# ponding root is "gluc", to which suffixes such as "-ose" or "-osamine" are
+# added, as appropriate to the specific ResidueType.
+
+# The 2nd map stores 3-letter codes with their default stereochemistries.
 
 # The data in this file serve a dual purpose:
-# 1. The map is used by internal CarbohydrateInfo code for nomenclature pur-
-#    poses, as noted above.
+# 1. The maps are used by internal CarbohydrateInfoManger code for nomenclature
+#    purposes, as noted above.
 # 2. The map keys are used as a list of "Rosetta-allowed" carbohydrate 3-letter
 #    codes.  Any 3-letter codes in a PDB file containing saccharide residues
 #    must be converted to one of the 3-letter codes found here.  If a 3-letter
 #    code is found in this list, then and only then are the HETNAM records of
-#    PDB files parsed by FileData to determine specific saccharide
-#    ResidueTypes.
+#    PDB files parsed to determine specific saccharide ResidueTypes.
 
 # Sources:
 # IUPAC
@@ -24,73 +29,73 @@
 
 # ALDOSES
 # Aldotriose
-Gly glycer  # TODO: Deal with this special case later.
+Gly glycer  D  # TODO: Deal with this special case later.
 
 # Aldotetroses
-Ery erythr
-Thr thre
+Ery erythr  D
+Thr thre  D
 
 # Aldopentoses, Linear
-Rib rib
-Ara arabin
-Xyl xyl
-Lyx lyx
+Rib rib  D
+Ara arabin  L
+Xyl xyl  D
+Lyx lyx  D
 
 # Aldopentoses, Branched-chain
-Api api  # trivial name for 3-C-(hydroxymethyl)-D-erythrofuranose
+Api api  *  # trivial name for 3-C-(hydroxymethyl)-D-erythrofuranose
 
 # Aldohexoses
-All all
-Alt altr
-Glc gluc
-Man mann
-Gul gul
-Ido id
-Gal galact
-Tal tal
+All all  D
+Alt altr  L
+Glc gluc  D
+Man mann  D
+Gul gul  D
+Ido id  L
+Gal galact  D
+Tal tal  D
 
-Fuc fuc  # trivial name for 6-deoxygalactose
-Rha rhamn  # trivial name for 6-deoxymannose
-Qui quinov  # trivial name for 6-deoxyglucose
+Fuc fuc  L  # trivial name for 6-deoxygalactose
+Rha rhamn  L  # trivial name for 6-deoxymannose
+Qui quinov  D  # trivial name for 6-deoxyglucose
 
-Dau daun  # trivial name for 2,6-dideoxygalactose/talose; Dau is (I think) my own invention ~Labonte
-Dig digitox  # trivial name for 2,6-dideoxyaltrose/allose
-Oli oliv  # trivial name for 2,6-dideoxyglucose/mannose
+Dau daun  D  # trivial name for 2,6-dideoxygalactose/talose; Dau is (I think) my own invention ~Labonte
+Dig digitox  D  # trivial name for 2,6-dideoxyaltrose/allose
+Oli oliv  D  # trivial name for 2,6-dideoxyglucose/mannose
 
-Col colit  # trivial name for 3,6-dideoxy-L-galactose/gulose; "L-Abe"
-Abe abequ  # trivial name for 3,6-dideoxy-D-galactose/gulose; "D-Col"
-Tyv tyvel  # trivial name for 3,6-dideoxymannose/altrose
-Par parat  # trivial name for 3,6-dideoxyglucose/allose
+Col colit  L  # trivial name for 3,6-dideoxy-L-galactose/gulose; "L-Abe"
+Abe abequ  D  # trivial name for 3,6-dideoxy-D-galactose/gulose; "D-Col"
+Tyv tyvel  *  # trivial name for 3,6-dideoxy-D-mannose/altrose
+Par parat  *  # trivial name for 3,6-dideoxy-D-glucose/allose
 
-Rho rhodin  # trivial name for 2,3,6-trideoxyglucose/mannose/altrose/allose; Rho is (I think) my own invention ~Labonte
+Rho rhodin  D  # trivial name for 2,3,6-trideoxyglucose/mannose/altrose/allose; Rho is (I think) my own invention ~Labonte
 
-Mur muram  # trivial name for a lactic acid derivative of glucosamine
-Bac bacill  # trivial name for 2,4,6-trideoxy-2,4-diamino-D-glucose
+Mur muram  *  # trivial name for a lactic acid derivative of D-glucosamine
+Bac bacill  *  # trivial name for 2,4,6-trideoxy-2,4-diamino-D-glucose
 
 
 # KETOSES
 # Ketotriose
-DHA dihydroxyacet  # TODO: Deal with this special case later.
+DHA dihydroxyacet  *  # TODO: Deal with this special case later.
 
 # Ketotetrose
-Eul erythrul  # Eul is (I think) my own invention; compare Rul and Xul. ~ Labonte
+Eul erythrul  D  # Eul is (I think) my own invention; compare Rul and Xul. ~ Labonte
 
 # Ketopentoses
-Rul ribul
-Xul xylul
+Rul ribul  D
+Xul xylul  D
 
 # Ketohexoses
-Psi psic
-Fru fruct
-Sor sorb
-Tag tagat
+Psi psic  D
+Fru fruct  D
+Sor sorb  L
+Tag tagat  D
 
 # Ketoheptoses
-Dha 3-deoxy-D-lyxo-hept-2-ulosar
+Dha 3-deoxy-D-lyxo-hept-2-ulosar  D
 
 # Ketooctose
-Kdo keto-deoxy-octulon
+Kdo keto-deoxy-octulon  *  # D inherent
 
 # Ketononoses (e.g., Sialic Acids)
-Neu neuramin
-Kdn keto-deoxy-nonulon
+Neu neuramin  *  # D inherent
+Kdn keto-deoxy-nonulon  *  # D inherent

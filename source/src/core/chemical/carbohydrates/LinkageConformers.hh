@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/chemical/carbohydrates/carbohydrate_data_structures.hh
-/// @brief  Data structure declarations for carbohdrates
+/// @file   core/chemical/carbohydrates/LinkageConformers.hh
+/// @brief  Data structure declarations for glycosydic linkage conformers
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_core_chemical_carbohydrates_carbohydrate_data_structures_hh
-#define INCLUDED_core_chemical_carbohydrates_carbohydrate_data_structures_hh
+#ifndef INCLUDED_core_chemical_carbohydrates_LinkageConformers_HH
+#define INCLUDED_core_chemical_carbohydrates_LinkageConformers_HH
 
 #include <core/id/types.hh>
 #include <utility/vector1.hh>
@@ -102,4 +102,4 @@ typedef std::map< std::pair< std::string, std::string >, utility::vector1< Linka
 } //chemical
 } //core
 
-#endif //core/chemical/carbohydrates_carbohydrate_data_structures_hh
+#endif  // INCLUDED_core_chemical_carbohydrates_LinkageConformers_HH

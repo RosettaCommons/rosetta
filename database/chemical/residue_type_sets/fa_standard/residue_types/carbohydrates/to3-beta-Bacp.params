@@ -1,0 +1,161 @@
+NAME ->3)-beta-Bacp        # ->3)-beta-bacillosamine
+IO_STRING Bac Z            # Note lower case!
+TYPE POLYMER
+VARIANT C2_AMINO_SUGAR C4_AMINO_SUGAR C6_DEOXY_SUGAR  # Bacillosamine is a common modified sugar.
+AA UNK
+
+# Main-chain atoms:
+ATOM  C1  CH1  CT1   0.17  # anomeric carbon
+ATOM  C2  CH1  CT1   0.22
+ATOM  C3  CH1  CT1   0.04
+ATOM  O3  OH   OS   -0.26
+
+# Other backbone heavy atoms:
+ATOM  C4  CH1  CT1   0.22
+ATOM  C5  CH1  CT1   0.04
+ATOM  O5  OOC   OS  -0.26
+ATOM  VO5 VIRT VIRT  0.00  # to O5; allows for consistent chi angles
+ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
+
+# Side-chain heavy atoms:
+ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM  N2  Nlys NH3  -0.30
+ATOM  N4  Nlys NH3  -0.30
+ATOM  C6  CH2  CT2  -0.27
+ATOM  O6  VIRT VIRT  0.00  # allows for consistent chi angles, although that angle will be NaN
+
+# Hydrogens:
+ATOM  H1  Hapo  HA   0.09
+ATOM  HO1 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  HO1  H1O 
+ATOM  H2  Hapo  HA   0.09
+ATOM 1HN2 Hpol  HC   0.33
+ATOM 2HN2 Hpol  HC   0.33
+ATOM 3HN2 Hpol  HC   0.33
+ATOM  H3  Hapo  HA   0.09
+ATOM  HO3 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM_ALIAS  HO3  H3O 
+ATOM  H4  Hapo  HA   0.09
+ATOM 1HN4 Hpol  HC   0.33
+ATOM 2HN4 Hpol  HC   0.33
+ATOM 3HN4 Hpol  HC   0.33
+ATOM  H5  Hapo  HA   0.09
+ATOM 1H6  Hapo  HA   0.09
+ATOM 2H6  Hapo  HA   0.09
+ATOM 3H6  Hapo  HA   0.09
+ATOM  HO6 VIRT VIRT  0.00  # allows for consistent chi angles
+ATOM_ALIAS  HO6  H6O 
+
+CHARGE  N2  FORMAL +1
+CHARGE  N4  FORMAL +1
+
+LOWER_CONNECT C1
+UPPER_CONNECT O3
+
+BOND  C1   VO5             # cyclic bond
+BOND  C1   C2
+BOND  C2   C3
+BOND  C3   O3
+BOND  O3   HO3
+BOND  C3   C4
+BOND  C4   C5
+BOND  C5   O5
+BOND  O5   C1              # cyclic bond
+CUT_BOND  O5   C1          # cyclic bond
+BOND  O5   VC1             # cyclic bond
+BOND  C5   C6
+BOND  C1   O1
+BOND  C2   N2
+BOND  C4   N4
+BOND  C1   H1
+BOND  O1   HO1
+BOND  C2   H2
+BOND  N2  1HN2
+BOND  N2  2HN2
+BOND  N2  3HN2
+BOND  C3   H3
+BOND  C4   H4
+BOND  N4  1HN4
+BOND  N4  2HN4
+BOND  N4  3HN4
+BOND  C5   H5
+BOND  C6   O6
+BOND  C6  1H6
+BOND  C6  2H6
+BOND  C6  3H6
+BOND  O6   HO6
+
+VIRTUAL_SHADOW VO5   O5
+VIRTUAL_SHADOW VC1   C1
+
+CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
+CHI 2  C1   C2   N2  1HN2
+CHI_ROTAMERS 2   0 0
+CHI_ROTAMERS 2 120 0
+CHI_ROTAMERS 2 240 0
+CHI 3  C2   C3   O3   HO3  # duplicates BB 3
+CHI 4  C3   C4   N4  1HN4
+CHI_ROTAMERS 4  0 0
+CHI_ROTAMERS 4 120 0
+CHI_ROTAMERS 4 240 0
+CHI 5  C4   C5   C6  3H6   # trigonal symmetry -- only need to sample the staggered conformer
+CHI_ROTAMERS 5 180 0
+CHI 6  C5   C6   O6   HO6  # meaningless chi; this is just a placeholder
+
+ADD_RING 1 C1 C2 C3 C4 C5 O5
+
+NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
+NU 2  C1   C2   C3   C4    # duplicates BB 2
+NU 3  C2   C3   C4   C5
+NU 4  C3   C4   C5   O5
+NU 5  C4   C5   O5   VC1
+#NU 6 is across the CUT_BOND
+LOWEST_RING_CONFORMER 1 4C1
+
+PROPERTIES  POLAR CYCLIC CHARGED CARBOHYDRATE BETA_SUGAR D_SUGAR ALDOSE HEXOSE PYRANOSE C2_MODIFIED C4_MODIFIED AMINO_SUGAR C6_MODIFIED DEOXY_SUGAR
+
+NBR_ATOM  C3
+NBR_RADIUS 7              # arbitrary value
+
+MAINCHAIN_ATOMS  C1 C2 C3 O3
+FIRST_SIDECHAIN_ATOM  O1
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C1     0.000       0.000       0.000      C1    C2    C3
+ICOOR_INTERNAL    C2     0.000     180.000       1.525      C1    C2    C3
+ICOOR_INTERNAL    C3     0.000      71.162       1.571      C2    C1    C3
+ICOOR_INTERNAL    O3  -179.575      66.291       1.442      C3    C2    C1
+ICOOR_INTERNAL  UPPER  -66.5867     67.748       1.413      O3    C3    C2
+# then the rest of the backbone heavy atoms
+ICOOR_INTERNAL    C4   -61.7206     72.51        1.507      C3    C2    C1
+ICOOR_INTERNAL    C5    59.9109     73.275       1.556      C4    C3    C2
+ICOOR_INTERNAL    O5   -60.2297     69.213       1.456      C5    C4    C3
+ICOOR_INTERNAL    VO5   60.2088     71.033       1.426      C1    C2    C3  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL    VC1   61.2474     67.606       1.426      O5    C5    C4  # must build from end of ring, unlike C1
+ICOOR_INTERNAL  LOWER -178.368      71.333       1.464      C1    C2    C3
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    O1  -178.368      71.333       1.464      C1    C2    C3
+ICOOR_INTERNAL    N2  -178.933      67.028       1.417      C2    C3    C4
+ICOOR_INTERNAL    N4  -178.911      71.649       1.476      C4    C3    C2
+ICOOR_INTERNAL    C6   179.973      70.036       1.536      C5    C4    C3
+ICOOR_INTERNAL    O6    60.0026     70.501       1.493      C6    C5    C4
+# now all the Hs
+ICOOR_INTERNAL    H1   -59.7058     70.264       1.099      C1    C2    C3
+ICOOR_INTERNAL    HO1  179.46       68.94        1.05       O1    C1    C2
+ICOOR_INTERNAL    H2    58.4635     69.907       1.101      C2    C3    C4
+ICOOR_INTERNAL   1HN2  -60.         70.629       1.029      N2    C2    C1
+ICOOR_INTERNAL   2HN2  180.         70.629       1.029      N2    C2    C1
+ICOOR_INTERNAL   3HN2   60          70.629       1.029      N2    C2    C1
+
+ICOOR_INTERNAL    H3    57.7675     69.901       1.097      C3    C2    C1
+ICOOR_INTERNAL    HO3  -66.5867     67.748       1.05       O3    C3    C2
+ICOOR_INTERNAL    H4   -59.692      69.682       1.102      C4    C3    C2
+ICOOR_INTERNAL   1HN4  -60.         70.4         1.029      N4    C4    C3
+ICOOR_INTERNAL   2HN4  180.         70.4         1.029      N4    C4    C3
+ICOOR_INTERNAL   3HN4   60.         70.4         1.029      N4    C4    C3
+
+ICOOR_INTERNAL    H5    59.9641     70.597       1.098      C5    C4    C3
+ICOOR_INTERNAL   1H6    60.         70.501       1.09       C6    C5    C4
+ICOOR_INTERNAL   2H6   -60.         70.501       1.09       C6    C5    C4
+ICOOR_INTERNAL   3H6   180.         70.501       1.09       C6    C5    C4
+ICOOR_INTERNAL    HO6  180.         70.501       1.05       O6    C6    C5

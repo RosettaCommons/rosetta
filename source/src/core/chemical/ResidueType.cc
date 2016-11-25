@@ -1373,7 +1373,7 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 	finalized_ = false;
 
 	if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
-		std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
+		std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " don't exist!";
 		utility_exit_with_message( message  );
 	}
 

@@ -1,0 +1,76 @@
+## full-atom 2-acetyl sugar patch
+
+NAME 2-Ac
+TYPES C2_ACETYLAMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE C2_ACETYLAMINO_SUGAR
+VARIANT_TYPE C2_AMINO_SUGAR
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, remove hydrogens on amine.
+DELETE_ATOM 1HN2
+DELETE_ATOM 2HN2
+DELETE_ATOM 3HN2
+
+# Next, change the nitrogen atom type
+SET_ATOM_TYPE  N2  NH2O
+SET_MM_ATOM_TYPE  N2   NH1
+SET_ATOMIC_CHARGE  N2  -0.35
+
+SET_FORMAL_CHARGE  N2   0
+
+# Next, add the new atoms
+ADD_ATOM  CN2 CObb C    0.22
+ADD_ATOM CAN2 CH3  CT3  0.01
+ADD_ATOM OCN2 OCbb O    -0.27
+ADD_ATOM  HN2 Hpol H    0.16
+ADD_ATOM 1HC2 Hapo HA   0.03   # 1st H on CA of the acetyl on N2
+ADD_ATOM 2HC2 Hapo HA   0.03
+ADD_ATOM 3HC2 Hapo HA   0.03
+
+# These atoms usually are named differently in the PDB, so add aliases.
+# These aliases assume a 6-membered sugar.  This will need to be fixed in the
+# future somehow. ~Labonte
+ADD_ATOM_ALIAS  CN2  C7
+ADD_ATOM_ALIAS CAN2  C8
+ADD_ATOM_ALIAS OCN2  O7
+
+ADD_BOND  N2   CN2
+ADD_BOND_TYPE  CN2 OCN2 DOUBLE
+ADD_BOND  CN2 CAN2
+ADD_BOND  N2   HN2
+ADD_BOND CAN2 1HC2
+ADD_BOND CAN2 2HC2
+ADD_BOND CAN2 3HC2
+
+REDEFINE_CHI 2  C1   C2   N2   CN2
+CLEAR_CHI_ROTAMERS  2  # Old chi2 was defined off of a hydrogen, but now it's defined off a carbon, so they need to shift 180 degrees from what they were before so that an anti H is still anti.
+ADD_CHI_ROTAMER 2    0 0
+ADD_CHI_ROTAMER 2  120 0
+ADD_CHI_ROTAMER 2 -120 0
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C2   N2   CN2 CAN2
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+SET_ICOOR  CN2  -28.295   62.736  1.312  N2    C2    H2
+SET_ICOOR CAN2 -178.271   58.957  1.496  CN2   N2    C2
+SET_ICOOR OCN2    0.654   61.455  1.234  CN2   N2    C2
+SET_ICOOR  HN2  152.671   58.88   0.99   N2    C2    H2
+SET_ICOOR 1HC2   33.119   70.479  1.099 CAN2   CN2   N2
+SET_ICOOR 2HC2  -84.152   70.479  1.099 CAN2   CN2   N2
+SET_ICOOR 3HC2  157.255   70.479  1.099 CAN2   CN2   N2
+
+DELETE_VARIANT_TYPE C2_AMINO_SUGAR
+DELETE_PROPERTY AMINO_SUGAR
+ADD_PROPERTY ACETYLAMINO_SUGAR
+
+END_CASE

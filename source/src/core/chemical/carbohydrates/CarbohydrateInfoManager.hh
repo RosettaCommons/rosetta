@@ -20,7 +20,7 @@
 
 // Package header
 #include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -53,6 +53,9 @@ public:  // Static constant data access ///////////////////////////////////////
 
 	/// @brief  Get the monosaccharide root name from the given Rosetta/IUPAC 3-letter code.
 	static std::string const & root_from_code( std::string const & code );
+	
+	/// @brief  Get the default stereochemistry from the given Rosetta/IUPAC 3-letter code.
+	static char default_stereochem_from_code( std::string const & code );
 
 
 	/// @brief  Is the given 1-letter code valid for designating carbohydrate ring size?
@@ -99,13 +102,13 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Empty constructor
 	CarbohydrateInfoManager();
 
-	// Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
-	// creating it if necessary.
-	// Called by the public static method root_from_code().
-	std::map< std::string, std::string > const & code_to_root_map();
+	// Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root and default
+	// stereochemistry, creating it if necessary.
+	// Called by the public static method root_from_code() and default_stereochem_from_code().
+	std::map< std::string, std::pair< std::string, char > > const & code_to_root_map();
 
 
-	// Get the map of carbohydrate ring sizes and their 1-letter affixes and morphemes requested, creating it if
+	// Get the map of carbohydrate ring sizes and their 1-letter affixes and morphemes, creating it if
 	// necessary.
 	// Called by the public static methods ring_affix_from_ring_size() and morpheme_from_ring_size().
 	std::map< core::Size, std::pair< char, std::string > > const & ring_size_to_morphemes_map();
@@ -140,7 +143,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	std::map< std::string, std::string> const & short_name_to_iupac_strings_map();
 
 private:  // Private data /////////////////////////////////////////////////////
-	std::map< std::string, std::string > code_to_root_map_;
+	std::map< std::string, std::pair< std::string, char > > code_to_root_map_;  // also stores default stereochemistry
 	std::map< core::Size, std::pair< char, std::string > > ring_size_to_morphemes_map_;
 	utility::vector1< char > ring_affixes_;
 

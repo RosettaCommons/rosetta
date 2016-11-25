@@ -59,13 +59,14 @@ residue_types/staple/08B.params
 residue_types/carbohydrates/to4-alpha-D-Xylp.params
 ### Aldohexoses
 #### Glucoses
+residue_types/carbohydrates/to2-beta-D-Glcp.params
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
 residue_types/carbohydrates/to3-beta-D-Glcp.params
 residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
-residue_types/carbohydrates/to2-beta-D-Glcp.params
+residue_types/carbohydrates/to3-beta-Bacp.params
 #### Galactoses
 residue_types/carbohydrates/to2-beta-D-Galp.params
 residue_types/carbohydrates/to3-alpha-D-Galp.params

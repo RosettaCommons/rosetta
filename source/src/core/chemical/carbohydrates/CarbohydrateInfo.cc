@@ -158,6 +158,7 @@ CarbohydrateInfo::base_name() const
 	string const & root = CarbohydrateInfoManager::root_from_code( code );
 
 	// First cover accepted trivial names.
+	// TODO: Remove hardcoding!
 	if ( code == "Gly" ) {
 		return root + "aldehyde";
 	} else if ( code == "DHA" ) {
@@ -498,6 +499,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 	string const & root = CarbohydrateInfoManager::root_from_code( code );
 
 	// Flag for special cases.
+	// TODO: Find a way to remove this hardcoding.
 	bool const is_Neu( code == "Neu" );
 
 	// Determine prefixes.
@@ -514,7 +516,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 	short_prefixes << long_prefixes.str();
 
 	// Substitutions
-	// TODO: How do I alphabetize substitutions?  I'll need a vector to sort.  For now, order by position.
+	// TODO: How do I alphabetize and group substitutions?  I'll need a vector to sort.  For now, order by position.
 	for ( uint position = 1; position <= n_carbons_; ++position ) {
 		if ( modifications_[ position ] == "amino sugar" ) {
 			if ( ! is_Neu ) {  // (Neu is by definition an amino sugar.)
@@ -534,7 +536,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 	}
 
 	// Stereochemistry
-	if ( ! is_Neu ) {  // (Neu is by definition D.)
+	if ( CarbohydrateInfoManager::default_stereochem_from_code( code ) != '*' ) {  // (* implies inherent stereochem.)
 		long_prefixes << stereochem_ << '-';
 		short_prefixes << stereochem_ << '-';
 	}

@@ -25,7 +25,7 @@
 #include <core/id/TorsionID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 // Utility Header
 #include <utility/vector1.hh>

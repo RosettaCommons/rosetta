@@ -47,8 +47,9 @@ patches/carbohydrates/Me_glycoside.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### patches/branching
+### branching
 patches/carbohydrates/N-linked_glycosylation.txt
+patches/carbohydrates/C-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt
@@ -60,7 +61,9 @@ patches/carbohydrates/3-amination.txt
 patches/carbohydrates/3-methylation.txt
 patches/carbohydrates/N-acetyl-2-amination.txt
 patches/carbohydrates/N-R-3'-hydroxybutyryl-3-amination.txt
-patches/carbohydrates/5-acetylation.txt
+patches/carbohydrates/N2-acetylation.txt
+patches/carbohydrates/N4-acetylation.txt
+patches/carbohydrates/N5-acetylation.txt
 patches/carbohydrates/2-sulfation.txt
 patches/carbohydrates/6-sulfation.txt
 patches/carbohydrates/2-sulfamidation.txt

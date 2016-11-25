@@ -17,7 +17,7 @@
 
 // Package header
 #include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 // Project header
 #include <core/types.hh>
@@ -43,7 +43,7 @@ std::string read_glycan_sequence_file( std::string filename );
 
 /// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
 /// from a database file.
-std::map< std::string, std::string >
+std::map< std::string, std::pair< std::string, char > >
 read_codes_and_roots_from_database_file( std::string const & filename );
 
 /// @brief  Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and

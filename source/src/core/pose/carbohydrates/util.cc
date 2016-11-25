@@ -20,7 +20,6 @@
 #include <core/io/carbohydrates/pose_io.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
 #include <core/chemical/carbohydrates/database_io.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>

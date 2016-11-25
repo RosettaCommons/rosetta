@@ -87,7 +87,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, neuraminate, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
+			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
 			whacky_sugar;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -216,6 +216,14 @@ main( int argc, char *argv[] )
 		pose_from_file( neuraminate, PATH + "Neu.pdb", PDB_file );
 
 		test_sugar( neuraminate );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating 2,4-diacetylbacillosamine:" << endl;
+
+		make_pose_from_saccharide_sequence( bacillosamine, "->3)-beta-Bacp2,4Ac", *residue_set );
+
+		test_sugar( bacillosamine );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

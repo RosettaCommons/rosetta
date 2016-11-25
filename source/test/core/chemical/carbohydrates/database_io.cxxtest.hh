@@ -21,7 +21,7 @@
 
 // Package header
 #include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
-#include <core/chemical/carbohydrates/carbohydrate_data_structures.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.hh>
 
 // Project header
 #include <core/types.hh>
@@ -56,7 +56,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TR << "Testing read_codes_and_roots_from_database_file() method."  << std::endl;
 
-		map< string, string > map(
+		map< string, pair< string, char > > map(
 			read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 3 );
