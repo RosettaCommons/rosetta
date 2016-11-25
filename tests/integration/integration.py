@@ -1238,6 +1238,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
 
         if ( ( cmd_line_sh is None ) or (workdir is None) ) :
             print "No correct command.sh file found for %s.  Skipping." % test
+            queue.task_done() # Mark the task done, for proper counting.
             continue
 
         def run(nt, times):
