@@ -833,7 +833,8 @@ public:
 	void
 	delete_jump_and_intervening_cutpoint(
 		int jump_begin,
-		int jump_end
+		int jump_end,
+		Size cut = 0
 	);
 
 	/// @brief  Useful for removing a loop modeling jump+cut

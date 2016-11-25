@@ -156,7 +156,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int const jump_number )
 /// @details  Useful for removing a loop modeling jump+cut
 /// @note  This will trigger a renumbering of the jumps if jump number < num_jump()
 void
-FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
+FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end, Size cut/*= 0*/ )
 {
 	PyAssert( is_jump_point(jump_begin),
 		"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
@@ -182,14 +182,17 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 	}
 	debug_assert( jump_number ); // will fail if there's no jump between jump_begin and jump_end
 
-	// look for a cutpoint between
-	Size cut(0);
-	for ( int i=jump_begin; i<= jump_end-1; ++i ) {
-		if ( is_cutpoint( i ) ) {
-			if ( cut ) utility_exit_with_message( "multiple cutpoints between jump positions!" );
-			cut = i;
+	// look for a cutpoint between if unspecified
+	if ( !cut ) {
+	//Size cut(0);
+		for ( int i=jump_begin; i<= jump_end-1; ++i ) {
+			if ( is_cutpoint( i ) ) {
+				if ( cut ) utility_exit_with_message( "multiple cutpoints between jump positions!" );
+				cut = i;
+			}
 		}
 	}
+
 	debug_assert( cut );
 
 	add_edge( cut, cut+1, Edge::PEPTIDE );

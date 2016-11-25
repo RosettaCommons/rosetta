@@ -154,8 +154,8 @@ TransientCutpointHandler::take_out_cutpoints(
 	// return to simple fold tree
 	if ( change_foldtree_ ) {
 		core::kinematics::FoldTree f( pose.fold_tree() );
-		f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_ );
-		pose.fold_tree( f );
+		f.delete_jump_and_intervening_cutpoint( jump_start_, jump_end_, cutpoint_suite_ );
+		pose.fold_tree( f );	
 	}
 
 #ifdef GL_GRAPHICS
