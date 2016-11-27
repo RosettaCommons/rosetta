@@ -158,7 +158,7 @@ void RNA_IdealCoord::apply_coords(
 					}
 				}
 				if ( index1 != 1 ) {
-					atom_id_map.emplace(AtomID( index1, seqpos ), AtomID( index2, 2 ) );
+					atom_id_map[AtomID( index1, seqpos )] = AtomID( index2, 2 );
 				}
 			}
 		}
