@@ -1000,7 +1000,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 
 bool
 missing_stubs_build(core::Size ii, Residue const & residue, utility::vector1< bool > const & missing, Vector & coordinate ) {
-	if( ! residue.icoor(ii).is_internal() ) { return false; }
+	if ( ! residue.icoor(ii).is_internal() ) { return false; }
 	std::string const & ii_name( residue.atom_name(ii) );
 	chemical::AtomICoor const & ic( residue.icoor(ii) );
 	chemical::ICoorAtomID const & id1( ic.stub_atom(1) );
@@ -1009,95 +1009,95 @@ missing_stubs_build(core::Size ii, Residue const & residue, utility::vector1< bo
 	// Note that we only pull from strictly internal coordinates - this ensures that the atomno values corrspond to real atoms.
 	// First, possible distances
 	utility::vector1< chemical::AtomICoor > distances; // These are valid for distances only
-	if( ! missing[ id1.atomno() ] && id1.atomno() != ii ) { // The current distance could work - put this first to prefer this building method.
+	if ( ! missing[ id1.atomno() ] && id1.atomno() != ii ) { // The current distance could work - put this first to prefer this building method.
 		chemical::AtomICoor newicoor( ii_name, 0.0, 0.0, ic.d(),
-				residue.atom_name(id1.atomno()), ii_name, ii_name, residue.type() ); // ii's are placeholders
+			residue.atom_name(id1.atomno()), ii_name, ii_name, residue.type() ); // ii's are placeholders
 		distances.push_back( newicoor );
 	}
-	for( Size jj=1; jj <= residue.natoms(); ++jj ) {
-		if( ! missing[jj] ) {
+	for ( Size jj=1; jj <= residue.natoms(); ++jj ) {
+		if ( ! missing[jj] ) {
 			chemical::AtomICoor const & icj( residue.icoor(jj) );
-			if( ! icj.is_internal() ) { continue; }
+			if ( ! icj.is_internal() ) { continue; }
 			// Looking for JJ-II distances to build II-JJ
-			if( icj.stub_atom(1).atomno() == ii && jj != ii ) {
+			if ( icj.stub_atom(1).atomno() == ii && jj != ii ) {
 				chemical::AtomICoor newicoor( ii_name, 0.0, 0.0, icj.d(),
-						residue.atom_name(jj), ii_name, ii_name, residue.type() );
+					residue.atom_name(jj), ii_name, ii_name, residue.type() );
 				distances.push_back( newicoor );
 			}
 		}
 	}
 	// Now we find possible angles for the distance pairs.
 	utility::vector1< chemical::AtomICoor > angles; // These are valid for distance and bondangles only
-	for( core::Size aa=1; aa <= distances.size(); ++aa ) {
+	for ( core::Size aa=1; aa <= distances.size(); ++aa ) {
 		chemical::AtomICoor const & previc( distances[aa] );
 		core::Size dd( previc.stub_atom(1).atomno() );
-		for( Size jj=1; jj <= residue.natoms(); ++jj ) {
-				chemical::AtomICoor const & icj( residue.icoor(jj) );
-				if( ! icj.is_internal() ) { continue; }
-				// We either want II-DD-XX or JJ-DD-II
-				if( icj.stub_atom1().atomno() == dd ) {
-					core::Size xx(icj.stub_atom2().atomno());
-					if( jj == ii && ! missing[xx] && xx != ii && xx != dd ) { // II-DD-XX
-						chemical::AtomICoor newicoor( ii_name, 0.0, icj.theta(), previc.d(),
-								residue.atom_name(dd),
-								residue.atom_name(xx),
-								ii_name, residue.type() );
-						angles.push_back( newicoor );
-					} else if( !missing[jj] && xx == ii && jj != ii && jj != dd ) { // JJ-DD-II
-						chemical::AtomICoor newicoor( ii_name, 0.0, icj.theta(), previc.d(),
-								residue.atom_name(dd),
-								residue.atom_name(jj),
-								ii_name, residue.type() );
-						angles.push_back( newicoor );
-					}
+		for ( Size jj=1; jj <= residue.natoms(); ++jj ) {
+			chemical::AtomICoor const & icj( residue.icoor(jj) );
+			if ( ! icj.is_internal() ) { continue; }
+			// We either want II-DD-XX or JJ-DD-II
+			if ( icj.stub_atom1().atomno() == dd ) {
+				core::Size xx(icj.stub_atom2().atomno());
+				if ( jj == ii && ! missing[xx] && xx != ii && xx != dd ) { // II-DD-XX
+					chemical::AtomICoor newicoor( ii_name, 0.0, icj.theta(), previc.d(),
+						residue.atom_name(dd),
+						residue.atom_name(xx),
+						ii_name, residue.type() );
+					angles.push_back( newicoor );
+				} else if ( !missing[jj] && xx == ii && jj != ii && jj != dd ) { // JJ-DD-II
+					chemical::AtomICoor newicoor( ii_name, 0.0, icj.theta(), previc.d(),
+						residue.atom_name(dd),
+						residue.atom_name(jj),
+						ii_name, residue.type() );
+					angles.push_back( newicoor );
 				}
+			}
 		}
 	}
 	// Now we find possible dihedrals consistent with valids angles and dihedrals
 	utility::vector1< chemical::AtomICoor > dihedrals; // These are fully valid
-	for( core::Size pp=1; pp <= angles.size(); ++pp ) {
+	for ( core::Size pp=1; pp <= angles.size(); ++pp ) {
 		chemical::AtomICoor const & previc( angles[pp] );
 		core::Size dd( previc.stub_atom(1).atomno() );
 		core::Size aa( previc.stub_atom(2).atomno() );
-		for( Size jj=1; jj <= residue.natoms(); ++jj ) {
+		for ( Size jj=1; jj <= residue.natoms(); ++jj ) {
 			chemical::AtomICoor const & icj( residue.icoor(jj) );
-			if( ! icj.is_internal() ) { continue; }
+			if ( ! icj.is_internal() ) { continue; }
 			// Four cases:
 			//    II-DD-AA-XX - this doesn't work, or else we could build it straight
 			//    JJ-AA-DD-II - reverse orientation - the same dihedral
 			//    JJ-DD-AA-II - We can still steal the dihedral, we just need to negate it.
 			//    II-AA-DD-XX - Like the JJ-DD-AA-II case
-			if( jj == ii ) {
+			if ( jj == ii ) {
 				core::Size xx( icj.stub_atom3().atomno() );
-				if( !missing[xx] && icj.stub_atom1().atomno() == aa && icj.stub_atom2().atomno() == dd
-						&& xx != ii && xx != dd && xx != aa) { // II-AA-DD-XX
+				if ( !missing[xx] && icj.stub_atom1().atomno() == aa && icj.stub_atom2().atomno() == dd
+						&& xx != ii && xx != dd && xx != aa ) { // II-AA-DD-XX
 					chemical::AtomICoor newicoor( ii_name, -1 * icj.phi(), previc.theta(), previc.d(),
-							residue.atom_name(dd),
-							residue.atom_name(aa),
-							residue.atom_name(xx), residue.type() );
+						residue.atom_name(dd),
+						residue.atom_name(aa),
+						residue.atom_name(xx), residue.type() );
 					dihedrals.push_back( newicoor );
 				}
 			} else if ( ! missing[jj] ) {
-				if( icj.stub_atom1().atomno() == aa && icj.stub_atom2().atomno() == dd && icj.stub_atom3().atomno() == ii
-						&& jj != ii && jj != dd && jj != aa) { // JJ-AA-DD-II
+				if ( icj.stub_atom1().atomno() == aa && icj.stub_atom2().atomno() == dd && icj.stub_atom3().atomno() == ii
+						&& jj != ii && jj != dd && jj != aa ) { // JJ-AA-DD-II
 					chemical::AtomICoor newicoor( ii_name, icj.phi(), previc.theta(), previc.d(),
-							residue.atom_name(dd),
-							residue.atom_name(aa),
-							residue.atom_name(jj), residue.type() );
+						residue.atom_name(dd),
+						residue.atom_name(aa),
+						residue.atom_name(jj), residue.type() );
 					dihedrals.push_back( newicoor );
 				} else if ( icj.stub_atom1().atomno() == dd && icj.stub_atom2().atomno() == aa && icj.stub_atom3().atomno() == ii
-						&& jj != ii && jj != dd && jj != aa) { // JJ-DD-AA-II
+						&& jj != ii && jj != dd && jj != aa ) { // JJ-DD-AA-II
 					chemical::AtomICoor newicoor( ii_name, -1 * icj.phi(), previc.theta(), previc.d(),
-							residue.atom_name(dd),
-							residue.atom_name(aa),
-							residue.atom_name(jj), residue.type() );
+						residue.atom_name(dd),
+						residue.atom_name(aa),
+						residue.atom_name(jj), residue.type() );
 					dihedrals.push_back( newicoor );
 				}
 			}
 		}
 	}
 
-	if( dihedrals.size() >= 1 ) {
+	if ( dihedrals.size() >= 1 ) {
 		// We have multiple ways of building the atom, we can just use the first one.
 		TR.Debug << "Building atom " << ii_name << " based on assembled internal coordinates." << std::endl;
 		coordinate = dihedrals[1].build(residue);
@@ -1112,11 +1112,11 @@ missing_stubs_build(core::Size ii, Residue const & residue, utility::vector1< bo
 /// @brief Build
 void
 improper_build(Residue const & residue,
-		core::Size missing,
-		core::Size parent,
-		core::Size sibling1,
-		core::Size sibling2 ,
-		Vector & coordinate
+	core::Size missing,
+	core::Size parent,
+	core::Size sibling1,
+	core::Size sibling2 ,
+	Vector & coordinate
 ) {
 	core::chemical::ResidueType const & restype( residue.type() );
 	core::Vector to_missing( restype.atom(missing).ideal_xyz() - restype.atom(parent).ideal_xyz() );
@@ -1124,11 +1124,11 @@ improper_build(Residue const & residue,
 	core::Real d( to_missing.length() );
 	core::Real theta( numeric::constants::r::pi - angle_of( to_missing, to_sib1 ) );
 	core::Real phi( numeric::dihedral_radians( restype.atom(missing).ideal_xyz(), restype.atom(parent).ideal_xyz(),
-			restype.atom(sibling1).ideal_xyz(), restype.atom(sibling2).ideal_xyz() ) );
+		restype.atom(sibling1).ideal_xyz(), restype.atom(sibling2).ideal_xyz() ) );
 	chemical::AtomICoor newicoor( residue.atom_name(missing), phi, theta, d,
-			residue.atom_name(parent),
-			residue.atom_name(sibling1),
-			residue.atom_name(sibling2), restype);
+		residue.atom_name(parent),
+		residue.atom_name(sibling1),
+		residue.atom_name(sibling2), restype);
 	coordinate = newicoor.build(residue);
 }
 
@@ -1177,7 +1177,7 @@ Residue::fill_missing_atoms(
 
 				if ( !stub_atoms_missing ) {
 					// no stub atoms missing: build coordinates for this atom from them
-					if( ! stubs_buildable ) {
+					if ( ! stubs_buildable ) {
 						// We are dependant on residue connections which might not have coordinates.
 						// (e.g. like non-termini variants at the beginning/end of the pose)
 						// NOTE: This used to check for residues next to chainbreaks too, but I (RM) removed that logic,
@@ -1192,10 +1192,10 @@ Residue::fill_missing_atoms(
 					missing[i] = false;
 					progress = true;
 					continue;
-				} else if( !progress && desperation >= 2 ) {
+				} else if ( !progress && desperation >= 2 ) {
 					// Only try building for missing stubs if we have to.
 					Vector coordinates;
-					if( missing_stubs_build(i, *this, missing, coordinates ) ) {
+					if ( missing_stubs_build(i, *this, missing, coordinates ) ) {
 						missing[i] = false;
 						set_xyz(i, coordinates);
 						progress = true;
@@ -1209,18 +1209,18 @@ Residue::fill_missing_atoms(
 				// This atom is present. If we have two bonded atoms also present,
 				// we can build any missing bonded atoms from the ideal geometry around this atom.
 				AtomIndices const & bonded( bonded_neighbor(i) );
-				if( bonded.size() >= 3 ) { // Need at least two present and one not present
+				if ( bonded.size() >= 3 ) { // Need at least two present and one not present
 					utility::vector1<core::Size> nbr_present;
 					utility::vector1<core::Size> nbr_missing;
-					for( core::Size bb(1); bb <= bonded.size(); ++bb ) {
+					for ( core::Size bb(1); bb <= bonded.size(); ++bb ) {
 						if ( missing[bonded[bb]] ) {
 							nbr_missing.push_back( bonded[bb] );
 						} else {
 							nbr_present.push_back( bonded[bb] );
 						}
 					}
-					if( nbr_present.size() >= 2 && nbr_missing.size() >= 1 ) {
-						for( core::Size mm(1); mm <= nbr_missing.size(); ++mm ) {
+					if ( nbr_present.size() >= 2 && nbr_missing.size() >= 1 ) {
+						for ( core::Size mm(1); mm <= nbr_missing.size(); ++mm ) {
 							Vector coordinates;
 							improper_build(*this, nbr_missing[mm], i, nbr_present[1], nbr_present[2], coordinates );
 							missing[ nbr_missing[mm] ] = false;
@@ -1233,9 +1233,9 @@ Residue::fill_missing_atoms(
 				}
 			}
 		} // end for i in atoms
-		if( ! progress ) {
+		if ( ! progress ) {
 			++desperation;
-			if( desperation >= 3 ) {
+			if ( desperation >= 3 ) {
 				// Did our best to build the atoms - simply can't.
 				if ( fail ) {
 					TR.Error << "[ ERROR ] Cannot build coordinates for residue " << name() << " at position " << seqpos() << ": missing too many atoms." << std::endl;
@@ -1243,8 +1243,8 @@ Residue::fill_missing_atoms(
 					TR.Debug << "Internal coordinate tree:" << std::endl;
 					core::chemical::pretty_print_atomicoor( TR.Debug, type().icoor(type().atom_index(type().root_atom())), type());
 					TR.Error << "Missing atoms are: ";
-					for( core::Size nn(1); nn <= missing.size(); ++nn ) {
-						if( missing[nn] ) {
+					for ( core::Size nn(1); nn <= missing.size(); ++nn ) {
+						if ( missing[nn] ) {
 							TR.Error << atom_name(nn) << "  ";
 						}
 					}

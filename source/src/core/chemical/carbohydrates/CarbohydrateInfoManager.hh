@@ -53,7 +53,7 @@ public:  // Static constant data access ///////////////////////////////////////
 
 	/// @brief  Get the monosaccharide root name from the given Rosetta/IUPAC 3-letter code.
 	static std::string const & root_from_code( std::string const & code );
-	
+
 	/// @brief  Get the default stereochemistry from the given Rosetta/IUPAC 3-letter code.
 	static char default_stereochem_from_code( std::string const & code );
 

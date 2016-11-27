@@ -258,7 +258,7 @@ public:
 
 		TR << "Single Atom rebuilding" << std::endl;
 		// Can we rebuild each single atom? (This includes the root)
-		for( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+		for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
 			core::conformation::Residue residue( pose->residue(1) );
 			utility::vector1<bool> missing(residue.natoms(),false);
 			residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
@@ -271,13 +271,13 @@ public:
 
 		TR << "Atom and connection rebuilding" << std::endl;
 		// Can we rebuild atoms when they and all their connecting atoms are rebuilt?
-		for( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
+		for ( core::Size ii(1); ii <= orig_res->natoms(); ++ii ) {
 			core::conformation::Residue residue( pose->residue(1) );
 			utility::vector1<bool> missing(residue.natoms(),false);
 			residue.set_xyz(ii, core::Vector( 0, 0, 0 ) );
 			missing[ii] = true;
 			core::chemical::AtomIndices nbrs( residue.bonded_neighbor( ii ) );
-			for( core::Size jj(1); jj <= nbrs.size(); ++jj ) {
+			for ( core::Size jj(1); jj <= nbrs.size(); ++jj ) {
 				missing[nbrs[jj]] = true;
 				residue.set_xyz(nbrs[jj], core::Vector( 0, 0, 0 ) );
 			}

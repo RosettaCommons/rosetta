@@ -184,7 +184,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end, Si
 
 	// look for a cutpoint between if unspecified
 	if ( !cut ) {
-	//Size cut(0);
+		//Size cut(0);
 		for ( int i=jump_begin; i<= jump_end-1; ++i ) {
 			if ( is_cutpoint( i ) ) {
 				if ( cut ) utility_exit_with_message( "multiple cutpoints between jump positions!" );
