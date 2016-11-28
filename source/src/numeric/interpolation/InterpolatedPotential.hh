@@ -28,6 +28,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/vector0.hh>
 
 #include <utility/exit.hh>
 
@@ -43,13 +44,12 @@ class InterpolatedPotential {
 
 public:
 
-	InterpolatedPotential():
-		gridpoints_( nullptr )
+	InterpolatedPotential()
 	{
 		for ( auto & p : periodic_ ) { p = false; }
 	}
 
-	~InterpolatedPotential() { delete gridpoints_; }
+	~InterpolatedPotential() = default;
 
 public:
 	void dimension( utility::fixedsizearray1< Size, N > const & dims ) {
@@ -61,8 +61,9 @@ public:
 
 		Size product = 1;
 		for ( Size const dim : dims ) product *= dim;
-		if ( gridpoints_ ) delete gridpoints_;
-		gridpoints_ = new utility::fixedsizearray1< Real, ( 1 << N ) >[ product ];
+		// Clear out an allocate the appropriate number of entries.
+		gridpoints_.clear();
+		gridpoints_.resize( product );
 		grid_size_ = dims;
 	}
 
@@ -115,10 +116,8 @@ public:
 private:
 	utility::fixedsizearray1< Size, N > grid_size_;
 	utility::fixedsizearray1< std::pair< Real, Real >, N > axis_ranges_ = std::make_pair( 0.0, 0.0 );
-	//std::array< utility::fixedsizearray1< Real, ( 1 << N ) > > gridpoints_;
-	// Implementing as a raw pointer. We can't know how many gridpoints there are
-	// yet. Look into this later, but you'd need variadic templates maybe?
-	utility::fixedsizearray1< Real, ( 1 << N ) > * gridpoints_ = nullptr;
+	// Outer vector0 will be resized when the dimension is set (rapidly, as it's allocated in one go.)
+	utility::vector0< utility::fixedsizearray1< Real, ( 1 << N ) > > gridpoints_;
 
 	utility::fixedsizearray1< Real, N > bin_width_;
 	utility::fixedsizearray1< bool, N > periodic_;
