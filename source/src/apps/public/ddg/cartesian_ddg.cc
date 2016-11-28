@@ -57,6 +57,9 @@
 #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>
 
+OPT_1GRP_KEY(Integer, ddg, bbnbr)
+OPT_1GRP_KEY(Boolean, ddg, cartesian)
+
 //Auto Headers
 using basic::T;
 using basic::Error;
@@ -166,8 +169,11 @@ compute_folding_energies(
 	bools const & is_mutpos,
 	Size bbnbrs=0 )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	protocols::relax::FastRelax fastrelax( fa_scorefxn, 0 );
-	fastrelax.cartesian( true );
+	fastrelax.cartesian( option[ ddg::cartesian ]()  );
 
 	MoveMapOP movemap(new MoveMap);
 	movemap->set_bb( false );
@@ -207,8 +213,6 @@ compute_folding_energies(
 	fastrelax.apply(pose);
 }
 
-OPT_1GRP_KEY(Integer, ddg, bbnbr)
-
 int
 main( int argc, char * argv [] )
 {
@@ -219,6 +223,7 @@ main( int argc, char * argv [] )
 
 	try {
 		NEW_OPT(ddg::bbnbr, "bb neighbor", 0);
+		NEW_OPT(ddg::cartesian, "cartesian", true);
 
 		//init
 		devel::init(argc, argv);
