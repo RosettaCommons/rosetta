@@ -53,15 +53,16 @@ CreateTorsionConstraint::CreateTorsionConstraint() //:
 {}
 CreateTorsionConstraint::~CreateTorsionConstraint()= default;
 
-void CreateTorsionConstraint::set(utility::vector1<Size> res1,
-	utility::vector1<std::string> atom1,
-	utility::vector1<Size> res2,
-	utility::vector1<std::string> atom2,
-	utility::vector1<Size> res3,
-	utility::vector1<std::string> atom3,
-	utility::vector1<Size> res4,
-	utility::vector1<std::string> atom4,
-	utility::vector1<std::string> cst_func
+void CreateTorsionConstraint::set(
+	utility::vector1<Size> const &res1,
+	utility::vector1<std::string> const &atom1,
+	utility::vector1<Size> const &res2,
+	utility::vector1<std::string> const &atom2,
+	utility::vector1<Size> const &res3,
+	utility::vector1<std::string> const &atom3,
+	utility::vector1<Size> const &res4,
+	utility::vector1<std::string> const &atom4,
+	utility::vector1<std::string> const &cst_func
 )
 {
 	res1_=res1;

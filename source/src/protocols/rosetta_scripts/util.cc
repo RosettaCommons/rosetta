@@ -364,6 +364,19 @@ attributes_for_parse_score_function_w_description( utility::tag::AttributeList &
 		description);
 }
 
+/// @brief Appends the attributes read by parse_score_function w/ name argument and description.
+/// @details This version appends the attributes as required attributes.
+/// @author Vikram K. Mulligan.
+void
+attributes_for_parse_score_function_w_description_when_required( utility::tag::AttributeList & attributes,
+	std::string const & sfxn_option_name,
+	std::string const & description
+) {
+	attributes + utility::tag::XMLSchemaAttribute::required_attribute(
+		sfxn_option_name, utility::tag::xs_string ,
+		description);
+}
+
 void
 attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name ){
 	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string , "XRW_TODO" );

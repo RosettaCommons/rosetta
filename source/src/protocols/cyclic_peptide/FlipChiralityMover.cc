@@ -319,7 +319,7 @@ void FlipChiralityMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "XRW TO DO" )
+		+ XMLSchemaAttribute::required_attribute( "name", xs_string, "A unique identifier for this instance of the FlipChiralityMover." )
 		+ XMLSchemaAttribute( "centerx", xsct_real, "X coordinate of center point" )
 		+ XMLSchemaAttribute( "centery", xsct_real, "Y coordinate of center point" )
 		+ XMLSchemaAttribute( "centerz", xsct_real, "Z coordinate of center point" )

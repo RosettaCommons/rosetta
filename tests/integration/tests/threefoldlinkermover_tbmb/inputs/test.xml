@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="beta_nov15.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_cys" resnums="7,21,35" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		
+		<DeclareBond name="bond1" res1="42" atom1="C" res2="1" atom2="N" />
+
+		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="tala" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bond1" />
+		<Add mover="threefold" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala" />
+</ROSETTASCRIPTS>

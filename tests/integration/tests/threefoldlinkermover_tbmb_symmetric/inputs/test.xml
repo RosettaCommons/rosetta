@@ -1,0 +1,33 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="beta_nov15.wts" symmetric="true" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_cys" resnums="7,21,35" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+	
+		<SetupForSymmetry name="setup_symm" definition="inputs/c3_y.symm" />
+		
+		<DeclareBond name="bond1" res1="42" atom1="C" res2="1" atom2="N" />
+
+		<ConstraintSetMover name="constrain_pepbonds" add_constraints="1" cst_file="inputs/pepbonds.cst" />
+
+		<ThreefoldLinkerMover name="threefold" residue_selector="select_cys" linker_name="TBMB" scorefxn="tala" threefold_symmetric="true" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="setup_symm" />
+		<Add mover="bond1" />
+		<Add mover="constrain_pepbonds" />
+		<Add mover="threefold" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala" />
+</ROSETTASCRIPTS>

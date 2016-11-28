@@ -158,6 +158,16 @@ attributes_for_parse_score_function_w_description( utility::tag::AttributeList &
 	std::string const & sfxn_option_name,
 	std::string const & description );
 
+/// @brief Appends the attributes read by parse_score_function w/ name argument and description.
+/// @details This version appends the attributes as required attributes.
+/// @author Vikram K. Mulligan.
+void
+attributes_for_parse_score_function_w_description_when_required( utility::tag::AttributeList & attributes,
+	std::string const & sfxn_option_name,
+	std::string const & description
+);
+
+
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
 /// Will look for tag in in_tag variable

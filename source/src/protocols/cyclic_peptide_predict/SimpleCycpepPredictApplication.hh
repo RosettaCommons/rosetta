@@ -455,6 +455,15 @@ private:
 	/// @details True if we are, false if we're using classic rama tables.
 	inline bool use_rama_prepro_for_sampling() const { return use_rama_prepro_for_sampling_; }
 
+	/// @brief The length of the sequence, excluding crosslinkers.
+	/// @details This is also the index of the last sequence residue.  Crosslinker residues follow this position.
+	inline core::Size sequence_length() const { return sequence_length_; }
+
+	/// @brief Given a pose with TBMB in it and another pose without TBMB, copy the TBMB residues from the first to the second,
+	/// and add back covalent bonds.
+	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
+	void re_append_tbmb_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset ) const;
+
 private:
 	/// ------------- Data -------------------------------
 	/// -------- When you add new data to this class, ----
@@ -507,6 +516,11 @@ private:
 	/// @brief The string that would be read from a sequence file.
 	/// @details If provided by external code, prevents filesystem read in run() function.
 	std::string sequence_string_;
+
+	/// @brief The length of the sequence, excluding any cross-linkers.
+	/// @details Computed internally and stored for reference.  This is also the index of the last sequence residue (with cross-linkers
+	/// following in linear sequence).
+	mutable core::Size sequence_length_;
 
 	/// @brief The number of attempts that will be made by the generalized kinematic closure machinery.
 	/// @details Defaults to 1.
@@ -730,6 +744,23 @@ private:
 	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
 	/// @details Defaults to empty list.
 	utility::vector1< core::Size > n_methyl_positions_;
+
+	/// @brief List of positions linked by 1,3,5-tris(bromomethyl)benzene.
+	/// @details This is a vector of lists of three residues.
+	utility::vector1< utility::vector1 < core::Size >  > tbmb_positions_;
+
+	/// @brief If true, filters are applied based on distance between TBMB cysteines and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_tbmb_filters_;
+
+	/// @brief Multiplier to make the TBMB distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real tbmb_sidechain_distance_filter_multiplier_;
+
+	/// @brief Multiplier to make the TBMB constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real tbmb_constraints_energy_filter_multiplier_;
 
 };
 

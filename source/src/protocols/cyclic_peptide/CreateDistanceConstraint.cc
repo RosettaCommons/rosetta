@@ -57,18 +57,19 @@ CreateDistanceConstraint::CreateDistanceConstraint() //:
 CreateDistanceConstraint::~CreateDistanceConstraint()= default;
 
 //adding a setter so that people can call the mover within Rosetta commands
-void CreateDistanceConstraint::set (utility::vector1<Size> res1,
-	utility::vector1<std::string> atom1,
-	utility::vector1<Size> res2,
-	utility::vector1<std::string> atom2,
-	utility::vector1<std::string> cst_func
+void CreateDistanceConstraint::set (
+	utility::vector1<Size> const &res1,
+	utility::vector1<std::string> const &atom1,
+	utility::vector1<Size> const &res2,
+	utility::vector1<std::string> const &atom2,
+	utility::vector1<std::string> const &cst_function
 )
 {
 	res1_=res1;
 	atom1_=atom1;
 	res2_=res2;
 	atom2_=atom2;
-	cst_func_=cst_func;
+	cst_func_=cst_function;
 }
 
 ///////////////////////////////////////////////////////////////

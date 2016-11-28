@@ -33,8 +33,16 @@ public:
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
 
+	/// @brief Setter for options for this mover, so that it can be called from
+	/// outside of RosettaScripts.
 	virtual void
-	set (utility::vector1<Size>, utility::vector1<std::string>,utility::vector1<Size>,utility::vector1<std::string>,utility::vector1<std::string>);
+	set(
+		utility::vector1<Size> const &res1,
+		utility::vector1<std::string> const &atom1,
+		utility::vector1<Size> const &res2,
+		utility::vector1<std::string> const &atom2,
+		utility::vector1<std::string> const &cst_function
+	);
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;

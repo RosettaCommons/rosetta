@@ -2135,7 +2135,6 @@ std::string gen_kic_add_filter_subelement_mangler( std::string const & element_n
 
 void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-	// TO DO!
 	using namespace utility::tag;
 	selector::GeneralizedKICselector::define_valid_selector_name_enumeration( xsd );
 	perturber::GeneralizedKICperturber::define_valid_perturber_name_enumeration( xsd );
@@ -2148,7 +2147,7 @@ void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ Attr( "correct_polymer_dependent_atoms", xsct_rosetta_bool, "If set to true, atoms whose positions are dependent on polymer bonds, such as amino acid \"H\" and \"O\" atoms, will have their positions set to ideal coordinates after closure.  False by default." )
 		+ Attr( "dont_fail_if_no_solution_found", xsct_rosetta_bool, "By default, the GeneralizedKIC mover returns failure status if it fails to find a closed solution that passes filters.  Certain usage cases require that it does not fail.  If this option is set to true, it prevents GeneralizedKIC from returning a failure status, even if it finds no solution (in which case the input pose, which may have an open chain of atoms, is returned as the output pose).  This is necessary, for example, when GeneralizedKIC is used in conjunction with a ContingentFilter." )
 		+ Attr::required_attribute( "selector", "genkic_selector_name", "The GeneralizedKICselector to use to pick a solution.  Solutions may be picked randomly (\"random_selector\"), by energy (\"lowest_energy_selector\"), or by other criteria.  See the Rosetta help wiki for more information on GeneralizedKICselectors, and for the full range of options." )
-		+ Attr( "selector_scorefunction", xs_string, "XSD XRW TO DO")
+		+ Attr( "selector_scorefunction", xs_string, "A scorefunction that the GeneralizedKICselector will use to select the solution to return.")
 		+ Attr( "selector_kbt", xsct_real, "If the GeneralizedKICselector is set to \"boltzmann_energy_selector\", this is the Boltzmann temperature used when selecting a solution randomly, weighted by the Boltzmann probability of that solution." )
 		+ Attr::attribute_w_default( "stop_if_no_solution", xsct_non_negative_integer, "If this option is used and set to a positive integer N, GeneralizedKIC stops looking for closure solutions if no solution was found in the first N attempts.", "0" )
 		+ Attr( "closure_attempts", xsct_non_negative_integer, "The maximum number of times to try to find a solution.  Set this to zero to keep trying indefinitely (in which case the \"stop_when_n_solutions_found\" option should be used to prevent the mover from iterating forever)." )

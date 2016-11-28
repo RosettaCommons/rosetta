@@ -90,6 +90,10 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
+//TBMB
+#include <protocols/cyclic_peptide/ThreefoldLinkerMover.hh>
+#include <protocols/cyclic_peptide/threefold_linker/TBMB_Helper.hh>
+
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
@@ -165,6 +169,10 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::cartesian_relax_rounds               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_positions                       );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier  );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -201,6 +209,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	out_scorefilename_("default.sc"),
 	sequence_file_(""),
 	sequence_string_(""),
+	sequence_length_(0),
 	genkic_closure_attempts_(1),
 	genkic_min_solution_count_(1),
 	cyclic_permutations_(true),
@@ -253,7 +262,11 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	angle_length_relax_rounds_(0),
 	cartesian_relax_rounds_(0),
 	use_rama_prepro_for_sampling_(true),
-	n_methyl_positions_()
+	n_methyl_positions_(),
+	tbmb_positions_(),
+	use_tbmb_filters_(true),
+	tbmb_sidechain_distance_filter_multiplier_(1.0),
+	tbmb_constraints_energy_filter_multiplier_(1.0)
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -280,6 +293,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	out_scorefilename_(src.out_scorefilename_),
 	sequence_file_(src.sequence_file_),
 	sequence_string_(src.sequence_string_),
+	sequence_length_(src.sequence_length_),
 	genkic_closure_attempts_(src.genkic_closure_attempts_),
 	genkic_min_solution_count_(src.genkic_min_solution_count_),
 	cyclic_permutations_(src.cyclic_permutations_),
@@ -332,7 +346,11 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
 	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
-	n_methyl_positions_(src.n_methyl_positions_)
+	n_methyl_positions_(src.n_methyl_positions_),
+	tbmb_positions_(src.tbmb_positions_),
+	use_tbmb_filters_(src.use_tbmb_filters_),
+	tbmb_sidechain_distance_filter_multiplier_(src.tbmb_sidechain_distance_filter_multiplier_),
+	tbmb_constraints_energy_filter_multiplier_(src.tbmb_constraints_energy_filter_multiplier_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -521,6 +539,26 @@ SimpleCycpepPredictApplication::initialize_from_options(
 			n_methyl_positions_[i] = static_cast< core::Size >( option[basic::options::OptionKeys::cyclic_peptide::n_methyl_positions]()[i] );
 		}
 	}
+
+	//Store the TBMB positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions].user() ) {
+		core::Size const ntbmbres(option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions]().size());
+		runtime_assert_string_msg( ntbmbres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues to link with 1,3,5-tris(bromomethyl)benzene." );
+		runtime_assert_string_msg( ntbmbres % 3 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of three.  Groups of three residues will be linked with 1,3,5-tris(bromomethyl)benzene." );
+		core::Size count(0);
+		tbmb_positions_.resize(ntbmbres / 3);
+		for ( core::Size i=1; i<=ntbmbres / 3; ++i ) {
+			utility::vector1 <core::Size> innervect(3);
+			for ( core::Size j=1; j<=3; ++j ) {
+				++count;
+				innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions]()[count];
+			}
+			tbmb_positions_[i] = innervect;
+		}
+	}
+	use_tbmb_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters]();
+	tbmb_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier]();
+	tbmb_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier]();
 
 	return;
 } //initialize_from_options()
@@ -783,6 +821,7 @@ SimpleCycpepPredictApplication::run() const {
 	//Get the sequence that we're considering:
 	utility::vector1 < std::string > resnames;
 	read_sequence( sequence_file_, resnames );
+	sequence_length_ = resnames.size(); //Store the number of residues in the sequence, excluding crosslinkers.
 
 	//Get the native sequence that we will compare to.
 	core::pose::PoseOP native_pose;
@@ -891,6 +930,8 @@ SimpleCycpepPredictApplication::run() const {
 		if ( angle_relax_rounds() > 0 || angle_length_relax_rounds() > 0 || cartesian_relax_rounds() > 0 ) {
 			do_final_fastrelax( pose, sfxn_default_cst, 1, false, false, false ); //Do one more round of regular FastRelax if we've done any Cartesian, just to make sure we're in a pro_close minimum.
 		}
+
+		//pose->dump_pdb( "TEMP.pdb" ); //DELETE ME!!!
 
 		//Undo the cyclic permutation in anticipation of re-aligning to the native:
 		depermute( pose, cyclic_offset );
@@ -1001,7 +1042,7 @@ SimpleCycpepPredictApplication::count_cis_peptide_bonds(
 	core::pose::PoseCOP pose
 ) const {
 	core::Size count(0);
-	for ( core::Size i=1, imax=pose->total_residue(); i<=imax; ++i ) {
+	for ( core::Size i=1, imax=sequence_length(); i<=imax; ++i ) {
 		core::Real const omegaval( numeric::principal_angle_degrees( pose->omega(i) /*Should handle terminal peptide bonds.*/ ) );
 		TR.Debug << "omega" << i << "=" << omegaval << std::endl;
 		if ( omegaval <= 90 && omegaval > -90 ) ++count; //Count this as cis if in the interval (-90,90]
@@ -1103,7 +1144,7 @@ SimpleCycpepPredictApplication::add_n_methylation(
 ) const {
 	if ( n_methyl_positions_.size() == 0 ) { return; } //Do nothing if there's no N-methylation.
 
-	core::Size const nres(pose->total_residue());
+	core::Size const nres(sequence_length());
 
 	TR << "Adding N-methylation" << std::endl;
 	protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
@@ -1269,7 +1310,7 @@ SimpleCycpepPredictApplication::set_up_termini_mover (
 	core::pose::PoseCOP pose,
 	bool const native
 ) const {
-	core::Size const nres(pose->size());
+	core::Size const nres(sequence_length());
 
 	runtime_assert_string_msg(pose->residue(1).has_lower_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: residue 1 does not have a LOWER_CONNECT.");
 	runtime_assert_string_msg(pose->residue(nres).has_upper_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: the final residue does not have an UPPER_CONNECT.");
@@ -1361,7 +1402,7 @@ SimpleCycpepPredictApplication::add_cyclic_constraints (
 
 	TR << "Setting up cyclic constraints." << std::endl;
 
-	core::Size const nres(pose->size());
+	core::Size const nres(sequence_length());
 
 	//The four atoms defining the peptide bond:
 	AtomID const atom_a( pose->residue(nres).type().icoor(pose->residue(nres).upper_connect_atom()).stub_atom1().atomno(), nres );
@@ -1420,7 +1461,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 	core::Size const cyclic_offset
 ) const {
 	TR << "Randomizing mainchain torsions." << std::endl;
-	core::Size const nres(pose->size());
+	core::Size const nres(sequence_length());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
 		if ( pose->residue(i).type().is_alpha_aa() ) {
 			core::scoring::Ramachandran & rama(core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst() ); //Get the Rama scoring function; must be nonconst to allow lazy loading
@@ -1526,7 +1567,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	TR << "Performing GeneralizedKIC closure of loop." << std::endl;
 
 	//Number of residues in the pose:
-	core::Size const nres( pose->size() );
+	core::Size const nres( sequence_length() );
 	runtime_assert( nres >= 4 ); //Already checked at sequence load time, so should be true, but let's make sure.
 
 	//Randomly pick one of the middle residues to be the anchor residue:
@@ -1558,6 +1599,31 @@ SimpleCycpepPredictApplication::genkic_close(
 		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_mover_filter_pair( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
+	}
+
+	//If we're considering TBMB, add it here.
+	if ( tbmb_positions_.size() > 0 ) {
+		for ( core::Size i=1, imax=tbmb_positions_.size(); i<=imax; ++i ) { //Loop through all sets of triples of residues.
+			debug_assert(tbmb_positions_[i].size() == 3); //Should always be true.
+			std::stringstream cys_indices;
+			for ( core::Size j=1; j<=3; ++j ) {
+				cys_indices << current_position( tbmb_positions_[i][j], cyclic_offset, nres );
+				if ( j<3 ) cys_indices << ",";
+			}
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			index_selector->set_index( cys_indices.str() );
+			protocols::cyclic_peptide::ThreefoldLinkerMoverOP threelinker( new protocols::cyclic_peptide::ThreefoldLinkerMover );
+			threelinker->set_residue_selector(index_selector);
+			threelinker->set_linker_name("TBMB");
+			threelinker->set_behaviour( true, true, true, false, false );
+			threelinker->set_filter_behaviour( use_tbmb_filters_, use_tbmb_filters_, false, 0.0, tbmb_sidechain_distance_filter_multiplier_, tbmb_constraints_energy_filter_multiplier_ );
+			threelinker->set_scorefxn( sfxn_highhbond );
+			threelinker->set_sidechain_frlx_rounds(3);
+			//TODO -- set options for filtering.
+			std::stringstream movername;
+			movername << "TBMB_link_" << i;
+			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
+		}
 	}
 
 	core::Size disulf_count(0);
@@ -2008,7 +2074,7 @@ SimpleCycpepPredictApplication::depermute (
 
 	if ( offset==0 ) return; //Do nothing if the pose was not offset.
 
-	core::Size const nres(pose->size());
+	core::Size const nres( sequence_length() );
 	debug_assert(nres > offset);
 	core::Size const old_first_res_index( nres-offset+1 );
 
@@ -2041,6 +2107,11 @@ SimpleCycpepPredictApplication::depermute (
 	//Re-form the disulfides:
 	rebuild_disulfides( newpose, new_disulfides );
 
+	//Re-append linker residues:
+	if ( tbmb_positions_.size() > 0 ) {
+		re_append_tbmb_residues( pose, newpose, offset );
+	}
+
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
@@ -2061,7 +2132,7 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::pose::PoseOP pose,
 	core::pose::PoseCOP native_pose
 ) const {
-	core::Size const nres( pose->size() );
+	core::Size const nres( sequence_length() );
 	debug_assert( native_pose->size() == nres ); //Should be true.
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
@@ -2260,6 +2331,41 @@ void SimpleCycpepPredictApplication::erase_random_seed_info() const {
 	}
 	return;
 }
+
+/// @brief Given a pose with TBMB in it and another pose without TBMB, copy the TBMB residues from the first to the second,
+/// and add back covalent bonds.
+/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
+void
+SimpleCycpepPredictApplication::re_append_tbmb_residues(
+	core::pose::PoseCOP pose,
+	core::pose::PoseOP newpose,
+	core::Size const offset
+) const {
+	debug_assert( pose->total_residue() > newpose->total_residue() );
+
+	core::Size lastres(0);
+	for ( core::Size i=1, imax=tbmb_positions_.size(); i<=imax; ++i ) { //Loop through all TBMBs
+		//For each one, loop through the sequence and find the next TBMB.
+		for ( core::Size j=lastres+1, jmax=pose->total_residue(); j<=jmax; ++j ) {
+			if ( !pose->residue_type(j).name3().compare("TBM") ) {
+				lastres = j;
+				break;
+			}
+		}
+		newpose->append_residue_by_jump( pose->residue(lastres), tbmb_positions_[i][1] ); //Jump from the first cys that links this TBMB to the TBMB
+		protocols::cyclic_peptide::threefold_linker::TBMB_Helper helper;
+		core::Size cys1, cys2, cys3;
+		if ( offset >= tbmb_positions_[i][3] || offset < tbmb_positions_[i][1] ) {
+			cys1 = tbmb_positions_[i][1]; cys2 = tbmb_positions_[i][2]; cys3 = tbmb_positions_[i][3];
+		} else if ( offset >= tbmb_positions_[i][2] ) {
+			cys1 = tbmb_positions_[i][3]; cys2 = tbmb_positions_[i][1]; cys3 = tbmb_positions_[i][2];
+		} else {
+			cys1 = tbmb_positions_[i][2]; cys2 = tbmb_positions_[i][3]; cys3 = tbmb_positions_[i][1];
+		}
+		helper.add_linker_bonds_asymmetric( *newpose, cys1, cys2, cys3, newpose->total_residue() );
+	}
+}
+
 
 } //cyclic_peptide_predict
 } //protocols
