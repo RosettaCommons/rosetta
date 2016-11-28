@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<tala weights="beta_nov15.wts" />
+		<ScoreFunction name="tala" weights="beta_nov15.wts" />
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 		<RestrictToRepacking name="repack_only" />
