@@ -1,2 +1,3 @@
--s input/1vii.pdb
+-s input/4GQ4.pdb
+-extra_res_fa input/4GQ4.params
 -score:patch occ_Hbond_sol_fitted

@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/geometric_solvation/DatabaseOccSolEne.hh
-/// @brief  Database containing params for OccludedHbondSolEnergy
+/// @brief  Database containing params for OccludedHbondSolEnergy (i.e., for the pwSHO model)
 /// @author John Karanicolas
+/// @author Andrea Bazzoli
 
 
 #ifndef INCLUDED_core_scoring_geometric_solvation_DatabaseOccSolEne_hh
@@ -59,14 +60,45 @@ public:
 	{
 		// note: min cos_angle can be negative
 		if ( polar_atom_donates ) {
-			debug_assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+			debug_assert ( donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > NO_PARAMETERS_ + 0.01 );
 			return donor_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 		}
-		debug_assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > -1.1 );
+		debug_assert ( acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param] > NO_PARAMETERS_ + 0.01 );
 		return acc_occ_data_[ polar_atom_type_index][occ_atom_type_index][des_param];
 	}
 
 	Real const & atomic_interaction_cutoff() const { return atomic_interaction_cutoff_; }
+
+	/// @brief tells, for a given atom type, if there are pwSHO parameters for donors having that atom type
+	bool don_type_has_data( Size atom_type_index ) const { return don_type_has_data_[ atom_type_index ]; }
+
+	/// @brief tells, for a given atom type, if there are pwSHO parameters for acceptors having that atom type
+	bool acc_type_has_data( Size atom_type_index ) const { return acc_type_has_data_[ atom_type_index ]; }
+
+	/// @brief tells, for a given atom type, if there are pwSHO parameters for donor-occluding atoms having
+	/// that type
+	bool don_occ_type_has_data( Size atom_type_index ) const { return don_occ_type_has_data_[ atom_type_index ]; }
+
+	/// @brief tells, for a given atom type, if there are pwSHO parameters for acceptor-occluding atoms having
+	/// that type
+	bool acc_occ_type_has_data( Size atom_type_index ) const { return acc_occ_type_has_data_[ atom_type_index ]; }
+
+	/// @brief maps each atom type to one for which there are pwSHO parameters when atoms of the new type are
+	/// evaluated as donors
+	Size don_type_mapping( Size atom_type_index ) const { return don_type_mapping_[ atom_type_index ]; }
+
+	/// @brief maps each atom type to one for which there are pwSHO parameters when atoms of the new type are
+	/// evaluated as acceptors
+	Size acc_type_mapping( Size atom_type_index ) const { return acc_type_mapping_[ atom_type_index ]; }
+
+	/// @brief maps each atom type to one for which there are pwSHO parameters when atoms of the new type are
+	/// evaluated as occluding solvent H-bonds to donors
+	Size don_occ_type_mapping( Size atom_type_index ) const { return don_occ_type_mapping_[ atom_type_index ]; }
+
+	/// @brief maps each atom type to one for which there are pwSHO parameters when atoms of the new type are
+	/// evaluated as occluding solvent H-bonds to acceptors
+	Size acc_occ_type_mapping( Size atom_type_index ) const { return acc_occ_type_mapping_[ atom_type_index ]; }
+
 
 private:
 
@@ -84,12 +116,43 @@ private:
 	utility::vector1< utility::vector1< utility::vector1< Real > > > donor_occ_data_;
 	utility::vector1< utility::vector1< utility::vector1< Real > > > acc_occ_data_;
 
+	// tell, for each atom type, if there are pwSHO parameters for donors, acceptors, atoms occluding solvent H-bonds to
+	// donors, and atoms occluding solvent H-bonds to acceptors, respectively, having that atom type.
+	utility::vector1< bool > don_type_has_data_;
+	utility::vector1< bool > acc_type_has_data_;
+	utility::vector1< bool > don_occ_type_has_data_;
+	utility::vector1< bool > acc_occ_type_has_data_;
+
+	// map each atom type to one for which the pwSHO has parameters when atoms of the new type are evaluated as donors,
+	// acceptors, atoms occluding solvent H-bonds to donors, and atoms occluding solvent H-bonds to acceptors, respectively.
+	utility::vector1< Size > don_type_mapping_;
+	utility::vector1< Size > acc_type_mapping_;
+	utility::vector1< Size > don_occ_type_mapping_;
+	utility::vector1< Size > acc_occ_type_mapping_;
+
+	/// @brief maps each atom type to itself
+	void init_to_self_mapping( utility::vector1< Size > & v );
+
+	/// @brief maps donor types not having pwSHO parameters to donor types having them
+	void init_don_mapping(chemical::AtomTypeSet const & atom_set);
+
+	/// @brief maps acceptor types not having pwSHO parameters to acceptor types having them
+	void init_acc_mapping(chemical::AtomTypeSet const & atom_set);
+
+	/// @brief maps occluding-atom types not having pwSHO parameters to occluding-atom types having them
+	void init_atom_occ_mapping(
+		chemical::AtomTypeSet const & atom_set,
+		utility::vector1< Size > & atom_occ_type_mapping,
+		utility::vector1< bool > const & atom_occ_type_has_data);
+
 	// energies below this can be neglected, used in determining jumpout geometry conditions
 	Real const min_occ_energy_;
 
 	// max distance between interacting atoms (computed from min_occ_energy)
 	Real atomic_interaction_cutoff_;
 
+	// dummy value indicating the absence of pwSHO parameters for a given atom type
+	Real const NO_PARAMETERS_;
 };
 
 } // geometric_solvation

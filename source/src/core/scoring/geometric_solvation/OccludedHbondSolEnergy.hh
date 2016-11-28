@@ -8,8 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/geometric_solvation/OccludedHbondSolEnergy.hh
-/// @brief  Solvation model based on penalizing potential for Hbonding to solvent
+/// @brief  Pairwise-decomposable, continuous solvation model based on penalizing potential for Hbonding to solvent.
+///  This is the pwSHO model.
 /// @author John Karanicolas
+/// @author Andrea Bazzoli
 
 
 #ifndef INCLUDED_core_scoring_geometric_solvation_OccludedHbondSolEnergy_hh

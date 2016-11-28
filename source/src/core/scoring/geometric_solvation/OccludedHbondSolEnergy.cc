@@ -8,8 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/geometric_solvation/OccludedHbondSolEnergy.cc
-/// @brief  Solvation model based on penalizing potential for Hbonding to solvent
+/// @brief  Pairwise-decomposable, continuous solvation model based on penalizing potential for Hbonding to solvent.
+///  This is the pwSHO model.
 /// @author John Karanicolas
+/// @author Andrea Bazzoli
 
 
 // NOTES FOR IMPROVED PERFORMANCE / POTENTIAL IMPROVEMENTS....
@@ -366,21 +368,28 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 		// polar donor cannot be occluded by an acceptor (analogous to exact_occ_skip_Hbonders in exact model, but not quite the same)
 		if ( occ_rsd.heavyatom_is_an_acceptor( occ_atom ) ) return;
 	} else {
-		// polar acceptor cannot be occluded by an donor base (analogous to exact_occ_skip_Hbonders in exact model, but not quite the same)
+		// polar acceptor cannot be occluded by a donor base (analogous to exact_occ_skip_Hbonders in exact model, but not quite the same)
 		if ( occ_rsd.heavyatom_has_polar_hydrogens( occ_atom ) ) return;
 	}
 
 	debug_assert( ( polar_atom_donates && atom_is_donor_h( polar_rsd, polar_atom ) ) ||
 		( ( ! polar_atom_donates ) && atom_is_acceptor( polar_rsd, polar_atom ) ) );
 
-	// If acceptor, do lookup on polar atom. If donor (ie. polar atom is a hydrogen), use the base atom instead
+	// get atom type lookup index for polar and occluding atoms; map indexes to those of known atom types, if necessary
 	Size polar_atom_type_lookup_index = polar_rsd.atom_type_index( polar_atom );
-	if ( polar_atom_donates ) polar_atom_type_lookup_index = polar_rsd.atom_type_index( base_atom );
+	Size occ_atom_type_index = occ_rsd.atom_type_index( occ_atom );
+	if ( polar_atom_donates ) {
+
+		// do donor lookup with base atom
+		polar_atom_type_lookup_index = occ_hbond_sol_database_.don_type_mapping( polar_rsd.atom_type_index( base_atom ) );
+		occ_atom_type_index = occ_hbond_sol_database_.don_occ_type_mapping( occ_atom_type_index );
+	} else {
+		polar_atom_type_lookup_index = occ_hbond_sol_database_.acc_type_mapping( polar_atom_type_lookup_index );
+		occ_atom_type_index = occ_hbond_sol_database_.acc_occ_type_mapping( occ_atom_type_index );
+	}
 
 	Vector const & polar_atom_xyz( polar_rsd.atom( polar_atom ).xyz() );
 	Vector const & base_atom_xyz( polar_rsd.atom( base_atom ).xyz() );
-
-	Size const occ_atom_type_index = occ_rsd.atom_type_index( occ_atom );
 	Vector const & occ_atom_xyz( occ_rsd.atom( occ_atom ).xyz() );
 
 	// jumpout with no calculations if easy tests are violated, ie. no contribution to solvation energy
