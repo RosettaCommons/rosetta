@@ -1605,128 +1605,131 @@ Conformation::fill_missing_atoms(
 	for ( Size i=1; i<= size(); ++i ) { //Loop through all residues in this conformation
 		Residue const & rsd( residue_(i) ); // prevent many many calls to update_residue_torsions()
 		Size const natoms( rsd.natoms() );
+
+		utility::vector1< bool > atm_missing(natoms, false);
+		Size num_missing(0);
+
+		// Loop through atoms in residue, annotate those missing
+		for ( Size j=1; j<= natoms; ++j ) {
+			AtomID const id( j, i );
+			if ( missing[ id ] ) {
+				// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
+				if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j) ) {
+					TR.Warning << "[ WARNING ] missing heavyatom: " << rsd.atom_name(j) <<
+						" on residue " << rsd.name() << ' ' << i << std::endl;
+				}
+				atm_missing[j] = true;
+				++num_missing;
+			}
+		}
+
+		if( num_missing == 0 ) { continue; }
+
 		Size tries(0);
-		while ( true ) {
+		// Note: Invoking Residue::fill_missing_atoms currently has a known "failure" case.
+		// Since it doesn't get information about which atoms in other residues are missing,
+		// it won't necessarily do the right thing if atoms on both sides of the connection are missing.
+		// (This should be exceedingly rare, though.)
+		while ( ! residue_(i).fill_missing_atoms(atm_missing, *this, /*fail=*/ false) ) {
+			// The residue can't be filled with the information we have -- attempt workarounds
+			// RM: At some point it would be nice to move this logic (or similar) into Residue::fill_missing_atoms
 			++tries;
-			if ( tries > 10000 ) {
+			if ( tries > natoms ) {
 				utility_exit_with_message("too many tries in fill_missing_atoms!");
 			}
-			bool any_missing( false );
-			Size num_present = 0;
 			for ( Size j=1; j<= natoms; ++j ) {
-				if ( !missing[ AtomID( j, i ) ] ) num_present += 1;
-			}
-			for ( Size j=1; j<= natoms; ++j ) { //Loop through all atoms in this residue
 				AtomID const id( j, i );
-				if ( missing[ id ] ) {
-					// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
-					if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j) ) {
-						TR.Warning << "[ WARNING ] missing heavyatom: " << rsd.atom_name(j) <<
-							" on residue " << rsd.name() << ' ' << i << std::endl;
-					}
-					any_missing = true;
+				if ( ! missing[ id ] ) { continue; }
 
-					if ( rsd.icoor(j).depends_on_residue_connection() ) {
-						//if the coordinates of this atom depend on a residue connection
-						//NOTE: we assume that the coordinates of the root atom are never connection-dependent (which is true).
-						bool needed_atom_is_missing(false);
-						for ( core::Size ii=1; ii<=3; ++ii ) { //Check whether needed residues are missing, ignoring connections.
-							if ( !rsd.icoor(j).stub_atom(ii).is_connect() && missing[rsd.icoor(j).stub_atom(ii).atom_id(rsd, *this)] ) {
-								needed_atom_is_missing = true;
-								break;
-							}
-						}
-						if ( !needed_atom_is_missing ) { //If no needed atoms are missing
-							set_xyz( id , rsd.build_atom_ideal( j, *this ) );
-							missing[ id ] = false;
-							num_present += 1;
-						}
-					} else { //if the coordinates of this atom do not depend on a residue connection
-						// check if our stub atoms are all present
+				// check if our stub atoms are all present
+				AtomID const
+					stub_atom1( rsd.icoor( j ).stub_atom1().atom_id( rsd, *this ) ),
+					stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( rsd, *this ) ),
+					stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( rsd, *this ) );
+
+				if ( natoms-num_missing < 3 && !( stub_atom1 == id::BOGUS_ATOM_ID || missing[ stub_atom1 ] ) ) {
+					// with < 3 atoms present, we can't build any stubs, so we're stuck forever unless we punt:
+					using numeric::random::uniform;
+					Vector xyz1( xyz( stub_atom1 ) ), xyz2( xyz( stub_atom2 ) ), xyz3( xyz( stub_atom3 ) );
+					if ( stub_atom2 == id::BOGUS_ATOM_ID || missing[ stub_atom2 ] ) xyz2 = Vector( uniform(), uniform(), uniform() );
+					if ( stub_atom3 == id::BOGUS_ATOM_ID || missing[ stub_atom3 ] ) xyz3 = Vector( uniform(), uniform(), uniform() );
+					kinematics::Stub const stub( xyz1, xyz2, xyz3 );
+					set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
+					if( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
+						TR.Warning << "[ WARNING ] Rebuilding missing atom (" << rsd.atom_name( j ) <<
+							") from residue " << rsd.name() << " " << i << " from faked coordinates, due to too few atoms being present." <<
+							"\nThis probably means that this residue should be further optimized..." << std::endl;
+					}
+					missing[id] = false;
+					atm_missing[ j ] = false;
+					num_missing -= 1;
+
+				} else if ( id == stub_atom1 || id == stub_atom2 || id == stub_atom3 ) {
+					// the root atom of the default residue tree or one of it's stub_atoms...
+					// special case requires careful handling:
+					// build new residue trees for the ideal-coordinates residue, look for one
+					// that doesn't have this problem...
+
+					ResidueOP tmp_rsd( new Residue( rsd.type(), false /*dummy arg*/ ) );
+					tmp_rsd->seqpos( i );
+
+					for ( Size root_atomno=1; root_atomno<= natoms; ++root_atomno ) {
+						if ( root_atomno == j ) continue;
+
+						kinematics::AtomPointer2D atom_pointer( i );
+						build_residue_tree( root_atomno, *tmp_rsd, atom_pointer[i], true/*root is jump*/ );
+						AtomTree rsd_tree( atom_pointer );
+
 						AtomID const
-							stub_atom1( rsd.icoor( j ).stub_atom1().atom_id( rsd, *this ) ),
-							stub_atom2( rsd.icoor( j ).stub_atom2().atom_id( rsd, *this ) ),
-							stub_atom3( rsd.icoor( j ).stub_atom3().atom_id( rsd, *this ) );
+							new_stub_atom1( rsd_tree.atom( id ).input_stub_atom1_id() ),
+							new_stub_atom2( rsd_tree.atom( id ).input_stub_atom2_id() ),
+							new_stub_atom3( rsd_tree.atom( id ).input_stub_atom3_id() );
 
-						if ( num_present < 3 && stub_atom1 != id::BOGUS_ATOM_ID && !missing[ stub_atom1 ] ) {
-							// with < 3 atoms, we can't build any stubs, so we're stuck forever unless we punt:
-							//if ( rsd.natoms() == 3 && !missing[ stub_atom1 ] ) {
-							// special case, eg HOH water, O is present H's missing
-							using numeric::random::uniform;
-							Vector xyz1( xyz( stub_atom1 ) ), xyz2( xyz( stub_atom2 ) ), xyz3( xyz( stub_atom3 ) );
-							if ( missing[ stub_atom2 ] ) xyz2 = Vector( uniform(), uniform(), uniform() );
-							if ( missing[ stub_atom3 ] ) xyz3 = Vector( uniform(), uniform(), uniform() );
-							kinematics::Stub const stub( xyz1, xyz2, xyz3 );
-							set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
-							missing[id] = false;
-							num_present += 1;
-
-						} else if ( id == stub_atom1 || id == stub_atom2 || id == stub_atom3 ) {
-							// the root atom of the default residue tree or one of it's stub_atoms...
-							// special case requires careful handling:
-							// build new residue trees for the ideal-coordinates residue, look for one
-							// that doesn't have this problem...
-
-							ResidueOP tmp_rsd( new Residue( rsd.type(), false /*dummy arg*/ ) );
-							tmp_rsd->seqpos( i );
-
-							for ( Size root_atomno=1; root_atomno<= natoms; ++root_atomno ) {
-								if ( root_atomno == j ) continue;
-
-								kinematics::AtomPointer2D atom_pointer( i );
-								build_residue_tree( root_atomno, *tmp_rsd, atom_pointer[i], true/*root is jump*/ );
-								AtomTree rsd_tree( atom_pointer );
-
-								AtomID const
-									new_stub_atom1( rsd_tree.atom( id ).input_stub_atom1_id() ),
-									new_stub_atom2( rsd_tree.atom( id ).input_stub_atom2_id() ),
-									new_stub_atom3( rsd_tree.atom( id ).input_stub_atom3_id() );
-
-								if ( !missing[ new_stub_atom1 ] && !missing[ new_stub_atom2 ] && !missing[ new_stub_atom3 ] ) {
-									TR.Warning << "[ WARNING ] Building missing atom (" << rsd.atom_name( j ) <<
-										") at root of residue tree, using stubs: " <<
-										rsd.atom_name( new_stub_atom1.atomno() ) << ' ' <<
-										rsd.atom_name( new_stub_atom2.atomno() ) << ' ' <<
-										rsd.atom_name( new_stub_atom3.atomno() ) <<
-										"\nThis probably means that a torsion angle is being taken from the ideal residue and"
-										"\nshould be further optimized..." << std::endl;
-									kinematics::Stub stub
-										( rsd.xyz( new_stub_atom1.atomno() ),
-										rsd.xyz( new_stub_atom2.atomno() ),
-										rsd.xyz( new_stub_atom3.atomno() ) );
-									set_xyz( id, stub.spherical( rsd_tree.dof( DOF_ID( id, id::PHI ) ),
-										rsd_tree.dof( DOF_ID( id, id::THETA ) ),
-										rsd_tree.dof( DOF_ID( id, id::D ) ) ) );
-									missing[ id ] = false;
-									num_present += 1;
-									break;
-								}
-							} // root_atomno = 1,natoms
-						} else {
-							// typical case
-							if ( stub_atom1 != id::BOGUS_ATOM_ID && !missing[ stub_atom1 ] &&
-									stub_atom2 != id::BOGUS_ATOM_ID && !missing[ stub_atom2 ] &&
-									stub_atom3 != id::BOGUS_ATOM_ID && !missing[ stub_atom3 ] ) {
-								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
-								missing[ id ] = false;
-								num_present += 1;
-							} else if ( tries > 10 &&
-									(stub_atom1 == id::BOGUS_ATOM_ID ||
-									stub_atom2 == id::BOGUS_ATOM_ID ||
-									stub_atom3 == id::BOGUS_ATOM_ID) ) {
-								// Emergency fallback, as we often can't build things with missing connections.
-								TR.Warning << "Building atom " << id << " with a null connection point." << std::endl;
-								set_xyz( id , rsd.build_atom_ideal( j, *this ) );
-								missing[ id ] = false;
-								num_present += 1;
-							}
+						if ( !missing[ new_stub_atom1 ] && !missing[ new_stub_atom2 ] && !missing[ new_stub_atom3 ] ) {
+							TR.Warning << "[ WARNING ] Building missing atom (" << rsd.atom_name( j ) <<
+								") at root of residue tree, using stubs: " <<
+								rsd.atom_name( new_stub_atom1.atomno() ) << ' ' <<
+								rsd.atom_name( new_stub_atom2.atomno() ) << ' ' <<
+								rsd.atom_name( new_stub_atom3.atomno() ) <<
+								"\nThis probably means that a torsion angle is being taken from the ideal residue and"
+								"\nshould be further optimized..." << std::endl;
+							kinematics::Stub stub
+								( rsd.xyz( new_stub_atom1.atomno() ),
+								rsd.xyz( new_stub_atom2.atomno() ),
+								rsd.xyz( new_stub_atom3.atomno() ) );
+							set_xyz( id, stub.spherical( rsd_tree.dof( DOF_ID( id, id::PHI ) ),
+								rsd_tree.dof( DOF_ID( id, id::THETA ) ),
+								rsd_tree.dof( DOF_ID( id, id::D ) ) ) );
+							missing[ id ] = false;
+							atm_missing[ j ] = false;
+							num_missing -= 1;
+							break;
 						}
-					}
-				} //if(rsd.icoor(j).depends_on_residue_connection())
+					} // root_atomno = 1,natoms
+				}
+			} // for j in atoms
+		} // while ! Residue::fill_missing_atoms()
+
+		// Setting the xyz in the Residue object is insufficient - we need to update things in the atom tree/scoring etc.
+		for ( Size j=1; j<= natoms; ++j ) {
+			AtomID id( j, i );
+			if ( missing[ id ] ) {
+				set_xyz( id, rsd.xyz(j) );
 			}
-			if ( !any_missing ) break;
 		}
-	} // i = 1..size()
+
+		// Print out the filled-in residues
+		if ( TR.Trace.visible() ) {
+			core::Size old_prec( std::cout.precision() );
+			TR.Trace << std::setprecision( 9 );
+			TR.Trace << "Filled coordinates for Residue " << rsd.seqpos() << " " << rsd.name() << std::endl;
+			for ( Size j=1; j<= natoms; ++j ) {
+				TR.Trace << j << "  " << rsd.atom_name(j) << ": " << rsd.xyz(j).x() << ", " << rsd.xyz(j).y() << ", " << rsd.xyz(j).z() << std::endl;
+			}
+			TR.Trace << std::setprecision( old_prec );
+		}
+
+	} // loop through all residues
 }
 
 /// @details There is a version of this in Residue.hh.
