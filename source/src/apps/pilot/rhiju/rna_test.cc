@@ -3674,6 +3674,7 @@ output_sugar_geometry_parameters(
 
 	for ( Size i = 1; i <= nres; i++ ) {
 		Residue const & rsd( pose.residue( i ) );
+		if ( ! rsd.type().is_RNA() ) continue; // needs RNA_Info
 		RNA_Info const & rna_type( rsd.type().RNA_type() );
 
 		out << rsd.mainchain_torsion( 4 );

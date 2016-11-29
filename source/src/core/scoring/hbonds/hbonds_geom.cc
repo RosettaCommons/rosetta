@@ -496,8 +496,6 @@ get_hb_acc_chem_type(
 	using namespace chemical;
 	std::string const & aname(acc_rsd.atom_name(aatm)); // NEVER create a string when a string const & will do
 
-	chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_type();
-
 	// AMW TODO: these string comparisons are 3.6% of SWA runtime
 
 	if ( acc_rsd.atom_is_backbone(aatm) ) {
@@ -519,6 +517,7 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_DNA;
 			}
 		} else if ( acc_rsd.is_RNA() ) {
+			chemical::rna::RNA_Info const & rna_type = acc_rsd.type().RNA_type();
 			if ( aatm == rna_type.op2_atom_index() || aatm == rna_type.op1_atom_index() || aname == " O3P" ||
 					aname == "XOP2" || aname == "XOP1" ||
 					aname == "YOP2" || aname == "YOP1" ) {

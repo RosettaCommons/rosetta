@@ -331,6 +331,8 @@ prepare_scratch_residue(
 	utility::vector1< Vector > const & non_main_chain_sugar_coords,
 	Pose const & pose)
 {
+	// Can't do anything like this if this isn't an RNA residue.
+	if ( ! scratch_rsd->type().is_RNA() ) return;
 
 	for ( Size j = 1; j < scratch_rsd->first_sidechain_atom(); j++ ) {
 		scratch_rsd->set_xyz( j , start_rsd.xyz( j ) );

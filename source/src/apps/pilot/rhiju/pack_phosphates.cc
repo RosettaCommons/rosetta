@@ -205,6 +205,7 @@ pack_phosphates()
 
 		add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PACKABLE_PHOSPHATE", working_sample_res);
 
+		if ( ! pose.residue_type( working_sample_res ).is_RNA() ) continue; // needs RNA_Info
 		RNA_Info const & rna_type = pose.residue_type( working_sample_res ).RNA_type();
 		TR << rna_type.chi_number_pseudogamma() << " " << rna_type.chi_number_pseudobeta() << " " << rna_type.chi_number_pseudoalpha() << std::endl;
 		pose.set_chi( rna_type.chi_number_pseudogamma(), working_sample_res, pose.residue(working_sample_res).mainchain_torsion(3) );
