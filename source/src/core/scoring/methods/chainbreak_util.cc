@@ -23,7 +23,9 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.chainbreak_util" );
 
 namespace core {
 namespace scoring {
@@ -83,10 +85,13 @@ bool
 lower_upper_connected_across_cutpoint( core::conformation::Residue const & lower_rsd,
 	core::conformation::Residue const & upper_rsd )
 {
-	if ( lower_rsd.connect_atom( upper_rsd ) == lower_rsd.upper_connect_atom() ) {
-		runtime_assert( upper_rsd.connect_atom( lower_rsd ) == upper_rsd.lower_connect_atom() );
-		runtime_assert( lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) );
-		runtime_assert( upper_rsd.has_variant_type( core::chemical::CUTPOINT_UPPER ) );
+	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+		if ( lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+		if ( upper != upper_rsd.seqpos() ) return false;
+		Size const m = lower_rsd.residue_connection_conn_id( k );
+		if ( upper_rsd.residue_connect_atom_index( m ) != upper_rsd.lower_connect_atom() ) return false;
+		runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == lower_rsd.seqpos() );
 		return true;
 	}
 	return false;

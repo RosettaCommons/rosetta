@@ -34,6 +34,7 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/scoring/methods/chainbreak_util.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers
@@ -815,6 +816,7 @@ is_cutpoint_closed_torsion(
 	id::TorsionID const & torsion_id
 ) {
 	using namespace ObjexxFCL;
+	using namespace core::scoring::methods;
 	Size torsion_seq_num = torsion_id.rsd();
 	Size lower_seq_num = 0;
 	Size upper_seq_num = 0;
@@ -823,12 +825,16 @@ is_cutpoint_closed_torsion(
 
 	if ( torsion_id.torsion() == ALPHA ) { //COULD BE A UPPER RESIDUE OF A CHAIN_BREAK_CLOSE
 
-		lower_seq_num = torsion_seq_num - 1;
+		if ( !pose.residue_type( torsion_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
+		lower_seq_num = get_lower_cutpoint_partner_for_upper( pose, torsion_seq_num );
 		upper_seq_num = torsion_seq_num;
 
 	} else if ( torsion_id.torsion() == EPSILON || torsion_id.torsion() == ZETA ) {
+
+		if ( !pose.residue_type( torsion_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) return false;
 		lower_seq_num = torsion_seq_num;
-		upper_seq_num = torsion_seq_num + 1;
+		upper_seq_num = get_upper_cutpoint_partner_for_lower( pose, torsion_seq_num );
+
 	} else {
 		if ( torsion_id.torsion() != DELTA && torsion_id.torsion() != BETA && torsion_id.torsion() != GAMMA ) {
 			utility_exit_with_message( "The torsion should be DELTA( lower ), BETA( upper ) or GAMMA( upper ) !!" );
@@ -836,12 +842,12 @@ is_cutpoint_closed_torsion(
 		return false;
 	}
 
-	if ( upper_seq_num == 1 ) return false;
+	if ( upper_seq_num == 0 ) return false;
 
-	if ( lower_seq_num == pose.size() ) return false;
+	if ( lower_seq_num == 0 ) return false;
 
 	if ( pose.residue_type( lower_seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
-		if ( pose.residue_type( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
+		if ( !pose.residue_type( upper_seq_num ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 			utility_exit_with_message( "seq_num " + string_of( lower_seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( upper_seq_num ) + " is not a cutpoint CUTPOINT_UPPER??" );
 		}
 		return true;

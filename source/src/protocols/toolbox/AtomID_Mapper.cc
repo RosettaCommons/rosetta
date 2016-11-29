@@ -20,6 +20,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/scoring/methods/chainbreak_util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -157,7 +158,8 @@ AtomID_Mapper::map_from_reference( AtomID const & atom_id ) const
 
 //////////////////////////////////////////////////////////////////
 std::map< AtomID, AtomID >
-AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
+AtomID_Mapper::calculate_atom_id_map(
+	core::pose::Pose const & target_pose,
 	std::map< core::Size, core::Size > const & res_map /* from target to source */,
 	core::kinematics::FoldTree const & source_fold_tree,
 	AtomID_MapperCOP source_mapper_to_vanilla /* = 0 */ ) const
@@ -188,10 +190,11 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 			int const rsd_offset = int( reference_atom_id.rsd() ) - int( target_atom_id.rsd() ); //this is nonzero for OVL1, OVU1, etc. (chainbreak atoms)
 			Size const source_atomno = reference_atom_id.atomno();
 
-			Size const source_pos_offset = source_pos + rsd_offset;
+			Size const source_pos_offset = source_pos + rsd_offset; // will not be correct for cyclization
 
 			if ( in_source_res.find( source_pos_offset ) == in_source_res.end() ) continue;
 
+			// will not be correct for cyclization:
 			if ( rsd_offset == +1 && source_fold_tree.is_cutpoint( source_pos   ) ) continue;
 			if ( rsd_offset == -1 && source_fold_tree.is_cutpoint( source_pos-1 ) ) continue;
 
@@ -217,6 +220,8 @@ AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
 //  chainbreak variants and has pretty standard numbering scheme.
 void
 AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
+
+	using namespace core::scoring::methods;
 
 	if ( pose.sequence() != sequence_ ) {
 		utility_exit_with_message( "AtomID_Mapper cannot currenty handle changes in sequence, just changes in variants! Your old sequence was " + sequence_ + " and the new sequence is " + pose.sequence() );
@@ -256,21 +261,21 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 				if ( rsd_type.is_RNA() ) {
 					if ( rsd_type.is_coarse() ) {
 						if ( atom_name == "OVL1" ) {
-							alternative_named_atom_id = NamedAtomID( " P  ", i+1 );
+							alternative_named_atom_id = NamedAtomID( " P  ", get_upper_cutpoint_partner_for_lower( pose, i ) );
 						} else if ( atom_name == "OVL2" ) {
-							alternative_named_atom_id = NamedAtomID( " S  ", i+1 );
+							alternative_named_atom_id = NamedAtomID( " S  ", get_upper_cutpoint_partner_for_lower( pose, i ) );
 						} else if ( atom_name == "OVU1" ) {
-							alternative_named_atom_id = NamedAtomID( " S  ", i-1 );
+							alternative_named_atom_id = NamedAtomID( " S  ", get_lower_cutpoint_partner_for_upper( pose, i ) );
 						} else {
 							continue;
 						}
 					} else {
 						if ( atom_name == "OVL1" ) {
-							alternative_named_atom_id = NamedAtomID( " P  ", i+1 );
+							alternative_named_atom_id = NamedAtomID( " P  ", get_upper_cutpoint_partner_for_lower( pose, i ) );
 						} else if ( atom_name == "OVL2" ) {
-							alternative_named_atom_id = NamedAtomID( " O5'", i+1 );
+							alternative_named_atom_id = NamedAtomID( " O5'", get_upper_cutpoint_partner_for_lower( pose, i ) );
 						} else if ( atom_name == "OVU1" ) {
-							alternative_named_atom_id = NamedAtomID( " O3'", i-1 );
+							alternative_named_atom_id = NamedAtomID( " O3'", get_lower_cutpoint_partner_for_upper( pose, i ) );
 						} else {
 							continue;
 						}

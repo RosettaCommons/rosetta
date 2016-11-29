@@ -163,7 +163,10 @@ is_cutpoint_closed( pose::Pose const & pose, Size const seq_num ){
 	runtime_assert( seq_num > 0 );
 	runtime_assert( seq_num <= pose.size() );
 	if ( pose.residue_type( seq_num  ).has_variant_type( chemical::CUTPOINT_LOWER )  ) {
-		runtime_assert ( pose.residue_type( seq_num+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
+		Size const j = core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, seq_num );
+		if ( !pose.residue_type( j ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+			utility_exit_with_message( "found CUTPOINT_LOWER with no CUTPOINT_UPPER" );
+		}
 		return true;
 	}
 	return false;
@@ -1446,14 +1449,17 @@ figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap 
 	for ( Size n = 1; n < pose.size(); n++ ) {
 
 		if ( cutpoint_closed.has_value( n ) ) {
+			// already a chainbreak -- is it moving?
 			if ( moving_chainbreak_res.has_value( n ) ) continue;
+			Size const n_next = core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, n );
 			if ( mm.get( id::TorsionID( n, id::BB, 5 ) ) ||
 					mm.get( id::TorsionID( n, id::BB, 6 ) ) ||
-					mm.get( id::TorsionID( n+1, id::BB, 1 ) ) ||
-					mm.get( id::TorsionID( n+1, id::BB, 2 ) ) ||
-					mm.get( id::TorsionID( n+1, id::BB, 3 ) ) ) moving_chainbreak_res.push_back( n );
+					mm.get( id::TorsionID( n_next, id::BB, 1 ) ) ||
+					mm.get( id::TorsionID( n_next, id::BB, 2 ) ) ||
+					mm.get( id::TorsionID( n_next, id::BB, 3 ) ) ) moving_chainbreak_res.push_back( n );
 		} else {
 
+			// not a chainbreak -- if we move it will any cutpoints move relative to each other?
 			if ( pose.fold_tree().is_cutpoint( n ) ) continue;
 
 			if ( ! mm.get( id::TorsionID( n+1, id::BB, 1 ) ) ) continue;
@@ -1464,7 +1470,8 @@ figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap 
 			for ( Size m = 1; m <= cutpoint_closed.size(); m++ ) {
 				Size const k = cutpoint_closed[ m ];
 				if ( moving_chainbreak_res.has_value( k ) ) continue;
-				if ( partner1( k ) != partner1( k+1 ) ) moving_chainbreak_res.push_back( k );
+				Size const k_upper( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, k ) );
+				if ( partner1( k ) != partner1( k_upper ) ) moving_chainbreak_res.push_back( k );
 			}
 		}
 	}

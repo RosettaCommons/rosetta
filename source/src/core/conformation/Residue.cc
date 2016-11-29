@@ -497,6 +497,7 @@ Residue::update_connections_to_other_residue( Residue const &other_rsd)
 			runtime_assert_string_msg(connect_map_size() >= this_conn_id, "Residue::update_connections_to_other_residue() error:  Connection id reported by other residue doesn't exist in current residue!");
 			if ( connected_residue_at_resconn(this_conn_id)!=other_rsd.seqpos() ) {
 				TR.Warning << "Warning!  While updating residue " << seqpos() << "'s connections to residue " << other_rsd.seqpos() << ", a connection to residue " << connected_residue_at_resconn(this_conn_id) << " was overwritten!" << std::endl;
+				utility_exit_with_message( "Let it die" );
 			}
 			residue_connection_partner( this_conn_id, other_rsd.seqpos(), ic ); //Set this residue's connection appropriately for the other residue's connection indices.
 		}
@@ -1257,6 +1258,27 @@ Residue::fill_missing_atoms(
 		} // end no progress
 	} // end while still missing
 	return true;
+}
+
+
+void
+Residue::mark_connect_incomplete( Size resconn_index )
+{
+	// must remove from connections_to_residues_ map;
+	Size const prev_partner = connect_map_[ resconn_index ].resid();
+	if ( prev_partner > 0 ) {
+		utility::vector1< Size > const & connids = connections_to_residues_.find( prev_partner )->second;
+		utility::vector1< Size > connids_new;
+		for ( auto connid : connids ) {
+			if ( connid == resconn_index ) continue; // now disconnected.
+			connids_new.push_back( connid );
+		}
+		connections_to_residues_[ prev_partner ] = connids_new;
+		if ( connids_new.size() == 0 ) connections_to_residues_.erase( prev_partner );
+	}
+
+	// must remove from connect_map_;
+	connect_map_[ resconn_index ].mark_incomplete();
 }
 
 void

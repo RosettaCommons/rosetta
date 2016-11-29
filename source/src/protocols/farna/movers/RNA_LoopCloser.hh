@@ -66,20 +66,6 @@ public:
 
 	void fast_scan( bool const & setting ) { fast_scan_ = setting; }
 
-	// void
-	// close_loops_carefully(
-	//     core::pose::Pose & pose,
-	//   std::map< Size, Size > const & connections,
-	//   Size const close_loops_rounds );
-
-	void
-	close_loops_carefully(
-		core::pose::Pose & pose,
-		std::map< Size, Size > const & connections );
-
-	// void
-	// close_loops_carefully_one_round( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn );
-
 	bool
 	check_closure( core::pose::Pose const & pose, core::Size const i, core::Real ccd_tolerance = -1.0 /* -1.0 means use absolute_ccd_tolerance_*/ );
 
@@ -113,7 +99,8 @@ private:
 	get_chainbreak_xyz( core::pose::Pose const & pose,
 		Size const cutpoint,
 		utility::vector1< core::Vector > & upstream_xyzs,
-		utility::vector1< core::Vector > & downstream_xyzs
+		utility::vector1< core::Vector > & downstream_xyzs,
+		Size const cutpoint_next_input = 0
 	) const;
 
 	core::Real
@@ -121,21 +108,6 @@ private:
 		Size const cutpoint
 	) const;
 
-
-	utility::vector1< Size >
-	get_extra_cutpoints( core::pose::Pose const & pose ) const;
-
-	void
-	setup_variants_at_extra_cutpoints( core::pose::Pose & pose, utility::vector1< Size > const & extra_cutpoints ) const;
-
-	void
-	remove_variants_at_extra_cutpoints( core::pose::Pose & pose, utility::vector1< Size > const & extra_cutpoints ) const;
-
-	void
-	local_minimize_at_chainbreaks( core::pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn ) const;
-
-	void
-	tight_minimize( core::pose::Pose & pose ) const;
 
 private:
 	//Make these options:

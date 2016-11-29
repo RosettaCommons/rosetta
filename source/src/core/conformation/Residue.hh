@@ -1222,6 +1222,9 @@ public:
 		return connect_map_[ resconn_index ];
 	}
 
+	void
+	mark_connect_incomplete( Size resconn_index );
+
 	/// @brief Returns the size (number of elements) in the connect_map_ object.
 	///
 	core::Size
