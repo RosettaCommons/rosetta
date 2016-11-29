@@ -3,7 +3,6 @@ SCORE:     score    rna_data_backbone    rna_vdw    rna_base_backbone    rna_bac
 REMARK BINARY SILENTFILE
 SCORE:  -159.066                0.000      0.050                0.000                    0.000            4.261         -101.324          -13.000             -53.416            -2.891                 -3.716     10.969                   0.000                   0.000                0.000 157d_minimize.pdb
 RES_NUM A:1-12 B:13-24 157d_minimize.pdb
-SEGMENT_IDS A   :1-12 B   :13-24 157d_minimize.pdb
 FOLD_TREE  EDGE 1 12 -1  JEDGE 12 13 1  C4   C2   END  EDGE 13 24 -1  157d_minimize.pdb
 RT -0.986397 0.163238 0.0193625 0.160744 0.982494 -0.0941626 -0.0343944 -0.0897693 -0.995369 6.3328 0.100659 0.0413441   157d_minimize.pdb
 ANNOTATED_SEQUENCE: c[RCY:LowerRNA:Virtual_Phosphate]gcgaauuagcg[RGU:UpperRNA]c[RCY:LowerRNA:Virtual_Phosphate]gcgaauuagcg[RGU:UpperRNA] 157d_minimize.pdb
@@ -34,7 +33,6 @@ LR2O1AfnvP/DUNuJQ67nvAzfqBA0xLNMQjXaABra8y/zIbnJQWO0xAzLdT4Tc94IQmuJ5APy258LT3EH
 LIwKABf9o4Bs9oQNQPKc9A/mEzAsU4KPQdoFGBXiBBC8FZ7MQqGv6Arw1nCcwKHOQktz6AjWkNDcKcdMQVjXyAbQgpDs78tNQIwKoAXNeZDcwKHNQ46RyAX46tD8jCXQQ5lu5AnCXFEMYl7QQXktgAPepjDsX6GPQRLymAXNe9Dc0ikQQkCXmALFuUEcwKPQQKxgw+GYlbC8z3PSQZQgF/yfqFDc5Q7RQ14lu+obSgD8d+WSQtIbz/y0NVDcLyORQEtIHA3is1CMUN2QQCsyFALFuKCchrHRQOJGo/env3BsCX3RQ14le/S14tA8NJOSQW5QXArEDqBMoakQQzhWhALFuSCsSMAQQXktZAjU46CsnvHQQhrH5AXNeFDs8SnKQe++ABbmZaDcxggMQAAAzAb5QDEc2O/MQmZmzAT14RDMW5wQQW5QVA7kY0Dc0icOQlYQkAT2O3D84leRQgqxhAXMIcEcxg4QQiBB2+Q0iUCsuJxSQRLym+sd++DcjXKSQ789j/46RVD8z33SQJGEoATf/MCcktDPQ 157d_minimize.pdb
 SCORE:  -371.321                0.000      4.223              -67.260                  -27.433           73.002         -236.048          -24.219             -88.179           -15.534                -19.209     29.336                   0.000                   0.000                0.000 hunk_5afi.pdb
 RES_NUM a:677-719 a:721-805 hunk_5afi.pdb
-SEGMENT_IDS A   :677-719 A   :721-805 hunk_5afi.pdb
 FOLD_TREE  EDGE 1 43 -1  JEDGE 43 44 1  C2   C4   END  EDGE 44 128 -1  hunk_5afi.pdb
 RT 0.210229 -0.929272 -0.303738 -0.747035 0.0477263 -0.663069 0.630668 0.3663 -0.684166 -4.53995 -4.5324 -6.10712   hunk_5afi.pdb
 ANNOTATED_SEQUENCE: u[URA:LowerRNA:Virtual_Phosphate]uccagguguagcggugaaaugcguagagaucuggaggaauac[RCY:UpperRNA]g[RGU:LowerRNA:Virtual_Phosphate]guggcgaaggcggcccccuggacgaagacugacgcucaggugcgaaagcguggggagcaaacaggauuagauacccugguaguc[RCY:UpperRNA] hunk_5afi.pdb
@@ -169,7 +167,6 @@ LlYc5CZ7EcM0d+ixQAAo5Cd9gdM0eUjxQHaV5C12ZbMEpwdxQtdy4Ch/0bMkpbmxQNeh4C9RhaMU0Cnx
 LLHm2C9SfbMkZGjxQqGH3CZljbM0w1exQAA81CFX3aME99hxQQgd2C989cMUwKlxQ0i01CxKXdM0jCnxQ3ks1CJG0eMUdzlxQsyJ2CxJpfM0k4oxQvJ11CJFOfMkEDgxQhAT1CZm5eMkljcxQ/pW2C9owgMktzlxQCB+1CRgtgM0jigxQ2OX1CRhbhMkVOhxQNeF3CdSsgMEr8kxQ/pa3CVN2hM0GPjxQy2F3CR14iMkvfixQHaF4Cd8yhMkacixQFua4CRLqgMULSjxQKxE5CdTqgMUKcixQIFG4C98dfMUiBlxQuzb3CNHifMEsylxQOJz1ChAOdMEf6qxQQse1CN5zcMU7SlxQUIP1CFVCfMU1zmxQaPP2CRtxeM0hyexQJbP2CJjlhMUKtnxQZsO2C5sChMk3fdxQTud1C1pYiME+hhxQ/ZV5Cl+1fMEJBjxQZET5CpuehMEWPhxQvSW4CtIpeMUZolxQ6oM3CZuueM0X/mxQ hunk_5afi.pdb
 SCORE:  -333.376                0.000      4.175              -49.068                  -24.679           14.750         -173.223          -20.081             -66.855           -15.880                -19.879     17.363                   0.000                   0.000                0.000 hunk2_5afi.pdb
 RES_NUM A:293-346 hunk2_5afi.pdb
-SEGMENT_IDS AA  :293-346 hunk2_5afi.pdb
 ANNOTATED_SEQUENCE: u[URA:LowerRNA:Virtual_Phosphate]aguggaagcgucuggaaaggcgcgcgauacagggugacagccccguacacaaa[RAD:UpperRNA] hunk2_5afi.pdb
 LbnFLDhqJAOETXGxQpbOLDZk1AOka8GxQhrTLDtzH/NkSMHxQf/6KDNHGAOkolAxQRLuKDpaE/N0GP/wQ78fKDBqW/N0gg6wQdTOKDFuGAOkZG8wQSMqKDJbDAOkm51wQ7R3KDpbS/NkrnywQPKIKDV3gAOkYw3wQNzWKDBBWAO0yBzwQ5lMKD9ms/NUj3vwQuzJKD1hOBOUdT5wQCB8JDJwqBOE+z2wQKxuJDRffBOkEjzwQ679JDFtUCO03P4wQZQMKDZ7kCOUj37wQMIMKDZlLDO03v8wQMIaKDFDGCOE7R+wQ0iYKDR1cBOk788wQnOlKD9R1+NkDUCxQDh3KDt/T+N0zX+wQlIaKDNfg+NkQL5wQs1yKDV9aAOkvU3wQaU5JDpLaAOEBz2wQQoaKDlUvAOE/6wwQGNAKDFGDAO0dEuwQqI0JDJ1oCOElg2wQ30kKDBDPCOUs6AxQrTiKDVmIBOkdr+wQ hunk2_5afi.pdb
 LY6QLDBBW/NECMzwQ0iWLDZPCAOUwK4wQ1NZLDNJ+9NUdTywQxgYLDBAIAOUdTuwQWOSLDZlzAOU14twQQgXLD9TFBO05bowQAAKLDhqpBOEUNnwQFDuLDpZWBOUPqnwQMd9LDNe1AOEZ7mwQQ1ULDxLFCOUepjwQMdrLDZlzBOE+ziwQbnrLDNdbBOkQAewQ++tKDx0VEOEBWjwQJGqKDdSwDOE99gwQe+0KDpvLDOknPhwQ99FLDFCQDO0dekwQPKMLDxe0DOECMnwQ5Q/KDh/YEOkEjmwQtIDLDpb+EOU46owQ9oeLDJxsDOUbHqwQwKjLD5kEDO0KHpwQQ1ULDBWxCOkVulwQ+uZLD5REBO0BowwQIyCLDVw1AOUDguwQs+ULDxCvAOk3vlwQxCyLD9pnBOE7xqwQIBNLDBYECOE3PgwQKP2LDdXKCOETyiwQb7pLDl+uBO039awQtVdKDlrvDO0/rewQ3g5KD5uWFOUPUowQ+kPLDppBFOUTRrwQKlvLDB11CO0XpqwQ hunk2_5afi.pdb
