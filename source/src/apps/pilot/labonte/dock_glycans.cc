@@ -63,6 +63,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/rings.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
@@ -105,7 +106,7 @@ public:  // Standard methods
 	}
 
 	// Destructor
-	virtual ~DockGlycansProtocol() {}
+	virtual ~DockGlycansProtocol() = default;
 
 
 public:  // Standard Rosetta methods
@@ -117,8 +118,10 @@ public:  // Standard Rosetta methods
 		using namespace basic::options;
 		using namespace protocols;
 
+		option.add_relevant( OptionKeys::constraints::cst_fa_file );
 		option.add_relevant( OptionKeys::rings::idealize_rings );
 		option.add_relevant( OptionKeys::rings::lock_rings );
+		option.add_relevant( OptionKeys::run::n_cycles );
 
 		// Call register_options() on all other Movers used by this class.
 		simple_moves::ConstraintSetMover::register_options();
@@ -138,7 +141,14 @@ public:  // Standard Rosetta methods
 	void
 	show( std::ostream & output=std::cout ) const
 	{
+		using namespace std;
+
 		moves::Mover::show( output );  // name, type, tag
+		
+		string const idealized( ( idealize_rings_ ) ? "idealized" : "as input" );
+		string const locked( ( lock_rings_ ) ? "locked" : "flexible" );
+		
+		output << "Rings: " << idealized << ", " << locked << ";  Cycles: " << n_cycles_ << endl;
 	}
 
 
@@ -187,26 +197,6 @@ public:  // Standard Rosetta methods
 		string const partners( upstream_chains_ + "_" + downstream_chains_ );
 		vector1< int > movable_jumps( 1, JUMP_NUM );
 		setup_foldtree( pose, partners, movable_jumps );
-
-		// Determine a search radius from the center of mass of the ligand and its length.
-		/*kinematics::Edge const & jump_edge( pose.fold_tree().jump_edge( JUMP_NUM ) );
-		core::uint const CoM_resnum( jump_edge.stop() );
-		Residue const & CoM_res( pose.residue( CoM_resnum ) );
-		core::uint const CoM_atomnum( CoM_res.nbr_atom() );
-		numeric::xyzVector< Distance > const starting_position( CoM_res.xyz( CoM_atomnum ) );
-
-		// Measure distance from CoM to each terminus.
-		Distance search_radius( 0 );
-		for ( core::uint i( first_ligand_residue_ ); i <= n_residues; ++i ) {
-		Residue const & ligand_res( pose.residue( i ) );
-		if ( ligand_res.is_terminus() ) {
-		core::uint const terminal_atomnum( ligand_res.nbr_atom() );
-		Distance const distance( ( ligand_res.xyz( terminal_atomnum ) - starting_position ).norm() );
-		if ( distance > search_radius ) {
-		search_radius = distance;
-		}
-		}
-		}*/
 
 		// Set up site constraints.
 		if ( constraint_setter_ ) {
@@ -276,9 +266,6 @@ public:  // Standard Rosetta methods
 				mc_->reset( pose );
 			}
 
-			// Save current pose, in case we need to revert if it leaves the search radius.
-			//Pose saved_pose( pose );
-
 			// Rigid-body moves
 			perturber_->apply( pose );
 			slider_->apply( pose );
@@ -291,14 +278,6 @@ public:  // Standard Rosetta methods
 			slider_->apply( pose );
 			packer_->apply( pose );
 			torsion_minimizer_->apply( pose );
-
-			/*numeric::xyzVector< Distance > const current_position( CoM_res.xyz( CoM_atomnum ) );
-			if ( ( current_position - starting_position ).norm() > search_radius ) {
-			cout << "   Rejecting pose on cycle " << cycle << ": ligand has left search radius." << endl;
-			pose = saved_pose;
-			--cycle;
-			continue;
-			}*/
 
 			// Metropolis criterion.
 			mc_->boltzmann( pose );
@@ -338,9 +317,20 @@ private:  // Private methods
 	set_commandline_options()
 	{
 		using namespace basic::options;
+		using namespace simple_moves;
 
 		idealize_rings_ = option[ OptionKeys::rings::idealize_rings ];
 		lock_rings_ = option[ OptionKeys::rings::lock_rings ];
+
+		// Note: I'm ignoring anything beyond the first .cst file provided.
+		if ( option[ OptionKeys::constraints::cst_fa_file ].active() ) {
+			constraint_setter_ = ConstraintSetMoverOP( new ConstraintSetMover );
+			constraint_setter_->constraint_file( option[ OptionKeys::constraints::cst_fa_file ][ 1 ] );
+		}
+		
+		if ( option[ OptionKeys::run::n_cycles ] > 1 ) {  // 1 is the default option setting.
+			n_cycles_ = option[ OptionKeys::run::n_cycles ];
+		}
 	}
 
 
@@ -368,12 +358,6 @@ private:  // Private methods
 
 		// Instantiate the Movers.
 		// Note: The randomizer objects require a Pose and so cannot be initialized here.
-
-		// Note: I'm ignoring anything beyond the first .cst file provided.
-		if ( option[ OptionKeys::constraints::cst_fa_file ].active() ) {
-			constraint_setter_ = ConstraintSetMoverOP( new ConstraintSetMover );
-			constraint_setter_->constraint_file( option[ OptionKeys::constraints::cst_fa_file ][ 1 ] );
-		}
 
 		slider_ = docking::FaDockingSlideIntoContactOP ( new docking::FaDockingSlideIntoContact( JUMP_NUM ) );
 		perturber_ = rigid::RigidBodyPerturbMoverOP ( new rigid::RigidBodyPerturbMover( JUMP_NUM, rot_, trans_ ) );

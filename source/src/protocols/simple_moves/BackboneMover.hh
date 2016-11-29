@@ -53,6 +53,7 @@ class BackboneMover : public protocols::canonical_sampling::ThermodynamicMover {
 public:
 	typedef core::Real Real;
 
+
 public:
 	// empty constructor fills the mover with default values
 	// default values from smallmoves.cc of Rosetta++ (small_move_param)
@@ -87,23 +88,33 @@ public:
 
 	bool check_rama();
 
-	/// Properties set/get functions
-	void temperature( core::Real const temperature_in );
-	core::Real temperature() const;
-	void nmoves( core::Size const nmoves_in );
-	core::Size nmoves() const;
-	core::kinematics::MoveMapCOP movemap() const;
 
-	void movemap(core::kinematics::MoveMapOP new_movemap);
+	/// Properties set/get functions
+	void temperature( core::Real const temperature_in ) { temperature_ = temperature_in; }
+
+	core::Real temperature() const { return temperature_; }
+
+	void nmoves( core::Size const nmoves_in ) { nmoves_ = nmoves_in; }
+
+	core::Size nmoves() const { return nmoves_; }
+
+	core::kinematics::MoveMapCOP movemap() const { return movemap_; }
+
+	void movemap(core::kinematics::MoveMapOP new_movemap) { movemap_= new_movemap; }
+
 
 	/// @brief returns the residue selector which can be used to dynamically select residues to perturb
 	/// at runtime
-	core::select::residue_selector::ResidueSelectorCOP selector() const;
-	void selector( core::select::residue_selector::ResidueSelectorCOP selector );
+	core::select::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
+
+	void selector( core::select::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
+
 
 	/// @brief if set, this scorefunction will be used instead of the original rama method (default = not set)
-	core::scoring::ScoreFunctionOP scorefxn() const;
-	void scorefxn( core::scoring::ScoreFunctionOP sfxn );
+	core::scoring::ScoreFunctionOP scorefxn() const { return scorefxn_; }
+
+	void scorefxn( core::scoring::ScoreFunctionOP sfxn ) { scorefxn_ = sfxn; }
+
 
 	/// @brief Sets the maximum angle of perturbation, independent of
 	/// secondary structure. new_angle = old_angle +/- ( angle_max/2 )
@@ -144,8 +155,9 @@ public:
 	///     SmallMover
 	core::Real get_angle_max(char const type) const;
 
-	core::Real new_phi();
-	core::Real new_psi();
+	core::Real new_phi() { return new_phi_; }
+	core::Real new_psi() { return new_psi_; }
+	core::Real new_omega() { return new_omega_; }
 
 	/// @brief Set the ResidueSelector that this mover will use.
 	/// @details Clones the input.
@@ -169,23 +181,23 @@ public:
 	) override;
 
 	/// @brief get whether detailed balance is preserved (i.e. no Ramachandran biasing)
-	bool
-	preserve_detailed_balance() const override;
+	bool preserve_detailed_balance() const override { return preserve_detailed_balance_; }
 
 	/// @brief set whether detailed balance is preserved (i.e. no Ramachandran biasing)
 	void
-	set_preserve_detailed_balance(
-		bool preserve_detailed_balance
-	) override;
+	set_preserve_detailed_balance( bool preserve_detailed_balance ) override
+	{
+		preserve_detailed_balance_ = preserve_detailed_balance;
+	}
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
+	utility::vector1<core::id::DOF_ID_Range> dof_id_ranges(core::pose::Pose & pose) override = 0;
 
-	utility::vector1<core::id::DOF_ID_Range>
-	dof_id_ranges(core::pose::Pose & pose) override = 0;
 
 protected:
-	core::select::residue_selector::ResidueSubset
-	compute_selected_residues( core::pose::Pose const & pose ) const;
+	/// @brief Set the ResidueSelector that this mover will use.
+	core::select::residue_selector::ResidueSubset compute_selected_residues( core::pose::Pose const & pose ) const;
+
 
 private:
 	core::kinematics::MoveMapOP movemap_;
@@ -207,19 +219,18 @@ protected:
 	utility::vector1< std::pair< int, core::Real > > pos_list_;
 
 protected:
-	core::Real old_phi_, new_phi_, old_psi_, new_psi_;
+	core::Real old_phi_, new_phi_, old_psi_, new_psi_, old_omega_, new_omega_;
 	core::Real old_rama_score_, new_rama_score_;
 
 private:
 	bool preserve_detailed_balance_;
 
-	/// @brief The ResidueSelector to use.
-	///
+	// The ResidueSelector to use.
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 };  // class BackboneMover
 
-std::ostream &operator<< (std::ostream &os, BackboneMover const &mover);
+std::ostream & operator<< ( std::ostream & os, BackboneMover const & mover );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -249,13 +260,11 @@ public:
 	SmallMover(
 		core::kinematics::MoveMapOP movemap_in,
 		core::Real temperature_in,
-		core::Size nmoves_in
-	);
+		core::Size nmoves_in );
 
-	//destructor
+	// destructor
 	~SmallMover() override;
 
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -266,18 +275,10 @@ public:
 	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-
-	utility::vector1<core::id::TorsionID_Range>
-	torsion_id_ranges(
-		core::pose::Pose & pose
-	) override;
+	utility::vector1<core::id::TorsionID_Range> torsion_id_ranges( core::pose::Pose & pose ) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-
-	utility::vector1<core::id::DOF_ID_Range>
-	dof_id_ranges(
-		core::pose::Pose & pose
-	) override;
+	utility::vector1<core::id::DOF_ID_Range> dof_id_ranges( core::pose::Pose & pose ) override;
 
 	std::string
 	get_name() const override;
@@ -330,7 +331,6 @@ public:
 	//destructor
 	~ShearMover() override;
 
-	// XRW TEMP  std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 
@@ -341,18 +341,10 @@ public:
 	void test_move( core::pose::Pose & ) override;
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
-
-	utility::vector1<core::id::TorsionID_Range>
-	torsion_id_ranges(
-		core::pose::Pose & pose
-	) override;
+	utility::vector1<core::id::TorsionID_Range> torsion_id_ranges( core::pose::Pose & pose ) override;
 
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
-
-	utility::vector1<core::id::DOF_ID_Range>
-	dof_id_ranges(
-		core::pose::Pose & pose
-	) override;
+	utility::vector1<core::id::DOF_ID_Range> dof_id_ranges( core::pose::Pose & pose ) override;
 
 	std::string
 	get_name() const override;

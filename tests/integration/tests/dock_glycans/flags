@@ -1,0 +1,10 @@
+-mute all
+-include_sugars
+-lock_rings
+-s input/MBP-G4_prepacked.pdb
+-cst_fa_file input/1B.cst
+-out:path:pdb output/
+-out:path:score output/
+-in:file:native input/MBP-G4_prepacked.pdb
+-nstruct 1
+-n_cycles 25

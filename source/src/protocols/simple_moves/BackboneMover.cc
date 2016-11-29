@@ -15,6 +15,7 @@
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 
 // Project Headers
+#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -22,10 +23,12 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/id/AtomID.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/TorsionID_Range.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -48,15 +51,13 @@
 
 // C++ headers
 #include <string>
-// XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::T;
-using basic::Error;
-using basic::Warning;
+
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BackboneMover" );
+
 
 namespace protocols {
 namespace simple_moves {
@@ -75,8 +76,11 @@ BackboneMover::BackboneMover() :
 	big_angle_( 0 ),
 	small_angle_( 0 ),
 	pos_list_( ),
-	old_phi_(0), new_phi_(0), old_psi_(0), new_psi_(0), old_rama_score_(0), new_rama_score_(0),
-	preserve_detailed_balance_(false),
+	old_phi_(0), new_phi_(0),
+	old_psi_(0), new_psi_(0),
+	old_omega_(0), new_omega_(0),
+	old_rama_score_(0), new_rama_score_(0),
+	preserve_detailed_balance_( false ),
 	selector_()
 {
 	moves::Mover::type( "BackboneMoverBase" );
@@ -101,7 +105,10 @@ BackboneMover::BackboneMover(
 	big_angle_( 0 ),
 	small_angle_( 0 ),
 	pos_list_( ),
-	old_phi_(0), new_phi_(0), old_psi_(0), new_psi_(0), old_rama_score_(0), new_rama_score_(0),
+	old_phi_(0), new_phi_(0),
+	old_psi_(0), new_psi_(0),
+	old_omega_(0), new_omega_(0),
+	old_rama_score_(0), new_rama_score_(0),
 	preserve_detailed_balance_(false),
 	selector_()
 {
@@ -113,7 +120,6 @@ BackboneMover::BackboneMover(
 }
 
 /// @brief Copy constructor
-///
 BackboneMover::BackboneMover( BackboneMover const &src ) :
 	protocols::canonical_sampling::ThermodynamicMover( src ),
 	movemap_(), // Copied below
@@ -125,7 +131,10 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 	big_angle_( src.big_angle_ ),
 	small_angle_( src.small_angle_ ),
 	pos_list_( src.pos_list_ ),
-	old_phi_(src.old_phi_), new_phi_(src.new_phi_), old_psi_(src.old_psi_), new_psi_(src.new_psi_), old_rama_score_(src.old_rama_score_), new_rama_score_(src.new_rama_score_),
+	old_phi_(src.old_phi_), new_phi_(src.new_phi_),
+	old_psi_(src.old_psi_), new_psi_(src.new_psi_),
+	old_omega_(src.old_omega_), new_omega_(src.new_omega_),
+	old_rama_score_(src.old_rama_score_), new_rama_score_(src.new_rama_score_),
 	preserve_detailed_balance_( src.preserve_detailed_balance_ ),
 	selector_() // Cloned below
 {
@@ -144,52 +153,29 @@ BackboneMover::BackboneMover( BackboneMover const &src ) :
 	}
 }
 
-//destructor
+// Destructor.
 BackboneMover::~BackboneMover() = default;
 
 
-void BackboneMover::temperature( core::Real const temperature_in ) { temperature_ = temperature_in; }
-
-core::Real
-BackboneMover::temperature() const {
-	return temperature_;
-}
-
-void BackboneMover::nmoves( core::Size const nmoves_in ) { nmoves_ = nmoves_in; }
-
-core::Size
-BackboneMover::nmoves() const {
-	return nmoves_;
-}
-
-core::kinematics::MoveMapCOP BackboneMover::movemap() const { return movemap_; }
-
-void BackboneMover::movemap(core::kinematics::MoveMapOP new_movemap) { movemap_=new_movemap; }
-
-core::select::residue_selector::ResidueSelectorCOP
-BackboneMover::selector() const { return selector_; }
-
-void BackboneMover::selector( core::select::residue_selector::ResidueSelectorCOP selector )
-{
-	selector_ = selector;
-}
-
-core::scoring::ScoreFunctionOP
-BackboneMover::scorefxn() const { return scorefxn_; }
-
 void
-BackboneMover::scorefxn( core::scoring::ScoreFunctionOP sfx ) { scorefxn_ = sfx; }
-
-void BackboneMover::angle_max( core::Real const angle )
+BackboneMover::angle_max( core::Real const angle )
 {
 	angle_max( 'H', angle ); // helix
 	angle_max( 'L', angle ); // other
 	angle_max( 'E', angle ); // strand
 }
 
-void BackboneMover::angle_max( char const type, core::Real const angle ) { angle_max_[ type ] = angle; }
+void
+BackboneMover::angle_max( char const type, core::Real const angle )
+{
+	angle_max_[ type ] = angle;
+}
 
-void BackboneMover::angle_max( std::map< char, core::Real > angle_max_in ) { angle_max_.swap( angle_max_in ); }
+void
+BackboneMover::angle_max( std::map< char, core::Real > angle_max_in )
+{
+	angle_max_.swap( angle_max_in );
+}
 
 core::Real
 BackboneMover::get_angle_max(char const type) const
@@ -198,34 +184,16 @@ BackboneMover::get_angle_max(char const type) const
 }
 
 
-bool
-BackboneMover::preserve_detailed_balance() const
-{
-	return preserve_detailed_balance_;
-}
 
-void
-BackboneMover::set_preserve_detailed_balance(
-	bool preserve_detailed_balance
-)
-{
-	preserve_detailed_balance_ = preserve_detailed_balance;
-}
-
-core::Real BackboneMover::new_phi() { return new_phi_; }
-
-core::Real BackboneMover::new_psi() { return new_psi_; }
-
-/// @brief Set the ResidueSelector that this mover will use.
 /// @details Clones the input.
 void
-BackboneMover::set_residue_selector(
-	core::select::residue_selector::ResidueSelectorCOP selector
-) {
-	runtime_assert_string_msg( selector, "Error in protocols::simple_moves::BackboneMover::set_residue_selector(): An invalid ResidueSelector owning pointer was passed to this function." );
+BackboneMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	runtime_assert_string_msg( selector, "Error in protocols::simple_moves::BackboneMover::set_residue_selector(): "
+			"An invalid ResidueSelector owning pointer was passed to this function." );
 	selector_ = selector->clone();
-	return;
 }
+
 
 void
 BackboneMover::parse_my_tag(
@@ -262,12 +230,13 @@ BackboneMover::parse_my_tag(
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance_ ) );
 }
 
-void BackboneMover::apply( core::pose::Pose & pose )
+void
+BackboneMover::apply( core::pose::Pose & pose )
 {
 	// clear everything to start from clean
 	clear();
 
-	//what if symmetry input
+	// what if symmetry input
 	// will not run for now, can change this to true if symmetry desired
 	// potential problem with incoming modified symmetric movemaps, this will
 	// reset any changes to the input movemap
@@ -278,11 +247,10 @@ void BackboneMover::apply( core::pose::Pose & pose )
 		}
 	}
 
-	// currently secstruct is not implemented and returns 'L' for all residues
 	setup_list( pose );
 
 	if ( pos_list_.empty() ) {
-		Warning() << "no movable positions in " << type() << "!" << std::endl;
+		TR.Warning << "no movable positions in " << type() << "!" << std::endl;
 		return;
 	}
 
@@ -292,7 +260,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 	int tries = 0;
 
 	// now loop
-	for ( int k=1; k<=num_iterations; ++k ) {
+	for ( int k = 1; k <= num_iterations; ++k ) {
 		while ( true ) {
 			++tries;
 
@@ -301,8 +269,9 @@ void BackboneMover::apply( core::pose::Pose & pose )
 				break;
 			}
 
-			//choose a random position from the list of positions previously chose to be candidate positions
-			std::pair< int, Real > const & random_pos( pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
+			//choose a random position from the list of positions previously chosen to be candidate positions
+			std::pair< int, Real > const & random_pos(
+					pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
 			resnum_ = random_pos.first;
 
 			set_angles( random_pos.second );
@@ -332,7 +301,6 @@ void BackboneMover::apply( core::pose::Pose & pose )
 			already_moved.insert( resnum_ );
 			break;
 		} // while ( true )
-
 	} // k=1,num
 }
 
@@ -342,30 +310,34 @@ BackboneMover::get_name() const {
 }
 
 void
-BackboneMover::show(std::ostream & output) const
+BackboneMover::show( std::ostream & output ) const
 {
-	Mover::show(output);
-	output << "Max angle for helices (H): " << get_angle_max('H') <<
-		"\nMax angle for strands (E): " << get_angle_max('E') <<
-		"\nMax angle for loops (L):   " << get_angle_max('L') <<
+	Mover::show( output );
+	output << "Max angle for helices (H): " << get_angle_max( 'H' ) <<
+		"\nMax angle for strands (E): " << get_angle_max( 'E' ) <<
+		"\nMax angle for loops (L):   " << get_angle_max( 'L' ) <<
 		"\nTemperature factor (kT):   " << temperature() <<
 		"\nNumber of moves:           " << nmoves() << std::endl;
 	output << "MoveMap:" << std::endl;
-	movemap()->show(output);
+	movemap()->show( output );
 }
 
-void BackboneMover::clear() {
-	pos_list_.erase(pos_list_.begin(), pos_list_.end());
+void
+BackboneMover::clear()
+{
+	pos_list_.erase( pos_list_.begin(), pos_list_.end() );
 }
 
-bool BackboneMover::check_rama() {
-	if ( preserve_detailed_balance_ ) return true;
+bool
+BackboneMover::check_rama()
+{
+	if ( preserve_detailed_balance_ ) { return true; }
 	if ( new_rama_score_ > old_rama_score_ ) {
-		Real const boltz_factor = (old_rama_score_-new_rama_score_)/temperature_;
-		Real const probability = std::exp(std::max(Real(-40.0),boltz_factor) );
-		if ( numeric::random::rg().uniform() >= probability ) return( false );
+		Real const boltz_factor = ( old_rama_score_ - new_rama_score_ ) / temperature_;
+		Real const probability = std::exp( std::max( Real( -40.0 ), boltz_factor ) );
+		if ( numeric::random::rg().uniform() >= probability ) { return false; }
 	}
-	return( true );
+	return true;
 }
 
 
@@ -411,6 +383,12 @@ BackboneMover::complex_type_generator_for_backbone_mover( utility::tag::XMLSchem
 	return ct_gen;
 }
 
+// AMW: this is probably unnecessarily + a curse
+std::string
+BackboneMover::backbone_mover_complex_type_namer( std::string tag_name ){
+	return "backbone_mover_" + tag_name + "_complex_type";
+}
+
 core::select::residue_selector::ResidueSubset
 BackboneMover::compute_selected_residues( core::pose::Pose const & pose ) const
 {
@@ -421,71 +399,62 @@ BackboneMover::compute_selected_residues( core::pose::Pose const & pose ) const
 	}
 }
 
-std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
+std::ostream & operator<< ( std::ostream & os, BackboneMover const & mover )
 {
-	mover.show(os);
+	mover.show( os );
 	return os;
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP SmallMoverCreator::keyname() const {
-// XRW TEMP  return SmallMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP SmallMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new SmallMover );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP SmallMover::mover_name() {
-// XRW TEMP  return "Small";
-// XRW TEMP }
-
+// SmallMover //////////////////////////////////////////////////////////////////
 
 //constructor
-SmallMover::SmallMover() : BackboneMover() { moves::Mover::type( "SmallMover" ); }
+SmallMover::SmallMover() : BackboneMover()
+{
+	moves::Mover::type( "SmallMover" );  // Why is the type different for the different constructors?  ~Labonte
+}
 
 SmallMover::SmallMover(
 	core::kinematics::MoveMapOP movemap_in,
 	core::Real temperature_in,
-	core::Size nmoves_in
-)
-: BackboneMover( movemap_in, temperature_in, nmoves_in )
+	core::Size nmoves_in ) :
+	BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
 	moves::Mover::type( "Small" );
 }
 
-//destructor
+// destructor
 SmallMover::~SmallMover() = default;
 
-// XRW TEMP std::string
-// XRW TEMP SmallMover::get_name() const {
-// XRW TEMP  return "Small";
-// XRW TEMP }
 
 protocols::moves::MoverOP
-SmallMover::clone() const {
-	return protocols::moves::MoverOP( new SmallMover(*this) );
+SmallMover::clone() const
+{
+	return protocols::moves::MoverOP( new SmallMover( *this ) );
 }
 
 protocols::moves::MoverOP
-SmallMover::fresh_instance() const {
+SmallMover::fresh_instance() const
+{
 	return protocols::moves::MoverOP( new SmallMover() );
 }
 
-void SmallMover::setup_list( core::pose::Pose & pose )
+
+void
+SmallMover::setup_list( core::pose::Pose & pose )
 {
+	using namespace id;
+	using namespace utility;
+	using namespace pose::carbohydrates;
+
 	//Mask by ResidueSelector:
 	core::select::residue_selector::ResidueSubset const subset = compute_selected_residues( pose );
 
-	using namespace id;
-	for ( core::Size i=1; i<=pose.size(); ++i ) {
-		if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( ! subset[ i ] ) { continue; } //Skip residues masked by the ResidueSelector.
 		conformation::Residue const & rsd( pose.residue( i ) );
 
-		//Checks if the residue is protein and has a free psi and phi angle as determined by the move map
+		// Check if the residue is protein and has a free psi and phi angle as determined by the MoveMap.
 		if ( rsd.is_protein() && movemap()->get( TorsionID( i, BB, phi_torsion ) ) &&
 				movemap()->get( TorsionID( i, BB, psi_torsion ) ) ) {
 			//Gets the secondary structure nature of the residue
@@ -498,80 +467,66 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
-			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
-		} else if ( rsd.is_carbohydrate() && movemap()->get(TorsionID(i, BB, 4)) &&
-				movemap()->get(TorsionID(i, BB, 5)) ) {
-			// Carbohydrates are always considered loops for now.
-			Real const mx = angle_max_.find('L')->second;
-			if ( mx > 0.0 ) {
-				pos_list_.push_back(std::make_pair(i, mx));
+
+		// Check if the residue is a monosaccharide and has a free phi and psi.
+		} else if ( rsd.is_carbohydrate() ) {
+			// Because a saccharide i's glycosidic torsions might not even belong to residue i from Rosetta's point of
+			// view, it is more direct to get the reference atoms and convert to DOF_ID and check the MoveMap that way.
+			conformation::Conformation const & conf( pose.conformation() );
+			DOF_ID const phi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_phi( pose, i ) ) );
+			DOF_ID const psi_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_psi( pose, i ) ) );
+			DOF_ID const omega_dof_id( conf.dof_id_from_atom_ids( get_reference_atoms_for_1st_omega( pose, i ) ) );
+			if ( movemap()->get( phi_dof_id ) && movemap()->get( psi_dof_id ) ) {
+				// If we have an omega, but we cannot move it, continue.
+				if ( ( omega_dof_id != BOGUS_DOF_ID ) && ( ! movemap()->get( omega_dof_id ) ) ) {
+					continue;
+				}
+				// Carbohydrates are always considered loops for now.
+				Angle const mx = angle_max_.find( 'L' )->second;
+				if ( mx > 0.0 ) {
+					pos_list_.push_back( std::make_pair( i, mx ) );
+				}
 			}
 		}
 	}
 }
 
-utility::vector1<core::id::TorsionID_Range>
-SmallMover::torsion_id_ranges(
-	core::pose::Pose & //pose
-)
-{
-	return utility::vector1<core::id::TorsionID_Range>();
+void
+SmallMover::set_angles( core::Real angle_in ) {
+	// If anyone can think of how to explain this better, please do so!!
+	big_angle_ = angle_in;  // <- This number comes from max angle, it is the maximum total deviation.
+	small_angle_ = big_angle_/2.0;  // <- This is max_angle/2, which is the deviation from the angle input.
 }
 
-utility::vector1<core::id::DOF_ID_Range>
-SmallMover::dof_id_ranges(
-	core::pose::Pose & pose
-)
-{
-	Real static const pi(numeric::NumericTraits<Real>::pi());
-	clear();
-	setup_list( pose );
-
-	utility::vector1<core::id::DOF_ID_Range> range_vector;
-
-	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
-
-		core::id::TorsionID phi_torsion(pos_list_[i].first, core::id::BB, core::id::phi_torsion);
-		core::id::DOF_ID phi_dof(pose.conformation().dof_id_from_torsion_id(phi_torsion));
-		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
-
-		core::id::TorsionID psi_torsion(pos_list_[i].first, core::id::BB, core::id::psi_torsion);
-		core::id::DOF_ID psi_dof(pose.conformation().dof_id_from_torsion_id(psi_torsion));
-		if ( psi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
-	}
-
-	return range_vector;
-}
-
-void SmallMover::set_angles( core::Real angle_in ) {
-	///< if anyone can think of how to explain this better, please do so!!
-	big_angle_ = angle_in; ///< this number comes from max angle, it is the maximum
-	///< total deviation
-	small_angle_ = big_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
-
-}
-
-bool SmallMover::move_with_scorefxn( core::pose::Pose & pose )
+bool
+SmallMover::move_with_scorefxn( core::pose::Pose & pose )
 {
 	debug_assert( scorefxn() );
-	old_rama_score_ = (*scorefxn())( pose );
+	old_rama_score_ = ( *scorefxn() )( pose );
 	pose.set_phi( resnum_, new_phi_ );
 	pose.set_psi( resnum_, new_psi_ );
+	if ( pose.residue( resnum_ ).is_carbohydrate() ) {
+		// If omega doesn't exist, setting it will have no adverse effects.
+		pose.set_omega( resnum_, new_omega_ );
+	}
 	pose.energies().clear();
-	new_rama_score_ = (*scorefxn())( pose );
+	new_rama_score_ = ( *scorefxn() )( pose );
 	TR.Debug << "Using score function to evaluate ramas. Old=" << old_rama_score_ << " New=" << new_rama_score_
 		<< " Temp=" << temperature() << std::endl;
 
-	if ( check_rama() ) return true;
+	if ( check_rama() ) { return true; }
 
 	pose.set_phi( resnum_, old_phi_ );
 	pose.set_psi( resnum_, old_psi_ );
+	// If this residue is a carbohydrate, the move will never be rejected based on rama score,
+	// so we therefore don't need to set back to old_omega_
 	pose.energies().clear();
-	TR.Debug << "Reject: reverted score = " << (*scorefxn())( pose ) << std::endl;
+	TR.Debug << "Reject: reverted score = " << ( *scorefxn() )( pose ) << std::endl;
 	return false;
 }
 
-bool SmallMover::move_with_rama( core::pose::Pose & pose )
+bool
+SmallMover::move_with_rama( core::pose::Pose & pose )
 {
 	scoring::Ramachandran const & rama( scoring::ScoringManager::get_instance()->get_Ramachandran() );
 	conformation::Residue const & current_rsd( pose.residue(resnum_) );
@@ -588,17 +543,30 @@ bool SmallMover::move_with_rama( core::pose::Pose & pose )
 	// set the new values for residue resnum
 	pose.set_phi( resnum_, new_phi_ );
 	pose.set_psi( resnum_, new_psi_ );
+	if ( pose.residue( resnum_ ).is_carbohydrate() ) {
+		// If omega doesn't exist, setting it will have no adverse effects.
+		pose.set_omega( resnum_, new_omega_ );
+	}
 
 	return true;
 }
 
-bool SmallMover::make_move( core::pose::Pose & pose )
+bool
+SmallMover::make_move( core::pose::Pose & pose )
 {
-	old_phi_ = pose.phi(resnum_);
+	old_phi_ = pose.phi( resnum_ );
 	new_phi_ = basic::periodic_range( old_phi_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 
-	old_psi_ = pose.psi(resnum_);
+	old_psi_ = pose.psi( resnum_ );
 	new_psi_ = basic::periodic_range( old_psi_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
+
+	if ( pose.residue( resnum_ ).is_carbohydrate() ) {
+		// If omega doesn't exist, setting it will have no adverse effects.
+		// Might be a better way of doing this. How can we quickly check if a carbohydrate has an omega?
+		old_omega_ = pose.omega( resnum_ );
+		new_omega_ = basic::periodic_range(
+				old_omega_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
+	}
 
 	if ( scorefxn() ) {
 		return move_with_scorefxn( pose );
@@ -607,121 +575,147 @@ bool SmallMover::make_move( core::pose::Pose & pose )
 	}
 }
 
-void SmallMover::test_move( core::pose::Pose & pose)
+void
+SmallMover::test_move( core::pose::Pose & pose )
 {
 	kinematics::MoveMapOP mmap( new kinematics::MoveMap() );
 	mmap->set_chi( true );
 	mmap->set_bb( true );
 
-	movemap(mmap);
+	movemap( mmap );
 
-	apply(pose);
+	apply( pose );
 }
 
-std::string SmallMover::get_name() const {
+utility::vector1<core::id::TorsionID_Range>
+SmallMover::torsion_id_ranges( core::pose::Pose & /* pose */ )
+{
+	return utility::vector1<core::id::TorsionID_Range>();
+}
+
+utility::vector1<core::id::DOF_ID_Range>
+SmallMover::dof_id_ranges( core::pose::Pose & pose )
+{
+	Real static const pi(numeric::NumericTraits<Real>::pi());
+	clear();
+	setup_list( pose );
+
+	utility::vector1<core::id::DOF_ID_Range> range_vector;
+
+	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
+		core::id::TorsionID phi_torsion(pos_list_[i].first, core::id::BB, core::id::phi_torsion);
+		core::id::DOF_ID phi_dof(pose.conformation().dof_id_from_torsion_id(phi_torsion));
+		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
+
+		core::id::TorsionID psi_torsion(pos_list_[i].first, core::id::BB, core::id::psi_torsion);
+		core::id::DOF_ID psi_dof(pose.conformation().dof_id_from_torsion_id(psi_torsion));
+		if ( psi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
+	}
+
+	return range_vector;
+}
+
+
+std::string
+SmallMover::get_name() const
+{
 	return mover_name();
 }
 
-std::string SmallMover::mover_name() {
+std::string
+SmallMover::mover_name()
+{
 	return "Small";
 }
 
-void SmallMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+void
+SmallMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	XMLSchemaComplexTypeGeneratorOP ct_gen = BackboneMover::complex_type_generator_for_backbone_mover( xsd );
 	ct_gen->element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.description( "Small-move style backbone-torsion moves that, unlike shear, do not minimize downstream propagation." )
+		.description( "Small-move style backbone-torsion moves that, "
+				"unlike shear, do not minimize downstream propagation." )
 		.write_complex_type_to_schema( xsd );
 
 	//protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
 }
 
-// AMW: this is probably unnecessarily + a curse
-std::string
-BackboneMover::backbone_mover_complex_type_namer( std::string tag_name ){
-	return "backbone_mover_" + tag_name + "_complex_type";
-}
 
 
-std::string SmallMoverCreator::keyname() const {
-	return SmallMover::mover_name();
-}
+// SmallMoverCreator ///////////////////////////////////////////////////////////
 
 protocols::moves::MoverOP
-SmallMoverCreator::create_mover() const {
+SmallMoverCreator::create_mover() const
+{
 	return protocols::moves::MoverOP( new SmallMover );
 }
 
-void SmallMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+std::string
+SmallMoverCreator::keyname() const
+{
+	return SmallMover::mover_name();
+}
+
+void
+SmallMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	SmallMover::provide_xml_schema( xsd );
 }
 
 
-// XRW TEMP std::string
-// XRW TEMP ShearMoverCreator::keyname() const {
-// XRW TEMP  return protocols::simple_moves::ShearMover::mover_name();
-// XRW TEMP }
+// ShearMover //////////////////////////////////////////////////////////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP ShearMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover );
-// XRW TEMP }
+// constructor
+ShearMover::ShearMover() : BackboneMover()
+{
+	protocols::moves::Mover::type( "ShearMover" );  // Why is the type different for the different constructors?  ~Labonte
+}
 
-// XRW TEMP std::string
-// XRW TEMP ShearMover::mover_name() {
-// XRW TEMP  return "Shear";
-// XRW TEMP }
-
-//constructor
-
-ShearMover::ShearMover() : BackboneMover() { protocols::moves::Mover::type( "ShearMover" ); }
 
 ShearMover::ShearMover(
 	core::kinematics::MoveMapOP movemap_in,
 	core::Real temperature_in,
-	core::Size nmoves_in
-)
-: BackboneMover( movemap_in, temperature_in, nmoves_in )
+	core::Size nmoves_in ) :
+	BackboneMover( movemap_in, temperature_in, nmoves_in )
 {
 	protocols::moves::Mover::type( "Shear" );
 }
 
-//destructor
+// destructor
 ShearMover::~ShearMover() = default;
 
-// XRW TEMP std::string
-// XRW TEMP ShearMover::get_name() const {
-// XRW TEMP  return "Shear";
-// XRW TEMP }
 
 protocols::moves::MoverOP
-ShearMover::clone() const {
-	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover(*this) );
+ShearMover::clone() const
+{
+	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover( *this ) );
 }
 
 protocols::moves::MoverOP
-ShearMover::fresh_instance() const {
+ShearMover::fresh_instance() const
+{
 	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover() );
 }
 
-void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
+
+void
+ShearMover::setup_list( core::pose::Pose & pose )
 {
 	//Mask by ResidueSelector:
 	core::select::residue_selector::ResidueSubset const subset = compute_selected_residues( pose );
 
 	using namespace id;
 	// Compare code below to that for SmallMover above.
-	for ( core::Size i=2; i<=pose.size(); ++i ) {
+	for ( core::Size i = 2; i <= pose.size(); ++i ) {
 		// both residue i and residue i-1 must be selected
-		if ( !subset[i] ) continue;
-		if ( !subset[i-1] ) continue;
+		if ( ! subset[ i ] ) { continue; }
+		if ( ! subset[ i - 1 ] ) { continue; }
 
 		conformation::Residue const & rsd( pose.residue( i ) );
 		if ( rsd.is_protein() && movemap()->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
-				movemap()->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/) ) {
+				movemap()->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/ ) ) {
 			char const ss( pose.secstruct( i ) );
 			if ( angle_max_.count( ss ) ) {
 				Real const mx( angle_max_.find( ss )->second );
@@ -729,73 +723,43 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
 			}
-			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
-		} else if ( rsd.is_carbohydrate() && movemap()->get(TorsionID(i - 1, BB, 4)) &&
-				movemap()->get(TorsionID(i, BB, 5)) ) {
+
+		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+		} else if ( rsd.is_carbohydrate() && movemap()->get( TorsionID( i - 1, BB, 4 ) ) &&
+				movemap()->get( TorsionID( i, BB, 5 ) ) ) {
 			// Carbohydrates are always considered loops for now.
-			Real const mx = angle_max_.find('L')->second;
+			Real const mx = angle_max_.find( 'L' )->second;
 			if ( mx > 0.0 ) {
-				pos_list_.push_back(std::make_pair(i, mx));
+				pos_list_.push_back( std::make_pair( i, mx ) );
 			}
 		}
 	}
 }
 
-utility::vector1<core::id::TorsionID_Range>
-ShearMover::torsion_id_ranges(
-	core::pose::Pose & //pose
-)
-{
-	return utility::vector1<core::id::TorsionID_Range>();
-}
-
-utility::vector1<core::id::DOF_ID_Range>
-ShearMover::dof_id_ranges(
-	core::pose::Pose & pose
-)
-{
-	Real static const pi(numeric::NumericTraits<Real>::pi());
-
-	clear();
-	setup_list( pose );
-
-	utility::vector1<core::id::DOF_ID_Range> range_vector;
-
-	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
-
-		core::id::TorsionID phi_torsion(pos_list_[i].first, core::id::BB, core::id::phi_torsion);
-		core::id::DOF_ID phi_dof(pose.conformation().dof_id_from_torsion_id(phi_torsion));
-		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(phi_dof, -pi, pi));
-
-		core::id::TorsionID psi_torsion(pos_list_[i].first-1, core::id::BB, core::id::psi_torsion);
-		core::id::DOF_ID psi_dof(pose.conformation().dof_id_from_torsion_id(psi_torsion));
-		if ( phi_dof.valid() ) range_vector.push_back(core::id::DOF_ID_Range(psi_dof, -pi, pi));
-	}
-
-	return range_vector;
-}
 
 // db (from rosetta++) set maximum deviation to be twice that of small move since shears are less perturbing
-void protocols::simple_moves::ShearMover::set_angles( core::Real angle_in ) {
-	///< if anyone can think of how to explain this, please do so!!
-	big_angle_ = angle_in*2.0;
-	small_angle_ = big_angle_/2.0;
+void
+ShearMover::set_angles( core::Real angle_in )
+{
+	// If anyone can think of how to explain this, please do so!!
+	big_angle_ = angle_in * 2.0;
+	small_angle_ = big_angle_ / 2.0;
 }
 
 
 bool
 ShearMover::move_with_scorefxn( core::pose::Pose & pose )
 {
-	old_rama_score_ = (*scorefxn())( pose );
+	old_rama_score_ = ( *scorefxn() )( pose );
 	pose.set_phi( resnum_, new_phi_ );
-	pose.set_psi( resnum_-1, new_psi_ );
+	pose.set_psi( resnum_ - 1, new_psi_ );
 	pose.energies().clear();
-	new_rama_score_ = (*scorefxn())( pose );
+	new_rama_score_ = ( *scorefxn() )( pose );
 
-	if ( check_rama() ) return true;
+	if ( check_rama() ) { return true; }
 
 	pose.set_phi( resnum_, old_phi_ );
-	pose.set_psi( resnum_-1, old_psi_ );
+	pose.set_psi( resnum_ - 1, old_psi_ );
 	pose.energies().clear();
 	return false;
 }
@@ -805,43 +769,113 @@ ShearMover::move_with_rama( core::pose::Pose & pose )
 {
 	scoring::Ramachandran const & rama( scoring::ScoringManager::get_instance()->get_Ramachandran() );
 	// grab the residues
-	conformation::Residue const & current_rsd( pose.residue(resnum_) );
-	conformation::Residue const & prev_rsd( pose.residue(resnum_-1) );
+	conformation::Residue const & current_rsd( pose.residue( resnum_ ) );
+	conformation::Residue const & prev_rsd( pose.residue( resnum_ - 1 ) );
 
 	// Always accept carbohydrate moves for now....
-	if ( current_rsd.is_protein() &&  current_rsd.aa() != chemical::aa_unk ) {
+	if ( current_rsd.is_protein() && current_rsd.aa() != chemical::aa_unk ) {
 		// rama for phi of resnum and psi of resnum-1
-		old_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi(resnum_));
-		new_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi(resnum_));
+		old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi( resnum_ ) );
+		new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi( resnum_ ) );
 
 		// decide whether to accept the move
-		if ( !check_rama() ) return false;
+		if ( !check_rama() ) { return false; }
 	}
-	if ( current_rsd.is_protein() &&  prev_rsd.aa() != chemical::aa_unk ) {
+	if ( current_rsd.is_protein() && prev_rsd.aa() != chemical::aa_unk ) {
 		// rama for residue resnum-1
-		old_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), old_psi_ );
-		new_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), new_psi_ );
+		old_rama_score_ = rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi( resnum_ - 1 ), old_psi_ );
+		new_rama_score_ = rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi( resnum_ - 1 ), new_psi_ );
 
 		// decide whether to accept the move
-		if ( !check_rama() ) return false;
+		if ( !check_rama() ) { return false; }
 	}
 
 	// set the new values phi of resnum and psi of resnum-1
 	pose.set_phi( resnum_, new_phi_ );
-	pose.set_psi( resnum_-1, new_psi_ );
+	pose.set_psi( resnum_ - 1, new_psi_ );
 
 	return true;
 }
 
-std::string ShearMover::get_name() const {
+bool
+ShearMover::make_move( core::pose::Pose & pose )
+{
+	Real shear_delta = small_angle_ - numeric::random::rg().uniform() * big_angle_;
+	old_phi_ = pose.phi( resnum_ );
+	new_phi_ = basic::periodic_range( old_phi_ - shear_delta, 360.0 );
+	old_psi_ = pose.psi( resnum_-1 );
+	new_psi_ = basic::periodic_range( old_psi_ + shear_delta, 360.0 );
+
+	if ( scorefxn() ) {
+		return move_with_scorefxn( pose );
+	} else {
+		return move_with_rama( pose );
+	}
+}
+
+
+void
+ShearMover::test_move( core::pose::Pose & pose )
+{
+	kinematics::MoveMapOP mmap( new kinematics::MoveMap() );
+	mmap->set_chi( true );
+	mmap->set_bb( true );
+
+	movemap( mmap );
+
+	apply( pose );
+}
+
+
+utility::vector1<core::id::TorsionID_Range>
+ShearMover::torsion_id_ranges( core::pose::Pose & /* pose */ )
+{
+	return utility::vector1<core::id::TorsionID_Range>();
+}
+
+utility::vector1<core::id::DOF_ID_Range>
+ShearMover::dof_id_ranges( core::pose::Pose & pose )
+{
+	Real static const pi( numeric::NumericTraits< Real >::pi() );
+
+	clear();
+	setup_list( pose );
+
+	utility::vector1< core::id::DOF_ID_Range > range_vector;
+
+	for ( core::Size i = 1; i <= pos_list_.size(); ++i ) {
+		core::id::TorsionID phi_torsion( pos_list_[ i ].first, core::id::BB, core::id::phi_torsion );
+		core::id::DOF_ID phi_dof( pose.conformation().dof_id_from_torsion_id( phi_torsion ) );
+		if ( phi_dof.valid() ) {
+			range_vector.push_back( core::id::DOF_ID_Range( phi_dof, -pi, pi ) );
+		}
+
+		core::id::TorsionID psi_torsion( pos_list_[ i ].first - 1, core::id::BB, core::id::psi_torsion );
+		core::id::DOF_ID psi_dof( pose.conformation().dof_id_from_torsion_id( psi_torsion ) );
+		if ( phi_dof.valid() ) {
+			range_vector.push_back( core::id::DOF_ID_Range( psi_dof, -pi, pi ) );
+		}
+	}
+
+	return range_vector;
+}
+
+
+std::string
+ShearMover::get_name() const
+{
 	return mover_name();
 }
 
-std::string ShearMover::mover_name() {
+std::string
+ShearMover::mover_name()
+{
 	return "Shear";
 }
 
-void ShearMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+
+void
+ShearMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
@@ -853,46 +887,26 @@ void ShearMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 }
 
-std::string ShearMoverCreator::keyname() const {
-	return ShearMover::mover_name();
-}
+
+// ShearMoverCreator ///////////////////////////////////////////////////////////
 
 protocols::moves::MoverOP
-ShearMoverCreator::create_mover() const {
+ShearMoverCreator::create_mover() const
+{
 	return protocols::moves::MoverOP( new ShearMover );
 }
 
-void ShearMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+std::string
+ShearMoverCreator::keyname() const
+{
+	return ShearMover::mover_name();
+}
+
+void
+ShearMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	ShearMover::provide_xml_schema( xsd );
 }
 
-
-bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
-{
-	Real shear_delta = small_angle_ - numeric::random::rg().uniform() * big_angle_;
-	old_phi_ = pose.phi(resnum_);
-	new_phi_ = basic::periodic_range( old_phi_ - shear_delta, 360.0 );
-	old_psi_ = pose.psi(resnum_-1);
-	new_psi_ = basic::periodic_range( old_psi_ + shear_delta, 360.0 );
-
-	if ( scorefxn() ) {
-		return move_with_scorefxn( pose );
-	} else {
-		return move_with_rama( pose );
-	}
-}
-
-void protocols::simple_moves::ShearMover::test_move( core::pose::Pose & pose)
-{
-	kinematics::MoveMapOP mmap( new kinematics::MoveMap() );
-	mmap->set_chi( true );
-	mmap->set_bb( true );
-
-	movemap(mmap);
-
-	apply(pose);
-}
-
-}  // namespace moves
+}  // namespace simple_moves
 }  // namespace protocols

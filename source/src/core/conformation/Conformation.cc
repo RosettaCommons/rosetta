@@ -266,7 +266,7 @@ Conformation::detached_copy( Conformation const & src )
 ConformationOP
 Conformation::clone() const
 {
-	return ConformationOP( new Conformation(*this) );
+	return ConformationOP( new Conformation( *this ) );
 }
 
 // clear data
@@ -554,7 +554,7 @@ Conformation::delete_chain_ending( Size const seqpos )
 {
 	auto it( std::find( chain_endings_.begin(), chain_endings_.end(), seqpos ) );
 	if ( it == chain_endings_.end() ) {
-		utility_exit_with_message("tried to delete nonexistent chain ending");
+		utility_exit_with_message( "tried to delete nonexistent chain ending" );
 	}
 	chain_endings_.erase( it );
 	rederive_chain_ids();
@@ -572,9 +572,9 @@ Conformation::chains_from_termini()
 
 	chain_endings_.clear();
 
-	for ( Size i=1; i< size(); ++i ) {
+	for ( Size i = 1; i< size(); ++i ) {
 		// should there be a chain ending between i and i+1 ?
-		if ( residues_[i]->is_polymer() && residues_[i]->is_upper_terminus() ) {
+		if ( residues_[ i ]->is_polymer() && residues_[ i ]->is_upper_terminus() ) {
 			chain_endings_.push_back( i );
 		}
 	}
@@ -2791,6 +2791,48 @@ Conformation::update_orbital_coords( Residue & rsd) const{
 
 // ID access and conversions /////////////////////////////////////////////////////////////////////////////////////////
 
+// Get the DOF_ID corresponding to the torsion angle defined by these four atoms.
+id::DOF_ID
+Conformation::dof_id_from_atom_ids(
+		id::AtomID const & id1,
+		id::AtomID const & id2,
+		id::AtomID const & id3,
+		id::AtomID const & id4 ) const
+{
+	return atom_tree_->torsion_angle_dof_id( id1, id2, id3, id4 );
+}
+
+// Get the DOF_ID corresponding to the bond angle defined by these three atoms.
+id::DOF_ID
+Conformation::dof_id_from_atom_ids( id::AtomID const & id1, id::AtomID const & id2, id::AtomID const & id3 ) const
+{
+	Real offset;
+	return atom_tree_->bond_angle_dof_id( id1, id2, id3, offset );
+}
+
+// Get the DOF_ID corresponding to the bond distance defined by these two atoms.
+id::DOF_ID
+Conformation::dof_id_from_atom_ids( id::AtomID const & id1, id::AtomID const & id2 ) const
+{
+	return atom_tree_->bond_length_dof_id( id1, id2 );
+}
+
+// Get the DOF_ID defined by these atoms.
+id::DOF_ID
+Conformation::dof_id_from_atom_ids( utility::vector1< id::AtomID > const & ids ) const
+{
+	switch ( ids.size() ) {
+		case 4:
+			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ], ids[ 4 ] );
+		case 3:
+			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ] );
+		case 2:
+			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ] );
+		default:
+			return id::BOGUS_DOF_ID;
+	}
+}
+
 id::DOF_ID
 Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 {
@@ -2810,7 +2852,7 @@ Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 			// probably a backbone torsion undefined b/c of a cutpoint
 			return id::BOGUS_DOF_ID;
 		}
-		return atom_tree_->torsion_angle_dof_id( id1, id2, id3, id4 );
+		return dof_id_from_atom_ids( id1, id2, id3, id4 );
 	}
 }
 
