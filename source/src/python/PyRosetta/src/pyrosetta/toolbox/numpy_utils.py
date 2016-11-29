@@ -16,10 +16,9 @@ from __future__ import print_function
 
 
 from math import acos, degrees
-import rosetta.core.pose.Pose
-import rosetta.core.conformation.Residue
-import rosetta.numeric.xyzVector_double_t
-import rosetta.numeric.xyzMatrix_double_t
+import rosetta.core.pose
+import rosetta.core.conformation
+import rosetta.numeric
 
 
 class NotInstalled(object):
@@ -96,7 +95,7 @@ def rigid_transform_3D(A, B):
 
     # special reflection case
     if np.linalg.det(R) < 0:
-        print 'Reflection detected'
+        print('Reflection detected')
         Vt[2, :] *= -1
         R = Vt.T * U.T
 
@@ -109,7 +108,8 @@ def numpy_to_rosetta(np_arr):
     data structure.
 
     Args:
-        np_arry (np.mat or np.array): One- or two-dimensional numpy matrix
+        np_arry (np.mat or np.array): One- (1 x 3) or two-dimensional (3 x 3)
+            numpy matrix
 
     Returns:
         The values in the appropriate Rosetta container
