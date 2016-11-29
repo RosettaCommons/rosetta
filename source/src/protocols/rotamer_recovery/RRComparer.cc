@@ -66,6 +66,14 @@ RRComparerRotBins::set_recovery_threshold(
 	recovery_threshold_ = recovery_threshold;
 }
 
+void
+RRComparerRotBins::set_absolute_threshold(
+	Real const absolute_threshold
+) {
+	absolute_threshold_ = absolute_threshold;
+}
+
+
 /// @details measure the rotamer recovery by comparing rotamer bins
 /// @return  true, if the measurement was successful, false otherwise
 bool
@@ -131,6 +139,9 @@ RRComparerChiDiff::~RRComparerChiDiff() = default;
 
 void
 RRComparerChiDiff::set_recovery_threshold( core::Real const setting ) { tolerance_ = setting; }
+
+void
+RRComparerChiDiff::set_absolute_threshold( core::Real const setting ) { absolute_threshold_ = setting; }
 
 // AS March 2013: enable comparison of a limited set of chi angles, no matter how many the residue actually has
 void

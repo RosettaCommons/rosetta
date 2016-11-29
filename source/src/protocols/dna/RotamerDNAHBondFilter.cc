@@ -115,6 +115,7 @@ RotamerDNAHBondFilter::operator() (
 						ratom.xyz(), rotamer->xyz( rotamer->atom_base( ratom_i )), create_don_orientation_vector( *rotamer, ratom_i ),
 						datom.xyz(), datom.xyz() /*apl -- acceptor base coordinate goes here, but used only for derivatives */,
 						create_acc_orientation_vector( *hbondoptions_, dnares, datom_i ),
+						create_acc_orientation_vector( *hbondoptions_, dnares, datom_i ),
 						Vector(-1.0, -1.0, -1.0) /* acceptor_base2 atom goes here, this is now wrong*/,
 						hbE,
 						false /*evaluate_derivative*/, DUMMY_DERIVS );
@@ -131,6 +132,7 @@ RotamerDNAHBondFilter::operator() (
 					hb_energy_deriv_u( *hb_database_, *hbondoptions_, hbtype,
 						datom.xyz(), dnares.xyz( dnares.atom_base( datom_i ) ), create_don_orientation_vector( dnares, datom_i ),
 						ratom.xyz(), ratom.xyz() /* apl -- acceptor-base coordinate goes here, but used only for derivatives */,
+						create_acc_orientation_vector( *hbondoptions_, *rotamer, ratom_i ),
 						create_acc_orientation_vector( *hbondoptions_, *rotamer, ratom_i ),
 						Vector(-1.0, -1.0, -1.0)  /* apl -- acceptor_base2 atom goes here, this is now wrong */,
 						hbE,

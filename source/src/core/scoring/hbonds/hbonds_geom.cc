@@ -30,6 +30,10 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+
+// option key includes
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -103,6 +107,7 @@ fade_energy(
 	Real & dE_dr,
 	Real & dE_dxD,
 	Real & dE_dxH,
+	Real & dE_dxH2,
 	Real & dE_dBAH,
 	Real & dE_dchi
 ) {
@@ -113,6 +118,7 @@ fade_energy(
 			dE_dr  = 0;
 			dE_dxD = 0;
 			dE_dxH = 0;
+			dE_dxH2 = 0;
 			dE_dBAH = 0;
 			dE_dchi = 0;
 		}
@@ -122,6 +128,7 @@ fade_energy(
 			dE_dr  *= 5*(0.1-input_energy);
 			dE_dxD *= 5*(0.1-input_energy);
 			dE_dxH *= 5*(0.1-input_energy);
+			dE_dxH2 *= 5*(0.1-input_energy);
 			dE_dBAH *= 5*(0.1-input_energy);
 			dE_dchi *= 5*(0.1-input_energy);
 		}
@@ -809,6 +816,7 @@ hbond_compute_energy(
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K. // cos(180-theta) (bazzoli)
 	Real const xH,    // cos(180-phi), where phi is defined by Tanja K.
+	Real const xH2,   // cos(180-phi2), phi2 is B2AH for sp3-hybridized acceptors where B2 is attached H
 	Real const chi,   // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 	Real & energy,
 	bool & apply_chi_torsion_penalty, // did this hbond get the chi torsion penalty?
@@ -816,6 +824,7 @@ hbond_compute_energy(
 	Real & dE_dr,
 	Real & dE_dxD,
 	Real & dE_dxH,
+	Real & dE_dxH2,
 	Real & dE_dBAH, // the change in the energy wrt the BAH angle
 	Real & dE_dchi  // the change in the energy wrt the chi dihedral
 )
@@ -828,35 +837,52 @@ hbond_compute_energy(
 
 	energy = MAX_HB_ENERGY + 1.0f;
 	apply_chi_torsion_penalty = false;
-	dE_dr = dE_dxD = dE_dxH = dE_dBAH = dE_dchi = 0.0;
+	dE_dr = dE_dxD = dE_dxH = dE_dxH2 = dE_dBAH = dE_dchi = 0.0;
 
 	// These should throw an exection if fail_on_bad_hbond is true
-	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 ) {
+	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 || std::abs(xH2) > 1.0 ) {
 		if ( true ) {
 			tr << "WARNING:: invalid angle value in hbond_compute_energy:"
-				<< " xH = " << ObjexxFCL::format::SS( xH ) << " xD = " << ObjexxFCL::format::SS( xD ) << std::endl;
+				<< " xH = " << ObjexxFCL::format::SS( xH ) << " xD = " << ObjexxFCL::format::SS( xD )
+				<< " xH2 = " << ObjexxFCL::format::SS( xH2 ) << std::endl;
 		}
 		return;
 	}
 	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << std::endl;
 	if ( AHdis > MAX_R || AHdis < MIN_R || xH < MIN_xH || xD < MIN_xD ||
-			xH > MAX_xH || xD > MAX_xD ) {
+			xH > MAX_xH || xH2 > MAX_xH || xD > MAX_xD ) {
 		return;
 	}
+
+	// fpd -- use softmax for sp3 acceptors?
+	bool use_softmax = false;
+	if (hbondoptions.measure_sp3acc_BAH_from_hvy()) {
+		// *optionally* use for all sp3 acceptors
+		if (basic::options::option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ]() && get_hbe_acc_hybrid(hbe) == chemical::SP3_HYBRID) {
+			use_softmax = true;
+		}
+		// *always* use for water acceptors
+		if (hbt.acc_type() == hbacc_H2O) {
+			use_softmax=true;
+		}
+	}
+
 
 	// The function takes in single precision and computes in double
 	// precision To help numeric stability
 	double const dAHdis = static_cast<double>(AHdis);
 	double const dxD    = static_cast<double>(xD);
 	double const dxH    = static_cast<double>(xH);
-	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0); // values of polynomials
-	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0); // derivatives of polynomials
-	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0); // values of fading intervals
-	double dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0); // derivatives of fading intervals
+	double const dxH2   = static_cast<double>(xH2);
+	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0),  PxH2(0.0); // values of polynomials
+	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0), dPxH2(0.0); // derivatives of polynomials
+	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0),  FxH2(0.0); // values of fading intervals
+	double dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0), dFxH2(0.0); // derivatives of fading intervals
 
 	database.AHdist_short_fade_lookup( hbe )->value_deriv(AHdis, FSr, dFSr);
 	database.AHdist_long_fade_lookup( hbe )->value_deriv(AHdis, FLr, dFLr);
 	database.cosBAH_fade_lookup( hbe )->value_deriv(xH, FxH, dFxH);
+	database.cosBAH2_fade_lookup( hbe )->value_deriv(xH2, FxH2, dFxH2);
 	database.cosAHD_fade_lookup( hbe )->value_deriv(xD, FxD, dFxD);
 
 	double const acc_don_scale = database.acc_strength( hbt.acc_type() ) * database.don_strength( hbt.don_type() );
@@ -870,7 +896,7 @@ hbond_compute_energy(
 		}
 	}
 
-	if ( FxH == Real(0.0) ) {
+	if ( FxH == Real(0.0) || (use_softmax && FxH2 == Real(0.0)) ) {
 		// is xH out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( ( dxH < database.cosBAH_short_poly_lookup( hbe )->xmin() && dxH < database.cosBAH_long_poly_lookup( hbe )->xmin() ) ||
 				( dxH > database.cosBAH_short_poly_lookup( hbe )->xmax() && dxH > database.cosBAH_long_poly_lookup( hbe )->xmax() ) ) {
@@ -910,6 +936,7 @@ hbond_compute_energy(
 	(*database.AHdist_poly_lookup( hbe ))(dAHdis, Pr, dPr);
 	(*database.cosBAH_short_poly_lookup( hbe ))(dxH, PSxH, dPSxH);
 	(*database.cosBAH_long_poly_lookup( hbe ))(dxH, PLxH, dPLxH);
+	(*database.cosBAH2_poly_lookup( hbe ))(dxH2, PxH2, dPxH2);
 	if ( use_cosAHD ) {
 		(*database.cosAHD_short_poly_lookup( hbe ))(dxD, PSxD, dPSxD);
 		(*database.cosAHD_long_poly_lookup( hbe ))(dxD, PLxD, dPLxD);
@@ -918,8 +945,23 @@ hbond_compute_energy(
 		(*database.cosAHD_long_poly_lookup( hbe ))(AHD, PLxD, dPLxD);
 	}
 
+	//  double fade_factor = 1.0; // larger == stiffer fade
+	double exp1,exp2;
+	double fade_factor = basic::options::option[ basic::options::OptionKeys::score::hbond_fade ].value();
+	if ( !use_softmax ) {
+		//old version
+		energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
+	} else {
+		// fade between both angles
+		double energy1 = Pr*FxD*FxH  + FSr*(PSxD*FxH + FxD*PSxH)  + FLr*(PLxD*FxH + FxD*PLxH);
+		double energy2 = Pr*FxD*FxH2 + FSr*(PSxD*FxH2 + FxD*PxH2) + FLr*(PLxD*FxH2 + FxD*PxH2);
 
-	energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
+		//FPD: new way
+		exp1 = exp(energy1*fade_factor);
+		exp2 = exp(energy2*fade_factor);
+		energy = log( exp1+exp2 )/fade_factor;
+	}
+
 	energy *= acc_don_scale;
 	energy += hbondoptions.hbond_energy_shift();
 
@@ -934,11 +976,12 @@ hbond_compute_energy(
 			xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	} else if (
-			hbondoptions.measure_sp3acc_BAH_from_hvy() &&
-			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
-			) {
+	  hbondoptions.measure_sp3acc_BAH_from_hvy() &&
+	  ( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
+		&& !use_softmax)
+	{
 		bah_chi_compute_energy_sp3(xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
-		apply_chi_torsion_penalty = true;
+	  apply_chi_torsion_penalty = true;
 	}
 	// dE_dBAH *= acc_don_scale; // moved inside chi energy computations
 	// dE_dchi *= acc_don_scale;
@@ -951,26 +994,53 @@ hbond_compute_energy(
 		return;
 	}
 
-	dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
-	dE_dr *= acc_don_scale;
+	if ( !use_softmax ) {
+		// old version
+		dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
+		dE_dr *= acc_don_scale;
 
-	if ( use_cosAHD ) {
-		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
+		if ( use_cosAHD ) {
+			dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
+		} else {
+			/// the fade function is still evaluated in cosine space, so its derivatives have to
+			/// be converted to units of dE/dAHD by multiplying dE/dcosAHD by sin(AHD)
+			/// the polynomial's derivatives, on the other hand, is already in units of dE/dAHD
+			dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH)*sin(AHD) + FxH*(FSr*dPSxD + FLr*dPLxD);
+		}
+		dE_dxD *= acc_don_scale;
+
+		dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
+		dE_dxH *= acc_don_scale;
 	} else {
-		/// the fade function is still evaluated in cosine space, so its derivatives have to
-		/// be converted to units of dE/dAHD by multiplying dE/dcosAHD by sin(AHD)
-		/// the polynomial's derivatives, on the other hand, is already in units of dE/dAHD
-		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH)*sin(AHD) + FxH*(FSr*dPSxD + FLr*dPLxD);
-	}
-	dE_dxD *= acc_don_scale;
+		// fpd - a bit more complicated with the fade ...
+		double dE1_dr = dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
+		double dE2_dr = dPr*FxD*FxH2 + dFSr*(PSxD*FxH2 + FxD*PxH2) + dFLr*(PLxD*FxH2 + FxD*PxH2);
+		double dE1_dxD, dE2_dxD;
+		if ( use_cosAHD ) {
+			dE1_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
+			dE2_dxD = dFxD*(Pr*FxH2 + FLr*PxH2 + FSr*PxH2) + FxH2*(FSr*dPSxD + FLr*dPLxD);
+		} else {
+			dE1_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH)*sin(AHD) + FxH*(FSr*dPSxD + FLr*dPLxD);
+			dE2_dxD = dFxD*(Pr*FxH2 + FLr*PxH2 + FSr*PxH2)*sin(AHD) + FxH2*(FSr*dPSxD + FLr*dPLxD);
+		}
 
-	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
-	dE_dxH *= acc_don_scale;
+		double dE1_dxH    = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
+		double dE2_dxH2   = dFxH2*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPxH2 + FLr*dPxH2);
+
+		dE_dr = (exp1*dE1_dr + exp2*dE2_dr) / (fade_factor*(exp1+exp2));
+		dE_dxD = (exp1*dE1_dxD + exp2*dE2_dxD) / (fade_factor*(exp1+exp2));
+		dE_dxH = (exp1*dE1_dxH) / (fade_factor*(exp1+exp2));
+		dE_dxH2 = (exp2*dE2_dxH2) / (fade_factor*(exp1+exp2));
+
+		dE_dr *= acc_don_scale;
+		dE_dxD *= acc_don_scale;
+		dE_dxH *= acc_don_scale;
+		dE_dxH2 *= acc_don_scale;
+	}
 
 	if ( hbondoptions.fade_energy() ) {
-		fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+		fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1026,12 +1096,13 @@ hb_energy_deriv_u(
 	Vector const & Bxyz, // (acceptor) (pseudo) Base coords -- needed for derivative calculations
 	Vector const & BAunit, // unit vector towards base
 	Vector const & B2xyz, /// acceptor base 2 coords -- will be needed for derivative evaluation when the torsional term comes online
+	Vector const & B2Aunit, // unit vector towards base
 	Real & energy, // returned energy
 	bool const evaluate_deriv,
 	HBondDerivs & deriv
 ) {
 	HBDerivType const deriv_type = ( evaluate_deriv ? hbderiv_ABE_GO : hbderiv_NONE );
-	hb_energy_deriv_u2( database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, Bxyz, BAunit, B2xyz, energy, deriv );
+	hb_energy_deriv_u2( database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, Bxyz, BAunit, B2xyz, B2Aunit, energy, deriv );
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 /// @details Innermost score/derivative evaluation logic in this function; "u" stands for "unit vector"
@@ -1053,6 +1124,7 @@ hb_energy_deriv_u2(
 	Vector const & Bxyz, // (acceptor) (pseudo) Base coords
 	Vector const & BAunit, // unit vector from base to acceptor
 	Vector const & B2xyz, /// acceptor base 2 coords -- will be needed for derivative evaluation when the torsional term comes online
+	Vector const & B2Aunit, // unit vector from base2 to acceptor
 	Real & energy, // returned energy
 	HBondDerivs & deriv
 )
@@ -1105,6 +1177,13 @@ hb_energy_deriv_u2(
 	if ( xH < MIN_xH ) return;
 	if ( xH > MAX_xH ) return;
 
+	// see comment above re: dot products
+	Real const xH2 =            /* cos(180-psi) = cos(thetaH) */
+		std::min( Real(1.0), dot( B2Aunit, AHunit ));
+
+	if ( xH2 < MIN_xH ) return;
+	if ( xH2 > MAX_xH ) return;
+
 	Real chi( 0 );
 	if ( hbondoptions.use_sp2_chi_penalty() &&
 			get_hbe_acc_hybrid( hbt.eval_type() ) == chemical::SP2_HYBRID &&
@@ -1126,12 +1205,12 @@ hb_energy_deriv_u2(
 
 	if ( deriv_type == hbderiv_NONE ) {
 		// NOTE: early return with energy if no derivatives
-		hbond_compute_energy( database, hbondoptions, hbt, AHdis, xD, xH, chi, energy );
+		hbond_compute_energy( database, hbondoptions, hbt, AHdis, xD, xH, xH2, chi, energy );
 		return;
 	}
 
 	//JSS the rest happens only if we want derivative information
-	Real dE_dxH, dE_dxD, dE_dr, dE_dBAH, dE_dchi;
+	Real dE_dxH, dE_dxH2, dE_dxD, dE_dr, dE_dBAH, dE_dchi;
 	bool apply_chi_torsion_penalty( false );
 	HBGeoDimType AHD_geometric_dimension;
 
@@ -1142,6 +1221,7 @@ hb_energy_deriv_u2(
 		AHdis,
 		xD,
 		xH,
+		xH2,
 		chi,
 		energy,
 		apply_chi_torsion_penalty,
@@ -1149,6 +1229,7 @@ hb_energy_deriv_u2(
 		dE_dr,
 		dE_dxD,
 		dE_dxH,
+		dE_dxH2,
 		dE_dBAH,
 		dE_dchi);
 
@@ -1229,7 +1310,7 @@ hb_energy_deriv_u2(
 		// this does not change values of phi & chi, just F1/F2. -- rhiju
 		Vector const & Hxyz_working = ( deriv_type != hbderiv_ABE_GO_GEOMSOL_OCC_ACC ) ? Hxyz : Dxyz;
 
-		/// 3. phi derivatives (phi is the H-A-AB angle )
+		/// 3A. phi derivatives (phi is the H-A-AB angle )
 		{ //scope
 			Real phi;
 			Vector f1h(0.0),f2h(0.0);
@@ -1255,6 +1336,26 @@ hb_energy_deriv_u2(
 				deriv.h_deriv.f1()     += dE_dBAH * f1h;
 				deriv.h_deriv.f2()     += dE_dBAH * f2h;
 			}
+		}
+
+		/// 3B. phi2 derivatives (phi2 is the H-A-AB2 angle)
+		{ //scope
+			Real phi;
+			Vector f1h(0.0),f2h(0.0);
+			angle_p1_deriv( Hxyz_working, Axyz, B2xyz, phi, f1h, f2h);
+			Real const dE_dxH2_sin_phi = dE_dxH2 *sin( phi );
+			deriv.h_deriv.f1() += dE_dxH2_sin_phi * f1h;
+			deriv.h_deriv.f2() += dE_dxH2_sin_phi * f2h;
+
+			Vector f1b(0.0),f2b(0.0);
+			angle_p1_deriv( B2xyz, Axyz, Hxyz_working, phi, f1b, f2b);
+			deriv.abase2_deriv.f1() += dE_dxH2_sin_phi * f1b;
+			deriv.abase2_deriv.f2() += dE_dxH2_sin_phi * f2b;
+
+			Vector f1a(0.0),f2a(0.0);
+			angle_p2_deriv( B2xyz, Axyz, Hxyz_working, phi, f1a, f2a);
+			deriv.acc_deriv.f1() += dE_dxH2_sin_phi * f1a;
+			deriv.acc_deriv.f2() += dE_dxH2_sin_phi * f2a;
 		}
 
 		/// 4. The chi derivative, for the chi torsion defined by H -- A -- AB -- AB2,
@@ -1389,7 +1490,7 @@ hb_energy_deriv(
 	HDunit *= inv_HDdis;
 
 	//car  B->A unit vector
-	Vector BAunit;
+	Vector BAunit, B2Aunit;
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
 	HBEvalType eval_type( hbt.eval_type() );
@@ -1398,8 +1499,8 @@ hb_energy_deriv(
 		utility_exit_with_message("Cannot compute derivative for hbond interaction");
 	}
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
-	make_hbBasetoAcc_unitvector(hbondoptions, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
-	hb_energy_deriv_u2(database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, energy, deriv );
+	make_hbBasetoAcc_unitvector(hbondoptions, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit, B2Aunit);
+	hb_energy_deriv_u2(database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, B2Aunit, energy, deriv );
 }
 
 
@@ -1412,14 +1513,14 @@ create_acc_orientation_vector(
 {
 	debug_assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
 	chemical::Hybridization acc_hybrid(residue.atom_type(atom_id).hybridization());
-	Vector ovect, dummy;
+	Vector ovect, dummy, dummy2;
 	make_hbBasetoAcc_unitvector(
 		hbondoptions,
 		acc_hybrid,
 		residue.atom( atom_id ).xyz(),
 		residue.atom( residue.atom_base( atom_id ) ).xyz(),
 		residue.atom( residue.abase2( atom_id ) ).xyz(),
-		dummy, ovect );
+		dummy, ovect, dummy2 );
 	return ovect;
 }
 
@@ -1439,30 +1540,45 @@ make_hbBasetoAcc_unitvector(
 	Vector const & Bxyz,
 	Vector const & B2xyz,
 	Vector & PBxyz,
-	Vector & BAunit
+	Vector & BAunit,
+	Vector & B2Aunit
 )
 {
 	using namespace chemical;
+	bool b2a_is_set=false;
+
 	switch(acc_hybrid){
-	case SP2_HYBRID :  PBxyz = Bxyz; break;
+	case SP2_HYBRID :
+		PBxyz = Bxyz;
+		break;
 	case SP3_HYBRID :
 		/// If the heavy-atom base of an sp3 hybridized acceptor is to be used
 		/// to compute the BAH angle (i.e. CB on Ser/Thr), then give it Bxyz;
 		/// else, git it B2xyz (i.e. HG on Ser/Thr).
 		if ( hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
 			PBxyz = Bxyz;
+			B2Aunit = Axyz - B2xyz;
+			B2Aunit.normalize();
+			b2a_is_set = true;
 		} else {
 			PBxyz = B2xyz;
 		}
 		break;
-	case RING_HYBRID : PBxyz = Real(0.5) * ( Bxyz + B2xyz ); break;
+	case RING_HYBRID :
+		PBxyz = Real(0.5) * ( Bxyz + B2xyz );
+		break;
 	default :
 		BAunit = 0.0;
 		tr << "Unrecognized Hybridization: " << acc_hybrid << std::endl;
 		utility_exit();
 	}
+
 	BAunit = Axyz - PBxyz;
 	BAunit.normalize();
+
+	if ( !b2a_is_set ) {
+		B2Aunit = BAunit;
+	}
 }
 
 /// @details Divide up the f1/f2 contributions calculated for the PBxyz coordinate

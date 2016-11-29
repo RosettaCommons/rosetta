@@ -53,6 +53,7 @@ get_cos_theta( core::conformation::Residue const & rsd1,
 	Vector const & i_xyz = rsd1.xyz( i );
 
 	Vector dummy;
+	Vector dummy2;
 	if ( i_base > 0 ) {
 		xyz_base = rsd1.xyz( i_base );
 	} else {
@@ -65,7 +66,7 @@ get_cos_theta( core::conformation::Residue const & rsd1,
 				rsd1.atom( i ).xyz(),
 				rsd1.xyz( i_base ),
 				rsd1.xyz( rsd1.abase2( i ) ),
-				xyz_base, dummy );
+				xyz_base, dummy, dummy2 );
 		} else if ( rsd1.atom_type( i ).name() == "Hpol" ) {
 			xyz_base = rsd1.xyz( i_base );
 		} else {

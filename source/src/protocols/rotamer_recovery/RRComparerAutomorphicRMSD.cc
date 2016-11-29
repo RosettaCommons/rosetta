@@ -155,5 +155,17 @@ RRComparerAutomorphicRMSD::get_recovery_threshold() const {
 	return recovery_threshold_;
 }
 
+void
+RRComparerAutomorphicRMSD::set_absolute_threshold(
+	Real const absolute_threshold
+) {
+	absolute_threshold_ = absolute_threshold;
+}
+
+Real
+RRComparerAutomorphicRMSD::get_absolute_threshold() const {
+	return absolute_threshold_;
+}
+
 } // rotamer_recovery
 } // protocols

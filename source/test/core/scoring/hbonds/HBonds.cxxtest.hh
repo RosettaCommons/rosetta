@@ -124,7 +124,7 @@ public:
 							for ( Real xH = MIN_xH; xH <= MAX_xH; xH += .5 ) {
 								for ( Real chi = 0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_2 ) {
 									hbond_compute_energy( *database, hboptions, hbt,
-										AHdis, xD, xH, chi, energy,
+										AHdis, xD, xH, xH, chi, energy,
 										dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH);
 									if ( energy < 0 ) {
 										UT << i << "\t" << ii << "\t" << jj << "\t" << kk << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
@@ -153,7 +153,7 @@ public:
 		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy_sp2.u");
 		bool chipenalty;
 		HBGeoDimType AHD_geometric_dimension;
-		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi;
+		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi;
 		Size i(0);
 		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
 		Real xD(.9);
@@ -161,8 +161,8 @@ public:
 			for ( Real xH = MIN_xH; xH < MAX_xH; xH += .4 ) {
 				for ( Real chi = 0.0; chi < numeric::constants::d::pi_2; chi += numeric::constants::d::pi_over_3 ) {
 					hbond_compute_energy( *database, hboptions, hbt,
-						AHdis, xD, xH, chi, energy,
-						chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+						AHdis, xD, xH, xH, chi, energy,
+						chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 					if ( energy < 0 ) {
 						UT << i << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 						UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
@@ -183,7 +183,7 @@ public:
 
 		bool dummy_chipenalty;
 		HBGeoDimType AHD_geometric_dimension;
-		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi;
+		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi;
 		HBEvalTuple hbt = HBEvalTuple( hbdon_PBA, hbacc_PBA, seq_sep_other );
 
 		test::UTracer UT("core/scoring/hbonds/hbond_compute_energy_sp2_specific_cases.u");
@@ -191,8 +191,8 @@ public:
 			Real AHdis(1.7), xD(1.0), xH(0.36), chi(0);
 
 			hbond_compute_energy( *database, hboptions, hbt,
-				AHdis, xD, xH, chi, energy,
-				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+				AHdis, xD, xH, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
 		}
@@ -200,16 +200,16 @@ public:
 		{
 			Real AHdis(1.7), xD(.9), xH(-0.07), chi(0.03);
 			hbond_compute_energy( *database, hboptions, hbt,
-				AHdis, xD, xH, chi, energy,
-				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+				AHdis, xD, xH, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
 		}
 		{
 			Real AHdis(1.7), xD(.9), xH(-0.07), chi(0.04);
 			hbond_compute_energy( *database, hboptions, hbt,
-				AHdis, xD, xH, chi, energy,
-				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+				AHdis, xD, xH, xH, chi, energy,
+				dummy_chipenalty, AHD_geometric_dimension, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 			UT << "\t" << hbt.eval_type() << "\t" << AHdis << "\t" << xD << "\t" << xH << "\t" << chi << "\t";
 			UT << energy << "\t" << dE_dr << "\t" << dE_dxD << "\t" << dE_dxH << "\t" << dE_dBAH << "\t" << dE_dchi << std::endl;
 		}

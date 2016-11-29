@@ -869,9 +869,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 /// Hack Elec E
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -882,9 +882,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -895,9 +895,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -907,9 +907,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -919,46 +919,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
-}
-
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -969,9 +932,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -981,9 +944,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -993,9 +956,22 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
+}
+
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1005,9 +981,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1017,9 +993,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1029,9 +1005,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1041,9 +1017,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1053,9 +1029,33 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_trie reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 )
@@ -1066,9 +1066,9 @@ VDWTrieCountPair1B::resolve_trie_vs_trie(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1078,9 +1078,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1090,9 +1090,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1101,21 +1101,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1125,9 +1113,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1137,9 +1125,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1149,20 +1137,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1172,9 +1149,20 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1184,53 +1172,9 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
-}
-
-void
-VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1240,9 +1184,65 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 
 void
 VDWTrieCountPair1B::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	elec::FA_ElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message( "vdwaals::VDWTrieCountPair1B::resolve_trie_vs_path reached with wrong score function" );
+}
+
+
+void
+VDWTrieCountPair1B::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {

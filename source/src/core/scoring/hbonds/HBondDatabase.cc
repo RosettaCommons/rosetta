@@ -89,12 +89,14 @@ HBondDatabase::HBondDatabase():
 	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	HBPoly1D_lookup_by_name_(),
 	HBPoly1D_lookup_(),
 	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
@@ -119,12 +121,14 @@ HBondDatabase::HBondDatabase(
 	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	AHdist_long_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	cosBAH2_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	HBPoly1D_lookup_by_name_(),
 	HBPoly1D_lookup_(),
 	AHdist_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosBAH_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
+	cosBAH2_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_short_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	cosAHD_long_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
 	chi_poly_lookup_(HB_EVAL_TYPE_COUNT, NULL),
@@ -147,12 +151,14 @@ HBondDatabase::HBondDatabase(
 	AHdist_short_fade_lookup_(src.AHdist_short_fade_lookup_),
 	AHdist_long_fade_lookup_(src.AHdist_long_fade_lookup_),
 	cosBAH_fade_lookup_(src.cosBAH_fade_lookup_),
+	cosBAH2_fade_lookup_(src.cosBAH2_fade_lookup_),
 	cosAHD_fade_lookup_(src.cosAHD_fade_lookup_),
 	HBPoly1D_lookup_by_name_(src.HBPoly1D_lookup_by_name_),
 	HBPoly1D_lookup_(src.HBPoly1D_lookup_),
 	AHdist_poly_lookup_(src.AHdist_poly_lookup_),
 	cosBAH_short_poly_lookup_(src.cosBAH_short_poly_lookup_),
 	cosBAH_long_poly_lookup_(src.cosBAH_long_poly_lookup_),
+	cosBAH2_poly_lookup_(src.cosBAH2_poly_lookup_),
 	cosAHD_short_poly_lookup_(src.cosAHD_short_poly_lookup_),
 	cosAHD_long_poly_lookup_(src.cosAHD_long_poly_lookup_),
 	chi_poly_lookup_(src.chi_poly_lookup_),
@@ -389,7 +395,12 @@ HBondDatabase::initialize_HBPoly1D()
 /// @details read one dimensional polynomial definition file
 // File Format:
 //    -fields are space delimited
-//    -Columns are: HBDonChemType, HBAccChemType, HBSeqSep, AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, cosAHD_fade_name, AHDist_poly_name, cosBAH_poly_name, cosAHD_poly_name,
+//    -Columns are: 
+//         don_chem_type_name, acc_chem_type_name, seq_sep_type_name, 
+//         AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, 
+//         cosBAH2_fade_name, cosAHD_fade_name, AHdist_poly_name, 
+//         cosBAH_short_poly_name, cosBAH_long_poly_name, cosBAH2_poly_name, 
+//         cosAHD_short_poly_name, cosAHD_long_poly_name, weight_type_name
 
 void
 HBondDatabase::initialize_HBEval()
@@ -404,16 +415,16 @@ HBondDatabase::initialize_HBEval()
 	string line;
 	vector1<bool> initialized_hbe_types(hbe_MAX,false);
 	string AHdist_poly_name, cosBAH_short_poly_name, cosBAH_long_poly_name,
-		cosAHD_short_poly_name, cosAHD_long_poly_name, chi_poly_name,
+		cosAHD_short_poly_name, cosAHD_long_poly_name, cosBAH2_poly_name, chi_poly_name,
 		don_chem_type_name, acc_chem_type_name, seq_sep_type_name,
 		AHdist_short_fade_name, AHdist_long_fade_name,
-		cosBAH_fade_name, cosAHD_fade_name;
+		cosBAH_fade_name, cosAHD_fade_name, cosBAH2_fade_name;
 	HBDonChemType don_chem_type;
 	HBAccChemType acc_chem_type;
 	HBSeqSep seq_sep_type;
 	Polynomial_1dCOP AHdist_poly, cosBAH_short_poly, cosBAH_long_poly,
-		cosAHD_short_poly, cosAHD_long_poly, chi_poly;
-	FadeIntervalCOP AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosAHD_fade;
+		cosAHD_short_poly, cosAHD_long_poly, cosBAH2_poly, chi_poly;
+	FadeIntervalCOP AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosAHD_fade, cosBAH2_fade;
 	string weight_type_name;
 	HBondWeightType weight_type;
 
@@ -422,10 +433,10 @@ HBondDatabase::initialize_HBEval()
 	while ( getline(s, line) ) {
 		++line_number;
 		tokens = string_split( line, ',');
-		if ( tokens.size() != 15 ) {
+		if ( tokens.size() != 17 ) {
 			stringstream message;
 			message << "HBond evaluation data line does not have enough fields" << endl;
-			message << "Expected '" << 15 << "' tokens but found '" << tokens.size() << "' tokens." << endl;
+			message << "Expected '" << 17 << "' tokens but found '" << tokens.size() << "' tokens." << endl;
 			message << line << endl;
 			utility_exit_with_message(message.str());
 		}
@@ -514,6 +525,17 @@ HBondDatabase::initialize_HBEval()
 		{
 			stringstream buf;
 			buf << tokens[i]; i++;
+			buf >> cosBAH2_fade_name;
+			cosBAH2_fade = HBFadeInterval_from_name(cosBAH2_fade_name);
+			if ( cosBAH2_fade_lookup_[hbe_type] ) {
+				assert(cosBAH2_fade_lookup_[hbe_type] == cosBAH2_fade);
+			} else {
+				cosBAH2_fade_lookup_[hbe_type] = cosBAH2_fade;
+			}
+		}
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
 			buf >> cosAHD_fade_name;
 			cosAHD_fade = HBFadeInterval_from_name(cosAHD_fade_name);
 			if ( cosAHD_fade_lookup_[hbe_type] ) {
@@ -566,6 +588,21 @@ HBondDatabase::initialize_HBEval()
 				debug_assert(cosBAH_long_poly_lookup_[hbe_type] == cosBAH_long_poly);
 			} else {
 				cosBAH_long_poly_lookup_[hbe_type] = cosBAH_long_poly;
+			}
+		}
+		{
+			stringstream buf;
+			buf << tokens[i]; i++;
+			buf >> cosBAH2_poly_name;
+			cosBAH2_poly = HBPoly1D_from_name(cosBAH2_poly_name);
+			/// Error handling: make sure we're given either a cosAHD polynomial or an AHD polynomial
+			if ( cosBAH2_poly->geometric_dimension() != hbgd_cosBAH  ) {
+				utility_exit_with_message("When reading HBEval.csv parameters for " + don_chem_type_name + " and " + acc_chem_type_name + ", expected to read a long-range cosAHD or AHD polynomial (i.e. geometric_dimension == hbgd_cosAHD or hbgd_AHD), but instead, found " + cosBAH2_poly_name + " of geometric dimension " + utility::to_string(cosBAH2_poly->geometric_dimension()) );
+			}
+			if ( cosBAH2_poly_lookup_[hbe_type] ) {
+				assert(cosBAH2_poly_lookup_[hbe_type] == cosBAH2_poly);
+			} else {
+				cosBAH2_poly_lookup_[hbe_type] = cosBAH2_poly;
 			}
 		}
 		{
@@ -889,6 +926,29 @@ HBondDatabase::cosAHD_fade_lookup(
 	return p;
 }
 
+///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+///determine hb_eval_type.
+FadeIntervalCOP
+HBondDatabase::cosBAH2_fade_lookup(
+	Size const hb_eval_type
+) const {
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
+		stringstream message;
+		message << "HBond eval type '" << hb_eval_type
+			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
+		utility_exit_with_message(message.str());
+	}
+	FadeIntervalCOP p(cosBAH2_fade_lookup_[hb_eval_type]);
+
+	if ( !p ) {
+		stringstream message;
+		message << "No fade interval for cosAHD has been defined for hb eval type '"
+			<< hb_eval_type << "'" <<endl;
+		utility_exit_with_message(message.str());
+	}
+	return p;
+}
+
 Polynomial_1dCOP
 HBondDatabase::HBPoly1D_from_name(
 	string const & name
@@ -1019,7 +1079,31 @@ HBondDatabase::cosAHD_long_poly_lookup(
 	}
 	return p;
 }
-/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+
+///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+///determine hb_eval_type.
+Polynomial_1dCOP
+HBondDatabase::cosBAH2_poly_lookup(
+	Size const hb_eval_type
+) const {
+	if ( hb_eval_type < 1 || hb_eval_type > HB_EVAL_TYPE_COUNT ) {
+		stringstream message;
+		message << "HBond eval type '" << hb_eval_type
+			<< "' is out side of the valid range (1," << HB_EVAL_TYPE_COUNT << ")";
+		utility_exit_with_message(message.str());
+	}
+	Polynomial_1dCOP p(cosBAH2_poly_lookup_[hb_eval_type]);
+
+	if ( !p ) {
+		stringstream message;
+		message << "No cosBAH2 polynomial has been defined for hb eval type '"
+			<< hb_eval_type << "'" << endl;
+		utility_exit_with_message(message.str());
+	}
+	return p;
+}
+
+///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::chi_poly_lookup(
@@ -1192,10 +1276,12 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 	Column AHdist_short_fade("AHdist_short_fade", DbDataTypeOP( new DbText() ));
 	Column AHdist_long_fade("AHdist_long_fade", DbDataTypeOP( new DbText() ));
 	Column cosBAH_fade("cosBAH_fade", DbDataTypeOP( new DbText() ));
+	Column cosBAH2_fade("cosBAH2_fade", DbDataTypeOP( new DbText() ));
 	Column cosAHD_fade("cosAHD_fade", DbDataTypeOP( new DbText() ));
 	Column AHdist("AHdist", DbDataTypeOP( new DbText() ));
 	Column cosBAH_short("cosBAH_short", DbDataTypeOP( new DbText() ));
 	Column cosBAH_long("cosBAH_long", DbDataTypeOP( new DbText() ));
+	Column cosBAH2_poly("cosBAH2_poly", DbDataTypeOP( new DbText() ));
 	Column cosAHD_short("cosAHD_short", DbDataTypeOP( new DbText() ));
 	Column cosAHD_long("cosAHD_long", DbDataTypeOP( new DbText() ));
 	Column weight_type("weight_type", DbDataTypeOP( new DbText() ));
@@ -1241,6 +1327,18 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 		foreign_key_columns_cosBAH_fade,
 		"hbond_fade_interval",
 		reference_columns_cosBAH_fade,
+		true);
+
+	Columns foreign_key_columns_cosBAH2_fade;
+	foreign_key_columns_cosBAH2_fade.push_back(database_tag);
+	foreign_key_columns_cosBAH2_fade.push_back(cosBAH2_fade);
+	vector1< std::string > reference_columns_cosBAH2_fade;
+	reference_columns_cosBAH2_fade.push_back("database_tag");
+	reference_columns_cosBAH2_fade.push_back("name");
+	ForeignKey foreign_key_cosBAH2_fade(
+		foreign_key_columns_cosBAH2_fade,
+		"hbond_fade_interval",
+		reference_columns_cosBAH2_fade,
 		true);
 
 	Columns foreign_key_columns_cosAHD_fade;
@@ -1291,6 +1389,18 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 		reference_columns_cosBAH_long,
 		true);
 
+	Columns foreign_key_columns_cosBAH2_poly;
+	foreign_key_columns_cosBAH2_poly.push_back(database_tag);
+	foreign_key_columns_cosBAH2_poly.push_back(cosAHD_long);
+	vector1< std::string > reference_columns_cosBAH2_poly;
+	reference_columns_cosBAH2_poly.push_back("database_tag");
+	reference_columns_cosBAH2_poly.push_back("name");
+	ForeignKey foreign_key_cosBAH2_poly(
+		foreign_key_columns_cosBAH2_poly,
+		"hbond_polynomial_1d",
+		reference_columns_cosBAH2_poly,
+		true);
+
 	Columns foreign_key_columns_cosAHD_short;
 	foreign_key_columns_cosAHD_short.push_back(database_tag);
 	foreign_key_columns_cosAHD_short.push_back(cosAHD_short);
@@ -1319,19 +1429,23 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 	table.add_foreign_key(foreign_key_AHdist_short_fade);
 	table.add_foreign_key(foreign_key_AHdist_long_fade);
 	table.add_foreign_key(foreign_key_cosBAH_fade);
+	table.add_foreign_key(foreign_key_cosBAH2_fade);
 	table.add_foreign_key(foreign_key_cosAHD_fade);
 	table.add_foreign_key(foreign_key_AHdist);
 	table.add_foreign_key(foreign_key_cosBAH_short);
 	table.add_foreign_key(foreign_key_cosBAH_long);
+	table.add_foreign_key(foreign_key_cosBAH2_poly);
 	table.add_foreign_key(foreign_key_cosAHD_short);
 	table.add_foreign_key(foreign_key_cosAHD_long);
 	table.add_column(AHdist_short_fade);
 	table.add_column(AHdist_long_fade);
 	table.add_column(cosBAH_fade);
+	table.add_column(cosBAH2_fade);
 	table.add_column(cosAHD_fade);
 	table.add_column(AHdist);
 	table.add_column(cosBAH_short);
 	table.add_column(cosBAH_long);
+	table.add_column(cosBAH2_poly);
 	table.add_column(cosAHD_short);
 	table.add_column(cosAHD_long);
 	table.add_column(weight_type);
@@ -1393,7 +1507,10 @@ HBondDatabase::report_parameter_features(
 		basic::database::safely_write_to_database(hbond_polynomial_statement);
 	}
 
-	std::string hbond_evaluation_string = "INSERT INTO hbond_evaluation_types (database_tag, don_chem_type, acc_chem_type, separation, AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosAHD_fade, AHdist, cosBAH_short, cosBAH_long, cosAHD_short, cosAHD_long, weight_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string hbond_evaluation_string = 
+		"INSERT INTO hbond_evaluation_types (database_tag, don_chem_type, acc_chem_type, separation,"
+		" AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosBAH2_fade, cosAHD_fade, AHdist, cosBAH_short,"
+		" cosBAH_long, cosBAH2_poly, cosAHD_short, cosAHD_long, weight_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_evaluation_statement(basic::database::safely_prepare_statement(hbond_evaluation_string,db_session));
 	for ( Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon ) {
 		string const & don_chem_type(HBondTypeManager::name_from_don_chem_type(HBDonChemType(hbdon)));
@@ -1414,13 +1531,16 @@ HBondDatabase::report_parameter_features(
 				hbond_evaluation_statement.bind(5,AHdist_short_fade_lookup(hbe)->get_name());
 				hbond_evaluation_statement.bind(6,AHdist_long_fade_lookup(hbe)->get_name());
 				hbond_evaluation_statement.bind(7,cosBAH_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(8,cosAHD_fade_lookup(hbe)->get_name());
-				hbond_evaluation_statement.bind(9,AHdist_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(10,cosBAH_short_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(11,cosBAH_long_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(12,cosAHD_short_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(13,cosAHD_long_poly_lookup(hbe)->name());
-				hbond_evaluation_statement.bind(14,HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe)));
+				hbond_evaluation_statement.bind(8,cosBAH2_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(9,cosAHD_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(10,AHdist_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(11,cosBAH_short_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(12,cosBAH_long_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(13,cosBAH2_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(14,cosAHD_short_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(15,cosAHD_long_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(16,HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe)));
+
 				basic::database::safely_write_to_database(hbond_evaluation_statement);
 			}
 		}

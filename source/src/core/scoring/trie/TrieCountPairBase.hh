@@ -32,8 +32,8 @@
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
-#include <core/scoring/elec/ElecAtom.fwd.hh>
-#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
+#include <core/scoring/elec/electrie/ElecAtom.fwd.hh>
+#include <core/scoring/elec/electrie/ElecTrieEvaluator.fwd.hh>
 
 #include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>
@@ -874,288 +874,288 @@ public:
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
@@ -1163,72 +1163,72 @@ public:
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
 
 	virtual
 	void
 	resolve_trie_vs_trie(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
 	virtual
 	void
 	resolve_trie_vs_path(
-		trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
+		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie1,
 		RotamerTrieBase const & trie2,
-		elec::FA_ElecEnergy const & sfxn,
+		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
 

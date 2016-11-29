@@ -44,7 +44,7 @@ NBR_ATOM CB
 # Max distance from C-Beta to the members of the backbone; 3.4473 in all canonical AAs.
 NBR_RADIUS 3.4473
 FIRST_SIDECHAIN_ATOM CB
-RAMA_PREPRO_FILENAME scoring/score_functions/rama/fd/all.ramaProb scoring/score_functions/rama/fd/prepro.ramaProb
+RAMA_PREPRO_FILENAME all.ramaProb prepro.ramaProb
 ACT_COORD_ATOMS CB CG1 CG2 END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458004   N     CA    C  

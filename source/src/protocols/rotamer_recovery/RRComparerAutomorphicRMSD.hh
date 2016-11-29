@@ -84,10 +84,22 @@ public: // public interface
 	core::Real
 	get_recovery_threshold() const;
 
+	virtual
+	void
+	set_absolute_threshold(
+		core::Real const absolute_threshold
+	) override;
+
+	virtual
+	core::Real
+	get_absolute_threshold() const;
+
+
 private: // data members
 
 	bool include_backbone_atoms_;
 	core::Real recovery_threshold_;
+	core::Real absolute_threshold_;
 
 };
 

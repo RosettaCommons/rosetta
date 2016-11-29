@@ -958,23 +958,6 @@ hb_env_dep_burial_tk(int const nb1, int const nb2)
 		get_burial_3( nb2, exposed_threshold, buried_threshold ) );
 }
 
-core::Real
-hb_env_dep_burial_fd(int const nb1, int const nb2, core::Real low_scale, core::Real low_nb, core::Real high_nb)
-{
-	core::Real frac1 = (nb1-low_nb)/(high_nb-low_nb);
-	core::Real frac2 = (nb2-low_nb)/(high_nb-low_nb);
-
-	if ( frac1<0.0 ) { frac1=0.0; } if ( frac1>1.0 ) { frac1=1.0;}
-	if ( frac2<0.0 ) { frac2=0.0; } if ( frac2>1.0 ) { frac2=1.0;}
-
-	core::Real scale1 = (1-frac1)*low_scale + frac1;
-	core::Real scale2 = (1-frac1)*low_scale + frac1;
-
-	core::Real weight = 0.5*( scale1+scale2 );
-
-	return weight;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 Real
 get_environment_dependent_weight(
@@ -986,21 +969,15 @@ get_environment_dependent_weight(
 {
 	Real weight( 1.0 );
 
-	if ( options.use_hb_env_dep_new() ) {
-		///fpd alternate env dependence
-		weight = hb_env_dep_burial_fd(
-			acc_nb, don_nb, options.hb_env_dep_new_low_scale(), options.hb_env_dep_new_low_nneigh(), options.hb_env_dep_new_high_nneigh()
-		);
-	} else {
-		// mjo why is this only applied to side chains!!!!
-		if ( hbe_is_SC_type(hbe_type.eval_type()) ) {
-			if ( options.smooth_hb_env_dep() ) {
-				weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-			} else {
-				weight = hb_env_dep_burial_tk( acc_nb, don_nb );
-			}
+	// mjo why is this only applied to side chains!!!!
+	if ( hbe_is_SC_type(hbe_type.eval_type()) ) {
+		if ( options.smooth_hb_env_dep() ) {
+			weight = hb_env_dep_burial_lin( acc_nb, don_nb );
+		} else {
+			weight = hb_env_dep_burial_tk( acc_nb, don_nb );
 		}
 	}
+
 	// std::cout << "HB_ENV_WEIGHT: " << weight << std::endl;
 	return weight;
 }

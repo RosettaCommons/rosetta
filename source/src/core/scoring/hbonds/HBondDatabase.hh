@@ -113,7 +113,11 @@ public:
 	FadeIntervalCOP
 	cosBAH_fade_lookup( Size const hb_eval_type ) const;
 
-	/// @brief find fading function for hbgd_cosAHD
+	///@brief find fading function for hbgd_cosBAH2
+	FadeIntervalCOP
+	cosBAH2_fade_lookup( Size const hb_eval_type ) const;
+
+	///@brief find fading function for hbgd_cosAHD
 	FadeIntervalCOP
 	cosAHD_fade_lookup( Size const hb_eval_type ) const;
 
@@ -133,7 +137,11 @@ public:
 	Polynomial_1dCOP
 	cosBAH_long_poly_lookup( Size const hb_eval_type ) const;
 
-	/// @brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is short
+	///@brief find polynomial to hbgd_cosBAH2 dimension
+	Polynomial_1dCOP
+	cosBAH2_poly_lookup( Size const hb_eval_type ) const;
+
+	///@brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is short
 	Polynomial_1dCOP
 	cosAHD_short_poly_lookup( Size const hb_eval_type ) const;
 
@@ -201,6 +209,7 @@ private:
 	utility::vector1< FadeIntervalCOP > AHdist_short_fade_lookup_;
 	utility::vector1< FadeIntervalCOP > AHdist_long_fade_lookup_;
 	utility::vector1< FadeIntervalCOP > cosBAH_fade_lookup_;
+	utility::vector1< FadeIntervalCOP > cosBAH2_fade_lookup_;
 	utility::vector1< FadeIntervalCOP > cosAHD_fade_lookup_;
 
 	std::map< const std::string, Polynomial_1dCOP > HBPoly1D_lookup_by_name_;
@@ -208,6 +217,7 @@ private:
 	utility::vector1< Polynomial_1dCOP > AHdist_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > cosBAH_short_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > cosBAH_long_poly_lookup_;
+	utility::vector1< Polynomial_1dCOP > cosBAH2_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > cosAHD_short_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > cosAHD_long_poly_lookup_;
 	utility::vector1< Polynomial_1dCOP > chi_poly_lookup_;

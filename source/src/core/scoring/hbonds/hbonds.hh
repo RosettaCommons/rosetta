@@ -49,10 +49,6 @@ bool
 calculate_intra_res_hbonds( conformation::Residue const & rsd,
 	HBondOptions const & options );
 
-//fpd calc (new) env-dep burial weights
-core::Real
-hb_env_dep_burial_fd(int const nb1, int const nb2, core::Real low_scale, core::Real low_nb, core::Real high_nb);
-
 void
 fill_intra_res_hbond_set(
 	pose::Pose const & pose,

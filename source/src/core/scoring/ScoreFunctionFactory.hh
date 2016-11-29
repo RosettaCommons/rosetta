@@ -133,6 +133,7 @@ extern std::string const DOCK_LOW_PATCH;
 
 extern std::string const SCORE4_SMOOTH_CART;
 
+extern std::string const BETA_NOV16;
 extern std::string const BETA_NOV15;
 extern std::string const BETA_JULY15;
 

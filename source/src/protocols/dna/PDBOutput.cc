@@ -493,11 +493,11 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 		Real const HDdis( HD.length() ), AHdis( AH.length() );
 		Real const inv_HDdis( 1.0f / HDdis ), inv_AHdis( 1.0f / AHdis );
 		Vector const HDunit( HD * inv_HDdis ), AHunit( AH * inv_AHdis );
-		Vector BAunit, PBxyz;
+		Vector BAunit, B2Aunit, PBxyz;
 		make_hbBasetoAcc_unitvector(
 			hbond_set.hbond_options(),
 			get_hbe_acc_hybrid(hb.eval_type()),
-			Axyz, Bxyz, B2xyz, PBxyz, BAunit );
+			Axyz, Bxyz, B2xyz, PBxyz, BAunit , B2Aunit );
 		Real const xD( dot( AHunit, HDunit ) ), xH( dot( BAunit, AHunit ) );
 
 		int don_pdb(0), acc_pdb(0);

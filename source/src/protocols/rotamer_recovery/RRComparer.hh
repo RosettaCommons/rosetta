@@ -65,6 +65,11 @@ public: // public interface
 		core::Real const recovery_threshold) = 0;
 
 	virtual
+	void
+	set_absolute_threshold(
+		core::Real const absolute_threshold) = 0;
+
+	virtual
 	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
@@ -97,10 +102,15 @@ public: // public interface
 	get_parameters() const override;
 
 
+	virtual
 	void
 	set_recovery_threshold(
 		core::Real const recovery_threshold) override;
-
+	
+	virtual
+	void
+	set_absolute_threshold(
+		core::Real const absolute_threshold) override;
 
 	bool
 	measure_rotamer_recovery(
@@ -114,6 +124,7 @@ public: // public interface
 private: // data members
 
 	core::Real recovery_threshold_;
+	core::Real absolute_threshold_;
 
 };
 
@@ -130,6 +141,7 @@ public: // constructors destructors
 public: // public interface
 
 	void set_recovery_threshold( core::Real const setting ) override;
+	void set_absolute_threshold( core::Real const setting ) override;
 
 	virtual
 	void
@@ -156,6 +168,7 @@ public: // public interface
 
 private: // data members
 	core::Real tolerance_;
+	core::Real absolute_threshold_;
 	bool limit_chi_angles_;
 	core::Size max_chi_considered_; // only relevant if limit_chi_angles_ is set
 

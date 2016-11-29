@@ -255,7 +255,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 				debug_assert( ! hbondoptions_->use_sp2_chi_penalty() ); // APL avoid the new sp2 chi term.
 				debug_assert( ! hbondoptions_->measure_sp3acc_BAH_from_hvy() );
 				hbond_compute_energy(*hb_database_, *hbondoptions_, hbond_eval_type,
-					AHdis, xD, xH, dummy_chi, curr_water_hbond );
+					AHdis, xD, xH, xH, dummy_chi, curr_water_hbond ); //fpd sp3 acceptors conditioned on two angles, assume they are equal
 
 				// Save the Hbond energy
 				curr_water_hbond *= entropy_scaling;

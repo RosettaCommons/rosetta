@@ -18,6 +18,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  C    O  
 PROPERTIES PROTEIN CANONICAL_AA ALPHA_AA ACHIRAL_BACKBONE
+RAMA_PREPRO_FILENAME all.ramaProb prepro.ramaProb
 NBR_ATOM CEN
 NBR_RADIUS 3.025 #fpd true neighbor radius is 2.400; keep this at prev. value so 12A neighbor graph is correct
 FIRST_SIDECHAIN_ATOM CEN

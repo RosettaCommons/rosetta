@@ -381,7 +381,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 						Real hb_energy( 0.0 );
 						scoring::hbonds::hbond_compute_energy( *( hb_database_ ),
 							scorefxn->energy_method_options().hbond_options(),
-							hbe_type, AHdist, cosAHD, cosBAH, B2BAHchi, hb_energy );
+							hbe_type, AHdist, cosAHD, cosBAH, 0.0, B2BAHchi, hb_energy );
 						//TR << hb_energy << std::endl;
 						if ( hb_energy >= 0.0 ) continue; //was not actually an hbond
 

@@ -31,13 +31,16 @@ namespace lkball {
 namespace lkbtrie {
 
 LKBTrieEvaluator::LKBTrieEvaluator(
-	core::Real wt_lk_ball, core::Real wt_lk_ball_iso, core::Real wt_lk_ball_wtd,
-	core::scoring::lkball::LK_BallEnergy const &lkb,
-	core::scoring::etable::EtableCOP etable
+		core::Real wt_lk_ball, core::Real wt_lk_ball_iso, core::Real wt_lk_ball_wtd,
+		core::Real wt_lk_ball_bridge,	core::Real wt_lk_ball_bridge_uncpl,
+		core::scoring::lkball::LK_BallEnergy const &lkb,
+		core::scoring::etable::EtableCOP etable
 ) :
 	wt_lk_ball_(wt_lk_ball),
 	wt_lk_ball_iso_(wt_lk_ball_iso),
 	wt_lk_ball_wtd_(wt_lk_ball_wtd),
+	wt_lk_ball_bridge_(wt_lk_ball_bridge),
+	wt_lk_ball_bridge_uncpl_(wt_lk_ball_bridge_uncpl),
 	lkb_(lkb),
 	etable_(etable)
 {}
@@ -68,15 +71,26 @@ LKBTrieEvaluator::heavyatom_heavyatom_energy(
 	if ( !at2.waters().empty() ) lk_ij += lk_desolvation_of_atom2_by_atom1;
 	core::Real lkbr_ij = lk_desolvation_of_atom1_by_atom2_lkb+lk_desolvation_of_atom2_by_atom1_lkb;
 
+	core::Real lkbridge_frac = 0.0, lkbr_wt = 0.0, lkbr_uncpl_wt = 0.0;
+	if (wt_lk_ball_bridge_ != 0.0 || wt_lk_ball_bridge_uncpl_ != 0.0) {
+		lkbridge_frac = lkb_.get_lkbr_fractional_contribution(
+			at1.atom( ).xyz(), at2.atom( ).xyz(),
+			at1.waters(), at2.waters(),
+      lkbr_ij,
+      lkbr_wt, lkbr_uncpl_wt );
+	}
+
 	core::Real score =
 		wt_lk_ball_iso_ * lk_ij +
 		wt_lk_ball_  * lkbr_ij +
+		wt_lk_ball_bridge_  * lk_ij * lkbridge_frac +
+		wt_lk_ball_bridge_uncpl_  * lkbridge_frac +
 		wt_lk_ball_wtd_ * (
-		at1.atom_weights()[1] * lk_desolvation_of_atom1_by_atom2 +
-		at1.atom_weights()[2] * lk_desolvation_of_atom1_by_atom2_lkb +
-		at2.atom_weights()[1] * lk_desolvation_of_atom2_by_atom1 +
-		at2.atom_weights()[2] * lk_desolvation_of_atom2_by_atom1_lkb
-	);
+			at1.atom_weights()[1] * lk_desolvation_of_atom1_by_atom2 +
+			at1.atom_weights()[2] * lk_desolvation_of_atom1_by_atom2_lkb +
+			at2.atom_weights()[1] * lk_desolvation_of_atom2_by_atom1 +
+			at2.atom_weights()[2] * lk_desolvation_of_atom2_by_atom1_lkb
+		);
 
 	return score;
 }

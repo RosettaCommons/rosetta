@@ -155,7 +155,11 @@ build_optimal_water_O_on_donor(
 	Vector const & dxyz
 )
 {
-	return ( dxyz + optimal_water_distance * ( hxyz - dxyz ).normalized() );
+	core::Real donor_length = optimal_water_distance;
+	if (basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user()) {
+		donor_length = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ]();
+	}
+	return ( dxyz + donor_length * ( hxyz - dxyz ).normalized() );
 }
 
 
@@ -173,54 +177,74 @@ build_optimal_water_Os_on_acceptor(
 
 	Real const distance( optimal_water_distance ); // acceptor--O distance
 
-	Real theta(0);
-	utility::vector1< Real > phi_list;
+	//Real theta(0);
+	utility::vector1< Real > params_sp2, params_sp3, params_ring;
+
+	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user()) {
+		params_sp2.push_back(distance);params_sp2.push_back(120.0);params_sp2.push_back(0.0);
+		params_sp2.push_back(distance);params_sp2.push_back(120.0);params_sp2.push_back(180.0);
+	} else {
+		params_sp2 = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ]();
+	}
+	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user()) {
+		params_sp3.push_back(distance);params_sp3.push_back(109.0);params_sp3.push_back(120.0);
+		params_sp3.push_back(distance);params_sp3.push_back(109.0);params_sp3.push_back(240.0);
+	} else {
+		params_sp3 = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ]();
+	}
+	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user()) {
+		params_ring.push_back(distance);params_ring.push_back(180.0);params_ring.push_back(0.0);
+	} else {
+		params_ring = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ]();
+	}
 
 	// detect special case of DNA phosphate hydration:
-	std::string const & acc_atm_name( acc_rsd.atom_name( acc_atm ) );
+	utility::vector1< Vector > waters;
 
+	std::string const & acc_atm_name( acc_rsd.atom_name( acc_atm ) );
 	if ( acc_rsd.is_DNA() && acc_rsd.atom_is_backbone( acc_atm ) &&
 			( acc_atm_name == " OP2" || acc_atm_name == " OP1" ) ) {
+
 		// special case: hydration of the DNA phosphate group
 		b1_xyz = acc_rsd.xyz( "P" );
 		b2_xyz = ( ( acc_atm_name == " OP2" ) ? acc_rsd.xyz( "OP1" ) : acc_rsd.xyz( "OP2" ) );
+		kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+
 		// these numbers are taken from "Hydration of the Phosphate Group in Double-Helical DNA",
 		// Schneider, Patel, and Berman, Biophysical Journal Vol. 75 2422-2434
-		theta = 180.0 - 125.0;
-		phi_list.push_back(  45.0 );
-		phi_list.push_back( 160.0 );
-		phi_list.push_back( 280.0 );
+		waters.push_back( stub.spherical( radians( 45.0 ), radians( 180.0 - 125.0 ), distance ) );
+		waters.push_back( stub.spherical( radians( 160.0 ), radians( 180.0 - 125.0 ), distance ) );
+		waters.push_back( stub.spherical( radians( 280.0 ), radians( 180.0 - 125.0 ), distance ) );
+
 	} else {
 
-		switch( hybrid ) {
-		case SP2_HYBRID :
-			theta = 180.0 - 120.0;
-			phi_list.push_back(   0.0 );
-			phi_list.push_back( 180.0 );
-			break;
-		case SP3_HYBRID :
-			theta = 180.0 - 109.0;
-			phi_list.push_back( 120.0 );
-			phi_list.push_back( 240.0 );
-			break;
-		case RING_HYBRID :
+		if (hybrid == SP2_HYBRID) {
+			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+			for (core::Size i=0; i<params_sp2.size()/3; ++i) {
+				waters.push_back( stub.spherical( radians( params_sp2[3*i+3] ), radians( 180.0-params_sp2[3*i+2] ), params_sp2[3*i+1] ) );
+			}
+		} else if (hybrid == SP3_HYBRID) {
+			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+			for (core::Size i=0; i<params_sp3.size()/3; ++i) {
+				waters.push_back( stub.spherical( radians( params_sp3[3*i+3] ), radians( 180.0-params_sp3[3*i+2] ), params_sp3[3*i+1] ) );
+			}
+		} else if (hybrid == RING_HYBRID) {
 			b1_xyz = 0.5 * ( b1_xyz + b2_xyz );
-			theta = 0.0;
-			phi_list.push_back( 0.0 ); // doesnt matter
-			break;
-		default :
+			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
+			for (core::Size i=0; i<params_ring.size()/3; ++i) {
+				waters.push_back( stub.spherical( radians( params_ring[3*i+3] ), radians( 180.0-params_ring[3*i+2] ), params_ring[3*i+1] ) );
+			}
+		} else {
 			TR.Error << "Bad hybridization type for acceptor " << hybrid << std::endl;
 			utility_exit();
 		}
+
 	}
 
-	utility::vector1< Vector > waters;
-	kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
-	for ( Size i=1; i<= phi_list.size(); ++i ) {
-		waters.push_back( stub.spherical( radians( phi_list[i] ), radians( theta ), distance ) );
-	}
 	return waters;
 }
+
+
 void
 setup_water_builders_for_residue_type(
 	ResidueType const & rsd_type,
@@ -231,7 +255,6 @@ setup_water_builders_for_residue_type(
 	using namespace conformation;
 	using namespace chemical;
 
-	//bool const no_lk_ball_for_SP2( options::option[ options::OptionKeys::dna::specificity::no_lk_ball_for_SP2 ] );
 	bool const no_SP3_acceptor_waters
 		( false );//basic::options::option[ basic::options::OptionKeys::dna::specificity::no_SP3_acceptor_waters ] );
 

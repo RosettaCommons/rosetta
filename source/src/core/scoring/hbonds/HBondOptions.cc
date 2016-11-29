@@ -90,11 +90,7 @@ HBondOptions::HBondOptions(
 	ldsrbb_low_scale_( 0.5 ),
 	ldsrbb_high_scale_( 2.0 ),
 	ldsrbb_minlength_( 4 ),
-	ldsrbb_maxlength_( 17 ),
-	use_hb_env_dep_new_ ( false ),  //fpd new envdep HB
-	hb_env_dep_new_low_scale_ ( 0.2 ),  //fpd new envdep HB
-	hb_env_dep_new_low_nneigh_ ( 10 ),  //fpd new envdep HB
-	hb_env_dep_new_high_nneigh_ ( 20 )  //fpd new envdep HB
+	ldsrbb_maxlength_( 17 )
 {
 	initialize_from_options( options );
 }
@@ -142,20 +138,6 @@ void HBondOptions::initialize_from_options( utility::options::OptionCollection c
 	if ( options[ OptionKeys::score::ldsrbb_maxlength ].user() ) {
 		ldsrbb_maxlength_ = options[ OptionKeys::score::ldsrbb_maxlength ];
 	}
-
-	if ( options[ OptionKeys::score::hb_env_dep_new ].user() ) {
-		use_hb_env_dep_new_ = options[ OptionKeys::score::hb_env_dep_new ]();
-	}
-	if ( options[ OptionKeys::score::hb_env_dep_new_low_scale ].user() ) {
-		hb_env_dep_new_low_scale_ = options[ OptionKeys::score::hb_env_dep_new_low_scale ]();
-	}
-	if ( options[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user() ) {
-		hb_env_dep_new_low_nneigh_ = options[ OptionKeys::score::hb_env_dep_new_low_nneigh ]();
-	}
-	if ( options[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user() ) {
-		hb_env_dep_new_high_nneigh_ = options[ OptionKeys::score::hb_env_dep_new_high_nneigh ]();
-	}
-
 	if ( options.has(OptionKeys::corrections::score::hb_sp2_outer_width) ) {
 		sp2_outer_width_ = options[ OptionKeys::corrections::score::hb_sp2_outer_width ];
 	}
@@ -181,10 +163,6 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 		+ OptionKeys::dna::specificity::exclude_dna_dna
 		+ OptionKeys::membrane::Mhbond_depth
 		+ OptionKeys::mp::scoring::hbond
-		+ OptionKeys::score::hb_env_dep_new
-		+ OptionKeys::score::hb_env_dep_new_high_nneigh
-		+ OptionKeys::score::hb_env_dep_new_low_nneigh
-		+ OptionKeys::score::hb_env_dep_new_low_scale
 		+ OptionKeys::score::hbond_bb_per_residue_energy
 		+ OptionKeys::score::hbond_disable_bbsc_exclusion_rule
 		+ OptionKeys::score::hbond_params
@@ -232,10 +210,6 @@ HBondOptions::operator=( HBondOptions const & src )
 	ldsrbb_high_scale_ = src.ldsrbb_high_scale_;
 	ldsrbb_minlength_ = src.ldsrbb_minlength_;
 	ldsrbb_maxlength_ = src.ldsrbb_maxlength_;
-	use_hb_env_dep_new_ = src.use_hb_env_dep_new_;
-	hb_env_dep_new_low_scale_ = src.hb_env_dep_new_low_scale_;
-	hb_env_dep_new_low_nneigh_ = src.hb_env_dep_new_low_nneigh_;
-	hb_env_dep_new_high_nneigh_ = src.hb_env_dep_new_high_nneigh_;
 
 	return *this;
 }
@@ -577,18 +551,6 @@ void HBondOptions::length_dependent_srbb_minlength( Size setting ) { ldsrbb_minl
 Size HBondOptions::length_dependent_srbb_maxlength() const { return ldsrbb_maxlength_; }
 void HBondOptions::length_dependent_srbb_maxlength( Size setting ) { ldsrbb_maxlength_ = setting; }
 
-bool HBondOptions::use_hb_env_dep_new() const { return use_hb_env_dep_new_; }
-void HBondOptions::use_hb_env_dep_new(bool val) { use_hb_env_dep_new_=val; }
-
-core::Real HBondOptions::hb_env_dep_new_low_scale() const { return hb_env_dep_new_low_scale_; }
-void HBondOptions::hb_env_dep_new_low_scale(core::Real val) { hb_env_dep_new_low_scale_=val; }
-
-core::Real HBondOptions::hb_env_dep_new_low_nneigh() const { return hb_env_dep_new_low_nneigh_; }
-void HBondOptions::hb_env_dep_new_low_nneigh(core::Real val) { hb_env_dep_new_low_nneigh_=val; }
-
-core::Real HBondOptions::hb_env_dep_new_high_nneigh() const { return hb_env_dep_new_high_nneigh_; }
-void HBondOptions::hb_env_dep_new_high_nneigh(core::Real val) { hb_env_dep_new_high_nneigh_=val; }
-
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
@@ -615,11 +577,7 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.ldsrbb_low_scale_ == b.ldsrbb_low_scale_) &&
 		( a.ldsrbb_high_scale_ == b.ldsrbb_high_scale_) &&
 		( a.ldsrbb_minlength_ == b.ldsrbb_minlength_) &&
-		( a.ldsrbb_maxlength_ == b.ldsrbb_maxlength_) &&
-		( a.use_hb_env_dep_new_ == b.use_hb_env_dep_new_) &&
-		( a.hb_env_dep_new_low_scale_ == b.hb_env_dep_new_low_scale_) &&
-		( a.hb_env_dep_new_low_nneigh_ == b.hb_env_dep_new_low_nneigh_) &&
-		( a.hb_env_dep_new_high_nneigh_ == b.hb_env_dep_new_high_nneigh_) );
+		( a.ldsrbb_maxlength_ == b.ldsrbb_maxlength_) );
 }
 
 bool
@@ -711,10 +669,6 @@ core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( ldsrbb_high_scale_ ) ); // Real
 	arc( CEREAL_NVP( ldsrbb_minlength_ ) ); // Size
 	arc( CEREAL_NVP( ldsrbb_maxlength_ ) ); // Size
-	arc( CEREAL_NVP( use_hb_env_dep_new_ ) ); // _Bool
-	arc( CEREAL_NVP( hb_env_dep_new_low_scale_ ) ); // core::Real
-	arc( CEREAL_NVP( hb_env_dep_new_low_nneigh_ ) ); // core::Real
-	arc( CEREAL_NVP( hb_env_dep_new_high_nneigh_ ) ); // core::Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -745,10 +699,6 @@ core::scoring::hbonds::HBondOptions::load( Archive & arc ) {
 	arc( ldsrbb_high_scale_ ); // Real
 	arc( ldsrbb_minlength_ ); // Size
 	arc( ldsrbb_maxlength_ ); // Size
-	arc( use_hb_env_dep_new_ ); // _Bool
-	arc( hb_env_dep_new_low_scale_ ); // core::Real
-	arc( hb_env_dep_new_low_nneigh_ ); // core::Real
-	arc( hb_env_dep_new_high_nneigh_ ); // core::Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondOptions );

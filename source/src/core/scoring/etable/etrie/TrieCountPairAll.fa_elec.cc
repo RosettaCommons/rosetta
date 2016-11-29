@@ -23,7 +23,7 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 
 // Project Headers
-#include <core/scoring/elec/FA_ElecEnergy.hh>
+#include <core/scoring/elec/electrie/ElecTrieEvaluator.hh>
 #include <core/scoring/vdwaals/VDW_Energy.hh>
 
 // STL Headers
@@ -44,9 +44,9 @@ using namespace trie;
 /// Hack Elec E
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -57,9 +57,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -70,9 +70,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -82,9 +82,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -94,46 +94,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-)
-{
-	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
-}
-
-
-void
-TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-)
-{
-	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
-)
-{
-	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -144,9 +107,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -156,9 +119,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -168,9 +131,22 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+)
+{
+	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
+}
+
+
+void
+TrieCountPairAll::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -180,9 +156,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -192,9 +168,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -204,9 +180,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -216,9 +192,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -228,9 +204,33 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+)
+{
+	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+)
+{
+	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -241,9 +241,9 @@ TrieCountPairAll::resolve_trie_vs_trie(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -253,9 +253,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -265,9 +265,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -276,21 +276,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -300,9 +288,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -312,9 +300,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -324,20 +312,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -347,9 +324,20 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -359,53 +347,9 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
-	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
-}
-
-void
-TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -415,9 +359,65 @@ TrieCountPairAll::resolve_trie_vs_path(
 
 void
 TrieCountPairAll::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
-	elec::FA_ElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
+{
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+}
+
+
+void
+TrieCountPairAll::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::electrie::ElecTrieEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {

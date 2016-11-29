@@ -842,9 +842,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 /// Hack Elec E
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -855,9 +855,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -868,9 +868,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -880,22 +880,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
-	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
-}
-
-
-void
-HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -906,33 +893,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
-	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
-}
-
-void
-HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
-	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
-}
-
-void
-HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -943,9 +906,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -955,9 +918,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -967,9 +930,22 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -979,9 +955,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -991,9 +967,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -1003,9 +979,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -1015,9 +991,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -1027,9 +1003,33 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_trie(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &
+)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 )
@@ -1040,9 +1040,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1052,9 +1052,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1064,9 +1064,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1075,21 +1075,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
-	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
-	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
-}
-
-
-void
-HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1099,9 +1087,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1111,20 +1099,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	elec::FA_ElecEnergy const &,
-	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
-	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
-}
-
-void
-HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1134,9 +1111,20 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1146,9 +1134,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
-	elec::FA_ElecEnergy const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
 	utility::vector1< core::PackerEnergy > &)
 {
@@ -1158,9 +1146,21 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
+	elec::electrie::ElecTrieEvaluator const &,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< core::PackerEnergy > &)
+{
+	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
+}
+
+
+void
+HBCountPairFunction::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {
@@ -1169,9 +1169,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {
@@ -1180,9 +1180,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {
@@ -1191,9 +1191,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {
@@ -1202,9 +1202,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {
@@ -1213,9 +1213,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 
 void
 HBCountPairFunction::resolve_trie_vs_path(
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
-	elec::FA_ElecEnergy const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
+	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
 	utility::vector1< core::PackerEnergy > & )
 {

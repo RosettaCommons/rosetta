@@ -65,7 +65,8 @@ namespace rotamer_recovery {
 static Tracer TR("protocol.moves.RRComparerElecDensDiff");
 
 RRComparerElecDensDiff::RRComparerElecDensDiff() :
-	recovery_threshold_( 0.13 )
+	recovery_threshold_( 0.12 ),
+	absolute_threshold_( 0.70 )
 {}
 
 RRComparerElecDensDiff::RRComparerElecDensDiff( RRComparerElecDensDiff const & src ) :
@@ -126,14 +127,16 @@ RRComparerElecDensDiff::measure_rotamer_recovery(
 	Real corr_diff = pose1_corr - pose2_corr;    //if Rosetta fixes an error in native density fitting, count as recovered
 	//pose1 must be native
 
-	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;
+//	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " corr diff: " << corr_diff << std::endl;
+//	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " native_corr: " << pose1_corr<< " pack_corr: " << pose2_corr << " corr diff: " << corr_diff << std::endl;
 
-	if ( corr_diff > recovery_threshold_ ) {
+	if ( corr_diff > recovery_threshold_ || pose2_corr < absolute_threshold_ ) {
 		recovered = false;
 	} else {
 		recovered = true;
 	}
 
+	TR << "type: " << res1.name3() << " seqpos: " << res1.seqpos() << " native_corr: " << pose1_corr<< " pack_corr: " << pose2_corr << " corr diff: " << corr_diff << " " << recovered << std::endl;
 	return true;
 }
 
@@ -157,6 +160,18 @@ RRComparerElecDensDiff::set_recovery_threshold(
 Real
 RRComparerElecDensDiff::get_recovery_threshold() const {
 	return recovery_threshold_;
+}
+
+void
+RRComparerElecDensDiff::set_absolute_threshold(
+	Real const absolute_threshold
+) {
+	absolute_threshold_ = absolute_threshold;
+}
+
+Real
+RRComparerElecDensDiff::get_absolute_threshold() const {
+	return absolute_threshold_;
 }
 
 } // rotamer_recovery

@@ -477,7 +477,7 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 				energy, hbderiv_ABE_GO_GEOMSOL_OCC_DON, deriv);
 		} else {
 			Real chi( 0.0 );
-			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
+			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, xH, chi, energy );
 		}
 	} else {
 		// water is the donor, give it perfect geometry. This used to be 0.9999, but that caused imperfect derivatives.
@@ -495,13 +495,13 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 
 		// find cosine of the base-acceptor-water_proton angle (xH)
 		// note: this is the same as the base-acceptor-water_oxygen angle
-		Vector pseudo_base_atm_xyz, dummy; // stolen from hbonds_geom.cc
+		Vector pseudo_base_atm_xyz, dummy, dummy2; // stolen from hbonds_geom.cc
 		make_hbBasetoAcc_unitvector( options_.hbond_options(),
 			get_hbe_acc_hybrid( hbond_eval_type.eval_type() ),
 			polar_atm_xyz,
 			base_atm_xyz,
 			base2_atm_xyz,
-			pseudo_base_atm_xyz, dummy );
+			pseudo_base_atm_xyz, dummy, dummy2 );
 
 		xH = get_water_cos( pseudo_base_atm_xyz, polar_atm_xyz, occluding_atm_xyz );
 		if ( xH < MIN_xH ) return 0.;
@@ -529,7 +529,7 @@ GeometricSolEnergyEvaluator::occluded_water_hbond_penalty(
 				/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
 				chi = numeric::dihedral_radians( occluding_mock_hydrogen_atm_xyz, polar_atm_xyz, pseudo_base_atm_xyz, base2_atm_xyz );
 			}
-			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, chi, energy );
+			hbond_compute_energy( *hb_database_, options_.hbond_options(), hbond_eval_type, AHdis, xD, xH, xH, chi, energy );
 		}
 	}
 
@@ -709,14 +709,14 @@ Vector
 GeometricSolEnergyEvaluator::get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm,
 	hbonds::HBEvalTuple const & hbt ) const{
 
-	Vector base_atm_xyz, dummy;
+	Vector base_atm_xyz, dummy, dummy2;
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) ); //acc_rsd.atom_type( acc_atm ).hybridization());
 	make_hbBasetoAcc_unitvector( options_.hbond_options(),
 		acc_hybrid,
 		acc_rsd.atom( acc_atm ).xyz(),
 		acc_rsd.xyz( acc_rsd.atom_base( acc_atm ) ),
 		acc_rsd.xyz( acc_rsd.abase2( acc_atm ) ),
-		base_atm_xyz, dummy );
+		base_atm_xyz, dummy, dummy2 );
 	return base_atm_xyz;
 }
 

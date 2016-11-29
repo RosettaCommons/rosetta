@@ -162,18 +162,23 @@ ScoreFunctionFactory::validate_beta(
 	//Note this is checking a function argument options, not the global options
 	//not sure why create_score_function is like that.
 	using namespace basic::options::OptionKeys;
+	bool const betanov16_active(options[corrections::beta_nov16].value()
+		|| options[corrections::beta_nov16_cart].value() );
 	bool const betanov15_active(options[corrections::beta_nov15].value()
 		|| options[corrections::beta_nov15_cart].value() );
 	bool const betajuly15_active(options[corrections::beta_july15].value()
 		|| options[corrections::beta_july15_cart].value() );
 
-	if ( (weights_tag_no_extension == (BETA_NOV15)) && !betanov15_active ) {
+	if ( (weights_tag_no_extension == (BETA_NOV16)) && !betanov16_active ) {
+		utility_exit_with_message(BETA_NOV16 + "(.wts) requested, but -corrections::beta_nov16 not set to true. This leads to a garbage scorefunction.  Exiting.");
+		return false; //can't get here
+	} else if ( (weights_tag_no_extension == (BETA_NOV15)) && !betanov15_active ) {
 		utility_exit_with_message(BETA_NOV15 + "(.wts) requested, but -corrections::beta_nov15 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
 	} else if ( (weights_tag_no_extension == (BETA_JULY15)) && !betajuly15_active ) {
 		utility_exit_with_message(BETA_JULY15 + "(.wts) requested, but -corrections::beta_july15 not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
-	} else if ( sf_maybe_beta && !betanov15_active && !betajuly15_active ) {
+	} else if ( sf_maybe_beta && !betanov16_active && !betanov15_active && !betajuly15_active ) {
 		TR.Warning << "**************************************************************************\n"
 			<< "*****************************************************\n"
 			<< "****************************************************\n"
@@ -333,6 +338,7 @@ std::string const DOCK_LOW_PATCH( "docking_cen" );
 
 std::string const SCORE4_SMOOTH_CART( "score4_smooth_cart" );
 
+std::string const BETA_NOV16( "beta_nov16" );
 std::string const BETA_NOV15( "beta_nov15" );
 std::string const BETA_JULY15( "beta_july15" );
 

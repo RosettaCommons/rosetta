@@ -342,7 +342,6 @@ sources = {
 		"util",
 	],
 	"core/scoring/elec": [
-		"ElecAtom",
 		"FA_ElecEnergy",
 		"FA_ElecEnergyAroAll",
 		"FA_ElecEnergyAroAro",
@@ -350,6 +349,10 @@ sources = {
 		"GroupElec",
 		"FA_GrpElecEnergy",
 		"util",
+	],
+	"core/scoring/elec/electrie": [
+		"ElecAtom",
+		"ElecTrieEvaluator",
 	],
 	"core/scoring/electron_density": [
 		"ElecDensAllAtomCenEnergy",

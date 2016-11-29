@@ -38,6 +38,7 @@ class LKBTrieEvaluator
 public:
 	LKBTrieEvaluator(
 		core::Real wt_lk_ball, core::Real wt_lk_ball_iso, core::Real wt_lk_ball_wtd,
+		core::Real wt_lk_ball_bridge,	core::Real wt_lk_ball_bridge_uncpl,
 		core::scoring::lkball::LK_BallEnergy const &lkb,
 		core::scoring::etable::EtableCOP etable
 	);
@@ -87,7 +88,7 @@ public:
 	hydrogen_interaction_cutoff2() const;
 
 private:
-	core::Real wt_lk_ball_, wt_lk_ball_iso_, wt_lk_ball_wtd_;
+	core::Real wt_lk_ball_, wt_lk_ball_iso_, wt_lk_ball_wtd_, wt_lk_ball_bridge_, wt_lk_ball_bridge_uncpl_;
 	core::scoring::lkball::LK_BallEnergy const & lkb_; // store reference to energy method (which does the heavy lifting)
 	core::scoring::etable::EtableCOP etable_; // pointer to etable
 };

@@ -20,7 +20,8 @@
 #include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/elec/ElecAtom.hh>
+#include <core/scoring/elec/electrie/ElecAtom.hh>
+#include <core/scoring/elec/electrie/ElecTrie.fwd.hh>
 
 // Project headers
 #include <core/chemical/AtomType.hh>
@@ -54,6 +55,7 @@ struct weight_triple
 {
 	Real wbb_bb_;
 	Real wbb_sc_;
+	Real wsc_bb_; //fpd allow asymmetric weights
 	Real wsc_sc_;
 };
 
@@ -160,6 +162,37 @@ public:
 		EnergyMap & emap
 	) const;
 
+	bool
+	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const;
+
+	void
+	setup_for_scoring_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const &,// pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & resdata
+	) const;
+
+	bool
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const;
+
+	void
+	setup_for_derivatives_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & min_data
+	) const;
+
+	void
+	setup_for_minimizing_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		kinematics::MinimizerMapBase const & min_map,
+		ResSingleMinimizationData & resdata
+	) const;
+
 	void
 	setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
@@ -190,15 +223,6 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-	void
-	eval_intrares_derivatives(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*min_data*/,
-		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
-	) const ;
-
 	/// @brief Evaluate the derivative vectors for a particular atom in a given
 	/// (asymmetric) pose when nblist_autoupdate is being used.  nblist_autoupdate
 	/// cannot be used with symmetric poses, in rtmin, or in minpack.
@@ -212,6 +236,16 @@ public:
 		EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
+	) const;
+
+	virtual
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & min_data,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
 
 
@@ -298,7 +332,7 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const;
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const;
 
 	/// @brief Interface function for class NeighborList.
 	etable::count_pair::CountPairFunctionCOP
@@ -356,58 +390,9 @@ public:
 	bool eval_intrares_ST_only() const { return eval_intrares_ST_only_; }
 
 	inline
-	Energy heavyatom_heavyatom_energy(
-		ElecAtom const & at1,
-		ElecAtom const & at2,
-		DistanceSquared & d2,
-		Size & /*path_dist*/
-	) const
-	{
-		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
-	}
-
-	inline
-	Energy heavyatom_hydrogenatom_energy(
-		ElecAtom const & at1,
-		ElecAtom const & at2,
-		Size & /*path_dist*/
-	) const
-	{
-		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
-	}
-
-	inline
-	Energy hydrogenatom_heavyatom_energy(
-		ElecAtom const & at1,
-		ElecAtom const & at2,
-		Size & /*path_dist*/
-	) const
-	{
-		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
-	}
-
-	inline
-	Energy hydrogenatom_hydrogenatom_energy(
-		ElecAtom const & at1,
-		ElecAtom const & at2,
-		Size & /*path_dist*/
-	) const
-	{
-		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
-	}
-
-	/// @brief This has to go
-	inline
-	Real
-	elec_weight( bool at1isbb, bool at2isbb ) const {
-		return ( at1isbb ? ( at2isbb ? wbb_bb_ : wbb_sc_ ) : ( at2isbb ? wbb_sc_ : wsc_sc_ ) );
-	}
-
-
-	inline
 	Real
 	elec_weight( bool at1isbb, bool at2isbb, weight_triple const & wts ) const {
-		return ( at1isbb ? ( at2isbb ? wts.wbb_bb_ : wts.wbb_sc_ ) : ( at2isbb ? wts.wbb_sc_ : wts.wsc_sc_ ) );
+		return ( at1isbb ? ( at2isbb ? wts.wbb_bb_ : wts.wbb_sc_ ) : ( at2isbb ? wts.wsc_bb_ : wts.wsc_sc_ ) );
 	}
 
 
@@ -422,6 +407,9 @@ public:
 		core::Size atm_i
 	) const;
 
+	inline
+	etable::coulomb::Coulomb const &
+	coulomb() const {return coulomb_; }
 
 	/// Private methods
 private:
@@ -487,12 +475,6 @@ private:
 	) const;
 
 
-protected:
-
-	inline
-	etable::coulomb::Coulomb const &
-	coulomb() const {return coulomb_; }
-
 private:
 
 	etable::coulomb::Coulomb coulomb_;
@@ -501,20 +483,12 @@ private:
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 
-	//fpd: envdep hbonds
-	bool use_env_dep_;
-	core::Real env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_;
 	bool eval_intrares_ST_only_; // hpark: intrares_elec for ST hydroxyl only
 
 	//fpd: countpair representative atoms
 	bool use_cp_rep_, flip_cp_rep_;
 	mutable std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
 	CPRepMapTypeCOP cp_rep_map_byname_;
-
-	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
-	mutable Real wbb_bb_;
-	mutable Real wbb_sc_;
-	mutable Real wsc_sc_;
 
 	mutable Size nres_monomer_;
 

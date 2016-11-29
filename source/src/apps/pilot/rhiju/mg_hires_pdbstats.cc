@@ -140,7 +140,7 @@ Size & total_residues, std::string const pdb_file)
 			// measure angle to base atom of acceptor (should be 120 degrees for sp2)
 			Real theta_acceptor( 0.0 );
 			if ( rsd_j.heavyatom_is_an_acceptor( jj ) ) {
-				Vector dummy, xyz_base;
+				Vector dummy, dummy2, xyz_base;
 				chemical::Hybridization acc_hybrid( rsd_j.atom_type( jj ).hybridization());
 				make_hbBasetoAcc_unitvector(
 					hbond_options,
@@ -148,7 +148,7 @@ Size & total_residues, std::string const pdb_file)
 					rsd_j.atom( jj ).xyz(),
 					rsd_j.xyz( rsd_j.atom_base( jj ) ),
 					rsd_j.xyz( rsd_j.abase2( jj ) ),
-					xyz_base, dummy );
+					xyz_base, dummy, dummy2 );
 				theta_acceptor = numeric::conversions::degrees( angle_of( xyz_mg, xyz_ligand, xyz_base ) );
 			}
 			if ( theta_acceptor == 0.0 ) {

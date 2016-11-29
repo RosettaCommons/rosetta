@@ -48,6 +48,9 @@ void init_beta_july15_correction();
 /// @brief Initialize the -beta_nov15 score function
 void init_beta_nov15_correction();
 
+/// @brief Initialize the -beta_nov16 score function
+void init_beta_nov16_correction();
+
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction();
 

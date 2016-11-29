@@ -60,7 +60,10 @@
 
 #include <core/scoring/hbonds/hbonds.hh>
 
+#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/RotamerSetBase.hh>
+#include <core/conformation/RotamerSetCacheableDataType.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -134,8 +137,6 @@ FA_ElecEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_intra_elec );
 	return sts;
 }
-
-
 ////////////////////////////////////////////////////////////////////////////
 FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new FA_ElecEnergyCreator ) ),
@@ -143,10 +144,6 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	use_env_dep_( options.hbond_options().use_hb_env_dep_new() ),
-	env_dep_low_scale_( options.hbond_options().hb_env_dep_new_low_scale() ),
-	env_dep_low_nneigh_( options.hbond_options().hb_env_dep_new_low_nneigh() ),
-	hb_env_dep_high_nneigh_( options.hbond_options().hb_env_dep_new_high_nneigh() ),
 	eval_intrares_ST_only_( options.eval_intrares_elec_ST_only() )
 {
 	initialize();
@@ -160,10 +157,6 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	use_env_dep_( src.use_env_dep_ ),
-	env_dep_low_scale_( src.env_dep_low_scale_ ),
-	env_dep_low_nneigh_( src.env_dep_low_nneigh_ ),
-	hb_env_dep_high_nneigh_( src.hb_env_dep_high_nneigh_ ),
 	eval_intrares_ST_only_( src.eval_intrares_ST_only_ )
 {
 	initialize();
@@ -276,12 +269,9 @@ FA_ElecEnergy::setup_for_minimizing(
 
 
 void
-FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
+FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & /*sfxn*/ ) const
 {
-	set_nres_mono(pose);
-	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
+	set_nres_mono(pose); // why?
 	pose.update_residue_neighbors();
 }
 
@@ -291,10 +281,10 @@ FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn
 {
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
-	if ( ! pose.energies().use_nblist() ) return;
-
-	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
-	nblist.prepare_for_scoring( pose, scfxn, *this );
+	if ( pose.energies().use_nblist() ) {
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+		nblist.prepare_for_scoring( pose, scfxn, *this );
+	}
 }
 
 
@@ -325,7 +315,6 @@ FA_ElecEnergy::setup_for_packing(
 		tries->trie( ii, one_rotamer_trie );
 	}
 	pose.energies().data().set( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION, tries );
-
 }
 
 // @brief Creates a rotamer trie for the input set of rotamers and stores the trie
@@ -354,8 +343,10 @@ FA_ElecEnergy::update_residue_for_packing(
 	Size resid
 ) const
 {
+	conformation::Residue const & rsd( pose.residue( resid ) );
+
 	using namespace trie;
-	trie::RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( resid ), pose );
+	trie::RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( rsd, pose );
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
 	TrieCollection & trie_collection
@@ -373,28 +364,20 @@ FA_ElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & /*sf*/,
 	EnergyMap & emap
 ) const
 {
 	if ( pose.energies().use_nblist() ) return;
-
 	using namespace etable::count_pair;
 
 	Real score(0.0);
 
-	Real const attached_h_max_dis2 = hydrogen_interaction_cutoff2();
+	Real attached_h_max_dis2 = hydrogen_interaction_cutoff2();
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
-
+	// NULL if no info
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
@@ -407,7 +390,7 @@ FA_ElecEnergy::residue_pair_energy(
 			for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
 				Size jj_rep = get_countpair_representative_atom( rsd2.type(), jj );
 
-				Real weight = 1.0;
+				Real weight=1.0;
 				Size path_dist( 0 );
 				if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
 					score += score_atom_pair( rsd1, rsd2, ii, jj, emap, weight, d2 );
@@ -424,14 +407,18 @@ FA_ElecEnergy::residue_pair_energy(
 
 					weight = 1.0;
 					path_dist = 0;
-					if ( cpfxn->count( kk_rep, jj_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, jj, emap, weight, d2 );
+					if ( cpfxn->count( kk_rep, jj_rep, weight, path_dist ) ) {
+						score += score_atom_pair( rsd1, rsd2, kk, jj, emap, weight, d2 );
+					}
 				}
 				for ( Size kk = jj_hatbegin; kk <= jj_hatend; ++kk ) {
 					Size kk_rep = get_countpair_representative_atom( rsd2.type(), kk );
 
 					weight = 1.0;
 					path_dist = 0;
-					if ( cpfxn->count( ii_rep, kk_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, ii, kk, emap, weight, d2 );
+					if ( cpfxn->count( ii_rep, kk_rep, weight, path_dist ) ) {
+						score += score_atom_pair( rsd1, rsd2, ii, kk, emap, weight, d2 );
+					}
 				}
 				for ( Size kk = ii_hatbegin; kk <= ii_hatend; ++kk ) {
 					Size kk_rep = get_countpair_representative_atom( rsd1.type(), kk );
@@ -440,19 +427,18 @@ FA_ElecEnergy::residue_pair_energy(
 
 						weight = 1.0;
 						path_dist = 0;
-						if ( cpfxn->count( kk_rep, ll_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
+						if ( cpfxn->count( kk_rep, ll_rep, weight, path_dist ) ) {
+							score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
+						}
 					}
 				}
 			}
 		}
-
-
 	} else {
 		Real d2;
 		for ( Size ii = 1; ii <= rsd1.nheavyatoms(); ++ii ) {
 			for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
-
-				Real weight = 1.0;
+				Real weight=1.0;
 				score += score_atom_pair( rsd1, rsd2, ii, jj, emap, weight, d2 );
 
 				if ( d2 > attached_h_max_dis2 ) continue;
@@ -472,44 +458,27 @@ FA_ElecEnergy::residue_pair_energy(
 				}
 			}
 		}
-
-
 	}
-	emap[ fa_elec ] += wt_envdep*score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
 
 void
 FA_ElecEnergy::eval_intrares_energy(
-	conformation::Residue const &rsd,
-	pose::Pose const &pose,
-	ScoreFunction const &sf,
-	EnergyMap &emap ) const {
-
-	if ( sf.get_weight( fa_intra_elec ) == 0 ) return;
+		conformation::Residue const &rsd,
+		pose::Pose const &/*pose*/,
+		ScoreFunction const &sf,
+		EnergyMap &emap ) const {
+	if (sf.get_weight( fa_intra_elec ) == 0) return;
 	using namespace etable::count_pair;
 
 	Real score(0.0);
-	Real wt_env( 1.0 );
 
 	if ( eval_intrares_ST_only() &&
 			!(rsd.aa() == chemical::aa_ser || rsd.aa() == chemical::aa_thr ||
 			rsd.aa() == chemical::aa_dse || rsd.aa() == chemical::aa_dth )
 			) return;
 
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-
-		wt_env = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd.seqpos()), hbond_set.nbrs(rsd.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
-
-	// assuming only a single bond right now -- generalizing to arbitrary topologies
-	// also assuming crossover of 4, should be closest (?) to classic rosetta
-	CountPairFunctionOP cpfxn =
-		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
-
-	Real d2;
 	Size iOG=0, iHG=0, iN=0;
 	utility::vector1< Size > iHs;
 	if ( eval_intrares_ST_only() ) {
@@ -534,24 +503,27 @@ FA_ElecEnergy::eval_intrares_energy(
 		}
 	}
 
+	// assuming only a single bond right now -- generalizing to arbitrary topologies
+	// also assuming crossover of 4, should be closest (?) to classic rosetta
+	CountPairFunctionOP cpfxn =
+		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
+	Real d2;
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		Size ii_rep = get_countpair_representative_atom( rsd.type(), ii );
-
 		for ( Size jj = ii+1; jj <= rsd.natoms(); ++jj ) {
+			Size jj_rep = get_countpair_representative_atom( rsd.type(), jj );
+
 			if ( eval_intrares_ST_only() ) {
 				if ( !( ( ii == iN && jj == iOG ) || ( ii == iN && jj == iHG ) ||
 						( ii == iOG && iHs.contains(jj) ) || ( iHs.contains(ii) && jj == iHG ) )
 						) continue;
 			}
-			Size jj_rep = get_countpair_representative_atom( rsd.type(), jj );
 
-			Real weight( 1.0 );
+			Real weight=1.0;
+
 			Size path_dist( 0 );
-			if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
-				score += score_atom_pair( rsd, rsd, ii, jj, emap, weight*wt_env, d2 );
-				//TR << "res/ii/jj/weight " << rsd.seqpos() << " " << ii << " " << jj << " "
-				//  << weight << " "
-				//  << score_atom_pair( rsd, rsd, ii, jj, emap, weight*wt_env, d2 ) << std::endl;
+			if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist )) {
+				score += score_atom_pair( rsd, rsd, ii, jj, emap, weight, d2 );
 			}
 		}
 	}
@@ -602,19 +574,11 @@ FA_ElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData const & min_data,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & /*sf*/,
 	EnergyMap & emap
 ) const
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
-
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
 
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
@@ -624,7 +588,18 @@ FA_ElecEnergy::residue_pair_energy_ext(
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
 		score += score_atom_pair( rsd1, rsd2, neighbs[ ii ].atomno1(), neighbs[ ii ].atomno2(), emap, neighbs[ ii ].weight(), dsq );
 	}
-	emap[ fa_elec ] += wt_envdep*score;
+	emap[ fa_elec ] += score;
+}
+
+void
+FA_ElecEnergy::setup_for_minimizing_for_residue(
+	conformation::Residue const & /*rsd*/,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & /*scorefxn*/,
+	kinematics::MinimizerMapBase const & /*min_map*/,
+	ResSingleMinimizationData & /*resdata*/
+) const
+{
 }
 
 void
@@ -632,10 +607,10 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
+	ScoreFunction const & /*scorefxn*/,
+	kinematics::MinimizerMapBase const & /*minmap*/,
+	ResSingleMinimizationData const & /*res1data*/,
+	ResSingleMinimizationData const & /*res2data*/,
 	ResPairMinimizationData & pair_data
 ) const
 {
@@ -647,10 +622,10 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ));
+	ResiduePairNeighborListOP nblist(
+		utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ));
 	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
-	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
 	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
 
@@ -667,13 +642,45 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	pair_data.set_data( elec_pair_nblist, nblist );
 }
 
+bool
+FA_ElecEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const
+{
+	return true;
+}
+
+void
+FA_ElecEnergy::setup_for_scoring_for_residue(
+	conformation::Residue const & /*rsd*/,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & /*sfxn*/,
+	ResSingleMinimizationData & /*resdata*/
+) const
+{
+}
+
+bool
+FA_ElecEnergy::requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const
+{
+	return true;
+}
+
+void
+FA_ElecEnergy::setup_for_derivatives_for_residue(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	ResSingleMinimizationData & min_data
+) const
+{
+	setup_for_scoring_for_residue( rsd, pose, sfxn, min_data );
+}
 
 void
 FA_ElecEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const & /*res1data*/,
+	ResSingleMinimizationData const & /*res2data*/,
 	ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
@@ -689,67 +696,55 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
-
 	weight_triple wtrip;
 	setup_weight_triple( weights, wtrip );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		Vector const & atom1xyz( rsd1.xyz( neighbs[ ii ].atomno1() ) );
-		Vector const & atom2xyz( rsd2.xyz( neighbs[ ii ].atomno2() ) );
+		Size at1 = neighbs[ ii ].atomno1();
+		Size at2 = neighbs[ ii ].atomno2();
+		Vector const & atom1xyz( rsd1.xyz( at1 ) );
+		Vector const & atom2xyz( rsd2.xyz( at2 ) );
 
-		Real const at1_charge( rsd1.atomic_charge( neighbs[ ii ].atomno1() ) );
-		Real const at2_charge( rsd2.atomic_charge( neighbs[ ii ].atomno2() ) );
+		Real const at1_charge( rsd1.atomic_charge( at1 ) );
+		Real const at2_charge( rsd2.atomic_charge( at2 ) );
 
-		Vector f2 = ( atom1xyz - atom2xyz );
+		Vector f1( 0.0 ), f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = wt_envdep * neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
-
-		if ( dE_dr_over_r == 0.0 ) continue;
-
+		Real dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		Real sfxn_weight = elec_weight(
-			rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
-			rsd2.atom_is_backbone( neighbs[ ii ].atomno2() ),
-			wtrip );
-		Vector f1 = atom1xyz.cross( atom2xyz );
-		f1 *= dE_dr_over_r * sfxn_weight;
-		f2 *= dE_dr_over_r * sfxn_weight;
-		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f1() += f1;
-		r1_atom_derivs[ neighbs[ ii ].atomno1() ].f2() += f2;
-		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f1() -= f1;
-		r2_atom_derivs[ neighbs[ ii ].atomno2() ].f2() -= f2;
+				rsd1.atom_is_backbone( at1 ),
+				rsd2.atom_is_backbone( at2 ),
+				wtrip );
+
+		if ( dE_dr_over_r != 0.0 ) {
+			f1 = atom1xyz.cross( atom2xyz );
+			Vector f1s = dE_dr_over_r * sfxn_weight * f1;
+			Vector f2s = dE_dr_over_r * sfxn_weight * f2;
+			r1_atom_derivs[ at1 ].f1() += f1s;
+			r1_atom_derivs[ at1 ].f2() += f2s;
+			r2_atom_derivs[ at2 ].f1() -= f1s;
+			r2_atom_derivs[ at2 ].f2() -= f2s;
+		}
 	}
 }
+
+
 void
 FA_ElecEnergy::eval_intrares_derivatives(
-	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*min_data*/,
-	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & /*min_data*/,
+		pose::Pose const & /*pose*/,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
 	using namespace etable::count_pair;
-	if ( std::abs( weights[ fa_intra_elec ] ) <= 1.0e-9 ) return;
+	if (weights[ fa_intra_elec ] == 0) return;
 	Real sfxn_weight = weights[fa_intra_elec];
 
 	if ( eval_intrares_ST_only() &&
 			!(rsd.aa() == chemical::aa_ser || rsd.aa() == chemical::aa_thr ||
 			rsd.aa() == chemical::aa_dse || rsd.aa() == chemical::aa_dth )
 			) return;
-
-	///fpd   env dep
-	core::Real wt_envdep=1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd.seqpos()), hbond_set.nbrs(rsd.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
 
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
@@ -780,15 +775,14 @@ FA_ElecEnergy::eval_intrares_derivatives(
 
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		Size ii_rep = get_countpair_representative_atom( rsd.type(), ii );
-
 		for ( Size jj = ii+1; jj <= rsd.natoms(); ++jj ) {
 			if ( eval_intrares_ST_only() ) {
 				if ( !( ( ii == iN && jj == iOG ) || ( ii == iN && jj == iHG ) ||
 						( ii == iOG && iHs.contains(jj)) || ( iHs.contains(ii) && jj == iHG ) )
 						) continue;
 			}
-			Size jj_rep = get_countpair_representative_atom( rsd.type(), jj );
 
+			Size jj_rep = get_countpair_representative_atom( rsd.type(), jj );
 			Vector const & atom1xyz( rsd.xyz( ii ) );
 			Vector const & atom2xyz( rsd.xyz( jj ) );
 
@@ -800,8 +794,8 @@ FA_ElecEnergy::eval_intrares_derivatives(
 			Real dE_dr_over_r = 0;
 			Size path_dist( 0 );
 			Real weight=1.0;
-			if ( !cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) continue;
-			dE_dr_over_r = weight * wt_envdep * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
+			if ( !cpfxn->count( ii_rep, jj_rep, weight, path_dist )) continue;
+			dE_dr_over_r = weight * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 
 			if ( dE_dr_over_r == 0.0 ) continue;
 
@@ -815,6 +809,8 @@ FA_ElecEnergy::eval_intrares_derivatives(
 		}
 	}
 }
+
+
 
 /// @details for use only with the nblist auto-update algorithm
 void
@@ -856,20 +852,12 @@ FA_ElecEnergy::eval_atom_derivative(
 		Size const jj( nbr.atomno() );
 		conformation::Residue const & jrsd( pose.residue( j ) );
 
-		///fpd   env dep
-		core::Real wt_envdep = 1.0;
-		if ( use_env_dep_ ) {
-			hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-			wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-				hbond_set.nbrs(irsd.seqpos()), hbond_set.nbrs(jrsd.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-		}
-
 		Real const jj_charge( jrsd.atomic_charge(jj) );
 		if ( jj_charge == 0.0 ) continue; /// should prune out such atoms when constructing the neighborlist!
 		Vector const & jj_xyz( jrsd.xyz( jj ) );
 		Vector f2 = ( ii_xyz - jj_xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = wt_envdep * nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
+		Real const dE_dr_over_r = nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
 		if ( dE_dr_over_r == 0.0 ) continue;
 
 		Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
@@ -885,8 +873,8 @@ void
 FA_ElecEnergy::backbone_backbone_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ScoreFunction const & ,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & /*scorefxn*/,
 	EnergyMap & emap
 ) const
 {
@@ -896,14 +884,6 @@ FA_ElecEnergy::backbone_backbone_energy(
 	Real score(0.0);
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -951,8 +931,8 @@ FA_ElecEnergy::backbone_backbone_energy(
 			}
 		}
 	}
-	emap[ fa_elec_bb_bb ] += wt_envdep*score;
-	emap[ fa_elec ] += wt_envdep*score;
+	emap[ fa_elec_bb_bb ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
 
@@ -960,8 +940,8 @@ void
 FA_ElecEnergy::backbone_sidechain_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ScoreFunction const & ,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & /*scorefxn*/,
 	EnergyMap & emap
 ) const
 {
@@ -971,14 +951,6 @@ FA_ElecEnergy::backbone_sidechain_energy(
 	Real score(0.0);
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -1026,8 +998,8 @@ FA_ElecEnergy::backbone_sidechain_energy(
 			}
 		}
 	}
-	emap[ fa_elec_bb_sc ] += wt_envdep*score;
-	emap[ fa_elec ] += wt_envdep*score;
+	emap[ fa_elec_bb_sc ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 
 }
@@ -1037,8 +1009,8 @@ void
 FA_ElecEnergy::sidechain_sidechain_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
-	ScoreFunction const & ,
+	pose::Pose const & /*pose*/,
+	ScoreFunction const & /*scorefxn*/,
 	EnergyMap & emap
 ) const
 {
@@ -1048,14 +1020,6 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 	Real score(0.0);
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -1103,8 +1067,8 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 			}
 		}
 	}
-	emap[ fa_elec_sc_sc ] += wt_envdep*score;
-	emap[ fa_elec ] += wt_envdep*score;
+	emap[ fa_elec_sc_sc ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 
 }
@@ -1147,21 +1111,13 @@ FA_ElecEnergy::finalize_total_energy(
 				conformation::Residue const & jres( *resvect[j] );
 				int jj_isbb = jres.atom_is_backbone( jj );
 
-				///fpd   env dep
-				core::Real wt_envdep = 1.0;
-				if ( use_env_dep_ ) {
-					hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )) );
-					wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-						hbond_set.nbrs(ires.seqpos()), hbond_set.nbrs(jres.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-				}
-
-				debug_assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
+				debug_assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );  //?
 
 				Real score = nbr.weight() *
 					coulomb().eval_atom_atom_fa_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
-				bb_sc_scores[ ii_isbb + jj_isbb ] += wt_envdep*score;
-				total_score += wt_envdep*score;
+				bb_sc_scores[ ii_isbb + jj_isbb ] += score;
+				total_score += score;
 			}
 		}
 	}
@@ -1177,7 +1133,7 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	EnergyMap const & /*weights*/,
+	EnergyMap const & , //weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
@@ -1195,12 +1151,18 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	temp_table1 = 0; temp_table2 = 0;
 
 	// save weight information so that its available during tvt execution
-	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
+	core::Real wt_bb_bb = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
+	core::Real wt_bb_sc = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	core::Real wt_sc_bb = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	core::Real wt_sc_sc = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 
+	/// this will later retrieve a stored rotamer trie from inside the set;
 	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( elec_method ) ));
 	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( elec_method ) ));
+
+	//fpd get rid of mutable data, use evaluator instead
+	electrie::ElecTrieEvaluator eleceval(
+		wt_bb_bb, wt_bb_sc, wt_sc_bb,	wt_sc_sc, *this );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -1210,23 +1172,15 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
 	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
-	trie1->trie_vs_trie( *trie2, *cp, *this, temp_table1, temp_table2 );
-
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(set1.resid()), hbond_set.nbrs(set2.resid()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
+	trie1->trie_vs_trie( *trie2, *cp, eleceval, temp_table1, temp_table2 );
 
 	/// add in the energies calculated by the tvt alg.
-	energy_table += wt_envdep*temp_table1;
+	energy_table += temp_table1;
 	//std::cout << "FINISHED evaluate_rotamer_pair_energies" << std::endl;
 
-	/*
 	// There should be a way to turn this on without recompiling...
 	// debug
+	/*
 	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
 	temp_table3 = 0;
 	EnergyMap emap;
@@ -1244,8 +1198,6 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	}
 	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
 	*/
-
-
 }
 
 void
@@ -1254,7 +1206,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
-	EnergyMap const & /*weights*/,
+	EnergyMap const & , //weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
@@ -1270,15 +1222,20 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
 
 	// save weight information so that its available during tvt execution
-	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
+	core::Real wt_bb_bb = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
+	core::Real wt_bb_sc = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	core::Real wt_sc_bb = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	core::Real wt_sc_sc = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 
 	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set.get_trie( elec_method ) ));
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
 	if ( trie2 == NULL ) return;
+
+	//fpd get rid of mutable data, use evaluator instead
+	electrie::ElecTrieEvaluator eleceval(
+		wt_bb_bb, wt_bb_sc, wt_sc_bb,	wt_sc_sc, *this );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), residue, trie1, trie2, pose, sfxn );
@@ -1288,24 +1245,16 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
 	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
-	trie1->trie_vs_path( *trie2, *cp, *this, temp_vector1, temp_vector2 );
+	trie1->trie_vs_path( *trie2, *cp, eleceval, temp_vector1, temp_vector2 );
 
-	///fpd   env dep
-	core::Real wt_envdep = 1.0;
-	if ( use_env_dep_ ) {
-		hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
-		wt_envdep = core::scoring::hbonds::hb_env_dep_burial_fd(
-			hbond_set.nbrs(set.resid()), hbond_set.nbrs(residue.seqpos()), env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_);
-	}
-
-	/// add in the energies calculated by the tvt alg.
-	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
-		energy_vector[ ii ] += wt_envdep*temp_vector1[ ii ];
-	}
 	//std::cout << "FINISHED evaluate_rotamer_background_energies" << std::endl;
+  /// add in the energies calculated by the tvt alg.
+	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
+		energy_vector[ ii ] += temp_vector1[ ii ];
+	}
 
-	/*
 	//debug
+	/*
 	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
@@ -1318,7 +1267,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
 	}
 	}
-	//std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << residue.seqpos() << std::endl;
+	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << residue.seqpos() << std::endl;
 	*/
 
 }
@@ -1434,8 +1383,63 @@ FA_ElecEnergy::setup_weight_triple(
 {
 	wttrip.wbb_bb_ = weights[ fa_elec ] + weights[ fa_elec_bb_bb ];
 	wttrip.wbb_sc_ = weights[ fa_elec ] + weights[ fa_elec_bb_sc ];
+	wttrip.wsc_bb_ = weights[ fa_elec ] + weights[ fa_elec_bb_sc ];
 	wttrip.wsc_sc_ = weights[ fa_elec ] + weights[ fa_elec_sc_sc ];
 }
+
+// create an elec trie rotamer descriptor from a single rotamer
+template <class CPDAT>
+void
+create_rotamer_descriptor(
+	conformation::Residue const & res,
+	trie::CPDataCorrespondence const &cpdata_map,
+	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	trie::RotamerDescriptor< electrie::ElecAtom, CPDAT > & rotamer_descriptor
+)
+{
+	using namespace trie;
+	using namespace electrie;
+
+	rotamer_descriptor.natoms( res.natoms() );
+
+	Size count_added_atoms = 0;
+	for ( Size jj = 1; jj <= res.nheavyatoms(); ++jj ) {
+		ElecAtom newatom;
+		CPDAT cpdata;
+		std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()));
+		core::Size jj_rep = jj;
+		if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
+		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
+
+		newatom.atom( res.atom(jj) );
+		newatom.is_hydrogen( false );
+		newatom.isbb( res.atom_is_backbone( jj ) );
+		newatom.charge( res.atomic_charge(jj) );
+
+		RotamerDescriptorAtom< ElecAtom, CPDAT > rdatom( newatom, cpdata );
+		rotamer_descriptor.atom( ++count_added_atoms, rdatom );
+
+		for ( Size kk = res.attached_H_begin( jj ),
+				kk_end = res.attached_H_end( jj );
+				kk <= kk_end; ++kk ) {
+			ElecAtom newhatom;
+			newhatom.atom( res.atom(kk) );
+			newhatom.is_hydrogen( true );
+			newhatom.isbb( res.atom_is_backbone( kk ) );
+			newhatom.charge( res.atomic_charge( kk ) );
+
+			CPDAT hcpdata;
+			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()));
+			core::Size kk_rep = kk;
+			if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
+			initialize_cpdata_for_atom( hcpdata, kk_rep, res, cpdata_map );
+
+			RotamerDescriptorAtom< ElecAtom, CPDAT> hrdatom( newhatom, hcpdata );
+			rotamer_descriptor.atom( ++count_added_atoms, hrdatom );
+		}
+	}
+}
+
 
 /// @brief create a rotamer trie for a particular set, deciding upon the kind of count pair data that
 /// needs to be contained by the trie.
@@ -1448,59 +1452,99 @@ FA_ElecEnergy::create_rotamer_trie(
 {
 	using namespace trie;
 	using namespace etable::etrie;
+	using namespace electrie;
+
+	trie::RotamerTrieBaseOP retval;
 
 	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamerset( rotset ) );
 	if ( cpdata_map.has_pseudobonds() ||
 			cpdata_map.max_connpoints_for_residue() > 1 ||
 			cpdata_map.n_entries() > 3 ) {
-		ElecAtom at; CountPairDataGeneric cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, atomic_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< electrie::ElecAtom, CountPairDataGeneric > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
-		ElecAtom at; CountPairData_1_1 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff()  );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 2 ) {
-		ElecAtom at; CountPairData_1_2 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 3 ) {
-		ElecAtom at; CountPairData_1_3 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( rotset.num_rotamers() );
+		for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+			create_rotamer_descriptor( *rotset.rotamer( ii ), cpdata_map, cp_rep_map_, rotamer_descriptors[ ii ] );
+			rotamer_descriptors[ ii ].rotamer_id( ii );
+		}
+		sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< electrie::ElecAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else {
-		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
-		utility_exit();
-		return 0;
+		utility_exit_with_message( "Unknown residue connection in FA_ElecEnergy::create_rotamer_trie");
 	}
+
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
+	return retval;
 }
 
 /// @details Create a one-residue rotamer trie
 trie::RotamerTrieBaseOP
 FA_ElecEnergy::create_rotamer_trie(
 	conformation::Residue const & res,
-	pose::Pose const & // will be need to create tries for disulfides
+	pose::Pose const & /*pose*/
 ) const
 {
 	using namespace trie;
 	using namespace etable::etrie;
+	using namespace electrie;
+
+	trie::RotamerTrieBaseOP retval;
 
 	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamer( res ) );
 	if ( cpdata_map.has_pseudobonds() ||
 			cpdata_map.max_connpoints_for_residue() > 1 ||
 			cpdata_map.n_entries() > 3 ) {
-		ElecAtom at; CountPairDataGeneric cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, atomic_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairDataGeneric > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairDataGeneric >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
-		ElecAtom at; CountPairData_1_1 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff()  );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_1 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_1 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 2 ) {
-		ElecAtom at; CountPairData_1_2 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_2 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_2 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else if ( cpdata_map.n_entries() == 3 ) {
-		ElecAtom at; CountPairData_1_3 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		utility::vector1< RotamerDescriptor< ElecAtom, CountPairData_1_3 > > rotamer_descriptors( 1 );
+		create_rotamer_descriptor( res, cpdata_map, cp_rep_map_, rotamer_descriptors[ 1 ] );
+		rotamer_descriptors[ 1 ].rotamer_id( 1 );
+		retval = electrie::ElecRotamerTrieOP( new RotamerTrie< ElecAtom, CountPairData_1_3 >( rotamer_descriptors, atomic_interaction_cutoff()) );
 	} else {
-		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
-		utility_exit();
-		return 0;
+		utility_exit_with_message( "Unknown residue connection in FA_ElecEnergy::create_rotamer_trie");
 	}
+
+  for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+    retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+  }
+	return retval;
 }
 
 /// @brief figure out the trie count pair function to use
@@ -1573,7 +1617,9 @@ FA_ElecEnergy::score_atom_pair(
 	Real & d2
 ) const
 {
-	Real energy = cpweight * coulomb().eval_atom_atom_fa_elecE(
+
+  Real energy;
+	energy = cpweight * coulomb().eval_atom_atom_fa_elecE(
 		rsd1.xyz(at1), rsd1.atomic_charge(at1),
 		rsd2.xyz(at2), rsd2.atomic_charge(at2), d2);
 
@@ -1584,10 +1630,7 @@ FA_ElecEnergy::score_atom_pair(
 	} else {
 		emap[ fa_elec_bb_sc ] += energy;
 	}
-	/* TR << "Residue " << rsd1.seqpos() << " atom " << rsd1.atom_name(at1) << " to Residue " << rsd2.seqpos() << " atom " << rsd2.atom_name(at2)
-	<< " q1 " << rsd1.atomic_charge(at1) << " q2 " << rsd2.atomic_charge(at2)
-	<< " dist " << rsd1.xyz(at1).distance( rsd2.xyz(at2) ) << " energy " << energy << " cpwt " << cpweight << " d2 " << d2 << std::endl;
-	*/
+
 	return energy;
 }
 
@@ -1619,8 +1662,9 @@ FA_ElecEnergy::monomer_test(
 ) const {
 	return (irsd <= nres_monomer_ && jrsd <= nres_monomer_ ) ||
 		(irsd >  nres_monomer_ && jrsd >  nres_monomer_ );
-
 }
+
+
 
 } // namespace elec
 } // namespace scoring
@@ -1628,20 +1672,20 @@ FA_ElecEnergy::monomer_test(
 
 #ifdef    SERIALIZATION
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairDataGeneric > EtrieRotTrieGeneric;
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::electrie::ElecAtom, core::scoring::etable::etrie::CountPairDataGeneric > EtrieRotTrieGeneric;
 
 SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrieGeneric );
 CEREAL_REGISTER_TYPE( EtrieRotTrieGeneric )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_1 > EtrieRotTrie11;
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::electrie::ElecAtom, core::scoring::etable::etrie::CountPairData_1_1 > EtrieRotTrie11;
 SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie11 );
 CEREAL_REGISTER_TYPE( EtrieRotTrie11 )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_2 > EtrieRotTrie12;
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::electrie::ElecAtom, core::scoring::etable::etrie::CountPairData_1_2 > EtrieRotTrie12;
 SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie12 );
 CEREAL_REGISTER_TYPE( EtrieRotTrie12 )
 
-typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_3 > EtrieRotTrie13;
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::electrie::ElecAtom, core::scoring::etable::etrie::CountPairData_1_3 > EtrieRotTrie13;
 SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie13 );
 CEREAL_REGISTER_TYPE( EtrieRotTrie13 )
 

@@ -178,7 +178,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 					// let's also get the angles!
 					Real theta( 0.0 );
 					if ( rsd_j.heavyatom_is_an_acceptor( jj ) ) {
-						Vector dummy, xyz_base;
+						Vector dummy, dummy2, xyz_base;
 						chemical::Hybridization acc_hybrid( rsd_j.atom_type( jj ).hybridization());
 						make_hbBasetoAcc_unitvector(
 							hbond_options,
@@ -186,7 +186,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 							rsd_j.atom( jj ).xyz(),
 							rsd_j.xyz( rsd_j.atom_base( jj ) ),
 							rsd_j.xyz( rsd_j.abase2( jj ) ),
-							xyz_base, dummy );
+							xyz_base, dummy, dummy2 );
 						theta = numeric::conversions::degrees( angle_of( xyz_mg, xyz_jj, xyz_base ) );
 						//      if ( rsd_j.atom_name( jj ) == " OP2" && distance < 3.0){
 						//       std::cout << "OP2 " << jj << " " << " " << xyz_jj.x() << " " << xyz_base.x() << " " << xyz_mg.x() << " " << theta << std::endl;

@@ -1006,10 +1006,10 @@ HBondFeatures::insert_hbond_geom_coords(
 	Real const HDdist2( HDunit.length_squared() );
 	Real const inv_HDdist = 1.0f / std::sqrt( HDdist2 );
 	HDunit *= inv_HDdist;
-	Vector BAunit;
+	Vector BAunit, B2Aunit;
 	Vector PBxyz; // pseudo base atom
 	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbond.eval_type() ) );
-	make_hbBasetoAcc_unitvector(hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
+	make_hbBasetoAcc_unitvector(hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit, B2Aunit);
 
 	// Paraphrase hb_energy_deriv (when called with coords/vectors)
 	Vector AH = Hxyz - Axyz;

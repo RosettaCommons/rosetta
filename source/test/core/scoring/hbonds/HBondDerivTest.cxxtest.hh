@@ -103,7 +103,7 @@ public:
 			hbond_compute_energy(
 				*database,
 				hbond_options,
-				hbt, AHdis, xD, xH, chi,
+				hbt, AHdis, xD, xH, xH, chi,
 				energy,
 				apply_chi_torsion_penalty,
 				AHD_geometric_dimension,
@@ -246,21 +246,21 @@ public:
 		bool numeric_apply_chi_torsion_penalty;
 		HBGeoDimType AHD_geometric_dimension;
 		// Get Analytic derivative
-		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi;
+		Real energy, dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi;
 		hbond_compute_energy(
 			*database,
 			hbond_options,
-			hbt, AHdis, xD, xH, chi,
+			hbt, AHdis, xD, xH, xH, chi,
 			energy,
 			analytic_apply_chi_torsion_penalty,
 			AHD_geometric_dimension,
-			dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+			dE_dr, dE_dxD, dE_dxH, dE_dxH2, dE_dBAH, dE_dchi);
 
 		// Only check derivatives that have a hope of becoming an hbond
 		if ( energy > .1 ) return;
 
 		Real BAH(numeric::constants::d::pi - acos(xH));
-		Real e_low, e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi;
+		Real e_low, e_high, dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dxH2, dummy_dE_dBAH, dummy_dE_dchi;
 		Real numeric_deriv, deriv, deriv_dev;
 
 		if ( verbose ) {
@@ -294,7 +294,7 @@ public:
 			hbond_compute_energy(
 				*database,
 				hbond_options,
-				hbt, test_AHdis, xD, xH, chi,
+				hbt, test_AHdis, xD, xH, xH, chi,
 				e_low,
 				numeric_apply_chi_torsion_penalty,
 				AHD_geometric_dimension,
@@ -304,7 +304,7 @@ public:
 			hbond_compute_energy(
 				*database,
 				hbond_options,
-				hbt, test_AHdis, xD, xH, chi,
+				hbt, test_AHdis, xD, xH, xH, chi,
 				e_high,
 				numeric_apply_chi_torsion_penalty,
 				AHD_geometric_dimension,
@@ -343,21 +343,21 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, test_xH, chi,
+					hbt, AHdis, xD, test_xH, test_xH, chi,
 					e_low,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
-					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi);
+					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dxH2, dummy_dE_dBAH, dummy_dE_dchi);
 
 				test_xH = xH + factor * increment;
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, test_xH, chi,
+					hbt, AHdis, xD, test_xH, test_xH, chi,
 					e_high,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
-					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi);
+					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dxH2, dummy_dE_dBAH, dummy_dE_dchi);
 				numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 				deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
@@ -390,21 +390,21 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, xH, test_chi,
+					hbt, AHdis, xD, xH, xH, test_chi,
 					e_low,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
-					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi);
+					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dxH2, dummy_dE_dBAH, dummy_dE_dchi);
 
 				test_chi = chi + factor * increment;
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, xH, test_chi,
+					hbt, AHdis, xD, xH, xH, test_chi,
 					e_high,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
-					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dBAH, dummy_dE_dchi);
+					dummy_dE_dr, dummy_dE_dxD, dummy_dE_dxH, dummy_dE_dxH2, dummy_dE_dBAH, dummy_dE_dchi);
 				numeric_deriv = ( e_high - e_low ) / ( factor * 2 * increment );
 				deriv_dev = std::min( deriv_dev, std::abs( deriv - numeric_deriv ) );
 				Real const ratio( std::abs( numeric_deriv ) < .001 ? 0.0 :
@@ -439,7 +439,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, test_xH, chi,
+					hbt, AHdis, xD, test_xH, test_xH, chi,
 					e_low,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -449,7 +449,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, xD, test_xH, chi,
+					hbt, AHdis, xD, test_xH, test_xH, chi,
 					e_high,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -488,7 +488,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, test_xD, xH, chi,
+					hbt, AHdis, test_xD, xH, xH, chi,
 					e_low,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -498,7 +498,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, test_xD, xH, chi,
+					hbt, AHdis, test_xD, xH, xH, chi,
 					e_high,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -538,7 +538,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, test_xD, xH, chi,
+					hbt, AHdis, test_xD, xH, xH, chi,
 					e_low,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -549,7 +549,7 @@ public:
 				hbond_compute_energy(
 					*database,
 					hbond_options,
-					hbt, AHdis, test_xD, xH, chi,
+					hbt, AHdis, test_xD, xH, xH, chi,
 					e_high,
 					numeric_apply_chi_torsion_penalty,
 					AHD_geometric_dimension,
@@ -639,9 +639,9 @@ public:
 		const Vector Hxyz(don_res.atom(hbond.don_hatm()).xyz());
 		const Vector HDunit(create_don_orientation_vector(don_res, hbond.don_hatm()));
 		chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbond.eval_type() ) );
-		Vector BAunit;
+		Vector BAunit, B2Aunit;
 		Vector PBxyz;
-		make_hbBasetoAcc_unitvector( hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit );
+		make_hbBasetoAcc_unitvector( hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit, B2Aunit );
 
 
 		// compute hbond geometric dimensions
@@ -679,7 +679,7 @@ public:
 			*database,
 			hbond_options,
 			hbond.eval_tuple(),
-			AHdis, xD, xH, chi,
+			AHdis, xD, xH, xH, chi,
 			dummy_energy,
 			apply_chi_torsion_penalty,
 			AHD_geometric_dimension,

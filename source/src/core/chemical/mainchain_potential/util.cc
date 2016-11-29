@@ -26,7 +26,8 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
-// Numeric Headers
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 //C++ includes
 
@@ -48,6 +49,8 @@ void read_rama_map_file_shapovalov(
 	bool const use_polycubic_interpolation,
 	std::map< std::string, MainchainScoreTableCOP > &mainchain_score_table_map
 ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	debug_assert( res_type_names.size() > 0 );
 
@@ -56,14 +59,20 @@ void read_rama_map_file_shapovalov(
 	// A string to hold the file contents:
 	std::string filecontents;
 
-	// Search in the local directory first, then the database.
+	// Search in the three places:
+	//   1) filename
+	//   2) $DATABASE/[rama_pp_map]/filename
+	//   3) $DATABASE/filename
 	iunit.open( filename );
 	if ( !iunit.good() ) {
 		iunit.close();
-		if ( !basic::database::open( iunit, filename ) ) {
-			std::stringstream err_msg;
-			err_msg << "Unable to open mainchain torsion score table '" << filename << "'.";
-			utility_exit_with_message(err_msg.str());
+		std::string full_filename = std::string(option[ corrections::score::rama_pp_map]())+"/"+filename;
+		if ( !basic::database::open( iunit, full_filename ) ) {
+			if ( !basic::database::open( iunit, filename ) ) {
+				std::stringstream err_msg;
+				err_msg << "Unable to open mainchain torsion score table '" << filename << "'.";
+				utility_exit_with_message(err_msg.str());
+			}
 		}
 	}
 	utility::slurp( iunit, filecontents ); //Read the whole file into a string.
@@ -90,16 +99,30 @@ void read_rama_map_file_shapovalov(
 	bool const use_polycubic_interpolation,
 	utility::vector1< std::pair < std::string, MainchainScoreTableOP> > &newtables
 ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	// The input stream for the file:
 	utility::io::izstream  iunit;
 	// A string to hold the file contents:
 	std::string filecontents;
 
-	// Search in the local directory first, then the database.
+	// Search in the three places:
+	//   1) filename
+	//   2) $DATABASE/[rama_pp_map]/filename
+	//   3) $DATABASE/filename
 	iunit.open( filename );
 	if ( !iunit.good() ) {
 		iunit.close();
-		if ( !basic::database::open( iunit, filename ) ) {
+		std::string full_filename = std::string(option[ corrections::score::rama_pp_map]())+"/"+filename;
+
+		//see if fullfilename exists (this is a waste but db::open throws an exception if file does not exist)
+		utility::io::izstream temp( basic::database::full_name( full_filename, false ) );
+		if (!temp.good()) {
+			full_filename = filename;
+		}
+
+		if ( !basic::database::open( iunit, full_filename ) ) {
 			std::stringstream err_msg;
 			err_msg << "Unable to open mainchain torsion score table '" << filename << "'.";
 			utility_exit_with_message(err_msg.str());

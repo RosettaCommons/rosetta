@@ -19,7 +19,7 @@
 #include <core/scoring/elec/GroupElec.hh>
 
 // Package headers
-#include <core/scoring/elec/ElecAtom.hh>
+#include <core/scoring/elec/electrie/ElecAtom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 
 // Project headers

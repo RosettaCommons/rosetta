@@ -520,21 +520,28 @@ void
 init_beta_correction() {
 	// -beta activates most recent
 	if ( option[corrections::beta]() ) {
-		option[ corrections::beta_nov15 ].value(true);
+		option[ corrections::beta_nov16 ].value(true);
 	}
 	if ( option[corrections::beta_cart]() ) {
-		option[ corrections::beta_nov15_cart ].value(true);
+		option[ corrections::beta_nov16_cart ].value(true);
 	}
 	if ( option[corrections::beta_patch]() ) {
-		option[corrections::beta_nov15_patch].value( true );
+		utility_exit_with_message("-beta_patch no longer supported!  Use '-beta' (nov16) or '-beta_nov15_patch'");
 	}
 	if ( option[corrections::beta_nov15_patch]() ) {
-		debug_assert( option[corrections::beta_nov15]() );
-		option[ corrections::beta_nov15_patch ].value(true);
+		if( !option[corrections::beta_nov15]() ) {
+			utility_exit_with_message("-beta_nov15_patch _must_ be used with '-beta_nov15'");
+		}
 	}
 
 	// if multiple flags specified use the most recent
-	if ( option[corrections::beta_nov15]() || option[corrections::beta_nov15_cart]() ) {
+	if ( option[corrections::beta_nov16]() || option[corrections::beta_nov16_cart]() ) {
+		// incompatible
+		if ( option[corrections::score::rama_prepro_steep]() ) {
+			utility_exit_with_message("-rama_prepro_steep is incompatible with -beta_nov16.  Use beta_nov15 or remove this flag");
+		}
+		init_beta_nov16_correction();
+	} if ( option[corrections::beta_nov15]() || option[corrections::beta_nov15_cart]() ) {
 		init_beta_nov15_correction();
 	} else if ( option[corrections::beta_july15]() || option[corrections::beta_july15_cart]() ) {
 		init_beta_july15_correction();
@@ -1849,6 +1856,1065 @@ init_beta_nov15_correction() {
 	}
 }
 
+void
+init_beta_nov16_correction() {
+	// atom clone
+	if ( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back( "fa_standard:CH1:CH0" );
+		params.push_back( "fa_standard:Hpol:HS" );
+		params.push_back( "fa_standard:Ntrp:NtrR" );
+		params.push_back( "fa_standard:S:SH1" );
+		option[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// atom reassign
+	if ( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back( "fa_standard:ARG:NE:NtrR" );
+		params.push_back( "fa_standard:CYS:HG:HS" );
+		params.push_back( "fa_standard:CYS:SG:SH1" );
+		params.push_back( "fa_standard:HIS:CG:CH0" );
+		params.push_back( "fa_standard:HIS_D:CG:CH0" );
+		params.push_back( "fa_standard:PHE:CG:CH0" );
+		params.push_back( "fa_standard:TRP:CD2:CH0" );
+		params.push_back( "fa_standard:TRP:CE2:CH0" );
+		params.push_back( "fa_standard:TRP:CG:CH0" );
+		params.push_back( "fa_standard:TYR:CG:CH0" );
+		params.push_back( "fa_standard:TYR:CZ:CH0" );
+		option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// atom properties
+	if ( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back("fa_standard:aroC:LJ_RADIUS:2.01644");
+		params.push_back("fa_standard:aroC:LJ_WDEPTH:0.06877");
+		params.push_back("fa_standard:aroC:LK_DGFREE:2.22283");
+		params.push_back("fa_standard:aroC:LK_VOLUME:16.704");
+		params.push_back("fa_standard:CAbb:LJ_RADIUS:2.01176");
+		params.push_back("fa_standard:CAbb:LJ_WDEPTH:0.06264");
+		params.push_back("fa_standard:CAbb:LK_DGFREE:4.44945");
+		params.push_back("fa_standard:CAbb:LK_VOLUME:12.137");
+		params.push_back("fa_standard:CH0:LJ_RADIUS:2.01176");
+		params.push_back("fa_standard:CH0:LJ_WDEPTH:0.06264");
+		params.push_back("fa_standard:CH0:LK_DGFREE:1.24868");
+		params.push_back("fa_standard:CH0:LK_VOLUME:8.9980");
+		params.push_back("fa_standard:CH1:LJ_RADIUS:2.01176");
+		params.push_back("fa_standard:CH1:LJ_WDEPTH:0.06264");
+		params.push_back("fa_standard:CH1:LK_DGFREE:-6.49218");
+		params.push_back("fa_standard:CH1:LK_VOLUME:10.686");
+		params.push_back("fa_standard:CH2:LJ_RADIUS:2.01176");
+		params.push_back("fa_standard:CH2:LJ_WDEPTH:0.06264");
+		params.push_back("fa_standard:CH2:LK_DGFREE:-2.55184");
+		params.push_back("fa_standard:CH2:LK_VOLUME:18.331");
+		params.push_back("fa_standard:CH3:LJ_RADIUS:2.01176");
+		params.push_back("fa_standard:CH3:LJ_WDEPTH:0.06264");
+		params.push_back("fa_standard:CH3:LK_DGFREE:7.72716");
+		params.push_back("fa_standard:CH3:LK_VOLUME:25.855");
+		params.push_back("fa_standard:CNH2:LJ_RADIUS:1.96829");
+		params.push_back("fa_standard:CNH2:LJ_WDEPTH:0.09463");
+		params.push_back("fa_standard:CNH2:LK_DGFREE:3.70334");
+		params.push_back("fa_standard:CNH2:LK_VOLUME:13.500");
+		params.push_back("fa_standard:CObb:LJ_RADIUS:1.91666");
+		params.push_back("fa_standard:CObb:LJ_WDEPTH:0.14179");
+		params.push_back("fa_standard:CObb:LK_DGFREE:3.57899");
+		params.push_back("fa_standard:CObb:LK_VOLUME:13.221");
+		params.push_back("fa_standard:COO:LJ_RADIUS:1.91666");
+		params.push_back("fa_standard:COO:LJ_WDEPTH:0.14179");
+		params.push_back("fa_standard:COO:LK_DGFREE:-2.50876");
+		params.push_back("fa_standard:COO:LK_VOLUME:14.653");
+		params.push_back("fa_standard:Hapo:LJ_RADIUS:1.42127");
+		params.push_back("fa_standard:Hapo:LJ_WDEPTH:0.02180");
+		params.push_back("fa_standard:Haro:LJ_RADIUS:1.37491");
+		params.push_back("fa_standard:Haro:LJ_WDEPTH:0.01590");
+		params.push_back("fa_standard:HNbb:LJ_RADIUS:0.90168");
+		params.push_back("fa_standard:HNbb:LJ_WDEPTH:0.005");
+		params.push_back("fa_standard:Hpol:LJ_RADIUS:0.90168");
+		params.push_back("fa_standard:Hpol:LJ_WDEPTH:0.005");
+		params.push_back("fa_standard:HS:LJ_RADIUS:0.36388");
+		params.push_back("fa_standard:HS:LJ_WDEPTH:0.05083");
+		params.push_back("fa_standard:Narg:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Narg:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Narg:LK_DGFREE:-8.69602");
+		params.push_back("fa_standard:Narg:LK_LAMBDA:3.500");
+		params.push_back("fa_standard:Narg:LK_VOLUME:15.717");
+		params.push_back("fa_standard:Nbb:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Nbb:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Nbb:LK_DGFREE:-12.84665");
+		params.push_back("fa_standard:Nbb:LK_VOLUME:15.992");
+		params.push_back("fa_standard:NH2O:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:NH2O:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:NH2O:LK_DGFREE:-7.66671");
+		params.push_back("fa_standard:NH2O:LK_VOLUME:15.689");
+		params.push_back("fa_standard:Nhis:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Nhis:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Nhis:LK_DGFREE:-9.72534");
+		params.push_back("fa_standard:Nhis:LK_VOLUME:9.3177");
+		params.push_back("fa_standard:Nlys:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Nlys:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Nlys:LK_DGFREE:-18.74326");
+		params.push_back("fa_standard:Nlys:LK_LAMBDA:3.500");
+		params.push_back("fa_standard:Nlys:LK_VOLUME:16.514");
+		params.push_back("fa_standard:Npro:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Npro:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Npro:LK_DGFREE:-1.51111");
+		params.push_back("fa_standard:Npro:LK_VOLUME:3.7181");
+		params.push_back("fa_standard:Ntrp:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:Ntrp:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:Ntrp:LK_DGFREE:-10.64481");
+		params.push_back("fa_standard:Ntrp:LK_VOLUME:9.5221");
+		params.push_back("fa_standard:NtrR:LJ_RADIUS:1.80245");
+		params.push_back("fa_standard:NtrR:LJ_WDEPTH:0.16172");
+		params.push_back("fa_standard:NtrR:LK_DGFREE:-4.92802");
+		params.push_back("fa_standard:NtrR:LK_VOLUME:9.7792");
+		params.push_back("fa_standard:OCbb:LJ_RADIUS:1.54057");
+		params.push_back("fa_standard:OCbb:LJ_WDEPTH:0.14241");
+		params.push_back("fa_standard:OCbb:LK_DGFREE:-9.52921");
+		params.push_back("fa_standard:OCbb:LK_VOLUME:12.196");
+		params.push_back("fa_standard:OH:LJ_RADIUS:1.54274");
+		params.push_back("fa_standard:OH:LJ_WDEPTH:0.16194");
+		params.push_back("fa_standard:OH:LK_DGFREE:-5.46060");
+		params.push_back("fa_standard:OH:LK_VOLUME:10.722");
+		params.push_back("fa_standard:ONH2:LJ_RADIUS:1.54866");
+		params.push_back("fa_standard:ONH2:LJ_WDEPTH:0.18292");
+		params.push_back("fa_standard:ONH2:LK_DGFREE:-5.03501");
+		params.push_back("fa_standard:ONH2:LK_VOLUME:10.102");
+		params.push_back("fa_standard:OOC:LJ_RADIUS:1.49287");
+		params.push_back("fa_standard:OOC:LJ_WDEPTH:0.09987");
+		params.push_back("fa_standard:OOC:LK_DGFREE:-10.20822");
+		params.push_back("fa_standard:OOC:LK_LAMBDA:3.500");
+		params.push_back("fa_standard:OOC:LK_VOLUME:9.9956");
+		params.push_back("fa_standard:S:LJ_RADIUS:1.97596");
+		params.push_back("fa_standard:S:LJ_WDEPTH:0.45597");
+		params.push_back("fa_standard:S:LK_DGFREE:-4.89802");
+		params.push_back("fa_standard:S:LK_VOLUME:17.640");
+		params.push_back("fa_standard:SH1:LJ_RADIUS:1.97596");
+		params.push_back("fa_standard:SH1:LJ_WDEPTH:0.45597");
+		params.push_back("fa_standard:SH1:LK_DGFREE:2.07945");
+		params.push_back("fa_standard:SH1:LK_VOLUME:23.240");
+		option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// atomic charge
+	if ( ! option[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back("fa_standard:ALA:1HB:0.12155");
+		params.push_back("fa_standard:ALA:2HB:0.12155");
+		params.push_back("fa_standard:ALA:3HB:0.12155");
+		params.push_back("fa_standard:ALA:C:0.76511");
+		params.push_back("fa_standard:ALA:CA:0.11475");
+		params.push_back("fa_standard:ALA:CB:-0.36465");
+		params.push_back("fa_standard:ALA:H:0.50819");
+		params.push_back("fa_standard:ALA:HA:0.14754");
+		params.push_back("fa_standard:ALA:N:-0.77049");
+		params.push_back("fa_standard:ALA:O:-0.76511");
+		params.push_back("fa_standard:ARG:1HB:0.07619");
+		params.push_back("fa_standard:ARG:1HD:0.07619");
+		params.push_back("fa_standard:ARG:1HG:0.07619");
+		params.push_back("fa_standard:ARG:1HH1:0.29787");
+		params.push_back("fa_standard:ARG:1HH2:0.29787");
+		params.push_back("fa_standard:ARG:2HB:0.07619");
+		params.push_back("fa_standard:ARG:2HD:0.07619");
+		params.push_back("fa_standard:ARG:2HG:0.07619");
+		params.push_back("fa_standard:ARG:2HH1:0.29787");
+		params.push_back("fa_standard:ARG:2HH2:0.29787");
+		params.push_back("fa_standard:ARG:C:0.76511");
+		params.push_back("fa_standard:ARG:CA:0.11475");
+		params.push_back("fa_standard:ARG:CB:-0.08557");
+		params.push_back("fa_standard:ARG:CD:0.14210");
+		params.push_back("fa_standard:ARG:CG:-0.08557");
+		params.push_back("fa_standard:ARG:CZ:0.40572");
+		params.push_back("fa_standard:ARG:H:0.50819");
+		params.push_back("fa_standard:ARG:HA:0.14754");
+		params.push_back("fa_standard:ARG:HE:0.28589");
+		params.push_back("fa_standard:ARG:N:-0.77049");
+		params.push_back("fa_standard:ARG:NE:-0.39713");
+		params.push_back("fa_standard:ARG:NH1:-0.45704");
+		params.push_back("fa_standard:ARG:NH2:-0.45704");
+		params.push_back("fa_standard:ARG:O:-0.76511");
+		params.push_back("fa_standard:ASN:1HB:0.07322");
+		params.push_back("fa_standard:ASN:1HD2:0.26032");
+		params.push_back("fa_standard:ASN:2HB:0.07322");
+		params.push_back("fa_standard:ASN:2HD2:0.24405");
+		params.push_back("fa_standard:ASN:C:0.76511");
+		params.push_back("fa_standard:ASN:CA:0.11475");
+		params.push_back("fa_standard:ASN:CB:-0.14643");
+		params.push_back("fa_standard:ASN:CG:0.44743");
+		params.push_back("fa_standard:ASN:H:0.50819");
+		params.push_back("fa_standard:ASN:HA:0.14754");
+		params.push_back("fa_standard:ASN:N:-0.77049");
+		params.push_back("fa_standard:ASN:ND2:-0.50437");
+		params.push_back("fa_standard:ASN:O:-0.76511");
+		params.push_back("fa_standard:ASN:OD1:-0.44743");
+		params.push_back("fa_standard:ASP:1HB:0.13276");
+		params.push_back("fa_standard:ASP:2HB:0.13276");
+		params.push_back("fa_standard:ASP:C:0.76511");
+		params.push_back("fa_standard:ASP:CA:0.11475");
+		params.push_back("fa_standard:ASP:CB:-0.29888");
+		params.push_back("fa_standard:ASP:CG:0.75106");
+		params.push_back("fa_standard:ASP:H:0.50819");
+		params.push_back("fa_standard:ASP:HA:0.14754");
+		params.push_back("fa_standard:ASP:N:-0.77049");
+		params.push_back("fa_standard:ASP:O:-0.76511");
+		params.push_back("fa_standard:ASP:OD1:-0.85885");
+		params.push_back("fa_standard:ASP:OD2:-0.85885");
+		params.push_back("fa_standard:CYD:1HB:0.12155");
+		params.push_back("fa_standard:CYD:2HB:0.12155");
+		params.push_back("fa_standard:CYD:C:0.76511");
+		params.push_back("fa_standard:CYD:CA:0.11475");
+		params.push_back("fa_standard:CYD:CB:-0.13506");
+		params.push_back("fa_standard:CYD:H:0.50819");
+		params.push_back("fa_standard:CYD:HA:0.14754");
+		params.push_back("fa_standard:CYD:N:-0.77049");
+		params.push_back("fa_standard:CYD:O:-0.76511");
+		params.push_back("fa_standard:CYD:SG:-0.10804");
+		params.push_back("fa_standard:CYS:1HB:0.12155");
+		params.push_back("fa_standard:CYS:2HB:0.12155");
+		params.push_back("fa_standard:CYS:C:0.76511");
+		params.push_back("fa_standard:CYS:CA:0.11475");
+		params.push_back("fa_standard:CYS:CB:-0.14856");
+		params.push_back("fa_standard:CYS:H:0.50819");
+		params.push_back("fa_standard:CYS:HA:0.14754");
+		params.push_back("fa_standard:CYS:HG:0.21609");
+		params.push_back("fa_standard:CYS:N:-0.77049");
+		params.push_back("fa_standard:CYS:O:-0.76511");
+		params.push_back("fa_standard:CYS:SG:-0.31063");
+		params.push_back("fa_standard:GLN:1HB:0.09669");
+		params.push_back("fa_standard:GLN:1HE2:0.34378");
+		params.push_back("fa_standard:GLN:1HG:0.09669");
+		params.push_back("fa_standard:GLN:2HB:0.09669");
+		params.push_back("fa_standard:GLN:2HE2:0.32229");
+		params.push_back("fa_standard:GLN:2HG:0.09669");
+		params.push_back("fa_standard:GLN:C:0.76511");
+		params.push_back("fa_standard:GLN:CA:0.11475");
+		params.push_back("fa_standard:GLN:CB:-0.19338");
+		params.push_back("fa_standard:GLN:CD:0.59087");
+		params.push_back("fa_standard:GLN:CG:-0.19338");
+		params.push_back("fa_standard:GLN:H:0.50819");
+		params.push_back("fa_standard:GLN:HA:0.14754");
+		params.push_back("fa_standard:GLN:N:-0.77049");
+		params.push_back("fa_standard:GLN:NE2:-0.66607");
+		params.push_back("fa_standard:GLN:O:-0.76511");
+		params.push_back("fa_standard:GLN:OE1:-0.59087");
+		params.push_back("fa_standard:GLU:1HB:0.05862");
+		params.push_back("fa_standard:GLU:1HG:0.05862");
+		params.push_back("fa_standard:GLU:2HB:0.05862");
+		params.push_back("fa_standard:GLU:2HG:0.05862");
+		params.push_back("fa_standard:GLU:C:0.76511");
+		params.push_back("fa_standard:GLU:CA:0.11475");
+		params.push_back("fa_standard:GLU:CB:-0.16925");
+		params.push_back("fa_standard:GLU:CD:0.50590");
+		params.push_back("fa_standard:GLU:CG:-0.25364");
+		params.push_back("fa_standard:GLU:H:0.50819");
+		params.push_back("fa_standard:GLU:HA:0.14754");
+		params.push_back("fa_standard:GLU:N:-0.77049");
+		params.push_back("fa_standard:GLU:O:-0.76511");
+		params.push_back("fa_standard:GLU:OE1:-0.65874");
+		params.push_back("fa_standard:GLU:OE2:-0.65874");
+		params.push_back("fa_standard:GLY:1HA:0.14754");
+		params.push_back("fa_standard:GLY:2HA:0.14754");
+		params.push_back("fa_standard:GLY:C:0.76511");
+		params.push_back("fa_standard:GLY:CA:-0.03279");
+		params.push_back("fa_standard:GLY:H:0.50819");
+		params.push_back("fa_standard:GLY:N:-0.77049");
+		params.push_back("fa_standard:GLY:O:-0.76511");
+		params.push_back("fa_standard:HIS_D:1HB:0.08456");
+		params.push_back("fa_standard:HIS_D:2HB:0.08456");
+		params.push_back("fa_standard:HIS_D:C:0.76511");
+		params.push_back("fa_standard:HIS_D:CA:0.11475");
+		params.push_back("fa_standard:HIS_D:CB:-0.08456");
+		params.push_back("fa_standard:HIS_D:CD2:0.20671");
+		params.push_back("fa_standard:HIS_D:CE1:0.23490");
+		params.push_back("fa_standard:HIS_D:CG:-0.04698");
+		params.push_back("fa_standard:HIS_D:H:0.50819");
+		params.push_back("fa_standard:HIS_D:HA:0.14754");
+		params.push_back("fa_standard:HIS_D:HD1:0.30067");
+		params.push_back("fa_standard:HIS_D:HD2:0.09396");
+		params.push_back("fa_standard:HIS_D:HE1:0.12215");
+		params.push_back("fa_standard:HIS_D:N:-0.77049");
+		params.push_back("fa_standard:HIS_D:ND1:-0.33825");
+		params.push_back("fa_standard:HIS_D:NE2:-0.65772");
+		params.push_back("fa_standard:HIS_D:O:-0.76511");
+		params.push_back("fa_standard:HIS:1HB:0.08456");
+		params.push_back("fa_standard:HIS:2HB:0.08456");
+		params.push_back("fa_standard:HIS:C:0.76511");
+		params.push_back("fa_standard:HIS:CA:0.11475");
+		params.push_back("fa_standard:HIS:CB:-0.07517");
+		params.push_back("fa_standard:HIS:CD2:-0.04698");
+		params.push_back("fa_standard:HIS:CE1:0.23490");
+		params.push_back("fa_standard:HIS:CG:0.20671");
+		params.push_back("fa_standard:HIS:H:0.50819");
+		params.push_back("fa_standard:HIS:HA:0.14754");
+		params.push_back("fa_standard:HIS:HD2:0.08456");
+		params.push_back("fa_standard:HIS:HE1:0.12215");
+		params.push_back("fa_standard:HIS:HE2:0.30067");
+		params.push_back("fa_standard:HIS:N:-0.77049");
+		params.push_back("fa_standard:HIS:ND1:-0.65772");
+		params.push_back("fa_standard:HIS:NE2:-0.33825");
+		params.push_back("fa_standard:HIS:O:-0.76511");
+		params.push_back("fa_standard:ILE:1HD1:0.12155");
+		params.push_back("fa_standard:ILE:1HG1:0.12155");
+		params.push_back("fa_standard:ILE:1HG2:0.12155");
+		params.push_back("fa_standard:ILE:2HD1:0.12155");
+		params.push_back("fa_standard:ILE:2HG1:0.12155");
+		params.push_back("fa_standard:ILE:2HG2:0.12155");
+		params.push_back("fa_standard:ILE:3HD1:0.12155");
+		params.push_back("fa_standard:ILE:3HG2:0.12155");
+		params.push_back("fa_standard:ILE:C:0.76511");
+		params.push_back("fa_standard:ILE:CA:0.11475");
+		params.push_back("fa_standard:ILE:CB:-0.12155");
+		params.push_back("fa_standard:ILE:CD1:-0.36465");
+		params.push_back("fa_standard:ILE:CG1:-0.24310");
+		params.push_back("fa_standard:ILE:CG2:-0.36465");
+		params.push_back("fa_standard:ILE:H:0.50819");
+		params.push_back("fa_standard:ILE:HA:0.14754");
+		params.push_back("fa_standard:ILE:HB:0.12155");
+		params.push_back("fa_standard:ILE:N:-0.77049");
+		params.push_back("fa_standard:ILE:O:-0.76511");
+		params.push_back("fa_standard:LEU:1HB:0.12155");
+		params.push_back("fa_standard:LEU:1HD1:0.12155");
+		params.push_back("fa_standard:LEU:1HD2:0.12155");
+		params.push_back("fa_standard:LEU:2HB:0.12155");
+		params.push_back("fa_standard:LEU:2HD1:0.12155");
+		params.push_back("fa_standard:LEU:2HD2:0.12155");
+		params.push_back("fa_standard:LEU:3HD1:0.12155");
+		params.push_back("fa_standard:LEU:3HD2:0.12155");
+		params.push_back("fa_standard:LEU:C:0.76511");
+		params.push_back("fa_standard:LEU:CA:0.11475");
+		params.push_back("fa_standard:LEU:CB:-0.24310");
+		params.push_back("fa_standard:LEU:CD1:-0.36465");
+		params.push_back("fa_standard:LEU:CD2:-0.36465");
+		params.push_back("fa_standard:LEU:CG:-0.12155");
+		params.push_back("fa_standard:LEU:H:0.50819");
+		params.push_back("fa_standard:LEU:HA:0.14754");
+		params.push_back("fa_standard:LEU:HG:0.12155");
+		params.push_back("fa_standard:LEU:N:-0.77049");
+		params.push_back("fa_standard:LEU:O:-0.76511");
+		params.push_back("fa_standard:LYS:1HB:0.08943");
+		params.push_back("fa_standard:LYS:1HD:0.08943");
+		params.push_back("fa_standard:LYS:1HE:0.05026");
+		params.push_back("fa_standard:LYS:1HG:0.08943");
+		params.push_back("fa_standard:LYS:1HZ:0.32446");
+		params.push_back("fa_standard:LYS:2HB:0.08943");
+		params.push_back("fa_standard:LYS:2HD:0.08943");
+		params.push_back("fa_standard:LYS:2HE:0.05026");
+		params.push_back("fa_standard:LYS:2HG:0.08943");
+		params.push_back("fa_standard:LYS:2HZ:0.32446");
+		params.push_back("fa_standard:LYS:3HZ:0.32446");
+		params.push_back("fa_standard:LYS:C:0.76511");
+		params.push_back("fa_standard:LYS:CA:0.11475");
+		params.push_back("fa_standard:LYS:CB:-0.17497");
+		params.push_back("fa_standard:LYS:CD:-0.17497");
+		params.push_back("fa_standard:LYS:CE:0.20694");
+		params.push_back("fa_standard:LYS:CG:-0.17497");
+		params.push_back("fa_standard:LYS:H:0.50819");
+		params.push_back("fa_standard:LYS:HA:0.14754");
+		params.push_back("fa_standard:LYS:N:-0.77049");
+		params.push_back("fa_standard:LYS:NZ:-0.29249");
+		params.push_back("fa_standard:LYS:O:-0.76511");
+		params.push_back("fa_standard:MET:1HB:0.12155");
+		params.push_back("fa_standard:MET:1HE:0.12155");
+		params.push_back("fa_standard:MET:1HG:0.12155");
+		params.push_back("fa_standard:MET:2HB:0.12155");
+		params.push_back("fa_standard:MET:2HE:0.12155");
+		params.push_back("fa_standard:MET:2HG:0.12155");
+		params.push_back("fa_standard:MET:3HE:0.12155");
+		params.push_back("fa_standard:MET:C:0.76511");
+		params.push_back("fa_standard:MET:CA:0.11475");
+		params.push_back("fa_standard:MET:CB:-0.24310");
+		params.push_back("fa_standard:MET:CE:-0.29712");
+		params.push_back("fa_standard:MET:CG:-0.18908");
+		params.push_back("fa_standard:MET:H:0.50819");
+		params.push_back("fa_standard:MET:HA:0.14754");
+		params.push_back("fa_standard:MET:N:-0.77049");
+		params.push_back("fa_standard:MET:O:-0.76511");
+		params.push_back("fa_standard:MET:SD:-0.12155");
+		params.push_back("fa_standard:PHE:1HB:0.14323");
+		params.push_back("fa_standard:PHE:2HB:0.14323");
+		params.push_back("fa_standard:PHE:C:0.76511");
+		params.push_back("fa_standard:PHE:CA:0.11475");
+		params.push_back("fa_standard:PHE:CB:-0.28647");
+		params.push_back("fa_standard:PHE:CD1:-0.18302");
+		params.push_back("fa_standard:PHE:CD2:-0.18302");
+		params.push_back("fa_standard:PHE:CE1:-0.18302");
+		params.push_back("fa_standard:PHE:CE2:-0.18302");
+		params.push_back("fa_standard:PHE:CG:0.00000");
+		params.push_back("fa_standard:PHE:CZ:-0.18302");
+		params.push_back("fa_standard:PHE:H:0.50819");
+		params.push_back("fa_standard:PHE:HA:0.14754");
+		params.push_back("fa_standard:PHE:HD1:0.18302");
+		params.push_back("fa_standard:PHE:HD2:0.18302");
+		params.push_back("fa_standard:PHE:HE1:0.18302");
+		params.push_back("fa_standard:PHE:HE2:0.18302");
+		params.push_back("fa_standard:PHE:HZ:0.18302");
+		params.push_back("fa_standard:PHE:N:-0.77049");
+		params.push_back("fa_standard:PHE:O:-0.76511");
+		params.push_back("fa_standard:PRO:1HB:0.14754");
+		params.push_back("fa_standard:PRO:1HD:0.14754");
+		params.push_back("fa_standard:PRO:1HG:0.14754");
+		params.push_back("fa_standard:PRO:2HB:0.14754");
+		params.push_back("fa_standard:PRO:2HD:0.14754");
+		params.push_back("fa_standard:PRO:2HG:0.14754");
+		params.push_back("fa_standard:PRO:C:0.76511");
+		params.push_back("fa_standard:PRO:CA:0.03279");
+		params.push_back("fa_standard:PRO:CB:-0.29508");
+		params.push_back("fa_standard:PRO:CG:-0.29508");
+		params.push_back("fa_standard:PRO:HA:0.14754");
+		params.push_back("fa_standard:PRO:N:-0.47541");
+		params.push_back("fa_standard:PRO:O:-0.76511");
+		params.push_back("fa_standard:SER:1HB:0.07337");
+		params.push_back("fa_standard:SER:2HB:0.07337");
+		params.push_back("fa_standard:SER:C:0.76511");
+		params.push_back("fa_standard:SER:CA:0.11475");
+		params.push_back("fa_standard:SER:CB:0.04076");
+		params.push_back("fa_standard:SER:H:0.50819");
+		params.push_back("fa_standard:SER:HA:0.14754");
+		params.push_back("fa_standard:SER:HG:0.35053");
+		params.push_back("fa_standard:SER:N:-0.77049");
+		params.push_back("fa_standard:SER:O:-0.76511");
+		params.push_back("fa_standard:SER:OG:-0.53802");
+		params.push_back("fa_standard:THR:1HG2:0.08381");
+		params.push_back("fa_standard:THR:2HG2:0.08381");
+		params.push_back("fa_standard:THR:3HG2:0.08381");
+		params.push_back("fa_standard:THR:C:0.76511");
+		params.push_back("fa_standard:THR:CA:0.11475");
+		params.push_back("fa_standard:THR:CB:0.13037");
+		params.push_back("fa_standard:THR:CG2:-0.25143");
+		params.push_back("fa_standard:THR:H:0.50819");
+		params.push_back("fa_standard:THR:HA:0.14754");
+		params.push_back("fa_standard:THR:HB:0.08381");
+		params.push_back("fa_standard:THR:HG1:0.40042");
+		params.push_back("fa_standard:THR:N:-0.77049");
+		params.push_back("fa_standard:THR:O:-0.76511");
+		params.push_back("fa_standard:THR:OG1:-0.61459");
+		params.push_back("fa_standard:TRP:1HB:0.10831");
+		params.push_back("fa_standard:TRP:2HB:0.10831");
+		params.push_back("fa_standard:TRP:C:0.76511");
+		params.push_back("fa_standard:TRP:CA:0.11475");
+		params.push_back("fa_standard:TRP:CB:-0.21662");
+		params.push_back("fa_standard:TRP:CD1:0.04212");
+		params.push_back("fa_standard:TRP:CD2:-0.02407");
+		params.push_back("fa_standard:TRP:CE2:0.15644");
+		params.push_back("fa_standard:TRP:CE3:-0.13839");
+		params.push_back("fa_standard:TRP:CG:-0.03610");
+		params.push_back("fa_standard:TRP:CH2:-0.13839");
+		params.push_back("fa_standard:TRP:CZ2:-0.13839");
+		params.push_back("fa_standard:TRP:CZ3:-0.13839");
+		params.push_back("fa_standard:TRP:H:0.50819");
+		params.push_back("fa_standard:TRP:HA:0.14754");
+		params.push_back("fa_standard:TRP:HD1:0.13839");
+		params.push_back("fa_standard:TRP:HE1:0.45730");
+		params.push_back("fa_standard:TRP:HE3:0.13839");
+		params.push_back("fa_standard:TRP:HH2:0.13839");
+		params.push_back("fa_standard:TRP:HZ2:0.13839");
+		params.push_back("fa_standard:TRP:HZ3:0.13839");
+		params.push_back("fa_standard:TRP:N:-0.77049");
+		params.push_back("fa_standard:TRP:NE1:-0.73409");
+		params.push_back("fa_standard:TRP:O:-0.76511");
+		params.push_back("fa_standard:TYR:1HB:0.07353");
+		params.push_back("fa_standard:TYR:2HB:0.07353");
+		params.push_back("fa_standard:TYR:C:0.76511");
+		params.push_back("fa_standard:TYR:CA:0.11475");
+		params.push_back("fa_standard:TYR:CB:-0.14706");
+		params.push_back("fa_standard:TYR:CD1:-0.09395");
+		params.push_back("fa_standard:TYR:CD2:-0.09395");
+		params.push_back("fa_standard:TYR:CE1:-0.09395");
+		params.push_back("fa_standard:TYR:CE2:-0.09395");
+		params.push_back("fa_standard:TYR:CG:0.00000");
+		params.push_back("fa_standard:TYR:CZ:0.08987");
+		params.push_back("fa_standard:TYR:H:0.50819");
+		params.push_back("fa_standard:TYR:HA:0.14754");
+		params.push_back("fa_standard:TYR:HD1:0.09395");
+		params.push_back("fa_standard:TYR:HD2:0.09395");
+		params.push_back("fa_standard:TYR:HE1:0.09395");
+		params.push_back("fa_standard:TYR:HE2:0.09395");
+		params.push_back("fa_standard:TYR:HH:0.35130");
+		params.push_back("fa_standard:TYR:N:-0.77049");
+		params.push_back("fa_standard:TYR:O:-0.76511");
+		params.push_back("fa_standard:TYR:OH:-0.44117");
+		params.push_back("fa_standard:VAL:1HG1:0.12155");
+		params.push_back("fa_standard:VAL:1HG2:0.12155");
+		params.push_back("fa_standard:VAL:2HG1:0.12155");
+		params.push_back("fa_standard:VAL:2HG2:0.12155");
+		params.push_back("fa_standard:VAL:3HG1:0.12155");
+		params.push_back("fa_standard:VAL:3HG2:0.12155");
+		params.push_back("fa_standard:VAL:C:0.76511");
+		params.push_back("fa_standard:VAL:CA:0.11475");
+		params.push_back("fa_standard:VAL:CB:-0.12155");
+		params.push_back("fa_standard:VAL:CG1:-0.36465");
+		params.push_back("fa_standard:VAL:CG2:-0.36465");
+		params.push_back("fa_standard:VAL:H:0.50819");
+		params.push_back("fa_standard:VAL:HA:0.14754");
+		params.push_back("fa_standard:VAL:HB:0.12155");
+		params.push_back("fa_standard:VAL:N:-0.77049");
+		params.push_back("fa_standard:VAL:O:-0.76511");
+		params.push_back("fa_standard:DAL:1HB:0.12155");
+		params.push_back("fa_standard:DAL:2HB:0.12155");
+		params.push_back("fa_standard:DAL:3HB:0.12155");
+		params.push_back("fa_standard:DAL:C:0.76511");
+		params.push_back("fa_standard:DAL:CA:0.11475");
+		params.push_back("fa_standard:DAL:CB:-0.36465");
+		params.push_back("fa_standard:DAL:H:0.50819");
+		params.push_back("fa_standard:DAL:HA:0.14754");
+		params.push_back("fa_standard:DAL:N:-0.77049");
+		params.push_back("fa_standard:DAL:O:-0.76511");
+		params.push_back("fa_standard:DAR:1HB:0.07619");
+		params.push_back("fa_standard:DAR:1HD:0.07619");
+		params.push_back("fa_standard:DAR:1HG:0.07619");
+		params.push_back("fa_standard:DAR:1HH1:0.29787");
+		params.push_back("fa_standard:DAR:1HH2:0.29787");
+		params.push_back("fa_standard:DAR:2HB:0.07619");
+		params.push_back("fa_standard:DAR:2HD:0.07619");
+		params.push_back("fa_standard:DAR:2HG:0.07619");
+		params.push_back("fa_standard:DAR:2HH1:0.29787");
+		params.push_back("fa_standard:DAR:2HH2:0.29787");
+		params.push_back("fa_standard:DAR:C:0.76511");
+		params.push_back("fa_standard:DAR:CA:0.11475");
+		params.push_back("fa_standard:DAR:CB:-0.08557");
+		params.push_back("fa_standard:DAR:CD:0.14210");
+		params.push_back("fa_standard:DAR:CG:-0.08557");
+		params.push_back("fa_standard:DAR:CZ:0.40572");
+		params.push_back("fa_standard:DAR:H:0.50819");
+		params.push_back("fa_standard:DAR:HA:0.14754");
+		params.push_back("fa_standard:DAR:HE:0.28589");
+		params.push_back("fa_standard:DAR:N:-0.77049");
+		params.push_back("fa_standard:DAR:NE:-0.39713");
+		params.push_back("fa_standard:DAR:NH1:-0.45704");
+		params.push_back("fa_standard:DAR:NH2:-0.45704");
+		params.push_back("fa_standard:DAR:O:-0.76511");
+		params.push_back("fa_standard:DAN:1HB:0.07322");
+		params.push_back("fa_standard:DAN:1HD2:0.26032");
+		params.push_back("fa_standard:DAN:2HB:0.07322");
+		params.push_back("fa_standard:DAN:2HD2:0.24405");
+		params.push_back("fa_standard:DAN:C:0.76511");
+		params.push_back("fa_standard:DAN:CA:0.11475");
+		params.push_back("fa_standard:DAN:CB:-0.14643");
+		params.push_back("fa_standard:DAN:CG:0.44743");
+		params.push_back("fa_standard:DAN:H:0.50819");
+		params.push_back("fa_standard:DAN:HA:0.14754");
+		params.push_back("fa_standard:DAN:N:-0.77049");
+		params.push_back("fa_standard:DAN:ND2:-0.50437");
+		params.push_back("fa_standard:DAN:O:-0.76511");
+		params.push_back("fa_standard:DAN:OD1:-0.44743");
+		params.push_back("fa_standard:DAS:1HB:0.13276");
+		params.push_back("fa_standard:DAS:2HB:0.13276");
+		params.push_back("fa_standard:DAS:C:0.76511");
+		params.push_back("fa_standard:DAS:CA:0.11475");
+		params.push_back("fa_standard:DAS:CB:-0.29888");
+		params.push_back("fa_standard:DAS:CG:0.75106");
+		params.push_back("fa_standard:DAS:H:0.50819");
+		params.push_back("fa_standard:DAS:HA:0.14754");
+		params.push_back("fa_standard:DAS:N:-0.77049");
+		params.push_back("fa_standard:DAS:O:-0.76511");
+		params.push_back("fa_standard:DAS:OD1:-0.85885");
+		params.push_back("fa_standard:DAS:OD2:-0.85885");
+		params.push_back("fa_standard:DCS:1HB:0.12155");
+		params.push_back("fa_standard:DCS:2HB:0.12155");
+		params.push_back("fa_standard:DCS:C:0.76511");
+		params.push_back("fa_standard:DCS:CA:0.11475");
+		params.push_back("fa_standard:DCS:CB:-0.14856");
+		params.push_back("fa_standard:DCS:H:0.50819");
+		params.push_back("fa_standard:DCS:HA:0.14754");
+		params.push_back("fa_standard:DCS:HG:0.21609");
+		params.push_back("fa_standard:DCS:N:-0.77049");
+		params.push_back("fa_standard:DCS:O:-0.76511");
+		params.push_back("fa_standard:DCS:SG:-0.31063");
+		params.push_back("fa_standard:DGN:1HB:0.09669");
+		params.push_back("fa_standard:DGN:1HE2:0.34378");
+		params.push_back("fa_standard:DGN:1HG:0.09669");
+		params.push_back("fa_standard:DGN:2HB:0.09669");
+		params.push_back("fa_standard:DGN:2HE2:0.32229");
+		params.push_back("fa_standard:DGN:2HG:0.09669");
+		params.push_back("fa_standard:DGN:C:0.76511");
+		params.push_back("fa_standard:DGN:CA:0.11475");
+		params.push_back("fa_standard:DGN:CB:-0.19338");
+		params.push_back("fa_standard:DGN:CD:0.59087");
+		params.push_back("fa_standard:DGN:CG:-0.19338");
+		params.push_back("fa_standard:DGN:H:0.50819");
+		params.push_back("fa_standard:DGN:HA:0.14754");
+		params.push_back("fa_standard:DGN:N:-0.77049");
+		params.push_back("fa_standard:DGN:NE2:-0.66607");
+		params.push_back("fa_standard:DGN:O:-0.76511");
+		params.push_back("fa_standard:DGN:OE1:-0.59087");
+		params.push_back("fa_standard:DGU:1HB:0.05862");
+		params.push_back("fa_standard:DGU:1HG:0.05862");
+		params.push_back("fa_standard:DGU:2HB:0.05862");
+		params.push_back("fa_standard:DGU:2HG:0.05862");
+		params.push_back("fa_standard:DGU:C:0.76511");
+		params.push_back("fa_standard:DGU:CA:0.11475");
+		params.push_back("fa_standard:DGU:CB:-0.16925");
+		params.push_back("fa_standard:DGU:CD:0.50590");
+		params.push_back("fa_standard:DGU:CG:-0.25364");
+		params.push_back("fa_standard:DGU:H:0.50819");
+		params.push_back("fa_standard:DGU:HA:0.14754");
+		params.push_back("fa_standard:DGU:N:-0.77049");
+		params.push_back("fa_standard:DGU:O:-0.76511");
+		params.push_back("fa_standard:DGU:OE1:-0.65874");
+		params.push_back("fa_standard:DGU:OE2:-0.65874");
+		params.push_back("fa_standard:DHI_D:1HB:0.08456");
+		params.push_back("fa_standard:DHI_D:2HB:0.08456");
+		params.push_back("fa_standard:DHI_D:C:0.76511");
+		params.push_back("fa_standard:DHI_D:CA:0.11475");
+		params.push_back("fa_standard:DHI_D:CB:-0.08456");
+		params.push_back("fa_standard:DHI_D:CD2:0.20671");
+		params.push_back("fa_standard:DHI_D:CE1:0.23490");
+		params.push_back("fa_standard:DHI_D:CG:-0.04698");
+		params.push_back("fa_standard:DHI_D:H:0.50819");
+		params.push_back("fa_standard:DHI_D:HA:0.14754");
+		params.push_back("fa_standard:DHI_D:HD1:0.30067");
+		params.push_back("fa_standard:DHI_D:HD2:0.09396");
+		params.push_back("fa_standard:DHI_D:HE1:0.12215");
+		params.push_back("fa_standard:DHI_D:N:-0.77049");
+		params.push_back("fa_standard:DHI_D:ND1:-0.33825");
+		params.push_back("fa_standard:DHI_D:NE2:-0.65772");
+		params.push_back("fa_standard:DHI_D:O:-0.76511");
+		params.push_back("fa_standard:DHI:1HB:0.08456");
+		params.push_back("fa_standard:DHI:2HB:0.08456");
+		params.push_back("fa_standard:DHI:C:0.76511");
+		params.push_back("fa_standard:DHI:CA:0.11475");
+		params.push_back("fa_standard:DHI:CB:-0.07517");
+		params.push_back("fa_standard:DHI:CD2:-0.04698");
+		params.push_back("fa_standard:DHI:CE1:0.23490");
+		params.push_back("fa_standard:DHI:CG:0.20671");
+		params.push_back("fa_standard:DHI:H:0.50819");
+		params.push_back("fa_standard:DHI:HA:0.14754");
+		params.push_back("fa_standard:DHI:HD2:0.08456");
+		params.push_back("fa_standard:DHI:HE1:0.12215");
+		params.push_back("fa_standard:DHI:HE2:0.30067");
+		params.push_back("fa_standard:DHI:N:-0.77049");
+		params.push_back("fa_standard:DHI:ND1:-0.65772");
+		params.push_back("fa_standard:DHI:NE2:-0.33825");
+		params.push_back("fa_standard:DHI:O:-0.76511");
+		params.push_back("fa_standard:DIL:1HD1:0.12155");
+		params.push_back("fa_standard:DIL:1HG1:0.12155");
+		params.push_back("fa_standard:DIL:1HG2:0.12155");
+		params.push_back("fa_standard:DIL:2HD1:0.12155");
+		params.push_back("fa_standard:DIL:2HG1:0.12155");
+		params.push_back("fa_standard:DIL:2HG2:0.12155");
+		params.push_back("fa_standard:DIL:3HD1:0.12155");
+		params.push_back("fa_standard:DIL:3HG2:0.12155");
+		params.push_back("fa_standard:DIL:C:0.76511");
+		params.push_back("fa_standard:DIL:CA:0.11475");
+		params.push_back("fa_standard:DIL:CB:-0.12155");
+		params.push_back("fa_standard:DIL:CD1:-0.36465");
+		params.push_back("fa_standard:DIL:CG1:-0.24310");
+		params.push_back("fa_standard:DIL:CG2:-0.36465");
+		params.push_back("fa_standard:DIL:H:0.50819");
+		params.push_back("fa_standard:DIL:HA:0.14754");
+		params.push_back("fa_standard:DIL:HB:0.12155");
+		params.push_back("fa_standard:DIL:N:-0.77049");
+		params.push_back("fa_standard:DIL:O:-0.76511");
+		params.push_back("fa_standard:DLE:1HB:0.12155");
+		params.push_back("fa_standard:DLE:1HD1:0.12155");
+		params.push_back("fa_standard:DLE:1HD2:0.12155");
+		params.push_back("fa_standard:DLE:2HB:0.12155");
+		params.push_back("fa_standard:DLE:2HD1:0.12155");
+		params.push_back("fa_standard:DLE:2HD2:0.12155");
+		params.push_back("fa_standard:DLE:3HD1:0.12155");
+		params.push_back("fa_standard:DLE:3HD2:0.12155");
+		params.push_back("fa_standard:DLE:C:0.76511");
+		params.push_back("fa_standard:DLE:CA:0.11475");
+		params.push_back("fa_standard:DLE:CB:-0.24310");
+		params.push_back("fa_standard:DLE:CD1:-0.36465");
+		params.push_back("fa_standard:DLE:CD2:-0.36465");
+		params.push_back("fa_standard:DLE:CG:-0.12155");
+		params.push_back("fa_standard:DLE:H:0.50819");
+		params.push_back("fa_standard:DLE:HA:0.14754");
+		params.push_back("fa_standard:DLE:HG:0.12155");
+		params.push_back("fa_standard:DLE:N:-0.77049");
+		params.push_back("fa_standard:DLE:O:-0.76511");
+		params.push_back("fa_standard:DLY:1HB:0.08943");
+		params.push_back("fa_standard:DLY:1HD:0.08943");
+		params.push_back("fa_standard:DLY:1HE:0.05026");
+		params.push_back("fa_standard:DLY:1HG:0.08943");
+		params.push_back("fa_standard:DLY:1HZ:0.32446");
+		params.push_back("fa_standard:DLY:2HB:0.08943");
+		params.push_back("fa_standard:DLY:2HD:0.08943");
+		params.push_back("fa_standard:DLY:2HE:0.05026");
+		params.push_back("fa_standard:DLY:2HG:0.08943");
+		params.push_back("fa_standard:DLY:2HZ:0.32446");
+		params.push_back("fa_standard:DLY:3HZ:0.32446");
+		params.push_back("fa_standard:DLY:C:0.76511");
+		params.push_back("fa_standard:DLY:CA:0.11475");
+		params.push_back("fa_standard:DLY:CB:-0.17497");
+		params.push_back("fa_standard:DLY:CD:-0.17497");
+		params.push_back("fa_standard:DLY:CE:0.20694");
+		params.push_back("fa_standard:DLY:CG:-0.17497");
+		params.push_back("fa_standard:DLY:H:0.50819");
+		params.push_back("fa_standard:DLY:HA:0.14754");
+		params.push_back("fa_standard:DLY:N:-0.77049");
+		params.push_back("fa_standard:DLY:NZ:-0.29249");
+		params.push_back("fa_standard:DLY:O:-0.76511");
+		params.push_back("fa_standard:DME:1HB:0.12155");
+		params.push_back("fa_standard:DME:1HE:0.12155");
+		params.push_back("fa_standard:DME:1HG:0.12155");
+		params.push_back("fa_standard:DME:2HB:0.12155");
+		params.push_back("fa_standard:DME:2HE:0.12155");
+		params.push_back("fa_standard:DME:2HG:0.12155");
+		params.push_back("fa_standard:DME:3HE:0.12155");
+		params.push_back("fa_standard:DME:C:0.76511");
+		params.push_back("fa_standard:DME:CA:0.11475");
+		params.push_back("fa_standard:DME:CB:-0.24310");
+		params.push_back("fa_standard:DME:CE:-0.29712");
+		params.push_back("fa_standard:DME:CG:-0.18908");
+		params.push_back("fa_standard:DME:H:0.50819");
+		params.push_back("fa_standard:DME:HA:0.14754");
+		params.push_back("fa_standard:DME:N:-0.77049");
+		params.push_back("fa_standard:DME:O:-0.76511");
+		params.push_back("fa_standard:DME:SD:-0.12155");
+		params.push_back("fa_standard:DPH:1HB:0.14323");
+		params.push_back("fa_standard:DPH:2HB:0.14323");
+		params.push_back("fa_standard:DPH:C:0.76511");
+		params.push_back("fa_standard:DPH:CA:0.11475");
+		params.push_back("fa_standard:DPH:CB:-0.28647");
+		params.push_back("fa_standard:DPH:CD1:-0.18302");
+		params.push_back("fa_standard:DPH:CD2:-0.18302");
+		params.push_back("fa_standard:DPH:CE1:-0.18302");
+		params.push_back("fa_standard:DPH:CE2:-0.18302");
+		params.push_back("fa_standard:DPH:CG:0.00000");
+		params.push_back("fa_standard:DPH:CZ:-0.18302");
+		params.push_back("fa_standard:DPH:H:0.50819");
+		params.push_back("fa_standard:DPH:HA:0.14754");
+		params.push_back("fa_standard:DPH:HD1:0.18302");
+		params.push_back("fa_standard:DPH:HD2:0.18302");
+		params.push_back("fa_standard:DPH:HE1:0.18302");
+		params.push_back("fa_standard:DPH:HE2:0.18302");
+		params.push_back("fa_standard:DPH:HZ:0.18302");
+		params.push_back("fa_standard:DPH:N:-0.77049");
+		params.push_back("fa_standard:DPH:O:-0.76511");
+		params.push_back("fa_standard:DPR:1HB:0.14754");
+		params.push_back("fa_standard:DPR:1HD:0.14754");
+		params.push_back("fa_standard:DPR:1HG:0.14754");
+		params.push_back("fa_standard:DPR:2HB:0.14754");
+		params.push_back("fa_standard:DPR:2HD:0.14754");
+		params.push_back("fa_standard:DPR:2HG:0.14754");
+		params.push_back("fa_standard:DPR:C:0.76511");
+		params.push_back("fa_standard:DPR:CA:0.03279");
+		params.push_back("fa_standard:DPR:CB:-0.29508");
+		params.push_back("fa_standard:DPR:CG:-0.29508");
+		params.push_back("fa_standard:DPR:HA:0.14754");
+		params.push_back("fa_standard:DPR:N:-0.47541");
+		params.push_back("fa_standard:DPR:O:-0.76511");
+		params.push_back("fa_standard:DSE:1HB:0.07337");
+		params.push_back("fa_standard:DSE:2HB:0.07337");
+		params.push_back("fa_standard:DSE:C:0.76511");
+		params.push_back("fa_standard:DSE:CA:0.11475");
+		params.push_back("fa_standard:DSE:CB:0.04076");
+		params.push_back("fa_standard:DSE:H:0.50819");
+		params.push_back("fa_standard:DSE:HA:0.14754");
+		params.push_back("fa_standard:DSE:HG:0.35053");
+		params.push_back("fa_standard:DSE:N:-0.77049");
+		params.push_back("fa_standard:DSE:O:-0.76511");
+		params.push_back("fa_standard:DSE:OG:-0.53802");
+		params.push_back("fa_standard:DTH:1HG2:0.08381");
+		params.push_back("fa_standard:DTH:2HG2:0.08381");
+		params.push_back("fa_standard:DTH:3HG2:0.08381");
+		params.push_back("fa_standard:DTH:C:0.76511");
+		params.push_back("fa_standard:DTH:CA:0.11475");
+		params.push_back("fa_standard:DTH:CB:0.13037");
+		params.push_back("fa_standard:DTH:CG2:-0.25143");
+		params.push_back("fa_standard:DTH:H:0.50819");
+		params.push_back("fa_standard:DTH:HA:0.14754");
+		params.push_back("fa_standard:DTH:HB:0.08381");
+		params.push_back("fa_standard:DTH:HG1:0.40042");
+		params.push_back("fa_standard:DTH:N:-0.77049");
+		params.push_back("fa_standard:DTH:O:-0.76511");
+		params.push_back("fa_standard:DTH:OG1:-0.61459");
+		params.push_back("fa_standard:DTR:1HB:0.10831");
+		params.push_back("fa_standard:DTR:2HB:0.10831");
+		params.push_back("fa_standard:DTR:C:0.76511");
+		params.push_back("fa_standard:DTR:CA:0.11475");
+		params.push_back("fa_standard:DTR:CB:-0.21662");
+		params.push_back("fa_standard:DTR:CD1:0.04212");
+		params.push_back("fa_standard:DTR:CD2:-0.02407");
+		params.push_back("fa_standard:DTR:CE2:0.15644");
+		params.push_back("fa_standard:DTR:CE3:-0.13839");
+		params.push_back("fa_standard:DTR:CG:-0.03610");
+		params.push_back("fa_standard:DTR:CH2:-0.13839");
+		params.push_back("fa_standard:DTR:CZ2:-0.13839");
+		params.push_back("fa_standard:DTR:CZ3:-0.13839");
+		params.push_back("fa_standard:DTR:H:0.50819");
+		params.push_back("fa_standard:DTR:HA:0.14754");
+		params.push_back("fa_standard:DTR:HD1:0.13839");
+		params.push_back("fa_standard:DTR:HE1:0.45730");
+		params.push_back("fa_standard:DTR:HE3:0.13839");
+		params.push_back("fa_standard:DTR:HH2:0.13839");
+		params.push_back("fa_standard:DTR:HZ2:0.13839");
+		params.push_back("fa_standard:DTR:HZ3:0.13839");
+		params.push_back("fa_standard:DTR:N:-0.77049");
+		params.push_back("fa_standard:DTR:NE1:-0.73409");
+		params.push_back("fa_standard:DTR:O:-0.76511");
+		params.push_back("fa_standard:DTY:1HB:0.07353");
+		params.push_back("fa_standard:DTY:2HB:0.07353");
+		params.push_back("fa_standard:DTY:C:0.76511");
+		params.push_back("fa_standard:DTY:CA:0.11475");
+		params.push_back("fa_standard:DTY:CB:-0.14706");
+		params.push_back("fa_standard:DTY:CD1:-0.09395");
+		params.push_back("fa_standard:DTY:CD2:-0.09395");
+		params.push_back("fa_standard:DTY:CE1:-0.09395");
+		params.push_back("fa_standard:DTY:CE2:-0.09395");
+		params.push_back("fa_standard:DTY:CG:0.00000");
+		params.push_back("fa_standard:DTY:CZ:0.08987");
+		params.push_back("fa_standard:DTY:H:0.50819");
+		params.push_back("fa_standard:DTY:HA:0.14754");
+		params.push_back("fa_standard:DTY:HD1:0.09395");
+		params.push_back("fa_standard:DTY:HD2:0.09395");
+		params.push_back("fa_standard:DTY:HE1:0.09395");
+		params.push_back("fa_standard:DTY:HE2:0.09395");
+		params.push_back("fa_standard:DTY:HH:0.35130");
+		params.push_back("fa_standard:DTY:N:-0.77049");
+		params.push_back("fa_standard:DTY:O:-0.76511");
+		params.push_back("fa_standard:DTY:OH:-0.44117");
+		params.push_back("fa_standard:DVA:1HG1:0.12155");
+		params.push_back("fa_standard:DVA:1HG2:0.12155");
+		params.push_back("fa_standard:DVA:2HG1:0.12155");
+		params.push_back("fa_standard:DVA:2HG2:0.12155");
+		params.push_back("fa_standard:DVA:3HG1:0.12155");
+		params.push_back("fa_standard:DVA:3HG2:0.12155");
+		params.push_back("fa_standard:DVA:C:0.76511");
+		params.push_back("fa_standard:DVA:CA:0.11475");
+		params.push_back("fa_standard:DVA:CB:-0.12155");
+		params.push_back("fa_standard:DVA:CG1:-0.36465");
+		params.push_back("fa_standard:DVA:CG2:-0.36465");
+		params.push_back("fa_standard:DVA:H:0.50819");
+		params.push_back("fa_standard:DVA:HA:0.14754");
+		params.push_back("fa_standard:DVA:HB:0.12155");
+		params.push_back("fa_standard:DVA:N:-0.77049");
+		params.push_back("fa_standard:DVA:O:-0.76511");
+		option[ basic::options::OptionKeys::chemical::set_atomic_charge ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -set_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// patch charges
+	if ( ! option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back( "fa_standard:ALA:CtermProteinFull:C:0.215733145869844" );
+		params.push_back("fa_standard:ALA:CtermProteinFull:C:0.35448");
+		params.push_back("fa_standard:ALA:CtermProteinFull:O:-0.67724");
+		params.push_back("fa_standard:ALA:CtermProteinFull:OXT:-0.67724");
+		params.push_back("fa_standard:ALA:NtermProteinFull:1H:0.26154");
+		params.push_back("fa_standard:ALA:NtermProteinFull:2H:0.26154");
+		params.push_back("fa_standard:ALA:NtermProteinFull:3H:0.26154");
+		params.push_back("fa_standard:ALA:NtermProteinFull:CA:0.19184");
+		params.push_back("fa_standard:ALA:NtermProteinFull:HA:0.12794");
+		params.push_back("fa_standard:ALA:NtermProteinFull:N:-0.10440");
+		params.push_back("fa_standard:DAL:CtermProteinFull:C:0.35448");
+		params.push_back("fa_standard:DAL:CtermProteinFull:O:-0.67724");
+		params.push_back("fa_standard:DAL:CtermProteinFull:OXT:-0.67724");
+		params.push_back("fa_standard:DAL:NtermProteinFull:1H:0.26154");
+		params.push_back("fa_standard:DAL:NtermProteinFull:2H:0.26154");
+		params.push_back("fa_standard:DAL:NtermProteinFull:3H:0.26154");
+		params.push_back("fa_standard:DAL:NtermProteinFull:CA:0.19184");
+		params.push_back("fa_standard:DAL:NtermProteinFull:HA:0.12794");
+		params.push_back("fa_standard:DAL:NtermProteinFull:N:-0.10440");
+		params.push_back("fa_standard:GLY:NtermProteinFull:1H:0.25156");
+		params.push_back("fa_standard:GLY:NtermProteinFull:1HA:0.11215");
+		params.push_back("fa_standard:GLY:NtermProteinFull:2H:0.25156");
+		params.push_back("fa_standard:GLY:NtermProteinFull:2HA:0.11215");
+		params.push_back("fa_standard:GLY:NtermProteinFull:3H:0.25156");
+		params.push_back("fa_standard:GLY:NtermProteinFull:CA:0.13539");
+		params.push_back("fa_standard:GLY:NtermProteinFull:N:-0.11438");
+		params.push_back("fa_standard:PRO:NtermProteinFull:1H:0.17880");
+		params.push_back("fa_standard:PRO:NtermProteinFull:1HB:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:1HD:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:1HG:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:2H:0.17880");
+		params.push_back("fa_standard:PRO:NtermProteinFull:2HB:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:2HD:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:2HG:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:CA:0.13233");
+		params.push_back("fa_standard:PRO:NtermProteinFull:CB:-0.06516");
+		params.push_back("fa_standard:PRO:NtermProteinFull:CG:-0.06516");
+		params.push_back("fa_standard:PRO:NtermProteinFull:HA:0.09167");
+		params.push_back("fa_standard:PRO:NtermProteinFull:N:-0.00127");
+		params.push_back("fa_standard:DPR:NtermProteinFull:1H:0.17880");
+		params.push_back("fa_standard:DPR:NtermProteinFull:1HB:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:1HD:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:1HG:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:2H:0.17880");
+		params.push_back("fa_standard:DPR:NtermProteinFull:2HB:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:2HD:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:2HG:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:CA:0.13233");
+		params.push_back("fa_standard:DPR:NtermProteinFull:CB:-0.06516");
+		params.push_back("fa_standard:DPR:NtermProteinFull:CG:-0.06516");
+		params.push_back("fa_standard:DPR:NtermProteinFull:HA:0.09167");
+		params.push_back("fa_standard:DPR:NtermProteinFull:N:-0.00127");
+		option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -set_patch_atomic_charge is also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// hbonds
+	if ( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back( "hbacc_AHX:1.15");
+		params.push_back( "hbacc_CXA:1.21");
+		params.push_back( "hbacc_CXL:1.10");
+		params.push_back( "hbacc_HXL:1.15");
+		params.push_back( "hbacc_IMD:1.13");
+		params.push_back( "hbacc_IME:1.16");
+		params.push_back( "hbacc_PBA:1.19");
+		option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
+	}
+	if ( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+		utility::vector1< std::string > params;
+		params.push_back( "hbdon_AHX:1.00");
+		params.push_back( "hbdon_AMO:1.17");
+		params.push_back( "hbdon_CXA:1.29");
+		params.push_back( "hbdon_GDE:1.11");
+		params.push_back( "hbdon_GDH:1.11");
+		params.push_back( "hbdon_HXL:0.99");
+		params.push_back( "hbdon_IMD:1.18");
+		params.push_back( "hbdon_IME:1.42");
+		params.push_back( "hbdon_IND:1.15");
+		params.push_back( "hbdon_PBA:1.45");
+		option[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
+	}
+
+	// unmodifypot
+	if ( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+		option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
+	}
+
+	// attractive hydrogens
+	if ( ! option[ basic::options::OptionKeys::score::fa_Hatr ].user() ) {
+		option[ basic::options::OptionKeys::score::fa_Hatr ].value(true);
+	}
+
+	// new sp3 acceptor
+	if ( ! option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].user() ) {
+		option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ].value(true);
+	}
+
+	// sigmoidal dielectric
+	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
+	}
+	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(79.9);
+	}
+	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(6.65);
+	}
+	if ( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+		option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.4415);
+	}
+
+	// lkball
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_ramp_width_A2 ].value(3.709);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_overlap_width_A2 ].value(2.828);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_water_fade ].value(1.0);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ].value(true);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_bridge_angle_widthscale ].value(1.0);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
+		utility::vector1< core::Real > params;
+		params.push_back(2.828);
+		params.push_back(134.5);
+		params.push_back(0.0);
+		params.push_back(2.828);
+		params.push_back(134.5);
+		params.push_back(180.0);
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].value(params);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user() ) {
+		utility::vector1< core::Real > params;
+		params.push_back(2.828);
+		params.push_back(109.3);
+		params.push_back(120.0);
+		params.push_back(2.828);
+		params.push_back(109.3);
+		params.push_back(240.0);
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].value(params);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user() ) {
+		utility::vector1< core::Real > params;
+		params.push_back(2.828);
+		params.push_back(180);
+		params.push_back(0);
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(params);
+	}
+	if ( ! option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
+		option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].value(2.828);
+	}
+
+
+	// roland's new smoothed p_aa_pp and fa_dun libraries
+	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].user() ) {
+		option[ basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable ].value(true);
+	}
+	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].user() ) {
+		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable ].value(false);
+	}
+	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].user() ) {
+		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
+	}
+	if ( ! option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].user() ) {
+		option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
+	}
+
+	// corrected torsions
+	if ( ! option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].user() ) {
+		option[ basic::options::OptionKeys::corrections::score::rama_pp_map ].value("scoring/score_functions/rama/fd_beta_nov2016/");
+	}
+	if ( ! option[ basic::options::OptionKeys::corrections::score::dun10_dir ].user() ) {
+		option[ basic::options::OptionKeys::corrections::score::dun10_dir ].value("rotamer/beta_nov2016");
+	}
+
+
+	// bbdep omega
+	if ( ! option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].user() ) {
+		option[ basic::options::OptionKeys::corrections::score::bbdep_omega ].value(true);
+	}
+
+	// updated fa_elec countpair logic
+	if ( ! option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].user() ) {
+		option[ basic::options::OptionKeys::score::elec_representative_cp_flip ].value(true);
+	}
+
+	// updated cartbonded parameters
+	if ( ! option[ basic::options::OptionKeys::score::bonded_params_dir ].user() ) {
+		option[ basic::options::OptionKeys::score::bonded_params_dir ].value("scoring/score_functions/bondlength_bondangle_beta/");
+	}
+
+	// weights file
+	if ( ! option[ score::weights ].user() ) {
+		if ( option[corrections::beta_nov16_cart]() || option[optimization::nonideal]() ) {
+			option[ score::weights ].value( "beta_nov16_cart.wts" );
+		} else {
+			option[ score::weights ].value( "beta_nov16.wts" );
+		}
+	} else {
+		TR.Warning << "Flag -beta_nov16 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
+	}
+
+	// protocol option but it should be default ...
+	if ( !option[optimization::default_max_cycles]() ) {
+		option[ optimization::default_max_cycles ].value( 200 );
+	}
+}
 
 void
 init_nonideal_correction() {

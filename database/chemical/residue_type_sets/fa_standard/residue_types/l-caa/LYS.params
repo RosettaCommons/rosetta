@@ -60,7 +60,7 @@ NBR_ATOM CB
 # APL CB to side chain heavyatom distance --  max observed in residue 74 of ubiquitin
 NBR_RADIUS 5.0084
 FIRST_SIDECHAIN_ATOM CB
-RAMA_PREPRO_FILENAME scoring/score_functions/rama/fd/all.ramaProb scoring/score_functions/rama/fd/prepro.ramaProb
+RAMA_PREPRO_FILENAME all.ramaProb prepro.ramaProb
 ACT_COORD_ATOMS NZ END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  

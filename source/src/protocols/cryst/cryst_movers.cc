@@ -297,6 +297,8 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	//  b) normalization for non-etable derivs
 
 	for ( int ii=1; ii<=(int)core::scoring::n_score_types; ++ii ) {
+		core::scoring::ScoreType st_ii = (core::scoring::ScoreType)ii;
+
 		if ( reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0 ) continue;
 
 		term_i.push_back( (core::scoring::ScoreType)ii );
@@ -305,9 +307,10 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , reference_scorefxn->get_weight( (core::scoring::ScoreType)ii )  );
 
 		// lk ball hack
-		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
+		if ( st_ii == lk_ball_wtd || st_ii == lk_ball || st_ii == lk_ball_iso || st_ii == lk_ball_bridge || st_ii == lk_ball_bridge_uncpl ) {
 			working_scorefxn->set_weight( fa_atr, 1e-9 );
 		}
+
 
 		(*working_scorefxn)(pose);
 		working_scorefxn->setup_for_minimizing( pose, min_map );
@@ -315,7 +318,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		f_ros_i.dfunc( vars, dEros_i_dvars[ dEros_i_dvars.size() ] );
 
 		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , 0.0  );
-		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
+		if ( st_ii == lk_ball_wtd || st_ii == lk_ball || st_ii == lk_ball_iso || st_ii == lk_ball_bridge || st_ii == lk_ball_bridge_uncpl ) {
 			working_scorefxn->set_weight( fa_atr, 0 );
 		}
 	}
@@ -489,7 +492,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 
 				// fa_elec
 				core::Size iirep = faelec.get_countpair_representative_atom(rsd1.type(), iatm);
-				core::Size jjrep = faelec.get_countpair_representative_atom(rsd2.type(), iatm);
+				core::Size jjrep = faelec.get_countpair_representative_atom(rsd2.type(), jatm);
 
 				if ( cpfxn->count( iirep, jjrep, weight, path_dist ) ) {
 					norm += symmscale * weight *(dis*fa_elec_wt*std::abs(d_faelec));

@@ -41,10 +41,10 @@ fade_energy(
 	Real & dE_dr = DUMMY_DERIV,
 	Real & dE_dxD = DUMMY_DERIV,
 	Real & dE_dxH = DUMMY_DERIV,
+	Real & dE_dxH2 = DUMMY_DERIV,
 	Real & dE_dBAH = DUMMY_DERIV,
 	Real & dE_dchi = DUMMY_DERIV
 );
-
 
 HBAccChemType
 get_hb_acc_chem_type(
@@ -105,6 +105,7 @@ hbond_compute_energy(
 	Real const AHdis, // acceptor proton distance
 	Real const xD,    // -cos(180-theta), where theta is defined by Tanja K.
 	Real const xH,      // cos(180-phi), where phi is defined by Tanja K.
+	Real const xH2,      // cos(180-phi2), phi2 is B2AH for sp3-hybridized acceptors where B2 is attached H
 	Real const chi,     // AB2-AB-A-H dihdral angle for sp2 hybridized acceptors
 	Real & energy,      // main return value #1: sum of the dAH term, the xD term and the xH term.
 	bool & apply_chi_torsion_penalty = DUMMY_BOOL, // did this hbond get the chi torsion penalty?
@@ -112,9 +113,11 @@ hbond_compute_energy(
 	Real & dE_dr = DUMMY_DERIV,
 	Real & dE_dxD = DUMMY_DERIV,
 	Real & dE_dxH = DUMMY_DERIV,
+	Real & dE_dxH2 = DUMMY_DERIV,
 	Real & dchipen_dBAH = DUMMY_DERIV,
 	Real & dchipen_dchi = DUMMY_DERIV
 );
+
 
 /// @brief Evaluate the hydrogen bond energy and derivatives after having first calculated
 /// the HD and BA *u*nit vectors
@@ -130,6 +133,7 @@ hb_energy_deriv_u(
 	Vector const & Bxyz, // pseudo acceptor-base coordinate -- only needed for derivative evaluation
 	Vector const & BAunit, // unit vector towards the acceptor base
 	Vector const & B2xyz, // coordinate of acceptor-base 2
+	Vector const & B2Aunit, // unit vector towards the acceptor base
 	Real & energy,
 	bool const calculate_derivative = false,
 	HBondDerivs & deriv = DUMMY_DERIVS
@@ -150,6 +154,7 @@ hb_energy_deriv_u2(
 	Vector const & Bxyz, // pseudo acceptor-base coordinate
 	Vector const & BAunit, // unit vector towards base
 	Vector const & B2xyz, // coordinate of acceptor-base 2
+	Vector const & B2Aunit, // unit vector towards base
 	Real & energy,
 	HBondDerivs & deriv = DUMMY_DERIVS
 );
@@ -211,7 +216,8 @@ make_hbBasetoAcc_unitvector(
 	Vector const & Bxyz,
 	Vector const & B2xyz,
 	Vector & PBxyz, /// the coordinate for the pseudo-acceptor-base atom, used in derivative evaluation
-	Vector & BAunit
+	Vector & BAunit,
+	Vector & B2Aunit
 );
 
 void

@@ -7,7 +7,7 @@
 
 <SCOREFXNS>
   ### add Nov15 energy function with coordinate constraints
-  <ScoreFunction name="NOV15" weights="beta" >
+  <ScoreFunction name="NOV15" weights="beta_nov15" >
     <Reweight scoretype="coordinate_constraint" weight="1" />
   </ScoreFunction>
   <ScoreFunction name="VDW" weights="empty" >

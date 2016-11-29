@@ -59,6 +59,8 @@ enum ScoreType {
 	lk_ball,
 	lk_ball_wtd,
 	lk_ball_iso,
+	lk_ball_bridge,
+	lk_ball_bridge_uncpl,
 	coarse_fa_atr,
 	coarse_fa_rep,
 	coarse_fa_sol,

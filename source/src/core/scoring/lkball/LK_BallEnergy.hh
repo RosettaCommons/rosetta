@@ -48,6 +48,16 @@ namespace core {
 namespace scoring {
 namespace lkball {
 
+struct ScoredBridgingWater {
+	ScoredBridgingWater( core::Real lkbr_uncpl_score_in, 
+                       core::Real lkbr_score_in,
+                       numeric::xyzVector< core::Real > position_in ) : 
+  lkbr_uncpl_score(lkbr_uncpl_score_in), lkbr_score(lkbr_score_in), position(position_in) {}
+	core::Real lkbr_uncpl_score;
+	core::Real lkbr_score;
+	numeric::xyzVector< core::Real > position;
+};
+
 
 class LK_BallEnergy : public methods::ContextIndependentTwoBodyEnergy {
 public:
@@ -178,7 +188,7 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
+		ScoreFunction const & sfxn,
 		EnergyMap & emap
 	) const;
 
@@ -200,6 +210,7 @@ public:
 		LKB_ResidueInfo const & rsd1_info,
 		conformation::Residue const & rsd2,
 		LKB_ResidueInfo const & rsd2_info,
+		ScoreFunction const &sf,
 		EnergyMap & emap
 	) const;
 
@@ -320,12 +331,11 @@ public:
 
 
 	Real
-	eval_lk_fraction( Real const d2_delta ) const;
+	eval_lk_fraction( Real const d2_delta, Real const width ) const;
 
 
 	Real
-	eval_d_lk_fraction_dr_over_r( Real const d2_delta ) const;
-
+	eval_d_lk_fraction_dr_over_r( Real const d2_delta, Real const width ) const;
 
 	Real
 	get_lk_fractional_contribution(
@@ -335,6 +345,8 @@ public:
 		utility::vector1< Real > & d_weighted_d2_d_di,  // per water contribution
 		Real & weighted_water_dis2
 	) const;
+
+
 	Real
 	get_lk_fractional_contribution(
 		Vector const & atom2_xyz,
@@ -342,17 +354,34 @@ public:
 		Vectors const & atom1_waters
 	) const;
 
-	/// for external use
 	Real
-	eval_lk_ball_fraction_deriv(
-		Vector const & atom2_xyz,
-		Size const atom2_type_index,
+	get_lkbr_fractional_contribution(
+		Vector const & atom1_base,
+		Vector const & atom2_base,
 		Vectors const & atom1_waters,
-		bool const evaluate_deriv,
-		Vector & f1,
-		Vector & f2
+		Vectors const & atom2_waters,
+    Real const & lk_desolvation_sum,
+    Real const & lkbr_wt,
+    Real const & lkbr_uncpl_wt
 	) const;
 
+
+	Real
+	get_lkbr_fractional_contribution(
+		Vector const & atom1_base,
+		Vector const & atom2_base,
+		Vectors const & atom1_waters,
+		Vectors const & atom2_waters,
+		utility::vector1< numeric::xyzVector<core::Real> > & d_weighted_d2_d_di1,  // per water1 contribution
+		Real & weighted_d2_water_delta,
+		Real & pointterm_lkbr,
+		Real & angleterm_lkbr,
+		Real & d_angleterm_lkbr_dr,
+    Real const & lk_desolvation_sum,
+    Real const & lkbr_wt,
+    Real const & lkbr_uncpl_wt,
+		bool compute_derivs=true
+	) const;
 
 	virtual
 	void
@@ -385,6 +414,7 @@ public:
 		LKB_ResidueInfo const & rsd1_info,
 		Size const heavyatom2,
 		conformation::Residue const & rsd2,
+		LKB_ResidueInfo const & rsd2_info,
 		EnergyMap const & weights,
 		Real const weight_factor,
 		Real const d2,
@@ -411,6 +441,16 @@ public:
 	void
 	setup_d2_bounds();
 
+	//
+	//  save bridging waters
+	void
+	set_save_bridging_waters( bool val) { save_bridging_waters_=val; }
+
+	utility::vector1< ScoredBridgingWater >
+	get_bridging_waters() { return bridging_waters_; }
+
+	void
+	clear_bridging_waters() { bridging_waters_.clear(); }
 
 private:
 
@@ -457,19 +497,27 @@ private:
 
 	ObjexxFCL::FArray3D< Real > const & dsolv1_;
 
-	Real const safe_max_dis2_;
 	Real const etable_bins_per_A2_;
+	Real lkb_max_dis_, lkb_max_dis2_;
+	Real fasol_max_dis2_;
 	bool const slim_etable_;
 	bool const use_intra_dna_cp_crossover_4_;
 
-	Real const ramp_width_A2_, multi_water_fade_;
+	// controls the shape of the potential:
+	//    ramp_width_A2: fade between water distance and heavyatom distance
+	//    overlap_width_A2: fade in water-water overlap
+	//    multi_water_fade: "softness" of soft-max
+	Real ramp_width_A2_, overlap_width_A2_, multi_water_fade_;
+	Real lkbridge_angle_widthscale_, overlap_target_len_;
+
 	utility::vector1< Real > d2_low_;
 	utility::vector1< bool > atom_type_is_charged_;
 
 	utility::vector1< Real > lk_ball_prefactor_;
-	/// HACK
-	//utility::vector1< Size > positions_;
-	//bool include_all_dna_;
+
+	// save bridging water positions
+	bool save_bridging_waters_;
+	mutable utility::vector1< ScoredBridgingWater > bridging_waters_;
 
 	virtual
 	core::Size version() const;
