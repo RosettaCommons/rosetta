@@ -16,6 +16,7 @@
 
 import os, os.path, commands
 import sys, errno
+import codecs
 
 INCLUDES = "-I ./ -I ./platform/linux/ -isystem ../external/boost_1_55_0/ -isystem ../external/include/ -isystem ../external/dbio/"
 
@@ -105,7 +106,7 @@ def process_file( filename, compile_type ):
                 pass # To avoid race conditions in the multi-processor situation
             else:
                 raise
-    with open( cache_filename, 'w' ) as f:
+    with codecs.open( cache_filename, 'w', encoding='utf-8', errors='replace') as f:
         if selected_lines:
             f.write( '\n'.join(selected_lines) + '\n' )
 

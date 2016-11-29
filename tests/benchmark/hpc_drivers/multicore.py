@@ -2,6 +2,7 @@
 # :noTabs=true:
 
 import time as time_module
+import codecs
 
 import sys, signal, imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) + '/base.py')  # A bit of Python magic here, what we trying to say is this: from base import *, but path to base is calculated from our source location  # from base import HPC_Driver, execute, NT
@@ -58,7 +59,7 @@ class MultiCore_HPC_Driver(HPC_Driver):
             if not pid:  # we are child process
                 command_line = 'cd {} && {} {}'.format(working_dir, executable, arguments.format(process=process) )
                 log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='output')
-                with file(self.working_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w') as f: f.write(command_line+'\n'+log)
+                with codecs.open(self.working_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w', encoding='utf-8', errors='replace') as f: f.write(command_line+'\n'+log)
                 sys.exit(0)
 
             process += 1

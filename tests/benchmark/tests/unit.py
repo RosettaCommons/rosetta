@@ -13,6 +13,7 @@
 ## @author Sergey Lyskov
 
 import os, json, commands
+import codecs
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -62,7 +63,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     full_log += 'Compiling: {}\n'.format(build_command_line) + output
 
-    with file(working_dir+'/build-log.txt', 'w') as f: f.write(full_log)
+    with codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace') as f: f.write(full_log)
 
     if res:
         results[_StateKey_] = _S_build_failed_
@@ -85,7 +86,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including run.py output
             return results
 
-    json_results = json.load( file(json_results_file) )
+    json_results = json.load( file(json_results_file) ) #JSON handles unicode internally
 
     #r = {}
     # for lib in json_results:

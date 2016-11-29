@@ -14,6 +14,7 @@
 
 
 import commands
+import codecs
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
@@ -75,6 +76,12 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
     TR(message);  TR(commandline)
     while True:
         (res, output) = commands.getstatusoutput(commandline)
+        # Subprocess results will always be a bytes-string.
+        # Probably ASCII, but may have some Unicode characters.
+        # A UTF-8 decode will probably get decent results 99% of the time
+        # and the replace option will gracefully handle the rest.
+        output = output.decode(encoding="utf-8", errors="replace")
+
         TR(output)
 
         if res and until_successes: pass  # Thats right - redability COUNT!
@@ -121,7 +128,7 @@ def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
     '''
     allowed_time = int(time*60)
     job_file_name = working_dir + '/' + name
-    with file(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2)
+    with file(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2) # JSON handles unicode internally
     execute("Running {} in parallel with {} CPU's...".format(name, cpu_count), 'cd {working_dir} && ulimit -t {allowed_time} && {rosetta_dir}/tests/benchmark/util/parallel.py -j{cpu_count} {job_file_name}.json'.format(**vars()))
 
     return json.load( file(job_file_name+'.results.json') )
@@ -204,10 +211,10 @@ def install_llvm_tool(name, source_location, config, clean=True):
     cmake_lists = prefix + '/llvm/tools/clang/tools/extra/CMakeLists.txt'
     tool_build_line = 'add_subdirectory({})'.format(name)
 
-    for line in file(cmake_lists):
+    for line in codecs.open(cmake_lists, encoding='utf-8', errors='replace'):
         if line == tool_build_line: break
     else:
-        with file(cmake_lists, 'w') as f: f.write( file(cmake_lists).read() + tool_build_line + '\n' )
+        with codecs.open(cmake_lists, 'w', encoding='utf-8', errors='replace') as f: f.write( codecs.open(cmake_lists, encoding='utf-8', errors='replace').read() + tool_build_line + '\n' )
 
     build_dir = prefix+'/llvm/build-' + release
     if not os.path.isdir(build_dir): os.makedirs(build_dir)

@@ -13,6 +13,7 @@
 ## @author Sergey Lyskov
 
 import os, os.path, json, commands, shutil
+import codecs
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -36,7 +37,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     if res  and  platform['os'] != 'windows':  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
-    file(working_dir+'/build-log.txt', 'w').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
 
     res_code = _S_failed_ if res else _S_passed_
     if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
@@ -65,7 +66,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
         if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
-    file(working_dir+'/build-log.txt', 'w').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
 
     if res:
         res_code = _S_build_failed_

@@ -42,8 +42,8 @@ for line in source_lines:
     else:
         nonmatch.append( line )
 
-with open(sys.argv[3], 'w') as f:
+with codecs.open(sys.argv[3], 'w', encoding='utf-8', errors='replace') as f:
     f.write( ''.join(match) )
 
-with open(sys.argv[4], 'w') as f:
+with codecs.open(sys.argv[4], 'w', encoding='utf-8', errors='replace') as f:
     f.write( ''.join(nonmatch) )

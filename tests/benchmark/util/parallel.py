@@ -86,6 +86,9 @@ class Runner:
 
         output, errors = p.communicate()
 
+        # p.communicate() give us raw byte streams, which we then throw to files/output as raw byte streams
+        # There's only unicode issues if the input and output encoding doesn't match (and there's no way to tell that).
+
         if output_file:
             with file(output_file, 'w') as f: f.write(output);  f.write(errors)
             sys.stderr.write( errors )

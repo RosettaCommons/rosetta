@@ -14,6 +14,7 @@
 
 
 import os, os.path, sys, imp, shutil, json, platform, commands
+import codecs
 
 from ConfigParser import ConfigParser
 import argparse
@@ -75,6 +76,12 @@ def main(args):
 
     global Options;
     Options = parser.parse_args(args=args[1:])
+
+    if any( [a.startswith('-') for a in Options.args] ) :
+        print '\nWARNING WARNING WARNING WARNING\n'
+        print '\tInterpreting', ' '.join(["'"+a+"'" for a in Options.args if a.startswith('-')]), 'as test name(s), rather than as option(s).'
+        print "\tTry moving it before any test name, if that's not what you want."
+        print '\nWARNING WARNING WARNING WARNING\n'
 
     if Options.suffix: Options.suffix = '.' + Options.suffix
 
@@ -180,44 +187,10 @@ def main(args):
 
             print 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir)
 
-            with file(working_dir+'/output.log'.format(test), 'w') as f: f.write(res[_LogKey_])
-            with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
-
-
-        # if not test.startswith('tests/')  and  test.count('.'):  # regular Test or a TestSuite?
-        #     suite_name, test_name = test.split('.')
-        #     file_name = 'tests/' + suite_name + '.py'
-        #     test_suite = imp.load_source('test_suite', file_name)
-
-        #     if Options.compare: compare(test_suite.compare_tests)
-        #     else:
-        #         working_dir = os.path.abspath('./results/' + test + Options.suffix)
-        #         if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-        #         os.makedirs(working_dir)
-
-        #         res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
-
-        #         if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
-        #         else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
-
-
-        # else:  # TestSuite
-        #     if not test.startswith('tests/'): file_name = 'tests/' + test + '.py'
-        #     else: file_name = test;  test = test.partition('tests/')[2][:-3]  # removing dir prefix
-
-        #     test_suite = imp.load_source('test_suite', file_name)
-
-        #     if Options.compare: compare(test_suite.compare_test_suites)
-        #     else:
-        #         working_dir = os.path.abspath('./results/' + test + Options.suffix)
-        #         if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-        #         os.makedirs(working_dir)
-
-        #         res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
-
-        #         if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
-        #         else:
-        #             print 'Test {} finished with output:\n{}\n'.format(test, json.dumps(res, sort_keys=True, indent=2))
-
+            # Caution! Some of the strings in the result object may be unicode.
+            with codecs.open(working_dir+'/output.log'.format(test), 'w', encoding='utf-8', errors='replace') as f: # Be robust to unicode in the log messages
+                    f.write(res[_LogKey_])
+            # Json by default serializes to an ascii-encoded format
+            with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, encoding="utf-8", indent=2)
 
 if __name__ == "__main__": main(sys.argv)

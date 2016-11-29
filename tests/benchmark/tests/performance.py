@@ -15,6 +15,7 @@
 import os, os.path, json, commands, shutil, stat
 
 import imp
+import codecs
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 _api_version_ = '1.0'  # api version
@@ -40,7 +41,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
     if debug: res, output = 0, 'run_performance_tests: debug is enabled, skippig build phase...\n'
     else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
-    file(working_dir+'/build-log.txt', 'w').write( 'Running: {}\n{}\n'.format(build_command_line, output) )
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write( 'Running: {}\n{}\n'.format(build_command_line, output) )
 
     results = {}
 
@@ -64,11 +65,11 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
             if os.path.isfile(json_results_file): os.remove(json_results_file)
             hpc_driver.execute(executable=command_line, arguments='', working_dir='{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), name='performance_benchmark', shell_wrapper=True)  # we using Shell redirects so shell_wrapper=True
 
-        output = file(output_log_file).read()
+        output = codecs.open(output_log_file, encoding='utf-8', errors='replace').read()
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
 
         try:
-            json_results = json.load( file(json_results_file) )
+            json_results = json.load( file(json_results_file) ) #JSON handles unicode internally
             results[_ResultsKey_] = { _TestsKey_:{} }
 
             for t in json_results:

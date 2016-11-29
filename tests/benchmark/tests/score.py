@@ -42,7 +42,7 @@ def run_score_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver
     else:
         res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
-    full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
+    full_log += output
 
     if res:
         results[_StateKey_] = _S_build_failed_

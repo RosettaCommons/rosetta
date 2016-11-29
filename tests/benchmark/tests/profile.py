@@ -14,6 +14,7 @@
 ## @author Sergey Lyskov
 
 import json, os, os.path, shutil
+import codecs
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
@@ -58,14 +59,14 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
             # if os.path.isdir(files_location + '/' + d):
             #     shutil.copytree(os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
 
-        tests = json.load( file(json_results_file) )
+        tests = json.load( file(json_results_file) ) #JSON handles unicode internally
 
         for t in tests: tests[t][_LogKey_]   = ''  #tests[t][_StateKey_] = _S_queued_for_comparison_
 
 
         results = { _TestsKey_ : tests }
 
-        return {_StateKey_ : _S_queued_for_comparison_,  _ResultsKey_ : results,  _LogKey_ : file(output_log_file).read() }
+        return {_StateKey_ : _S_queued_for_comparison_,  _ResultsKey_ : results,  _LogKey_ : codecs.open(output_log_file, encoding='utf-8', errors='replace').read() }
 
 
 
