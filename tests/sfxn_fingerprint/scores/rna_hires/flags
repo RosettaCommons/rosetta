@@ -1,0 +1,4 @@
+-in:file:silent ./../../data/rna.out
+-in:file:silent_struct_type binary
+-out:nooutput
+-score:weights farna/rna_hires.wts
