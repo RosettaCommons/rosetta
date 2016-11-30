@@ -64,7 +64,10 @@ scorefxn = create_score_function("talaris2013")
 
 min_mover.movemap(mm4060)
 min_mover.score_function(scorefxn)
-AddPyMolObserver(test2, True)
+
+# Commenting out for now because this lead to seg-fault in debug builds
+# AddPyMolObserver(test2, True)
+
 min_mover.apply(test2)
 print( min_mover )
 

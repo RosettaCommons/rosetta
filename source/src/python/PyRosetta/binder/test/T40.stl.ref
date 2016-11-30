@@ -45,7 +45,7 @@
 void bind_std_stl_vector(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// std::vector file:bits/stl_vector.h line:210
-binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
+	binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_int_t");
 
 }
 
@@ -97,7 +97,7 @@ binder::vector_binder<int,std::allocator<int>>(M("std"), "int", "std_allocator_i
 void bind_T40_stl(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// foo(class std::vector<int, class std::allocator<int> >) file:T40.stl.hpp line:19
-	M("").def("foo", (void (*)(class std::vector<int, class std::allocator<int> >)) &foo, "", pybind11::arg(""));
+	M("").def("foo", (void (*)(class std::vector<int, class std::allocator<int> >)) &foo, "C++: foo(class std::vector<int, class std::allocator<int> >) --> void", pybind11::arg(""));
 
 }
 
@@ -136,10 +136,10 @@ PYBIND11_PLUGIN(T40_stl) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T40_stl.sources
+// Source list file: TEST/T40_stl.sources
 // T40_stl.cpp
 // std/stl_vector.cpp
 // T40_stl.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T40_stl.modules
+// Modules list file: TEST/T40_stl.modules
 // std 

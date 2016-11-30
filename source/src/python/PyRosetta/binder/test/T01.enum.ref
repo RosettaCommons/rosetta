@@ -33,7 +33,8 @@ void bind_T01_enum(std::function< pybind11::module &(std::string const &namespac
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());	pybind11::enum_<A::AE1>(cl, "AE1", "")
+		cl.def(pybind11::init<>());
+		pybind11::enum_<A::AE1>(cl, "AE1", "")
 			.value("AE1_V0", A::AE1::AE1_V0)
 			.value("AE1_V1", A::AE1::AE1_V1)
 			.export_values();
@@ -77,9 +78,9 @@ PYBIND11_PLUGIN(T01_enum) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.sources
+// Source list file: TEST/T01_enum.sources
 // T01_enum.cpp
 // T01_enum.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T01_enum.modules
+// Modules list file: TEST/T01_enum.modules
 // 

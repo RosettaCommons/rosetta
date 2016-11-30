@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/class.hpp
 /// @brief  Binding generation for C++ struct and class objects
@@ -46,15 +45,6 @@ std::vector<clang::NamedDecl const *> get_decl_dependencies(clang::CXXRecordDecl
 
 /// check if generator can create binding
 bool is_bindable(clang::CXXRecordDecl const *C);
-
-
-// /// check if bindings for particular object was requested
-// bool is_binding_requested(clang::CXXRecordDecl const *C, std::vector<std::string> const & namespaces_to_bind);
-
-
-// // check if bindings for object should be skipped
-// bool is_skipping_requested(clang::CXXRecordDecl const *C, std::vector<std::string> const & namespaces_to_skip);
-
 
 /// check if user requested binding for the given declaration
 bool is_binding_requested(clang::CXXRecordDecl const *C, Config const &config);
@@ -108,9 +98,6 @@ private:
 
 	std::string prefix_code_;
 	std::vector<clang::FunctionDecl const *> prefix_includes;
-	//std::set<clang::NamedDecl const *> prefix_includes_stack;
-
-	//bool call_back_is_abstract = false; // true if call-back structure is still abstract entity
 
 	// vector of classes in which current class depend to be binded (usually base classes)
 	std::vector<clang::CXXRecordDecl const *> dependencies_;
@@ -120,15 +107,9 @@ private:
 
 	void generate_prefix_code();
 
-
 	/// generate (if any) bindings for Python __str__ by using appropriate global operator<<
 	std::string bind_repr(Context &);
-
-
-	// set of members which user asked to exclude from bindings
-	//std::set<clang::NamedDecl const *> members_to_skip;
 };
-
 
 
 } // namespace binder

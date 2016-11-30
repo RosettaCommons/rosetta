@@ -16,43 +16,43 @@
 void bind_T00_basic(std::function< pybind11::module &(std::string const &namespace_) > &M)
 {
 	// foo() file:T00.basic.hpp line:26
-	M("").def("foo", (void (*)()) &foo, "");
+	M("").def("foo", (void (*)()) &foo, "C++: foo() --> void");
 
 	// foo_int(int) file:T00.basic.hpp line:28
-	M("").def("foo_int", (int (*)(int)) &foo_int, "", pybind11::arg(""));
+	M("").def("foo_int", (int (*)(int)) &foo_int, "C++: foo_int(int) --> int", pybind11::arg(""));
 
 	// foo_int(int &) file:T00.basic.hpp line:29
-	M("").def("foo_int", (int (*)(int &)) &foo_int, "", pybind11::arg(""));
+	M("").def("foo_int", (int (*)(int &)) &foo_int, "C++: foo_int(int &) --> int", pybind11::arg(""));
 
 	// foo_int(int *) file:T00.basic.hpp line:30
-	M("").def("foo_int", (int (*)(int *)) &foo_int, "", pybind11::arg(""));
+	M("").def("foo_int", (int (*)(int *)) &foo_int, "C++: foo_int(int *) --> int", pybind11::arg(""));
 
 	// foo_float(float) file:T00.basic.hpp line:32
-	M("").def("foo_float", (float (*)(float)) &foo_float, "", pybind11::arg(""));
+	M("").def("foo_float", (float (*)(float)) &foo_float, "C++: foo_float(float) --> float", pybind11::arg(""));
 
 	// foo_float(float &) file:T00.basic.hpp line:33
-	M("").def("foo_float", (float (*)(float &)) &foo_float, "", pybind11::arg(""));
+	M("").def("foo_float", (float (*)(float &)) &foo_float, "C++: foo_float(float &) --> float", pybind11::arg(""));
 
 	// foo_float(float *) file:T00.basic.hpp line:34
-	M("").def("foo_float", (float (*)(float *)) &foo_float, "", pybind11::arg(""));
+	M("").def("foo_float", (float (*)(float *)) &foo_float, "C++: foo_float(float *) --> float", pybind11::arg(""));
 
 	// foo_double(double) file:T00.basic.hpp line:36
-	M("").def("foo_double", (double (*)(double)) &foo_double, "", pybind11::arg(""));
+	M("").def("foo_double", (double (*)(double)) &foo_double, "C++: foo_double(double) --> double", pybind11::arg(""));
 
 	// foo_double(double &) file:T00.basic.hpp line:37
-	M("").def("foo_double", (double (*)(double &)) &foo_double, "", pybind11::arg(""));
+	M("").def("foo_double", (double (*)(double &)) &foo_double, "C++: foo_double(double &) --> double", pybind11::arg(""));
 
 	// foo_double(double *) file:T00.basic.hpp line:38
-	M("").def("foo_double", (double (*)(double *)) &foo_double, "", pybind11::arg(""));
+	M("").def("foo_double", (double (*)(double *)) &foo_double, "C++: foo_double(double *) --> double", pybind11::arg(""));
 
 	// foo_void_p(void *) file:T00.basic.hpp line:42
-	M("").def("foo_void_p", (void * (*)(void *)) &foo_void_p, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+	M("").def("foo_void_p", (void * (*)(void *)) &foo_void_p, "C++: foo_void_p(void *) --> void *", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
 	// foo_void_p(void *const &) file:T00.basic.hpp line:43
-	M("").def("foo_void_p", (void * (*)(void *const &)) &foo_void_p, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+	M("").def("foo_void_p", (void * (*)(void *const &)) &foo_void_p, "C++: foo_void_p(void *const &) --> void *", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
 	// foo_void_p(void *&) file:T00.basic.hpp line:44
-	M("").def("foo_void_p", (void * (*)(void *&)) &foo_void_p, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+	M("").def("foo_void_p", (void * (*)(void *&)) &foo_void_p, "C++: foo_void_p(void *&) --> void *", pybind11::return_value_policy::automatic, pybind11::arg(""));
 
 }
 
@@ -88,9 +88,9 @@ PYBIND11_PLUGIN(T00_basic) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T00_basic.sources
+// Source list file: TEST/T00_basic.sources
 // T00_basic.cpp
 // T00_basic.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T00_basic.modules
+// Modules list file: TEST/T00_basic.modules
 // 

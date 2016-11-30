@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/type.cpp
 /// @brief  Various functionality for handline clang::QualType's
@@ -68,17 +67,8 @@ string relevant_include(NamedDecl const *decl)
 	ASTContext & ast_context( decl->getASTContext() );
 	SourceManager & sm( ast_context.getSourceManager() );
 
-	// outs() << "  Source location: " << F->getLocation().printToString(sm) << "\n";
-	//outs() << "  Source location: " << sm.getFilename( decl->getLocation() )  << "\n";
-
 	FileID fid = sm.getFileID( decl->getLocation() );
 	SourceLocation include = sm.getIncludeLoc(fid);
-
-	//outs() << "  Include location: " << include.printToString( ast_context.getSourceManager() ) << "\n";
-	//outs() << "  printToString: " << include.printToString( ast_context.getSourceManager() ) << "\n";
-	//include.dump(ast_context.getSourceManager());
-	//outs() << "  Line: " << sm.getCharacterData(include) << "\n";
-	// outs() << "  Source location: " << sm.getFileEntryForID( FullSourceLoc(F->getLocation(), sm ).getFileID() )->getName() << "\n";
 
 	string include_string;
 	if( include.isValid() ) {
@@ -90,8 +80,6 @@ string relevant_include(NamedDecl const *decl)
 			include_string.push_back(*data); ++data;
 			for(; *data and  *data != terminator; ++data ) include_string.push_back(*data);
 			if(*data == terminator) include_string.push_back(*data);
-
-			//outs() << "  Include for " << decl->getNameAsString() << ": " << include_string << "\n";
 		}
 		if( include_string.size()  and  include_string[0]=='"' ) include_string.resize(0); // avoid adding include in quotes because compiler will not be able to find them
 	}
@@ -205,8 +193,6 @@ void add_relevant_includes(QualType const &qt, /*const ASTContext &context,*/ In
 // check if given QualType is bindable
 bool is_bindable(QualType const &qt)
 {
-	// if( qt->isVoidPointerType() ) return false; // for now refuse to bind void* types - note the recent pybind11 can handle bindings for void*
-
 	bool r = true;
 
 	r &= !qt->isFunctionPointerType()  and  !qt->isRValueReferenceType()  and  !qt->isInstantiationDependentType()  and  !qt->isArrayType();  //and  !qt->isConstantArrayType()  and  !qt->isIncompleteArrayType()  and  !qt->isVariableArrayType()  and  !qt->isDependentSizedArrayType()
@@ -258,13 +244,7 @@ void request_bindings(clang::QualType const &qt, Context &context)
 	if( /*is_bindable(qt)  and*/  !is_skipping_requested(qt, Config::get()) ) {
 		//outs() << "request_bindings(clang::QualType,...): " << qt.getAsString() << "\n";
 		if( TagDecl *td = qt->getAsTagDecl() ) {
-			//if( TypeDecl * type_decl = dyn_cast<TypeDecl>( b->named_decl() ) ) types[ typename_from_type_decl(type_decl) ] = b;
-
 			if( td->isCompleteDefinition()  or  dyn_cast<ClassTemplateSpecializationDecl>(td) ) context.request_bindings( typename_from_type_decl(td) );
-			//if( td->isCompleteDefinition() ) context.request_bindings( typename_from_type_decl(td) );
-
-			//else outs() << "void bind(clang::QualType, Context &): isCompleteDefinition is false for: "<< qt.getAsString() << "\n";
-			//context.request_bindings( typename_from_type_decl(td) );
 		}
 
 		if( PointerType const *pt = dyn_cast<PointerType>( qt.getTypePtr() ) ) {

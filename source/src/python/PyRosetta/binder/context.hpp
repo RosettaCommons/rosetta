@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/context.hpp
 /// @brief  Data structures to represent root context and modules
@@ -23,8 +22,8 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <unordered_set>
 #include <unordered_map>
-
 
 namespace binder {
 
@@ -35,13 +34,11 @@ class IncludeSet
 {
 	std::vector<std::string> includes_;
 
-	//std::set<clang::NamedDecl const *> stack;
-	std::map<clang::NamedDecl const *, int> stack_;
+	std::unordered_map<clang::NamedDecl const *, int> stack_;
 
 public:
 	// add include to the set
 	void add_include(std::string const &i) { includes_.push_back(i); }
-
 
 	// check if declaration is already in stack with level at lease as 'level' or lower and add it if it is not - return true if declaration was added
 	bool add_decl(clang::NamedDecl const *, int level);
@@ -119,15 +116,7 @@ typedef std::shared_ptr< Binder > BinderOP;
 typedef std::vector<BinderOP> Binders;
 
 
-
 llvm::raw_ostream & operator << (llvm::raw_ostream & os, Binder const &b);
-
-/// Module - represent bindings of individual Python module
-// struct Module
-// {
-// 	std::string path;
-// 	std::vector<BinderOP> binders;
-// };
 
 
 /// Context - root, hold bindings info for whole TranslationUnit
@@ -146,12 +135,6 @@ public:
 
 	/// generate C++ expression for module variable for namespace_
 	string module_variable_name(string const & namespace_);
-
-	//void request_bindings(std::vector<string> const & namespaces);
-	// is binding requested
-
-	/// check if given CXXRecordDecl is already binded and if not add forward declaration for it.
-	//void maybe_add_forward_declaration(clang::CXXRecordDecl const *);
 
 	void add_insertion_operator(clang::FunctionDecl const *f);
 
@@ -188,29 +171,14 @@ private:
 	std::unordered_map<string, BinderOP> types;
 
 	/// set of items unique id's to keep track of whats binders being added
-	std::set<string> ids;
+	std::unordered_set<string> ids;
 
 	/// set of items unique id's to keep track of whats binded and not
 	std::set<string> binded;
 
-	/// counter to generate unique trace lines
+	/// counter to generate unique trace lines for debug
 	int trace_counter = -1;
-
-	// set of classes for which forward declaration is needed
-	//std::set<clang::CXXRecordDecl const *> forward;
-
-	// binder.id() → binder
-	//std::unordered_map<string, Binders> binders_map;
-
-	//std::unordered_map<string, Binders> modules;
-	//std::unordered_map<string, BinderOP> system_binders;
-
-	/// create vector of all namespaces and sort it
-	//std::vector<string> sorted_namespaces();
-	//std::vector<string> bind_namespaces(string const &namespace_, size_t max_code_size);
 };
-
-
 
 
 } // namespace binder

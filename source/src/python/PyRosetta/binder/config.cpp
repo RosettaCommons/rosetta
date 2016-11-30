@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/config.hpp
 /// @brief  Support for Binder Config file
@@ -250,9 +249,6 @@ bool Config::is_class_skipping_requested(string const &class__) const
 
 bool Config::is_include_skipping_requested(string const &include) const
 {
-	// auto skip = std::find(includes_to_skip.begin(), includes_to_skip.end(), include);
-	// if( skip != includes_to_skip.end() ) return true;
-	// else return false;
 	for(auto & i : includes_to_skip)
 		if( begins_with(include, i) ) return true;
 

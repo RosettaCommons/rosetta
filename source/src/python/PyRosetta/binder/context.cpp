@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/context.cpp
 /// @brief  Data structures to represent root context and modules
@@ -46,9 +45,6 @@ namespace binder {
 // check if declaration is already in stack with level at lease as 'level' or lower and add it if it is not - return true if declaration was added
 bool IncludeSet::add_decl(clang::NamedDecl const *D, int level)
 {
-	// auto r = stack_.insert( make_pair(D, level) );
-	// if( !r.second  and  (*r.first).second <= level ) return false;
-
 	if( stack_.count(D)  and  stack_[D] <= level ) return false;
 
 	stack_[D] = level;
@@ -141,7 +137,7 @@ void Context::add_to_binded(CXXRecordDecl const *C)
 /// examine binded objects and recursivly create all nested namespaces
 std::set<string> Context::create_all_nested_namespaces()
 {
-	vector<string> namespaces;//{""};
+	vector<string> namespaces;
 
 	for(auto & b : binders) {
 		if( b->code().size() ) {
@@ -182,11 +178,8 @@ std::string Context::module_variable_name(std::string const& namespace_)
 void Context::request_bindings(std::string const &type)
 {
 	if( types.count(type)  and  !types[type]->is_binded()  and  types[type]->bindable()  and  !types[type]->skipping_requested()  and  !is_python_builtin( types[type]->named_decl() ) ) {
-		//if( begins_with(type, "std::__1::basic_ostream") ) outs() << "Context::bind: requesting bindings for: " << type << "...\n";
-		//if( begins_with(type, "std::basic_ostream") ) outs() << "Context::bind: requesting bindings for: " << type << "...\n";
 		types[type]->request_bindings();
 	}
-	//else outs() << "Context::bind: Could not find generator for type:" << type << "\n";
 }
 
 
@@ -269,11 +262,8 @@ string file_name_prefix_for_binder(BinderOP &b)
 	if( include.size() <= 2 ) { include = "<unknown/unknown.hh>";  outs() << "Warning: file_name_for_decl could not determent file name for decl: " + string(*b) + ", result is too short!\n"; } //throw std::runtime_error( "file_name_for_decl failed!!! include name for decl: " + string(*b) + " is too short!");
 	include = include.substr(1, include.size()-2);
 
-	//outs() << "qn:" << decl->getQualifiedNameAsString() << " namespace_from_named_decl(decl):" << namespace_from_named_decl(decl) << "\n";
-
 	if( namespace_from_named_decl(decl) == "std"  or  begins_with(namespace_from_named_decl(decl), "std::" ) ) include = "std/" +  ( begins_with(include, "bits/") ? include.substr(5) : include );
 
-	//return replace( replace( replace( replace(include, ".hh", ""), ".hpp", ""), ".h", ""), ".", "_");
 	replace(include, ".hh", ""); replace(include, ".hpp", ""); replace(include, ".h", ""); replace(include, ".", "_");
 	return include;
 }
@@ -336,7 +326,7 @@ void Context::generate(Config const &config)
 			++file_names[np];
 
 			string function_name = "bind_" + replace_(file_name, "/", "_");
-			file_name += ".cpp"; //".b.cpp";
+			file_name += ".cpp";
 
 			sources.push_back(file_name);
 			binding_function_names.push_back(function_name);

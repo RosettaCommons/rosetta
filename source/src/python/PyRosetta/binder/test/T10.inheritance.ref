@@ -25,11 +25,12 @@ void bind_T10_inheritance(std::function< pybind11::module &(std::string const &n
 		pybind11::class_<Base, std::shared_ptr<Base>> cl(M(""), "Base", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());	cl.def("foo", (void (Base::*)()) &Base::foo, "");
-		cl.def("maybe", (void (Base::*)()) &Base::maybe, "");
+		cl.def(pybind11::init<>());
+		cl.def("foo", (void (Base::*)()) &Base::foo, "C++: Base::foo() --> void");
+		cl.def("maybe", (void (Base::*)()) &Base::maybe, "C++: Base::maybe() --> void");
 	}
 	{ // Delete file:T10.inheritance.hpp line:30
-		pybind11::class_<Delete, std::shared_ptr<Delete>> cl(M(""), "Delete", "", pybind11::base<Base>());
+		pybind11::class_<Delete, std::shared_ptr<Delete>, Base> cl(M(""), "Delete", "");
 		pybind11::handle cl_type = cl;
 
 	}
@@ -37,17 +38,19 @@ void bind_T10_inheritance(std::function< pybind11::module &(std::string const &n
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());	cl.def(pybind11::init<const class A &>(), pybind11::arg(""));
+		cl.def(pybind11::init<>());
+		cl.def(pybind11::init<const class A &>(), pybind11::arg(""));
 
-		cl.def("assign", (class A & (A::*)(const class A &)) &A::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+		cl.def("assign", (class A & (A::*)(const class A &)) &A::operator=, "C++: A::operator=(const class A &) --> class A &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 	{ // B file:T10.inheritance.hpp line:41
 		pybind11::class_<B, std::shared_ptr<B>> cl(M(""), "B", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());	cl.def(pybind11::init<const class B &>(), pybind11::arg(""));
+		cl.def(pybind11::init<>());
+		cl.def(pybind11::init<const class B &>(), pybind11::arg(""));
 
-		cl.def("assign", (class B & (B::*)(const class B &)) &B::operator=, "", pybind11::return_value_policy::automatic, pybind11::arg(""));
+		cl.def("assign", (class B & (B::*)(const class B &)) &B::operator=, "C++: B::operator=(const class B &) --> class B &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 }
 
@@ -83,9 +86,9 @@ PYBIND11_PLUGIN(T10_inheritance) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.sources
+// Source list file: TEST/T10_inheritance.sources
 // T10_inheritance.cpp
 // T10_inheritance.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T10_inheritance.modules
+// Modules list file: TEST/T10_inheritance.modules
 // 

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # :noTabs=true: :collapseFolds=10:
-
-# (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available under license.
-# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+#
+# Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+#
+# All rights reserved. Use of this source code is governed by a
+# MIT license that can be found in the LICENSE file.
 
 ## @file   self-test.py
 ## @brief  Script to run Binder tool self-test
@@ -49,12 +48,23 @@ def get_test_files(dir_):
         return [dir_ + '/' + f for f in os.listdir(dir_) if f.startswith('T') and f.endswith('.hpp')]
 
 
+def remover_absolute_paths(source):
+    ''' search and replace .cpp file and replace all occurrence with absolute file path with TEST
+    '''
+    data = open(source).read()
+
+    path = os.path.dirname( os.path.abspath(source) )
+    with open(source, 'w') as f: f.write(data.replace(path, 'TEST'))
+
+
 def run_test(test_path, build_dir):
     if not os.path.isfile(test_path): print('Could not find test file: {} ... Exiting...'.format(test_path)); sys.exit(1)
 
     test = os.path.basename(test_path)
     test_name = test[:-len('.hpp')]
+
     source_dir = os.path.dirname(test_path)
+    if not source_dir: source_dir = '.'
 
     source_include = build_dir + '/' + test + '.include'
     with open(source_include, 'w') as f: f.write( '#include <{}>\n'.format(test) )
@@ -64,11 +74,11 @@ def run_test(test_path, build_dir):
     if not os.path.isfile(config): config = ''
 
     command_line = '{binder} --bind "" --root-module {root_module} --prefix {build_dir} --single-file --annotate-includes {config} {source} -- -x c++ -std=c++11 -I {source_dir} -I {source_dir}/..'.format(binder=Options.binder, root_module=root_module, build_dir=build_dir, source_dir=source_dir, source=source_include,
-                                                                                                                                                                                         config='--config {}'.format(config) if config else '')
+                                                                                                                                                                                                            config='--config {}'.format(config) if config else '')
 
     execute('{} Running test...'.format(test), command_line);
 
-    command_line = 'cd {build_dir} && clang++ -O3 -shared -std=c++11 -I {pybind11} -I/usr/include/python2.7 -I./.. -I./../.. {root_module}.cpp -o {root_module}.so -fPIC'.format(pybind11=Options.pybind11, root_module=root_module, build_dir=build_dir)
+    command_line = 'cd {build_dir} && clang++ -O3 -shared -std=c++11 -I {pybind11} -I/usr/include/python2.7 -I./.. -I./../.. -I./../../binder {root_module}.cpp -o {root_module}.so -fPIC'.format(pybind11=Options.pybind11, root_module=root_module, build_dir=build_dir)
     execute('{} Compiling binding results...'.format(test), command_line);
 
     command_line = "cd {build_dir} && python -c 'import {root_module}'".format(root_module=root_module, build_dir=build_dir)
@@ -78,6 +88,7 @@ def run_test(test_path, build_dir):
     new = build_dir + '/' + root_module + '.cpp'
     command_line = 'diff {ref} {new}'.format(**vars())
 
+    remover_absolute_paths(new)
     r = execute('Comparing results for test {}...'.format(test), command_line, terminate_on_failure=not Options.accept);
 
     not_binded = [l for l in open(new).read().split('\n') if 'not_binded' in l]
@@ -85,7 +96,7 @@ def run_test(test_path, build_dir):
 
     if r  and  Options.accept:
         a = input( 'Accept new results from test {} as reference? (yes or no) '.format(test) )
-        if a == 'yes': shutil.copyfile(new, ref)
+        if a in ['y', 'yes']: shutil.copyfile(new, ref)
 
 
 

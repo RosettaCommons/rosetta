@@ -26,12 +26,14 @@ void bind_T08_constructor(std::function< pybind11::module &(std::string const &n
 		pybind11::class_<BaseA, std::shared_ptr<BaseA>> cl(M(""), "BaseA", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());}
+		cl.def(pybind11::init<>());
+	}
 	{ // DerivedA file:T08.constructor.hpp line:18
-		pybind11::class_<DerivedA, std::shared_ptr<DerivedA>> cl(M(""), "DerivedA", "", pybind11::base<BaseA>());
+		pybind11::class_<DerivedA, std::shared_ptr<DerivedA>, BaseA> cl(M(""), "DerivedA", "");
 		pybind11::handle cl_type = cl;
 
-		cl.def(pybind11::init<>());}
+		cl.def(pybind11::init<>());
+	}
 	{ // BaseB file:T08.constructor.hpp line:21
 		pybind11::class_<BaseB, std::shared_ptr<BaseB>> cl(M(""), "BaseB", "");
 		pybind11::handle cl_type = cl;
@@ -40,7 +42,7 @@ void bind_T08_constructor(std::function< pybind11::module &(std::string const &n
 
 	}
 	{ // DerivedB file:T08.constructor.hpp line:26
-		pybind11::class_<DerivedB, std::shared_ptr<DerivedB>> cl(M(""), "DerivedB", "", pybind11::base<BaseB>());
+		pybind11::class_<DerivedB, std::shared_ptr<DerivedB>, BaseB> cl(M(""), "DerivedB", "");
 		pybind11::handle cl_type = cl;
 
 	}
@@ -52,7 +54,7 @@ void bind_T08_constructor(std::function< pybind11::module &(std::string const &n
 
 	}
 	{ // DerivedC file:T08.constructor.hpp line:36
-		pybind11::class_<DerivedC, std::shared_ptr<DerivedC>> cl(M(""), "DerivedC", "", pybind11::base<BaseC>());
+		pybind11::class_<DerivedC, std::shared_ptr<DerivedC>, BaseC> cl(M(""), "DerivedC", "");
 		pybind11::handle cl_type = cl;
 
 	}
@@ -64,7 +66,7 @@ void bind_T08_constructor(std::function< pybind11::module &(std::string const &n
 
 	}
 	{ // DerivedD file:T08.constructor.hpp line:45
-		pybind11::class_<DerivedD, std::shared_ptr<DerivedD>> cl(M(""), "DerivedD", "", pybind11::base<BaseD>());
+		pybind11::class_<DerivedD, std::shared_ptr<DerivedD>, BaseD> cl(M(""), "DerivedD", "");
 		pybind11::handle cl_type = cl;
 
 	}
@@ -102,9 +104,9 @@ PYBIND11_PLUGIN(T08_constructor) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T08_constructor.sources
+// Source list file: TEST/T08_constructor.sources
 // T08_constructor.cpp
 // T08_constructor.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T08_constructor.modules
+// Modules list file: TEST/T08_constructor.modules
 // 

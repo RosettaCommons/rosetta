@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/type.hpp
 /// @brief  Various functionality for handline clang::QualType and clang::NamedDecl
@@ -58,83 +57,6 @@ std::string standard_name(std::string const &type);
 /// check if given class/struct is builtin in Python and therefor should not be binded
 bool is_python_builtin(clang::NamedDecl const *C);
 
-
-/*
-template<typename R, R default_value>
-class QualType_functor
-{
-public:
-	R apply(clang::QualType const &qt) {
-		if( clang::PointerType const *pt = clang::dyn_cast<clang::PointerType>( qt.getTypePtr() ) ) return apply( pt->getPointeeType() );
-
-		if( clang::ReferenceType const *rt = clang::dyn_cast<clang::ReferenceType>( qt.getTypePtr() ) ) return apply( rt->getPointeeType() );
-
-		if( clang::CXXRecordDecl const *C = qt->getAsCXXRecordDecl() ) return cxx_record_decl(C);
-
-		if( clang::EnumDecl const *E = clang::dyn_cast_or_null<clang::EnumDecl>( qt->getAsTagDecl() ) ) return enum_decl(E);
-
-		return default_value;
-	}
-
-	R cxx_record_decl(clang::CXXRecordDecl const *C) { return default_value; }
-	R enum_decl(clang::EnumDecl const *E) { return default_value; }
-};
-
-
-class QualType_void_functor
-{
-public:
-	void apply(clang::QualType const &qt) {
-		if( clang::PointerType const *pt = clang::dyn_cast<clang::PointerType>( qt.getTypePtr() ) ) apply( pt->getPointeeType() );
-
-		if( clang::ReferenceType const *rt = clang::dyn_cast<clang::ReferenceType>( qt.getTypePtr() ) ) apply( rt->getPointeeType() );
-
-		if( clang::CXXRecordDecl const *C = qt->getAsCXXRecordDecl() ) cxx_record_decl(C);
-
-		if( clang::EnumDecl const *E = clang::dyn_cast_or_null<clang::EnumDecl>( qt->getAsTagDecl() ) ) enum_decl(E);
-	}
-
-	void cxx_record_decl(clang::CXXRecordDecl const *C) {}
-	void enum_decl(clang::EnumDecl const *E) {}
-};
-
-
-/// check if user requested binding for the given QualType
-class f_is_binding_requested : public QualType_functor<bool, false>
-{
-	Config const &config;
-public:
-	f_is_binding_requested(Config const &config_) : config(config_) {}
-
-	bool cxx_record_decl(clang::CXXRecordDecl const *C);
-};
-
-
-/// check if user requested skipping for the given QualType
-class f_is_skipping_requested : public QualType_functor<bool, false>
-{
-	Config const &config;
-public:
-	f_is_skipping_requested(Config const &config_) : config(config_) {}
-
-	bool cxx_record_decl(clang::CXXRecordDecl const *C);
-};
-
-
-
-/// extract include needed for this generator and add it to includes vector
-class f_add_relevant_includes : public QualType_void_functor
-{
-	std::vector<std::string> &includes;
-	std::set<clang::NamedDecl const *> &stack;
-
-public:
-	f_add_relevant_includes(std::vector<std::string> &includes_, std::set<clang::NamedDecl const *> &stack_) : includes(includes_), stack(stack_) {}
-
-	void cxx_record_decl(clang::CXXRecordDecl const *C);
-	void enum_decl(clang::EnumDecl const *E);
-};
-*/
 
 } // namespace binder
 

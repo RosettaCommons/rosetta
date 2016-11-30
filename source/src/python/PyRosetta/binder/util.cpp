@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/util.cpp
 /// @brief  Various helper functions
@@ -88,7 +87,6 @@ bool ends_with(std::string const &source, std::string const &prefix)
 }
 
 
-
 string indent(string const &code, string const &indentation)
 {
 	auto lines = split(code);
@@ -124,11 +122,9 @@ string namespace_from_named_decl(NamedDecl const *decl)
 {
 	string qn = standard_name( decl->getQualifiedNameAsString() );
 	string n  = decl->getNameAsString();
-	//name = decl->getQualifiedNameAsString();
 
 	int namespace_len = qn.size() - n.size();
 
-	//string path = decl->getQualifiedNameAsString().substr(0, namespace_len > 1 ? namespace_len-2 : namespace_len );  // removing trailing '::'
 	string path = qn.substr(0, namespace_len > 1 ? namespace_len-2 : namespace_len );  // removing trailing '::'
 
 	return path;
@@ -139,7 +135,6 @@ string namespace_from_named_decl(NamedDecl const *decl)
 string typename_from_type_decl(TypeDecl *decl)
 {
 	return standard_name( decl->getTypeForDecl()->getCanonicalTypeInternal()/*getCanonicalType()*/.getAsString() );
-	//CanQualType 	getCanonicalTypeUnqualified () const
 }
 
 

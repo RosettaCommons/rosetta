@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/class.cpp
 /// @brief  Binding generation for C++ struct and class objects
@@ -101,11 +100,9 @@ vector<QualType> get_type_dependencies(CXXRecordDecl const *C /*, bool include_m
 // Return true if class have direct or inderect std::enable_shared_from_this as base class
 bool is_inherited_from_enable_shared_from_this(CXXRecordDecl const *C)
 {
-	//outs() << "is_inherited_from_enable_shared_from_this: " << C->getQualifiedNameAsString() << " " << C->isCompleteDefinition() << "\n";
 	if( C->getQualifiedNameAsString() == "std::enable_shared_from_this" ) return true;
 	if( C->isCompleteDefinition() ) {
 		for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
-			//if( b->getAccessSpecifier() == AS_public)
 			if( auto r = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
 				CXXRecordDecl *rd = cast<CXXRecordDecl>(r->getDecl());
 			if( rd /*and rd->isCompleteDefinition()*/  and  is_inherited_from_enable_shared_from_this(rd) ) return true;
@@ -179,25 +176,16 @@ bool is_bindable(clang::CXXRecordDecl const *C)
 				//outs() << "is_bindable( " << class_qualified_name(C) << " ): no point of instantiation  found, skipping...\n";
 				return false;
 			}
-
-
-			//errs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << "  -  " << const_cast<ClassTemplateSpecializationDecl*>(ts)->getMostRecentDecl()->isCompleteDefinition() << "\n";
 		}
 		else return false;
 	}
 
-	//outs() << "is_bindable(CXXRecordDecl): " << C->getQualifiedNameAsString() << template_specialization(C) << " " << r << "\n";
-
 	if( auto t = dyn_cast<ClassTemplateSpecializationDecl>(C) ) {
-		//C->dump();
 		for(uint i=0; i < t->getTemplateArgs().size(); ++i) {
 
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Type ) {
-				//outs() << "_____ " << t->getTemplateArgs()[i].getAsType().getAsString() << " " << is_bindable( t->getTemplateArgs()[i].getAsType() ) << "\n";
 				if( !is_bindable( t->getTemplateArgs()[i].getAsType() ) ) return false;
 			}
-
-			//if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Integral ) return true;
 
 			if( t->getTemplateArgs()[i].getKind() == TemplateArgument::Declaration )  {
 				if( ValueDecl *v = t->getTemplateArgs()[i].getAsDecl() ) {
@@ -230,11 +218,6 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config)
 
 	for(auto & t : get_type_dependencies(C) ) skip |= is_skipping_requested(t, config);
 
-	// if( standard_name( C->getQualifiedNameAsString() ) == "std::basic_istream" ) {
-	// 	outs() << "standard_name( C->getQualifiedNameAsString() == 'std::basic_istream' skip: " << skip << "\n";
-	// }
-	//outs() << C->getQualifiedNameAsString() << " skip: " << skip << "\n";
-
 	return skip;
 }
 
@@ -243,12 +226,7 @@ bool is_skipping_requested(clang::CXXRecordDecl const *C, Config const &config)
 // extract include needed for declaration and add it to includes
 void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, int level)
 {
-	//if( stack.count(C)  /*or  stack.size() > 16*/ ) return; else stack.insert(C);
 	if( !includes.add_decl(C, level) ) return;
-
-	//outs() << stack.size() << " ";
-	// if( begins_with(C->getQualifiedNameAsString(), "boost::property")
-	// 	) outs() << "add_relevant_includes(class): " << C->getQualifiedNameAsString() << template_specialization(C) << "\n";
 
 	add_relevant_include_for_decl(C, includes);
 
@@ -289,25 +267,19 @@ void add_relevant_includes(clang::CXXRecordDecl const *C, IncludeSet &includes, 
 // 	for(auto b = C->bases_begin(); b!=C->bases_end(); ++b) {
 // 		if( auto rt = dyn_cast<RecordType>(b->getType().getCanonicalType().getTypePtr() ) ) {
 // 			if(CXXRecordDecl *R = cast<CXXRecordDecl>(rt->getDecl()) ) {
-
 // 				if( !R->hasDefaultConstructor() ) return false;
-
 // 				bool default_constructor_processed = false;
-
 // 				for(auto t = R->ctor_begin(); t != R->ctor_end(); ++t) {
 // 					if( t->isDefaultConstructor() ) {
 // 						if( t->getAccess() == AS_private  or   !t->isUserProvided()  or  t->isDeleted() ) return false;
 // 					}
 // 					default_constructor_processed = true;
 // 				}
-
 // 				if( R->ctor_begin() != R->ctor_end()   and   !default_constructor_processed ) return false;
-
 // 				if( !is_default_default_constructor_available(R) ) return false;
 // 			}
 // 		}
 // 	}
-
 // 	return true;
 // }
 
@@ -320,16 +292,11 @@ bool base_default_default_constructor_available(CXXRecordDecl const *C)
 
 				if( !R->hasDefaultConstructor() ) return false;
 
-				//bool default_constructor_processed = false;
-
 				for(auto t = R->ctor_begin(); t != R->ctor_end(); ++t) {
 					if( t->isDefaultConstructor() ) {
 						if( t->getAccess() == AS_private  /*or  !t->isUserProvided()*/  or  t->isDeleted() ) return false;
 					}
-					//default_constructor_processed = true;
 				}
-
-				// if( R->ctor_begin() != R->ctor_end()   and   !default_constructor_processed ) return false;
 
 				if( !base_default_default_constructor_available(R) ) return false;
 			}
@@ -486,8 +453,6 @@ if (overload) {{
 	else return pybind11::detail::cast_safe<{3}>(std::move(o));
 }}
 )_";
-//if (overload) return overload.operator()<pybind11::return_value_policy::reference>({}).template cast<{}>();
-
 
 
 // generate call-back overloads for all public virtual functions in C including it bases
@@ -503,7 +468,6 @@ string bind_member_functions_for_call_back(CXXRecordDecl const *C, string const 
 			tuple<string, string, string> args = function_arguments_for_py_overload(*m);
 
 			string key = /*return_type + ' ' +*/ m->getNameAsString() + '(' + std::get<0>(args) + (m->isConst() ? ") const" : ")");
-			//outs() << key << "\n";
 			if( !binded.count(key) ) {
 				binded.insert(key);
 
@@ -581,9 +545,6 @@ string binding_public_member_functions(CXXRecordDecl const *C, bool callback_str
 			//(*m)->dump();
 
 			c += bind_function("\tcl", *m, context);
-			// if( ( !callback_structure  and  m->getAccess() == AS_public )  or
-			// 	( callback_structure  and  callback_structure_constructible ) or
-			// 	( callback_structure  and  !callback_structure_constructible  and  !m->isVirtual() ) ) c += bind_function("\tcl", *m, context);
 		}
 	}
 
@@ -593,8 +554,6 @@ string binding_public_member_functions(CXXRecordDecl const *C, bool callback_str
 
 string binding_template_bases(CXXRecordDecl const *C, bool callback_structure, bool callback_structure_constructible, Context &context)
 {
-	// TODO: add somekind of redundancy detection here
-
 	string c;
 
 	if( dyn_cast<ClassTemplateSpecializationDecl>(C) ) { // for template classes explicitly bind data members and member functions from public base classes
@@ -659,16 +618,11 @@ string ClassBinder::maybe_base_classes(Context &context)
 						binder::request_bindings(b->getType().getCanonicalType(), context);
 
 						dependencies_.push_back(R);
-
-						//break; // right now pybind11 support only one base class
 					}
 				}
 			}
 		}
 	}
-	// if( std::count(r.begin(), r.end(), ',') > 1 ) {
-	// 	outs() << "Multiple inheritance: " << r << "\n";
-	// }
 
 	return r;
 }
@@ -707,9 +661,6 @@ string bind_constructor(CXXConstructorDecl const *T, pair<string, string> const 
 	//string function_name = python_function_name(F);
 	//string function_qualified_name { F->getQualifiedNameAsString() };
 
-	//CXXMethodDecl * m = dyn_cast<CXXMethodDecl>(F);
-	//string maybe_static = m and m->isStatic() ? "_static" : "";
-
 	string c;
 	if( args_to_bind == T->getNumParams() ) {
 		c = "\tcl.def(pybind11::init<{}>()"_format( function_arguments(T) );
@@ -724,12 +675,7 @@ string bind_constructor(CXXConstructorDecl const *T, pair<string, string> const 
 	else {
 		pair<string, string> args = function_arguments_for_lambda(T, args_to_bind);
 
-		//string constructor_type = class_qualified_name(T->getParent());
-		//string object = constructor_type + " &o" + ( args_to_bind ? ", " : "" );
 		string params = args_to_bind ? ", " + args.first : "";
-		//string function = "[cl_type](handle self{}) {{ new (&o) {}({}); }}"_format(args, constructor_type, args.second);
-
-		//c = "\tcl.def(\"__init__\", {}, \"doc\");"_format(function);
 
 		if( constructor_types.first.size()  and  constructor_types.second.size()  ) c = fmt::format(constructor_if_template, params, args.second, constructor_types.first, constructor_types.second);
 		else if( constructor_types.first.size() ) c = fmt::format(constructor_template, params, args.second, constructor_types.first);
@@ -795,13 +741,7 @@ void ClassBinder::bind(Context &context)
 	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(C) );
 	//string const decl_namespace = namespace_from_named_decl(C);
 
-	// string const include = relevant_include(C);
-	// string c = "{ // " + qualified_name + " file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(C) + "\n";
 	string c = "{ " + generate_comment_for_declaration(C);
-
-	//c += "// callback_structure={} callback_structure_constructible={}\n"_format(callback_structure, callback_structure_constructible);
-
-	//if( decl_namespace.size() ) c += "\tusing namespace " + decl_namespace + ";\n";
 
 	string const binding_qualified_name = callback_structure_constructible ? callback_structure_name(C) : qualified_name;
 
@@ -816,12 +756,9 @@ void ClassBinder::bind(Context &context)
 	c += '\t' + R"(pybind11::class_<{}{}{}{}> cl({}, "{}", "{}");)"_format(qualified_name, maybe_holder_type, maybe_trampoline, maybe_base_classes(context), module_variable_name, python_class_name(C), generate_documentation_string_for_declaration(C)) + '\n';
 	c += "\tpybind11::handle cl_type = cl;\n\n";
 
-	//if(callback_structure_constructible) c += "\tcl.alias<{}>();\n"_format(qualified_name);
-
 	//if( C->isAbstract()  and  callback_structure) c += "\tcl.def(pybind11::init<>());\n";
 
 	if( !C->isAbstract()  or  callback_structure_constructible) {
-		//c += "// hasDefaultConstructor:{}\n"_format(C->hasDefaultConstructor() );
 		bool default_constructor_processed = false;
 
 		string constructors;
@@ -830,11 +767,9 @@ void ClassBinder::bind(Context &context)
 				if( t->isCopyConstructor()  and  callback_structure_constructible) constructors += "\tcl.def(pybind11::init<{} const &>());\n"_format(binding_qualified_name);
 				else constructors += bind_constructor(*t, std::make_pair(!C->isAbstract() ? qualified_name : "",
 																		 callback_structure_constructible ? callback_structure_name(C) : ""), context);
-				//else constructors += "\tcl.def(pybind11::init<{}>());\n"_format( function_arguments(*t) );
 			}
 			if( t->isDefaultConstructor() ) default_constructor_processed = true;
 		}
-		//or callback_structure_constructible
 		//c += "\t// hasDefaultConstructor={} needsImplicitDefaultConstructor={} base_default_default_constructor_available={}\n"_format(C->hasDefaultConstructor(), C->needsImplicitDefaultConstructor(), base_default_default_constructor_available(C));
 
 		if( !default_constructor_processed  and  C->needsImplicitDefaultConstructor()  and  base_default_default_constructor_available(C)
@@ -866,8 +801,6 @@ void ClassBinder::bind(Context &context)
 
 	c += binding_template_bases(C, callback_structure,  callback_structure_constructible, context);
 
-	//outs() << "typename_from_type_decl: " << typename_from_type_decl(C) << "\n";
-
 	c += bind_repr(context);
 
 	std::map<string, string> const &external_add_on_binders = Config::get().add_on_binders();
@@ -877,8 +810,5 @@ void ClassBinder::bind(Context &context)
 
 	code() = indent(c, "\t");
 }
-
-
-
 
 } // namespace binder

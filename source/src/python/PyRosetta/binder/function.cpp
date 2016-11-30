@@ -1,11 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+// Copyright (c) 2016 Sergey Lyskov <sergey.lyskov@jhu.edu>
+//
+// All rights reserved. Use of this source code is governed by a
+// MIT license that can be found in the LICENSE file.
 
 /// @file   binder/function.cpp
 /// @brief  Binding generation for static and member functions
@@ -198,9 +197,6 @@ vector<QualType> get_type_dependencies(FunctionDecl const *F)
 	r.push_back( F->getReturnType() ); //.getDesugaredType(F->getASTContext()) );
 	for(uint i=0; i<F->getNumParams(); ++i) r.push_back(F->getParamDecl(i)->getOriginalType()/*.getDesugaredType(F->getASTContext())*/ );
 
-	// r.push_back( F->getReturnType().getDesugaredType(F->getASTContext()) );
-	// for(uint i=0; i<F->getNumParams(); ++i) r.push_back(F->getParamDecl(i)->getOriginalType().getDesugaredType(F->getASTContext()) );
-
 	if( F->getTemplatedKind() == FunctionDecl::TK_MemberSpecialization  or   F->getTemplatedKind() == FunctionDecl::TK_FunctionTemplateSpecialization ) {
 		if( TemplateArgumentList const *tal = F->getTemplateSpecializationArgs() ) {
 			for(uint i=0; i < tal->size(); ++i) {
@@ -305,19 +301,6 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 		if(request_bindings_f) request_bindings( F->getParamDecl(i)->getOriginalType(), context);
 	}
 
-	// for(auto p = F->param_begin(); p != F->param_end(); ++p) {
-	// 	string default_argument;
-	// 	if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
-	// 	bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
-	// 	string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
-	// 	bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
-	// 	if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
-	// 		r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
-	// 	}
-	// 	else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
-	// 	if(request_bindings_f) request_bindings((*p)->getOriginalType(), context);
-	// }
-
 	r += ");";
 
 	return r;
@@ -336,52 +319,15 @@ string bind_function(string const & module, FunctionDecl const *F, Context &cont
 	}
 
 	for(; args_to_bind <= num_params; ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == num_params, context) + '\n';
-	//for(int i = num_params; i >= args_to_bind ; --i) code += module + bind_function(F, i, i == num_params, context) + '\n';
-
 
 	return code;
-	// string function_name = python_function_name(F);
-	// string function_qualified_name { F->getQualifiedNameAsString() };
-
-	// CXXMethodDecl * m = dyn_cast<CXXMethodDecl>(F);
-	// string maybe_static = m and m->isStatic() ? "_static" : "";
-
-	// string r = R"(.def{}("{}", ({}) &{}{}, "doc")"_format(maybe_static, function_name, function_pointer_type(F), function_qualified_name, template_specialization(F));
-
-	// request_bindings(F->getReturnType(), context);
-
-	// for(auto p = F->param_begin(); p != F->param_end(); ++p) {
-
-	// 	string default_argument;
-	// 	if( !(*p)->hasUninstantiatedDefaultArg() ) default_argument = expresion_to_string( (*p)->getDefaultArg() );
-
-	// 	bool is_function_call = ( default_argument.find("(") != std::string::npos  and  default_argument.find(")") != std::string::npos )  or  default_argument.find("new ") != std::string::npos;  // filter 'function call' default arguments
-
-	// 	string arg_type = (*p)->getOriginalType().getCanonicalType().getAsString();  fix_boolean_types(arg_type);
-
-	// 	bool good_default = default_argument.find("std::cout") == std::string::npos  and  default_argument.find("std::cerr") == std::string::npos;
-
-	// 	if( (*p)->hasDefaultArg()  and  !(*p)->hasUninstantiatedDefaultArg()  and  !is_function_call  and  good_default  and  false) {
-	// 		r += ", pybind11::arg_t<{}>(\"{}\", {}, \"{}\")"_format(arg_type, string( (*p)->getName() ), default_argument, replace(default_argument, "\"", "\\\"") );
-	// 	}
-	// 	else r += ", pybind11::arg(\"{}\")"_format( string( (*p)->getName() ) );
-
-	// 	request_bindings((*p)->getOriginalType(), context);
-	// }
-
-	// r += ')';
-
-	// return r;
 }
 
 
 /// extract include needed for this generator and add it to includes vector
 void add_relevant_includes(FunctionDecl const *F, IncludeSet &includes, int level /*, bool for_template_arg_only*/)
 {
-	//if( stack.count(F) ) return; else stack.insert(F);
 	if( !includes.add_decl(F, level) ) return;
-
-	// if( begins_with(F->getQualifiedNameAsString(), "boost::get_property_value") ) outs() << "add_relevant_includes(function): " << F->getQualifiedNameAsString() << " templ:" << template_specialization(F) << "\n";
 
 	add_relevant_include_for_decl(F, includes);
 
@@ -471,10 +417,8 @@ void FunctionBinder::bind(Context &context)
 
 	string const module_variable_name = context.module_variable_name( namespace_from_named_decl(F) );
 	string const include = relevant_include(F);
-	//string const namespace_ = namespace_from_named_decl(F);
 
 	code()  = "\t// " + F->getQualifiedNameAsString() + "(" + function_arguments(F) + ") file:" + (include.size() ? include.substr(1, include.size()-2) : "") + " line:" + line_number(F) + "\n";
-	//if( namespace_.size() ) code() += "\t\tusing namespace " + namespace_ + ";\n";
 	code() += bind_function("\t"+ module_variable_name, F, context);
 	code() += "\n";
 }

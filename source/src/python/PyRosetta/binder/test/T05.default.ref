@@ -27,7 +27,7 @@ void bind_T05_default(std::function< pybind11::module &(std::string const &names
 	M("").def("foo", [](int  const &a0, int  const &a1, int & a2, float  const &a3) -> double { return foo(a0, a1, a2, a3); }, "", pybind11::arg("a"), pybind11::arg("i1"), pybind11::arg("i2"), pybind11::arg("f"));
 	M("").def("foo", [](int  const &a0, int  const &a1, int & a2, float  const &a3, const double & a4) -> double { return foo(a0, a1, a2, a3, a4); }, "", pybind11::arg("a"), pybind11::arg("i1"), pybind11::arg("i2"), pybind11::arg("f"), pybind11::arg("d"));
 	M("").def("foo", [](int  const &a0, int  const &a1, int & a2, float  const &a3, const double & a4, void * a5) -> double { return foo(a0, a1, a2, a3, a4, a5); }, "", pybind11::arg("a"), pybind11::arg("i1"), pybind11::arg("i2"), pybind11::arg("f"), pybind11::arg("d"), pybind11::arg("p"));
-	M("").def("foo", (double (*)(int, int, int &, float, const double &, void *, int)) &foo, "", pybind11::arg("a"), pybind11::arg("i1"), pybind11::arg("i2"), pybind11::arg("f"), pybind11::arg("d"), pybind11::arg("p"), pybind11::arg("q"));
+	M("").def("foo", (double (*)(int, int, int &, float, const double &, void *, int)) &foo, "C++: foo(int, int, int &, float, const double &, void *, int) --> double", pybind11::arg("a"), pybind11::arg("i1"), pybind11::arg("i2"), pybind11::arg("f"), pybind11::arg("d"), pybind11::arg("p"), pybind11::arg("q"));
 
 	{ // A file:T05.default.hpp line:20
 		pybind11::class_<A, std::shared_ptr<A>> cl(M(""), "A", "");
@@ -53,19 +53,19 @@ void bind_T05_default(std::function< pybind11::module &(std::string const &names
 		cl.def("foo", [](B &o, struct A  const &a0) -> void { return o.foo(a0); }, "", pybind11::arg("a1"));
 		cl.def("foo", [](B &o, struct A  const &a0, struct A & a1) -> void { return o.foo(a0, a1); }, "", pybind11::arg("a1"), pybind11::arg("a2"));
 		cl.def("foo", [](B &o, struct A  const &a0, struct A & a1, struct A * a2) -> void { return o.foo(a0, a1, a2); }, "", pybind11::arg("a1"), pybind11::arg("a2"), pybind11::arg("a3"));
-		cl.def("foo", (void (B::*)(struct A, struct A &, struct A *, int)) &B::foo, "", pybind11::arg("a1"), pybind11::arg("a2"), pybind11::arg("a3"), pybind11::arg("i"));
+		cl.def("foo", (void (B::*)(struct A, struct A &, struct A *, int)) &B::foo, "C++: B::foo(struct A, struct A &, struct A *, int) --> void", pybind11::arg("a1"), pybind11::arg("a2"), pybind11::arg("a3"), pybind11::arg("i"));
 		cl.def("foo_member", [](B &o) -> double { return o.foo_member(); }, "");
 		cl.def("foo_member", [](B &o, const int  &a0) -> double { return o.foo_member(a0); }, "", pybind11::arg("i"));
 		cl.def("foo_member", [](B &o, const int  &a0, float  const &a1) -> double { return o.foo_member(a0, a1); }, "", pybind11::arg("i"), pybind11::arg("f"));
-		cl.def("foo_member", (double (B::*)(const int, float, double)) &B::foo_member, "", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
+		cl.def("foo_member", (double (B::*)(const int, float, double)) &B::foo_member, "C++: B::foo_member(const int, float, double) --> double", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
 		cl.def("foo_member_const", [](B const &o) -> double { return o.foo_member_const(); }, "");
 		cl.def("foo_member_const", [](B const &o, int  const &a0) -> double { return o.foo_member_const(a0); }, "", pybind11::arg("i"));
 		cl.def("foo_member_const", [](B const &o, int  const &a0, float  const &a1) -> double { return o.foo_member_const(a0, a1); }, "", pybind11::arg("i"), pybind11::arg("f"));
-		cl.def("foo_member_const", (double (B::*)(int, float, double) const) &B::foo_member_const, "", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
+		cl.def("foo_member_const", (double (B::*)(int, float, double) const) &B::foo_member_const, "C++: B::foo_member_const(int, float, double) const --> double", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
 		cl.def_static("foo_static", []() -> double { return B::foo_static(); }, "");
 		cl.def_static("foo_static", [](int  const &a0) -> double { return B::foo_static(a0); }, "", pybind11::arg("i"));
 		cl.def_static("foo_static", [](int  const &a0, float  const &a1) -> double { return B::foo_static(a0, a1); }, "", pybind11::arg("i"), pybind11::arg("f"));
-		cl.def_static("foo_static", (double (*)(int, float, double)) &B::foo_static, "", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
+		cl.def_static("foo_static", (double (*)(int, float, double)) &B::foo_static, "C++: B::foo_static(int, float, double) --> double", pybind11::arg("i"), pybind11::arg("f"), pybind11::arg("d"));
 	}
 }
 
@@ -101,9 +101,9 @@ PYBIND11_PLUGIN(T05_default) {
 	return modules[""]->ptr();
 }
 
-// Source list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T05_default.sources
+// Source list file: TEST/T05_default.sources
 // T05_default.cpp
 // T05_default.cpp
 
-// Modules list file: /home/benchmark/rosetta/binder/main/source/src/python/PyRosetta/binder/test/build/T05_default.modules
+// Modules list file: TEST/T05_default.modules
 // 
