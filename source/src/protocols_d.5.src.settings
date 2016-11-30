@@ -54,7 +54,6 @@ sources = {
         "RNA_MinimizerOptions",
     ],
     "protocols/farna/secstruct": [
-        "RNA_SecStruct",
         "RNA_SecStructLegacyInfo",
     ],
     "protocols/farna/setup": [

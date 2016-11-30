@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/farna/secstruct/RNA_SecStruct.hh
+/// @file core/pose/rna/RNA_SecStruct.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_farna_secstruct_RNA_SecStruct_HH
-#define INCLUDED_protocols_farna_secstruct_RNA_SecStruct_HH
+#ifndef INCLUDED_core_pose_rna_RNA_SecStruct_HH
+#define INCLUDED_core_pose_rna_RNA_SecStruct_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/farna/secstruct/RNA_SecStruct.fwd.hh>
+#include <core/pose/rna/RNA_SecStruct.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <map>
 
-namespace protocols {
-namespace farna {
-namespace secstruct {
+namespace core {
+namespace pose {
+namespace rna {
 
 class RNA_SecStruct: public utility::pointer::ReferenceCount {
 
@@ -41,8 +41,7 @@ public:
 public:
 
 	utility::vector1< utility::vector1< std::pair< core::Size, core::Size > > >
-	get_all_stems( std::string const & sequence = "",
-		utility::vector1< core::Size > const & cutpoint_open = utility::vector1< Size >() ) const;
+	get_all_stems() const;
 
 	void
 	check_compatible_with_sequence( std::string const & sequence_in,
@@ -60,6 +59,9 @@ private:
 
 	void
 	set_secstruct( std::string const & secstruct );
+	
+	void
+	set_basepairs_from_secstruct();
 
 	bool
 	check_balanced_secstruct() const;
@@ -70,18 +72,11 @@ private:
 	void
 	read_secstruct_from_file( std::string const & filename );
 
-	void
-	get_stems(
-		utility::vector1< utility::vector1< std::pair< Size, Size > > > & stems,
-		std::string const & line /*secstruct*/,
-		std::string const & sequence_for_fasta,
-		utility::vector1< Size > const & chainbreak_pos,
-		char const & left_bracket_char, char const & right_bracket_char ) const;
-
-
 private:
 
 	std::string secstruct_;
+	utility::vector1< std::pair< core::Size, core::Size > > base_pairs_;
+
 	utility::vector1< Size > spacer_positions_;
 
 	std::map< char, utility::vector1< char > > rna_complement_;

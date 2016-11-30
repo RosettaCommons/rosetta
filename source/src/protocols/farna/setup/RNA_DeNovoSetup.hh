@@ -19,7 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/farna/setup/RNA_DeNovoSetup.fwd.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.fwd.hh>
-#include <protocols/farna/secstruct/RNA_SecStruct.fwd.hh>
+#include <core/pose/rna/RNA_SecStruct.fwd.hh>
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -77,8 +77,8 @@ private:
 		utility::vector1< core::Size > const & working_res,
 		bool const annotations_in_brackets = true ) const;
 
-	secstruct::RNA_SecStruct
-	working_res_map( secstruct::RNA_SecStruct const & seq,
+	core::pose::rna::RNA_SecStruct
+	working_res_map( core::pose::rna::RNA_SecStruct const & seq,
 		utility::vector1< core::Size > const & working_res ) const;
 
 	void

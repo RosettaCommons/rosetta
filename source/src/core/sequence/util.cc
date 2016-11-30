@@ -136,8 +136,8 @@ read_alignment_file(
 vector1< string > read_fasta_file_str( std::string const & filename ) {
 	vector1< SequenceOP > seqs = read_fasta_file( filename );
 	vector1< string > seq_strings;
-	for ( vector1< SequenceOP >::const_iterator it = seqs.begin(), end = seqs.end(); it != end; ++it ) {
-		seq_strings.push_back( (*it)->sequence() );
+	for ( SequenceOP seq : seqs ) {
+		seq_strings.push_back( seq->sequence() );
 	}
 	return seq_strings;
 }
@@ -308,24 +308,19 @@ utility::vector1< SequenceOP > seqs_from_cmd_lines() {
 
 	if ( option[ in::file::fasta ].user() ) {
 		vector1< FileName > fns( option[ in::file::fasta ]() );
-		typedef vector1< FileName >::const_iterator iter;
-		for ( iter it = fns.begin(), end = fns.end(); it != end; ++it ) {
-			vector1< SequenceOP > temp_seqs( read_fasta_file( *it ) );
-			for ( vector1< SequenceOP >::const_iterator s_it = temp_seqs.begin(),
-					s_end = temp_seqs.end(); s_it != s_end; ++s_it
-					) {
-				seqs.push_back( *s_it );
+		for ( FileName const & fn : fns ) {
+			vector1< SequenceOP > temp_seqs( read_fasta_file( fn ) );
+			for ( SequenceOP seq : temp_seqs ) {
+				seqs.push_back( seq );
 			}
 		}
 	}
 
 	if ( option[ in::file::pssm ].user() ) {
 		vector1< FileName > fns( option[ in::file::pssm ]() );
-		for ( vector1< FileName >::const_iterator it = fns.begin(), end = fns.end();
-				it != end; ++it
-				) {
+		for ( FileName const & fn : fns ) {
 			SequenceProfileOP prof( new SequenceProfile );
-			prof->read_from_file( *it );
+			prof->read_from_file( fn );
 			prof->convert_profile_to_probs(); // was previously implicit in read_from_file()
 			seqs.push_back( prof );
 		}

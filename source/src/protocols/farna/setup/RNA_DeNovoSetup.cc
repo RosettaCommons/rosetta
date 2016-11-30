@@ -15,7 +15,6 @@
 
 #include <protocols/farna/setup/RNA_DeNovoSetup.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.hh>
-#include <protocols/farna/secstruct/RNA_SecStruct.hh>
 #include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
@@ -40,6 +39,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
+#include <core/pose/rna/RNA_SecStruct.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -498,7 +498,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	// working stems
 	/////////////////////////
 	vector1< Size > working_cutpoint( working_cutpoint_open ); working_cutpoint.append( working_cutpoint_closed );
-	working_stems = working_secstruct.get_all_stems( working_sequence, working_cutpoint );
+	working_stems = working_secstruct.get_all_stems();
 	vector1< Size > working_input_res = working_res_map( input_res, working_res );
 	if ( options_->fixed_stems() ) {
 		update_working_obligate_pairs_with_stems( working_obligate_pairs, working_stems, working_input_res );
@@ -951,12 +951,12 @@ RNA_DeNovoSetup::working_res_map( std::string const & seq_input,
 }
 
 // Following not handling spacers correctly...
-secstruct::RNA_SecStruct
-RNA_DeNovoSetup::working_res_map( secstruct::RNA_SecStruct const & rna_secstruct,
+core::pose::rna::RNA_SecStruct
+RNA_DeNovoSetup::working_res_map( core::pose::rna::RNA_SecStruct const & rna_secstruct,
 	vector1< Size > const & working_res ) const
 {
 	std::string working_secstruct = working_res_map( rna_secstruct.secstruct(), working_res, false /*annotations_in_brackets*/ );
-	return secstruct::RNA_SecStruct( working_secstruct );
+	return core::pose::rna::RNA_SecStruct( working_secstruct );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
