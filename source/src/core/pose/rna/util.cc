@@ -65,7 +65,7 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
-mutate_position( pose::Pose & pose, Size const i, char const & new_seq ) {
+mutate_position( pose::Pose & pose, Size const i, char const new_seq ) {
 
 	using namespace core::conformation;
 	using namespace core::chemical;
@@ -221,7 +221,6 @@ bool
 is_cutpoint_open( Pose const & pose, Size const i ) {
 
 	if ( i < 1 ) return true; // user may pass zero -- sometimes checking if we are at a chain terminus, and this would corresponde to n-1 with n=1.
-
 	if ( i >= pose.size() ) return true;
 
 	if ( ! pose.fold_tree().is_cutpoint(i) ) return false;
@@ -305,7 +304,6 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 		new_dof_sets.push_back( dof_set );
 	}
 
-
 	// Now put the ring atoms in the desired spots, but by changing internal DOFS --
 	// rest of the atoms (e.g., in base and 2'-OH) will scoot around as well, preserving
 	// ideal bond lengths and angles.
@@ -354,7 +352,6 @@ prepare_scratch_residue(
 
 	Size const o2prime_index( scratch_rsd->type().RNA_type().o2prime_index() );
 	scratch_rsd->set_xyz( o2prime_index, scratch_rsd->build_atom_ideal( o2prime_index, pose.conformation() ) );
-
 }
 
 
@@ -367,7 +364,6 @@ fix_sugar_coords(
 	Pose const & reference_pose,
 	Size const i )
 {
-
 	using namespace core::id;
 	using namespace core::conformation;
 
@@ -511,6 +507,8 @@ apply_non_main_chain_sugar_coords(
 	}
 }
 
+// AMW TODO: find invocations of this function, replace with RNA_IdealCoord
+// Used in ConstrainToIdealMover
 ////////////////////////////////////////////////////////////////////
 //FANG: All these sugar coord stuffs should be deprecated in favor of
 //RNA_IdealCoord class? Are there any performance concern for using

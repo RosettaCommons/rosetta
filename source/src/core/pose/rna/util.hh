@@ -30,7 +30,7 @@ namespace pose {
 namespace rna {
 
 bool
-mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
+mutate_position( core::pose::Pose & pose, core::Size const i, char const new_seq );
 
 bool
 mutate_position( pose::Pose & pose, Size const i, std::string const & name3 );

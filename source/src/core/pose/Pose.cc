@@ -858,7 +858,7 @@ Pose::sequence() const
 {
 	std::string seq;
 	for ( Size i=1; i<= conformation_->size(); ++i ) {
-		seq += residue(i).name1();
+		seq += residue_type(i).name1();
 	}
 	return seq;
 }
@@ -869,7 +869,6 @@ Pose::sequence(core::Size resnum_start, core::Size resnum_end) const
 	PyAssert((resnum_end <= size()), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater less than or equal to total residues!")
 
 		PyAssert((resnum_end >= resnum_start), "Pose:sequence(core::Size resnum_start, core::Size resnum_end): resnum_end must be greater than or equal to resnum_start!");
-
 	return sequence().substr(resnum_start - 1, resnum_end - resnum_start + 1);
 
 }
@@ -895,17 +894,17 @@ Pose::chain_sequence(core::Size const chain_in) const
 	Size const begin = conformation_->chain_begin(chain_in);
 	Size const end = conformation_->chain_end(chain_in);
 
-	if ( !residue(begin).is_carbohydrate() ) {
+	if ( !residue_type(begin).is_carbohydrate() ) {
 		for ( Size i = begin; i <= end; ++i ) {
-			seq << residue(i).name1();
+			seq << residue_type(i).name1();
 		}
 	} else /*is carbohydrate*/ {
 		// Carbohydrate sequences are listed in the opposite direction as they are numbered.
 		for ( Size i = end; i >= begin; --i ) {
-			seq << residue(i).carbohydrate_info()->short_name();
+			seq << residue_type(i).carbohydrate_info()->short_name();
 			if ( i != begin ) {
 				seq << "(";
-				seq << residue(i).carbohydrate_info()->anomeric_carbon();
+				seq << residue_type(i).carbohydrate_info()->anomeric_carbon();
 			}
 		}
 	}

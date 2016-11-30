@@ -20,6 +20,8 @@
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 
+#include <core/scoring/methods/WholeStructureEnergy.hh>
+
 // Package headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
@@ -47,10 +49,22 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_LowResolutionPotential : public utility::pointer::ReferenceCount {
+class RNA_LowResolutionPotential : public methods::WholeStructureEnergy { //utility::pointer::ReferenceCount {
+	typedef methods::WholeStructureEnergy parent;
 
 public:
 	RNA_LowResolutionPotential();
+	
+	/// clone
+	virtual
+	methods::EnergyMethodOP
+	clone() const {	return methods::EnergyMethodOP( new RNA_LowResolutionPotential ); }
+	
+	virtual
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+	
+	virtual
+	core::Size version() const { return 1; }	
 
 
 	void

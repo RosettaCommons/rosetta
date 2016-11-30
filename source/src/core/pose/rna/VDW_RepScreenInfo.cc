@@ -64,10 +64,7 @@ VDW_RepScreenInfo::VDW_RepScreenInfo( VDW_RepScreenInfo const & src ):
 	import_ID( src.import_ID ),
 	align_working_to_vdw_atom_id_map( src.align_working_to_vdw_atom_id_map )
 {
-
 }
-
-
 
 
 //Destructor

@@ -66,7 +66,7 @@ VDW_Grid::~VDW_Grid()
 
 
 void
-VDW_Grid::setup( int const & bin_max ) const
+VDW_Grid::setup( int const bin_max ) const
 {
 	bin_max_ = bin_max;
 	utility::vector1< bool > one_dim_bin( bin_max*2, false );
@@ -103,12 +103,16 @@ core::Size
 VDW_Grid::size() const
 {
 	//return bins_.size();
-	return bins_.size() * bins_.size() * bins_.size();
+	if ( bins_.size() == 0 ) return 0;
+	if ( bins_[1].size() == 0 ) return 0;
+	if ( bins_[1][1].size() == 0 ) return 0;
+
+	return bins_.size() * bins_[1].size() * bins_[1][1].size();
 }
 
 
 bool
-VDW_Grid::get_bin( int const & x, int const & y, int const & z ) const
+VDW_Grid::get_bin( int const x, int const y, int const z ) const
 {
 	return bins_[x][y][z];
 }
@@ -122,7 +126,7 @@ VDW_Grid::get_xyz_bin( Atom_Bin const & xyz_bin ) const
 
 
 void
-VDW_Grid::set_bin( int const & x, int const & y, int const & z, bool const & value ) const
+VDW_Grid::set_bin( int const x, int const y, int const z, bool const value ) const
 {
 	bins_[x][y][z] = value;
 	if ( value && !is_occupied_ ) is_occupied_ = value;
@@ -130,7 +134,7 @@ VDW_Grid::set_bin( int const & x, int const & y, int const & z, bool const & val
 
 
 void
-VDW_Grid::set_xyz_bin( Atom_Bin const & xyz_bin, bool const & value ) const
+VDW_Grid::set_xyz_bin( Atom_Bin const & xyz_bin, bool const value ) const
 {
 	set_bin( xyz_bin.x, xyz_bin.y, xyz_bin.z, value );
 }
@@ -142,7 +146,7 @@ VDW_Grid::is_occupied() const
 }
 
 void
-VDW_Grid::set_bin_max( int const & value ) const {
+VDW_Grid::set_bin_max( int const value ) const {
 	bin_max_ = value;
 }
 
@@ -152,7 +156,7 @@ VDW_Grid::get_bin_max() const {
 }
 
 void
-VDW_Grid::set_atom_bin_size( core::Real const & value ) const {
+VDW_Grid::set_atom_bin_size( core::Real const value ) const {
 	atom_bin_size_ = value;
 }
 
@@ -162,7 +166,7 @@ VDW_Grid::get_atom_bin_size() const {
 }
 
 void
-VDW_Grid::set_bin_offset( int const & value ) const {
+VDW_Grid::set_bin_offset( int const value ) const {
 	bin_offset_ = value;
 }
 

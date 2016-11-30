@@ -35,6 +35,7 @@
 
 
 // C++
+#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers

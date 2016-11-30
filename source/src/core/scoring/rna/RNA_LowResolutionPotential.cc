@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+#include <core/scoring/rna/RNA_LowResolutionPotentialCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyGraph.hh>
@@ -60,6 +61,31 @@ namespace core {
 namespace scoring {
 namespace rna {
 
+/// @details This must return a fresh instance of the RNA_LowResolutionPotential class,
+/// never an instance already in use
+methods::EnergyMethodOP
+RNA_LowResolutionPotentialCreator::create_energy_method(
+	methods::EnergyMethodOptions const &
+) const {
+	return methods::EnergyMethodOP( new RNA_LowResolutionPotential );
+}
+
+ScoreTypes
+RNA_LowResolutionPotentialCreator::score_types_for_method() const {
+	ScoreTypes sts;
+	sts.push_back( rna_base_pair );
+	sts.push_back( rna_base_axis );
+	sts.push_back( rna_base_stagger );
+	sts.push_back( rna_base_stack );
+	sts.push_back( rna_base_stack_axis );
+	sts.push_back( rna_base_backbone );
+	sts.push_back( rna_backbone_backbone );
+	sts.push_back( rna_repulsive );
+	sts.push_back( rna_data_base );
+	return sts;
+}
+
+
 core::Real RNA_LowResolutionPotential::dummy_deriv = 0.0;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -72,6 +98,7 @@ using namespace ObjexxFCL::format;
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 RNA_LowResolutionPotential::RNA_LowResolutionPotential():
+	parent( methods::EnergyMethodCreatorOP( new RNA_LowResolutionPotentialCreator ) ),
 	////////////////////////////////////////////
 	rna_basepair_radius_cutoff_( 8.0 ),
 	rna_basepair_stagger_cutoff_( 3.0 ),

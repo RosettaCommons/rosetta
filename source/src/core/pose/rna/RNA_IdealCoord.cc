@@ -84,11 +84,7 @@ void RNA_IdealCoord::init() {
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCOP rsd_set;
 	// FA_STANDARD now includes rna_phenix by default.
-	if ( chemical::ChemicalManager::get_instance()->has_residue_type_set( chemical::FA_STANDARD ) ) {
-		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
-	} else {
-		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
-	}
+	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
 		PoseOP ref_pose( new Pose() );
 		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, pdb_file_list[i] );

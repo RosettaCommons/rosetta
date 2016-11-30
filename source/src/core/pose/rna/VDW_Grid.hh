@@ -51,7 +51,7 @@ public:
 	virtual ~VDW_Grid();
 
 	void
-	setup( int const & bin_max ) const;
+	setup( int const bin_max ) const;
 
 	void
 	reset() const;
@@ -63,34 +63,34 @@ public:
 	size() const;
 
 	bool
-	get_bin( int const & x, int const & y, int const & z ) const;
+	get_bin( int const x, int const y, int const z ) const;
 
 	void
-	set_bin( int const & x, int const & y, int const & z, bool const & value ) const;
+	set_bin( int const x, int const y, int const z, bool const value ) const;
 
 	bool
 	get_xyz_bin( Atom_Bin const & xyz_bin ) const;
 
 	void
-	set_xyz_bin( Atom_Bin const & xyz_bin, bool const & value ) const;
+	set_xyz_bin( Atom_Bin const & xyz_bin, bool const value ) const;
 
 	bool
 	is_occupied() const;
 
 	void
-	set_bin_max( int const & value ) const;
+	set_bin_max( int const value ) const;
 
 	int
 	get_bin_max() const;
 
 	void
-	set_atom_bin_size( core::Real const & value ) const;
+	set_atom_bin_size( core::Real const value ) const;
 
 	core::Real
 	get_atom_bin_size() const;
 
 	void
-	set_bin_offset( int const & value ) const;
+	set_bin_offset( int const value ) const;
 
 	int
 	get_bin_offset() const;

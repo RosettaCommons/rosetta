@@ -82,9 +82,7 @@ RNA_BasePairHandler::check_base_pairs( pose::Pose & pose,
 	using namespace core::pose::rna;
 	static scoring::rna::RNA_LowResolutionPotential const rna_low_resolution_potential;
 
-	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-
-		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+	for ( BasePair const & rna_pairing : rna_pairing_list_ ) {
 		Size i( rna_pairing.res1() );
 		Size j( rna_pairing.res2() );
 		if ( i > j ) {
@@ -131,9 +129,7 @@ RNA_BasePairHandler::setup_base_pair_constraints( core::pose::Pose & pose,
 
 	// Go through all pairings and define atom pair constraints that will bring together
 	//  appropriate atoms on bases.
-	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-
-		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+	for ( BasePair const & rna_pairing : rna_pairing_list_ ) {
 		Size const & i( rna_pairing.res1() );
 		Size const & j( rna_pairing.res2() );
 
@@ -161,10 +157,9 @@ std::map< Size, Size >
 RNA_BasePairHandler::connections() const
 {
 	std::map< Size, Size > connections_local;
-	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		BasePair pairing = rna_pairing_list_[n];
-		connections_local[ pairing.res1() ] = pairing.res2();
-		connections_local[ pairing.res2() ] = pairing.res1();
+	for ( BasePair const & rna_pairing : rna_pairing_list_ ) {
+		connections_local[ rna_pairing.res1() ] = rna_pairing.res2();
+		connections_local[ rna_pairing.res2() ] = rna_pairing.res1();
 	}
 	return connections_local;
 }
@@ -173,8 +168,7 @@ RNA_BasePairHandler::connections() const
 void
 RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const
 {
-	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+	for ( BasePair const & rna_pairing : rna_pairing_list_ ) {
 		Size i( rna_pairing.res1() );
 		Size j( rna_pairing.res2() );
 
@@ -213,8 +207,8 @@ RNA_BasePairHandler::get_base_pair_steps( bool const just_canonical ) const {
 
 	utility::vector1< BasePairStep > base_pair_steps;
 
-	for ( std::map< Size, Size >::const_iterator iter = partner.begin(), end = partner.end(); iter != end; ++iter ) {
-		Size const i = iter->first;
+	for ( auto const & elem : partner ) {
+		Size const i = elem.first;
 		if ( partner.find( i+1 ) == partner.end() || cutpoints_open_.has_value( i ) ) continue;
 
 		Size const j = partner[ i+1 ];
@@ -267,8 +261,7 @@ RNA_BasePairHandler::get_stem_residues( core::pose::Pose const & pose ) const
 {
 	std::list< Size > in_stem;
 
-	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+	for ( BasePair const & rna_pairing : rna_pairing_list_ ) {
 		if (  rna_pairing.edge1() == WATSON_CRICK &&
 				rna_pairing.edge2() == WATSON_CRICK &&
 				rna_pairing.orientation() == ANTIPARALLEL &&
@@ -283,8 +276,8 @@ RNA_BasePairHandler::get_stem_residues( core::pose::Pose const & pose ) const
 	in_stem.unique();
 
 	utility::vector1< Size > stem_res;
-	for ( std::list< Size >::const_iterator it = in_stem.begin(); it != in_stem.end(); it++ ) stem_res.push_back( *it );
-
+	stem_res.assign( in_stem.begin(), in_stem.end() );
+	
 	return stem_res;
 }
 

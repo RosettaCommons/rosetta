@@ -71,6 +71,11 @@ using namespace core::chemical::rna;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+// AMW TODO: implement a generic method to accomplish this classification
+// (WC/H/S edge ID, atom counting) for NCNTs
+// Note that NCNTs are MOSTLY canonical derived, with a very few variants
+// so 90% of the job is trivial and should be done immediately
+
 
 ///////////////////////////////////////////////////////////////////
 void
@@ -209,49 +214,36 @@ update_edge_hbond_numbers_careful_hydrogen(
 			N_W++;
 		}
 	}
-
 }
 
 //////////////////////////////////
 bool
 atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
 {
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd.Hpos_polar().begin(),
-			anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
-		Size const H_atm( *anum );
+	for ( Size const H_atm : rsd.Hpos_polar() ) {
 		if ( H_atm == atm ) return true;
 	}
 	return false;
-
 }
 
 //////////////////////////////////
 bool
 heavy_atom_is_polar( core::conformation::Residue const & rsd, Size const & atm )
 {
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd.Hpos_polar().begin(),
-			anume = rsd.Hpos_polar().end(); anum != anume; ++anum ) {
-		Size const H_atm( *anum );
+	for ( Size const H_atm : rsd.Hpos_polar() ) {
 		if ( rsd.atom_base( H_atm ) == atm ) return true;
 	}
 	return false;
-
 }
 
 //////////////////////////////////
 bool
 atom_is_acceptor( core::conformation::Residue const & rsd, Size const & atm )
 {
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd.accpt_pos().begin(),
-			anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-		Size const H_atm( *anum );
-		if ( H_atm == atm ) return true;
+	for ( Size const a_atm : rsd.accpt_pos() ) {
+		if ( a_atm == atm ) return true;
 	}
 	return false;
-
 }
 
 
@@ -279,8 +271,6 @@ figure_out_number_base_contacts(
 	// heavy atom on base j; heavy atom on i.
 	for ( Size k = rsd_j.first_sidechain_atom()+1 ; k <= rsd_j.nheavyatoms(); k++ ) {
 
-		//  if ( k <= rsd_j.first_sidechain_atom() ) continue;
-
 		for ( Size m = 1; m <= rsd_i.nheavyatoms(); m++ ) {
 
 			Real const dist_ij = ( rsd_i.xyz( m ) - rsd_j.xyz( k ) ).length();
@@ -294,13 +284,9 @@ figure_out_number_base_contacts(
 				if ( atom_is_acceptor( rsd_j, k ) && heavy_atom_is_polar( rsd_i, m) ) {
 					update_edge_hbond_numbers_careful_hydrogen( rsd_i, m, rsd_j, k, N_W, N_H, N_S ); //helps resolve confusion for A, C, and G bifurcated
 				}
-
 			}
-
 		}
-
 	}
-
 
 	//std::cout << i << " <--> " << j << std::endl;
 
@@ -338,7 +324,6 @@ figure_out_number_base_contacts(
 	}
 
 	// return n_hbonds;
-
 }
 
 
@@ -357,8 +342,7 @@ figure_out_base_pair_orientation(
 	RNA_ScoringInfo  & rna_scoring_info( nonconst_rna_scoring_info_from_pose( pose ) );
 	RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.update( pose );
-
-	//utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
+	
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	kinematics::Stub const & stub_i( base_stubs[i] );
@@ -372,14 +356,12 @@ figure_out_base_pair_orientation(
 
 	BaseDoubletOrientation const theta_bin = (cos_theta < 0) ?  ANTIPARALLEL : PARALLEL;
 	return theta_bin;
-
 }
 
 ////////////////////////////////////////////////////////////////
 bool
 residue_is_bulge( pose::Pose const & pose, Size const i )
 {
-
 	conformation::Residue const & rsd_i ( pose.residue( i ) ) ;
 	static Real const DIST_CUTOFF( 4.0 );
 
@@ -396,7 +378,6 @@ residue_is_bulge( pose::Pose const & pose, Size const i )
 	}
 
 	return true;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -406,18 +387,17 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 	Size const & i,
 	Size const & j )
 {
-
 	Size num_hbonds = 0;
 
 	static Real const HBOND_CUTOFF( -0.1 );
 	for ( Size n = 1; n <= hbond_set->nhbonds(); n++ ) {
 		core::scoring::hbonds::HBond const & hbond( hbond_set->hbond( n ) );
 
-		Size const & don_res_num = hbond.don_res();
-		Size const & don_hatm = hbond.don_hatm();
+		Size const don_res_num = hbond.don_res();
+		Size const don_hatm = hbond.don_hatm();
 
-		Size const & acc_res_num = hbond.acc_res();
-		Size const & acc_atm = hbond.acc_atm();
+		Size const acc_res_num = hbond.acc_res();
+		Size const acc_atm = hbond.acc_atm();
 
 		if ( don_res_num == i && acc_res_num == j ) {
 			if ( pose.residue( i ).atom_base( don_hatm ) > pose.residue( i ).first_sidechain_atom() &&
@@ -435,10 +415,8 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 
 				//if ( ( i == 4  && j == 10 ) || ( i==10 && j==4) )   std::cout << j << "--" << i << "  -> " << pose.residue( j ).atom_name( don_hatm) << " " << pose.residue( i ).atom_name( acc_atm ) << hbond.energy() << std::endl;
 				if ( hbond.energy() <= HBOND_CUTOFF ) num_hbonds++;
-
 			}
 		}
-
 	}
 
 	if ( num_hbonds > 0 ) return num_hbonds;
@@ -448,18 +426,10 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 	conformation::Residue const & rsd_i( pose.residue( i ) ) ;
 	conformation::Residue const & rsd_j( pose.residue( j ) ) ;
 
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd_i.accpt_pos().begin(),
-			anume = rsd_i.accpt_pos().end(); anum != anume; ++anum ) {
-
-		Size const aatm( *anum ) ;
+	for ( Size const aatm : rsd_i.accpt_pos() ) {
 		if ( aatm <= rsd_i.first_sidechain_atom() ) continue;
 
-		for ( chemical::AtomIndices::const_iterator
-				hnum  = rsd_j.Hpos_polar().begin(),
-				hnume = rsd_j.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const hatm( *hnum );
-
+		for ( Size const hatm : rsd_j.Hpos_polar() ) {
 			if ( rsd_j.atom_base( hatm ) <= rsd_j.first_sidechain_atom() ) continue;
 
 			if ( ( rsd_i.xyz( aatm ) - rsd_j.xyz( hatm ) ).length() < DIST_CUTOFF  ) {
@@ -469,19 +439,10 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 		}
 	}
 
-
-	for ( chemical::AtomIndices::const_iterator
-			anum  = rsd_j.accpt_pos().begin(),
-			anume = rsd_j.accpt_pos().end(); anum != anume; ++anum ) {
-
-		Size const aatm( *anum ) ;
+	for ( Size const aatm : rsd_j.accpt_pos() ) {
 		if ( aatm <= rsd_j.first_sidechain_atom() ) continue;
 
-		for ( chemical::AtomIndices::const_iterator
-				hnum  = rsd_i.Hpos_polar().begin(),
-				hnume = rsd_i.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const hatm( *hnum );
-
+		for ( Size const hatm : rsd_i.Hpos_polar() ) {
 			if ( rsd_i.atom_base( hatm ) <= rsd_i.first_sidechain_atom() ) continue;
 
 			if ( ( rsd_j.xyz( aatm ) - rsd_i.xyz( hatm ) ).length()  < DIST_CUTOFF  ) {
@@ -490,7 +451,6 @@ bases_form_a_hydrogen_bond( core::scoring::hbonds::HBondSetOP const & hbond_set,
 			}
 		}
 	}
-
 
 	return false;
 }
@@ -502,7 +462,6 @@ bases_are_coplanar(
 	Size const & i,
 	Size const & j )
 {
-
 	using namespace core::scoring::rna;
 
 	RNA_ScoringInfo  & rna_scoring_info( nonconst_rna_scoring_info_from_pose( pose ) );
@@ -515,16 +474,12 @@ bases_are_coplanar(
 	Vector const & centroid_i( base_centroids[i] );
 	kinematics::Stub const & stub_i( base_stubs[i] );
 	Matrix const & M_i( stub_i.M );
-	//Vector const & x_i = M_i.col_x();
-	//Vector const & y_i = M_i.col_y();
 	Vector const & z_i = M_i.col_z();
 
 	Vector const & centroid_j( base_centroids[j] );
 	kinematics::Stub const & stub_j( base_stubs[j] );
 
 	Vector d_ij = centroid_j - centroid_i;
-	//Real const dist_x = dot_product( d_ij, x_i );
-	// Real const dist_y = dot_product( d_ij, y_i );
 	Real const dist_z = dot_product( d_ij, z_i );
 
 	Matrix const & M_j( stub_j.M );
@@ -535,11 +490,9 @@ bases_are_coplanar(
 	// if ( i == 5  && j == 8 )  std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
 	// if ( j == 5  && i == 8 )  std::cout << "DIST_Z COS_THETA " << dist_z << " " << cos_theta << std::endl;
 
-
 	static Real const rna_basepair_stagger_cutoff_( 2.8 );
 	static Real const COS_THETA_CUTOFF( 0.6 );
 	if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_  && std::abs( cos_theta ) > COS_THETA_CUTOFF ) return true;
-
 
 	// static Real const rna_basepair_stagger_cutoff_loose_( 3.5 );
 	// static Real const COS_THETA_CUTOFF_STRICT( 0.65 );
@@ -567,8 +520,7 @@ classify_base_pairs(
 	core::pose::Pose const & pose_input,
 	utility::vector1< core::pose::rna::BasePair> & base_pair_list,
 	utility::vector1< bool > & is_bulged
-)
-{
+) {
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 	using namespace core::chemical;
@@ -593,7 +545,6 @@ classify_base_pairs(
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ) );
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
-
 
 	//////////////////////////////////////////////////////////////
 	for ( Size i = 1; i <= pose.size(); i++ ) {
@@ -627,7 +578,6 @@ classify_base_pairs(
 			if ( false ) std::cout << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << core::chemical::rna::get_edge_from_num( edge_classification_i ) << " " << core::chemical::rna::get_edge_from_num( edge_classification_j ) << " " << orientation << std::endl;
 
 			//   }
-
 		}
 	}
 
@@ -640,15 +590,13 @@ classify_base_pairs(
 			std::cout << " BULGE " << i << std::endl;
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////
 Size
 get_number_base_stacks(
 	core::pose::Pose const & pose_input
-)
-{
+) {
 	return get_scored_base_stack_list( pose_input ).size();
 }
 
@@ -656,8 +604,7 @@ get_number_base_stacks(
 EnergyBaseStackList
 get_scored_base_stack_list(
 	core::pose::Pose const & pose_input
-)
-{
+) {
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 
