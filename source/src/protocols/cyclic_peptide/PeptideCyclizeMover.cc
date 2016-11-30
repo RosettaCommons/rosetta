@@ -135,7 +135,7 @@ void PeptideCyclizeMover::set_bond(core::Size res1, std::string atom1, core::Siz
 
 	counter_+=1;
 
-	printf ("I am setting bond for you\n");
+	//printf ("I am setting bond for you\n");
 	bond_assigned_=true;
 
 	return;
@@ -150,7 +150,7 @@ void PeptideCyclizeMover::set_distance(core::Size res1, std::string atom1, core:
 	cst_func_dist_.push_back(cst_func);
 
 	distance_assigned_=true;
-	printf ("Now I am setting distance for you\n");
+	//printf ("Now I am setting distance for you\n");
 
 	return;
 }
@@ -166,7 +166,7 @@ void PeptideCyclizeMover::set_angle(core::Size res_center, std::string atom_cent
 	cst_func_angle_.push_back(cst_func);
 
 	angle_assigned_=true;
-	printf ("setting angle dude\n");
+	//printf ("setting angle dude\n");
 
 	return;
 }
@@ -184,7 +184,7 @@ void PeptideCyclizeMover::set_torsion(core::Size res1, std::string atom1, core::
 	cst_func_torsion_.push_back(cst_func);
 
 	torsion_assigned_=true;
-	printf ("time for setting torsion\n");
+	//printf ("time for setting torsion\n");
 
 	return;
 }
@@ -228,7 +228,7 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 		return;
 	} else {
 		if ( selector_ ) {
-			printf ("setting residue selector\n");
+			//printf ("setting residue selector\n");
 			subset = selector_->apply( pose );
 		}
 	}
@@ -249,7 +249,7 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 		angle2->apply(pose);
 		angle1->set(res_center_,atom_center_,res1_angle_,atom1_angle_,res2_angle_,atom2_angle_,cst_func_angle_);
 		angle1->apply(pose);
-		printf("this is where angle constraints being set, if not assigned\n");
+		//printf("this is where angle constraints being set, if not assigned\n");
 		std::cout << "we are first setting the angle function " << cst_func_angle_ << " between " << res1_angle_ << atom1_angle_ << " and " << res_center_ << atom_center_ << " and " << res2_angle_ << atom2_angle_ << std::endl << "and then the function " << cst_func_angle2_ << " between " << res1_angle_ << atom1_angle2_ << " and " << res_center2_ << atom_center2_ << " and " << res2_angle_ << atom2_angle2_ << std::endl;
 	} else {
 
@@ -311,15 +311,15 @@ PeptideCyclizeMover::parse_my_tag(
 	counter_=0;
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Bond" ) {
-			printf ("you have assigned a Bond to be formed\n");
+			//printf ("you have assigned a Bond to be formed\n");
 			set_bond ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"), (*tag_it)->getOption< bool >( "add_termini" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
 		}
 		if ( (*tag_it)->getName() == "Distance" ) {
-			printf ("getting distance constraints from user\n");
+			//printf ("getting distance constraints from user\n");
 			set_distance ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
 		}
 		if ( (*tag_it)->getName() == "Angle" ) {
-			printf ("getting angle constraints from user \n");
+			//printf ("getting angle constraints from user \n");
 			set_angle ((*tag_it)->getOption<core::Size> ("res_center"),(*tag_it)->getOption<std::string> ("atom_center"),(*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
 		}
 		if ( (*tag_it)->getName() == "Torsion" ) {
@@ -329,7 +329,7 @@ PeptideCyclizeMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("residue_selector") ) {
-		printf ("residue selector being read in\n");
+		//printf ("residue selector being read in\n");
 		set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	}
 
