@@ -14,7 +14,9 @@
 # /// @author Andrew Leaver-Fay
 # /// @author Sergey Lyskov
 
-import sys, time, os, re, os.path, subprocess, commands
+from __future__ import print_function
+
+import sys, time, os, re, os.path, subprocess
 
 def update_file_if_changed(filename, contents):
     changed = False
@@ -62,9 +64,14 @@ def retrieve_version_information():
     # See commit log for  dbbff5655669f41af0dfa7c9421fc89e36b2a227
     commit_id = 'unknown'
     if os.path.isfile('get_commit_id.sh'):
-        (res, output) = commands.getstatusoutput('./get_commit_id.sh %s' % ver)
+        try:
+            res = 0
+            output = subprocess.check_output(['./get_commit_id.sh {}'.format(ver)])
+        except subprocess.CalledProcessError as err:
+            res = err.returncode
+            output = err.output
 
-        print 'Asked Testing server for commit id, got reply:', repr(output)
+        print('Asked Testing server for commit id, got reply:', repr(output))
 
         if (res  or  not output  or not output.isdigit() ):
             commit_id = 'failed_to_get_id' # simple validation
