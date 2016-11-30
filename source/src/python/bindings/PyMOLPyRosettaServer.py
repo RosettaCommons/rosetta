@@ -8,13 +8,9 @@
 
 """
 @file    PyMOLPyRosettaServer.py
-
 @brief   Establishes a link between PyMOL and PyRosetta
-
 @author  Sergey Lyskov, Johns Hopkins University
-
 @edits   Evan Baugh, Rebecca Alford, Jason Labonte & Julia Koehler Leman
-
 @details This is the script to run to let you view PyRosetta runs inside PyMOL.
          To run it:
              1) Open PyMOL
@@ -317,10 +313,10 @@ class PR_PyMOLServer:
             bytes 10:...  - name
             bytes ...:... - message itself
         """
+        #print("the initial message is {0}".format(msg))
         ptype = msg[:8].tostring()
         flags = ord(msg[8])
         name_len = ord(msg[9])
-        #print 'name_len:', name_len
         name = msg[10:(10 + name_len)].tostring()
         data = msg[10 + name_len:]  #.tostring()
         #print 'Decoy type: %s, name: %s' % (ptype, name)
@@ -374,13 +370,9 @@ class PR_PyMOLServer:
                 s = bz2.decompress(data[(1 + e_type_len):])
             #print 'Compression stats: %s-->%s' % (len(data[(1 + e_type_len):]),
             #                                      len(s) )
-
+            #print("the decompressed data is {0} \n".format(s))
             try:
-                #for i in range(0, len(s), 7):
-                #    pymol.cmd.color('R%s' % s[(i + 5):(i + 7)],
-                #                    '%s and chain %s and resi %s' % (name,
-                #                                    s[i], s[(i + 1):(i + 5)]))
-                #print 'Coloring model:', name
+               #print 'Coloring model:', name
                 self._color_model(name, e_type, s)
             except pymol.parsing.QuietException:
                 print "Coloring failed..."
@@ -445,8 +437,16 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Display hydrogen bonds.
-        elif ptype == 'hbd.bz2 ':
-            data = bz2.decompress(data)
+                # Energy data.
+        elif ptype.startswith('hbd'):
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+                #print("data is {0}\n".format(data))
+            elif ptype == 'hbd.bz2 ':
+                data = bz2.decompress(data)
             # First 5 characters are the # of H-bonds.
             nhbonds = data[:5]
             data = data[5:]  # 22 char per H-bond: 6+4 + 6+4 + 2
@@ -466,7 +466,8 @@ class PR_PyMOLServer:
                     # Make selection.
                     hbname = 'hb_' + acc_res + acc_chain + acc_name + '_' + \
                                     don_res + don_chain + don_name + '_' + name
-                    pymol.cmd.distance(hbname,
+                    hbname = "hb_name"
+                    pymol.cmd.distance(hbname, 
                                        name + ' and chain ' + acc_chain +
                                        ' and res ' + acc_res + ' and name ' +
                                        acc_name,
@@ -484,8 +485,15 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Update display of secondary structure.
-        elif ptype == ' ss.bz2 ':
-            data = bz2.decompress(data)
+        elif ptype.startswith(' ss'):
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == ' ss.bz2 ':
+                data = bz2.decompress(data)
+
             size = int(data[0])
             data = data[1:]
             ss_map = {'H':'H', 'E':'S', 'L':'L'}
@@ -503,8 +511,16 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Color by a boolean value for polar residues.
-        elif ptype == 'pol.bz2 ':
-            data = bz2.decompress(data)
+        elif ptype.startswith('pol'):
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'pol.bz2 ':
+                data = bz2.decompress(data)
+
+            #print("in the pol the data is {0}\n".format(data))
             size = int(data[0])
             data = data[1:]
             try:
@@ -512,6 +528,7 @@ class PR_PyMOLServer:
                     dat = data[(i + 6):(i + 6 + size)]
                     sel = '%s and chain %s and resi %s' % (name, data[i + 5],
                                                        data[i:(i + 5)].strip())
+                    #print("dat is {0}\nsel is {1}\n".format(dat, sel))
                     color = 'blue'
                     if int(dat):
                         color = 'red'
@@ -523,8 +540,15 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Color by MoveMap DOF.
-        elif ptype == 'mm1.bz2 ':
-            data = bz2.decompress(data)
+        elif ptype.startswith('mm'):
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'mm1.bz2 ':
+                data = bz2.decompress(data)
+
             size = int(data[0])
             data = data[1:]
             try:
@@ -553,8 +577,15 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Color by foldtree edges.
-        elif ptype == 'ft1.bz2 ':
-            data = bz2.decompress(data)
+        elif ptype.startswith('ft1'):
+            #print 'etype=%s  msg=%s' % (e_type, data)
+
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'ft1.bz2 ':
+                data = bz2.decompress(data)
+
             size = int(data[0])
             data = data[1:]
             try:
@@ -880,7 +911,6 @@ def draw_membrane_planes( plane_points, normal_vector ):
     Draw CGO Planes Representing the upper & lower membrane planes
     Adapted from Evan Baugh's Draw Object code by Rebecca Alford to work
     with the framework
-
     """
     # Settings
     name = 'membrane_planes'
@@ -891,7 +921,7 @@ def draw_membrane_planes( plane_points, normal_vector ):
     # Create the top plane
     top_plane = [
         BEGIN, TRIANGLE_FAN,
-		ALPHA, 0.5,
+        ALPHA, 0.5,
         COLOR, color.x, color.y, color.z,
         NORMAL, normal.x, normal.y, normal.z,
         ]
@@ -909,7 +939,7 @@ def draw_membrane_planes( plane_points, normal_vector ):
     # Create the bottom plane
     bottom_plane = [
         BEGIN, TRIANGLE_FAN,
-		ALPHA, 0.5,
+        ALPHA, 0.5,
         COLOR, color.x, color.y, color.z,
         NORMAL, normal.x, normal.y, normal.z,
         ]
@@ -930,7 +960,6 @@ def draw_membrane_planes( plane_points, normal_vector ):
 def make_axis(name, ends, dr, scale=False, axis_color='', num=0):
     """
     Make an axis 'name' from 'ends[0]' to 'ends[1]' on the 'dr' (direction).
-
     'scale' bool tells to label axis or not; 'axis_color' determines the axis
     color; 'num' allows intermediate scale points.
     """
@@ -977,7 +1006,6 @@ def make_axis(name, ends, dr, scale=False, axis_color='', num=0):
 def scale_axes(name='x_axis or y_axis or z_axis'):
     """
     Labels the selection name.
-
     Used here for convenience: axis point value str in resn.
     """
     pymol.cmd.hide('label', name)
@@ -987,7 +1015,6 @@ def scale_axes(name='x_axis or y_axis or z_axis'):
 def get_ends(data):
     """
     Determines the ends for axes from list.
-
     Defaults to min, max, but if not pos/neg.
     Determines based on closest point.
     """
@@ -1037,7 +1064,6 @@ def add_point(name, point, connect='', rescale=False, scale=False,
               axis_color='', num=0, banner=''):
     """
     Adds a point to existing data, reconnecting points optionally.
-
     Adds 'point' to 'name' and connects it with color 'connect' (empty for no
     connection).
     'rescale' will rescale the axes; 'scale' will label the scales;

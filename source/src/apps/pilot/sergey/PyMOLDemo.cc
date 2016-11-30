@@ -13,7 +13,6 @@
 /// @author Sergey Lyskov
 
 #include <basic/Tracer.hh>
-
 #include <protocols/moves/PyMolMover.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/PDBInfo.hh>
@@ -52,16 +51,20 @@ int main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
+    
 	core::pose::Pose pose;
-	core::import_pose::pose_from_file(pose, "src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
+    core::import_pose::pose_from_file(pose,"src/python/bindings/test/data/1a6t.pdb", core::import_pose::PDB_file);
+    //core::import_pose::pose_from_file(pose,"/Users/xlong3/lab_work_data/raw_files/antibody_file/1a6t/1a6t.pdb",core::import_pose::PDB_file);
+
 
 	protocols::moves::AddPyMolObserver( pose );
-	for(int j=0; j<32; j++) {
-		pose.set_phi(70, pose.phi(70) + 1. );
-		usleep(500000);
-	}
-
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
+    /*	
+    for(int j=0; j<32; j++) {
+            pose.set_phi(70, pose.phi(70) + 1. );
+            usleep(500000);
+    }
+    */
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 	scorefxn->score(pose);
 	//pose.energies().residue_total_energies(1);
 	//T("Scoring done!") << "---------------------" << std::endl;
@@ -70,12 +73,13 @@ int main( int argc, char * argv [] )
 
 	//pymol.keep_history(true);
 	//pymol.update_interval(.1);
+    //dat << std::right << std::setw(size);
 
 	core::Real a = 0.;
 
 	pymol.print("Hi PyMOL!\n");
 
-	for(int j=0; j<16; j++) {
+	for(int j=0; j<1; j++) {
 		pose.set_phi(50, a);
 		a += 2.;
 
@@ -92,21 +96,50 @@ int main( int argc, char * argv [] )
 		//TR << a << std::endl ;
 	}
 
-	for(int j=0; j<1000; j++) {
-		for(unsigned int r=1; r<=pose.size(); r++) {
+    /*	
+    for(int j=0; j<2; j++) {
+		for(unsigned int r=1; r<=10; r++) {
+            //constuct a map from residue numbers to a color index which code what color 
 			std::map<int, int> C = utility::tools::make_map(int(r), int(protocols::moves::XC_white), int(1+pose.size() - r), int(protocols::moves::XC_red) );
 			pymol.send_colors(pose, C );
 			usleep(500000);
+            
 		}
-	}
+	}*/
+
+    pymol.label_energy(pose,"total_score");
+     std::cout<<"finished the pymol.label energy\n";
+    pymol.send_hbonds(pose);
+    std::cout<<"finished the pymol.send_hbonds\n";
+    pymol.send_ss(pose, "");
+    std::cout<<"finished the send_ss\n";
+    pymol.send_polars(pose);
+    std::cout<<"finished the send_polars\n";
+    //second argument is movemap
+    core::kinematics::MoveMap movemap;
+    std::cout<<"finished instantiating a movemap\n";
+    movemap.set_bb(true);
+    movemap.set_chi(false);
+    pymol.send_movemap(pose, movemap);
+    std::cout<<"finished send_movemap function\n";
+
+    //second argument is a foldtree
+    core::kinematics::FoldTree fold_tree;
+    //std::cout<<" finished instantiating a fold tree"<<std::endl;
+    fold_tree = pose.fold_tree();
+    //std::cout<<"finished assign the pose fold tree to the instantiated one"<<std::endl;
+    pymol.send_foldtree(pose, fold_tree);
+    std::cout<<"finished send_foldtree\n";
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
+   //~pymol;
 }
 
+/*
 
 int _main( int argc, char * argv [] )
 {
@@ -114,13 +147,13 @@ int _main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	protocols::moves::UDPSocketClient s;
+	protocols::moves::UDPSocketClient s("127.0.0.1", 65000);
 
 	std::string msg;
 	for(int i=0; i<65536; i++) msg.push_back('_');
 
 	msg = msg + "Qwe...";
-
+    
 	std::ostringstream ostringstream_;
 	zlib_stream::zip_ostream zipper(ostringstream_, true);
 	zipper << msg;
@@ -131,7 +164,7 @@ int _main( int argc, char * argv [] )
 	// ___Qwe...') 65542
 
 
-	/*
+	
 	sockaddr_in addr;
 	memset(&addr, '\0', sizeof(sockaddr_in));
 
@@ -149,6 +182,6 @@ int _main( int argc, char * argv [] )
 	if( error == -1 ) {
 		printf("Cannot connect... Exiting.\n");
 		return(1);
-	}*/
+	}
 	return 0;
-}
+} */

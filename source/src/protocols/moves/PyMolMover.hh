@@ -26,8 +26,9 @@
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/datacache/CacheableObserver.hh>
-
+#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/kinematics/FoldTree.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -35,6 +36,8 @@
 
 // c++ headers
 #include <string>
+#include <numeric/types.hh>
+#include <cmath>
 
 // REQUIRED FOR WINDOWS
 #ifndef __native_client__
@@ -251,7 +254,7 @@ public:
 	~UDPSocketClient();
 
 	void sendMessage(std::string msg);
-
+    
 	void show(std::ostream & output) const;
 
 private:
@@ -302,32 +305,54 @@ public:
 	virtual void apply( Pose const & );
 
 	/// @brief Send message for PyMol to print
-	void print(std::string const & message);
+	void print( std::string const & message );
 
 	/// @brief Send specified energy to PyMOL.
-	void send_energy(Pose const &, core::scoring::ScoreType stype = core::scoring::total_score);
+	void send_energy( Pose const &, core::scoring::ScoreType stype = core::scoring::total_score );
 
 	/// @brief Send specified energy to PyMOL.
-	void send_energy(Pose const &, std::string const & stype);
+	void send_energy( Pose const &, std::string const & stype );
 
 	/// @brief Send RAW energy array for coloring by PyMOL
-	void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
+    ///already implemented
+	void send_RAW_Energies( Pose const &, std::string energyType, utility::vector1<int> const & energies );
 
 	/// @brief Send Membrane Planes to PyMol
 	/// @details If pose is a membrane pose
 	/// pymol viewer will build CGO planes from points specified
+   //**already implemented
 	void send_membrane_planes( Pose const & );
+    
+    void send_any( std::string ptype, core::pose::Pose const &pose, utility::vector1< std::string > data, core::Size size=6 );	
+	/// Xiyao's Code
+	void label_energy( Pose const &input_pose, std::string energy_type);
+	
+	void send_hbonds( Pose const & pose );
+	
+	void send_ss( Pose &pose, std::string ss );
+	
+	void send_polars( Pose const &pose );
+	
+	void send_movemap( Pose const &pose, core::kinematics::MoveMap const &movemap );
+	
+	void send_foldtree( Pose const &pose, core::kinematics::FoldTree const &foldtree );
+	/// End Xiyao's Code
+
 
 	/// @brief Tell PyMOL to color protein with supplied custom colors
+    //**already implemented
 	virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
 
 	/// @brief Specify PyMOL model name
+    //**already implemented
 	std::string pymol_name() { return pymol_name_; }
+    //**already implemented set the private variable pymol_name to the define string
 	void pymol_name(std::string new_pymol_name) { pymol_name_ = new_pymol_name; }
 
 
 	/// @brief Flag that specify if PyMOL mover should send current Pose energy on every apply. If name set to empty string (default) then name derived from pdb_info will be used
 	bool update_energy() { return update_energy_; }
+    //**already implemented here  appear in the PyMolMover::PyMolMover constructor in the .cc file
 	void update_energy(bool f) { update_energy_ = f; }
 
 
@@ -382,9 +407,19 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-private:
-	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
 
+//private methods
+private:
+    //why this line is commented out?
+	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
+	/// Xiyao's code
+	/// @brief return vector of energy_type energy for each residue
+	utility::vector1< core::Real > get_energies( Pose const & pose, core::scoring::ScoreType energy_type );
+	
+	/// @brief return name, stripped of path and ".pdb"
+	std::string get_pose_name(Pose const & pose);
+	
+	/// End Xiyao's code
 
 
 	bool is_it_time();
