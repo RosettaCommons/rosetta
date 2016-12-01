@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
@@ -76,6 +77,10 @@ public:
 	///
 	void set_target(core::Size const target_in);
 
+	/// @brief Set a selector if specified by the user
+	///
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in);
+
 	/// @brief Get this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	std::string target() const { return target_; }
@@ -108,6 +113,8 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
+	void make_mutation(core::pose::Pose &, core::Size);
+	
 	std::string
 	get_name() const override;
 
@@ -140,7 +147,10 @@ private:
 	/// @brief If true, updates polymer-dependent atoms.
 	/// @details false by default.
 	bool update_polymer_dependent_;
-
+ 
+	///@brief gets a residue selector
+	///
+  core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 } // moves

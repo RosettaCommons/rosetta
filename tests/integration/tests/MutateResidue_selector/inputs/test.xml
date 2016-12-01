@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <Phi name="Phi" select_positive_phi="true"/>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <MutateResidue name="mutate" residue_selector="Phi" new_res="PHE" preserve_atom_coords="1"/>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover="mutate"/>
+    </PROTOCOLS>
+    <OUTPUT />
+</ROSETTASCRIPTS>

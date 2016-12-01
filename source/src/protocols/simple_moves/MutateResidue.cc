@@ -24,7 +24,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/select/residue_selector/util.hh>
 //parsing
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -68,7 +70,8 @@ MutateResidue::MutateResidue() :
 	res_name_(""),
 	preserve_atom_coords_(false),
 	mutate_self_(false),
-	update_polymer_dependent_(false)
+	update_polymer_dependent_(false),
+	selector_()
 {}
 
 /// @brief copy ctor
@@ -79,7 +82,8 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 	res_name_(dm.res_name_),
 	preserve_atom_coords_(dm.preserve_atom_coords_),
 	mutate_self_(dm.mutate_self_),
-	update_polymer_dependent_(dm.update_polymer_dependent_)
+	update_polymer_dependent_(dm.update_polymer_dependent_),
+	selector_(dm.selector_)
 {}
 
 /// @brief Mutate a single residue to a new amino acid
@@ -92,7 +96,8 @@ MutateResidue::MutateResidue( core::Size const target, string new_res ) :
 	res_name_(std::move(new_res)),
 	preserve_atom_coords_(false),
 	mutate_self_(false),
-	update_polymer_dependent_(false)
+	update_polymer_dependent_(false),
+	selector_()
 {
 	set_target( target );
 }
@@ -103,7 +108,8 @@ MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
 	preserve_atom_coords_(false),
 	mutate_self_(false),
-	update_polymer_dependent_(false)
+	update_polymer_dependent_(false),
+	selector_()
 {
 	set_target( target );
 }
@@ -114,7 +120,8 @@ MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const 
 	res_name_( name_from_aa( aa )),
 	preserve_atom_coords_(false),
 	mutate_self_(false),
-	update_polymer_dependent_(false)
+	update_polymer_dependent_(false),
+	selector_()
 {
 	set_target( target );
 }
@@ -126,18 +133,26 @@ MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const 
 *  - target_pdb_nums or target_res_nums. A list of possible target residues
 */
 void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & /*pose*/)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
-	if ( !tag->hasOption("target") ) {
-		TR.Error << "Error: no 'target' parameter specified." << std::endl;
+	if ( !tag->hasOption("target") && !tag->hasOption("residue_selector") ) {
+		TR.Error << "Error: you need to define either a target residue using 'target' or a residue selector using 'residue_selector'." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
-	set_target( tag->getOption<string>("target") );
+
+	if ( tag->hasOption("target") && tag->hasOption("residue_selector") ) {
+    TR.Error << "Error: you can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
+    throw utility::excn::EXCN_RosettaScriptsOption("");
+  }
+
+	if (tag->hasOption("target")){
+    set_target( tag->getOption<string>("target") );
+  }
 	//set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
 
 	//Set the identity of the new residue:
@@ -155,6 +170,10 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 
 	//Set whether we're updating coordinates of polymer bond-dependent atoms.
 	set_update_polymer_dependent( tag->getOption<bool>( "update_polymer_bond_dependent", update_polymer_dependent() ) );
+
+	if ( tag->hasOption("residue_selector")) {                                                                                 
+      set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );                                                                     
+  }
 
 	return;
 }
@@ -176,8 +195,23 @@ void MutateResidue::apply( Pose & pose ) {
 
 	// Converting the target string to target residue index must be done at apply time,
 	// since the string might refer to a residue in a reference pose.
-	core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
+	if (selector_){                                                                                                                                          
+    core::select::residue_selector::ResidueSubset subset=selector_->apply( pose );                                                                         
+                                                                                                                                                           
+    for ( core::Size ir=1, irmax=pose.total_residue(); ir<=irmax; ++ir ) {                                                                                 
+                                                                                                                                                           
+      if ( subset[ir] ) {                                                                                                                                  
+          make_mutation(pose,ir);                                                                                                                          
+      }                                                                                                                                                    
+    }                                                                                                                                                      
+  } else {  
+		core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
+		make_mutation(pose,rosetta_target);
+	}
+}
 
+void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_target)                                                                      
+{ 
 	if ( rosetta_target < 1 ) {
 		// Do nothing for 0
 		return;
@@ -262,12 +296,14 @@ void MutateResidue::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	attlist + XMLSchemaAttribute( "preserve_atom_coords", xsct_rosetta_bool,
 		"Preserve atomic coords as much as possible" );
 
-	// AMW: can this take a residue selector? No evidence in parse_my_tag, but
-	// some support from Parisa's submitted XML
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+    attlist, "residue_selector",
+    "name of a residue selector that specifies the subset to be mutated" );
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
-		"Change a single residue to a different type. For instance, mutate Arg31 to an Asp.",
+		"Change a single residue or a given subset of residues to a different type. For instance, mutate Arg31 to an Asp, or mutate all Prolines to Alanine",
 		attlist );
 }
 
@@ -285,7 +321,16 @@ void MutateResidueCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	MutateResidue::provide_xml_schema( xsd );
 }
 
-
+void MutateResidue::set_selector(                                                                                                                          
+  core::select::residue_selector::ResidueSelectorCOP selector_in                                                                                           
+) {                 
+  if ( selector_in ) {                                                                                                                                     
+	selector_ = selector_in;                                                                                                                                 
+  } else {                                                                                                                                                 
+      utility_exit_with_message("Error in protocols::simple_moves::MutateResidue::set_selector(): Null pointer passed to function!");               
+  }                                                                                                                                                        
+  return;                                                                                                                                                  
+}
 
 
 
