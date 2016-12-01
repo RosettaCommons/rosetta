@@ -417,19 +417,17 @@ make_symmetric_pdb_info(
 	utility::vector1< bool > used_chainIDs(nuniqueIDs, false);
 	std::map< std::pair< Size,Size >, Size > symmChainIDMap;
 
-	// first pass, find chainIDs in base unit, keep these the same
-	Size nclones = 1;
+	// 1: find chainIDs in base unit, keep these the same
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		char chn_id = pdb_info_src->chain( res );
 		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
 		if ( chn_idx!=0 ) {
 			asymm_chains[chn_idx] = used_chainIDs[chn_idx] = true;
 		}
-
-		if ( symm_info->bb_is_independent(res) ) nclones = std::max<Size>( symm_info->bb_clones(res).size(), nclones );
 	}
 
-	// second pass, map (base chain,clone#) => new chain
+	// 2: map (base chain id,clone#) => new chain id
+	Size nclones = symm_info->num_bb_clones();
 	for ( uint clone_i = 1; clone_i <= nclones; ++clone_i ) {
 		for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 			char chn_id = pdb_info_src->chain( res );
@@ -440,7 +438,7 @@ make_symmetric_pdb_info(
 				for ( newchainidx = 1; newchainidx <= nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx ) ;
 
 				if ( newchainidx > nuniqueIDs ) { // all ids used
-					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = nuniqueIDs;
+					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = 0; // use ' '
 				} else {
 					used_chainIDs[newchainidx] = true;
 					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = newchainidx;
@@ -449,56 +447,43 @@ make_symmetric_pdb_info(
 		}
 	}
 
-
+	// 3: now build the symmetrized pdbinfo
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		// resids in scoring subunit
-		int res_id = pdb_info_src->number( res );
-		pdb_info_target->number( res, res_id );
+		int src_res = res;
+		if (!symm_info->bb_is_independent(res)) {
+			src_res = symm_info->bb_follows(res);
+		}
+
+		int tgt_res_id = pdb_info_src->number( res );
+		pdb_info_target->number( src_res, tgt_res_id );
 
 		// insertion codes
-		char icode = pdb_info_src->icode( res );
-		pdb_info_target->icode( res, icode );
+		char tgt_icode = pdb_info_src->icode( res );
+		pdb_info_target->icode( src_res, tgt_icode );
 
 		// chnids in scoring subunit
-		char chn_id = pdb_info_src->chain( res );
-		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
-		//if (chn_idx==0) chn_idx = 1; // treat all weird-character chains as 'A' in symm copies  //fpd 11-10-13 no longer necessary
-		pdb_info_target->chain( res, chn_id );
+		char tgt_chn_id = pdb_info_src->chain( res );
+		Size tgt_chn_idx = basic::get_pymol_chain_index_1(tgt_chn_id);
+		pdb_info_target->chain( src_res, tgt_chn_id );
 
 		// symmetrize B's
 		for ( Size atm=1; atm <= pdb_info_src->natoms(res); ++atm ) {
-			core::Real b_atm = pdb_info_src->temperature( res, atm );
-			pdb_info_target->temperature( res, atm, b_atm );
-		}
-
-		// scoring subunit may not be the first
-		Size res_master = res;
-		if ( !symm_info->bb_is_independent(res) ) {
-			res_master = symm_info->bb_follows(res);
-
-			int clone_res( res_master );
-			pdb_info_target->number( clone_res, res_id );
-			pdb_info_target->icode( clone_res, icode );
-
-			int newchn_idx = chn_idx;
-			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
-			for ( Size atm=1; atm <= pdb_info_src->natoms(res) ; ++atm ) {
-				pdb_info_target->temperature( clone_res, atm, pdb_info_src->temperature( res, atm ) );
-			}
+			core::Real tgt_b_atm = pdb_info_src->temperature( res, atm );
+			pdb_info_target->temperature( src_res, atm, tgt_b_atm );
 		}
 
 		int clone_counter = 1;
-		for ( std::vector< Size>::const_iterator
-				clone     = symm_info->bb_clones( res_master ).begin(),
-				clone_end = symm_info->bb_clones( res_master ).end();
-				clone != clone_end; ++clone ) {
-			int clone_res( *clone );
-			pdb_info_target->number( clone_res, res_id );
-			pdb_info_target->icode( clone_res, icode );
+		utility::vector1< Size > const & clones_i = symm_info->bb_clones( src_res );
+		for ( core::Size i=1; i<=clones_i.size(); ++i ) {
+			int clone_res = clones_i[i];
+			pdb_info_target->number( clone_res, tgt_res_id );
+			pdb_info_target->icode( clone_res, tgt_icode );
 
-			int newchn_idx = symmChainIDMap[ std::make_pair(chn_idx,clone_counter++) ];
+			int newchn_idx = symmChainIDMap[ std::make_pair(tgt_chn_idx,clone_counter) ];
+
 			if ( newchn_idx == 0 ) {
-				pdb_info_target->chain( clone_res, ' ' );
+				pdb_info_target->chain( clone_res, ' ' ); // out of chain IDs
 			} else {
 				pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
 			}
@@ -506,6 +491,8 @@ make_symmetric_pdb_info(
 			for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm ) {
 				pdb_info_target->temperature( clone_res, atm, pdb_info_src->temperature( res, atm ) );
 			}
+
+			clone_counter++;
 		}
 	}
 

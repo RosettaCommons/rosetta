@@ -798,23 +798,16 @@ void HybridizeProtocol::validate_template(
 	for ( core::Size i=1; i<=nres_templ; ++i ) {
 		char templ_aa = template_pose->residue(i).name1();
 		core::Size i_fasta = template_pose->pdb_info()->number(i);
+		bool is_ligand = !template_pose->residue(i).is_protein();
 
 		// ligands
-		if ( i_fasta > nres_fasta ) {
-			bool number_correct = (i_fasta==next_ligand);
-			bool is_ligand = !template_pose->residue(i).is_protein();
-			if ( !(number_correct && is_ligand) ) {
-				TR.Error << "Error in input numbering in template " << filename
-					<< " while reading residue " << i << std::endl;
-				if ( !is_ligand ) {
-					TR.Error << "   Residue number " << i_fasta << " is outside of input fasta range." << std::endl;
-					requires_alignment = true;
-					break;
-				} else {
-					TR.Error << "   Ligands must be numbered sequentially after protein residues." << std::endl;
-					TR.Error << "   Expected: " << next_ligand << "   Saw: " << i_fasta << std::endl;
-					template_pose->pdb_info()->number(i,next_ligand);
-				}
+		if ( i_fasta > nres_fasta || is_ligand ) {
+			if ( !is_ligand ) {
+				TR.Error << "   Residue number " << i_fasta << " is outside of input fasta range." << std::endl;
+				requires_alignment = true;
+				break;
+			} else {
+				template_pose->pdb_info()->number(i,next_ligand);
 			}
 			next_ligand++;
 		} else {
@@ -852,6 +845,7 @@ void HybridizeProtocol::validate_template(
 		core::Size counter = 1;
 		core::Size nres = template_pose->size();
 		for ( Size i=1; i<=nres; i++ ) {
+			if (! template_pose->residue(i).is_protein() ) continue; // will get fixed later
 			Size pdbnumber = template_pose->pdb_info()->number(counter);
 			Size fastanumber = sequencemap[i];
 			if ( fastanumber == 0 ) { // extra residues in template

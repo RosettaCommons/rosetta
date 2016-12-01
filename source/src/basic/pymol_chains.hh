@@ -19,8 +19,9 @@
 
 namespace basic {
 
+//fd removing '{' and '}' since they mess with pymol selection
 static std::string const pymol_chains(
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]{}|-_\\~=%" );
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]|-_\\~=%" );
 
 
 numeric::Size get_pymol_num_unique_ids();

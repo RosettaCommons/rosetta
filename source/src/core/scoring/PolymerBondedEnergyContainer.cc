@@ -339,18 +339,14 @@ bool
 PolymerBondedEnergyContainer::is_valid(
 	core::pose::Pose const &pose
 ) const {
-	//First, check that the number of residues is correct:
+	//fd (Nov 2016): Note that this container iterates over a set of edges independent of pose size
+	//   So as long as the #edges stays fixed, we are fine
+	//   Note that this means adding residues by jumps to a pose makes this still valid
+	//   This is fine.
 
+	// check that the correct connections have been set up.
 	core::Size nres( pose.size() );
-	//fd This does not work if the scoring subunit is not the first ....
-	//if ( core::pose::symmetry::is_symmetric(pose) ) {
-	// nres = core::pose::symmetry::symmetry_info(pose)->last_independent_residue();
-	//}
-	if ( size_ != nres ) return false;
-
-	//Next, check that the correct connections have been set up.
 	core::Size connect_count(0);
-	//bool correct_connections_found(true);
 	for ( core::Size ir=1; ir<=nres; ++ir ) { //Loop through all residues (or all residues in the asymmetric unit, if this is a symmetric pose).
 		if ( core::pose::symmetry::is_symmetric(pose) && !core::pose::symmetry::symmetry_info(pose)->bb_is_independent(ir) ) continue;
 
@@ -363,8 +359,8 @@ PolymerBondedEnergyContainer::is_valid(
 		for ( core::Size ic=1; ic<=nconnected; ++ic ) {
 			core::Size connect_i = rsd.residue_connection_partner( ic );
 			bool connect_found = false;
-			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
 
+			// ensure ir,rsd.residue_connection_partner( ic ) is in the list
 			for ( auto p = range.first; p != range.second && !connect_found; ++p ) {
 				if ( p->second == connect_i ) connect_found = true;
 			}
@@ -376,7 +372,8 @@ PolymerBondedEnergyContainer::is_valid(
 		}
 	}
 
-	// now we need to make sure there are no additional edges in current container
+	// every edge in the pose has been accounted for
+	// ensure there are no additional edges in current container
 	return ( connect_count == size_ );
 }
 

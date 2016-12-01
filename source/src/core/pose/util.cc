@@ -1225,10 +1225,8 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose ) {
 					continue; // skip empty record
 				} else {
 					// something is inconsistent
-					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HERE BE DRAGONS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-					TR.Warning << "WARNING: conf2pdb_chain(): chain mapping inconsistent, returning default map p 1=A, 2=B, ... ";
-					TR.Warning << "WARNING: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+					//fd: tone this message down a bit
+					TR.Warning << "WARNING: conf2pdb_chain(): chain mapping inconsistent, returning default map p 1=A, 2=B, ... " << std::endl;
 					TR.Warning << "existing " << c2p->first << " -> " << c2p->second << "  |  ";
 					TR.Warning << "new " << conf << " -> " << pdb << std::endl;
 					conf2pdb_chain_default_map(pose,conf2pdb);
