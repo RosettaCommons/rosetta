@@ -148,7 +148,9 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
 
     build_dir = prefix+'/llvm/build_' + release + '.' + Platform + ('.debug' if debug else '.release')
     if not os.path.isdir(build_dir): os.makedirs(build_dir)
-    execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON .. && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release'), silent=True)
+    execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release',
+                                                                                                                                                                                                              gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
+            silent=True)
     print()
     # build_dir = prefix+'/llvm/build-ninja-' + release
     # if not os.path.isdir(build_dir): os.makedirs(build_dir)
@@ -393,7 +395,9 @@ def  build_generated_bindings(rosetta_source_path):
 
     # if we ever go back to use static libs for intermediates: fix this on Mac: -DCMAKE_RANLIB=/usr/bin/ranlib -DCMAKE_AR=/usr/bin/ar
 
-    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} ../source'.format(config, prefix=prefix, python_version=_python_version_))
+    execute('Running CMake...', 'cd {prefix} && cmake -G Ninja {} -DPYROSETTA_PYTHON_VERSION={python_version} {py_lib} {py_include} ../source'.format(config, prefix=prefix, python_version=_python_version_,
+                                                                                                                                                      py_lib='-DPYTHON_LIBRARY='+Options.python_lib if Options.python_lib else '',
+                                                                                                                                                      py_include='-DPYTHON_INCLUDE_DIR='+Options.python_include_dir if Options.python_include_dir else ''))
 
     execute('Building...', 'cd {prefix} && ninja -j{jobs}'.format(prefix=prefix, jobs=Options.jobs))
 
@@ -436,7 +440,7 @@ def create_package(rosetta_source_path, path):
     shutil.copy(build_prefix + '/rosetta.so', package_prefix)
     distutils.dir_util.copy_tree(build_prefix + '/pyrosetta', package_prefix + '/pyrosetta', update=False)
 
-    generate_documentation(rosetta_source_path, path+'/documentation')
+    #generate_documentation(rosetta_source_path, path+'/documentation')
 
 
 
@@ -462,6 +466,11 @@ def main(args):
     parser.add_argument('--documentation', default='', help='Generate PyRosetta documentation at specified path (default is to skip documentation creation)')
 
     parser.add_argument('--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
+
+    parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
+    parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
+
+    parser.add_argument('--gcc-install-prefix', default=None, help='Path to GCC install prefix which will be used to determent location of libstdc++ for Binder build. Default is: auto-detected. Use this option if you would like to build Binder with compiler that was side-installed and which LLVM build system failed to identify. To see what path Binder uses for libstdc++ run `binder -- -xc++ -E -v`.')
 
     global Options
     Options = parser.parse_args()

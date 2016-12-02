@@ -1,2 +1,0 @@
-SCORE=talaris2013
-PATCH=

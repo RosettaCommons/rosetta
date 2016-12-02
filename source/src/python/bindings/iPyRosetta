@@ -1,6 +1,0 @@
-#!/bin/bash
-
-PYROSETTA=${BASH_SOURCE[0]%/*}
-
-source $PYROSETTA/SetPyRosettaEnvironment.sh
-$PYROSETTA/ipython.py $*

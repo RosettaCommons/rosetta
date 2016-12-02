@@ -41,12 +41,13 @@ def retrieve_version_information():
     ver = ""
     url = ""
     commit_date = ""
-
     if subprocess.call("git rev-parse --show-toplevel", shell=True, stdout=subprocess.PIPE) is 0:
+
         try:
             ver = subprocess.check_output("git rev-parse HEAD", shell=True).strip()
+            ver = ver.decode('utf-8') if type(ver) == bytes else ver
             url = subprocess.check_output("git remote -v | grep fetch | awk '{print $2}' | head -n1", shell=True).strip()
-            commit_date = subprocess.check_output("git log %s -1 --format='%%ci'" % ver, shell=True).strip()
+            commit_date = subprocess.check_output("git log {} -1 --format='%ci'".format(ver), shell=True).strip()
         except subprocess.CalledProcessError:
             pass
 
@@ -90,7 +91,6 @@ def generate_version_files():
     Although this is being placed in core/, it doesn't really belong to any subproject.
     There's no good way to know when the version summary will change, either, so we just generate the file every time.
     '''
-
     version_info = retrieve_version_information()
     # moved to utility/version.hh update_file_if_changed( os.path.normpath("src/devel/svn_version.cc"),  version_cc_template % version_info)
     update_file_if_changed( os.path.normpath("src/python/bindings/src/version.py"), version_py_template % version_info)
