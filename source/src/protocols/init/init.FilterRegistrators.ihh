@@ -20,6 +20,7 @@ using protocols::filters::FilterRegistrator;
 
 static FilterRegistrator< protocols::analysis::PeptideDeriverFilterCreator > reg_PeptideDeriverFilterCreator;
 
+static FilterRegistrator< protocols::cyclic_peptide::CycpepSymmetryFilterCreator > reg_CycpepSymmetryFilterCreator;
 static FilterRegistrator< protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator > reg_OversaturatedHbondAcceptorFilterCreator;
 
 static FilterRegistrator< protocols::enzdes::DiffAtomSasaFilterCreator > reg_DiffAtomSasaFilterCreator;

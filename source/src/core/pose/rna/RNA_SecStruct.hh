@@ -59,7 +59,7 @@ private:
 
 	void
 	set_secstruct( std::string const & secstruct );
-	
+
 	void
 	set_basepairs_from_secstruct();
 

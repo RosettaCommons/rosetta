@@ -106,7 +106,7 @@ public: // public interface
 	void
 	set_recovery_threshold(
 		core::Real const recovery_threshold) override;
-	
+
 	virtual
 	void
 	set_absolute_threshold(

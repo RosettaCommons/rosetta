@@ -156,7 +156,7 @@ build_optimal_water_O_on_donor(
 )
 {
 	core::Real donor_length = optimal_water_distance;
-	if (basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ].user() ) {
 		donor_length = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_donor ]();
 	}
 	return ( dxyz + donor_length * ( hxyz - dxyz ).normalized() );
@@ -180,19 +180,19 @@ build_optimal_water_Os_on_acceptor(
 	//Real theta(0);
 	utility::vector1< Real > params_sp2, params_sp3, params_ring;
 
-	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user()) {
+	if ( !basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ].user() ) {
 		params_sp2.push_back(distance);params_sp2.push_back(120.0);params_sp2.push_back(0.0);
 		params_sp2.push_back(distance);params_sp2.push_back(120.0);params_sp2.push_back(180.0);
 	} else {
 		params_sp2 = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp2 ]();
 	}
-	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user()) {
+	if ( !basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ].user() ) {
 		params_sp3.push_back(distance);params_sp3.push_back(109.0);params_sp3.push_back(120.0);
 		params_sp3.push_back(distance);params_sp3.push_back(109.0);params_sp3.push_back(240.0);
 	} else {
 		params_sp3 = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_sp3 ]();
 	}
-	if (!basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user()) {
+	if ( !basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ].user() ) {
 		params_ring.push_back(distance);params_ring.push_back(180.0);params_ring.push_back(0.0);
 	} else {
 		params_ring = basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_waters_ring ]();
@@ -218,20 +218,20 @@ build_optimal_water_Os_on_acceptor(
 
 	} else {
 
-		if (hybrid == SP2_HYBRID) {
+		if ( hybrid == SP2_HYBRID ) {
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
-			for (core::Size i=0; i<params_sp2.size()/3; ++i) {
+			for ( core::Size i=0; i<params_sp2.size()/3; ++i ) {
 				waters.push_back( stub.spherical( radians( params_sp2[3*i+3] ), radians( 180.0-params_sp2[3*i+2] ), params_sp2[3*i+1] ) );
 			}
-		} else if (hybrid == SP3_HYBRID) {
+		} else if ( hybrid == SP3_HYBRID ) {
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
-			for (core::Size i=0; i<params_sp3.size()/3; ++i) {
+			for ( core::Size i=0; i<params_sp3.size()/3; ++i ) {
 				waters.push_back( stub.spherical( radians( params_sp3[3*i+3] ), radians( 180.0-params_sp3[3*i+2] ), params_sp3[3*i+1] ) );
 			}
-		} else if (hybrid == RING_HYBRID) {
+		} else if ( hybrid == RING_HYBRID ) {
 			b1_xyz = 0.5 * ( b1_xyz + b2_xyz );
 			kinematics::Stub stub( a_xyz, b1_xyz, b2_xyz );
-			for (core::Size i=0; i<params_ring.size()/3; ++i) {
+			for ( core::Size i=0; i<params_ring.size()/3; ++i ) {
 				waters.push_back( stub.spherical( radians( params_ring[3*i+3] ), radians( 180.0-params_ring[3*i+2] ), params_ring[3*i+1] ) );
 			}
 		} else {

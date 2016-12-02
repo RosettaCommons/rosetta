@@ -109,7 +109,7 @@ protocols::filters::FilterOP
 std::string
 --class--Creator::keyname() const
 {
-	return --class--Creator::class_name();
+	return --class--::class_name();
 }
 
 void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const

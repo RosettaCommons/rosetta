@@ -1623,7 +1623,7 @@ Conformation::fill_missing_atoms(
 			}
 		}
 
-		if( num_missing == 0 ) { continue; }
+		if ( num_missing == 0 ) { continue; }
 
 		Size tries(0);
 		// Note: Invoking Residue::fill_missing_atoms currently has a known "failure" case.
@@ -1655,7 +1655,7 @@ Conformation::fill_missing_atoms(
 					if ( stub_atom3 == id::BOGUS_ATOM_ID || missing[ stub_atom3 ] ) xyz3 = Vector( uniform(), uniform(), uniform() );
 					kinematics::Stub const stub( xyz1, xyz2, xyz3 );
 					set_xyz( id, stub.spherical( rsd.icoor(j).phi(), rsd.icoor(j).theta(), rsd.icoor(j).d() ) );
-					if( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
+					if ( ! rsd.is_virtual(j) ) { // Metal ions rely on this -- don't warn for virtuals
 						TR.Warning << "[ WARNING ] Rebuilding missing atom (" << rsd.atom_name( j ) <<
 							") from residue " << rsd.name() << " " << i << " from faked coordinates, due to too few atoms being present." <<
 							"\nThis probably means that this residue should be further optimized..." << std::endl;
@@ -2794,10 +2794,10 @@ Conformation::update_orbital_coords( Residue & rsd) const{
 // Get the DOF_ID corresponding to the torsion angle defined by these four atoms.
 id::DOF_ID
 Conformation::dof_id_from_atom_ids(
-		id::AtomID const & id1,
-		id::AtomID const & id2,
-		id::AtomID const & id3,
-		id::AtomID const & id4 ) const
+	id::AtomID const & id1,
+	id::AtomID const & id2,
+	id::AtomID const & id3,
+	id::AtomID const & id4 ) const
 {
 	return atom_tree_->torsion_angle_dof_id( id1, id2, id3, id4 );
 }
@@ -2822,14 +2822,14 @@ id::DOF_ID
 Conformation::dof_id_from_atom_ids( utility::vector1< id::AtomID > const & ids ) const
 {
 	switch ( ids.size() ) {
-		case 4:
-			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ], ids[ 4 ] );
-		case 3:
-			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ] );
-		case 2:
-			return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ] );
-		default:
-			return id::BOGUS_DOF_ID;
+	case 4 :
+		return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ], ids[ 4 ] );
+	case 3 :
+		return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ], ids[ 3 ] );
+	case 2 :
+		return dof_id_from_atom_ids( ids[ 1 ], ids[ 2 ] );
+	default :
+		return id::BOGUS_DOF_ID;
 	}
 }
 

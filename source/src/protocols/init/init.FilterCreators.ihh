@@ -16,6 +16,7 @@
 
 #include <protocols/analysis/PeptideDeriverFilterCreator.hh>
 
+#include <protocols/cyclic_peptide/CycpepSymmetryFilterCreator.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
 
 #include <protocols/enzdes/EnzFilterCreators.hh>

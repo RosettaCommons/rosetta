@@ -47,17 +47,17 @@ operator < ( BaseStack const & lhs, BaseStack const & rhs ){
 	// Priorities are res1_, then res2_, then orientation_, then which_side_
 	if ( lhs.res1_ < rhs.res1_ ) {
 		return true;
-	} 
-	
+	}
+
 	if ( lhs.res1_ == rhs.res1_ ) {
 		if ( lhs.res2_ < rhs.res2_ ) {
 			return true;
-		} 
-		
+		}
+
 		if ( lhs.res2_ == rhs.res2_ ) {
 			if ( lhs.orientation_ < rhs.orientation_ ) {
 				return true;
-			} 
+			}
 			if ( lhs.orientation_ == rhs.orientation_ ) {
 				return ( lhs.which_side_ < rhs.which_side_ );
 			}

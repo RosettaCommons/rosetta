@@ -146,13 +146,13 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	}
 
 	if ( tag->hasOption("target") && tag->hasOption("residue_selector") ) {
-    TR.Error << "Error: you can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
-    throw utility::excn::EXCN_RosettaScriptsOption("");
-  }
+		TR.Error << "Error: you can only degine a target residue using 'target' or a residue selector using 'residue_selector' but not both." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption("");
+	}
 
-	if (tag->hasOption("target")){
-    set_target( tag->getOption<string>("target") );
-  }
+	if ( tag->hasOption("target") ) {
+		set_target( tag->getOption<string>("target") );
+	}
 	//set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
 
 	//Set the identity of the new residue:
@@ -171,9 +171,9 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	//Set whether we're updating coordinates of polymer bond-dependent atoms.
 	set_update_polymer_dependent( tag->getOption<bool>( "update_polymer_bond_dependent", update_polymer_dependent() ) );
 
-	if ( tag->hasOption("residue_selector")) {                                                                                 
-      set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );                                                                     
-  }
+	if ( tag->hasOption("residue_selector") ) {
+		set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
+	}
 
 	return;
 }
@@ -195,23 +195,23 @@ void MutateResidue::apply( Pose & pose ) {
 
 	// Converting the target string to target residue index must be done at apply time,
 	// since the string might refer to a residue in a reference pose.
-	if (selector_){                                                                                                                                          
-    core::select::residue_selector::ResidueSubset subset=selector_->apply( pose );                                                                         
-                                                                                                                                                           
-    for ( core::Size ir=1, irmax=pose.total_residue(); ir<=irmax; ++ir ) {                                                                                 
-                                                                                                                                                           
-      if ( subset[ir] ) {                                                                                                                                  
-          make_mutation(pose,ir);                                                                                                                          
-      }                                                                                                                                                    
-    }                                                                                                                                                      
-  } else {  
+	if ( selector_ ) {
+		core::select::residue_selector::ResidueSubset subset=selector_->apply( pose );
+
+		for ( core::Size ir=1, irmax=pose.total_residue(); ir<=irmax; ++ir ) {
+
+			if ( subset[ir] ) {
+				make_mutation(pose,ir);
+			}
+		}
+	} else {
 		core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
 		make_mutation(pose,rosetta_target);
 	}
 }
 
-void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_target)                                                                      
-{ 
+void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_target)
+{
 	if ( rosetta_target < 1 ) {
 		// Do nothing for 0
 		return;
@@ -298,8 +298,8 @@ void MutateResidue::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 
 	core::select::residue_selector::attributes_for_parse_residue_selector(
-    attlist, "residue_selector",
-    "name of a residue selector that specifies the subset to be mutated" );
+		attlist, "residue_selector",
+		"name of a residue selector that specifies the subset to be mutated" );
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
@@ -321,15 +321,15 @@ void MutateResidueCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	MutateResidue::provide_xml_schema( xsd );
 }
 
-void MutateResidue::set_selector(                                                                                                                          
-  core::select::residue_selector::ResidueSelectorCOP selector_in                                                                                           
-) {                 
-  if ( selector_in ) {                                                                                                                                     
-	selector_ = selector_in;                                                                                                                                 
-  } else {                                                                                                                                                 
-      utility_exit_with_message("Error in protocols::simple_moves::MutateResidue::set_selector(): Null pointer passed to function!");               
-  }                                                                                                                                                        
-  return;                                                                                                                                                  
+void MutateResidue::set_selector(
+	core::select::residue_selector::ResidueSelectorCOP selector_in
+) {
+	if ( selector_in ) {
+		selector_ = selector_in;
+	} else {
+		utility_exit_with_message("Error in protocols::simple_moves::MutateResidue::set_selector(): Null pointer passed to function!");
+	}
+	return;
 }
 
 

@@ -342,7 +342,7 @@ figure_out_base_pair_orientation(
 	RNA_ScoringInfo  & rna_scoring_info( nonconst_rna_scoring_info_from_pose( pose ) );
 	RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.update( pose );
-	
+
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	kinematics::Stub const & stub_i( base_stubs[i] );

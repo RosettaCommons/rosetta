@@ -84,7 +84,7 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 	if ( secstruct_.size() == 0 ) blank_secstruct( sequence );
 	// We don't want to depend on the sequence here: could be a
 	// 'general' secstruct.
-	set_basepairs_from_secstruct(); 
+	set_basepairs_from_secstruct();
 
 	check_balanced_secstruct();
 }
@@ -92,31 +92,31 @@ RNA_SecStruct::RNA_SecStruct( std::string const & secstruct,
 //Destructor
 RNA_SecStruct::~RNA_SecStruct()
 {}
-	
+
 void
 RNA_SecStruct::set_basepairs_from_secstruct() {
-	
+
 	// We don't care which BPs are in stems with each other yet
 	//vector1< vector1< std::pair< Size, Size > > > & stems,
 	//std::string const & line /*secstruct*/,
 	//std::string const & sequence_for_fasta,
 	//vector1< Size > const & chainbreak_pos,
 	//char const & left_bracket_char, char const & right_bracket_char ) const
-	
+
 	// Go through pairs of left and right bracket chars.
 	// After those base pairs are assigned, find matching e.g. aaaaa....aaaaa
 	// Note that some issues may come up if we do not carefully force a 'break'
 	// of ... or a chainbreak character.
-	
+
 	std::string const lefts  = "([{<";
 	std::string const rights = ")]}>";
-	
+
 	for ( Size ii = 0; ii < lefts.size(); ++ii ) {
 		char left_bracket_char = lefts[ii], right_bracket_char = rights[ii];
-		
+
 		Size count( 0 );
 		vector1< Size > left_brackets;
-		
+
 		for ( Size i = 0; i < secstruct_.size(); i++ ) {
 			if ( core::sequence::spacers.has_value( secstruct_[i] ) ) continue;
 			count++;
@@ -135,10 +135,10 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 			utility_exit_with_message( "Number of right brackets does not match left brackets" );
 		}
 	}
-	
+
 	// UNICHAR
 	// We need to be able to assign new base pairs, without
-	// creating unrealistic stems. That is, 
+	// creating unrealistic stems. That is,
 	// ...aa.a....aaa
 	// needs to act like
 	// ...((.(....)))
@@ -152,9 +152,9 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 
 	// AMW: at some point, generate this string sanely
 	std::string const single_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	
+
 	for ( char const single_char : single_chars ) {
-		
+
 		// Obtain set of all occurrences of each character.
 		std::set< Size > occurrences;
 		for ( Size i = 0; i < secstruct_.size(); i++ ) {
@@ -162,7 +162,7 @@ RNA_SecStruct::set_basepairs_from_secstruct() {
 				occurrences.insert( i + 1 );
 			}
 		}
-		
+
 		// Iterate inward, pairing first with last, second with penultimate, etc.
 		auto bp1 = occurrences.begin(), bp2 = occurrences.end();
 		while ( std::distance( bp1, bp2 ) > 0 ) {
@@ -180,7 +180,7 @@ RNA_SecStruct::set_secstruct( std::string const & secstruct )
 	// I'm not sure how this state is obtained now but couldn't have been earlier,
 	// but there you go.
 	secstruct_ = secstruct;
-	if ( secstruct_[ secstruct.size() - 1 ] == ' ' ) { 
+	if ( secstruct_[ secstruct.size() - 1 ] == ' ' ) {
 		secstruct_ = secstruct_.substr( 0, secstruct.size() - 1 );
 	}
 	spacer_positions_ = core::sequence::strip_spacers( secstruct_, false /*annotations_in_brackets*/ );
@@ -228,7 +228,7 @@ RNA_SecStruct::blank_secstruct( std::string const & sequence_in )
 bool
 RNA_SecStruct::check_balanced_secstruct() const
 {
-	// AMW: not really necessary now that the base pairs are created/checked at 
+	// AMW: not really necessary now that the base pairs are created/checked at
 	// construction
 	runtime_assert( std::count( secstruct_.begin(), secstruct_.end(),'(') ==
 		std::count( secstruct_.begin(), secstruct_.end(),')') );
@@ -237,7 +237,7 @@ RNA_SecStruct::check_balanced_secstruct() const
 	runtime_assert( std::count( secstruct_.begin(), secstruct_.end(),'{') ==
 		std::count( secstruct_.begin(), secstruct_.end(),'}') );
 	runtime_assert( std::count( secstruct_.begin(), secstruct_.end(),'<') ==
-				   std::count( secstruct_.begin(), secstruct_.end(),'>') );
+		std::count( secstruct_.begin(), secstruct_.end(),'>') );
 	return true;
 }
 
@@ -258,11 +258,11 @@ RNA_SecStruct::check_compatible_with_sequence( std::string const & sequence_in,
 		utility_exit_with_message( "Length of sequence & secstruct do not match: " +  ObjexxFCL::format::I(5,sequence.size()) + " " + ObjexxFCL::format::I(5,secstruct_.size()) );
 	}
 
-	//if ( spacer_positions_sequence != spacer_positions_ ) { 
-	//	TR << "Spacer positions from sequence:  " << spacer_positions_sequence << std::endl;
-	//	TR << "Spacer positions from secstruct: " << spacer_positions_ << std::endl;
+	//if ( spacer_positions_sequence != spacer_positions_ ) {
+	// TR << "Spacer positions from sequence:  " << spacer_positions_sequence << std::endl;
+	// TR << "Spacer positions from secstruct: " << spacer_positions_ << std::endl;
 	//}
-	
+
 	if ( check_complementarity ) {
 		for ( auto const & pair : base_pairs_ ) {
 			Size const pos1 = pair.first;
@@ -270,8 +270,8 @@ RNA_SecStruct::check_compatible_with_sequence( std::string const & sequence_in,
 
 			auto it =  rna_complement_.find( sequence[pos2-1] );
 			if ( it == rna_complement_.end() ||
-				( !( it->second ).has_value( sequence[pos1-1] ) ) ) {
-					utility_exit_with_message( "Not complementary at positions " + A(1,sequence[pos1-1]) + I(5,pos1) + " and " + A(1,sequence[pos2-1]) + I(5,pos2) );
+					( !( it->second ).has_value( sequence[pos1-1] ) ) ) {
+				utility_exit_with_message( "Not complementary at positions " + A(1,sequence[pos1-1]) + I(5,pos1) + " and " + A(1,sequence[pos2-1]) + I(5,pos2) );
 			}
 
 		}
@@ -284,7 +284,7 @@ vector1< vector1< std::pair< Size, Size > > >
 RNA_SecStruct::get_all_stems() const
 {
 	vector1< vector1< std::pair< Size, Size > > > stems;
-	
+
 	Size numres = 0;
 	std::map< Size, Size > pair_map;
 	for ( auto const & elem : base_pairs_ ) {
@@ -293,10 +293,10 @@ RNA_SecStruct::get_all_stems() const
 		pair_map[ elem.first ] = elem.second;
 		pair_map[ elem.second ] = elem.first;
 	}
-	
+
 	// Parse out stems
 	vector1< bool > already_in_stem( numres, false );
-	
+
 	Size stem_count( 0 );
 	for ( Size i = 1; i <= numres; i++ ) {
 		if ( pair_map.find( i ) != pair_map.end() && !already_in_stem[ i ] ) {
@@ -304,17 +304,17 @@ RNA_SecStruct::get_all_stems() const
 			Size k = i;
 			stem_count += 1;
 			vector1< std::pair< Size, Size > > stem_res;
-			
+
 			stem_res.push_back( std::make_pair( k, pair_map[k] ) );
 			already_in_stem[ k ] = true;
 			already_in_stem[ pair_map[k] ] = true;
-			
+
 			// Can we extend in one direction?
 			while ( pair_map.find( k + 1 ) != pair_map.end() &&
-				   pair_map[ k + 1 ] == pair_map[ k ] - 1  &&
-				   !already_in_stem[ k + 1 ] &&
-				   !spacer_positions_.has_value( k ) &&
-				   !spacer_positions_.has_value( pair_map[ k + 1 ] ) ) {
+					pair_map[ k + 1 ] == pair_map[ k ] - 1  &&
+					!already_in_stem[ k + 1 ] &&
+					!spacer_positions_.has_value( k ) &&
+					!spacer_positions_.has_value( pair_map[ k + 1 ] ) ) {
 				k++;
 				stem_res.push_back( std::make_pair( k, pair_map[k] ) );
 				already_in_stem[ k ] = true;
@@ -334,13 +334,13 @@ RNA_SecStruct::remove_pair( std::pair< Size, Size > pair ) {
 	Size pos2 = pair.second;
 	secstruct_[ pos1 - 1 ] = '.';
 	secstruct_[ pos2 - 1 ] = '.';
-	
+
 	// Also remove base pairs from base_pairs_
 	// AMW: conceivably one could trigger the other, or we could just stop
 	// maintaining secstruct_ after construction.
 	// But, it's nicer to use the same string representation you were built with
 	// if ever you are displayed.
-	
+
 	// Standard erase-remove idiom
 	base_pairs_.erase( std::remove( base_pairs_.begin(), base_pairs_.end(), pair ), base_pairs_.end());
 }

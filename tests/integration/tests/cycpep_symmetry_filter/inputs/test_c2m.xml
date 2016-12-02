@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<CycpepSymmetryFilter name="symmfilter" symmetry_repeats="2" mirror_symmetry="true" />
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		
+		<DeclareBond name="bond1" res1="8" atom1="C" res2="1" atom2="N" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bond1" />
+		<Add filter="symmfilter" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv" />
+</ROSETTASCRIPTS>

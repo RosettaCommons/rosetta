@@ -99,6 +99,14 @@ parse_residue_selector(
 );
 
 /// @brief Companion function for parse_residue_selector
+/// @brief This assumes the default residue selector option name ("residue_selector").
+void
+attributes_for_parse_residue_selector_default_option_name(
+	utility::tag::AttributeList & attlist,
+	std::string const & documentation_string = ""
+);
+
+/// @brief Companion function for parse_residue_selector
 void
 attributes_for_parse_residue_selector(
 	utility::tag::AttributeList & attlist,

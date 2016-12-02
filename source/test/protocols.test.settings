@@ -80,6 +80,7 @@ sources = {
 	],
 
 	"cyclic_peptide" : [
+		"CycpepSymmetryFilterTests",
                 "FlipChiralityMover",
 		"NMethylationTests",
 		"NMethylationTests_betanov15",
@@ -648,6 +649,9 @@ testinputfiles = [
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.cst",
 	"constraint_generator/HydrogenBondConstraintGenerator_complicated.pdb.gz",
 	"constraint_generator/HydrogenBondConstraintGenerator_9_OD1_16_NH2.cst",
+	"cyclic_peptide/asymm.pdb",
+	"cyclic_peptide/c2_symm.pdb",
+	"cyclic_peptide/c2m_symm.pdb",
 	"cyclic_peptide/dVdPN_A.pdb",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",
 	"cyclic_peptide_predict/allowed_residues.txt",

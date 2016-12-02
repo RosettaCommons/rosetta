@@ -114,7 +114,7 @@ public:
 	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
 	void make_mutation(core::pose::Pose &, core::Size);
-	
+
 	std::string
 	get_name() const override;
 
@@ -147,10 +147,10 @@ private:
 	/// @brief If true, updates polymer-dependent atoms.
 	/// @details false by default.
 	bool update_polymer_dependent_;
- 
+
 	///@brief gets a residue selector
 	///
-  core::select::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 } // moves

@@ -963,10 +963,10 @@ public:  // ID access and conversions
 
 	/// @brief  Get the DOF_ID corresponding to the torsion angle defined by these four atoms.
 	id::DOF_ID dof_id_from_atom_ids(
-			id::AtomID const & id1,
-			id::AtomID const & id2,
-			id::AtomID const & id3,
-			id::AtomID const & id4 ) const;
+		id::AtomID const & id1,
+		id::AtomID const & id2,
+		id::AtomID const & id3,
+		id::AtomID const & id4 ) const;
 
 	/// @brief  Get the DOF_ID corresponding to the bond angle defined by these three atoms.
 	id::DOF_ID dof_id_from_atom_ids( id::AtomID const & id1, id::AtomID const & id2, id::AtomID const & id3 ) const;
@@ -976,7 +976,7 @@ public:  // ID access and conversions
 
 	/// @brief  Get the DOF_ID defined by these atoms.
 	id::DOF_ID dof_id_from_atom_ids( utility::vector1< id::AtomID > const & ids ) const;
-	
+
 	/// @brief  Get the DOF_ID corresponding to this TorsionID.
 	DOF_ID dof_id_from_torsion_id( TorsionID const & id ) const;
 

@@ -844,7 +844,7 @@ void HybridizeProtocol::validate_template(
 		core::Size counter = 1;
 		core::Size nres = template_pose->size();
 		for ( Size i=1; i<=nres; i++ ) {
-			if (! template_pose->residue(counter).is_protein() ) {
+			if ( ! template_pose->residue(counter).is_protein() ) {
 				// will get fixed later
 				counter++;
 				continue;

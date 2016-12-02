@@ -855,13 +855,13 @@ hbond_compute_energy(
 
 	// fpd -- use softmax for sp3 acceptors?
 	bool use_softmax = false;
-	if (hbondoptions.measure_sp3acc_BAH_from_hvy()) {
+	if ( hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
 		// *optionally* use for all sp3 acceptors
-		if (basic::options::option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ]() && get_hbe_acc_hybrid(hbe) == chemical::SP3_HYBRID) {
+		if ( basic::options::option[ basic::options::OptionKeys::score::hbond_new_sp3_acc ]() && get_hbe_acc_hybrid(hbe) == chemical::SP3_HYBRID ) {
 			use_softmax = true;
 		}
 		// *always* use for water acceptors
-		if (hbt.acc_type() == hbacc_H2O) {
+		if ( hbt.acc_type() == hbacc_H2O ) {
 			use_softmax=true;
 		}
 	}
@@ -975,12 +975,11 @@ hbond_compute_energy(
 			xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	} else if (
-	  hbondoptions.measure_sp3acc_BAH_from_hvy() &&
-	  ( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
-		&& !use_softmax)
-	{
+			hbondoptions.measure_sp3acc_BAH_from_hvy() &&
+			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )
+			&& !use_softmax ) {
 		bah_chi_compute_energy_sp3(xH, chi, acc_don_scale, energy, dE_dBAH, dE_dchi);
-	  apply_chi_torsion_penalty = true;
+		apply_chi_torsion_penalty = true;
 	}
 	// dE_dBAH *= acc_don_scale; // moved inside chi energy computations
 	// dE_dchi *= acc_don_scale;

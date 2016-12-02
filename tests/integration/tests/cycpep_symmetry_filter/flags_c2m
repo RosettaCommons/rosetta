@@ -1,0 +1,11 @@
+-parser:protocol inputs/test_c2m.xml
+-in:file:s inputs/asymm.pdb inputs/c2_symm.pdb inputs/c2m_symm.pdb
+-nstruct 1
+-write_all_connect_info
+-out:prefix c2mtest_
+##### these are general flags
+-beta_nov15
+-score:weights beta_nov15
+-jd2:failed_job_exception false
+-out:levels protocols.cyclic_peptide.ThreefoldLinkerMover:500 protocols.cyclic_peptide.threefold_linker.TBMB_Helper:500
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

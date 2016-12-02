@@ -277,7 +277,7 @@ RNA_BasePairHandler::get_stem_residues( core::pose::Pose const & pose ) const
 
 	utility::vector1< Size > stem_res;
 	stem_res.assign( in_stem.begin(), in_stem.end() );
-	
+
 	return stem_res;
 }
 

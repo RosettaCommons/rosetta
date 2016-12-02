@@ -463,7 +463,7 @@ Real
 RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
 	Size const cutpoint,
 	utility::vector1< Vector > & upstream_xyzs,
-  utility::vector1< Vector > & downstream_xyzs,
+	utility::vector1< Vector > & downstream_xyzs,
 	Size const cutpoint_next_input /*= 0 */
 ) const
 {
@@ -494,7 +494,7 @@ RNA_LoopCloser::get_gap_distance( pose::Pose & pose,
 	Size const cutpoint
 ) const
 {
-	//	Size const cutpoint_next( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
+	// Size const cutpoint_next( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
 	// following appears to be a bug (cutpoint should be cutpoint_next) -- do not check in fix yet, to isolate integration test changes.
 	return ( pose.residue(cutpoint).xyz( " O3'" ) - pose.residue(cutpoint).xyz(" C5'" ) ).length();
 }

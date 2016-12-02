@@ -36,11 +36,11 @@ ElecTrieEvaluator::elec_weight( bool at1isbb, bool at2isbb ) const {
 
 
 ElecTrieEvaluator::ElecTrieEvaluator(
-		core::Real wt_bb_bb,
-		core::Real wt_bb_sc,
-		core::Real wt_sc_bb,
-		core::Real wt_sc_sc,
-		core::scoring::elec::FA_ElecEnergy const &elec
+	core::Real wt_bb_bb,
+	core::Real wt_bb_sc,
+	core::Real wt_sc_bb,
+	core::Real wt_sc_sc,
+	core::scoring::elec::FA_ElecEnergy const &elec
 ) :
 	wbb_bb_(wt_bb_bb),
 	wbb_sc_(wt_bb_sc),

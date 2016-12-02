@@ -118,7 +118,7 @@ void read_rama_map_file_shapovalov(
 
 		//see if fullfilename exists (this is a waste but db::open throws an exception if file does not exist)
 		utility::io::izstream temp( basic::database::full_name( full_filename, false ) );
-		if (!temp.good()) {
+		if ( !temp.good() ) {
 			full_filename = filename;
 		}
 

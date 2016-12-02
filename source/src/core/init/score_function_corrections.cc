@@ -529,7 +529,7 @@ init_beta_correction() {
 		utility_exit_with_message("-beta_patch no longer supported!  Use '-beta' (nov16) or '-beta_nov15_patch'");
 	}
 	if ( option[corrections::beta_nov15_patch]() ) {
-		if( !option[corrections::beta_nov15]() ) {
+		if ( !option[corrections::beta_nov15]() ) {
 			utility_exit_with_message("-beta_nov15_patch _must_ be used with '-beta_nov15'");
 		}
 	}

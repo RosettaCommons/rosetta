@@ -465,11 +465,11 @@ FA_ElecEnergy::residue_pair_energy(
 
 void
 FA_ElecEnergy::eval_intrares_energy(
-		conformation::Residue const &rsd,
-		pose::Pose const &/*pose*/,
-		ScoreFunction const &sf,
-		EnergyMap &emap ) const {
-	if (sf.get_weight( fa_intra_elec ) == 0) return;
+	conformation::Residue const &rsd,
+	pose::Pose const &/*pose*/,
+	ScoreFunction const &sf,
+	EnergyMap &emap ) const {
+	if ( sf.get_weight( fa_intra_elec ) == 0 ) return;
 	using namespace etable::count_pair;
 
 	Real score(0.0);
@@ -522,7 +522,7 @@ FA_ElecEnergy::eval_intrares_energy(
 			Real weight=1.0;
 
 			Size path_dist( 0 );
-			if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist )) {
+			if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
 				score += score_atom_pair( rsd, rsd, ii, jj, emap, weight, d2 );
 			}
 		}
@@ -711,9 +711,9 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 		Real const dis2( f2.length_squared() );
 		Real dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		Real sfxn_weight = elec_weight(
-				rsd1.atom_is_backbone( at1 ),
-				rsd2.atom_is_backbone( at2 ),
-				wtrip );
+			rsd1.atom_is_backbone( at1 ),
+			rsd2.atom_is_backbone( at2 ),
+			wtrip );
 
 		if ( dE_dr_over_r != 0.0 ) {
 			f1 = atom1xyz.cross( atom2xyz );
@@ -730,15 +730,15 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 
 void
 FA_ElecEnergy::eval_intrares_derivatives(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*min_data*/,
-		pose::Pose const & /*pose*/,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const & /*min_data*/,
+	pose::Pose const & /*pose*/,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
 	using namespace etable::count_pair;
-	if (weights[ fa_intra_elec ] == 0) return;
+	if ( weights[ fa_intra_elec ] == 0 ) return;
 	Real sfxn_weight = weights[fa_intra_elec];
 
 	if ( eval_intrares_ST_only() &&
@@ -794,7 +794,7 @@ FA_ElecEnergy::eval_intrares_derivatives(
 			Real dE_dr_over_r = 0;
 			Size path_dist( 0 );
 			Real weight=1.0;
-			if ( !cpfxn->count( ii_rep, jj_rep, weight, path_dist )) continue;
+			if ( !cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) continue;
 			dE_dr_over_r = weight * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 
 			if ( dE_dr_over_r == 0.0 ) continue;
@@ -1162,7 +1162,7 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 
 	//fpd get rid of mutable data, use evaluator instead
 	electrie::ElecTrieEvaluator eleceval(
-		wt_bb_bb, wt_bb_sc, wt_sc_bb,	wt_sc_sc, *this );
+		wt_bb_bb, wt_bb_sc, wt_sc_bb, wt_sc_sc, *this );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -1235,7 +1235,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 
 	//fpd get rid of mutable data, use evaluator instead
 	electrie::ElecTrieEvaluator eleceval(
-		wt_bb_bb, wt_bb_sc, wt_sc_bb,	wt_sc_sc, *this );
+		wt_bb_bb, wt_bb_sc, wt_sc_bb, wt_sc_sc, *this );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), residue, trie1, trie2, pose, sfxn );
@@ -1248,7 +1248,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	trie1->trie_vs_path( *trie2, *cp, eleceval, temp_vector1, temp_vector2 );
 
 	//std::cout << "FINISHED evaluate_rotamer_background_energies" << std::endl;
-  /// add in the energies calculated by the tvt alg.
+	/// add in the energies calculated by the tvt alg.
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
 		energy_vector[ ii ] += temp_vector1[ ii ];
 	}
@@ -1338,7 +1338,7 @@ FA_ElecEnergy::get_count_pair_function(
 
 	//fd not sure if this is necessary....
 	//if ( res1 == res2 ) {
-	//	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	// return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
 	//}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -1538,9 +1538,9 @@ FA_ElecEnergy::create_rotamer_trie(
 		utility_exit_with_message( "Unknown residue connection in FA_ElecEnergy::create_rotamer_trie");
 	}
 
-  for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
-    retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
-  }
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		retval->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
 	return retval;
 }
 
@@ -1615,7 +1615,7 @@ FA_ElecEnergy::score_atom_pair(
 ) const
 {
 
-  Real energy;
+	Real energy;
 	energy = cpweight * coulomb().eval_atom_atom_fa_elecE(
 		rsd1.xyz(at1), rsd1.atomic_charge(at1),
 		rsd2.xyz(at2), rsd2.atomic_charge(at2), d2);

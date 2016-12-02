@@ -38,7 +38,7 @@ class LKBTrieEvaluator
 public:
 	LKBTrieEvaluator(
 		core::Real wt_lk_ball, core::Real wt_lk_ball_iso, core::Real wt_lk_ball_wtd,
-		core::Real wt_lk_ball_bridge,	core::Real wt_lk_ball_bridge_uncpl,
+		core::Real wt_lk_ball_bridge, core::Real wt_lk_ball_bridge_uncpl,
 		core::scoring::lkball::LK_BallEnergy const &lkb,
 		core::scoring::etable::EtableCOP etable
 	);

@@ -95,11 +95,11 @@ bool operator < ( BasePair const & lhs, BasePair const & rhs )
 		if ( lhs.res2_ == rhs.res2_ ) {
 			if ( lhs.edge1_ < rhs.edge1_ ) {
 				return true;
-			} 
+			}
 			if ( lhs.edge1_ == rhs.edge1_ ) {
 				if ( lhs.edge2_ < rhs.edge2_ ) {
 					return true;
-				} 
+				}
 				if ( lhs.edge2_ == rhs.edge2_ ) {
 					return ( lhs.orientation_ < rhs.orientation_ );
 				}

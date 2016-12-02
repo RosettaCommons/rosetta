@@ -75,7 +75,7 @@ public:
 	void setUp() {
 		core_init_with_additional_options("-mute core.io.pdb");
 	}
-	
+
 	void test_strip_spacers() {
 		// Strip spacers from a sequence with no spacers
 		utility::vector1< core::Size > empty_vector;
@@ -89,7 +89,7 @@ public:
 		TS_ASSERT( core::sequence::strip_spacers( continuous_sequence ) == one_vector );
 		continuous_sequence = "acgu acgu";
 		TS_ASSERT( core::sequence::strip_spacers( continuous_sequence ) == one_vector );
-		
+
 		utility::vector1< core::Size > two_vector;
 		two_vector.push_back( 4 );
 		two_vector.push_back( 8 );

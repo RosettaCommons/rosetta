@@ -54,17 +54,17 @@ class RNA_LowResolutionPotential : public methods::WholeStructureEnergy { //util
 
 public:
 	RNA_LowResolutionPotential();
-	
+
 	/// clone
 	virtual
 	methods::EnergyMethodOP
-	clone() const {	return methods::EnergyMethodOP( new RNA_LowResolutionPotential ); }
-	
+	clone() const { return methods::EnergyMethodOP( new RNA_LowResolutionPotential ); }
+
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
-	
+
 	virtual
-	core::Size version() const { return 1; }	
+	core::Size version() const { return 1; }
 
 
 	void

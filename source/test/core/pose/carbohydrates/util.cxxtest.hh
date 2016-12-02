@@ -65,7 +65,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 		// Test exocyclic carbon in linkage.
 		pose_from_file( exo_test_,
-				"core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", PDB_file);
+			"core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", PDB_file);
 
 		std::string const man9_s( "a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
 			"[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-b-D-GlcpNAc-(1->4)-b-D-GlcpNAc" );
@@ -200,7 +200,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( isomaltose_.residue( atoms[ 3 ].rsd() ).atom_name( atoms[ 3 ].atomno() ), " C5 " );
 		TS_ASSERT_EQUALS( isomaltose_.residue( atoms[ 4 ].rsd() ).atom_name( atoms[ 4 ].atomno() ), " C4 " );
 	}
-	
+
 	void test_TorsionID_query_functions()
 	{
 		using namespace std;

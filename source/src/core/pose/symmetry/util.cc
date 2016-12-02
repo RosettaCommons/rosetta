@@ -451,7 +451,7 @@ make_symmetric_pdb_info(
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		// resids in scoring subunit
 		int src_res = res;
-		if (!symm_info->bb_is_independent(res)) {
+		if ( !symm_info->bb_is_independent(res) ) {
 			src_res = symm_info->bb_follows(res);
 		}
 

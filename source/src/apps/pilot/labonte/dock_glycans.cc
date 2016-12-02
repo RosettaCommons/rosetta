@@ -144,10 +144,10 @@ public:  // Standard Rosetta methods
 		using namespace std;
 
 		moves::Mover::show( output );  // name, type, tag
-		
+
 		string const idealized( ( idealize_rings_ ) ? "idealized" : "as input" );
 		string const locked( ( lock_rings_ ) ? "locked" : "flexible" );
-		
+
 		output << "Rings: " << idealized << ", " << locked << ";  Cycles: " << n_cycles_ << endl;
 	}
 
@@ -327,7 +327,7 @@ private:  // Private methods
 			constraint_setter_ = ConstraintSetMoverOP( new ConstraintSetMover );
 			constraint_setter_->constraint_file( option[ OptionKeys::constraints::cst_fa_file ][ 1 ] );
 		}
-		
+
 		if ( option[ OptionKeys::run::n_cycles ] > 1 ) {  // 1 is the default option setting.
 			n_cycles_ = option[ OptionKeys::run::n_cycles ];
 		}

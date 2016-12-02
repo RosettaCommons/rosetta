@@ -49,10 +49,10 @@ namespace scoring {
 namespace lkball {
 
 struct ScoredBridgingWater {
-	ScoredBridgingWater( core::Real lkbr_uncpl_score_in, 
-                       core::Real lkbr_score_in,
-                       numeric::xyzVector< core::Real > position_in ) : 
-  lkbr_uncpl_score(lkbr_uncpl_score_in), lkbr_score(lkbr_score_in), position(position_in) {}
+	ScoredBridgingWater( core::Real lkbr_uncpl_score_in,
+		core::Real lkbr_score_in,
+		numeric::xyzVector< core::Real > position_in ) :
+		lkbr_uncpl_score(lkbr_uncpl_score_in), lkbr_score(lkbr_score_in), position(position_in) {}
 	core::Real lkbr_uncpl_score;
 	core::Real lkbr_score;
 	numeric::xyzVector< core::Real > position;
@@ -360,9 +360,9 @@ public:
 		Vector const & atom2_base,
 		Vectors const & atom1_waters,
 		Vectors const & atom2_waters,
-    Real const & lk_desolvation_sum,
-    Real const & lkbr_wt,
-    Real const & lkbr_uncpl_wt
+		Real const & lk_desolvation_sum,
+		Real const & lkbr_wt,
+		Real const & lkbr_uncpl_wt
 	) const;
 
 
@@ -377,9 +377,9 @@ public:
 		Real & pointterm_lkbr,
 		Real & angleterm_lkbr,
 		Real & d_angleterm_lkbr_dr,
-    Real const & lk_desolvation_sum,
-    Real const & lkbr_wt,
-    Real const & lkbr_uncpl_wt,
+		Real const & lk_desolvation_sum,
+		Real const & lkbr_wt,
+		Real const & lkbr_uncpl_wt,
 		bool compute_derivs=true
 	) const;
 

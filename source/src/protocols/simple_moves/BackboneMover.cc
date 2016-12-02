@@ -190,7 +190,7 @@ void
 BackboneMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector )
 {
 	runtime_assert_string_msg( selector, "Error in protocols::simple_moves::BackboneMover::set_residue_selector(): "
-			"An invalid ResidueSelector owning pointer was passed to this function." );
+		"An invalid ResidueSelector owning pointer was passed to this function." );
 	selector_ = selector->clone();
 }
 
@@ -271,7 +271,7 @@ BackboneMover::apply( core::pose::Pose & pose )
 
 			//choose a random position from the list of positions previously chosen to be candidate positions
 			std::pair< int, Real > const & random_pos(
-					pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
+				pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
 			resnum_ = random_pos.first;
 
 			set_angles( random_pos.second );
@@ -468,7 +468,7 @@ SmallMover::setup_list( core::pose::Pose & pose )
 				}
 			}
 
-		// Check if the residue is a monosaccharide and has a free phi and psi.
+			// Check if the residue is a monosaccharide and has a free phi and psi.
 		} else if ( rsd.is_carbohydrate() ) {
 			// Because a saccharide i's glycosidic torsions might not even belong to residue i from Rosetta's point of
 			// view, it is more direct to get the reference atoms and convert to DOF_ID and check the MoveMap that way.
@@ -565,7 +565,7 @@ SmallMover::make_move( core::pose::Pose & pose )
 		// Might be a better way of doing this. How can we quickly check if a carbohydrate has an omega?
 		old_omega_ = pose.omega( resnum_ );
 		new_omega_ = basic::periodic_range(
-				old_omega_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
+			old_omega_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 	}
 
 	if ( scorefxn() ) {
@@ -636,7 +636,7 @@ SmallMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	ct_gen->element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.description( "Small-move style backbone-torsion moves that, "
-				"unlike shear, do not minimize downstream propagation." )
+		"unlike shear, do not minimize downstream propagation." )
 		.write_complex_type_to_schema( xsd );
 
 	//protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, subelements );
@@ -724,7 +724,7 @@ ShearMover::setup_list( core::pose::Pose & pose )
 				}
 			}
 
-		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+			// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
 		} else if ( rsd.is_carbohydrate() && movemap()->get( TorsionID( i - 1, BB, 4 ) ) &&
 				movemap()->get( TorsionID( i, BB, 5 ) ) ) {
 			// Carbohydrates are always considered loops for now.

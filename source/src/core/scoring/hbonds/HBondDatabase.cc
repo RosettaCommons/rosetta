@@ -395,11 +395,11 @@ HBondDatabase::initialize_HBPoly1D()
 /// @details read one dimensional polynomial definition file
 // File Format:
 //    -fields are space delimited
-//    -Columns are: 
-//         don_chem_type_name, acc_chem_type_name, seq_sep_type_name, 
-//         AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, 
-//         cosBAH2_fade_name, cosAHD_fade_name, AHdist_poly_name, 
-//         cosBAH_short_poly_name, cosBAH_long_poly_name, cosBAH2_poly_name, 
+//    -Columns are:
+//         don_chem_type_name, acc_chem_type_name, seq_sep_type_name,
+//         AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name,
+//         cosBAH2_fade_name, cosAHD_fade_name, AHdist_poly_name,
+//         cosBAH_short_poly_name, cosBAH_long_poly_name, cosBAH2_poly_name,
 //         cosAHD_short_poly_name, cosAHD_long_poly_name, weight_type_name
 
 void
@@ -1507,7 +1507,7 @@ HBondDatabase::report_parameter_features(
 		basic::database::safely_write_to_database(hbond_polynomial_statement);
 	}
 
-	std::string hbond_evaluation_string = 
+	std::string hbond_evaluation_string =
 		"INSERT INTO hbond_evaluation_types (database_tag, don_chem_type, acc_chem_type, separation,"
 		" AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosBAH2_fade, cosAHD_fade, AHdist, cosBAH_short,"
 		" cosBAH_long, cosBAH2_poly, cosAHD_short, cosAHD_long, weight_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
