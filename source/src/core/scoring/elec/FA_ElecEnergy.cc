@@ -1317,18 +1317,13 @@ FA_ElecEnergy::atomic_interaction_cutoff() const
 
 etable::count_pair::CountPairFunctionCOP
 FA_ElecEnergy::get_intrares_countpair(
-	conformation::Residue const &,
+	conformation::Residue const &res,
 	pose::Pose const &,
-	ScoreFunction const &sf
+	ScoreFunction const &
 ) const
 {
-	// hpark: note that current intra_elec only works for beta_nov15,
-	// which calls another machinery "get_coutpair_representative_atom" for intra_elec as well
-	if ( sf.get_weight( fa_intra_elec ) == 0 ) {
-		utility_exit_with_message( "FA_ElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
-	}
-
-	return 0;
+	using namespace etable::count_pair;
+	return CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_4 );
 }
 
 etable::count_pair::CountPairFunctionCOP
@@ -1340,9 +1335,11 @@ FA_ElecEnergy::get_count_pair_function(
 ) const
 {
 	using namespace etable::count_pair;
-	if ( res1 == res2 ) {
-		return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
-	}
+
+	//fd not sure if this is necessary....
+	//if ( res1 == res2 ) {
+	//	return etable::count_pair::CountPairFunctionCOP( etable::count_pair::CountPairFunctionOP( new CountPairNone ) );
+	//}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
 	conformation::Residue const & rsd2( pose.residue( res2 ) );

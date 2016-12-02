@@ -838,14 +838,18 @@ void HybridizeProtocol::validate_template(
 
 		TR << fasta2template << std::endl;
 
-
 		core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
 		sequencemap.reverse();
 		core::Size ndel = 0;
 		core::Size counter = 1;
 		core::Size nres = template_pose->size();
 		for ( Size i=1; i<=nres; i++ ) {
-			if (! template_pose->residue(i).is_protein() ) continue; // will get fixed later
+			if (! template_pose->residue(counter).is_protein() ) {
+				// will get fixed later
+				counter++;
+				continue;
+			}
+
 			Size pdbnumber = template_pose->pdb_info()->number(counter);
 			Size fastanumber = sequencemap[i];
 			if ( fastanumber == 0 ) { // extra residues in template
