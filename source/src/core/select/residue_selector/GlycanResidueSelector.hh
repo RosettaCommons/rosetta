@@ -46,17 +46,32 @@ public:
 
 	/// @brief Constructor to select tree residues from branch roots.
 	///   See set_branch_residues for more
-	GlycanResidueSelector( utility::vector1< bool > root_residues );
-
+	GlycanResidueSelector( utility::vector1< bool > root_residues, bool include_root = false );
+	
+	GlycanResidueSelector( core::Size root_residue, bool include_root = false );
+	
 	/// @brief Set the residue(s) to select from.  These can be the branch points of the glycans or
 	///  carbohydrate residues from which to select the downstream branch from.
 	///
 	///  Like the rest of a tree from a particular position.  That position could be the trunk or individual branches, which keep branching out.
 	///
-	///  Note that the Subset will not include the Root residue, since many times it will be the ASN root.
+	///  Note that the Subset will not include the Root residue by default.
 	void
 	set_select_from_branch_residues( utility::vector1< bool > root_residues );
-
+	
+	/// @brief Set the residue to select from.  These can be the branch points of the glycans or
+	///  carbohydrate residues from which to select the downstream branch from.
+	///
+	///  Like the rest of a tree from a particular position.  That position could be the trunk or individual branches, which keep branching out.
+	///
+	///  Note that the Subset will not include the Root residue by default.
+	void
+	set_select_from_branch_residue( core::Size root_residue );
+	
+	///@brief Option to include the root(s) we are selecting from.
+	/// Default FALSE.
+	void
+	set_include_root(bool include_root);
 
 	/// @brief Destructor.
 	virtual ~GlycanResidueSelector();
@@ -92,8 +107,10 @@ public:
 private:
 
 	utility::vector1< bool > root_residues_;
+	core::Size root_residue_;
 	utility::vector1< std::string > parsed_positions_;
 	std::string ref_pose_name_;
+	bool include_root_;
 
 };
 

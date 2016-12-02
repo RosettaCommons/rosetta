@@ -818,6 +818,7 @@ sources = {
 		"PhiSelector",
 		"PrimarySequenceNeighborhoodSelector",
 		"RandomResidueSelector",
+		"RandomGlycanFoliageSelector",
 		"ResidueIndexSelector",
 		"ResidueNameSelector",
 		"ResiduePDBInfoHasLabelSelector",

@@ -260,7 +260,9 @@ public:
 		bool setup_sampling_data = false,
 		Real sampling_step_size = 0.1 ) const;
 
-	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction() const;
+	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction(
+		bool setup_sampling_data = false,
+		Real sampling_step_size = 0.1 ) const;
 
 
 	bool

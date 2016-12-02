@@ -26,7 +26,9 @@ namespace carbohydrates {
 enum OmegaPreferenceType {
 	ANTI = 1,       // The gauche effect is not in place, i.e., the anti rotamer is preferred.
 	GAUCHE_EFFECT,  // The gauche effect is in place, i.e., the gauche rotamers are preferred.
-
+	
+	N_OMEGA_PREFERENCE_TYPES = GAUCHE_EFFECT,
+	
 	PREFERENCE_NA   // The gauche effect is not applicable here.
 };
 

@@ -156,7 +156,7 @@ public:
 	/// See Also:
 	///     PackRotamersMover
 	///     PackRotamersMover.task
-	void task_factory( TaskFactoryCOP tf );
+	virtual void task_factory( TaskFactoryCOP tf );
 
 	/// @brief Sets the PackerTask to  <t>
 	///

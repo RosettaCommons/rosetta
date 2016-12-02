@@ -742,6 +742,34 @@ get_residues_from_movemap_bb_any_torsion(MoveMap const & movemap, Size total_res
 
 }
 
+utility::vector1< core::Size >
+get_residues_from_movemap_bb_or_chi(MoveMap const & movemap, Size total_resnum){
+
+	utility::vector1< bool > on(total_resnum, false);
+	utility::vector1< core::Size > final_vec;
+
+	for ( core::Size i = 1; i <= total_resnum; ++i ) {
+		if ( movemap.get_bb( i )  || movemap.get_chi( i ) ){
+			on[ i ] = true;
+			continue;
+		}
+		
+		//Torsion specific
+		for ( core::Size x = 1; x <= 4; ++x ) {
+			if ( movemap.get_bb( i, x ) ) {
+				on[ i ] = true;
+				break;
+			}
+		}
+	}
+
+	for ( core::Size resnum = 1; resnum <= total_resnum; ++resnum ) {
+		if ( on[ resnum ] ) {
+			final_vec.push_back( resnum );
+		}
+	}
+	return final_vec;
+}
 
 } // namespace kinematics
 } // namespace core

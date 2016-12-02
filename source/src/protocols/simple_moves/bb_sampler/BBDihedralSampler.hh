@@ -80,7 +80,9 @@ public:
 	};
 
 	virtual std::string
-	name() const = 0;
+	get_name() const {
+		return "BBDihedralSamplerBase";
+	}
 
 
 protected:
@@ -118,7 +120,7 @@ public:
 	virtual void
 	set_torsion_to_pose(core::pose::Pose & pose, core::Size resnum) const = 0;
 
-	std::string name() const {
+	virtual std::string get_name() const {
 		return "BBDihedralSampler";
 	};
 };
@@ -149,7 +151,7 @@ public:
 	set_2D_torsion_to_pose(core::pose::Pose & pose, core::Size resnum,
 		std::pair<core::id::MainchainTorsionType, core::Real > ) const = 0;
 
-	std::string name() const {
+	virtual std::string get_name() const {
 		return "BBDihedralSampler2D";
 	};
 
@@ -186,7 +188,7 @@ public:
 		std::pair< core::id::MainchainTorsionType, core::Real >,
 		std::pair< core::id::MainchainTorsionType, core::Real > ) const = 0;
 
-	std::string name() const {
+	virtual std::string get_name() const {
 		return "BBDihedralSampler3D";
 	};
 
@@ -218,7 +220,7 @@ public:
 		core::pose::Pose & pose, core::Size resnum,
 		utility::vector1< std::pair< core::id::MainchainTorsionType, core::Real > >) const = 0;
 
-	std::string name() const {
+	virtual std::string get_name() const {
 		return "BBDihedralSamplerND";
 	};
 

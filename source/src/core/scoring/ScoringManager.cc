@@ -904,7 +904,7 @@ ScoringManager::get_CHIEnergyFunction( bool setup_for_sampling /* false */, Real
 
 ///////////////////////////////////////////////////////////////////////////////
 carbohydrates::OmegaPreferencesFunction const &
-ScoringManager::get_OmegaPreferencesFunction() const
+ScoringManager::get_OmegaPreferencesFunction(  bool setup_for_sampling /* false */, Real step_size /* 0.1 */ ) const
 {
 	if ( carbohydrate_omega_preferences_function_ == nullptr ) {
 		TR << "Creating carbohydrate omega preferences function." << std::endl;
@@ -912,6 +912,13 @@ ScoringManager::get_OmegaPreferencesFunction() const
 			carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
 
 	}
+	
+	if ( setup_for_sampling && ( ! carbohydrate_omega_preferences_function_->sampling_data_setup() ) ) {
+		TR << "should be setting up for sampling..." << std::endl;
+		carbohydrate_omega_preferences_function_->setup_for_sampling( step_size );
+	}
+	
+	
 	return *carbohydrate_omega_preferences_function_;
 }
 

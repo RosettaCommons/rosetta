@@ -181,35 +181,3 @@ RandomResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 } //namespace select
 } //namespace core
 
-
-#ifdef    SERIALIZATION
-
-/// @brief Automatically generated serialization method
-template< class Archive >
-void
-core::select::residue_selector::RandomResidueSelector::save( Archive & arc ) const
-{
-	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-	arc( CEREAL_NVP( selector_ ) ); // ResidueSelectorCOP
-	arc( CEREAL_NVP( num_residues_ ) ); // Size
-}
-
-/// @brief Automatically generated deserialization method
-template< class Archive >
-void
-core::select::residue_selector::RandomResidueSelector::load( Archive & arc )
-{
-	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
-
-	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_selector;
-	arc( local_selector ); // ResidueSelectorCOP
-	selector_ = local_selector; // copy the non-const pointer(s) into the const pointer(s)
-
-	arc( num_residues_ ); // std::string
-}
-
-SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::RandomResidueSelector );
-CEREAL_REGISTER_TYPE( core::select::residue_selector::RandomResidueSelector )
-
-CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_RandomResidueSelector )
-#endif // SERIALIZATION

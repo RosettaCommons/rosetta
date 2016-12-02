@@ -257,6 +257,33 @@ void
 MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
 
 void
+MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap & active_movemap){
+	PROF_START( basic::MINMOVER_APPLY );
+	if ( !cartesian( ) ) {
+		AtomTreeMinimizer minimizer;
+		if ( !omega_ ) {
+			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
+				if ( !pose.residue( i ).is_protein() ) continue;
+				active_movemap.set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
+			}
+		}
+		(*scorefxn_)(pose);
+		minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
+	} else {
+		CartesianMinimizer minimizer;
+		(*scorefxn_)(pose);
+		minimizer.run( pose, active_movemap, *scorefxn_, *min_options_ );
+	}
+	PROF_STOP( basic::MINMOVER_APPLY );
+
+	// emit statistics
+	scorefxn_->show(TR.Debug, pose);
+	TR.Debug << std::endl;
+
+}
+
+void
 MinMover::apply(pose::Pose & pose) {
 	// lazy default initialization
 	MoveMapOP active_movemap;
@@ -267,29 +294,8 @@ MinMover::apply(pose::Pose & pose) {
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
-
-	PROF_START( basic::MINMOVER_APPLY );
-	if ( !cartesian( ) ) {
-		AtomTreeMinimizer minimizer;
-		if ( !omega_ ) {
-			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
-			for ( core::Size i = 1; i <= pose.size(); ++i ) {
-				if ( !pose.residue( i ).is_protein() ) continue;
-				active_movemap->set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
-			}
-		}
-		(*scorefxn_)(pose);
-		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
-	} else {
-		CartesianMinimizer minimizer;
-		(*scorefxn_)(pose);
-		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
-	}
-	PROF_STOP( basic::MINMOVER_APPLY );
-
-	// emit statistics
-	scorefxn_->show(TR.Debug, pose);
-	TR.Debug << std::endl;
+	
+	minimize( pose, *active_movemap );
 }
 
 void

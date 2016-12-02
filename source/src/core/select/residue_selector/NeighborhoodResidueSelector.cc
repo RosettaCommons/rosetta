@@ -61,17 +61,27 @@ namespace residue_selector {
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector():
 	ResidueSelector(),
-	focus_selector_(/* NULL */)
+	focus_selector_(nullptr)
 {
 	set_defaults();
 }
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSubset const & focus, Real distance, bool include_focus ):
 	ResidueSelector(),
-	focus_selector_(/* NULL */)
+	focus_selector_(nullptr)
 {
 	set_defaults();
 	set_focus( focus );
+	set_distance( distance );
+	set_include_focus_in_subset( include_focus );
+
+}
+
+NeighborhoodResidueSelector::NeighborhoodResidueSelector( ResidueSelectorCOP selector, Real distance, bool include_focus ):
+	ResidueSelector(),
+	focus_selector_(selector)
+{
+	set_defaults();
 	set_distance( distance );
 	set_include_focus_in_subset( include_focus );
 
@@ -97,7 +107,6 @@ void
 NeighborhoodResidueSelector::set_defaults() {
 	distance_ = 10.0;
 	include_focus_in_subset_ = true;
-	clear_focus();
 
 }
 

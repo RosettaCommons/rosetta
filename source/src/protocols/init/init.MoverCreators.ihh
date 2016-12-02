@@ -51,6 +51,7 @@
 #include <protocols/backrub/BackrubProtocolCreator.hh>
 #include <protocols/backrub/BackrubSidechainMoverCreator.hh>
 
+
 // C //////////////////////////////////////////////////////////////////////////
 #include <protocols/canonical_sampling/MetricRecorderCreator.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
@@ -62,6 +63,7 @@
 #include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/carbohydrates/GlycanRelaxMoverCreator.hh>
+#include <protocols/carbohydrates/GlycanTreeMinMoverCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMoverCreator.hh>
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 

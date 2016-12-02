@@ -11,7 +11,6 @@
 /// @brief   Method declarations for OmegaPreferencesFunction.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
-
 #ifndef INCLUDED_core_scoring_carbohydrates_OmegaPreferencesFunction_HH
 #define INCLUDED_core_scoring_carbohydrates_OmegaPreferencesFunction_HH
 
@@ -26,11 +25,22 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <map>
 
 namespace core {
 namespace scoring {
 namespace carbohydrates {
+
+/// @brief  Struct for Omega-Preference dihedral sampling.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+struct OmegaPreferenceSamplingData {
+	OmegaPreferenceType preference_type;
+	Real step_size;
+	
+	utility::vector1< Real > probabilities;
+	utility::vector1< Angle > angles;
+};
+
 
 /// @details  TBD
 class OmegaPreferencesFunction : public utility::pointer::ReferenceCount {
@@ -46,7 +56,16 @@ public:  // Other Public Methods //////////////////////////////////////////////
 
 	Real evaluate_derivative( OmegaPreferenceType preference, Angle x ) const;
 
+public: // Dihedral Sampling Methods //////////////////////////////////////////
+	OmegaPreferenceSamplingData const & get_sampling_data( OmegaPreferenceType const type ) const;
 
+	///@brief Set up CHI sampling data.
+	void setup_for_sampling( core::Real step_size = 0.1 );
+
+	bool sampling_data_setup() const;
+
+	bool sampling_data_setup( OmegaPreferenceType const linkage_type ) const;
+	
 private:  // Private methods //////////////////////////////////////////////////
 	void set_parameters( OmegaPreferenceType preference, Angle x ) const;
 
@@ -62,6 +81,11 @@ private:  // Private Data /////////////////////////////////////////////////////
 	core::Real const k_ = 0.0025;  // constant to determine parabola "width"
 	mutable core::Angle theta_;  // location of the vertex of the parabola
 	mutable core::Real b_;  // relative energy difference of minima from minimum
+	
+private:  // Formatted Sampling Data //////////////////////////////////////////
+	std::map< OmegaPreferenceType, OmegaPreferenceSamplingData > dihedral_sampling_data_;
+	
+	
 };  // class OmegaPreferencesFunction
 
 }  // namespace carbohydrates

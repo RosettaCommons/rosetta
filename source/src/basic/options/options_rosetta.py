@@ -2003,6 +2003,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = "Randomize the starting glycans using sugar bb data before the protocol.",
 				default = 'false'
 				),
+			Option('cartmin', 'Boolean',
+				desc = 'Use Cartesian-space minimization instead of dihedral',
+				default = 'false'
+				),
+			Option('tree_based_min_pack', 'Boolean',
+				desc = 'Use a random-tree based method to minimize and pack instead of minimizing and packing all of them during the randommover selection.'
+					' This makes the speed of the algorithm mostly-linear with the addition of more glycans, and wastes less time packing and minimizing',
+				default = 'true'
+				),
 
 		), # - glycan_relax
 

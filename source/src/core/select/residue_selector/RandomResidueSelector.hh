@@ -88,10 +88,4 @@ public:
 } //namespace select
 } //namespace core
 
-
-#ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_residue_selector_RandomResidueSelector )
-#endif // SERIALIZATION
-
-
 #endif

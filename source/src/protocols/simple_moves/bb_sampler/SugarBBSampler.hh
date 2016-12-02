@@ -59,7 +59,12 @@ public:
 	name() const {
 		return "SugarBBSampler";
 	};
-
+	
+	std::string
+	get_name() const {
+		return name();
+	}
+	
 private:
 
 	core::Real sampling_step_size_;

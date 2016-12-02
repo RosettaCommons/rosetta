@@ -171,11 +171,6 @@ attributes_for_parse_task_operations( utility::tag::AttributeList & attributes )
 	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" );
 }
 
-void
-attributes_for_get_task_operations( utility::tag::AttributeList & attributes )
-{
-	attributes + utility::tag::XMLSchemaAttribute( "task_operations", utility::tag::xs_string , "XRW TO DO" );
-}
 
 /// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
 void

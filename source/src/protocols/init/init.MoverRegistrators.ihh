@@ -69,8 +69,11 @@ static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_T
 static MoverRegistrator< constraint_generator::AddConstraintsCreator > reg_AddConstraintsCreator;
 static MoverRegistrator< constraint_generator::RemoveConstraintsCreator > reg_RemoveConstraintsCreator;
 
-static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;
 static MoverRegistrator< carbohydrates::GlycanRelaxMoverCreator > reg_GlycanRelaxMoverCreator;
+//static MoverRegistrator< carbohydrates::GlycanTorsionSamplerMoverCreator > reg_GlycanTorsionSamplerCreator;
+static MoverRegistrator< carbohydrates::GlycanTreeMinMoverCreator > reg_GlycanTreeMinMoverCreator;
+//static MoverRegistrator< carbohydrates::GlycanTreePackRotamersMoverCreator > reg_GlycanTreePackRotamersMoverCreator;
+static MoverRegistrator< carbohydrates::LinkageConformerMoverCreator > reg_LinkageConformerMoverCreator;
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
 
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;

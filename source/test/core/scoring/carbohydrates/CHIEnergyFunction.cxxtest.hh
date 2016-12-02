@@ -185,8 +185,8 @@ public: // Tests //////////////////////////////////////////////////////////////
 			CHIEnergyFunctionLinkageType link_type = static_cast< CHIEnergyFunctionLinkageType >( i );
 
 			TS_ASSERT( sugar_bb.sampling_data_setup( link_type ) );
-			TS_ASSERT_THROWS_NOTHING( sugar_bb.get_chi_sampling_data( link_type )  );
-			CHIDihedralSamplingData const & sampling_data = sugar_bb.get_chi_sampling_data( link_type );
+			TS_ASSERT_THROWS_NOTHING( sugar_bb.get_sampling_data( link_type )  );
+			CHIDihedralSamplingData const & sampling_data = sugar_bb.get_sampling_data( link_type );
 
 			TR << "PROB Size" << sampling_data.probabilities.size() << std::endl;
 		}

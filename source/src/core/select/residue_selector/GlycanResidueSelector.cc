@@ -53,14 +53,25 @@ GlycanResidueSelector::GlycanResidueSelector():
 	ResidueSelector(),
 	ref_pose_name_("")
 {
-
+	include_root_ = false;
+	root_residue_ = 0;
 }
 
-GlycanResidueSelector::GlycanResidueSelector( utility::vector1< bool > root_residues ):
+GlycanResidueSelector::GlycanResidueSelector( utility::vector1< bool > root_residues, bool include_root /*false*/ ):
 	ResidueSelector(),
-	ref_pose_name_("")
+	ref_pose_name_(""),
+	include_root_(include_root)
 {
+	root_residue_ = 0;
 	set_select_from_branch_residues( root_residues );
+}
+
+GlycanResidueSelector::GlycanResidueSelector( core::Size root_residue, bool include_root /*false*/ ):
+	ResidueSelector(),
+	ref_pose_name_(""),
+	include_root_(include_root)
+{
+	set_select_from_branch_residue( root_residue );
 }
 
 /// @brief Destructor.
@@ -69,11 +80,22 @@ GlycanResidueSelector::~GlycanResidueSelector() {}
 
 void
 GlycanResidueSelector::set_select_from_branch_residues(utility::vector1<bool> root_residues){
-
+	root_residue_ = 0;
 	root_residues_ = root_residues;
 
 }
 
+void
+GlycanResidueSelector::set_select_from_branch_residue(core::Size root_residue){
+	root_residues_.clear();
+	root_residue_ = root_residue;
+
+}
+
+void
+GlycanResidueSelector::set_include_root(bool include_root){
+	include_root_ = include_root;
+}
 
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
@@ -101,7 +123,7 @@ GlycanResidueSelector::parse_my_tag(
 	}
 
 	ref_pose_name_ = tag->getOption< std::string >( "ref_pose_name", ref_pose_name_ );
-
+	include_root_ = tag->getOption< bool >("include_root", include_root_);
 }
 
 std::string GlycanResidueSelector::get_name() const
@@ -120,11 +142,31 @@ void GlycanResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute(  "branch",      xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute(  "branches",    xs_string , "XRW TO DO" )
-		+ XMLSchemaAttribute(  "ref_pose_name", xs_string , "XRW TO DO" );
 
-	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
+		+ XMLSchemaAttribute(  "branch",      xs_string ,
+		"Set the residue to select from.  "
+		"These can be the branch points of the glycans or carbohydrate residues from which to select the downstream branch from. "
+		"Like the rest of a tree from a particular position.  "
+		"That position could be the trunk or individual branches, which keep branching out. "
+		"Pose (23) or PDB numbering (24A)" )
+	
+		+ XMLSchemaAttribute(  "branches",    xs_string ,
+		"Set the residues to select from. Separated by spaces or commas. "
+		"These can be the branch points of the glycans or carbohydrate residues from which to select the downstream branch from. "
+		"Like the rest of a tree from a particular position.  "
+		"That position could be the trunk or individual branches, which keep branching out. Pose (23) or PDB numbering (24A)" )
+	
+		+ XMLSchemaAttribute(  "ref_pose_name", xs_string ,
+		"If using a Reference Pose, set the name" )
+	
+		+ XMLSchemaAttribute::attribute_w_default(  "include_root", xsct_rosetta_bool ,
+		"Should we include the root (branch/branches) residues in our selection or just go from that?", "false");
+	
+	xsd_type_definition_w_attributes( xsd, class_name(),
+	"A ResidueSelector for carbohydrates and individual carbohydrate trees. "
+	"Selects all Glycan residues if no option is given or the branch going out from the root residue. "
+	"Selecting from root residues allows you to choose the whole glycan branch or only tips, etc.", attributes );
+
 
 
 }
@@ -160,24 +202,29 @@ ResidueSubset
 GlycanResidueSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-
+	
 	utility::vector1< bool > root_residues = root_residues_;
-
 	utility::vector1< bool > subset (pose.size(), false);
-	if ( parsed_positions_.size() > 0 ) {
+	
+	if (root_residue_ != 0){
+		root_residues.clear();
+		root_residues.resize(pose.total_residue(), false);
+		root_residues[ root_residue_ ] = true;
+		
+	}
+	
+	if ( ! parsed_positions_.empty()) {
 		root_residues.resize(pose.size(), false);
 		for ( core::Size i = 1; i <= parsed_positions_.size(); ++ i ) {
 			core::Size resnum = core::pose::parse_resnum( parsed_positions_[ i ], pose);
 			root_residues[ resnum ] = true;
 		}
 	}
-
-	if ( root_residues_.size() > 0 ) {
-		for ( core::Size i = 1; i <= root_residues_.size(); ++ i ) {
-
+	if ( ! root_residues.empty() ) {
+		for ( core::Size i = 1; i <= root_residues.size(); ++i ) {
 			if ( ! root_residues[ i ] ) continue;
 
-			core::Size resnum = i;
+			core::Size resnum = i ;
 
 			if ( ref_pose_name_ != "" ) {
 				resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name_ );
@@ -187,7 +234,10 @@ GlycanResidueSelector::apply(
 
 			res_and_tips = get_carbohydrate_residues_upstream( pose, resnum );
 			utility::vector1< core::Size > branching_residues = res_and_tips.first;
-			//branching_residues.push_back( resnum ); This selects the root and includes it.  Probably not what we want, especially if we select on
+			
+			if (include_root_){
+				branching_residues.push_back( resnum );
+			}
 
 			for ( core::Size x = 1; x <= branching_residues.size(); ++x ) {
 				core::Size branching_resnum = branching_residues[ x ];
@@ -202,7 +252,6 @@ GlycanResidueSelector::apply(
 			}
 		}
 	}
-
 	return subset;
 
 }

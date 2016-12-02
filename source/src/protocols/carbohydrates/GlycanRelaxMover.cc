@@ -14,12 +14,9 @@
 #include <protocols/carbohydrates/GlycanRelaxMover.hh>
 #include <protocols/carbohydrates/GlycanRelaxMoverCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMover.hh>
+#include <protocols/carbohydrates/GlycanTreeMinMover.hh>
 #include <protocols/simple_moves/BBDihedralSamplerMover.hh>
 
-
-
-
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/selection.hh>
@@ -38,6 +35,8 @@
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/select/residue_selector/RandomGlycanFoliageSelector.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -116,7 +115,6 @@ GlycanRelaxMover::parse_my_tag(
 	kt_ = tag->getOption< core::Real >("kt", kt_);
 	rounds_ = tag->getOption< core::Size >("rounds", rounds_);
 
-	pack_glycans_ = tag->getOption< bool >("pack_glycans", pack_glycans_);
 	final_min_ = tag->getOption< bool >("final_min", final_min_);
 
 	pymol_movie_ = tag->getOption< bool >("pymol_movie", pymol_movie_);
@@ -156,7 +154,41 @@ GlycanRelaxMover::parse_my_tag(
 	}
 
 	pack_distance_ = tag->getOption< core::Real >("pack_distance", pack_distance_);
+	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
+	
+	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
+}
 
+void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	// TO DO!
+	using namespace utility::tag;
+	AttributeList attlist; // TO DO: add attributes to this list
+	attlist + XMLSchemaAttribute("kt", xsct_real, "Temperature for metropolis criterion")
+		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Number of relax rounds to perform.  Will be multiplied by the number of glycan residues.")
+		+ XMLSchemaAttribute::attribute_w_default("final_min", xsct_rosetta_bool, "Perform a final minimization", "true")
+		+ XMLSchemaAttribute::attribute_w_default("pymol_movie", xsct_rosetta_bool, "Output a PyMOL movie of the run", "false")
+	
+		+ XMLSchemaAttribute::attribute_w_default("random_start", xsct_rosetta_bool, "Start with a random glycan conformation", "false")
+		+ XMLSchemaAttribute::attribute_w_default("sugar_bb_start", xsct_rosetta_bool, "Start with a glycan conformation sampled from sugar bb data.", "false")
+	
+		+ XMLSchemaAttribute("pack_distance", xsct_real, "Neighbor distance for packing")
+		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true");
+	
+	//Append for MoveMap, scorefxn, and task_operation tags.
+	rosetta_scripts::attributes_for_parse_task_operations( attlist );
+	rosetta_scripts::attributes_for_get_score_function_name( attlist );
+	
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
+	
+	"Main mover for Glycan Relax, which optimizes glycans in a pose. "
+	"Each round optimizes either one residue for BB sampling, linkage, or a [part of a ] branch for minimization and packing."
+	"Minimization and packing work by default by selecting a random glycan residue from any set movemap or all of them "
+	"and then selecting the rest of the downstream branch.  Those residues are then minimized or packed.  Packing includes a neighbor packing shell. "
+	"Currently uses a random sampler with a set of weights to each mover for sampling.", attlist, subelements );
 }
 
 void
@@ -164,7 +196,6 @@ GlycanRelaxMover::set_defaults(){
 	rounds_ = 75; //Means absolutely nothing right now - Actually set from cmd line.
 	test_ = false;
 
-	pack_glycans_ = false;
 	final_min_ = true;
 
 	set_cmd_line_defaults();
@@ -172,6 +203,8 @@ GlycanRelaxMover::set_defaults(){
 	total_glycan_residues_ = 0;
 	ref_pose_name_ = "";
 	pack_distance_ = 6.0;
+	cartmin_ = false;
+	
 }
 
 
@@ -180,12 +213,13 @@ GlycanRelaxMover::set_cmd_line_defaults(){
 
 	rounds_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_rounds]();
 	test_ = option [OptionKeys::carbohydrates::glycan_relax::glycan_relax_test]();
-	pack_glycans_ = option[ OptionKeys::carbohydrates::glycan_relax::pack_glycans]();
 	final_min_ = option[ OptionKeys::carbohydrates::glycan_relax::final_min_glycans]();
 	pymol_movie_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_movie]();
 	kt_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_kt]();
 	random_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_random_start]();
 	sugar_bb_start_ = option[ OptionKeys::carbohydrates::glycan_relax::glycan_relax_sugar_bb_start]();
+	cartmin_ = option[ OptionKeys::carbohydrates::glycan_relax::cartmin]();
+	tree_based_min_pack_ = option[ OptionKeys::carbohydrates::glycan_relax::tree_based_min_pack]();
 
 
 }
@@ -235,30 +269,65 @@ GlycanRelaxMover::set_taskfactory(core::pack::task::TaskFactoryCOP tf){
 	tf_ = tf;
 }
 
-void
-GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & glycan_positions ){
+core::pack::task::TaskFactoryOP
+GlycanRelaxMover::get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & glycan_positions) const {
+
 	using namespace core::pack::task::operation;
-
-
+	using namespace core::select::residue_selector;
+	
 	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
 	tf->push_back(InitializeFromCommandlineOP( new InitializeFromCommandline));
-
+	
 	//If a resfile is provided, we just use that and get out.
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
 		tf->push_back( ReadResfileOP( new ReadResfile()) );
-	} else {
-
-		//Select all the NON-glycan and neighbors and then turn them off.
+	}
+	else{
 		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(glycan_positions, pack_distance_, true /* include focus */));
 		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
 
 		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
 		tf->push_back( subset_op );
 		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
+	
+	}
+	return tf;
+	
+}
+
+void
+GlycanRelaxMover::setup_default_task_factory(utility::vector1< bool > const & glycan_positions ){
+	using namespace core::pack::task::operation;
+	using namespace core::select::residue_selector;
+
+	TaskFactoryOP tf = TaskFactoryOP( new TaskFactory());
+	
+
+
+
+	//Select all the NON-glycan and non-neighbors and then turn them off.
+	if (tree_based_min_pack_){
+	
+		TR << "Setting up Tree-based packing." << std::endl;
+		
+		tf->push_back(InitializeFromCommandlineOP( new InitializeFromCommandline));
+		RandomGlycanFoliageSelectorOP select_random_foliage= RandomGlycanFoliageSelectorOP( new RandomGlycanFoliageSelector(glycan_positions));
+		PreventRepackingRLTOP prevent_repacking = PreventRepackingRLTOP( new PreventRepackingRLT());
+		
+		NeighborhoodResidueSelectorOP neighbor_selector = NeighborhoodResidueSelectorOP( new NeighborhoodResidueSelector(select_random_foliage, pack_distance_, true /* include focus */));
+		
+		OperateOnResidueSubsetOP subset_op = OperateOnResidueSubsetOP( new OperateOnResidueSubset( prevent_repacking, neighbor_selector, true /* flip */));
+		tf->push_back( subset_op );
+		tf->push_back( RestrictToRepackingOP( new RestrictToRepacking()));
+		
+	}
+	else{
+		tf = get_all_glycans_and_neighbor_res_task_factory( glycan_positions );
 	}
 
 	set_taskfactory(tf);
 }
+
 
 
 
@@ -278,6 +347,18 @@ GlycanRelaxMover::set_rounds(core::Size rounds){
 	rounds_ = rounds;
 }
 
+void
+GlycanRelaxMover::use_cartmin( bool use_cartmin ){
+	cartmin_ = use_cartmin;
+}
+
+void
+GlycanRelaxMover::setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const {
+
+	scorefxn->set_weight_if_zero(core::scoring::cart_bonded, .5);
+	scorefxn->set_weight(core::scoring::pro_close, 0);
+
+}
 
 void
 GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
@@ -297,8 +378,17 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	//Create Scorefunction if needed.
 	if ( ! scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
-	}
 
+	}
+	
+	//If Cartmin is enabled, and scorefxn_ needs the terms, enable them!
+	if (cartmin_){
+		core::scoring::ScoreFunctionOP local_scorefxn = scorefxn_->clone();
+		setup_cartmin(local_scorefxn);
+		scorefxn_ = local_scorefxn;
+	}
+	
+	
 	//Create a MonteCarlo object
 	scorefxn_->score(pose);
 	mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, kt_) );
@@ -377,41 +467,49 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	//////////  Setup Phi/Psi/N-Omega movemaps. /////////////////////////
 	MoveMapOP sugar_bb_movemap = MoveMapOP( new MoveMap() );
 	MoveMapOP glycan_dih_movemap = MoveMapOP( new MoveMap() );
-
+	
+	
 	SmallBBSamplerOP random_sampler = SmallBBSamplerOP( new SmallBBSampler( 360.0 ) ); // +/- 180 degrees
 	SugarBBSamplerOP random_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( ) );
 
 
 	core::Size max_glycan_dihedrals = 2;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-
 		//Turn off if not carbohydrates or if N terminal carbohydrate not attached to anything.
-		if ( ! glycan_movemap_->get_bb( i )  || find_seqpos_of_saccharides_parent_residue( pose.residue( i ) ) == 0 ) {
+		if ( ! glycan_movemap_->get_bb( i ) ) {
+		
+			//TR << "Turning OFF Residue "<< i << " Skipping Non-protein Residue " << std::endl;
 			sugar_bb_movemap->set_bb( i, false );
 			glycan_dih_movemap->set_bb( i, false );
 			continue;
 		}
+			
+
 
 		//Need Psi Movemap (Non-Exocyclic) and Omega for only Exocyclic
 		core::Size n_dihedrals = get_n_glycosidic_torsions_in_res( pose, i );
 
-		sugar_bb_movemap->set_bb(i , 1, true); //Turn on for Phi
-		sugar_bb_movemap->set_bb(i, 2, true);
-
-		//Turn off psi for residue if it has any omegas.  We don't have data for this.
-		if ( n_dihedrals > 2 ) {
-			sugar_bb_movemap->set_bb( i, 2, false );
-		}
-
 		if ( n_dihedrals > max_glycan_dihedrals ) {
 			max_glycan_dihedrals = n_dihedrals;
 		}
-
+		
+		core::Size parent_res = find_seqpos_of_saccharides_parent_residue( pose.residue( i ) );
+		if ( parent_res == 0 || ! pose.residue( parent_res ).is_carbohydrate() ) {
+			//TR << "Turning OFF Residue " << i << ":: PROTEIN or NO PARENT :: " << std::endl;
+			
+			sugar_bb_movemap->set_bb( i, false );
+			glycan_dih_movemap->set_bb( i, false );
+			continue;
+			
+		}
+		
+		//TR << "Turning ON Residue " << i << std::endl;
 		//Turn on only dihedrals for which these residues actually have
 		for ( core::Size torsion_id = 1; torsion_id <= n_dihedrals; ++torsion_id ) {
 
 			glycan_dih_movemap->set_bb( i, torsion_id, true );
-
+			sugar_bb_movemap->set_bb(i, torsion_id, true);
+			
 			//Randomize starting structure if set.
 			if ( random_start_ ) {
 				random_sampler->set_torsion_type( static_cast< core::id::MainchainTorsionType >( torsion_id ) );
@@ -434,33 +532,63 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	}
 
 	TR << "Modeling " << total_glycan_residues_ << " glycan residues" << std::endl;
+	//sugar_bb_movemap->show(std::cout);
+	
 	//pose.dump_pdb("post_random.pdb");
 
 	////////////////// Mover Setup //////////////
 	//Create Movers that will be part of our sequence mover.
 	SugarBBSamplerOP phi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::phi_dihedral ) );
 	SugarBBSamplerOP psi_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::psi_dihedral ) );
-
+	SugarBBSamplerOP omega_sugar_sampler = SugarBBSamplerOP( new SugarBBSampler( core::id::omega_dihedral) );
 
 	BBDihedralSamplerMoverOP sugar_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
-	BBDihedralSamplerMoverOP small_sampler_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover );
 
 	//Tolerance of .001 can significantly decrease energies, but it takes ~ 25% longer.  This tolerance should be optimized here.
 	min_mover_ = MinMoverOP( new MinMover( glycan_movemap_->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, false /* use_nblist*/ ) );
+	
+	if (cartmin_){
+		min_mover_->min_type("lbfgs_armijo_nonmonotone");
+		min_mover_->cartesian(true);
+		min_mover_->min_options()->max_iter(200); //Great suggestion from Patrick Conway
+	}
+	
 	linkage_mover_ = LinkageConformerMoverOP( new LinkageConformerMover( glycan_movemap_ ));
 
 	//Setup Sugar Samplers
 	sugar_sampler_mover->add_sampler( phi_sugar_sampler );
 	sugar_sampler_mover->add_sampler( psi_sugar_sampler );
+	sugar_sampler_mover->add_sampler( omega_sugar_sampler );
 	sugar_sampler_mover->set_movemap( sugar_bb_movemap );
 
 	////////// Sequence Mover Setup //////////////
 	//Settings for linkage conformer mover here!
 	weighted_random_mover_ = RandomMoverOP(new RandomMover);
-	weighted_random_mover_->add_mover(sugar_sampler_mover, .40);
+	
+	//Set the sugar bb weight.  If we are min/packing properly, we switch it out a bit.
+	core::Real sugar_bb_sampler_weight;
+	if (tree_based_min_pack_){
+		sugar_bb_sampler_weight = .30;
+	}
+	else {
+		sugar_bb_sampler_weight = .40;
+	}
+	
+	weighted_random_mover_->add_mover(sugar_sampler_mover, sugar_bb_sampler_weight);
 	weighted_random_mover_->add_mover(linkage_mover_, .20);
-	weighted_random_mover_->add_mover(min_mover_, .05);
-
+	
+	core::Real min_pack_weight;
+	if (tree_based_min_pack_){
+		min_pack_weight = .10;
+		
+		GlycanTreeMinMoverOP tree_min_mover = GlycanTreeMinMoverOP( new GlycanTreeMinMover( glycan_movemap_->clone(), scorefxn_, "dfpmin_armijo_nonmonotone", 0.01 ));
+		weighted_random_mover_->add_mover(tree_min_mover, min_pack_weight);
+	}
+	else {
+		min_pack_weight = .05;
+		weighted_random_mover_->add_mover(min_mover_, min_pack_weight);
+	}
+	
 
 	//Setup Small Sampler
 	BBDihedralSamplerMoverOP glycan_small_mover = BBDihedralSamplerMoverOP( new BBDihedralSamplerMover() );
@@ -489,17 +617,27 @@ GlycanRelaxMover::init_objects(core::pose::Pose & pose ){
 	weighted_random_mover_->add_mover( glycan_small_mover, 0.17142857142857143 );
 	weighted_random_mover_->add_mover( glycan_medium_mover, 0.08571428571428572 );
 	weighted_random_mover_->add_mover( glycan_large_mover, 0.04285714285714286 );
-
+	
 	if ( ! tf_ ) {
 		setup_default_task_factory(glycan_positions);
 	}
 
+	core::pack::task::TaskFactoryOP full_task = get_all_glycans_and_neighbor_res_task_factory(glycan_positions);
+	
 	//Setup pack rotamers mover, add it.
-	packer_ = PackRotamersMoverOP( new PackRotamersMover() );
+	PackRotamersMoverOP main_packer = PackRotamersMoverOP( new PackRotamersMover() );
+	packer_                         = PackRotamersMoverOP( new PackRotamersMover() );
+	
+	
 	packer_->score_function(scorefxn_);
-	packer_->task_factory(tf_);
+	main_packer->score_function(scorefxn_);
+	
+	packer_->task_factory(full_task);
+	main_packer->task_factory(tf_);
+	
 
-	weighted_random_mover_->add_mover( packer_, .05);
+	weighted_random_mover_->add_mover( main_packer, min_pack_weight );
+
 
 }
 
@@ -539,7 +677,7 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 		if ( weighted_random_mover_->get_last_move_status() == protocols::moves::MS_SUCCESS ) {
 			core::Real energy = scorefxn_->score(pose);
 			if ( TR.Debug.visible() ) {
-				TR.Debug << "energy post MC: "<< energy << std::endl;
+				TR << "energy post MC: "<< energy << std::endl;
 			}
 
 			if ( pymol_movie_ ) {
@@ -599,20 +737,6 @@ GlycanRelaxMover::apply( core::pose::Pose& pose ){
 
 /////////////// Creator ///////////////
 
-// XRW TEMP protocols::moves::MoverOP
-// XRW TEMP GlycanRelaxMoverCreator::create_mover() const {
-// XRW TEMP  return protocols::moves::MoverOP( new GlycanRelaxMover );
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP GlycanRelaxMoverCreator::keyname() const {
-// XRW TEMP  return GlycanRelaxMover::mover_name();
-// XRW TEMP }
-
-// XRW TEMP std::string
-// XRW TEMP GlycanRelaxMover::mover_name(){
-// XRW TEMP  return "GlycanRelaxMover";
-// XRW TEMP }
 
 std::string GlycanRelaxMover::get_name() const {
 	return mover_name();
@@ -622,22 +746,6 @@ std::string GlycanRelaxMover::mover_name() {
 	return "GlycanRelaxMover";
 }
 
-void GlycanRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
-{
-	// TO DO!
-	using namespace utility::tag;
-	AttributeList attlist; // TO DO: add attributes to this list
-	attlist + XMLSchemaAttribute("kt", xsct_real, "Temperature for metropolis criterion")
-		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Number of relax rounds to perform")
-		+ XMLSchemaAttribute("pack_glycans", xsct_rosetta_bool, "Should we sample rotamers for glycans?")
-		+ XMLSchemaAttribute("final_min", xsct_rosetta_bool, "Perform a final minimization")
-		+ XMLSchemaAttribute("pymol_movie", xsct_rosetta_bool, "Output a PyMOL movie of the run")
-		+ XMLSchemaAttribute("random_start", xsct_rosetta_bool, "Start with a random glycan conformation");
-
-	XMLSchemaSimpleSubelementList subelements;
-	rosetta_scripts::append_subelement_for_parse_movemap_w_datamap( xsd, subelements );
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Mover to relax glycans", attlist, subelements );
-}
 
 std::string GlycanRelaxMoverCreator::keyname() const {
 	return GlycanRelaxMover::mover_name();

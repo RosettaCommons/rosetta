@@ -22,6 +22,7 @@
 // Basic Headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
 #include <cmath>
@@ -111,6 +112,89 @@ OmegaPreferencesFunction::evaluate_function( OmegaPreferenceType preference, Ang
 	set_parameters( preference, x );
 	return k_ * pow( ( x - theta_ ), 2 ) + b_;
 }
+
+
+
+// Sampling Methods ///////////////////////////////////////////////////////////
+
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+void
+OmegaPreferencesFunction::setup_for_sampling( core::Real step_size ){
+	using utility::to_string;
+
+	//Note:
+	// Probability from energy: -ln(p)=E -> p = e^-E
+
+	//Get phi/get psi linkages.
+	TR << "Setting up omega preference sampling" << std::endl;
+
+	// Write 2 for loops.  Difference will be -180, 180; 360.
+	for ( core::Size i = 1; i <= core::Size(N_OMEGA_PREFERENCE_TYPES); ++i ) {
+		//TR << "linkage: " << i << std::endl;
+		//std::cout << "Angle,Energy,Probability"<<std::endl;
+
+		OmegaPreferenceType preference_type = static_cast< OmegaPreferenceType >( i );
+
+		OmegaPreferenceSamplingData sampling_data;
+
+		sampling_data.preference_type = preference_type;
+		sampling_data.step_size = step_size;
+
+		for ( Angle dih = -180.0; dih <= 180.0; dih+=step_size ) {
+			Energy e = evaluate_function(preference_type, dih);
+			Probability prob = std::exp( -e );
+
+			sampling_data.angles.push_back( dih );
+			sampling_data.probabilities.push_back( prob );
+			//std::cout <<dih << "," << e << "," << prob << std::endl;
+
+		}
+
+		dihedral_sampling_data_[ preference_type ] = sampling_data;
+	}
+}
+
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+bool
+OmegaPreferencesFunction::sampling_data_setup() const {
+	if ( dihedral_sampling_data_.empty() ) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+bool
+OmegaPreferencesFunction::sampling_data_setup( OmegaPreferenceType const linkage_type ) const {
+	std::map< OmegaPreferenceType, OmegaPreferenceSamplingData>::const_iterator const_iter;
+	const_iter = dihedral_sampling_data_.find( linkage_type );
+
+	if ( const_iter != dihedral_sampling_data_.end() ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+OmegaPreferenceSamplingData const &
+OmegaPreferencesFunction::get_sampling_data( OmegaPreferenceType const linkage_type ) const {
+
+	std::map< OmegaPreferenceType, OmegaPreferenceSamplingData>::const_iterator const_iter;
+	const_iter = dihedral_sampling_data_.find( linkage_type );
+
+
+	if ( const_iter != dihedral_sampling_data_.end() ) {
+		return const_iter->second;
+	} else {
+		std::string m = "Omega Preference Data not found for linkage type "+utility::to_string( linkage_type );
+		utility_exit_with_message( m );
+	}
+}
+
+
+
 
 }  // namespace carbohydrates
 }  // namespace scoring

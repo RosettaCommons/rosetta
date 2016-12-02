@@ -18,6 +18,7 @@
 // Unit Headers
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunctionLinkageType.hh>
+#include <core/scoring/carbohydrates/OmegaPreferenceType.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -70,7 +71,7 @@ public:  // Other Public Methods //////////////////////////////////////////////
 
 
 public: // Dihedral Sampling Methods //////////////////////////////////////////
-	CHIDihedralSamplingData const & get_chi_sampling_data( CHIEnergyFunctionLinkageType type ) const;
+	CHIDihedralSamplingData const & get_sampling_data( CHIEnergyFunctionLinkageType type ) const;
 
 	///@brief Set up CHI sampling data.
 	void setup_for_sampling( core::Real step_size = 0.1 );

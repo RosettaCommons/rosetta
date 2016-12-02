@@ -262,7 +262,7 @@ has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformatio
 	// What does this mean for ASN-glycan connections?? Technically, it won't be an exocyclic atom -
 	// but it WILL have omega and omega2 if ASN - so be careful here!
 	if ( ! parent_rsd.is_carbohydrate() ) {
-		TR << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << std::endl;
+		TR.Debug << "has_exocyclic_glycosidic_linkage: Previous residue is not a carbohydrate! Returning false. " << std::endl;
 		return false;
 	}
 
@@ -401,7 +401,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 		return ids;
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
-		TR.Warning << "Omega is undefined for residue " << sequence_position <<
+		TR.Debug << "Omega is undefined for residue " << sequence_position <<
 			" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
@@ -454,7 +454,7 @@ get_reference_atoms_for_2nd_omega( Pose const & pose, uint const sequence_positi
 		return ids;
 	}
 	if ( residues.second->is_carbohydrate() && ( ! has_exocyclic_glycosidic_linkage( *residues.first, *residues.second ) ) ) {
-		TR.Warning << "Omega2 is undefined for residue " << sequence_position <<
+		TR.Debug << "Omega2 is undefined for residue " << sequence_position <<
 			" because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
@@ -848,7 +848,7 @@ get_glycosidic_torsion( uint const torsion_id, Pose const & pose, uint const seq
 
 	if ( ref_atoms.size() == 0 ) {
 		// This occurs when there is no parent residue or when the glycosidic bond is not exocyclic (omega only).
-		TR.Warning << "Returning zero." << std::endl;
+		TR.Debug << "Returning zero." << std::endl;
 		return 0.0;
 	}
 
@@ -1342,7 +1342,7 @@ get_carbohydrate_residues_upstream(
 	utility::vector1< Size > children_residues;
 
 	if ( ! pose.residue( starting_position ).is_carbohydrate() && ! pose.residue( starting_position ).is_branch_point() ) {
-		TR << "Delete to residue is not carbohydrate and not a branch point.  Nothing to be done." << std::endl;
+		TR << "Starting position residue is not carbohydrate and not THE branch point.  Nothing to be done. " << starting_position << std::endl;
 		return std::make_pair( list_of_residues, tips);
 	}
 

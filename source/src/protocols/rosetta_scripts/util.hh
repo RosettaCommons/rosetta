@@ -61,16 +61,11 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*con
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data );
 
-/// @brief Appends the attributes read by parse_task_operations
+/// @brief Appends the 'task_operation' attribute
 void
 attributes_for_parse_task_operations( utility::tag::AttributeList & attributes );
 
-/// @brief Appends the attributes read by get_task_operations which behaves just
-/// like parse_task_operations (but doesn't rely on it for some unknowable reason)
-void
-attributes_for_get_task_operations( utility::tag::AttributeList & attributes );
-
-/// @brief Appends the attributes read by parse_task_operations when handed a TaskFactory
+/// @brief Appends the 'task_operation' and 'task_factory' attributes.
 void
 attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes );
 

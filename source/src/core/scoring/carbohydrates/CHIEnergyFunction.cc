@@ -222,7 +222,7 @@ CHIEnergyFunction::sampling_data_setup( CHIEnergyFunctionLinkageType linkage_typ
 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 CHIDihedralSamplingData const &
-CHIEnergyFunction::get_chi_sampling_data( CHIEnergyFunctionLinkageType linkage_type ) const {
+CHIEnergyFunction::get_sampling_data( CHIEnergyFunctionLinkageType linkage_type ) const {
 	// Need to go through iterator.  Fuck you C++
 
 	std::map< CHIEnergyFunctionLinkageType, CHIDihedralSamplingData>::const_iterator const_iter;

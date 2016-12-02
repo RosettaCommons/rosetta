@@ -36,6 +36,7 @@ sources = {
 	],
 	"protocols/carbohydrates":[
 		"GlycanRelaxMover",
+		"GlycanTreeMinMover",
 		"LinkageConformerMover",
 		"SimpleGlycosylateMover",
 		"util",

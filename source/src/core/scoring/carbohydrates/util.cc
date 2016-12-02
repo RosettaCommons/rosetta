@@ -135,7 +135,8 @@ get_omega_preference_for_residue_in_pose( pose::Pose const & pose, core::uint rs
 	using namespace conformation;
 
 	Residue const & rsd( pose.residue( rsd_num ) );
-
+	
+	//JAB - shouldn't we check parent residue here and make sure its not zero instead of 1?
 	if ( rsd.is_carbohydrate() && rsd.seqpos() != 1 ) {
 		// For omega, we need to get information from the previous residue.
 		Residue const & prev_rsd( pose.residue(
@@ -195,6 +196,10 @@ get_linkage_types_for_dihedral( core::Size torsion )
 	} else if ( torsion == id::psi_dihedral ) {
 		linkages[ 1 ] = _2AX_3EQ_4AX_LINKS;
 		linkages[ 2 ] = _2EQ_3AX_4EQ_LINKS;
+		
+		//CHI in an an exocyclic 1-6 linkage.
+		linkages.push_back( ALPHA6_LINKS );
+		linkages.push_back( BETA6_LINKS );
 	} else {
 		//Should probably throw instead of exit.
 		utility_exit_with_message( "no data for torsion" );
