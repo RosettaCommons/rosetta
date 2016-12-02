@@ -566,6 +566,7 @@ store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
 	TR.Debug << "SSBOND record information stored successfully." << endl;
 }
 
+
 // Convert .pdb LINK record into SFR data.
 void
 store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
@@ -600,6 +601,14 @@ store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
 		links = sfr.link_map()[ link.resID1 ];
 	}
 	links.push_back( link );
+	
+	if ( links.size() > 1 ) {
+		// The links need to be sorted such that higher-numbered residues come later.
+		auto sort_func = []( LinkInformation const & lhs, LinkInformation const & rhs ) {
+			return ( lhs.chainID2 < rhs.chainID2 ) || ( lhs.chainID2 == rhs.chainID2 && lhs.resSeq2 < rhs.resSeq2 );
+		};
+		sort( links.begin(), links.end(), sort_func );
+	}
 
 	sfr.link_map()[ link.resID1 ] = links;
 

@@ -1,5 +1,6 @@
 -include_sugars
 -include_lipids
+-alternate_3_letter_codes pdb_sugar
 -write_pdb_link_records
 -mute all
 -unmute core.chemical.carbohydrates

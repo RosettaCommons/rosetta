@@ -87,8 +87,8 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
-			whacky_sugar;
+				O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
+				whacky_sugar, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -318,6 +318,12 @@ main( int argc, char *argv[] )
 			*residue_set );
 
 		test_sugar( whacky_sugar );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing a .pdb file with bad LINK records:" << endl;
+
+		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
