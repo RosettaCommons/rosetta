@@ -93,8 +93,8 @@ def generate_version_files():
     '''
     version_info = retrieve_version_information()
     # moved to utility/version.hh update_file_if_changed( os.path.normpath("src/devel/svn_version.cc"),  version_cc_template % version_info)
-    update_file_if_changed( os.path.normpath("src/python/bindings/src/version.py"), version_py_template % version_info)
-    update_file_if_changed( os.path.normpath("src/python/packaged_bindings/src/version.py"), version_py_template % version_info)
+    # update_file_if_changed( os.path.normpath("src/python/bindings/src/version.py"), version_py_template % version_info)
+    # update_file_if_changed( os.path.normpath("src/python/packaged_bindings/src/version.py"), version_py_template % version_info)
     #update_file_if_changed( os.path.normpath("src/python/PyRosetta/src/pyrosetta/version.py"), version_py_template % version_info)
 
     update_file_if_changed( os.path.normpath("src/utility/version.hh"), version_utility_template % version_info)

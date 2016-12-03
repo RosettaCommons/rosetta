@@ -13,8 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import commands
-import codecs
+import codecs, commands
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
@@ -170,7 +169,12 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', verb
 
     #binder = install_llvm_tool('binder', source_location='{}/source/src/python/PyRosetta/binder'.format(rosetta_dir), config=config)
 
-    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}'.format(rosetta_dir=rosetta_dir, python=platform['python'], jobs=jobs, compiler=platform['compiler'], mode=mode)
+    extra = ''
+    if platform['os'] == 'mac'  and  platform['python'].startswith('python3'):
+        python_prefix = execute('Getting {} prefix path...'.format(platform['python']), '{}-config --prefix'.format(platform['python']), return_='output')
+        extra = ' --python-include-dir={0}/include/python3.5m --python-lib={0}/lib/libpython3.5.dylib'.format(python_prefix)
+
+    command_line = 'cd {rosetta_dir}/source/src/python/PyRosetta && {python} build.py -j{jobs} --compiler {compiler} --type {mode}{extra}'.format(rosetta_dir=rosetta_dir, python=platform['python'], jobs=jobs, compiler=platform['compiler'], mode=mode, extra=extra)
 
     pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output')
 

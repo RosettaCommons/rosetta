@@ -61,7 +61,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 endif()
 
 
-# work-around for: pybind11.h:147:36: error: invalid conversion from ‘std::enable_if<true, void*>::type {aka void*}’ to ‘const pybind11::detail::void_type*’ [-fpermissive]
+# work-around for: pybind11.h:147:36: error: invalid conversion from 'std::enable_if<true, void*>::type {aka void*}' to 'const pybind11::detail::void_type*' [-fpermissive]
 # only works for GCC
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 

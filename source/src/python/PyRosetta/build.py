@@ -17,7 +17,7 @@
 
 from __future__ import print_function
 
-import os, sys, argparse, platform, subprocess, imp, shutil, distutils.dir_util
+import os, sys, argparse, platform, subprocess, imp, shutil, codecs, distutils.dir_util
 
 from collections import OrderedDict
 
@@ -28,6 +28,8 @@ elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "unknown"
 PlatformBits = platform.architecture()[0][:2]
 
+_machine_name_ = os.uname()[1]
+
 _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)  # should be formatted: 2.7 or 3.5
 #_python_version_ = '{}.{}.{}'.format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)  # should be formatted: 2.7.6 or 3.5.0
 
@@ -36,6 +38,10 @@ _pybind11_version_ = '1ee4128cfe8efcab618a980649cad9d830d8b32b'
 _banned_dirs_ = 'src/utility/pointer src/protocols/jd3'.split()  # src/utility/keys src/utility/options src/basic/options
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
 _banned_headers_ +=' core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh' # GPU code
+
+# Setting output to be printed in unicode regardless of terminal settings
+if sys.version_info[0] == 2: sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+else: sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach());
 
 # moved to config file _banned_namespaces_ = 'utility::options'.split()
 
@@ -74,8 +80,7 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
         output = output + errors
 
-        if sys.version_info[0] == 2: output = output.decode('utf-8', errors='replace').encode('utf-8', 'replace') # Python-2
-        else: output = output.decode('utf-8', errors='replace')  # Python-3
+        output = output.decode(encoding="utf-8", errors="replace")
 
         exit_code = p.returncode
 
@@ -146,7 +151,7 @@ def install_llvm_tool(name, source_location, prefix, debug, clean=True):
     else:
         with open(cmake_lists, 'w') as f: f.write( open(cmake_lists).read() + tool_build_line + '\n' )
 
-    build_dir = prefix+'/llvm/build_' + release + '.' + Platform + ('.debug' if debug else '.release')
+    build_dir = prefix+'/llvm/build_' + release + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
     if not os.path.isdir(build_dir): os.makedirs(build_dir)
     execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -G Ninja -DCMAKE_BUILD_TYPE={build_type} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release',
                                                                                                                                                                                                               gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
