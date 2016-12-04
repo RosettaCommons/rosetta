@@ -418,6 +418,7 @@ sources = {
 		"StoredResidueSubsetSelector",
 		"StoreResidueSubsetMover",
 		"TaskSelector",
+		"UnsatSelector",
 	],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",

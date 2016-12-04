@@ -26,5 +26,7 @@ static ResidueSelectorRegistrator< protocols::denovo_design::residue_selectors::
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 
+static ResidueSelectorRegistrator< protocols::residue_selectors::UnsatSelectorCreator > reg_UnsatSelectorCreator;
+
 } // namespace protocols
 

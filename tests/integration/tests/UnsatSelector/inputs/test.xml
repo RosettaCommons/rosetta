@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <ScoreFunction name="beta" weights="beta_nov15"/>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <Unsat name="Unsat" check_acceptors="false" scorefxn="beta" consider_mainchain_only="false"/>
+	<Not name="Sat" selector="Unsat"/>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+	<ReadResfile name="resfile" filename="inputs/resfile.txt" selector="Unsat"/>
+	<OperateOnResidueSubset name="no_design_sat" selector="Sat">
+           <PreventRepackingRLT/>
+        </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <FastDesign repeats="1" name="mutate" task_operations="resfile,no_design_sat"/>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover="mutate"/>
+    </PROTOCOLS>
+    <OUTPUT />
+</ROSETTASCRIPTS>
