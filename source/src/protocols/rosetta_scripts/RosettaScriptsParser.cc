@@ -247,7 +247,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 	}
 
 	// Validate the input script against the XSD for RosettaScripts.
-	if ( !option[ OptionKeys::parser::skip_validation]() ) validate_input_script_against_xsd( dock_design_filename, fin );
+	validate_input_script_against_xsd( dock_design_filename, fin );
 
 	TagCOP tag = utility::tag::Tag::create(fin);
 

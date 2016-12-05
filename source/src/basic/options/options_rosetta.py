@@ -6248,7 +6248,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),
 		Option( 'protocol', 'String', desc='File name for the xml parser protocol' ),
 		Option( 'script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
-		Option( 'skip_validation', 'Boolean', desc="If true, XML Schema validation is skipped.  Only recommended for scripts that you're quite sure about.  False by default.", default='false' ),
 		Option( 'validate_and_exit', 'Boolean', desc='After XML Schema validation completes, exit' ),
 		Option( 'view', 'Boolean', desc='Use the viewer?' ),
 	), # -parser
