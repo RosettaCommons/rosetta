@@ -34,7 +34,7 @@ download_template = '''\
 </html>'''
 
 
-def release(name, package_name, package_dir, working_dir, platform, config):
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
@@ -62,10 +62,11 @@ def release(name, package_name, package_dir, working_dir, platform, config):
     if files:
         with file(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
 
-    TR('Creating git repository for {name} as {package_name}...'.format(**vars()) )
 
     # Creating git repository with binaries, only for named branches
-    if config['branch'] != 'commits' or True:
+    if release_as_git_repository: #config['branch'] != 'commits' or True:
+        TR('Creating git repository for {name} as {package_name}...'.format(**vars()) )
+
         git_repository_name = '{package_name}.{branch}'.format(**vars())
         git_release_path = '{}/{name}/git/{branch}/'.format(config['release_root'], **vars())
         git_origin = os.path.abspath(git_release_path + git_repository_name + '.git')  # bare repositiry
@@ -482,7 +483,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()), return_='tuple')
 
-            release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
+            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
 
             res_code = _S_passed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
@@ -575,9 +576,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test =='PyRosetta.monolith_debug':  return py_rosetta_release('monolith_debug',  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta.namespace_debug': return py_rosetta_release('namespace_debug', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta4.Debug':          return py_rosetta4_release('Debug',      rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.Release':        return py_rosetta4_release('Release',    rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.MinSizeRel':     return py_rosetta4_release('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.Debug':          return py_rosetta4_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.Release':        return py_rosetta4_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta4.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta4.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='PyRosetta4.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
