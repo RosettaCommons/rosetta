@@ -1128,6 +1128,18 @@ ChiralFlipNaming::apply( ResidueType & rsd ) const {
 			rsd.interchangeability_group( "DTY" );
 		}
 
+	} else if ( rsd.aa() == na_rad ) {
+		rsd.name3( " 0A" );
+		rsd.interchangeability_group( " 0A" );
+	} else if ( rsd.aa() == na_rcy ) {
+		rsd.name3( " 0C" );
+		rsd.interchangeability_group( " 0C" );
+	} else if ( rsd.aa() == na_rgu ) {
+		rsd.name3( " 0G" );
+		rsd.interchangeability_group( " 0G" );
+	} else if ( rsd.aa() == na_ura ) {
+		rsd.name3( " 0U" );
+		rsd.interchangeability_group( " 0U" );
 	} else {
 		// e.g. DHLU, DC01--will be caught later and set to DAL etc. for canonicals
 		rsd.interchangeability_group( "D" + rsd.name().substr( 0, rsd.name().find(":") ) );
@@ -1148,23 +1160,35 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 
 	// Flip each
 	//rsd.debug_dump_icoor();
-	rsd.delete_property( "L_AA" );
-	rsd.add_property( "D_AA" );
-
 	if ( rsd.natoms() < 4 ) return true;
+	
+	std::string base_atom_name;
+	// The rest of the Patch takes care of props, and it's really out of theme.
+	if ( rsd.is_l_aa() ) {
+		//rsd.delete_property( "L_AA" );
+		//rsd.add_property( "D_AA" );
+		base_atom_name = " N  ";
+	} else if ( rsd.is_d_rna() ) {
+		//rsd.delete_property( "D_RNA" );
+		//rsd.add_property( "L_RNA" );
+		base_atom_name = " P  ";
+	} else {
+		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a non-AA, non-NA" );
+	}
+
 	for ( core::Size ii = 2; ii <= rsd.natoms(); ++ii ) {
 
 		AtomICoor icoor1 = rsd.icoor( ii );
 
 		std::string n1 = icoor1.stub_atom1().is_polymer_upper() ? "UPPER" :
 			( icoor1.stub_atom1().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom1().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom1().atomno() ).name() ) );
+			( icoor1.stub_atom1().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom1().atomno() ).name() ) );
 		std::string n2 = icoor1.stub_atom2().is_polymer_upper() ? "UPPER" :
 			( icoor1.stub_atom2().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom2().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom2().atomno() ).name() ) );
+			( icoor1.stub_atom2().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom2().atomno() ).name() ) );
 		std::string n3 = icoor1.stub_atom3().is_polymer_upper() ? "UPPER" :
 			( icoor1.stub_atom3().is_polymer_lower() ? "LOWER" :
-			( icoor1.stub_atom3().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom3().atomno() ).name() ) );
+			( icoor1.stub_atom3().atomno() == 0 ? base_atom_name : rsd.atom( icoor1.stub_atom3().atomno() ).name() ) );
 
 		rsd.set_icoor( rsd.atom( ii ).name(),
 			-1.0*icoor1.phi(),

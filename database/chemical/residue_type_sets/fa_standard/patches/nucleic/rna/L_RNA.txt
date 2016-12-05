@@ -1,13 +1,13 @@
 ## chiral_flip patch
 
-NAME D
+NAME L
 
 #############################################################################################
 ## general requirements
-##   L amino acids
+##   D RNAs
 #############################################################################################
 BEGIN_SELECTOR
-PROPERTY L_AA
+PROPERTY D_RNA
 END_SELECTOR
 
 
@@ -16,9 +16,8 @@ BEGIN_CASE
 CHIRAL_FLIP_NAMING
 CHIRAL_FLIP_ATOMS
 
-DELETE_PROPERTY L_AA
-DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY D_RNA
 DELETE_PROPERTY CANONICAL_NUCLEIC
-ADD_PROPERTY D_AA
+ADD_PROPERTY L_RNA
 
 END_CASE

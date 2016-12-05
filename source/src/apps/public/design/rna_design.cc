@@ -200,10 +200,14 @@ rna_design_test()
 		pack::task::parse_resfile(pose, *task);
 	} else {
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			task->nonconst_residue_task( ii ).allow_aa( na_rad );
-			task->nonconst_residue_task( ii ).allow_aa( na_ura );
-			task->nonconst_residue_task( ii ).allow_aa( na_rgu );
-			task->nonconst_residue_task( ii ).allow_aa( na_rcy );
+			// AMW: We can no longer use 'allow_aa( na_rad )' etc. because
+			// L-RNA residues share the parent na_rad (for now -- could add
+			// new ones like for the D_AAs
+			// Instead, the misnomer: allow_noncanonical_aa
+			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  A" );
+			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  U" );
+			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  G" );
+			task->nonconst_residue_task( ii ).allow_noncanonical_aa( "  C" );
 			if ( option[ all_RNA ] ) {
 				for ( auto const & name : names ) {
 					task->nonconst_residue_task( ii ).allow_noncanonical_aa(name);

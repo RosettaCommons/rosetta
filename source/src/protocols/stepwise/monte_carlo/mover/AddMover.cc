@@ -565,6 +565,8 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 
 	// use name3 to account for non-canonicals
+	// AMW: important to note that this is actually gonna be the base name
+	// in annotated sequence format, for example
 	std::string newrestype3 = chemical::name_from_aa( chemical::aa_from_oneletter_code( newrestype ) );
 	if ( nc_res_map.find( res_to_add_in_full_model_numbering_ ) != nc_res_map.end() ) {
 		newrestype3 = nc_res_map.at( res_to_add_in_full_model_numbering_ );
@@ -572,7 +574,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
 	// figure out residue type from name3
 	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
-	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_name3( newrestype3 ) );
+	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_base_name( newrestype3 ) );
 	return conformation::ResidueFactory::create_residue( rsd_type );
 }
 

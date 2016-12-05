@@ -209,6 +209,9 @@ public:
 	ResidueTypeCOP
 	get_representative_type_name3( std::string const &  name3 ) const;
 
+	ResidueTypeCOP
+	get_representative_type_base_name( std::string const & base_name ) const;
+	
 	/// @brief Gets all non-patched types with the given aa type
 	ResidueTypeCOPs
 	get_base_types_aa( AA aa ) const;

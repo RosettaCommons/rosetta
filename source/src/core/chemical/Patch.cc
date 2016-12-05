@@ -561,12 +561,15 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 						}
 						patched_rsd_type->add_variant_type( type );
 					}
-					// AMW: Special case for the D patch. In ONLY THIS CASE,
-					// application of the D patch prepends the letter D. No ':'.
+					// AMW: Special case for the chiral flip patches. In ONLY THESE CASE,
+					// application PREpends the letter D or L. No ':'.
 					std::string name_new;
 					if ( name_ == "D" ) {
 						name_new = "D" + patched_rsd_type->name();
+					} else if ( name_ == "L" ) {
+						name_new = "L" + patched_rsd_type->name();
 					} else { /*
+						   }
 						AMW: briefly I thought this would be necessary. Nope.
 						else if ( name_.substr( 0, 3 ) == "MP-" ) {
 						Size count = 0;

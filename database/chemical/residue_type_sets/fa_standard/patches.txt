@@ -15,6 +15,7 @@ patches/nucleic/dna/dna_cutpoint_lower.txt
 patches/nucleic/dna/VirtualDNAPhosphate.txt
 
 ## RNA standard
+patches/nucleic/rna/L_RNA.txt
 patches/nucleic/rna/LowerRNA.txt
 patches/nucleic/rna/UpperRNA.txt
 patches/nucleic/rna/UpperConnectionRNA.txt

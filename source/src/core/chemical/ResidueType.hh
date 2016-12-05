@@ -1599,12 +1599,18 @@ public:
 	/// @brief Is this a triazolemer?
 	///
 	bool is_triazolemer() const;
-
+	
 	/// @brief is this a d-amino acid?
 	bool is_d_aa() const;
 
 	/// @brief is this an l-amino acid?
 	bool is_l_aa() const;
+
+	/// @brief is this a d-RNA?
+	bool is_d_rna() const;
+
+	/// @brief is this an l-RNA?
+	bool is_l_rna() const;
 
 	/// @brief Is this residue N-methylated?
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

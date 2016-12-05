@@ -213,10 +213,9 @@ void ResidueTypeSet::init(
 		// E.g. "SpecialRotamer" or "SpecialRotamer.txt".  Directory names will be ignored if given.
 		std::set< std::string > patches_to_avoid;
 		if ( option[ OptionKeys::chemical::exclude_patches ].user() ) {
-			utility::vector1< std::string > avoidlist =
+			utility::vector1< std::string > const & avoidlist =
 				option[ OptionKeys::chemical::exclude_patches ];
-			for ( Size ii = 1; ii <= avoidlist.size(); ++ii ) {
-				utility::file::FileName fname( avoidlist[ ii ] );
+			for ( utility::file::FileName const & fname : avoidlist ) {
 				patches_to_avoid.insert( fname.base() );
 			}
 		}
@@ -242,7 +241,7 @@ void ResidueTypeSet::init(
 			// Skip this patch if the "patches_to_avoid" set contains the named patch.
 			// AMW: keeping this because "patches_to_avoid" is explicitly asked for
 			// on the command line.
-			utility::file::FileName fname( line );
+			utility::file::FileName const & fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
 				TR << "While generating ResidueTypeSet " << name_ <<
 					": Skipping patch " << fname.base() << " as requested" << std::endl;
@@ -283,7 +282,6 @@ void ResidueTypeSet::init(
 					== patch_filenames.end() ) {
 				patch_filenames.push_back( database_directory_ + "patches/CtermTruncation.txt" );
 			}
-
 		}
 
 		// Also obtain metapatch filenames, for FA_STANDARD only.
@@ -311,12 +309,12 @@ void ResidueTypeSet::init(
 
 	ResidueTypeCOPs residue_types = cache_->generated_residue_types();
 	if ( option[ OptionKeys::in::add_orbitals] ) {
-		for ( Size ii = 1 ; ii <= residue_types.size() ; ++ii ) {
-			if ( residue_types[ii]->finalized() ) {
-				ResidueTypeOP rsd_type_clone = residue_types[ii]->clone();
+		for ( auto const & residue_type : residue_types ) {
+			if ( residue_type->finalized() ) {
+				ResidueTypeOP rsd_type_clone = residue_type->clone();
 				orbitals::AssignOrbitals( rsd_type_clone ).assign_orbitals();
-				cache_->update_residue_type( residue_types[ ii ], rsd_type_clone );
-				update_base_residue_types_if_replaced( residue_types[ ii ], rsd_type_clone );
+				cache_->update_residue_type( residue_type, rsd_type_clone );
+				update_base_residue_types_if_replaced( residue_type, rsd_type_clone );
 			}
 		}
 	}
@@ -365,10 +363,9 @@ ResidueTypeSet::read_list_of_residues(
 void
 ResidueTypeSet::read_files(
 	utility::vector1< std::string > const & filenames
-)
-{
-	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		ResidueTypeCOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
+) {
+	for ( std::string const & filename : filenames ) {
+		ResidueTypeCOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
 		base_residue_types_.push_back( rsd_type );
 	}
 }
@@ -378,22 +375,20 @@ void
 ResidueTypeSet::apply_patches(
 	utility::vector1< std::string > const & patch_filenames,
 	utility::vector1< std::string > const & metapatch_filenames
-)
-{
-	for ( Size ii=1; ii<= patch_filenames.size(); ++ii ) {
-		PatchOP p( new Patch(name_) );
-		p->read_file( patch_filenames[ii] );
+) {
+	for ( std::string const & patch_filename : patch_filenames ) {
+		PatchOP p( new Patch( name_ ) );
+		p->read_file( patch_filename );
 		patches_.push_back( p );
 		patch_map_[ p->name() ].push_back( p );
 	}
 
-	for ( Size ii=1; ii <= metapatch_filenames.size(); ++ii ) {
+	for ( std::string const & metapatch_filename : metapatch_filenames ) {
 		MetapatchOP p( new Metapatch );
-		p->read_file( metapatch_filenames[ii] );
+		p->read_file( metapatch_filename );
 		metapatches_.push_back( p );
 		metapatch_map_[ p->name() ] = p;
 	}
-
 
 	// separate this to handle a set of base residue types and a set of patches...
 	// this would allow addition of patches and/or base_residue_types at stages after initialization.
@@ -407,27 +402,25 @@ ResidueTypeSet::apply_patches(
 	//  look for "MET:protein_centroid_with_HA" and know about this patch.
 	// For now, apply them first, and force application/instantiation later.
 	// -- rhiju
-	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
-		PatchCOP p( patches_[ ii ] );
-		for ( Size i=1; i<= base_residue_types_.size(); ++i ) {
-			ResidueType const & rsd_type( *base_residue_types_[ i ] );
-			if ( p->applies_to( rsd_type ) ) {
-				if ( p->replaces( rsd_type ) ) {
-					runtime_assert( rsd_type.finalized() );
-					ResidueTypeCOP rsd_type_new = p->apply( rsd_type );
-					cache_->update_residue_type( base_residue_types_[ i ], rsd_type_new );
-					runtime_assert( update_base_residue_types_if_replaced( base_residue_types_[ i ], rsd_type_new ) );
-				}
+	for ( PatchCOP p : patches_ ) {
+		for ( Size i = 1; i <= base_residue_types_.size(); ++i ) {
+			ResidueType const & rsd_type( *base_residue_types_[i] );
+			if ( !p->applies_to( rsd_type ) )  continue;
+			
+			if ( p->replaces( rsd_type ) ) {
+				runtime_assert( rsd_type.finalized() );
+				ResidueTypeCOP rsd_type_new = p->apply( rsd_type );
+				cache_->update_residue_type( base_residue_types_[i], rsd_type_new );
+				runtime_assert( update_base_residue_types_if_replaced( base_residue_types_[i], rsd_type_new ) );
 			}
 		}
 	}
 
 	// separate this to handle a set of base residue types and a set of patches.
 	// this would allow addition of patches and/or base_residue_types at stages after initialization.
-	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
-		PatchCOP p( patches_[ ii ] );
+	for ( PatchCOP p : patches_ ) {
 		for ( Size i=1; i<= base_residue_types_.size(); ++i ) {
-			ResidueType const & rsd_type( *base_residue_types_[ i ] );
+			ResidueType const & rsd_type( *base_residue_types_[i] );
 			if ( p->applies_to( rsd_type ) && p->adds_properties( rsd_type ).has_value( "D_AA" ) ) {
 				ResidueTypeOP new_rsd_type_op = p->apply( rsd_type );
 				new_rsd_type_op->base_name( new_rsd_type_op->name() ); //D-residues have their own base names.
@@ -449,6 +442,26 @@ ResidueTypeSet::apply_patches(
 				);
 				d_to_l_mapping_[ new_rsd_type ] = base_residue_types_[i];
 			}
+			
+			if ( p->applies_to( rsd_type ) && p->adds_properties( rsd_type ).has_value( "L_RNA" ) ) {
+				ResidueTypeOP new_rsd_type_op = p->apply( rsd_type );
+				new_rsd_type_op->base_name( new_rsd_type_op->name() ); //L-RNA residues have their own base names.
+				new_rsd_type_op->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
+				
+				ResidueTypeCOP new_rsd_type( new_rsd_type_op );  //Make const-access pointer.
+				base_residue_types_.push_back( new_rsd_type );
+				cache_->add_residue_type( new_rsd_type );
+				
+				// Store the D-to-L and L-to-D mappings -- in reverse, of course!
+				runtime_assert_string_msg(
+					l_to_d_mapping_.count( base_residue_types_[i] ) == 0,
+					"Error in core::chemical::ResidueTypeSet::apply_patches: A D-equivalent for " + rsd_type.name() + " has already been defined." );
+				l_to_d_mapping_[ new_rsd_type ] = base_residue_types_[i];
+				runtime_assert_string_msg(
+					d_to_l_mapping_.count( new_rsd_type ) == 0,
+					"Error in core::chemical::ResidueTypeSet::apply_patches: An L-equivalent for " + new_rsd_type->name() + " has already been defined." );
+				d_to_l_mapping_[ base_residue_types_[i] ] = new_rsd_type;
+			}
 		}
 	}
 
@@ -463,30 +476,27 @@ ResidueTypeSet::apply_patches(
 void
 ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCOPs base_residue_types ) {
 
-	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
-		PatchCOP p( patches_[ ii ] );
+	for ( PatchCOP p : patches_ ) {
 		for ( Size i=1; i<= base_residue_types.size(); ++i ) {
-			ResidueType const & rsd_type( *base_residue_types[ i ] );
-			if ( p->applies_to( rsd_type ) ) {
-
-				// Check if any patches change name3 of residue_types.
-				// Such patches must be applicable to base residue types -- probably should
-				// check this somewhere (e.g. ResidueTypeFinder).
-				std::string const new_name3 = p->generates_new_name3( rsd_type );
-				if ( new_name3.size() > 0 && rsd_type.name3() != new_name3 ) {
-					name3_generated_by_base_residue_name_[ rsd_type.name() ].insert( new_name3 );
-				}
-
-				// similarly, check if any patches create interchangeability_groups from this base residue type.
-				// Used by ResidueTypeFinder.
-				std::string const interchangeability_group = p->generates_interchangeability_group( rsd_type );
-				if ( interchangeability_group.size() > 0 ) {
-					interchangeability_group_generated_by_base_residue_name_[ rsd_type.name() ].insert( interchangeability_group );
-				}
+			ResidueType const & rsd_type( *base_residue_types[i] );
+			if ( ! p->applies_to( rsd_type ) ) continue;
+			
+			// Check if any patches change name3 of residue_types.
+			// Such patches must be applicable to base residue types -- probably should
+			// check this somewhere (e.g. ResidueTypeFinder).
+			std::string const & new_name3 = p->generates_new_name3( rsd_type );
+			if ( new_name3.size() > 0 && rsd_type.name3() != new_name3 ) {
+				name3_generated_by_base_residue_name_[ rsd_type.name() ].insert( new_name3 );
+			}
+			
+			// similarly, check if any patches create interchangeability_groups from this base residue type.
+			// Used by ResidueTypeFinder.
+			std::string const & interchangeability_group = p->generates_interchangeability_group( rsd_type );
+			if ( interchangeability_group.size() > 0 ) {
+				interchangeability_group_generated_by_base_residue_name_[ rsd_type.name() ].insert( interchangeability_group );
 			}
 		}
 	}
-
 }
 
 
@@ -564,9 +574,6 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		// Add buffering spaces just in case the resultant patch is PDB-naming sensitive
 		// we need enough whitespace -- will trim later
 		PatchCOP needed_patch = metapatch_map_.at( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
-		//patches_.push_back( needed_patch );
-		//patch_map_[ needed_patch->name() ] = needed_patch;
-
 		ResidueTypeOP rsd_instantiated ( needed_patch->apply( rsd_base ) );
 
 		if ( rsd_instantiated == nullptr ) {
@@ -600,10 +607,9 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		bool patch_applied( false );
 
 		// sometimes patch cases are split between several patches -- look through all:
-		for ( Size n = 1; n <= patches.size(); n++ ) {
-			PatchCOP p = patches[ n ];
-
+		for ( PatchCOP p : patches ) {
 			if ( !p->applies_to( rsd_base ) ) continue;
+			
 			runtime_assert( !patch_applied ); // patch cannot be applied twice.
 
 			ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
@@ -684,6 +690,12 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 		rsd_name_base = rsd_name.substr( 1 );
 		patch_name    = "D";
 	}
+	
+	// For chiral-flip nucleic acid patch, it's the first letter.
+	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'L' && has_name( rsd_name.substr( 1 ) ) ) {
+		rsd_name_base = rsd_name.substr( 1 );
+		patch_name    = "L";
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -746,6 +758,11 @@ ResidueTypeCOP
 ResidueTypeSet::get_representative_type_name3( std::string const &  name3  ) const {
 	utility::vector1< std::string > const variants; // blank
 	return get_representative_type_name3( name3, variants );
+}
+	
+ResidueTypeCOP
+ResidueTypeSet::get_representative_type_base_name( std::string const & base_name ) const {
+	return ResidueTypeFinder( *this ).residue_base_name( base_name ).get_representative_type();
 }
 
 /// @brief Gets all non-patched types with the given aa type
@@ -882,7 +899,6 @@ ResidueTypeSet::has_interchangeability_group( std::string const & interchangeabi
 	return ( rsd_type != nullptr );
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @details Return the first match with both base ResidueType id and variant_type name.  Abort if there is no match.
 /// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
@@ -926,7 +942,6 @@ ResidueTypeSet::merge_behavior_manager() const
 	return *merge_behavior_manager_;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
 ///          files).
@@ -968,8 +983,8 @@ ResidueTypeSet::read_files_for_custom_residue_types(
 	utility::vector1< std::string > const & filenames
 )
 {
-	for ( Size n = 1; n <= filenames.size(); n++ ) {
-		add_custom_residue_type( filenames[ n ] );
+	for ( std::string const & filename : filenames ) {
+		add_custom_residue_type( filename );
 	}
 }
 

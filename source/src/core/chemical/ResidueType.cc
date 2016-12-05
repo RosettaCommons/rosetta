@@ -2148,7 +2148,6 @@ ResidueType::is_triazolemer() const
 	return properties_->has_property( TRIAZOLE_LINKER );
 }
 
-
 bool
 ResidueType::is_d_aa() const
 {
@@ -2159,6 +2158,18 @@ bool
 ResidueType::is_l_aa() const
 {
 	return properties_->has_property( L_AA );
+}
+
+bool
+ResidueType::is_d_rna() const
+{
+	return properties_->has_property( D_RNA );
+}
+
+bool
+ResidueType::is_l_rna() const
+{
+	return properties_->has_property( L_RNA );
 }
 
 /// @brief Is this residue N-methylated?
