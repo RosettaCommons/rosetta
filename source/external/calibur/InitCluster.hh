@@ -1298,7 +1298,7 @@ Clustering::cluster()
         AdjacentList* nextClus = (*mFinalClusters)[1];
         nextSize = mNumNeighbor[nextClus->mWhich];
         bestClusMargin = (bestClusSize - nextSize) /(double) bestClusSize;
-        cout << "Largest 2 clusters: "
+        cout << std::endl << std::endl<<"Largest 2 cluster centers: "
              << (*mNames)[bestClus->mWhich] << "(" << bestClusSize << "), "
              << (*mNames)[nextClus->mWhich] << "(" << nextSize
              << "). Margin = " << (bestClusMargin*100) << "%" << endl;
@@ -1325,8 +1325,8 @@ Clustering::showClusters(int numClus)
     {
         AdjacentList* clu = (*mFinalClusters)[i];
         //cout << clu->mWhich << "'" << (*mNames)[clu->mWhich]
-        cout << (*mNames)[clu->mWhich]
-             << " " << clu->mNumNeigh << ": ";
+        cout << std::endl << "cluster = " << i << "; center = " << (*mNames)[clu->mWhich]
+             << "; n_decoy_members = " << clu->mNumNeigh << "; members = ";
         int size2 = clu->mNumNeigh;
         vector<int>* neigh = clu->neigh;
         for (int j=0; j < size2; j++) // for each neighboring decoy...
@@ -1341,7 +1341,7 @@ Clustering::showClusters(int numClus)
             //else
             //    cout << clu->getD(decoy) << ", ";
         }
-        cout << endl;
+        cout << endl << endl;
     }
 }
 

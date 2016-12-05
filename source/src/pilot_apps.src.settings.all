@@ -545,7 +545,7 @@ sources = {
 		"scaffold_matcher",
 	],
 	"pilot/kalngyk" : [
-		"calibur",
+		#"calibur" - Moved to public,
 	],
 	"pilot/kenjung" : [
 		"loophash_createfiltereddb",

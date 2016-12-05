@@ -45,7 +45,6 @@ sources = {
 	"public": [
 		"AbinitioRelax",
 		"backrub",
-		"cluster",
 		"combine_silent",
 		"extract_pdbs",
 		"fragment_picker",
@@ -88,6 +87,10 @@ sources = {
 	"public/boinc": [
 		"minirosetta",
 		"minirosetta_graphics",
+	],
+	"public/clustering": [
+		"calibur",
+		"cluster",
 	],
 	"public/comparative_modeling": [
 		"cluster_alns",

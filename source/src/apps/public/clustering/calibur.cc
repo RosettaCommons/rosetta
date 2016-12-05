@@ -10,6 +10,7 @@
 /// @file apps/pilot/kalngyk/calibur.cc
 /// @brief  A tool for clustering decoys
 /// @author YK Ng & SC Li (kalngyk@gmail.com)
+/// @author Jared Adolf-Bryfogle (testing, cleanup, etc.)
 
 #include <devel/init.hh>
 #include <basic/options/option_macros.hh>
@@ -18,8 +19,14 @@
 
 #include <math.h>
 #include <stdlib.h>
+
+//Calibur Includes - Note this is EXTERNAL and is written outside of the coding conventions for SPEED.
+// If you are intrepid, please convert these to Rosetta proper if possible!
 #include <calibur/InitCluster.hh>
 #include <calibur/SimpPDB.hh>
+
+#include <utility/string_constants.hh>
+#include <utility/string_util.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -27,7 +34,7 @@ using namespace basic::options::OptionKeys;
 OPT_1GRP_KEY( String, input, pdb_list ) // 1st default param
 OPT_1GRP_KEY( Integer, res, start ) // r
 OPT_1GRP_KEY( Integer, res, end   ) // r
-OPT_1GRP_KEY( String,  res, types ) // c
+OPT_1GRP_KEY( String,  res, chains ) // c
 OPT_1GRP_KEY( Real,    strategy, thres ) // 2nd default param
 OPT_1GRP_KEY( Boolean, strategy, nofilter ) // n
 OPT_1GRP_KEY( Integer, strategy, thres_finder ) // t
@@ -36,24 +43,23 @@ int main(int argc, char** argv)
 {
 	try {
 		NEW_OPT( input::pdb_list, "A file specifying the decoys. Each line of the file"
-			" specifies a path (relative to the working directory) to a decoy's PDB file",
+			" specifies a path (relative to the working directory) to a decoy's PDB file (-in:file:l also works here)",
 			"" );
-		NEW_OPT( res::start, "(Optional) starts from this C-alpha atom (instead of starting"
+		NEW_OPT( res::start, "(Optional) starts from this Residues C-alpha atom (instead of starting"
 			" from the first C-alpha atom)", 1);
-		NEW_OPT( res::end, "(Optional) ends at this C-alpha atom (instead of ending at"
+		NEW_OPT( res::end, "(Optional) ends at this Residues C-alpha atom (instead of ending at"
 			" the last C-alpha atom)", 0);
-		NEW_OPT( res::types, "(Optional) specifies the chains to be used."
-			" By default, XYZ=\"AC \", i.e. 'A', 'C', or unspecified", "");
+		NEW_OPT( res::chains, "(Optional) specifies the chains to be used."
+			" By default, we scan for all alhpanumerics and empty chain, i.e. 'A', 'C', or unspecified", "");
 		NEW_OPT( strategy::thres_finder, "(Optional) specifies the threshold finding strategy."
-			" This should be one of 0, 1, 2, 3, 4. (default strategy: 0) "
+			" This should be one of 0, 1, 2, 3. (default strategy: 0) "
 			" 0: threshold results in only x% of \"edges\" between decoys;"
 			" default x=100/sqrt(sqrt(#decoys)) ||"
 			" 1: threshold = min dist + x * (most frequent dist - min dist);"
 			" default x=0.666667 (=2/3) ||"
 			" 2: threshold = min dist + x * min(the avarage dist of decoys from a"
 			" decoy; default x=0.666667 (=2/3) ||"
-			" 3: find threshold using ROSETTA's method (auto-detect parameters) ||"
-			" 4: same as 3, but with a sampled decoy set rather than the full set.",
+			" 3: find threshold using ROSETTA's method (auto-detect parameters).  May result in no clustering",
 			0);
 		NEW_OPT( strategy::nofilter, "(Optional) disables the filtering of outlier"
 			" decoys.", false);
@@ -67,13 +73,16 @@ int main(int argc, char** argv)
 
 		Clustering * ic = new Clustering();
 
+		//JAB - thres_finder 4 does not work.  I'm disabling it instead of trying to fix it.
+
 		// FIXME Make this user-definable
 		SimPDB::preloadPDB = true;
 
 		// Handle res::types
-		SimPDB::chains = strdup("AC ");
-		if ( option[res::types].user() && strcmp(option[res::types]().c_str(), "") ) {
-			SimPDB::chains = strdup( option[res::types]().c_str() );
+		std::string chains = utility::ALPHANUMERICS+" ";
+		SimPDB::chains = strdup(chains.c_str());
+		if ( option[res::chains].user() && strcmp(option[res::chains]().c_str(), "") ) {
+			SimPDB::chains = strdup( option[res::chains]().c_str() );
 		}
 
 		// Handle res::{start,end}
@@ -127,19 +136,23 @@ int main(int argc, char** argv)
 						Clustering::EST_THRESHOLD = ROSETTA;
 						break;
 					case 4 :
-						Clustering::EST_THRESHOLD = SAMPLED_ROSETTA;
+						//Clustering::EST_THRESHOLD = SAMPLED_ROSETTA;
+						utility_exit_with_message("Threshold strategy 4 no longer supported");
 						break;
 					default : break;
 					}
 		}
 
-		// Handles input::pdb_list
-		if ( ! option[input::pdb_list].user() ) {
-			cout << "Missing pdb_list (please run with -help for usage)" << endl;
-			exit(-1);
+		char * filename;
+		if (option[input::pdb_list].user()){
+			filename = strdup( option[input::pdb_list]().c_str() );
 		}
-		char * filename = strdup( option[input::pdb_list]().c_str() );
-
+		else if (option[in::file::l].user()){
+			filename = strdup( utility::to_string(option[in::file::l]()).c_str() );
+		}
+		else {
+			utility_exit_with_message( "Missing -l or -pdb_list (please run with -help for usage)");
+		}
 		// Handles strategy::thres
 		double threshold = -1;
 		if ( option[strategy::thres].user() ) {
