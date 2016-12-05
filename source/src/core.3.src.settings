@@ -183,6 +183,7 @@ sources = {
 		"EnergyMap",
 		"EnvPairPotential",
 		"GenBornPotential",
+		"HydroxylTorsionPotential",
 		"MultipoleElecPotential",
 		"SASAPotential",
 		"LREnergyContainer",

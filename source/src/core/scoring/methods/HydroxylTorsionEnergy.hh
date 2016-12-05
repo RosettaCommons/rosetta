@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/scoring/methods/P_AA_pp_Energy.hh
-/// @brief  Probability of observing an amino acid, given its phi/psi energy method declaration
-/// @author Andrew Leaver-Fay
-
+/// @file   core/scoring/methods/HydroxylTorsionEnergy.hh
+/// @brief  Term for proton_chi on Ser/Thr/Tyr residues 
+/// @author Hahnbeom Park (hahnbeom@gmail.com)
 
 #ifndef INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
 #define INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
 
 // Unit headers
 #include <core/scoring/methods/HydroxylTorsionEnergy.fwd.hh>
+#include <core/scoring/HydroxylTorsionPotential.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
@@ -35,16 +35,9 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-struct TorsionParams
-{
-	utility::vector1< Size > atm;
-	Real n, k, delta;
-};
-
 class HydroxylTorsionEnergy : public ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
-	typedef boost::unordered_multimap< std::string, TorsionParams >::const_iterator tors_iterator;
 
 public:
 
@@ -89,14 +82,7 @@ public:
 	core::Size version() const;
 
 private:
-	std::string get_restag( core::chemical::ResidueType const & restype ) const;
-
-	void read_database( std::string filename );
-
-private:
-	//utility::vector1< std::pair< std::string, TorsionParams > >  torsion_params_;
-	//std::map< std::string const, utility::vector1< TorsionParams > >  torsion_params_;
-	boost::unordered_multimap< std::string, TorsionParams > torsion_params_;
+	HydroxylTorsionPotential const & potential_;
 
 };
 
@@ -104,6 +90,5 @@ private:
 } // scoring
 } // core
 
-
-#endif // INCLUDED_core_scoring_HydroxylTorsionEnergy_hh
+#endif // INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
 

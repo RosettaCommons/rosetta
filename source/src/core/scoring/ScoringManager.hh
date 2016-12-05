@@ -23,6 +23,7 @@
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
+#include <core/scoring/HydroxylTorsionPotential.fwd.hh>
 #include <core/scoring/MultipoleElecPotential.fwd.hh>
 #include <core/scoring/SASAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
@@ -135,6 +136,8 @@ public:
 	PairEPotential const & get_PairEPotential() const;
 
 	GenBornPotential const & get_GenBornPotential() const;
+
+	HydroxylTorsionPotential const & get_HydroxylTorsionPotential() const;
 
 	VdWTinkerPotential const & get_VdWTinkerPotential() const;
 
@@ -372,6 +375,7 @@ private:
 	mutable P_AA_ssOP p_aa_ss_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;
+	mutable HydroxylTorsionPotentialOP hxl_tors_potential_;
 	mutable MultipoleElecPotentialOP multipole_elec_potential_;
 	mutable SASAPotentialOP sasa_potential_;
 	mutable FACTSPotentialOP facts_potential_;

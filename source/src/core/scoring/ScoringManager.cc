@@ -36,6 +36,7 @@
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
+#include <core/scoring/HydroxylTorsionPotential.hh>
 #include <core/scoring/MultipoleElecPotential.hh>
 #include <core/scoring/SASAPotential.hh>
 #include <core/scoring/VdWTinkerPotential.hh>
@@ -154,6 +155,7 @@ ScoringManager::ScoringManager() :
 	p_aa_ss_( /* 0 */ ),
 	water_adduct_hbond_potential_( /* 0 */ ),
 	gen_born_potential_( /* 0 */ ),
+	hxl_tors_potential_( /* 0 */ ),
 	fa_disulfide_potential_( /* 0 */ ),
 	cen_disulfide_potential_( /* 0 */ ),
 	disulfide_matching_potential_( /* 0 */ ),
@@ -350,6 +352,16 @@ ScoringManager::get_GenBornPotential() const
 	}
 	return *gen_born_potential_;
 }
+
+HydroxylTorsionPotential const &
+ScoringManager::get_HydroxylTorsionPotential() const
+{
+	if ( hxl_tors_potential_ == nullptr ) {
+		hxl_tors_potential_ = HydroxylTorsionPotentialOP( new HydroxylTorsionPotential );
+	}
+	return *hxl_tors_potential_;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 MultipoleElecPotential const &
