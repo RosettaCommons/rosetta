@@ -101,9 +101,9 @@ TBMB_Helper::add_linker_asymmetric(
 		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
 	//Mutate the cysteines to CYX:
-	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "CYX" : "DCYX" );
-	protocols::simple_moves::MutateResidue mut2( cys2, pose.residue_type(cys2).is_d_aa() ? "CYX" : "DCYX" );
-	protocols::simple_moves::MutateResidue mut3( cys3, pose.residue_type(cys3).is_d_aa() ? "CYX" : "DCYX" );
+	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
+	protocols::simple_moves::MutateResidue mut2( cys2, pose.residue_type(cys2).is_d_aa() ? "DCYX" : "CYX" );
+	protocols::simple_moves::MutateResidue mut3( cys3, pose.residue_type(cys3).is_d_aa() ? "DCYX" : "CYX" );
 	mut1.set_preserve_atom_coords(true);
 	mut2.set_preserve_atom_coords(true);
 	mut3.set_preserve_atom_coords(true);
@@ -175,7 +175,7 @@ TBMB_Helper::add_linker_symmetric(
 		"Error in protocols::cyclic_peptide::threefold_linker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
 	//Mutate the cysteines to CYX:
-	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "CYX" : "DCYX" );
+	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
 	mut1.set_preserve_atom_coords(true);
 	mut1.apply(pose);
 
