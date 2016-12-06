@@ -32,6 +32,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/tag/XMLSchemaValidation.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -152,7 +153,7 @@ public:
 	static std::string rosetta_scripts_element_name(); // returns "ROSETTASCRIPTS"
 	static std::string rosetta_scripts_complex_type_naming_func( std::string const & element_name );
 
-private:
+private: //Methods
 
 	static
 	void
@@ -182,6 +183,22 @@ private:
 		std::string const &str,
 		core::Size const endpos
 	) const;
+
+	/// @brief Is a filename in the list of files already validated?
+	/// @details Returns ture if it is, false if it is not.
+	bool
+	was_already_validated( std::string const &filename ) const;
+
+	/// @brief Add a filename to the list already validated.
+	void set_validated( std::string const &filename );
+
+private: //Varaibles
+
+	/// @brief The object used to validate XML input files against the schema
+	utility::tag::XMLSchemaValidatorOP validator_;
+
+	/// @brief A list of filenames that we have already encountered and validated.
+	utility::vector1 < std::string > filenames_already_validated_;
 
 }; // Parser
 

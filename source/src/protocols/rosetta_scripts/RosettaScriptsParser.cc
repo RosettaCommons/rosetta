@@ -85,7 +85,9 @@ using namespace jd2;
 static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
-	Parser()
+	Parser(),
+	validator_( new utility::tag::XMLValidator ),
+	filenames_already_validated_()  //Empty list initially
 {
 	register_factory_prototypes();
 }
@@ -246,8 +248,11 @@ RosettaScriptsParser::generate_mover_from_pose(
 		fin.str( fin_sub.str() );
 	}
 
-	// Validate the input script against the XSD for RosettaScripts.
-	validate_input_script_against_xsd( dock_design_filename, fin );
+	// Validate the input script against the XSD for RosettaScripts, if it hasn't yet been validated.
+	if( !was_already_validated( dock_design_filename ) ) {
+		validate_input_script_against_xsd( dock_design_filename, fin );
+		set_validated( dock_design_filename );
+	}
 
 	TagCOP tag = utility::tag::Tag::create(fin);
 
@@ -820,21 +825,70 @@ RosettaScriptsParser::has_double_percent_signs(
 
 }
 
+/// @brief Is a filename in the list of files already validated?
+/// @details Returns ture if it is, false if it is not.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool
+RosettaScriptsParser::was_already_validated(
+	std::string const &filename
+) const {
+	for(core::Size i=1, imax=filenames_already_validated_.size(); i<=imax; ++i) {
+		if( !filenames_already_validated_[i].compare( filename ) ) return true;
+	}
+	return false;
+}
+
+/// @brief Add a filename to the list already validated.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+RosettaScriptsParser::set_validated(
+	std::string const &filename
+) {
+	filenames_already_validated_.push_back(filename);
+}
+
 void
 RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fname, std::stringstream const & input_xml ) const
 {
 	using namespace utility::tag;
-	std::string schema = xsd_for_rosetta_scripts();
+
+	// Step 1: Internal generation of the schema and initialization of the libxml2 data structure for schema validation
+	if ( ! validator_->schema_has_been_set() ) {
+		std::ostringstream oss;
+		oss << "If you are seeing this message, the internally-generated XML Schema for rosetta_scripts could not be properly generated\nThis failure occurred before your XML script that provided was examined. The error has been compiled into Rosetta and will need to be fixed by a developer.";
+		std::string schema;
+		try {
+			schema = xsd_for_rosetta_scripts();
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			oss << "An error was encountered while the string of the schema was being generated; this is before the schema is analyzed for whether it is correct or not.\n";
+			oss << e.msg() << "\n";
+			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		}
+
+		if ( basic::options::option[ basic::options::OptionKeys::parser::output_schema ].user() ) {
+			std::ofstream ofs( basic::options::option[ basic::options::OptionKeys::parser::output_schema ] );
+			ofs << schema << std::endl;
+			exit( 0 );
+		}
+
+		XMLValidationOutput schema_valid_output;
+		try {
+			TR << "Initializing schema validator..." << std::endl;
+			schema_valid_output = validator_->set_schema( schema );
+			TR << "...done" << std::endl;
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			oss << e.msg() << "\n";
+			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		}
+		if ( ! schema_valid_output.valid() ) {
+			oss << "If there is an error message immediately above stating that the schema failed to validate, and errors below that look like 'real XML' with lots of <xs:something> tags and NOT like your XML input, then you have a global schema validation error not an XML input validation error.  Read the error message below and fix your schema in the C++ code. \n\n";
+			oss << "Errors: " << schema_valid_output.error_messages() << "\n";
+			oss << "Warnings: " << schema_valid_output.warning_messages() << "\n";
+			throw utility::excn::EXCN_Msg_Exception( oss.str() );
+		}
+	}
 
 	TR << "Validating input script..." << std::endl;
-
-	if ( basic::options::option[ basic::options::OptionKeys::parser::output_schema ].user() ) {
-		std::ofstream ofs( basic::options::option[ basic::options::OptionKeys::parser::output_schema ] );
-		ofs << schema << std::endl;
-		exit( 0 );
-	}
-	//std::cout << "Rosetta scripts schema!\n" << schema << std::endl;
-	//utility_exit_with_message( "temp temp temp" );
 
 	std::string xml_file = input_xml.str();
 
@@ -843,13 +897,13 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 		" the rosetta scripts schema. Use the option -parser::output_schema <output filename> to output"
 		" the schema to a file to see all valid options.\n";
 
-	std::string const long_error_string("Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:\n\n1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction) - fix it.\n2) If you haven’t run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/$LIKELY_PERMANENT_PATH) XRW TODO on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction=\"talaris2014\") is a good indicator that this is your problem.\n3) If you are a developer and neither 1 nor 2 worked - email the developer’s mailing list or try Slack.\n4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum\n5) If there is an error message immediately above stating that the schema failed to validate, and errors below that look like 'real XML' with lots of <xs:something> tags and NOT like your XML input, then you have a global schema validation error not an XML input validation error.  Read the message above and fix your schema in the C++ code. \n\n");
+	std::string const long_error_string("Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:\n\n1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction), then you need to fix your XML file.\n2) If you haven’t run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/xsd_xrw/rewrite_rosetta_script.py) on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction=\"talaris2014\") is a good indicator that this is your problem.\n3) If you are a developer and neither 1 nor 2 worked - email the developer’s mailing list or try Slack.\n4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum\n5)\n");
 
 	oss << long_error_string << "\n\n";
 
 	XMLValidationOutput validator_output;
 	try {
-		validator_output = validate_xml_against_xsd( xml_file, schema );
+		validator_output = validator_->validate_xml_against_schema( xml_file );
 	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 		oss << e.msg() << "\n";
 		throw utility::excn::EXCN_Msg_Exception( oss.str() );
@@ -857,8 +911,10 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 
 	if ( ! validator_output.valid() ) {
 		//I don't think this part actually works - these messages are always empty and there is a matching "does this work?" comment in XMLSchemaValidation.cc XRW TODO
-		oss << "Error messages were: " << validator_output.error_messages() << "\n";
-		oss << "Warning messages were: " << validator_output.warning_messages() << "\n";
+		oss << "Error messages were:\n" << validator_output.error_messages();;
+		oss << "------------------------------------------------------------\n";
+		oss << "Warning messages were:\n" << validator_output.warning_messages();
+		oss << "------------------------------------------------------------\n";
 		throw utility::excn::EXCN_Msg_Exception( oss.str() );
 	}
 

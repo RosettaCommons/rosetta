@@ -215,8 +215,22 @@ bool XMLValidationOutput::valid() const { return valid_; }
 std::list< std::string > const & XMLValidationOutput::errors() const { return error_list_; }
 std::list< std::string > const & XMLValidationOutput::warnings() const { return warning_list_; }
 
+void XMLValidationOutput::add_error( std::string const & error )
+{
+	error_list_.push_back( error );
+}
+void XMLValidationOutput::add_warnings( std::string const & warning )
+{
+	warning_list_.push_back( warning );
+}
+
 void XMLValidationOutput::errors( std::list< std::string > const & error_list ) { error_list_ = error_list; }
 void XMLValidationOutput::warnings( std::list< std::string > const & warning_list ) { warning_list_ = warning_list; }
+
+void XMLValidationOutput::add_errors( std::list< std::string > const & error_list )
+{ for ( auto const & err : error_list ) error_list_.push_back( err ); }
+void XMLValidationOutput::add_warnings( std::list< std::string > const & warning_list )
+{ for ( auto const & warn : warning_list ) warning_list_.push_back( warn ); }
 
 
 std::string concat_stringlist( std::list< std::string > const & strings ) {
@@ -291,11 +305,14 @@ validate_xml_against_xsd(
 		xmlFreeDoc( xsd_doc );
 		xmlSchemaFreeParserCtxt( schema_parser_context );
 		output.valid( false );
-		output.errors( handler1.errors() );
+			std::ostringstream oss;
+		oss << "Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be"
+			" exposed until runtime.  You've edited some class’s provide_XML_schema function recently in such a way that it is"
+			" now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute's"
+			" description.  Email the devel list if the error message below does not help you locate and fix the problem." << std::endl;
+		output.add_error( oss.str() );
+		output.add_errors( handler1.errors() );
 		output.warnings( handler1.warnings() );
-
-		//SML adding error clarification; unsure if this is a great place.  I think we're in no-Tracers land so I guess cerr?
-		std::cerr << "Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be exposed until runtime.  You’ve edited some class’s provide_XML_schema function recently in such a way that it is now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute’s description.  Email the devel list if the error message below does not help you locate and fix the problem." << std::endl;
 
 		return output;
 	}
@@ -315,6 +332,7 @@ validate_xml_against_xsd(
 	if ( ! xml_doc ) {
 		xmlFreeDoc( xsd_doc );
 		xmlSchemaFreeParserCtxt( schema_parser_context );
+		xmlSchemaFree( schema );
 		xmlSchemaFreeValidCtxt( schema_validator );
 		output.valid( false );
 		output.errors( handler3.errors() );
@@ -381,6 +399,157 @@ test_if_schema_is_valid(
 	return output;
 }
 
+class XMLValidatorImpl {
+public:
+	XMLValidatorImpl();
+	~XMLValidatorImpl();
+
+	bool
+	schema_has_been_set() const;
+
+	XMLValidationOutput
+	set_schema(  std::string const & schema );
+
+	XMLValidationOutput
+	validate_xml_against_schema( std::string const & xml );
+
+private:
+	bool schema_has_been_set_;
+	xmlSchemaPtr schema_;
+	xmlSchemaValidCtxtPtr schema_validator_;
+};
+
+
+XMLValidator::XMLValidator() : pimpl_( new XMLValidatorImpl() ) {}
+XMLValidator::~XMLValidator() { delete pimpl_; }
+
+bool
+XMLValidator::schema_has_been_set() const
+{
+	return pimpl_->schema_has_been_set();
+}
+
+
+XMLValidationOutput
+XMLValidator::set_schema( std::string const & schema )
+{
+	return pimpl_->set_schema( schema );
+}
+
+XMLValidationOutput
+XMLValidator::validate_xml_against_schema( std::string const & xml )
+{
+	return pimpl_->validate_xml_against_schema( xml );
+}
+
+
+XMLValidatorImpl::XMLValidatorImpl() :
+	schema_has_been_set_( false ),
+	schema_( nullptr ),
+	schema_validator_( nullptr )
+{}
+
+XMLValidatorImpl::~XMLValidatorImpl()
+{
+	xmlSchemaFree( schema_ );
+	xmlSchemaFreeValidCtxt( schema_validator_ );
+}
+
+bool
+XMLValidatorImpl::schema_has_been_set() const
+{
+	return schema_has_been_set_;
+}
+
+XMLValidationOutput
+XMLValidatorImpl::set_schema(  std::string const & xsd_string )
+{
+	XMLValidationOutput output;
+
+	xmlLineNumbersDefault( 1 );
+	XMLErrorHandler is_xsd_valid_handler;
+	is_xsd_valid_handler.set_file_contents( xsd_string );
+	xmlSetStructuredErrorFunc( & is_xsd_valid_handler, handle_structured_xml_error );
+
+	xmlDoc * xsd_doc = xmlParseMemory( xsd_string.c_str(), xsd_string.size() );
+	if ( ! xsd_doc ) {
+		output.valid( false );
+		output.errors( is_xsd_valid_handler.errors() );
+		output.warnings( is_xsd_valid_handler.warnings() );
+		return output;
+	}
+
+	xmlSchemaParserCtxtPtr schema_parser_context = xmlSchemaNewDocParserCtxt( xsd_doc );
+	//xmlSchemaSetParserErrors( schema_parser_context, handle_xml_error, handle_xml_warning, &handler );
+	schema_ = xmlSchemaParse( schema_parser_context );
+
+	if ( ! schema_ ) {
+		xmlFreeDoc( xsd_doc );
+		xmlSchemaFreeParserCtxt( schema_parser_context );
+		output.valid( false );
+
+		std::ostringstream oss;
+		oss << "Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be"
+			" exposed until runtime.  You've edited some class’s provide_XML_schema function recently in such a way that it is"
+			" now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute's"
+			" description.  Email the devel list if the error message below does not help you locate and fix the problem." << std::endl;
+		output.add_error( oss.str() );
+		output.add_errors( is_xsd_valid_handler.errors() );
+		output.warnings( is_xsd_valid_handler.warnings() );
+
+		return output;
+	}
+
+
+	//std::cout << "Parsed the schema" << std::endl;
+	schema_validator_ = xmlSchemaNewValidCtxt( schema_ );
+	//std::cout << "Created schema validator" << std::endl;
+
+	xmlFreeDoc( xsd_doc );
+
+	schema_has_been_set_ = true;
+
+	return output;
+}
+
+XMLValidationOutput
+XMLValidatorImpl::validate_xml_against_schema( std::string const & xml_string )
+{
+	XMLValidationOutput output;
+
+	XMLErrorHandler is_xml_handler;
+	is_xml_handler.set_file_contents( xml_string );
+	xmlSetStructuredErrorFunc( & is_xml_handler, handle_structured_xml_error );
+
+	xmlChar * xml_input_xmlchar = xmlCharStrdup( xml_string.c_str() );
+	xmlDoc * xml_doc = xmlParseDoc( xml_input_xmlchar ); // need to figure out how to get error messages from this step
+	if ( ! xml_doc ) {
+		output.valid( false );
+		output.errors( is_xml_handler.errors() );
+		output.warnings( is_xml_handler.warnings() );
+		//errors here (I think) are annotated with a human-readable message in RosettaScriptsParser.cc
+		return output;
+	}
+
+
+	//std::cout << "Validating XML document" << std::endl;
+	XMLErrorHandler is_xml_valid_handler;
+	is_xml_valid_handler.set_file_contents( xml_string );
+	xmlSetStructuredErrorFunc( & is_xml_valid_handler, handle_structured_xml_error );
+
+	int validation_output = xmlSchemaValidateDoc( schema_validator_, xml_doc );
+
+	// clean up
+	free( xml_input_xmlchar );
+	xmlFreeDoc( xml_doc );
+
+	output.valid( validation_output == 0 );
+	output.errors( is_xml_valid_handler.errors() );
+	output.warnings( is_xml_valid_handler.warnings() );
+
+	return output;
+
+}
 
 
 }

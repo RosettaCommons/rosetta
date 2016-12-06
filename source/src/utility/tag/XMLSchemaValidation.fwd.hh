@@ -31,8 +31,11 @@
 namespace utility {
 namespace tag {
 
+class XMLValidator;
 class XMLValidationOutput;
 class XMLErrorHandler;
+
+typedef utility::pointer::shared_ptr< XMLValidator > XMLSchemaValidatorOP;
 
 }
 }

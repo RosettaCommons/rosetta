@@ -764,10 +764,14 @@ public:
 	void test_validate_xml_file_against_bad_xsd_using_libxml2() {
 		XMLValidationOutput output = validate_xml_against_xsd( example_xml_doc1(), example_bad_xsd() );
 		TS_ASSERT( ! output.valid() );
-		TS_ASSERT_EQUALS( output.errors().size(), 2 );
+		TS_ASSERT_EQUALS( output.errors().size(), 3 );
 		TS_ASSERT( output.warnings().empty() );
 
 		std::string gold_errors =
+			"Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be"
+			" exposed until runtime.  You've edited some class’s provide_XML_schema function recently in such a way that it is"
+			" now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute's"
+			" description.  Email the devel list if the error message below does not help you locate and fix the problem.\n"
 			"From line 102:\n"
 			"Error: Element \'{http://www.w3.org/2001/XMLSchema}all\': The content is not valid. Expected is (annotation?, (annotation?, element*).\n"
 			"\n"
@@ -860,6 +864,50 @@ public:
 		//xmlFreeDoc( xsd_doc );
 
 
+	}
+
+
+	void test_XMLValidator_validate_one_file() {
+		using namespace utility::tag;
+		XMLValidator validator;
+		{
+			XMLValidationOutput output = validator.set_schema( example_xsd() );
+			TS_ASSERT( output.valid() );
+		}
+
+		{
+			XMLValidationOutput output = validator.validate_xml_against_schema( example_xml_doc1() );
+			TS_ASSERT( output.valid() );
+		}
+	}
+
+	void test_XMLValidator_validate_several_files() {
+		using namespace utility::tag;
+		XMLValidator validator;
+		{
+			XMLValidationOutput output = validator.set_schema( example_xsd() );
+			TS_ASSERT( output.valid() );
+		}
+
+		{
+			XMLValidationOutput output = validator.validate_xml_against_schema( example_xml_doc1() );
+			TS_ASSERT( output.valid() );
+		}
+
+		{
+			XMLValidationOutput output = validator.validate_xml_against_schema( example_xml_doc2() );
+			TS_ASSERT( ! output.valid() );
+		}
+
+		{
+			XMLValidationOutput output = validator.validate_xml_against_schema( example_xml_doc3() );
+			TS_ASSERT( ! output.valid() );
+		}
+
+		{
+			XMLValidationOutput output = validator.validate_xml_against_schema( example_xml_doc1() );
+			TS_ASSERT( output.valid() );
+		}
 	}
 
 };

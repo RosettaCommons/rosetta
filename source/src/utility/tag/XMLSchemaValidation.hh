@@ -69,6 +69,27 @@ private:
 	utility::vector1< std::string > file_lines_;
 };
 
+class XMLValidator
+{
+public:
+	XMLValidator();
+	~XMLValidator();
+
+	bool
+	schema_has_been_set() const;
+
+	XMLValidationOutput
+	set_schema(  std::string const & schema );
+
+	XMLValidationOutput
+	validate_xml_against_schema( std::string const & xml );
+
+private:
+	XMLValidator( XMLValidator const & ) = delete;
+	XMLValidator & operator = ( XMLValidator const & rhs ) = delete;
+
+	class XMLValidatorImpl * pimpl_;
+};
 
 class XMLValidationOutput
 {
@@ -81,8 +102,12 @@ public:
 	std::list< std::string > const & errors() const;
 	std::list< std::string > const & warnings() const;
 
+	void add_error( std::string const & error );
+	void add_warnings( std::string const & warning );
 	void errors( std::list< std::string > const & error_list );
 	void warnings( std::list< std::string > const & warning_list );
+	void add_errors( std::list< std::string > const & error_list );
+	void add_warnings( std::list< std::string > const & warning_list );
 
 	std::string error_messages() const;
 	std::string warning_messages() const;
