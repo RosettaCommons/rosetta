@@ -121,8 +121,8 @@ enum AA {
 	aa_b3v,
 	aa_b3w,
 	aa_b3y,
-	aa_b3cisACPrC,
 	aa_b3cisACPC,
+	aa_b3transACPC,
 	aa_b3cisACHC,
 	last_beta3_aa = aa_b3cisACHC,
 

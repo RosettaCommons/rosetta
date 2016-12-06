@@ -87,21 +87,21 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 	if ( ! pose.residue( resnum ).is_carbohydrate() ) {
 		utility_exit_with_message("Resnum not a carbohydrate residue! "+ utility::to_string( resnum ));
 	}
-	
+
 	Angle new_dihedral = 0.0;
-	
+
 	//TR << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl;
-	
-	if (torsion_type_ == core::id::phi_dihedral || torsion_type_ == core::id::psi_dihedral){
+
+	if ( torsion_type_ == core::id::phi_dihedral || torsion_type_ == core::id::psi_dihedral ) {
 		CHIEnergyFunction const & sugar_bb =
 			ScoringManager::get_instance()->get_CHIEnergyFunction( true /*setup for scoring*/, sampling_step_size_ );
 
 		// Get linkage type.
 		CHIEnergyFunctionLinkageType linkage_type =
 			get_CHI_energy_function_linkage_type_for_residue_in_pose( torsion_type_, pose, resnum );
-		
+
 		//TR << "Applying linkage type: " << linkage_type << std::endl;
-		
+
 		if ( linkage_type == LINKAGE_NA ) {
 			std::string msg = "No data for linkage.  Either this is psi and previous residue is not carbohydrate or we do not have a pyranose ring in the previous residue.";
 			//Throw here.  We expect an angle, better to use exception then throw a bogus angle.
@@ -114,7 +114,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		//TR << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl;
 
 		//Sample Dihedral
-		
+
 		if ( sampling_type_ == probability ) {
 
 			numeric::random::WeightedSampler sampler;
@@ -123,10 +123,9 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		} else if ( sampling_type_ == minima ) {
 			new_dihedral = sampling_data.angles[ utility::arg_max( sampling_data.probabilities ) ];
 		}
-	}
-	else if ( torsion_type_ == core::id::omega_dihedral ){
-	
-		
+	} else if ( torsion_type_ == core::id::omega_dihedral ) {
+
+
 		OmegaPreferencesFunction const & omega_pref  =
 			ScoringManager::get_instance()->get_OmegaPreferencesFunction( true /*setup for scoring*/, sampling_step_size_ );
 
@@ -141,7 +140,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		OmegaPreferenceSamplingData const & sampling_data = omega_pref.get_sampling_data( preference_type );
 
 		//Sample Dihedral
-		
+
 		if ( sampling_type_ == probability ) {
 
 			numeric::random::WeightedSampler sampler;
@@ -150,9 +149,8 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		} else if ( sampling_type_ == minima ) {
 			new_dihedral = sampling_data.angles[ utility::arg_max( sampling_data.probabilities ) ];
 		}
-		
-	}
-	else {
+
+	} else {
 		utility_exit_with_message("SugarBBSampler: Unknown torsion type!");
 	}
 

@@ -1161,7 +1161,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 	// Flip each
 	//rsd.debug_dump_icoor();
 	if ( rsd.natoms() < 4 ) return true;
-	
+
 	std::string base_atom_name;
 	// The rest of the Patch takes care of props, and it's really out of theme.
 	if ( rsd.is_l_aa() ) {

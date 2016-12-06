@@ -179,6 +179,14 @@ public:
 		core::Size const res2
 	) const;
 
+	/// @brief Returns true if at least one of the partners in this disulfide is NOT
+	/// D-cysteine or L-cysteine.  Returns false otherwise.
+	bool noncanonical_disulfide(
+		core::pose::Pose const & pose,
+		core::Size const res1,
+		core::Size const res2
+	) const;
+
 public: //mutators
 	/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
 	void set_set1_selector( core::select::residue_selector::ResidueSelectorCOP selector );
@@ -198,8 +206,8 @@ public: //mutators
 	void set_match_rt_limit( core::Real const matchrtval );
 
 	/// @brief Set the types of cysteines that we design with:
-	/// @details By default, we use only L-cysteine (not D-cysteine).
-	void set_cys_types( bool const lcys, bool const dcys );
+	/// @details By default, we use only L-cysteine (not D-cysteine or beta-3-cysteine).
+	void set_cys_types( bool const lcys, bool const dcys, bool const beta_cys );
 
 	/// @brief Set the scorefunction to use for scoring disulfides, minimizing, and repacking.
 	/// @details Clones the input scorefunction; does not copy it.
@@ -248,14 +256,23 @@ private:   // options
 	bool include_current_ds_;
 	bool keep_current_ds_;
 	bool score_or_matchrt_;
+
 	/// @brief Can disulfides involve L-cystine?
 	/// @details Default true
 	bool allow_l_cys_;
+
 	/// @brief Can disulfides involve D-cystine?
 	/// @details Default false
 	bool allow_d_cys_;
+
+	/// @brief Can disulfides involve beta-3-cysteine?
+	/// @details Default false.  If true, beta-3-cysteine is considered only at beta-amino
+	/// acid positions.
+	bool allow_beta_cys_;
+
 	/// @brief Can GLY be mutated?
 	bool mutate_gly_;
+
 	/// @brief Can PRO be mutated?
 	bool mutate_pro_;
 

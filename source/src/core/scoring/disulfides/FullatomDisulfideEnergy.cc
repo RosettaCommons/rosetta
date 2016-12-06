@@ -172,6 +172,8 @@ FullatomDisulfideEnergy::setup_for_packing(
 /// @details returns true if both residues are cys, if both are disulfide-cys, and then
 /// if all of these conditions have been satisfied, if residue1's SG atom connects to residue 2,
 /// and if residue 2's SG atom connects to residue 1
+/// @note Correction to above: returns true if both residues are possible disulfide-forming
+/// residues, and both share a disulfide bond.
 bool
 FullatomDisulfideEnergy::defines_score_for_residue_pair(
 	conformation::Residue const & res1,

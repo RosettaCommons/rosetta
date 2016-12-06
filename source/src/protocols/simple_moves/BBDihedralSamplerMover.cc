@@ -129,8 +129,8 @@ BBDihedralSamplerMover::set_sampler( bb_sampler::BBDihedralSamplerOP sampler ){
 	sampler_movemap_union_.clear();
 	samplers_[ sampler->get_torsion_type() ]; //Initialize vector
 	samplers_[ sampler->get_torsion_type() ].push_back( sampler );
-	
-	
+
+
 	sampler_torsion_types_.push_back( sampler->get_torsion_type() );
 
 }
@@ -144,7 +144,7 @@ BBDihedralSamplerMover::add_sampler( bb_sampler::BBDihedralSamplerOP sampler ){
 	} else {
 		samplers_[ sampler->get_torsion_type() ];
 		samplers_[ sampler->get_torsion_type() ].push_back( sampler );
-		
+
 		sampler_torsion_types_.push_back( sampler->get_torsion_type() );
 	}
 
@@ -158,11 +158,11 @@ BBDihedralSamplerMover::setup_all_bb_residues( core::pose::Pose const & pose) {
 	}
 
 	MoveMapOP mm = MoveMapOP( new MoveMap );
-	
+
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		mm->set_bb(i, true);
 		bb_residues_.push_back( i );
-		
+
 	}
 	movemap_ = mm;
 
@@ -179,12 +179,12 @@ BBDihedralSamplerMover::setup_sampler_movemap_union( core::pose::Pose const & po
 	if ( bb_residues_.size() == 0 ) {
 		setup_all_bb_residues( pose );
 	}
-	
+
 	for ( core::Size i = 1; i <= bb_residues_.size(); ++i ) {
 		core::Size resnum = bb_residues_[ i ];
 		sampler_movemap_union_[ resnum ];
 		for ( core::Size x = 1; x <= sampler_torsion_types_.size(); ++x ) {
-		//TR << "Resnum " << resnum << " Torsion " << sampler_torsion_types_[x] << " ON? " << movemap_->get_bb( resnum, sampler_torsion_types_[x]) << std::endl;
+			//TR << "Resnum " << resnum << " Torsion " << sampler_torsion_types_[x] << " ON? " << movemap_->get_bb( resnum, sampler_torsion_types_[x]) << std::endl;
 			if ( movemap_->get_bb( resnum, sampler_torsion_types_[x]) ) {
 				sampler_movemap_union_[ resnum ].push_back( sampler_torsion_types_[x] );
 			}

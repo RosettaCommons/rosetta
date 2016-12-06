@@ -1821,7 +1821,7 @@ bool change_cys_state(
 	Residue const & res( conf.residue( index ) );
 	chemical::ResidueTypeSetCOP residue_type_set = res.type().residue_type_set();
 
-	// make sure we're working on a cys
+	// make sure we're working on a disulfide-forming type.
 	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
 		if ( TR.Warning.visible() ) TR.Warning << "WARNING: change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
 		return false;
@@ -2086,7 +2086,11 @@ void form_disulfide_helper(
 	// VKM: This was failing to act properly on residues that were thiol-containing.  I'm taking out the
 	// unncessary check for !thiol-containing and !disulfide-bonded.
 	if ( force_d_residues ) {
-		query_type = aa_dcs;
+		if ( conformation.residue_type(res_index).is_alpha_aa() ) {
+			query_type = aa_dcs;
+		} else if ( conformation.residue_type(res_index).is_beta_aa() ) {
+			query_type = aa_b3c;
+		}
 	} else {
 		if ( conformation.residue_type(res_index).is_alpha_aa() ) {
 			if ( !conformation.residue_type(res_index).is_d_aa() || !preserve_d_residues ) {
@@ -2094,6 +2098,8 @@ void form_disulfide_helper(
 			} else {
 				query_type = aa_dcs;
 			}
+		} else if ( conformation.residue_type(res_index).is_beta_aa() ) {
+			query_type = aa_b3c;
 		}
 	}
 
@@ -2109,6 +2115,10 @@ void form_disulfide_helper(
 		}
 	}
 	if ( !has_disulfide ) variant_types.push_back( "DISULFIDE" );
+
+	if ( conformation.residue_type(res_index).is_beta_aa() && ( conformation.residue_type(res_index).is_d_aa() || force_d_residues ) ) {
+		variant_types.push_back( "D" );
+	}
 
 	//Get the suitable variant type, and create a residue with it:
 	ResidueOP lower_cyd( ResidueFactory::create_residue( *(restype_set->get_representative_type_aa( query_type, variant_types )), conformation.residue( res_index ), conformation ) );

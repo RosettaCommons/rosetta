@@ -1599,7 +1599,7 @@ public:
 	/// @brief Is this a triazolemer?
 	///
 	bool is_triazolemer() const;
-	
+
 	/// @brief is this a d-amino acid?
 	bool is_d_aa() const;
 

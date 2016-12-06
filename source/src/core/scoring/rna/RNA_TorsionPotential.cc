@@ -157,7 +157,7 @@ RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & 
 	if ( !rsd.is_RNA() ) return 0.0;
 
 	Real const factor = rsd.is_d_rna() ? 1.0 : -1.0;
-	
+
 	if ( verbose_ ) {
 		TR << std::endl;
 		TR << "Intra_res: " << " rsd.seqpos() = " << rsd.seqpos() << std::endl;
@@ -303,9 +303,9 @@ RNA_TorsionPotential::residue_pair_energy( core::conformation::Residue const & r
 			<< " zero for these two residues." << std::endl;
 		return 0.0;
 	}
-	
+
 	Real const factor = rsd1.is_d_rna() ? 1.0 : -1.0;
-	
+
 	if ( verbose_ )  {
 		TR << std::endl;
 		TR << "Between_res = " << " rsd1.seqpos() = " << rsd1.seqpos() << " rsd2.seqpos() = " << rsd2.seqpos() << std::endl;
@@ -359,7 +359,7 @@ RNA_TorsionPotential::get_f1_f2( core::id::TorsionID const & torsion_id, pose::P
 	if  ( conformation.get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 ) ) return false;
 
 	Real const factor = pose.residue_type( torsion_id.rsd() ).is_d_rna() ? 1.0 : -1.0;
-	
+
 	//Kinda hacky, but most succinct this way
 	if ( verbose_ ) {
 		TR << "In get_f1_f2_function: ";
@@ -435,7 +435,7 @@ RNA_TorsionPotential::eval_atom_derivative(
 		if ( seqpos > 1 && pose.residue( seqpos - 1 ).is_RNA() && get_f1_f2( id::TorsionID( seqpos, id::BB, ALPHA ), pose, id, f1, f2 ) ) {
 
 			Real dE_dtorsion = alpha_potential_->dfunc( alpha );
-			
+
 			// TODO: avoid scoring L-D junctions here too.
 			Real const factor2 = pose.residue_type( seqpos - 1 ).is_d_rna() ? 1.0 : -1.0;
 			Real const previous_zeta = factor2 * numeric::principal_angle_degrees( pose.residue( seqpos - 1 ).mainchain_torsion( ZETA ) );  ///NEED TO CHANGE THIS AS WELL
@@ -515,10 +515,10 @@ RNA_TorsionPotential::eval_atom_derivative(
 
 		////////////////////////////////////ZETA////////////////////////////////////////////////
 		if ( seqpos < nres && pose.residue( seqpos + 1 ).is_RNA() && get_f1_f2( id::TorsionID( seqpos, id::BB, ZETA ), pose, id, f1, f2 ) ) {
-			
+
 			// TODO: avoid scoring L-D junctions here too.
 			Real const factor2 = pose.residue_type( seqpos + 1 ).is_d_rna() ? 1.0 : -1.0;
-			
+
 			Real const next_alpha = factor2 * numeric::principal_angle_degrees(   pose.residue( seqpos + 1 ).mainchain_torsion( ALPHA ) );  ///NEED TO CHANGE THIS AS WELL
 			Real const dE_dtorsion = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->dfunc( zeta ) +
 				fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->dfunc( zeta ) +

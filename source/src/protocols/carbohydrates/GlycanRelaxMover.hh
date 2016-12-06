@@ -97,12 +97,12 @@ public:
 
 	void
 	set_defaults();
-	
+
 	///@brief Use Cartesian minimization instead of Dihedral minimization.
 	/// Default (for now) is dihedral.
 	void
 	use_cartmin( bool use_cartmin );
-	
+
 public:
 	void
 	show( std::ostream & output=std::cout ) const override;
@@ -165,13 +165,13 @@ private:
 
 	void
 	setup_default_task_factory(utility::vector1< bool > const & glycan_residues );
-	
+
 	void
 	setup_cartmin(core::scoring::ScoreFunctionOP scorefxn) const;
-	
+
 	core::pack::task::TaskFactoryOP
 	get_all_glycans_and_neighbor_res_task_factory(utility::vector1< bool > const & glycan_positions) const;
-	
+
 private:
 
 	core::kinematics::MoveMapOP full_movemap_;
@@ -207,8 +207,8 @@ private:
 	utility::vector1< std::string > parsed_positions_;
 	core::Real pack_distance_;
 	bool cartmin_;
-	
-	
+
+
 	bool tree_based_min_pack_;
 
 };

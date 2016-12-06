@@ -2,7 +2,7 @@
 NAME B3W
 IO_STRING B3W W
 TYPE POLYMER #residue type
-AA UNK
+AA B3W
 # amw 4/15 changed to gaussian charges
 ATOM  N   Nbb  NH1  -0.162433
 ATOM  CA  CAbb CT1  0.109053

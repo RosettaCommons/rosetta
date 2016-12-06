@@ -86,6 +86,7 @@ DisulfidizeMover::DisulfidizeMover() :
 	score_or_matchrt_( false ),
 	allow_l_cys_( true ),
 	allow_d_cys_( false ),
+	allow_beta_cys_( false ),
 	mutate_gly_( false ),
 	mutate_pro_( false ),
 	set1_selector_(),
@@ -110,6 +111,7 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	score_or_matchrt_( src.score_or_matchrt_ ),
 	allow_l_cys_( src.allow_l_cys_ ),
 	allow_d_cys_( src.allow_d_cys_ ),
+	allow_beta_cys_( src.allow_beta_cys_ ),
 	mutate_gly_( src.mutate_gly_ ),
 	mutate_pro_( src.mutate_pro_ ),
 	set1_selector_( src.set1_selector_ ), //Copies the const owning pointer -- points to same object!
@@ -171,11 +173,12 @@ DisulfidizeMover::set_match_rt_limit( core::Real const matchrtval )
 /// @brief Set the types of cysteines that we design with:
 /// @details By default, we use only L-cysteine (not D-cysteine).
 void
-DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys )
+DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys, bool const beta_cys )
 {
 	allow_l_cys_ = lcys;
 	allow_d_cys_ = dcys;
-	runtime_assert_string_msg( allow_l_cys_ || allow_d_cys_, "Error in protocols::denovo_design::movers::DisulfidizeMover::set_cys_types():  The Disulfidize mover must use at least one of L-cysteine or D-cysteine.  The user has specified that both are prohibited.  Check your input, please." );
+	allow_beta_cys_ = beta_cys;
+	runtime_assert_string_msg( allow_l_cys_ || allow_d_cys_ || allow_beta_cys_, "Error in protocols::denovo_design::movers::DisulfidizeMover::set_cys_types():  The Disulfidize mover must use at least one of L-cysteine, D-cysteine, or beta-3-cysteine.  The user has specified that all are prohibited.  Check your input, please." );
 	return;
 }
 
@@ -275,7 +278,9 @@ DisulfidizeMover::parse_my_tag(
 	//By default, we only design with L-cystine:
 	set_cys_types(
 		tag->getOption< bool >( "use_l_cys", allow_l_cys_ ),
-		tag->getOption< bool >( "use_d_cys", allow_d_cys_ ) );
+		tag->getOption< bool >( "use_d_cys", allow_d_cys_ ),
+		tag->getOption< bool >( "use_beta_cys", allow_beta_cys_ )
+	);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +319,7 @@ DisulfidizeMover::process_pose(
 	else { TR << "No disulfides were already present in the pose." << std::endl; }
 
 	if ( !keep_current_ds_ ) {
-		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015.
+		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015; updated for B3A, VKM 26 Nov 2016.
 	}
 
 	// create initial list of possible disulfides between residue subset 1 and subset 2
@@ -429,22 +434,36 @@ DisulfidizeMover::mutate_disulfides_to_ala(
 	// mutate current disulfides to alanine if we aren't keeping or including them
 	for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
 
-		core::conformation::break_disulfide( pose.conformation(), ds->first, ds->second ); //First, break the existing disulfide
+		core::conformation::break_disulfide( pose.conformation(), ds->first, ds->second ); //First, break the existing disulfide.  This should be compatible with NCAAs already.
 
-		if ( !pose.residue(ds->first).type().is_d_aa() ) {
-			protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
+		if ( pose.residue(ds->first).type().is_alpha_aa() ) {
+			if ( !pose.residue(ds->first).type().is_d_aa() ) {
+				protocols::simple_moves::MutateResidue mut( ds->first, "ALA" );
+				mut.apply( pose );
+			} else {
+				protocols::simple_moves::MutateResidue mut( ds->first, "DALA" );
+				mut.apply( pose );
+			}
+		} else if ( pose.residue(ds->first).type().is_beta_aa() ) {
+			protocols::simple_moves::MutateResidue mut( ds->first, "B3A" );
 			mut.apply( pose );
 		} else {
-			protocols::simple_moves::MutateResidue mut( ds->first, "DALA" );
-			mut.apply( pose );
+			utility_exit_with_message( "Error in protocols::denovo_design::movers::DisulfidizeMover::mutate_disulfides_to_ala(): Encountered a disulfide-bonded residue that is neither an alpha-amino acid nor a beta-amino acid.  This should not be possible." );
 		}
 
-		if ( !pose.residue(ds->second).type().is_d_aa() ) {
-			protocols::simple_moves::MutateResidue mut2( ds->second, "ALA" );
-			mut2.apply( pose );
+		if ( pose.residue(ds->first).type().is_alpha_aa() ) {
+			if ( !pose.residue(ds->second).type().is_d_aa() ) {
+				protocols::simple_moves::MutateResidue mut2( ds->second, "ALA" );
+				mut2.apply( pose );
+			} else {
+				protocols::simple_moves::MutateResidue mut2( ds->second, "DALA" );
+				mut2.apply( pose );
+			}
+		} else if ( pose.residue(ds->second).type().is_beta_aa() ) {
+			protocols::simple_moves::MutateResidue mut( ds->second, "B3A" );
+			mut.apply( pose );
 		} else {
-			protocols::simple_moves::MutateResidue mut2( ds->second, "DALA" );
-			mut2.apply( pose );
+			utility_exit_with_message( "Error in protocols::denovo_design::movers::DisulfidizeMover::mutate_disulfides_to_ala(): Encountered a disulfide-bonded residue that is neither an alpha-amino acid nor a beta-amino acid.  This should not be possible." );
 		}
 
 	}
@@ -622,7 +641,8 @@ DisulfidizeMover::find_possible_disulfides(
 			// disulfide potential scoring -- check_disulfide_match_rt can now score mirror-image pairs, too
 			bool good_match(false);
 			bool const mixed( mixed_disulfide( pose, *itr, *itr2) );
-			if ( !mixed ) {
+			bool const noncanonical( noncanonical_disulfide( pose, *itr, *itr2) );
+			if ( !mixed && !noncanonical ) {
 				bool good_match1(false), good_match_inv(false);
 				if ( allow_l_cys_ ) good_match1=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, false );
 				if ( allow_d_cys_ ) good_match_inv=check_disulfide_match_rt( pose, *itr, *itr2, disulfPot, true );
@@ -630,14 +650,9 @@ DisulfidizeMover::find_possible_disulfides(
 			} else {
 				good_match=true; //Don't apply the match_rt test if this is a mixed disulfide
 			}
-			if ( ( !mixed ) && score_or_matchrt_ ) {
-				if ( !good_score && !good_match ) {
-					continue;
-				}
-			} else {
-				if ( !good_score || !good_match ) {
-					continue;
-				}
+
+			if ( !good_score && !good_match ) {
+				continue;
 			}
 
 			if ( TR.visible() ) TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
@@ -758,10 +773,10 @@ DisulfidizeMover::check_residue_type( core::pose::Pose const & pose, core::Size 
 {
 	bool const retval = ( pose.residue(res).is_protein() &&
 		( mutate_pro_ ||
-		( ( pose.residue(res).aa() != core::chemical::aa_pro ) && ( pose.residue(res).aa() != core::chemical::aa_dpr ) ) ) &&
-		( mutate_gly_ || ( pose.residue(res).aa() != core::chemical::aa_gly ) ) );
+		( ( pose.residue(res).aa() != core::chemical::aa_pro ) && ( pose.residue(res).aa() != core::chemical::aa_dpr ) && ( pose.residue(res).aa() != core::chemical::aa_b3p ) ) ) &&
+		( mutate_gly_ || ( pose.residue(res).aa() != core::chemical::aa_gly && pose.residue(res).aa() != core::chemical::aa_b3g ) ) );
 	if ( !retval && TR.Debug.visible() ) {
-		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << ") cannot be mutated to CYD." << std::endl;
+		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << ") cannot be mutated to disulfide variant." << std::endl;
 	}
 	return retval;
 }
@@ -846,6 +861,21 @@ bool DisulfidizeMover::mixed_disulfide (
 	if ( !pose.residue(res1).type().is_d_aa() && pose.residue(res2).type().is_d_aa() ) return true;
 
 	return false;
+}
+
+/// @brief Returns true if at least one of the partners in this disulfide is NOT
+/// D-cysteine or L-cysteine.  Returns false otherwise.
+bool
+DisulfidizeMover::noncanonical_disulfide(
+	core::pose::Pose const & pose,
+	core::Size const res1,
+	core::Size const res2
+) const {
+	using namespace core::chemical;
+	bool const first_is_canonical( pose.residue_type(res1).aa() == aa_cys || pose.residue_type(res1).aa() == aa_dcs );
+	bool const second_is_canonical( pose.residue_type(res2).aa() == aa_cys || pose.residue_type(res2).aa() == aa_dcs );
+
+	return (!first_is_canonical) || (!second_is_canonical);
 }
 
 std::string DisulfidizeMover::get_name() const {
@@ -940,7 +970,13 @@ void DisulfidizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"use_d_cys", xsct_rosetta_bool,
 		"Should the mover consider placing D-cysteine? False by default. "
-		"(Note that at least one of use_l_cys and use_d_cys must be set to \"true\".)",
+		"(Note that at least one of use_l_cys, use_d_cys, or use_beta_cys must be set to \"true\".)",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"use_beta_cys", xsct_rosetta_bool,
+		"Should the mover consider placing beta-3-cysteine at beta-amino acid positions? False by default. "
+		"(Note that at least one of use_l_cys, use_d_cys, or use_beta_cys must be set to \"true\".)",
 		"false");
 
 	protocols::moves::xsd_type_definition_w_attributes(

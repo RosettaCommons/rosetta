@@ -38,13 +38,13 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMove
 
 namespace protocols {
 namespace carbohydrates {
-	
-	using namespace core::kinematics;
-	using namespace core::scoring;
-	
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+
+using namespace core::kinematics;
+using namespace core::scoring;
+
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 GlycanTreeMinMover::GlycanTreeMinMover():
@@ -58,11 +58,11 @@ GlycanTreeMinMover::GlycanTreeMinMover(
 	ScoreFunctionCOP scorefxn_in,
 	std::string const & min_type_in /*dfpmin_armijo_nonmonotone */,
 	Real tolerance_in /* .01 */):
-	
-		protocols::simple_moves::MinMover(movemap_in, scorefxn_in, min_type_in, tolerance_in, false /*use nblist*/)
-	
+
+	protocols::simple_moves::MinMover(movemap_in, scorefxn_in, min_type_in, tolerance_in, false /*use nblist*/)
+
 {
-		
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ GlycanTreeMinMover::~GlycanTreeMinMover(){}
 
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Scripts Support ///
-	///////////////////////////////
+/// Rosetta Scripts Support ///
+///////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,86 +136,84 @@ GlycanTreeMinMover::set_movemap(core::kinematics::MoveMapCOP movemap_in){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-	/// Mover Methods ///
-	/////////////////////
+/// Mover Methods ///
+/////////////////////
 
 
 /// @brief Apply the mover
 void
 GlycanTreeMinMover::apply( core::pose::Pose& pose){
-	
+
 	core::select::residue_selector::GlycanResidueSelector selector = core::select::residue_selector::GlycanResidueSelector();
 	selector.set_include_root( true ); //Since we wont really have the ASN root, and we want the possibility to sample the whole glycan.
-	
+
 	utility::vector1< bool > root(pose.total_residue(), false);
-	
+
 	MoveMapOP active_movemap = MoveMapOP( new MoveMap());
-	
+
 	//Set default movemap, only include carbohydrate residues.
 	if ( ! movemap() ) {
 		MoveMapOP full_mm = MoveMapOP( new MoveMap ) ;
-		for (core::Size i = 1; i <= pose.total_residue(); ++i){
-			if (!pose.residue(i).is_carbohydrate()){
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( !pose.residue(i).is_carbohydrate() ) {
 				full_mm->set_bb(false, i);
 				full_mm->set_chi(false, i);
-			}
-			else {
+			} else {
 				full_mm->set_bb(true, i);
 				full_mm->set_chi(true, i);
 			}
 			set_movemap(full_mm);
 		}
 	}
-	if (mm_residues_.size() == 0){
+	if ( mm_residues_.size() == 0 ) {
 		mm_residues_ = core::kinematics::get_residues_from_movemap_bb_or_chi(*movemap(), pose.total_residue());
 	}
-	
-	
+
+
 	//Randomly select a residue from the movemap.
 	core::Size index = numeric::random::rg().random_range( 1, mm_residues_.size() );
 	core::Size resnum = mm_residues_[ index ];
-	
+
 	TR << "Minimizing from carbohydrate root: " << resnum << std::endl;
 	core::Size min_residue_n = 0;
-	
+
 	//Get downstream Tree.
 	selector.set_select_from_branch_residue( resnum );
-	
+
 	utility::vector1< bool > subset = selector.apply(pose);
-	
+
 	//Setup the active movemap
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if ( subset[ i ] ){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( subset[ i ] ) {
 			min_residue_n+=1;
-			if (movemap()->get_bb(i)){
+			if ( movemap()->get_bb(i) ) {
 				active_movemap->set_bb(i, true);
 			}
-			if (movemap()->get_chi(i)){
+			if ( movemap()->get_chi(i) ) {
 				active_movemap->set_chi(i, true);
 			}
 			//This needs to be total number of possible glycan torsions!
-			for (core::Size xx = 1; xx <= 10; ++xx){
-				if (movemap()->get_bb( i, xx)){
+			for ( core::Size xx = 1; xx <= 10; ++xx ) {
+				if ( movemap()->get_bb( i, xx) ) {
 					active_movemap->set_bb(i, xx, true);
 				}
 			}
-		}
-		else {
+		} else {
 			active_movemap->set_bb( i, false );
 			active_movemap->set_chi( i, false );
-			
+
 		}
 	}
-	
+
 	//Minimize
 	TR << "Minimizing " << min_residue_n << " residues " << std::endl;
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
 	if ( ! score_function() ) score_function(get_score_function()); // get a default (INITIALIZED!) ScoreFunction
-	
+
 	minimize( pose, *active_movemap );
-	
-	
+
+
 }
 
 void GlycanTreeMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

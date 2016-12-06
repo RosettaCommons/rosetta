@@ -50,26 +50,26 @@ public:
 
 	/// @brief Constructor.
 	RandomGlycanFoliageSelector();
-	
+
 	/// @brief Constructor passing a subset from which to choose from
 	RandomGlycanFoliageSelector( ResidueSubset const & subset );
-	
+
 	/// @brief Constructor passing a selector, from which to generate a subset on apply and from which to choose the roots from.
 	RandomGlycanFoliageSelector( ResidueSelectorOP selector );
-	
+
 	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
 	RandomGlycanFoliageSelector(RandomGlycanFoliageSelector const & src);
 
 public:
-	
+
 	/// @brief Set a subset to select the glycan root and subsequent foliage on.
 	void
 	set_subset(ResidueSubset const & subset);
-	
+
 	void
 	/// @brief Set a selector to set the glycan root and subsequent foliage on.
 	set_selector( ResidueSelectorCOP selector);
-	
+
 public:
 
 	/// @brief Destructor.
@@ -114,9 +114,9 @@ private:
 	/// @brief Setup anyting nessessary for this class.
 	void
 	setup();
-	
+
 private:
-	
+
 	ResidueSelectorCOP selector_;
 	ResidueSubset subset_;
 

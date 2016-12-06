@@ -102,9 +102,9 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "B3W" ] = aa_b3w;
 	n2aa[ "B3Y" ] = aa_b3y;
 	// 3 common cyclic beta-3 amino acids
-	n2aa[ "cPr" ] = aa_b3cisACPrC;
-	n2aa[ "cAC" ] = aa_b3cisACPC;
-	n2aa[ "cAH" ] = aa_b3cisACHC;
+	n2aa[ "CAC" ] = aa_b3cisACPC;
+	n2aa[ "TAC" ] = aa_b3transACPC;
+	n2aa[ "CAH" ] = aa_b3cisACHC;
 
 	// Nucleic acids
 	n2aa[ "ADE" ] = na_ade;

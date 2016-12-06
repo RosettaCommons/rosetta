@@ -294,7 +294,7 @@ MinMover::apply(pose::Pose & pose) {
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
 
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
-	
+
 	minimize( pose, *active_movemap );
 }
 

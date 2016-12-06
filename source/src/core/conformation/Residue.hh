@@ -1772,14 +1772,14 @@ public:
 	{
 		return rsd_type_.is_RNA();
 	}
-	
+
 	/// @brief Returns true if this residue is a L-RNA residue
 	bool
 	is_l_rna() const
 	{
 		return rsd_type_.is_l_rna();
 	}
-	
+
 	/// @brief Returns true if this residue is a D-RNA residue
 	bool
 	is_d_rna() const

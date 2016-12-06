@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterTests.cxxtest.hh
+/// @file  protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter_betanov15_Tests.cxxtest.hh
 /// @brief  Unit tests for a filter that flags excessive numbers of hydrogen bonds to acceptors.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
@@ -28,23 +28,23 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.OversaturatedHbondAcceptorFilterTests");
+static THREAD_LOCAL basic::Tracer TR("protocols.cyclic_peptide.OversaturatedHbondAcceptorFilter_betanov15_Tests");
 
 
-class OversaturatedHbondAcceptorFilterTests : public CxxTest::TestSuite {
+class OversaturatedHbondAcceptorFilter_betanov15_Tests : public CxxTest::TestSuite {
 
 public:
 
 	void setUp(){
 		core_init_with_additional_options("-no_optH -beta_nov15");
-		
+
 		oversaturated_bb_bb_bb_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/oversaturated_bb_bb_bb.pdb", false, core::import_pose::PDB_file);
-		
+
 		//Link the termini:
 		protocols::cyclic_peptide::DeclareBond decbond1;
 		decbond1.set( 1, "N", 8, "C", false );
 		decbond1.apply(*oversaturated_bb_bb_bb_);
-		
+
 	}
 
 	void tearDown(){
@@ -57,13 +57,13 @@ public:
 		OversaturatedHbondAcceptorFilter filter;
 		filter.set_max_allowed_oversaturated(0);
 		filter.set_consider_mainchain_only(false);
-		
+
 		TR << "Testing backbone-backbone oversaturation in all-hbonds mode." << std::endl;
 		TS_ASSERT( !filter.apply( *oversaturated_bb_bb_bb_ ) );
 		TS_ASSERT_DELTA( filter.report_sm(*oversaturated_bb_bb_bb_), 1, 0.00001 );
-		
+
 		filter.set_consider_mainchain_only(true);
-		
+
 		TR << "Testing backbone-backbone oversaturation in backbone-only mode." << std::endl;
 		TS_ASSERT( !filter.apply( *oversaturated_bb_bb_bb_ ) );
 		TS_ASSERT_DELTA( filter.report_sm(*oversaturated_bb_bb_bb_), 1, 0.00001 );

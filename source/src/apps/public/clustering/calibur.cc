@@ -144,13 +144,11 @@ int main(int argc, char** argv)
 		}
 
 		char * filename;
-		if (option[input::pdb_list].user()){
+		if ( option[input::pdb_list].user() ) {
 			filename = strdup( option[input::pdb_list]().c_str() );
-		}
-		else if (option[in::file::l].user()){
+		} else if ( option[in::file::l].user() ) {
 			filename = strdup( utility::to_string(option[in::file::l]()).c_str() );
-		}
-		else {
+		} else {
 			utility_exit_with_message( "Missing -l or -pdb_list (please run with -help for usage)");
 		}
 		// Handles strategy::thres

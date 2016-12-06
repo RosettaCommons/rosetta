@@ -46,14 +46,14 @@ public:
 
 	/// @brief Default constructor
 	GlycanTreeMinMover();
-	
+
 	GlycanTreeMinMover(
 		core::kinematics::MoveMapOP movemap_in,
 		ScoreFunctionCOP scorefxn_in,
 		std::string const & min_type_in = "dfpmin_armijo_nonmonotone",
 		Real tolerance_in = .01
 	);
-	
+
 	/// @brief Copy constructor (not needed unless you need deep copies)
 	GlycanTreeMinMover( GlycanTreeMinMover const & src );
 
@@ -71,7 +71,7 @@ public:
 
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap_in) override;
-	
+
 public:
 
 	/// @brief Show the contents of the Mover
@@ -99,7 +99,7 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	
+
 private: // methods
 
 private:

@@ -64,7 +64,7 @@ public:
 	NeighborhoodResidueSelector( utility::vector1< bool > const & focus, Real distance, bool include_focus_in_subset = true);
 
 	NeighborhoodResidueSelector( ResidueSelectorCOP selector, Real distance, bool include_focus_in_subset = true);
-	
+
 	virtual ~NeighborhoodResidueSelector();
 
 public:

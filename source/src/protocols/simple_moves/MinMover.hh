@@ -221,7 +221,7 @@ protected:
 	apply_dof_tasks_to_movemap(
 		core::pose::Pose const & pose,
 		core::kinematics::MoveMap & movemap) const;
-	
+
 	// @brief Do the minimization witht the final movemap setup.
 	void
 	minimize(

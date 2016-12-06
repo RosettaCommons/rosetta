@@ -66,10 +66,10 @@ public:
 		}
 
 		//Test the selector
-		
+
 		GlycanResidueSelector selector = GlycanResidueSelector();
 
-		
+
 		utility::vector1< bool > glycan_residues = selector.apply(pose_);
 		compare_bool_vector(correct_glycan_residues, glycan_residues);
 

@@ -569,7 +569,7 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 					} else if ( name_ == "L" ) {
 						name_new = "L" + patched_rsd_type->name();
 					} else { /*
-						   }
+						}
 						AMW: briefly I thought this would be necessary. Nope.
 						else if ( name_.substr( 0, 3 ) == "MP-" ) {
 						Size count = 0;

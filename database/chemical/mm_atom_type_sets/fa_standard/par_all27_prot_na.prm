@@ -555,6 +555,8 @@ CP1  N    C      60.000   117.0000 ! ALLOW PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 CP2  CP1  C      52.000   112.3000 ! ALLOW PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+CP2  CP1  CT2    52.000   112.3000 ! ALLOW PRO
+                ! Beta-3-proline (VKM)
 CP2  CP1  CC     52.000   112.3000 ! ALLOW PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 CP2  CP1  CD     50.000   112.3000 ! ALLOW PRO PEP
@@ -623,6 +625,8 @@ C    CT1  CA    53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! AMW no hope
 CT1  CT2  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! AMW for beta amino acids
+CP1  CT2  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
+                ! VKM for beta-3-proline
 CT1  CT2  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 CT1  CT2  CD     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -919,6 +923,8 @@ HE2  CE2  HE2    19.00    119.00   !
 		! for propene, yin/adm jr., 12/95
 HB   CP1  C      50.000   112.0000 ! ALLOW PEP PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+HB   CP1  CT2    50.000   112.0000 ! ALLOW beta-3-proline (VKM)
+                ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 HB   CP1  CC     50.000   112.0000 ! ALLOW PEP PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 HB   CP1  CD     50.000   112.0000 ! ALLOW PEP POL PRO
@@ -941,6 +947,10 @@ HB   CT1  CT2    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT2  CT1    35.000   111.0000 ! ALLOW  PEP
                 ! AMW beta amino acids
+HB   CT2  CP1    35.000   111.0000 ! ALLOW  PEP
+                ! VKM beta-3-proline
+HB   CT2  CT2    35.000   111.0000 ! ALLOW  PEP
+                ! VKM beta amino acids -- "beta-3-glycine" (beta-alanine)
 HB   CT1  CT3    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  NR2    35.000   111.0000 ! ALLOW  PEP
@@ -1061,6 +1071,8 @@ NH1  CT1  CT1    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
 NH1  CT1  CT2    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
+N    CP1  CT2    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
+                ! Beta-3-proline (VKM)
 NH1  CT1  CT3    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
 NH1  CT1  HB     48.000   108.0000 ! ALLOW PEP

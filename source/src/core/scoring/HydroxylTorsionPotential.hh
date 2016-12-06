@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/methods/HydroxylTorsionPotential.hh
-/// @brief  Term for proton_chi on Ser/Thr/Tyr residues 
+/// @brief  Term for proton_chi on Ser/Thr/Tyr residues
 /// @author Hahnbeom Park (hahnbeom@gmail.com)
 
 #ifndef INCLUDED_core_scoring_HydroxylTorsionPotential_hh
@@ -33,36 +33,36 @@ namespace scoring {
 
 struct TorsionParams
 {
-  utility::vector1< Size > atm;
-  Real n, k, delta;
+	utility::vector1< Size > atm;
+	Real n, k, delta;
 };
 
 class HydroxylTorsionPotential : public utility::pointer::ReferenceCount
 {
 public:
-  typedef boost::unordered_multimap< std::string, TorsionParams >::const_iterator tors_iterator;
+	typedef boost::unordered_multimap< std::string, TorsionParams >::const_iterator tors_iterator;
 
 public:
-  HydroxylTorsionPotential();
-  ~HydroxylTorsionPotential() override = default;
+	HydroxylTorsionPotential();
+	~HydroxylTorsionPotential() override = default;
 
-  Real
-  eval_residue_energy( 
-  conformation::Residue const & rsd
-  ) const;
+	Real
+	eval_residue_energy(
+		conformation::Residue const & rsd
+	) const;
 
-  void
-  eval_residue_derivative( 
-  conformation::Residue const & rsd,
-  utility::vector1< DerivVectorPair > & atom_derivs
-  ) const;
+	void
+	eval_residue_derivative(
+		conformation::Residue const & rsd,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
 
 
 private:
-  std::string get_restag( core::chemical::ResidueType const & restype ) const;
+	std::string get_restag( core::chemical::ResidueType const & restype ) const;
 
-  void read_database( std::string filename );
-  boost::unordered_multimap< std::string, TorsionParams > torsion_params_;
+	void read_database( std::string filename );
+	boost::unordered_multimap< std::string, TorsionParams > torsion_params_;
 
 };
 

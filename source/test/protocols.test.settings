@@ -78,14 +78,21 @@ sources = {
 	"contact_map": [
 		"ContactMap",
 	],
-
+	
 	"cyclic_peptide" : [
+		"BetaAlphaDisulfideTests",
+		"BetaAlphaDisulfideTests_betanov15",
+		"BetaAlphaDisulfideTests_betanov16",
 		"CycpepSymmetryFilterTests",
                 "FlipChiralityMover",
 		"NMethylationTests",
 		"NMethylationTests_betanov15",
+		"NMethylationTests_betanov16",
 		"OversaturatedHbondAcceptorFilterTests",
+		"OversaturatedHbondAcceptorFilter_betanov15_Tests",
+		"OversaturatedHbondAcceptorFilter_betanov16_Tests",
 	],
+	
 	"cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_betanov15",
@@ -653,6 +660,7 @@ testinputfiles = [
 	"cyclic_peptide/c2_symm.pdb",
 	"cyclic_peptide/c2m_symm.pdb",
 	"cyclic_peptide/dVdPN_A.pdb",
+	"cyclic_peptide/mixed_disulf_test.pdb",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",
 	"cyclic_peptide_predict/allowed_residues.txt",
 	"cyclic_peptide_predict/design_setup_test.txt",

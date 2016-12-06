@@ -87,8 +87,8 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-				O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
-				whacky_sugar, bad_pdb;
+			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, target57, maltobiose, Me_glycoside, C_linked,
+			whacky_sugar, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 

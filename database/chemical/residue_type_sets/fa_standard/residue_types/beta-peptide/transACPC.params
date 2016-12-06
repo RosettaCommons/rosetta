@@ -1,9 +1,9 @@
 # Params file for trans-2-aminocyclopentatnecarboxylic acid (trans-ACPC).
 # File created 14 July 2015 by Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
 NAME transACPC
-IO_STRING tAC X
+IO_STRING TAC X
 TYPE POLYMER
-AA UNK
+AA TAC
 ATOM  N   Nbb  NH1  -0.59
 ATOM  CA  CAbb CT1  -0.07
 ATOM  CM  CAbb CT1  -0.07
@@ -50,6 +50,7 @@ LOWER_CONNECT N
 UPPER_CONNECT C
 PROPERTIES PROTEIN BETA_AA L_AA METALBINDING
 METAL_BINDING_ATOMS O
+MAINCHAIN_ATOMS N CA CM C
 VIRTUAL_SHADOW VCM CM
 VIRTUAL_SHADOW VCD CD
 FIRST_SIDECHAIN_ATOM CB

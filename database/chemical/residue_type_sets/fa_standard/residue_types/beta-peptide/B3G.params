@@ -6,7 +6,7 @@
 NAME B3G
 IO_STRING B3G G
 TYPE POLYMER #residue type
-AA UNK
+AA B3G
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT2  -0.02
 ATOM  CM  CAbb CT2  -0.18

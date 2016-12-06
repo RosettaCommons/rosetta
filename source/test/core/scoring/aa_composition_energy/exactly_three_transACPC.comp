@@ -1,7 +1,7 @@
 # This is a .comp file for requiring that a structure have exactly three transACPC residues. 
 # File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
 PENALTY_DEFINITION
-TYPE tAC
+TYPE TAC
 DELTA_START -2
 DELTA_END 1
 PENALTIES 100 40 0 90

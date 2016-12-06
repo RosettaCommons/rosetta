@@ -41,63 +41,63 @@ static basic::Tracer TR("core.scoring.HydroxylTorsionPotential");
 HydroxylTorsionPotential::HydroxylTorsionPotential()
 {
 	// hard-code for now....
-  read_database( "scoring/score_functions/bondlength_bondangle/hydroxyl_torsion_preference.txt" );
+	read_database( "scoring/score_functions/bondlength_bondangle/hydroxyl_torsion_preference.txt" );
 }
 
 // copied over from cart_bonded
 std::string
 HydroxylTorsionPotential::get_restag( core::chemical::ResidueType const & restype ) const
 {
-  using namespace core::chemical;
+	using namespace core::chemical;
 
-  if ( core::chemical::is_canonical_D_aa(restype.aa()) ) {
-	std::string rsdname = restype.name();
-	if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
-	else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
-	return rsdname;
-  } else if ( !restype.is_protein() && !restype.is_NA() ) {
+	if ( core::chemical::is_canonical_D_aa(restype.aa()) ) {
+		std::string rsdname = restype.name();
+		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
+		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
+		return rsdname;
+	} else if ( !restype.is_protein() && !restype.is_NA() ) {
 		return restype.name3();
-  } else {
+	} else {
 		std::string rsdname = restype.name();
 		rsdname = rsdname.substr( 0, rsdname.find(chemical::PATCH_LINKER) );
 		return rsdname;
-  }
+	}
 }
 
 void
 HydroxylTorsionPotential::read_database( std::string filename )
 {
-  utility::io::izstream instream;
-  basic::database::open( instream, filename );
+	utility::io::izstream instream;
+	basic::database::open( instream, filename );
 
-  std::string fileline;
-  std::string restag;
-  std::string atm1, atm2, atm3, atm4;
-  Real k, n, delta;
+	std::string fileline;
+	std::string restag;
+	std::string atm1, atm2, atm3, atm4;
+	Real k, n, delta;
 
-  chemical::ResidueTypeSetCOP rsd_set
-	= chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	chemical::ResidueTypeSetCOP rsd_set
+		= chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-  TR.Debug << "Reading database from " << filename << std::endl;
+	TR.Debug << "Reading database from " << filename << std::endl;
 
-  while ( instream ) {
+	while ( instream ) {
 		getline(instream, fileline);
 		std::istringstream linestream(fileline);
 
 		linestream >> restag;
 		if ( !rsd_set->has_name3( restag ) ) continue;
-	
+
 		linestream >> atm1 >> atm2 >> atm3 >> atm4
-							 >> k >> n >> delta;
+			>> k >> n >> delta;
 
 		/*
-			boost::unordered_multimap< std::string, TorsionParams >::const_iterator it
-			= torsion_params_.find( restag );
-			if( it == torsion_params_.end() ){
-			torsion_params_[res3] = utility::vector1< TorsionParams >();
-			torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
-			TR.Debug << "add " << restag << std::endl;
-			}
+		boost::unordered_multimap< std::string, TorsionParams >::const_iterator it
+		= torsion_params_.find( restag );
+		if( it == torsion_params_.end() ){
+		torsion_params_[res3] = utility::vector1< TorsionParams >();
+		torsion_params_.insert( std::make_pair( res3, utility::vector1< TorsionParams >() ) );
+		TR.Debug << "add " << restag << std::endl;
+		}
 		*/
 
 		chemical::ResidueType const &rsd = rsd_set->name_map( restag );
@@ -108,25 +108,25 @@ HydroxylTorsionPotential::read_database( std::string filename )
 		p.k = k; p.n = n; p.delta = delta;
 		torsion_params_.insert( std::make_pair( restag, p ) );
 		TR.Debug << "added " << restag << ", total " << torsion_params_.size() << std::endl;
-  }
+	}
 }
 
 Real
-HydroxylTorsionPotential::eval_residue_energy( 
-  conformation::Residue const & rsd
+HydroxylTorsionPotential::eval_residue_energy(
+	conformation::Residue const & rsd
 ) const
 {
-  Real score( 0.0 );
+	Real score( 0.0 );
 
 	std::string restag = get_restag( rsd.type() );
 
-  tors_iterator it = torsion_params_.find( restag );
-  if ( it == torsion_params_.end() ) return 0.0;
+	tors_iterator it = torsion_params_.find( restag );
+	if ( it == torsion_params_.end() ) return 0.0;
 
-  Size const natm( rsd.natoms() );
+	Size const natm( rsd.natoms() );
 
-  for ( it = torsion_params_.begin(); it != torsion_params_.end();
-		it = torsion_params_.equal_range(it->first).second ) {
+	for ( it = torsion_params_.begin(); it != torsion_params_.end();
+			it = torsion_params_.equal_range(it->first).second ) {
 
 		if ( it->first != restag ) continue;
 
@@ -139,39 +139,39 @@ HydroxylTorsionPotential::eval_residue_energy(
 			TorsionParams const &p = it2->second;
 
 			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
 
 			score += p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
 			/*
-				printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
-				int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
-				p.k, p.n, p.delta, tors, score
-				);
+			printf( "Atms/k/n/delta/tors/score: %2d %2d %2d %2d %5.2f %4.1f %6.4f %6.4f %8.3f\n",
+			int(p.atm[1]), int(p.atm[2]), int(p.atm[3]), int(p.atm[4]),
+			p.k, p.n, p.delta, tors, score
+			);
 			*/
 		}
-  }
+	}
 
-  return score;
+	return score;
 }
 
 void
-HydroxylTorsionPotential::eval_residue_derivative( 
-  conformation::Residue const & rsd,
-  utility::vector1< DerivVectorPair > & atom_derivs
+HydroxylTorsionPotential::eval_residue_derivative(
+	conformation::Residue const & rsd,
+	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-  std::string restag = get_restag( rsd.type() );
+	std::string restag = get_restag( rsd.type() );
 
-  Size const natm( rsd.natoms() );
+	Size const natm( rsd.natoms() );
 
-  tors_iterator it = torsion_params_.find( restag );
-  if ( it == torsion_params_.end() ) return;
+	tors_iterator it = torsion_params_.find( restag );
+	if ( it == torsion_params_.end() ) return;
 
-  for ( it = torsion_params_.begin(); it != torsion_params_.end();
-		it = torsion_params_.equal_range(it->first).second ) {
+	for ( it = torsion_params_.begin(); it != torsion_params_.end();
+			it = torsion_params_.equal_range(it->first).second ) {
 
 		if ( it->first != restag ) continue;
 		if ( torsion_params_.count( it->first ) <= 1 ) continue;
@@ -183,7 +183,7 @@ HydroxylTorsionPotential::eval_residue_derivative(
 			TorsionParams const &p = it2->second;
 
 			debug_assert( (p.atm[1] <= natm) && (p.atm[2] <= natm) &&
-										(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
+				(p.atm[3] <= natm) && ( p.atm[4] <=natm ) );
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
@@ -203,18 +203,18 @@ HydroxylTorsionPotential::eval_residue_derivative(
 			numeric::deriv::dihedral_p2_cosine_deriv( xyz1, xyz2, xyz3, xyz4, tors, f1, f2 );
 			atom_derivs[ p.atm[2] ].f1() += dE_dtors * f1;
 			atom_derivs[ p.atm[2] ].f2() += dE_dtors * f2;
-	  
+
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p2_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
 			atom_derivs[ p.atm[3] ].f1() += dE_dtors * f1;
 			atom_derivs[ p.atm[3] ].f2() += dE_dtors * f2;
-	  
+
 			f1 = f2 = Vector(0.0);
 			numeric::deriv::dihedral_p1_cosine_deriv( xyz4, xyz3, xyz2, xyz1, tors, f1, f2 );
 			atom_derivs[ p.atm[4] ].f1() += dE_dtors * f1;
 			atom_derivs[ p.atm[4] ].f2() += dE_dtors * f2;
 		}
-  }
+	}
 }
 
 } // namespace scoring

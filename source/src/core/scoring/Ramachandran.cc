@@ -588,6 +588,13 @@ Ramachandran::eval_rama_score_residue(
 ) const {
 	using namespace numeric;
 
+	if ( res_aa > core::chemical::num_canonical_aas && !is_canonical_d_aminoacid(res_aa) ) { //Do nothing if this isn't a canonical L- or D-amino acid.
+		rama=0;
+		drama_dphi=0;
+		drama_dpsi=0;
+		return;
+	}
+
 	core::chemical::AA res_aa2 = res_aa;
 	core::Real phi2 = phi;
 	core::Real psi2 = psi;

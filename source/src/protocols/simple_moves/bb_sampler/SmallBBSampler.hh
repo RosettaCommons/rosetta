@@ -103,12 +103,12 @@ public:
 
 	SmallBBSamplerOP
 	clone() const;
-	
+
 	virtual std::string
 	get_name() const {
 		return "SmallBBSampler";
 	}
-	
+
 private:
 
 	/// max allowed angle-change as a function of ss type

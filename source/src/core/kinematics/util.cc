@@ -749,11 +749,11 @@ get_residues_from_movemap_bb_or_chi(MoveMap const & movemap, Size total_resnum){
 	utility::vector1< core::Size > final_vec;
 
 	for ( core::Size i = 1; i <= total_resnum; ++i ) {
-		if ( movemap.get_bb( i )  || movemap.get_chi( i ) ){
+		if ( movemap.get_bb( i )  || movemap.get_chi( i ) ) {
 			on[ i ] = true;
 			continue;
 		}
-		
+
 		//Torsion specific
 		for ( core::Size x = 1; x <= 4; ++x ) {
 			if ( movemap.get_bb( i, x ) ) {

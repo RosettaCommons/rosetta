@@ -406,7 +406,7 @@ ResidueTypeSet::apply_patches(
 		for ( Size i = 1; i <= base_residue_types_.size(); ++i ) {
 			ResidueType const & rsd_type( *base_residue_types_[i] );
 			if ( !p->applies_to( rsd_type ) )  continue;
-			
+
 			if ( p->replaces( rsd_type ) ) {
 				runtime_assert( rsd_type.finalized() );
 				ResidueTypeCOP rsd_type_new = p->apply( rsd_type );
@@ -442,16 +442,16 @@ ResidueTypeSet::apply_patches(
 				);
 				d_to_l_mapping_[ new_rsd_type ] = base_residue_types_[i];
 			}
-			
+
 			if ( p->applies_to( rsd_type ) && p->adds_properties( rsd_type ).has_value( "L_RNA" ) ) {
 				ResidueTypeOP new_rsd_type_op = p->apply( rsd_type );
 				new_rsd_type_op->base_name( new_rsd_type_op->name() ); //L-RNA residues have their own base names.
 				new_rsd_type_op->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
-				
+
 				ResidueTypeCOP new_rsd_type( new_rsd_type_op );  //Make const-access pointer.
 				base_residue_types_.push_back( new_rsd_type );
 				cache_->add_residue_type( new_rsd_type );
-				
+
 				// Store the D-to-L and L-to-D mappings -- in reverse, of course!
 				runtime_assert_string_msg(
 					l_to_d_mapping_.count( base_residue_types_[i] ) == 0,
@@ -480,7 +480,7 @@ ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCO
 		for ( Size i=1; i<= base_residue_types.size(); ++i ) {
 			ResidueType const & rsd_type( *base_residue_types[i] );
 			if ( ! p->applies_to( rsd_type ) ) continue;
-			
+
 			// Check if any patches change name3 of residue_types.
 			// Such patches must be applicable to base residue types -- probably should
 			// check this somewhere (e.g. ResidueTypeFinder).
@@ -488,7 +488,7 @@ ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCO
 			if ( new_name3.size() > 0 && rsd_type.name3() != new_name3 ) {
 				name3_generated_by_base_residue_name_[ rsd_type.name() ].insert( new_name3 );
 			}
-			
+
 			// similarly, check if any patches create interchangeability_groups from this base residue type.
 			// Used by ResidueTypeFinder.
 			std::string const & interchangeability_group = p->generates_interchangeability_group( rsd_type );
@@ -609,7 +609,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		// sometimes patch cases are split between several patches -- look through all:
 		for ( PatchCOP p : patches ) {
 			if ( !p->applies_to( rsd_base ) ) continue;
-			
+
 			runtime_assert( !patch_applied ); // patch cannot be applied twice.
 
 			ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
@@ -690,7 +690,7 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 		rsd_name_base = rsd_name.substr( 1 );
 		patch_name    = "D";
 	}
-	
+
 	// For chiral-flip nucleic acid patch, it's the first letter.
 	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'L' && has_name( rsd_name.substr( 1 ) ) ) {
 		rsd_name_base = rsd_name.substr( 1 );
@@ -759,7 +759,7 @@ ResidueTypeSet::get_representative_type_name3( std::string const &  name3  ) con
 	utility::vector1< std::string > const variants; // blank
 	return get_representative_type_name3( name3, variants );
 }
-	
+
 ResidueTypeCOP
 ResidueTypeSet::get_representative_type_base_name( std::string const & base_name ) const {
 	return ResidueTypeFinder( *this ).residue_base_name( base_name ).get_representative_type();

@@ -604,8 +604,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= indep_res; ++ii ) {
-		if ( ( pose.residue( ii ).aa() == chemical::aa_cys || pose.residue( ii ).aa() == chemical::aa_dcs || pose.residue( ii ).aa() == chemical::aa_unk ) &&
-				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
+		if ( pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
 				pose.residue_type( ii ).has( pose.residue_type( ii ).get_disulfide_atom_name() ) &&
 				pose.residue_type( ii ).get_disulfide_atom_name() != "CEN" // full atom residue
@@ -656,8 +655,7 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
-			if ( (pose.residue( ii ).aa() != chemical::aa_cys || pose.residue(ii).aa() != chemical::aa_dcs)
-					|| disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
+			if ( disulfide_residue_types_[ ii ].get() != & ( pose.residue_type( ii ) )
 					|| ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) /// subsumed by residue type check amw but reactivating
 					|| pose.residue_type( ii ).get_disulfide_atom_name() == "CEN" //no longer full atom
 					|| ! ( pose.residue( ii ).connect_map(
@@ -667,10 +665,7 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 					) ) {
 				return true;
 			}
-		} else if ( ( pose.residue( ii ).aa() == chemical::aa_cys
-				|| pose.residue( ii ).aa() == chemical::aa_dcs
-				|| pose.residue( ii ).aa() == chemical::aa_unk )
-				&& pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ) {
+		} else if ( pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ) {
 			return true;
 		}
 	}

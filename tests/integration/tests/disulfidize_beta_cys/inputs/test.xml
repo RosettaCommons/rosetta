@@ -1,0 +1,33 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="bnv" weights="beta_nov15.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="repack_only" />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		
+		<BundleGridSampler name="bgs" scorefxn="bnv" residue_name="B3A" crick_params_file="14_helix" helix_length="20" r0_min="6.0" r0_max="7.0" r0_samples="5" omega0="2.5" use_degrees="true" nstruct_mode="true" max_samples="25" >
+			<Helix delta_omega0="0" delta_omega1_min="-45" delta_omega1_max="45" delta_omega1_samples="5" />
+			<Helix delta_omega0="120" delta_omega1_copies_helix="1" invert="true" pitch_from_helix="1" r0_copies_helix="1" />
+			<Helix residue_name="ALA" crick_params_file="alpha_helix" delta_omega0="240" delta_omega1_copies_helix="1" pitch_from_helix="1" r0_copies_helix="1" />
+		</BundleGridSampler>
+		
+		<DeclareBond name="termini" res1="2" res2="3" atom1="C" atom2="N" add_termini="true" />
+
+		<Disulfidize name="disulf" use_beta_cys="true" min_disulfides="1" max_disulfides="1" min_loop="15" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs" />
+		<Add mover="termini" />
+		<Add mover="disulf" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="bnv" />
+</ROSETTASCRIPTS>

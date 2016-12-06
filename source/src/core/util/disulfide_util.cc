@@ -122,8 +122,8 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 
 
 /// @details
-/// @pre The two residues specified should already be cysteines with a bond
-///  defined between the SG atoms. This can be accomplished by first calling
+/// @pre The two residues specified should already be disulfide-forming types with a bond
+///  defined between the sulphur atoms. This can be accomplished by first calling
 ///  protocols::toolbox::form_disulfide().
 ///
 ///  To provide the most flexibility, this function does not restrict

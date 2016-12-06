@@ -93,6 +93,32 @@ construct_poly_d_ala_pose(
 	construct_poly_uniq_restype_pose( pose, positions, core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("DALA"), keep_pro, keep_gly, keep_disulfide_cys);
 }
 
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @brief puts in beta-3-ala residues at the positions specified in the 'positions' input array.
+void
+construct_poly_beta_ala_pose(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
+) {
+	construct_poly_uniq_restype_pose( pose, positions, core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("B3A"), keep_pro, keep_gly, keep_disulfide_cys);
+}
+
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @brief puts in D-beta-3-ala residues at the positions specified in the 'positions' input array
+void
+construct_poly_d_beta_ala_pose(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
+) {
+	construct_poly_uniq_restype_pose( pose, positions, core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map("DB3A"), keep_pro, keep_gly, keep_disulfide_cys);
+}
+
 void
 construct_poly_uniq_restype_pose(
 	core::pose::Pose & pose,
@@ -112,12 +138,15 @@ construct_poly_uniq_restype_pose(
 	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
 			pos_it != positions.end(); ++pos_it ) {
 
+		if ( replace_res.type().is_alpha_aa() && !pose.residue_type( *pos_it ).is_alpha_aa() ) continue;
+		if ( replace_res.type().is_beta_aa() && !pose.residue_type( *pos_it ).is_beta_aa() ) continue;
+
 		chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
 
 
-		if ( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
-				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
-				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
+		if ( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro || cur_restype->aa() == chemical::aa_dpr || cur_restype->aa() == chemical::aa_b3p ) )
+				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly || cur_restype->aa() == chemical::aa_b3g ) )
+				||( keep_disulfide_cys && cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
 			continue;
 		}
 
@@ -140,7 +169,6 @@ construct_poly_uniq_restype_pose(
 				}
 			}
 
-			//runtime_assert( var_replace_type->name3() == "ALA" );
 			conformation::Residue const var_replace_res( *var_replace_type, true );
 
 			pose.replace_residue( *pos_it, var_replace_res, true );

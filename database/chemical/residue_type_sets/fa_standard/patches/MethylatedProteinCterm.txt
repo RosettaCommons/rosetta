@@ -27,7 +27,7 @@ BEGIN_CASE #### ring betas ###################################
 
 # Issue here is that we can't use HM.
 BEGIN_SELECTOR
-NAME3 tAC cAC cAH
+NAME3 TAC CAC CAH
 END_SELECTOR
 
 ADD_ATOM  NM  Nbb   NH1   -0.47

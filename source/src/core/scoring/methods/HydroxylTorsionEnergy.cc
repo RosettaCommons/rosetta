@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/scoring/methods/HydroxylTorsionEnergy.hh
-/// @brief  Term for proton_chi on Ser/Thr/Tyr residues 
+/// @brief  Term for proton_chi on Ser/Thr/Tyr residues
 /// @author Hahnbeom Park (hahnbeom@gmail.com)
 
 // Unit headers

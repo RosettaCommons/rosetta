@@ -90,8 +90,8 @@ void
 RandomGlycanFoliageSelector::set_selector( ResidueSelectorCOP selector){
 	selector_ = selector;
 }
-	
-	
+
+
 /// @brief Clone function.
 /// @details Copy this object and return owning pointer to the copy (created on the heap).
 RandomGlycanFoliageSelector::ResidueSelectorOP
@@ -131,7 +131,7 @@ RandomGlycanFoliageSelector::parse_my_tag(
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = parse_residue_selector(tag, data);
 	}
-	
+
 }
 
 void RandomGlycanFoliageSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd)
@@ -141,9 +141,9 @@ void RandomGlycanFoliageSelector::provide_xml_schema( utility::tag::XMLSchemaDef
 	AttributeList attributes;
 	attributes_for_parse_residue_selector(attributes);
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),
-	"Selects a random carbohydrate residue from a subset or selector, then selects the rest of the glycan foliage.  Used for sampling.",
-	attributes );
-	
+		"Selects a random carbohydrate residue from a subset or selector, then selects the rest of the glycan foliage.  Used for sampling.",
+		attributes );
+
 }
 
 /// @brief Provide XSD information, allowing automatic evaluation of bad XML.
@@ -159,38 +159,36 @@ RandomGlycanFoliageSelector::ResidueSubset
 RandomGlycanFoliageSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	
+
 	TR << "applying RandomGlycanFoliageSelector" << std::endl;
 	GlycanResidueSelector glycan_selector = GlycanResidueSelector();
 	glycan_selector.set_include_root( true ); //We want to be able to select the residue and the rest, and we won't really usually have the ASN here.
-	
+
 	ResidueSubset select_on_subset;
 	utility::vector1< core::Size > select_on_vector;
-	
-	if (selector_){
+
+	if ( selector_ ) {
 		select_on_subset = selector_->apply( pose );
-	}
-	else if (subset_.empty()){
+	} else if ( subset_.empty() ) {
 		//Use ALL glycan residues
 		select_on_subset = glycan_selector.apply(pose);
-	}
-	else {
+	} else {
 		select_on_subset = subset_;
 	}
-	
+
 	//Group active residues, make sure we are carbohydrate.
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		if (select_on_subset[i] && pose.residue( i ).is_carbohydrate()){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( select_on_subset[i] && pose.residue( i ).is_carbohydrate() ) {
 			select_on_vector.push_back( i );
 		}
 	}
-	
+
 	core::Size index = numeric::random::rg().random_range( 1, select_on_vector.size() );
 	core::Size resnum = select_on_vector[ index ];
 	glycan_selector.set_select_from_branch_residue(resnum);
 	utility::vector1< bool > subset = glycan_selector.apply(pose);
 	return subset;
-	
+
 }
 
 

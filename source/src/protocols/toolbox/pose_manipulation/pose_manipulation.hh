@@ -69,6 +69,28 @@ construct_poly_d_ala_pose(
 	bool const keep_disulfide_cys
 );
 
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @brief puts in beta-3-ala residues at the positions specified in the 'positions' input array.
+void
+construct_poly_beta_ala_pose(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
+);
+
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @brief puts in D-beta-3-ala residues at the positions specified in the 'positions' input array
+void
+construct_poly_d_beta_ala_pose(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
+);
+
 /// @author Possu Huang ( possu@uw.edu)
 /// @brief allows construction of a polymer of any residue type
 void

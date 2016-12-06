@@ -103,68 +103,68 @@ public:
 
 public:
 
-    // ---------- SETTERS AND GETTERS ---------------
+	// ---------- SETTERS AND GETTERS ---------------
 
-    /// @brief Set the maximum allowed number of instances of an oversaturated
-    /// hydrogen bond acceptor.
-    void set_mode( bool const input_setting );
+	/// @brief Set the maximum allowed number of instances of an oversaturated
+	/// hydrogen bond acceptor.
+	void set_mode( bool const input_setting );
 
-    /// @brief Get the maximum allowed number of instances of an oversaturated
-    /// hydrogen bond acceptor.
-    bool mode() const ;
+	/// @brief Get the maximum allowed number of instances of an oversaturated
+	/// hydrogen bond acceptor.
+	bool mode() const ;
 
-    /// @brief Set the threshhold for considering something to be a
-    /// hydrogen bond.
-    void set_hbond_energy_cutoff( core::Real const &input_value );
+	/// @brief Set the threshhold for considering something to be a
+	/// hydrogen bond.
+	void set_hbond_energy_cutoff( core::Real const &input_value );
 
-    /// @brief Get the threshhold for considering something to be a
-    /// hydrogen bond.
-    core::Real const & hbond_energy_cutoff() const ;
+	/// @brief Get the threshhold for considering something to be a
+	/// hydrogen bond.
+	core::Real const & hbond_energy_cutoff() const ;
 
-    /// @brief Set whether we only consider mainchain hydrogen bond
-    /// donors and acceptors.
-    void set_consider_mainchain_only ( bool const input_setting ) ;
+	/// @brief Set whether we only consider mainchain hydrogen bond
+	/// donors and acceptors.
+	void set_consider_mainchain_only ( bool const input_setting ) ;
 
-    /// @brief Get whether we only consider mainchain hydrogen bond
-    /// donors and acceptors.
-    bool consider_mainchain_only() const ;
+	/// @brief Get whether we only consider mainchain hydrogen bond
+	/// donors and acceptors.
+	bool consider_mainchain_only() const ;
 
-    /// @brief Set the scorefunction.
-    /// @details Clones the input.
-    void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) ;
+	/// @brief Set the scorefunction.
+	/// @details Clones the input.
+	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) ;
 
-    /// @brief Get the scorefunction.
-    ///
-    core::scoring::ScoreFunctionCOP scorefxn() const ;
+	/// @brief Get the scorefunction.
+	///
+	core::scoring::ScoreFunctionCOP scorefxn() const ;
 
 private:
 
-    // ---------- PRIVATE FUNCTIONS -----------------
+	// ---------- PRIVATE FUNCTIONS -----------------
 
-    /// @brief The function that actually calculates the value that this filter returns, called by the apply(),
-    /// report(), and report_sm() functions.
-    /// @details Returns the number of atoms receiving more than the allowed number of hydrogen bonds.
-    utility::vector1< utility::vector1 < core::Size > > compute( core::pose::Pose const &pose ) const;
+	/// @brief The function that actually calculates the value that this filter returns, called by the apply(),
+	/// report(), and report_sm() functions.
+	/// @details Returns the number of atoms receiving more than the allowed number of hydrogen bonds.
+	utility::vector1< utility::vector1 < core::Size > > compute( core::pose::Pose const &pose ) const;
 
-    // ---------- PRIVATE MEMBER VARIABLES ----------
+	// ---------- PRIVATE MEMBER VARIABLES ----------
 
-    /// @brief What is the maximum allowed number of instances of an oversaturated
-    /// hydrogen bond acceptor?
-    /// @details Defaults to 0.
+	/// @brief What is the maximum allowed number of instances of an oversaturated
+	/// hydrogen bond acceptor?
+	/// @details Defaults to 0.
 
-    /// @brief The energy cutoff for considering something to be a hydrogen
-		//bond}.
-    /// @details Defaults to -0.1.
-    core::Real hbond_energy_cutoff_;
+	/// @brief The energy cutoff for considering something to be a hydrogen
+	//bond}.
+	/// @details Defaults to -0.1.
+	core::Real hbond_energy_cutoff_;
 
-    /// @brief Should we only consider mainchain hydrogen bond donors and acceptors?
-    /// @details Defaults to true.
-    bool consider_mainchain_only_;
-    bool acceptors_;
+	/// @brief Should we only consider mainchain hydrogen bond donors and acceptors?
+	/// @details Defaults to true.
+	bool consider_mainchain_only_;
+	bool acceptors_;
 
-    /// @brief The scorefunction to use for hydrogen bond scoring.
-    /// @details If no scorefunction is provided, then the default scorefunction is used.
-    core::scoring::ScoreFunctionOP scorefxn_;
+	/// @brief The scorefunction to use for hydrogen bond scoring.
+	/// @details If no scorefunction is provided, then the default scorefunction is used.
+	core::scoring::ScoreFunctionOP scorefxn_;
 
 
 };

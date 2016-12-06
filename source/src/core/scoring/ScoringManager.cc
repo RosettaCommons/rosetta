@@ -924,13 +924,13 @@ ScoringManager::get_OmegaPreferencesFunction(  bool setup_for_sampling /* false 
 			carbohydrates::OmegaPreferencesFunctionOP( new carbohydrates::OmegaPreferencesFunction );
 
 	}
-	
+
 	if ( setup_for_sampling && ( ! carbohydrate_omega_preferences_function_->sampling_data_setup() ) ) {
 		TR << "should be setting up for sampling..." << std::endl;
 		carbohydrate_omega_preferences_function_->setup_for_sampling( step_size );
 	}
-	
-	
+
+
 	return *carbohydrate_omega_preferences_function_;
 }
 
