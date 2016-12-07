@@ -1,3 +1,5 @@
+cd %(workdir)s
+
 # Do the tests actually exist?
 [ -x %(bin)s/calibur.%(binext)s ] || exit 1
 
