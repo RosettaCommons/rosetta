@@ -10,20 +10,20 @@
 /// @file protocols/comparative_modeling/PartialThreadingMover.hh
 /// @brief
 /// @author James Thompson
+/// @author fpd some updates
 
 // libRosetta headers
 
 #ifndef INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
 #define INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
 
-#include <protocols/comparative_modeling/ThreadingMover.hh>
-
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <core/sequence/SequenceAlignment.hh>
 
 #include <string>
 
@@ -33,10 +33,9 @@
 namespace protocols {
 namespace comparative_modeling {
 
-class PartialThreadingMover : public ThreadingMover {
+class PartialThreadingMover : public protocols::moves::Mover {
 
 public:
-
 	/// @brief align describes the association between the query and template
 	/// sequences, template_pose is the conformation from which to build a
 	/// threading model.
@@ -53,14 +52,9 @@ public:
 
 	std::string get_name() const override;
 
-	void parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		Pose const & pose
-	) override;
-
+private:
+	core::pose::Pose template_pose_;
+	core::sequence::SequenceAlignment align_;
 }; // PartialThreadingMover
 
 } // comparative_modeling

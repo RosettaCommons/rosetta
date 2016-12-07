@@ -115,74 +115,40 @@ main( int argc, char* argv [] ) {
 
 		basic::Tracer tr( "partial_thread" );
 
-		SequenceOP fasta_seq = core::sequence::read_fasta_file(
-			option[ in::file::fasta ]()[1]
-			)[1];
-
+		SequenceOP fasta_seq = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1];
+		map< string, Pose > poses = poses_from_cmd_line( option[ in::file::template_pdb ]() );
 
 		vector1< string > align_fns = option[ in::file::alignment ]();
-
-		map< string, Pose > poses = poses_from_cmd_line(
-			option[ in::file::template_pdb ]()
-		);
-
 		typedef vector1< string >::const_iterator aln_iter;
-		// in this block, when compiler sees aln_iter, it converts to
-		// vector1< string >::const_iterator. We could have used this:
-		// vector1< string >::iterator. We do not, because we don't want
-		// to change the vector1< string >. This is called "const-correctness"
-		// in C++, and is a very important topic.
-		//
-		// equivalent to:
-		//for ( vector1< string >::const_iterator aln_fn = aln_fns.begin(),
-		//   aln_end = aln_fns.end();
-		//   aln_fn != aln_end; ++aln_fn )
-		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end();
-				aln_fn != aln_end; ++aln_fn
-				) {
-			vector1< SequenceAlignment > alns = core::sequence::read_aln(
-				option[ cm::aln_format ](), *aln_fn
-			);
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end(); aln_fn != aln_end; ++aln_fn) {
+			vector1< SequenceAlignment > alns = core::sequence::read_aln(option[ cm::aln_format ](), *aln_fn);
 
-			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),
-					end = alns.end();
-					it != end; ++it
-					) {
-				string const template_id( it->sequence(2)->id().substr(0,5) ); //Why in the world do we only use 5 residues.  Lets split the string and go from there.
+			//fd  One thing kind of dumb about this is that:
+			//fd     "input id" is it->sequence(2)->id().substr(0,5)
+			//fd     "output id" is it->sequence(2)->id()
+			//fd  So input and outputs are "linked" and it is really easy to overwrite your inputs
+			for ( vector1< SequenceAlignment >::iterator it = alns.begin(),end = alns.end(); it != end; ++it ) {
+				string const template_id( it->sequence(2)->id().substr(0,5) );
 
-
-				tr << *it << std::endl;
-				tr << "id " << it->sequence(2)->id() << " => " << template_id
-					<< std::endl;
 				string const ungapped_query( it->sequence(1)->ungapped_sequence() );
 
-				// calc rmsd/gdt stats
 				map< string, Pose >::iterator pose_it = poses.find( template_id );
 				if ( pose_it == poses.end() ) {
-					string msg( "Error: can't find pose (id = "
-						+ template_id + ")"
-					);
-					//utility_exit_with_message(msg);
-					tr.Error << msg << std::endl;
+					tr.Error << "WARNING: can't find pose (id = " << template_id << ")" << std::endl;
 				} else {
+					tr << *it << std::endl;
+					tr << "id " << it->sequence(2)->id() << " => " << template_id
+						<< std::endl;
+
 					Pose query_pose, template_pose;
-					make_pose_from_sequence(
-						query_pose,
-						//ungapped_query,
-						fasta_seq->sequence(),
-						*(rsd_set_from_cmd_line().lock())
-					);
+					make_pose_from_sequence( query_pose, fasta_seq->sequence(),	*(rsd_set_from_cmd_line().lock())	);
 					template_pose = pose_it->second;
 					PartialThreadingMover mover(*it,template_pose);
 					mover.apply(query_pose);
-					// line below is equivalent to this:
-					//(*(*it).sequence(2)).id();
-					// so the object->method() is syntax for saying (*object).method()
 					string const id_out( it->sequence(2)->id() );
-					//query_pose.dump_pdb(id_out + ".pdb");
 
 					// print out query-anchored alignment
-					utility::io::ozstream output( id_out+".pdb" ); //This is stupid.  new branch to fix this.
+					utility::io::ozstream output( id_out+".pdb" );
 
 					core::id::SequenceMapping map( it->sequence_mapping(1,2) );
 					output << "REMARK query_anchored_aln ";

@@ -10,6 +10,7 @@
 /// @file protocols/comparative_modeling/PartialThreadingMover.hh
 /// @brief
 /// @author James Thompson
+/// @author fpd some updates
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
@@ -17,10 +18,19 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.functions.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+
+#include <core/pack/optimizeH.hh>
+#include <core/pack/pack_missing_sidechains.hh>
+
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -33,36 +43,31 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 
-
 namespace protocols {
 namespace comparative_modeling {
+
+static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.threading" );
 
 PartialThreadingMover::PartialThreadingMover(
 	core::sequence::SequenceAlignment const & align,
 	core::pose::Pose const & template_pose
-) :
-	ThreadingMover( align, template_pose )
-{}
+) :	template_pose_( template_pose ),	align_( align ) {}
 
-void PartialThreadingMover::apply(
-	core::pose::Pose & query_pose
-) {
+void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
+	using namespace core::scoring;
 	using core::Size;
 	using basic::Tracer;
 	using core::id::SequenceMapping;
 
-	static Tracer tr("protocols.comparative_modeling.partial_threading");
-	build_loops(false);
-	repack_query(true);
-	ThreadingMover::apply(query_pose);
-
-	SequenceMapping query_to_pdbseq = get_qt_mapping(query_pose);
+	// alignment
+	SequenceMapping query_to_pdbseq = get_qt_mapping_general(query_pose, align_, template_pose_, 1, 2 );
 
 	//fpd update PDBinfo to have correct residue numbering
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains;
 
-	// iterate backwards as we change downstream sequence numbering with deletions
+	//////////
+	// 1) delete all unaligned residues
 	tr.Debug << "current sequence is " << query_pose.sequence() << std::endl;
 	for ( Size resi = query_pose.size(); resi >= 1; --resi ) {
 		Size const t_resi = query_to_pdbseq[ resi ];
@@ -74,7 +79,6 @@ void PartialThreadingMover::apply(
 			pdb_chains.push_back( 'A' );
 		}
 	} // for resi
-	tr.Debug << "final sequence is " << query_pose.sequence() << std::endl;
 
 	std::reverse(pdb_numbering.begin(), pdb_numbering.end());
 	core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo(query_pose,true) );
@@ -83,60 +87,55 @@ void PartialThreadingMover::apply(
 	query_pose.pdb_info( new_pdb_info );
 	query_pose.pdb_info()->obsolete( false );
 
-	tr.flush_all_channels();
+	//////////
+	// 2) update coords
+	std::string const template_id( utility::file_basename( template_pose_.pdb_info()->name() )	);
+	core::pose::add_score_line_string( query_pose, "template", template_id );
+
+	core::id::AtomID_Mask missing( true );
+	core::pose::initialize_atomid_map( missing, query_pose ); // used for repacking atoms
+
+	utility::vector1< core::id::AtomID > atm_ids;
+	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
+
+	for ( Size resi = 1; resi <= query_pose.size(); resi++ ) {
+		Size const t_resi = query_to_pdbseq[ pdb_numbering[resi] ];
+
+		// skip this residue if we're not aligned
+		if ( t_resi == 0 ) continue;
+		if ( t_resi > template_pose_.size() ) continue;
+
+		for ( Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
+			std::string atom_name( query_pose.residue(resi).atom_name( atomj ));
+
+			// unless match, don't copy BB
+			if ( !query_pose.residue(resi).atom_is_backbone(atomj) && 
+					 query_pose.residue(resi).aa() != template_pose_.residue(t_resi).aa() ) continue;
+			if ( !template_pose_.residue_type(t_resi).has( atom_name ) ) continue;
+
+			// match!
+			core::id::AtomID atm_id( atomj, resi );
+			missing[ atm_id ] = false;
+			atm_ids.push_back( atm_id );
+			atm_xyzs.push_back( template_pose_.residue(t_resi).xyz( atom_name ) );
+		} // for atom_i
+	}
+
+	query_pose.batch_set_xyz( atm_ids, atm_xyzs );
+
+	//////////
+	// 3) repack all missing atoms & idealize H
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+	core::pack::pack_missing_sidechains( query_pose, missing );
+
+	for ( core::Size ii = 1; ii <= query_pose.size(); ++ii ) {
+		core::conformation::ResidueOP iires = query_pose.residue( ii ).clone();
+		core::conformation::idealize_hydrogens( *iires, query_pose.conformation() );
+		query_pose.replace_residue( ii, *iires, false );
+	}
+	core::pack::optimize_H_and_notify( query_pose, missing );
 } // apply
 
-void PartialThreadingMover::parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /* data */,
-	protocols::filters::Filters_map const & /* filters */,
-	protocols::moves::Movers_map const & /* movers */,
-	core::pose::Pose const & /* pose */
-) {
-	// need to provide aln_fn, template Pose somehow
-	runtime_assert( tag->hasOption("aln_fn") );
-	runtime_assert( tag->hasOption("aln_id") );
-	runtime_assert( tag->hasOption("template_pdb_fn") );
-
-	using std::string;
-	using utility::vector1;
-	using core::pose::Pose;
-	using core::import_pose::pose_from_file;
-	using core::sequence::read_aln;
-	using core::sequence::SequenceAlignment;
-
-	string const template_pdb_fn(
-		tag->getOption< string >("template_pdb_fn")
-	);
-	Pose template_pose;
-	core::import_pose::pose_from_file(template_pose,template_pdb_fn, core::import_pose::PDB_file);
-	ThreadingMover::template_pose(template_pose);
-
-	string const aln_fn( tag->getOption< string >("aln_fn") );
-	string const aln_id( tag->getOption< string >("aln_id") );
-	string aln_format("grishin");
-	if ( tag->hasOption("aln_format") ) {
-		aln_format = tag->getOption< string >("aln_format");
-	}
-
-	vector1< SequenceAlignment > alns = read_aln( aln_fn, aln_format );
-	typedef vector1< SequenceAlignment >::const_iterator iter;
-	bool found_aln(false);
-	for ( iter it = alns.begin(), end = alns.end(); it != end; ++it ) {
-		if ( it->alignment_id() == aln_id ) {
-			found_aln = true;
-			ThreadingMover::alignment(*it);
-		}
-	}
-
-	if ( !found_aln ) {
-		string const msg(
-			"Error: couldn't find aln with id " + aln_id +
-			" in aln_file " + aln_fn + "!"
-		);
-		utility_exit_with_message("Error!");
-	}
-}
 
 std::string
 PartialThreadingMover::get_name() const {
