@@ -1,0 +1,717 @@
+
+Basic usage:  stepwise  -fasta <fasta file with sequence> -s <start pdb> -input_res <input pdb1> [ -native <native pdb file> ] 
+
+ Type -help for full slate of options.
+
+core.init: Rosetta version unknown:12f6f5386ff1dae5f266b23ca06a30545e1abe7d 2016-12-06 17:01:24 -0800 from https://everyday847@github.com/RosettaCommons/main.git
+core.init: command: stepwise @ flags
+core.init: 'RNG device' seed mode, using '/dev/urandom', seed=-864872742 seed_offset=0 real_seed=-864872742
+core.init.random: RandomGenerator:init: Normal mode, seed=-864872742 RG_type=mt19937
+core.init: Resolved executable path: /Users/amw579/Rosetta/main/source/bin//stepwise
+core.init: Looking for database based on location of executable: /Users/amw579/Rosetta/main/database/
+core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created 473 residue types
+core.chemical.ResidueTypeSet: Total time to initialize 0.935266 seconds.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+core.io.pose_from_sfr.chirality_resolution: Flipping atom xyz for  H5' and H5'' for residue   A
+core.io.pose_from_sfr.chirality_resolution: Flipping atom xyz for  H5' and H5'' for residue   A
+core.io.pose_from_sfr.chirality_resolution: Number of flip-atom fixups exceeds output limit. Rerun with -show_all_fixes to show everything.
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//base_pairs/cg_standard.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//base_pairs/ua_handle_1q9a.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//base_pairs/gg_1raw_RNA.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//base_pairs/gg_2grb_RNA.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//uturns/uturn_t_loop_3l0u_RNA.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//uturns/uturn_t_loop_3l0u_RNA_thread_to_uaa.pdb
+protocols.stepwise.monte_carlo.submotif.SubMotifLibrary: Reading in submotif: /Users/amw579/Rosetta/main/database/sampling/rna/submotif//srl/GUA_GA_430d.pdb
+protocols.stepwise.setup.StepWiseMonteCarloJobDistributor: 
+protocols.stepwise.setup.StepWiseMonteCarloJobDistributor: Embarking on structure 1 of 1
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.578 to   32.578   [original:   31.335]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 1 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 7.253 (22 atoms in 8), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 2450. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   38.058 to   32.817   [original:   36.743]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 8 with attachments  BOND_TO_NEXT:9 is Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 8-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.5781 to  32.8169 [proposal_density_ratio: 0.436364] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      1 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 2 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 11.379 (22 atoms in 15), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3400. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.948 to   33.610   [original:   36.262]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14 is Choice DELETE res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-15 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.5781 to  33.6099 [proposal_density_ratio: 0.436364] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      2 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 3 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 15-16 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.644 (40 atoms in 15-16), superimposed on 3 atoms in 15-16 (RMSD 0.0159627) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   39.953 to   39.952   [original:   38.580]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 15-16 with no attachments is Choice DELETE res 16 with attachments  BOND_TO_PREVIOUS:15
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 15-16 [ other_pose: 1-4 9-14 19-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.5781 to  39.9524 [proposal_density_ratio: 0.45] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      1 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 4 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 18 with attachments  BOND_TO_NEXT:19
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 8.650 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5435. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   38.382 to   30.427   [original:   36.043]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 18 with attachments  BOND_TO_NEXT:19 is Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.5781 to  30.4268 [proposal_density_ratio: 0.436364] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.71710
+protocols.moves.TrialCounter:     from_scratch trials=      1 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 5 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 7-8 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.763 (40 atoms in 7-8), superimposed on 3 atoms in 7-8 (RMSD 0.0194860) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   39.017 to   38.999   [original:   37.496]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 7-8 with no attachments is Choice DELETE res 8 with attachments  BOND_TO_PREVIOUS:7
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 7-8 [ other_pose: 1-4 9-14 18-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4268 to  38.9995 [proposal_density_ratio: 0.859375] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.71710
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 6 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.588 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5820. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.713 to   32.431   [original:   36.431]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4268 to  32.4309
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.71710
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      1 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 7 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.588 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6716. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.637 to   32.860   [original:   36.390]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4268 to  32.8598
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.71710
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      2 NO ACCEPTS.
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 8 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.588 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6804. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.708 to   30.356   [original:   36.462]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4268 to  30.3564
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.71710
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.02348
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 9 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 10.145 (22 atoms in 15), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3025. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   33.585 to   33.585   [original:   32.165]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14 is Choice DELETE res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-15 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.3564 to  33.5847 [proposal_density_ratio: 0.833333] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.02348
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 10 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.578 to   32.578   [original:   31.335]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.578 to   32.578   [original:   31.335]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice ADD res 18 with attachments  BOND_TO_NEXT:19
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.3564 to  32.5781 [proposal_density_ratio: 2.29167] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:           delete trials=      1 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      3;  accepts= 0.3333;  energy_drop/trial=  -0.02348
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 11 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.771 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 4089. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.395 to   32.277   [original:   36.150]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.3564 to  32.2768
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:           delete trials=      1 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.01761
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 12 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.771 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6451. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.350 to   37.349   [original:   36.004]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.3564 to  37.3494
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:           delete trials=      1 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      5;  accepts= 0.2000;  energy_drop/trial=  -0.01409
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 13 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.771 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5284. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   36.079 to   30.497   [original:   34.698]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.3564 to  30.4968
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:           delete trials=      1 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 14 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.710 to   32.710   [original:   31.467]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.710 to   32.710   [original:   31.467]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-4 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice ADD res 18 with attachments  BOND_TO_NEXT:19
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4968 to  32.7101 [proposal_density_ratio: 2.29167] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      4;  accepts= 0.2500;  energy_drop/trial=  -0.53782
+protocols.moves.TrialCounter:           delete trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 15 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-4 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 2.161 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3479. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   33.179 to   30.286   [original:   31.628]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice DELETE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.4968 to  30.2858 [proposal_density_ratio: 0.833333] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      5;  accepts= 0.4000;  energy_drop/trial=  -0.47245
+protocols.moves.TrialCounter:           delete trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 16 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.646 (22 atoms in 8), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 9293. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   34.491 to   29.555   [original:   32.681]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 8 with attachments  BOND_TO_NEXT:9 is Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2858 to  29.5547 [proposal_density_ratio: 0.857143] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 17 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.536 to   30.536   [original:   29.021]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.536 to   30.536   [original:   29.021]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8 is Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.5547 to  30.5358 [proposal_density_ratio: 1.16667] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      3 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 18 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 8-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000000) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   33.964 to   33.963   [original:   32.510]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000000) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   33.964 to   33.963   [original:   32.510]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 8-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice ADD res 18 with attachments  BOND_TO_NEXT:19
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.5547 to  33.9634 [proposal_density_ratio: 1.16667] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      4 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 19 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.536 to   30.536   [original:   29.021]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.536 to   30.536   [original:   29.021]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8 is Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.5547 to  30.5358 [proposal_density_ratio: 1.16667] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      6;  accepts= 0.3333;  energy_drop/trial=   0.01166
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 20 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 2.230 (22 atoms in 8), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 7609. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   34.569 to   29.512   [original:   32.378]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8 is Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.5547 to  29.5116
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      7;  accepts= 0.4286;  energy_drop/trial=   0.00385
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 21 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 2.149 (22 atoms in 8), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6998. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.438 to   29.687   [original:   33.610]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8 is Choice RESAMPLE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.5116 to  29.6869
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      2 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 22 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 15-16 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.620 (40 atoms in 15-16), superimposed on 3 atoms in 15-16 (RMSD 0.0159627) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   38.522 to   38.521   [original:   36.714]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 15-16 with no attachments is Choice DELETE res 16 with attachments  BOND_TO_PREVIOUS:15
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 15-16 [ other_pose: 1-5 8-14 18-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.6869 to  38.5213 [proposal_density_ratio: 1.03125] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      3 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 23 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 15-16 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.741 (40 atoms in 15-16), superimposed on 3 atoms in 15-16 (RMSD 0.0159627) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   38.308 to   38.290   [original:   36.522]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 15-16 with no attachments is Choice DELETE res 16 with attachments  BOND_TO_PREVIOUS:15
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 15-16 [ other_pose: 1-5 8-14 18-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.6869 to  38.2904 [proposal_density_ratio: 1.03125] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      4 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 24 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 16-17 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 4.011 (40 atoms in 16-17), superimposed on 3 atoms in 16-17 (RMSD 0.0270488) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.064 to   37.063   [original:   35.278]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 16-17 with no attachments is Choice DELETE res 17 with attachments  BOND_TO_PREVIOUS:16
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 16-17 [ other_pose: 1-5 8-14 18-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.6869 to  37.0632 [proposal_density_ratio: 1.03125] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      6;  accepts= 0.5000;  energy_drop/trial=  -0.51556
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 25 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 17 with attachments  BOND_TO_NEXT:18
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.776 (22 atoms in 17), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5404. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.876 to   28.645   [original:   31.200]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 17 with attachments  BOND_TO_NEXT:18 is Choice DELETE res 1-5 8-14 18-22 with attachments  BOND_TO_PREVIOUS:17
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 17-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 29.6869 to  28.6453 [proposal_density_ratio: 0.875] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat low
+protocols.moves.TrialCounter:              add trials=      7;  accepts= 0.5714;  energy_drop/trial=  -0.59072
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 26 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 17-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 15-16 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.381 (40 atoms in 15-16), superimposed on 3 atoms in 15-16 (RMSD 0.0159627) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.111 to   35.051   [original:   33.103]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 15-16 with no attachments is Choice DELETE res 16 with attachments  BOND_TO_PREVIOUS:15
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 15-16 [ other_pose: 1-5 8-14 17-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 28.6453 to  35.0506 [proposal_density_ratio: 0.6875] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      7;  accepts= 0.5714;  energy_drop/trial=  -0.59072
+protocols.moves.TrialCounter:           delete trials=      5 NO ACCEPTS.
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 27 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 17-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 17-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   31.492 to   31.491   [original:   29.873]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000007) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   31.492 to   31.491   [original:   29.873]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 17-22 with attachments  BOND_TO_PREVIOUS:8 is Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 17-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 28.6453 to  31.4912 [proposal_density_ratio: 1.14286] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=      7;  accepts= 0.5714;  energy_drop/trial=  -0.59072
+protocols.moves.TrialCounter:           delete trials=      6;  accepts= 0.1667;  energy_drop/trial=   0.47432
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 28 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 17-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:17
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.563 to   30.562   [original:   29.056]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   30.563 to   30.562   [original:   29.056]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:17 is Choice ADD res 17 with attachments  BOND_TO_NEXT:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 31.4912 to  30.5622 [proposal_density_ratio: 1.16667] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat last
+protocols.moves.TrialCounter:              add trials=      7;  accepts= 0.5714;  energy_drop/trial=  -0.59072
+protocols.moves.TrialCounter:           delete trials=      7;  accepts= 0.2857;  energy_drop/trial=   0.27384
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      8;  accepts= 0.5000;  energy_drop/trial=   0.02528
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 29 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.335 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6020. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.977 to   35.977   [original:   34.513]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.5622 to  35.9766
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      7;  accepts= 0.5714;  energy_drop/trial=  -0.59072
+protocols.moves.TrialCounter:           delete trials=      7;  accepts= 0.2857;  energy_drop/trial=   0.27384
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.02247
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 30 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 7.500 (22 atoms in 15), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 2412. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.485 to   31.016   [original:   33.903]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14 is Choice DELETE res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-15 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.5622 to  31.0163 [proposal_density_ratio: 0.857143] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      8;  accepts= 0.5000;  energy_drop/trial=  -0.51688
+protocols.moves.TrialCounter:           delete trials=      7;  accepts= 0.2857;  energy_drop/trial=   0.27384
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.02247
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 31 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 17 with attachments  BOND_TO_NEXT:18
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 12.746 (22 atoms in 17), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 8408. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.390 to   31.214   [original:   33.286]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 17 with attachments  BOND_TO_NEXT:18 is Choice DELETE res 1-5 9-14 18-22 with attachments  BOND_TO_PREVIOUS:17
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 17-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.5622 to  31.2144 [proposal_density_ratio: 0.857143] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      9;  accepts= 0.4444;  energy_drop/trial=  -0.45945
+protocols.moves.TrialCounter:           delete trials=      7;  accepts= 0.2857;  energy_drop/trial=   0.27384
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.02247
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 32 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.335 (22 atoms in 18), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000008) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5579. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   36.102 to   32.248   [original:   33.316]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice RESAMPLE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.5622 to  32.2482
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=      9;  accepts= 0.4444;  energy_drop/trial=  -0.45945
+protocols.moves.TrialCounter:           delete trials=      7;  accepts= 0.2857;  energy_drop/trial=   0.27384
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     10;  accepts= 0.4000;  energy_drop/trial=   0.02022
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 33 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 18-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000009) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.501 to   32.501   [original:   31.104]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000009) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.501 to   32.501   [original:   31.104]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:18 is Choice ADD res 18 with attachments  BOND_TO_NEXT:19
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.5622 to  32.5007 [proposal_density_ratio: 1.2] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=      9;  accepts= 0.4444;  energy_drop/trial=  -0.45945
+protocols.moves.TrialCounter:           delete trials=      8;  accepts= 0.3750;  energy_drop/trial=   0.48193
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     10;  accepts= 0.4000;  energy_drop/trial=   0.02022
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 34 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 1.763 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000009) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3002. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   36.922 to   32.693   [original:   35.658]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.5007 to  32.6934
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=      9;  accepts= 0.4444;  energy_drop/trial=  -0.45945
+protocols.moves.TrialCounter:           delete trials=      8;  accepts= 0.3750;  energy_drop/trial=   0.48193
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     11;  accepts= 0.4545;  energy_drop/trial=   0.03590
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 35 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  NORMAL  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 8.728 (22 atoms in 8), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000009) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 6851. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.798 to   31.345   [original:   35.588]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 8 with attachments  BOND_TO_NEXT:9 is Choice DELETE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 8-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.6934 to  31.3454 [proposal_density_ratio: 0.833333] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat last
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=      8;  accepts= 0.3750;  energy_drop/trial=   0.48193
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     11;  accepts= 0.4545;  energy_drop/trial=   0.03590
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 36 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 8-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:8
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.691 to   32.691   [original:   31.206]
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.691 to   32.691   [original:   31.206]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 1-5 9-14 19-22 with attachments  BOND_TO_PREVIOUS:8 is Choice ADD res 8 with attachments  BOND_TO_NEXT:9
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 31.3454 to  32.6911 [proposal_density_ratio: 1.2] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.57790
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     11;  accepts= 0.4545;  energy_drop/trial=   0.03590
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 37 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.105 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 2963. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.623 to   32.887   [original:   34.378]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.6911 to  32.8867
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted thermally
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.57790
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     12;  accepts= 0.5000;  energy_drop/trial=   0.04921
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 38 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 4.367 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3391. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.956 to   30.282   [original:   34.667]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 32.8867 to  30.2822
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? accepted score beat last
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=      9;  accepts= 0.4444;  energy_drop/trial=   0.57790
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     13;  accepts= 0.5385;  energy_drop/trial=  -0.15492
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 39 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.681 to   32.681   [original:   31.437]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice ADD res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  32.681 [proposal_density_ratio: 2.29167] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=     10;  accepts= 0.4000;  energy_drop/trial=   0.52011
+protocols.moves.TrialCounter:     from_scratch trials=      6 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     13;  accepts= 0.5385;  energy_drop/trial=  -0.15492
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 40 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice FROM_SCRATCH res 17-18 with no attachments
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.375 (40 atoms in 17-18), superimposed on 3 atoms in 17-18 (RMSD 0.0127461) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   35.483 to   35.483   [original:   33.891]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice FROM_SCRATCH res 17-18 with no attachments is Choice DELETE res 18 with attachments  BOND_TO_PREVIOUS:17
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 17-18 [ other_pose: 1-5 9-14 19-22]
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  35.4831 [proposal_density_ratio: 0.859375] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=     10;  accepts= 0.4000;  energy_drop/trial=   0.52011
+protocols.moves.TrialCounter:     from_scratch trials=      7 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     13;  accepts= 0.5385;  energy_drop/trial=  -0.15492
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 41 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 2.912 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 2558. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.086 to   35.468   [original:   35.792]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  35.4679
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=     10;  accepts= 0.4000;  energy_drop/trial=   0.52011
+protocols.moves.TrialCounter:     from_scratch trials=      7 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     14;  accepts= 0.5000;  energy_drop/trial=  -0.14385
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 42 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice DELETE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 0.000 (0 atoms in ), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   32.681 to   32.681   [original:   31.437]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice DELETE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice ADD res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-4 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  32.681 [proposal_density_ratio: 2.29167] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=     11;  accepts= 0.3636;  energy_drop/trial=   0.47283
+protocols.moves.TrialCounter:     from_scratch trials=      7 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     14;  accepts= 0.5000;  energy_drop/trial=  -0.14385
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 43 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.ResampleMover: About to remodel move_element Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 2.912 (22 atoms in 5), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 3097. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   38.467 to   34.206   [original:   37.209]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4 is Choice RESAMPLE res 5 with attachments  BOND_TO_PREVIOUS:4
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  34.2057
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     10;  accepts= 0.5000;  energy_drop/trial=  -0.54831
+protocols.moves.TrialCounter:           delete trials=     11;  accepts= 0.3636;  energy_drop/trial=   0.47283
+protocols.moves.TrialCounter:     from_scratch trials=      7 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     15;  accepts= 0.4667;  energy_drop/trial=  -0.13426
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 44 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 6 with attachments  BOND_TO_PREVIOUS:5
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 3.969 (22 atoms in 6), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 2648. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   34.329 to   31.739   [original:   32.635]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 6 with attachments  BOND_TO_PREVIOUS:5 is Choice DELETE res 6 with attachments  BOND_TO_PREVIOUS:5
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-6 9-14 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  31.7393 [proposal_density_ratio: 0.833333] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     11;  accepts= 0.4545;  energy_drop/trial=  -0.49846
+protocols.moves.TrialCounter:           delete trials=     11;  accepts= 0.3636;  energy_drop/trial=   0.47283
+protocols.moves.TrialCounter:     from_scratch trials=      7 NO ACCEPTS.
+protocols.moves.TrialCounter:         resample trials=     15;  accepts= 0.4667;  energy_drop/trial=  -0.13426
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Embarking on cycle 45 of 50
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Modeling: 1-5 9-14 19-22
+protocols.stepwise.monte_carlo.mover.AddOrDeleteMover: Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.mover.AddMover: Going to add adenosine.
+protocols.stepwise.monte_carlo.mover.AddMover: Selected  PROTONATED  variant.
+protocols.stepwise.modeler.align.StepWisePoseAligner: RMSD 11.379 (22 atoms in 15), superimposed on 252 atoms in 1-4 9-14 19-22 (RMSD 0.0000005) 
+protocols.stepwise.StepWiseSampleAndScreen: Number of tries: 5978. Number of successes: 20
+protocols.stepwise.modeler.StepWiseMinimizer: Score minimized from   37.093 to   32.055   [original:   34.334]
+protocols.stepwise.monte_carlo.mover.StepWiseMasterMover: Reverse of Choice ADD res 15 with attachments  BOND_TO_PREVIOUS:14 is Choice DELETE res 15 with attachments  BOND_TO_PREVIOUS:14
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: After move, modeling: 1-5 9-15 19-22
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Score changed from: 30.2822 to  32.0552 [proposal_density_ratio: 0.833333] 
+protocols.stepwise.monte_carlo.StepWiseMonteCarlo: Monte Carlo accepted? rejected
+protocols.moves.TrialCounter:              add trials=     12;  accepts= 0.4167;  energy_drop/trial=  -0.45692
+protocols.moves.TrialCounter:           delete trials=     11;  accepts= 0.3636;  energy_drop/trial=   0.47283
+prot

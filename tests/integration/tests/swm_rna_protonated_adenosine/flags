@@ -1,0 +1,12 @@
+-native 4jrd_RNA.pdb
+-s  noloop_4jrd_RNA.pdb
+-out:file:silent swm_TEST.out
+-out:overwrite
+-fasta 4jrd.fasta
+-nstruct 1
+-cycles 10
+-score:rna_torsion_potential RNA11_based_new
+-chemical::enlarge_H_lj
+-pH_mode true
+-value_pH 4.0
+-set_weights e_pH 1.0

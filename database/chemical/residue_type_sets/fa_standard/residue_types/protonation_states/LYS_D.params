@@ -56,7 +56,7 @@ CHI 3  CB   CG   CD   CE
 CHI 4  CG   CD   CE   NZ 
 CHI 5  CD   CE   NZ  1HZ  
 PROTON_CHI 5 SAMPLES 3 60 -60 180 EXTRA 1 20
-PROPERTIES PROTEIN POLAR
+PROPERTIES PROTEIN POLAR ALPHA_AA L_AA
 NBR_ATOM CB
 # APL CB to side chain heavyatom distance --  max observed in residue 74 of ubiquitin
 NBR_RADIUS 5.0084

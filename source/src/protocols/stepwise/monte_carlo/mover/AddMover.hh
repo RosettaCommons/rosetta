@@ -64,6 +64,8 @@ public:
 	void set_sample_range_large( core::Real const setting ){ sample_range_large_ = setting; }
 
 	void set_internal_cycles( core::Size const setting ){ internal_cycles_ = setting; }
+	
+	void set_sample_pH( bool const setting ){ sample_pH_ = setting; }
 
 	void set_presample_added_residue( core::Size const setting ){ presample_added_residue_ = setting; }
 
@@ -128,6 +130,7 @@ private:
 	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
 	core::Size internal_cycles_;
+	bool sample_pH_;
 
 	rna::RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;

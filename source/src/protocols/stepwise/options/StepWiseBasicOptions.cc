@@ -17,6 +17,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
@@ -80,6 +81,7 @@ StepWiseBasicOptions::initialize_variables(){
 	n_cycles_ = 100;
 	thermal_sampler_temperature_ = 0.5;
 	thermal_sampler_output_min_pose_ = false;
+	sample_pH_ = false;
 }
 
 /// @brief clone the options
@@ -126,7 +128,7 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	auto temps = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::temps ]();
 	thermal_sampler_temperature_ = ( temps.size() > 0 )  ? temps[ 1 ] : 0.5;
 	thermal_sampler_output_min_pose_ = option[ basic::options::OptionKeys::rna::farna::thermal_sampling::output_min_pose ]();
-
+	sample_pH_ = option[ basic::options::OptionKeys::pH::pH_mode ]();
 }
 
 

@@ -554,7 +554,10 @@ AddMover::setup_initial_jump( pose::Pose & pose ) {
 
 
 ///////////////////////////////////////////////////////////////////////
-// @brief: figure out the res type of the residue to add and create it
+/// @brief: figure out the res type of the residue to add and create it
+/// @details: also handles the question of 'what if I have chemical modifications'
+/// and 'what if I have protonation sampling turned on'. Probably should factor
+/// out these concerns.
 core::conformation::ResidueOP
 AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
@@ -574,8 +577,34 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
 	// figure out residue type from name3
 	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
-	chemical::ResidueType const & rsd_type = *( rsd_set->get_representative_type_base_name( newrestype3 ) );
-	return conformation::ResidueFactory::create_residue( rsd_type );
+	
+	// Handle pH sampling: if sample_pH_ is true, then we need to have a 50/50
+	// shot of creating a protonated adenosine (50/50 because score will take
+	// care of the rest)
+	chemical::ResidueTypeCOP rsd_type = nullptr;
+	if ( newrestype == 'a' && sample_pH_ ) {
+		TR << "Going to add adenosine." << std::endl;
+		// There is something irritating about enforcing the exact equality of 
+		// [0, 0.5) and [0.5, 1) in floating point space, but we don't care for
+		// now, certainly.
+		TR << "Selected ";
+		if ( numeric::random::rg().uniform() < 0.5 ) {
+			TR << " PROTONATED ";
+			newrestype3 += ":Protonated_N1_Adenosine";
+			rsd_type = chemical::ResidueTypeCOP( rsd_set->name_mapOP( newrestype3 ) );
+			if ( !rsd_type ) {
+				utility_exit_with_message( "We couldn't generate a residue type of name " + newrestype3 + "; apologies." );
+			}
+		} else {
+			TR << " NORMAL ";
+			rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
+		}
+		TR << " variant." << std::endl;
+	} else {
+		rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
+	}
+	
+	return conformation::ResidueFactory::create_residue( *rsd_type );
 }
 
 

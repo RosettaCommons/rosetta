@@ -244,6 +244,7 @@ StepWiseMasterMover::initialize(){
 	add_mover_->set_presample_added_residue(  true );
 	add_mover_->set_presample_by_swa(  true );
 	add_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
+	add_mover_->set_sample_pH( options_->sample_pH() );
 
 	delete_mover_ = DeleteMoverOP( new DeleteMover );
 	delete_mover_->set_native_pose( get_native_pose() );
