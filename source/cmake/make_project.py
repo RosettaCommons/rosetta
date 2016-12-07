@@ -9,7 +9,8 @@ import build_util
 # Note that CMake encodes absolute path information in the compile,
 # so we don't actually lose anything by using the absolute path
 PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) + "/"
-
+PATH_TO_SOURCE_DIR.replace('\\', '/')
+                           
 def update_version():
 	cmd = 'cd ..; python2.7 version.py'
 	os.system(cmd)
@@ -26,6 +27,7 @@ def update_ResidueType_enum_files():
 def project_callback(project, project_path, project_files):
 	print 'making project files for project ' + project + ' ...',
 
+        project_path = project_path.replace("\\",'/')
         platform = sys.platform
 
         if platform == 'darwin':
@@ -91,6 +93,7 @@ def project_callback(project, project_path, project_files):
 
 def project_external_callback(project, project_path, project_files, other_settings):
 	print 'making external project files for project ' + project + ' ...',
+        project_path = project_path.replace("\\",'/')
 
 	cmake_files = ''
 	for dir, files in project_files:
@@ -130,6 +133,7 @@ def project_external_callback(project, project_path, project_files, other_settin
 
 def project_test_callback(test, project_path, test_path, test_files, test_inputs):
 	print 'making test files for test ' + test + ' ...',
+        project_path = project_path.replace("\\",'/')
 
 	output = ''
 	cmake_headers = []

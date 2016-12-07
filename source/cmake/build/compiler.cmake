@@ -24,7 +24,11 @@
 IF( ${CMAKE_CXX_COMPILER_ID} MATCHES ".*[Cc][Ll][Aa][Nn][Gg].*" )
     SET(COMPILER clang)
 ELSE()
-    SET(COMPILER gcc)
+	IF( ${WIN32} )
+		SET(COMPILER cl)
+	ELSE()
+		SET(COMPILER gcc)
+	ENDIF()
 ENDIF()
 
 MESSAGE( ">> CMAKE identifies C++ compiler as '${CMAKE_CXX_COMPILER_ID}', interpreting this as '${COMPILER}'" )

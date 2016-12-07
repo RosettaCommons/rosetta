@@ -3,7 +3,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 # Tell cmake where additional modules can be found.
-
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../build/finders)
 
 # Specify the default compile flags.  Different options may add new flags to 

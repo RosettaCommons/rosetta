@@ -5,8 +5,7 @@
 -ex1
 -ex2
 
--s input/9_mer_linear_glycan_test.pdb input/alpha-L-Fucp-(1->6)-D-GlcpNAc.pdb
-#-s input/alpha-L-Fucp-(1->6)-D-GlcpNAc.pdb
+-s input/9_mer_linear_glycan_test.pdb input/alpha-L-Fucp-1to6-D-GlcpNAc.pdb
 -glycan_relax_rounds 15
 -overwrite
 
