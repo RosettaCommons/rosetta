@@ -33,7 +33,7 @@ settings = {
         "appends" : {
         },
         "overrides" : {
-                "cxx" : "mpiicpc",
+                "cxx" : "mpicxx",
         },
         "removes" : {
         },
