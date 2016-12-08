@@ -22,7 +22,6 @@ sources = {
 		"FunGroupTK",
 	],
 	"protocols/make_rot_lib": [
-                "MakeRotLib",
                 "MakeRotLibJob",
                 "MakeRotLibJobInputter",
                 #"MakeRotLibJobOutputter",
