@@ -620,7 +620,14 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			//else runtime_assert( iter->first == " H  " && ii_rsd_type.is_terminus() ); // special casee
 		}
 
-		check_and_correct_sister_atoms( ii_rsd );
+		// These sister atoms are THUS FAR only found in RNA (it's to perfectly copy
+		// native structure coordinates). So, at the moment, we only need to call
+		// this function for RNA. Eventually, we may implement more proteinaceous use
+		// cases, at which point you may want to move this condition into the
+		// check_and_correct function.
+		if ( ii_rsd->is_RNA() ) {
+			check_and_correct_sister_atoms( ii_rsd );
+		}
 
 		Size const old_nres( pose.size() );
 

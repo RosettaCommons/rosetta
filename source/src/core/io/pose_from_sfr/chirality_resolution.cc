@@ -111,7 +111,6 @@ check_and_correct_sister_atoms( core::conformation::ResidueOP & rsd ){
 	check_and_correct_sister_atom_based_on_outgroup( rsd, " H21", " H22", " N1 " );
 	// in cytidine
 	check_and_correct_sister_atom_based_on_outgroup( rsd, " H41", " H42", " N3 " );
-
 }
 
 
