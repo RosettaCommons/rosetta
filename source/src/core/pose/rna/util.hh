@@ -21,6 +21,8 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
+#include <core/pose/rna/BasePair.fwd.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
@@ -58,6 +60,10 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 	utility::vector1< Vector > const & non_main_chain_sugar_coords,
 	Pose & pose,
 	Size const i);
+
+bool
+check_in_base_pair_list( core::pose::rna::BasePair const & base_pair /*from native*/,
+	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/);
 
 void
 prepare_scratch_residue(
@@ -144,6 +150,12 @@ remove_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num
 bool
 has_virtual_rna_residue_variant_type( pose::Pose & pose, Size const & seq_num );
 
+void
+add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s );
+
+void
+add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s );
+	
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n );
 

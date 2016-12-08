@@ -96,13 +96,7 @@ private:
 		core::pose::Pose & pose,
 		std::string const & out_file_tag,
 		bool const score_only = false ) const;
-
-	void
-	add_number_base_pairs( core::pose::Pose const & pose_input, core::io::silent::SilentStruct & s ) const;
-
-	void
-	add_number_native_base_pairs( core::pose::Pose & pose, core::io::silent::SilentStruct & s ) const;
-
+	
 	void
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, core::pose::Pose const & pose ) const;
 

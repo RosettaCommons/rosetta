@@ -373,13 +373,14 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
+	using namespace core::pose::rna;
 
 	if ( get_native_pose() ) calc_rmsds( s, pose, out_file_tag );
 
 	// TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
 	add_number_base_pairs( pose, s );
 	// TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
-	if ( get_native_pose() ) add_number_native_base_pairs( pose, s );
+	if ( get_native_pose() ) add_number_native_base_pairs( pose, *get_native_pose(), s );
 
 	// hopefully these will end up in silent file...
 	if ( options_->output_filters() && ( rna_fragment_monte_carlo_ != nullptr ) ) {
@@ -429,147 +430,6 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 {
 	rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
 	output_to_silent_file( pose, silent_file, out_file_tag, false /*score_only*/ );
-}
-
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-// Following may better fit in a util.cc ,or pose_metrics...
-void
-RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s ) const
-{
-	using namespace scoring::rna;
-	using namespace pose::rna;
-	using namespace conformation;
-	using namespace core::chemical::rna;
-
-	utility::vector1< core::pose::rna::BasePair > base_pair_list;
-	utility::vector1< bool > is_bulged;
-	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
-
-	Size N_WC( 0 ), N_NWC( 0 );
-
-	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-
-		BasePair const base_pair = base_pair_list[ n ];
-
-		Size const i = base_pair.res1();
-		Size const j = base_pair.res2();
-
-		BaseEdge const k = base_pair.edge1();
-		BaseEdge const m = base_pair.edge2();
-
-		Residue const & rsd_i( pose.residue( i ) );
-		Residue const & rsd_j( pose.residue( j ) );
-
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
-				core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
-			N_WC++;
-		} else {
-			N_NWC++;
-		}
-	}
-
-	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
-	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
-	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
-
-}
-
-/////////////////////////////////////////////////////////////////////
-bool
-check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
-	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
-{
-	using namespace pose::rna;
-
-	bool in_list( false );
-
-	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-
-		BasePair const base_pair2 = base_pair_list[ n ];
-
-		if ( base_pair == base_pair2 ) {
-			in_list = true;
-			break;
-		}
-
-		if ( base_pair.flipped() == base_pair2 ) {
-			in_list = true;
-			break;
-		}
-
-	}
-
-	return in_list;
-
-}
-
-/////////////////////////////////////////////////////////////////////
-void
-RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::SilentStruct & s ) const
-{
-	if ( !get_native_pose() ) return;
-
-	using namespace scoring::rna;
-	using namespace chemical::rna;
-	using namespace conformation;
-
-	pose::Pose native_pose = *get_native_pose();
-
-	utility::vector1< core::pose::rna::BasePair > base_pair_list;
-	utility::vector1< bool > is_bulged;
-	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
-
-	utility::vector1< core::pose::rna::BasePair > base_pair_list_native;
-	utility::vector1< bool > is_bulged_native;
-	core::pose::rna::classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
-
-	Size N_WC_NATIVE( 0 ), N_NWC_NATIVE( 0 );
-	Size N_WC( 0 ), N_NWC( 0 );
-
-	for ( Size n = 1; n <= base_pair_list_native.size(); n++ ) {
-
-		//Real const score = it->first;
-		//  Real const SCORE_CUTOFF( -1.0 );
-		//  if (score > SCORE_CUTOFF) continue;
-
-		core::pose::rna::BasePair const base_pair = base_pair_list_native[ n ];
-
-		Size const i = base_pair.res1();
-		Size const j = base_pair.res2();
-
-		BaseEdge const k = base_pair.edge1();
-		BaseEdge const m = base_pair.edge2();
-
-		Residue const & rsd_i( pose.residue( i ) );
-		Residue const & rsd_j( pose.residue( j ) );
-
-		//std::cout << " NATIVE BASE PAIR " << i << " " << j << " " << k << " " << m << " " << it->first << std::endl;
-
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
-				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
-			N_WC_NATIVE++;
-			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ) N_WC++;
-		} else {
-			N_NWC_NATIVE++;
-			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ) {
-				N_NWC++;
-			} else {
-				std::cout << "Missing native base pair " << pose.residue( i ).name1() << i << " " << pose.residue(j).name1() << j << "  " << get_edge_from_num( k ) << " " << get_edge_from_num( m ) << " " << std::endl;
-			}
-		}
-	}
-
-	Real f_natWC( 0.0 ), f_natNWC( 0.0 ), f_natBP( 0.0 );
-	if ( N_WC_NATIVE > 0 ) f_natWC = ( N_WC / (1.0 * N_WC_NATIVE) );
-	if ( N_NWC_NATIVE > 0 ) f_natNWC = ( N_NWC / (1.0 * N_NWC_NATIVE) );
-	if ( (N_WC_NATIVE + N_NWC_NATIVE) > 0 ) f_natBP = ( (N_WC+N_NWC) / (1.0 * (N_WC_NATIVE + N_NWC_NATIVE) ));
-
-	s.add_energy( "f_natWC" , f_natWC );
-	s.add_energy( "f_natNWC", f_natNWC );
-	s.add_energy( "f_natBP" , f_natBP );
-
 }
 
 void

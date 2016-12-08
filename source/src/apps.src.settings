@@ -231,6 +231,7 @@ sources = {
 		"make_exemplar",
 	],
 	"public/rna_util": [
+		"analyze_base_pairing",
 		"nucleobase_sample_around",
 		"recces_turner",
 		"rna_features",

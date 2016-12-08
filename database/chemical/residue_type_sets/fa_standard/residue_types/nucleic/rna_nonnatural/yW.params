@@ -1,7 +1,8 @@
 #unoptimized
 # check charge
+# YYG in PDB, but yW in a lot of nomenclatures
 NAME yW
-IO_STRING  yW X
+IO_STRING YYG X
 TYPE POLYMER #residue type
 AA UNP
 ATOM  P   Phos H    1.602645
