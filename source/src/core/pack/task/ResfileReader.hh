@@ -751,7 +751,7 @@ void
 parse_resfile(
 	pose::Pose const & pose,
 	PackerTask & the_task,
-	std::string filename );
+	std::string const & filename );
 
 /// @brief changes the state of the given PackerTask according to the commands in the resfile.
 /// @details This version calls the overloaded parse_resfile_string and just passes it a ResidueSubset

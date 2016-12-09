@@ -325,7 +325,7 @@ HighResDocker::make_packer_task_from_vector(
 		}
 	} else {
 		high_res_docker_tracer<< "using XML resfile"<< std::endl;
-		core::pack::task::parse_resfile(pose, *pack_task);
+		core::pack::task::parse_resfile(pose, *pack_task, resfile_);
 	}
 
 

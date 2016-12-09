@@ -1362,7 +1362,7 @@ void
 parse_resfile(
 	pose::Pose const & pose,
 	PackerTask & the_task,
-	std::string filename)
+	std::string const & filename)
 {
 
 	std::string resfile;
