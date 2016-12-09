@@ -645,8 +645,8 @@ void AbscriptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		"skip_stages", xsct_positive_integer_cslist,
 		"Comma-separated list of ab initio stages (1, 2, 3, or 4) that you wish to skip");
 
-	//XMLSchemaSimpleSubelementList subelements;
-	XMLSchemaSimpleSubelementList subelements_fragments, subelements_stages;
+	XMLSchemaSimpleSubelementList subelements;
+	//XMLSchemaSimpleSubelementList subelements_fragments, subelements_stages;
 	XMLSchemaSimpleSubelementList stage_subelements;
 	AttributeList stage_attlist;
 	AttributeList mover_attlist;
@@ -682,27 +682,27 @@ void AbscriptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		.complex_type_naming_func( & stage_complex_namer )
 		.description( "Tag specifying behavior for a specific stage of the ab initio protocol" )
 		.write_complex_type_to_schema( xsd );
-	//subelements.add_already_defined_subelement( "Stage", & stage_complex_namer );
-	subelements_stages.add_already_defined_subelement( "Stage", & stage_complex_namer );
+	subelements.add_already_defined_subelement( "Stage", & stage_complex_namer );
+	//subelements_stages.add_already_defined_subelement( "Stage", & stage_complex_namer );
 
-	//subelements.add_simple_subelement("Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments", 0, 1);
-	subelements_fragments.add_simple_subelement("Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments" ); //, 0, 1);
+	subelements.add_simple_subelement( "Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments" );
+	//subelements_fragments.add_simple_subelement("Fragments", frag_attlist, "Macro used to add the appropriate ClassicFragmentMovers for insertion of large fragments, normal insertion of small fragments, and smooth insertion of small fragments" ); //, 0, 1);
 
-	XMLSchemaComplexTypeGenerator whole_shebang;
-	whole_shebang.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.element_name( mover_name() )
-		.description( "A special mover used to replicate the state of ab initio in early 2014" )
-		.add_attributes( attlist )
-		//.add_optional_name_attribute() -- Name attribute has already been added as required.
-		//.set_subelements_repeatable( subelements )
-		.add_ordered_subelement_set_as_optional( subelements_fragments )
-		.add_ordered_subelement_set_as_repeatable( subelements_stages )
-		.write_complex_type_to_schema( xsd );
+	//XMLSchemaComplexTypeGenerator whole_shebang;
+	//whole_shebang.complex_type_naming_func( & moves::complex_type_name_for_mover )
+	//	.element_name( mover_name() )
+	//	.description( "A special mover used to replicate the state of ab initio in early 2014" )
+	//	.add_attributes( attlist )
+	//	//.add_optional_name_attribute() -- Name attribute has already been added as required.
+	//	//.set_subelements_repeatable( subelements )
+	//	.add_ordered_subelement_set_as_optional( subelements_fragments )
+	//	.add_ordered_subelement_set_as_repeatable( subelements_stages )
+	//	.write_complex_type_to_schema( xsd );
 
-	/*protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
-	xsd, mover_name(),
-	"A special mover used to replicate the state of ab initio in early 2014",
-	attlist, subelements);*/
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
+		xsd, mover_name(),
+		"A special mover used to replicate the state of ab initio in early 2014",
+		attlist, subelements);
 }
 
 std::string AbscriptMoverCreator::keyname() const {
