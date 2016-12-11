@@ -43,6 +43,7 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
+#include <utility/stream_util.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.libraries.RNA_ChunkLibrary" );
 
@@ -330,6 +331,10 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
 			TR << TR.Red  << "WARNING!!! Ignoring this fold tree problem and continuing!!!" << std::endl;
 			TR << TR.Red  << "////////////////////////////////////////////////////////////////////" << std::endl;
+			TR << TR.Red << "Pose FOLD-TREE " << pose.fold_tree() << std::endl;
+			TR << TR.Red << "Chunk Set mapping: " << std::endl;
+			for ( auto it = chunk_set.res_map().begin(); it != chunk_set.res_map().end(); it++ ) TR << TR.Red << " pose " << it->first << " to chunk " << it->second << std::endl;;
+			print_backtrace( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 			//utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
 		}
 	}

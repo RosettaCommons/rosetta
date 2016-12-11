@@ -97,12 +97,13 @@ prepare_silent_struct( std::string const & out_tag,
 	s->add_string_value( "missing", ObjexxFCL::string_of( core::pose::full_model_info::get_number_missing_residues_and_connections( pose ) ) );
 
 	// AMW New: Add WC stats etc.
-	core::pose::rna::add_number_base_pairs( pose, *s );
+	// core::pose::rna::add_number_base_pairs( pose, *s );
 
 	if ( native_pose != 0 ) {
 		core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
 		s->add_energy( "rms",      rms );
 		if ( do_rms_fill_calculation ) s->add_energy( "rms_fill", rms_fill );
+		//core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
 	}
 
 	return s;

@@ -39,9 +39,6 @@ public:
 
 public:
 
-	friend class RNA_DeNovoPoseInitializer;
-
-
 	void set_rna_pairing_list( core::pose::rna::RNA_BasePairList const & setting ) { rna_pairing_list_ = setting; }
 	core::pose::rna::RNA_BasePairList const & rna_pairing_list() const {
 		return rna_pairing_list_;
@@ -66,6 +63,12 @@ public:
 	void set_cutpoints_cyclize( utility::vector1 <core::Size > const & setting ){ cutpoints_cyclize_ = setting; }
 	utility::vector1 <core::Size > cutpoints_cyclize() const { return cutpoints_cyclize_; }
 
+	void set_block_stack_above_res( utility::vector1 <core::Size > const & setting ){ block_stack_above_res_ = setting; }
+	utility::vector1 <core::Size > block_stack_above_res() const { return block_stack_above_res_; }
+
+	void set_block_stack_below_res( utility::vector1 <core::Size > const & setting ){ block_stack_below_res_ = setting; }
+	utility::vector1 <core::Size > block_stack_below_res() const { return block_stack_below_res_; }
+
 	void set_virtual_anchor_attachment_points( utility::vector1 <core::Size > const & setting ){ virtual_anchor_attachment_points_ = setting; }
 	utility::vector1 <core::Size > virtual_anchor_attachment_points() const { return virtual_anchor_attachment_points_; }
 
@@ -75,6 +78,24 @@ public:
 	void set_chain_connections(  utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const & setting ) { chain_connections_ = setting; }
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
 	chain_connections() const { return chain_connections_; }
+
+	void set_rna_secstruct_legacy( std::string const & setting ){ rna_secstruct_legacy_ = setting; }
+	std::string rna_secstruct_legacy() const { return rna_secstruct_legacy_; }
+
+	void
+	add_cutpoint_open( Size const n ) { cutpoints_open_.push_back( n ); }
+
+	void
+	add_rna_pairing( core::pose::rna::BasePair const & rna_pairing ) { rna_pairing_list_.push_back( rna_pairing ); }
+
+	void
+	add_obligate_pairing_set( utility::vector1 <core::Size > const & set ) { obligate_pairing_sets_.push_back( set ); }
+
+	bool const & secstruct_defined() const { return secstruct_defined_; }
+
+	Size
+	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
+		core::pose::rna::BasePair const & rna_pairing_check ) const;
 
 private:
 
@@ -94,10 +115,6 @@ private:
 		std::istringstream & line_stream,
 		bool const in_stem );
 
-	Size
-	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-		core::pose::rna::BasePair const & rna_pairing_check ) const;
-
 private:
 
 	std::string const filename_;
@@ -112,6 +129,8 @@ private:
 	utility::vector1 <core::Size > cutpoints_open_;
 	utility::vector1 <core::Size > cutpoints_closed_;
 	utility::vector1 <core::Size > cutpoints_cyclize_;
+	utility::vector1 <core::Size > block_stack_above_res_;
+	utility::vector1 <core::Size > block_stack_below_res_;
 	utility::vector1 <core::Size > virtual_anchor_attachment_points_;
 
 	utility::vector1 < core::Size > allow_insert_res_;

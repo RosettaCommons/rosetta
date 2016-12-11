@@ -781,7 +781,8 @@ sources = {
 		"dna_test",
 	        "screen_phosphates",
 	        "rb_entropy", #hey I've added a demo do not delete.
-		#"rna_protein_test",
+	        "homolog_finder_farna",
+	        #"rna_protein_test",
 		#"pdbstats_test"
 	],
 	"pilot/rjha" : [

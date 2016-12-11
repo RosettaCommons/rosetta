@@ -111,23 +111,23 @@ RNA_DeNovoPoseInitializer::initialize_for_de_novo_protocol(
 {
 	initialize_secstruct( pose );
 	if  ( ignore_secstruct ) override_secstruct( pose );
-	if ( rna_params_.virtual_anchor_attachment_points_.size() > 0 ) append_virtual_anchor( pose );
+	if ( rna_params_.virtual_anchor_attachment_points().size() > 0 ) append_virtual_anchor( pose );
 	setup_virtual_phosphate_variants( pose );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoPoseInitializer::override_secstruct( core::pose::Pose & pose ){
-	rna_params_.rna_secstruct_legacy_ = std::string( pose.size(), 'X' );
-	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_legacy_ << std::endl;
-	set_rna_secstruct_legacy( pose, rna_params_.rna_secstruct_legacy_ );
+	rna_params_.set_rna_secstruct_legacy( std::string( pose.size(), 'X' ) );
+	TR << "OVER-RIDING SECONDARY STRUCTURE WITH:   " << rna_params_.rna_secstruct_legacy() << std::endl;
+	set_rna_secstruct_legacy( pose, rna_params_.rna_secstruct_legacy() );
 }
 /////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 {
 
-	if ( rna_params_.virtual_anchor_attachment_points_.size() == 0 ) return;
+	if ( rna_params_.virtual_anchor_attachment_points().size() == 0 ) return;
 
 	TR.Debug << "Current last residue is type: " << pose.residue( pose.size() ).name3()  << std::endl;
 	if ( pose.residue( pose.size() ).name3() == "XXX" ) return; //already did virtual residue attachment.
@@ -137,23 +137,23 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 
 	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( core::chemical::aa_vrt ) );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
-	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points_[1] );
+	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points()[1] );
 
 	Size const virt_res = pose.size();
 
 	// Info on pairings and cutpoints.
-	rna_params_.cutpoints_open_.push_back( (virt_res - 1) );
+	rna_params_.add_cutpoint_open( virt_res - 1 );
 
-	for ( Size n = 1; n <= rna_params_.virtual_anchor_attachment_points_.size(); n++ ) {
+	for ( Size n = 1; n <= rna_params_.virtual_anchor_attachment_points().size(); n++ ) {
 
 		core::pose::rna::BasePair p;
-		p.set_res1( rna_params_.virtual_anchor_attachment_points_[ n ] );
+		p.set_res1( rna_params_.virtual_anchor_attachment_points()[ n ] );
 		p.set_res2( virt_res );
-		rna_params_.rna_pairing_list_.push_back( p );
+		rna_params_.add_rna_pairing( p );
 
-		utility::vector1< Size > obligate_pair;
-		obligate_pair.push_back( rna_params_.rna_pairing_list_.size() );
-		rna_params_.obligate_pairing_sets_.push_back( obligate_pair );
+		utility::vector1< Size > obligate_pairing_set;
+		obligate_pairing_set.push_back( rna_params_.rna_pairing_list().size() );
+		rna_params_.add_obligate_pairing_set( obligate_pairing_set );
 	}
 
 
@@ -163,18 +163,18 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 void
 RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 {
-	std::string & rna_secstruct_legacy = rna_params_.rna_secstruct_legacy_;
+	std::string rna_secstruct_legacy = rna_params_.rna_secstruct_legacy();
 
-	if ( !rna_params_.secstruct_defined_ ) {
+	if ( !rna_params_.secstruct_defined() ) {
 
 		rna_secstruct_legacy = std::string( pose.size(), 'X' );
 
-		if ( rna_params_.rna_pairing_list_.size() > 0 && assume_non_stem_is_loop ) {
+		if ( rna_params_.rna_pairing_list().size() > 0 && assume_non_stem_is_loop ) {
 			rna_secstruct_legacy = std::string( pose.size(), 'L' );
 		}
 
-		for ( Size n = 1; n <= rna_params_.rna_pairing_list_.size(); n++ ) {
-			core::pose::rna::BasePair const & rna_pairing( rna_params_.rna_pairing_list_[ n ] );
+		for ( Size n = 1; n <= rna_params_.rna_pairing_list().size(); n++ ) {
+			core::pose::rna::BasePair const & rna_pairing( rna_params_.rna_pairing_list()[ n ] );
 			if (  rna_pairing.edge1() == WATSON_CRICK &&
 					rna_pairing.edge2() == WATSON_CRICK &&
 					rna_pairing.orientation() == ANTIPARALLEL &&
@@ -187,7 +187,7 @@ RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 	}
 
 	TR << "Setting desired secondary structure to: " << rna_secstruct_legacy << std::endl;
-
+	rna_params_.set_rna_secstruct_legacy( rna_secstruct_legacy );
 	set_rna_secstruct_legacy( pose, rna_secstruct_legacy );
 }
 
@@ -223,7 +223,8 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_and_jumps_and_variants( pose::Pose & 
 {
 	runtime_assert( rna_jump_mover.atom_level_domain_map() == atom_level_domain_map );
 	setup_jumps( pose, rna_jump_mover );
-	setup_chainbreak_variants( pose, atom_level_domain_map );
+	setup_chainbreak_variants(  pose, atom_level_domain_map );
+	setup_block_stack_variants( pose, atom_level_domain_map );
 	runtime_assert( rna_jump_mover.atom_level_domain_map() == atom_level_domain_map );
 }
 
@@ -253,31 +254,31 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 
-	Size const num_cuts_closed( rna_params_.cutpoints_closed_.size() );
-	Size const num_cuts_open  ( rna_params_.cutpoints_open_.size() );
+	Size const num_cuts_closed( rna_params_.cutpoints_closed().size() );
+	Size const num_cuts_open  ( rna_params_.cutpoints_open().size() );
 	Size const num_cuts_total ( num_cuts_closed + num_cuts_open );
 
 	////////////////////////////////////////////////////////////////////////
 	utility::vector1< utility::vector1< Size > > obligate_pairing_sets,  stem_pairing_sets;
 	obligate_pairing_sets = rna_params_.obligate_pairing_sets();
 	if ( bps_moves_ ) { // supplement obligate_pairing_sets with stems in freely moving regions.
-		for ( Size n = 1; n <= rna_params_.stem_pairing_sets_.size(); n++ ) {
-			for ( Size m = 1; m <= rna_params_.stem_pairing_sets_[n].size(); m++ ) {
-				Size const idx = rna_params_.stem_pairing_sets_[n][m];
-				BasePair const & base_pair = rna_params_.rna_pairing_list_[ idx ] ;
+		for ( Size n = 1; n <= rna_params_.stem_pairing_sets().size(); n++ ) {
+			for ( Size m = 1; m <= rna_params_.stem_pairing_sets()[n].size(); m++ ) {
+				Size const idx = rna_params_.stem_pairing_sets()[n][m];
+				BasePair const & base_pair = rna_params_.rna_pairing_list()[ idx ] ;
 				if ( rna_params_.check_in_pairing_sets( obligate_pairing_sets, base_pair ) ) continue;
 				if ( !base_pair_moving( base_pair, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
 				obligate_pairing_sets.push_back( utility::tools::make_vector1( idx ) );
 			}
 		}
 	} else {
-		stem_pairing_sets = rna_params_.stem_pairing_sets_;
+		stem_pairing_sets = rna_params_.stem_pairing_sets();
 	}
 
-	Size const num_pairings( rna_params_.rna_pairing_list_.size() );
+	Size const num_pairings( rna_params_.rna_pairing_list().size() );
 	Size const num_obligate_pairing_sets( obligate_pairing_sets.size() );
 	Size const num_stem_pairing_sets( stem_pairing_sets.size() );
-	Size const num_chain_connections( rna_params_.chain_connections_.size() );
+	Size const num_chain_connections( rna_params_.chain_connections().size() );
 	// std::cout << num_stem_pairing_sets << " + " <<  num_obligate_pairing_sets << " <= " << num_pairings << std::endl;
 	runtime_assert( num_stem_pairing_sets + num_obligate_pairing_sets <= num_pairings );
 
@@ -285,8 +286,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 	// Cuts.
 	//////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > obligate_cut_points;
-	for ( Size n = 1; n<= num_cuts_closed; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_closed_[ n ] );
-	for ( Size n = 1; n<= num_cuts_open  ; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_open_[n] );
+	for ( Size n = 1; n<= num_cuts_closed; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_closed()[ n ] );
+	for ( Size n = 1; n<= num_cuts_open  ; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_open()[n] );
 
 	//////////////////////////////////////////////////////////////////////
 	// base pair steps are a special kind of chunk, created "on-the-fly"
@@ -384,16 +385,16 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			Size const pairing_index_in_stem( static_cast<Size>( numeric::random::rg().uniform() * obligate_pairing_sets[n].size() )  + 1 );
 			Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
 			count++;
-			jump_points(1, count) = rna_params_.rna_pairing_list_[which_pairing].res1();
-			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
+			jump_points(1, count) = rna_params_.rna_pairing_list()[which_pairing].res1();
+			jump_points(2, count) = rna_params_.rna_pairing_list()[which_pairing].res2();
 			//   TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 
 		// "Chain connections" provide less information about specific residues to pair --
 		//  but they're assumed to be obligatory.
 		for ( Size n = 1; n <= num_chain_connections ; n++ ) {
-			utility::vector1 < Size > const & res_list1( rna_params_.chain_connections_[n].first );
-			utility::vector1 < Size > const & res_list2( rna_params_.chain_connections_[n].second);
+			utility::vector1 < Size > const & res_list1( rna_params_.chain_connections()[n].first );
+			utility::vector1 < Size > const & res_list2( rna_params_.chain_connections()[n].second);
 			Size jump_pos1 = numeric::random::rg().random_element( res_list1 );
 			Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
 			count++;
@@ -434,8 +435,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
 			count++;
-			jump_points(1, count) = rna_params_.rna_pairing_list_[which_pairing].res1();
-			jump_points(2, count) = rna_params_.rna_pairing_list_[which_pairing].res2();
+			jump_points(1, count) = rna_params_.rna_pairing_list()[which_pairing].res1();
+			jump_points(2, count) = rna_params_.rna_pairing_list()[which_pairing].res2();
 
 			used_set( m ) = true;
 			num_sets_left--;
@@ -467,7 +468,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 
 	fill_in_default_jump_atoms( f, pose );
 
-	if ( rna_params_.virtual_anchor_attachment_points_.size() > 0 ) {
+	if ( rna_params_.virtual_anchor_attachment_points().size() > 0 ) {
 
 		f.reorder( pose.size() ); //reroot so that virtual residue is fixed.
 
@@ -513,7 +514,7 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 {
 
 	pose::Pose pose_copy = pose;
-	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open_ );
+	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
 
 	// Create cutpoint variants to force chainbreak score computation.
 	for ( Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
@@ -533,8 +534,8 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		} // i
 	}
 
-	for ( Size i = 1; i <= rna_params_.cutpoints_cyclize_.size(); i++ ) {
-		Size const n( rna_params_.cutpoints_cyclize_[ i ] );
+	for ( Size i = 1; i <= rna_params_.cutpoints_cyclize().size(); i++ ) {
+		Size const n( rna_params_.cutpoints_cyclize()[ i ] );
 		// Need to track partner -- move back along chain until we see open cutpoint.
 		Size m;
 		for ( m = n; m > 1; m-- ) {
@@ -548,6 +549,18 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoPoseInitializer::setup_block_stack_variants(
+    pose::Pose & pose,
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
+{
+	using namespace chemical;
+	for ( auto m : rna_params_.block_stack_above_res() ) add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, m );
+	for ( auto m : rna_params_.block_stack_below_res() ) add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, m );
+	atom_level_domain_map->renumber_after_variant_changes( pose );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -558,7 +571,7 @@ RNA_DeNovoPoseInitializer::setup_virtual_phosphate_variants( pose::Pose & pose )
 
 	if ( pose.residue( 1 ).is_RNA() ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
-	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open_ );
+	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
 	for ( Size i = 1; i <= cutpoints_open.size(); i++ ) {
 
 		Size n = cutpoints_open[ i ];

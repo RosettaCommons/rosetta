@@ -89,7 +89,7 @@ public:
 		Size const which_frag,
 		core::Size const offset );
 
-	TorsionSet const get_fragment_torsion_set( core::Size const which_frag );
+	TorsionSet const & get_fragment_torsion_set( core::Size const which_frag ) const;
 
 	void  add_torsion( TorsionSet const & torsion_set );
 
@@ -99,7 +99,7 @@ public:
 		core::Size const size
 	);
 
-	core::Size get_align_depth();
+	core::Size get_align_depth() const;
 
 private:
 	std::vector< TorsionSet > align_torsions_;
@@ -147,6 +147,19 @@ public:
 	core::Real
 	torsions( core::Size const & i, core::Size const & j ) const { return vall_torsions_( i, j ); }
 
+	FragmentLibraryOP
+	get_fragment_library_pointer(
+															 std::string const & RNA_string,
+															 std::string const & RNA_secstruct_string,
+															 Size const type /* = MATCH_YR */) const;
+
+	void
+	insert_fragment(
+		core::pose::Pose & pose,
+		Size const position,
+		TorsionSet const & torsion_set,
+		toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+
 private:
 
 	void read_vall_torsions( std::string const & filename );
@@ -165,13 +178,6 @@ private:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type = MATCH_YR ) const;
-
-	void
-	insert_fragment(
-		core::pose::Pose & pose,
-		Size const position,
-		TorsionSet const & torsion_set,
-		toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	void pick_fragment_library( SequenceSecStructPair const & key ) const;
 

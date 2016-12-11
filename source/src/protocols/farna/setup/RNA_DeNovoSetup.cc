@@ -206,6 +206,10 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		full_model_parameters->conventional_to_full( option[ full_model::cutpoint_closed ].resnum_and_chain() );
 	vector1< Size > const cutpoint_cyclize          =
 		full_model_parameters->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() );
+	vector1< Size > block_stack_above_res  =
+		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
+	vector1< Size > block_stack_below_res  =
+		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
 	vector1< Size > extra_minimize_res =
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::minimize::extra_minimize_res ].resnum_and_chain() );
 	vector1< Size > extra_minimize_chi_res =
@@ -388,7 +392,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			i = resnum[ q ];
 			c = conventional_chains[ resnum[ q ] ];
 			domain_map[ i ] = n;
-			if ( j > 1 &&
+			if ( j > 0 &&
 					( ( ( i - 1 ) != j ) || d != c || cutpoint_open_in_full_model.has_value( j )  ) ) {
 				chunks.push_back(curr_chunk);
 				curr_chunk.clear();
@@ -432,13 +436,18 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			if ( connected_to_next[ i ] ) continue;
 			Size const i_next = ( i < chunks.size() ) ? ( i + 1 ) : 1;
 
-			Size const segment1_end   = chunks[ i     ][ chunks[ i ].size() ];
-			Size const segment2_start = chunks[ i_next ][ 1 ];
+			Size segment1_end   = chunks[ i     ][ chunks[ i ].size() ];
+			Size segment2_start = chunks[ i_next ][ 1 ];
+
+			// avoid placing jump positions at extra_minimize_res
+			while ( extra_minimize_res.has_value( segment1_end )   && segment1_end > chunks[ i ][ 1 ] ) segment1_end--;
+			while ( extra_minimize_res.has_value( segment2_start ) && segment2_start < chunks[ i_next ][ chunks[ i_next ].size() ] ) segment2_start++;
+
 			Size const new_pos1 = std::min( segment1_end, segment2_start );
 			Size const new_pos2 = std::max( segment1_end, segment2_start );
 			obligate_pair.push_back( new_pos1 );
 			obligate_pair.push_back( new_pos2 );
-			//   TR << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
+			//			TR << TR.Cyan << "Creating new obligate pair: " << obligate_pair << " for chunk with residues " << resnum << std::endl;
 			n_jumps++;
 		}
 	}
@@ -486,6 +495,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	vector1< Size > working_cutpoint_open   = working_res_map( cutpoint_open_in_full_model, working_res, true /*leave out last residue*/ );
 	vector1< Size > working_cutpoint_closed = working_res_map( cutpoint_closed, working_res );
 	vector1< Size > working_cutpoint_cyclize = working_res_map( cutpoint_cyclize, working_res );
+	vector1< Size > working_block_stack_above_res = working_res_map( block_stack_above_res, working_res );
+	vector1< Size > working_block_stack_below_res = working_res_map( block_stack_below_res, working_res );
 	vector1< Size > working_virtual_anchor  = working_res_map( virtual_anchor, working_res );
 	vector1< pose::rna::BasePair > working_obligate_pairs;
 	vector1< vector1< std::pair< Size, Size > > > working_stems;
@@ -597,6 +608,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 
 		working_obligate_pairs.push_back( BasePair( working_res.index( pos1 ), working_res.index( pos2 ), ANY_BASE_EDGE, ANY_BASE_EDGE, ANY_BASE_DOUBLET_ORIENTATION ) );
 	}
+
 
 	////////////////////
 	// Step 14
@@ -780,6 +792,8 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	rna_params_->set_cutpoints_open( working_cutpoint_open );
 	rna_params_->set_cutpoints_closed( working_cutpoint_closed );
 	rna_params_->set_cutpoints_cyclize( working_cutpoint_cyclize );
+	rna_params_->set_block_stack_above_res( working_block_stack_above_res );
+	rna_params_->set_block_stack_below_res( working_block_stack_below_res );
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );
 
 

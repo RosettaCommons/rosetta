@@ -69,6 +69,8 @@ public:
 	void set_user_input( bool const & setting ){ user_input_ = setting; }
 	bool user_input() const { return user_input_; }
 
+	core::pose::ResMap const & res_map() const { return res_map_; }
+
 private:
 
 	void

@@ -121,7 +121,9 @@ Real FragmentLibrary::get_fragment_torsion( Size const num_torsion,  Size const 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-TorsionSet const FragmentLibrary::get_fragment_torsion_set( Size const which_frag ){
+TorsionSet const &
+FragmentLibrary::get_fragment_torsion_set( Size const which_frag ) const
+{
 	return align_torsions_[ which_frag - 1 ];
 }
 
@@ -167,7 +169,7 @@ void  FragmentLibrary::add_torsion(
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-Size FragmentLibrary::get_align_depth() {
+Size FragmentLibrary::get_align_depth() const {
 	return align_torsions_.size();
 }
 
@@ -254,9 +256,8 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
-void
-FullAtomRNA_Fragments::pick_random_fragment(
-	TorsionSet & torsion_set,
+FragmentLibraryOP
+FullAtomRNA_Fragments::get_fragment_library_pointer(
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
 	Size const type /* = MATCH_YR */) const
@@ -269,13 +270,25 @@ FullAtomRNA_Fragments::pick_random_fragment(
 		pick_fragment_library( key );
 	}
 
-	FragmentLibraryOP fragment_library_pointer = fragment_library_pointer_map[ key ];
+	return fragment_library_pointer_map[ key ];
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+void
+FullAtomRNA_Fragments::pick_random_fragment(
+	TorsionSet & torsion_set,
+	std::string const & RNA_string,
+	std::string const & RNA_secstruct_string,
+	Size const type /* = MATCH_YR */) const
+{
+	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, type );
 
 	Size const num_frags = fragment_library_pointer->get_align_depth();
 
 	if ( num_frags == 0 ) { //trouble.
-		TR << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
-		std::cerr << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
+		TR << "Fragment Library: zero fragments found for " << RNA_string << " " << RNA_secstruct_string << std::endl;
+		std::cerr << "Fragment Library: zero fragments found for " << RNA_string << " " << RNA_secstruct_string << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
 

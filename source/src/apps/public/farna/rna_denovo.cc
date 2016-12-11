@@ -154,8 +154,11 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::minimize::extra_minimize_res );
 		option.add_relevant( rna::farna::minimize::extra_minimize_chi_res );
 		option.add_relevant( rna::farna::minimize::minimize_bps );
+		option.add_relevant( full_model::cyclize );
 		option.add_relevant( full_model::cutpoint_closed );
 		option.add_relevant( full_model::cutpoint_open );
+		option.add_relevant( full_model::rna::block_stack_above_res );
+		option.add_relevant( full_model::rna::block_stack_below_res );
 		option.add_relevant( rna::vary_geometry );
 		option.add_relevant( basic::options::OptionKeys::rna::data_file );
 
