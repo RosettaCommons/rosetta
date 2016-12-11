@@ -183,10 +183,12 @@ StepWisePoseAligner::initialize( pose::Pose const & pose ){
 
 ///////////////////////////////////////////////////////////////////////////////////
 bool
-match_up_to_rna_dna( char const & nt1, char const & nt2 ) {
+match_up_to_rna_dna( char const nt1, char const nt2 ) {
 	if ( nt1 == nt2 ) return true;
 	if ( nt1 == 't' && nt2 == 'u' ) return true;
 	if ( nt1 == 'u' && nt2 == 't' ) return true;
+
+	std::cout << nt1 << " " << nt2 << std::endl;
 	return false;
 }
 

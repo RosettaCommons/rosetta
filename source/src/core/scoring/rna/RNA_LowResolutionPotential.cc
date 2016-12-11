@@ -351,6 +351,25 @@ RNA_LowResolutionPotential::initialize_rna_repulsive_weights(){
 	// O2' --> weight stays at zero.
 }
 
+Size 
+convert_na_to_1234( core::chemical::AA const foo ) {
+	if ( foo == core::chemical::na_rad ) {
+		return 1;
+	} else if ( foo == core::chemical::na_rcy ) {
+		return 2;
+	} else if ( foo == core::chemical::na_rgu ) {
+		return 3;
+	} else if ( foo == core::chemical::na_ura ) {
+		return 4;
+	} else {
+		utility_exit_with_message( "No idea how we got here." );
+	}
+}
+	
+Size get_bin( conformation::Residue const & res_i ) {
+	return ( res_i.type().na_analogue() == chemical::aa_unp ) ? chemical::rna::convert_acgu_to_1234( res_i.name1() ) : convert_na_to_1234( res_i.type().na_analogue() );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -372,8 +391,9 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 	debug_assert( res_i.is_RNA() );
 	debug_assert( res_j.is_RNA() );
 
-	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
-	Size const res_j_bin = core::chemical::rna::convert_acgu_to_1234( res_j.name1() );
+	// If canonical, just convert acgu; if noncanonical, get analogue_na first
+	Size const res_i_bin = get_bin( res_i );
+	Size const res_j_bin = get_bin( res_j );//( res_j.type().na_analogue() == chemical::aa_unp ) ? chemical::rna::convert_acgu_to_1234( res_j.name1() ) : convert_na_to_1234( res_j.type().na_analogue() );
 
 	debug_assert( res_i_bin > 0 );
 	debug_assert( res_j_bin > 0 );
@@ -580,7 +600,7 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 	deriv_y = 0.0;
 	deriv_z = 0.0;
 
-	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
+	Size const res_i_bin = get_bin( res_i ); //core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 
 	debug_assert( res_i_bin > 0 );
 	debug_assert( atom_num_j_bin > 0 );
@@ -925,7 +945,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	Vector const & x_i = M_i.col_x();
 	Vector const & y_i = M_i.col_y();
 
-	Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( rsd->name1() );
+	Size const res_i_bin = get_bin( *rsd );// core::chemical::rna::convert_acgu_to_1234( rsd->name1() );
 
 	Real dist_x( 0.0 ), dist_y( 0.0 ), zeta( 0.0 );
 
@@ -972,7 +992,7 @@ RNA_LowResolutionPotential::get_zeta_cutoff(
 ) const
 {
 	if ( more_precise_base_pair_classification_ ) {
-		Size const res_i_bin = core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
+		Size const res_i_bin = get_bin( res_i );//core::chemical::rna::convert_acgu_to_1234( res_i.name1() );
 		zeta_hoogsteen_cutoff = zeta_hoogsteen_cutoff_precise_( res_i_bin );
 		zeta_sugar_cutoff = zeta_sugar_cutoff_precise_( res_i_bin );
 	} else {

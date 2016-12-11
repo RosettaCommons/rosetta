@@ -1,6 +1,6 @@
 #unoptimized
 NAME M1I
-IO_STRING   I i
+IO_STRING M1I X
 TYPE POLYMER #residue type
 AA UNP
 ATOM  P   Phos H    1.606751

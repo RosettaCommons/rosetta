@@ -108,6 +108,7 @@ ResidueType::ResidueType(
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
+	na_analogue_( aa_unp ),
 	base_name_(""),
 	base_type_cop_(), //Assumes that this is a base type by default.
 	name_(""),
@@ -220,6 +221,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	aa_ = residue_type.aa_;
 	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
+	na_analogue_ = residue_type.na_analogue_;
 	base_name_ = residue_type.base_name_;
 	base_type_cop_ = residue_type.base_type_cop_; //If the residue type that we're copying has a base type, copy the base type pointer, too.
 	runtime_assert( base_type_cop_.get() != this );
@@ -3483,6 +3485,11 @@ ResidueType::perform_checks()
 		msg << "Error!  A residue type " << name() << " specifies a standard alpha amino acid to use as a template for backbone scoring"
 			" (rama and p_aa_pp scoring functions) without specifying that it is itself an alpha amino acid "
 			"(PROPERTIES ALPHA_AA)." << std::endl;
+		checkspass=false;
+	}
+	if ( (na_analogue_ != core::chemical::aa_unp) && ( ! properties_->has_property( RNA )  || properties_->has_property( CANONICAL_NUCLEIC ) ) ) {
+		msg << "Error!  A residue type " << name() << " specifies a standard nucleic acid to use as a fragment analogue"
+		" but it is not itself an RNA residue OR it is a canonical RNA residue" << std::endl;
 		checkspass=false;
 	}
 

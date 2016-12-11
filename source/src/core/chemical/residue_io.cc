@@ -241,6 +241,12 @@ read_topology_file(
 /// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
 /// this noncanonical.
 ///
+/// NA_ANALOGUE:
+/// Sets the "na_analogue" for a particular residue, which can be used
+/// in fragment assembly. For example, it is a REALLY good first approximation
+/// that 5-methyl-uridine (i.e., thymine-but-on-ribose) can work with fragments
+/// identified by na_ura. 
+///
 /// BOND:
 /// Declares a bond between two atoms giving their names. This line is
 /// whitespace delimited.  E.g., "BOND  N    CA" from ALA.params.
@@ -921,6 +927,9 @@ read_topology_file(
 		} else if ( tag == "BACKBONE_AA" ) {
 			l >> tag;
 			rsd->backbone_aa( tag );
+		} else if ( tag == "NA_ANALOGUE" ) {
+			l >> tag;
+			rsd->na_analogue( tag );
 		} else if ( tag == "RAMA_PREPRO_FILENAME" ) {
 			l >> tag;
 			rsd->set_rama_prepro_map_file_name(tag, false);

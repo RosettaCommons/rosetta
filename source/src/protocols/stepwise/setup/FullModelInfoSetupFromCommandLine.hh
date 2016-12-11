@@ -36,9 +36,6 @@ core::pose::PoseOP
 get_pdb_and_cleanup( std::string const & input_file,
 	core::chemical::ResidueTypeSetCAP rsd_set );
 
-std::map< core::Size, std::string > /* info on any non-standard residue names */
-parse_out_non_standard_residues( std::string & sequence /* gets replaced with one letter sequence*/ );
-
 void
 get_other_poses(  utility::vector1< core::pose::PoseOP > & other_poses,
 	utility::vector1< std::string > const & other_files,

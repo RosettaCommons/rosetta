@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/sequence/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -167,7 +168,7 @@ RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_seq
 {
 	// handle weird non-naturals, including g[IGU] for isoguanosine, etc.
 	full_sequence_ = full_sequence_in;
-	non_standard_residues_ = setup::parse_out_non_standard_residues( full_sequence_ );
+	non_standard_residues_ = core::sequence::parse_out_non_standard_residues( full_sequence_ );
 
 	// figure out if there are dangling ends -- just extract helix portion.
 	figure_out_and_remove_dangling_ends();

@@ -182,7 +182,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		std::string sequence( sequence_strings[1] );
 		for ( Size n = 2; n <= sequence_strings.size(); n++ ) sequence += std::string( " " + sequence_strings[ n ] );
 		cutpoint_open_in_full_model = core::sequence::strip_spacers( sequence );
-		std::map< Size, std::string > non_standard_residue_map = stepwise::setup::parse_out_non_standard_residues( sequence );
+		std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence );
 		vector1< int > res_numbers_in_pose;
 		for ( Size n = 1; n <= sequence.size(); n++ ) res_numbers_in_pose.push_back( n + offset );
 		stepwise::setup::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );

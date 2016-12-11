@@ -19,6 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
 
@@ -89,9 +90,17 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		// following is pretty awful -- atom_level_domain_map makes use of atom indices for speed, and
 		//  some downstream applications (RNA_ChunkLibrary) assume that it was set up in a pose
 		//  without weird variants.
-		Pose pose_without_variants;
-		make_pose_from_sequence( pose_without_variants, pose.sequence() /* note this is not annotated_sequence(), which would include variants*/,
-			pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
+
+		// AHA! Here is the issue. We NEED to have some info from annotated_sequence()
+		// because we need the base name of everything.
+		Pose pose_without_variants = pose;
+		//make_pose_from_sequence( pose_without_variants, pose.sequence() /* note this is not annotated_sequence(), which would include variants*/,
+		//	pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
+		using namespace core::conformation;
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue( ii ).residue_type_set()->name_map( pose.residue_type( ii ).base_name() ) );
+			pose_without_variants.replace_residue( ii, *new_rsd, true );
+		}
 		initialize_from_pose( pose_without_variants );
 		renumber_after_variant_changes( pose );
 	} else {

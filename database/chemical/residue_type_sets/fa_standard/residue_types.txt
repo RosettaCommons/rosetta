@@ -58,7 +58,7 @@ residue_types/nucleic/rna_nonnatural/7MG.params
 residue_types/nucleic/rna_nonnatural/7DA.params
 #residue_types/nucleic/rna_nonnatural/ICY.params
 #residue_types/nucleic/rna_nonnatural/IGU.params
-#residue_types/nucleic/rna_nonnatural/INO.params
+residue_types/nucleic/rna_nonnatural/INO.params
 residue_types/nucleic/rna_nonnatural/M2G.params
 residue_types/nucleic/rna_nonnatural/MA6.params
 # 2'OMe

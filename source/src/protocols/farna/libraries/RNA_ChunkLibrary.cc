@@ -30,6 +30,7 @@
 #include <core/scoring/rms_util.hh>
 #include <numeric/random/random.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/sequence/util.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
@@ -131,7 +132,9 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 	utility::vector1< core::Size > const & input_res,
 	utility::vector1< core::Size > const & allow_insert_res /* = blank */ )
 {
-	std::string const & sequence_of_big_pose( pose.sequence() );
+	std::string sequence_of_big_pose( pose.annotated_sequence() );
+	std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence_of_big_pose );
+	
 	coarse_rna_ = pose.residue( 1 ).is_coarse();
 	do_rosetta_library_domain_check_ = true;
 

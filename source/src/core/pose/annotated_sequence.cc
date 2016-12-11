@@ -190,8 +190,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini /* true */
-)
-{
+) {
 	chemical::ResidueTypeCOPs requested_types;
 
 	using namespace core::chemical;
@@ -205,7 +204,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 	tr.Debug << "one_letter: " << one_letter_sequence << std::endl;
 	tr.Debug << "seq_in: " << sequence_in << std::endl;
-
+	
 	// setup the pose by appending the appropriate residues
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
 		char aa = one_letter_sequence[ seqpos-1 ]; // string indexing is zero-based!

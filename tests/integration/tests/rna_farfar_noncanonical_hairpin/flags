@@ -1,0 +1,8 @@
+-s helix.pdb
+-fasta fasta 
+-secstruct_file secstruct 
+-cycles 1000
+-include_neighbor_base_stacks  
+-minimize_rna true
+-nstruct 1
+-score:weights farna/rna_hires.wts

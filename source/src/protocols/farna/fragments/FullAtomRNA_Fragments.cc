@@ -297,8 +297,17 @@ FullAtomRNA_Fragments::pick_random_fragment(
 {
 
 	std::string const & RNA_sequence( pose.sequence() );
-	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
+	//std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
+	// For every non-acgu character in the single letter sequence, we need to 
+	// instead put in the na_analogue.
+	std::string RNA_string = RNA_sequence.substr( position - 1, size );
+	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
+		if ( RNA_string[ ii ] != 'a' && RNA_string[ ii ] != 'c' && RNA_string[ ii ] != 'g' && RNA_string[ ii ] != 'u' ) {
+			RNA_string[ ii ] = oneletter_code_from_aa( pose.residue_type( ii + 1 ).na_analogue() );
+		}
+	}
+	
 	//Desired "secondary structure".
 	std::string const & RNA_secstruct( secstruct::get_rna_secstruct_legacy( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
