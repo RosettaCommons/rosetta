@@ -228,9 +228,11 @@ void XMLValidationOutput::errors( std::list< std::string > const & error_list ) 
 void XMLValidationOutput::warnings( std::list< std::string > const & warning_list ) { warning_list_ = warning_list; }
 
 void XMLValidationOutput::add_errors( std::list< std::string > const & error_list )
-{ for ( auto const & err : error_list ) error_list_.push_back( err ); }
+{ for ( auto const & err : error_list ) error_list_.push_back( err );
+}
 void XMLValidationOutput::add_warnings( std::list< std::string > const & warning_list )
-{ for ( auto const & warn : warning_list ) warning_list_.push_back( warn ); }
+{ for ( auto const & warn : warning_list ) warning_list_.push_back( warn );
+}
 
 
 std::string concat_stringlist( std::list< std::string > const & strings ) {
@@ -305,7 +307,7 @@ validate_xml_against_xsd(
 		xmlFreeDoc( xsd_doc );
 		xmlSchemaFreeParserCtxt( schema_parser_context );
 		output.valid( false );
-			std::ostringstream oss;
+		std::ostringstream oss;
 		oss << "Your XML Schema failed to self-validate.  This is essentially a compile-time error, but it cannot be"
 			" exposed until runtime.  You've edited some class’s provide_XML_schema function recently in such a way that it is"
 			" now providing an invalid or incomplete schema.  The most likely problem is that you put <, >, or & in an attribute's"

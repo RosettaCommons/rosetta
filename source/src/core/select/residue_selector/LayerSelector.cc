@@ -161,13 +161,13 @@ LayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default( "select_core",                    xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default( "select_boundary",                xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default( "select_surface",                 xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default( "cache_selection",                xsct_rosetta_bool, "XRW TO DO",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xsct_rosetta_bool, "XRW TO DO",  "true"  )
-		+ XMLSchemaAttribute( "ball_radius",                    xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xsct_real , "XRW TO DO" )
+		+ XMLSchemaAttribute::attribute_w_default( "select_core",                    xsct_rosetta_bool, "Should the core (buried) layer be selected?",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default( "select_boundary",                xsct_rosetta_bool, "Should the boundary (semi-buried) layer be selected?",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default( "select_surface",                 xsct_rosetta_bool, "Should the surface (exposed) layer be selected?",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default( "cache_selection",                xsct_rosetta_bool, "Should the selection be stored, so that it needn't be recomputed?",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xsct_rosetta_bool, "If true (the default), then the sidechain neighbour algorithm is used to determine burial.  If false, burial is based on SASA (solvent-accessible surface area) calculations.",  "true"  )
+		+ XMLSchemaAttribute( "ball_radius",                    xsct_real , "The radius value for the rolling ball algorithm used for SASA (solvent-accessible surface area) calculations.  Only used if use_sidechain_neighbors=false." )
+		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xsct_real , "The midpoint of the distance-dependent sigmoidal falloff for the sidechain-neighbours algorithm.  Only used if use_sidechain_neighbors=true." )
 		+ XMLSchemaAttribute( "sc_neighbor_denominator",        xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xsct_real , "XRW TO DO" )
 		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xsct_real , "XRW TO DO" )

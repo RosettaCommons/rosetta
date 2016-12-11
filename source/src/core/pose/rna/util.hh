@@ -155,7 +155,7 @@ add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s );
 
 void
 add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s );
-	
+
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n );
 

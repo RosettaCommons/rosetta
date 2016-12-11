@@ -65,6 +65,12 @@ public:
 	/// @brief pass through to child factories
 	void add_creator( ResLvlTaskOperationCreatorOP );
 	void add_creator( ResFilterCreatorOP );
+
+	/// @brief Get the XML schema for a given TaskOperation.
+	/// @details Throws an error if the TaskOperation is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &task_operation_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	/// @brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
 	TaskOperationOP newTaskOperation(
 		std::string const &,

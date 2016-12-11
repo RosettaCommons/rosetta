@@ -28,19 +28,19 @@ namespace operation {
 std::string
 complex_type_name_for_task_op( std::string const & task_op_name )
 {
-	return "to_" + task_op_name + "Type";
+	return "to_" + task_op_name + "_type";
 }
 
 std::string
 complex_type_name_for_res_lvl_task_op( std::string const & task_op_name )
 {
-	return "rlto_" + task_op_name + "Type";
+	return "rlto_" + task_op_name + "_type";
 }
 
 std::string
 complex_type_name_for_res_filter( std::string const & res_filter_name )
 {
-	return "resfilter_" + res_filter_name + "Type";
+	return "resfilter_" + res_filter_name + "_type";
 }
 
 

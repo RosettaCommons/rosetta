@@ -41,6 +41,11 @@ public:
 	void factory_register( ResidueSelectorCreatorOP creator );
 	bool has_type( std::string const & ) const;
 
+	/// @brief Get the XML schema for a given residue selector.
+	/// @details Throws an error if the residue selector is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &selector_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	ResidueSelectorOP new_residue_selector(
 		std::string const & selector_name,
 		utility::tag::TagCOP tag,

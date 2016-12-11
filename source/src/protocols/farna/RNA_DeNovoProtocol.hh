@@ -96,7 +96,7 @@ private:
 		core::pose::Pose & pose,
 		std::string const & out_file_tag,
 		bool const score_only = false ) const;
-	
+
 	void
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, core::pose::Pose const & pose ) const;
 

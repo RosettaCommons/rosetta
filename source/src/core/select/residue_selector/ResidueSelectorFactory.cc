@@ -52,6 +52,22 @@ bool ResidueSelectorFactory::has_type( std::string const & selector_type ) const
 	return creator_map_.find( selector_type ) != creator_map_.end();
 }
 
+/// @brief Get the XML schema for a given residue selector.
+/// @details Throws an error if the residue selector is unknown to Rosetta.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResidueSelectorFactory::provide_xml_schema(
+	std::string const &selector_name,
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	if ( ! has_type( selector_name ) ) {
+		std::string err_msg =  "No ResidueSelectorCreator with the name '" + selector_name + "' has been registered with the ResidueSelectorFactory";
+		throw utility::excn::EXCN_Msg_Exception( err_msg );
+	}
+	std::map< std::string, ResidueSelectorCreatorOP >::const_iterator iter = creator_map_.find( selector_name );
+	iter->second->provide_xml_schema( xsd );
+}
+
 ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 	std::string const & selector_name,
 	utility::tag::TagCOP tag,

@@ -120,7 +120,7 @@ main( int argc, char* argv [] ) {
 
 		vector1< string > align_fns = option[ in::file::alignment ]();
 		typedef vector1< string >::const_iterator aln_iter;
-		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end(); aln_fn != aln_end; ++aln_fn) {
+		for ( aln_iter aln_fn = align_fns.begin(), aln_end = align_fns.end(); aln_fn != aln_end; ++aln_fn ) {
 			vector1< SequenceAlignment > alns = core::sequence::read_aln(option[ cm::aln_format ](), *aln_fn);
 
 			//fd  One thing kind of dumb about this is that:
@@ -141,7 +141,7 @@ main( int argc, char* argv [] ) {
 						<< std::endl;
 
 					Pose query_pose, template_pose;
-					make_pose_from_sequence( query_pose, fasta_seq->sequence(),	*(rsd_set_from_cmd_line().lock())	);
+					make_pose_from_sequence( query_pose, fasta_seq->sequence(), *(rsd_set_from_cmd_line().lock()) );
 					template_pose = pose_it->second;
 					PartialThreadingMover mover(*it,template_pose);
 					mover.apply(query_pose);

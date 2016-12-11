@@ -76,6 +76,15 @@ public:
 
 	void factory_register( FilterCreatorOP creator );
 
+	/// @brief Is there a filter with the given name that's known to Rosetta?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool filter_exists( std::string const &filter_name ) const;
+
+	/// @brief Get the XML schema for a given filter.
+	/// @details Throws an error if the filter is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &filter_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	/// @brief Create a filter given its identifying string
 	FilterOP newFilter( std::string const & );
 

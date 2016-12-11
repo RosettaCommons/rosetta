@@ -690,14 +690,14 @@ void AbscriptMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	//XMLSchemaComplexTypeGenerator whole_shebang;
 	//whole_shebang.complex_type_naming_func( & moves::complex_type_name_for_mover )
-	//	.element_name( mover_name() )
-	//	.description( "A special mover used to replicate the state of ab initio in early 2014" )
-	//	.add_attributes( attlist )
-	//	//.add_optional_name_attribute() -- Name attribute has already been added as required.
-	//	//.set_subelements_repeatable( subelements )
-	//	.add_ordered_subelement_set_as_optional( subelements_fragments )
-	//	.add_ordered_subelement_set_as_repeatable( subelements_stages )
-	//	.write_complex_type_to_schema( xsd );
+	// .element_name( mover_name() )
+	// .description( "A special mover used to replicate the state of ab initio in early 2014" )
+	// .add_attributes( attlist )
+	// //.add_optional_name_attribute() -- Name attribute has already been added as required.
+	// //.set_subelements_repeatable( subelements )
+	// .add_ordered_subelement_set_as_optional( subelements_fragments )
+	// .add_ordered_subelement_set_as_repeatable( subelements_stages )
+	// .write_complex_type_to_schema( xsd );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements(
 		xsd, mover_name(),

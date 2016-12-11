@@ -101,6 +101,7 @@
 /// this may not be appropriate for non-Rosetta XML.
 ///
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Added human-readable XML schema output.
 
 #ifndef INCLUDED_utility_tag_XMLSchemaGeneration_HH
 #define INCLUDED_utility_tag_XMLSchemaGeneration_HH
@@ -113,6 +114,10 @@
 
 // Boost headers
 #include <boost/function.hpp>
+
+// LibXML includes
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 // C++ headers
 #include <list>
@@ -476,9 +481,47 @@ public:
 	~XMLSchemaDefinition() override;
 	void add_top_level_element( XMLSchemaTopLevelElement const & element );
 	bool has_top_level_element( std::string const & element_name ) const;
+
+	/// @brief Returns the full XML schema definition, in XML format.
 	std::string full_definition() const;
 
+	/// @brief Returns a human-readable summary of the XML schema definition.
+	/// @details SLOW!  Must generate the summary for every invocation.
+	/// @note If component_name and component_type are provided, then summary information is only returned for that particular
+	/// object type.  For example, component_name="DeclareBond" and component_type="mover" would return information on the DeclareBond
+	/// mover.  Also note, this function uses raw pointers, unfortunately -- the libxml2 functions that I'm calling require it.
+	/// As such, no premature return statements should be added prior to the xmlFreeDoc and xmlCleanupParser statements at the end of the function.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string human_readable_summary( std::string const &component_name="", std::string const &component_type="" ) const;
+
 private:
+
+	/// @brief Go through an XSD XML and generate a human-readable version, recursively.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void generate_human_readable_recursive( xmlNode* rootnode, std::stringstream &description, std::stringstream &tags, std::stringstream &options, Size const level, std::string const &complextype, std::string const &tag_name_to_print  ) const;
+
+	/// @brief Given a node in an XML tree, get the value of an option.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string get_node_option( xmlNode* node, std::string const &optionname ) const;
+
+	/// @brief Given a node in an XML tree representing a tag, get the string that starts the tag.  (e.g. "DeclareBond" in "<DeclareBond .... />").
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string get_tag_name( xmlNode* node ) const;
+
+	/// @brief Given a documentation node in an XML tree, parse out the documentation and print it.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void generate_human_readable_documentation( xmlNode* doc_node, std::stringstream &outstream ) const;
+
+	/// @brief Given a node in an XML tree representing a tag, get all options in that tag, write their descriptions to "options",
+	/// and write their names and types to "tags".
+	/// @details Heads the section in "options" with the tag name.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void output_all_tag_options( xmlNode* node, std::string const &tagname, Size const level, std::stringstream &tags, std::stringstream &options) const;
+
+	/// @brief Given an XSD simple type (e.g. "rosetta_bool"), return a more human-readable type (e.g. "bool").
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	std::string get_type_name( std::string const& xsd_type ) const;
+
 	void validate_new_top_level_element( std::string const & element_name, std::string const & definition );
 
 	std::list< std::string > elements_in_order_;

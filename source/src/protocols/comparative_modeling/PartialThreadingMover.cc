@@ -51,7 +51,7 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.threading"
 PartialThreadingMover::PartialThreadingMover(
 	core::sequence::SequenceAlignment const & align,
 	core::pose::Pose const & template_pose
-) :	template_pose_( template_pose ),	align_( align ) {}
+) : template_pose_( template_pose ), align_( align ) {}
 
 void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 	using namespace core::scoring;
@@ -89,7 +89,7 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 
 	//////////
 	// 2) update coords
-	std::string const template_id( utility::file_basename( template_pose_.pdb_info()->name() )	);
+	std::string const template_id( utility::file_basename( template_pose_.pdb_info()->name() ) );
 	core::pose::add_score_line_string( query_pose, "template", template_id );
 
 	core::id::AtomID_Mask missing( true );
@@ -109,8 +109,8 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 			std::string atom_name( query_pose.residue(resi).atom_name( atomj ));
 
 			// unless match, don't copy BB
-			if ( !query_pose.residue(resi).atom_is_backbone(atomj) && 
-					 query_pose.residue(resi).aa() != template_pose_.residue(t_resi).aa() ) continue;
+			if ( !query_pose.residue(resi).atom_is_backbone(atomj) &&
+					query_pose.residue(resi).aa() != template_pose_.residue(t_resi).aa() ) continue;
 			if ( !template_pose_.residue_type(t_resi).has( atom_name ) ) continue;
 
 			// match!

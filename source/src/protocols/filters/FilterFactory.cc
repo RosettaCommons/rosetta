@@ -58,6 +58,39 @@ FilterFactory::factory_register( FilterCreatorOP creator )
 	filter_creator_map_[ filter_type ] = creator;
 }
 
+/// @brief Is there a filter with the given name that's known to Rosetta?
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+bool
+FilterFactory::filter_exists(
+	std::string const &filter_name
+) const {
+	return( filter_creator_map_.find( filter_name ) != filter_creator_map_.end() );
+}
+
+/// @brief Get the XML schema for a given filter.
+/// @details Throws an error if the filter is unknown to Rosetta.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+FilterFactory::provide_xml_schema(
+	std::string const &filter_name,
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	FilterMap::const_iterator iter( filter_creator_map_.find( filter_name ) );
+	if ( iter != filter_creator_map_.end() ) {
+		if ( ! iter->second ) {
+			utility_exit_with_message( "Error: FilterCreatorOP prototype for " + filter_name + " is NULL!" );
+		}
+		iter->second->provide_xml_schema( xsd );
+	} else {
+		TR << "Available filters: ";
+		for ( FilterMap::const_iterator filt_it = filter_creator_map_.begin(); filt_it != filter_creator_map_.end(); ++filt_it ) {
+			TR << filt_it->first << ", ";
+		}
+		TR << std::endl;
+		utility_exit_with_message( filter_name + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+	}
+}
+
 
 /// @brief return new Filter by key lookup in filter_prototype_map_ (new Filter parses Tag if provided)
 FilterOP

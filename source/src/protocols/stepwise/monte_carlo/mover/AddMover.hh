@@ -64,7 +64,7 @@ public:
 	void set_sample_range_large( core::Real const setting ){ sample_range_large_ = setting; }
 
 	void set_internal_cycles( core::Size const setting ){ internal_cycles_ = setting; }
-	
+
 	void set_sample_pH( bool const setting ){ sample_pH_ = setting; }
 
 	void set_presample_added_residue( core::Size const setting ){ presample_added_residue_ = setting; }

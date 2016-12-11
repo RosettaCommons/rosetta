@@ -577,7 +577,7 @@ common_movemap_complex_type_def( utility::tag::XMLSchemaComplexTypeGenerator & c
 		+ XMLSchemaAttribute::required_attribute( "chi",       xsct_rosetta_bool , chi_desc )
 		+ XMLSchemaAttribute::required_attribute( "bb",        xsct_rosetta_bool , bb_desc )
 		+ XMLSchemaAttribute( "bondangle", xsct_rosetta_bool , "move 3-body angles?" )
-		+ XMLSchemaAttribute( "bondlenth", xsct_rosetta_bool , "move 2-body lengths?" );
+		+ XMLSchemaAttribute( "bondlength", xsct_rosetta_bool , "move 2-body lengths?" );
 	movemap_subelements.add_simple_subelement( "Span", span_attributes , "XRW TO DO, probably a user-defined region of the Pose");
 	movemap_subelements.complex_type_naming_func( & move_map_tag_namer );
 

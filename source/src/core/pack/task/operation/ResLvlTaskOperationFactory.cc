@@ -67,6 +67,23 @@ bool ResLvlTaskOperationFactory::has_type( std::string const & type ) const
 	return ( rltoc_map_.find( type ) != rltoc_map_.end() );
 }
 
+/// @brief Get the XML schema for a given ResLvlTaskOperation.
+/// @details Throws an error if the ResLvlTaskOperation is unknown to Rosetta.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResLvlTaskOperationFactory::provide_xml_schema(
+	std::string const &task_operation_name,
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	RLTOC_Map::const_iterator iter( rltoc_map_.find( task_operation_name ) );
+	if ( iter != rltoc_map_.end() ) {
+		iter->second->provide_xml_schema( xsd );
+	} else {
+
+		utility_exit_with_message( task_operation_name + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
+	}
+}
+
 /// @brief return new ResLvlTaskOperation by key lookup in rltoc_map_ (new ResLvlTaskOperation parses Tag if provided)
 ResLvlTaskOperationOP
 ResLvlTaskOperationFactory::newRLTO( std::string const & type ) const

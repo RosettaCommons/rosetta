@@ -96,28 +96,28 @@ pHEnergy::residue_energy(
 	using namespace core::chemical;
 	core::Real ipKa;
 	switch ( rsd.type().aa() ) {
-	
-	case na_rad:
+
+	case na_rad :
 		ipKa = 6.1;
 		break;
 
-	case aa_asp:
+	case aa_asp :
 		ipKa = 4.0;
 		break;
 
-	case aa_glu:
+	case aa_glu :
 		ipKa = 4.4;
 		break;
 
-	case aa_his:
+	case aa_his :
 		ipKa = 6.3;
 		break;
 
-	case chemical::aa_lys:
+	case chemical::aa_lys :
 		ipKa = 10.4;
 		break;
 
-	case chemical::aa_tyr:
+	case chemical::aa_tyr :
 		ipKa = 10.0;
 		break;
 
@@ -130,28 +130,28 @@ pHEnergy::residue_energy(
 	core::Real fprot = 1.0 / ( ( pow( 10.0, ( pH_ - ipKa ) ) ) + 1.0 );
 	core::Real score_prot = -0.59 * log( fprot );
 	core::Real score_deprot = -0.59 * log( 1.0 - fprot );
-	
+
 	core::Real pH_score = 0;
 	switch ( rsd.type().aa() ) {
-		case na_rad: 
-			pH_score = (rsd.type().has_variant_type( PROTONATED_N1_ADENOSINE )) ? score_prot : score_deprot;
-			break;
-		
-		case aa_asp:
-		case aa_glu:
-		case aa_his:
-			pH_score = (rsd.type().has_variant_type( PROTONATED )) ? score_prot : score_deprot;
-			break;
-			
-		case aa_lys:
-		case aa_tyr:
-			pH_score = (rsd.type().has_variant_type( DEPROTONATED )) ? score_deprot : score_prot;
-			break;
-			
-		default: // should be impossible unless the two switch statements desync.
-			break;
+	case na_rad :
+		pH_score = (rsd.type().has_variant_type( PROTONATED_N1_ADENOSINE )) ? score_prot : score_deprot;
+		break;
+
+	case aa_asp:
+	case aa_glu:
+	case aa_his :
+		pH_score = (rsd.type().has_variant_type( PROTONATED )) ? score_prot : score_deprot;
+		break;
+
+	case aa_lys:
+	case aa_tyr :
+		pH_score = (rsd.type().has_variant_type( DEPROTONATED )) ? score_deprot : score_prot;
+		break;
+
+	default : // should be impossible unless the two switch statements desync.
+		break;
 	}
-	
+
 	emap[ e_pH ] += pH_score; //add pHEnergy to the EmapVector
 } // residue_energy
 

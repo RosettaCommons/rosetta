@@ -56,6 +56,11 @@ public:
 	void add_creator( ResLvlTaskOperationCreatorOP );
 	bool has_type( std::string const & ) const;
 
+	/// @brief Get the XML schema for a given ResLvlTaskOperation.
+	/// @details Throws an error if the ResLvlTaskOperation is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &task_operation_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
 	ResLvlTaskOperationOP newRLTO( std::string const & ) const;
 

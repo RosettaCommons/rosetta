@@ -98,7 +98,7 @@ prepare_silent_struct( std::string const & out_tag,
 
 	// AMW New: Add WC stats etc.
 	core::pose::rna::add_number_base_pairs( pose, *s );
-	
+
 	if ( native_pose != 0 ) {
 		core::pose::rna::add_number_native_base_pairs( pose, *native_pose, *s );
 		s->add_energy( "rms",      rms );

@@ -961,28 +961,28 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
-	
+
 	bool in_list( false );
-	
+
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-		
+
 		BasePair const base_pair2 = base_pair_list[ n ];
-		
+
 		if ( base_pair == base_pair2 ) {
 			in_list = true;
 			break;
 		}
-		
+
 		if ( base_pair.flipped() == base_pair2 ) {
 			in_list = true;
 			break;
 		}
-		
+
 	}
-	
-	return in_list;	
+
+	return in_list;
 }
-	
+
 /////////////////////////////////////////////////////////////////////
 void
 add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
@@ -990,74 +990,74 @@ add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s )
 	using namespace pose::rna;
 	using namespace conformation;
 	using namespace core::chemical::rna;
-	
+
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
 	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
-	
+
 	Size N_WC( 0 ), N_NWC( 0 );
-	
+
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-		
+
 		BasePair const base_pair = base_pair_list[ n ];
-		
+
 		Size const i = base_pair.res1();
 		Size const j = base_pair.res2();
-		
+
 		BaseEdge const k = base_pair.edge1();
 		BaseEdge const m = base_pair.edge2();
-		
+
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
-		
+
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
-			core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
+				core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC++;
 		} else {
 			N_NWC++;
 		}
 	}
-	
+
 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
 	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
-	
+
 }
-	
+
 /////////////////////////////////////////////////////////////////////
 void
 add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, io::silent::SilentStruct & s )
 {
 	// This is fundamentally comparative. When it was developed for FARFAR,
-	// there was a guarantee that pose and native_pose would have the same 
+	// there was a guarantee that pose and native_pose would have the same
 	// residues. Not so now.
 	//
 	// Rather than messing with FullModelInfo (which may not be set up for the
 	// native, especially since FARFAR still needs this functionality) we'll use
 	// the PDBInfo.
-	
+
 	using namespace chemical::rna;
 	using namespace conformation;
-	
+
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	utility::vector1< bool > is_bulged;
 	core::pose::rna::classify_base_pairs( pose, base_pair_list, is_bulged );
-	
+
 	utility::vector1< core::pose::rna::BasePair > base_pair_list_native;
 	utility::vector1< bool > is_bulged_native;
 	core::pose::rna::classify_base_pairs( native_pose, base_pair_list_native, is_bulged_native );
-	
+
 	Size N_WC_NATIVE( 0 ), N_NWC_NATIVE( 0 );
 	Size N_WC( 0 ), N_NWC( 0 );
-	
+
 	for ( BasePair const & native_base_pair : base_pair_list_native ) {
 		Size const i = native_base_pair.res1();
 		Size const j = native_base_pair.res2();
-		
-		
+
+
 		BaseEdge const k = native_base_pair.edge1();
 		BaseEdge const m = native_base_pair.edge2();
-		
+
 		// Does the pose-of-interest have these residues, too?
 		// Map to new seqpos numbering, then create a base pair.
 		Size i_decoy = 0;
@@ -1069,15 +1069,15 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 			// handle partially built stepwise decoys
 			// chains might be unspecified for single-chain.
 			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-				if ( native_pose.pdb_info()->chain( i ) == pose.pdb_info()->chain( ii ) 
-						|| pose.pdb_info()->chain( ii ) == ' ' 
+				if ( native_pose.pdb_info()->chain( i ) == pose.pdb_info()->chain( ii )
+						|| pose.pdb_info()->chain( ii ) == ' '
 						|| pose.pdb_info()->chain( ii ) == '^' ) {
 					if ( native_pose.pdb_info()->number( i ) == pose.pdb_info()->number( ii ) ) {
 						i_decoy = ii;
 					}
 				}
 				if ( native_pose.pdb_info()->chain( j ) == pose.pdb_info()->chain( ii )
-						|| pose.pdb_info()->chain( ii ) == ' ' 
+						|| pose.pdb_info()->chain( ii ) == ' '
 						|| pose.pdb_info()->chain( ii ) == '^' ) {
 					if ( native_pose.pdb_info()->number( j ) == pose.pdb_info()->number( ii ) ) {
 						j_decoy = ii;
@@ -1088,18 +1088,18 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 		}
 		// Do not proceed unless we have found both residues of interest.
 		if ( !( i_decoy && j_decoy ) ) continue;
-		
+
 		Residue const & rsd_i( pose.residue( i_decoy ) );
 		Residue const & rsd_j( pose.residue( j_decoy ) );
-		
+
 		BasePair decoy_base_pair( native_base_pair );
 		decoy_base_pair.set_res1( i_decoy );
 		decoy_base_pair.set_res2( j_decoy );
-		
+
 		//std::cout << " NATIVE BASE PAIR " << i << " " << j << " " << k << " " << m << " " << it->first << std::endl;
-		
+
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && decoy_base_pair.orientation() == ANTIPARALLEL )  &&
-			possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
+				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC_NATIVE++;
 			if ( check_in_base_pair_list( decoy_base_pair /*from native*/, base_pair_list /*for decoy*/) ) N_WC++;
 		} else {
@@ -1111,23 +1111,23 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose, 
 			}
 		}
 	}
-	
+
 	Real f_natWC( 0.0 ), f_natNWC( 0.0 ), f_natBP( 0.0 );
 	if ( N_WC_NATIVE > 0 ) f_natWC = ( N_WC / (1.0 * N_WC_NATIVE) );
 	if ( N_NWC_NATIVE > 0 ) f_natNWC = ( N_NWC / (1.0 * N_NWC_NATIVE) );
 	if ( (N_WC_NATIVE + N_NWC_NATIVE) > 0 ) f_natBP = ( (N_WC+N_NWC) / (1.0 * (N_WC_NATIVE + N_NWC_NATIVE) ));
-	
-	// I would personally like to see the native number esp. of NWC because 
+
+	// I would personally like to see the native number esp. of NWC because
 	// otherwise the fraction could be deflated by false 0s.
 	s.add_string_value( "natWC" , ObjexxFCL::format::I( 9, N_WC_NATIVE ) );
 	s.add_string_value( "natNWC", ObjexxFCL::format::I( 9, N_NWC_NATIVE ) );
 	s.add_string_value( "natBP" , ObjexxFCL::format::I( 9, N_WC_NATIVE + N_NWC_NATIVE ) );
-	
+
 	s.add_energy( "f_natWC" , f_natWC );
 	s.add_energy( "f_natNWC", f_natNWC );
-	s.add_energy( "f_natBP" , f_natBP );	
+	s.add_energy( "f_natBP" , f_natBP );
 }
-	
+
 //////////////////////////////////////////////////////////////////////////////////////
 void
 apply_Aform_torsions( pose::Pose & pose, Size const n ){

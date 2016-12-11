@@ -68,6 +68,15 @@ public:
 
 	void factory_register( MoverCreatorOP creator );
 
+	/// @brief Is there a mover with the given name that's known to Rosetta?
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool mover_exists( std::string const &mover_name ) const;
+
+	/// @brief Get the XML schema for a given mover.
+	/// @details Throws an error if the mover is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &mover_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	/// @brief Create a mover given its identifying string
 	MoverOP newMover( std::string const & );
 

@@ -50,7 +50,7 @@ namespace residue_selector {
 std::string
 complex_type_name_for_residue_selector( std::string const & rs_type )
 {
-	return "rs_" + rs_type + "Type";
+	return "rs_" + rs_type + "_type";
 }
 
 void

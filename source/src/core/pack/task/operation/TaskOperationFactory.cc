@@ -100,6 +100,28 @@ or
 </OperateOnCertainResidues>
 
 */
+
+/// @brief Get the XML schema for a given TaskOperation.
+/// @details Throws an error if the TaskOperation is unknown to Rosetta.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+TaskOperationFactory::provide_xml_schema(
+	std::string const &task_operation_name,
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	TaskOperationCreatorMap::const_iterator iter( task_operation_creator_map_.find( task_operation_name ) );
+	if ( iter != task_operation_creator_map_.end() ) {
+		iter->second->provide_xml_schema( xsd );
+	} else {
+		TR << "Available options: ";
+		for ( TaskOperationCreatorMap::const_iterator to_iter = task_operation_creator_map_.begin(); to_iter != task_operation_creator_map_.end(); ++to_iter ) {
+			TR << to_iter->first << ", ";
+		}
+		TR << std::endl;
+		utility_exit_with_message( task_operation_name + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
+	}
+}
+
 TaskOperationOP
 TaskOperationFactory::newTaskOperation(
 	std::string const & type,

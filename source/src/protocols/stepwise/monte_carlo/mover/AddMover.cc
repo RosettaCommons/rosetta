@@ -577,14 +577,14 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
 	// figure out residue type from name3
 	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
-	
+
 	// Handle pH sampling: if sample_pH_ is true, then we need to have a 50/50
 	// shot of creating a protonated adenosine (50/50 because score will take
 	// care of the rest)
 	chemical::ResidueTypeCOP rsd_type = nullptr;
 	if ( newrestype == 'a' && sample_pH_ ) {
 		TR << "Going to add adenosine." << std::endl;
-		// There is something irritating about enforcing the exact equality of 
+		// There is something irritating about enforcing the exact equality of
 		// [0, 0.5) and [0.5, 1) in floating point space, but we don't care for
 		// now, certainly.
 		TR << "Selected ";
@@ -603,7 +603,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	} else {
 		rsd_type = chemical::ResidueTypeCOP( rsd_set->get_representative_type_base_name( newrestype3 ) );
 	}
-	
+
 	return conformation::ResidueFactory::create_residue( *rsd_type );
 }
 

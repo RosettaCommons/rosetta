@@ -6243,6 +6243,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	## options for parser
 	Option_Group( 'parser',
+		Option( 'info', 'StringVector', desc='Have the rosetta_scripts application print out the available XML-accessible options for a given mover, filter, task operation, or residue selector, and then exit.' ),
 		Option( 'output_schema', 'String', desc='Have the rosetta_scripts application write out its XML Schema to the given file and then exit.' ),
 		Option( 'patchdock', 'String', desc='Patchdock output file name.' ),
 		Option( 'patchdock_random_entry', 'IntegerVector', desc='Pick a random patchdock entry between two entry numbers. inclusive', n='2' ),

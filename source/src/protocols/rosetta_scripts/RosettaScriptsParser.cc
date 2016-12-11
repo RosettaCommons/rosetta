@@ -249,7 +249,7 @@ RosettaScriptsParser::generate_mover_from_pose(
 	}
 
 	// Validate the input script against the XSD for RosettaScripts, if it hasn't yet been validated.
-	if( !was_already_validated( dock_design_filename ) ) {
+	if ( !was_already_validated( dock_design_filename ) ) {
 		validate_input_script_against_xsd( dock_design_filename, fin );
 		set_validated( dock_design_filename );
 	}
@@ -832,8 +832,8 @@ bool
 RosettaScriptsParser::was_already_validated(
 	std::string const &filename
 ) const {
-	for(core::Size i=1, imax=filenames_already_validated_.size(); i<=imax; ++i) {
-		if( !filenames_already_validated_[i].compare( filename ) ) return true;
+	for ( core::Size i=1, imax=filenames_already_validated_.size(); i<=imax; ++i ) {
+		if ( !filenames_already_validated_[i].compare( filename ) ) return true;
 	}
 	return false;
 }
