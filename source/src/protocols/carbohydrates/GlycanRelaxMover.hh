@@ -195,7 +195,7 @@ private:
 
 	bool test_;
 	bool final_min_;
-	bool random_start_;
+	bool refine_;
 	bool sugar_bb_start_;
 
 	core::Size total_glycan_residues_;

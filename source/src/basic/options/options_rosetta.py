@@ -1995,12 +1995,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc = "KT for GlycanRelaxMover",
 				default = '2.0',
 				),
-			Option('glycan_relax_random_start', 'Boolean',
-				desc = "Randomize the starting glycans set to move before the protocol.  Used to create increased diversity.",
-				default = 'false'
-				),
-			Option('glycan_relax_sugar_bb_start', 'Boolean',
-				desc = "Randomize the starting glycans using sugar bb data before the protocol.",
+			Option('glycan_relax_refine', 'Boolean',
+				desc = "Set the protocol to not start from a random conformation, and instead refine the structure.",
 				default = 'false'
 				),
 			Option('cartmin', 'Boolean',
