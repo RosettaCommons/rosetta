@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   --path--/--class--.hh
-/// @brief  --brief--
-/// @author --name-- (--email--)
+/// @file   core/select/residue_selector/CloseContactResidueSelector.hh
+/// @brief  A class that finds the neighboring residues for a particular residue by looking at atom-atom distances
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_--path_underscore--_--class--_HH
-#define INCLUDED_--path_underscore--_--class--_HH
+#ifndef INCLUDED_core_select_residue_selector_CloseContactResidueSelector_HH
+#define INCLUDED_core_select_residue_selector_CloseContactResidueSelector_HH
 
 // Unit headers
-#include <--path--/--class--.fwd.hh>
+#include <core/select/residue_selector/CloseContactResidueSelector.fwd.hh>
 
 // Package headers
 #include <core/types.hh>
@@ -35,10 +35,12 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
---namespace--
+namespace core {
+namespace select {
+namespace residue_selector {
 
-/// @brief --brief--
-class --class-- : public core::select::residue_selector::ResidueSelector {
+/// @brief A class that finds the neighboring residues for a particular residue by looking at atom-atom distances
+class CloseContactResidueSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
 	typedef core::select::residue_selector::ResidueSubset ResidueSubset;
@@ -46,15 +48,15 @@ public:
 public:
 
 	/// @brief Constructor.
-	--class--();
+	CloseContactResidueSelector();
 
 	/// @brief Copy Constructor.  Usually not necessary unless you need deep copying (e.g. OPs)
-	//--class--(--class-- const & src);
+	CloseContactResidueSelector(CloseContactResidueSelector const & src);
 
 public:
 
 	/// @brief Destructor.
-	~--class--() override;
+	~CloseContactResidueSelector() override;
 
 	/// @brief Clone operator.
 	/// @details Copy the current object (creating the copy on the heap) and return an owning pointer
@@ -67,6 +69,10 @@ public:
 	/// indicating whether each residue is selected ("true") or not ("false").
 
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
+
+	void central_residue_group_selector( ResidueSelectorCOP selector );
+	void threshold( core::Real contact_threshold );
+	core::Real threshold() const;
 
 	/// @brief XML parse.
 	/// @details Parse RosettaScripts tags and set up this mover.
@@ -90,20 +96,26 @@ public:
 
 private:
 
+	core::Real close_contact_threshold_;
+	ResidueSelectorCOP central_residues_selector_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
 	template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
 
-
 };
 
 
---end_namespace--
+} //core
+} //select
+} //residue_selector
+
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( --namespace_underscore--_--class-- )
+CEREAL_FORCE_DYNAMIC_INIT( core_select_residue_selector_CloseContactResidueSelector )
 #endif // SERIALIZATION
 
-#endif //INCLUDED--path_underscore--_--class--_HH
+
+#endif //INCLUDEDcore/select/residue_selector_CloseContactResidueSelector_hh

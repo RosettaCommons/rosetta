@@ -11,8 +11,8 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-#ifndef INCLUDED_--path_underscore--_--class--_hh
-#define INCLUDED_--path_underscore--_--class--_hh
+#ifndef INCLUDED_--path_underscore--_--class--_HH
+#define INCLUDED_--path_underscore--_--class--_HH
 
 // Unit headers
 #include <--path--/--class--.fwd.hh>
@@ -105,4 +105,4 @@ operator<<( std::ostream & os, --class-- const & mover );
 
 --end_namespace--
 
-#endif //--path--_--class--_hh
+#endif //--path_underscore--_--class--_HH

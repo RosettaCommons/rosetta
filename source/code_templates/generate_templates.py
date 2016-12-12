@@ -68,8 +68,8 @@ class GenerateRosettaTemplates(object):
             "--namespace_dot--": lambda: self.get_namespace_char_concat("."),
             "--namespace_colon--": lambda: self.get_namespace_char_concat(":"),
             "--namespace_2colon--": lambda: self.get_namespace_char_concat("::"),
+            "--namespace_underscore--": lambda: self.get_namespace_char_concat("_"),
             "--end_namespace--": lambda: self.get_end_namespace(),
-            "--res_sel_creator--": lambda: self.get_res_sel_creator_path()
         }
 
         #### General Template Paths ###
@@ -93,10 +93,10 @@ class GenerateRosettaTemplates(object):
             files.append(self.fwd_class_template)
 
         #Special case residue selector creator
-        if hasattr(self.options, "type") and self.options.type == "residue_selector" and \
-            self.options.namespace == residue_selector_namespace:
-
-            files = [f for f in files if os.path.basename(f) != "ResidueSelectorCreator.hh"]
+        #if hasattr(self.options, "type") and self.options.type == "residue_selector" and \
+        #    self.options.namespace == residue_selector_namespace:
+        #
+        #    files = [f for f in files if os.path.basename(f) != "ResidueSelectorCreator.hh"]
 
 
 
@@ -163,15 +163,12 @@ class GenerateRosettaTemplates(object):
             if self.options.type == "util":
                 print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/util"+"*"
             else:
+                print "\nRemember to add your newly created files to the git repository:",
                 print "\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
                       self.get_option("class_name", fail_on_none=False)+"*"
 
 
             if self.options.type == "residue_selector":
-
-                if self.options.namespace == residue_selector_namespace:
-                    print "\nA Creator class should be declared in "+self.get_base_outdir()+"/"+ \
-                        "core/select/residue_selector/ResidueSelectorCreators.hh"
 
                 if self.options.namespace[0] == "core":
                     print "\nRegister in (core.5): \n"+\
@@ -264,16 +261,16 @@ class GenerateRosettaTemplates(object):
         else:
             sys.exit("Path not defined.  Either set the path override or pass a namespace")
 
-    def get_res_sel_creator_path(self):
-        """
-        Places the residue selector creator path in the template if namespace is not core
-        For ResidueSelectors, Creators are in core are contained in one one file.
-        :rtype: str
-        """
-        if self.options.namespace == residue_selector_namespace:
-            return "<core/select/residue_selector/ResidueSelectorCreators.hh>\n"
-        else:
-            return "<"+self.replacement["--path--"]()+"/"+self.replacement["--class--"]()+"Creator.hh>\n"
+    #def get_res_sel_creator_path(self):
+    #    """
+    #    Places the residue selector creator path in the template if namespace is not core
+    #    For ResidueSelectors, Creators are in core are contained in one one file.
+    #    :rtype: str
+    #    """
+    #    if self.options.namespace == residue_selector_namespace:
+    #        return "<core/select/residue_selector/ResidueSelectorCreators.hh>\n"
+    #    else:
+    #        return "<"+self.replacement["--path--"]()+"/"+self.replacement["--class--"]()+"Creator.hh>\n"
 
 
 

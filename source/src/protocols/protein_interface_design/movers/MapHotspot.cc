@@ -384,7 +384,15 @@ void MapHotspot::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	utility::tag::XMLSchemaSimpleSubelementList ssl;
 	ssl.add_simple_subelement( "Jumps", subtag_attributes, "XRW TODO"/*, 0 minoccurs*/ );
 
-	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "XRW TO DO", attlist, ssl );
+	std::string doc_string = "Map out the residues that might serve as a hotspot region on a target. This requires"
+		" massive user guidance. Each hot-spot residue should be roughly placed by the user (at least as backbone)"
+		" against the target. Each hot-spot residue should have a different chain ID. The method iterates over all"
+		" allowed residue identities and all allowed rotamers for each residue. Tests its filters and for the subset"
+		" that pass selects the lowest-energy residue by score12. Once the first hot-spot residue is identified it"
+		" iterates over the next and so on until all hot-spot residues are placed. The output contains one file per"
+		" residue identity combination.";
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), doc_string, attlist, ssl );
 }
 
 std::string MapHotspotCreator::keyname() const {

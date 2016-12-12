@@ -7,25 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--Creator.hh
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file   core/select/residue_selector/CloseContactResidueSelectorCreator.hh
+/// @brief  Class declaration for the CloseContactResidueSelectorCreator
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_--path_underscore--_--class--Creator_HH
-#define INCLUDED_--path_underscore--_--class--Creator_HH
+#ifndef INCLUDED_core_select_residue_selector_CloseContactResidueSelectorCreator_HH
+#define INCLUDED_core_select_residue_selector_CloseContactResidueSelectorCreator_HH
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
---namespace--
+namespace core {
+namespace select {
+namespace residue_selector {
 
-class --class--Creator : public  core::select::residue_selector::ResidueSelectorCreator {
+class CloseContactResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	ResidueSelectorOP create_residue_selector() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
---end_namespace--
 
-#endif //INCLUDED_--path_underscore--_--class--Creator_HH
+} //namespace residue_selector
+} //namespace select
+} //namespace core
+
+
+#endif

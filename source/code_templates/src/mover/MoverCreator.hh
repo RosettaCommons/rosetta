@@ -11,30 +11,20 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-#ifndef INCLUDED_--path_underscore--_--class--Creator_hh
-#define INCLUDED_--path_underscore--_--class--Creator_hh
+#ifndef INCLUDED_--path_underscore--_--class--Creator_HH
+#define INCLUDED_--path_underscore--_--class--Creator_HH
 
 #include <protocols/moves/MoverCreator.hh>
-//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from MoverCreator
 
 --namespace--
 
 class --class--Creator : public protocols::moves::MoverCreator {
-
 public:
-
-	protocols::moves::MoverOP
-	create_mover() const override;
-
-	std::string
-	keyname() const override;
-
-	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
-
-
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 --end_namespace--
 
-#endif //INCLUDED_--path--_--class--_fwd_hh
+#endif //INCLUDED_--path_underscore--_--class--Creator_HH

@@ -13,8 +13,7 @@
 
 // Unit headers
 #include <--path--/--class--.hh>
-#include --res_sel_creator--
-#include <core/select/residue_selector/util.hh>
+#include <--path--/--class--Creator.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -22,6 +21,8 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
+
+// Project headers
 #include <core/pose/Pose.hh>
 
 // Utility Headers
@@ -31,6 +32,15 @@
 
 // C++ headers
 #include <utility/assert.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -60,58 +70,6 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 	return ResidueSelectorOP( new --class--(*this) );
 }
 
---class--::ResidueSelectorOP
---class--Creator::create_residue_selector() const {
-	return --class--::ResidueSelectorOP( new --class-- );
-}
-
-std::string --class--::get_name() const
-{
-	return --class--::class_name();
-}
-
-std::string --class--::class_name()
-{
-	return "--class--";
-}
-
-std::string
---class--Creator::keyname() const {
-	return --class--::class_name();
-}
-
-/// @brief XML parse.
-/// @details Parse RosettaScripts tags and set up this mover.
-void
---class--::parse_my_tag(
-	utility::tag::TagCOP ,
-	basic::datacache::DataMap & )
-{
-}
-
-void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & )
-{
-	//Syntax Example:
-	//using namespace utility::tag;
-	//AttributeList attributes;
-	//attributes
-	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
-	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
-	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
-
-}
-
-/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
-///
-void
---class--Creator::provide_xml_schema(
-	utility::tag::XMLSchemaDefinition & xsd
-) const {
-	--class--::provide_xml_schema( xsd );
-}
-
-
-
 /// @brief "Apply" function.
 /// @details Given the pose, generate a vector of bools with entries for every residue in the pose
 /// indicating whether each residue is selected ("true") or not ("false").
@@ -124,8 +82,74 @@ void
 	return ResidueSubset();
 }
 
+/// @brief XML parse.
+/// @details Parse RosettaScripts tags and set up this mover.
+void
+--class--::parse_my_tag(
+	utility::tag::TagCOP ,
+	basic::datacache::DataMap & )
+{
+}
+
+std::string --class--::get_name() const
+{
+	return --class--::class_name();
+}
+
+std::string --class--::class_name()
+{
+	return "--class--";
+}
+
+void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & /*xsd*/ )
+{
+	//Syntax Example:
+	//using namespace utility::tag;
+	//AttributeList attributes;
+	//attributes
+	//	+ XMLSchemaAttribute::attribute_w_default(  "select_positive_phi",      xsct_rosetta_bool, "true" )
+	//	+ XMLSchemaAttribute::attribute_w_default(  "ignore_unconnected_upper", xsct_rosetta_bool, "true" );
+	//xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+
+}
+
+--class--::ResidueSelectorOP
+--class--Creator::create_residue_selector() const {
+	return --class--::ResidueSelectorOP( new --class-- );
+}
+
+std::string
+--class--Creator::keyname() const {
+	return --class--::class_name();
+}
+
+/// @brief Provide XSD information, allowing automatic evaluation of bad XML.
+void
+--class--Creator::provide_xml_schema(
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	--class--::provide_xml_schema( xsd );
+}
 
 --end_namespace--
 
+#ifdef    SERIALIZATION
+template< class Archive >
+void
+--namespace_2colon--::--class--::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	// You need to add "arc( <datamember_name> );" calls here for each of your data members.
+}
 
+template< class Archive >
+void
+--namespace_2colon--::--class--::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	// You need to add "arc( <datamember_name> );" calls here for each of your data members.
+}
 
+SAVE_AND_LOAD_SERIALIZABLE( --namespace_2colon--::--class-- );
+CEREAL_REGISTER_TYPE( --namespace_2colon--::--class-- )
+
+CEREAL_REGISTER_DYNAMIC_INIT( --namespace_underscore--_--class-- )
+#endif // SERIALIZATION

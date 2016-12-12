@@ -807,6 +807,7 @@ sources = {
 		"BinSelector",
 		"CachedResidueSubset",
 		"ChainSelector",
+		"CloseContactResidueSelector",
 		"GlycanResidueSelector",
 		"InterGroupInterfaceByVectorSelector",
 		"JumpDownstreamSelector",
