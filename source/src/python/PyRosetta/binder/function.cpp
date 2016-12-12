@@ -270,6 +270,21 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 
 		string return_type = standard_name( F->getReturnType().getCanonicalType().getAsString() );
 
+		// workaround of GCC bug during lambda specification: replace enum/struct/class/const_* from begining of the lambda return type with //const*
+		static vector< std::pair<string, string> > const name_map = {
+			std::make_pair("enum ", ""),
+			std::make_pair("class ", ""),
+			std::make_pair("struct ", ""),
+			std::make_pair("const enum ", "const "),
+			std::make_pair("const class ", "const "),
+			std::make_pair("const struct ", "const "),
+		};
+		for(auto & p : name_map) {
+			if( begins_with(return_type, p.first) ) {
+				return_type = p.second + return_type.substr(p.first.size());
+			}
+		}
+
 		if( m and !m->isStatic() ) {
 			string object = class_qualified_name( m->getParent() ) + (m->isConst() ? " const" : "") + " &o" + ( args_to_bind ? ", " : "" );
 			function = "[]({}{}) -> {} {{ return o.{}({}); }}"_format(object, args.first, return_type, F->getNameAsString(), args.second);

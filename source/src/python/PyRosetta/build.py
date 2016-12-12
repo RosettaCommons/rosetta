@@ -72,7 +72,7 @@ def get_defines():
 
 
 def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False):
-    print(message);  print(command_line)
+    print(message);  print(command_line); sys.stdout.flush();
     while True:
 
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -84,13 +84,14 @@ def execute(message, command_line, return_='status', until_successes=False, term
 
         exit_code = p.returncode
 
-        if exit_code  or  not silent: print(output)
+        if exit_code  or  not silent: print(output); sys.stdout.flush();
 
         if exit_code and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
         print( "Error while executing {}: {}\n".format(message, output) )
         print("Sleeping 60s... then I will retry...")
+        sys.stdout.flush();
         time.sleep(60)
 
     if return_ == 'tuple': return(exit_code, output)
@@ -372,7 +373,9 @@ def generate_bindings(rosetta_source_path):
     with open(include, 'w') as fh:
         for i in all_includes: fh.write( '#include <{}>\n'.format(i) )
 
-
+    config = open('rosetta.config').read()
+    if 'clang' not in Options.compiler: config += open('rosetta.gcc.config').read()
+    with open(prefix + 'rosetta.config', 'w') as f: f.write(config)
 
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
     defines  = ''.join( [' -D'+d for d in get_defines()] )
@@ -380,7 +383,7 @@ def generate_bindings(rosetta_source_path):
     if Platform == 'macos': includes = '-isystem/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1' + includes
 
     execute('Generating bindings...', 'cd {prefix} && {} --config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {} -- -std=c++11 {} {}'.format(Options.binder, include, includes, defines,
-                                                                                                                                                            prefix=prefix, config=os.path.abspath('./rosetta.config'),
+                                                                                                                                                            prefix=prefix, config='./rosetta.config',
                                                                                                                                                             annotate=' --annotate-includes' if Options.annotate_includes else '',
                                                                                                                                                             trace=' --trace' if Options.trace else '',) ) # -stdlib=libc++ -x c++
 
@@ -503,4 +506,10 @@ def main(args):
 
 
 if __name__ == "__main__":
+
+    # Check if current working dir is where this file is located...
+    if os.path.dirname(os.path.realpath(__file__)) != os.getcwd():
+        print('This script must be run from within setup directory! Exiting...')
+        sys.exit(1)
+
     main(sys.argv)

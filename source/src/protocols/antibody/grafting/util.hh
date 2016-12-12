@@ -14,13 +14,16 @@
 #ifndef INCLUDED_protocols_antibody_grafting_util_hh
 #define INCLUDED_protocols_antibody_grafting_util_hh
 
-#ifdef __clang__
-#define __ANTIBODY_GRAFTING__
-#else
-#if (__GNUC__ > 3  &&  __GNUC_MINOR__ > 8)  || (__GNUC__ > 4) // We need at least GCC-4.9 to compiler Antibody code
-#define __ANTIBODY_GRAFTING__
-#endif
-#endif
+
+#define __ANTIBODY_GRAFTING__  // always define __ANTIBODY_GRAFTING__ and relay on antibody_grafting_usable to determine if it can be used
+
+// #ifdef __clang__
+// #define __ANTIBODY_GRAFTING__
+// #else
+// #if (__GNUC__ > 3  &&  __GNUC_MINOR__ > 8)  || (__GNUC__ > 4) // We need at least GCC-4.9 to compiler Antibody code
+// #define __ANTIBODY_GRAFTING__
+// #endif
+// #endif
 
 #include <utility/vector0.hh>
 #include <map>

@@ -270,10 +270,25 @@ string standard_name(string const &type)
 
 		make_pair("class std::string",  "std::string"), // for return/paremeters types
 		make_pair("class std::ostream", "std::ostream"),
+
+		//make_pair("const class ", "const "),
+		//make_pair("const struct ", "const "),
 	};
 
 	string r(type);
 	for(auto & p : name_map) replace(r, p.first, p.second);
+
+	// static vector< string > const prefixes = {
+	// 	"enum ",
+	// 	"class ",
+	// 	"struct ",
+	// };
+	// for(auto & p : prefixes) {
+	// 	if( begins_with(r, p) ) {
+	// 		r = r.substr(p.size());
+	// 		break;
+	// 	}
+	// }
 
 	fix_boolean_types(r);
 
