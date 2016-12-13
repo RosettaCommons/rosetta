@@ -528,7 +528,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
     distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
 
     if res:
         res_code = _S_build_failed_
