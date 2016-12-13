@@ -176,8 +176,8 @@ std::map< std::string, std::map<std::string, bool> >
 SCS_Helper::parse_outlier_data()
 {
 	// e.g. 12e8_FRL
-  std::map< std::string, std::map<std::string, bool> > results;
-	std::string temp_cdr;
+	std::map< std::string, std::map<std::string, bool> > results;
+	//std::string temp_cdr;
 
 	// can we find the file?
 	std::string dir = "protocol_data/antibody/";

@@ -34,7 +34,7 @@ struct SCS_SubstitutionMatrixResult : public SCS_Antibody_Database_Result
 	core::Real score;
 
 	/// sequences of selected template (do not confuse with query sequences! 'sequence' will hold value corresponding to region results column)
-	std::string h1, h2, h3, frh, l1, l2, l3, frl;
+	//std::string h1, h2, h3, frh, l1, l2, l3, frl;
 };
 
 class SCS_SubstitutionMatrix : public SCS_LoopOverSCs

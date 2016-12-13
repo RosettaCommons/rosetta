@@ -330,3 +330,35 @@
 [utility/graph/UpperEdgeGraph.hh:246]: (style) Unused private function: 'UEVertex::note_lower_edge_added'
 [utility/graph/UpperEdgeGraph.hh:507]: (style) Unused private function: 'UpperEdgeGraph::get_vertex_ptr'
 [utility/graph/UpperEdgeGraph.hh:510]: (style) Unused private function: 'UpperEdgeGraph::note_edge_deleted'
+[protocols/antibody/grafting/chothia_numberer.cc:85]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:224]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:225]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:330]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:331]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:332]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:333]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:334]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/grafter.cc:335]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_based_cdr_detection.cc:53]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_based_cdr_detection.cc:54]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_manager.cc:77]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_manager.cc:78]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_manager.cc:79]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/regex_manager.cc:80]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:105]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:106]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:107]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:131]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:132]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:133]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:292]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:293]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:294]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:382]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:383]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_blast.cc:384]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_functor.cc:60]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_functor.cc:61]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_multi_template.cc:53]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_multi_template.cc:54]: (warning) Redundant code: Found a statement that begins with string constant.
+[protocols/antibody/grafting/scs_multi_template.cc:55]: (warning) Redundant code: Found a statement that begins with string constant.
