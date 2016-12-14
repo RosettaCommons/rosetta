@@ -61,6 +61,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_check_if_residues_are_Ctermini( tag->getOption< std::string >( "Ctermini", "ALL" ) );
 	set_skip_connect_info( tag->getOption< bool >( "skip_connect_info", 0 ) );
 	set_connect_info_cutoff( tag->getOption< Real >( "connect_info_cutoff", 0.0 ) );
+	set_do_not_autoassign_SS( tag->getOption< bool >( "do_not_autoassign_SS", false ) ); //NOTE to later person writing provide_xml_schema: this option does nothing if output_secondary_structure is not set true
 	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", 0 ) );
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ) );
 	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", 0 ) );
@@ -75,6 +76,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_no_chainend_ter( tag->getOption< bool >( "no_chainend_ter", 0 ) );
 	set_no_output_cen( tag->getOption< bool >( "no_output_cen", 0 ) );
 	set_normalize_to_thk( tag->getOption< bool >( "normalize_to_thk", 0 ) );
+	set_output_secondary_structure( tag->getOption< bool >( "output_secondary_structure", false ) );
 	set_output_torsions( tag->getOption< bool >( "output_torsions", 0 ) );
 	set_output_virtual( tag->getOption< bool >( "output_virtual", 0 ) );
 	set_output_virtual_zero_occ( tag->getOption< bool >( "output_virtual_zero_occ", 0 ) );
@@ -110,6 +112,7 @@ std::string const & StructFileRepOptions::check_if_residues_are_Ntermini() const
 std::string const & StructFileRepOptions::check_if_residues_are_Ctermini() const { return check_if_residues_are_Ctermini_; }
 bool StructFileRepOptions::skip_connect_info() const { return skip_connect_info_; }
 core::Real StructFileRepOptions::connect_info_cutoff() const { return connect_info_cutoff_; }
+bool StructFileRepOptions::do_not_autoassign_SS() const { return do_not_autoassign_SS_;}
 bool StructFileRepOptions::exit_if_missing_heavy_atoms() const { return exit_if_missing_heavy_atoms_; }
 bool StructFileRepOptions::fold_tree_io() const { return fold_tree_io_; }
 bool StructFileRepOptions::ignore_unrecognized_res() const { return ignore_unrecognized_res_; }
@@ -124,6 +127,7 @@ bool StructFileRepOptions::missing_dens_as_jump() const { return missing_dens_as
 bool StructFileRepOptions::no_chainend_ter() const { return no_chainend_ter_; }
 bool StructFileRepOptions::no_output_cen() const { return no_output_cen_; }
 bool StructFileRepOptions::normalize_to_thk() const { return normalize_to_thk_; }
+bool StructFileRepOptions::output_secondary_structure() const { return output_secondary_structure_; }
 bool StructFileRepOptions::output_torsions() const { return output_torsions_; }
 bool StructFileRepOptions::output_virtual() const { return output_virtual_; }
 bool StructFileRepOptions::output_virtual_zero_occ() const { return output_virtual_zero_occ_; }
@@ -159,6 +163,9 @@ void StructFileRepOptions::set_skip_connect_info( bool const skip_connect_info )
 
 void StructFileRepOptions::set_connect_info_cutoff( core::Real const & connect_info_cutoff )
 { connect_info_cutoff_ = connect_info_cutoff; }
+
+void StructFileRepOptions::set_do_not_autoassign_SS( bool const do_not_autoassign_SS)
+{ do_not_autoassign_SS_ = do_not_autoassign_SS; }
 
 void StructFileRepOptions::set_exit_if_missing_heavy_atoms( bool const exit_if_missing_heavy_atoms )
 { exit_if_missing_heavy_atoms_ = exit_if_missing_heavy_atoms; }
@@ -204,6 +211,9 @@ void StructFileRepOptions::set_no_output_cen( bool const no_output_cen )
 
 void StructFileRepOptions::set_normalize_to_thk( bool const normalize_to_thk )
 { normalize_to_thk_ = normalize_to_thk; }
+
+void StructFileRepOptions::set_output_secondary_structure( bool const output_secondary_structure )
+{ output_secondary_structure_ = output_secondary_structure; }
 
 void StructFileRepOptions::set_output_torsions( bool const output_torsions )
 { output_torsions_ = output_torsions; }
@@ -276,6 +286,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ in::Ctermini
 		+ inout::skip_connect_info
 		+ inout::connect_info_cutoff
+		+ out::file::do_not_autoassign_SS
 		+ run::exit_if_missing_heavy_atoms
 		+ inout::fold_tree_io
 		+ in::include_sugars
@@ -290,6 +301,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ out::file::no_chainend_ter
 		+ out::file::no_output_cen
 		+ mp::output::normalize_to_thk
+		+ out::file::output_secondary_structure
 		+ out::file::output_torsions
 		+ out::file::output_virtual
 		+ out::file::output_virtual_zero_occ
@@ -323,6 +335,7 @@ void
 StructFileRepOptions::provide_xml_schema( utility::tag::XMLSchemaDefinition &  )
 {
 	// TO DO!
+
 }
 
 
@@ -333,8 +346,10 @@ StructFileRepOptions::provide_xml_schema( utility::tag::XMLSchemaDefinition &  )
 /// 4. add the option key to the OptionKeyList in list_options_read
 /// 5. add a read to the (XML) Tag object in the parse_my_tag funciton
 /// 6. list the XML attribute (aka "Tag option") that you read from in parse_my_tag to the provide_xml_schema function.
+/// 7. add to operator < and operator ==
+/// 8. add to init_from_options (here)
 ///
-/// The usability of Rosetta is improved by continued vigilence of its developers to
+/// The usability of Rosetta is improved by continued vigilance of its developers to
 /// provide a well documented and accessible code, and the process of reading in structures
 /// is vital to Rosetta. Do your part and follow in the careful efforts of those who
 /// came before you.
@@ -347,6 +362,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_check_if_residues_are_Ctermini( options[ in::Ctermini ].value());
 	set_skip_connect_info( options[ inout::skip_connect_info ].value());
 	set_connect_info_cutoff( options[ inout::connect_info_cutoff ].value());
+	set_do_not_autoassign_SS( options [ OptionKeys::out::file::do_not_autoassign_SS ].value());
 	set_exit_if_missing_heavy_atoms( options[ run::exit_if_missing_heavy_atoms ].value());
 	set_fold_tree_io( options[ inout::fold_tree_io ]() );
 
@@ -363,6 +379,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_no_chainend_ter( options[ OptionKeys::out::file::no_chainend_ter ]() );
 	set_no_output_cen( options[ OptionKeys::out::file::no_output_cen ]() );
 	set_normalize_to_thk( options[ OptionKeys::mp::output::normalize_to_thk ]() );
+	set_output_secondary_structure( options[ OptionKeys::out::file::output_secondary_structure ]() );
 	set_output_torsions( options[ OptionKeys::out::file::output_torsions ]() );
 	set_output_virtual( options[ OptionKeys::out::file::output_virtual ]() );
 	set_output_virtual_zero_occ( options[ OptionKeys::out::file::output_virtual_zero_occ ]() );
@@ -397,6 +414,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                      ) return false;
 	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
 	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
+	if ( do_not_autoassign_SS_                                  != other.do_not_autoassign_SS_                                 ) return false;
 	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
 	if ( fold_tree_io_                                          != other.fold_tree_io_                                         ) return false;
 	if ( ignore_unrecognized_res_                               != other.ignore_unrecognized_res_                              ) return false;
@@ -410,6 +428,7 @@ StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 	if ( no_chainend_ter_                                       != other.no_chainend_ter_                                      ) return false;
 	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
 	if ( normalize_to_thk_                                      != other.normalize_to_thk_                                     ) return false;
+	if ( output_secondary_structure_                            != other.output_secondary_structure_                           ) return false;
 	if ( output_torsions_                                       != other.output_torsions_                                      ) return false;
 	if ( output_virtual_                                        != other.output_virtual_                                       ) return false;
 	if ( output_virtual_zero_occ_                               != other.output_virtual_zero_occ_                              ) return false;
@@ -438,12 +457,14 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 {
 	if ( check_if_residues_are_Ntermini_                        <  other.check_if_residues_are_Ntermini_                       ) return true;
 	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
-	if ( check_if_residues_are_Ctermini_                        <  other.check_if_residues_are_Ctermini_                      ) return true;
-	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                      ) return false;
+	if ( check_if_residues_are_Ctermini_                        <  other.check_if_residues_are_Ctermini_                       ) return true;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                       ) return false;
 	if ( skip_connect_info_                                     <  other.skip_connect_info_                                    ) return true;
 	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
 	if ( connect_info_cutoff_                                   <  other.connect_info_cutoff_                                  ) return true;
 	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
+	if ( do_not_autoassign_SS_                                  < other.do_not_autoassign_SS_                                 ) return true;
+	if ( do_not_autoassign_SS_                                  != other.do_not_autoassign_SS_                                 ) return false;
 	if ( exit_if_missing_heavy_atoms_                           <  other.exit_if_missing_heavy_atoms_                          ) return true;
 	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
 	if ( fold_tree_io_                                          <  other.fold_tree_io_                                         ) return true;
@@ -470,6 +491,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( no_output_cen_                                         != other.no_output_cen_                                        ) return false;
 	if ( normalize_to_thk_                                      <  other.normalize_to_thk_                                     ) return true;
 	if ( normalize_to_thk_                                      != other.normalize_to_thk_                                     ) return false;
+	if ( output_secondary_structure_                            <  other.output_secondary_structure_                           ) return true;
+	if ( output_secondary_structure_                            != other.output_secondary_structure_                           ) return false;
 	if ( output_torsions_                                       <  other.output_torsions_                                      ) return true;
 	if ( output_torsions_                                       != other.output_torsions_                                      ) return false;
 	if ( output_virtual_                                        <  other.output_virtual_                                       ) return true;

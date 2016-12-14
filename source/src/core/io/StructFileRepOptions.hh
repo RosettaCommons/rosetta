@@ -60,6 +60,7 @@ public:
 	std::string const & check_if_residues_are_Ctermini() const;
 	bool skip_connect_info() const;
 	core::Real connect_info_cutoff() const;
+	bool do_not_autoassign_SS() const;
 	bool exit_if_missing_heavy_atoms() const;
 	bool fold_tree_io() const;
 	bool ignore_unrecognized_res() const;
@@ -74,6 +75,7 @@ public:
 	bool no_chainend_ter() const;
 	bool no_output_cen() const;
 	bool normalize_to_thk() const;
+	bool output_secondary_structure() const;
 	bool output_torsions() const;
 	bool output_virtual() const;
 	bool output_virtual_zero_occ() const;
@@ -102,6 +104,7 @@ public:
 	void set_check_if_residues_are_Ctermini( std::string const & check_if_residues_are_Ctermini );
 	void set_skip_connect_info( bool const skip_connect_info );
 	void set_connect_info_cutoff( core::Real const & connect_info_cutoff );
+	void set_do_not_autoassign_SS( bool const do_not_autoassign_SS );
 	void set_exit_if_missing_heavy_atoms( bool const exit_if_missing_heavy_atoms );
 	void set_fold_tree_io( bool const fold_tree_io );
 	void set_ignore_unrecognized_res( bool const ignore_unrecognized_res );
@@ -116,6 +119,7 @@ public:
 	void set_no_chainend_ter( bool const no_chainend_ter );
 	void set_no_output_cen( bool const no_output_cen );
 	void set_normalize_to_thk( bool const normalize_to_thk );
+	void set_output_secondary_structure( bool const output_secondary_structure );
 	void set_output_torsions( bool const output_torsions );
 	void set_output_virtual( bool const output_virtual );
 	void set_output_virtual_zero_occ( bool const output_virtual_zero_occ );
@@ -166,6 +170,7 @@ private:
 	std::string check_if_residues_are_Ctermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	bool skip_connect_info_;
 	core::Real connect_info_cutoff_;
+	bool do_not_autoassign_SS_;
 	bool exit_if_missing_heavy_atoms_;
 	bool fold_tree_io_;
 	bool ignore_unrecognized_res_;
@@ -180,6 +185,7 @@ private:
 	bool no_chainend_ter_;
 	bool no_output_cen_;
 	bool normalize_to_thk_;
+	bool output_secondary_structure_;
 	bool output_torsions_;
 	bool output_virtual_;
 	bool output_virtual_zero_occ_;

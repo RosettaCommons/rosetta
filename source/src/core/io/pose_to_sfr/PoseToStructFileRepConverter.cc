@@ -213,6 +213,10 @@ PoseToStructFileRepConverter::init_from_pose(
 		sfr_->crystinfo() = pose.pdb_info()->crystinfo();
 	}
 
+	if ( options.output_secondary_structure() ) {
+		generate_secondary_structure_informations( pose );
+	}
+
 	// Get membrane, other data:
 	grab_additional_pose_data( pose );
 
@@ -1225,6 +1229,145 @@ std::string restrict_prec( core::Real inval )
 
 }
 
+/// @brief fills HELIXInformation and SHEETInformation for SFR - wrappers for individual functions
+/// @author Steven Lewis smlewi@gmail.com, but cribbed from code of Yifan Song as part of Cyrus Biotechnology
+/// option dependencies in this function: options_.output_secondary_structure() controls if it runs at all, options_.per_chain_renumbering() is used with ResidueInformation, and it also calls get_residue_information()
+void PoseToStructFileRepConverter::generate_secondary_structure_informations(
+	core::pose::Pose const & pose
+) {
+
+	//skip if option not requested
+	if ( !options_.output_secondary_structure() ) return;
+
+	//generate ss string ourselves unless requested to use the one in the pose
+	std::string secstructs(pose.secstruct());
+	if ( !options_.do_not_autoassign_SS() ) { //this defaults FALSE, so usually this first if DOES run
+		secstructs = core::scoring::dssp::Dssp(pose).get_dssp_secstruct();
+	} else if ( secstructs == "" ) {  //I think this never works, because pose seems to set all L secstruct by default
+		TR.Error << "PoseToStructFileRepConverter::generate_secondary_structure_informations:: you have requested secondary structure output (-out:file:output_secondary_structure true) without automatically generating the secstruct string (-out:file:do_not_autoassign_SS true), but your pose does not have its secstruct string set; skipping secondary structure output" << std::endl;
+		return;
+	} else if ( secstructs.size() != pose.size() ) {
+		TR.Error << "PoseToStructFileRepConverter::generate_secondary_structure_informations:: you have requested secondary structure output (-out:file:output_secondary_structure true) without automatically generating the secstruct string (-out:file:do_not_autoassign_SS true), but your pose's secstruct string is a different length from your pose; skipping secondary structure output" << std::endl;
+		return;
+	} else { //we are checking if the string consists of only LLLLLLLLL... or if H and E occur
+		std::size_t const found_H = secstructs.find("H");
+		std::size_t const found_E = secstructs.find("E");
+		if ( found_H == std::string::npos && found_E == std::string::npos ) {
+			TR.Error << "PoseToStructFileRepConverter::generate_secondary_structure_informations:: you have requested secondary structure output (-out:file:output_secondary_structure true) without automatically generating the secstruct string (-out:file:do_not_autoassign_SS true), but your pose appears to have an all-L secondary structure.  It is likely that your pose never had its secondary structure set by DSSP.  No secondary structure will be output." << std::endl;
+			return; //not clear that this return is relevant since the rest of this code is no-op in this circumstance; OK to change, later code-reviewer!
+		}
+	}
+
+	//count numbers of SS elements for their ID field
+	core::Size n_helix = 0, n_sheet = 0;//, n_loop = 0;
+	core::Size new_tercount( 0 ); //we have to track this for ResidueInformation
+
+	//Now we are going to iterate through the pose, identifying secondary structure elements
+	for ( Size ires=1; ires<pose.size(); ++ires ) {
+		char secstruct = secstructs[ires-1]; //H, E, or L; note indexing fix
+		Size chain = pose.residue(ires).chain();
+		Size jres = ires;
+
+		//this is tracked for certain option combinations in ResidueInformation
+		//this was copied from elsewhere in the file and NOT TESTED CAREFULLY
+		if ( ( ires > 1 ) && ( pose.chain( ires ) != pose.chain( ires - 1 ) ) ) {
+			++new_tercount;
+		}
+
+		// iterate jres until jres+1's secstruct mismatches, so that ires and jres mark the beginning and end of an ss segment
+		while (
+				jres < pose.size() //not past end of pose
+				&& secstructs[jres] == secstruct //ss matches
+				&& pose.residue(jres+1).chain() == chain /*still on same chain*/ ) {
+			jres += 1;
+		}
+
+		ResidueInformation ires_info, jres_info;
+		get_residue_information(pose, ires, use_pdb_info_for_num(pose, ires), options_.per_chain_renumbering(), new_tercount, ires_info);
+		get_residue_information(pose, jres, use_pdb_info_for_num(pose, jres), options_.per_chain_renumbering(), new_tercount, jres_info);
+
+		if ( secstruct == 'H' ) {
+			n_helix += 1;
+			core::Size const helix_length(jres-ires+1);
+			generate_HELIXInformation(ires_info, jres_info, n_helix, helix_length);
+		} else if ( secstruct == 'E' ) {
+			n_sheet += 1;
+			generate_SHEETInformation(ires_info, jres_info, n_sheet);
+		}
+
+		ires = jres; //increment ires to end of this ss element; loop iterator will move us to the start of the next ss element
+	}
+	return;
+}
+
+/// @brief fills one HELIXInformation into SFR
+/// @author Steven Lewis smlewi@gmail.com
+void PoseToStructFileRepConverter::generate_HELIXInformation(
+	ResidueInformation const & start_info,
+	ResidueInformation const & stop_info,
+	core::Size const index,
+	core::Size const length
+){
+
+	HELIXInformation helix;
+	helix.helixID = index;
+	helix.helix_name = std::string(ObjexxFCL::format::I(3, index)); //3-width string
+	helix.name3_1 = start_info.resName();
+	helix.chainID1 = start_info.chainID();
+	helix.seqNum1 = start_info.resSeq();
+	helix.icode1 = start_info.iCode();
+	helix.name3_2 = stop_info.resName();
+	helix.chainID2 = stop_info.chainID();
+	helix.seqNum2 = stop_info.resSeq();
+	helix.icode2 = stop_info.iCode();
+	//IGNORING helixClass
+	//IGNORING comment
+	helix.length = length;
+
+	std::string const key(start_info.resid());
+	//check if this is already in map
+	if ( sfr_->HELIXInformations().count( key ) ) {
+		utility_exit_with_message("when generating HELIXInformation in PoseToStructFileRepConverter, one HELIX has been generated repeatedly (starting at " + key + ")");
+	} else { //good, add to map
+		sfr_->HELIXInformations()[key] = helix;
+	}
+
+	return;
+}
+
+/// @brief fills one SHEETInformation into SFR
+/// @author Steven Lewis smlewi@gmail.com
+void PoseToStructFileRepConverter::generate_SHEETInformation(
+	ResidueInformation const & start_info,
+	ResidueInformation const & stop_info,
+	core::Size const index
+){
+
+	SHEETInformation sheet;
+	sheet.sheetID = index; // NOTE this means we are defining all strands as isolated sheets
+	sheet.sheet_name = std::string(ObjexxFCL::format::I(3, index)); //3-width string
+	//IGNORING num_strands
+	sheet.name3_1 = start_info.resName();
+	sheet.chainID1 = start_info.chainID();
+	sheet.seqNum1 = start_info.resSeq();
+	sheet.icode1 = start_info.iCode();
+	sheet.name3_2 = stop_info.resName();
+	sheet.chainID2 = stop_info.chainID();
+	sheet.seqNum2 = stop_info.resSeq();
+	sheet.icode2 = stop_info.iCode();
+	//IGNORING strandClass
+	//IGNORING the remainder of the record, this is enough to get it to show nicely in pymol and PV
+
+	std::string const key(start_info.resid());
+	//check if this is already in map
+	if ( sfr_->SHEETInformations().count( key ) ) {
+		utility_exit_with_message("when generating SHEETInformation in PoseToStructFileRepConverter, one SHEET has been generated repeatedly (starting at " + key + ")");
+	} else { //good, add to map
+		sfr_->SHEETInformations()[key] = sheet;
+	}
+
+	return;
+}
 
 } // namespace pose_to_sfr
 } // namespace io

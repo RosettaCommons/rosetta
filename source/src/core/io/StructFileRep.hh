@@ -113,6 +113,47 @@ struct CisPeptideInformation {
 };  // struct CisPeptideInformation
 
 
+// A structure for storing information from/for .pdb HELIX records.
+// http://www.wwpdb.org/documentation/file-format-content/format23/sect5.html
+/// @author Steven Lewis smlewi@gmail.com
+struct HELIXInformation {
+	core::Size helixID; //numeric ID (which # helix is this?). if > 999 bad things happen here (output field is only 3 chars)
+	std::string helix_name; //arbitrary unique ID; copy of helixID as a string
+	std::string name3_1; //name3 of start residue
+	char chainID1; //chain of start residue
+	int seqNum1; //sequence number of start residue
+	char icode1; //icode of start residue
+	std::string name3_2; //name3 of end residue
+	char chainID2;
+	int seqNum2;
+	char icode2;
+	core::Size helixClass = 1; //always 1, although actually it's an enum on 1-10 according to PDB
+	std::string comment = "";
+	core::Size length; //length of helix
+};
+
+// A structure for storing information from/for .pdb SHEET records.
+// NOTE it does not store enough information to match the real record type! It is storing any STRAND as a one-membered SHEET instead.
+// http://www.wwpdb.org/documentation/file-format-content/format23/sect5.html
+/// @author Steven Lewis smlewi@gmail.com
+struct SHEETInformation {
+	core::Size sheetID; //numeric ID (which # helix is this?). if > 999 bad things happen here (output field is only 3 chars)
+	std::string sheet_name; //arbitrary unique ID; copy of sheetID as a string
+	core::Size num_strands = 1; //nominally these are SHEET records but we are only doing STRANDs
+	std::string name3_1; //name3 of start residue
+	char chainID1; //chain of start residue
+	int seqNum1; //sequence number of start residue
+	char icode1; //icode of start residue
+	std::string name3_2; //name3 of end residue
+	char chainID2;
+	int seqNum2;
+	char icode2;
+	int strandClass = 0; //always 0, although actually it's an enum on -1:1 according to PDB
+	//ignoring the rest of the stuff in the definition because it's hard to calculate, I don't need it, and it's unnecessary for strandClass 0 anyway (first strand of sheet)
+};
+
+//NOT IMPLEMENTED.  struct TURNInformation {}
+
 /// @details This class is designed to store information about a structure in a
 /// "non-Rosetta" way, such that it can serve as an intermediary between
 /// various file formats and a Pose.
@@ -205,11 +246,16 @@ public:  // Accessors /////////////////////////////////////////////////////////
 
 
 	// PDB Secondary Structure Section ////////////////////////////////////////
-	// Accessors for HELIX and/or SHEET records data should be declared here
-	// if ever implemented.
+	/// @brief   Access map for storing HELIX records.
+	/// @details key is 6-character resID of 1st residue in helix, from ResidueInformation::resid().  These records should be essentially correct, unlike the SHEET records.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
+	std::map< std::string, HELIXInformation > const & HELIXInformations() const { return HELIXInformations_; }
+	std::map< std::string, HELIXInformation >       & HELIXInformations()       { return HELIXInformations_; }
 
-
-
+	// PDB Secondary Structure Section ////////////////////////////////////////
+	/// @brief   Access map for storing SHEET records.
+	/// @details key is 6-character resID of 1st residue in strand, from ResidueInformation::resid().  These records are cheating on the PDB rules and just storing individual strands as 1-strand sheets.  NOTE that they are NOT read from the PDB by PoseFromStructFileRepConverter, only generated FROM the pose in PoseToStructFileRepConverter.
+	std::map< std::string, SHEETInformation > const & SHEETInformations() const { return SHEETInformations_; }
+	std::map< std::string, SHEETInformation >       & SHEETInformations()       { return SHEETInformations_; }
 
 	// PDB Connectivity Annotation Section ////////////////////////////////////
 	/// @brief   Access map for storing SSBOND records.
@@ -319,6 +365,8 @@ private:
 	std::map< std::string, utility::vector1< std::string > > heterogen_synonyms_;  // key is hetID
 	std::map< std::string, std::string > heterogen_formulae_;  // key is hetID
 	std::map< std::string, std::pair< std::string, std::string > > residue_type_base_names_;  // key is 6-char. resID
+	std::map< std::string, HELIXInformation > HELIXInformations_; // key is 6-char resID from ResidueInformation::resid
+	std::map< std::string, SHEETInformation > SHEETInformations_; // key is 6-char resID from ResidueInformation::resid
 	std::map< std::string, utility::vector1< SSBondInformation > > ssbond_map_;  // key is 6-character resID
 	std::map< std::string, utility::vector1< LinkInformation > > link_map_;  // key is 6-character resID
 	std::map< std::string, CisPeptideInformation > cispep_map_;  // key is 6-character resID

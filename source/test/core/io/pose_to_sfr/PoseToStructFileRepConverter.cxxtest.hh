@@ -167,5 +167,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->additional_string_output(), "REMARK torsions: res    res    chain seq dssp phi psi omega\nREMARK    1    1 1 A L     0.000   -41.000   180.000\nREMARK    2    2 1 A L   -61.000   -41.000   180.000\nREMARK    3    3 1 A L  -135.000   135.000   180.000\nREMARK    4    4 1 A L   -61.000   -41.000   180.000\nREMARK    5    5 1 A L   -61.000   -41.000   180.000\nREMARK    6    6 1 A L   -61.000     0.000     0.000\n" );
 	}
 
+	//SEE ALSO StructFileRep.cxxtest.hh; unclear if test_generate_secondary_structure_informations belongs here or there
 
 };  // class StructFileRepTests

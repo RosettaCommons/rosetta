@@ -257,6 +257,54 @@ create_records_from_sfr(
 		VR.push_back(R);
 	}
 
+	// Secondary Structure Section ///////////////////////////////////////////
+	if ( options->output_secondary_structure() ) {
+
+		R = RecordCollection::record_from_record_type( HELIX );
+		//type is std::map< std::string, HELIXInformation >
+		auto const helixmap(sfr.HELIXInformations());
+		for ( auto it(helixmap.begin()); it != helixmap.end(); ++it ) {
+			R["type"].value = "HELIX ";
+			R["serNum"].value = pad_left(it->second.helixID, 3);
+			R["helixID"].value = it->second.helix_name;
+			R["initResName"].value = it->second.name3_1;
+			R["initChainID"].value = std::string( 1, it->second.chainID1 );
+			R["initSeqNum"].value = pad_left( it->second.seqNum1, 4 );
+			R["initICode"].value = std::string( 1, it->second.icode1 );
+			R["endResName"].value = it->second.name3_2;
+			R["endChainID"].value = std::string( 1, it->second.chainID2 );
+			R["endSeqNum"].value = pad_left( it->second.seqNum2, 4 );
+			R["endICode"].value = std::string( 1, it->second.icode2 );
+			R["helixClass"].value = pad_left(it->second.helixClass, 2 );
+			R["comment"].value = it->second.comment;
+			R["length"].value = pad_left( it->second.length, 5 );
+			VR.push_back(R);
+		}
+
+		R = RecordCollection::record_from_record_type( SHEET );
+		//type is std::map< std::string, SHEETInformation >
+		auto const sheetmap(sfr.SHEETInformations());
+		for ( auto it(sheetmap.begin()); it != sheetmap.end(); ++it ) {
+			R["type"].value = "SHEET ";
+			R["strand"].value = pad_left(it->second.sheetID, 3);
+			R["sheetID"].value = it->second.sheet_name;
+			R["numStrands"].value = pad_left( it->second.num_strands, 2);
+			R["initResName"].value = it->second.name3_1;
+			R["initChainID"].value = std::string( 1, it->second.chainID1 );
+			R["initSeqNum"].value = pad_left( it->second.seqNum1, 4 );
+			R["initICode"].value = std::string( 1, it->second.icode1 );
+			R["endResName"].value = it->second.name3_2;
+			R["endChainID"].value = std::string( 1, it->second.chainID2 );
+			R["endSeqNum"].value = pad_left( it->second.seqNum2, 4 );
+			R["endICode"].value = std::string( 1, it->second.icode2 );
+			R["sense"].value = pad_left(it->second.strandClass, 2);
+			//There are other fields, but we have no values for them, let's try skipping them wholesale and see what happens
+			VR.push_back(R);
+		}
+
+	}
+
+
 	// Heterogen Section //////////////////////////////////////////////////////
 	R = RecordCollection::record_from_record_type( HETNAM );
 	if ( options->use_pdb_format_HETNAM_records() ) {

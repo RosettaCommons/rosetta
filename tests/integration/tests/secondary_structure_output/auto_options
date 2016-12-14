@@ -1,0 +1,7 @@
+-in:file:s 1UBQ.pdb.gz
+-mute core.io.database
+
+-out:file:output_secondary_structure true
+-parser:protocol auto_OSS.xml
+
+-out:prefix auto

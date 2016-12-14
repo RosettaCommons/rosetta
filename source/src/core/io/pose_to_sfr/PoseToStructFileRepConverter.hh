@@ -266,6 +266,26 @@ private: //PRIVATE FUNCTIONS:
 		ResidueInformation & res_info
 	) const;
 
+	/// @brief fills HELIXInformation and SHEETInformation for SFR
+	void generate_secondary_structure_informations(
+		core::pose::Pose const & pose
+	);
+
+	/// @brief fills one HELIXInformation into SFR
+	void generate_HELIXInformation(
+		ResidueInformation const & start_info,
+		ResidueInformation const & stop_info,
+		core::Size const index,
+		core::Size const length
+	);
+
+	/// @brief fills one SHEETInformation into SFR
+	void generate_SHEETInformation(
+		ResidueInformation const & start_info,
+		ResidueInformation const & stop_info,
+		core::Size const index
+	);
+
 private: // PRIVATE DATA:
 
 	/// @brief Owning pointer to the StructFileRep object, copied in during
