@@ -149,13 +149,32 @@ RNA_AtomVDW::vdw_atom_list( chemical::ResidueType const & rt ) const
 	return ( iter->second );
 }
 
+Size
+rna_residue_type_to_num( chemical::ResidueType const & rt ) {
+	if ( rt.name1() == 'a' ) return 1;
+	if ( rt.name1() == 'c' ) return 2;
+	if ( rt.name1() == 'g' ) return 3;
+	if ( rt.name1() == 'u' ) return 4;
+	if ( rt.name1() == 't' ) return 4;
+	if ( rt.name1() == 'Z' ) return 5; // Mg(2+)
+	
+	if ( rt.na_analogue() == chemical::na_rad ) return 1;
+	if ( rt.na_analogue() == chemical::na_rcy ) return 2;
+	if ( rt.na_analogue() == chemical::na_rgu ) return 3;
+	if ( rt.na_analogue() == chemical::na_ura ) return 4;
+	
+	tr << "What is this? " << rt.name() << std::endl;
+	utility_exit_with_message( "Asked for rna_residue_name_to_num for unknown residue_name" );
+	return 0;
+}
+
 Real
 RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
-	char const which_residue1, char const which_residue2 ) const
+	chemical::ResidueType const & rsd1, chemical::ResidueType const & rsd2 ) const
 {
 	return rna_vdw_parameter_( atom1, atom2,
-		rna_residue_name_to_num( which_residue1 ),
-		rna_residue_name_to_num( which_residue2 ) );
+		rna_residue_type_to_num( rsd1 ),
+		rna_residue_type_to_num( rsd2 ) );
 }
 
 

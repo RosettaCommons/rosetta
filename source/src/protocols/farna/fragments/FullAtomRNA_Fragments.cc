@@ -316,8 +316,14 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	// instead put in the na_analogue.
 	std::string RNA_string = RNA_sequence.substr( position - 1, size );
 	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
-		if ( RNA_string[ ii ] != 'a' && RNA_string[ ii ] != 'c' && RNA_string[ ii ] != 'g' && RNA_string[ ii ] != 'u' ) {
-			RNA_string[ ii ] = oneletter_code_from_aa( pose.residue_type( ii + 1 ).na_analogue() );
+		if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rad ) {
+			RNA_string[ ii ] = 'a';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rcy ) {
+			RNA_string[ ii ] = 'c';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_rgu ) {
+			RNA_string[ ii ] = 'g';
+		} else if ( pose.residue_type( ii + position ).na_analogue() == chemical::na_ura ) {
+			RNA_string[ ii ] = 'u';
 		}
 	}
 	

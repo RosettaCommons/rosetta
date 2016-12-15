@@ -54,7 +54,7 @@ public:
 
 	Real
 	bump_parameter( Size const atom1, Size const atom2,
-		char const which_nucleotide1, char const which_nucleotide2 ) const;
+		chemical::ResidueType const & rsd1, chemical::ResidueType const & rsd2 ) const;
 
 private: //data
 

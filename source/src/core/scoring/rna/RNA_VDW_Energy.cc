@@ -126,8 +126,8 @@ RNA_VDW_Energy::residue_pair_energy(
 	if ( !rsd1.is_RNA() && !is_magnesium[ pos1 ] ) return;
 	if ( !rsd2.is_RNA() && !is_magnesium[ pos2 ] ) return;
 
-	char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
-	char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
+	//char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
+	//char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
 
 	Real score( 0.0 );
 
@@ -156,7 +156,7 @@ RNA_VDW_Energy::residue_pair_energy(
 			Size const j = atom_numbers2[ n ];
 			if ( rsd2.is_virtual( j ) ) continue;
 
-			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
+			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, rsd1.type(), rsd2.type() ) );
 			Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz( j ) ) );
 
 			if ( clash > 0.0 ) {
@@ -212,7 +212,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 
 	if ( !rsd1.is_RNA() && !is_magnesium[ pos1 ]  ) return;
 
-	char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
+	//char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
 
 	int const pos1_map( domain_map( pos1 ) );
 	bool const pos1_fixed( pos1_map != 0 );
@@ -241,7 +241,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
 
 		conformation::Residue const & rsd2( pose.residue( pos2 ) );
-		char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
+		//char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
 
 		if ( !rsd2.is_RNA()  && !is_magnesium[ pos2 ] ) continue;
 
@@ -256,7 +256,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 			Vector const & j_xyz( rsd2.xyz( j ) );
 			Vector const f2( i_xyz - j_xyz );
 			Real const dis2( f2.length_squared() );
-			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
+			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, rsd1.type(), rsd2.type() ) );
 
 			if ( dis2 < bump_dsq ) {
 				Real const dE_dr_over_r = vdw_scale_factor_ * weights[ rna_vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
