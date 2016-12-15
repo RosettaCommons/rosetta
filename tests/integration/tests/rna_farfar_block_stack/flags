@@ -1,0 +1,9 @@
+-fasta fasta 
+-secstruct_file secstruct 
+-cycles 50000
+-include_neighbor_base_stacks  
+-minimize_rna false
+-block_stack_above_res B:3
+-block_stack_below_res B:3
+-nstruct 1
+-jran -1444055240

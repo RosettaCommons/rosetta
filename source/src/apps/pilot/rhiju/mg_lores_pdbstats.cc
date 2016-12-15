@@ -203,7 +203,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 			}
 
 			// also make sure to look through vdw representatives.
-			utility::vector1< std::string > const & vdw_atom_list =rna_atom_vdw.vdw_atom_list( rsd_j.name1() );
+			utility::vector1< std::string > const & vdw_atom_list =rna_atom_vdw.vdw_atom_list( rsd_j.type() );
 			for ( Size m = 1;  m <= vdw_atom_list.size(); m++ ) {
 
 				std::string const atom_name = vdw_atom_list[ m ];

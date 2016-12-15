@@ -53,12 +53,14 @@ rna_residue_name_to_num( char const c )
 }
 
 //Why doesn't this helper function already exist in vector class?
+template
+< class T >
 Size
-get_position_in_vector( utility::vector1< std::string > & vec, std::string const & element )
+get_position_in_vector( utility::vector1< T > & vec, T const & element )
 {
 	Size count( 1 );
-	for ( utility::vector1< std::string > ::iterator iter = vec.begin(), end = vec.end(); iter < end; ++iter ) {
-		if ( *iter == element ) return count;
+	for ( auto const & elem : vec ) {
+		if ( elem == element ) return count;
 		count++;
 	}
 	vec.push_back( element );
@@ -73,7 +75,7 @@ RNA_AtomVDW::RNA_AtomVDW()
 	utility::io::izstream stream;
 	basic::database::open( stream, "scoring/rna/rna_atom_vdw.txt" );
 
-	rna_vdw_parameter_.dimension( 9, 9, 5, 5 );  // 5 = a,c,g,u,Z (Mg2+)
+	rna_vdw_parameter_.dimension( 13, 13, 5, 5 );  // 5 = a,c,g,u,Z (Mg2+)
 	rna_vdw_parameter_ = 0.0; // zero everything out.
 
 	if ( !stream.good() ) utility_exit_with_message( "Unable to open rna_scoring/AtomVDW/atom_vdw.txt!" );
@@ -116,9 +118,23 @@ RNA_AtomVDW::RNA_AtomVDW()
 
 //////////////////////////////////////////////
 utility::vector1 < std::string > const
-RNA_AtomVDW::vdw_atom_list( char const which_nucleotide ) const
+RNA_AtomVDW::vdw_atom_list( chemical::ResidueType const & rt ) const
 {
-	AtomList::const_iterator iter = rna_vdw_atom_.find( which_nucleotide );
+	using namespace core::chemical;
+	char which_nucleotide = aa_unp;
+	if ( rt.aa() == na_rad || rt.na_analogue() == na_rad ) {
+		which_nucleotide = 'a';
+	} else if ( rt.aa() == na_rcy || rt.na_analogue() == na_rcy ) {
+		which_nucleotide = 'c';
+	} else if ( rt.aa() == na_rgu || rt.na_analogue() == na_rgu ) {
+		which_nucleotide = 'g';
+	} else if ( rt.aa() == na_ura || rt.na_analogue() == na_ura ) {
+		which_nucleotide = 'u';
+	} else if ( rt.name1() == 't' ) {
+		which_nucleotide = 't';
+	}
+	
+	auto iter = rna_vdw_atom_.find( which_nucleotide );
 
 	if ( iter == rna_vdw_atom_.end() ) {
 		if ( which_nucleotide == 't' ) {

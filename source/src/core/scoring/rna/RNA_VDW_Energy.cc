@@ -319,11 +319,10 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 
 		if ( !rsd.is_RNA() && !is_magnesium[ i ] ) continue;
 
-		//a,c,g, or u?
-		char const which_nucleotide = rsd.name1();
 		//What atom names to look at?
-		utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
+		utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( rsd.type() );
 		for ( Size m = 1; m <= vdw_atom_list.size(); m++ ) {
+			if ( !rsd.has( vdw_atom_list[ m ] ) ) continue;
 			Size const vdw_atom_index =  rsd.atom_index( vdw_atom_list[ m ] );
 			atom_numbers_for_vdw_calculation[ i ].push_back( vdw_atom_index );
 			//std::cout << i << " " << rsd.name1() << " " << m << " of " << vdw_atom_list.size() << ": " << vdw_atom_list[ m ] << " " << vdw_atom_index << std::endl;

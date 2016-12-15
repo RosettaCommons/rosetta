@@ -18,6 +18,7 @@
 // Unit Headers
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Package headers
@@ -49,7 +50,7 @@ public:
 
 
 	utility::vector1 < std::string > const
-	vdw_atom_list( char const which_nucleotide ) const;
+	vdw_atom_list( chemical::ResidueType const & rt ) const;
 
 	Real
 	bump_parameter( Size const atom1, Size const atom2,
