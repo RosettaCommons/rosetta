@@ -58,11 +58,20 @@ public:
 	/// @brief Add the given coordinates as a valid starting position for the given structure hash
 	void add_coords_hash(core::Vector const & coords, std::string const & hash_value);
 
-	/// @brief Set which chain the mover operates on.
-	void chain(std::string const & chain) { chain_ = chain; }
+	/// @brief Set which chains the mover operates on.
+	void chain(utility::vector1<std::string> const & chains) { chains_ = chains; }
 
-	/// @brief Get which chain the mover operates on
-	std::string chain() { return chain_; }
+	/// @brief Add a chain to the mover targets
+	void chain(std::string const & chain) { chains_.push_back(chain); }
+
+	/// @brief Get which chains the mover operates on
+	std::string chain()
+	{
+		std::string chains;
+		for (utility::vector1<std::string>::const_iterator i = chains_.begin(); i != chains_.end(); ++i)
+		    chains += *i;
+		return chains;
+	}
 
 	/// @brief Set if we should use the neighbor atom or the all-atom centroid to center the ligand
 	void use_nbr(bool setting) { use_nbr_ = setting; }
@@ -92,18 +101,17 @@ public:
 
 
 private:
-	/// @brief The chain which to move
-	std::string chain_;
+/// @brief The chain which to move
+	utility::vector1<std::string> chains_;
+/// @brief If true, try to center the chain based on the neighbor atom of the first residue
+/// Otherwise, use the all-atom centroid of the chain.
+bool use_nbr_;
 
-	/// @brief If true, try to center the chain based on the neighbor atom of the first residue
-	/// Otherwise, use the all-atom centroid of the chain.
-	bool use_nbr_;
+/// @brief The possible starting positions, indexed by tag (or "default")
+std::map< std::string, utility::vector1<core::Vector> > starting_positions_;
 
-	/// @brief The possible starting positions, indexed by tag (or "default")
-	std::map< std::string, utility::vector1<core::Vector> > starting_positions_;
-
-	/// @brief The possible starting positions, indexed by hash
-	std::map< std::string, utility::vector1<core::Vector>  > hash_starting_positions_;
+/// @brief The possible starting positions, indexed by hash
+std::map< std::string, utility::vector1<core::Vector>  > hash_starting_positions_;
 };
 
 } //namespace ligand_docking

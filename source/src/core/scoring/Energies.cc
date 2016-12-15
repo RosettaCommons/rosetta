@@ -60,6 +60,9 @@
 #include <utility/graph/UpperEdgeGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.Energies" );
 
@@ -1204,16 +1207,45 @@ Energies::update_neighbor_links(
 				Distance const jjradius( pose.residue_type( jj ).nbr_radius() );
 				DistanceSquared const square_distance( ii_iter->data().dsq() );
 
-				// How about we simply make sure the radii sum is positive instead of paying for a sqrt
-				// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
-				if ( ii_intxn_radius + jjradius > 0 ) {
-					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius ) ) {
-						energy_graph_->add_energy_edge( ii, jj, square_distance );
-					}
-					for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
-						context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
-					}
+
+				//check for option to see if its multi-ligand docking, if it is then do not add edge if
+				//both residues are ligands
+				//put remaining code in else statement
+				core::Real ligand_ensemble_wt = 0;
+				if (basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ].user()) {
+					ligand_ensemble_wt = basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ]();
 				}
+
+				if (ligand_ensemble_wt != 0)
+				{
+					if ( pose.residue_type(ii).is_ligand() && pose.residue_type(jj).is_ligand())
+					{}
+					// How about we simply make sure the radii sum is positive instead of paying for a sqrt
+							// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
+					else if ( ii_intxn_radius + jjradius > 0 ) {
+							if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
+								energy_graph_->add_energy_edge( ii, jj, square_distance );
+							}
+							for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
+								context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
+							}
+						}
+
+					}
+
+				else
+				{
+
+					//How about we simply make sure the radii sum is positive instead of paying for a sqrt
+						if ( ii_intxn_radius + jjradius > 0 ) {
+							if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
+								energy_graph_->add_energy_edge( ii, jj, square_distance );
+							}
+							for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
+								context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
+							}
+						}
+					}
 			}
 		}
 	}

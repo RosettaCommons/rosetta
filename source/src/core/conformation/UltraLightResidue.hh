@@ -45,6 +45,9 @@ public:
 	//@brief apply some transformation matrix and translation perturbation
 	void transform(numeric::xyzMatrix<core::Real> const & rotation_matrix, core::Vector const & translation_vector );
 
+	void transform(numeric::xyzMatrix<core::Real> const & rotation_matrix, core::Vector const & translation_vector, core::Vector group_center);
+
+
 	//@brief align the residue on to some other residue
 	void align_to_residue(UltraLightResidue const & other_residue);
 
@@ -81,10 +84,23 @@ public:
 		return center_;
 	}
 
-	/// @brief get const ref to residue coords
+	///@brief get const ref to residue coords
+	void set_coords(utility::vector1<PointPosition> const & input_coords)
+	{
+		coords_ = input_coords;
+	}
+
+	///@brief get const ref to residue coords
+
 	utility::vector1<PointPosition> const & coords_vector() const
 	{
 		return coords_;
+	}
+
+	///@brief get const ref to residue heavy atom coords
+	utility::vector1<PointPosition> const & heavy_coords_vector() const
+	{
+		return heavy_coords_;
 	}
 
 private:
@@ -95,10 +111,11 @@ private:
 	//datatypes used for easy interfacing with conformation::batch_set_xyz and batch_get_xyz
 	utility::vector1<id::AtomID> atom_ids_;
 	utility::vector1<PointPosition > coords_;
-	PointPosition center_;
+	utility::vector1<PointPosition > heavy_coords_;
 
 	//read only access to the base residue.
 	ResidueCOP residue_;
+	PointPosition center_;
 
 };
 

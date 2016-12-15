@@ -46,6 +46,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
+
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/excn/Exceptions.hh>
 
@@ -86,10 +87,12 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 /// @brief
 StartFrom::StartFrom():
-	Mover("StartFrom"),
-	chain_(""),
-	use_nbr_(false)
-{}
+						//utility::pointer::ReferenceCount(),
+						Mover("StartFrom"),
+						chains_(),
+						use_nbr_(false),
+						starting_positions_(){}
+
 
 StartFrom::StartFrom(StartFrom const & )= default;
 
@@ -110,11 +113,11 @@ protocols::moves::MoverOP StartFrom::fresh_instance() const {
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 StartFrom::parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
-	protocols::filters::Filters_map const & /*filters*/,
-	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & /*pose*/
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & /*datamap*/,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/
 )
 {
 	if ( tag->getName() != "StartFrom" ) {
@@ -122,7 +125,10 @@ StartFrom::parse_my_tag(
 	}
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover requires chain tag");
 
-	chain( tag->getOption<std::string>("chain") );
+
+	std::string const all_chains_str = tag->getOption<std::string>("chain");
+	chains_ = utility::string_split(all_chains_str, ',');
+
 	use_nbr( tag->getOption<bool>("use_nbr", false) );
 
 	for ( utility::tag::TagCOP child_tag : tag->getTags() ) {
@@ -138,11 +144,10 @@ StartFrom::parse_my_tag(
 			std::string pdb_tag( child_tag->getOption<std::string>("pdb_tag","default") );
 
 			core::Vector v(
-				child_tag->getOption<core::Real>("x"),
-				child_tag->getOption<core::Real>("y"),
-				child_tag->getOption<core::Real>("z")
+					child_tag->getOption<core::Real>("x"),
+					child_tag->getOption<core::Real>("y"),
+					child_tag->getOption<core::Real>("z")
 			);
-
 			add_coords(v,pdb_tag);
 
 		} else if ( name == "File" ) {
@@ -152,6 +157,7 @@ StartFrom::parse_my_tag(
 			}
 
 			if ( !child_tag->hasOption("filename") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover File tag requires 'filename' coordinates option");
+
 			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
 
 		} else if ( name == "PDB" ) {
@@ -180,86 +186,90 @@ void StartFrom::add_coords_hash(core::Vector const & coords,std::string const & 
 	hash_starting_positions_[ hash_value ].push_back(coords);
 }
 
-void StartFrom::apply(core::pose::Pose & pose) {
+void StartFrom::apply(core::pose::Pose & pose){
 
-	if ( !core::pose::has_chain(chain_,pose) ) {
-		utility_exit_with_message("StartFrom mover cannot find the chain " +chain_+ " in the current pose.");
-	}
-
-	utility::vector1<core::Vector> possible_centroids;
-
-	// If we've already stored a startfrom, add that to the values to use.
-	jd2::Job::StringRealPairs string_real_data(jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs());
-	if ( string_real_data.find("start_x") != string_real_data.end() ) {
-		core::Vector start_coords;
-		start_coords.x(string_real_data["start_x"]);
-		start_coords.y(string_real_data["start_y"]);
-		start_coords.z(string_real_data["start_z"]);
-		possible_centroids.push_back( start_coords );
-		TR.Debug << "Using starting coords stored in job" <<std::endl;
-	}
-
-	std::map< std::string, utility::vector1< core::Vector > >::iterator position_id;
-	bool specific_tag_found( false );
-
-	// Add hash-tagged data, if any.
-	if ( ! hash_starting_positions_.empty() ) {
-		std::string hash = core::pose::get_sha1_hash_excluding_chain(chain_[0],pose);
-		position_id = hash_starting_positions_.find(hash);
-		if ( position_id != hash_starting_positions_.end() ) {
-			specific_tag_found = true;
-			possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
-			TR.Debug << "Using starting positions for hash " << hash << std::endl;
+	for(std::string chain : chains_){
+		if(!core::pose::has_chain(chain,pose))
+		{
+			utility_exit_with_message("StartFrom mover cannot find the chain " +chain+ " in the current pose.");
 		}
-	}
 
-	// Now add all the job-tagged data.
-	if ( ! starting_positions_.empty() && ! specific_tag_found ) {
-		std::string const job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
-		utility::vector1<std::string> const input_filenames(utility::split(job_tag));
-		for ( std::string const & filename : input_filenames ) {
-			position_id = starting_positions_.find(filename);
-			if ( position_id != starting_positions_.end() ) {
+		utility::vector1<core::Vector> possible_centroids;
+
+		// If we've already stored a startfrom, add that to the values to use.
+		jd2::Job::StringRealPairs string_real_data(jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs());
+		if ( string_real_data.find("start_x") != string_real_data.end() ) {
+			core::Vector start_coords;
+			start_coords.x(string_real_data["start_x"]);
+			start_coords.y(string_real_data["start_y"]);
+			start_coords.z(string_real_data["start_z"]);
+			possible_centroids.push_back( start_coords );
+			TR.Debug << "Using starting coords stored in job" <<std::endl;
+		}
+
+		std::map< std::string, utility::vector1< core::Vector > >::iterator position_id;
+		bool specific_tag_found( false );
+
+		// Add hash-tagged data, if any.
+		if ( ! hash_starting_positions_.empty() ) {
+			std::string hash = core::pose::get_sha1_hash_excluding_chain(chain[0],pose);
+			position_id = hash_starting_positions_.find(hash);
+			if ( position_id != hash_starting_positions_.end() ) {
 				specific_tag_found = true;
 				possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
-				TR.Debug << "Using starting positions for path " << filename << std::endl;
-				break; // Should we stack multiple values?
-			} else {
-				// Try finding just the basename, rather than the whole path.
-				utility::file::FileName file_data(filename);
-				std::string base_name(file_data.base());
-				position_id = starting_positions_.find(base_name);
+				TR.Debug << "Using starting positions for hash " << hash << std::endl;
+			}
+		}
+
+		// Now add all the job-tagged data.
+		if ( ! starting_positions_.empty() && ! specific_tag_found ) {
+			std::string const job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
+			utility::vector1<std::string> const input_filenames(utility::split(job_tag));
+			for( std::string filename : input_filenames ) {
+				position_id = starting_positions_.find(filename);
 				if ( position_id != starting_positions_.end() ) {
 					specific_tag_found = true;
 					possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
-					TR.Debug << "Using starting positions for base filename " << base_name << std::endl;
-					break;
+					TR.Debug << "Using starting positions for path " << filename << std::endl;
+					break; // Should we stack multiple values?
+				} else {
+					// Try finding just the basename, rather than the whole path.
+					utility::file::FileName file_data(filename);
+					std::string base_name(file_data.base());
+					position_id = starting_positions_.find(base_name);
+					if ( position_id != starting_positions_.end() ) {
+						specific_tag_found = true;
+						possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
+						TR.Debug << "Using starting positions for base filename " << base_name << std::endl;
+						break;
+					}
 				}
 			}
 		}
-	}
 
-	// Try the defaults, if nothing else better came along.
-	if ( ! specific_tag_found ) {
-		position_id = starting_positions_.find("default");
-		if ( position_id != starting_positions_.end() ) {
-			possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
-			TR.Debug << "Using default starting position set." << std::endl;
+		// Try the defaults, if nothing else better came along.
+		if ( ! specific_tag_found ) {
+			position_id = starting_positions_.find("default");
+			if ( position_id != starting_positions_.end() ) {
+				possible_centroids.insert( possible_centroids.end(), position_id->second.begin(), position_id->second.end() );
+				TR.Debug << "Using default starting position set." << std::endl;
+			}
+		}
+
+		if ( possible_centroids.size() == 0 ) {
+			utility_exit_with_message("The current pose does not have behavior specified, and there are no default starting coordinates specified in the StartFrom mover");
+		}
+
+		core::Size const picked_centroid( numeric::random::rg().random_range(1, possible_centroids.size()) );
+		core::Vector const desired_centroid = possible_centroids[picked_centroid];
+		if ( use_nbr_ ) {
+			move_ligand_neighbor_to_desired_position(chains_, desired_centroid, pose);
+		} else {
+			move_ligand_to_desired_centroid(chains_, desired_centroid, pose);
 		}
 	}
-
-	if ( possible_centroids.size() == 0 ) {
-		utility_exit_with_message("The current pose does not have behavior specified, and there are no default starting coordinates specified in the StartFrom mover");
 	}
 
-	core::Size const picked_centroid( numeric::random::rg().random_range(1, possible_centroids.size()) );
-	core::Vector const desired_centroid = possible_centroids[picked_centroid];
-	if ( use_nbr_ ) {
-		move_ligand_neighbor_to_desired_position(chain_, desired_centroid, pose);
-	} else {
-		move_ligand_to_desired_centroid(chain_, desired_centroid, pose);
-	}
-}
 
 void StartFrom::parse_startfrom_file(std::string const & filename)
 {
@@ -280,6 +290,7 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 	//The format is something like this:
 	/*
 	[
+
 	{
 	"file_name" : "infile.pdb",
 	"x" : 0.0020,
@@ -287,8 +298,9 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 	"z" : 0.0020,
 	"hash" : "aa2aff055d19bc32e483df7ff4ae08361a768931"
 	}
+
 	]
-	*/
+	 */
 	// Only one of 'file_name' or 'hash' needs to be present (hash will take precident if both are present)
 	// "input_tag" is considered a synonym for "file_name"
 	// If you just have the x/y/z coordinates, they will be added to the default set.
@@ -315,6 +327,7 @@ void StartFrom::parse_startfrom_file(std::string const & filename)
 		} else {
 			add_coords( coords, "default" );
 		}
+
 	}
 
 }

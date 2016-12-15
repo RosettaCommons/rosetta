@@ -4967,6 +4967,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'start_from', 'RealVector', desc="One or more XYZ locations to choose for the ligand:  -start_from X1 Y1 Z1  -start_from X2 Y2 Z2  ..." ),
 			Option('option_file', 'String', desc="Name of Ligand Option File for use with multi_ligand_dock application"),
 #			Option('rescore', 'Boolean', desc="No docking (debug/benchmark mode)", default='false'),
+			Option('ligand_ensemble', 'Real', desc="Weight for correlation adjustment in ligand ensemble docking, ignores ligand-ligand interactions if value is not zero", default='0'),
 			Option_Group( 'grid',
 				Option( 'grid', 'Boolean', desc="docking:ligand:grid option group", legal='true', default='true' ),
 				Option( 'grid_kin', 'File', desc="Write kinemage version of generated grid to named file" ),
