@@ -47,7 +47,7 @@ PROJECT_KEYS = {  #        group                       sources
 }
 
 def find_line(s, lines, start):
-    for ii in xrange(start, len(lines)):
+    for ii in range(start, len(lines)):
         if lines[ii].startswith(s):
             return ii
     raise RuntimeError('Can\'t find line starting with: "' + s + '".')
@@ -92,7 +92,7 @@ def remove_build_files_and_sources(source_files_lines, build_file_lines):
     del source_files_lines[:]
 
 def genkey(s):
-    return hashlib.md5(s).hexdigest().upper()[0:24]
+    return hashlib.md5(s.encode('utf-8')).hexdigest().upper()[0:24]
 
 def to_dir_tpl(d):
     dl = d.strip('/').split('/')
@@ -101,8 +101,8 @@ def to_dir_tpl(d):
     return tuple(dl)
 
 def from_dir_tpl(dl):
-    import string
-    return string.join(dl, '/') + '/'
+    # import string
+    return '/'.join(dl) + '/'
 
 def make_groups_and_file_refs(root_group_key, project, project_path, project_files):
     node_map = {}
@@ -111,9 +111,9 @@ def make_groups_and_file_refs(root_group_key, project, project_path, project_fil
         d_dir_tpl = to_dir_tpl(d)
         d_dir_top = d_dir_tpl[0]
         d_dir_tpl = d_dir_tpl[1:]
-        for ii in xrange(len(d_dir_tpl) + 1):
+        for ii in range(len(d_dir_tpl) + 1):
             part_dir_tpl = d_dir_tpl[0:ii]
-            if not node_map.has_key(part_dir_tpl):
+            if not part_dir_tpl in node_map:
                 full_path = d_dir_top + '/' + from_dir_tpl(part_dir_tpl)
 
                 new_group = {}
@@ -131,12 +131,12 @@ def make_groups_and_file_refs(root_group_key, project, project_path, project_fil
 
                 if parent != None:
                     parent['children_dir'].append(new_group)
-                    
+
                 node_map[part_dir_tpl] = new_group
-                
+
         group_node = node_map[d_dir_tpl]
 
-        for f in sorted(fs): 
+        for f in sorted(fs):
             full_path = d_dir_top + '/' + from_dir_tpl(d_dir_tpl) + f
 
             new_file_ref = {}

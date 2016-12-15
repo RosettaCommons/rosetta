@@ -589,3 +589,9 @@ class EnergyMethod:
         rosetta.core.scoring.methods.PyEnergyMethodRegistrator(_mem_EnergyCreators_[-1])
 
         return original_class
+
+def rrange(n):
+    """Return an iterator from 1 to n inclusive"""
+    # think of this as "Rosetta range"
+    assert(type(n) == int)
+    return range(1, n + 1)
