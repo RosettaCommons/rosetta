@@ -89,6 +89,8 @@ StepWiseMonteCarloJobDistributor::apply( core::pose::Pose & pose ) {
 	pose = *start_pose_;
 	stepwise_monte_carlo_->set_model_tag( out_tag_ );
 
+	// Maybe here is where we check for a possibly checkpointed file for structure out_tag_
+	
 	stepwise_monte_carlo_->apply( pose );
 
 	if ( ! stepwise_monte_carlo_->options()->output_minimized_pose_list() ) {

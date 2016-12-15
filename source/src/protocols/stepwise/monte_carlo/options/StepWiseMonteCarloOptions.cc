@@ -76,7 +76,9 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	save_times_( false ),
 	use_precomputed_library_( true ),
 	minimize_after_delete_( true ),
-	use_first_jump_for_submotif_( false )
+	use_first_jump_for_submotif_( false ),
+	checkpoint_( false ),
+	checkpointing_frequency_( 0 )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -153,6 +155,8 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
 	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
+	checkpoint_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]() != 0;
+	checkpointing_frequency_ = option[ OptionKeys::stepwise::monte_carlo::checkpointing_frequency ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );

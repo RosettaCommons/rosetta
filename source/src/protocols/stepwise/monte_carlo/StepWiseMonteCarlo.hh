@@ -75,6 +75,18 @@ public:
 
 	mover::StepWiseMasterMoverCOP master_mover() const { return master_mover_; }
 
+	void
+	output_checkpoint_file( core::pose::Pose const & pose, Size const k ) const;
+ 	
+	void
+	remove_checkpoint_file() const;
+	
+	bool
+	checkpoint_file_exists() const;
+	
+	core::pose::Pose
+	pose_from_checkpoint_file() const;
+	
 private:
 
 	void initialize();

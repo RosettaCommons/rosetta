@@ -19,6 +19,7 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueType.hh>
@@ -95,6 +96,10 @@ StepWiseMonteCarlo::initialize() {
 void
 StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	initialize();
+	
+	if ( checkpoint_file_exists(/* model_tag_ */) ) {
+		pose = pose_from_checkpoint_file(/* model_tag_ */);
+	}
 
 	if ( pose.size() > 0 && move_.move_type() == NO_MOVE ) show_scores( pose, "Initial score:" );
 	if ( master_mover_->do_test_move( move_, pose ) ) {
@@ -117,6 +122,11 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	initialize_for_movie( pose );
 
 	Size k( 0 );
+	// Restore value of k from pose checkpoint, if possible.
+	if ( hasPoseExtraScore( pose, "frame" ) ) {
+		k = getPoseExtraScore( pose, "frame" );
+	}
+	
 	bool success( true );
 	Real before_move_score( 0.0 ), after_move_score( 0.0 );
 	modeler::switch_focus_among_poses_randomly( pose, scorefxn_ );
@@ -149,6 +159,15 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 		TR << "Monte Carlo accepted? " << monte_carlo->mc_accepted_string() << std::endl;
 		monte_carlo->show_counters();
 		output_movie( pose, k, "ACCEPTED", movie_file_accepted_ );
+		
+		if ( options_->checkpoint() && k % options_->checkpointing_frequency() == 0 ) { 
+			remove_checkpoint_file();
+			output_checkpoint_file( pose, k );
+		}
+	}
+	// Done with this pose, so we can remove the checkpoint file
+	if ( options_->checkpoint() ) {
+		remove_checkpoint_file();
 	}
 
 	if ( options_->recover_low() ) monte_carlo->recover_low( pose );
@@ -156,9 +175,47 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 	clearPoseExtraScores( pose );
 	if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time_ ) / CLOCKS_PER_SEC );
-
+}
+	
+// AMW: no need to have k in there because we only want latest
+void
+StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, Size const k ) const {
+	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	// I don't think we'll need this. In theory we could store a bunch of checkpoints and restore only the one with biggest frame.
+	Pose pose_copy = pose;
+	setPoseExtraScore(pose_copy, "frame", k);
+	output_to_silent_file( model_tag_ + "_CHECK" /*+ lead_zero_string_of( k, 6 )*/, checkpoint_file, pose_copy, get_native_pose() );
+}
+	
+// AMW: no need to have k in there because we only want latest
+void
+StepWiseMonteCarlo::remove_checkpoint_file() const {
+	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	
+	stepwise::modeler::remove_silent_file_if_it_exists( checkpoint_file );
 }
 
+bool
+StepWiseMonteCarlo::checkpoint_file_exists() const {
+	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	return utility::file::file_exists( checkpoint_file );
+}
+	
+core::pose::Pose
+StepWiseMonteCarlo::pose_from_checkpoint_file() const {	
+	core::pose::Pose pose;
+	std::string const checkpoint_file = out_path_ /*+ "checkpoint/"*/ + model_tag_ + "_checkpoint.out";
+	
+	auto sfd = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
+	debug_assert( utility::file::file_exists( checkpoint_file ) );
+	sfd->read_file( checkpoint_file );
+	
+	core::io::silent::SilentStructOP s( sfd->structure_list()[ 1 ] );
+	s->fill_pose( pose );
+	
+	return pose;
+}
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMonteCarlo::initialize_scorefunction(){

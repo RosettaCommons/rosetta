@@ -200,6 +200,12 @@ public:
 	bool const & use_first_jump_for_submotif() const { return use_first_jump_for_submotif_; }
 	void set_use_first_jump_for_submotif( bool const & setting ){ use_first_jump_for_submotif_ = setting; }
 
+	bool checkpoint() const { return checkpoint_; }
+	void set_checkpoint( bool const setting ){ checkpoint_ = setting; }
+		
+	Size checkpointing_frequency() const { return checkpointing_frequency_; }
+	void set_checkpointing_frequency( Size const setting ) { checkpointing_frequency_ = setting; }
+
 private:
 
 	bool verbose_scores_;
@@ -243,6 +249,8 @@ private:
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
 	bool use_first_jump_for_submotif_;
+	bool checkpoint_;
+	core::Size checkpointing_frequency_;
 
 };
 
