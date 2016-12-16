@@ -10,7 +10,6 @@
 /// @file   numeric/random/random_xyz.hh
 /// @brief  Random vectors and stuff
 /// @author Will Sheffler
-/// @author Darwin Fu for uniform sphere sampling
 
 #include <numeric/random/random_xyz.hh>
 
@@ -20,37 +19,6 @@ namespace random {
 using numeric::Real;
 using namespace numeric;
 using namespace numeric::random;
-
-xyzVector<Real> uniform_vector_sphere(numeric::Real radius){ //==1
-
-	xyzVector<Real> random_point;
-
-	//Method taken from http://mathworld.wolfram.com/SpherePointPicking.html
-	//Select distance uniformly from 0 to D^2, assume unit sphere if not given distance
-	numeric::Real distance = sqrt(numeric::random::uniform() * radius * radius);
-
-	//Select U and V uniformly from (0,1)
-	//Eliminate 0 and 1 in case random.cc is actually picking from [0,1]. Documentation in random.cc unclear
-	numeric::Real U = 0;
-	numeric::Real V = 0;
-
-	while(U == 0 || U == 1)
-	{
-		U = numeric::random::uniform();
-	}
-	while(V == 0 || V == 1)
-	{
-		V = numeric::random::uniform();
-	}
-	numeric::Real theta = 2 * 3.14159265358979 * U;
-	numeric::Real phi = acos(2 * V - 1);
-
-	random_point.x(distance * sin(phi) * cos(theta));
-	random_point.y(distance * sin(phi) * sin(theta));
-	random_point.z(distance * cos(phi));
-
-	return random_point;
-}
 
 xyzVector<Real> random_vector_spherical(){
 	return xyzVector<Real>(gaussian(),gaussian(),gaussian());

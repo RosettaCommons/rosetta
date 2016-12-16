@@ -13,18 +13,12 @@
 
 #include <cxxtest/TestSuite.h>
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 #include <test/core/init_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
-
-#include <numeric/model_quality/rms.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTransform.hh>
 
 class UltraLightResidueTests : public CxxTest::TestSuite {
 public:
@@ -35,61 +29,15 @@ public:
 	}
 
 	void test_ultralight() {
-
-		core::conformation::UltraLightResidue original_res(pose_.residue(3).get_self_ptr());
-		core::conformation::UltraLightResidue test_res(pose_.residue(3).get_self_ptr());
-
-		core::Vector test_translation(1.5,2.5,3.0);
-		core::Vector inverse_translation(-1.5,-2.5,-3.0);
-
-		numeric::xyzMatrix<core::Real> test_rotation(
-				numeric::z_rotation_matrix_degrees( 115.0 ) * (
-					numeric::y_rotation_matrix_degrees( 85.0 ) *
-					numeric::x_rotation_matrix_degrees( 5.0 ) ));
-
-		//******************Perform a random transformation and then test align to residue to see if alignment works
-
-		test_res.transform(test_rotation, test_translation);
-		test_res.align_to_residue(original_res);
-
-		for ( core::Size atom_index =1; atom_index <= test_res.natoms(); ++atom_index ) {
-			TS_ASSERT_DELTA(original_res[atom_index],test_res[atom_index],0.001);
-		}
-
-		core::Real deviation = 0;
-		utility::vector1<core::PointPosition > target_coords = original_res.coords_vector();
-		utility::vector1<core::PointPosition > copy_coords = test_res.coords_vector();
-
-		for(core::Size i=1; i <= copy_coords.size(); ++i)
-			{
-					core::Real deviation_x = ((copy_coords[i][0]-target_coords[i][0]) * (copy_coords[i][0]-target_coords[i][0]));
-					core::Real deviation_y = ((copy_coords[i][1]-target_coords[i][1]) * (copy_coords[i][1]-target_coords[i][1]));
-					core::Real deviation_z = ((copy_coords[i][2]-target_coords[i][2]) * (copy_coords[i][2]-target_coords[i][2]));
-
-					core::Real total_dev = deviation_x + deviation_y + deviation_z;
-					deviation += total_dev;
-			}
-
-				deviation /= (core::Real)copy_coords.size();
-				deviation = sqrt(deviation);
-
-				TS_ASSERT_LESS_THAN(deviation, 0.001);
-
-				deviation=0;
-				target_coords.clear();
-				copy_coords.clear();
-
-		//******************************************END Perform a random transformation and then test align to residue to see if alignment works
-
-		//******************Perform a simple 1D rotation and check against correct coordinates
-
 		core::conformation::UltraLightResidue light_res(pose_.residue(3).get_self_ptr());
+
 		TS_ASSERT_EQUALS(pose_.residue(3).natoms(),light_res.natoms());
 
 		numeric::xyzMatrix<core::Real> matrix(numeric::x_rotation_matrix_degrees(40.0));
 		core::Vector null_translation(0.0,0.0,0.0);
 
 		light_res.transform(matrix,null_translation);
+
 
 		utility::vector1<core::PointPosition> correct_values;
 
@@ -144,8 +92,6 @@ public:
 		for ( core::Size atom_index = 1; atom_index <= light_res.natoms(); ++atom_index ) {
 			TS_ASSERT_EQUALS(light_res[atom_index],pose_.residue(3).xyz(atom_index));
 		}
-
-		//******************END- Perform a simple 1D rotation and check against correct coordinates
 
 	}
 };

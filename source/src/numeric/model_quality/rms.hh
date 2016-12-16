@@ -200,19 +200,6 @@ rmsfitca2(
 	bool const realign = false
 );
 
-
-//rms_fit with FArray2Ds and passing by reference
-void
-rms_fit(
-	int npoints,
-	ObjexxFCL::FArray2D< double > xx,
-	ObjexxFCL::FArray2D< double > &yy,
-	ObjexxFCL::FArray1D< double > ww,
-	int natsel,
-	double & esq
-);
-
-
 //////////////////////////////////////////////////////////////////
 ///
 /// @brief

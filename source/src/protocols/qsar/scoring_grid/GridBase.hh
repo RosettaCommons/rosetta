@@ -40,7 +40,6 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)=0;
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
-//	virtual void reset(){};
 	/// @setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
 

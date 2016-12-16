@@ -311,7 +311,6 @@ sources = {
 		"LigandDockingLoaders",
 		"ResidueTorsionRestraints",
 		"StartFrom",
-		"Transform",
  	],
 
 	"loophash" : [

@@ -26,10 +26,6 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace ligand_docking {
 
@@ -45,47 +41,6 @@ void move_ligand_to_desired_centroid(
 	// We probably want some error checking here to make sure that moving the jump
 	// doesn't also move some other part of the protein due to FoldTree setup.
 	move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
-}
-
-/// @brief Move the center of specified multiple chains to the desired_centroid
-void
-move_ligand_to_desired_centroid(
-		utility::vector1<std::string> const & chains,
-		core::Vector const & desired_centroid,
-		core::pose::Pose & pose
-){
-
-	utility::vector1<core::Size> chain_ids;
-	utility::vector1<core::Size> jump_ids;
-
-	//obtain chain IDs and jump IDs from pose
-	foreach(std::string chain, chains){
-		chain_ids.push_back(core::pose::get_chain_id_from_chain(chain, pose));
-		jump_ids.push_back(core::pose::get_jump_id_from_chain_id(chain_ids.back(), pose));
-	}
-
-	core::Vector const ligand_centroid = protocols::geometry::centroid_by_chains(pose, chain_ids);
-	core::Vector const trans_vec = desired_centroid - ligand_centroid;
-	core::Real const trans_len = trans_vec.length();
-
-	if (trans_len > 1e-3) { // otherwise we get NaNs
-			protocols::rigid::RigidBodyTransMover mover(pose, jump_ids[1]);
-			mover.step_size(trans_len);
-			mover.trans_axis(trans_vec);
-			mover.freeze();
-			mover.apply(pose); //moving original chain
-
-			//applying same mover to other chains
-			for(
-						core::Size counter = 2;
-						counter <= jump_ids.size();
-						++counter
-				)
-			{
-				mover.rb_jump(jump_ids[counter]);
-				mover.apply(pose);
-			}
-		}
 }
 
 /// @brief Move the center of the object(s) downstream of jump_id to the desired_centroid
@@ -104,19 +59,6 @@ move_ligand_to_desired_centroid(
 		mover.trans_axis(trans_vec);
 		mover.apply(pose);
 	}
-}
-
-/// @brief Move the neighbor atom of the specified multiple chains to the desired_position
-void
-move_ligand_neighbor_to_desired_position(
-		utility::vector1<std::string> const & chains,
-		core::Vector const & desired_position,
-		core::pose::Pose & pose
-){
-	foreach(std::string chain, chains){
-		move_ligand_neighbor_to_desired_position(chain, desired_position,pose);
-	}
-
 }
 
 /// @brief Move the neighbor atom of the specified chain to the desired_position

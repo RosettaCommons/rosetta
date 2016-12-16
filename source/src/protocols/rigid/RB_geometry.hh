@@ -21,7 +21,6 @@
 // Package headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 // C++ Headers
@@ -34,18 +33,6 @@ namespace geometry {
 
 numeric::xyzMatrix_double
 random_reorientation_matrix(const double phi_range= 360.0, const double psi_range= 360.0);
-
-core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_pointers);
-
-core::Vector centroid_by_chains(
-		core::pose::Pose const & pose,
-		utility::vector1<core::Size> chain_ids
-);
-
-core::Vector centroid_by_chain(
-		core::pose::Pose const & pose,
-		core::Size const chain_id
-);
 
 void
 centroids_by_jump(

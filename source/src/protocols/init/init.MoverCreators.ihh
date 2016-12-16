@@ -212,7 +212,6 @@
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/GrowLigandCreator.hh>
 #include <protocols/ligand_docking/HighResDockerCreator.hh>
-#include <protocols/ligand_docking/HighResEnsembleCreator.hh>
 #include <protocols/ligand_docking/InterfaceScoreCalculatorCreator.hh>
 #include <protocols/ligand_docking/LigandDesignCreator.hh>
 #include <protocols/ligand_docking/MinimizeBackboneCreator.hh>
@@ -222,7 +221,6 @@
 #include <protocols/ligand_docking/SlideTogetherCreator.hh>
 #include <protocols/ligand_docking/StartFromCreator.hh>
 #include <protocols/ligand_docking/TransformCreator.hh>
-#include <protocols/ligand_docking/TransformEnsembleCreator.hh>
 #include <protocols/ligand_docking/TranslateCreator.hh>
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 

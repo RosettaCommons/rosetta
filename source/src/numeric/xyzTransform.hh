@@ -123,7 +123,7 @@ public:
 	friend    Transform operator *( T const & a, Transform const & b ){ return Transform( b.R, b.t*a ); }
 	friend    Transform operator *( Transform const & a, Matrix const & b ){ return Transform( a.R*b, a.t ); }
 	friend    Transform operator *( Matrix const & a, Transform const & b ){ return Transform( a*b.R, a*b.t ); }
-	friend    Vector operator *( Transform const & x, Vector const & v ){ return x.R*v+x.t; } //Performs 3D transformation on coordinates
+	friend    Vector operator *( Transform const & x, Vector const & v ){ return x.R*v+x.t; }
 	friend    Transform operator *( Transform const & a, Transform const & b ){ return Transform( a.R*b.R, a.R*b.t + a.t ); }
 
 	// friend    Transform operator /( Transform const & n, Transform const & d ){ return (~d)*n; }

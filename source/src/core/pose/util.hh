@@ -545,9 +545,6 @@ get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose
 core::conformation::ResidueCOPs
 get_chain_residues(core::pose::Pose const & pose, core::Size chain_id);
 
-
-core::conformation::ResidueCOPs
-get_residues_from_chains(core::pose::Pose const & pose, utility::vector1<core::Size> chain_ids);
 /// @brief Is residue number in this chain?
 bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string chain );
 
@@ -595,7 +592,6 @@ core::Size
 get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose);
 
 std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose);
-std::string get_sha1_hash_from_chain(char const & chain, core::pose::Pose const & pose);
 
 /// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values
 template< typename T >

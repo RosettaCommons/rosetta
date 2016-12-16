@@ -34,7 +34,6 @@ sources = {
         "WrapAngles",
 		"xyz.functions",
 		"xyzMatrix",
-		"xyzTransform",
 		"xyzTriple",
 		"xyzVector",
 	],
@@ -72,7 +71,6 @@ sources = {
 	"random" : [
 		"DistributionSampler",
 		"random.functions",
-		"random_xyz",
 		"reservoir_sample",
 		"WeightedReservoirSampler",
 		"WeightedSampler",
