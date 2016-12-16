@@ -31,7 +31,9 @@
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/Patch.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -1612,6 +1614,50 @@ Pose::clear()
 	observer_cache_->clear();
 	pdb_info( nullptr ); // will check for existence, remove observers, etc
 }
+
+// @details Switch residues to VIRTUAL
+/// @author Sebastian RŠmisch <raemisch@scripps.edu>
+/// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
+void
+Pose::real_to_virtual( core::Size seqpos ){
+	//std::cout << "Original residue type:" << std::endl;
+	//std::cout << this->residue_type(seqpos) << std::endl;
+	
+	
+	//work on a copy of the restype. Then add the restype to the pose
+    core::chemical::ResidueTypeOP newRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
+	newRT->real_to_virtual();
+	replace_pose_residue_copying_existing_coordinates(*this, seqpos, *newRT);
+
+	// update connections
+	for ( Size i_con=1; i_con<=this->residue_type(seqpos).n_possible_residue_connections(); ++i_con ) {
+		if ( this->conformation().residue(seqpos).connected_residue_at_resconn(i_con) != 0 ) {
+			Size connected_seqpos = this->conformation().residue(seqpos).connected_residue_at_resconn(i_con);
+			Size connected_id = this->residue(seqpos).connect_map(i_con).connid();
+			this->conformation().update_noncanonical_connection(seqpos, i_con, connected_seqpos, connected_id);
+		}
+	}
+}
+
+
+/// @details Switch residues from VIRTUAL to full_atom
+/// @author Sebastian RŠmisch <raemisch@scripps.edu>
+/// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
+void
+Pose::virtual_to_real( core::Size seqpos ){
+	core::chemical::ResidueTypeOP oldRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
+    std::string const base_name( residue_type_base_name( *oldRT ) );
+	
+	//Remove variant type before getting list.
+	oldRT->delete_property("VIRTUAL_RESIDUE");
+	
+	utility::vector1< std::string > const & variants( oldRT->properties().get_list_of_variants() );
+    chemical::ResidueTypeSetCOP base_RTset( oldRT->residue_type_set() );
+    core::chemical::ResidueTypeCOP RT = core::chemical::ResidueTypeFinder(*base_RTset).residue_base_name( base_name ).variants( variants ).get_representative_type();
+    // swap in new (old) residue type
+    core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);
+}
+
 
 /// @details Dumps an mmcif formatted file if the extension on the input file_name_string is .cif
 void

@@ -60,6 +60,102 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
+
+/// @brief Return the number of the residue on source that is nearest to res on target. If the distance
+/// is greater than 2.0 returns 0 to indicate error
+core::Size
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
+	//TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<< " and residue "<<res<<std::endl;
+	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
+	for ( core::Size i = 1; i <= source.size(); ++i ) {
+		if ( source.residue( i ).is_ligand() ) continue;
+		if ( chain && source.residue( i ).chain() != chain ) continue;
+		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
+		if ( dist <= min_dist ) {
+			min_dist = dist;
+			nearest_res = i;
+		}
+	}
+	if ( min_dist <= 3.0 ) return nearest_res;
+	else return 0;
+}
+
+void
+find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & target_dist, core::Size const chain/*=0*/ ){
+	target_res = 0; target_dist = 0.0;
+	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
+	for ( core::Size i = 1; i <= source.size(); ++i ) {
+		if ( source.residue( i ).is_ligand() ) continue;
+		if ( chain && source.residue( i ).chain() != chain ) continue;
+		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
+		if ( dist <= min_dist ) {
+			min_dist = dist;
+			nearest_res = i;
+		}
+	}
+	if ( min_dist <= 3.0 ) {
+		target_res = nearest_res;
+		target_dist = min_dist;
+	}
+}
+
+
+utility::vector1< core::Size >
+residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/) {
+	utility::vector1< core::Size > designable_vec, packable_vec, both;
+	designable_vec.clear(); packable_vec.clear(); both.clear();
+	core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
+	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
+		if ( packer_task->being_designed( resi ) ) {
+			designable_vec.push_back( resi );
+		} else if ( packer_task->being_packed( resi ) ) {
+			packable_vec.push_back( resi );
+		}
+	}
+	if ( designable && packable ) {
+		both.insert( both.begin(), designable_vec.begin(), designable_vec.end() );
+		both.insert( both.end(), packable_vec.begin(), packable_vec.end() );
+		return both;
+	}
+	if ( designable ) {
+		return designable_vec;
+	}
+	return packable_vec;
+}
+/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
+core::Size
+find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
+{
+	core::Size disulfideN=0,disulfideC=0;
+	for ( core::Size i = res; i <= pose.size(); ++i ) {
+		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
+			disulfideC=i;
+			break;
+		}
+	}
+	// TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
+	for ( core::Size i = res ; i > 0; --i ) {
+		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
+			disulfideN=i;
+			break;
+		}
+	}
+	//TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
+	if ( (disulfideN==0)&&(disulfideC==0) ) {
+		utility_exit_with_message("Could not find disulfides on: "+pose.pdb_info()->name());
+	}
+	if ( ((disulfideC-res)>(res-disulfideN))&&disulfideN!=0 ) {
+		return disulfideN;
+	}
+
+	return disulfideC;
+}
+
+
+///////////////////////////////////////////////////////////
+//////////////////// Task Operations //////////////////////
+
+
 /// @details This is essentially a shameless copy of Justin's PackRotamersMover::parse_task_operations. In truth
 /// DesignRepackMover should disappear into Justin's better organized class, but this will wait... (SJF)
 core::pack::task::TaskFactoryOP
@@ -181,34 +277,39 @@ attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & at
 		+ utility::tag::XMLSchemaAttribute( "task_factory", utility::tag::xs_string , "XRW TO DO" );
 }
 
-//this function was moved to src/core/select/residue_selector/util.cc
-//core::select::residue_selector::ResidueSelectorCOP
-//parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
-//{
-// std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
-// if ( selectorname.empty() ) {
-//  return core::select::residue_selector::ResidueSelectorCOP();
-// }
-// return get_residue_selector( selectorname, data );
-//}
-//
-//core::select::residue_selector::ResidueSelectorCOP
-//get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
-//{
-// core::select::residue_selector::ResidueSelectorCOP selector;
-// try {
-//  selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
-// } catch ( utility::excn::EXCN_Msg_Exception & e ) {
-//  std::stringstream error_msg;
-//  error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
-//  error_msg << e.msg();
-//  throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-// }
-// debug_assert( selector );
-// TR << "Using residue selector " << selector_name << std::endl;
-// return selector;
-//}
+/////////////////////////////////////////////////////////////
+//////////////////// Residue Selectors //////////////////////
 
+/// @brief returns a residue selector given a tag and datamap
+/// @details Looks for "residue_selector" option in tag
+///          If that option isn't found, returns NULL ptr
+///          If that option is found, calls get_residue_selector()
+core::select::residue_selector::ResidueSelectorCOP
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name )
+{
+	return core::select::residue_selector::parse_residue_selector( tag, data, option_name );
+}
+
+/// @brief returns a residue selector given a selector's name and datamap
+/// @details Looks for selector in the datamap
+///          Returns a const ptr to the selector
+/// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
+core::select::residue_selector::ResidueSelectorCOP
+get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
+{
+	return core::select::residue_selector::get_residue_selector( selector_name, data );
+}
+
+
+/// @brief Appends the attributes read by parse_residue_selector
+void
+attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes )
+{
+	return core::select::residue_selector::attributes_for_parse_residue_selector(attributes);
+}
+
+///////////////////////////////////////////////////////////
+//////////////////// ScoreFunction ////////////////////////
 
 /// @details Utility function to find a scorefunction from
 /// parser-provided data. This is essentially a shameless copy of
@@ -256,25 +357,7 @@ parse_score_function(
 	return data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 }
 
-/// @brief returns a residue selector given a tag and datamap
-/// @details Looks for "residue_selector" option in tag
-///          If that option isn't found, returns NULL ptr
-///          If that option is found, calls get_residue_selector()
-core::select::residue_selector::ResidueSelectorCOP
-parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data, std::string const & option_name )
-{
-	return core::select::residue_selector::parse_residue_selector( tag, data, option_name );
-}
 
-/// @brief returns a residue selector given a selector's name and datamap
-/// @details Looks for selector in the datamap
-///          Returns a const ptr to the selector
-/// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
-core::select::residue_selector::ResidueSelectorCOP
-get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
-{
-	return core::select::residue_selector::get_residue_selector( selector_name, data );
-}
 
 /// @details Utility function to find a scorefunction from
 /// parser-provided data for the option 'scorefxn'.
@@ -308,7 +391,6 @@ get_score_function_name(
 	return get_score_function_name(tag, "scorefxn");
 }
 
-////////////////////////////////////////////////////////////////////
 ///  Get attributes ( i.e. options ) for movers to build xml schemas
 /// @brief Appends the attributes read by get_score_function_name
 void
@@ -372,6 +454,15 @@ attributes_for_parse_score_function_w_description_when_required( utility::tag::A
 		description);
 }
 
+
+
+
+
+
+///////////////////////////////////////////////////////////
+//////////////////// Reference Pose ///////////////////////
+
+
 void
 attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name ){
 	attributes + utility::tag::XMLSchemaAttribute( attribute_name, utility::tag::xs_string , "XRW_TODO" );
@@ -394,6 +485,14 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 	} else std::cerr << "WARNING: saved_reference_pose function called even though tag has no " + tag_name + " entry. something's unclean somewhere." << std::endl;
 	return nullptr;
 }
+
+
+
+
+
+
+/////////////////////////////////////////////////////////
+//////////////////// MoveMap ////////////////////////////
 
 /// @brief utility function for parse_movemap which goes over each of the tags in a movemap section
 void
@@ -668,19 +767,9 @@ add_movemaps_to_datamap(
 	}
 }
 
-bool
-has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
-	using utility::tag::TagCOP;
 
-	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
-	utility::vector1< TagCOP >::const_iterator tag_it;
-	for ( auto const & branch_tag : branch_tags ) {
-		if ( branch_tag->getName() == branch_name ) {
-			return true;
-		}
-	}
-	return false;
-}
+/////////////////////////////////////////////////////////
+//////////////////// Filter ////////////////////////////
 
 protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
@@ -691,6 +780,11 @@ parse_filter( std::string const & filter_name, protocols::filters::Filters_map c
 	return filter_it->second;
 }
 
+
+
+/////////////////////////////////////////////////////////
+//////////////////// Mover //////////////////////////////
+
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
 	auto mover_it( movers.find( mover_name ) );
@@ -699,6 +793,11 @@ parse_mover( std::string const & mover_name, protocols::moves::Movers_map const 
 	}
 	return mover_it->second;
 }
+
+
+
+/////////////////////////////////////////////////////////
+//////////////////// XYZ Vector /////////////////////////
 
 void
 attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist ){
@@ -730,109 +829,12 @@ parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 
 }
 
-/// @brief Return the number of the residue on source that is nearest to res on target. If the distance
-/// is greater than 2.0 returns 0 to indicate error
-core::Size
-find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ ){
-	//TR<<"looking for neiboughrs of: "<<source.pdb_info()->name()<< " and residue "<<res<<std::endl;
-	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for ( core::Size i = 1; i <= source.size(); ++i ) {
-		if ( source.residue( i ).is_ligand() ) continue;
-		if ( chain && source.residue( i ).chain() != chain ) continue;
-		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-		if ( dist <= min_dist ) {
-			min_dist = dist;
-			nearest_res = i;
-		}
-	}
-	if ( min_dist <= 3.0 ) return nearest_res;
-	else return 0;
-}
 
+
+/// @brief Appends the attributes read by parse_residue_selector
 void
-find_nearest_res(  core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & target_dist, core::Size const chain/*=0*/ ){
-	target_res = 0; target_dist = 0.0;
-	core::Real min_dist( 100000 ); core::Size nearest_res( 0 );
-	for ( core::Size i = 1; i <= source.size(); ++i ) {
-		if ( source.residue( i ).is_ligand() ) continue;
-		if ( chain && source.residue( i ).chain() != chain ) continue;
-		core::Real const dist( target.residue( res ).xyz( "CA" ).distance( source.residue( i ).xyz( "CA" ) ) );
-		if ( dist <= min_dist ) {
-			min_dist = dist;
-			nearest_res = i;
-		}
-	}
-	if ( min_dist <= 3.0 ) {
-		target_res = nearest_res;
-		target_dist = min_dist;
-	}
-}
+attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
 
-
-utility::vector1< core::Size >
-residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/) {
-	utility::vector1< core::Size > designable_vec, packable_vec, both;
-	designable_vec.clear(); packable_vec.clear(); both.clear();
-	core::pack::task::PackerTaskOP packer_task( tf->create_task_and_apply_taskoperations( pose ) );
-	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
-		if ( packer_task->being_designed( resi ) ) {
-			designable_vec.push_back( resi );
-		} else if ( packer_task->being_packed( resi ) ) {
-			packable_vec.push_back( resi );
-		}
-	}
-	if ( designable && packable ) {
-		both.insert( both.begin(), designable_vec.begin(), designable_vec.end() );
-		both.insert( both.end(), packable_vec.begin(), packable_vec.end() );
-		return both;
-	}
-	if ( designable ) {
-		return designable_vec;
-	}
-	return packable_vec;
-}
-/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
-core::Size
-find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
-{
-	core::Size disulfideN=0,disulfideC=0;
-	for ( core::Size i = res; i <= pose.size(); ++i ) {
-		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
-			disulfideC=i;
-			break;
-		}
-	}
-	// TR<<"C-ter disulfide: "<<disulfideC<<std::endl;
-	for ( core::Size i = res ; i > 0; --i ) {
-		if ( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ) {
-			disulfideN=i;
-			break;
-		}
-	}
-	//TR<<"N-ter disulfide: "<<disulfideN<<std::endl;
-	if ( (disulfideN==0)&&(disulfideC==0) ) {
-		utility_exit_with_message("Could not find disulfides on: "+pose.pdb_info()->name());
-	}
-	if ( ((disulfideC-res)>(res-disulfideN))&&disulfideN!=0 ) {
-		return disulfideN;
-	}
-
-	return disulfideC;
-}
-
-void
-parse_bogus_res_tag( utility::tag::TagCOP tag, std::string const & prefix ){
-	// AMW: cppcheck flags this becuase it does nothing! where does bogus go?!
-	// The answer, excruciatingly, is that this is a way to handle tags silently that just shouldn't be there, I guess?
-	// This function is passed a prefix before "pdb_num"
-	std::string bogus;
-	if ( tag->hasOption(prefix+"pdb_num") ) {
-		bogus = tag->getOption<std::string>(prefix+"pdb_num");
-	} else if ( tag->hasOption(prefix+"res_num") ) {
-		bogus = tag->getOption<std::string>(prefix+"res_num");
-	}
-
-}
 
 // void
 // attributes_for_report_to_db( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaDefinition & xsd)

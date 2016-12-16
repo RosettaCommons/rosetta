@@ -1,0 +1,5 @@
+-s 9_mer_linear_glycan_test.pdb
+-parser:protocol output_root.xml 
+-include_sugars
+-write_pdb_link_records
+-overwrite

@@ -121,7 +121,7 @@ GlycanRelaxMover::parse_my_tag(
 
 
 	//Movemap
-	if ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
+	if ( tag->hasTag( "MoveMap") ) {
 		full_movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
 		//protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);

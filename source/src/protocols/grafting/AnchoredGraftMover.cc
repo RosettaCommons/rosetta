@@ -218,8 +218,8 @@ AnchoredGraftMover::parse_my_tag(
 	tag_ = tag->clone();
 
 	//Protect from unused option crash.
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
+	tag->getOption<std::string>( "start_" );
+	tag->getOption<std::string>( "end_" );
 
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
 
@@ -232,7 +232,7 @@ AnchoredGraftMover::parse_my_tag(
 		fa_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", fa_scorefxn);
 	}
 
-	if ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
+	if ( tag->hasTag("MoveMap") ) {
 		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
 
 	}
@@ -240,7 +240,7 @@ AnchoredGraftMover::parse_my_tag(
 	if ( data.has("movemaps", "scaffold_movemap") ) { //&& data.has("movemaps", "scaffold_movemap")){
 		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
 		insert_movemap_ = data.get_ptr<MoveMap>("movemaps", "insert_movemap");
-	} else if ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
+	} else if ( tag->hasTag( "MoveMap") ) {
 		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
 	} else {
 		TR <<"scaffold_movemap and insert_movemap unspecified.  Using set flexibility settings." << std::endl;

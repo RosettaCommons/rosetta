@@ -42,6 +42,9 @@ xsd_type_definition_w_attributes(
 	utility::tag::AttributeList const & attributes
 );
 
+/// @brief Define the XML schema definition for a Mover that
+/// contains subtags
+/// attributes (aka options).
 void
 xsd_type_definition_w_attributes_and_repeatable_subelements(
 	utility::tag::XMLSchemaDefinition & xsd,

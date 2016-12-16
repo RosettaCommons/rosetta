@@ -76,11 +76,26 @@ typedef utility::pointer::shared_ptr< XMLSchemaRepeatableCTNode const > XMLSchem
 typedef utility::pointer::weak_ptr< XMLSchemaRepeatableCTNode > XMLSchemaRepeatableCTNodeAP;
 typedef utility::pointer::weak_ptr< XMLSchemaRepeatableCTNode const > XMLSchemaRepeatableCTNodeCAP;
 
+/// @brief
+///
+///  The simple types provided by the XMLSchema language itself.
+///  These are not always the types that you want to use.
+///
+/// @details
+///
+///  In particular, xs_decimal does not support scientific notation, so you probably
+///  want to use xsct_real (defined in the XMLSchemaCommonType enumeration in
+///  XMLSchemaGeneration.hh) to represent real-valued numbers.
+///
+///  Also, the boolean-value reading function in tag::getOption< bool > accepts more values
+///  for "true" and "false" than the xs_boolean
+///  so you want to use xsct_rosetta_bool in your schemas instead.
+///
 enum XMLSchemaDataType {
 	xs_string,
-	xs_decimal,
+	xs_decimal, // forbidden, you want xsct_real
 	xs_integer,
-	xs_boolean, // You probably do not want to use this, but instead want "xsct_rosetta_bool"
+	xs_boolean, // forbidden, you want xsct_rosetta_bool
 	xs_date,
 	xs_time,
 	xs_common, // for use with the XMLSchemaCommonType

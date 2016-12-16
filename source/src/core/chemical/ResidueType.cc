@@ -27,6 +27,7 @@
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/icoor_support.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElementSet.hh>
@@ -4552,6 +4553,23 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 		}
 	}
 }
+
+//////////////////////////////////////////////////////
+/// Make all atoms virtual
+/// @author Sebastian Rämisch <raemisch@scripps.edu>
+void
+ResidueType::real_to_virtual() {
+    std::string VIRT = "VIRT";
+    for(Size i=1; i<=this->natoms(); ++i){
+        this->set_atom_type( (this->atom_name(i) ), VIRT);
+        this->atom(i).charge(0.0);
+        this->atom(i).is_virtual( true );
+	}
+	this->add_property("VIRTUAL_RESIDUE");
+	this->finalize();
+	
+}
+
 
 
 // Helper methods //////////////////////////////////////////////////////////////

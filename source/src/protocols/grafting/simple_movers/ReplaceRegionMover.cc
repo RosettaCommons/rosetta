@@ -97,8 +97,8 @@ ReplaceRegionMover::parse_my_tag(
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);
 
 	//Protect from unused option crash.
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "src_pose_start_");
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "target_pose_start_");
+	tag->getOption<std::string>( "src_pose_start_" );
+	tag->getOption<std::string>( "target_pose_start_" );
 
 
 }

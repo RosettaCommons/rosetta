@@ -107,8 +107,8 @@ KeepRegionMover::parse_my_tag(
 {
 	tag_ = tag->clone();
 	//Protect from unused option crash.
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
+	tag->getOption<std::string>( "start_" );
+	tag->getOption<std::string>( "end_" );
 
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);

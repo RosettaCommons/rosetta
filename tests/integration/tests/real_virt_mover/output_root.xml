@@ -1,0 +1,12 @@
+<ROSETTASCRIPTS>
+	<RESIDUE_SELECTORS>
+    		<Index name="outer_residues" resnums="6,7,8,9"/>
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<ConvertRealToVirtualMover name="to_virt" residue_selector="outer_residues"/>
+		<ConvertVirtualToRealMover name="from_virt" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="to_virt" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

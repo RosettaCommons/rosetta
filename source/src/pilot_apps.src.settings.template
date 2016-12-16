@@ -17,6 +17,8 @@
 #  When using cmake/make_project.py, the .settings.my file will override the usual .settings
 #  file as the list of .cc files to compile.  It will not be checked into git (it is listed in .gitignore).
 #  When ready for primetime, move your apps into this .settings file.
+#  YOU must pass 'my' to scons if compiling, it DOES NOT see the my file automatically.
+#  Ex: python scons.py bin my mode=release...
 
 sources = {
 	"pilot/yournamehere" : [

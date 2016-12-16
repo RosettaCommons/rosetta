@@ -91,7 +91,7 @@ SimpleGlycosylateMover::parse_my_tag(
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("position"), ",'`~+*&|;. ");
 	} else if ( tag->hasOption("positions") ) {
 		parsed_positions_ = utility::string_split_multi_delim( tag->getOption< std::string >("positions"), ",'`~+*&|;. ");
-	} else if  ( protocols::rosetta_scripts::has_branch(tag, "MoveMap") ) {
+	} else if  ( tag->hasTag( "MoveMap") ) {
 		MoveMapOP mm = MoveMapOP( new MoveMap() );
 
 		//protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);

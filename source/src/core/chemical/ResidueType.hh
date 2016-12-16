@@ -26,6 +26,7 @@
 // Package headers
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
+#include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -1006,15 +1007,24 @@ public:
 		return ( resconn_id == lower_connect_id_ || resconn_id == upper_connect_id_ );
 	}
 
-	Size residue_connect_atom_index( Size const resconn_id ) const;
+	Size
+	residue_connect_atom_index( Size const resconn_id ) const;
 
 
 	/// @brief require actcoord?
-	bool requires_actcoord() const;
+	bool
+	requires_actcoord() const;
 
 	/// @brief update actcoord
-	void update_actcoord( conformation::Residue & rot ) const;
+	void
+	update_actcoord( conformation::Residue & rot ) const;
 
+	/// @brief make all atoms virtual, set variant of this residue type as VIRTUAL
+	///  Virtual residues are exactly the same, but they are not not scored!
+	///  Please use Pose.freal_to_virtual, unless you know what you are doing!
+	void
+	real_to_virtual();
+	
 
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////atoms////////////////////////////////////////
@@ -1718,6 +1728,7 @@ public:
 	bool is_methylated_cterminus() const;
 
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
+	///  This ONLY checks the VIRTUAL_RESIDUE PROPERTY!
 	bool is_virtual_residue() const;
 
 	/// @brief  Check if atom is an inverted virtual

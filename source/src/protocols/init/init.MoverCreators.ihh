@@ -426,6 +426,8 @@
 #include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
+#include <protocols/simple_moves/ConvertRealToVirtualMoverCreator.hh>
+#include <protocols/simple_moves/ConvertVirtualToRealMoverCreator.hh>
 #include <protocols/simple_moves/CopyRotamerMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/simple_moves/CstInfoMoverCreator.hh>

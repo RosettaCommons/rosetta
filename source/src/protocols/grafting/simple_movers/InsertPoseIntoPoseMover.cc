@@ -117,8 +117,8 @@ InsertPoseIntoPoseMover::parse_my_tag(
 	tag_ = tag->clone();
 
 	//Protect from unused option crash.
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
-	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
+	tag->getOption<std::string>( "start_" );
+	tag->getOption<std::string>( "end_" );
 
 	src_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map, "spm_reference_name");
 	copy_pdbinfo_ = tag->getOption<bool>("copy_pdbinfo", false);

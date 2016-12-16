@@ -451,6 +451,11 @@ static MoverRegistrator< simple_moves::DisulfideInsertionMoverCreator > reg_Disu
 static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::EvolutionaryDynamicsMoverCreator > reg_EvolutionaryDynamicsMoverCreator;
 static MoverRegistrator< simple_moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
+
+static MoverRegistrator< simple_moves::ConvertRealToVirtualMoverCreator > reg_ConvertRealToVirtualMoverCreator;
+
+static MoverRegistrator< simple_moves::ConvertVirtualToRealMoverCreator > reg_ConvertVirtualToRealMoverCreator;
+
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
 static MoverRegistrator< simple_moves::FindConsensusSequenceCreator > reg_FindConsensusSequenceCreator;

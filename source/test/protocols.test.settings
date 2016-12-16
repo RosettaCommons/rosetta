@@ -490,6 +490,7 @@ sources = {
 		"ddG",
 		"DisulfideInsertionMoverTests",
 		"FavorSequenceProfile",
+		"FAVirtMoverTests",
 		"GenericSimulatedAnnealer",
 		#"UniformPositionMover",
 		"MSDMoverTest",
@@ -641,6 +642,7 @@ testinputfiles = [
 	"branch_angle/branch_angle_1.txt",
 	"branch_angle/branch_angle_2.txt",
 #	"core/conformation/dock_in.pdb", # RestrictToInterfaceOperation and others in toolbox use this pdb file
+	"carbohydrates/N-linked_14-mer_glycan.pdb",
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",

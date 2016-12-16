@@ -47,6 +47,28 @@
 namespace protocols {
 namespace rosetta_scripts {
 
+
+/// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain
+core::Size
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain = 0 );
+
+/// @brief find nearest residue and also return the distance
+void
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & dist, core::Size const chain = 0 );
+
+/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
+core::Size
+find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
+
+/// @brief returns a vector containing all the residues with a given packer state according to the TF
+utility::vector1< core::Size >
+residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );
+
+
+
+///////////////////////////////////////////////////////////
+//////////////////// Task Operations //////////////////////
+
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
 
@@ -61,6 +83,9 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*con
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data );
 
+
+///////////////////// Attributes /////////////////////////
+
 /// @brief Appends the 'task_operation' attribute
 void
 attributes_for_parse_task_operations( utility::tag::AttributeList & attributes );
@@ -68,6 +93,17 @@ attributes_for_parse_task_operations( utility::tag::AttributeList & attributes )
 /// @brief Appends the 'task_operation' and 'task_factory' attributes.
 void
 attributes_for_parse_task_operations_w_factory( utility::tag::AttributeList & attributes );
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+//////////////////// Residue Selectors //////////////////////
 
 /// @brief returns a residue selector given a tag and datamap
 /// @details Looks for "residue_selector" option in tag
@@ -87,18 +123,20 @@ parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap cons
 core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
 
-//This function was moved to src/core/select/residue_selector/util.hh
+
+///////////////////// Attributes ///////////////////////////
+
 /// @brief Appends the attributes read by parse_residue_selector
-//void
-//attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
-
-/// @brief Appends the attributes read by get_score_function_name
 void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attributes );
+attributes_for_parse_residue_selector( utility::tag::AttributeList & attributes );
 
-/// @brief Appends the attributes read by get_score_function_name w/ name argument
-void
-attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name );
+
+
+
+
+
+///////////////////////////////////////////////////////////
+//////////////////// ScoreFunction ////////////////////////
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
 /// through the given option. Defaults to 'commandline'.
@@ -133,6 +171,16 @@ get_score_function_name(
 	utility::tag::TagCOP tag);
 
 
+///////////////////// Attributes ///////////////////////////
+
+/// @brief Appends the attributes read by get_score_function_name
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes );
+
+/// @brief Appends the attributes read by get_score_function_name w/ name argument
+void
+attributes_for_get_score_function_name( utility::tag::AttributeList & attributes, std::string const & option_name );
+
 /// @brief Appends the attributes read by parse_score_function
 void
 attributes_for_parse_score_function( utility::tag::AttributeList & attributes);
@@ -163,17 +211,13 @@ attributes_for_parse_score_function_w_description_when_required( utility::tag::A
 );
 
 
-/// @brief convenience function to access pointers to poses that will be stored
-/// in the data map at an arbitrary point during an RS protocol
-/// Will look for tag in in_tag variable
-void
-attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name="reference_name" );
 
-core::pose::PoseOP
-saved_reference_pose(
-	utility::tag::TagCOP in_tag,
-	basic::datacache::DataMap & data_map,
-	std::string const & tag_str="reference_name" );
+
+
+
+
+/////////////////////////////////////////////////////////
+//////////////////// MoveMap ////////////////////////////
 
 /// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
 /// Still resets movemap if MoveMap branch not found!
@@ -195,6 +239,9 @@ parse_movemap(
 	core::kinematics::MoveMapOP mm,
 	bool const reset_movemap = true /* should we turn everything to true at start?*/);
 
+
+///////////////////// Attributes ///////////////////////////
+
 /// @brief Adds a subelement to an input subelement list describing a MoveMap subtag
 /// that will be used by the parse_movemap function that does not take a DataMap parameter.
 void
@@ -211,10 +258,6 @@ append_subelement_for_parse_movemap_w_datamap(
 	utility::tag::XMLSchemaSimpleSubelementList & subelements
 );
 
-/// @brief Edits the complex type for an object that parses a MoveMap subtag and that
-/// is read through the overloaded parse_movemap which takes a DataMap parameter.
-//void
-//append_subelement_for_parse_movemap( utility::tag::XMLSchemaSimpleSubelementList & subelements );
 
 /// @brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
 /// Skips any mm names that are already loaded.
@@ -226,46 +269,60 @@ add_movemaps_to_datamap(
 	basic::datacache::DataMap & data,
 	bool initialize_mm_as_true = false);
 
-/// @brief Does the tag have a branch of the given name
-bool
-has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name);
+
+
+///////////////////////////////////////////////////////////
+//////////////////// Reference Pose ///////////////////////
+
+core::pose::PoseOP
+saved_reference_pose(
+	utility::tag::TagCOP in_tag,
+	basic::datacache::DataMap & data_map,
+	std::string const & tag_str="reference_name" );
+
+/// @brief convenience function to access pointers to poses that will be stored
+/// in the data map at an arbitrary point during an RS protocol
+/// Will look for tag in in_tag variable
+void
+attributes_for_saved_reference_pose( utility::tag::AttributeList & attributes,  std::string const & attribute_name="reference_name" );
+
+
+
+
+
+/////////////////////////////////////////////////////////
+//////////////////// Filter ////////////////////////////
 
 protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & d );
 
+
+
+
+
+/////////////////////////////////////////////////////////
+//////////////////// Mover //////////////////////////////
 protocols::moves::MoverOP
 parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & d );
 
 
-void
-attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
+
+
+/////////////////////////////////////////////////////////
+//////////////////// XYZ Vector /////////////////////////
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 
-
-/// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain
-core::Size
-find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain = 0 );
-
-/// @brief find nearest residue and also return the distance
 void
-find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size & target_res, core::Real & dist, core::Size const chain = 0 );
+attributes_for_parse_xyz_vector( utility::tag::AttributeList & attlist );
 
-/// @brief finds the nearest disulife to given residue on pose by searching both up and down stream to the given postion
-core::Size
-find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
 
-/// @brief returns a vector containing all the residues with a given packer state according to the TF
-utility::vector1< core::Size >
-residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );
 
-/// @brief Access res_num/pdb_num tag with prefix.
-/// This is to allow parsing at apply time (pdb_num) instead of at parse_my_tag.
-/// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.
-/// This function is to prevent unused variable crash.
-void
-parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const & prefix);
+
+
+
+
 
 ///This is kind of a strange place for this, but for library-level reasons it needs to be more accessible than a more logical home with ReportToDB, and cannot live in basic because it needs other functions in this file.  (There is also value in not creating a new file b/c it breaks the fast-compile system XML XSD XRW is using, and it's 6pm on Friday!)
 
