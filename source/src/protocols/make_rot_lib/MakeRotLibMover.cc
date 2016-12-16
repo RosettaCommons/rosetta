@@ -430,7 +430,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 
 	// create filenames
 	std::stringstream file_name;
-	file_name << "tripeptide_" << rd.get_omg() << "_";
+	file_name << "dipeptide_" << rd.get_omg() << "_";
 	for ( Size bb_i(1); bb_i <= bbs.size(); ++bb_i ) file_name << rd.get_bb(bb_i) << "_";
 	file_name << rd.get_eps() << "_";
 	if ( rd.get_semirotameric() ) {
@@ -441,16 +441,13 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	file_name << ".pdb";
 
 	// set phi, psi, omg, eps based on torsion ids
-	// AMW: prior version used mainchain_torsions().size() to find epsilon's id
-	// I am not actually sure why that no longer works, but it may relate to the mainchain atoms
-	// that are being prepended in the C and N term patches, which work more consistently now.
-	//id::TorsionID omg_id( resi, id::BB, 1 );
 	//TR << "Going to set omega to " << rd.get_omg() << std::endl;
 	id::TorsionID omg_id = ( option[ use_terminal_residues ].value() ?
 		id::TorsionID( resi, id::BB, 1 ) :
 		id::TorsionID( 1,    id::BB, 1 ) );
 	pose.set_torsion( omg_id , rd.get_omg() );
-	core::Size eps_num = pose.residue( resi ).mainchain_torsions().size()-1;
+
+	core::Size eps_num = pose.residue( resi ).mainchain_torsions().size();
 	//TR << "Going to set epsilon (torsion " << eps_num << ") to " << rd.get_eps() << std::endl;
 	id::TorsionID eps_id( resi, id::BB, eps_num );
 	pose.set_torsion( eps_id, rd.get_eps() );
@@ -459,7 +456,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	// We also have an array of backbone dihedral id numbers, which comes from the OptionsData--this is used
 	// to interact with the pose. These two arrays share the bb_i counter.
 	for ( Size bb_i( 1 ); bb_i <= bbs.size(); ++bb_i ) {
-		TR << "About to set bb id " << bb_ids[ bb_i ] << " to " << rd.get_bb( bb_i ) << std::endl;
+		//TR << "About to set bb id " << bb_ids[ bb_i ] << " to " << rd.get_bb( bb_i ) << std::endl;
 		id::TorsionID bb_id( resi, id::BB, bb_ids[ bb_i ] - offset );
 		pose.set_torsion( bb_id, rd.get_bb( bb_i ) );
 	}
