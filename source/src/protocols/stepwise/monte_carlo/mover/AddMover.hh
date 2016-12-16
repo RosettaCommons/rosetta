@@ -130,7 +130,7 @@ private:
 	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
 	core::Size internal_cycles_;
-	bool sample_pH_;
+	bool sample_pH_ = false;
 
 	rna::RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;

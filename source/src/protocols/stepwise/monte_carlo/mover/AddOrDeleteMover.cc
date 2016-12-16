@@ -148,6 +148,9 @@ AddOrDeleteMover::get_name() const {
 void
 AddOrDeleteMover::set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){
 	options_ = options;
+	// This happens RIGHT after construction. I want to propagate this option to the AddMover once
+	// rather than every time apply() is called, so even though it's gross, I will do this:
+	rna_add_mover_->set_sample_pH( options_->sample_pH() );
 }
 
 
