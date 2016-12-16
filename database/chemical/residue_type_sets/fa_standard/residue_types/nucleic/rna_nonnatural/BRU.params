@@ -1,6 +1,6 @@
 # unoptimized
-NAME U33
-IO_STRING U33 X
+NAME BRU
+IO_STRING BRU X
 TYPE POLYMER #residue type
 AA UNP
 ATOM  P   Phos H    1.617264

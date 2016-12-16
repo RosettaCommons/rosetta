@@ -53,7 +53,7 @@ residue_types/nucleic/rna_nonnatural/2MU.params
 residue_types/nucleic/rna_nonnatural/4OC.params
 residue_types/nucleic/rna_nonnatural/5MC.params
 residue_types/nucleic/rna_nonnatural/5MU.params
-residue_types/nucleic/rna_nonnatural/U33.params
+residue_types/nucleic/rna_nonnatural/BRU.params
 residue_types/nucleic/rna_nonnatural/7MG.params
 residue_types/nucleic/rna_nonnatural/7DA.params
 #residue_types/nucleic/rna_nonnatural/ICY.params
