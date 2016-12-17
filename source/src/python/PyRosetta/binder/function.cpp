@@ -248,10 +248,11 @@ bool is_skipping_requested(FunctionDecl const *F, Config const &config)
 
 
 // Generate binding for given function: .def("foo", (std::string (aaaa::A::*)(int) ) &aaaa::A::foo, "doc")
-string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bindings_f, Context &context)
+string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bindings_f, Context &context, CXXRecordDecl const *parent)
 {
 	string function_name = python_function_name(F);
-	string function_qualified_name { standard_name(F->getQualifiedNameAsString()) };
+
+	string function_qualified_name = standard_name( parent ? class_qualified_name(parent) + "::" + F->getNameAsString() : F->getQualifiedNameAsString() );
 
 	CXXMethodDecl const * m = dyn_cast<CXXMethodDecl>(F);
 	string maybe_static = m and m->isStatic() ? "_static" : "";
@@ -322,7 +323,8 @@ string bind_function(FunctionDecl const *F, uint args_to_bind, bool request_bind
 }
 
 // Generate binding for given function. If function have default arguments generate set of bindings by creating separate bindings for each argument with default.
-string bind_function(string const & module, FunctionDecl const *F, Context &context)
+// if parent is not nullptr then bind function as-if it a member of that CXXRecordDecl (for handling visibility changes with 'using' directive)
+string bind_function(string const & module, FunctionDecl const *F, Context &context, CXXRecordDecl const *parent)
 {
 	string code;
 
@@ -333,7 +335,7 @@ string bind_function(string const & module, FunctionDecl const *F, Context &cont
 		if( F->getParamDecl(args_to_bind)->hasDefaultArg() ) break;
 	}
 
-	for(; args_to_bind <= num_params; ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == num_params, context) + '\n';
+	for(; args_to_bind <= num_params; ++args_to_bind) code += module + bind_function(F, args_to_bind, args_to_bind == num_params, context, parent) + '\n';
 
 	return code;
 }

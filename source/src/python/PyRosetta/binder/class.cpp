@@ -342,6 +342,22 @@ void ClassBinder::add_relevant_includes(IncludeSet &includes) const
 string binding_public_data_members(CXXRecordDecl const *C)
 {
 	string c;
+
+	// binding protected data member that was made public in child class by 'using' declaration
+	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
+		if(UsingDecl *u = dyn_cast<UsingDecl>(*d) ) {
+			if( u->getAccess() == AS_public ) {
+				for(auto s = u->shadow_begin(); s != u->shadow_end(); ++s) {
+					if(UsingShadowDecl *us = dyn_cast<UsingShadowDecl>(*s) ) {
+						if( FieldDecl *f = dyn_cast<FieldDecl>( us->getTargetDecl() ) ) {
+							if( is_bindable(f) ) c += "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
+						}
+					}
+				}
+			}
+		}
+	}
+
 	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
 		if(FieldDecl *f = dyn_cast<FieldDecl>(*d) ) {
 			if( f->getAccess() == AS_public  and  is_bindable(f) ) c += "\tcl" + bind_data_member(f, class_qualified_name(C)) + ";\n";
@@ -537,8 +553,31 @@ void ClassBinder::generate_prefix_code()
 string binding_public_member_functions(CXXRecordDecl const *C, bool callback_structure, bool callback_structure_constructible, Context &context)
 {
 	string c;
+	// binding protected member functions that was made public in child class by 'using' declaration
+	for(auto d = C->decls_begin(); d != C->decls_end(); ++d) {
+		if(UsingDecl *u = dyn_cast<UsingDecl>(*d) ) {
+			if( u->getAccess() == AS_public ) {
+				for(auto s = u->shadow_begin(); s != u->shadow_end(); ++s) {
+					if(UsingShadowDecl *us = dyn_cast<UsingShadowDecl>(*s) ) {
+						if( CXXMethodDecl *m = dyn_cast<CXXMethodDecl>( us->getTargetDecl() ) ) {
+							if( is_bindable(m)  and  !is_skipping_requested(m, Config::get())  and  !isa<CXXConstructorDecl>(m)  and   !isa<CXXDestructorDecl>(m)  and  !is_const_overload(m) ) {
+								// Create a new CXXRecordDecl and insert base method into inherited class so bind_function correctly resolve parent namespace for function as 'child::' instead of 'base::'
+								// CXXRecordDecl NC(*C);
+								// CXXMethodDecl *nm = CXXMethodDecl::Create(m->getParentASTContext(), &NC, m->getLocStart(), m->getNameInfo(), m->getType(), m->getTypeSourceInfo(),
+								// 										  m->getStorageClass(), m->isInlineSpecified(), m->isConstexpr() , m->getLocStart());
+								// it looks like LLVM will delete this object when parent CXXRecordDecl is destroyed so commenting out for now... // delete nm;
+								c += bind_function("\tcl", m, context, C);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	for(auto m = C->method_begin(); m != C->method_end(); ++m) {
-		if( m->getAccess() == AS_public  and  is_bindable(*m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
+		if( m->getAccess() == AS_public
+			and  is_bindable(*m)  //and  !is_skipping_requested(FunctionDecl const *F, Config const &config)
 			and  !is_skipping_requested(*m, Config::get())
 			and  !isa<CXXConstructorDecl>(*m)  and   !isa<CXXDestructorDecl>(*m)
 			and  !is_const_overload(*m) ) {

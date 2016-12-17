@@ -18,7 +18,13 @@
 
 class Base
 {
+protected:
+	virtual void foo_protected() {}
+	int data;
+
 public:
+	using Base::foo_protected;
+	using Base::data;
 
 	void foo() {}
 
