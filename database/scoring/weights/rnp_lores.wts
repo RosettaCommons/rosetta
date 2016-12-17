@@ -1,0 +1,4 @@
+rnp_base_pair           0.3
+rnp_stack               1.0
+rnp_vdw                 0.6
+rnp_aa_to_rna_backbone  1.0

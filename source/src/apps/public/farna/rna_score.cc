@@ -57,6 +57,7 @@
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 // C++ headers
 #include <iostream>
@@ -85,6 +86,8 @@ OPT_KEY( Boolean, virtualize_free )
 OPT_KEY( Boolean, color_by_score )
 OPT_KEY( Boolean, soft_rep )
 OPT_KEY( Boolean, rmsd_nosuper )
+OPT_KEY( Boolean, convert_protein_centroid )
+OPT_KEY( IntegerVector, rmsd_residues )
 
 // Move this out to protocols/toolbox/ before checkin.
 //
@@ -258,7 +261,15 @@ rna_score_test()
 	if ( option[ in::file::native ].user() ) {
 		native_pose = get_pdb_with_full_model_info( option[ in::file::native ](), rsd_set );
 		native_exists = true;
+		//native_pose->dump_pdb("native_pose_dump.pdb");
+
+		if ( option[ convert_protein_centroid ]() ) {
+			//native_pose->dump_pdb("native_pose_dump.pdb");
+			core::util::switch_to_residue_type_set( *native_pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
+		}
+
 	}
+
 
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -307,6 +318,10 @@ rna_score_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
+		if ( option[ convert_protein_centroid ]() ) {
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */ );
+		}
+
 		if ( option[ virtualize_free ]() ) protocols::stepwise::modeler::rna::virtualize_free_rna_moieties( pose ); // purely for testing.
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
@@ -351,7 +366,12 @@ rna_score_test()
 		if ( native_exists ) {
 			Real rmsd;
 			if ( option[ rmsd_nosuper ]() ) {
-				rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+				if ( option[ rmsd_residues ].user() ) {
+				//rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+				rmsd = protocols::stepwise::modeler::align::get_rmsd( pose, *native_pose, option[ rmsd_residues ]() );
+				} else {
+					rmsd      = all_atom_rmsd_nosuper( *native_pose, pose );
+				}
 			} else {
 				//Real const rmsd      = all_atom_rmsd( *native_pose, pose );
 				rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, *native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
@@ -439,6 +459,8 @@ main( int argc, char * argv [] )
 		NEW_OPT( color_by_score, "color PDB by score (currently handles fa_atr & fa_rep)", false );
 		NEW_OPT( soft_rep, "use soft_rep params for color_by_score", false ); // how about for actual scoring?
 		NEW_OPT( rmsd_nosuper, "Calculate rmsd without superposition first", false);
+		NEW_OPT( convert_protein_centroid, "convert the protein residues to centroid rep", false);
+		NEW_OPT( rmsd_residues, "residues to calculate rmsd for", 1);
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

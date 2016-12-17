@@ -1609,5 +1609,40 @@ base_pair_moving( core::pose::rna::BasePair const & base_pair,
 	return pair_moving;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+void 
+delete_non_protein_from_pose( core::pose::Pose & pose ) {
+
+	// Delete all residues that aren't protein from a pose
+	
+	utility::vector1< std::pair< core::Size, core::Size > > rna_start_and_end_residues;
+	core::Size start = 0;
+	core::Size end = 0;
+	// Figure out the non-protein start and end residues
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( !pose.residue( i ).is_protein() && start == 0 ) {
+			start = i;
+		} else if ( pose.residue( i ).is_protein() ) {
+			if ( start != 0 ) {
+				end = i-1;
+				rna_start_and_end_residues.push_back( std::make_pair( start, end ) );
+				start = 0;
+			}
+		}
+		if ( (i == pose.total_residue()) && (start > end) ){
+			end = i;
+			rna_start_and_end_residues.push_back( std::make_pair( start, end ) );
+		}
+	}
+
+	// Now delete all the non-protein residues
+	core::Size offset = 0;
+	for ( core::Size i=1; i<=rna_start_and_end_residues.size(); ++i ) {
+		pose.delete_residue_range_slow( rna_start_and_end_residues[i].first - offset, rna_start_and_end_residues[i].second - offset );
+		offset += rna_start_and_end_residues[i].second - rna_start_and_end_residues[i].first + 1;
+	}
+
+}
+
 } //farna
 } //protocols

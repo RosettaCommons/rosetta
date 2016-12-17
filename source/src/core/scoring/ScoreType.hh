@@ -157,6 +157,7 @@ enum ScoreType {
 	gauss,
 
 	rna_vdw,          // low res clash check for RNA
+	rnp_vdw,          // low res clash check for RNA/protein
 	rna_base_backbone,          // Bases to 2'-OH, phosphates, etc.
 	rna_backbone_backbone,      // 2'-OH to 2'-OH, phosphates, etc.
 	rna_repulsive,              // mainly phosphate-phosphate repulsion
@@ -178,6 +179,12 @@ enum ScoreType {
 	rna_base_stagger, // Force base pairs to be in same plane.
 	rna_base_stack,   // Stacking interactions
 	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
+
+	rnp_base_pair, // low-res RNA-protein interactions in the plane of the base
+	rnp_stack, // low-res RNA-protein stacking interactions
+	rnp_stack_xy, // low-res RNA-protein stacking interactions, statistical potential in xy grid
+	rnp_pair, // low-res RNA-protein pair interactions (distance and environment dependent)
+	rnp_aa_to_rna_backbone, // low-res potential describing interactions between AAs and RNA backbone
 
 	rna_mg_point, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
 	rna_mg_point_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
@@ -424,6 +431,8 @@ enum ScoreType {
 	burial_v2, // burial of a list of residues converted to score function.
 	burial, // informatic burial prediction
 	abego,  // informatic torsion-bin prediction
+
+	rnp_env,
 
 	// nucleotide resolution thermodynamics
 	loop_close,  // Loop closure terms -- attempting model full folding free energy for multiple loop-connected poses

@@ -741,6 +741,11 @@ sources = {
 		"RNA_FullAtomVDW_BasePhosphate",
 		"StackElecEnergy",
 #		"VDWGridEnergy",
+		"RNP_LowResEnergy",
+		"RNP_LowResPotential",
+		"RNP_LowResStackEnergy",
+		"RNP_LowResStackData",
+		"util",
 	],
 	"core/scoring/rna/chemical_shift" : [
 		"RNA_CS_Parameters",

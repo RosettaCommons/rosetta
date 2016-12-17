@@ -96,6 +96,21 @@ public:
 	utility::vector1< bool > &
 	nonconst_is_magnesium() { return is_magnesium_; }
 
+	// stuff for RNA/protein scoring
+	// maybe I should put this somewhere else..
+	// just putting it here for now because it's easy
+	utility::vector1< bool > const &
+	is_interface() const { return is_interface_; }
+
+	utility::vector1< bool > &
+	nonconst_is_interface() { return is_interface_; }
+
+	utility::vector1< bool > const &
+	is_buried() const { return is_buried_; }
+
+	utility::vector1< bool > &
+	nonconst_is_buried() { return is_buried_; }
+
 	RNA_CentroidInfo &
 	rna_centroid_info() { return rna_centroid_info_; }
 
@@ -145,6 +160,8 @@ private:
 	// for rna low-res magnesium calculations
 	utility::vector1< utility::vector1< Size > > atom_numbers_for_mg_calculation_;
 	utility::vector1< bool > is_magnesium_;
+	utility::vector1< bool > is_interface_;
+	utility::vector1< bool > is_buried_;
 
 	std::string vdw_calculation_annotated_sequence_;
 	std::string mg_calculation_annotated_sequence_;

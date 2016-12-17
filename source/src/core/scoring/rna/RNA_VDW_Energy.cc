@@ -23,6 +23,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <basic/Tracer.hh>
+#include <core/scoring/rna/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -57,6 +60,7 @@ ScoreTypes
 RNA_VDW_EnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( rna_vdw );
+	sts.push_back( rnp_vdw );
 	return sts;
 }
 
@@ -122,6 +126,41 @@ RNA_VDW_Energy::residue_pair_energy(
 
 	Size const pos1 = rsd1.seqpos();
 	Size const pos2 = rsd2.seqpos();
+	
+	if ( (rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA()) ) {
+
+		bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
+		if (rsd1.is_protein()) {
+			bool is_centroid = rsd1.type().residue_type_set()->name() == core::chemical::CENTROID;
+			if ( !is_centroid && !use_actual_centroid ) {
+				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
+				return;
+			}
+		} else {
+			bool is_centroid = rsd2.type().residue_type_set()->name() == core::chemical::CENTROID;
+			if ( !is_centroid && !use_actual_centroid ) {
+				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
+				return;
+			}
+		}
+
+		Real score( 0.0 );
+		// if RNA and protein, calculate RNP clash
+		// Loop through representative RNA atoms and all protein residues (in centroid rep)
+		// Can make this nicer after I get it to work...
+		if ( rsd1.is_RNA() ) {
+			//std::cout << "Calculating rnp vdw energy" << std::endl;
+			score = evaluate_rnp_vdw_score( rsd1 /* rna residue */, rsd2 /* protein residue */, rna_scoring_info, !use_actual_centroid );
+		} else {
+			//std::cout << "Calculating rnp vdw energy" << std::endl;
+			score = evaluate_rnp_vdw_score( rsd2 /* rna residue */, rsd1 /* protein residue */, rna_scoring_info, !use_actual_centroid );
+		}
+	
+		emap[ rnp_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
+	
+		///////////////////////////////
+
+	}
 
 	if ( !rsd1.is_RNA() && !is_magnesium[ pos1 ] ) return;
 	if ( !rsd2.is_RNA() && !is_magnesium[ pos2 ] ) return;
@@ -167,6 +206,69 @@ RNA_VDW_Energy::residue_pair_energy(
 	}
 
 	emap[ rna_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
+}
+/////////////////////////////////
+Real
+RNA_VDW_Energy::evaluate_rnp_vdw_score( 
+		conformation::Residue const & rna_rsd,
+		conformation::Residue const & protein_rsd,
+		rna::RNA_ScoringInfo const & rna_scoring_info,
+		bool const & centroid_mode )
+const {
+
+	Size RNA_pos;
+	Real score( 0.0 );
+
+	RNA_pos = rna_rsd.seqpos();
+
+	char const which_nucleotide = rna_rsd.name1(); //a,c,g,u
+
+	utility::vector1< utility::vector1< Size > > const &
+		atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
+	utility::vector1< Size > const & rna_atom_numbers( atom_numbers_for_vdw_calculation[ RNA_pos ] );
+	Size const num_vdw_atoms_rna( rna_atom_numbers.size() );
+
+	///////////////
+	for ( Size m = 1; m <= num_vdw_atoms_rna; ++m ) {
+	
+		Size const i = rna_atom_numbers[ m ];
+		if ( rna_rsd.is_virtual( i ) ) continue;
+	
+		Vector const & i_xyz( rna_rsd.xyz( i ) );
+	
+		for ( Size n = 1; n <= protein_rsd.natoms(); ++n ) {
+	
+			if ( protein_rsd.is_virtual( n ) ) continue;
+			// if hydrogen, then continue
+			if ( protein_rsd.atom_is_hydrogen( n ) ) continue;
+			Real clash, bump_dsq, j;
+			if ( !centroid_mode && !protein_rsd.atom_is_backbone( n ) ) {
+				j = protein_atom_name_to_num( " CEN", protein_rsd.name3());
+				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, which_nucleotide );
+				// maybe at some point later we want to use the actual centroid/COM
+				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.actcoord() ); // instead of protein_rsd.xyz(n);
+			} else {
+				j = protein_atom_name_to_num( protein_rsd.atom_name( n ), protein_rsd.name3());
+				//Size const j = protein_rsd.atom_type_index( n );
+				// Need some check that this is really one of the atoms that we have data for!
+	
+				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, which_nucleotide );
+				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.xyz( n ) );
+			}
+	
+			//if ( clash > -5.0 ) {
+			if ( clash > 0.0 ) {
+				//std::cout << "SCORE " << score << std::endl;
+				score += ( clash * clash ) / bump_dsq;
+				//std::cout << "SCORE after adding " << score << std::endl;
+				//std::cout << "VDW CLASH! " << rna_rsd.name3() << rna_rsd.seqpos() << " " << rna_rsd.atom_name(i) << " --- " << protein_rsd.name3() << protein_rsd.seqpos() << " " << protein_rsd.atom_name(n) << " Penalty: " << (clash * clash) /bump_dsq << " sqrt(atomvdw) " << sqrt( bump_dsq ) << " dist " << i_xyz.distance( protein_rsd.xyz(j)) << "  index: " << m << " " << n << std::endl;
+				//     tr << "BUMP " << rsd1.name3() << I(4,rsd1.seqpos() ) << ' ' << rsd1.atom_name(i) << " --- " << rsd2.name3() << I(4,rsd2.seqpos() ) << ' ' << rsd2.atom_name(j) << " Penalty: " << ( clash * clash ) / bump_dsq << " sqrt(atomvdw) " << sqrt( bump_dsq ) <<  " dist "  << i_xyz.distance( rsd2.xyz(j)) << "  index: "  << m << " " << n << std::endl;
+			}
+		}
+	}
+
+	return score;
+
 }
 
 
@@ -273,6 +375,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 Distance
 RNA_VDW_Energy::atomic_interaction_cutoff() const
 {
+	// TEST FOR RNP stuff
 	return 5.0; /// now subtracted off 3.0 from cutoffs in centroid params files
 	//return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }

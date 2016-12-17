@@ -35,6 +35,8 @@
 #include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
@@ -76,6 +78,9 @@ public:
 
 	void
 	set_vdw_grid( protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP setting ){ vdw_grid_ = setting; }
+
+	void
+	set_is_rna_and_protein( bool const & setting ){ is_rna_and_protein_ = setting; }
 
 	void
 	set_out_file_tag( std::string const & setting ){ out_file_tag_ = setting; }
@@ -141,6 +146,9 @@ private:
 
 	void
 	randomize_rigid_body_orientations( core::pose::Pose & pose );
+	
+	void
+	randomize_rnp_rigid_body_orientations( core::pose::Pose & pose );
 
 	void
 	update_denovo_scorefxn_weights( core::Size const r );
@@ -164,10 +172,22 @@ private:
 	random_jump_trial( core::pose::Pose & pose );
 
 	void
+	rnp_docking_trial( core::pose::Pose & pose ); 
+
+	core::kinematics::FoldTree
+	get_rnp_docking_fold_tree( core::pose::Pose const & pose );
+
+	void
 	RNA_move_trial( core::pose::Pose & pose );
 
 	void
+	setup_rna_protein_docking_mover( core::pose::Pose const & pose, core::Size const round );
+
+	void
 	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r );
+
+	void
+	setup_rigid_body_mover2( core::pose::Pose const & pose, core::Size const r );
 
 	bool
 	check_score_filter( core::Real const lores_score_, std::list< core::Real > & all_lores_score_ );
@@ -208,6 +228,7 @@ private:
 	movers::RNA_LoopCloserOP rna_loop_closer_;
 	movers::RNA_MinimizerOP rna_minimizer_;
 	movers::RNA_RelaxerOP rna_relaxer_;
+	protocols::rigid::RigidBodyPerturbMoverOP rnp_docking_mover_;
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
 
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
@@ -236,6 +257,9 @@ private:
 	std::list< core::Real > all_lores_score_final_;
 	core::scoring::constraints::ConstraintSetOP constraint_set_;
 	core::pose::PoseOP lores_pose_;
+	bool is_rna_and_protein_;
+	bool do_rnp_docking_;
+	core::kinematics::FoldTree rnp_docking_ft_;
 
 	utility::io::ozstream running_score_output_;
 

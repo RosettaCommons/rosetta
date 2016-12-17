@@ -384,6 +384,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "rna_rg"] = rna_rg;
 	name2score_type_[ "rna_vdw"] = rna_vdw;
+	name2score_type_[ "rnp_vdw"] = rnp_vdw;
 	name2score_type_[ "rna_base_backbone"] = rna_base_backbone;
 	name2score_type_[ "rna_backbone_backbone"] = rna_backbone_backbone;
 	name2score_type_[ "rna_repulsive"] = rna_repulsive;
@@ -393,6 +394,13 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_stagger"] = rna_base_stagger;
 	name2score_type_[ "rna_base_stack"] = rna_base_stack;
 	name2score_type_[ "rna_base_stack_axis"] = rna_base_stack_axis;
+
+	name2score_type_[ "rnp_base_pair"] = rnp_base_pair;
+	name2score_type_[ "rnp_pair"] = rnp_pair;
+	name2score_type_[ "rnp_stack"] = rnp_stack;
+	name2score_type_[ "rnp_stack_xy"] = rnp_stack_xy;
+	name2score_type_[ "rnp_aa_to_rna_backbone"] = rnp_aa_to_rna_backbone;
+	name2score_type_[ "rnp_env"] = rnp_env;
 
 	name2score_type_[ "rna_data_base"] = rna_data_base;
 	name2score_type_[ "rna_data_backbone"] = rna_data_backbone;

@@ -145,6 +145,15 @@ public:
 	void set_grid_vdw_weight( core::Real const & setting ){ grid_vdw_weight_ = setting; }
 	core::Real grid_vdw_weight() const { return grid_vdw_weight_; }
 
+	void set_convert_protein_centroid( bool const setting ){ convert_protein_centroid_ = setting; }
+	bool convert_protein_centroid() const { return convert_protein_centroid_; }
+
+	void set_rna_protein_docking( bool const setting ){ rna_protein_docking_ = setting; }
+	bool rna_protein_docking() const { return rna_protein_docking_; }
+
+	void set_rna_protein_docking_freq( core::Size const setting ){ rna_protein_docking_freq_ = setting; }
+	core::Size rna_protein_docking_freq() const { return rna_protein_docking_freq_; }
+
 	void set_monte_carlo_cycles( core::Size const setting ){ monte_carlo_cycles_ = setting; }
 	core::Size monte_carlo_cycles() const { return monte_carlo_cycles_; }
 
@@ -254,6 +263,11 @@ private:
 	bool vdw_rep_screen_include_sidechains_;
 	bool gradual_constraints_;
 	core::Real grid_vdw_weight_;
+
+	bool convert_protein_centroid_;
+
+	bool rna_protein_docking_;
+	core::Size rna_protein_docking_freq_;
 
 	bool simple_rmsd_cutoff_relax_;
 

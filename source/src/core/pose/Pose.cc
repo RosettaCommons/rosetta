@@ -180,6 +180,7 @@ Pose::operator=( Pose const & src )
 		conformation_ = src.conformation_->clone();
 		conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 	}
+	//std::cout << "Trying to copy the energies!" << std::endl;
 
 	if ( energies_ && energies_->same_type_as_me( *src.energies_ ) ) {
 		(*energies_) = (*src.energies_);
@@ -187,6 +188,8 @@ Pose::operator=( Pose const & src )
 		energies_ = src.energies_->clone();
 		energies_->set_owner( this );
 	}
+
+	//std::cout << "Done copying energies, copying data cache" << std::endl;
 
 	// Deep copy of the data held in the non-constant cache
 	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
@@ -216,9 +219,11 @@ Pose::operator=( Pose const & src )
 	observer_cache_->set( datacache::CacheableObserverType::PYMOL_OBSERVER, pymol_observer, was_pymol_observer_attached );
 
 	this->pdb_info( src.pdb_info_ );
+	//std::cout << "Done pdb info" << std::endl;
 
 	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer( *src.metrics_ ) );
 	metrics_->attach_to( *this );
+	//std::cout << "Done metrics" << std::endl;
 
 	// TEMP DEBUG CONSTRAINTS
 	// if ( constraint_set_ ) constraint_set_->detach_from_conformation();
@@ -248,6 +253,7 @@ Pose::operator=( Pose const & src )
 		}
 	}
 
+	//std::cout << "Done constraints" << std::endl;
 	//Clone the reference poses:
 	if ( src.reference_pose_set_ ) reference_pose_set_ = src.reference_pose_set_->clone();
 
@@ -259,6 +265,7 @@ Pose::operator=( Pose const & src )
 	}
 
 	unbuffer_observers();
+	//std::cout << "Done ref pose and observers" << std::endl;
 
 	PROF_STOP ( basic::POSE_COPY );
 

@@ -210,6 +210,8 @@ base_pair_moving( core::pose::rna::BasePair const & base_pair,
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::pose::Pose const & pose );
 
+void delete_non_protein_from_pose( core::pose::Pose & pose );
+
 } //farna
 } //protocols
 

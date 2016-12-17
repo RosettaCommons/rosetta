@@ -1304,6 +1304,7 @@ Options = Option_Group( '',
 		Option( 'rna_chem_map_lores_weight', 'Real', desc="In RNA lo-res chemical mapping scoring, final strength of rna_chem_map_lores term when -data_file is specified.", default="0.0"),
 		Option( 'use_2prime_OH_potential',   'Boolean', desc="Use torsional potential for RNA 2prime OH." , default="true"),
 		Option( 'include_neighbor_base_stacks',   'Boolean', desc="In RNA score calculation, include stacks between i,i+1" , default="false"),
+		Option( 'FA_low_res_rnp_scoring', 'Boolean', desc="RNA/protein low-res scoring using full atom protein residues", default="false"),
 		Option( 'find_neighbors_3dgrid', 'Boolean', desc="Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)", default='false' ),
 		Option( 'find_neighbors_stripehash', 'Boolean', desc="should be faster than 3dgrid and use 1/8th the memory", default='false' ),
 		Option( 'seqdep_refene_fname', 'String', desc="Filename for table containing sequence-dependent reference energies" ),
@@ -4125,6 +4126,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'max_total_cluster','Integer', desc="Only ever make N clusters or less", default = '1000'),
 		Option( 'gdtmm', 'Boolean', desc="Cluster by gdtmm instead of RMS", default = 'false' ),
         Option( 'skip_align', 'Boolean', desc="Cluster without aligning the structures", default = 'false' ),
+        Option( 'max_rms_matrix', 'Integer', desc="Maximum number of structures to use to calculate the full RMSD matrix", default = '400' ),
+        Option( 'rna_P', 'Boolean', desc="Calculate rmsd from backbone phosphate positions only", default = 'false' ),
 		Option( 'sort_groups_by_energy', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
 		Option( 'sort_groups_by_size', 'Boolean', desc="Sort clusters by energy", default = 'false' ),
 		Option( 'remove_singletons', 'Boolean', desc="Get rid of single-member clusters", default = 'false' ),
@@ -6818,6 +6821,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		Option_Group( 'farna',
 		   Option( 'cycles', 'Integer', desc= "Default number of Monte Carlo cycles",default='0' ), # now default is set based on the number of moving residues
+		   Option( 'rna_protein_docking_freq', 'Integer', desc= "RNA/protein docking frequency",default='10' ),
 			 Option( 'rounds', 'Integer', desc= "Number of rounds to split cycles into during fragment assembly", default='10' ),
 		   Option( 'temperature', 'Real', desc= "temperature",default='2.0' ),
 		   Option( 'minimize_rna', 'Boolean', desc= "Minimize RNA after fragment assembly",default='false' ),
@@ -6888,6 +6892,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'working_native', 'String', desc= "Native to use if we only know a fragment",default='false' ),
 		   Option( 'use_legacy_setup', 'Boolean', desc= "Use old de novo setup without residue/chain mapping",default='false' ),
 		   Option( 'cst_gap', 'Boolean', desc= "Setup up atompair constraints to keep chain ends close if they are known to be part of the same chain in full model pose",default='false' ),
+		   Option( 'convert_protein_CEN', 'Boolean', desc= "Convert protein residues to centroid mode during low-res fragment assembly",default='true' ),
+		   Option( 'rna_protein_docking', 'Boolean', desc= "Do RNA/protein docking?",default='true' ),
 			 Option( 'output_score_frequency', 'Integer', desc= "output running score with this frequency [0 means no running output]", default='0' ),
 			 Option( 'output_score_file', 'String', desc= "output running score to this file", default='' ),
 

@@ -1,0 +1,10 @@
+-nstruct 2
+-cycles 200
+-secstruct_file MS2_secstruct.txt
+-fasta MS2_fasta.txt
+-out:file:silent MS2_remodel.out 
+-minimize_rna true
+-s MS2_protein.pdb
+-ignore_zero_occupancy false
+-rna:farna:refine_native true 
+-native center_0_r10_complex.pdb

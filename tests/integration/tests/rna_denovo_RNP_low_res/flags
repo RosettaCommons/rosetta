@@ -1,0 +1,9 @@
+-nstruct 1 
+-cycles 1000 
+-secstruct_file MS2_secstruct.txt
+-fasta MS2_fasta.txt
+-out:file:silent MS2_fold_and_dock.out 
+-minimize_rna false 
+-s MS2_protein.pdb helix_1.pdb helix_2.pdb
+-ignore_zero_occupancy false
+-obligate_pair A:258 B:1

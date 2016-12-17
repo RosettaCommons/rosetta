@@ -33,11 +33,14 @@ namespace util {
 /// copied. Redundant atoms will be removed (in case from fullatom to centroid)
 /// and missing atoms will be built by ideal geometry (in the case from centroid
 /// to fullatom).
+
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & type_set,
-	bool allow_sloppy_match = false
+	bool allow_sloppy_match = false,
+	bool switch_protein_res_only = false,
+	bool keep_energies = false
 );
 
 /// @details the function allows a pose to use a different residue_type_set to
@@ -50,7 +53,9 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::TypeSetCategory type_set_type,
-	bool allow_sloppy_match = false
+	bool allow_sloppy_match = false,
+	bool switch_protein_res_only = false,
+	bool keep_energies = false
 );
 
 /// @details the function allows a pose to use a different residue_type_set to
@@ -63,9 +68,10 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	std::string const & type_set_name,
-	bool allow_sloppy_match = false
+	bool allow_sloppy_match = false,
+	bool switch_protein_res_only = false,
+	bool keep_energies = false
 );
-
 //////////////
 // Functions primarily for internal use
 // (Mainly to cut down on the giant if-then-else function)

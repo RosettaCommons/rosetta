@@ -123,6 +123,13 @@ private:
 		char const which_nucleotide,
 		Size const & i ) const;
 
+	Real
+	evaluate_rnp_vdw_score( 
+		conformation::Residue const & rna_rsd,
+		conformation::Residue const & protein_rsd,
+		rna::RNA_ScoringInfo const & rna_scoring_info,
+		bool const & centroid_mode ) const;
+
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////

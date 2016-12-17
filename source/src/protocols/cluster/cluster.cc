@@ -182,6 +182,28 @@ GatherPosesMover::get_distance_measure(
 			return scoring::CA_rmsd_symmetric( pose1, pose2 );
 		}
 		return scoring::CA_rmsd( pose1, pose2, residues );
+	} 
+	if ( option[ OptionKeys::cluster::skip_align ].user() && option[ OptionKeys::cluster::rna_P ]() ) {
+
+		// RNA backbone atoms:
+		utility::vector1< std::string > RNA_atoms;
+		RNA_atoms.push_back(" P  ");
+
+		// then get the rmsd
+		std::map<core::id::AtomID, core::id::AtomID> atom_map_rms;
+		for ( core::Size i = 1; i<= pose1.total_residue(); ++i ) {
+			for ( core::Size j = 1; j<= RNA_atoms.size(); ++j ) {
+				std::string name = RNA_atoms[ j ];
+				if (!pose1.residue(i).has( name )) continue;
+				if (!pose2.residue(i).has( name )) continue;
+				id::AtomID const id1( pose1.residue(i ).atom_index(name), i);
+				id::AtomID const id2( pose2.residue( i).atom_index(name), i );
+				atom_map_rms[ id1 ] = id2;
+			}
+		}
+		Real rmsd = scoring::rms_at_corresponding_atoms_no_super( pose1, pose2, atom_map_rms );
+		return rmsd;
+		//rmsd = rms_at_corresponding_atoms_no_super( pose, *native_pose, atom_map_rms, rmsd_residues );
 	} else {
 		// no residues excluded from the native.
 		if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() &&

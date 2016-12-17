@@ -35,6 +35,7 @@
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/rna/util.hh>
 
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -46,6 +47,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <numeric/random/random.hh>
 #include <basic/database/open.hh>
+#include <core/scoring/Energies.hh>
 
 #include <basic/Tracer.hh>
 
@@ -97,7 +99,9 @@ RNA_FragmentMonteCarlo::RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP
 	jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
 	lores_score_early_( 0.0 ),
 	lores_score_final_( 0.0 ),
-	chunk_coverage_( 0.0 ) // will be updated later
+	chunk_coverage_( 0.0 ), // will be updated later
+	is_rna_and_protein_( false ),
+	do_rnp_docking_( false )
 {}
 
 //Destructor
@@ -203,7 +207,7 @@ void
 RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 	initialize( pose );
-
+	
 	pose::Pose start_pose = pose;
 
 	// The pose gets scored when this object is set up: if using grid_vdw, will see a warning that the term was not computed
@@ -254,6 +258,30 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 		if ( !refine_pose_ ) do_random_moves( pose );
 
+		// this works here I think, doesn't create atom mapping issues, but it may create some issues with 
+		// the score function
+		if ( options_->convert_protein_centroid() /* default true */ && is_rna_and_protein_ ) {
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, false /* no sloppy match */, true /* only switch protein residues */, false /* keep energies! */ );
+		}
+
+		if ( is_rna_and_protein_ ) {
+			// set up the fold tree for docking 
+			rnp_docking_ft_ = get_rnp_docking_fold_tree( pose );
+			if ( !refine_pose_ ) {
+				kinematics::FoldTree ft_init = pose.fold_tree(); // save original fold tree
+				// apply docking fold tree
+				pose.fold_tree( rnp_docking_ft_ );
+				pose.energies().clear(); // clear the energies so that pose is scored correctly next time
+				// randomize the RNA/protein rigid body orientations
+				randomize_rnp_rigid_body_orientations( pose );
+				// get back original fold tree
+				pose.fold_tree( ft_init );
+				pose.energies().clear();
+				if ( options_->dump_pdb() )  pose.dump_pdb( "random_rnp_orientation.pdb" );
+				//denovo_scorefxn_->show( TR, pose );
+			}
+		}
+
 		monte_carlo_->reset( pose );
 
 		if ( options_->verbose() ) TR << "Beginning main loop... " << std::endl;
@@ -284,12 +312,38 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			// finer rigid body moves
 			setup_rigid_body_mover( pose, r ); // needs to happen after fold_tree is decided...
 
+			// set up the RNA/protein docking, if specified (default true)
+			if ( is_rna_and_protein_ && options_->rna_protein_docking() ) { 
+				// reset the magnitude of the perturbation each round
+				setup_rna_protein_docking_mover( pose, r );
+			}
+
 			//////////////////////
 			// This is it ... do the loop.
 			//////////////////////
 			for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
+				//for debugging linear_chainbreak
+				//show the distance between connected atoms
+				//so we know if there should be a penalty
+				//denovo_scorefxn_->show( TR, pose );
+				//for ( Size num = 259; num <= 276; ++num ) { // for 1zdh test case
+				//	Real dist1 = (pose.residue( num ).xyz( " O3'") - pose.residue( num+1 ).xyz(" P  ")).length();
+				//	std::cout << "Distance " << num << " " << num+1 << ": " << dist1 << std::endl;
+				//}
 				// Make this generic fragment/jump multimover next?
-				RNA_move_trial( pose );
+				if ( !is_rna_and_protein_ ) { // Just do regular RNA fragment assembly
+					RNA_move_trial( pose );
+				} else {
+					// Do RNA/protein docking (if specified)
+					if ( do_rnp_docking_ && 
+						// default, dock every 10th move (10% docking, 90% RNA move trials)
+						(i % options_->rna_protein_docking_freq() == 0 )) {
+							rnp_docking_trial( pose );
+					} else {
+						// regular RNA move
+						RNA_move_trial( pose );
+					}
+				}
 				output_score_if_desired( r, i, pose );
 			}
 
@@ -368,6 +422,8 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	update_denovo_scorefxn_weights( rounds_ );
 	update_pose_constraints( rounds_, pose );
 	if ( options_->verbose() ) {
+		// try clearing energies and then rescoring???
+		//pose.energies().clear();
 		working_denovo_scorefxn_->show( TR, pose );
 		TR << std::endl;
 	}
@@ -376,8 +432,14 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	lores_pose_ = pose.clone();
 
 	if ( options_->minimize_structure() ) {
-		rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
-		rna_minimizer_->apply( pose );
+		if ( is_rna_and_protein_ ) {
+			// convert the pose back to full atom
+			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false /* no sloppy match */, true /* only switch protein residues */, false /* don't keep the energies! */ );
+			rna_chunk_library_->insert_random_protein_chunks( pose ); //actually not random if only one chunk in each region.
+		} else {
+			rna_minimizer_->set_atom_level_domain_map( atom_level_domain_map_ );
+			rna_minimizer_->apply( pose );
+		}
 		if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_base_pair_handler_->connections() );
 		final_scorefxn_ = hires_scorefxn_;
 	}
@@ -444,6 +506,64 @@ RNA_FragmentMonteCarlo::setup_monte_carlo_cycles( core::pose::Pose const & pose 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
+RNA_FragmentMonteCarlo::setup_rna_protein_docking_mover( pose::Pose const & pose, Size const round ){
+
+	do_rnp_docking_ = false;
+
+	Real suppress ( 3.0 / 4.0 * round / rounds_ );
+	if ( suppress > 1.0 ) suppress = 1.0;
+
+	// copied from setup_rigid_body_mover, decide whether to change later
+	//Real const rot_mag_init( 1.0 ), rot_mag_final( 0.2 );
+	Real const rot_mag_init( 10.0 ), rot_mag_final( 0.2 );
+	//Real const trans_mag_init( 1.0 ), trans_mag_final( 0.1 );
+	Real const trans_mag_init( 5.0 ), trans_mag_final( 0.1 );
+	Real const rot_mag = rot_mag_init + ( rot_mag_final - rot_mag_init ) * suppress;
+	Real const trans_mag = trans_mag_init + ( trans_mag_final - trans_mag_init ) * suppress;
+
+	core::kinematics::MoveMap movemap;
+	movemap.set_jump( false );
+
+//	// figure out the jumps between RNA and protein
+//	This doesn't work because there are often jumps within RNA chains, then the whole RNA chain doesn't
+//	dock together as a rigid body...
+// 	But ultimately this may be a better way to go
+//	utility::vector1< Size > rna_protein_jumps;
+//	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
+//		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
+//		// if the upstream/downstream jump residues are RNA and protein, then we can move this jump
+//		if (( pose.residue( pose.fold_tree().upstream_jump_residue( n ) ).is_RNA() && 
+//			pose.residue( pose.fold_tree().downstream_jump_residue( n ) ).is_protein() ) || 
+//			(pose.residue( pose.fold_tree().upstream_jump_residue( n ) ).is_protein() &&
+//			pose.residue( pose.fold_tree().upstream_jump_residue( n ) ).is_RNA() )) {
+//
+//				rna_protein_jumps.push_back( n );
+//				std::cout << "Found RNA/protein jump between " << pose.fold_tree().downstream_jump_residue( n ) << 
+//					" and " << pose.fold_tree().upstream_jump_residue( n ) << std::endl;
+//
+//		}
+//	}
+
+	if ( rnp_docking_ft_.num_jump() < 1 ) return;
+
+	do_rnp_docking_ = true;
+	
+	for ( core::Size i =1; i<=rnp_docking_ft_.num_jump(); ++i ) {
+		// Double check that there's RNA on one side and protein on the other
+		Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
+		Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
+		if ( (pose.residue( up_res ).is_RNA() && pose.residue( down_res ).is_protein() ) ||
+			(pose.residue( up_res ).is_protein() && pose.residue( down_res ).is_RNA()) ) {
+			movemap.set_jump( i, true );
+			TR << "Set up RNP docking jump between residue " << up_res << " and " << down_res << std::endl;
+		}
+	}
+	rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream ) );
+	//rnp_docking_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag ) );
+
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
 RNA_FragmentMonteCarlo::setup_rigid_body_mover( pose::Pose const & pose, Size const r ){
 
 	core::kinematics::MoveMap movemap;
@@ -469,7 +589,7 @@ RNA_FragmentMonteCarlo::setup_rigid_body_mover( pose::Pose const & pose, Size co
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::final_score( core::pose::Pose & pose )
 {
@@ -551,6 +671,35 @@ RNA_FragmentMonteCarlo::randomize_rigid_body_orientations( pose::Pose & pose ){
 	}
 
 
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::randomize_rnp_rigid_body_orientations( pose::Pose & pose ){
+
+	using namespace protocols::rigid;
+	using namespace protocols::farna;
+	using namespace kinematics;
+
+	if (rnp_docking_ft_.num_jump() < 1) return;
+
+	for (Size i = 1; i <= rnp_docking_ft_.num_jump(); ++i ) {
+	
+		Vector rigid_body_position = pose.jump( i ).get_translation();
+	
+		// randomize orientation
+		RigidBodyRandomizeMover rigid_body_randomize_mover( pose, i );
+		rigid_body_randomize_mover.apply( pose );
+
+		//randomize translation
+		Jump jump = pose.jump( i );
+		jump.set_translation( rigid_body_position );
+		pose.set_jump( i, jump );
+
+		Real const translation_magnitude( 20.0 );
+		RigidBodyPerturbMover rigid_body_perturb_mover( i /*jump*/, 0.0 /*rotation*/, translation_magnitude );
+		rigid_body_perturb_mover.apply( pose );
+
+	}
 }
 
 
@@ -713,6 +862,98 @@ RNA_FragmentMonteCarlo::random_jump_trial( pose::Pose & pose ) {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+kinematics::FoldTree
+RNA_FragmentMonteCarlo::get_rnp_docking_fold_tree( pose::Pose const & pose ) {
+
+	// This is super simple right now, later update this so that it can take
+	// user input docking jumps, that's sort of the next simplest thing that 
+	// we can do, but eventually can try to be smart looking at chains and
+	// distances (a little difficult if there are e.g. 2 RNA chains in a helix
+	// that together bind to the protein, you'd need to make sure that you end
+	// up with only one jump between the RNA and the protein
+	
+	// We want a fold tree that puts all the consecutive protein residues in one edge
+	// and all consecutive RNA residues in another edge, with a jump between the
+	// RNA and protein edge
+	// Right now this will fail if there is e.g. RNA -> protein -> RNA or
+	// protein -> RNA -> protein
+
+	// We also need to make sure that linear_chainbreak is getting computed....
+
+	kinematics::FoldTree ft;
+	bool prev_RNA = false;
+	bool prev_protein = false;
+	utility::vector1< core::Size > rna_protein_jumps;
+
+	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).is_RNA() && prev_protein ) {
+			rna_protein_jumps.push_back( i );
+		} else if ( pose.residue( i ).is_protein() && prev_RNA ) {
+			rna_protein_jumps.push_back( i );
+		}
+		if ( pose.residue( i ).is_RNA() ) {
+			prev_RNA = true;
+			prev_protein = false;
+		}
+		else if ( pose.residue( i ).is_protein() ) {
+			prev_protein = true;
+			prev_RNA = false;
+		}
+	}
+
+	// Make the fold tree
+	for ( core::Size i=1; i <= rna_protein_jumps.size(); ++i ) {
+		if ( i == 1 ) { // add the first edge
+			ft.add_edge(1, rna_protein_jumps[i] - 1, kinematics::Edge::PEPTIDE );
+		}
+		// add the jump
+		ft.add_edge( rna_protein_jumps[i] - 1, rna_protein_jumps[i], i );
+		if ( i == rna_protein_jumps.size() ) { // add the last edge
+			ft.add_edge( rna_protein_jumps[i], pose.total_residue(), kinematics::Edge::PEPTIDE );
+		}
+	}
+
+	return ft;
+	
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::rnp_docking_trial( pose::Pose & pose ) {
+
+	// clear energies after applying a new fold tree to the pose
+	// to prevent any scoring craziness
+
+	if ( !rnp_docking_mover_ ) return;
+	std::string move_type( "rnp_dock" );
+
+	// initial fold tree
+	core::kinematics::FoldTree const ft_init = pose.fold_tree();
+	// apply the docking fold tree
+	// jumps only between RNA and protein
+	pose.fold_tree( rnp_docking_ft_ );
+	// don't need to clear here, because we won't score until after fold tree
+	// is returned and we'll clear energies then
+	//ft.show( std::cout );
+
+	rnp_docking_mover_->apply( pose );
+
+	// Need to return the fold tree before scoring
+	// so that linear_chainbreak gets computed correctly...
+	// there must be a better way to do this, but we need
+	// the fold tree set up so protein and RNA chains are
+	// separated by jumps (with no jumps within RNA or 
+	// protein chains) so that the chains get docked as a
+	// whole
+	// could probably set up the docking mover in a different
+	// way... but this works for now
+
+	pose.fold_tree( ft_init );
+	pose.energies().clear(); // clear the energies so that pose is scored correctly next time
+
+	monte_carlo_->boltzmann( pose, move_type ); 
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarlo::random_fragment_trial( pose::Pose & pose ) {

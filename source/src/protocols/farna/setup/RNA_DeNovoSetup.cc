@@ -451,7 +451,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 			n_jumps++;
 		}
 	}
-
 	vector1< std::pair< Size, Size > > canonical_pairs = flatten( secstruct.get_all_stems() );
 	vector1< std::pair< Size, Size > > general_pairs   = flatten( secstruct_general.get_all_stems() );
 	for ( Size n = 1; n <= general_pairs.size(); n++ ) {
@@ -521,13 +520,60 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	// working pose
 	////////////////////////
+	std::string const in_path = option[ in::path::path ]()[1];
 	Pose full_pose;
 	pose_ = PoseOP( new Pose );
 	std::string const full_annotated_sequence = full_model_parameters->full_annotated_sequence();
 	make_pose_from_sequence( full_pose, full_annotated_sequence, *rsd_set_ );
 	set_output_res_and_chain( full_pose, std::make_pair( full_model_parameters->conventional_numbering(),
 		full_model_parameters->conventional_chains() ) );
-	pdbslice( *pose_, full_pose, working_res );
+	// Check whether the sequence contains protein residues
+	bool is_rna_and_protein = false;
+	for ( core::Size r=1; r<=full_pose.total_residue(); ++r ) {
+		if ( full_pose.residue( r ).is_protein() ) {
+			is_rna_and_protein = true;
+			break;
+		}
+	}
+
+	//
+	if ( is_rna_and_protein ) {
+		if ( !option[ OptionKeys::rna::farna::lores_scorefxn ].user() ) {
+			// set default low-res RNA/protein score function
+			options_->set_lores_scorefxn( "farna/rna_lores_with_rnp" );
+		}
+	}
+
+	////////////////////////
+	// Working native pose
+	////////////////////////
+	//Read in native if it exists.
+	if ( option[ in::file::native ].user() ) {
+		//Read in native if it exists.
+		std::string native_pdb_file  = option[ in::file::native ]();
+		native_pose_ = PoseOP( new Pose );
+		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+		// if refine native, set the full_pose equal to the native_pose
+		if ( option[ OptionKeys::rna::farna::refine_native ]() ) {
+			full_pose = *(native_pose_->clone());
+		}
+		pdbslice( *native_pose_, working_res );
+	} else if ( option[ OptionKeys::rna::farna::working_native ].user() ) {
+		std::string native_pdb_file  = option[ OptionKeys::rna::farna::working_native ];
+		native_pose_ = PoseOP( new Pose );
+		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+	} else {
+		runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
+	}
+
+	// if the refine_native, then the full pose is equal to the native pose
+	if ( ! option[ OptionKeys::rna::farna::working_native ].user() ) { // usually not defined by user
+		pdbslice( *pose_, full_pose, working_res );
+	} else {
+		// there might still be issues with how the csts are set up here...?
+		pose_ = native_pose_->clone();
+	}
+
 
 
 	////////////////////
@@ -573,7 +619,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	////////////////////////
 	// working data
 	////////////////////////
-	std::string const in_path = option[ in::path::path ]()[1];
 	if ( option[ OptionKeys::rna::data_file].user() ) {
 		core::io::rna::RNA_DataReader rna_data_reader( in_path + option[ OptionKeys::rna::data_file ]  );
 		// note that this actually does look at conventional numbering in a smart way (but not chains yet):
@@ -795,28 +840,35 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	rna_params_->set_block_stack_above_res( working_block_stack_above_res );
 	rna_params_->set_block_stack_below_res( working_block_stack_below_res );
 	rna_params_->set_virtual_anchor_attachment_points( working_virtual_anchor );
+	rna_params_->set_rna_and_protein( is_rna_and_protein );
 
 
 	////////////////////
 	// Step 18
 	////////////////////
-	////////////////////////
-	// Working native pose
-	////////////////////////
-	//Read in native if it exists.
-	if ( option[ in::file::native ].user() ) {
-		//Read in native if it exists.
-		std::string native_pdb_file  = option[ in::file::native ]();
-		native_pose_ = PoseOP( new Pose );
-		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
-		pdbslice( *native_pose_, working_res );
-	} else if ( option[ OptionKeys::rna::farna::working_native ].user() ) {
-		std::string native_pdb_file  = option[ OptionKeys::rna::farna::working_native ];
-		native_pose_ = PoseOP( new Pose );
-		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
-	} else {
-		runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
-	}
+	// Moved this up to restore refine_native functionality
+	//////////////////////////
+	//// Working native pose
+	//////////////////////////
+	////Read in native if it exists.
+	//if ( option[ in::file::native ].user() ) {
+	//	//Read in native if it exists.
+	//	std::string native_pdb_file  = option[ in::file::native ]();
+	//	native_pose_ = PoseOP( new Pose );
+	//	core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+	//	pdbslice( *native_pose_, working_res );
+	//	// set the pose equal to the native pose if user wants to refine_native
+	//	// does having this way down here mess anything up?
+	//	if ( option[ OptionKeys::rna::farna::refine_native ]() ) {
+	//		pose_ = native_pose_->clone();
+	//	}
+	//} else if ( option[ OptionKeys::rna::farna::working_native ].user() ) {
+	//	std::string native_pdb_file  = option[ OptionKeys::rna::farna::working_native ];
+	//	native_pose_ = PoseOP( new Pose );
+	//	core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
+	//} else {
+	//	runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
+	//}
 
 	if ( !option[ OptionKeys::rna::farna::minimize_rna ].user() ) utility_exit_with_message( "Please specify either '-minimize_rna true' or '-minimize_rna false'." );
 	// runtime_assert( option[ OptionKeys::score::include_neighbor_base_stacks ].user() ); // user should specify -include_neighbor_base_stacks true or -include_neighbor_base_stacks false.

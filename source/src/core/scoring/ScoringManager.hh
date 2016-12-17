@@ -89,6 +89,8 @@
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
+#include <core/scoring/rna/RNP_LowResPotential.fwd.hh>
+#include <core/scoring/rna/RNP_LowResStackData.fwd.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
@@ -202,6 +204,10 @@ public:
 	carbon_hbonds::CarbonHBondPotential const & get_CarbonHBondPotential() const;
 
 	rna::RNA_LowResolutionPotential const & get_RNA_LowResolutionPotential() const;
+
+	rna::RNP_LowResPotential const & get_RNP_LowResPotential() const;
+
+	rna::RNP_LowResStackData const & get_RNP_LowResStackData() const;
 
 	// rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
 
@@ -365,6 +371,8 @@ private:
 	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
+	mutable rna::RNP_LowResPotentialOP rnp_low_res_potential_;
+	mutable rna::RNP_LowResStackDataOP rnp_low_res_stack_data_;
 	// mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
 	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
 	// mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;

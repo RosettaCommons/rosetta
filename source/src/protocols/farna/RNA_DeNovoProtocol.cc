@@ -56,6 +56,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -211,6 +212,9 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
 		rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
 		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
+		// tell rna_fragment_monte_carlo_ whether we have both rna and protein residues
+		// we'll need to know this for the high resolution stuff
+		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() );
 		// Set the vdw grid here
 		if ( options_->filter_vdw() ) {
 			rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
@@ -227,6 +231,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		if ( options_->dump_pdb() ) dump_pdb( pose,  out_file_name );
 
 		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
+
 		align_and_output_to_silent_file( pose, options_->silent_file(), out_file_tag );
 	} //nstruct
 }
@@ -377,9 +382,7 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 	if ( get_native_pose() ) calc_rmsds( s, pose, out_file_tag );
 
-	// TR << "ADD_NUMBER_BASE_PAIRS" << std::endl;
 	add_number_base_pairs( pose, s );
-	// TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
 	if ( get_native_pose() ) add_number_native_base_pairs( pose, *get_native_pose(), s );
 
 	// hopefully these will end up in silent file...
@@ -406,6 +409,14 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	using namespace core::io::silent;
 	using namespace core::scoring;
 
+	if ( rna_params_->is_rna_and_protein() && !options_->minimize_structure() ) {
+		// convert back to full atom (should give stupid coords... ok for now b/c protein doesn't move)
+		// if protein sidechains have moved, then the pose should already be in full atom by now (?!)
+		// if the structure is getting minimized, then it should already be converted back to full atom
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false /* no sloppy match */, true /* only switch protein residues */, true /* keep energies! */ );
+		// but as soon as I score again, it tries to recalculate rnp scores (so they get set to 0)
+	}
+
 	// Silent file setup?
 	//static SilentFileData silent_file_data;
 	SilentFileData silent_file_data;
@@ -429,9 +440,17 @@ void
 RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
 {
 	rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
-	output_to_silent_file( pose, silent_file, out_file_tag, false /*score_only*/ );
+	if ( rna_params_->is_rna_and_protein() && !options_->minimize_structure() ) {
+		// copy the pose because we'll switch the residue type set when we output to silent file
+		// this is a stupid hack b/c right now the pose has both centroid and full atom residues!
+		core::pose::Pose pose_copy =  pose;
+		output_to_silent_file( pose_copy, silent_file, out_file_tag, false /*score_only*/ );
+	} else {
+		output_to_silent_file( pose, silent_file, out_file_tag, false /*score_only*/ );
+	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct,
 	core::pose::Pose const & const_pose) const {

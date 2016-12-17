@@ -50,6 +50,8 @@
 #include <core/scoring/dna/DNATorsionPotential.hh>
 #include <core/scoring/dna/DNA_BasePotential.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+#include <core/scoring/rna/RNP_LowResPotential.hh>
+#include <core/scoring/rna/RNP_LowResStackData.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_SuitePotential.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
@@ -147,6 +149,8 @@ ScoringManager::ScoringManager() :
 	DNA_base_potential_( /* 0 */ ),
 	carbon_hbond_potential_( /* 0 */ ),
 	rna_low_resolution_potential_( /* 0 */ ),
+	rnp_low_res_potential_( /* 0 */ ),
+	rnp_low_res_stack_data_( /* 0 */ ),
 	// rna_torsion_potential_( /* 0 */ ),
 	rna_chemical_shift_potential_( /* 0 */ ),
 	rna_dms_potential_( /* 0 */ ),
@@ -457,6 +461,24 @@ ScoringManager::get_RNA_LowResolutionPotential() const
 	return *rna_low_resolution_potential_;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+rna::RNP_LowResPotential const &
+ScoringManager::get_RNP_LowResPotential() const
+{
+	if ( rnp_low_res_potential_ == 0 ) {
+		rnp_low_res_potential_ = rna::RNP_LowResPotentialOP( new rna::RNP_LowResPotential() );
+	}
+	return *rnp_low_res_potential_;
+}
+///////////////////////////////////////////////////////////////////////////////
+rna::RNP_LowResStackData const &
+ScoringManager::get_RNP_LowResStackData() const
+{
+	if ( rnp_low_res_stack_data_ == 0 ) {
+		rnp_low_res_stack_data_ = rna::RNP_LowResStackDataOP( new rna::RNP_LowResStackData() );
+	}
+	return *rnp_low_res_stack_data_;
+}
 ///////////////////////////////////////////////////////////////////////////////
 // rna::RNA_TorsionPotential const &
 // ScoringManager::get_RNA_TorsionPotential() const

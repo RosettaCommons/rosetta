@@ -70,6 +70,9 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	vdw_rep_screen_include_sidechains_( false ),
 	gradual_constraints_( true ),
 	grid_vdw_weight_( 1.0 ),
+	convert_protein_centroid_( true ),
+	rna_protein_docking_( true ),
+	rna_protein_docking_freq_( 10 ),
 	simple_rmsd_cutoff_relax_( false ),
 	refine_from_silent_( false ),
 	refine_pose_( false ),
@@ -157,6 +160,12 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	}
 	set_gradual_constraints( option[ rna::farna::gradual_constraints ]() );
 	set_grid_vdw_weight( option[ rna::farna::grid_vdw_weight ]() );
+
+	set_convert_protein_centroid( option[ rna::farna::convert_protein_CEN ]() ); // default true
+
+	// default true, but of course only happens if structure contains both rna and protein
+	set_rna_protein_docking( option[ rna::farna::rna_protein_docking ]() ); 
+	set_rna_protein_docking_freq( option[ rna::farna::rna_protein_docking_freq ]() ); // default 10
 
 	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
 

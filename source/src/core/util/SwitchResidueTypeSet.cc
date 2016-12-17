@@ -67,7 +67,9 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & type_set,
-	bool allow_sloppy_match
+	bool allow_sloppy_match,
+	bool switch_protein_res_only,
+	bool keep_energies
 )
 {
 	using namespace core::chemical;
@@ -79,7 +81,9 @@ switch_to_residue_type_set(
 	//Energies object is not properly "aware" of typeset changes, and can attempt to score your pose with an incompatible
 	//scorefunction if you go FA->CEN (or vice versa) and access the Energies without rescoring.
 	//So, we'll eject the Energies to be safe!
-	pose.energies().clear();
+	if ( !keep_energies ) { // but there are some specific cases when we actually want to keep the energies
+		pose.energies().clear();
+	}
 
 	//fpd only do this over the asymmetric unit if the pose is symmetric
 	symmetry::SymmetryInfoCOP symm_info=nullptr;
@@ -97,6 +101,7 @@ switch_to_residue_type_set(
 
 	// loop each position and find new type that matches from the new type set
 	for ( core::Size i=1; i<= pose.size(); ++i ) {
+		if ( !pose.residue( i ).is_protein() && switch_protein_res_only ) continue;
 		if ( symm_info && !symm_info->bb_is_independent(i) ) continue;
 
 		core::conformation::Residue const & rsd( pose.residue(i) );
@@ -168,20 +173,24 @@ void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	core::chemical::TypeSetCategory type_set_type,
-	bool allow_sloppy_match
+	bool allow_sloppy_match,
+	bool switch_protein_res_only,
+	bool keep_energies
 ) {
 	core::chemical::ResidueTypeSetCOP type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_type ) );
-	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match );
+	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match, switch_protein_res_only, keep_energies );
 }
 
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
 	std::string const & type_set_name,
-	bool allow_sloppy_match
+	bool allow_sloppy_match,
+	bool switch_protein_res_only,
+	bool keep_energies
 ) {
 	core::chemical::ResidueTypeSetCOP type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
-	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match );
+	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match, switch_protein_res_only, keep_energies );
 }
 
 void

@@ -20,6 +20,7 @@
 #include <protocols/farna/setup/RNA_DeNovoPoseInitializer.fwd.hh>
 #include <protocols/farna/setup/RNA_DeNovoParameters.fwd.hh>
 #include <core/pose/rna/BasePair.hh>
+#include <core/pose/Pose.hh>
 
 namespace protocols {
 namespace farna {
@@ -79,6 +80,10 @@ public:
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
 	chain_connections() const { return chain_connections_; }
 
+	void set_rna_and_protein( bool const & setting ) { is_rna_and_protein_ = setting; }
+
+	bool is_rna_and_protein() const { return is_rna_and_protein_; }
+
 	void set_rna_secstruct_legacy( std::string const & setting ){ rna_secstruct_legacy_ = setting; }
 	std::string rna_secstruct_legacy() const { return rna_secstruct_legacy_; }
 
@@ -136,6 +141,7 @@ private:
 	utility::vector1 < core::Size > allow_insert_res_;
 	std::string rna_secstruct_legacy_;
 	bool secstruct_defined_;
+	bool is_rna_and_protein_;
 
 };
 

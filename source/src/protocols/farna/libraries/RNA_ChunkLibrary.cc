@@ -135,8 +135,15 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 {
 	std::string sequence_of_big_pose( pose.annotated_sequence() );
 	std::map< Size, std::string > non_standard_residue_map = core::sequence::parse_out_non_standard_residues( sequence_of_big_pose );
-	
-	coarse_rna_ = pose.residue( 1 ).is_coarse();
+	// Find the RNA and see if it's coarse (rather than
+	// just using the first residue to decide this 
+	// (in case it's protein))
+	for ( core::Size i =1; i<= pose.total_residue(); ++i ) {
+		if (pose.residue( i ).is_RNA()) {
+			coarse_rna_ = pose.residue( i ).is_coarse();
+			break;
+		}
+	}
 	do_rosetta_library_domain_check_ = true;
 
 	// atom_level_domain_map keeps track of where chunks are placed -- only allow
@@ -435,6 +442,33 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 		if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
 	}
 
+}
+
+////////////////////////////////////////////////////////////////
+void
+RNA_ChunkLibrary::insert_random_protein_chunks( pose::Pose & pose ) const {
+	// this is only "random" if there is more than one chunk input for a given
+	// part of the protein (so only if silent file input (I think))
+	for ( Size n = 1; n <= num_chunk_sets(); n++ ) {
+
+		ChunkSet const & chunk_set( *chunk_sets_[ n ] );
+
+		Size chunk_index = static_cast<int>( numeric::random::rg().uniform() * chunk_set.num_chunks() ) + 1;
+
+		//TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
+		// this will only insert the chunk if it contains protein residues
+		// this is a little hacky...
+		// need a full atom atom_level_domain_map
+		chunk_set.insert_protein_chunk_into_pose( pose, chunk_index, atom_level_domain_map_, do_rosetta_library_domain_check_ );
+
+		// arbitrarily set to origin (except in special cases with virtual residues...)
+		if ( n == 1 && chunk_set.user_input()
+				/*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) {
+			align_to_chunk( pose, chunk_set, chunk_index  );
+		}
+
+	}
+	
 }
 
 

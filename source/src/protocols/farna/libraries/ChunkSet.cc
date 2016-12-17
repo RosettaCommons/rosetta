@@ -14,17 +14,20 @@
 
 
 #include <protocols/farna/libraries/ChunkSet.hh>
+#include <protocols/farna/util.hh>
 #include <protocols/farna/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/toolbox/AtomID_Mapper.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/copydofs/util.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.farna.libraries.ChunkSet" );
@@ -155,6 +158,63 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 	mini_pose_list_ = filtered_mini_pose_list;
 }
 
+
+///////////////////////////////////////////////////////////////////////
+void
+ChunkSet::insert_protein_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,
+	toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	bool do_rosetta_library_domain_check /* = true */ ) const
+{
+
+	using namespace core::pose;
+	using namespace core::id;
+
+	// FOR TESTING
+	//pose.dump_pdb( "pose_before_fix_protein.pdb" );
+
+	core::pose::MiniPose const & scratch_pose ( *(mini_pose_list_[ chunk_pose_index ]) );
+
+	// check whether this pose contains protein residues, if not, return
+	bool contains_protein = false;
+	// can check the sequence
+	std::string seq = scratch_pose.sequence();
+	for ( core::Size i=1; i<=scratch_pose.size(); ++i ) {
+		// a little more specific than we want, but ok for now...
+		core::chemical::AA aa = core::chemical::aa_from_oneletter_code( seq[i] );
+		if ( core::chemical::is_canonical_L_aa( aa ) ) {
+			contains_protein = true;
+			break;
+		}
+	}
+	if ( !contains_protein ) return;
+
+	std::map< AtomID, AtomID > atom_id_map = get_atom_id_map( pose, *atom_level_domain_map->atom_id_mapper() );
+	std::map< AtomID, Size > atom_id_domain_map;
+	if ( !user_input() ) atom_id_domain_map = get_atom_id_domain_map_for_rosetta_library_chunk( atom_id_map, pose, *atom_level_domain_map, do_rosetta_library_domain_check );
+
+	// very useful for debugging
+	//std::cout << "atom_id_domain_map" << std::endl;
+	//std::cout << atom_id_domain_map << std::endl;
+	//std::cout << "atom_id_map" << std::endl;
+	//std::cout << atom_id_map << std::endl;
+
+	// preserve jumps!
+	utility::vector1< core::kinematics::Jump > initial_jumps;
+	for ( core::Size i=1; i <= pose.fold_tree().num_jump(); ++i ) {
+		initial_jumps.push_back( pose.jump( i ));
+	}
+	
+	core::pose::copydofs::copy_dofs( pose, scratch_pose,
+		atom_id_map, atom_id_domain_map );
+
+	for ( core::Size i=1; i <= initial_jumps.size(); ++i ) {
+		pose.set_jump( i, initial_jumps[i] );
+	}
+
+	// FOR TESTING
+	//pose.dump_pdb( "pose_after_fix_protein.pdb" );
+
+}
 
 ///////////////////////////////////////////////////////////////////////
 void

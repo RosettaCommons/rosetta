@@ -64,6 +64,8 @@ RNA_ScoringInfo::RNA_ScoringInfo( RNA_ScoringInfo const & src ) :
 	atom_numbers_for_vdw_calculation_( src.atom_numbers_for_vdw_calculation_ ),
 	atom_numbers_for_mg_calculation_( src.atom_numbers_for_mg_calculation_ ),
 	is_magnesium_( src.is_magnesium_ ),
+	is_interface_( src.is_interface_ ),
+	is_buried_( src.is_buried_ ),
 	vdw_calculation_annotated_sequence_( src.vdw_calculation_annotated_sequence_ ),
 	mg_calculation_annotated_sequence_( src.mg_calculation_annotated_sequence_ )
 {
@@ -126,6 +128,8 @@ core::scoring::rna::RNA_ScoringInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( atom_numbers_for_vdw_calculation_ ) ); // utility::vector1<utility::vector1<Size> >
 	arc( CEREAL_NVP( atom_numbers_for_mg_calculation_ ) ); // utility::vector1<utility::vector1<Size> >
 	arc( CEREAL_NVP( is_magnesium_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( is_interface_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( is_buried_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( vdw_calculation_annotated_sequence_ ) ); // std::string
 	arc( CEREAL_NVP( mg_calculation_annotated_sequence_ ) ); // std::string
 }
@@ -142,6 +146,8 @@ core::scoring::rna::RNA_ScoringInfo::load( Archive & arc ) {
 	arc( atom_numbers_for_vdw_calculation_ ); // utility::vector1<utility::vector1<Size> >
 	arc( atom_numbers_for_mg_calculation_ ); // utility::vector1<utility::vector1<Size> >
 	arc( is_magnesium_ ); // utility::vector1<_Bool>
+	arc( is_interface_ ); // utility::vector1<_Bool>
+	arc( is_buried_ ); // utility::vector1<_Bool>
 	arc( vdw_calculation_annotated_sequence_ ); // std::string
 	arc( mg_calculation_annotated_sequence_ ); // std::string
 }

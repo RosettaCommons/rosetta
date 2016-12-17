@@ -124,6 +124,9 @@ public:
 	void
 	initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
+	void
+	insert_random_protein_chunks( core::pose::Pose & pose ) const;
+
 	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map() const { return atom_level_domain_map_; };
 
 

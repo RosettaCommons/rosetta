@@ -400,7 +400,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose, RNA_JumpMover const &
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
-			//   TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
+			  // TR << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 		//  TR << std::endl;
 

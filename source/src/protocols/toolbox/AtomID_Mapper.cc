@@ -90,6 +90,26 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		// following is pretty awful -- atom_level_domain_map makes use of atom indices for speed, and
 		//  some downstream applications (RNA_ChunkLibrary) assume that it was set up in a pose
 		//  without weird variants.
+//		Pose pose_without_variants;
+//
+//		// Want to keep any variants for protein stuff though 
+//		std::string seq_without_RNA_variants;
+//		for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
+//			char c = pose.residue( i ).name1();
+//			seq_without_RNA_variants += c;
+//			if (!pose.residue( i ).is_RNA()) { 
+//				// get rid of the variants for RNA
+//				// keep the variants for anything other than RNA
+//				if (( !core::chemical::oneletter_code_specifies_aa(c) || core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code(c) ) != pose.residue(i).name() )) {
+//					seq_without_RNA_variants += '[';
+//					seq_without_RNA_variants += pose.residue(i).name();
+//					seq_without_RNA_variants += ']';
+//				}
+//			}
+//		}
+//		make_pose_from_sequence( pose_without_variants, seq_without_RNA_variants,
+//			pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
+		// try Andy's fix instead
 
 		// AHA! Here is the issue. We NEED to have some info from annotated_sequence()
 		// because we need the base name of everything.
@@ -98,8 +118,10 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		//	pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
 		using namespace core::conformation;
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue( ii ).residue_type_set()->name_map( pose.residue_type( ii ).base_name() ) );
-			pose_without_variants.replace_residue( ii, *new_rsd, true );
+			if (!pose.residue( ii ).is_protein()) {
+				ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue( ii ).residue_type_set()->name_map( pose.residue_type( ii ).base_name() ) );
+				pose_without_variants.replace_residue( ii, *new_rsd, true );
+			}
 		}
 		initialize_from_pose( pose_without_variants );
 		renumber_after_variant_changes( pose );
@@ -302,7 +324,6 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 			}
 
 			if ( map_to_reference_.find( new_atom_id ) != map_to_reference_.end() ) atom_ids.push_back( new_atom_id );
-
 		}
 
 		atom_ids_in_res_.push_back( atom_ids );

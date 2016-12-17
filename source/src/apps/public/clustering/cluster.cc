@@ -190,7 +190,9 @@ main( int argc, char * argv [] ) {
 
 		// Cluster the first up-to-400 structures by calculating a full rms matrix
 		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
-		while ( input.has_another_pose() && (clustering->nposes() < 400 ) ) {
+		core::Size max_struct_for_full_rms = option[ basic::options::OptionKeys::cluster::max_rms_matrix ]();
+		while ( input.has_another_pose() && (clustering->nposes() < max_struct_for_full_rms ) ) { // default 400 (was hard coded before)
+		//while ( input.has_another_pose() && (clustering->nposes() < 400 ) ) {
 			core::pose::Pose pose;
 			input.fill_pose( pose, *rsd_set );
 			clustering->apply( pose );

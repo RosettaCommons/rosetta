@@ -30,6 +30,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <ObjexxFCL/FArray4D.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 #include <map>
 
@@ -52,9 +53,16 @@ public:
 	utility::vector1 < std::string > const
 	vdw_atom_list( chemical::ResidueType const & rt ) const;
 
+	void
+	initialize_rnp_vdw_parameters();
+
 	Real
 	bump_parameter( Size const atom1, Size const atom2,
 		chemical::ResidueType const & rsd1, chemical::ResidueType const & rsd2 ) const;
+
+	Real
+	bump_parameter_rnp( Size const atom_RNA, Size const atom_protein,
+		char const which_residue ) const;
 
 private: //data
 
@@ -67,9 +75,13 @@ private: //data
 	// but it was really slow... now its an FArray,
 	// with a helper function to convert a,c,g,u to indices 1,2,3,4.
 	ObjexxFCL::FArray4D < Real > rna_vdw_parameter_;
+	ObjexxFCL::FArray3D < Real > rnp_vdw_parameter_;
 
 
 };
+
+
+
 
 } //rna
 } //scoring
