@@ -97,6 +97,13 @@ private:
 	std::string stub_atom1_;
 	std::string stub_atom2_;
 	std::string stub_atom3_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical

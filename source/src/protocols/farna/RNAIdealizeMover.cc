@@ -19,6 +19,7 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -314,8 +315,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	if ( pose.residue_type( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		we_added_the_virt = true;
 		// attach virt res there
-		core::chemical::ResidueTypeSet const & rts = *pose.residue_type( 1 ).residue_type_set();
-		ResidueOP new_res( ResidueFactory::create_residue( *( rts.get_representative_type_name3( "VRT" ) ) ) );
+		ResidueOP new_res( ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
 		pose.append_residue_by_jump( *new_res, pose.size() );
 		// make the virt atom the root
 		kinematics::FoldTree newF( pose.fold_tree() );

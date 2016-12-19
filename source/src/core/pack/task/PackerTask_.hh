@@ -76,7 +76,7 @@ public:
 	PackerTaskOP clone() const;
 
 	/// @brief replace a given residue task with a brand new one NOTE: This should be the only way to break commutativity!!!!
-	virtual void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos);
+	virtual void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos, core::pose::Pose const & pose);
 
 	/// @brief number of residues in the input pose, for convienience (PackerTask does not handle variable length)
 	virtual Size total_residue() const;

@@ -19,6 +19,14 @@
 #include <utility>
 #include <utility/exit.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -160,3 +168,42 @@ Adduct::stub_atom( int const atm ) const
 } // core
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Adduct::save( Archive & arc ) const {
+	arc( CEREAL_NVP( adduct_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_type_name_ ) ); // std::string
+	arc( CEREAL_NVP( mm_atom_type_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_charge_ ) ); // Real
+	arc( CEREAL_NVP( phi_ ) ); // Real
+	arc( CEREAL_NVP( theta_ ) ); // Real
+	arc( CEREAL_NVP( d_ ) ); // Real
+	arc( CEREAL_NVP( stub_atom1_ ) ); // std::string
+	arc( CEREAL_NVP( stub_atom2_ ) ); // std::string
+	arc( CEREAL_NVP( stub_atom3_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Adduct::load( Archive & arc ) {
+	arc( adduct_name_ ); // std::string
+	arc( atom_name_ ); // std::string
+	arc( atom_type_name_ ); // std::string
+	arc( mm_atom_type_name_ ); // std::string
+	arc( atom_charge_ ); // Real
+	arc( phi_ ); // Real
+	arc( theta_ ); // Real
+	arc( d_ ); // Real
+	arc( stub_atom1_ ); // std::string
+	arc( stub_atom2_ ); // std::string
+	arc( stub_atom3_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Adduct );
+#endif // SERIALIZATION

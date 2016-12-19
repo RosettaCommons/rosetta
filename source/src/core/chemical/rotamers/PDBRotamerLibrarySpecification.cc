@@ -18,6 +18,15 @@
 // Utility headers
 #include <utility/exit.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -69,3 +78,27 @@ PDBRotamerLibrarySpecification::library_name() {
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::PDBRotamerLibrarySpecification::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( CEREAL_NVP( pdb_rotamers_file_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::PDBRotamerLibrarySpecification::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( pdb_rotamers_file_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::PDBRotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::PDBRotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_PDBRotamerLibrarySpecification )
+#endif // SERIALIZATION

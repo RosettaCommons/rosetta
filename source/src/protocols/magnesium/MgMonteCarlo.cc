@@ -101,7 +101,7 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 					while ( xyz_water.length() < 1.9 || xyz_water.length() > 2.2 ) {
 						xyz_water = Vector( box_radius * rg().uniform(), box_radius * rg().uniform(), box_radius * rg().uniform() );
 					}
-					ResidueOP rsd_hoh = conformation::ResidueFactory::create_residue( pose.residue( 1 ).residue_type_set()->name_map("HOH") );
+					ResidueOP rsd_hoh = conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "HOH" ) );
 					Matrix R;
 					urs.get( rg().random_range(1, urs.nrots() ), R );
 					for ( Size j = 1; j <= rsd_hoh->natoms(); j++ ) {

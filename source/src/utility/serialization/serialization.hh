@@ -87,8 +87,36 @@ template return_type func( typename cereal::BinaryInputArchive &, param ); \
 template return_type func( typename cereal::XMLInputArchive &, param ); \
 template return_type func( typename cereal::JSONInputArchive &, param  )
 
+// This macro is for specializing handling of COPs
+// for example, when you want to point some to a Global (non-serialized) resource.
+// Place this macro in the header file of the type, so that the redefinitions are
+// found by every class which uses/serializes the class.
+// - type_name is a *fully namespace qualified* name of the base type to specialize
+// - save_function is the (fully namespace qualified) name of the function which takes a
+//   templated Archive by reference and the COP by *value* and saves to the archive.
+// - load_function is the (fully namespace qualified) name of the function which takes a
+//   templated Archive by reference and the COP by *reference* and loads from the archive.
+// IMPORTANT!! - If in your save_function/load_function you archive the object (as opposed
+// to a parent/subclass OP) *you* are responsible for handling deduplication of pointers.
+// This can easily be accomplished with the arc.registerSharedPointer() facility.
+// (See core/chemical/ResidueType.srlz.cc for example.)
+template<typename T> struct LOAD_DEPENDENT_FALSE: std::false_type {};
 
-
+#define SPECIAL_COP_SERIALIZATION_HANDLING( type_name, save_function, load_function ) \
+namespace cereal { \
+template < class Archive > \
+void save( Archive & arc, utility::pointer::shared_ptr< type_name const > const & ptr ) \
+{ save_function( arc, ptr ); } \
+template < class Archive > \
+void save( Archive & arc, utility::pointer::shared_ptr< type_name > const & ptr ) \
+{ save_function( arc, ptr ); } \
+template < class Archive > \
+void load( Archive & arc, utility::pointer::shared_ptr< type_name const > & ptr ) \
+{ load_function( arc, ptr ); } \
+template < class Archive > \
+void load( Archive &, utility::pointer::shared_ptr< type_name > & ) \
+{ static_assert( LOAD_DEPENDENT_FALSE<Archive>::value , "You cannot load into a " #type_name "OP - must use a " #type_name "COP" ); } \
+}
 
 namespace utility {
 namespace serialization {

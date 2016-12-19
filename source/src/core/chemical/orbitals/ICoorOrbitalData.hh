@@ -72,6 +72,8 @@ public:
 		VD v3
 	);
 
+	/// @brief Update the internal VDs based on the provide mapping
+	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 	Real phi() const;
 	Real theta() const;
@@ -152,6 +154,12 @@ private:
 	VD vertex2_;
 	VD vertex3_;
 
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

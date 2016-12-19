@@ -23,6 +23,7 @@
 #include <core/io/raw_data/DecoyStruct.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <numeric/model_quality/rms.hh>
@@ -87,9 +88,9 @@ void DecoyStruct::fill_pose(
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
 	if ( fullatom() ) {
-		residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	} else {
-		residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
+		residue_set = pose.residue_type_set_for_pose( CENTROID_t );
 	}
 	fill_pose( pose, *residue_set );
 } // fill_pose

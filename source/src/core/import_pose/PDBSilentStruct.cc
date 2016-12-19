@@ -30,6 +30,7 @@
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -185,8 +186,7 @@ void PDBSilentStruct::fill_pose(
 ) const {
 
 	using namespace core::chemical;
-	ResidueTypeSetCOP residue_set;
-	residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	fill_pose( pose, *residue_set );
 	finish_pose( pose );
 } // fill_pose

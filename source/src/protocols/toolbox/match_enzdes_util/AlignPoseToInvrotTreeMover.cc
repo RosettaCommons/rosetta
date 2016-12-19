@@ -142,7 +142,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	if ( add_target_to_pose_ ) {
 		first_target_seqpos++;
 		//have to add something to switch target res to centroid here
-		core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.conformation().residue_typeset_category() ) );
+		core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.conformation().residue_typeset_mode() ) );
 
 		pose.append_residue_by_jump( *ligres, pose.size() );
 		++target_it;
@@ -159,7 +159,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 		// position got fucked up during the above superimpose call,
 		// so we need to reset it to the position in the invrot tree
 		// current implemenation absolutely only works for one ligand case
-		pose.replace_residue( first_target_seqpos, *(this->switch_residue_type_set( *target_it, pose.conformation().residue_typeset_category() )), false );
+		pose.replace_residue( first_target_seqpos, *(this->switch_residue_type_set( *target_it, pose.conformation().residue_typeset_mode() )), false );
 	}
 
 	//2b. fold tree setup
@@ -236,10 +236,10 @@ AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
 core::conformation::ResidueCOP
 AlignPoseToInvrotTreeMover::switch_residue_type_set(
 	core::conformation::ResidueCOP residue,
-	core::chemical::TypeSetCategory desired_restype_set
+	core::chemical::TypeSetMode desired_restype_set
 ) const{
 
-	if ( desired_restype_set != residue->residue_type_set()->category() ) {
+	if ( desired_restype_set != residue->type().mode() ) {
 		core::pose::PoseOP temp_pose( new core::pose::Pose() );
 		temp_pose->append_residue_by_jump( *residue, (Size) 0 );
 		core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set );

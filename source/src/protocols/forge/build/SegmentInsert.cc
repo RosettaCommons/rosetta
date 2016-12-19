@@ -31,6 +31,7 @@
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
@@ -82,7 +83,7 @@ SegmentInsert::SegmentInsert(
 	bool const keep_known_bb_torsions_at_junctions,
 	SegmentInsertConnectionScheme::Enum connection_scheme
 ) :
-	Super( i, insert.residue( 1 ).residue_type_set() ),
+	Super( i, insert.residue_type_set_for_pose() ),
 	interval_( i ),
 	ss_( ss ),
 	keep_known_bb_torsions_at_junctions_( keep_known_bb_torsions_at_junctions ),
@@ -136,7 +137,7 @@ SegmentInsert::SegmentInsert(
 	bool const keep_known_bb_torsions_at_junctions,
 	SegmentInsertConnectionScheme::Enum connection_scheme
 ) :
-	Super( i, insert.residue( 1 ).residue_type_set() ),
+	Super( i, insert.residue_type_set_for_pose() ),
 	interval_( i ),
 	ss_( ss ),
 	aa_( aa ),

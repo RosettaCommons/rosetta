@@ -31,6 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -328,16 +329,9 @@ void Environment::remove_chainbreak_variants( core::pose::Pose& pose, core::Size
 
 	Residue const & rsd_lower( conf.residue( down_res ) );
 	Residue const & rsd_upper( conf.residue( up_res ) );
-	ResidueTypeSetCOP rsd_set( rsd_lower.residue_type_set() );
 
-	ResidueType const & new_type_lower( rsd_set->get_residue_type_with_variant_removed( rsd_lower.type(), CUTPOINT_LOWER ) );
-	ResidueType const & new_type_upper( rsd_set->get_residue_type_with_variant_removed( rsd_upper.type(), CUTPOINT_UPPER ) );
-
-	ResidueOP new_lower( ResidueFactory::create_residue( new_type_lower, rsd_lower, conf ) );
-	ResidueOP new_upper( ResidueFactory::create_residue( new_type_upper, rsd_upper, conf ) );
-
-	copy_residue_coordinates_and_rebuild_missing_atoms( rsd_lower, *new_lower, conf );
-	copy_residue_coordinates_and_rebuild_missing_atoms( rsd_upper, *new_upper, conf );
+	ResidueOP new_lower( core::pose::remove_variant_type_from_residue( rsd_lower, CUTPOINT_LOWER, pose ) );
+	ResidueOP new_upper( core::pose::remove_variant_type_from_residue( rsd_upper, CUTPOINT_UPPER, pose ) );
 
 	conf.replace_residue( rsd_lower.seqpos(), *new_lower, true );
 	conf.replace_residue( rsd_upper.seqpos(), *new_upper, true );

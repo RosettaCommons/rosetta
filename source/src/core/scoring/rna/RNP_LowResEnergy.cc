@@ -129,7 +129,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 	// Calculate the environment for each residue in the pose
 	// this option defaults to false
 	bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
-	
+
 	// Figure out the interface residues
 	// and buried or not for protein residues
 	for ( core::Size rsd = 1; rsd <= pose.total_residue(); ++rsd ) {
@@ -140,7 +140,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 	        // use the rna base centroid for RNA
 	        Vector rsd_centroid;
 	        bool const is_rsd_protein( pose.residue(rsd).is_protein() );
-		bool is_centroid = pose.residue(rsd).type().residue_type_set()->name() == core::chemical::CENTROID;
+		bool is_centroid = pose.residue_type(rsd).mode() == core::chemical::CENTROID_t;
 		if ( is_rsd_protein && !is_centroid && !use_actual_centroid ) {
 			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
@@ -153,7 +153,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 				// then say 0 interface and 0 buried
 				is_interface_residues.push_back( false );
 				is_buried_residues.push_back( false );
-				// then continue to the next residue in the pose 
+				// then continue to the next residue in the pose
 				continue;
 			}
 			if ( !use_actual_centroid ) {
@@ -176,7 +176,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 				// would just count for buried, but we dont care about "buried" for RNA
 				continue;
 			}
-	
+
 	                if (pose.residue(rsd2).is_RNA()) {
 	                        rsd2_centroid = core::chemical::rna::get_rna_base_centroid( pose.residue(rsd2), false /*verbos*/ );
 	                } else {
@@ -241,13 +241,13 @@ RNP_LowResEnergy::residue_pair_energy(
 
 	// Just give a warning and return if the protein isn't coarse
 	if ( rsd1.is_protein() ) {
-		bool is_centroid = rsd1.type().residue_type_set()->name() == core::chemical::CENTROID;
+		bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 		if ( !is_centroid && !use_actual_centroid ) {
 			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
 		}
 	} else { // rsd2 is protein
-		bool is_centroid = rsd2.type().residue_type_set()->name() == core::chemical::CENTROID;
+		bool is_centroid = rsd2.type().mode() == core::chemical::CENTROID_t;
 		if ( !is_centroid && !use_actual_centroid ) {
 			//TR << "Warning: rnp low res pair energy not computed b/c protein is not centroid" << std::endl;
 			return;
@@ -257,7 +257,7 @@ RNP_LowResEnergy::residue_pair_energy(
 	Vector rna_centroid;
 	Vector protein_centroid;
 	numeric::xyzMatrix< core::Real > rna_base_coord_sys;
-	
+
 	if ( rsd1.is_RNA() ) {
 		rna_centroid = chemical::rna::get_rna_base_centroid( rsd1 );
 		rna_base_coord_sys = chemical::rna::get_rna_base_coordinate_system( rsd1, rna_centroid );
@@ -316,7 +316,7 @@ RNP_LowResEnergy::residue_pair_energy(
 			calculate_rnp_stack = true;
 		}
 	}
-	
+
 	if ( calculate_rnp_stack ) {
 		if ( std::abs( dist_z ) > 3.0 && std::abs( dist_z ) < 6.5 && (dist_x*dist_x + dist_y*dist_y) < 16.0 ) {
 			emap[ rnp_stack ] += -1.0;
@@ -345,12 +345,12 @@ RNP_LowResEnergy::residue_pair_energy(
 			backbone_score = potential_.evaluate_rnp_aa_rna_backbone_score( rsd2, dist_to_backbone );
 		}
 	}
-	
+
 	emap[ rnp_aa_to_rna_backbone ] += backbone_score;
 
 //	// Get the pair score
 //	Real rnp_pair_score( 0.0 );
-//	
+//
 //	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 //	utility::vector1< bool > const & is_interface = rna_scoring_info.is_interface();
 //	utility::vector1< bool > const & is_buried = rna_scoring_info.is_buried();
@@ -362,7 +362,7 @@ RNP_LowResEnergy::residue_pair_energy(
 //	bool const rsd2_is_buried = is_buried[ rsd2.seqpos() ];
 //
 //	//std::cout << "About to evaluate rnp pair score" << std::endl;
-//	potential_.evaluate_rnp_pair_score( rsd1, rsd2, rsd1_is_interface, rsd1_is_buried, 
+//	potential_.evaluate_rnp_pair_score( rsd1, rsd2, rsd1_is_interface, rsd1_is_buried,
 //			rsd2_is_interface, rsd2_is_buried, dist_rna_protein.length(), rnp_pair_score );
 //	//std::cout << "Done evaluating rnp pair score" << std::endl;
 //
@@ -387,7 +387,7 @@ RNP_LowResEnergy::residue_pair_energy(
 Distance
 RNP_LowResEnergy::atomic_interaction_cutoff() const
 {
-	// For testing 
+	// For testing
 	return 0.0; /// Uh, I don't know.
 }
 

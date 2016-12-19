@@ -19,6 +19,7 @@
 // Package headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // Utility headers
@@ -33,36 +34,50 @@ namespace core {
 namespace chemical {
 
 
-/// @details First serialize a boolean representing which of the two paths
-/// this code will go down, then serialize the data for those two paths.
-/// @note The current signal for whether a ResidueType is a member of a
-/// globally-held ResidueTypeSet is whether or not the ResidueType is held
-/// in a ResidueTypeSet at all.  This will fail if a non-global ResidueTypeSet
-/// is used to manage a ResidueType.
+/// @details First serialize a boolean representing if the restype pointer is null.
+/// For non-null restypes, then serialize a boolean representing one of two paths:
+/// if the restype is in a global RTS or not. If it's in a GlobalRTS, store an annotation
+/// of how to pull it out of the GlobalRTS. If it's not, then just serialize the ResidueType
+/// Note that Cereal will handle multiple OPs to the same object sanely.
 template < class Archive >
-void serialize_residue_type( Archive & arc, ResidueTypeCOP restype )
+void serialize_residue_type( Archive & arc, ResidueTypeCOP ptr )
 {
 	//std::cout << "Serializing RT: " << restype << std::endl;
-	if ( ! restype ) {
+	if ( ! ptr ) {
 		bool rt_is_nonnull( false );
-		arc( rt_is_nonnull );
-	} else if ( restype->in_residue_type_set() ) {
-		bool rt_is_nonnull( true );
-		bool yes_restype_is_in_rts( true );
-		arc( rt_is_nonnull );
-		arc( yes_restype_is_in_rts );
-		arc( restype->residue_type_set()->name() );
-		arc( restype->name() );
+		arc( CEREAL_NVP( rt_is_nonnull ) );
 	} else {
-		// TEMPORARY! arc( restype );
-		std::cout << "UNIMPLEMENTED CASE IN ResidueType.srlz.cc::serialize_residue_type!" << std::endl;
+		bool rt_is_nonnull( true );
+		TypeSetMode mode( ptr->mode() );
+		ResidueTypeSetCOP global( ChemicalManager::get_instance()->residue_type_set( mode ) );
+		if ( global->has( ptr ) ) {
+			GlobalResidueTypeSetCOP global_rts( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( global ) );
+			bool in_global_rts( true );
+			arc( CEREAL_NVP( rt_is_nonnull ) );
+			arc( CEREAL_NVP(  in_global_rts ) );
+			arc( ::cereal::make_nvp("global_rts", global_rts->name() ) );
+			arc( ::cereal::make_nvp("restype_name", ptr->name() ) );
+		} else {
+			bool in_global_rts( false );
+			arc( CEREAL_NVP( rt_is_nonnull ) );
+			arc( CEREAL_NVP( in_global_rts ) );
+
+			// Need to do de-duplication of this particular pointer
+			uint32_t id = arc.registerSharedPointer( ptr.get() );
+			arc( CEREAL_NVP(id) );
+			if ( id & ::cereal::detail::msb_32bit ) {
+				// Hasn't been saved yet - do so.
+				arc( *ptr ); // Hopefully this is the appropriate way of serializing a RT directly.
+			}
+		}
 	}
 }
+
 INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, serialize_residue_type, ResidueTypeCOP );
 
 /// @details See comments for serialize_residue_type
 template < class Archive >
-void deserialize_residue_type( Archive & arc, ResidueTypeCOP & restype )
+void deserialize_residue_type( Archive & arc, ResidueTypeCOP & ptr )
 {
 	bool rt_is_nonnull( true ); arc( rt_is_nonnull );
 	if ( rt_is_nonnull ) {
@@ -71,64 +86,27 @@ void deserialize_residue_type( Archive & arc, ResidueTypeCOP & restype )
 		if ( in_global_rts ) {
 			std::string rts_name, rt_name;
 			arc( rts_name, rt_name );
-			restype = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_map( rt_name ).get_self_ptr();
+			ptr = chemical::ChemicalManager::get_instance()->residue_type_set( rts_name )->name_map( rt_name ).get_self_ptr();
 		} else {
-			// TEMP!
-			std::cout << "UNIMPLEMENTED CASE IN ResidueType.srlz.cc::deserialize_residue_type!" << std::endl;
+			uint32_t id;
+			arc( id );
+			if ( id & ::cereal::detail::msb_32bit ) {
+				// Hasn't been loaded yet - do so.
+				ResidueTypeOP mod_restype( new ResidueType(nullptr,nullptr,nullptr,nullptr) );
+				// Inform the Archive the pointer which corresponds to this id
+				// (put before loading to handle circular references.)
+				arc.registerSharedPointer( id, mod_restype );
+				arc( *mod_restype ); // Hopefully this is the appropriate way of deserializeing a RT directly
+				ptr = mod_restype;
+			} else {
+				ptr = utility::pointer::static_pointer_cast< ResidueType const >( arc.getSharedPointer(id) );
+			}
 		}
 	} else {
-		restype = 0;
+		ptr = nullptr;
 	}
 }
 INSTANTIATE_FOR_INPUT_ARCHIVES( void, deserialize_residue_type, ResidueTypeCOP & );
-
-template< class Archive >
-void serialize_residue_type_vector( Archive & arc, ResidueTypeCOPs const & restypes )
-{
-	arc( restypes.size() );
-	for ( Size ii = 1; ii <= restypes.size(); ++ii ) {
-		serialize_residue_type( arc, restypes[ ii ] );
-	}
-}
-INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, serialize_residue_type_vector, ResidueTypeCOPs const & );
-
-
-template < class Archive >
-void deserialize_residue_type_vector( Archive & arc, ResidueTypeCOPs & restypes )
-{
-	Size size_of_array( 0 ); arc( size_of_array );
-	restypes.resize( size_of_array );
-	for ( Size ii = 1; ii <= size_of_array; ++ii ) {
-		deserialize_residue_type( arc, restypes[ ii ] );
-	}
-}
-INSTANTIATE_FOR_INPUT_ARCHIVES( void, deserialize_residue_type_vector, ResidueTypeCOPs & );
-
-template< class Archive >
-void serialize_residue_type_list( Archive & arc, std::list< ResidueTypeCOP > const & restypes )
-{
-	arc( restypes.size() );
-	for ( auto iter = restypes.begin(), iter_end = restypes.end(); iter != iter_end; ++iter ) {
-		serialize_residue_type( arc, *iter );
-	}
-}
-INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, serialize_residue_type_list, std::list< ResidueTypeCOP > const &  );
-
-
-template < class Archive >
-void deserialize_residue_type_list( Archive & arc, std::list< ResidueTypeCOP > & restypes )
-{
-	Size numrestypes; arc( numrestypes );
-	restypes.clear();
-	for ( Size ii = 1; ii <= numrestypes; ++ii ) {
-		ResidueTypeCOP iirt;
-		deserialize_residue_type( arc, iirt );
-		restypes.push_back( iirt );
-	}
-
-}
-INSTANTIATE_FOR_INPUT_ARCHIVES( void, deserialize_residue_type_list, std::list< ResidueTypeCOP > & );
-
 
 }
 }

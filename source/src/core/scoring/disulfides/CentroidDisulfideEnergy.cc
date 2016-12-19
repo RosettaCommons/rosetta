@@ -128,8 +128,8 @@ void CentroidDisulfideEnergy::residue_pair_energy(
 	//Require cysteines
 	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 	//Require Centroid
-	if ( rsd1.residue_type_set()->category() != chemical::CENTROID_t ||
-			rsd2.residue_type_set()->category() != chemical::CENTROID_t ) {
+	if ( rsd1.type().mode() != chemical::CENTROID_t ||
+			rsd2.type().mode() != chemical::CENTROID_t ) {
 		return;
 	}
 

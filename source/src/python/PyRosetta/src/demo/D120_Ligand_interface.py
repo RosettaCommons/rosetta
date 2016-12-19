@@ -18,9 +18,7 @@ protein docking. The "ligand" scoring function is optimized for
 ligand-protein docking.
 
 The "Alternate scenarios" section below provides guidelines for using additional
-ligand compounds in PyRosetta. A second method,
-generate_nonstandard_residue_set, is supplied here to allow this script to run
-in older and newer versions of PyRosetta.
+ligand compounds in PyRosetta.
 
 Instructions:
 
@@ -113,12 +111,14 @@ def sample_ligand_interface(pdb_filename, partners,
     """
     # 1. creates a pose from the desired PDB file
     pose = Pose()
-    if ligand_params[0]:    # the params list has contents
+
+    if len(ligand_params) != 0 and ligand_params[0] != '':    # the params list has contents
         ligand_params = Vector1(ligand_params)
-        new_res_set = generate_nonstandard_residue_set(ligand_params)
-        pose_from_file(pose, new_res_set, pdb_filename)
-    else:
-        pose_from_file(pose, pdb_filename)
+        res_set = pose.conformation().modifiable_residue_type_set_for_conf()
+        res_set.read_files_for_base_residue_types( ligand_params )
+        pose.conformation().reset_residue_type_set_for_conf( res_set )
+
+    pose_from_file(pose, pdb_filename)
 
     # 2. setup the docking FoldTree
     # using this method, the jump number 1 is automatically set to be the
@@ -212,38 +212,6 @@ def sample_ligand_interface(pdb_filename, partners,
         test_pose.pdb_info().name(job_output + '_' + str(counter) + '_fa')
         # to a PDB file
         jd.output_decoy(test_pose)
-
-# a method for producing non-standard ResidueTypeSets
-#    there is a custom (PyRosetta only) method in PyRosetta v2.0beta named
-#    generate_nonstandard_residue_set which will work there, but not for newer
-#    versions, this method supports  both older and newer versions of PyRosetta
-def generate_nonstandard_residue_set(params_list):
-    """
-    Returns a "custom" ResidueTypeSet with the normal ResidueTypes and any
-        new ones added as a Vector1 of .params filenames,
-        the input  <params_list>
-
-    example(s):
-        res_set = generate_nonstandard_residue_set( Vector1( ['ATP.params'] ) )
-    See Also:
-        Pose
-        Residue
-        ResidueType
-        ResidueTypeSet
-
-    """
-    res_set = ChemicalManager.get_instance().nonconst_residue_type_set(
-        'fa_standard')
-    atoms = ChemicalManager.get_instance().atom_type_set('fa_standard')
-    mm_atoms = ChemicalManager.get_instance().mm_atom_type_set('fa_standard')
-    orbitals = ChemicalManager.get_instance().orbital_type_set('fa_standard')
-
-    # element_sets were added to the chemical database and changed the syntax
-    #    of read_files
-    elements = ChemicalManager.get_instance().element_set('default')
-    res_set.read_files(params_list, atoms, elements, mm_atoms, orbitals)
-
-    return res_set
 
 ################################################################################
 # INTERPRETING RESULTS
@@ -374,12 +342,16 @@ python molfile_to_params.py <MDL filename> -n <ResidueType name>
         -the ligand chain is named "X" (a convention)
         -the ligand chain occurs after all protein chains**
 5) Load the ligand-protein complex PDB into PyRosetta by:
-        >Temporarily creating a ResidueTypeSet (Method 1)
-            -create a ResidueTypeSet using generate_nonstandard_residue_set,
-                providing it a Vector1 of .params filenames
+        > Load the ligand .params file into the pose (Method 1)
             -create an empty Pose object
-            -load the PDB file data into the pose using pose_from_file providing
-                the ResidueTypeSet as the second argument
+            -get a copy of the current pose-specific ResidueTypeSet with pose.conformation().residue_type_set_for_conf()
+                optionally passing the mode (e.g. centroid) that you're using
+            -add the .params files to the ResidueTypeSet
+                by passing a single .params filename to add_base_residue_type() or
+                multiple .params filenames in a list to read_files_for_base_residue_types()
+            -place a copy of the modified ResidueTypeSet back in the pose with
+                pose.conformation().reset_residue_type_set_for_conf( res_set )
+            -load the PDB file data into the pose using pose_from_file( pose, filename )
         >Permanently modifying the chemical database (Method 2)
             -if using a new ligand/ResidueType:
                 -place the new .params file into (in PyRosetta main directory)
@@ -439,15 +411,19 @@ ID. As with DNA-protein PDB files, the ligand chain should be last**.
 
 === Loading a Ligand PDB File into PyRosetta ===
 
-== Method 1: Temporarily using generate_nonstandard_residue_set ==
-Inside the relevant script or interpreter, create a non-standard ResidueTypeSet
-using the method generate_nonstandard_residue_set and use use pose_from_file to
-load data into to a pose object. The method pose_from_file is overloaded
-such that it can accept a Pose (poses), a ResidueTypeSet (residue_set), and a
-string (filename) and load into the poses the data in the PDB file filename
-using residue_set to define any unknown residues. This method is preferred when
-the ligand is transitory (default). Permanently adding the ligand increases the
-amount of data held at any time and may slow PyRosetta if too many are added.
+== Method 1: Loading the .params file into the Pose ==
+Inside the relevant script or interpreter, use the modifiable_residue_type_set_for_conf()
+method of the pose's Conformation object (pose.conformation()) to first get a copy of the
+Pose-specific ResidueTypeSet. You can then load one or more .params files into this
+ResidueTypeSet. Then you can replace the pose-specific ResidueTypeSet with the
+reset_residue_type_set_for_conf() method of the Conformation object.
+The method pose_from_file is overloaded such that it can accept a Pose (pose),
+and a string (filename) and load into the poses the data in the PDB file filename
+using the Pose-specific ResidueTypeSet to define any unknown residues.
+
+This method is preferred when the ligand is transitory (default). Permanently
+adding the ligand increases the amount of data held at any time and may slow
+PyRosetta if too many are added.
 
 == Method 2: Permanently by altering the PyRosetta database ==
 Place (or copy) the new .params file somewhere in the PyRosetta fullatom

@@ -146,7 +146,11 @@ build_pose_from_pdb_as_is(
 )
 {
 	using namespace chemical;
-	build_pose_from_pdb_as_is( pose, * ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ), filename, pdr_options );
+	ResidueTypeSetCOP restype_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
+	if ( restype_set == nullptr ) {
+		restype_set = ChemicalManager::get_instance()->residue_type_set( FULL_ATOM_t );
+	}
+	build_pose_from_pdb_as_is( pose, *restype_set, filename, pdr_options );
 }
 
 void

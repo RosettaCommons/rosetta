@@ -27,6 +27,12 @@
 
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -92,6 +98,12 @@ public:
 	bool
 	applies_to_placeholder() const { return false; }
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +125,16 @@ public:
 private:
 	/// name of the atom to be deleted
 	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +151,16 @@ public:
 private:
 	// name of the atom to be set
 	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetBackboneHeavyatom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +180,16 @@ private:
 	std::string atom_name_;
 	// -1 for lower connection, 1 for upper connection
 	int upper_lower_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetPolymerConnectAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,13 +209,23 @@ public:
 	apply( ResidueType & rsd ) const override;
 
 private:
-	std::string const connect_atom_;
-	Real const phi_;
-	Real const theta_;
-	Real const d_;
-	std::string const  parent_atom_;
-	std::string const   angle_atom_;
-	std::string const torsion_atom_;
+	std::string connect_atom_;
+	Real phi_;
+	Real theta_;
+	Real d_;
+	std::string  parent_atom_;
+	std::string   angle_atom_;
+	std::string torsion_atom_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddConnect();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -198,6 +250,16 @@ public:
 private:
 	/// property to be added
 	std::string property_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddProperty();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +284,16 @@ public:
 private:
 	// property to be added
 	std::string property_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteProperty();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -243,6 +315,16 @@ public:
 
 private:
 	std::string variant_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteVariantType();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -277,6 +359,16 @@ private:
 	std::string atom2_;
 	std::string atom3_;
 	std::string atom4_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddChi();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -299,6 +391,16 @@ private:
 	Size chino_;
 	utility::vector1<core::Real> samples_;
 	utility::vector1<core::Real> extrasamples_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddProtonChi();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -328,6 +430,16 @@ private:
 	std::string atom2_;
 	std::string atom3_;
 	std::string atom4_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	RedefineChi();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,6 +453,12 @@ public:
 	/// redefine a chi angle
 	bool
 	apply( ResidueType & rsd ) const override;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -357,6 +475,16 @@ public:
 private:
 	std::string atom_name_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteMetalbindingAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +499,16 @@ public:
 	apply( ResidueType & rsd ) const override;
 private:
 	std::string atom_name_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteActCoordAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -394,6 +532,16 @@ private:
 	Size chino_;
 	Real mean_;
 	Real sdev_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddChiRotamer();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -411,6 +559,16 @@ public:
 
 private:
 	core::uint chi_no_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ClearChiRotamers();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -447,7 +605,18 @@ private:
 	std::string atom_name_;
 	std::string atom_type_name_;
 	std::string mm_atom_type_name_;
-	Real const charge_;
+	Real charge_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -471,6 +640,16 @@ public:
 private:
 	std::string rosetta_atom_name_;
 	std::string alias_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddAtomAlias();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -494,6 +673,16 @@ private:
 	std::string atom1_;
 	std::string atom2_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddBond();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -516,6 +705,16 @@ private:
 	std::string atom1_;
 	std::string atom2_;
 	std::string bond_type_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddBondType();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -540,6 +739,16 @@ private:
 	std::string atom2_;
 	std::string old_bond_type_;
 	std::string new_bond_type_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ChangeBondType();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -563,6 +772,16 @@ private:
 	std::string atom_name_;
 	/// atom's charge
 	Real charge_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetAtomicCharge();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -580,6 +799,16 @@ public:
 private:
 	std::string atom_name_;
 	core::SSize charge_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetFormalCharge();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -602,6 +831,16 @@ private:
 	std::string atom_name_;
 	/// atom's type name
 	std::string atom_type_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetAtomType();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -628,8 +867,18 @@ public:
 	applies_to_placeholder() const override { return true; }
 
 private:
-	std::string const name3_;
-	char const name1_;
+	std::string name3_;
+	char name1_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetIO_String();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -648,7 +897,17 @@ public:
 	generates_interchangeability_group() override{ return intgrp_; }
 
 private:
-	std::string const intgrp_;
+	std::string intgrp_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetInterchangeabilityGroup_String();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -671,6 +930,16 @@ private:
 	std::string atom_name_;
 	/// atom's type name
 	std::string mm_atom_type_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetMMAtomType();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -702,6 +971,16 @@ private:
 	std::string stub1_;
 	std::string stub2_;
 	std::string stub3_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetICoor();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -726,6 +1005,16 @@ private:
 	std::string atom_;
 	Ancestor which_ancestor_;
 	std::string ancestor_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ChangeAncestory();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -744,6 +1033,16 @@ public:
 private:
 	std::string atm_;
 	core::Distance d_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ResetBondLength();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -760,6 +1059,16 @@ public:
 
 private:
 	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	PrependMainchainAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -775,6 +1084,16 @@ public:
 
 private:
 	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AppendMainchainAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -791,6 +1110,16 @@ public:
 private:
 	std::string target_;
 	std::string new_atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceMainchainAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -806,6 +1135,16 @@ public:
 
 private:
 	std::string atom_name_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetNbrAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -821,6 +1160,16 @@ public:
 
 private:
 	Real radius_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetNbrRadius();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -833,6 +1182,12 @@ public:
 	/// @brief set the residue neighbor atom
 	bool
 	apply( ResidueType & rsd ) const override;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -847,6 +1202,16 @@ public:
 
 private:
 	bool force_nbr_atom_orient_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SetOrientAtom();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -929,6 +1294,16 @@ public:
 
 private:
 	std::string path_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NCAARotLibPath();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -958,6 +1333,12 @@ public:
 
 	bool
 	apply( ResidueType & rsd ) const override;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -982,6 +1363,12 @@ public:
 
 private:
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -997,6 +1384,12 @@ public:
 
 private:
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1011,6 +1404,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithMethoxy();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1025,6 +1428,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithEthyl();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1039,6 +1452,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithMethyl();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1053,6 +1476,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithTrifluoromethyl();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1067,6 +1500,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithChlorine();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1081,6 +1524,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithFluorine();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1095,6 +1548,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithBromine();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1109,6 +1572,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithIodine();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1123,6 +1596,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ReplaceProtonWithHydroxyl();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1137,6 +1620,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddConnectAndTrackingVirt();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1151,6 +1644,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AddConnectDeleteChildProton();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1165,6 +1668,16 @@ public:
 
 private:
 	std::string atom_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DeleteChildProton();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1189,5 +1702,10 @@ patch_operation_from_patch_file_line(
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_PatchOperation )
+#endif // SERIALIZATION
+
 
 #endif

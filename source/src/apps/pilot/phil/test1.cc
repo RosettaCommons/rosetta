@@ -640,12 +640,12 @@ simple_loop_modeling_test()
 	}
 
 	// now convert sequence of aligned positions
-	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose() );
 	{
 		for ( Size i=1; i<= mapping.size1(); ++i ) {
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed
 			// Representative type should have no/minimal variants
-			ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( new_seq ) );
+			ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue(i), pose.conformation() ) );
 			pose.replace_residue( i, *new_rsd, false );
 		}
@@ -671,7 +671,7 @@ simple_loop_modeling_test()
 		int const aligned_pos( mapping[1] - 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
 		// Representative type should have no/minimal variants
-		ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( new_seq ) );
+		ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		pose.set_omega( 1, 180.0 );
@@ -683,7 +683,7 @@ simple_loop_modeling_test()
 		int const aligned_pos( mapping[seqpos-1] + 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
 		// Representative type should have no/minimal variants
-		ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( new_seq ) );
+		ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, seqpos-1, true );
 		pose.set_omega( seqpos-1, 180.0 );
@@ -701,7 +701,7 @@ simple_loop_modeling_test()
 				int const aligned_pos( cutpoint+1 );
 				char const new_seq( target_seq[ aligned_pos - 1 ] ); // 0-indexed
 				// Representative type should have no/minimal variants
-				ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( new_seq ) );
+				ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 				ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 				pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, cutpoint, true );
 				pose.set_omega( cutpoint, 180.0 );
@@ -2421,8 +2421,7 @@ backrub_min_test()
 	edges.push_back( std::make_pair( 7, 4 ) ); //       seqpos+1 -->       seqpos
 	edges.push_back( std::make_pair( 4, 1 ) ); //       seqpos   -->       seqpos-1
 
-	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
-	ResidueOP psd( ResidueFactory::create_residue( rsd_set.name_map( "VRT1" ) ) );
+	ResidueOP psd( ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
 	pose.append_residue_by_jump( *psd, 1 );
 	pose.append_residue_by_jump( *psd, 1 );
 	pose.append_residue_by_jump( *psd, 1 );
@@ -2552,7 +2551,7 @@ bk_test2()
 	core::import_pose::pose_from_file( pose1, start_files()[1] , core::import_pose::PDB_file);
 	core::import_pose::pose_from_file( pose2, start_files()[2] , core::import_pose::PDB_file);
 
-	ResidueTypeSet const & rsd_set( *pose1.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose1.residue_type_set_for_pose() );
 	Size const nres1( pose1.size() );
 	Size const nres2( pose2.size() );
 

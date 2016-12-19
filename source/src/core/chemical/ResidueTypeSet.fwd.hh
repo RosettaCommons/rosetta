@@ -8,8 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file src/core/chemical/ResidueTypeSet.fwd.hh
-/// @author Phil Bradley
-/// @author Modified by Sergey Lyskov
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #ifndef INCLUDED_core_chemical_ResidueTypeSet_fwd_hh
 #define INCLUDED_core_chemical_ResidueTypeSet_fwd_hh

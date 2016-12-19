@@ -38,6 +38,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -50,7 +55,11 @@ class OrbitalTypeSet : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~OrbitalTypeSet();
-	OrbitalTypeSet(std::string const & directory);
+	OrbitalTypeSet(std::string const & directory, std::string const & name="" );
+
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string const &
+	name() const { return name_; }
 
 	void read_file(std::string const & filename);
 
@@ -74,6 +83,10 @@ public:
 	orbital_type_index( std::string & orbital_type_name ) const;
 
 private:
+
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string name_;
+
 	/// lookup map: get orbital_type_index by orbital_type_name
 	std::map< std::string, int > orbital_type_index_;
 
@@ -91,9 +104,24 @@ private:
 };
 
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an OrbitalTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void serialize_orbital_type_set( Archive & arc, OrbitalTypeSetCOP ptr );
+
+/// @brief Deserialize an OrbitalTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void deserialize_orbital_type_set( Archive & arc, OrbitalTypeSetCOP & ptr );
+#endif // SERIALIZATION
+
 }
 }
 }
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_orbitals_OrbitalTypeSet )
+
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::orbitals::OrbitalTypeSet, core::chemical::orbitals::serialize_orbital_type_set, core::chemical::orbitals::deserialize_orbital_type_set )
+#endif // SERIALIZATION
 
 #endif /* ORBITALTYPESET_HH_ */

@@ -21,9 +21,9 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -88,7 +88,7 @@ public:
 			Size rsd_no = rg().random_range( 2, modified_pose.size()-1 );
 			using namespace core::conformation;
 			ResidueOP newres = ResidueFactory::create_residue(
-				modified_pose.residue(rsd_no).residue_type_set()->name_map("LYS"),
+				*core::pose::get_restype_for_pose( modified_pose, "LYS", modified_pose.residue_type(rsd_no).mode() ),
 				modified_pose.residue(rsd_no), modified_pose.conformation());
 			modified_pose.replace_residue(rsd_no, *newres, true /*orient backbone*/);
 			// Change chi angles for mutated res away from their default values

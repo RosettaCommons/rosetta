@@ -27,8 +27,9 @@ public:
 
 	void setUp() {
 		core_init_with_additional_options(
-			""//-extra_res_fa core/chemical/1pqc.params core/chemical/uk002.params"
+			"-extra_res_fa core/chemical/1pqc.params core/chemical/uk002.params"
 		);
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -38,6 +39,7 @@ public:
 		if ( !residue_set.has_name("QC1") )   params_files.push_back("core/chemical/1pqc.params");
 		if ( !residue_set.has_name("UK002") ) params_files.push_back("core/chemical/uk002.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
 	}
 
 	void tearDown() {}

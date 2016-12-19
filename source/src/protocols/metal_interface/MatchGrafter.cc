@@ -201,7 +201,7 @@ MatchGrafter::ensure_proper_his_tautomers(
 			std::string const new_name(HIS_D ? "HIS" : "HIS_D");
 
 			//get type set from original residue; query it for a residue type of the other name
-			core::chemical::ResidueType const & new_type(old_rsd.residue_type_set()->name_map(new_name));
+			core::chemical::ResidueType const & new_type( *core::pose::get_restype_for_pose( combined, new_name, old_rsd.type().mode() ) );
 			TR << "mutating from " << old_rsd.name() << " to " << new_type.name() << " at combined position "
 				<< metalsite_seqpos[i] << std::endl;
 			core::conformation::ResidueOP new_rsd(core::conformation::ResidueFactory::create_residue(new_type, old_rsd, combined.conformation()));

@@ -26,6 +26,7 @@
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
@@ -640,12 +641,7 @@ public:
 	void test_sdfreader() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		std::string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
 
 		sdf::MolFileIOReader molfile_reader;
 
@@ -658,8 +654,7 @@ public:
 				TR << "------- Comparing  " << molfile << " and " << paramsfile << std::endl;
 
 				// Read reference
-				core::chemical::ResidueTypeOP rsd_ref = read_topology_file(paramsfile,
-					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+				core::chemical::ResidueTypeOP rsd_ref = read_topology_file(paramsfile, rsd_types );
 
 				// Read molfile (reader has sensible defaults for typesets in use)
 				utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( molfile ) );

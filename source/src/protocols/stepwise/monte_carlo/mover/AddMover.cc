@@ -124,7 +124,7 @@ AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_m
 void
 AddMover::apply(
 #ifdef GL_GRAPHICS
-	core::pose::Pose & viewer_pose, 
+	core::pose::Pose & viewer_pose,
 #else
 	core::pose::Pose & pose,
 #endif
@@ -576,7 +576,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 	}
 
 	// figure out residue type from name3
-	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type( 1 ).residue_type_set();
+	chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose();
 
 	// Handle pH sampling: if sample_pH_ is true, then we need to have a 50/50
 	// shot of creating a protonated adenosine (50/50 because score will take

@@ -18,6 +18,14 @@
 // Utility headers
 #include <utility/exit.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -82,3 +90,27 @@ DunbrackRotamerLibrarySpecification::library_name() {
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::DunbrackRotamerLibrarySpecification::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( CEREAL_NVP( aa_ ) ); // enum core::chemical::AA
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::DunbrackRotamerLibrarySpecification::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( aa_ ); // enum core::chemical::AA
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::DunbrackRotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::DunbrackRotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_DunbrackRotamerLibrarySpecification )
+#endif // SERIALIZATION

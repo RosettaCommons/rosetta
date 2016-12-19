@@ -26,6 +26,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
 
 // Platform Headers
@@ -68,20 +69,14 @@ public:
 		using namespace core::chemical;
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
 		paramslist >> filename;
 		while ( paramslist ) {
 			TR << "Retyping " << filename << std::endl;
-			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename, rsd_types);
 			core::chemical::ResidueTypeOP ref( new core::chemical::ResidueType(*rsd) );
 
 			for ( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {

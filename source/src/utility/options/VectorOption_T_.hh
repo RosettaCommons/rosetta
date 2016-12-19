@@ -206,6 +206,17 @@ public: // Conversion
 	return value_;
 	} */
 
+	/// @brief Iterator access for range for loops
+	typename Values::const_iterator
+	begin() const {
+		return (*this)().begin();
+	}
+
+	/// @brief Iterator access for range for loops
+	typename Values::const_iterator
+	end() const {
+		return (*this)().end();
+	}
 
 public: // Methods
 

@@ -145,7 +145,7 @@ COMCoordinateConstraint::setup_for_scoring( scoring::func::XYZ_Func const & xyz,
 		id::AtomID atm_i;
 
 		// is pose centroid?? then we need to remap atmids
-		if ( rsd_type.residue_type_set()->category() == chemical::CENTROID_t && atms_[i].atomno() > 5 ) {
+		if ( rsd_type.mode() == chemical::CENTROID_t && atms_[i].atomno() > 5 ) {
 			atm_i = id::AtomID( xyz.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );
 		} else {
 			atm_i = atms_[i];

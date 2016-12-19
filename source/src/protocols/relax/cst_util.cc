@@ -34,6 +34,8 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 
+#include <core/pose/util.hh>
+
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -62,9 +64,7 @@ void coordinate_constrain_selection(
 	using namespace core::scoring::constraints;
 	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
-			*ResidueFactory::create_residue(
-			pose.residue(1).residue_type_set()->name_map( "VRT" )
-			),
+			*ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ),
 			static_cast< Size > (pose.size() / 2)
 		);
 	}
@@ -170,9 +170,7 @@ void add_virtual_residue_to_cterm(
 	using core::conformation::ResidueFactory;
 	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
-			*ResidueFactory::create_residue(
-			pose.residue(1).residue_type_set()->name_map( "VRT" )
-			),
+			*ResidueFactory::create_residue( *core::pose::virtual_type_for_pose( pose ) ),
 			static_cast< Size > (pose.size() / 2)
 		);
 	}

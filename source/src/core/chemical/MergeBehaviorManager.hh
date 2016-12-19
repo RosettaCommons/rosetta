@@ -34,6 +34,7 @@ public:
 	typedef std::pair< merge_residue_behavior, AtomRenamingMap > ResidueMergeInstructions;
 	typedef std::map< std::string, ResidueMergeInstructions > MergeBehaviorMap;
 
+	MergeBehaviorManager();
 	MergeBehaviorManager( std::string const & database_directory );
 	~MergeBehaviorManager();
 
@@ -50,6 +51,12 @@ private:
 
 	// no_behavior_ is a pair of do not merge with an empty map
 	ResidueMergeInstructions no_behavior_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }

@@ -19,6 +19,8 @@
 #include <core/import_pose/import_pose_options.hh>
 #include <core/import_pose/import_pose_options_creator.hh>
 
+#include <core/chemical/ChemicalManager.hh>
+
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -80,7 +82,10 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", 1 ));
 	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", 0 ));
 	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
-	set_residue_type_set( tag->getOption< std::string >( "residue_type_set", "fa_standard" ));
+	// Umm .. shouldn't this be sensitive to the centroid setting?
+	// right now we ignore them for this if residue_type_set is left as the default.
+	std::string residue_type_set_name( tag->getOption< std::string >( "residue_type_set", "fa_standard" ) );
+	set_residue_type_set_mode( core::chemical::type_set_mode_from_string( residue_type_set_name ) );
 	set_set_up_metal_bonds( tag->getOption<bool>("auto_setup_metals", false) );
 	set_metal_bond_LJ_multiplier( tag->getOption<core::Real>("metals_detection_LJ_multiplier", 1.0) );
 	set_metal_bond_dist_constraint_multiplier( tag->getOption<core::Real>("metals_distance_constraint_multiplier", 1.0) );
@@ -101,7 +106,7 @@ core::Real ImportPoseOptions::metal_bond_LJ_multiplier() const { return metal_bo
 core::Real ImportPoseOptions::metal_bond_dist_constraint_multiplier() const { return metal_bond_dist_constraint_multiplier_; }
 core::Real ImportPoseOptions::metal_bond_angle_constraint_multiplier() const { return metal_bond_angle_constraint_multiplier_;  }
 
-std::string const & ImportPoseOptions::residue_type_set() const { return residue_type_set_; }
+core::chemical::TypeSetMode ImportPoseOptions::residue_type_set_mode() const { return residue_type_set_mode_; }
 
 // mutators
 void ImportPoseOptions::set_centroid( bool centroid ) { centroid_ = centroid; }
@@ -116,7 +121,7 @@ void ImportPoseOptions::set_metal_bond_LJ_multiplier(core::Real invalue ) { meta
 void ImportPoseOptions::set_metal_bond_dist_constraint_multiplier(core::Real invalue ) { metal_bond_dist_constraint_multiplier_ = invalue; return;}
 void ImportPoseOptions::set_metal_bond_angle_constraint_multiplier(core::Real invalue ) { metal_bond_angle_constraint_multiplier_ = invalue; return;}
 
-void ImportPoseOptions::set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
+void ImportPoseOptions::set_residue_type_set_mode( core::chemical::TypeSetMode residue_type_set_mode ) { residue_type_set_mode_ = residue_type_set_mode; }
 
 
 void ImportPoseOptions::init_from_options( utility::options::OptionCollection const & options )
@@ -148,7 +153,9 @@ void ImportPoseOptions::init_from_options( utility::options::OptionCollection co
 	set_metal_bond_dist_constraint_multiplier( options[in::metals_distance_constraint_multiplier]() );
 	set_metal_bond_angle_constraint_multiplier( options[in::metals_angle_constraint_multiplier]() );
 
-	set_residue_type_set( options[ in::file::residue_type_set ]());
+	// Umm .. shouldn't this be sensitive to the -in::file::centroid_input/-in::file::centroid flags?
+	// right now we ignore them for this if -in::file::residue_type_set is left as the default.
+	set_residue_type_set_mode( core::chemical::type_set_mode_from_string( options[ in::file::residue_type_set ]() ) );
 }
 
 void ImportPoseOptions::list_options_read( utility::options::OptionKeyList & read_options )
@@ -190,7 +197,7 @@ ImportPoseOptions::operator == ( ImportPoseOptions const & other ) const
 	if ( metal_bond_LJ_multiplier_               != other.metal_bond_LJ_multiplier_               ) return false;
 	if ( metal_bond_dist_constraint_multiplier_  != other.metal_bond_dist_constraint_multiplier_  ) return false;
 	if ( metal_bond_angle_constraint_multiplier_ != other.metal_bond_angle_constraint_multiplier_ ) return false;
-	if ( residue_type_set_                        != other.residue_type_set_                       ) return false;
+	if ( residue_type_set_mode_                  != other.residue_type_set_mode_                  ) return false;
 	return true;
 }
 
@@ -222,8 +229,8 @@ ImportPoseOptions::operator < ( ImportPoseOptions const & other ) const
 	if ( metal_bond_dist_constraint_multiplier_  != other.metal_bond_dist_constraint_multiplier_  ) return false;
 	if ( metal_bond_angle_constraint_multiplier_ <  other.metal_bond_angle_constraint_multiplier_ ) return true;
 	if ( metal_bond_angle_constraint_multiplier_ != other.metal_bond_angle_constraint_multiplier_ ) return false;
-	if ( residue_type_set_                        <  other.residue_type_set_                       ) return true;
-	//if ( residue_type_set_                        == other.residue_type_set_                       ) return false;
+	if ( residue_type_set_mode_                  <  other.residue_type_set_mode_                  ) return true;
+	//if ( residue_type_set_mode_                != other.residue_type_set_mode_                  ) return false;
 	return false;
 }
 

@@ -1623,17 +1623,18 @@ Pose::clear()
 }
 
 // @details Switch residues to VIRTUAL
-/// @author Sebastian RŠmisch <raemisch@scripps.edu>
+/// @author Sebastian Raemisch <raemisch@scripps.edu>
 /// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 void
 Pose::real_to_virtual( core::Size seqpos ){
 	//std::cout << "Original residue type:" << std::endl;
 	//std::cout << this->residue_type(seqpos) << std::endl;
-	
-	
+
+
 	//work on a copy of the restype. Then add the restype to the pose
-    core::chemical::ResidueTypeOP newRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
+	core::chemical::ResidueTypeOP newRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
 	newRT->real_to_virtual();
+	// Should the new, virtual ResidueType be placed in the pose's RTS, so we don't make a new TR for each replacement?
 	replace_pose_residue_copying_existing_coordinates(*this, seqpos, *newRT);
 
 	// update connections
@@ -1648,21 +1649,21 @@ Pose::real_to_virtual( core::Size seqpos ){
 
 
 /// @details Switch residues from VIRTUAL to full_atom
-/// @author Sebastian RŠmisch <raemisch@scripps.edu>
+/// @author Sebastian Raemisch <raemisch@scripps.edu>
 /// @author Jared Adolf-Bryfogle <jadolfbr@gmail.com>
 void
 Pose::virtual_to_real( core::Size seqpos ){
 	core::chemical::ResidueTypeOP oldRT( new core::chemical::ResidueType ( this->residue_type(seqpos) ) );
-    std::string const base_name( residue_type_base_name( *oldRT ) );
-	
+	std::string const base_name( residue_type_base_name( *oldRT ) );
+
 	//Remove variant type before getting list.
 	oldRT->delete_property("VIRTUAL_RESIDUE");
-	
+
 	utility::vector1< std::string > const & variants( oldRT->properties().get_list_of_variants() );
-    chemical::ResidueTypeSetCOP base_RTset( oldRT->residue_type_set() );
-    core::chemical::ResidueTypeCOP RT = core::chemical::ResidueTypeFinder(*base_RTset).residue_base_name( base_name ).variants( variants ).get_representative_type();
-    // swap in new (old) residue type
-    core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);
+	chemical::ResidueTypeSetCOP base_RTset( residue_type_set_for_pose( oldRT->mode() ) );
+	core::chemical::ResidueTypeCOP RT = core::chemical::ResidueTypeFinder(*base_RTset).residue_base_name( base_name ).variants( variants ).get_representative_type();
+	// swap in new (old) residue type
+	core::pose::replace_pose_residue_copying_existing_coordinates(*this,seqpos,*RT);
 }
 
 
@@ -1965,6 +1966,10 @@ bool Pose::is_centroid() const {
 	return conformation_->is_centroid();
 }
 
+core::chemical::ResidueTypeSetCOP
+Pose::residue_type_set_for_pose( core::chemical::TypeSetMode mode ) const {
+	return conformation().residue_type_set_for_conf( mode );
+}
 
 void Pose::store_const_data(
 	std::string const & category,

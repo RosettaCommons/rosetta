@@ -42,6 +42,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 
 
@@ -322,8 +323,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
 
 	//add vrt res so final torsion exists
-	chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
-	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
+	chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose( pose, "VRT", rsd.type().mode() ) );
+	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *vrt_rsd, pose.size() );
 	FoldTree f_jump( pose.fold_tree() );
 	//just min the new jump
@@ -479,8 +480,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 	special_region_unsat_polars_ = 0;
 	//Real min_dist( core::scoring::hbonds::MIN_R );
 	//Real shell_cutoff( core::scoring::hbonds::MAX_R );
-	chemical::ResidueTypeSetCOP rsd_set( in_pose.residue( 1 ).residue_type_set() );
-	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "TP3" ) ) );
+	chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose( in_pose, "TP3" ) );
+	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 	Size wat_O_at( 1 ); //warning! hardcoded for TP3 water!
 	Size wat_H1_at( 2 ); //warning! hardcoded for TP3 water!
 	//turn off solvation score

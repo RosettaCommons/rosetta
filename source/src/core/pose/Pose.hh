@@ -60,6 +60,8 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
@@ -917,6 +919,24 @@ public:
 	///     ResidueType
 	bool is_centroid() const;
 
+
+	/// @brief Return the custom ResidueTypeSet for the Pose, if any.
+	/// Otherwise will return the appropriate global ResidueTypeSet
+	///
+	/// @details If mode is INVALID_t (the default), the returned ResidueTypeSet
+	/// is the one corresponding to the majority of the residues in the Pose.
+	/// i.e. FULL_ATOM if pose.is_fullatom(); CENTROID if pose.is_centriod()
+	///
+	/// examples(s):
+	///     pose.residue_type_set_for_pose()
+	///     pose.residue_type_set_for_pose( core::chemical::CENTROID_t )
+	/// See also:
+	///     Pose
+	///     Pose.is_fullatom
+	///     Pose.is_centroid
+	///     ResidueTypeSet
+	core::chemical::ResidueTypeSetCOP
+	residue_type_set_for_pose( core::chemical::TypeSetMode mode = core::chemical::INVALID_t ) const;
 
 	///////////////////////////////////////////////////////////////////////////
 	// convenience access for torsion angles

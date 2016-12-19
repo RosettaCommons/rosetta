@@ -438,7 +438,7 @@ void rebuild_loops_until_closed(
 		return;
 	}
 
-	core::chemical::TypeSetCategory const orig_rsd_set_category( query_pose.conformation().residue_typeset_category() );
+	core::chemical::TypeSetMode const orig_rsd_set_mode( query_pose.conformation().residue_typeset_mode() );
 	core::util::switch_to_residue_type_set( query_pose, core::chemical::CENTROID_t );
 
 	bool closed( false );
@@ -461,7 +461,7 @@ void rebuild_loops_until_closed(
 
 	tr.flush();
 
-	core::util::switch_to_residue_type_set( query_pose, orig_rsd_set_category );
+	core::util::switch_to_residue_type_set( query_pose, orig_rsd_set_mode );
 } // rebuild_loops_until_closed
 
 void steal_ligands(

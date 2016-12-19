@@ -324,8 +324,8 @@ void ThreadingMover::apply(
 
 		if ( query_loops->size() > 0 ) {
 			// switch to centroid ResidueTypeSet for loop remodeling
-			core::chemical::TypeSetCategory const orig_rsd_set_type(
-				query_pose.conformation().residue_typeset_category()
+			core::chemical::TypeSetMode const orig_rsd_set_mode(
+				query_pose.conformation().residue_typeset_mode()
 			);
 
 			using core::util::switch_to_residue_type_set;
@@ -340,10 +340,10 @@ void ThreadingMover::apply(
 			loop_mover->apply( query_pose );
 
 			// switch back to original ResidueTypeSet after loop modeling
-			if ( orig_rsd_set_type != core::chemical::CENTROID_t ) {
+			if ( orig_rsd_set_mode != core::chemical::CENTROID_t ) {
 				core::util::switch_to_residue_type_set(
 					query_pose,
-					orig_rsd_set_type
+					orig_rsd_set_mode
 				);
 			}
 		} else {

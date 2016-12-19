@@ -33,6 +33,7 @@
 #include <sstream>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
 
@@ -98,14 +99,15 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 		score = automorphic_rmsd( res1, res2, false /*superimpose*/ );
 		recovered = (score <= get_recovery_threshold() );
 	} else {
-		ResidueTypeSetCOP res1_set( res1.residue_type_set() );
+		// We assume here that res1 came from pose1 and res2 comes from pose2 (or at the least their typesets are compatable).
+		ResidueTypeSetCOP res1_set( pose1.residue_type_set_for_pose( res1.type().mode() ) );
 		ResidueType const & working_res1_type(
 			res1_set->get_residue_type_with_variant_added( res1.type(), core::chemical::VIRTUAL_BB ) );
 		ResidueOP working_res1 = ResidueFactory::create_residue( working_res1_type );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			res1, *working_res1, pose1.conformation() );
 
-		ResidueTypeSetCOP res2_set( res2.residue_type_set() );
+		ResidueTypeSetCOP res2_set( pose2.residue_type_set_for_pose( res2.type().mode() ) );
 		ResidueType const & working_res2_type(
 			res2_set->get_residue_type_with_variant_added( res2.type(), core::chemical::VIRTUAL_BB ) );
 		ResidueOP working_res2 = ResidueFactory::create_residue( working_res2_type );

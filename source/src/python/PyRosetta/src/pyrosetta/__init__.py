@@ -272,9 +272,9 @@ def Set(list_in):
 
 
 # New methods.
-def generate_nonstandard_residue_set(params_list):
+def generate_nonstandard_residue_set(pose, params_list):
     """
-    Generates a ResidueTypeSet from a list of .params filenames.
+    Places the ResidueTypes corresponding to a list of .params filenames into a given pose
 
     .params files must be generated beforehand. Typically, one would obtain a
     molfile (.mdl) generated from the xyz coordinates of a residue, small
@@ -285,22 +285,18 @@ def generate_nonstandard_residue_set(params_list):
 
     Example:
         params = ["penicillin.params", "amoxicillin.params"]
-        type_set = generate_nonstandard_residue_set(params)
-        pose = pose_from_file(type_set, "TEM-1_with_substrates.pdb")
+        pose = Pose()
+        generate_nonstandard_residue_set(pose, params)
+        pose_from_file(pose, "TEM-1_with_substrates.pdb")
     See also:
         ResidueTypeSet
         Vector1()
         pose_from_file()
     """
-    res_set = rosetta.core.chemical.ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
-    # res_set.read_files(Vector1(params_list),
-    #                    ChemicalManager.get_instance().atom_type_set("fa_standard"),
-    #                    ChemicalManager.get_instance().element_set('default'),
-    #                    ChemicalManager.get_instance().mm_atom_type_set("fa_standard"),
-    #                    ChemicalManager.get_instance().orbital_type_set("fa_standard"),)
-    res_set.read_files_for_custom_residue_types(Vector1(params_list))
-    return res_set
-
+    res_set = pose.conformation().modifiable_residue_type_set_for_conf()
+    res_set.read_files_for_base_residue_types(Vector1(params_list))
+    pose.conformation().reset_residue_type_set_for_conf( res_set )
+    return pose.residue_type_set_for_pose()
 
 def standard_task_factory():
         tf = rosetta.core.pack.task.TaskFactory()

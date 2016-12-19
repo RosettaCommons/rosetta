@@ -30,6 +30,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
@@ -885,13 +886,13 @@ ZnCoordinationScorer::insert_match_onto_pose(
 	destresids[1] = chain_insertion_id == 1 ? match.res1() : match.res1() + r2() - r1();
 	destresids[2] = chain_insertion_id == 1 ? match.res2() : match.res2() + r2() - r1();
 
-	core::chemical::ResidueTypeSetCOP restypeset( p.residue_type(r1()).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP restypeset( p.residue_type_set_for_pose( p.residue_type(r1()).mode() ) );
 
 	for ( Size ii = 1; ii <= 2; ++ii ) {
 		core::conformation::Residue const & matchres = ii == 1 ? match.res1conf() : match.res2conf();
 		core::conformation::Residue const & dstres = p.residue( destresids[ ii ] );
-		assert( restypeset == dstres.type().residue_type_set() );
-		assert( restypeset == matchres.type().residue_type_set() );
+		assert( restypeset->mode() == dstres.type().mode() );
+		assert( restypeset->mode() == matchres.type().mode() );
 
 		// find the appropriate residue type for this position
 		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );

@@ -18,6 +18,7 @@
 #include <protocols/simple_filters/ResidueCountFilterCreator.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -114,8 +115,7 @@ ResidueCountFilter::parse_my_tag(
 		// if a pose with residues is given, check the residue types vs the pose residue type set to warn the user before runtime
 		core::chemical::ResidueTypeSetCOP restype_set;
 		if ( pose.size() ) {
-			// get the residue type set from the first residue of the input pose
-			restype_set = core::chemical::ResidueTypeSetCOP( pose.residue(1).residue_type_set() );
+			restype_set = pose.residue_type_set_for_pose();
 		} else {
 			restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		}

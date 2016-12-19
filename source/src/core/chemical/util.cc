@@ -54,7 +54,7 @@ rsd_set_from_cmd_line()
 	using namespace basic::options::OptionKeys;
 
 	std::string const type_set_name( option[ in::file::residue_type_set ]() );
-	ResidueTypeSetCAP set = ChemicalManager::get_instance()->residue_type_set( type_set_name );
+	ResidueTypeSetCOP set = ChemicalManager::get_instance()->residue_type_set( type_set_name );
 
 	return set;
 }

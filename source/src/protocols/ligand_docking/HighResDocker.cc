@@ -368,7 +368,7 @@ HighResDocker::enable_ligand_rotamer_packing(
 	core::pack::task::PackerTaskOP & pack_task
 ) const{
 	core::conformation::Residue const & this_residue= pose.residue(ligand_residue_id);
-	core::chemical::ResidueTypeSetCOP rsd_type_set = this_residue.residue_type_set();
+	core::chemical::ResidueTypeSetCOP rsd_type_set = pose.residue_type_set_for_pose( this_residue.type().mode() );
 	core::chemical::ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_residue.name3() ).get_all_possible_residue_types(); // a vector1
 
 	assert(allowed_types.size() > 0);

@@ -125,9 +125,9 @@ public:
 		//pose.dump_pdb("unmodified.pdb");
 
 		//get typeset and HIS and HIS_D
-		core::chemical::ResidueTypeSet & typeset(core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(core::chemical::FA_STANDARD));
-		core::chemical::ResidueType const & HIS(typeset.name_map("HIS"));
-		core::chemical::ResidueType const & HIS_D(typeset.name_map("HIS_D"));
+		core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+		core::chemical::ResidueType const & HIS(typeset->name_map("HIS"));
+		core::chemical::ResidueType const & HIS_D(typeset->name_map("HIS_D"));
 		utility::vector1< core::conformation::ResidueOP > HISs, HIS_Ds;
 
 		//create concrete HIS(_D) residues

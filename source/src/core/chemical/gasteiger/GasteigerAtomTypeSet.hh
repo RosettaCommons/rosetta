@@ -36,6 +36,11 @@
 #include <iosfwd>                                                // for string
 #include <map>
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -55,9 +60,12 @@ private:
 
 public:
 
-	GasteigerAtomTypeSet( ElementSetCAP element_set );
+	GasteigerAtomTypeSet( ElementSetCAP element_set, std::string const & name = "" );
 	GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other );
 	virtual ~GasteigerAtomTypeSet();
+
+	/// @brief What does the ChemicalManger call this TypeSet?
+	std::string const & name() const { return name_; }
 
 	/// @brief Number of atom types in the set
 	Size
@@ -99,6 +107,9 @@ public:
 	// data
 private:
 
+	/// @brief What does the ChemicalManager call this TypeSet?
+	std::string name_;
+
 	/// @brief The associated element type set.
 	ElementSetCAP element_set_;
 
@@ -110,8 +121,24 @@ private:
 
 };
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void serialize_gasteiger_atom_type_set( Archive & arc, GasteigerAtomTypeSetCOP ptr );
+
+/// @brief Deserialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void deserialize_gasteiger_atom_type_set( Archive & arc, GasteigerAtomTypeSetCOP & ptr );
+#endif // SERIALIZATION
+
 } // gasteiger
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_gasteiger_GasteigerAtomTypeSet )
+
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::gasteiger::GasteigerAtomTypeSet, core::chemical::gasteiger::serialize_gasteiger_atom_type_set, core::chemical::gasteiger::deserialize_gasteiger_atom_type_set )
+#endif // SERIALIZATION
 
 #endif

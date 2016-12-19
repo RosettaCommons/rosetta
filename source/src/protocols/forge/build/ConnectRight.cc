@@ -63,7 +63,7 @@ ConnectRight::ConnectRight(
 	Size const right_position,
 	Pose const & pose_right
 ) :
-	Super( Interval( left_position, left_position ), pose_right.residue( 1 ).residue_type_set() ),
+	Super( Interval( left_position, left_position ), pose_right.residue_type_set_for_pose() ),
 	left_position_( left_position ),
 	right_position_( right_position ),
 	pose_right_( pose_right ),

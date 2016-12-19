@@ -28,6 +28,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/util.hh>
+
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/Tracer.hh>
@@ -275,7 +277,7 @@ RestrictDesignToProteinDNAInterface::apply(
 
 			if ( ! def->name3.empty() ) {
 				// specifying the appropriate ResidueType here is tricky, because there are multiple possible 'name3's for the nucleotides, AND because we must make sure to indicate a ResidueType that is already represented in the ResidueLevelTask
-				ResidueTypeSetCOP rts( pose.residue(1).residue_type_set() );
+				ResidueTypeSetCOP rts( pose.residue_type_set_for_pose() );
 				// a list of all existing residue types that match the input name3
 				// AMW: can this be improved?
 				ResidueTypeCOPs const & name3map( ResidueTypeFinder( *rts ).name3( def->name3 ).get_all_possible_residue_types() );

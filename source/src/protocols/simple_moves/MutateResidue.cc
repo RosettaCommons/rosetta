@@ -34,6 +34,7 @@
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.hh>
@@ -231,11 +232,10 @@ void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_ta
 			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
 	}
 
-	chemical::ResidueTypeSetCOP restype_set( pose.residue( rosetta_target ).residue_type_set() );
-
+	chemical::ResidueTypeCOP new_restype( core::pose::get_restype_for_pose( pose, res_name_, pose.residue_type( rosetta_target ).mode() ) );
 	// Create the new residue and replace it
 	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-		restype_set->name_map(res_name_), pose.residue( rosetta_target ),
+		*new_restype, pose.residue( rosetta_target ),
 		pose.conformation());
 	// Make sure we retain as much info from the previous res as possible
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),

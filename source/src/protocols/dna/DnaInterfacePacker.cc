@@ -37,6 +37,7 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/options/option.hh>
@@ -406,7 +407,7 @@ DnaInterfacePacker::init_standard( Pose & pose )
 
 	// set up for looping over multiple DNA sequences if task() has DNA positions set to 'scan'
 	// makes all canonical combinations that can be described by the rotamer set
-	make_dna_sequence_combinations();
+	make_dna_sequence_combinations( *pose.residue_type_set_for_pose() );
 
 	if ( dna_sequences_.empty() ) {
 		// no list of DNA sequences to loop over:
@@ -509,7 +510,7 @@ void DnaInterfacePacker::parse_my_tag(
 /// @details looks for rotable DNA positions in the RotamerSets, generates a list of all canonical sequence combinations for them
 /// @author ashworth
 void
-DnaInterfacePacker::make_dna_sequence_combinations()
+DnaInterfacePacker::make_dna_sequence_combinations( ResidueTypeSet const & typeset )
 {
 	runtime_assert( task() != nullptr );
 	runtime_assert( dna_chains_ != nullptr );
@@ -534,7 +535,7 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 	// TR << std::endl;
 
 	for ( auto & dna_sequence : dna_sequences_ ) {
-		add_complementary_sequence( dna_sequence );
+		add_complementary_sequence( dna_sequence, typeset );
 	}
 }
 
@@ -542,7 +543,7 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 /// @details turns single-stranded DNA sequences into double-stranded ones
 /// @author ashworth
 void
-DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
+DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence, ResidueTypeSet const & typeset )
 {
 	runtime_assert( dna_chains_ != nullptr );
 	// fill a temporary ResTypeSequence, in order to avoid iterator-related issues with std::map
@@ -555,8 +556,7 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 		Size const comppos( dnatop.bottom() );
 		// find the complement type in the current typeset
 		ResidueTypeCOP type( postype.second );
-		ResidueTypeSetCOP typeset( type->residue_type_set() );
-		ResidueTypeCOP comptype( typeset->get_representative_type_aa( dna_base_partner( type->aa() ) ) );
+		ResidueTypeCOP comptype( typeset.get_representative_type_aa( dna_base_partner( type->aa() ) ) );
 		complement[ comppos ] = comptype;
 	}
 	// append this temporary bottom-stranded sequence to the original top-stranded sequence
@@ -618,7 +618,7 @@ std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
 	make_single_mutants( current_sequence, task(), specificity_sequences );
 	// add complementary DNA positions to the these top-stranded sequences
 	for ( auto & specificity_sequence : specificity_sequences ) {
-		add_complementary_sequence( specificity_sequence );
+		add_complementary_sequence( specificity_sequence, *pose.residue_type_set_for_pose() );
 	}
 
 	// for ( ResTypeSequences::iterator sequence( specificity_sequences.begin() ),
@@ -634,7 +634,7 @@ std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
 	Real bound_specificity(0.), binding_specificity(0.);
 
 	// calculate_specificity expects complemented target sequence
-	add_complementary_sequence( current_sequence );
+	add_complementary_sequence( current_sequence, *pose.residue_type_set_for_pose() );
 	TR_spec << "\nCalculating bound specificity:";
 	bound_specificity = calculate_specificity( pose, current_sequence, sequence_scores.first );
 	if ( binding_E_ ) {
@@ -687,7 +687,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 		}
 		// add complements (top-stranded sequences -> double-stranded)
 		for ( auto & single_bp_variant : single_bp_variants ) {
-			add_complementary_sequence( single_bp_variant ); // uses dna_chains_ information
+			add_complementary_sequence( single_bp_variant, *pose.residue_type_set_for_pose()  ); // uses dna_chains_ information
 		}
 		// model/score states, calculate specificities
 		// first element is bound, second binding if binding_ flag is true
@@ -701,7 +701,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 			current_single_bp[ bppos->first ] = bppos->second;
 			// but need full complemented target sequence for actual calculation
 			ResTypeSequence complemented_current_sequence( current_sequence );
-			add_complementary_sequence( complemented_current_sequence );
+			add_complementary_sequence( complemented_current_sequence, *pose.residue_type_set_for_pose() );
 			TR_spec << "\nCalculating bound specificity for " << seq_pdb_str( current_single_bp, pose );
 			bound_specificities[ current_single_bp ] =
 				calculate_specificity( pose, complemented_current_sequence, sequence_scores.first );
@@ -727,7 +727,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 	TR_spec << "\nCalculating bound specificity for " << seq_pdb_str( current_sequence, pose );
 	// need full complemented target sequence for calculation
 	ResTypeSequence complemented_current_sequence( current_sequence );
-	add_complementary_sequence( complemented_current_sequence );
+	add_complementary_sequence( complemented_current_sequence, *pose.residue_type_set_for_pose() );
 	bound_specificities[ current_sequence ] =
 		calculate_specificity( pose, complemented_current_sequence, bound_scores );
 	if ( binding_E_ ) {
@@ -1039,7 +1039,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	TR << "Starting protein_scan with allowed types " << typestring << "." << std::endl;
 	// parse allowed_types string into residue types
 	ResidueTypeCOPs allowed_type_caps;
-	ResidueTypeSetCOP rts( pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP rts( pose.residue_type_set_for_pose() );
 	for ( char typechar : typestring ) {
 		ResidueTypeCOP aa_type( rts->get_representative_type_aa( aa_from_oneletter_code( typechar ) ) );
 		if ( ! aa_type ) {

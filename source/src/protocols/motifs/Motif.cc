@@ -80,9 +80,9 @@ Motif::Motif(
 	has_remark_( false ),
 	has_path_( false )
 {
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
-	core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type( rsd_set->name_map( restype_name1_ ) );
+	core::chemical::ResidueType const & rsd_type2( rsd_set->name_map( restype_name2_ ) );
 	res1_atom1_index_ = rsd_type.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type.atom_index( res1_atom3_name_ );
@@ -124,9 +124,9 @@ Motif::Motif(
 	has_remark_( false ),
 	has_path_( false )
 {
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
-	core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type( rsd_set->name_map( restype_name1_ ) );
+	core::chemical::ResidueType const & rsd_type2( rsd_set->name_map( restype_name2_ ) );
 	res1_atom1_index_ = rsd_type.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type.atom_index( res1_atom3_name_ );
@@ -166,9 +166,9 @@ Motif::Motif(
 	has_remark_( false ),
 	has_path_( false )
 {
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
-	core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type( rsd_set->name_map( restype_name1_ ) );
+	core::chemical::ResidueType const & rsd_type2( rsd_set->name_map( restype_name2_ ) );
 	res1_atom1_index_ = rsd_type.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type.atom_index( res1_atom3_name_ );
@@ -219,9 +219,9 @@ Motif::Motif(
 	} else {
 		mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
 	}
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type1( rsd_set.name_map( restype_name1_ ) );
-	//core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type1( rsd_set->name_map( restype_name1_ ) );
+	//core::chemical::ResidueType const & rsd_type2( rsd_set->name_map( restype_name2_ ) );
 	res1_atom1_index_ = rsd_type1.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type1.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type1.atom_index( res1_atom3_name_ );
@@ -256,8 +256,8 @@ Motif::Motif(
 	forward_jump_ = orientation;
 	backward_jump_ = forward_jump_.reversed();
 
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type1( rsd_set.name_map( restype_name1_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type1( rsd_set->name_map( restype_name1_ ) );
 
 	res1_atom1_index_ = rsd_type1.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type1.atom_index( res1_atom2_name_ );
@@ -321,9 +321,9 @@ Motif::Motif(
 	} else {
 		mt << "Input motif residues do not match the expected combinations for this constructor; please use constructor that allows you to explicitly specify atoms involved." << std::endl;
 	}
-	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
-	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
-	core::chemical::ResidueType const & rsd_type2( rsd_set.name_map( restype_name2_ ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type( rsd_set->name_map( restype_name1_ ) );
+	core::chemical::ResidueType const & rsd_type2( rsd_set->name_map( restype_name2_ ) );
 	res1_atom1_index_ = rsd_type.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type.atom_index( res1_atom3_name_ );

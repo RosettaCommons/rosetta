@@ -69,16 +69,21 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		using namespace core::chemical;
+
+		core_init_with_additional_options("-run:preserve_header -extra_res_fa protocols/enzdes/D2N.params");
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
-		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
+		*/
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		/*
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("D2N") ) params_files.push_back("protocols/enzdes/D2N.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
+		*/
 
 		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
 

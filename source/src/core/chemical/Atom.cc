@@ -25,6 +25,23 @@
 // Utility header
 #include <utility/exit.hh>
 
+#ifdef    SERIALIZATION
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ElementSet.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -215,3 +232,70 @@ operator<< ( std::ostream & out, Atom const & atom )
 
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+void
+core::chemical::Atom::update_typesets( ResidueType const & parent ) {
+	element_ = nullptr;
+	if ( parent.element_set_ptr() ) {
+		element_ = parent.element_set_ptr()->element( element_enum_ );
+	}
+	gasteiger_atom_type_ = nullptr;
+	if ( ! gasteiger_atom_type_name_.empty() && parent.gasteiger_atom_typeset() ) {
+		gasteiger_atom_type_ =  parent.gasteiger_atom_typeset()->atom_type( gasteiger_atom_type_name_ );
+	}
+
+}
+
+template< class Archive >
+void
+core::chemical::Atom::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( mm_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_type_index_ ) ); // Size
+	arc( CEREAL_NVP( mm_atom_type_index_ ) ); // Size
+	// EXEMPT element_ element_enum_
+	arc( CEREAL_NVP_( "element_enum_", element() )); // core::chemical::element::Elements
+	// EXEMPT gasteiger_atom_type_ gasteiger_atom_type_name_
+	std::string gasteiger_atom_type_name("");
+	if ( gasteiger_atom_type_ ) {
+		gasteiger_atom_type_name = gasteiger_atom_type_->get_name();
+	}
+	arc( CEREAL_NVP_( "gasteiger_atom_type_name_", gasteiger_atom_type_name ) ); // std::string
+	arc( CEREAL_NVP( formal_charge_ ) ); // int
+	arc( CEREAL_NVP( charge_ ) ); // Real
+	arc( CEREAL_NVP( ideal_xyz_ ) ); // Vector
+	arc( CEREAL_NVP( properties_ ) ); // AtomPropertiesOP
+	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( has_orbitals_ ) ); // _Bool
+	arc( CEREAL_NVP( bonded_orbitals_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( abs_stereochem_ ) ); // char
+	arc( CEREAL_NVP( greek_d_ ) ); // enum core::chemical::GreekDistance
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Atom::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( mm_name_ ); // std::string
+	arc( atom_type_index_ ); // Size
+	arc( mm_atom_type_index_ ); // Size
+	// EXEMPT element_
+	arc( element_enum_ ); // core::chemical::element::Elements
+	// EXEMPT gasteiger_atom_type_
+	arc( gasteiger_atom_type_name_ );
+	arc( formal_charge_ ); // int
+	arc( charge_ ); // Real
+	arc( ideal_xyz_ ); // Vector
+	arc( properties_ ); // AtomPropertiesOP
+	arc( is_hydrogen_ ); // _Bool
+	arc( has_orbitals_ ); // _Bool
+	arc( bonded_orbitals_ ); // utility::vector1<Size>
+	arc( abs_stereochem_ ); // char
+	arc( greek_d_ ); // enum core::chemical::GreekDistance
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Atom );
+#endif // SERIALIZATION

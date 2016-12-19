@@ -27,7 +27,9 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
@@ -112,9 +114,9 @@ AddHydrogen::apply( core::pose::Pose & pose )
 
 	type_to_fix->finalize();
 	{
-		core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-		core::chemical::ResidueTypeSet & rsd_set= cm->nonconst_residue_type_set( core::chemical::FA_STANDARD );
-		rsd_set.add_custom_residue_type(type_to_fix);
+		core::chemical::PoseResidueTypeSetOP rts( pose.conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
+		rts->add_unpatchable_residue_type(type_to_fix);
+		pose.conformation().reset_residue_type_set_for_conf(rts);
 	}
 	utility::vector1< std::pair< std::string, std::string > > atom_pairs;
 	atom_pairs.push_back(std::pair<std::string, std::string>(name1,name1) );
@@ -128,7 +130,7 @@ AddHydrogen::apply( core::pose::Pose & pose )
 
 std::string generate_unique_name(std::string /*input_name*/){
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSet & rsd_set= cm->nonconst_residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set = cm->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string new_name;
 
@@ -143,7 +145,7 @@ std::string generate_unique_name(std::string /*input_name*/){
 		new_name.append(1,b);
 		new_name.append(1,c);
 
-	} while( rsd_set.has_name(new_name));
+	} while( rsd_set->has_name(new_name));
 
 	return new_name;
 

@@ -120,8 +120,8 @@ void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string con
 	for ( Size ii=0; ii<sequence.size(); ++ii ) {
 		char aa = sequence[ii];
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
-		ResidueType const & rsd_type( *( residue_set.lock()->get_representative_type_aa( my_aa ) ) );
+		ResidueTypeSetCOP const & residue_set( pose.residue_type_set_for_pose( core::chemical::CENTROID_t ));
+		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa ) ) );
 		replace_pose_residue_copying_existing_coordinates(pose,startSeqPos+ii,rsd_type);
 	}
 }

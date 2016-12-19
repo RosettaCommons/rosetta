@@ -24,10 +24,12 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -125,20 +127,13 @@ JD2ResourceManagerJobInputter::pose_from_job(
 		pose.clear();
 		JD2ResourceManager * jd2_resource_manager(
 			JD2ResourceManager::get_jd2_resource_manager_instance());
+		debug_assert( jd2_resource_manager != nullptr );
+
 		ResourceOP resource;
 
 		// Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
 		// APL: Sam, is there anywhere else this code could live?
-		if ( jd2_resource_manager->has_resource_tag_by_job_tag("residue", input_tag) ) {
-			ResourceOP residue_resource(jd2_resource_manager->get_resource_by_job_tag("residue",input_tag));
-
-			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( residue_resource ));
-			std::string type_set_name(new_residue->residue_type_set()->name());
-			if ( !core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()) ) {
-				tr << "loading residue " << new_residue->name() << " into " << type_set_name <<" residue_type_set" <<std::endl;
-				core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(type_set_name).add_custom_residue_type(new_residue);
-			}
-		}
+		// RM: It's been moved to PoseFromPDBLoader::create_resource() - not an ideal place, but one that works.
 
 		try {
 			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", input_tag ) << " for job " <<
@@ -223,15 +218,7 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 				continue;
 			}
 
-			//This might be a ResidueType.  if it is, we should delete the residue from the resource from the ChemicalManager
-			ResourceOP current_residue = jd2_resource_manager->find_resource(*resource_list_it);
-			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( current_residue ));
-
-			if ( new_residue ) {
-				std::string residue_type_set = new_residue->residue_type_set()->name();
-				core::chemical::ChemicalManager::get_instance()->
-					ChemicalManager::nonconst_residue_type_set(residue_type_set).remove_custom_residue_type(new_residue->name());
-			}
+			// We no longer need to explicitly delete ResidueTypes - Since we load them into the pose, they should be freed when the pose is freed.
 
 			tr << "Deleting resource " << *resource_list_it <<std::endl;
 

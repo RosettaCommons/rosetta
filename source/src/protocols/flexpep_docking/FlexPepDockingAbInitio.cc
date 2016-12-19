@@ -374,7 +374,7 @@ FlexPepDockingAbInitio::convertPSERtoASP(core::pose::Pose& pose, std::set<int>& 
 {
 	using namespace core::chemical;
 	using namespace core::conformation;
-	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	for ( int resid = 1; resid <= (int)pose.size(); resid++ ) {
 		if ( pose.residue_type(resid).has_variant_type(core::chemical::PHOSPHORYLATION) &&
 				pose.residue_type(resid).name3() == "SER" ) {
@@ -393,7 +393,7 @@ FlexPepDockingAbInitio::convertPSERtoGLU(core::pose::Pose& pose, std::set<int>& 
 {
 	using namespace core::chemical;
 	using namespace core::conformation;
-	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	for ( int resid = 1; resid <= (int)pose.size(); resid++ ) {
 		if ( pose.residue_type(resid).has_variant_type(core::chemical::PHOSPHORYLATION) &&
 				pose.residue_type(resid).name3() == "SER" ) {
@@ -411,7 +411,7 @@ FlexPepDockingAbInitio::restorePSER(core::pose::Pose& pose, std::set<int> const&
 {
 	using namespace core::chemical;
 	using namespace core::conformation;
-	ResidueTypeSetCOP centroid_set( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
+	ResidueTypeSetCOP centroid_set( pose.residue_type_set_for_pose( CENTROID_t ) );
 	std::set<int>::const_iterator iter, end;
 	for ( iter = pSer_positions.begin(), end = pSer_positions.end(); iter != end; ++iter ) {
 		int resid = *iter;

@@ -19,6 +19,7 @@ sources = {
 		"atomtype_support",
 		"automorphism",
 		"bond_support",
+		"CacheableResidueTypeSetsTests",
 		"Elements",
 		"MMAtomTypeSet",
 		"OrbitalTests",
@@ -63,6 +64,7 @@ sources = {
 	"conformation" : [
 		"Atom",
 		"Conformation",
+		"conformation_stored_restypes",
 		"Residue",
 		"UltraLightResidue",
 		"util",

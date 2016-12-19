@@ -179,7 +179,7 @@ protocols::fldsgn::topology::BB_Pos::save( Archive & arc ) const {
 	arc( CEREAL_NVP( CB_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( C_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( O_ ) ); // utility::vector1<Vector>
-	core::chemical::serialize_residue_type_vector( arc, residue_types_ );
+	arc( CEREAL_NVP( residue_types_ ) );
 	arc( CEREAL_NVP( N_index_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( CA_index_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( CB_index_ ) ); // utility::vector1<Size>
@@ -197,7 +197,7 @@ protocols::fldsgn::topology::BB_Pos::load( Archive & arc )
 	arc( CB_ ); // utility::vector1<Vector>
 	arc( C_ ); // utility::vector1<Vector>
 	arc( O_ ); // utility::vector1<Vector>
-	core::chemical::deserialize_residue_type_vector( arc, residue_types_ );
+	arc( CEREAL_NVP( residue_types_ ) );
 	arc( N_index_ ); // utility::vector1<Size>
 	arc( CA_index_ ); // utility::vector1<Size>
 	arc( CB_index_ ); // utility::vector1<Size>

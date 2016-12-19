@@ -27,6 +27,9 @@
 #include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
 #include <basic/basic.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+
 // Numeric Headers
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
@@ -38,7 +41,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
@@ -72,6 +74,7 @@ RamaPrePro::RamaPrePro() :
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 RamaPrePro::eval_rpp_rama_score(
+	core::conformation::Conformation const & conf,
 	core::chemical::ResidueTypeCOP res1,
 	core::chemical::ResidueTypeCOP res2,
 	utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
@@ -101,7 +104,7 @@ RamaPrePro::eval_rpp_rama_score(
 		for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] *= -1.0;
 	}
 
-	core::chemical::ResidueTypeCOP ltype( is_d ? res1->residue_type_set()->get_mirrored_type( res1 )  : res1 );
+	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
 
 	ScoringManager* manager( ScoringManager::get_instance() );
 
@@ -204,6 +207,7 @@ RamaPrePro::eval_rpp_rama_score(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void
 RamaPrePro::random_mainchain_torsions(
+	core::conformation::Conformation const & conf,
 	core::chemical::ResidueTypeCOP res1,
 	core::chemical::ResidueTypeCOP res2,
 	utility::vector1 < core::Real > &torsions
@@ -222,7 +226,7 @@ RamaPrePro::random_mainchain_torsions(
 	bool const is_d( res1->is_d_aa() );
 
 	//Get the L-equivalent type:
-	core::chemical::ResidueTypeCOP ltype( is_d ? res1->residue_type_set()->get_mirrored_type( res1 )  : res1 );
+	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
 
 	//Get an instance of the ScoringManager, and the proper MainchainScoreTable:
 	ScoringManager* manager( ScoringManager::get_instance() );

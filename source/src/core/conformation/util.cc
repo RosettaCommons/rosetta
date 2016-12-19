@@ -656,7 +656,7 @@ add_variant_type_to_conformation_residue(
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( conformation.residue_type_set_for_conf( old_rsd.type().mode() ) );
 	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 
 	core::conformation::replace_conformation_residue_copying_existing_coordinates( conformation, seqpos, new_rsd_type );
@@ -674,7 +674,7 @@ remove_variant_type_from_conformation_residue(
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( conformation.residue_type_set_for_conf( old_rsd.type().mode() ) );
 	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::conformation::replace_conformation_residue_copying_existing_coordinates( conformation, seqpos, new_rsd_type );
@@ -1819,7 +1819,7 @@ bool change_cys_state(
 
 	// Cache information on old residue.
 	Residue const & res( conf.residue( index ) );
-	chemical::ResidueTypeSetCOP residue_type_set = res.type().residue_type_set();
+	chemical::ResidueTypeSetCOP residue_type_set = conf.residue_type_set_for_conf( res.type().mode() );
 
 	// make sure we're working on a disulfide-forming type.
 	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
@@ -1993,8 +1993,7 @@ form_disulfide(
 	// Verify we're dealing with a FA conformation
 	runtime_assert( conformation.is_fullatom() );
 
-	chemical::ResidueTypeSetCOP restype_set =
-		chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
+	chemical::ResidueTypeSetCOP restype_set( conformation.residue_type_set_for_conf( chemical::FULL_ATOM_t ) );
 
 	// Break existing disulfide bonds to lower
 	if ( conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) { // full atom residue
@@ -2322,6 +2321,46 @@ return chemical::rings::NEITHER;
 
 return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
 }*/
+
+chemical::ResidueTypeCOP
+virtual_type_for_conf( core::conformation::Conformation const & conformation ) {
+	core::chemical::ResidueTypeSetCOP residue_set( conformation.residue_type_set_for_conf() );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->name_mapOP("VRT") );
+	if ( ! rsd_type ) {
+		// Have a fall-back to the Global TypeSet, in case the Conformation one is hiding it.
+		core::chemical::TypeSetMode mode( conformation.residue_typeset_mode() );
+		if ( mode == core::chemical::MIXED_t ) {
+			mode = core::chemical::FULL_ATOM_t;
+		}
+		residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( mode );
+		rsd_type = residue_set->name_mapOP("VRT");
+		if ( ! rsd_type ) {
+			TR.Error << "Can't find residue type VRT in type set of mode " << mode << std::endl;
+			utility_exit_with_message("Cannot find residue type VRT" );
+		}
+	}
+	return rsd_type;
+}
+
+chemical::ResidueTypeCOP
+inv_virtual_type_for_conf( core::conformation::Conformation const &conformation ) {
+	core::chemical::ResidueTypeSetCOP residue_set( conformation.residue_type_set_for_conf() );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->name_mapOP("INV_VRT") );
+	if ( ! rsd_type ) {
+		// Have a fall-back to the Global TypeSet, in case the Conformation one is hiding it.
+		core::chemical::TypeSetMode mode( conformation.residue_typeset_mode() );
+		if ( mode == core::chemical::MIXED_t ) {
+			mode = core::chemical::FULL_ATOM_t;
+		}
+		residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( mode );
+		rsd_type = residue_set->name_mapOP("INV_VRT");
+		if ( ! rsd_type ) {
+			TR.Error << "Can't find residue type INV_VRT in type set of mode " << mode << std::endl;
+			utility_exit_with_message("Cannot find residue type INV_VRT" );
+		}
+	}
+	return rsd_type;
+}
 
 } // namespace conformation
 } // namespace core

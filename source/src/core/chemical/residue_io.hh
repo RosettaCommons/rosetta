@@ -21,6 +21,7 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/io/izstream.fwd.hh>
 
 // C++ headers
@@ -34,15 +35,29 @@ namespace chemical {
 AtomIndices define_mainchain_atoms( ResidueTypeOP rsd );
 
 /// @brief virtual constructor for ResidueType objects
+/// Gets needed subsidiary type sets from rsd_type_set
+ResidueTypeOP
+read_topology_file(
+	std::string const & filename,
+	chemical::ResidueTypeSetCOP rsd_type_set
+);
+
+/// @brief virtual constructor for ResidueType objects
+/// Gets needed subsidiary type sets from rsd_type_set
+ResidueTypeOP
+read_topology_file(
+	utility::io::izstream & istream,
+	chemical::ResidueTypeSetCOP rsd_type_set
+);
+
+/// @brief virtual constructor for ResidueType objects
 ResidueTypeOP
 read_topology_file(
 	std::string const & filename,
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
-	chemical::ResidueTypeSetCAP rsd_type_set
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types
 );
 
 ResidueTypeOP
@@ -51,9 +66,7 @@ read_topology_file(
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
-	chemical::ResidueTypeSetCAP rsd_type_set
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types
 );
 
 /// @brief writes a .params file from a given ResidueType object
@@ -83,7 +96,7 @@ set_up_mapfile_reassignments_from_commandline(
 void
 setup_atom_type_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, std::string > & atom_type_reassignments
 );
 
@@ -91,7 +104,7 @@ setup_atom_type_reassignments_from_commandline(
 void
 setup_atomic_charge_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, Real > & atomic_charge_reassignments
 );
 
@@ -99,7 +112,7 @@ setup_atomic_charge_reassignments_from_commandline(
 void
 setup_icoor_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
 );
 

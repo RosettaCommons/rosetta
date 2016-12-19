@@ -102,7 +102,7 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 	clock_t starttime = clock();
 	utility::io::izstream libstream(basic::database::full_name("rotamer/cenrot_dunbrack.lib"));
 	//std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
-	ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
+	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
 	std::string nextaa;
 	libstream >> nextaa;

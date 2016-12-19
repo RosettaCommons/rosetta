@@ -12,8 +12,6 @@
 ## @brief
 ## @author Evan H. Baugh, Johns Hopkins University
 
-# generate_nonstandard_residue_set is adapted from an original script by Sid Chaudhury
-
 from __future__ import print_function
 
 import os
@@ -82,43 +80,6 @@ def sdf2mdl( sdfile , mdlfilename ):
 def molfile2params_quick( mdlfile , name ):
     molfile_to_params.main([mdlfile,'-n'+name])
 
-################################################################################
-# Temporary solution, load the ligand for this session
-
-# a method for producing non-standard ResidueTypeSets
-#    there is a custom (PyRosetta only) method in PyRosetta v2.0beta named
-#    generate_nonstandard_residue_set which will work there, but not for
-#    newer versions, this method supports older and newer versions of PyRosetta
-def generate_nonstandard_residue_set( params_list ):
-    """
-    Returns a "custom" ResidueTypeSet with the normal ResidueTypes and any
-        new ones added as a Vector1 of .params filenames,
-        the input  <params_list>
-
-    example(s):
-        res_set = generate_nonstandard_residue_set( Vector1( ['ATP.params'] ) )
-    See Also:
-        Pose
-        Residue
-        ResidueType
-        ResidueTypeSet
-    """
-    res_set = ChemicalManager.get_instance().nonconst_residue_type_set(
-        'fa_standard' )
-    atoms = ChemicalManager.get_instance().atom_type_set( 'fa_standard' )
-    mm_atoms = ChemicalManager.get_instance().mm_atom_type_set( 'fa_standard' )
-    orbitals = ChemicalManager.get_instance().orbital_type_set( 'fa_standard' )
-    try:
-        # then this PyRosetta is a newer version, sorry, element_sets were added
-        #    to the chemical database and changed the syntax of read_files
-        elements = ChemicalManager.get_instance().element_set( 'default' )
-        res_set.read_files( params_list , atoms , elements , mm_atoms , orbitals )
-    except:
-        # then this PyRosetta is v2.0 beta or earlier, as this is being written,
-        #    we support v2.0 beta, notice the subtle difference below
-        res_set.read_files( params_list , atoms , mm_atoms , orbitals )
-    return res_set
-
 # perform the above steps in one function call
 def params_from_pubchem( cid , name ):
     filename = 'CID_' + str(cid)
@@ -186,11 +147,13 @@ def pose_from_pubchem( cid , name , temporary = True ):
     # the temporary solution, create an ephemeral ResidueSet
         params_from_pubchem( cid , name )
 
-        # generate ResidueSet
-        res_set = generate_nonstandard_residue_set( [name] )
+        # Add the new ResidueType to the pose
+        rts = pose.conformation().modifiable_residue_type_set_for_conf( core.chemical.FULL_ATOM_t )
+        rts.add_base_residue_type( name )
+        pose.conformation().reset_residue_type_set_for_conf( rts )
 
         # fill the pose
-        pose_from_file( pose , res_set , name + '_0001.pdb')
+        pose_from_file( pose , pose.residue_type_set_for_pose() , name + '_0001.pdb')
     else:
     # permanent solution, add to .params list
         add_cid_to_database( cid , name )
@@ -201,7 +164,11 @@ def pose_from_pubchem( cid , name , temporary = True ):
 
 # returns a pose containing a ligand
 def pose_from_params( filename , params_list ):
-    res_set = generate_nonstandard_residue_set( params_list )
     pose = Pose()
-    pose_from_file( pose , res_set , filename )
+
+    rts = pose.conformation().modifiable_residue_type_set_for_conf( core.chemical.FULL_ATOM_t )
+    rts.read_files_for_base_residue_types( Vector1(params_list) )
+    pose.conformation().reset_residue_type_set_for_conf( rts )
+
+    pose_from_file( pose , pose.residue_type_set_for_pose() , filename )
     return pose

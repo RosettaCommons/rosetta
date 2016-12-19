@@ -51,8 +51,9 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-symmetry::symmetry_definition core/scoring/symmetry/fibril_symm.dat -in::file::silent_struct_type binary -in::file::fullatom" );
+		core_init_with_additional_options( "-symmetry::symmetry_definition core/scoring/symmetry/fibril_symm.dat -in::file::silent_struct_type binary -in::file::fullatom -extra_res_fa core/io/GTP.params" );
 
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -61,6 +62,7 @@ public:
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("GTP") ) params_files.push_back("core/io/GTP.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
 	}
 
 	// Shared finalization goes here.

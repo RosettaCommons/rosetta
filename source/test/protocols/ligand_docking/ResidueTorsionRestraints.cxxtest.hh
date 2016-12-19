@@ -37,7 +37,8 @@ class ResidueTorsionRestraintsTest : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init();
+		core_init_with_additional_options("-extra_res_fa protocols/ligand_docking/ZNx.params protocols/ligand_docking/7cpa.params");
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -47,6 +48,8 @@ public:
 		if ( !residue_set.has_name("ZNx") ) params_files.push_back("protocols/ligand_docking/ZNx.params");
 		if ( !residue_set.has_name("CP1") ) params_files.push_back("protocols/ligand_docking/7cpa.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
+
 	}
 
 	void tearDown() {}

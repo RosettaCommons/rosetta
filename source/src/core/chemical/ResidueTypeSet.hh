@@ -8,6 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/chemical/ResidueTypeSet.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 /// @author Phil Bradley
 
 
@@ -25,9 +26,6 @@
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
 #include <core/chemical/MergeBehaviorManager.fwd.hh>
 
-// STL headers
-#include <list>
-
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -39,129 +37,74 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <basic/datacache/CacheableData.hh>
+
 #include <map>
 #include <set>
 
-//Auto Headers
-//#include <core/chemical/Adduct.fwd.hh>
-//
-//#ifdef WIN32
-//#include <core/chemical/Adduct.hh>
-//#endif
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
 
-///  A collection of ResidueType defined
 /**
-One thing that is not nailed down is whether a single ResidueSet can have ResidueType's with
-different AtomTypeSets. I've left open this possibility currently although there isnt any code
-for this yet (PB-07/07)
+One thing that is not nailed down is whether a single ResidueTypeSet can have ResidueTypes with different AtomTypeSets. (PB-07/07)
+
+The answer is NO -- or at least a ResidueTypeSet shouldn't have ResidueTypes with different mode() values,
+which in most cases are determined by the AtomTypeSet being used. -
+Though two different AtomTypeSets with the same mode may be permitted. (RM-11/16)
 **/
 
-
-class ResidueTypeSet : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
+/// @brief An abstract interface to a set of ResidueTypes
+class ResidueTypeSet : public utility::pointer::enable_shared_from_this< ResidueTypeSet >
 {
-public:
-	typedef std::list< AA >::const_iterator AAsIter;
-	typedef std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;
 
 public:
-
 
 	/// @brief default c-tor
-	ResidueTypeSet( TypeSetCategory category = INVALID_t );
+	ResidueTypeSet( TypeSetMode mode = INVALID_t );
 
-	/// @brief constructor from directory
-	ResidueTypeSet(
-		std::string const & name,
-		std::string const & directory
-	);
+	~ResidueTypeSet();
 
-	~ResidueTypeSet() override;
-
-	void init(
-		std::vector< std::string > const & extra_res_param_files = std::vector< std::string >(),
-		std::vector< std::string > const & extra_patch_files = std::vector< std::string >()
-	);
-
-	/// self pointers
+	// Const pointers only - subclasses can implement the modifiable version.
 	inline ResidueTypeSetCOP get_self_ptr() const { return shared_from_this(); }
-	inline ResidueTypeSetOP  get_self_ptr() { return shared_from_this(); }
 	inline ResidueTypeSetCAP get_self_weak_ptr() const { return ResidueTypeSetCAP( shared_from_this() ); }
-	//inline ResidueTypeSetAP  get_self_weak_ptr() { return ResidueTypeSetAP( shared_from_this() ); }
-
-	/// @brief name of the residue type set
-	/// @details The difference between a ResidueTypeSet *name* and a ResidueTypeSet *category* is that a
-	/// a ResidueTypeSet *name* should uniquely identify a ResidueTypeSet (at lease those within the ChemicalManger)
-	/// but more than one ResidueTypeSet may have the same *category*.
-	/// The type specifies what compatibility class (full atom, centroid) the ResidueTypeSet has.
-	/// Generally speaking, the *name* should only be used when interacting with the user.
-	std::string const &
-	name() const {
-		return name_;
-	}
-
-	/// @brief The type of the ResidueTypeSet
-	/// @details The difference between a ResidueTypeSet *name* and a ResidueTypeSet *category* is that a
-	/// a ResidueTypeSet *name* should uniquely identify a ResidueTypeSet (at lease those within the ChemicalManger)
-	/// but more than one ResidueTypeSet may have the same *category*.
-	/// The type specifies what compatibility class (full atom, centroid) the ResidueTypeSet has.
-	TypeSetCategory
-	category() const {
-		return category_;
-	}
 
 	AtomTypeSetCOP atom_type_set() const { return atom_types_; }
 	ElementSetCOP element_set() const { return elements_; }
 	MMAtomTypeSetCOP mm_atom_type_set() const { return mm_atom_types_; }
 	orbitals::OrbitalTypeSetCOP orbital_type_set() const { return orbital_types_; }
 
-	void atom_type_set(AtomTypeSetCOP atom_types) {
-		runtime_assert( !atom_types_ ); // Don't change a set default.
-		atom_types_ = atom_types;
-	}
+protected: // We want resetting to go through the child classes
+
+	void atom_type_set(AtomTypeSetCOP atom_types); // In cc file for error reporting.
+
 	void element_set(ElementSetCOP elements) {
-		runtime_assert( !elements_ ); // Don't change a set default.
 		elements_ = elements;
 	}
 	void mm_atom_type_set(MMAtomTypeSetCOP mm_atom_types) {
-		runtime_assert( !mm_atom_types_ ); // Don't change a set default.
 		mm_atom_types_ = mm_atom_types;
 	}
 	void orbital_type_set(orbitals::OrbitalTypeSetCOP orbital_types) {
-		runtime_assert( !orbital_types_ ); // Don't change a set default.
 		orbital_types_ = orbital_types;
 	}
 
-	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches
-	void
-	add_custom_residue_type( ResidueTypeOP new_type );
+public:
 
-	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches
-	void
-	add_custom_residue_type( std::string const &  filename );
-
-	/// @brief delete a custom residue type from the set (Use with care)
-	void
-	apply_patches(
-		utility::vector1< std::string > const & patch_filenames,
-		utility::vector1< std::string > const & metapatch_filenames
-	);
-
-	/// @brief delete a custom residue type from the set (Use with care)
-	void
-	remove_custom_residue_type( std::string const & name );
-
-	/// @brief adds new residue types, ones that CANNOT be generated from a base_residue_type and patches
-	void
-	read_files_for_custom_residue_types(
-		utility::vector1< std::string > const & filenames
-	);
-
-	/// @brief delete a custom residue type from the set (Use with *extreme* care)
-	void
-	remove_base_residue_type_DO_NOT_USE( std::string const & name );
+	/// @brief The type of the ResidueTypeSet
+	/// @details The difference between a ResidueTypeSet *name* and a ResidueTypeSet *mode* is that a
+	/// a ResidueTypeSet *name* should uniquely identify a ResidueTypeSet (at lease those within the ChemicalManger)
+	/// but more than one ResidueTypeSet may have the same *mode*.
+	/// The mode specifies what compatibility class (full atom, centroid) the ResidueTypeSet has.
+	TypeSetMode
+	mode() const {
+		return mode_;
+	}
 
 	/// @brief query ResidueType by its unique residue id.
 	///
@@ -173,8 +116,21 @@ public:
 
 	/// @brief Get ResidueType by exact name, returning COP
 	/// Will return null pointer for no matches
+	virtual
 	ResidueTypeCOP
 	name_mapOP( std::string const & name ) const;
+
+	/// @brief query if a ResidueType of the unique residue id (name) is present.
+	virtual
+	bool
+	has_name( std::string const & name ) const = 0;
+
+	/// @brief query if any ResidueTypes in the set have a "name3" tat matches the input name3
+	bool has_name3( std::string const & name3 ) const;
+
+	/// @brief Does this ResidueTypeSet have ResidueTypes with the given interchangeability group?
+	bool
+	has_interchangeability_group( std::string const & name ) const;
 
 	/// @brief Get the base ResidueType with the given aa type and variants
 	/// @details Returns 0 if one does not exist.
@@ -242,29 +198,14 @@ public:
 	ResidueTypeCOP get_mirrored_type( ResidueTypeCOP original_rsd ) const;
 
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
+	virtual
 	bool
 	generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const;
 
 	/// @brief Check if a base type (like "CYS") generates any types with a new interchangeability group (like "SCY" (via cys_acetylated))
+	virtual
 	bool
 	generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const;
-
-	/// @brief Gets all types with the given aa type and variants
-	/// @details The number of variants must match exactly. Variants can be custom variants.
-	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	ResidueTypeCOPs
-	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const;
-
-	/// @brief Gets all types with the given aa type and variants, making exceptions for some variants.
-	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
-	///           be standard types, listed in VariantType.hh.
-	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	ResidueTypeCOPs
-	get_all_types_with_variants_aa(
-		AA aa,
-		utility::vector1< std::string > const & variants,
-		utility::vector1< VariantType > const & exceptions
-	) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
 	/// @details The number of variants must match exactly.
@@ -281,16 +222,6 @@ public:
 		utility::vector1< std::string > const & variants
 	) const;
 
-	/// @brief query if a ResidueType of the unique residue id (name) is present.
-	bool has_name( std::string const & name ) const;
-
-	/// @brief query if any ResidueTypes in the set have a "name3" tat matches the input name3
-	bool has_name3( std::string const & name3 ) const;
-
-	/// @brief Does this ResidueTypeSet have ResidueTypes with the given interchangeability group?
-	bool
-	has_interchangeability_group( std::string const & name ) const;
-
 	/// @brief Query a variant ResidueType by its base ResidueType and VariantType
 	ResidueType const &
 	get_residue_type_with_variant_added(
@@ -305,88 +236,192 @@ public:
 		VariantType const old_type
 	) const;
 
-	/// @brief accessor for database_directory
-	std::string const &
-	database_directory() const;
-
 	/// @brief accessor for merge behavior manager
 	MergeBehaviorManager const &
 	merge_behavior_manager() const;
 
-	/// @brief the residues with no patches applied
+	/// @brief The list of ResidueTypes that don't have any patches, but can be patched.
+	virtual
 	ResidueTypeCOPs base_residue_types() const { return base_residue_types_; }
 
-	/// @brief the residues with no patches applied
-	ResidueTypeCOPs custom_residue_types() const { return custom_residue_types_; }
+	/// @brief The list of ResidueTypes which shouldn't get patches applied to them
+	virtual
+	ResidueTypeCOPs unpatchable_residue_types() const { return unpatchable_residue_types_; }
 
 	/// @brief the patches
-	utility::vector1< PatchCOP > const & patches() const { return patches_; }
+	virtual
+	utility::vector1< PatchCOP > patches() const { return patches_; }
 
 	/// @brief the metapatches
-	utility::vector1< MetapatchCOP > const & metapatches() const { return metapatches_; }
+	virtual
+	utility::vector1< MetapatchCOP > metapatches() const { return metapatches_; }
 
 	/// @brief the patches, index by name.
-	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const { return patch_map_; }
+	virtual
+	std::map< std::string, utility::vector1< PatchCOP > > patch_map() const { return patch_map_; }
 
+	/// @brief Do we have this metapatch?
+	virtual
+	bool
+	has_metapatch( std::string const & name ) const {
+		return metapatch_map_.find( name ) != metapatch_map_.end();
+	}
+
+	virtual
 	MetapatchCOP
-	metapatch( std::string name ) const { return metapatch_map_.find( name )->second; }
+	metapatch( std::string const & name ) const {
+		if ( ! has_metapatch( name ) ) {
+			utility_exit_with_message(  "Metapatch " + name + " not in the metapatch map!" );
+		}
+		return metapatch_map_.find( name )->second;
+	}
+
+	/// @brief Gets all types with the given aa type and variants
+	/// @details The number of variants must match exactly. Variants can be custom variants.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	virtual
+	ResidueTypeCOPs
+	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Gets all types with the given aa type and variants, making exceptions for some variants.
+	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
+	///           be standard types, listed in VariantType.hh.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	virtual
+	ResidueTypeCOPs
+	get_all_types_with_variants_aa( AA aa,
+		utility::vector1< std::string > const & variants,
+		utility::vector1< VariantType > const & exceptions ) const;
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 	//////////////////
-	// private methods
-private:
+	// protected methods
 
-	/// @brief read a list of residue types
-	void
-	read_list_of_residues(
-		std::string const & list_filename
-	);
+//////////////////////////////////////////////////////////////////////////
+// These modification functions shouldn't be publically exposed in the
+// base class, as GlobalResidueTypeSets should have *no* public methods
+// which modify it, save for the initialization.
+//
+// Other subclasses might make these availible, though.
+/////////////////////////////////////////////////////////////////////////
 
+protected:
+
+	/// @brief Centralize the steps for preparing the ResidueType for addition to the RTS
+	/// (e.g. if there's any additional modifications that need to get done.)
 	void
-	read_files(
+	prep_restype( ResidueTypeOP new_type );
+
+	/// @brief adds a new base residue type to the set, one that isn't patched, but can be.
+	virtual
+	void
+	add_base_residue_type( ResidueTypeOP new_type );
+
+	/// @brief adds a new residue type to the set, one that can be patched
+	virtual
+	void
+	add_base_residue_type( std::string const &  filename );
+
+	/// @brief adds new residue types, ones that can be patched
+	virtual
+	void
+	read_files_for_base_residue_types(
 		utility::vector1< std::string > const & filenames
 	);
 
+	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	virtual
 	void
-	update_info_on_name3_and_interchangeability_group( ResidueTypeCOPs base_residue_types );
+	add_unpatchable_residue_type( ResidueTypeOP new_type );
+
+	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	virtual
+	void
+	add_unpatchable_residue_type( std::string const &  filename );
+
+	/// @brief adds new residue types, ones that CANNOT be generated from a base_residue_type and patches, and shouldn't have patches applied
+	virtual
+	void
+	read_files_for_unpatchable_residue_types(
+		utility::vector1< std::string > const & filenames
+	);
+
+	/// @brief delete an base residue type from the set (Use with care)
+	/// Currently will not remove any patched types
+	virtual
+	void
+	remove_base_residue_type( std::string const & name );
+
+	/// @brief delete an unpatchable residue type from the set (Use with care)
+	virtual
+	void
+	remove_unpatchable_residue_type( std::string const & name );
+
+protected:
+
+	/// @brief helper function used during replacing residue types after, e.g., orbitals.
+	bool
+	update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new );
 
 	void
-	generate_all_residue_types();
+	mode( TypeSetMode setting ) { mode_ = setting; }
 
+	// The alterable cache object
+	ResidueTypeSetCacheOP
+	cache_object() const { return cache_; }
+
+	virtual
 	bool
 	generate_residue_type( std::string const & rsd_name ) const;
+
+	/// @brief Attempt to lazily load the given residue type from data.
+	virtual
+	bool
+	lazy_load_base_type( std::string const & rsd_base_name ) const = 0;
 
 	void
 	figure_out_last_patch_from_name( std::string const & rsd_name,
 		std::string & rsd_name_base,
 		std::string & patch_name ) const;
 
-	/// @brief helper function used during replacing residue types after, e.g., orbitals.
-	bool
-	update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new );
-
-private:
-
-	/// @brief From a file, read which IDs shouldn't be loaded from the components.
+	virtual
 	void
-	load_shadowed_ids( std::string const & directory, std::string const & file = "shadow_list.txt" );
+	add_patches(
+		utility::vector1< std::string > const & patch_filenames,
+		utility::vector1< std::string > const & metapatch_filenames
+	);
 
-	/// @brief Attempt to lazily load the given residue type from data.
+	virtual
+	void
+	set_merge_behavior_manager( MergeBehaviorManagerCOP mbm);
+
+	/// @brief A list of L-chirality base types with an equivalent D-chirality base type.
+	std::map < ResidueTypeCOP /*L-type*/, ResidueTypeCOP /*D-type*/> &
+	l_to_d_mapping() { return l_to_d_mapping_; }
+
+	/// @brief A list of D-chirality base types with an equivalent L-chirality base type.
+	std::map < ResidueTypeCOP /*D-type*/, ResidueTypeCOP /*L-type*/> &
+	d_to_l_mapping() { return d_to_l_mapping_; }
+
+protected:
+	// External code shouldn't be able to copy a ResidueTypeSet, although
+	// derived types may expose it.
+	ResidueTypeSet( ResidueTypeSet const & );
+	ResidueTypeSet & operator = ( ResidueTypeSet const & ) = delete;
+
+#ifdef    SERIALIZATION
+public:
+	/// @brief Does this ResidueTypeSet *directly* have the ResidueType?
 	bool
-	lazy_load_base_type( std::string const & rsd_base_name ) const;
-
-	/// @brief Load a residue type from the components dictionary.
-	ResidueTypeOP
-	load_pdb_component( std::string const & pdb_id ) const;
+	has( ResidueTypeCOP restype ) const;
+#endif // SERIALIZATION
 
 	//////////////////
 	// data
 private:
-
-	/// @brief What does the ChemicalManager call this ResidueTypeSet?
-	std::string name_;
-
-	/// @brief What sort of TypeSet is this?
-	TypeSetCategory category_;
 
 	// The default subsidiary typesets, typically specified in the database summary file.
 	// You can add a residue type with a different subsidiary typeset, but you'll have to
@@ -396,21 +431,23 @@ private:
 	MMAtomTypeSetCOP mm_atom_types_;
 	orbitals::OrbitalTypeSetCOP orbital_types_;
 
-	/// @brief residue types with no patches applied, read in from database.
-	ResidueTypeCOPs base_residue_types_;
-
-	/// @brief information on residue types whose name3's can be changed by patches.
-	std::map< std::string, std::set< std::string > > name3_generated_by_base_residue_name_;
-	/// @brief interchangeability groups that appear upon patch application.
-	std::map< std::string, std::set< std::string > > interchangeability_group_generated_by_base_residue_name_;
-
-	/// @brief new residue types added at runtime with, e.g., custom variants.
-	ResidueTypeCOPs custom_residue_types_;
-
-	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
-	const std::string database_directory_;
+	/// @brief What sort of TypeSet is this?
+	TypeSetMode mode_;
 
 	MergeBehaviorManagerCOP merge_behavior_manager_;
+
+	/// @brief all cached residue_type information including generated residue_types, name3_map, etc.
+	/// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
+	/// const ResidueTypeSet.
+	ResidueTypeSetCacheOP cache_;
+
+	/// @brief ResidueTypes that don't have any patches, but can be patched.
+	/// @details The ResidueTypes represented here are also present in the ResidueTypeSetCache
+	ResidueTypeCOPs base_residue_types_;
+
+	/// @brief ResidueTypes which shouldn't get patches applied to them
+	/// @details The ResidueTypes represented here are also present in the ResidueTypeSetCache
+	ResidueTypeCOPs unpatchable_residue_types_;
 
 	/// @brief the patches
 	utility::vector1< PatchCOP > patches_;
@@ -419,17 +456,6 @@ private:
 	/// @brief patches indexed by name
 	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
 	std::map< std::string, MetapatchCOP > metapatch_map_;
-
-	/// @brief Which components shouldn't be loaded from the components file.
-	std::set< std::string > shadowed_ids_;
-
-	/// @brief data for lazy loading of PDB components
-	std::string pdb_components_filename_;
-
-	/// @brief all cached residue_type information including generated residue_types, name3_map, etc.
-	/// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
-	/// const ResidueTypeSet.
-	ResidueTypeSetCacheOP cache_;
 
 	/// @brief A list of L-chirality base types with an equivalent D-chirality base type.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -440,14 +466,23 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	std::map < ResidueTypeCOP /*D-type*/, ResidueTypeCOP /*L-type*/> d_to_l_mapping_;
 
-private:
-	// uncopyable
-	ResidueTypeSet( ResidueTypeSet const & );
-	ResidueTypeSet const & operator = ( ResidueTypeSet const & );
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical
 } // core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ResidueTypeSet )
+
+#include <core/chemical/ResidueTypeSet.srlz.hh>
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::ResidueTypeSet, core::chemical::serialize_residue_type_set, core::chemical::deserialize_residue_type_set )
+
+#endif // SERIALIZATION
 
 #endif

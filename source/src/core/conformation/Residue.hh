@@ -121,17 +121,17 @@ public:
 	///
 	Residue( Residue const & src );
 
-	/// @brief Copy constructor that preserves everything EXCEPT flips ResidueType to its mirror counterpart.
-	/// @details The flip_chirality option governs whether this residue keeps the old type or gets the mirror-image type.  All other data
-	/// (including xyz coordinates) are preserved, so this ONLY switches the type, not the geometry.
-	/// @author Vikram K. Mulligan.
-	Residue( Residue const & src, bool const flip_chirality );
-
 	/// @brief Destructor.
 	///
 	~Residue() override;
 
 private:
+
+	/// @brief Copy constructor that preserves everything EXCEPT the ResidueType
+	/// This is *deliberately* private, as hot-swapping the ResidueType is not generally going to work.
+	/// (In most instances, you should make a new Residue with the new ResidueType, and
+	/// explicitly copy over the things you want to preserve.
+	Residue( Residue const & src, core::chemical::ResidueTypeCOP new_restype, bool flip_chirality );
 
 	/// @brief Function called by both copy constructors, to avoid code duplication.
 	/// @details As private member variables are added, add them to this to copy them.
@@ -146,12 +146,13 @@ public:
 
 	/// @brief Copy this residue( allocate actual memory for it ), keeping everything the same EXCEPT the type.
 	/// @details Switches the ResidueType to the mirror type (D->L or L->D).  Preserves it for achiral residues.
+	/// The passed ResidueTypeSet is the ResidueTypeSet you want the mirrored type to come from.
 	/// @note This function is the best way to convert a D-residue to its L-counterpart, or an L-residue to its D-counterpart.
 	/// It assumes that you've already mirrored all of the coordinates, and just allows you to generate a replacement residue
 	/// of the mirror type that preserves all other Residue information (connections, seqpos, xyz coordinates of all atoms,
 	/// variant types, etc.).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	ResidueOP clone_flipping_chirality() const;
+	ResidueOP clone_flipping_chirality( core::chemical::ResidueTypeSet const & residue_type_set ) const;
 
 
 	/// @brief  Generate string representation of Residue for debugging purposes.
@@ -1140,14 +1141,6 @@ public:
 	{
 		return rsd_type_;
 	}
-
-	/// @brief Returns this residue's ResidueTypeSet
-	chemical::ResidueTypeSetCOP
-	residue_type_set() const
-	{
-		return rsd_type_.residue_type_set();
-	}
-
 
 	/// @brief Returns this residue's upper_connection
 	/// a ResidueConnection has internal coords info

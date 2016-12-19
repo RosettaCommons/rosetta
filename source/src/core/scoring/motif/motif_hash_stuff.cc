@@ -626,8 +626,8 @@ void ResPairMotif::fill_pose_with_motif( Pose & pose, int const & ir, int const 
 	pose.clear();
 	string const & name1( core::chemical::name_from_aa(core::chemical::aa_from_oneletter_code(aa1())) );
 	string const & name2( core::chemical::name_from_aa(core::chemical::aa_from_oneletter_code(aa2())) );
-	core::chemical::ResidueType const & rest1 = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")->name_map(name1);
-	core::chemical::ResidueType const & rest2 = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")->name_map(name2);
+	core::chemical::ResidueType const & rest1 = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t )->name_map(name1);
+	core::chemical::ResidueType const & rest2 = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t )->name_map(name2);
 	core::conformation::ResidueOP res1 = core::conformation::ResidueFactory::create_residue(rest1);
 	core::conformation::ResidueOP res2 = core::conformation::ResidueFactory::create_residue(rest2);
 

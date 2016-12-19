@@ -611,7 +611,7 @@ void new_pose_generator(
 
 	core::util::switch_to_residue_type_set( target_loops , core::chemical::CENTROID_t );
 
-	core::chemical::ResidueTypeSetCOP rsd_set( target_loops.residue(1).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP rsd_set( target_loops.residue_type_set_for_pose() );
 
 	std::string nat_seq = nat_prot.sequence();
 

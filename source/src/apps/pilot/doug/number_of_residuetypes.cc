@@ -44,9 +44,9 @@ main( int argc, char * argv [] )
 		ResidueTypeSetCOP rts_centroid( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 
 		TR << "The FA_STANDARD ResidueTypeSet contains " << rts_fa_std->base_residue_types().size()   << " base ResidueTypes, " <<
-			rts_fa_std->patches().size() << " Patches, and " << rts_fa_std->custom_residue_types().size() << " custom ResidueTypes " <<  std::endl;
+			rts_fa_std->patches().size() << " Patches, and " << rts_fa_std->unpatchable_residue_types().size() << " unpatchable ResidueTypes " <<  std::endl;
 		TR << "The CENTROID    ResidueTypeSet contains " << rts_centroid->base_residue_types().size() << " base ResidueTypes, " <<
-			rts_centroid->patches().size() << " Patches, and " << rts_centroid->custom_residue_types().size() << " custom ResidueTypes " <<  std::endl;
+			rts_centroid->patches().size() << " Patches, and " << rts_centroid->unpatchable_residue_types().size() << " unpatchable ResidueTypes " <<  std::endl;
 
 		TR << "************************************d**o**n**e***********************************" << std::endl;
 

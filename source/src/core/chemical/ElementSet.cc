@@ -26,13 +26,21 @@
 #include <utility/string_util.hh>
 #endif
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
 
 static THREAD_LOCAL basic::Tracer tr( "core.chemical.ElementSet" );
 
-ElementSet::ElementSet() {}
+ElementSet::ElementSet(std::string const & name): name_(name) {}
 
 ElementSet::~ElementSet() = default;
 
@@ -157,3 +165,38 @@ ElementSet::operator[] ( Size const index ) const
 
 } // chemical
 } // core
+
+#ifdef SERIALIZATION
+#include <core/chemical/ChemicalManager.hh>
+
+template < class Archive >
+void core::chemical::serialize_element_set( Archive & arc, core::chemical::ElementSetCOP ptr )
+{
+	if ( ! ptr ) {
+		bool ptr_is_nonnull( false );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+	} else {
+		bool ptr_is_nonnull( true );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+		std::string typeset_name( ptr->name() ); // Assumes that the name can be used to extract it from the ChemicalManager
+		arc( CEREAL_NVP( typeset_name ) );
+	}
+}
+INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, core::chemical::serialize_element_set, core::chemical::ElementSetCOP );
+
+template < class Archive >
+void core::chemical::deserialize_element_set( Archive & arc, core::chemical::ElementSetCOP & ptr )
+{
+	bool ptr_is_nonnull( true ); arc( ptr_is_nonnull );
+	if ( ptr_is_nonnull ) {
+		std::string typeset_name;
+		arc( typeset_name );
+		ptr = core::chemical::ChemicalManager::get_instance()->element_set( typeset_name );
+	} else {
+		ptr = nullptr;
+	}
+}
+INSTANTIATE_FOR_INPUT_ARCHIVES( void, core::chemical::deserialize_element_set, core::chemical::ElementSetCOP & );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_ElementSet )
+#endif // SERIALIZATION

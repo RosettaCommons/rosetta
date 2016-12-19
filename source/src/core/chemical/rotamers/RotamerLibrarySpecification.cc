@@ -16,6 +16,14 @@
 
 // Utility headers
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -27,3 +35,21 @@ RotamerLibrarySpecification::~RotamerLibrarySpecification() {}
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::RotamerLibrarySpecification::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::RotamerLibrarySpecification::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::RotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::RotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_RotamerLibrarySpecification )
+#endif // SERIALIZATION

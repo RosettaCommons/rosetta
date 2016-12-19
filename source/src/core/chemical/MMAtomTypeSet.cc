@@ -25,6 +25,13 @@
 
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -32,7 +39,8 @@ namespace chemical {
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 
 
-MMAtomTypeSet::MMAtomTypeSet():
+MMAtomTypeSet::MMAtomTypeSet( std::string const & name ):
+	name_( name ),
 	atom_type_index_(),
 	atoms_()
 {
@@ -120,3 +128,39 @@ MMAtomTypeSet::print_all_types()
 
 } // chemical
 } // core
+
+#ifdef SERIALIZATION
+
+#include <core/chemical/ChemicalManager.hh>
+
+template < class Archive >
+void core::chemical::serialize_mm_atom_type_set( Archive & arc, core::chemical::MMAtomTypeSetCOP ptr )
+{
+	if ( ! ptr ) {
+		bool ptr_is_nonnull( false );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+	} else {
+		bool ptr_is_nonnull( true );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+		std::string typeset_name( ptr->name() ); // Assumes that the name can be used to extract it from the ChemicalManager
+		arc( CEREAL_NVP( typeset_name ) );
+	}
+}
+INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, core::chemical::serialize_mm_atom_type_set, core::chemical::MMAtomTypeSetCOP );
+
+template < class Archive >
+void core::chemical::deserialize_mm_atom_type_set( Archive & arc, core::chemical::MMAtomTypeSetCOP & ptr )
+{
+	bool ptr_is_nonnull( true ); arc( ptr_is_nonnull );
+	if ( ptr_is_nonnull ) {
+		std::string typeset_name;
+		arc( typeset_name );
+		ptr = core::chemical::ChemicalManager::get_instance()->mm_atom_type_set( typeset_name );
+	} else {
+		ptr = nullptr;
+	}
+}
+INSTANTIATE_FOR_INPUT_ARCHIVES( void, core::chemical::deserialize_mm_atom_type_set, core::chemical::MMAtomTypeSetCOP & );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_MMAtomTypeSet )
+#endif // SERIALIZATION

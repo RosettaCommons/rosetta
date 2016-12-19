@@ -23,6 +23,7 @@
 #include <core/chemical/Element.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/residue_io.hh>
 
@@ -269,17 +270,11 @@ public:
 	void test_charge_states() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		std::string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
 
 		///////////// Thiolate
 
-		core::chemical::ResidueTypeOP thiolate_test = read_topology_file("core/chemical/gasteiger/THI.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP thiolate_test = read_topology_file("core/chemical/gasteiger/THI.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *thiolate_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -292,17 +287,11 @@ public:
 	void test_implicit_hydrogens() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		std::string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
 
 		///////////// Sulfurs
 
-		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/GST.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/GST.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -320,8 +309,7 @@ public:
 
 		///////////// Sulfoxides
 
-		core::chemical::ResidueTypeOP sulfoxide_test = read_topology_file("core/chemical/gasteiger/SXX.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP sulfoxide_test = read_topology_file("core/chemical/gasteiger/SXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfoxide_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -332,8 +320,7 @@ public:
 
 		///////////// Phosphates/Phosphines
 
-		core::chemical::ResidueTypeOP phos_test = read_topology_file("core/chemical/gasteiger/PXX.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP phos_test = read_topology_file("core/chemical/gasteiger/PXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *phos_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -351,8 +338,7 @@ public:
 
 		//////////// Nitrogens
 
-		core::chemical::ResidueTypeOP nitr_test = read_topology_file("core/chemical/gasteiger/NXX.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP nitr_test = read_topology_file("core/chemical/gasteiger/NXX.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *nitr_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -367,8 +353,7 @@ public:
 
 		//////////// Azides
 
-		core::chemical::ResidueTypeOP azo_test = read_topology_file("core/chemical/gasteiger/AZO.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP azo_test = read_topology_file("core/chemical/gasteiger/AZO.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *azo_test, atom_type_set_, /*keep_existing=*/ false );
 
@@ -388,17 +373,11 @@ public:
 	void test_oxides() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		std::string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
 
 		///////////// Sulfates and Sulfites
 
-		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/SOx.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/SOx.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
 
@@ -428,8 +407,7 @@ public:
 		TS_ASSERT_EQUALS( sulfur_test->atom("O4").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //S-O(-)
 		TS_ASSERT_EQUALS( sulfur_test->atom("O13").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
 
-		core::chemical::ResidueTypeOP phosphorus_test = read_topology_file("core/chemical/gasteiger/POx.params",
-			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+		core::chemical::ResidueTypeOP phosphorus_test = read_topology_file("core/chemical/gasteiger/POx.params", rsd_types );
 
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *phosphorus_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
 

@@ -38,6 +38,17 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -2396,3 +2407,1284 @@ patch_operation_from_patch_file_line(
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ChangeBondType::ChangeBondType() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ChangeBondType::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( old_bond_type_ ) ); // std::string
+	arc( CEREAL_NVP( new_bond_type_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ChangeBondType::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( old_bond_type_ ); // std::string
+	arc( new_bond_type_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ChangeBondType );
+CEREAL_REGISTER_TYPE( core::chemical::ChangeBondType )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetNbrRadius::SetNbrRadius() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetNbrRadius::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( radius_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetNbrRadius::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( radius_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetNbrRadius );
+CEREAL_REGISTER_TYPE( core::chemical::SetNbrRadius )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddBond::AddBond() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddBond::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddBond::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddBond );
+CEREAL_REGISTER_TYPE( core::chemical::AddBond )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetPolymerConnectAtom::SetPolymerConnectAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetPolymerConnectAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( upper_lower_ ) ); // int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetPolymerConnectAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( upper_lower_ ); // int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetPolymerConnectAtom );
+CEREAL_REGISTER_TYPE( core::chemical::SetPolymerConnectAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ChangeAncestory::ChangeAncestory() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ChangeAncestory::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+	arc( CEREAL_NVP( which_ancestor_ ) ); // enum core::chemical::Ancestor
+	arc( CEREAL_NVP( ancestor_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ChangeAncestory::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+	arc( which_ancestor_ ); // enum core::chemical::Ancestor
+	arc( ancestor_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ChangeAncestory );
+CEREAL_REGISTER_TYPE( core::chemical::ChangeAncestory )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithMethoxy::ReplaceProtonWithMethoxy() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithMethoxy::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithMethoxy::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithMethoxy );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithMethoxy )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetInterchangeabilityGroup_String::SetInterchangeabilityGroup_String() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetInterchangeabilityGroup_String::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( intgrp_ ) ); // const std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetInterchangeabilityGroup_String::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( intgrp_ ); // const std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetInterchangeabilityGroup_String );
+CEREAL_REGISTER_TYPE( core::chemical::SetInterchangeabilityGroup_String )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::RedefineChi::RedefineChi() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::RedefineChi::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( chino_ ) ); // Size
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( atom3_ ) ); // std::string
+	arc( CEREAL_NVP( atom4_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::RedefineChi::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( chino_ ); // Size
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( atom3_ ); // std::string
+	arc( atom4_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::RedefineChi );
+CEREAL_REGISTER_TYPE( core::chemical::RedefineChi )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetICoor::SetICoor() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetICoor::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+	arc( CEREAL_NVP( phi_ ) ); // Real
+	arc( CEREAL_NVP( theta_ ) ); // Real
+	arc( CEREAL_NVP( d_ ) ); // Real
+	arc( CEREAL_NVP( stub1_ ) ); // std::string
+	arc( CEREAL_NVP( stub2_ ) ); // std::string
+	arc( CEREAL_NVP( stub3_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetICoor::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+	arc( phi_ ); // Real
+	arc( theta_ ); // Real
+	arc( d_ ); // Real
+	arc( stub1_ ); // std::string
+	arc( stub2_ ); // std::string
+	arc( stub3_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetICoor );
+CEREAL_REGISTER_TYPE( core::chemical::SetICoor )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithEthyl::ReplaceProtonWithEthyl() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithEthyl::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithEthyl::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithEthyl );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithEthyl )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetNbrAtom::SetNbrAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetNbrAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetNbrAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetNbrAtom );
+CEREAL_REGISTER_TYPE( core::chemical::SetNbrAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AppendMainchainAtom::AppendMainchainAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AppendMainchainAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AppendMainchainAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AppendMainchainAtom );
+CEREAL_REGISTER_TYPE( core::chemical::AppendMainchainAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithHydroxyl::ReplaceProtonWithHydroxyl() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithHydroxyl::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithHydroxyl::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithHydroxyl );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithHydroxyl )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetIO_String::SetIO_String() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetIO_String::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( name3_ ) ); // const std::string
+	arc( CEREAL_NVP( name1_ ) ); // const char
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetIO_String::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( name3_ ); // const std::string
+	arc( name1_ ); // const char
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetIO_String );
+CEREAL_REGISTER_TYPE( core::chemical::SetIO_String )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddChi::AddChi() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddChi::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( no_index_ ) ); // _Bool
+	arc( CEREAL_NVP( chino_ ) ); // Size
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( atom3_ ) ); // std::string
+	arc( CEREAL_NVP( atom4_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddChi::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( no_index_ ); // _Bool
+	arc( chino_ ); // Size
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( atom3_ ); // std::string
+	arc( atom4_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddChi );
+CEREAL_REGISTER_TYPE( core::chemical::AddChi )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetAtomType::SetAtomType() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetAtomType::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_type_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetAtomType::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( atom_type_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetAtomType );
+CEREAL_REGISTER_TYPE( core::chemical::SetAtomType )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ChiralFlipAtoms::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ChiralFlipAtoms::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ChiralFlipAtoms );
+CEREAL_REGISTER_TYPE( core::chemical::ChiralFlipAtoms )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithFluorine::ReplaceProtonWithFluorine() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithFluorine::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithFluorine::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithFluorine );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithFluorine )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetBackboneHeavyatom::SetBackboneHeavyatom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetBackboneHeavyatom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetBackboneHeavyatom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetBackboneHeavyatom );
+CEREAL_REGISTER_TYPE( core::chemical::SetBackboneHeavyatom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetAtomicCharge::SetAtomicCharge() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetAtomicCharge::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( charge_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetAtomicCharge::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( charge_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetAtomicCharge );
+CEREAL_REGISTER_TYPE( core::chemical::SetAtomicCharge )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::PatchOperation::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::PatchOperation::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::PatchOperation );
+CEREAL_REGISTER_TYPE( core::chemical::PatchOperation )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ChiralFlipNaming::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ChiralFlipNaming::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ChiralFlipNaming );
+CEREAL_REGISTER_TYPE( core::chemical::ChiralFlipNaming )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddProperty::AddProperty() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddProperty::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( property_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddProperty::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( property_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddProperty );
+CEREAL_REGISTER_TYPE( core::chemical::AddProperty )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteProperty::DeleteProperty() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteProperty::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( property_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteProperty::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( property_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteProperty );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteProperty )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithTrifluoromethyl::ReplaceProtonWithTrifluoromethyl() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithTrifluoromethyl::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithTrifluoromethyl::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithTrifluoromethyl );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithTrifluoromethyl )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddChiRotamer::AddChiRotamer() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddChiRotamer::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( no_index_ ) ); // _Bool
+	arc( CEREAL_NVP( chino_ ) ); // Size
+	arc( CEREAL_NVP( mean_ ) ); // Real
+	arc( CEREAL_NVP( sdev_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddChiRotamer::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( no_index_ ); // _Bool
+	arc( chino_ ); // Size
+	arc( mean_ ); // Real
+	arc( sdev_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddChiRotamer );
+CEREAL_REGISTER_TYPE( core::chemical::AddChiRotamer )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddBondType::AddBondType() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddBondType::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( bond_type_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddBondType::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( bond_type_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddBondType );
+CEREAL_REGISTER_TYPE( core::chemical::AddBondType )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteTerminalChi::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteTerminalChi::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteTerminalChi );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteTerminalChi )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddConnect::AddConnect() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddConnect::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( phi_ ) ); // core::Real
+	arc( CEREAL_NVP( theta_ ) ); // core::Real
+	arc( CEREAL_NVP( d_ ) ); // core::Real
+	arc( CEREAL_NVP( connect_atom_ ) ); // const std::string
+	arc( CEREAL_NVP( parent_atom_ ) ); // const std::string
+	arc( CEREAL_NVP( angle_atom_ ) ); // const std::string
+	arc( CEREAL_NVP( torsion_atom_ ) ); // const std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddConnect::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( phi_ ); // core::Real
+	arc( theta_ ); // core::Real
+	arc( d_ ); // core::Real
+	arc( connect_atom_ ); // const std::string
+	arc( parent_atom_ ); // const std::string
+	arc( angle_atom_ ); // const std::string
+	arc( torsion_atom_ ); // const std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddConnect );
+CEREAL_REGISTER_TYPE( core::chemical::AddConnect )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddConnectAndTrackingVirt::AddConnectAndTrackingVirt() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddConnectAndTrackingVirt::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddConnectAndTrackingVirt::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddConnectAndTrackingVirt );
+CEREAL_REGISTER_TYPE( core::chemical::AddConnectAndTrackingVirt )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetFormalCharge::SetFormalCharge() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetFormalCharge::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( charge_ ) ); // core::SSize
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetFormalCharge::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( charge_ ); // core::SSize
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetFormalCharge );
+CEREAL_REGISTER_TYPE( core::chemical::SetFormalCharge )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddConnectDeleteChildProton::AddConnectDeleteChildProton() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddConnectDeleteChildProton::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddConnectDeleteChildProton::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddConnectDeleteChildProton );
+CEREAL_REGISTER_TYPE( core::chemical::AddConnectDeleteChildProton )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddProtonChi::AddProtonChi() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddProtonChi::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( chino_ ) ); // Size
+	arc( CEREAL_NVP( samples_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( extrasamples_ ) ); // utility::vector1<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddProtonChi::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( chino_ ); // Size
+	arc( samples_ ); // utility::vector1<core::Real>
+	arc( extrasamples_ ); // utility::vector1<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddProtonChi );
+CEREAL_REGISTER_TYPE( core::chemical::AddProtonChi )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ClearChiRotamers::ClearChiRotamers() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ClearChiRotamers::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( chi_no_ ) ); // core::uint
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ClearChiRotamers::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( chi_no_ ); // core::uint
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ClearChiRotamers );
+CEREAL_REGISTER_TYPE( core::chemical::ClearChiRotamers )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteVariantType::DeleteVariantType() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteVariantType::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( variant_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteVariantType::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( variant_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteVariantType );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteVariantType )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetMMAtomType::SetMMAtomType() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetMMAtomType::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( mm_atom_type_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetMMAtomType::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( mm_atom_type_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetMMAtomType );
+CEREAL_REGISTER_TYPE( core::chemical::SetMMAtomType )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithMethyl::ReplaceProtonWithMethyl() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithMethyl::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithMethyl::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithMethyl );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithMethyl )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithChlorine::ReplaceProtonWithChlorine() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithChlorine::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithChlorine::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithChlorine );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithChlorine )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteMetalbindingAtom::DeleteMetalbindingAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteMetalbindingAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteMetalbindingAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteMetalbindingAtom );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteMetalbindingAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteActCoordAtom::DeleteActCoordAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteActCoordAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteActCoordAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteActCoordAtom );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteActCoordAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::NCAARotLibPath::NCAARotLibPath() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::NCAARotLibPath::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( path_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::NCAARotLibPath::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( path_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::NCAARotLibPath );
+CEREAL_REGISTER_TYPE( core::chemical::NCAARotLibPath )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddAtomAlias::AddAtomAlias() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddAtomAlias::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( rosetta_atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( alias_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddAtomAlias::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( rosetta_atom_name_ ); // std::string
+	arc( alias_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddAtomAlias );
+CEREAL_REGISTER_TYPE( core::chemical::AddAtomAlias )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ResetBondLength::ResetBondLength() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ResetBondLength::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atm_ ) ); // std::string
+	arc( CEREAL_NVP( d_ ) ); // core::Distance
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ResetBondLength::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atm_ ); // std::string
+	arc( d_ ); // core::Distance
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResetBondLength );
+CEREAL_REGISTER_TYPE( core::chemical::ResetBondLength )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::SetOrientAtom::SetOrientAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetOrientAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( force_nbr_atom_orient_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetOrientAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( force_nbr_atom_orient_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetOrientAtom );
+CEREAL_REGISTER_TYPE( core::chemical::SetOrientAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteChildProton::DeleteChildProton() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteChildProton::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteChildProton::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteChildProton );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteChildProton )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetAllAtomsRepulsive::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetAllAtomsRepulsive::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetAllAtomsRepulsive );
+CEREAL_REGISTER_TYPE( core::chemical::SetAllAtomsRepulsive )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ConnectSulfurAndMakeVirtualProton::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ConnectSulfurAndMakeVirtualProton::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ConnectSulfurAndMakeVirtualProton );
+CEREAL_REGISTER_TYPE( core::chemical::ConnectSulfurAndMakeVirtualProton )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceMainchainAtom::ReplaceMainchainAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceMainchainAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( target_ ) ); // std::string
+	arc( CEREAL_NVP( new_atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceMainchainAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( target_ ); // std::string
+	arc( new_atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceMainchainAtom );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceMainchainAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::DeleteAtom::DeleteAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::DeleteAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::DeleteAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::DeleteAtom );
+CEREAL_REGISTER_TYPE( core::chemical::DeleteAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithIodine::ReplaceProtonWithIodine() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithIodine::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithIodine::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithIodine );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithIodine )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ReplaceProtonWithBromine::ReplaceProtonWithBromine() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithBromine::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ReplaceProtonWithBromine::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ReplaceProtonWithBromine );
+CEREAL_REGISTER_TYPE( core::chemical::ReplaceProtonWithBromine )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::PrependMainchainAtom::PrependMainchainAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::PrependMainchainAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::PrependMainchainAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::PrependMainchainAtom );
+CEREAL_REGISTER_TYPE( core::chemical::PrependMainchainAtom )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::AddAtom::AddAtom() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AddAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_type_name_ ) ); // std::string
+	arc( CEREAL_NVP( mm_atom_type_name_ ) ); // std::string
+	arc( CEREAL_NVP( charge_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AddAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( atom_name_ ); // std::string
+	arc( atom_type_name_ ); // std::string
+	arc( mm_atom_type_name_ ); // std::string
+	arc( charge_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddAtom );
+CEREAL_REGISTER_TYPE( core::chemical::AddAtom )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_PatchOperation )
+#endif // SERIALIZATION

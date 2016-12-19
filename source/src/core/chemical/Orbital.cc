@@ -32,8 +32,25 @@
 // Rosetta headers
 #include <core/chemical/Orbital.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
+
+void
+Orbital::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
+	icoor_.remap_atom_vds( old_to_new );
+	new_icoor_.remap_atom_vds( old_to_new );
+}
 
 void
 Orbital::print(
@@ -60,3 +77,30 @@ operator<< (std::ostream & out, const Orbital & orbital ){
 
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Orbital::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( orbital_type_index_ ) ); // Size
+	arc( CEREAL_NVP( ideal_xyz_ ) ); // Vector
+	arc( CEREAL_NVP( icoor_ ) ); // orbitals::ICoorOrbitalData
+	arc( CEREAL_NVP( new_icoor_ ) ); // orbitals::ICoorOrbitalData
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Orbital::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( orbital_type_index_ ); // Size
+	arc( ideal_xyz_ ); // Vector
+	arc( icoor_ ); // orbitals::ICoorOrbitalData
+	arc( new_icoor_ ); // orbitals::ICoorOrbitalData
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Orbital );
+#endif // SERIALIZATION

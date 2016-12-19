@@ -82,7 +82,7 @@ ModifyVariantTypeMover::apply( core::pose::Pose & pose )
 	for ( core::Size resi = 1, resimax = pose.total_residue() ; resi <= resimax; ++resi ) {
 		if ( ! selection[resi] ) continue;
 
-		core::chemical::ResidueTypeSetCOP rsd_set(pose.residue(resi).residue_type_set());
+		core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type(resi).mode() ) );
 		core::chemical::ResidueTypeCOP new_rsd_type = pose.residue(resi).type().get_self_ptr();
 
 		for ( std::string const & remove_type : remove_target_types_ ) {

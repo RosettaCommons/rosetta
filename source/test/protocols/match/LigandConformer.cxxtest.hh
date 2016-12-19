@@ -70,8 +70,9 @@ public:
 	void setUp() {
 		using namespace core::chemical;
 
-		core_init();
+		core_init_with_additional_options("-extra_res_fa protocols/match/carbaryl_LG1.params protocols/match/MBH_LG.params");
 
+		/*
 		ResidueTypeSet & restype_set(
 			ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
 		if ( ! restype_set.has_name( "CARBARYL_LG1" ) ) {
@@ -85,6 +86,7 @@ public:
 			carbaryl_list.push_back( "protocols/match/MBH_LG.params" );
 			restype_set.read_files_for_custom_residue_types(carbaryl_list);
 		}
+		*/
 
 
 		d_1.clear(); ang_U2D1_1.clear(); tor_U3D1_1.clear(); ang_U1D2_1.clear(); tor_U1D3_1.clear(); tor_U2D2_1.clear();

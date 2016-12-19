@@ -792,6 +792,7 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 	core::Size const &that_residue_index( this_residue.residue_connection_partner( this_residue.upper_connect().index() ) );
 
 	rama.eval_rpp_rama_score(
+		pose.conformation(),
 		this_residue.type().get_self_ptr(),
 		pose.residue_type(that_residue_index).get_self_ptr(),
 		mainchain_torsions,

@@ -30,6 +30,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -126,8 +127,8 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		ResidueTypeSetCOP residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
-		ResidueCOP new_res = ResidueFactory::create_residue( residue_set->name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
+		ResidueTypeCOP residue_type( core::pose::get_restype_for_pose(pose, name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
+		ResidueCOP new_res = ResidueFactory::create_residue( *residue_type );
 		if ( tail_segment_ ) {
 			/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
 			*        to the very last position. Instead we are here adding n+1 residues to the second last position.  */

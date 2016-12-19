@@ -31,6 +31,7 @@
 
 // Unit headers
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -48,6 +49,12 @@
 #ifdef PYROSETTA
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #endif
+
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -80,6 +87,10 @@ public:
 	/// @brief the name of the AtomTypeSet
 	std::string
 	name() const;
+
+	/// @brief The mode of the AtomTypeSet
+	TypeSetMode
+	mode() const { return mode_; }
 
 	/// @brief number of atom types in the set
 	Size
@@ -152,6 +163,11 @@ public:
 	void
 	read_file( std::string const & filename );
 
+	/// @brief Read in meta information from the given file
+	/// Meta information is info about the AtomTypeSet as a whole
+	void
+	read_meta_file( std::string const & filename );
+
 	/// @brief additional file I/O
 	void
 	add_parameters_from_file( std::string const & filename );
@@ -189,6 +205,10 @@ private: // helper methods for creating an atom type set from a database
 	clone_atom_types_from_commandline();
 
 private:
+
+	/// @brief The mode (fullatom/centroid/etc) of the AtomTypeSet
+	TypeSetMode mode_;
+
 	/// lookup map: get atom_type_index by atom_type_name
 	std::map< std::string, int > atom_type_index_;
 
@@ -206,7 +226,24 @@ private:
 
 };
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void serialize_atom_type_set( Archive & arc, AtomTypeSetCOP ptr );
+
+/// @brief Deserialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void deserialize_atom_type_set( Archive & arc, AtomTypeSetCOP & ptr );
+#endif // SERIALIZATION
+
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_AtomTypeSet )
+
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::AtomTypeSet, core::chemical::serialize_atom_type_set, core::chemical::deserialize_atom_type_set )
+#endif // SERIALIZATION
+
 
 #endif

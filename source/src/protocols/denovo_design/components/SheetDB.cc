@@ -513,8 +513,7 @@ SheetDB::add_sheets_from_pose( core::pose::Pose & pose )
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		positions.push_back(i);
 	}
-	core::chemical::ResidueTypeSetCOP restype_set =
-		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP restype_set = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose, positions, restype_set, false, false, false );
 	protocols::moves::DsspMover dssp;
 	dssp.apply( pose );

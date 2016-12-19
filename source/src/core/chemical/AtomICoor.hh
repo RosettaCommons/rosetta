@@ -79,6 +79,8 @@ public:
 
 	ICoorAtomID( ICoorAtomID const & id );
 
+	/// @brief Update the internal VDs based on the provide mapping
+	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 public:
 	/// @brief get ICoorAtomID atomno
@@ -188,6 +190,13 @@ private:
 	Size atomno_;
 	/// vertex descriptor associated with the icoor
 	VD vd_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief A basic class containing info of internal coordinates needed for building an atom within a ResidueType
@@ -238,6 +247,9 @@ public:
 		ICoorAtomID const & stub_atom3,
 		ResidueType const & rsd_type
 	);
+
+	/// @brief Update the internal VDs based on the provide mapping
+	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
 
 public:
 	/// @brief accessor to stub_atom1 ICoorAtomID
@@ -407,6 +419,13 @@ private:
 	ICoorAtomID stub_atom1_;
 	ICoorAtomID stub_atom2_;
 	ICoorAtomID stub_atom3_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 void pretty_print_atomicoor(std::ostream & out, ResidueType const & rsd_type);

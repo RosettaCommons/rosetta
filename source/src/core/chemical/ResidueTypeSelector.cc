@@ -23,6 +23,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -122,3 +133,251 @@ Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const resu
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_PROPERTY::Selector_PROPERTY() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_PROPERTY::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( properties_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_PROPERTY::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( properties_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_PROPERTY );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_PROPERTY )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_AA::Selector_AA() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_AA::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( aas_ ) ); // utility::vector1<AA>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_AA::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( aas_ ); // utility::vector1<AA>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_AA );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_AA )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_NAME3::Selector_NAME3() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_NAME3::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( name3s_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_NAME3::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( name3s_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_NAME3 );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_NAME3 )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_VARIANT_TYPE::Selector_VARIANT_TYPE() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_VARIANT_TYPE::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( variants_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_VARIANT_TYPE::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( variants_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_VARIANT_TYPE );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_VARIANT_TYPE )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_NAME1::Selector_NAME1() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_NAME1::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( name1_ ) ); // const char
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_NAME1::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( name1_ ); // const char
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_NAME1 );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_NAME1 )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::ResidueTypeSelectorSingle::ResidueTypeSelectorSingle() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ResidueTypeSelectorSingle::save( Archive & arc ) const {
+	arc( CEREAL_NVP( desired_result_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ResidueTypeSelectorSingle::load( Archive & arc ) {
+	arc( desired_result_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResidueTypeSelectorSingle );
+CEREAL_REGISTER_TYPE( core::chemical::ResidueTypeSelectorSingle )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_NO_VARIANTS::Selector_NO_VARIANTS() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_NO_VARIANTS::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_NO_VARIANTS::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_NO_VARIANTS );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_NO_VARIANTS )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_UPPER_POSITION::Selector_UPPER_POSITION() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_UPPER_POSITION::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( position_ ) ); // uint
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_UPPER_POSITION::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( position_ ); // uint
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_UPPER_POSITION );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_UPPER_POSITION )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ResidueTypeSelector::save( Archive & arc ) const {
+	arc( CEREAL_NVP( selectors_ ) ); // utility::vector1<ResidueTypeSelectorSingleOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ResidueTypeSelector::load( Archive & arc ) {
+	arc( selectors_ ); // utility::vector1<ResidueTypeSelectorSingleOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResidueTypeSelector );
+CEREAL_REGISTER_TYPE( core::chemical::ResidueTypeSelector )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_MATCH_VARIANTS::Selector_MATCH_VARIANTS() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_MATCH_VARIANTS::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( variants_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_MATCH_VARIANTS::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( variants_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_MATCH_VARIANTS );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_MATCH_VARIANTS )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::chemical::Selector_CMDFLAG::Selector_CMDFLAG() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Selector_CMDFLAG::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( CEREAL_NVP( b_flag_is_present_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Selector_CMDFLAG::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::ResidueTypeSelectorSingle >( this ) );
+	arc( b_flag_is_present_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Selector_CMDFLAG );
+CEREAL_REGISTER_TYPE( core::chemical::Selector_CMDFLAG )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_ResidueTypeSelector )
+#endif // SERIALIZATION

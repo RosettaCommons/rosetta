@@ -846,16 +846,16 @@ template< class Archive >
 void
 protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::save( Archive & arc ) const {
 	arc( CEREAL_NVP( mcfis_ ) ); // utility::vector1<MatchConstraintFileInfoOP>
-	core::chemical::serialize_residue_type_vector( arc, upstream_restypes_ );
+	arc( CEREAL_NVP( upstream_restypes_ ) );
 
 	arc( mcfis_for_restype_.size() );
 	for ( std::map<core::chemical::ResidueTypeCOP, utility::vector1<MatchConstraintFileInfoCOP> >::const_iterator
 					iter = mcfis_for_restype_.begin(), iter_end = mcfis_for_restype_.end(); iter != iter_end; ++iter ) {
-		core::chemical::serialize_residue_type( arc, iter->first );
+		arc( iter->first );
 		arc( iter->second );
 	}
 
-	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+	arc( CEREAL_NVP( restype_set_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -863,18 +863,18 @@ template< class Archive >
 void
 protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::load( Archive & arc ) {
 	arc( mcfis_ ); // utility::vector1<MatchConstraintFileInfoOP>
-	core::chemical::deserialize_residue_type_vector( arc, upstream_restypes_ );
+	arc( upstream_restypes_ );
 
 	core::Size nrestypes; arc( nrestypes );
 	for ( core::Size ii = 1; ii <= nrestypes; ++ii ) {
 		core::chemical::ResidueTypeCOP restype;
-		core::chemical::deserialize_residue_type( arc, restype );
+		arc( restype );
 		utility::vector1< MatchConstraintFileInfoOP > mcfis;
 		arc( mcfis );
 		mcfis_for_restype_[ restype ] = mcfis;
 	}
 
-	core::chemical::deserialize_residue_type_set( arc, restype_set_ ); // core::chemical::ResidueTypeSetCAP
+	arc( restype_set_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList );

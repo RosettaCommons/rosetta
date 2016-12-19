@@ -35,6 +35,7 @@
 #include <core/kinematics/FoldTree.hh>
 // for switch typeset
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 
 // for resfile command map
 #include <core/pack/task/ResfileReader.hh>
@@ -399,7 +400,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {
 			// handle ncaa
 			if ( data.blueprint[i].has_ncaa ) {
-				core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
+				core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue_type_set_for_pose() );
 				std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
 				char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
 				aa += one_let_name;

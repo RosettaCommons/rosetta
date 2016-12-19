@@ -305,94 +305,6 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 
 }
 
-
-/*void
-FullatomCustomPairDistanceEnergy::setup_for_minimizing(
-pose::Pose & pose,
-ScoreFunction const &,
-kinematics::MinimizerMapBase const &
-) const
-{
-using namespace basic::datacache;
-
-if( !pose.data().has( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) ) {
-pose.data().set( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO, new CacheableAtomPairFuncMap );
-}
-CacheableDataOP dat( pose.data().get_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
-CacheableAtomPairFuncMap *cachemap = (CacheableAtomPairFuncMap*)dat();
-ResAtomIndexFuncMap & resatomfuncmap(cachemap->map());
-
-// Identify which residue and atom pairs to evaluate in the pose by looping
-// through the pair_and_func_map keys (residue pairs to evaluate).
-// Save the data in the pose data cache for evaluating derivative.
-for (PairFuncMap::const_iterator respairiter = pair_and_func_map_.begin(),
-respairiter_end = pair_and_func_map_.end();
-respairiter != respairiter_end; ++respairiter) {
-ResTypePair respair = (*respairiter).first.data();
-for ( Size i=1; i<=pose.size(); ++i ) {
-if ( & (pose.residue_type(i)) == respair[1] ) {
-for ( Size j=1; j<=pose.size(); ++j ) {
-if ( & (pose.residue_type(j)) == respair[2] ) {
-for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
-iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {
-if ( i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_ ) continue; // skip same atom
-// add pair
-resatom_and_func_struct resatom_b;
-ResAtomIndex rai_a;
-rai_a[1] = i;
-rai_a[2] = (*iter_a).resA_atom_index_;
-resatom_b.res_index_ = j;
-resatom_b.atom_index_ = (*iter_a).resB_atom_index_;
-resatom_b.func_ = (*iter_a).func_;
-resatomfuncmap[rai_a].push_back( resatom_b );
-}
-}
-}
-}
-}
-}
-}
-
-
-void
-FullatomCustomPairDistanceEnergy::eval_atom_derivative(
-id::AtomID const & id,
-pose::Pose const & pose,
-kinematics::DomainMap const &, //domain_map,
-ScoreFunction const &, // sfxn,
-EnergyMap const & emap,
-Vector & F1,
-Vector & F2
-) const
-{
-using namespace basic::datacache;
-ResAtomIndex resatom;
-resatom[1] = id.rsd();
-resatom[2] = id.atomno();
-CacheableDataCOP dat( pose.data().get_const_ptr( pose::datacache::CacheableDataType::CUSTOM_PAIR_DIST_SCORE_INFO ) );
-CacheableAtomPairFuncMap const *cachemap = (CacheableAtomPairFuncMap const *)dat();
-ResAtomIndexFuncMap const & resatomfuncmap(cachemap->map());
-ResAtomIndexFuncMap::const_iterator resatomiter = resatomfuncmap.find( resatom );
-if ( resatomiter == resatomfuncmap.end() ) return;
-
-for ( std::list<resatom_and_func_struct>::const_iterator iter_a = (*resatomiter).second.begin(),
-iter_end_a = (*resatomiter).second.end(); iter_a != iter_end_a; ++iter_a) {
-// determine distance squared
-Vector const& atom_a_xyz( pose.residue(id.rsd()).atom(id.atomno()).xyz() );
-Vector const& atom_b_xyz( pose.residue((*iter_a).res_index_).atom((*iter_a).atom_index_).xyz() );
-Real dist_sq = atom_a_xyz.distance_squared(atom_b_xyz);
-if (dist_sq < (*iter_a).func_->min_dis() || dist_sq > (*iter_a).func_->max_dis()) continue;
-Vector const f1( atom_a_xyz.cross( atom_b_xyz ));
-Vector const f2( atom_a_xyz - atom_b_xyz );
-Real const dist( f2.length() );
-debug_assert(dist != 0);
-Real deriv = (*iter_a).func_->dfunc(dist_sq);
-F1 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f1;
-F2 += ( deriv / dist ) * emap[ fa_cust_pair_dist ] * f2;
-
-}
-}*/
-
 FullatomCustomPairDistanceEnergy::PairFuncMap::const_iterator
 FullatomCustomPairDistanceEnergy::find(
 	conformation::Residue const & rsd1,
@@ -473,6 +385,10 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			}
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
 				pair_func.func_->min_dis() << " max: " << pair_func.func_->max_dis() << ")" << std::endl;
+
+			if( residue_type_set.size() == 0 ) {
+				utility_exit_with_message( "You must specify RESIDUE_TYPE_SET before SCORE_FUNCTION in fa_custom_pair_distance_file" );
+			}
 
 			ResidueTypeSetCOP restype_set =
 				ChemicalManager::get_instance()->residue_type_set( residue_type_set );

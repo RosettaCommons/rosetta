@@ -48,7 +48,12 @@
 //#include <core/kinematics/Jump.hh>
 //#include <utility/vector1.hh>
 
-//Auto Headers
+#ifdef    SERIALIZATION
+#include <core/chemical/ResidueGraphTypes.srlz.hh>
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace orbitals {
@@ -92,6 +97,19 @@ ICoorOrbitalData::ICoorOrbitalData(
 
 }
 
+void
+ICoorOrbitalData::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
+	if ( old_to_new.count( vertex1_ ) == 1 ) {
+		vertex1_ = old_to_new.at( vertex1_ );
+	}
+	if ( old_to_new.count( vertex2_ ) == 1 ) {
+		vertex2_ = old_to_new.at( vertex2_ );
+	}
+	if ( old_to_new.count( vertex3_ ) == 1 ) {
+		vertex3_ = old_to_new.at( vertex3_ );
+	}
+}
+
 
 /// @brief return the phi for a given orbital
 Real ICoorOrbitalData::phi() const
@@ -133,3 +151,37 @@ ICoorOrbitalData::build(
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::orbitals::ICoorOrbitalData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( phi_ ) ); // Real
+	arc( CEREAL_NVP( theta_ ) ); // Real
+	arc( CEREAL_NVP( distance_ ) ); // Real
+	arc( CEREAL_NVP( stub1_ ) ); // Size
+	arc( CEREAL_NVP( stub2_ ) ); // Size
+	arc( CEREAL_NVP( stub3_ ) ); // Size
+	SERIALIZE_VD( arc, vertex1_ ); // EXEMPT vertex1_
+	SERIALIZE_VD( arc, vertex2_ ); // EXEMPT vertex2_
+	SERIALIZE_VD( arc, vertex3_ ); // EXEMPT vertex3_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::orbitals::ICoorOrbitalData::load( Archive & arc ) {
+	arc( phi_ ); // Real
+	arc( theta_ ); // Real
+	arc( distance_ ); // Real
+	arc( stub1_ ); // Size
+	arc( stub2_ ); // Size
+	arc( stub3_ ); // Size
+	DESERIALIZE_VD( arc, vertex1_ ); // EXEMPT vertex1_
+	DESERIALIZE_VD( arc, vertex2_ ); // EXEMPT vertex2_
+	DESERIALIZE_VD( arc, vertex3_ ); // EXEMPT vertex3_
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::orbitals::ICoorOrbitalData );
+#endif // SERIALIZATION

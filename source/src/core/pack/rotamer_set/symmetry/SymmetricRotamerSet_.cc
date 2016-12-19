@@ -20,6 +20,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
+#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 
 
@@ -356,25 +357,29 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 		// pairwise score terms, it needs to be on, but for the default interaction graph, it's probably a waste of clock cycles.  So the
 		// ResidueArrayAnnealingEvaluator calls this with set_up_mirror_types-if_has_mirror_symmetry=true, and everything else calls it with
 		// set_up_mirror_types_if_has_mirror_symmetry=false.
-		conformation::Residue target_rsd( set_up_mirror_types_if_has_mirror_symmetry && mirrored ?  *((*rot)->clone_flipping_chirality()) : **rot);
-		//conformation::Residue target_rsd( **rot );
+		conformation::ResidueOP target_rsd;
+		if ( set_up_mirror_types_if_has_mirror_symmetry && mirrored ) {
+			target_rsd = (*rot)->clone_flipping_chirality( *pose.residue_type_set_for_pose( (*rot)->type().mode() ) );
+		} else {
+			target_rsd = (*rot)->clone();
+		}
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
-		//if ( target_rsd.type().is_peptoid() ) {
-		// target_rsd.orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
+		//if ( target_rsd->type().is_peptoid() ) {
+		// target_rsd->orient_onto_residue_peptoid( pose.residue( sympos ), pose.conformation() );
 		//} else {
-		// target_rsd.orient_onto_residue( pose.residue( sympos ) );
+		// target_rsd->orient_onto_residue( pose.residue( sympos ) );
 		//}
 
 		//fpd use the stored transforms instead!  Will work for anything!
-		for ( int i=1; i<=static_cast<int>(target_rsd.natoms()); ++i ) {
-			target_rsd.set_xyz(i ,
-				SymmConf.apply_transformation_norecompute( target_rsd.xyz(i), target_rsd.seqpos(), sympos ) );
+		for ( int i=1; i<=static_cast<int>(target_rsd->natoms()); ++i ) {
+			target_rsd->set_xyz(i ,
+				SymmConf.apply_transformation_norecompute( target_rsd->xyz(i), target_rsd->seqpos(), sympos ) );
 		}
 
-		target_rsd.copy_residue_connections_from( pose.residue( sympos ) );
+		target_rsd->copy_residue_connections_from( pose.residue( sympos ) );
 		sym_rotamer_set->set_resid( sympos );
-		sym_rotamer_set->add_rotamer( target_rsd );
+		sym_rotamer_set->add_rotamer( *target_rsd );
 	}
 	return sym_rotamer_set;
 }

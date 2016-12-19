@@ -25,6 +25,16 @@
 #include <fstream>
 #include <string>
 
+#ifdef SERIALIZATION
+#include <core/chemical/ChemicalManager.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace gasteiger {
@@ -33,7 +43,8 @@ static THREAD_LOCAL basic::Tracer tr( "core.chemical.gasteiger.GasteigerAtomType
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet() {}
 
-GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set ):
+GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set, std::string const & name ):
+	name_( name ),
 	element_set_( element_set )
 {}
 
@@ -214,3 +225,37 @@ GasteigerAtomTypeSet::type_for_fake_atoms() const {
 } // gasteiger
 } // chemical
 } // core
+
+#ifdef SERIALIZATION
+
+template < class Archive >
+void core::chemical::gasteiger::serialize_gasteiger_atom_type_set( Archive & arc, core::chemical::gasteiger::GasteigerAtomTypeSetCOP ptr )
+{
+	if ( ! ptr ) {
+		bool ptr_is_nonnull( false );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+	} else {
+		bool ptr_is_nonnull( true );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+		std::string typeset_name( ptr->name() ); // Assumes that the name can be used to extract it from the ChemicalManager
+		arc( CEREAL_NVP( typeset_name ) );
+	}
+}
+INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, core::chemical::gasteiger::serialize_gasteiger_atom_type_set, core::chemical::gasteiger::GasteigerAtomTypeSetCOP );
+
+template < class Archive >
+void core::chemical::gasteiger::deserialize_gasteiger_atom_type_set( Archive & arc, core::chemical::gasteiger::GasteigerAtomTypeSetCOP & ptr )
+{
+	bool ptr_is_nonnull( true ); arc( ptr_is_nonnull );
+	if ( ptr_is_nonnull ) {
+		std::string typeset_name;
+		arc( typeset_name );
+		ptr = core::chemical::ChemicalManager::get_instance()->gasteiger_atom_type_set( typeset_name );
+	} else {
+		ptr = nullptr;
+	}
+}
+INSTANTIATE_FOR_INPUT_ARCHIVES( void, core::chemical::gasteiger::deserialize_gasteiger_atom_type_set, core::chemical::gasteiger::GasteigerAtomTypeSetCOP & );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_gasteiger_GasteigerAtomTypeSet )
+#endif // SERIALIZATION

@@ -296,9 +296,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	// Get the current residue typeset of the pose and use it to determine the
 	// typeset of the new membrane residue
-	ResidueTypeSetCOP const & residue_set(
-		ChemicalManager::get_instance()->residue_type_set( pose.is_fullatom() ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-	);
+	ResidueTypeSetCOP const & residue_set( pose.residue_type_set_for_pose() );
 
 	// Create a new Residue from rsd typeset of type MEM
 	ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("MEM") );

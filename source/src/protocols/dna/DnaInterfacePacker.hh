@@ -25,6 +25,7 @@
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
@@ -132,8 +133,8 @@ private: // methods
 	void post_packing( Pose &, ResTypeSequence const &, Size );
 	void protein_scan( Pose & );
 	void init_standard( Pose & );
-	void make_dna_sequence_combinations();
-	void add_complementary_sequence( ResTypeSequence & );
+	void make_dna_sequence_combinations( core::chemical::ResidueTypeSet const & );
+	void add_complementary_sequence( ResTypeSequence &, core::chemical::ResidueTypeSet const & );
 	core::Real calculate_specificity( Pose const &, ResTypeSequence const &, SequenceScores const & );
 
 private: // data

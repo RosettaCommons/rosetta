@@ -48,13 +48,16 @@ public:
 	get_all_possible_residue_types( bool const allow_extra_variants = false ) const;
 
 	ResidueTypeCOPs
-	get_possible_base_residue_types( bool const include_custom = true ) const;
+	get_possible_base_residue_types( bool const include_unpatchable = true ) const;
 
 	ResidueTypeCOPs
-	get_possible_custom_residue_types() const;
+	get_possible_unpatchable_residue_types() const;
 
+	/// @brief Get the unpatchable residue types where the any ResidueType with a
+	/// non-self "base residue type" (as annotated in the ResidueType itself)
+	/// filtered out.
 	ResidueTypeCOPs
-	get_possible_base_custom_residue_types() const;
+	get_possible_base_unpatchable_residue_types() const;
 
 	ResidueTypeCOP
 	get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );

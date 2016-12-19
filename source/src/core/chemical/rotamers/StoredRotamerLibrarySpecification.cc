@@ -22,6 +22,21 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -73,3 +88,27 @@ StoredRotamerLibrarySpecification::library_name() {
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::StoredRotamerLibrarySpecification::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( CEREAL_NVP( coordinates_ ) ); // utility::vector1<std::map<std::string, core::Vector> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::StoredRotamerLibrarySpecification::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( coordinates_ ); // utility::vector1<std::map<std::string, core::Vector> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::StoredRotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::StoredRotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_StoredRotamerLibrarySpecification )
+#endif // SERIALIZATION

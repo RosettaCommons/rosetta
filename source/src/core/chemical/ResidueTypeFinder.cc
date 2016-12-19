@@ -85,14 +85,14 @@ ResidueTypeCOP
 ResidueTypeFinder::get_representative_type() const
 {
 	ResidueTypeCOPs rsd_types;
-	rsd_types = get_possible_base_residue_types( false /* include_custom */ );
+	rsd_types = get_possible_base_residue_types( false /* include_unpatchable */ );
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 	// We need to apply metapatches again just in case there are some double variants.
 	// Only needed for packing metapatched residues.
 	// TODO: this is atrocious.
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
-	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_custom_residue_types();
+	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_unpatchable_residue_types();
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
 	if ( rsd_types.size() == 0 ) return nullptr;
@@ -104,7 +104,7 @@ ResidueTypeCOPs
 ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_variants /* = false */ ) const
 {
 	// Get all possible basic residues that might match
-	ResidueTypeCOPs rsd_types = get_possible_base_residue_types( false /* include_custom*/ );
+	ResidueTypeCOPs rsd_types = get_possible_base_residue_types( false /* include_unpatchable*/ );
 
 	TR.Debug << "Found " << rsd_types.size() << " base ResidueTypes." << std::endl;
 
@@ -117,8 +117,8 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	// TODO: this is atrocious.
 	rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 
-	// add in any custom residues.
-	rsd_types.append( get_possible_custom_residue_types() );
+	// add in any unpatchable residues.
+	rsd_types.append( get_possible_unpatchable_residue_types() );
 
 	TR.Debug << "Patched up to " << rsd_types.size() << " ResidueTypes." << std::endl;
 
@@ -165,7 +165,7 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
-ResidueTypeFinder::get_possible_base_residue_types( bool const include_custom /* = true */ ) const
+ResidueTypeFinder::get_possible_base_residue_types( bool const include_unpatchable /* = true */ ) const
 {
 	if ( base_type_ ) { //If a base type has already been specified, there's no need to bother with a lot of other rigamarole.
 		ResidueTypeCOPs rsd_types;
@@ -183,26 +183,26 @@ ResidueTypeFinder::get_possible_base_residue_types( bool const include_custom /*
 			rsd_types.push_back( pdb_component );
 		}
 	}
-	if ( include_custom ) rsd_types.append( get_possible_base_custom_residue_types() );
+	if ( include_unpatchable ) rsd_types.append( get_possible_base_unpatchable_residue_types() );
 	rsd_types = apply_basic_filters( rsd_types );
 	return rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
-ResidueTypeFinder::get_possible_custom_residue_types() const
+ResidueTypeFinder::get_possible_unpatchable_residue_types() const
 {
-	ResidueTypeCOPs rsd_types = residue_type_set_.custom_residue_types();
+	ResidueTypeCOPs rsd_types = residue_type_set_.unpatchable_residue_types();
 	rsd_types = apply_basic_filters( rsd_types );
 	return rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
-ResidueTypeFinder::get_possible_base_custom_residue_types() const
+ResidueTypeFinder::get_possible_base_unpatchable_residue_types() const
 {
 	ResidueTypeCOPs filtered_rsd_types;
-	ResidueTypeCOPs rsd_types = residue_type_set_.custom_residue_types();
+	ResidueTypeCOPs rsd_types = residue_type_set_.unpatchable_residue_types();
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP rsd_type = rsd_types[ n ];
 		if ( residue_type_base_name( *rsd_type ) == rsd_type->name() ) {
@@ -342,9 +342,10 @@ ResidueTypeFinder::apply_metapatches_recursively(
 	bool const get_first_totally_ok_residue_type /*= false*/
 ) const {
 	ResidueTypeCOPs rsd_types_new = rsd_types;
-	if ( metapatch_number > residue_type_set_.metapatches().size() ) return rsd_types_new;
+	utility::vector1< MetapatchCOP > metapatch_list( residue_type_set_.metapatches() ); // Returned by value
+	if ( metapatch_number == 0 || metapatch_number > metapatch_list.size() ) return rsd_types_new;
 
-	MetapatchCOP metapatch = residue_type_set_.metapatches()[ metapatch_number ];
+	MetapatchCOP metapatch = metapatch_list[ metapatch_number ];
 
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP rsd_type = rsd_types[ n ];

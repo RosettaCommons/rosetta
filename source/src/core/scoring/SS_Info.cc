@@ -366,8 +366,7 @@ core::scoring::BB_Pos::save( Archive & arc ) const {
 	arc( CEREAL_NVP( C_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( O_ ) ); // utility::vector1<Vector>
 
-	// manually serialize the vector of ResidueTypeCOPs
-	core::chemical::serialize_residue_type_vector( arc, residue_types_ );
+	arc( CEREAL_NVP( residue_types_ ) );
 
 	arc( CEREAL_NVP( N_index_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( CA_index_ ) ); // utility::vector1<Size>
@@ -387,8 +386,7 @@ core::scoring::BB_Pos::load( Archive & arc ) {
 	arc( C_ ); // utility::vector1<Vector>
 	arc( O_ ); // utility::vector1<Vector>
 
-	// manually serialize the vector of ResidueTypeCOPs
-	core::chemical::deserialize_residue_type_vector( arc, residue_types_ );
+	arc( residue_types_ );
 
 	arc( N_index_ ); // utility::vector1<Size>
 	arc( CA_index_ ); // utility::vector1<Size>

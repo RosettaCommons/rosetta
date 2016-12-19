@@ -140,7 +140,7 @@ void FlipChiralityMover::apply( core::pose::Pose & pose )
 					pose.set_xyz( core::id::AtomID(ia,ir), FlipChiralityMover::calculate_reflect(pose,ia,ir));
 				}
 
-				core::conformation::ResidueOP new_res=(pose.residue(ir)).clone_flipping_chirality();
+				core::conformation::ResidueOP new_res=(pose.residue(ir)).clone_flipping_chirality( *pose.residue_type_set_for_pose( pose.residue(ir).type().mode()) );
 				pose.replace_residue ( ir,*new_res,false);
 
 			}

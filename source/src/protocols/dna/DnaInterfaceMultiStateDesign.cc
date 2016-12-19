@@ -36,6 +36,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
@@ -403,7 +404,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );
-	ResidueTypeSetCOP rts( mutpose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP rts( mutpose.residue_type_set_for_pose() );
 
 	ResidueTypeCOPs dna_types = ResidueTypeFinder( *rts ).base_property( DNA ).get_possible_base_residue_types();
 

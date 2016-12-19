@@ -30,6 +30,7 @@
 #include <core/chemical/AA.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -678,8 +679,12 @@ SymmetricRotamerSets::orient_rotamer_set_to_symmetric_partner(
 		// pairwise score terms, it needs to be on, but for the default interaction graph, it's probably a waste of clock cycles.  So the
 		// ResidueArrayAnnealingEvaluator calls this with set_up_mirror_types-if_has_mirror_symmetry=true, and everything else calls it with
 		// set_up_mirror_types_if_has_mirror_symmetry=false.
-		conformation::ResidueOP target_rsd( set_up_mirror_types_if_has_mirror_symmetry && mirrored ? (*rot)->clone_flipping_chirality() : (*rot)->clone() );
-		//conformation::ResidueOP target_rsd( (*rot)->clone() );
+		conformation::ResidueOP target_rsd;
+		if ( set_up_mirror_types_if_has_mirror_symmetry && mirrored ) {
+			target_rsd = (*rot)->clone_flipping_chirality( *pose.residue_type_set_for_pose( (*rot)->type().mode() ) );
+		} else {
+			target_rsd = (*rot)->clone();
+		}
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
 		//if ( target_rsd->type().is_peptoid() ) {

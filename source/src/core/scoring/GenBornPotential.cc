@@ -24,6 +24,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -336,7 +337,7 @@ GenBornPotential::build_placeholders(
 ) const {
 	Size const nres( pose.size() );
 
-	chemical::ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
+	chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( !gb_info.being_packed(i) ) continue;

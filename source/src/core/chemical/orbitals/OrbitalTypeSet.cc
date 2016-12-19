@@ -36,6 +36,13 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -46,8 +53,8 @@ OrbitalTypeSet::~OrbitalTypeSet() {}
 
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.orbitals" );
 
-OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)
-: directory_( directory )
+OrbitalTypeSet::OrbitalTypeSet( std::string const & directory, std::string const & name)
+: name_( name ), directory_( directory )
 {
 	read_file( directory + "/orbital_properties.txt" );
 
@@ -168,3 +175,38 @@ OrbitalTypeSet::orbital_type_index( std::string & orbital_type_name ) const
 }
 }
 }
+
+#ifdef SERIALIZATION
+#include <core/chemical/ChemicalManager.hh>
+
+template < class Archive >
+void core::chemical::orbitals::serialize_orbital_type_set( Archive & arc, core::chemical::orbitals::OrbitalTypeSetCOP ptr )
+{
+	if ( ! ptr ) {
+		bool ptr_is_nonnull( false );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+	} else {
+		bool ptr_is_nonnull( true );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+		std::string typeset_name( ptr->name() ); // Assumes that the name can be used to extract it from the ChemicalManager
+		arc( CEREAL_NVP( typeset_name ) );
+	}
+}
+INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, core::chemical::orbitals::serialize_orbital_type_set, core::chemical::orbitals::OrbitalTypeSetCOP );
+
+template < class Archive >
+void core::chemical::orbitals::deserialize_orbital_type_set( Archive & arc, core::chemical::orbitals::OrbitalTypeSetCOP & ptr )
+{
+	bool ptr_is_nonnull( true ); arc( ptr_is_nonnull );
+	if ( ptr_is_nonnull ) {
+		std::string typeset_name;
+		arc( typeset_name );
+		ptr = core::chemical::ChemicalManager::get_instance()->orbital_type_set( typeset_name );
+	} else {
+		ptr = nullptr;
+	}
+}
+INSTANTIATE_FOR_INPUT_ARCHIVES( void, core::chemical::orbitals::deserialize_orbital_type_set, core::chemical::orbitals::OrbitalTypeSetCOP & );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_orbitals_OrbitalTypeSet )
+#endif // SERIALIZATION

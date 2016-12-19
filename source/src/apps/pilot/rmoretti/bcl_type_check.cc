@@ -50,8 +50,8 @@ main( int argc, char * argv [] )
 
 try {
 
-	  using namespace basic::options;
-	  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	devel::init(argc, argv);
 
@@ -65,8 +65,6 @@ try {
 	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 	core::chemical::gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_type_set = chem_mang->gasteiger_atom_type_set("default");
 
-	core::chemical::ResidueTypeSet res_set;
-
 	std::ofstream datafile( "rosetta.types" );
 	core::chemical::sdf::MolWriter molwriter;
 
@@ -79,7 +77,7 @@ try {
 		std::string filename = fname.name();
 
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				filename, atom_types, elements, mm_atom_types, orbital_types, &res_set ) );
+				filename, atom_types, elements, mm_atom_types, orbital_types ) );
 
 		TR << "Typing residue type " << fname.base()<< std::endl;
 

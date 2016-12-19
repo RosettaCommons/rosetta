@@ -76,7 +76,7 @@ public:
 		core::pose::make_pose_from_sequence(*pose, seq, "fa_standard", false);
 
 		if ( n_methylate ) {
-			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue(sampled_pos).residue_type_set());
+			core::chemical::ResidueTypeSetCOP rsd_set( pose->residue_type_set_for_pose( pose->residue_type(sampled_pos).mode() ) );
 			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type(sampled_pos).get_self_ptr() );
 			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );

@@ -24,6 +24,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 
 #include <core/conformation/util.hh>
 #include <utility/vector1.hh>
@@ -55,7 +56,7 @@ SegmentSwap::SegmentSwap(
 	MoveMap const & swap_in_movemap,
 	Pose const & swap_in
 ) :
-	Super( i, swap_in.residue( 1 ).residue_type_set() ),
+	Super( i, swap_in.residue_type_set_for_pose() ),
 	interval_( i ),
 	swap_in_movemap_( swap_in_movemap ),
 	swap_in_( swap_in )

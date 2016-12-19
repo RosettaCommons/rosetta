@@ -238,7 +238,7 @@ rsd_op( core::pose::Pose const & pose, std::string const & res_type )
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" )->name_map( res_type )
 		);
 	}
-	core::chemical::ResidueType const & rtype = pose.residue(1).residue_type_set()->name_map( res_type );
+	core::chemical::ResidueType const & rtype( *core::pose::get_restype_for_pose( pose, res_type ) );
 	return core::conformation::ResidueFactory::create_residue( rtype );
 }
 

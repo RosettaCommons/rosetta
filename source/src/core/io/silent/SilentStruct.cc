@@ -124,8 +124,7 @@ void SilentStruct::fill_pose(
 ) const {
 	runtime_assert( nres_ != 0 );
 	using namespace core::chemical;
-	ResidueTypeSetCOP residue_set
-		= ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	fill_pose( pose, residue_set );
 }
 

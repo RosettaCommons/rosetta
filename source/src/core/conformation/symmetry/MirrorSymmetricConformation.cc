@@ -571,7 +571,7 @@ MirrorSymmetricConformation::detect_disulfides( utility::vector1< Size > const &
 void
 MirrorSymmetricConformation::flip_chirality( ResidueOP & new_rsd ) {
 	// Copy the replacement residue to the input residue:
-	new_rsd = new_rsd->clone_flipping_chirality();
+	new_rsd = new_rsd->clone_flipping_chirality( *(this->residue_type_set_for_conf( new_rsd->type().mode() )) );
 }
 
 /// @brief helper functions called when #jumps or #residues changes, updating internal data

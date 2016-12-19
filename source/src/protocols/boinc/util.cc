@@ -107,7 +107,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
-		if ( rsd_set->category() == core::chemical::FULL_ATOM_t ) {
+		if ( rsd_set->mode() == core::chemical::FULL_ATOM_t ) {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
 			Real score = scorefxn->score(*input_poseOP);
 			scores.push_back(score);
@@ -154,7 +154,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 		input_rd2.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		Real tmpScore;
-		if ( rsd_set->category() == core::chemical::FULL_ATOM_t ) {
+		if ( rsd_set->mode() == core::chemical::FULL_ATOM_t ) {
 			core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
 			tmpScore = scorefxn->score(*input_poseOP);
 

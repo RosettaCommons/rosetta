@@ -65,7 +65,7 @@ void OopPatcher::apply( core::pose::Pose & pose )
 	//kdrew: an oop post position cannot be first position
 	runtime_assert ( oop_post_pos_ != 1 );
 
-	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	chemical::ResidueTypeSetCOP restype_set = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 
 	std::string const pre_base_name( core::chemical::residue_type_base_name( pose.residue_type( oop_pre_pos_ ) ) );
 	std::string const post_base_name( core::chemical::residue_type_base_name( pose.residue_type( oop_post_pos_ ) ) );

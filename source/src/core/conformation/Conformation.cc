@@ -80,14 +80,6 @@
 #include <algorithm>
 #include <utility/assert.hh>
 #include <set>
-//#include <stdio.h>
-
-
-using basic::T;
-
-
-static THREAD_LOCAL basic::Tracer TR( "core.conformation.Conformation" );
-
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -101,6 +93,9 @@ static THREAD_LOCAL basic::Tracer TR( "core.conformation.Conformation" );
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
+using basic::T;
+
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.Conformation" );
 
 namespace core {
 namespace conformation {
@@ -139,6 +134,8 @@ Conformation::Conformation( Conformation const & src ) :
 	for ( Size i=1; i<= src.size(); ++i ) {
 		residues_.push_back( src.residues_[i]->clone() );
 	}
+
+	residue_type_sets_ = src.residue_type_sets_;
 
 	// kinematics
 	fold_tree_ = FoldTreeOP( new FoldTree( *src.fold_tree_ ) );
@@ -205,6 +202,8 @@ Conformation::operator=( Conformation const & src )
 		for ( Size i=1; i<= src.size(); ++i ) {
 			residues_.push_back( src.residues_[i]->clone() );
 		}
+
+		residue_type_sets_ = src.residue_type_sets_;
 
 		// kinematics
 		(*fold_tree_) = (*src.fold_tree_);
@@ -275,6 +274,7 @@ Conformation::clear()
 {
 	pre_nresidue_change(); // nuke old atom tree update-data before destroying coordinates.
 
+	residue_type_sets_.clear();
 	fold_tree_->clear();
 	atom_tree_->clear();
 	parameters_set_.clear();
@@ -442,34 +442,122 @@ Conformation::sequence_matches( Conformation const & other ) const
 
 // General Properties ////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// @brief What ResidueTypeSet is this Conformation made of?
-/// If majority is true, it will be they ResidueTypeSet for most residues in the pose.
-/// If majority is false, core::chemical::MIXED_t will be returned for conformations with residues from multiple ResidueTypeSets
-core::chemical::TypeSetCategory
-Conformation::residue_typeset_category( bool majority /*=true*/ ) const {
+/// @brief Return the appropriate ResidueTypeSet for the Conformation
+/// If mode is INVALID_t (the default), then return the typeset for the majority mode of the Conformation.
+core::chemical::ResidueTypeSetCOP
+Conformation::residue_type_set_for_conf( core::chemical::TypeSetMode mode /*= INVALID_t*/ ) const {
+	if ( mode == core::chemical::INVALID_t ) {
+		mode = residue_typeset_mode();
+	}
+	if ( mode == core::chemical::MIXED_t ) {
+		// Can easily happen for empty poses.
+		TR.Debug << "Assuming fullatom type for mixed Conformation." << std::endl;
+		mode = core::chemical::FULL_ATOM_t;
+	}
+
+	// Invokes the const version, as we're in a const function.
+	core::chemical::ResidueTypeSetCOP residue_set( residue_type_sets_.get_res_type_set( mode ) );
+	// Fall back to the global RTS if we don't have a custom one
+	if ( ! residue_set ) {
+		residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( mode );
+	}
+	if ( ! residue_set ) {
+		TR.Error << "Can't find residue type set of mode " << mode << std::endl;
+		utility_exit_with_message("Unable to find appropriate type set.");
+	}
+	return residue_set;
+}
+
+/// @brief Return a *clone* of the Conformation-specific PoseResidueTypeSet.
+/// Modifications to this RTS won't be seen in the Conformation unless you pass it back in with reset_residue_type_set_for_conf()
+/// Should always return a non-null pointer: will create a new PoseResidueTypeSet if the Conformation doesn't have it already.
+core::chemical::PoseResidueTypeSetOP
+Conformation::modifiable_residue_type_set_for_conf( core::chemical::TypeSetMode mode /*= core::chemical::INVALID_t*/ ) const {
+	using namespace core::chemical;
+	if ( mode == INVALID_t ) {
+		mode = residue_typeset_mode();
+	}
+	if ( mode == MIXED_t ) {
+		// Can easily happen for empty poses.
+		TR.Debug << "Assuming fullatom type for mixed Conformation." << std::endl;
+		mode = FULL_ATOM_t;
+	}
+
+	// PoseResidueTypeSetCOP is deliberate here - we need to invoke the subtype-specific clone.
+	PoseResidueTypeSetCOP residue_set( residue_type_sets_.get_res_type_set( mode ) );
+	if ( residue_set ) {
+		return residue_set->clone();
+	}
+	// We're still using the global version - make a new PoseResidueTypeSet of the appropriate type.
+	ResidueTypeSetCOP global_rts( ChemicalManager::get_instance()->residue_type_set( mode )  );
+	return PoseResidueTypeSetOP( new PoseResidueTypeSet( global_rts ) );
+}
+
+/// @brief Reset the Conformation-specific PoseResidueTypeSet for the appropriat mode to the given RTS.
+/// @details NOTE: You're potentially in for a bunch of trouble if the passed in set isn't a modified version of the value
+/// returned by modifiable_residue_type_set_for_conf() from this conformation.
+/// Also, a clone of the RTS is made, so subsequent edits to the RTS will not be reflected in the Conformation's RTS
+void
+Conformation::reset_residue_type_set_for_conf( core::chemical::PoseResidueTypeSetCOP new_set, core::chemical::TypeSetMode mode /*= core::chemical::INVALID_t*/ ) {
+	using namespace core::chemical;
+	if ( new_set == nullptr ) {
+		// We're zeroing it out (for some strange reason).
+		residue_type_sets_.set_res_type_set( nullptr, mode ); // explicit nullptr due to COP/OP mismatch
+		return;
+	}
+	// new_set is valid from here on down.
+	if ( mode == INVALID_t ) {
+		mode = new_set->mode();
+	} else if ( mode != new_set->mode() ) {
+		TR.Warning << "WARNING: When resetting the Conformation's ResidueTypeSet, the ResidueTypeSet mode of " << new_set->mode() << " does not match the stated mode of " << mode << std::endl;
+	}
+	ResidueTypeSetCOP current_rts( residue_type_set_for_conf( mode ) ); // Remember this could be a GlobalRTS
+	if ( new_set->atom_type_set() != current_rts->atom_type_set() ) {
+		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different AtomTypeSets." << std::endl;
+	}
+	if ( new_set->element_set() != current_rts->element_set() ) {
+		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different ElementSets." << std::endl;
+	}
+	if ( new_set->mm_atom_type_set() != current_rts->mm_atom_type_set() ) {
+		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different MMAtomTypeSets." << std::endl;
+	}
+	if ( new_set->orbital_type_set() != current_rts->orbital_type_set() ) {
+		TR.Warning << "WARNING When resetting the Conformation's ResidueTypeSet, the old and new ResidueTypeSets of mode " << mode << " have different OrbitalTypeSets." << std::endl;
+	}
+	// Other sanity checks here?
+
+	residue_type_sets_.set_res_type_set( new_set->clone(), mode ); // Deliberately make a clone of the RTS, so the Conformation has exclusive access.
+}
+
+
+/// @brief What mode of ResidueTypeSet is this Conformation made of?
+/// If majority is true, it will be the mode of the ResidueTypes for most residues in the pose.
+/// If majority is false, core::chemical::MIXED_t will be returned for conformations with ResidueTypes of multiple modes
+core::chemical::TypeSetMode
+Conformation::residue_typeset_mode( bool majority /*=true*/ ) const {
 	if ( empty() ) {
 		TR.Warning << "WARNING: Attempted to determine the residue type set of an empty pose." << std::endl;
 		return core::chemical::MIXED_t; // Because an empty pose is compatible with all of them.
 	}
 
-	utility::vector1< core::Size > counts( core::chemical::TYPE_SET_CATEGORIES_LENGTH, 0 );
+	utility::vector1< core::Size > counts( core::chemical::TYPE_SET_MODES_LENGTH, 0 );
 
 	for ( core::Size ii(1); ii <= size(); ++ii ) {
-		core::chemical::TypeSetCategory category_for_residue( residue_type( ii ).residue_type_set()->category() );
+		core::chemical::TypeSetMode mode_for_residue( residue_type( ii ).mode() );
 		// Skip "INVALID", as it's not something we want to recognize (we'd have to change the counts vector too).
-		runtime_assert( category_for_residue != core::chemical::INVALID_t );
+		runtime_assert( mode_for_residue != core::chemical::INVALID_t );
 		// Individual ResidueTypes should not be of type MIXED
-		runtime_assert( category_for_residue != core::chemical::MIXED_t );
-		++counts[ category_for_residue ];
+		runtime_assert( mode_for_residue != core::chemical::MIXED_t );
+		++counts[ mode_for_residue ];
 	}
 
 	if ( majority ) {
-		core::chemical::TypeSetCategory best( core::chemical::MIXED_t );
+		core::chemical::TypeSetMode best( core::chemical::MIXED_t );
 		core::Size best_counts( 0 );
 
-		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_CATEGORIES_LENGTH; ++ii ) {
+		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_MODES_LENGTH; ++ii ) {
 			if ( counts[ii] > best_counts ) {
-				best = core::chemical::TypeSetCategory( ii );
+				best = core::chemical::TypeSetMode( ii );
 				best_counts = counts[ii];
 			} else if ( counts[ii] == best_counts ) {
 				best = core::chemical::MIXED_t; // We have multiple types with the same count.
@@ -477,10 +565,10 @@ Conformation::residue_typeset_category( bool majority /*=true*/ ) const {
 		}
 		return best;
 	} else { // majority == false
-		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_CATEGORIES_LENGTH; ++ii ) {
+		for ( core::Size ii(1); ii <= core::chemical::TYPE_SET_MODES_LENGTH; ++ii ) {
 			if ( counts[ii] == size() ) {
-				// All residues with valid TypeSetCategorys are in this type
-				return core::chemical::TypeSetCategory( ii );
+				// All residues with valid TypeSetModes are in this type
+				return core::chemical::TypeSetMode( ii );
 			}
 		}
 		// There isn't a single best, so return a hybrid.
@@ -493,19 +581,19 @@ bool
 Conformation::is_fullatom() const {
 	// The majority of ResidueTypes are fullatom
 	// "majority" more closely matches the previous behavior
-	return residue_typeset_category( true ) == core::chemical::FULL_ATOM_t;
+	return residue_typeset_mode( true ) == core::chemical::FULL_ATOM_t;
 }
 
 bool
 Conformation::is_centroid() const {
 	// The majority of ResidueTypes are centroid
 	// "majority" more closely matches the previous behavior
-	return residue_typeset_category( true ) == core::chemical::CENTROID_t;
+	return residue_typeset_mode( true ) == core::chemical::CENTROID_t;
 }
 
 bool
-Conformation::is_mixed_category() const {
-	return residue_typeset_category( false ) == core::chemical::MIXED_t;
+Conformation::is_mixed_mode() const {
+	return residue_typeset_mode( false ) == core::chemical::MIXED_t;
 }
 
 // Chains ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1966,7 +2054,7 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one /*=
 	// If all the cys are fullatom, use stricter criteria
 	bool fullatom( true );
 	for ( Size ii = 1; ii <= num_cys; ++ii ) {
-		if ( residue_type( cysid_2_resid[ ii ] ).residue_type_set()->category()
+		if ( residue_type( cysid_2_resid[ ii ] ).mode()
 				!= core::chemical::FULL_ATOM_t ) {
 			fullatom = false;
 			break;
@@ -4253,6 +4341,8 @@ Conformation::in_place_copy(
 
 	/// END IN PLACE OPTIMIZATION
 
+	residue_type_sets_ = src.residue_type_sets_;
+
 	// kinematics
 	(*fold_tree_) = (*src.fold_tree_);
 	(*atom_tree_) = (*src.atom_tree_); // internally performs an in-place copy if it can
@@ -4394,6 +4484,7 @@ template< class Archive >
 void
 core::conformation::Conformation::save( Archive & arc ) const {
 	arc( CEREAL_NVP( residues_ ) ); // ResidueOPs
+	arc( CEREAL_NVP( residue_type_sets_ ) ); // CacheableResidueTypeSets
 	arc( CEREAL_NVP( chain_endings_ ) ); // utility::vector1<Size>
 	arc( CEREAL_NVP( membrane_info_ ) ); // membrane::MembraneInfoOP
 	arc( CEREAL_NVP( fold_tree_ ) ); // FoldTreeOP
@@ -4421,6 +4512,7 @@ template< class Archive >
 void
 core::conformation::Conformation::load( Archive & arc ) {
 	arc( residues_ ); // ResidueOPs
+	arc( residue_type_sets_ ); // CacheableResidueTypeSets
 	arc( chain_endings_ ); // utility::vector1<Size>
 	arc( membrane_info_ ); // membrane::MembraneInfoOP
 	arc( fold_tree_ ); // FoldTreeOP

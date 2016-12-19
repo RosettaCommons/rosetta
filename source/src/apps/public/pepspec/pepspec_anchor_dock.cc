@@ -231,7 +231,8 @@ make_sequence_change(
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
-	chemical::ResidueTypeCOP rsd_type( current_rsd.residue_type_set()->get_representative_type_aa( new_aa, current_rsd.type().variant_types() ) );
+	chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( current_rsd.type().mode() ) );
+	chemical::ResidueTypeCOP rsd_type( rsd_type_set->get_representative_type_aa( new_aa, current_rsd.type().variant_types() ) );
 
 	if ( ! rsd_type ) {
 		utility_exit_with_message( "make_sequence_change failed: new_aa= "+chemical::name_from_aa(new_aa)+" -- no residue types found. " );
@@ -539,7 +540,7 @@ run_pep_prep()
 	Pose pose;
 	import_pose::pose_from_file( pose, pdb_filenames[ 1 ] , core::import_pose::PDB_file);
 
-	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue_type_set_for_pose() );
 
 	//Size const nres( pose.size() );  // unused ~Labonte
 

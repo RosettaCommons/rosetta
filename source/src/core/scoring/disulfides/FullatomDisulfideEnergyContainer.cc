@@ -696,9 +696,7 @@ core::scoring::disulfides::FullatomDisulfideEnergyContainer::save( Archive & arc
 
 	arc( CEREAL_NVP( resid_2_disulfide_index_ ) ); // utility::vector1<Size>
 
-	// individually serialize all of the ResidueTypeCOPs using the helper function
-	// in core::chemical.
-	core::chemical::serialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( CEREAL_NVP( disulfide_residue_types_ ) );
 
 	arc( CEREAL_NVP( disulfide_partners_ ) ); // utility::vector1<std::pair<Size, Size> >
 	arc( CEREAL_NVP( disulfide_atom_indices_ ) ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
@@ -713,9 +711,7 @@ void
 core::scoring::disulfides::FullatomDisulfideEnergyContainer::load( Archive & arc ) {
 	arc( resid_2_disulfide_index_ ); // utility::vector1<Size>
 
-	// individually deserialize the ResidueTypeCOPs, possibly resolving these
-	// ResidueTypeCOPs to globally-held ResidueTypes
-	core::chemical::deserialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( disulfide_residue_types_ );
 
 	arc( disulfide_partners_ ); // utility::vector1<std::pair<Size, Size> >
 	arc( disulfide_atom_indices_ ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >

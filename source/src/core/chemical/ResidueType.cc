@@ -59,16 +59,29 @@
 // C++ headers
 #include <algorithm>
 
+#ifdef    SERIALIZATION
+#include <core/chemical/ResidueGraphTypes.srlz.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/keys/Key2Tuple.srlz.hh>
+#include <utility/keys/Key3Tuple.srlz.hh>
+#include <utility/keys/Key4Tuple.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer tr( "core.chemical.ResidueType" );
 
@@ -84,18 +97,20 @@ strip_whitespace( std::string const & name )
 
 VD const ResidueType::null_vertex = boost::graph_traits<ResidueGraph>::null_vertex();
 
+ResidueType::ResidueType() = default; // private, not deleted because of serialization
+
 ResidueType::ResidueType(
 	AtomTypeSetCOP atom_types,
 	ElementSetCOP elements,
 	MMAtomTypeSetCOP mm_atom_types,
 	orbitals::OrbitalTypeSetCOP orbital_types
 ) : utility::pointer::ReferenceCount(),
-	atom_types_(std::move( atom_types )),
-	elements_(std::move( elements )),
-	mm_atom_types_(std::move( mm_atom_types )),
+	atom_types_( atom_types ),
+	elements_( elements ),
+	mm_atom_types_( mm_atom_types ),
 	gasteiger_atom_types_(),
-	orbital_types_(std::move( orbital_types)),
-	residue_type_set_( /* 0 */ ),
+	orbital_types_( orbital_types ),
+	mode_( INVALID_t ),
 	graph_(),
 	orbitals_(),
 	nheavyatoms_(0),
@@ -135,7 +150,13 @@ ResidueType::ResidueType(
 	rama_prepro_map_file_name_beforeproline_(),
 	finalized_(false),
 	nondefault_(false)
-{}
+{
+	if ( atom_types != nullptr ) {
+		// For any actual ResidueType atom_types should be valid, but there's tricky RTS bootstraping logic
+		// in Patch.cc that uses nullptr AtomTypeSets.
+		mode_ = atom_types->mode();
+	}
+}
 
 ResidueType::~ResidueType()
 {
@@ -161,7 +182,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	gasteiger_atom_types_ = residue_type.gasteiger_atom_types_;
 	orbital_types_ = residue_type.orbital_types_;
 	conformer_sets_ = residue_type.conformer_sets_;
-	residue_type_set_ = residue_type.residue_type_set_;
+	mode_ = residue_type.mode_;
 	graph_ = residue_type.graph_; // copying Will change the VDs
 	vd_to_index_.clear(); // must be regenerated for new VDs
 	atom_base_ = residue_type.atom_base_;
@@ -481,19 +502,6 @@ ResidueType::operator=( ResidueType const & residue_type )
 	return *this;
 }
 
-
-ResidueTypeSetCOP
-ResidueType::residue_type_set() const
-{
-	return residue_type_set_.lock();
-}
-
-bool
-ResidueType::in_residue_type_set() const
-{
-	return ! residue_type_set_.expired();
-}
-
 //////////////////////////////////////////////////////////////////////////////
 
 /// @brief make a copy
@@ -509,7 +517,7 @@ ResidueType::clone() const
 ResidueTypeOP
 ResidueType::placeholder_clone() const
 {
-	ResidueTypeOP rsd( new ResidueType( nullptr, nullptr, nullptr, nullptr ) );
+	ResidueTypeOP rsd( new ResidueType( atom_type_set_ptr(), element_set_ptr(), mm_atom_types_ptr(), orbital_types_ptr() ) );
 	rsd->name ( name() );
 	rsd->name1( name1() );
 	rsd->name3( name3() );
@@ -522,12 +530,6 @@ ResidueType::placeholder_clone() const
 	//  rsd->carbohydrate_info_ = carbohydrates::CarbohydrateInfoOP( new carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
 	// }
 	return rsd;
-}
-
-void
-ResidueType::residue_type_set( ResidueTypeSetCAP set_in )
-{
-	residue_type_set_ = set_in;
 }
 
 Atom & ResidueType::atom(Size const atom_index){
@@ -4583,3 +4585,366 @@ operator<<(std::ostream & output, ResidueType const & object_to_output)
 
 } // chemical
 } // core
+
+
+#ifdef    SERIALIZATION
+
+template< class Archive >
+void
+core::chemical::ResidueType::save( Archive & arc ) const {
+	using namespace core::chemical;
+
+	arc( CEREAL_NVP( atom_types_ ) ); // AtomTypeSetCOP
+	arc( CEREAL_NVP( elements_ ) ); // ElementSetCOP
+	arc( CEREAL_NVP( mm_atom_types_ ) ); // MMAtomTypeSetCOP
+	arc( CEREAL_NVP( gasteiger_atom_types_ ) ); // gasteiger::GasteigerAtomTypeSetCOP
+	arc( CEREAL_NVP( orbital_types_ ) ); // orbitals::OrbitalTypeSetCOP
+
+	runtime_assert( finalized_ ); // can't serialize if it's not finalized
+	// EXEMPT graph_ ordered_atoms_ vd_to_index_ icoor_
+	// We can't serialize the Boost graph directly, and, besides, the VDs will change
+	// when we reconstruct the graph. To circumvent this, we serialize atoms directly
+	// in index order (as atom names might not be unique ... theoretically).
+	arc( CEREAL_NVP_( "natoms", ordered_atoms_.size() ) );
+	for( VD vd : ordered_atoms_ ) {
+		SERIALIZE_VD( arc, vd );
+		arc( graph_[ vd ] ); // EXEMPT graph_ ordered_atoms_ vd_to_index_ atom_name_to_vd_
+	}
+
+	//std::cout << "DONE ATOMS" << std::endl;
+
+	arc( CEREAL_NVP_( "bonds", boost::num_edges(graph_) ) );
+	for( EIterPair biter_pair( boost::edges(graph_) ); biter_pair.first != biter_pair.second; ++biter_pair.first ) {
+		ED ed( *biter_pair.first );
+		VD source( boost::source( ed, graph_ ) ), target( boost::target( ed, graph_ ) );
+		SERIALIZE_VD( arc, source );
+		SERIALIZE_VD( arc, target );
+		arc( graph_[ ed ] );
+	}
+
+	for( VD vd : ordered_atoms_ ) {
+		arc( icoor_.at( vd ) ); // EXEMPT icoor_
+	}
+
+	// Need to be VD-adjusted on the back end.
+	arc( CEREAL_NVP( residue_connections_ ) ); // utility::vector1<ResidueConnection>
+	arc( CEREAL_NVP( orbitals_ ) ); // utility::vector1<Orbital>
+
+	SERIALIZE_VD( arc, root_atom_, "root_atom_" ); // EXEMPT root_atom_
+	SERIALIZE_VD( arc, nbr_atom_, "nbr_atom_" ); // EXEMPT nbr_atom_
+
+	SERIALIZE_VD_VD_MAP( arc, atom_base_ ); // EXEMPT atom_base_
+	SERIALIZE_VD_VD_MAP( arc, abase2_ ); // EXEMPT abase2_
+	SERIALIZE_VD_VD_MAP( arc, atom_shadowed_ ); // EXEMPT atom_shadowed_
+
+	SERIALIZE_VD_VD_VECTOR_MAP( arc, cut_bond_neighbor_ ); // EXEMPT cut_bond_neighbor_
+
+	SERIALIZE_VD_VECTOR( arc, mainchain_atoms_ ); // EXEMPT mainchain_atoms_
+	SERIALIZE_VD_VECTOR( arc, actcoord_atoms_ ); // EXEMPT actcoord_atoms_
+	SERIALIZE_VD_VECTOR( arc, force_bb_ ); // EXEMPT force_bb_
+
+	SERIALIZE_NESTED_VD_VECTOR( arc, chi_atoms_ ); // EXEMPT chi_atoms_
+	SERIALIZE_NESTED_VD_VECTOR( arc, nu_atoms_ ); // EXEMPT nu_atoms_
+	SERIALIZE_NESTED_VD_VECTOR( arc, ring_atoms_ ); // EXEMPT ring_atoms_
+
+	arc( rings_and_their_edges_.size() ); // EXEMPT rings_and_their_edges_
+	for ( utility::vector1<ED> const & innervec : rings_and_their_edges_ ) {
+		arc( innervec.size() );
+		for ( ED ed : innervec ) {
+			SERIALIZE_VD( arc, boost::source( ed, graph_ ) );
+			SERIALIZE_VD( arc, boost::target( ed, graph_ ) );
+		}
+	}
+
+	// Many of the following will be reset in finalize(), but I serialize them here anyway because it's just as easy as not doing so
+
+	// RingConformerSets are reset in finalize()
+	// EXEMPT conformer_sets_
+	arc( CEREAL_NVP( mode_ ) ); // enum core::chemical::TypeSetMode
+	arc( CEREAL_NVP( nheavyatoms_ ) ); // Size
+	arc( CEREAL_NVP( n_hbond_acceptors_ ) ); // Size
+	arc( CEREAL_NVP( n_hbond_donors_ ) ); // Size
+	arc( CEREAL_NVP( n_backbone_heavyatoms_ ) ); // Size
+	arc( CEREAL_NVP( first_sidechain_hydrogen_ ) ); // Size
+	arc( CEREAL_NVP( bonded_neighbor_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( bonded_neighbor_type_ ) ); // utility::vector1<utility::vector1<BondName> >
+	arc( CEREAL_NVP( attached_H_begin_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( attached_H_end_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( dihedral_atom_sets_ ) ); // utility::vector1<dihedral_atom_set>
+	arc( CEREAL_NVP( dihedrals_for_atom_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( improper_dihedral_atom_sets_ ) ); // utility::vector1<dihedral_atom_set>
+	arc( CEREAL_NVP( improper_dihedrals_for_atom_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( bondangle_atom_sets_ ) ); // utility::vector1<bondangle_atom_set>
+	arc( CEREAL_NVP( bondangles_for_atom_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( last_controlling_chi_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( atoms_last_controlled_by_chi_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( atoms_with_orb_index_ ) ); // AtomIndices
+	arc( CEREAL_NVP( Haro_index_ ) ); // AtomIndices
+	arc( CEREAL_NVP( Hpol_index_ ) ); // AtomIndices
+	arc( CEREAL_NVP( accpt_pos_ ) ); // AtomIndices
+	arc( CEREAL_NVP( Hpos_polar_ ) ); // AtomIndices
+	arc( CEREAL_NVP( Hpos_apolar_ ) ); // AtomIndices
+	arc( CEREAL_NVP( accpt_pos_sc_ ) ); // AtomIndices
+	arc( CEREAL_NVP( Hpos_polar_sc_ ) ); // AtomIndices
+	arc( CEREAL_NVP( all_bb_atoms_ ) ); // AtomIndices
+	arc( CEREAL_NVP( all_sc_atoms_ ) ); // AtomIndices
+	arc( CEREAL_NVP( metal_binding_atoms_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( disulfide_atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( is_proton_chi_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( proton_chis_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( chi_2_proton_chi_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( proton_chi_samples_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( proton_chi_extra_samples_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( path_distance_ ) ); // utility::vector1<utility::vector1<int> >
+	arc( CEREAL_NVP( atom_aliases_ ) ); // std::map<std::string, std::string>
+	arc( CEREAL_NVP( orbitals_index_ ) ); // std::map<std::string, int>
+	arc( CEREAL_NVP( chi_rotamers_ ) ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
+	arc( CEREAL_NVP( rotamer_library_specification_ ) ); // rotamers::RotamerLibrarySpecificationOP
+	arc( CEREAL_NVP( ring_sizes_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( lowest_ring_conformer_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( low_ring_conformers_ ) ); // utility::vector1<utility::vector1<std::string> >
+	arc( CEREAL_NVP( properties_ ) ); // ResiduePropertiesOP
+	arc( CEREAL_NVP( aa_ ) ); // enum core::chemical::AA
+	arc( CEREAL_NVP( rotamer_aa_ ) ); // enum core::chemical::AA
+	arc( CEREAL_NVP( backbone_aa_ ) ); // enum core::chemical::AA
+	arc( CEREAL_NVP( na_analogue_ ) ); // enum core::chemical::AA
+	arc( CEREAL_NVP( base_name_ ) ); // std::string
+	arc( CEREAL_NVP( base_type_cop_ ) ); // ResidueTypeCOP
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( name3_ ) ); // std::string
+	arc( CEREAL_NVP( name1_ ) ); // char
+	arc( CEREAL_NVP( interchangeability_group_ ) ); // std::string
+	arc( CEREAL_NVP( nbr_radius_ ) ); // Real
+	arc( CEREAL_NVP( force_nbr_atom_orient_ ) ); // _Bool
+	arc( CEREAL_NVP( remap_pdb_atom_names_ ) ); // _Bool
+	arc( CEREAL_NVP( mass_ ) ); // Real
+	arc( CEREAL_NVP( atom_2_residue_connection_map_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( atoms_within_one_bond_of_a_residue_connection_ ) ); // utility::vector1<utility::vector1<two_atom_set> >
+	arc( CEREAL_NVP( within1bonds_sets_for_atom_ ) ); // utility::vector1<utility::vector1<std::pair<Size, Size> > >
+	arc( CEREAL_NVP( atoms_within_two_bonds_of_a_residue_connection_ ) ); // utility::vector1<utility::vector1<three_atom_set> >
+	arc( CEREAL_NVP( within2bonds_sets_for_atom_ ) ); // utility::vector1<utility::vector1<std::pair<Size, Size> > >
+	arc( CEREAL_NVP( lower_connect_id_ ) ); // Size
+	arc( CEREAL_NVP( upper_connect_id_ ) ); // Size
+	arc( CEREAL_NVP( n_non_polymeric_residue_connections_ ) ); // Size
+	arc( CEREAL_NVP( n_polymeric_residue_connections_ ) ); // Size
+	// RNA_ResidueType and CarbohydrateInfo are reset in finalize()
+	// EXEMPT rna_residue_type_ carbohydrate_info_
+	arc( CEREAL_NVP( atom_base_indices_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( abase2_indices_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( chi_atoms_indices_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( nu_atoms_indices_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( ring_atoms_indices_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( mainchain_atoms_indices_ ) ); // AtomIndices
+	arc( CEREAL_NVP( nbr_atom_indices_ ) ); // Size
+	arc( CEREAL_NVP( actcoord_atoms_indices_ ) ); // AtomIndices
+	arc( CEREAL_NVP( cut_bond_neighbor_indices_ ) ); // utility::vector1<AtomIndices>
+	arc( CEREAL_NVP( atom_shadowed_indices_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( rama_prepro_mainchain_torsion_potential_name_ ) ); // std::string
+	arc( CEREAL_NVP( rama_prepro_mainchain_torsion_potential_name_beforeproline_ ) ); // std::string
+	arc( CEREAL_NVP( rama_prepro_map_file_name_ ) );// std::string
+	arc( CEREAL_NVP( rama_prepro_map_file_name_beforeproline_ ) );// std::string
+	// EXEMPT finalized_
+	// ( will call finalization function on load )
+	arc( CEREAL_NVP( defined_adducts_ ) ); // utility::vector1<Adduct>
+	arc( CEREAL_NVP( nondefault_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ResidueType::load( Archive & arc ) {
+	using namespace core::chemical;
+
+	arc( atom_types_ ); // AtomTypeSetCOP
+	arc( elements_ ); // ElementSetCOP
+	arc( mm_atom_types_ ); // MMAtomTypeSetCOP
+	arc( gasteiger_atom_types_ ); // gasteiger::GasteigerAtomTypeSetCOP
+	arc( orbital_types_ ); // orbitals::OrbitalTypeSetCOP
+
+	std::map< VD, VD > old_to_new;
+	old_to_new[ ResidueType::null_vertex ] = ResidueType::null_vertex; // Null vertex self-converts.
+
+	// EXEMPT graph_
+	core::Size natoms; arc( natoms );
+	for( core::Size ii(1); ii <= natoms; ++ii ) {
+		VD old_vd; DESERIALIZE_VD( arc, old_vd );
+		Atom atom; arc( atom );
+		atom.update_typesets( *this );
+		VD new_vd = graph_.add_vertex(atom);
+		old_to_new[ old_vd ] = new_vd;
+		//std::cout << "Old to new " << old_vd << " : " << new_vd << std::endl;
+		ordered_atoms_.push_back(new_vd); // EXEMPT ordered_atoms_
+		vd_to_index_[ new_vd ] = ii; // EXEMPT vd_to_index_
+		atom_name_to_vd_[ atom.name() ] = new_vd; // EXEMPT atom_name_to_vd_
+		atom_name_to_vd_[ strip_whitespace( atom.name() ) ] = new_vd;
+	}
+
+	//std::cout << "DONE ATOMS" << std::endl;
+
+	//std::map< ED, ED > old_to_new_bonds;
+
+	core::Size nbonds; arc( nbonds );
+	for( core::Size ii(1); ii <= nbonds; ++ii ) {
+		VD source, target;
+		DESERIALIZE_VD( arc, source );
+		source = old_to_new.at(source);
+		DESERIALIZE_VD( arc, target );
+		target = old_to_new.at(target);
+		Bond bond; arc( bond );
+		bool added; ED new_ed;
+		boost::tie( new_ed, added ) = graph_.add_edge( source, target, bond );
+		runtime_assert( added );
+		//old_to_new_bonds[ old_ed ] = new_ed;
+	}
+
+	// Now we have a completely set old_to_nes
+	for( core::Size ii(1); ii <= natoms; ++ii ) {
+		VD vd( ordered_atoms_[ii] );
+
+		AtomICoor icoor; arc( icoor );
+		icoor.remap_atom_vds( old_to_new );
+		icoor_[ vd ] = icoor; // EXEMPT icoor_
+
+	}
+
+	arc( residue_connections_ ); // utility::vector1<ResidueConnection>
+	for( ResidueConnection & rescon : residue_connections_ ) {
+		rescon.remap_atom_vds( old_to_new );
+	}
+	arc( orbitals_ ); // utility::vector1<Orbital>
+	for( Orbital & orbital : orbitals_ ) {
+		orbital.remap_atom_vds( old_to_new );
+	}
+
+	DESERIALIZE_VD( arc, root_atom_, old_to_new ); // EXEMPT root_atom_
+	DESERIALIZE_VD( arc, nbr_atom_, old_to_new ); // EXEMPT nbr_atom_
+
+	DESERIALIZE_VD_VD_MAP( arc, atom_base_, old_to_new ); // EXEMPT atom_base_
+	DESERIALIZE_VD_VD_MAP( arc, abase2_, old_to_new ); // EXEMPT abase2_
+	DESERIALIZE_VD_VD_MAP( arc, atom_shadowed_, old_to_new ); // EXEMPT atom_shadowed_
+
+	DESERIALIZE_VD_VD_VECTOR_MAP( arc, cut_bond_neighbor_, old_to_new ); // EXEMPT cut_bond_neighbor_
+
+	DESERIALIZE_VD_VECTOR( arc, mainchain_atoms_, old_to_new ); // EXEMPT mainchain_atoms_
+	DESERIALIZE_VD_VECTOR( arc, actcoord_atoms_, old_to_new ); // EXEMPT actcoord_atoms_
+	DESERIALIZE_VD_VECTOR( arc, force_bb_, old_to_new ); // EXEMPT force_bb_
+
+	DESERIALIZE_NESTED_VD_VECTOR( arc, chi_atoms_, old_to_new ); // EXEMPT chi_atoms_
+	DESERIALIZE_NESTED_VD_VECTOR( arc, nu_atoms_, old_to_new ); // EXEMPT nu_atoms_
+	DESERIALIZE_NESTED_VD_VECTOR( arc, ring_atoms_, old_to_new ); // EXEMPT ring_atoms_
+
+	core::Size r_a_t_e_size; arc( r_a_t_e_size ); // EXEMPT rings_and_their_edges_
+	rings_and_their_edges_.clear();
+	for ( core::Size ii(1); ii <= r_a_t_e_size; ++ii ) {
+		utility::vector1<ED> innervec;
+		core::Size innervec_size; arc( innervec_size );
+		for ( core::Size jj(1); jj <= innervec_size; ++jj ) {
+			VD source, target;
+			DESERIALIZE_VD( arc, source, old_to_new );
+			DESERIALIZE_VD( arc, target, old_to_new );
+			bool has_edge; ED edge;
+			boost::tie( edge, has_edge ) = boost::edge( source, target, graph_ );
+			debug_assert( has_edge );
+			innervec.push_back( edge );
+		}
+		rings_and_their_edges_.push_back( innervec );
+	}
+
+	// Many of the following will be reset in finalize(), but I deserialize them here anyway because it's just as easy as not doing so
+
+	// RingConformerSets are reset in finalize()
+	// EXEMPT conformer_sets_
+	arc( mode_ ); // enum core::chemical::TypeSetMode
+	arc( nheavyatoms_ ); // Size
+	arc( n_hbond_acceptors_ ); // Size
+	arc( n_hbond_donors_ ); // Size
+	arc( n_backbone_heavyatoms_ ); // Size
+	arc( first_sidechain_hydrogen_ ); // Size
+	arc( bonded_neighbor_ ); // utility::vector1<AtomIndices>
+	arc( bonded_neighbor_type_ ); // utility::vector1<utility::vector1<BondName> >
+	arc( attached_H_begin_ ); // utility::vector1<Size>
+	arc( attached_H_end_ ); // utility::vector1<Size>
+	arc( dihedral_atom_sets_ ); // utility::vector1<dihedral_atom_set>
+	arc( dihedrals_for_atom_ ); // utility::vector1<utility::vector1<Size> >
+	arc( improper_dihedral_atom_sets_ ); // utility::vector1<dihedral_atom_set>
+	arc( improper_dihedrals_for_atom_ ); // utility::vector1<utility::vector1<Size> >
+	arc( bondangle_atom_sets_ ); // utility::vector1<bondangle_atom_set>
+	arc( bondangles_for_atom_ ); // utility::vector1<utility::vector1<Size> >
+	arc( last_controlling_chi_ ); // utility::vector1<Size>
+	arc( atoms_last_controlled_by_chi_ ); // utility::vector1<AtomIndices>
+	arc( atoms_with_orb_index_ ); // AtomIndices
+	arc( Haro_index_ ); // AtomIndices
+	arc( Hpol_index_ ); // AtomIndices
+	arc( accpt_pos_ ); // AtomIndices
+	arc( Hpos_polar_ ); // AtomIndices
+	arc( Hpos_apolar_ ); // AtomIndices
+	arc( accpt_pos_sc_ ); // AtomIndices
+	arc( Hpos_polar_sc_ ); // AtomIndices
+	arc( all_bb_atoms_ ); // AtomIndices
+	arc( all_sc_atoms_ ); // AtomIndices
+	arc( metal_binding_atoms_ ); // utility::vector1<std::string>
+	arc( disulfide_atom_name_ ); // std::string
+	arc( is_proton_chi_ ); // utility::vector1<_Bool>
+	arc( proton_chis_ ); // utility::vector1<Size>
+	arc( chi_2_proton_chi_ ); // utility::vector1<Size>
+	arc( proton_chi_samples_ ); // utility::vector1<utility::vector1<Real> >
+	arc( proton_chi_extra_samples_ ); // utility::vector1<utility::vector1<Real> >
+	arc( path_distance_ ); // utility::vector1<utility::vector1<int> >
+	arc( atom_aliases_ ); // std::map<std::string, std::string>
+	arc( orbitals_index_ ); // std::map<std::string, int>
+	arc( chi_rotamers_ ); // utility::vector1<utility::vector1<std::pair<Real, Real> > >
+	arc( rotamer_library_specification_ ); // rotamers::RotamerLibrarySpecificationOP
+	arc( ring_sizes_ ); // utility::vector1<Size>
+	arc( lowest_ring_conformer_ ); // utility::vector1<std::string>
+	arc( low_ring_conformers_ ); // utility::vector1<utility::vector1<std::string> >
+	arc( properties_ ); // ResiduePropertiesOP
+	arc( aa_ ); // enum core::chemical::AA
+	arc( rotamer_aa_ ); // enum core::chemical::AA
+	arc( backbone_aa_ ); // enum core::chemical::AA
+	arc( na_analogue_ ); // enum core::chemical::AA
+	arc( base_name_ ); // std::string
+	arc( base_type_cop_ ); // ResidueTypeCOP
+	arc( name_ ); // std::string
+	arc( name3_ ); // std::string
+	arc( name1_ ); // char
+	arc( interchangeability_group_ ); // std::string
+	arc( nbr_radius_ ); // Real
+	arc( force_nbr_atom_orient_ ); // _Bool
+	arc( remap_pdb_atom_names_ ); // _Bool
+	arc( mass_ ); // Real
+	arc( atom_2_residue_connection_map_ ); // utility::vector1<utility::vector1<Size> >
+	arc( atoms_within_one_bond_of_a_residue_connection_ ); // utility::vector1<utility::vector1<two_atom_set> >
+	arc( within1bonds_sets_for_atom_ ); // utility::vector1<utility::vector1<std::pair<Size, Size> > >
+	arc( atoms_within_two_bonds_of_a_residue_connection_ ); // utility::vector1<utility::vector1<three_atom_set> >
+	arc( within2bonds_sets_for_atom_ ); // utility::vector1<utility::vector1<std::pair<Size, Size> > >
+	arc( lower_connect_id_ ); // Size
+	arc( upper_connect_id_ ); // Size
+	arc( n_non_polymeric_residue_connections_ ); // Size
+	arc( n_polymeric_residue_connections_ ); // Size
+	// RNA_ResidueType and CarbohydrateInfo are reset in finalize()
+	// EXEMPT rna_residue_type_ carbohydrate_info_
+	arc( atom_base_indices_ ); // utility::vector1<Size>
+	arc( abase2_indices_ ); // utility::vector1<Size>
+	arc( chi_atoms_indices_ ); // utility::vector1<AtomIndices>
+	arc( nu_atoms_indices_ ); // utility::vector1<AtomIndices>
+	arc( ring_atoms_indices_ ); // utility::vector1<AtomIndices>
+	arc( mainchain_atoms_indices_ ); // AtomIndices
+	arc( nbr_atom_indices_ ); // Size
+	arc( actcoord_atoms_indices_ ); // AtomIndices
+	arc( cut_bond_neighbor_indices_ ); // utility::vector1<AtomIndices>
+	arc( atom_shadowed_indices_ ); // utility::vector1<Size>
+	arc( rama_prepro_mainchain_torsion_potential_name_ ); // std::string
+	arc( rama_prepro_mainchain_torsion_potential_name_beforeproline_ ); // std::string
+	arc( rama_prepro_map_file_name_ ); // std::string
+	arc( rama_prepro_map_file_name_beforeproline_ ); // std::string
+	arc( defined_adducts_ ); // utility::vector1<Adduct>
+	arc( nondefault_ ); // _Bool
+
+	//finalize(); // Make sure all the derived data is up-to-date
+	// EXEMPT finalized_
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ResidueType );
+CEREAL_REGISTER_TYPE( core::chemical::ResidueType )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_ResidueType )
+#endif // SERIALIZATION

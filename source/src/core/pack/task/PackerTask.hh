@@ -77,7 +77,7 @@ public:
 	//inline PackerTaskCAP get_self_weak_ptr() const { return PackerTaskCAP( shared_from_this() ); }
 	//inline PackerTaskAP get_self_weak_ptr() { return PackerTaskAP( shared_from_this() ); }
 
-	virtual void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos ) = 0;
+	virtual void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos, core::pose::Pose const & pose ) = 0;
 
 	virtual Size total_residue() const = 0;
 

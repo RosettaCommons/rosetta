@@ -60,6 +60,7 @@ sources = {
 	"utility/keys": [
 		"Key2Tuple.srlz",
 		"Key3Tuple.srlz",
+		"Key4Tuple.srlz",
 	],
 	"utility/libsvm":[
 		"Svm_rosetta",

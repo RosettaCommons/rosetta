@@ -23,6 +23,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -99,6 +100,7 @@ SidechainRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 core::Real
 SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
+	debug_assert( reference_pose_ );
 	core::conformation::Residue const res_res1( pose.conformation().residue( res1_ ) );
 	core::conformation::Residue const res_res2( reference_pose_->conformation().residue( res2_ ) );
 	core::Real rmsd (0.0);
@@ -109,7 +111,7 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 	if ( include_backbone_ ) {
 		rmsd = core::scoring::automorphic_rmsd( res_res1, res_res2, false /*superimpose*/ );
 	} else {
-		core::chemical::ResidueTypeSetCOP res1_set( res_res1.residue_type_set() );
+		core::chemical::ResidueTypeSetCOP res1_set( pose.residue_type_set_for_pose( res_res1.type().mode() ) );
 		core::chemical::ResidueType const & working_res1_type(
 			res1_set->get_residue_type_with_variant_added( res_res1.type(), core::chemical::VIRTUAL_BB ) );
 		core::conformation::ResidueOP working_res1 =
@@ -117,7 +119,7 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms(
 			res_res1, *working_res1, pose.conformation() );
 
-		core::chemical::ResidueTypeSetCOP res2_set( res_res2.residue_type_set() );
+		core::chemical::ResidueTypeSetCOP res2_set( reference_pose_->residue_type_set_for_pose( res_res2.type().mode() ) );
 		core::chemical::ResidueType const & working_res2_type(
 			res2_set->get_residue_type_with_variant_added( res_res2.type(), core::chemical::VIRTUAL_BB ) );
 		core::conformation::ResidueOP working_res2 =

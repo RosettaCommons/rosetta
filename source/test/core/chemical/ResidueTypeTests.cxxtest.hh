@@ -29,6 +29,8 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/util.hh>
 
@@ -349,20 +351,14 @@ public:
 	void test_chi_assignment() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set( FA_STANDARD ) );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename("params/type_test1.params");
 		paramslist >> filename;
 		while ( paramslist ) {
 			TR << "------- Redoing chis for " << filename << std::endl;
-			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename, rsd_types );
 			rsd->finalize();
 			if ( TR.Debug.visible() ) {
 				print_chis(TR.Debug, *rsd);
@@ -411,20 +407,14 @@ public:
 		core::Real delta2 = 0.0005*0.0005; // Half the resolution of the PDB format, squared
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP element_types = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set( FA_STANDARD ) );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
 		paramslist >> filename;
 		while ( paramslist ) {
 			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
-			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename,
-				atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename, rsd_types );
 			core::chemical::ResidueTypeCOP restype_ref( core::chemical::ResidueTypeOP( new core::chemical::ResidueType(*restype) ) );
 			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
 

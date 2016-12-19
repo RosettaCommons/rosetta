@@ -205,12 +205,8 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 	Size ihelix = int(numeric::random::rg().uniform() * topology.tmhelix() + 1.);
 	core::Size jump_res = (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
 
-	// create a virtual residue, fullatom or centroid
-	bool fullatom = pose.is_fullatom();
-	core::chemical::ResidueTypeSetCOP const &residue_set(
-		core::chemical::ChemicalManager::get_instance()->residue_type_set
-		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-	);
+	// create a virtual residue, of the appropriate type
+	core::chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
 	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
 	core::conformation::ResidueOP new_virt_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 

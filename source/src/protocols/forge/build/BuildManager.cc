@@ -30,6 +30,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/util.hh>
+#include <core/pose/util.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -246,7 +247,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 		//add virtual residue, as star foldtree requires it
 		if ( pose.residue( pose.size()).aa() != core::chemical::aa_vrt ) {
-			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map("VRT")), second_start);
+			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ), second_start);
 		}
 
 		//update foldtree to new foldtree

@@ -23,6 +23,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
+#include <core/pose/util.hh>
+
 #include <core/kinematics/FoldTree.hh>
 
 
@@ -96,25 +98,21 @@ public:
 		core::Real score1 = (*scorefxn)(pose);
 
 		// add jump to vrt res
-		TS_ASSERT( pose.residue(1).residue_type_set()->has_name("VRT") );
+		pose.append_residue_by_jump
+			( *core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose( pose ) ),
+			pose.size()/2 );
 
-		if ( pose.residue(1).residue_type_set()->has_name("VRT") ) {
-			pose.append_residue_by_jump
-				( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
-				pose.size()/2 );
+		// make the virt atom the root
+		kinematics::FoldTree newF(pose.fold_tree());
+		newF.reorder( pose.size() );
+		pose.fold_tree( newF );
 
-			// make the virt atom the root
-			kinematics::FoldTree newF(pose.fold_tree());
-			newF.reorder( pose.size() );
-			pose.fold_tree( newF );
+		// 2) rescore structure w/ virtual res
+		core::Real score2 = (*scorefxn)(pose);
+		core::Real score_dev = std::fabs(score1 - score2);
 
-			// 2) rescore structure w/ virtual res
-			core::Real score2 = (*scorefxn)(pose);
-			core::Real score_dev = std::fabs(score1 - score2);
-
-			TR << "centroid-mode score deviation = " << score_dev << std::endl;
-			TS_ASSERT( score_dev < tol );
-		}
+		TR << "centroid-mode score deviation = " << score_dev << std::endl;
+		TS_ASSERT( score_dev < tol );
 	}
 
 
@@ -148,7 +146,7 @@ public:
 
 		// add jump to vrt res
 		pose.append_residue_by_jump
-			( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
+			( *core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose( pose ) ),
 			pose.size()/2 );
 
 		// make the virt atom the root

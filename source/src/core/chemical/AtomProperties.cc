@@ -31,6 +31,15 @@
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.AtomProperties" );
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -152,3 +161,25 @@ operator++( AtomProperty & property )
 
 }  // namespace chemical
 }  // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AtomProperties::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom_property_status_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AtomProperties::load( Archive & arc ) {
+	arc( atom_property_status_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AtomProperties );
+CEREAL_REGISTER_TYPE( core::chemical::AtomProperties )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_AtomProperties )
+#endif // SERIALIZATION

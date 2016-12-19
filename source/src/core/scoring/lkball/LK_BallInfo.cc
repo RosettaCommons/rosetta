@@ -670,7 +670,7 @@ template< class Archive >
 void
 core::scoring::lkball::LKB_ResidueInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	core::chemical::serialize_residue_type( arc, rsd_type_ );
+	arc( CEREAL_NVP( rsd_type_ ) );
 	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vectors>
 	arc( CEREAL_NVP( dwater_datom1_ ) );
 	arc( CEREAL_NVP( dwater_datom2_ ) );
@@ -684,7 +684,7 @@ template< class Archive >
 void
 core::scoring::lkball::LKB_ResidueInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	core::chemical::deserialize_residue_type( arc, rsd_type_ ); // const chemical::ResidueTypeCOP;
+	arc( rsd_type_ );
 	arc( waters_ ); // utility::vector1<Vectors>
 	arc( dwater_datom1_ );
 	arc( dwater_datom2_ );

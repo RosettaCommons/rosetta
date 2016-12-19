@@ -34,6 +34,16 @@
 #include <utility/io/util.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -67,6 +77,10 @@ mrb_from_name( std::string const & mrb ) {
 	utility_exit_with_message( "Unable to convert string \"" + mrb + "\" to a merge residue behavior" );
 	return mrb_do_not_merge;
 }
+
+MergeBehaviorManager::MergeBehaviorManager() :
+	no_behavior_( std::make_pair( mrb_do_not_merge, AtomRenamingMap() ) )
+{}
 
 MergeBehaviorManager::MergeBehaviorManager( std::string const & database_directory ) :
 	no_behavior_( std::make_pair( mrb_do_not_merge, AtomRenamingMap() ) )
@@ -127,3 +141,24 @@ MergeBehaviorManager::read_merge_behaviors_from_database_file( std::string const
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::MergeBehaviorManager::save( Archive & arc ) const {
+	arc( CEREAL_NVP( merge_behaviors_ ) ); // MergeBehaviorMap
+	arc( CEREAL_NVP( no_behavior_ ) ); // ResidueMergeInstructions
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::MergeBehaviorManager::load( Archive & arc ) {
+	arc( merge_behaviors_ ); // MergeBehaviorMap
+	arc( no_behavior_ ); // ResidueMergeInstructions
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::MergeBehaviorManager );
+#endif // SERIALIZATION

@@ -28,8 +28,8 @@
 ///
 /// @author Steven Combs
 ////////////////////////////////////////////////////////////////////////
-#ifndef INCLUDED_core_chemical_ResiduePredicates_hh
-#define INCLUDED_core_chemical_ResiduePredicates_hh
+#ifndef INCLUDED_core_chemical_ResidueGraphTypes_hh
+#define INCLUDED_core_chemical_ResidueGraphTypes_hh
 
 // Unit headers
 #include <core/chemical/Atom.hh> // needed full header for ResidueGraph def
@@ -41,7 +41,6 @@
 #include <utility>
 
 // Package headers
-
 
 namespace core {
 namespace chemical {

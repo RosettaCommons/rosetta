@@ -28,7 +28,9 @@
 // Core headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
@@ -217,15 +219,16 @@ public:
 		using namespace core::chemical;
 		using namespace protocols::denovo_design::components;
 
+		core::pose::Pose input_pose;
+
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
-		utility::vector1< std::string > params_files;
-		ResidueTypeSetCOP const_residue_set = ResidueTypeSetCOP( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if ( !residue_set.has_name("D2I") ) params_files.push_back("devel/denovo_design/D2I.params");
-		residue_set.read_files_for_custom_residue_types(params_files);
-
-		core::pose::Pose input_pose;
+		if ( ! input_pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("D2I") ) {
+			core::chemical::PoseResidueTypeSetOP mod_set = input_pose.conformation().modifiable_residue_type_set_for_conf( FULL_ATOM_t );
+			mod_set->add_unpatchable_residue_type("devel/denovo_design/D2I.params");
+			input_pose.conformation().reset_residue_type_set_for_conf(mod_set);
+		}
+		TS_ASSERT( input_pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("D2I") );
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/components/test_enz_remark_input.pdb" );
 		TS_ASSERT( input_pose.pdb_info() );
 

@@ -19,6 +19,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/util.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
@@ -143,7 +144,7 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 
 	// add VRT res for coord constraints
 	pose.append_residue_by_jump
-		( *conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
+		( *conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ),
 		pose.size()/2 );
 	int virt_resno = pose.size();
 	core::scoring::func::FuncOP func( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );

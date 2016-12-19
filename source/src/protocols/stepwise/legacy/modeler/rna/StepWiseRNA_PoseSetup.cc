@@ -935,8 +935,7 @@ StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ) {  //F
 		return;
 	}
 
-	core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3( "VRT" ) );
+	core::chemical::ResidueTypeCOP rsd_type( core::pose::virtual_type_for_pose(pose) );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	if ( working_moving_res == 1 ) {
 		pose.append_residue_by_jump( *new_res, nres );

@@ -31,6 +31,12 @@
 #include <map>
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -256,6 +262,13 @@ private:  // Private data /////////////////////////////////////////////////////
 
 	// Arbitrary string properties with string names.
 	std::map<std::string,std::string> string_properties_;
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< ResidueProperties > & construct );
+#endif // SERIALIZATION
+
 };
 
 
@@ -270,5 +283,10 @@ VariantType & operator++( VariantType & variant );
 
 }  // namespace chemical
 }  // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ResidueProperties )
+#endif // SERIALIZATION
+
 
 #endif  // INCLUDED_core_chemical_ResidueProperties_HH

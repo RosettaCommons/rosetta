@@ -15,7 +15,7 @@
 #include <core/chemical/residue_io.hh>
 
 // Package headers
-#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
@@ -147,6 +147,33 @@ define_mainchain_atoms( ResidueTypeOP rsd )
 	return mainchain;
 }
 
+ResidueTypeOP
+read_topology_file(
+	std::string const & filename,
+	chemical::ResidueTypeSetCOP rsd_type_set
+) {
+	debug_assert( rsd_type_set );
+	return read_topology_file(
+		filename,
+		rsd_type_set->atom_type_set(),
+		rsd_type_set->element_set(),
+		rsd_type_set->mm_atom_type_set(),
+		rsd_type_set->orbital_type_set() );
+}
+
+ResidueTypeOP
+read_topology_file(
+	utility::io::izstream & istream,
+	chemical::ResidueTypeSetCOP rsd_type_set
+) {
+	debug_assert( rsd_type_set );
+	return read_topology_file(
+		istream,
+		rsd_type_set->atom_type_set(),
+		rsd_type_set->element_set(),
+		rsd_type_set->mm_atom_type_set(),
+		rsd_type_set->orbital_type_set() );
+}
 
 ResidueTypeOP
 read_topology_file(
@@ -154,9 +181,7 @@ read_topology_file(
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-	// chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
-	chemical::ResidueTypeSetCAP rsd_type_set
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types
 )
 {
 	std::string full_filename = filename;
@@ -170,7 +195,7 @@ read_topology_file(
 	if ( !data.good() ) {
 		utility_exit_with_message("Cannot open file '"+full_filename+"'");
 	}
-	return read_topology_file(data, atom_types, elements, mm_atom_types, orbital_atom_types, rsd_type_set);
+	return read_topology_file(data, atom_types, elements, mm_atom_types, orbital_atom_types );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -556,9 +581,7 @@ read_topology_file(
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-	//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
-	chemical::ResidueTypeSetCAP rsd_type_set_ap )
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types )
 {
 
 	using id::AtomID;
@@ -596,9 +619,9 @@ read_topology_file(
 
 	std::map< std::string, std::string > atom_type_reassignments;
 	std::map< std::string, Real > atomic_charge_reassignments;
-	if ( rsd_type_set_ap.lock() ) {
-		setup_atom_type_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atom_type_reassignments );
-		setup_atomic_charge_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atomic_charge_reassignments );
+	if ( atom_types.lock() ) {
+		setup_atom_type_reassignments_from_commandline( myname, atom_types.lock()->mode(), atom_type_reassignments );
+		setup_atomic_charge_reassignments_from_commandline( myname, atom_types.lock()->mode(), atomic_charge_reassignments );
 	}
 
 	// Decide what type of Residue to instantiate.
@@ -614,9 +637,6 @@ read_topology_file(
 	// of stub atoms, etc., etc.
 
 	ResidueTypeOP rsd( new ResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
-	if ( ! rsd_type_set_ap.expired() ) {
-		rsd->residue_type_set( rsd_type_set_ap );  // Give this rsd_type a backpointer to its set.
-	}
 
 	// Add the atoms.
 	Size const nlines( lines.size() );
@@ -822,7 +842,7 @@ read_topology_file(
 			}
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling ]
 					&& (rsd->aa() == aa_ser || rsd->aa() == aa_thr )
-					&& rsd_type_set_ap.lock() && rsd_type_set_ap.lock()->category() == FULL_ATOM_t ) {
+					&& atom_types.lock() && atom_types.lock()->mode() == FULL_ATOM_t ) {
 				// ugly, temporary hack. change the sampling for serine and threonine chi2 sampling
 				// so that proton chi rotamers are sampled ever 20 degrees
 				tr << "Expanding chi2 sampling for amino acid " << rsd->aa() << std::endl;
@@ -1125,8 +1145,8 @@ read_topology_file(
 	// also sets up base_atom
 	{
 		std::map< std::string, utility::vector1< std::string > > icoor_reassignments;
-		if ( rsd_type_set_ap.lock() ) {
-			setup_icoor_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), icoor_reassignments );
+		if ( atom_types.lock() ) {
+			setup_icoor_reassignments_from_commandline( myname, atom_types.lock()->mode(), icoor_reassignments );
 		}
 
 		std::map< std::string, Vector > rsd_xyz;  // The coordinates of each atom in the residue.
@@ -1565,7 +1585,7 @@ set_up_mapfile_reassignments_from_commandline(
 void
 setup_atom_type_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, std::string > & atom_type_reassignments
 )
 {
@@ -1588,8 +1608,8 @@ setup_atom_type_reassignments_from_commandline(
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
-		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
-		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+		TypeSetMode mod_rsd_type_set_mode( type_set_mode_from_string( mod.substr(0,pos1) ) );
+		if ( mod_rsd_type_set_mode != rsd_type_set_mode ) continue;
 
 		Size const pos2( mod.substr(pos1+1).find(":") );
 		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
@@ -1602,7 +1622,7 @@ setup_atom_type_reassignments_from_commandline(
 
 		std::string const new_atom_type_name( mod.substr(pos1+1+pos2+1+pos3+1) );
 
-		tr.Trace << "setup_atom_type_reassignments_from_commandline: reassigning " << rsd_type_set_name << ' ' << rsd_type_name << ' ' << atom_name << " to new atomtype: " << new_atom_type_name << std::endl;
+		tr.Trace << "setup_atom_type_reassignments_from_commandline: reassigning " << rsd_type_set_mode << ' ' << rsd_type_name << ' ' << atom_name << " to new atomtype: " << new_atom_type_name << std::endl;
 
 		atom_type_reassignments[ atom_name ] = new_atom_type_name;
 	}
@@ -1613,7 +1633,7 @@ setup_atom_type_reassignments_from_commandline(
 void
 setup_atomic_charge_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, Real > & atomic_charge_reassignments
 )
 {
@@ -1636,8 +1656,8 @@ setup_atomic_charge_reassignments_from_commandline(
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
-		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
-		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+		TypeSetMode mod_rsd_type_set_mode( type_set_mode_from_string( mod.substr(0,pos1) ) );
+		if ( mod_rsd_type_set_mode != rsd_type_set_mode ) continue;
 
 		Size const pos2( mod.substr(pos1+1).find(":") );
 		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
@@ -1653,7 +1673,7 @@ setup_atomic_charge_reassignments_from_commandline(
 		if ( !ObjexxFCL::is_float( new_atomic_charge_string ) ) utility_exit_with_message(errmsg);
 		Real const new_atomic_charge( ObjexxFCL::float_of( new_atomic_charge_string ) );
 
-		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_name << ' ' << rsd_type_name << ' ' << atom_name << " to " << new_atomic_charge << std::endl;
+		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_mode << ' ' << rsd_type_name << ' ' << atom_name << " to " << new_atomic_charge << std::endl;
 
 		atomic_charge_reassignments[ atom_name ] = new_atomic_charge;
 	}
@@ -1664,7 +1684,7 @@ setup_atomic_charge_reassignments_from_commandline(
 void
 setup_icoor_reassignments_from_commandline(
 	std::string const & rsd_type_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
 )
 {
@@ -1686,8 +1706,8 @@ setup_icoor_reassignments_from_commandline(
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
-		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
-		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+		TypeSetMode mod_rsd_type_set_mode( type_set_mode_from_string( mod.substr(0,pos1) ) );
+		if ( mod_rsd_type_set_mode != rsd_type_set_mode ) continue;
 
 		Size const pos2( mod.substr(pos1+1).find(":") );
 		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
@@ -1704,7 +1724,7 @@ setup_icoor_reassignments_from_commandline(
 		runtime_assert( ObjexxFCL::is_float( new_icoor_params[2] ) );
 		runtime_assert( ObjexxFCL::is_float( new_icoor_params[3] ) );
 
-		tr.Trace << "setup_icoor_reassignments_from_commandline: reassigning " << rsd_type_set_name << ' ' <<
+		tr.Trace << "setup_icoor_reassignments_from_commandline: reassigning " << rsd_type_set_mode << ' ' <<
 			rsd_type_name << ' ' << atom_name << " to new icoor params: ";
 		for ( Size i=1; i<= 6; ++i ) tr.Trace << ' ' << new_icoor_params[i];
 		tr.Trace << std::endl;

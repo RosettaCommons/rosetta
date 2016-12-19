@@ -129,7 +129,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 	core::pose::Pose save_pose = pose;
 	if ( !ligres_ ) {
 		ligres_ = core::conformation::ResidueFactory::create_residue(
-			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map(
+			pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t )->name_map(
 			basic::options::option[ basic::options::OptionKeys::match::lig_name ] ) );
 	}
 

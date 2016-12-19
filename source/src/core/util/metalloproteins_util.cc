@@ -19,6 +19,7 @@
 // Package headers
 #include <core/pose/copydofs/CopyDofs.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -105,7 +106,7 @@ add_covalent_linkage_helper(
 
 	std::string res_type_mod_name( current_residue_type_basename + ':' + res_patchname + current_residue_type_patches_name );
 
-	conformation::Residue new_res( res.residue_type_set()->name_map( res_type_mod_name ), true);
+	conformation::Residue new_res( core::pose::get_restype_for_pose( pose, res_type_mod_name, res.type().mode() ), true);
 
 	// Temporarily make a copy of the old residue:
 	conformation::Residue old_res = ( *res.clone() );

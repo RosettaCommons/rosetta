@@ -16,6 +16,7 @@
 #include <test/util/pdb1rpb.hh>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
+#include <test/util/symmetry_funcs.hh>
 
 // Unit headers
 #include <core/scoring/ScoringManager.hh>
@@ -65,46 +66,6 @@ public:
 	}
 
 	void tearDown() {
-	}
-
-	/// @brief Given a residue type, get its mirror-image type.
-	///
-	core::chemical::ResidueType const & get_mirror_type( core::chemical::ResidueType const &master_type ) {
-		if ( !master_type.is_l_aa() && !master_type.is_d_aa() ) return master_type;
-		core::chemical::ResidueTypeSet const & residue_type_set = *master_type.residue_type_set();
-		if ( master_type.is_l_aa() ) {
-			return residue_type_set.name_map( "D"+master_type.name() );
-		}
-		return residue_type_set.name_map( master_type.name().substr(1) );
-	}
-
-	/// @brief Given a pose, flip the L-residues to D-residues.
-	///
-	void flip_residues( core::pose::Pose &pose ) {
-		// Create the new residue and replace it
-		for ( core::Size ir=1, irmax=pose.size(); ir<=irmax; ++ir ) {
-			core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( get_mirror_type( pose.residue(ir).type() ), pose.residue( ir ), pose.conformation());
-			core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( ir ), *new_res, pose.conformation(), true );
-			pose.replace_residue( ir, *new_res, false );
-		}
-	}
-
-	/// @brief Given a pose, construct its mirror image.
-	///
-	void mirror_pose( core::pose::Pose const &master, core::pose::Pose &mirror) {
-
-		for ( core::Size ir=1, irmax=mirror.size(); ir<=irmax; ++ir ) {
-			for ( core::Size ia=1, iamax=mirror.residue(ir).type().natoms(); ia<=iamax; ++ia ) {
-				core::id::AtomID const curatom(ia, ir);
-				numeric::xyzVector<core::Real> xyztemp( master.xyz( curatom ) );
-				xyztemp.z( -1.0*xyztemp.z() );
-				mirror.set_xyz( curatom, xyztemp );
-			}
-		}
-
-		mirror.update_residue_neighbors();
-
-		return;
 	}
 
 	/// @brief Run the minimizer on the pose.

@@ -25,6 +25,12 @@
 #include <map>
 #include <set>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -39,6 +45,9 @@ public:
 
 	//destructor
 	~ResidueTypeSetCache() override;
+
+	ResidueTypeSetCacheOP
+	clone( ResidueTypeSet const & rsd_type_set ) const;
 
 public:
 
@@ -77,8 +86,30 @@ public:
 
 	void clear_cached_maps();
 
+	/// @brief information on residue types whose name3's can be changed by patches.
+	std::map< std::string, std::set< std::string > > const &
+	name3_generated_by_base_residue_name() {
+		if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
+		return name3_generated_by_base_residue_name_;
+	}
+
+	/// @brief interchangeability groups that appear upon patch application.
+	std::map< std::string, std::set< std::string > > const &
+	interchangeability_group_generated_by_base_residue_name() {
+		if ( ! cache_up_to_date_ ) { regenerate_cached_maps(); }
+		return interchangeability_group_generated_by_base_residue_name_;
+	}
+
 private:
 
+	void regenerate_cached_maps();
+
+private:
+	// Default constructor and copy constructor don't make sense, due to the need for a ResidueTypeSet reference: use clone() instead.
+	ResidueTypeSetCache() = delete;
+	ResidueTypeSetCache( ResidueTypeSetCache const & ) = delete;
+
+private:
 	ResidueTypeSet const & rsd_type_set_;
 
 	////////////////////////////////////////////////////////////////////////////
@@ -92,21 +123,47 @@ private:
 	std::set< std::string > prohibited_types_;
 
 	////////////////////////////////////////////////////////////////////////////
-	// Following can get recomputed if custom_residue_types are
-	// added to the ResidueTypeSet -- flag such an event through 'up_to_date'
+	// These pieces of cached data can get recomputed on the fly.
 	////////////////////////////////////////////////////////////////////////////
+
 	/// @brief map to ResidueType pointers by AA enum -- may deprecate soon.
-	std::map< AA, ResidueTypeCOPs > aa_map_;
+	//std::map< AA, ResidueTypeCOPs > aa_map_;
 
 	/// @brief map to ResidueType pointers by 3-letter string name -- may deprecate soon.
-	std::map< std::string, ResidueTypeCOPs > name3_map_;
+	//std::map< std::string, ResidueTypeCOPs > name3_map_;
 
 	/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
+	///
 	std::map< AA_VariantsExceptions, ResidueTypeCOPs > cached_aa_variants_map_;
+
+	///////////////////////////////////////////////////////////////////////////
+	// These need to be recomputed in a batchwise fashion,
+	// as signaled by cache_up_to_date_
+	//////////////////////////////////////////////////////////////////////////
+
+	/// @brief True if the (batch) computed cached data is up to date.
+	bool cache_up_to_date_ = false;
+
+	/// @brief information on residue types whose name3's can be changed by patches.
+	std::map< std::string, std::set< std::string > > name3_generated_by_base_residue_name_;
+
+	/// @brief interchangeability groups that appear upon patch application.
+	std::map< std::string, std::set< std::string > > interchangeability_group_generated_by_base_residue_name_;
+
+#ifdef    SERIALIZATION
+public:
+	friend class cereal::access;
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< ResidueTypeSetCache > & construct );
+#endif // SERIALIZATION
 
 };
 
 } //chemical
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ResidueTypeSetCache )
+#endif // SERIALIZATION
 
 #endif

@@ -20,6 +20,16 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -109,3 +119,35 @@ NCAARotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const & r
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::NCAARotamerLibrarySpecification::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( CEREAL_NVP( ncaa_rotlib_path_ ) ); // std::string
+	arc( CEREAL_NVP( ncaa_rotlib_n_bins_per_rot_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( semirotameric_ncaa_rotlib_ ) ); // _Bool
+	arc( CEREAL_NVP( nrchi_symmetric_ ) ); // _Bool
+	arc( CEREAL_NVP( nrchi_start_angle_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::NCAARotamerLibrarySpecification::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( ncaa_rotlib_path_ ); // std::string
+	arc( ncaa_rotlib_n_bins_per_rot_ ); // utility::vector1<Size>
+	arc( semirotameric_ncaa_rotlib_ ); // _Bool
+	arc( nrchi_symmetric_ ); // _Bool
+	arc( nrchi_start_angle_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::NCAARotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::NCAARotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_NCAARotamerLibrarySpecification )
+#endif // SERIALIZATION

@@ -2032,9 +2032,7 @@ void RemodelLoopMover::loophash_stage(
 		for ( core::Size i = 1; i <= max_res; ++i ) {
 			residue_indices.push_back(i);
 		}
-		ResidueTypeSetCOP residue_set(
-			ChemicalManager::get_instance()->residue_type_set( CENTROID )
-		);
+		ResidueTypeSetCOP residue_set( constantPose.residue_type_set_for_pose( CENTROID_t ) );
 		core::io::pose_from_pose(*pose_for_rt, constantPose, *residue_set, residue_indices);
 
 		core::kinematics::FoldTree f;
@@ -3778,8 +3776,8 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 	for ( Size ii=1; ii<=swap_sequence.size(); ++ii ) {
 		char aa = swap_sequence[ii-1];
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
-		ResidueType const & rsd_type( *( residue_set.lock()->get_representative_type_aa( my_aa ) ) );
+		ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( core::chemical::CENTROID_t ) );
+		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa ) ) );
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);//pose has two coppies. This is the first
 			replace_pose_residue_copying_existing_coordinates(pose,ii+swap_sequence.size(),rsd_type);

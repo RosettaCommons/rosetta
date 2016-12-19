@@ -31,6 +31,7 @@
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
 
 #include <core/conformation/Residue.hh>
@@ -87,23 +88,8 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-run::preserve_header" );
+		core_init_with_additional_options( "-run::preserve_header -extra_res_fa devel/znhash/ZNX.params" );
 		//core_init_with_additional_options( "-run::preserve_header -symmetry:symmetry_definition devel/znhash/symm_def_file_cn4_generic -symmetry:initialize_rigid_body_dofs" );
-		if ( ! core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->
-				has_name( "ZNX" ) ) {
-			// We haven't yet read in the ZNX parameter file
-			core::chemical::ResidueTypeOP znx_restype = read_topology_file(
-				"devel/znhash/ZNX.params",
-				core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD ),
-				core::chemical::ChemicalManager::get_instance()->element_set( "default" ),
-				core::chemical::ChemicalManager::get_instance()->mm_atom_type_set( core::chemical::FA_STANDARD ),
-				core::chemical::ChemicalManager::get_instance()->orbital_type_set( core::chemical::FA_STANDARD ),
-				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
-			);
-			core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ).
-				add_custom_residue_type( znx_restype );
-		}
-
 	}
 
 	// Shared finalization goes here.

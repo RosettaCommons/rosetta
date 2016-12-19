@@ -881,8 +881,7 @@ std::string annotated_to_oneletter_sequence(
 	return oneletter_seq;
 }
 
-/// @details ResidueTypeFinder finds simplest residue type with this AA & requested termini. Compare to
-///          get_rsd_type_from_aa_legacy, which was the old style. -- rhiju.
+/// @details ResidueTypeFinder finds simplest residue type with this AA & requested termini.
 chemical::ResidueTypeCOP
 get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
 	chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )

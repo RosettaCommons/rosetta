@@ -167,7 +167,7 @@ nucleobase_probe_score_test()
 	pose.dump_pdb(out_prefix +  "a_rotated.pdb" );
 
 	add_virtual_res(pose);
-	core::chemical::ResidueTypeSet const & residue_set = *pose.residue_type ( 1 ).residue_type_set();
+	core::chemical::ResidueTypeSet const & residue_set = *pose.residue_type_set_for_pose();
 
 	core::conformation::ResidueOP new_res;
 

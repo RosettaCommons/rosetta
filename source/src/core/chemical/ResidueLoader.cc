@@ -50,13 +50,9 @@ ResidueLoader::create_resource(
 
 	ResidueLoaderOptions const & residue_options = static_cast<ResidueLoaderOptions const & >(options);
 
-	AtomTypeSetCOP atom_type_set = ChemicalManager::get_instance()->atom_type_set(residue_options.atom_type_set_tag());
-	ElementSetCOP element_set = ChemicalManager::get_instance()->element_set(residue_options.element_set_tag());
-	MMAtomTypeSetCOP mm_atom_type_set = ChemicalManager::get_instance()->mm_atom_type_set(residue_options.mm_atom_type_set_tag());
-	orbitals::OrbitalTypeSetCOP orbital_type_set = ChemicalManager::get_instance()->orbital_type_set(residue_options.orbital_set_tag());
-	ResidueTypeSetCOP residue_type_set = ChemicalManager::get_instance()->residue_type_set(residue_options.residue_type_set_tag());
+	ResidueTypeSetCOP residue_type_set( ChemicalManager::get_instance()->residue_type_set(residue_options.residue_type_set_tag()) );
 
-	ResidueTypeOP new_residue_type(read_topology_file(locator_id,atom_type_set,element_set,mm_atom_type_set,orbital_type_set,residue_type_set));
+	ResidueTypeOP new_residue_type( read_topology_file(locator_id, residue_type_set) );
 	return new_residue_type;
 
 }

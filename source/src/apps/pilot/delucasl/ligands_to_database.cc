@@ -52,14 +52,6 @@ int main(int argc, char*argv[])
 			basic::database::get_db_session(database_mode, database_name, database_pq_schema));
 		residue_database_io.initialize(db_session);
 
-		core::chemical::AtomTypeSetCAP atom_types =
-			core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		core::chemical::MMAtomTypeSetCAP mm_atom_types =
-			core::chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
-		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types =
-			core::chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
-		core::chemical::ElementSetCAP element_set =
-			core::chemical::ChemicalManager::get_instance()->element_set("default");
 		core::chemical::ResidueTypeSetCOP residue_types =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
@@ -67,8 +59,7 @@ int main(int argc, char*argv[])
 
 		for ( utility::vector1<std::string>::iterator res_file_it= res_file_paths.begin(); res_file_it != res_file_paths.end(); ++res_file_it ) {
 			std::string params_file_path = *res_file_it;
-			core::chemical::ResidueTypeOP new_residue_type = core::chemical::read_topology_file(
-				params_file_path,atom_types,element_set,mm_atom_types,orbital_types,residue_types);
+			core::chemical::ResidueTypeOP new_residue_type = core::chemical::read_topology_file( params_file_path, residue_types );
 
 			residue_database_io.write_residuetype_to_database("fa_standard",*new_residue_type,db_session);
 		}

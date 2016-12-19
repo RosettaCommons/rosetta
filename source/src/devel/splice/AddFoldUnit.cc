@@ -291,7 +291,7 @@ FoldUnitUtils::pose_from_fragment_info( core::pose::Pose & pose, PoseFragmentInf
 	}
 	// impose the dihedral angles
 	using namespace core::chemical;
-	ResidueTypeSetCOP residue_set( pose.size() ? pose.residue( 1 ).residue_type_set() : ChemicalManager::get_instance()->residue_type_set( CENTROID ) ); // residuetypeset is noncopyable
+	ResidueTypeSetCOP residue_set( pose.size() ? pose.residue_type_set_for_pose() : ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 	core::pose::make_pose_from_sequence( pose, seq, *residue_set );
 	/// set bb dofs
 	Size start( 1 );

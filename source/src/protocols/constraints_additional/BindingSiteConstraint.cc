@@ -204,7 +204,7 @@ BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & 
 		bool aln_cent_i = false;
 
 		// is pose centroid?? then we need to remap atmids
-		if ( rsd_type.residue_type_set()->category() == core::chemical::CENTROID_t && atms_[i].atomno() > 5 ) {
+		if ( rsd_type.mode() == core::chemical::CENTROID_t && atms_[i].atomno() > 5 ) {
 			//std::cerr << "ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << "  (" << pose.residue( atms_[i].rsd()  ).natoms() << ")" << std::endl;
 			//std::cerr << "Remapping ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << " to CENTROID" << std::endl;
 			atm_i = core::id::AtomID( xyz.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );

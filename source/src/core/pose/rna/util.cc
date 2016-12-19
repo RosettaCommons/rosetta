@@ -30,6 +30,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Info.hh>
@@ -75,7 +76,7 @@ mutate_position( pose::Pose & pose, Size const i, char const new_seq ) {
 
 	if ( new_seq == pose.sequence()[i-1] ) return false;
 
-	ResidueTypeSetCOP rsd_set = pose.residue_type( i ).residue_type_set();
+	ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( pose.residue_type( i ).mode() );
 
 	ResidueProperty base_property = ( pose.residue_type( i ).is_RNA() ) ? RNA : NO_PROPERTY;
 	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type() );
@@ -120,7 +121,7 @@ mutate_position( pose::Pose & pose, Size const i, std::string const & name3 ) {
 
 	if ( name3 == special_res[i-1] ) return false;
 
-	ResidueTypeSetCOP rsd_set = pose.residue_type( i ).residue_type_set();
+	ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( pose.residue_type( i ).mode() );
 
 	ResidueProperty base_property = ( pose.residue_type( i ).is_RNA() ) ? RNA : NO_PROPERTY;
 	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name3( name3 ).variants( pose.residue_type(i).variant_types() ).base_property( base_property ).get_representative_type() );
@@ -610,7 +611,7 @@ position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
 
 	if ( three_prime_chainbreak == 0 ) three_prime_chainbreak = five_prime_chainbreak + 1;
 
-	static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	static const ResidueTypeSetCOP rsd_set = current_pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 
 	chemical::AA res_aa = aa_from_name( "RAD" );
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
@@ -1241,7 +1242,7 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 {
 	using namespace ObjexxFCL;
 	pose::Pose mini_pose;
-	make_pose_from_sequence( mini_pose, "aa", pose.residue_type( 1 ).residue_type_set());
+	make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose() );
 	Real const sign2 = get_op2_op1_sign( mini_pose);
 
 	for ( Size res_num=1; res_num<=pose.size(); res_num++ ) {

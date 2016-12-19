@@ -19,6 +19,7 @@
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 
 // Project Headers
@@ -40,7 +41,7 @@
 using std::endl;
 using std::string;
 
-static basic::Tracer TR("core.chemical.ResidueTypeSetTests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.chemical.ResidueTypeSetTests.cxxtest");
 
 class ResidueTypeSetTests : public CxxTest::TestSuite {
 
@@ -60,107 +61,16 @@ public:
 
 		int width = 15;
 
-		string rss;
-		ResidueTypeSetOP rs;
-		rss = FA_STANDARD;
-		rs = ChemicalManager::get_instance()->nonconst_residue_type_set(rss ).get_self_ptr();
+		GlobalResidueTypeSetOP rs( new GlobalResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
+
 		TR << A(width,"ResidueTypeSet") << A(width,"NumBaseResTypes") << endl;
-		TR << A(width, rss) << I(width,rs->base_residue_types().size()) << endl;
+		TR << A(width, FA_STANDARD) << I(width,rs->base_residue_types().size()) << endl;
 		TR << A(width,"ResidueTypeSet") << A(width,"NumCustomResTypes") << endl;
-		TR << A(width, rss) << I(width,rs->custom_residue_types().size()) << endl;
+		TR << A(width, FA_STANDARD) << I(width,rs->unpatchable_residue_types().size()) << endl;
 
 		ResidueType const & serine = rs->name_map( "SER" );
 		TS_ASSERT_DELTA(serine.mass(), 87.0900, delta_percent);
 
-		ResidueTypeOP modser = serine.clone();
-		modser->nbr_radius( 15.0);
-		modser->name( "bigser" );
-
-		//get some stuff from the residue type set
-		core::Size n_base_res_types   = rs->base_residue_types().size();
-		core::Size n_custom_res_types = rs->custom_residue_types().size();
-		core::Size n_ser_types = ResidueTypeFinder( *rs ).name3( "SER" ).get_all_possible_residue_types().size();
-		core::Size n_gln_types = ResidueTypeFinder( *rs ).name3( "GLN" ).get_all_possible_residue_types().size();
-		core::Size n_ser_aa = ResidueTypeFinder( *rs ).aa( aa_ser ).get_all_possible_residue_types().size();
-
-		//now change the residue type set
-		rs->add_custom_residue_type( modser );
-
-		//now make sure everything is as should be
-		TS_ASSERT( n_base_res_types == rs->base_residue_types().size());
-		TS_ASSERT( n_custom_res_types + 1 == rs->custom_residue_types().size());
-		TS_ASSERT( n_ser_types + 1 == ResidueTypeFinder( *rs ).name3( "SER" ).get_all_possible_residue_types().size() );
-		TS_ASSERT( n_gln_types == ResidueTypeFinder( *rs ).name3( "GLN" ).get_all_possible_residue_types().size() );
-		TS_ASSERT( n_ser_aa + 1 == ResidueTypeFinder( *rs ).aa( aa_ser ).get_all_possible_residue_types().size() );
-		TS_ASSERT( rs->has_name("bigser") );
-	}
-
-
-	void test_extra_params() {
-		using namespace core::chemical;
-		using namespace ObjexxFCL::format;
-
-		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
-		std::vector< std::string > extra_patch_files( 1, "core/chemical/1pqc_test.patch");
-
-		ResidueTypeSetOP rtset( new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
-		rtset->init( extra_params_files, extra_patch_files );
-
-		TS_ASSERT( rtset->has_name3("QC1") );
-		TS_ASSERT( rtset->has_name("QC1") );
-		TS_ASSERT( rtset->has_name("QC1:1pqcTestPatch") );
-
-		ResidueType const & plain( rtset->name_map("QC1") );
-		ResidueType const & decorated( rtset->name_map("QC1:1pqcTestPatch") );
-
-		// This is here mainly to make sure it doesn't crash.
-		ResidueType const & dec_gen( rtset->get_residue_type_with_variant_added( plain, SPECIAL_ROT ) );
-
-		TR << "BASE\tFULL" << std::endl;
-		TR << plain.base_name() << "\t" << plain.name() << std::endl;
-		TR << decorated.base_name() << "\t" << decorated.name() << std::endl;
-		TR << std::endl; TR.flush();
-
-		TS_ASSERT_EQUALS( decorated.name(), "QC1:1pqcTestPatch" );
-		TS_ASSERT_EQUALS( decorated.base_name(), "QC1" );
-		TS_ASSERT_EQUALS( plain.name(), "QC1" );
-		TS_ASSERT_EQUALS( plain.base_name(), "QC1" );
-
-		TS_ASSERT_EQUALS( plain.natoms(), 43 );
-		TS_ASSERT_EQUALS( decorated.natoms(), 48 );
-		TS_ASSERT_EQUALS( dec_gen.natoms(), 48 );
-
-		TS_ASSERT( plain.has("F9") );
-		TS_ASSERT( plain.has("S1") );
-		TS_ASSERT( plain.has("H12") );
-		TS_ASSERT( ! plain.has("OP1") );
-		TS_ASSERT( ! plain.has("3HP2") );
-
-		TS_ASSERT( decorated.has("F9") );
-		TS_ASSERT( dec_gen.has("S1") );
-		TS_ASSERT( ! decorated.has("H12") );
-		TS_ASSERT( dec_gen.has("OP1") );
-		TS_ASSERT( decorated.has("3HP2") );
-
-	}
-
-	void test_delete_residue() {
-		using namespace core::chemical;
-
-		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
-		std::vector< std::string > extra_patch_files;
-
-		ResidueTypeSetOP rtset( new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
-		rtset->init( extra_params_files, extra_patch_files );
-
-		TS_ASSERT(rtset->has_name("QC1"));
-		TS_ASSERT(rtset->has_name3("QC1"));
-
-		// Approved use: we're literally testing if this dangerous function works as expected.
-		rtset->remove_base_residue_type_DO_NOT_USE("QC1");
-
-		TS_ASSERT(!rtset->has_name("QC1"));
-		TS_ASSERT(!rtset->has_name3("QC1"));
 	}
 
 	/// @brief Tests the ability of the ResidueTypeSet to give me the mirror-image ResidueType to a given type.
@@ -168,10 +78,7 @@ public:
 	void test_get_mirror_type() {
 		using namespace core::chemical;
 
-		ResidueTypeSetOP restypeset( new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
-		std::vector< std::string > extra_params_files;
-		std::vector< std::string > extra_patch_files;
-		restypeset->init( extra_params_files, extra_patch_files );
+		GlobalResidueTypeSetOP restypeset( new GlobalResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
 
 		//Test types:
 		ResidueTypeCOP lcys_nterm_cterm( restypeset->name_mapOP("CYS:NtermProteinFull:CtermProteinFull") );

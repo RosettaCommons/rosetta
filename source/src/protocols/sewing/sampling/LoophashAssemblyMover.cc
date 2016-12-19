@@ -629,7 +629,7 @@ LoophashAssemblyMover::build_loop_pose(
 	}
 
 	//Append new loop residues to the pose
-	core::chemical::ResidueTypeSetCOP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID);
+	core::chemical::ResidueTypeSetCOP rs = pose.residue_type_set_for_pose(core::chemical::CENTROID_t);
 	for(core::Size i=0; i<num_new_residues; ++i) {
 		core::conformation::ResidueOP new_rsd( NULL );
 		core::chemical::ResidueTypeCOP type = rs->aa_map(core::chemical::aa_from_oneletter_code(loop_sequence[i+1+n_overlapping_n]))[1];
@@ -804,7 +804,7 @@ LoophashAssemblyMover::parse_my_tag(
 	using namespace basic::options;
 
 	AssemblyMover::parse_my_tag(tag, data, filters, movers, pose);
-	
+
 	if(tag->hasOption("max_loop_segments_to_build")) {
 		max_loop_segments_to_build_ = tag->getOption<core::Size>("max_loop_segments_to_build");
 	}

@@ -125,7 +125,7 @@ bool ShortLoopClosure::apply( Pose const& pose ) {
 	core::pose::make_pose_from_sequence(
 		short_pose,
 		sequence.substr( orig_loop_.start() - 2, orig_loop_.size() + 2 ),
-		*( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ))
+		*( pose.residue_type_set_for_pose( chemical::CENTROID_t ))
 	);
 	short_pose.copy_segment( short_size, pose, 1, orig_loop_.start() - 1 );
 

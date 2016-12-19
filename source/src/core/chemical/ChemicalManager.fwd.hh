@@ -29,11 +29,11 @@ namespace chemical {
 class ChemicalManager;
 
 /// @brief A type set category is the "compatibility class" of a type set.
-/// That is, all e.g. ResidueTypes of a given TypeSetCategory should be
+/// That is, all e.g. ResidueTypes of a given TypeSetMode should be
 /// "compatible" with the scale of modeling resolution, indepenent of if
 /// they're in the same ResidueTypeSet.
-enum TypeSetCategory {
-	/// @brief Don't use this as a category - it exists as an error signal only.
+enum TypeSetMode {
+	/// @brief Don't use this as a mode - it exists as an error signal only.
 	INVALID_t = 0,
 	/// @brief Full atom modeling - all atoms are represented
 	FULL_ATOM_t = 1,
@@ -51,9 +51,9 @@ enum TypeSetCategory {
 	HYBRID_FA_STANDARD_CENTROID_t,
 	/// @brief ???
 	COARSE_RNA_t,
-	/// @brief MIXED is not an actual category, but is instead used for a a mixed TypeSetCategory situation
+	/// @brief MIXED is not an actual mode, but is instead used for a a mixed TypeSetMode situation
 	MIXED_t,
-	TYPE_SET_CATEGORIES_LENGTH = MIXED_t // keep at end
+	TYPE_SET_MODES_LENGTH = MIXED_t // keep at end
 };
 
 extern std::string const FA_STANDARD;

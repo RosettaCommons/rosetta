@@ -33,6 +33,16 @@
 #include <fstream>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -210,3 +220,35 @@ Metapatch::atoms( ResidueType const & rsd_type ) const
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Metapatch::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( types_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( cases_ ) ); // utility::vector1<PatchCaseOP>
+	arc( CEREAL_NVP( pertinent_property_ ) ); // chemical::AtomProperty
+	arc( CEREAL_NVP( case_lines_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( selector_ ) ); // class core::chemical::ResidueTypeSelector
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Metapatch::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( types_ ); // utility::vector1<std::string>
+	arc( cases_ ); // utility::vector1<PatchCaseOP>
+	arc( pertinent_property_ ); // chemical::AtomProperty
+	arc( case_lines_ ); // utility::vector1<std::string>
+	arc( selector_ ); // class core::chemical::ResidueTypeSelector
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Metapatch );
+CEREAL_REGISTER_TYPE( core::chemical::Metapatch )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_Metapatch )
+#endif // SERIALIZATION

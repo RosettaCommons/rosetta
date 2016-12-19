@@ -616,8 +616,8 @@ void RemodelMover::apply( Pose & pose ) {
 					build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
 				}
 				for ( Size i = 1; i<= len_diff; ++i ) {
-					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
+					core::chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose(pose, build_aa_type ) );
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
 					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.size()-1);
 					pose.set_omega(pose.size()-1,180);
@@ -640,7 +640,7 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
 			for ( Size i = 1; i<= len_diff*2; ++i ) { //all new residues are appended on the end.
-				core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+				core::chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose();
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
@@ -712,8 +712,8 @@ void RemodelMover::apply( Pose & pose ) {
 				Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 				// append a tail of the same length
 				for ( Size i = 1; i<= len_diff; ++i ) {
-					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("ALA") ) );
+					core::chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose(pose, "ALA" ) );
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
 					pose.pdb_info()->obsolete(true);
 					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.size()-1);
@@ -1558,8 +1558,8 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
-	core::chemical::TypeSetCategory mod_ap_type = modified_archive_pose.conformation().residue_typeset_category(false);
-	if ( mod_ap_type != core::chemical::FULL_ATOM_t ) {
+	core::chemical::TypeSetMode mod_ap_mode = modified_archive_pose.conformation().residue_typeset_mode(false);
+	if ( mod_ap_mode != core::chemical::FULL_ATOM_t ) {
 		core::util::switch_to_residue_type_set( modified_archive_pose, core::chemical::FULL_ATOM_t );
 	}
 	/*

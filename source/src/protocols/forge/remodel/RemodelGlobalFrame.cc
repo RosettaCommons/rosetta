@@ -563,7 +563,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 		residue_indices.push_back(i);
 	}
 	PoseOP singleton_pose( new Pose );
-	core::chemical::ResidueTypeSetCOP type_set = (pose.residue(1).residue_type_set());
+	core::chemical::ResidueTypeSetCOP type_set = pose.residue_type_set_for_pose();
 	core::io::pose_from_pose( *singleton_pose, pose, *type_set, residue_indices);
 
 	// However the constraint type maps the same atoms, so we actually need yet another pose, with two copies.

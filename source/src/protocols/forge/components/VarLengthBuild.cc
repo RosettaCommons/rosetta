@@ -307,7 +307,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	// Cache name of the residue type set the BuildInstructions are
 	// using -- currently assume they are all equivalent, as this is
 	// enforced in the BuildInstruction compatibility check.
-	TypeSetCategory bi_rts_type = ( **manager_.begin() ).residue_type_set().category();
+	TypeSetMode bi_rts_mode = ( **manager_.begin() ).residue_type_set().mode();
 
 	// make backup copy for e.g. side-chain transferal later
 	// REPEAT: also used for monomeric repeat
@@ -319,8 +319,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	Original2Modified original2modified; // keep track of old -> new mapping
 	if ( get_last_move_status() == MS_SUCCESS ) {
 		// alter residue type set if necessary
-		if ( pose.conformation().residue_typeset_category() != bi_rts_type ) {
-			core::util::switch_to_residue_type_set( pose, bi_rts_type );
+		if ( pose.conformation().residue_typeset_mode() != bi_rts_mode ) {
+			core::util::switch_to_residue_type_set( pose, bi_rts_mode );
 		}
 
 		// modify
@@ -480,8 +480,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	//archive_pose.dump_pdb("arc_pose_vlb_aft_centroid_build.pdb");
 
 	// flip back to prior residue type set if necessary
-	if ( pose.conformation().residue_typeset_category() != archive_pose.conformation().residue_typeset_category() ) {
-		core::util::switch_to_residue_type_set( pose, archive_pose.conformation().residue_typeset_category() );
+	if ( pose.conformation().residue_typeset_mode() != archive_pose.conformation().residue_typeset_mode() ) {
+		core::util::switch_to_residue_type_set( pose, archive_pose.conformation().residue_typeset_mode() );
 	}
 
 	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {

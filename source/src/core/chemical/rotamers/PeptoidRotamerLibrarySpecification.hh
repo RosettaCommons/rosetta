@@ -31,6 +31,11 @@
 #include <string>
 #include <istream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -87,12 +92,23 @@ private:
 	/// @brief the number of rotamer bins for each chi angle in the Peptoid rotlib
 	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_rotamers_PeptoidRotamerLibrarySpecification )
+#endif // SERIALIZATION
 
 
 #endif

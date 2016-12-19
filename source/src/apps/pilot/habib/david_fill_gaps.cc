@@ -29,6 +29,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -121,7 +122,7 @@ main( int argc, char * argv [] )
 		}
 
 		int last = -100;
-		core::chemical::ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
+		core::chemical::ResidueTypeSet const & rsd_set( *pose.residue_type_set_for_pose() );
 
 		for ( Size i = 1; i <= pose.size(); ++i ) {
 			if ( last == -100 ) {

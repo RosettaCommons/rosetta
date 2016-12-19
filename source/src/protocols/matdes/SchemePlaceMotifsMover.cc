@@ -132,8 +132,8 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	if ( mode_ == "basic" ) {
 		for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 			if ( pose.residue(ir).is_protein() && has_motif[ir] ) {
-				using namespace core::chemical ;
-				core::pose::replace_pose_residue_copying_existing_coordinates( pose, ir, pose.residue(ir).residue_type_set()->name_map("ALA") );
+				core::chemical::ResidueTypeCOP new_restype( core::pose::get_restype_for_pose(pose, "ALA", pose.residue_type(ir).mode() ) );
+				core::pose::replace_pose_residue_copying_existing_coordinates( pose, ir, *new_restype );
 			}
 		}
 		//core::pack::task::PackerTaskOP ptask = task_factory_->create_task_and_apply_taskoperations(pose);

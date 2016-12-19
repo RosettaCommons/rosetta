@@ -18,6 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
 #include <core/chemical/AA.hh>
@@ -477,7 +478,7 @@ packing_specificity_test(
 		}
 	}
 
-	ResidueTypeSetCOP residue_set( start_pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP residue_set( start_pose.residue_type_set_for_pose() );
 
 	tt << "Motif size = " << motif_size << ". Trying " << aa_combinations.size() << " different motif sequences" <<
 		std::endl;

@@ -110,7 +110,7 @@ SurfEnergy::setup_for_derivatives(
 	CacheableAtomID_MapVectorOP cachemap1 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector > ( dat1 );
 	AtomID_Map< xyzVector< Real > > & sasa_derivs(cachemap1->map());
 
-	CacheableDataOP dat2( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
+	CacheableDataOP dat2( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ); // !!! Is this a Typo for DAB_SEV_POSE_INFO?
 	CacheableAtomID_MapVectorOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector > ( dat2 );
 	AtomID_Map< xyzVector< Real > > & sev_derivs(cachemap2->map());
 
@@ -149,7 +149,7 @@ SurfEnergy::eval_atom_derivative(
 	CacheableAtomID_MapVectorCOP cachemap1 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat1 );
 	AtomID_Map<xyzVector<Real> > const & sasa_derivs(cachemap1->map());
 
-	CacheableDataCOP dat2( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
+	CacheableDataCOP dat2( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ); // !!! Is this a Typo for DAB_SEV_POSE_INFO?
 	CacheableAtomID_MapVectorCOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat2 );
 	AtomID_Map<xyzVector<Real> > const & sev_derivs(cachemap2->map());
 

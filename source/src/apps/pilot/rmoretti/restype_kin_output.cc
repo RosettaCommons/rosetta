@@ -48,9 +48,9 @@ main( int argc, char * argv [] )
 
 try {
 
-	  using namespace basic::options;
-	  using namespace basic::options::OptionKeys;
-	  using namespace core::chemical;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
 
 	devel::init(argc, argv);
 
@@ -63,8 +63,6 @@ try {
 	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
 	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 
-	core::chemical::ResidueTypeSet res_set;
-
 	core::chemical::ResidueTypeKinWriter kin_writer;
 
 	// We don't need to load all the residue types - just the extra_res_fa ones.
@@ -76,7 +74,7 @@ try {
 
 		TR << "Processing " << filename << std::endl;
 		core::chemical::ResidueTypeOP restype( read_topology_file(
-				filename, atom_types, elements, mm_atom_types, orbital_types, &res_set ) );
+				filenam, atom_types, elements, mm_atom_types, orbital_types ) );
 
 		std::string kinname( fname.base() + ".kin" );
 

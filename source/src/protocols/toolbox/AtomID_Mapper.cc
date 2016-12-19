@@ -92,12 +92,12 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		//  without weird variants.
 //		Pose pose_without_variants;
 //
-//		// Want to keep any variants for protein stuff though 
+//		// Want to keep any variants for protein stuff though
 //		std::string seq_without_RNA_variants;
 //		for ( core::Size i = 1; i <= pose.total_residue(); ++i ){
 //			char c = pose.residue( i ).name1();
 //			seq_without_RNA_variants += c;
-//			if (!pose.residue( i ).is_RNA()) { 
+//			if (!pose.residue( i ).is_RNA()) {
 //				// get rid of the variants for RNA
 //				// keep the variants for anything other than RNA
 //				if (( !core::chemical::oneletter_code_specifies_aa(c) || core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code(c) ) != pose.residue(i).name() )) {
@@ -119,7 +119,7 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		using namespace core::conformation;
 		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
 			if (!pose.residue( ii ).is_protein()) {
-				ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue( ii ).residue_type_set()->name_map( pose.residue_type( ii ).base_name() ) );
+				ResidueOP new_rsd = ResidueFactory::create_residue( pose.residue_type_set_for_pose( pose.residue_type(ii).mode() )->name_map( pose.residue_type( ii ).base_name() ) );
 				pose_without_variants.replace_residue( ii, *new_rsd, true );
 			}
 		}

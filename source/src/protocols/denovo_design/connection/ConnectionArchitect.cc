@@ -25,6 +25,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // Basic/Utililty headers
 #include <basic/Tracer.hh>
@@ -788,13 +789,13 @@ AreConnectablePredicate::check_distance(
 
 	// get residue and atom from segment 1
 	core::Size const res1 = template1->size();
-	core::chemical::ResidueType const & rtype = template1->residue( res1 ).residue_type_set()->name_map( template1->residue(res1).name3() );
+	core::chemical::ResidueType const & rtype = *core::pose::get_restype_for_pose( *template1, template1->residue(res1).name3(), template1->residue_type( res1 ).mode() );
 	std::string const & aname = rtype.atom_name( rtype.upper_connect_atom() );
 	core::Vector const xyz1 = template1->residue(res1).xyz( aname );
 
 	// get residue and atom from segment 2
 	core::Size const res2 = 1;
-	core::chemical::ResidueType const & rtype2 = template2->residue( res2 ).residue_type_set()->name_map( template2->residue(res2).name3() );
+	core::chemical::ResidueType const & rtype2 = *core::pose::get_restype_for_pose( *template2, template2->residue(res2).name3(), template2->residue_type( res2 ).mode() );
 	std::string const & aname2 = rtype2.atom_name( rtype2.lower_connect_atom() );
 	core::Vector const xyz2 = template2->residue(res2).xyz( aname2 );
 

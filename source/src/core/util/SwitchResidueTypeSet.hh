@@ -52,7 +52,7 @@ switch_to_residue_type_set(
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
-	core::chemical::TypeSetCategory type_set_type,
+	core::chemical::TypeSetMode type_set_mode,
 	bool allow_sloppy_match = false,
 	bool switch_protein_res_only = false,
 	bool keep_energies = false

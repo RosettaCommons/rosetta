@@ -31,6 +31,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -44,8 +50,12 @@ namespace chemical {
 class MMAtomTypeSet : public utility::pointer::ReferenceCount {
 
 public:
-	MMAtomTypeSet();
+	MMAtomTypeSet( std::string const & name = "" );
 	~MMAtomTypeSet() override;
+
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string const &
+	name() const { return name_; }
 
 	/// @brief Number of MM atom types in the set
 	Size
@@ -98,6 +108,9 @@ public:
 	// data
 private:
 
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string name_;
+
 	/// @brief atom_type_index_ lookup map
 	///
 	/// @details atom_type_index_ allows lookup of the atom type index by a string
@@ -111,7 +124,23 @@ private:
 
 };
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an ElementSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void serialize_mm_atom_type_set( Archive & arc, MMAtomTypeSetCOP ptr );
+
+/// @brief Deserialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void deserialize_mm_atom_type_set( Archive & arc, MMAtomTypeSetCOP & ptr );
+#endif // SERIALIZATION
+
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_MMAtomTypeSet )
+
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::MMAtomTypeSet, core::chemical::serialize_mm_atom_type_set, core::chemical::deserialize_mm_atom_type_set )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_chemical_MMAtomTypeSet_HH

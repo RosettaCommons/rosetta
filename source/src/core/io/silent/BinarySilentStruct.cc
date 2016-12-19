@@ -568,9 +568,9 @@ void BinarySilentStruct::fill_pose (
 	ResidueTypeSetCOP residue_set;
 	tr.Debug << "fill_pose: SilentStruct is " << ( fullatom() ? "fullatom" : "centroid" ) << std::endl;
 	if ( fullatom() ) {
-		residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	} else {
-		residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
+		residue_set = pose.residue_type_set_for_pose( CENTROID_t );
 	}
 	fill_pose( pose, *residue_set );
 } // fill_pose

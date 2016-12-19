@@ -246,7 +246,7 @@ RotamerFeatures::report_features(
 		if ( !check_relevant_residues(relevant_residues, residue_number) ) continue;
 
 		Residue const & residue(pose.residue(residue_number));
-		if ( residue.type().residue_type_set()->category() != core::chemical::FULL_ATOM_t ) {
+		if ( residue.type().mode() != core::chemical::FULL_ATOM_t ) {
 			utility_exit_with_message("Attempting to report protein rotamer features for a pose that is not full-atom.");
 		}
 

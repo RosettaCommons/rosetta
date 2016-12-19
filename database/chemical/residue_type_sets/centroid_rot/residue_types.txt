@@ -1,5 +1,5 @@
 ## the atom_type_set and mm-atom_type_set to be used for the subsequent parameter files
-TYPE_SET_CATEGORY centroid_rot
+TYPE_SET_MODE centroid_rot
 ATOM_TYPE_SET centroid_rot
 ELEMENT_SET default
 MM_ATOM_TYPE_SET fa_standard

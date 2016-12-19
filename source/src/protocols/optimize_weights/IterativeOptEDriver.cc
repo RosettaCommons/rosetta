@@ -4271,7 +4271,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					}
 				} else {
 					core::io::silent::SilentStructOP ss = sfd_mut[mut_pdb_names[ jj ]];
-					ss->fill_pose(mut_structure,core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(core::chemical::FA_STANDARD));
+					ss->fill_pose(mut_structure, *(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD)) );
 				}
 
 				/// make sure sequences match across poses...

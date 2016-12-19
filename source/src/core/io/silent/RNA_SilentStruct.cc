@@ -43,6 +43,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <numeric/model_quality/rms.hh>
 
@@ -377,7 +378,7 @@ void RNA_SilentStruct::fill_pose(
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set;
 	if ( fullatom() ) {
-		residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	}
 	fill_pose( pose, *residue_set );
 } // fill_pose
@@ -395,7 +396,7 @@ void RNA_SilentStruct::fill_pose(
 		tr.Info << "Using ideal geometry from params files..." << std::endl;
 		//RHIJU HACK!
 		//tr.Info << "USING RNA PARAMS FILES " << std::endl;
-		static const ResidueTypeSetCOP rna_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP rna_residue_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 		core::pose::make_pose_from_sequence( pose, sequence(), *rna_residue_set );
 	}
 	tr.Debug << "FOLD TREE: " << fold_tree();

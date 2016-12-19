@@ -124,7 +124,7 @@ GrowPeptides::ddg(){
 void
 GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ---- growing N-terminal stretch from residues: "<<res_pos <<" to " <<stop <<"----------" << std::endl;
-	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue(1).residue_type_set() );// this could be changed as needed
+	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue_type_set_for_pose( target_seeds.residue_type(1).mode() ) );// this could be changed as needed
 	//std::cout<<"nseq size: " << nat_seq.size() << " template sequence: "<< nat_seq << std::endl;
 	//std::cout<< "sequence register : "<< seq_register << std::endl;
 
@@ -144,7 +144,7 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 void
 GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ----- growing C-terminal extension from residues: "<<res_pos <<" to " <<stop <<"--------" <<std::endl;
-	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue( res_pos - 1 ).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue_type_set_for_pose( target_seeds.residue_type(res_pos-1).mode() ) );// this could be changed as needed
 	//std::cout<<"cseq size: " << nat_seq.size() << " sequence: "<< nat_seq << std::endl;
 	//std::cout<<"seq_register: " << seq_register << std::endl;
 

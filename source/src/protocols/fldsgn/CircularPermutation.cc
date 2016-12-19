@@ -246,8 +246,7 @@ void CircularPermutation::apply( Pose & pose )
 	Size chain_end = pose.conformation().chain_end( chain );
 
 	// add 4 residues at the end of chain
-	ResidueTypeSetCOP rsd_set( pose.residue(1).residue_type_set() );
-	ResidueOP ala( ResidueFactory::create_residue( rsd_set->name_map( "ALA" ) ) );
+	ResidueOP ala( ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "ALA" ) ) );
 	for ( Size i=1; i<=4; i++ ) {
 		Size pos = pose.conformation().chain_end( chain );
 		pose.conformation().safely_append_polymer_residue_after_seqpos( *ala, pos, true );

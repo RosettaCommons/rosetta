@@ -30,6 +30,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -59,6 +60,7 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void
 	eval_rpp_rama_score(
+		core::conformation::Conformation const & conf,
 		core::chemical::ResidueTypeCOP res1,
 		core::chemical::ResidueTypeCOP res2,
 		utility::vector1 < core::Real > mainchain_torsions, //Deliberately copied, not passed by reference
@@ -95,6 +97,7 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void
 	random_mainchain_torsions(
+		core::conformation::Conformation const & conf,
 		core::chemical::ResidueTypeCOP res1,
 		core::chemical::ResidueTypeCOP res2,
 		utility::vector1 < core::Real > &torsions

@@ -45,6 +45,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -1048,7 +1049,7 @@ make_base_pair_mutation(
 	using namespace core::conformation;
 	using namespace core::scoring::dna;
 
-	ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 	for ( int r=1; r<= 2; ++r ) {

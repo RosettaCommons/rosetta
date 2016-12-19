@@ -290,7 +290,7 @@ pose_from_file(
 		build_pose( sfr, pose, residue_set, options );
 
 		// set secondary structure for centroid PDBs
-		if ( residue_set.category() == core::chemical::CENTROID_t ) {
+		if ( residue_set.mode() == core::chemical::CENTROID_t ) {
 			core::pose::set_ss_from_phipsi( pose );
 		}
 
@@ -347,8 +347,8 @@ pose_from_file(
 	using namespace chemical;
 
 	ResidueTypeSetCOP residue_set( options.centroid() ?
-		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
-		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
+		pose.residue_type_set_for_pose( CENTROID_t ) :
+		pose.residue_type_set_for_pose( FULL_ATOM_t )
 	);
 
 	core::import_pose::pose_from_file( pose, *residue_set, filename, options, read_fold_tree, type);
@@ -570,7 +570,7 @@ pose_from_pdbstring(
 	io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( pdbcontents, options ).clone() );
 	sfr->filename() = filename;
 	chemical::ResidueTypeSetCOP residue_set
-		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+		( pose.residue_type_set_for_pose( chemical::FULL_ATOM_t ) );
 	core::import_pose::build_pose( sfr, pose, *residue_set, options );
 
 }
@@ -620,7 +620,7 @@ void pose_from_pdb_stream(
 	std::string pdb_file_contents;
 	utility::slurp( pdb_stream, pdb_file_contents );
 
-	chemical::ResidueTypeSetCOP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( options.residue_type_set()) );
+	chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( options.residue_type_set_mode() ) );
 	pose_from_pdbstring( pose, pdb_file_contents, *residue_set, options, filename);
 	read_additional_pdb_data( pdb_file_contents, pose, options, options.read_fold_tree() );
 }
@@ -634,7 +634,7 @@ centroid_pose_from_pdb(
 {
 	using namespace chemical;
 	ResidueTypeSetCOP residue_set
-		( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
+		( pose.residue_type_set_for_pose( CENTROID_t ) );
 
 	core::import_pose::pose_from_file( pose, *residue_set, filename, read_fold_tree, core::import_pose::PDB_file);
 }
@@ -698,7 +698,7 @@ void build_pose_as_is2(
 	}
 
 	// optimize H if using a full-atom residue type set, and no_optH is not specified
-	if ( residue_set.category() == FULL_ATOM_t ) {
+	if ( residue_set.mode() == FULL_ATOM_t ) {
 		//if pack_missing_density specified, repack residues w/ missing density
 		if ( options.pack_missing_sidechains()  && ! options.membrane() ) {
 			pack::pack_missing_sidechains( pose, missing );

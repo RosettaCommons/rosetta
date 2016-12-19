@@ -23,6 +23,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 
 #include <core/pack/task/ResfileReader.hh>
@@ -204,9 +205,9 @@ public:
 		parse_resfile(pose, *the_task, "core/pack/task/EX_test.resfile" );
 
 		//we need instances of an aromatic and nonaromatic residue
-		//fastest route is filching ResidueTypeSet reference out of pose
-		ResidueTypeCOP phe = pose.residue_type(1).residue_type_set()->name_map("PHE").get_self_ptr();
-		ResidueTypeCOP ala = pose.residue_type(1).residue_type_set()->name_map("ALA").get_self_ptr();
+		//fastest route is filching ResidueType references out of pose
+		ResidueTypeCOP phe = core::pose::get_restype_for_pose(pose, "PHE");
+		ResidueTypeCOP ala = core::pose::get_restype_for_pose(pose, "ALA");
 
 		//the "magic number" strings represent the expected data
 		//the format, presented as (position indexed from 0, meaning) is as follows:

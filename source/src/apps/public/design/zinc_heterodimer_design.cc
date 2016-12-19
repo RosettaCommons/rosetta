@@ -282,10 +282,10 @@ main( int argc, char* argv[] )
 				std::string const new_name(HIS_D ? "HIS" : "HIS_D");
 
 				//get type set from original residue; query it for a residue type of the other name
-				core::chemical::ResidueType const & new_type(old_rsd.residue_type_set()->name_map(new_name));
-				TR << "mutating from " << old_rsd.name() << " to " << new_type.name() << " at combined position "
+				core::chemical::ResidueTypeCOP new_type( core::pose::get_restype_for_pose(combined, new_name, old_rsd.type().mode() ) );
+				TR << "mutating from " << old_rsd.name() << " to " << new_type->name() << " at combined position "
 					<< metal_site[i] << std::endl;
-				core::conformation::ResidueOP new_rsd(core::conformation::ResidueFactory::create_residue(new_type, old_rsd, combined.conformation()));
+				core::conformation::ResidueOP new_rsd(core::conformation::ResidueFactory::create_residue(*new_type, old_rsd, combined.conformation()));
 				new_rsd->set_chi( 1, old_rsd.chi(1) );
 				new_rsd->set_chi( 2, old_rsd.chi(2) );
 				combined.replace_residue( metal_site[i], *new_rsd, true );

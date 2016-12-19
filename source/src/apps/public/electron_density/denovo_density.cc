@@ -1389,6 +1389,7 @@ ConsensusFragmentMover::run() {
 
 		for ( int i=1; i<=(int)iter->second.size(); ++i ) {
 			core::pose::PoseOP frag_i = iter->second[i];
+			debug_assert( frag_i );
 			for ( int j=1; j<=(int)frag_i->size(); ++j ) {
 				if ( !frag_i->residue(j).is_protein() ) continue;
 				core::Size resid_j = resid+j-1;
@@ -1445,6 +1446,7 @@ ConsensusFragmentMover::run() {
 			core::Size resid_tgt=iter->first;
 			for ( int i=1; i<=(int)iter->second.size() && !done; ++i ) {
 				core::pose::PoseOP frag_i = iter->second[i];
+				debug_assert( frag_i );
 				for ( int j=1; j<=(int)frag_i->size() && !done; ++j ) {
 					if ( !frag_i->residue(j).is_protein() ) continue;
 					int resid_j = resid_tgt+j-1;
@@ -1452,7 +1454,7 @@ ConsensusFragmentMover::run() {
 						done = true;
 
 						core::conformation::Residue old_rsd = frag_i->residue(j);
-						chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+						chemical::ResidueTypeSetCOP rsd_set( frag_i->residue_type_set_for_pose( old_rsd.type().mode() ) );
 						chemical::ResidueType const & new_rsd_type(
 							rsd_set->get_residue_type_with_variant_removed( old_rsd.type(),
 							chemical::LOWERTERM_TRUNC_VARIANT ) );

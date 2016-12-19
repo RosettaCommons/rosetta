@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   src/core/chemical/ResidueTypeSet.srlz.hh
-/// @brief  Serialization and deserialization routines for when working with globally-accessible ResidueTypeSets
+/// @brief  Serialization and deserialization routines for when working with ResidueTypeSets
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_core_chemical_ResidueTypeSet_SRLZ_HH

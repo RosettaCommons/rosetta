@@ -39,6 +39,7 @@
 #include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #ifdef WIN32
 #include <core/chemical/Orbital.hh>
@@ -76,6 +77,12 @@
 //#include <boost/graph/copy.hpp>
 //#include <boost/graph/floyd_warshall_shortest.hpp>
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -139,6 +146,11 @@ public:
 	/// @brief destructor
 	~ResidueType() override;
 
+private:
+	ResidueType(); // private, not deleted, as serialization needs it.
+
+public:
+
 	/// @brief constructor
 	/// @details We use the AtomTypeSet object to assign atom_types to atoms inside add_atom,
 	/// and to identify (polar) hydrogens, acceptors, etc.
@@ -169,9 +181,12 @@ public:
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	///////////////// Atom Functions              ////////////////////////
+	///////////////// Type Set Funcitons          ////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
+
+	TypeSetMode
+	mode() const { return mode_; }
 
 	/// @brief access by reference the atomset for which this residue is constructed
 	AtomTypeSet const &
@@ -200,6 +215,12 @@ public:
 	{
 		return atom_types_;
 	}
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	///////////////// Atom Functions              ////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 
 	Atom & atom(Size const atom_index);
 	Atom const & atom(Size const atom_index) const;
@@ -832,19 +853,6 @@ public:
 	////////////////          Residue Functions     //////////////////////
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-
-	/// @brief Return an owning pointer to the ResidueTypeSet that this
-	/// ResidueType belongs to; it will return a null pointer if this
-	/// ResidueType does not belong to any ResidueTypeSet.
-	ResidueTypeSetCOP
-	residue_type_set() const;
-
-	/// @brief set the residue type set of origin.
-	void
-	residue_type_set( ResidueTypeSetCAP set_in );
-
-	bool
-	in_residue_type_set() const;
 
 	/// @brief number of chi angles
 	Size
@@ -2317,13 +2325,11 @@ private:
 	/// @brief The set for OrbitalTypes. -- Primary, can be null.
 	orbitals::OrbitalTypeSetCOP orbital_types_;
 
-
 	/// @brief The sets of all possible ring conformers, one per ring -- Derived, can be null
 	utility::vector1< rings::RingConformerSetOP > conformer_sets_;
 
-	/// @brief The owning ResidueTypeSet, if any. -- Primary, can be null.
-	/// @details Once added to a ResidueTypeSet, the ResidueType should be considered Fixed.
-	ResidueTypeSetCAP residue_type_set_;
+	/// @brief The TypeSet mode for this ResidueType -- Primary, should be valid
+	TypeSetMode mode_ = INVALID_t;
 
 	/// @brief The Atoms and Bonds of the ResidueType, stored as Nodes and Edges. -- Primary.
 	ResidueGraph graph_;
@@ -2748,7 +2754,16 @@ private:
 	bool nondefault_;
 
 public:
+
 	static VD const null_vertex;
+
+#ifdef    SERIALIZATION
+public:
+	friend class cereal::access;
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };  // class ResidueType
 
 // Insertion operator (overloaded so that ResidueType can be "printed" in PyRosetta).
@@ -2757,5 +2772,12 @@ std::ostream & operator<<(std::ostream & output, ResidueType const & object_to_o
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ResidueType )
+
+#include <core/chemical/ResidueType.srlz.hh>
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::ResidueType, core::chemical::serialize_residue_type, core::chemical::deserialize_residue_type )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_chemical_Residues_HH

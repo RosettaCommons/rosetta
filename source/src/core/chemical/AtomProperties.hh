@@ -31,6 +31,11 @@
 #include <core/types.hh>
 #endif
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -100,6 +105,13 @@ private:  // Private methods //////////////////////////////////////////////////
 private:  // Private data /////////////////////////////////////////////////////
 	// Storage of general atom properties.
 	utility::vector1< bool > atom_property_status_;  // indexed by AtomProperty
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };  // class AtomProperties
 
 
@@ -111,5 +123,10 @@ AtomProperty & operator++( AtomProperty & property );
 
 }  // namespace chemical
 }  // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_AtomProperties )
+#endif // SERIALIZATION
+
 
 #endif  // INCLUDED_core_chemical_AtomProperties_HH

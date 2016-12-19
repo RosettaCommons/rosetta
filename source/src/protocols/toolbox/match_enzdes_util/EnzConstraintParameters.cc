@@ -24,7 +24,8 @@
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ChemicalManager.hh> //need for changing residue type sets
-#include <core/chemical/ResidueTypeSet.hh> //have to include complete file
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh> //needed for residue type base name function
@@ -580,7 +581,8 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 
 	std::string res_type_mod_name( current_residue_type_basename + ':' + res_patchname + current_residue_type_patches_name );
 
-	core::conformation::Residue new_res( pose.residue( res_pos ).residue_type_set()->name_map(res_type_mod_name), true);
+	core::chemical::ResidueTypeCOP new_type( core::pose::get_restype_for_pose( pose, res_type_mod_name, pose.residue_type( res_pos ).mode() ) );
+	core::conformation::Residue new_res( new_type, true);
 	replace_residue_keeping_all_atom_positions( pose, new_res, res_pos );
 
 	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper end" << std::endl;

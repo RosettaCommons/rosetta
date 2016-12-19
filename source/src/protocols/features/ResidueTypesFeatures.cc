@@ -20,6 +20,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
@@ -104,7 +105,7 @@ ResidueTypesFeatures::report_features(
 	}
 
 	for ( ResidueType const * res_type : res_types ) {
-		string const & residue_type_set_name(res_type->residue_type_set()->name());
+		string const & residue_type_set_name(core::chemical::string_from_type_set_mode( res_type->mode() ));
 
 		// Is this residue type already in the database?
 

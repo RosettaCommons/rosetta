@@ -149,7 +149,7 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	cterm_connect_type_name.erase( std::remove( cterm_connect_type_name.begin(), cterm_connect_type_name.end(), ' ' ), cterm_connect_type_name.end() );
 
 	// get CtermConnect and NtermConnect variant types
-	ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	ResidueType const & nterm_connect_type( rsd_type_set->name_map( nterm_connect_type_name ) );
 	ResidueType const & cterm_connect_type( rsd_type_set->name_map( cterm_connect_type_name ) );
 
@@ -186,7 +186,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	ResidueType const & cterm_connect_type( pose.residue( cterm_rsd_num_ ).type() );
 
 	// get base variants of ResidueTypes of N-terminus and C-terminus
-	ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	// remove spaces if the name3 really only has 2 letters, Damn it Tim!
 	std::string nterm_base_type_name( nterm_connect_type.name3() );
 	std::string cterm_base_type_name( cterm_connect_type.name3() );

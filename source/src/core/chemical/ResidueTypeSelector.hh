@@ -48,6 +48,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -76,6 +82,16 @@ public:
 
 private:
 	bool desired_result_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ResidueTypeSelectorSingle();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -102,6 +118,16 @@ public:
 	// data
 private:
 	utility::vector1< AA > aas_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_AA();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -124,6 +150,16 @@ public:
 	// data
 private:
 	bool b_flag_is_present_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_CMDFLAG();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -148,6 +184,16 @@ public:
 
 private:
 	utility::vector1< std::string > name3s_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_NAME3();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -175,6 +221,16 @@ public:
 	// data
 private:
 	utility::vector1< std::string > properties_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_PROPERTY();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -201,6 +257,16 @@ public:
 	// data
 private:
 	utility::vector1< std::string > variants_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_VARIANT_TYPE();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -237,6 +303,16 @@ public:
 
 private:
 	uint position_;  // This is the position label at which the upper connection is attached.
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_UPPER_POSITION();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -265,6 +341,16 @@ public:
 	// data
 private:
 	utility::vector1< std::string > variants_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_MATCH_VARIANTS();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -283,6 +369,16 @@ public:
 	operator[]( ResidueType const & rsd ) const override {
 		return ( rsd.properties().get_list_of_variants().empty() == desired_result() );
 	}
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_NO_VARIANTS();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -306,7 +402,17 @@ public:
 
 	// data
 private:
-	char const name1_;
+	char name1_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Selector_NAME1();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -402,9 +508,20 @@ public:
 private:
 	// a vector of single ResidueTypeSelector
 	utility::vector1< ResidueTypeSelectorSingleOP > selectors_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ResidueTypeSelector )
+#endif // SERIALIZATION
+
 
 #endif

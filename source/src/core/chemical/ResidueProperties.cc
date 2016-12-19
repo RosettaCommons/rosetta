@@ -33,6 +33,19 @@
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueProperties" );
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -315,3 +328,45 @@ operator++( VariantType & variant )
 }  // namespace core
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ResidueProperties::save( Archive & arc ) const {
+	bool valid_ptr( residue_type_ != nullptr );  // Shouldn't ever be non-null, but just to be safe ...
+	arc( CEREAL_NVP( valid_ptr ) );
+	if  ( valid_ptr  ) {
+		arc( CEREAL_NVP_( "residue_type", residue_type_->get_self_ptr() ) ); // EXEMPT residue_type_
+	}
+	arc( CEREAL_NVP( general_property_status_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( variant_type_status_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( has_custom_variant_types_ ) ); // _Bool
+	arc( CEREAL_NVP( custom_variant_types_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( numeric_properties_ ) ); // std::map<std::string, core::Real>
+	arc( CEREAL_NVP( string_properties_ ) ); // std::map<std::string, std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ResidueProperties::load_and_construct( Archive & arc, cereal::construct< core::chemical::ResidueProperties > & construct ) {
+	core::chemical::ResidueTypeCOP residue_type( nullptr );
+	bool valid_ptr; arc( valid_ptr );
+	if ( valid_ptr ) {
+		arc( residue_type );
+	}
+	construct( residue_type.get() ); // EXEMPT residue_type_
+	arc( construct->general_property_status_ ); // utility::vector1<_Bool>
+	arc( construct->variant_type_status_ ); // utility::vector1<_Bool>
+	arc( construct->has_custom_variant_types_ ); // _Bool
+	arc( construct->custom_variant_types_ ); // utility::vector1<std::string>
+	arc( construct->numeric_properties_ ); // std::map<std::string, core::Real>
+	arc( construct->string_properties_ ); // std::map<std::string, std::string>
+}
+SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( core::chemical::ResidueProperties );
+CEREAL_REGISTER_TYPE( core::chemical::ResidueProperties )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_ResidueProperties )
+#endif // SERIALIZATION

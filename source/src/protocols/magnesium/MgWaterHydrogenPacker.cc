@@ -146,7 +146,7 @@ MgWaterHydrogenPacker::pack_mg_water_hydrogens_in_pose( pose::Pose & pose,
 	// uniformly sample rotations
 	if ( urs_ == nullptr ) urs_ = get_water_uniform_rotation_sampler();
 
-	chemical::ResidueTypeSetCOP residue_set( pose.residue( water_res ).residue_type_set() );
+	chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( pose.residue_type( water_res ).mode() ) );
 	Vector Oc, OH1c, OH2c;
 	ResidueOP rsd_canonic = get_useful_HOH_coords( Oc, OH1c, OH2c, *residue_set );
 

@@ -38,6 +38,7 @@
 #include <basic/options/option.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/pose/util.hh>
 
 // Objexx headers
 #include <ObjexxFCL/format.hh>
@@ -88,11 +89,13 @@ static THREAD_LOCAL basic::Tracer T( "core.pack.task", basic::t_info );
 ///current rotamer is not included for packer.
 ///bump check is deactivated by default.
 ResidueLevelTask_::ResidueLevelTask_(
-	conformation::Residue const & original_residue
+	conformation::Residue const & original_residue,
+	pose::Pose const & pose
 )
 :
 	include_current_( false ),
 	adducts_( true ),
+	original_residue_type_set_( pose.residue_type_set_for_pose( original_residue.type().mode() ) ),
 	original_residue_type_( original_residue.type().get_self_weak_ptr() ),
 	target_residue_type_(/* 0 */),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
@@ -130,18 +133,15 @@ ResidueLevelTask_::ResidueLevelTask_(
 {
 	using namespace chemical;
 
-	// Note: we defer getting the residue set until we need it, as some types may not have a ResidueTypeSet
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
-
-		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
 
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
-		ResidueType const & match_residue_type( residue_set->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
+		ResidueType const & match_residue_type( original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			for ( Size jj = 1; jj <= match_residue_type.variant_types().size(); ++jj ) {}
-			ResidueTypeCOPs const & aas( residue_set->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
+			ResidueTypeCOPs const & aas( original_residue_type_set_->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
 			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),
 					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
@@ -160,16 +160,14 @@ ResidueLevelTask_::ResidueLevelTask_(
 
 	} else if ( original_residue.is_DNA() ) {
 
-		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
-		ResidueTypeCOPs dna_types = ResidueTypeFinder( *residue_set ).variants( original_residue.type().variant_types() ).
+		ResidueTypeCOPs dna_types = ResidueTypeFinder( *original_residue_type_set_ ).variants( original_residue.type().variant_types() ).
 			base_property( DNA ).variant_exceptions( utility::tools::make_vector1( ADDUCT_VARIANT ) ).get_all_possible_residue_types();
 		for ( Size n = 1; n <= dna_types.size(); n++ ) allowed_residue_types_.push_back( dna_types[ n ] );
 
 	} else if ( original_residue.is_RNA() ) {
 
-		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
 		ResidueType const & match_residue_type(
-			residue_set->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
+			original_residue_type_set_->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
 
 	} else {
@@ -412,10 +410,10 @@ void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	target_residue_type_ = type; /// non-commutative if multiple target residue types are set.
 }
 void ResidueLevelTask_::target_type( chemical::AA aa ) {
-	target_type( original_residue_type_->residue_type_set()->get_representative_type_aa( aa ) );
+	target_type( original_residue_type_set_->get_representative_type_aa( aa ) );
 }
 void ResidueLevelTask_::target_type( std::string name ) {
-	target_type( original_residue_type_->residue_type_set()->name_map( name ).get_self_ptr() );
+	target_type( original_residue_type_set_->name_map( name ).get_self_ptr() );
 }
 
 void ResidueLevelTask_::or_adducts( bool setting )
@@ -945,7 +943,7 @@ bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 
 chemical::ResidueTypeSetCOP
 ResidueLevelTask_::get_original_residue_set() const {
-	return original_residue_type_->residue_type_set();
+	return original_residue_type_set_;
 }
 
 chemical::AA const &
@@ -985,7 +983,7 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 /// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
 void ResidueLevelTask_::allow_noncanonical_aa( std::string const & interchangeability_group )
 {
-	allow_noncanonical_aa( interchangeability_group, *original_residue_type_->residue_type_set() );
+	allow_noncanonical_aa( interchangeability_group, *original_residue_type_set_ );
 }
 
 /// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
@@ -1030,8 +1028,7 @@ ResidueLevelTask_::allow_aa(
 	disabled_ = false;
 	design_disabled_ = false;
 
-	chemical::ResidueTypeSetCOP residue_set( original_residue_type_->residue_type_set() );
-	chemical::ResidueTypeCOPs const aas( residue_set->get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
+	chemical::ResidueTypeCOPs const aas( original_residue_type_set_->get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator
 			aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
@@ -1518,9 +1515,10 @@ core::pack::task::ResidueLevelTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( include_current_ ) ); // _Bool
 	arc( CEREAL_NVP( behaviors_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( adducts_ ) ); // _Bool
-	core::chemical::serialize_residue_type_list( arc, allowed_residue_types_ ); // ResidueTypeCOPList
-	core::chemical::serialize_residue_type( arc, original_residue_type_ ); // chemical::ResidueTypeCOP
-	core::chemical::serialize_residue_type( arc, target_residue_type_ ); // chemical::ResidueTypeCOP
+	arc( CEREAL_NVP( original_residue_type_set_ ) ); // chemical::ResidueTypeSetCOP
+	arc( CEREAL_NVP( allowed_residue_types_ ) );
+	arc( CEREAL_NVP( original_residue_type_ ) );
+	arc( CEREAL_NVP( target_residue_type_ ) );
 	arc( CEREAL_NVP( designing_ ) ); // _Bool
 	arc( CEREAL_NVP( repacking_ ) ); // _Bool
 	arc( CEREAL_NVP( optimize_H_mode_ ) ); // _Bool
@@ -1567,9 +1565,10 @@ core::pack::task::ResidueLevelTask_::load( Archive & arc ) {
 	arc( include_current_ ); // _Bool
 	arc( behaviors_ ); // utility::vector1<std::string>
 	arc( adducts_ ); // _Bool
-	core::chemical::deserialize_residue_type_list( arc, allowed_residue_types_ );
-	core::chemical::deserialize_residue_type( arc, original_residue_type_ );
-	core::chemical::deserialize_residue_type( arc, target_residue_type_ );
+	arc( original_residue_type_set_ ); // chemical::ResidueTypeSetCOP
+	arc( allowed_residue_types_ );
+	arc( original_residue_type_ );
+	arc( target_residue_type_ );
 	arc( designing_ ); // _Bool
 	arc( repacking_ ); // _Bool
 	arc( optimize_H_mode_ ); // _Bool

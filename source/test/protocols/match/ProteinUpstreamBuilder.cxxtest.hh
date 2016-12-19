@@ -23,10 +23,12 @@
 
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pose/util.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -326,7 +328,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -361,7 +364,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -419,7 +423,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -475,7 +480,7 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
 		ResidueTypeCOP restype( res2_set->name_mapOP( "PBF" ));
 
 		BuildSet build_set;
@@ -534,7 +539,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -622,7 +628,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -707,7 +714,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -760,7 +768,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;
@@ -817,7 +826,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeSetCOP in_res2_set( trpcage.residue_type_set_for_pose( trpcage.residue_type( 2 ).mode() ) );
+		GlobalResidueTypeSetCOP res2_set( utility::pointer::dynamic_pointer_cast< GlobalResidueTypeSet const >( in_res2_set ));
 		//ResidueTypeCOPs const & aas( ResidueTypeFinder( *res2_set ).aa( aa_phe ).get_all_possible_residue_types() );
 
 		BuildSet build_set;

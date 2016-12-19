@@ -142,6 +142,13 @@ private:
 	BondRingness ring_;
 	/// @brief For double bonds, what's the E/Z isometry?
 	BondIsometry isometry_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

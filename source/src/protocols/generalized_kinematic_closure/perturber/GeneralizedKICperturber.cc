@@ -990,7 +990,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 			loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
 			).get_self_ptr()
 		);
-		rama.random_mainchain_torsions( loop_pose_copy.residue_type(loopindex).get_self_ptr(), following_rsd, rand_torsions );
+		rama.random_mainchain_torsions( loop_pose_copy.conformation(), loop_pose_copy.residue_type(loopindex).get_self_ptr(), following_rsd, rand_torsions );
 
 		core::Size const ntors( rand_torsions.size() );
 

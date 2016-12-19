@@ -126,18 +126,18 @@ RNA_VDW_Energy::residue_pair_energy(
 
 	Size const pos1 = rsd1.seqpos();
 	Size const pos2 = rsd2.seqpos();
-	
+
 	if ( (rsd1.is_RNA() && rsd2.is_protein()) || (rsd1.is_protein() && rsd2.is_RNA()) ) {
 
 		bool const use_actual_centroid( basic::options::option[ basic::options::OptionKeys::score::FA_low_res_rnp_scoring ]() );
 		if (rsd1.is_protein()) {
-			bool is_centroid = rsd1.type().residue_type_set()->name() == core::chemical::CENTROID;
+			bool is_centroid = rsd1.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {
 				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
 				return;
 			}
 		} else {
-			bool is_centroid = rsd2.type().residue_type_set()->name() == core::chemical::CENTROID;
+			bool is_centroid = rsd2.type().mode() == core::chemical::CENTROID_t;
 			if ( !is_centroid && !use_actual_centroid ) {
 				//tr << "Warning: rnp vdw energy not computed b/c protein is not centroid" << std::endl;
 				return;
@@ -155,9 +155,9 @@ RNA_VDW_Energy::residue_pair_energy(
 			//std::cout << "Calculating rnp vdw energy" << std::endl;
 			score = evaluate_rnp_vdw_score( rsd2 /* rna residue */, rsd1 /* protein residue */, rna_scoring_info, !use_actual_centroid );
 		}
-	
+
 		emap[ rnp_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
-	
+
 		///////////////////////////////
 
 	}
@@ -209,7 +209,7 @@ RNA_VDW_Energy::residue_pair_energy(
 }
 /////////////////////////////////
 Real
-RNA_VDW_Energy::evaluate_rnp_vdw_score( 
+RNA_VDW_Energy::evaluate_rnp_vdw_score(
 		conformation::Residue const & rna_rsd,
 		conformation::Residue const & protein_rsd,
 		rna::RNA_ScoringInfo const & rna_scoring_info,
@@ -230,14 +230,14 @@ const {
 
 	///////////////
 	for ( Size m = 1; m <= num_vdw_atoms_rna; ++m ) {
-	
+
 		Size const i = rna_atom_numbers[ m ];
 		if ( rna_rsd.is_virtual( i ) ) continue;
-	
+
 		Vector const & i_xyz( rna_rsd.xyz( i ) );
-	
+
 		for ( Size n = 1; n <= protein_rsd.natoms(); ++n ) {
-	
+
 			if ( protein_rsd.is_virtual( n ) ) continue;
 			// if hydrogen, then continue
 			if ( protein_rsd.atom_is_hydrogen( n ) ) continue;
@@ -251,11 +251,11 @@ const {
 				j = protein_atom_name_to_num( protein_rsd.atom_name( n ), protein_rsd.name3());
 				//Size const j = protein_rsd.atom_type_index( n );
 				// Need some check that this is really one of the atoms that we have data for!
-	
+
 				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, which_nucleotide );
 				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.xyz( n ) );
 			}
-	
+
 			//if ( clash > -5.0 ) {
 			if ( clash > 0.0 ) {
 				//std::cout << "SCORE " << score << std::endl;

@@ -1561,7 +1561,7 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 			xwidth = graphics::protein_wireframeScale;
 		}
 
-		if ( residues[r]->residue_type_set()->name() == chemical::CENTROID
+		if ( residues[r]->type().mode() == chemical::CENTROID_t
 				&& residues[r]->aa() != core::chemical::aa_unk ) continue;
 
 		Size const natoms( residues[r]->natoms() );

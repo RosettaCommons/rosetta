@@ -26,6 +26,7 @@
 //#include <basic/options/util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -103,14 +104,13 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 		}
 	}
 
-	core::chemical::ResidueTypeSetCOP residue_set ( pose.residue(1).residue_type_set() );
-	core::chemical::ResidueType const * stapleA_type = nullptr;
-	core::chemical::ResidueType const * stapleB_type = nullptr;
+	core::chemical::ResidueTypeCOP stapleA_type = nullptr;
+	core::chemical::ResidueTypeCOP stapleB_type = nullptr;
 
 	// AMW cppcheck fix, would dereference a null pointer if staple_gap wasn't 4.
 	if ( staple_gap_ == 4 ) {
-		stapleA_type = &residue_set->name_map("STAPLE08A") ;
-		stapleB_type = &residue_set->name_map("STAPLE08B") ;
+		stapleA_type = core::pose::get_restype_for_pose( pose, "STAPLE08A");
+		stapleB_type = core::pose::get_restype_for_pose( pose, "STAPLE08B");
 	} else if ( staple_gap_ == 7 ) {
 		// in theory this should be supported, but the residue types don't exist!
 		return;

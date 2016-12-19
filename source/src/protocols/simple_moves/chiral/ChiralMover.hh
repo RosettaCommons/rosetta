@@ -36,7 +36,7 @@ enum Chirality {
 	FLIP_CHIRALITY //flip to the other chirality, ie L->D or D->L
 };
 
-core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality );
+core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality, core::chemical::ResidueTypeSet const & );
 
 /// @details
 class ChiralMover : public protocols::moves::Mover {

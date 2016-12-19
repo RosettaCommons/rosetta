@@ -126,7 +126,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 			if ( ionizables_[i_restype].name3() == rsd_i.type().name3() ) {
 				core::pose::Pose pose_copy(pose);
 
-				chemical::ResidueTypeSetCOP restype_set( pose_copy.residue(i).residue_type_set() );
+				chemical::ResidueTypeSetCOP restype_set( pose_copy.residue_type_set_for_pose( pose_copy.residue_type(i).mode() ) );
 
 				core::pose::Pose ref_pose;
 				ref_pose.append_residue_by_bond(rsd_i);

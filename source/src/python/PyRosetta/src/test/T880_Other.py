@@ -16,9 +16,14 @@ init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is fo
 import os; os.chdir('.test.output')
 
 print('testing ligand modeling')
+ligand_p = Pose()
+
 params_list = ['../test/data/ligand.params']
-res_set = generate_nonstandard_residue_set(params_list)
-ligand_p = core.import_pose.pose_from_file(res_set, "../test/data/ligand_test.pdb")
+rts = ligand_p.conformation().modifiable_residue_type_set_for_conf( core.chemical.FULL_ATOM_t )
+rts.read_files_for_base_residue_types( Vector1(params_list) )
+ligand_p.conformation().reset_residue_type_set_for_conf( rts )
+
+core.import_pose.pose_from_file(ligand_p, "../test/data/ligand_test.pdb")
 
 scorefxn = create_score_function("ligand")
 scorefxn(ligand_p)

@@ -21,6 +21,7 @@
 #include <core/chemical/AtomProperties.hh>
 
 // Package headers
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/GreekDistance.hh>
 //#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
@@ -257,6 +258,20 @@ private:
 
 	char abs_stereochem_;
 	GreekDistance greek_d_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+
+	void update_typesets( ResidueType const & parent );
+private:
+	// Temporary entries for serialization loading
+	std::string gasteiger_atom_type_name_;
+	core::chemical::element::Elements element_enum_;
+
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator<< ( std::ostream & out, Atom const & atom);

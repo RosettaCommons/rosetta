@@ -245,8 +245,7 @@ void CartesianMD::get_native_info( core::pose::Pose const &pose )
 	native_given_ = true;
 
 	std::string nativepdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
-	core::chemical::ResidueTypeSetCOP rsd_set
-		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
 	core::import_pose::pose_from_file( native_, *rsd_set, nativepdb, core::import_pose::PDB_file );
 
 	// Set resmap
@@ -295,10 +294,8 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 	prv_eqxyz_ = ref_xyz_;
 
 	// Mass setup
-	core::chemical::ElementSetCOP element_set
-		( core::chemical::ChemicalManager::get_instance()->element_set("default") );
-	core::chemical::ResidueTypeSetCOP rsdtype_set
-		( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
+	core::chemical::ResidueTypeSetCOP rsdtype_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
+	core::chemical::ElementSetCOP element_set( rsdtype_set->element_set() );
 
 	for ( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ) {
 		core::id::AtomID AtomID = min_map.get_atom( iatm );

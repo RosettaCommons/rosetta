@@ -168,12 +168,8 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	chemical::ResidueTypeOP rsd_for_charge;
 
 	if ( utility::file::file_exists( filename ) ) {
-		chemical::AtomTypeSetCOP atom_types = chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		chemical::ElementSetCOP elements = chemical::ChemicalManager::get_instance()->element_set("default");
-		chemical::MMAtomTypeSetCOP mm_atom_types = chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
-		chemical::orbitals::OrbitalTypeSetCOP orbital_types = chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
 		chemical::ResidueTypeSetCOP rsd_type_set = chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		rsd_for_charge = chemical::read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, rsd_type_set );
+		rsd_for_charge = chemical::read_topology_file( filename, rsd_type_set );
 
 	} else {
 		rsd_for_charge = rsd.clone();

@@ -22,6 +22,7 @@
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/util.hh>
 
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -300,10 +301,10 @@ setup_symmetric_conformation(
 	bool has_mirror_operations(false);
 	{
 		// create the new residue
-		chemical::ResidueTypeSetCOP rsd_set( src_conformation.residue(1).residue_type_set() );
+		chemical::ResidueTypeSetCOP rsd_set( src_conformation.residue_type_set_for_conf() );
 
-		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
-		conformation::ResidueOP irsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "INV_VRT" ) ) );
+		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( *conformation::virtual_type_for_conf( src_conformation ) ) );
+		conformation::ResidueOP irsd( conformation::ResidueFactory::create_residue( *conformation::inv_virtual_type_for_conf( src_conformation ) ) );
 
 		for ( Size i =1; i <= virtual_num_to_id.size(); ++i ) {
 			if ( virtual_num_to_id.find( i ) == virtual_num_to_id.end() ) {

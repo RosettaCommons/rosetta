@@ -134,8 +134,7 @@ DisulfideMover::~DisulfideMover() {}
 ///   disulfide correctly.
 void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
 {
-	ResidueTypeSetCOP restype_set =
-		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	ResidueTypeSetCOP restype_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	Residue const cyd( restype_set->name_map("CYS:disulfide"), true/*dummy*/ );
 
 	//mutate the two residues

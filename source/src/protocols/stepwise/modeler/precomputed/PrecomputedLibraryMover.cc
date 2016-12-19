@@ -20,6 +20,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
@@ -133,7 +134,7 @@ PrecomputedLibraryMover::apply( core::pose::Pose & pose ) const {
 
 	Pose pose_scratch;
 
-	silent_struct->fill_pose( pose_scratch, pose.residue( 1 ).residue_type_set() );
+	silent_struct->fill_pose( pose_scratch, pose.residue_type_set_for_pose() );
 	pose.conformation() = pose_scratch.conformation();
 
 	//simple fold_tree --> generalized in SubMotifLibrary.

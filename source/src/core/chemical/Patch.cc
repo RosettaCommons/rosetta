@@ -161,6 +161,7 @@
 
 // Unit headers
 #include <core/chemical/Patch.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -175,6 +176,16 @@
 // C++ headers
 #include <fstream>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -225,7 +236,7 @@ utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type ) 
 void
 setup_patch_atomic_charge_reassignments_from_commandline(
 	std::string const & patch_name,
-	std::string const & rsd_type_set_name,
+	TypeSetMode rsd_type_set_mode,
 	ResidueTypeSelector const & rsd_selector,
 	std::map< std::string, Real > & atomic_charge_reassignments
 )
@@ -248,7 +259,8 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		if ( tokens.size() != 5 ) utility_exit_with_message(errmsg);
 
 		// 1: check rsd_type_set
-		if ( tokens[1] != rsd_type_set_name ) continue;
+		TypeSetMode option_cat( type_set_mode_from_string( tokens[1] ) );
+		if ( option_cat != rsd_type_set_mode ) continue;
 
 		// 2: check patch name
 		if ( tokens[3] != patch_name ) continue;
@@ -276,7 +288,7 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		if ( !ObjexxFCL::is_float( tokens[5] ) ) utility_exit_with_message(errmsg);
 		Real const new_atomic_charge( ObjexxFCL::float_of( tokens[5] ) );
 
-		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_name << ' ' << patch_name << ' ' << tokens[4] << " to " << new_atomic_charge << std::endl;
+		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_mode << ' ' << patch_name << ' ' << tokens[4] << " to " << new_atomic_charge << std::endl;
 
 		atomic_charge_reassignments[ tokens[4] ] = new_atomic_charge;
 	}
@@ -289,7 +301,7 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 PatchCaseOP
 case_from_lines(
 	utility::vector1< std::string > const & lines,
-	std::string const & res_type_set_name,
+	TypeSetMode res_type_set_mode,
 	std::string const & patch_name
 )
 {
@@ -310,7 +322,7 @@ case_from_lines(
 			//fd : use phil's logic for flag-based changes to patch charges and atom types
 			//   : use both selector and patch name to figure out charge mapping
 			std::map< std::string, Real > atomic_charge_reassignments;
-			setup_patch_atomic_charge_reassignments_from_commandline( patch_name, res_type_set_name, pcase->selector(), atomic_charge_reassignments );
+			setup_patch_atomic_charge_reassignments_from_commandline( patch_name, res_type_set_mode, pcase->selector(), atomic_charge_reassignments );
 			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i],atomic_charge_reassignments ) );
 			if ( operation ) pcase->add_operation( operation );
 		}
@@ -520,7 +532,7 @@ Patch::read_file( std::string const & filename )
 			debug_assert( !in_case );
 			in_case = true;
 		} else if ( tag == "END_CASE" ) {
-			PatchCaseOP new_case( case_from_lines( case_lines, res_type_set_name_, name_ ) );
+			PatchCaseOP new_case( case_from_lines( case_lines, res_type_set_mode_, name_ ) );
 			if ( new_case ) cases_.push_back( new_case );
 			case_lines.clear();
 			in_case = false;
@@ -791,3 +803,55 @@ Patch::generates_aa( ResidueType const & rsd_type ) const
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::PatchCase::save( Archive & arc ) const {
+	arc( CEREAL_NVP( selector_ ) ); // class core::chemical::ResidueTypeSelector
+	arc( CEREAL_NVP( operations_ ) ); // utility::vector1<PatchOperationOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::PatchCase::load( Archive & arc ) {
+	arc( selector_ ); // class core::chemical::ResidueTypeSelector
+	arc( operations_ ); // utility::vector1<PatchOperationOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::PatchCase );
+CEREAL_REGISTER_TYPE( core::chemical::PatchCase )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Patch::save( Archive & arc ) const {
+	arc( CEREAL_NVP( res_type_set_mode_ ) ); // enum core::chemical::TypeSetMode
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( types_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( selector_ ) ); // class core::chemical::ResidueTypeSelector
+	arc( CEREAL_NVP( cases_ ) ); // utility::vector1<PatchCaseOP>
+	arc( CEREAL_NVP( replaces_residue_type_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Patch::load( Archive & arc ) {
+	arc( res_type_set_mode_ ); // enum core::chemical::TypeSetMode
+	arc( name_ ); // std::string
+	arc( types_ ); // utility::vector1<std::string>
+	arc( selector_ ); // class core::chemical::ResidueTypeSelector
+	arc( cases_ ); // utility::vector1<PatchCaseOP>
+	arc( replaces_residue_type_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Patch );
+CEREAL_REGISTER_TYPE( core::chemical::Patch )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_Patch )
+#endif // SERIALIZATION

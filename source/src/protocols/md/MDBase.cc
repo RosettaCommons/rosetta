@@ -68,9 +68,6 @@ MDBase::report_silent( core::pose::Pose &pose,
 {
 	using namespace core;
 
-	chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-
 	Size timeid = (Size)( cummulative_time()*1000.0 );
 
 	// pose should contain up-to-date score info

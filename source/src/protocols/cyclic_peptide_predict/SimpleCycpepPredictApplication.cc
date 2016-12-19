@@ -1481,7 +1481,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 						pose->residue(i).residue_connection_partner( pose->residue(i).upper_connect().index() )
 						).get_self_ptr()
 					);
-					ramaprepro.random_mainchain_torsions( pose->residue_type(i).get_self_ptr(), following_rsd, rand_torsions );
+					ramaprepro.random_mainchain_torsions( pose->conformation(), pose->residue_type(i).get_self_ptr(), following_rsd, rand_torsions );
 					phi=rand_torsions[1]; psi=rand_torsions[2];
 				} else { //Using classic rama tables for sampling:
 					if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {

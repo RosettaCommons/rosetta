@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/GlobalResidueTypeSet.fwd.hh>
 #include <core/chemical/Adduct.fwd.hh>
 
 // Project headers
@@ -54,14 +54,9 @@ ResidueTypeOP apply_adducts_to_residue(
 	utility::vector1< bool > & add_mask
 );
 
-/// @brief apply patches to base ResidueType to generate variant ResidueTyes
-void
-place_adducts( ResidueTypeSet & rsd_type_set );
-
 /// @brief Create correct combinations of adducts for a residue type
-void
+ResidueTypeOPs
 create_adduct_combinations(
-	ResidueTypeSet & rsd_type_set,
 	ResidueType const & rsd,
 	AdductMap ref_map,
 	AdductMap count_map,

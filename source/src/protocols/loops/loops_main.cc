@@ -1039,7 +1039,7 @@ apply_sequence_mapping(
 	}
 
 	// now convert sequence of aligned positions
-	ResidueTypeSetCOP rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose() );
 	{
 		for ( Size i=1; i<= mapping.size1(); ++i ) {
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed

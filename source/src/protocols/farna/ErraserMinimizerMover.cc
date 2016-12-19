@@ -695,8 +695,7 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 	}
 
 	// attach virt res there
-	core::chemical::ResidueTypeSet const & residue_set = *pose.residue_type( 1 ).residue_type_set();
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *( residue_set.get_representative_type_name3( "VRT" ) ) ) );
+	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
 
 	// OK, what we need is to save the PDBInfo, then add it back for every residue.
 	PDBInfo info = *pose.pdb_info();

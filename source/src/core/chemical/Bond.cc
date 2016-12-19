@@ -27,6 +27,11 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -359,3 +364,36 @@ core::Size Bond::GetSDAltFileID() const {
 
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::Bond::save( Archive & arc ) const {
+	arc( CEREAL_NVP( distance_ ) ); // Real
+	arc( CEREAL_NVP( cut_bond_ ) ); // _Bool
+	arc( CEREAL_NVP( bond_name_ ) ); // enum core::chemical::BondName
+	arc( CEREAL_NVP( order_ ) ); // enum core::chemical::BondOrder
+	arc( CEREAL_NVP( conjug_ ) ); // enum core::chemical::BondConjugability
+	arc( CEREAL_NVP( aroma_ ) ); // enum core::chemical::BondAromaticity
+	arc( CEREAL_NVP( ring_ ) ); // enum core::chemical::BondRingness
+	arc( CEREAL_NVP( isometry_ ) ); // enum core::chemical::BondIsometry
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::Bond::load( Archive & arc ) {
+	arc( distance_ ); // Real
+	arc( cut_bond_ ); // _Bool
+	arc( bond_name_ ); // enum core::chemical::BondName
+	arc( order_ ); // enum core::chemical::BondOrder
+	arc( conjug_ ); // enum core::chemical::BondConjugability
+	arc( aroma_ ); // enum core::chemical::BondAromaticity
+	arc( ring_ ); // enum core::chemical::BondRingness
+	arc( isometry_ ); // enum core::chemical::BondIsometry
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::Bond );
+#endif // SERIALIZATION

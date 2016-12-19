@@ -92,7 +92,7 @@ switch_to_residue_type_set(
 		symm_info = symm_conf.Symmetry_Info();
 	}
 
-	if ( type_set.category() == chemical::CENTROID_ROT_t ) {
+	if ( type_set.mode() == chemical::CENTROID_ROT_t ) {
 		switch_to_centroid_rot_set( pose, symm_info, type_set, allow_sloppy_match );
 		return;
 	}
@@ -106,14 +106,14 @@ switch_to_residue_type_set(
 
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		// in future we may have a conformation using mixed type set, so check this by residue
-		if ( rsd.type().residue_type_set() && rsd.type().residue_type_set()->category() == type_set.category() ) {
+		if ( rsd.type().mode() == type_set.mode() ) {
 			if ( ! warned ) {
-				TR.Warning << "When switching to a " << string_from_type_set_category( type_set.category() ) << " ResidueTypeSet: "
-					<< " Pose already contains " << string_from_type_set_category( type_set.category() ) << " ResidueTypes." << std::endl;
+				TR.Warning << "When switching to a " << type_set.mode() << " ResidueTypeSet: "
+					<< " Pose already contains " << type_set.mode() << " ResidueTypes." << std::endl;
 				warned = true;
 			}
 			TR.Debug << "core::util::switch_to_residue_type_set: residue " << i << " already in a " <<
-				string_from_type_set_category( type_set.category() ) << " ResidueTypeSet" << std::endl;
+				type_set.mode() << " ResidueTypeSet" << std::endl;
 			continue;
 		}
 
@@ -164,7 +164,7 @@ switch_to_residue_type_set(
 	}
 
 	// After a CEN->FA transition, rebuild the disulfides
-	if ( type_set.category() == chemical::FULL_ATOM_t && basic::options::option[ basic::options::OptionKeys::run::rebuild_disulf ]() ) {
+	if ( type_set.mode() == chemical::FULL_ATOM_t && basic::options::option[ basic::options::OptionKeys::run::rebuild_disulf ]() ) {
 		rebuild_fa_disulfides(pose);
 	}
 }
@@ -172,12 +172,12 @@ switch_to_residue_type_set(
 void
 switch_to_residue_type_set(
 	core::pose::Pose & pose,
-	core::chemical::TypeSetCategory type_set_type,
+	core::chemical::TypeSetMode type_set_mode,
 	bool allow_sloppy_match,
 	bool switch_protein_res_only,
 	bool keep_energies
 ) {
-	core::chemical::ResidueTypeSetCOP type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_type ) );
+	core::chemical::ResidueTypeSetCOP type_set( pose.residue_type_set_for_pose( type_set_mode ) );
 	switch_to_residue_type_set( pose, *type_set, allow_sloppy_match, switch_protein_res_only, keep_energies );
 }
 
@@ -204,7 +204,7 @@ switch_to_centroid_rot_set(
 	using namespace core::conformation;
 	using utility::vector1;
 
-	debug_assert( rsd_set.category() == chemical::CENTROID_ROT_t );
+	debug_assert( rsd_set.mode() == chemical::CENTROID_ROT_t );
 
 	bool warned(false); // Have we warned about already-in-this-typeset yet?
 
@@ -216,19 +216,16 @@ switch_to_centroid_rot_set(
 		Residue const & rsd( pose.residue(i) );
 		if ( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) continue; //skip invalid residue
 
-		TypeSetCategory existing_rsd_typeset_category( core::chemical::INVALID_t );
-		if (  rsd.type().residue_type_set() ) {
-			existing_rsd_typeset_category = rsd.type().residue_type_set()->category();
-		}
+		TypeSetMode existing_rsd_typeset_mode( rsd.type().mode() );
 		//check current restype
-		if ( existing_rsd_typeset_category == rsd_set.category() ) {
+		if ( existing_rsd_typeset_mode == rsd_set.mode() ) {
 			if ( ! warned ) {
-				TR.Warning << "When switching to a " << string_from_type_set_category( rsd_set.category() ) << " ResidueTypeSet: "
-					<< " Pose already contains " << string_from_type_set_category( existing_rsd_typeset_category ) << " ResidueTypes." << std::endl;
+				TR.Warning << "When switching to a " << rsd_set.mode() << " ResidueTypeSet: "
+					<< " Pose already contains " << existing_rsd_typeset_mode << " ResidueTypes." << std::endl;
 				warned = true;
 			}
 			TR.Debug << "core::util::switch_to_residue_type_set: residue " << i << " already in a " <<
-				string_from_type_set_category( existing_rsd_typeset_category ) << " ResidueTypeSet" << std::endl;
+				existing_rsd_typeset_mode << " ResidueTypeSet" << std::endl;
 			continue;
 		}
 
@@ -289,14 +286,14 @@ switch_to_centroid_rot_set(
 				TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd->name() << std::endl;
 			} else {
 				//bug here?
-				utility_exit_with_message( "switch to "+rsd_set.name()+" type set fails\n" );
+				utility_exit_with_message( "switch to "+core::chemical::string_from_type_set_mode(rsd_set.mode())+" type set fails\n" );
 			}
 		}
 
 		//find the centroid postion based on fa sidechain
 		PointPosition cenrotxyz(0,0,0);
 		PointPosition cbxyz(0,0,0);
-		if ( existing_rsd_typeset_category == chemical::FULL_ATOM_t ) {
+		if ( existing_rsd_typeset_mode == chemical::FULL_ATOM_t ) {
 			std::map<std::string, Real> masslst;
 			masslst["C"]=12.0107;
 			masslst["O"]=15.9994;
@@ -326,7 +323,7 @@ switch_to_centroid_rot_set(
 				}
 				cenrotxyz = cenrotxyz/mass;
 			}
-		} else if ( existing_rsd_typeset_category == chemical::CENTROID_t && rsd.name()!="VRT" ) {
+		} else if ( existing_rsd_typeset_mode == chemical::CENTROID_t && rsd.name()!="VRT" ) {
 			//keep the cen position
 			cenrotxyz = rsd.atom("CEN").xyz();
 
@@ -347,10 +344,10 @@ switch_to_centroid_rot_set(
 
 		//replace it
 		pose.replace_residue( i, *new_rsd, false );
-		if ( existing_rsd_typeset_category == chemical::FULL_ATOM_t ) {
+		if ( existing_rsd_typeset_mode == chemical::FULL_ATOM_t ) {
 			//set centroid_rot xyz
 			pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
-		} else if ( existing_rsd_typeset_category == chemical::CENTROID_t && new_rsd->name()!="VRT" ) {
+		} else if ( existing_rsd_typeset_mode == chemical::CENTROID_t && new_rsd->name()!="VRT" ) {
 			// preserve CB
 			if ( !(new_rsd->name3()=="GLY") ) {
 				pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CB"), i), cbxyz);
@@ -386,7 +383,7 @@ rebuild_fa_disulfides(
 		mm->set_bb( false );
 
 		// Set up each residue individually
-		for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( core::Size i(1); i <= pose.size(); ++i ) {
 			core::conformation::Residue const& res(pose.residue(i));
 			if ( !res.is_protein() ) {
 				continue;

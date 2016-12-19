@@ -23,6 +23,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -76,7 +77,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		pose.append_residue_by_jump
-			( *ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
+			( *ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ),
 			pose.size()/2 );
 	}
 

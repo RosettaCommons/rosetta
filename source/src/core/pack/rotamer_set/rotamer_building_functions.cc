@@ -51,6 +51,7 @@
 #include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -776,7 +777,7 @@ build_fixed_O_water_rotamers_independent(
 	Residue const & existing_rsd( pose.residue(seqpos) );
 	Vector const & xyz_O( existing_rsd.nbr_atom_xyz() );
 
-	chemical::ResidueTypeSetCOP residue_set( h2o_type.residue_type_set() );
+	chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( h2o_type.mode() ) );
 
 	// logic: look for nearby donors/acceptors
 	// look for acceptors within 3.2
@@ -1306,7 +1307,7 @@ build_moving_O_water_rotamers_dependent(
 	tt << "build_moving_O_water_rotamers_dependent: anchor_pos=  " << i << '\n';
 
 	// build a tp5 water for geometry calculations below
-	ResidueOP tp5( conformation::ResidueFactory::create_residue( h2o_type.residue_type_set()->name_map("TP5") ) );
+	ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
 
 	// build a list of residue/rotamers at this dna position to loop over
 	utility::vector1< conformation::ResidueCOP > rsd1_list;
@@ -1396,7 +1397,7 @@ build_moving_O_water_rotamers_independent(
 	Size const anchor_atom( water_info.anchor_atom( rsd1.type() ) );
 
 	// build a tp5 water for geometry calculations below
-	ResidueOP tp5( conformation::ResidueFactory::create_residue( h2o_type.residue_type_set()->name_map("TP5") ) );
+	ResidueOP tp5( conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( h2o_type.mode() )->name_map("TP5") ) );
 
 	// here we assume that the two residues bridged by water must be neighbors...
 	// this may not be completely true: D-O + A-O could be bigger than 5.5, but prob not much

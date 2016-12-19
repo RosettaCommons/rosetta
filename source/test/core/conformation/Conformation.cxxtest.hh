@@ -294,4 +294,62 @@ public:
 		TS_ASSERT_EQUALS( partner5.atomno(), pose->residue(2).atom_index("CG") );
 	}
 
+	/// @brief Test how ResidueTypeSets in Conformation are cloned
+	/// That is, are were doing a semi-shallow copy?
+	void test_Conformation_ResidueTypeSet_clone() {
+		using namespace core::io::pdb;
+		using namespace core::conformation;
+		using namespace core::chemical;
+		using core::pose::Pose;
+
+		pose::Pose pose( create_test_in_pdb_pose());
+		Conformation & orig_conf = pose.conformation();
+		// We don't start off with the residue.
+		TS_ASSERT( ! pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("U11") );
+
+		// Get the PoseRTS, and make a modification.
+		PoseResidueTypeSetOP orig_rts = orig_conf.modifiable_residue_type_set_for_conf( FULL_ATOM_t );
+		TS_ASSERT( ! orig_rts->has_name("U11") );
+		orig_rts->add_base_residue_type( "core/chemical/params/U11.params" );
+		TS_ASSERT( orig_rts->has_name("U11") );
+		orig_conf.reset_residue_type_set_for_conf( orig_rts );
+
+		// We should now have the ResidueType in the Pose.
+		TS_ASSERT( pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("U11") );
+
+		// The Conformation should have made a copy of the ResidueTypeSet we put in, so further modifications won't be reflected in the pose.
+		TS_ASSERT( ! orig_rts->has_name("U12") );
+		TS_ASSERT( ! pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("U12") );
+		orig_rts->add_base_residue_type( "core/chemical/params/U12.params" );
+		TS_ASSERT( orig_rts->has_name("U12") ); // Our RTS has it,
+		TS_ASSERT( ! pose.conformation().residue_type_set_for_conf( FULL_ATOM_t )->has_name("U12") ); // but the pose's still doesn't
+
+		// Conformation clones should make copies of the RTS
+		ConformationOP clone_conf_op = pose.conformation().clone();
+		Conformation & clone_conf = *clone_conf_op; //two-step so we keep the OP around and it isn't garbage collected.
+		TS_ASSERT( clone_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U11") );
+
+		// It should be a shallow-ish copy: The residue types shouldn't be cloned.
+		ResidueTypeCOP orig_U11( orig_conf.modifiable_residue_type_set_for_conf( FULL_ATOM_t )->name_mapOP( "U11" ) );
+		ResidueTypeCOP clone_U11( clone_conf.modifiable_residue_type_set_for_conf( FULL_ATOM_t )->name_mapOP( "U11" ) );
+		TS_ASSERT_EQUALS( orig_U11, clone_U11 ); // Yes, comparing the pointers -- we want to make sure these are the same object.
+
+		// The two conformations should be disconnected - alterning one shouldn't result in the other being modified
+		orig_rts = orig_conf.modifiable_residue_type_set_for_conf( FULL_ATOM_t );
+		orig_rts->add_base_residue_type( "core/chemical/params/U21.params" );
+		orig_conf.reset_residue_type_set_for_conf( orig_rts );
+
+		PoseResidueTypeSetOP clone_rts = clone_conf.modifiable_residue_type_set_for_conf( FULL_ATOM_t );
+		clone_rts->add_base_residue_type( "core/chemical/params/U31.params" );
+		clone_conf.reset_residue_type_set_for_conf( clone_rts );
+
+		TS_ASSERT( orig_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U11") ); // We should still have this.
+		TS_ASSERT( orig_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U21") );
+		TS_ASSERT( ! orig_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U31") );
+		TS_ASSERT( clone_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U11") ); // We should still have this.
+		TS_ASSERT( ! clone_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U21") );
+		TS_ASSERT( clone_conf.residue_type_set_for_conf( FULL_ATOM_t )->has_name("U31") );
+
+	}
+
 };

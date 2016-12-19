@@ -496,11 +496,8 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 {
 	// Add new virtual residues into conformation.
 	for ( SizeToStringMap::value_type const & pair : new_vrts ) {
-		// Steal the residue type set of the first residue. Will obviously break if the conformation
-		// has no residues. Is this a case I need to worry about?
-		core::chemical::ResidueTypeSetCOP rsd_set( conf.residue(1).residue_type_set() );
 		core::conformation::ResidueOP rsd(
-			core::conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
+			core::conformation::ResidueFactory::create_residue( *core::conformation::virtual_type_for_conf(conf) ) );
 
 		// where the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
 		conf.append_residue_by_jump( *rsd, conf.size() );
@@ -871,7 +868,7 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 	Residue const & rsd_lower( conf.residue( rsd_num_lower ) );
 	Residue const & rsd_upper( conf.residue( rsd_num_lower + 1 ) );
-	ResidueTypeSetCOP rsd_set( rsd_lower.residue_type_set() );
+	ResidueTypeSetCOP rsd_set( conf.residue_type_set_for_conf( rsd_lower.type().mode() ) );
 
 	ResidueType const & new_type_lower( rsd_set->get_residue_type_with_variant_added( rsd_lower.type(),
 		CUTPOINT_LOWER ) );

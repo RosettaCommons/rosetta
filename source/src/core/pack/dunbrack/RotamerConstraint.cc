@@ -295,7 +295,7 @@ core::pack::dunbrack::RotamerConstraint::save( Archive & arc ) const {
 	arc( CEREAL_NVP( seqpos_ ) ); // Size
 	arc( CEREAL_NVP( rsd_type_name_ ) ); // std::string
 	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
-	core::chemical::serialize_residue_type( arc, restype_ );
+	arc( CEREAL_NVP( restype_ ) );
 
 	// do not serialize the (global) rotamer library
 	// arc( CEREAL_NVP( rotlib_ ) ); // core::pack::rotamers::SingleResidueRotamerLibraryCOP
@@ -314,7 +314,7 @@ core::pack::dunbrack::RotamerConstraint::load( Archive & arc ) {
 	arc( rsd_type_name_ ); // std::string
 	arc( atom_ids_ ); // utility::vector1<AtomID>
 
-	core::chemical::deserialize_residue_type( arc, restype_ );
+	arc( restype_ );
 	rotlib_ = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *restype_ );
 
 	std::shared_ptr< core::pack::rotamers::SingleResidueRotamerLibrary > local_rotlib;

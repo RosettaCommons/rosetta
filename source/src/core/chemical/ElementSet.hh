@@ -33,6 +33,12 @@
 
 #include <core/types.hh>
 
+#ifdef    SERIALIZATION
+#include <utility/serialization/serialization.hh>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 
@@ -45,8 +51,12 @@ namespace chemical {
 class ElementSet : public utility::pointer::ReferenceCount {
 
 public:
-	ElementSet();
+	ElementSet( std::string const & name = "");
 	~ElementSet() override;
+
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string const &
+	name() const { return name_; }
 
 	/// @brief Number of elements in the set
 	Size
@@ -86,6 +96,9 @@ public:
 	// data
 private:
 
+	/// @brief What the ChemicalManager knows this as, if relevant
+	std::string name_;
+
 	/// @brief element_index_ lookup map
 	///
 	/// @details element_index_ allows lookup of the element by its symbol
@@ -99,7 +112,23 @@ private:
 
 };
 
+#ifdef    SERIALIZATION
+/// @brief Serialize an ElementSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void serialize_element_set( Archive & arc, ElementSetCOP ptr );
+
+/// @brief Deserialize an AtomTypeSet - assumes that they're all stored in the ChemicalManager
+template < class Archive >
+void deserialize_element_set( Archive & arc, ElementSetCOP & ptr );
+#endif // SERIALIZATION
+
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_ElementSet )
+
+SPECIAL_COP_SERIALIZATION_HANDLING( core::chemical::ElementSet, core::chemical::serialize_element_set, core::chemical::deserialize_element_set )
+#endif // SERIALIZATION
 
 #endif

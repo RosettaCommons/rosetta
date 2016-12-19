@@ -625,8 +625,8 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 			}
 			debug_assert( other_res_ii > ii );
 			//Can only bond residues of the same residue type set (eg centroid to centroid)
-			debug_assert( pose.residue_type(other_res_ii).residue_type_set()->category() ==
-				pose.residue_type(ii).residue_type_set()->category() );
+			debug_assert( pose.residue_type(other_res_ii).mode() ==
+				pose.residue_type(ii).mode() );
 
 			TR.Debug << "Found disulf between " << ii << " and " << other_res_ii << std::endl;
 
@@ -718,9 +718,7 @@ void
 core::scoring::disulfides::CentroidDisulfideEnergyContainer::save( Archive & arc ) const {
 	arc( CEREAL_NVP( resid_2_disulfide_index_ ) ); // utility::vector1<Size>
 
-	// individually serialize all of the ResidueTypeCOPs using the helper function
-	// in core::chemical.
-	core::chemical::serialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( CEREAL_NVP( disulfide_residue_types_ ) );
 
 	arc( CEREAL_NVP( disulfide_partners_ ) ); // utility::vector1<std::pair<Size, Size> >
 	arc( CEREAL_NVP( disulfide_atom_indices_ ) ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
@@ -735,9 +733,7 @@ void
 core::scoring::disulfides::CentroidDisulfideEnergyContainer::load( Archive & arc ) {
 	arc( resid_2_disulfide_index_ ); // utility::vector1<Size>
 
-	// individually deserialize the ResidueTypeCOPs, possibly resolving these
-	// ResidueTypeCOPs to globally-held ResidueTypes
-	core::chemical::deserialize_residue_type_vector( arc, disulfide_residue_types_ );
+	arc( disulfide_residue_types_ );
 
 	arc( disulfide_partners_ ); // utility::vector1<std::pair<Size, Size> >
 	arc( disulfide_atom_indices_ ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >

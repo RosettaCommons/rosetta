@@ -255,7 +255,7 @@ PackerTask_::PackerTask_(
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
-		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii) ));
+		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii), pose ));
 	}
 
 	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
@@ -278,13 +278,13 @@ Size PackerTask_::total_residue() const
 }
 
 void
-PackerTask_::clean_residue_task( conformation::Residue const & original_residue, Size const seqpos)
+PackerTask_::clean_residue_task( conformation::Residue const & original_residue, Size const seqpos, core::pose::Pose const & pose )
 {
 	if ( !pack_residue_[ seqpos ] ) {
 		--n_to_be_packed_;
 		pack_residue_[ seqpos ] = true;
 	}
-	residue_tasks_[seqpos] = ResidueLevelTask_( original_residue );
+	residue_tasks_[seqpos] = ResidueLevelTask_( original_residue, pose );
 }
 
 /// @details turn off packing at all positions.
@@ -1038,7 +1038,7 @@ void PackerTask_::remap_residue_level_tasks(
 
 		if ( old_pos == 0 ) {
 			//find insertions and remapped residues old res index is 0
-			remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ) ));
+			remapped_residue_tasks.push_back( ResidueLevelTask_( pose.residue( ii ), pose ));
 			remapped_residue_tasks[ii].initialize_from_command_line();
 			remapped_pack_residue.push_back( true );
 		} else if ( old_pos != 0 ) {

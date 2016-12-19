@@ -60,7 +60,7 @@ public:
 		core::pose::make_pose_from_sequence(*pose, seq, "fa_standard", false);
 
 		if ( add_nmethyl ) {
-			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue(2).residue_type_set());
+			core::chemical::ResidueTypeSetCOP rsd_set(pose->residue_type_set_for_pose( pose->residue_type(2).mode() ));
 			core::chemical::ResidueTypeCOP rsd_type( pose->residue_type(2).get_self_ptr() );
 			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
@@ -78,7 +78,7 @@ public:
 		core::Size leftcount(0);
 		for ( core::Size i=1; i<=1000; ++i ) {
 			utility::vector1 < core::Real > phipsi;
-			rama.random_mainchain_torsions( pose->residue_type(2).get_self_ptr(), pose->residue_type(3).get_self_ptr(), phipsi);
+			rama.random_mainchain_torsions( pose->conformation(), pose->residue_type(2).get_self_ptr(), pose->residue_type(3).get_self_ptr(), phipsi);
 			TR << phipsi[1] << "\t" << phipsi[2] << "\n";
 			if ( phipsi[1] <= 0 ) ++leftcount;
 		}

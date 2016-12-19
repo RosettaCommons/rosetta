@@ -418,6 +418,22 @@ chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
 /// @brief  Is the query atom in this residue axial or equatorial or neither?
 //chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, core::uint query_atom );
 
+/// @brief Return the appropritate ResidueType for the virtual residue for the
+/// "mode" (fullatom, centroid ...) the conformation is in.
+///
+/// When at all possible, use core::pose::virtual_type_for_pose() instead,
+/// as that can use more pose-specific residue type information, if any.
+chemical::ResidueTypeCOP
+virtual_type_for_conf( core::conformation::Conformation const &conformation );
+
+/// @brief Return the appropritate ResidueType for the inverse virtual residue for the
+/// "mode" (fullatom, centroid ...) the conformation is in.
+///
+/// When at all possible, use core::pose::get_restype_for_pose() instead,
+/// as that can use more pose-specific residue type information, if any.
+chemical::ResidueTypeCOP
+inv_virtual_type_for_conf( core::conformation::Conformation const &conformation );
+
 } // conformation
 } // core
 

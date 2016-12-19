@@ -18,8 +18,7 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -64,7 +63,7 @@ using namespace scoring;
 class OopPuckMoverTest : public CxxTest::TestSuite {
 
 public:
-	chemical::ResidueTypeSetOP residue_set;
+	chemical::GlobalResidueTypeSetOP residue_set;
 	pose::Pose pose;
 
 	OopPuckMoverTest() {}
@@ -79,8 +78,7 @@ public:
 		//kdrew: create new residue type set with oop patches included, cannot use chemical manager residue type set singleton because already initialized without oop patches
 		std::string const directory( basic::database::full_name( "chemical/residue_type_sets/fa_standard/" ) );
 		std::string const tag( "fa_standard" );
-		residue_set = chemical::ResidueTypeSetOP( new chemical::ResidueTypeSet( tag, directory ) );
-		residue_set->init();
+		residue_set = chemical::GlobalResidueTypeSetOP( new chemical::GlobalResidueTypeSet( tag, directory ) );
 
 		// read pdb file
 		core::import_pose::pose_from_file( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" , core::import_pose::PDB_file);

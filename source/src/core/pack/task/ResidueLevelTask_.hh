@@ -57,7 +57,8 @@ class ResidueLevelTask_ : public ResidueLevelTask
 public:
 	/// @brief constructor; requires a Residue object
 	ResidueLevelTask_(
-		conformation::Residue const & original_residue
+		conformation::Residue const & original_residue,
+		core::pose::Pose const & pose
 	);
 
 	ResidueLevelTask_();
@@ -358,6 +359,10 @@ private:
 	utility::vector1< std::string > behaviors_;
 	/// @brief include adducts at this residue
 	bool adducts_;
+
+	/// @brief What ResidueTypeSet does this set of allowed residues come from?
+	chemical::ResidueTypeSetCOP original_residue_type_set_;
+
 	/// @details std::list of ResidueTypeCOP objects - these are only residue types allowed at position
 	ResidueTypeCOPList allowed_residue_types_;
 	chemical::ResidueTypeCOP original_residue_type_; //record this on construction

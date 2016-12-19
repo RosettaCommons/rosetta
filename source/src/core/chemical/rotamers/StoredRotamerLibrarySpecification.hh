@@ -31,6 +31,11 @@
 #include <istream>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -67,12 +72,23 @@ private:
 
 	utility::vector1< std::map< std::string, core::Vector > > coordinates_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_rotamers_StoredRotamerLibrarySpecification )
+#endif // SERIALIZATION
 
 
 #endif

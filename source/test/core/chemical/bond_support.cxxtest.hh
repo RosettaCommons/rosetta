@@ -145,14 +145,9 @@ public:
 	void test_find_bonds_in_rings2() {
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
-		std::string const tag(FA_STANDARD);
-		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
-		ElementSetCOP elements = cm->element_set("default");
-		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
-		ResidueTypeSetCOP restypeset = cm->residue_type_set(tag);
+		ResidueTypeSetCOP restypeset = cm->residue_type_set(FA_STANDARD);
 
-		ResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params",
-			atom_types, elements, mm_atom_types, core::chemical::orbitals::OrbitalTypeSetCAP(), restypeset ) );
+		ResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params", restypeset ) );
 
 		TR << "Testing U26" << std::endl;
 

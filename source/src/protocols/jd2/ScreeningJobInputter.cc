@@ -40,8 +40,10 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -82,6 +84,14 @@ void ScreeningJobInputter::pose_from_job(core::pose::Pose & pose, JobOP job)
 
 	if ( !job->inner_job()->get_pose() ) {
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;
+		if ( ! params_files_.empty() ) {
+			core::chemical::PoseResidueTypeSetOP rts( pose.conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
+			for ( std::string & param_name : params_files_ ) {
+				// TODO: Should this be a patchable residue type?
+				rts->add_unpatchable_residue_type(param_name);
+			}
+			pose.conformation().reset_residue_type_set_for_conf(rts);
+		}
 		core::import_pose::pose_from_file( pose, job->input_tag() , core::import_pose::PDB_file);
 		load_pose_into_job(pose, job);
 	} else {
@@ -101,12 +111,10 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 	utility::json_spirit::mValue job_json_data;
 	utility::json_spirit::mObject job_object_data;
-	try
-{
+	try {
 		utility::json_spirit::read(data,job_json_data);
 		job_object_data = job_json_data.get_obj();
-	}catch(std::runtime_error &)
-{
+	} catch(std::runtime_error &) {
 		throw utility::excn::EXCN_BadInput(
 			"screening file " + file_name + "is incorrectly formatted. "
 			"it must be a dict with two keys: 'params' containing a list of needed params, and "
@@ -115,30 +123,24 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 
 
 	utility::json_spirit::mArray param_group_data;
-	try
-{
+	try {
 		param_group_data = job_object_data["params"].get_array();
-	}catch(std::runtime_error &)
-{
+	} catch(std::runtime_error &) {
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'params' section");
 	}
 
-//parse params files and insert them into the chemical manager
+	// Annotate params files for later insertion into the Pose.
 	if ( param_group_data.size() > 0 ) {
 		for ( auto & i : param_group_data ) {
 			std::string param_name = i.get_str();
-			core::chemical::ChemicalManager::get_instance()->
-				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_custom_residue_type(param_name);
-
+			params_files_.push_back( param_name );
 		}
 	}
 
 	utility::json_spirit::mArray job_group_data;
-	try
-{
+	try {
 		job_group_data = job_object_data["jobs"].get_array();
-	}catch(std::runtime_error & )
-{
+	} catch(std::runtime_error & ) {
 		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
 	}
 	for ( auto & i : job_group_data ) {
@@ -149,11 +151,9 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		utility::json_spirit::mArray ligand_path_data;
 
 		//The exceptions thrown by json_spirit are incredibly generic and meaningless. we catch them and throw more useful ones
-		try
-{
+		try {
 			group_name = group_map["group_name"].get_str();
-		}catch(std::runtime_error &)
-{
+		} catch(std::runtime_error &) {
 			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'group_name' or is misformatted");
 		}
 
@@ -164,23 +164,19 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 			startfrom_present = true;
 		}
 
-		try
-{
+		try {
 			protein_path_data = group_map["proteins"].get_array();
-		}catch(std::runtime_error &)
-{
+		} catch(std::runtime_error &) {
 			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
 		}
 
-		try
-{
+		try {
 			ligand_path_data = group_map["ligands"].get_array();
-		}catch(std::runtime_error &)
-{
+		} catch(std::runtime_error &) {
 			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
 		}
 
-//If we specify a native structure, store it
+		// If we specify a native structure, store it
 		bool native_present = false;
 		std::string native_string;
 		if ( group_map.find("native") != group_map.end() ) {

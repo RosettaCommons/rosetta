@@ -935,7 +935,7 @@ FlexPepDockingProtocol::polyAla(
 	using namespace core::conformation;
 	using namespace core::chemical;
 
-	ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
+	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( FULL_ATOM_t ) );
 	//   ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
 	ResidueType const & restype( residue_set->name_map( "ALA" ) );
 	ResidueOP ala;

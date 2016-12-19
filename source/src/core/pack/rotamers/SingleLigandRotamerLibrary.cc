@@ -337,9 +337,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	// Fill new_rotamers with new Residues, including proton_chi expansions
 	for ( Size i = 1; i <= base_rotamers.size(); ++i ) {
 		debug_assert( concrete_residue->name() == base_rotamers[i]->name() );
-		if ( concrete_residue->in_residue_type_set() ) {
-			debug_assert( concrete_residue->residue_type_set()->category() == base_rotamers[i]->residue_type_set()->category() ); // fa_standard / centroid
-		}
+		debug_assert( concrete_residue->mode() == base_rotamers[i]->type().mode() ); // fa_standard / centroid
 		if ( do_expand_proton_chi ) {
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 				conformation::ResidueOP newrsd = dup_residue( existing_residue, *base_rotamers[i] );

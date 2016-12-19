@@ -147,6 +147,9 @@ public:
 	int index() const { return index_; }
 	void index( int index_in ) { index_ = index_in; }
 
+	/// @brief Update the internal VDs based on the provide mapping
+	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
+
 private:
 
 	/// atom index number
@@ -156,6 +159,13 @@ private:
 	/// Which residue connection # am I in my owners list of residue connections?
 	int index_;
 	VD vertex_; //my vertex which corresponds to the atomno
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical

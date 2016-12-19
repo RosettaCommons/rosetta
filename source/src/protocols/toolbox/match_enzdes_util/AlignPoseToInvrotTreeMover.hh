@@ -93,7 +93,7 @@ public:
 	core::conformation::ResidueCOP
 	switch_residue_type_set(
 		core::conformation::ResidueCOP residue,
-		core::chemical::TypeSetCategory desired_restype_set
+		core::chemical::TypeSetMode desired_restype_set
 	) const;
 
 private:

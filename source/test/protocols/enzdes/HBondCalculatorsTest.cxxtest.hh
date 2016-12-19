@@ -79,7 +79,9 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+
+		core_init_with_additional_options("-run:preserve_header -extra_res_fa protocols/enzdes/D2N.params");
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -91,7 +93,7 @@ public:
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		//enz_io = new protocols::enzdes::EnzConstraintIO(& residue_set);
-
+		*/
 
 	}
 

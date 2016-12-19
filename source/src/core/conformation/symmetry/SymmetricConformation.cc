@@ -841,12 +841,14 @@ SymmetricConformation::recalculate_transforms( ) {
 				runtime_assert( coordframe_pos );
 				runtime_assert( symm_info_->subunit_index( coordframe_pos ) == isub );
 
-				Residue const & coordframe_rsd( residue( coordframe_pos ) );
-
 				if ( !vrt_res_op ) {
-					/// slow, create residueop
-					vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set()->name_map("VRT"));
+					// slow, create residueop
+					// Uses the typeset for the conformation as a whole.
+					// Is there a reason we'd want to use the typeset for the coordframe_rsd instead, if they differ?
+					vrt_res_op = conformation::ResidueFactory::create_residue( *conformation::virtual_type_for_conf( *this ) );
 				}
+
+				Residue const & coordframe_rsd( residue( coordframe_pos ) );
 
 				/// create some reasonable coords based on coordframe_rsd
 				if ( coordframe_rsd.is_protein() ) {
@@ -1014,7 +1016,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 		// If all the cys are fullatom, use stricter criteria
 		bool fullatom(true);
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
-			if ( residue_type(cysid_2_resid[ii]).residue_type_set()->category()
+			if ( residue_type(cysid_2_resid[ii]).mode()
 					!= core::chemical::FULL_ATOM_t ) {
 				fullatom = false;
 				break;

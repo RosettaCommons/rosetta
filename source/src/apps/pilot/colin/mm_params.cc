@@ -21,6 +21,7 @@
 #include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/Atom.hh>
 
@@ -81,8 +82,12 @@ char * argv []
 
 		//mm_bondangle_library->pretty_print();
 
-		core::chemical::ResidueTypeSetCOP residue_set(
+		core::chemical::ResidueTypeSetCOP rts(
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
+		);
+
+		core::chemical::GlobalResidueTypeSetCOP residue_set(
+			utility::pointer::dynamic_pointer_cast< core::chemical::GlobalResidueTypeSet const>( rts )
 		);
 
 		//for (core::chemical::ResidueTypeSet::const_residue_iterator residue_iter(residue_set->all_residues_begin());

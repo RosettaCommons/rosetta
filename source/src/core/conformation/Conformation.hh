@@ -37,6 +37,9 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/CacheableResidueTypeSets.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
+
 #include <core/types.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/AtomID.hh>
@@ -219,20 +222,40 @@ public:  // General Properties
 		return residues_.empty();
 	}
 
-	/// @brief What category of ResidueTypeSet is this Conformation made of?
-	/// If majority is true, it will be the category of the ResidueTypeSet for most residues in the pose.
-	/// If majority is false, core::chemical::MIXED_t will be returned for conformations with residues from multiple ResidueTypeSets
-	core::chemical::TypeSetCategory
-	residue_typeset_category( bool majority=true ) const;
+	/// @brief Return the appropriate ResidueTypeSet for the Conformation
+	/// If mode is INVALID_t (the default), then return the typeset for the majority mode of the Conformation.
+	/// Note: This may be a GlobalResidueTypeSet, if the Conformation doesn't have a specific PoseResidueTypeSet
+	core::chemical::ResidueTypeSetCOP
+	residue_type_set_for_conf( core::chemical::TypeSetMode mode = core::chemical::INVALID_t ) const;
 
-	/// @brief convenience test for residue_type_set category
+	/// @brief Return a *clone* of the Conformation-specific PoseResidueTypeSet (note this is const)
+	/// Modifications to this RTS won't be seen in the Conformation unless you pass it back in with reset_residue_type_set_for_conf()
+	/// Should always return a non-null pointer: will create a new PoseResidueTypeSet if the Conformation doesn't have it already.
+	core::chemical::PoseResidueTypeSetOP
+	modifiable_residue_type_set_for_conf( core::chemical::TypeSetMode mode = core::chemical::INVALID_t ) const;
+
+	/// @brief Reset the Conformation-specific PoseResidueTypeSet for the appropriate mode to the given RTS.
+	/// (If the given mode is INVALID_t (the recommended default) the mode will be auto-determined from the RTS.)
+	/// @details NOTE: You're potentially in for a bunch of trouble if the passed in set isn't a modified version of the value
+	/// returned by modifiable_residue_type_set_for_conf() from this conformation.
+	/// Also, a clone of the RTS is made, so subsequent edits to the RTS will not be reflected in the Conformation's RTS
+	void
+	reset_residue_type_set_for_conf( core::chemical::PoseResidueTypeSetCOP new_set, core::chemical::TypeSetMode mode = core::chemical::INVALID_t );
+
+	/// @brief What mode of ResidueTypeSet is this Conformation made of?
+	/// If majority is true, it will be the mode of the ResidueTypes for most residues in the pose.
+	/// If majority is false, core::chemical::MIXED_t will be returned for conformations with ResidueTypes of multiple modes
+	core::chemical::TypeSetMode
+	residue_typeset_mode( bool majority=true ) const;
+
+	/// @brief convenience test for residue_type_set mode
 	bool is_fullatom() const;
 
-	/// @brief convenience test for residue_type_set category
+	/// @brief convenience test for residue_type_set mode
 	bool is_centroid() const;
 
-	/// @brief convenience test for residue_type_set category
-	bool is_mixed_category() const;
+	/// @brief convenience test for residue_type_set mode
+	bool is_mixed_mode() const;
 
 	/// @brief convenience test for if the conformation contains information for a membrane protein
 	bool is_membrane() const {
@@ -1482,7 +1505,11 @@ private: // observer notifications
 private:
 
 	/// @brief container of Residues
-	ResidueOPs residues_; // someone made this protected at one point, voilating a very clear prohibition of protected data
+	ResidueOPs residues_; // someone made this protected at one point, violating a very clear prohibition of protected data
+
+	/// @brief Any Conformation-specific ResidueTypes are stored here.
+	/// Note: The ResidueTypeSets contained herein can be shared by multiple Conformations, and should have copy-on-write semantics
+	core::chemical::CacheableResidueTypeSets residue_type_sets_;
 
 	/// @brief chain number for each position
 	/**

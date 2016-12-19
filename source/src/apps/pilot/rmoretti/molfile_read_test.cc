@@ -67,8 +67,6 @@ try {
 	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
 	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 
-	core::chemical::ResidueTypeSet res_set;
-
 	TR << "Loading residue types " << std::endl;
 	// We don't need to load all the residue types - just the extra_res_fa ones.
 	// Grab each and go. //
@@ -85,7 +83,7 @@ try {
 		TR << "Loading params file " << std::endl;
 		// Load params file (should be generated from the mol file)
 		core::chemical::ResidueTypeOP ref( read_topology_file(
-				filename + ".params", atom_types, elements, mm_atom_types, orbital_types, &res_set ) );
+				filename + ".params", atom_types, elements, mm_atom_types, orbital_types ) );
 
 		TR << "Now loading mol file " << std::endl;
 

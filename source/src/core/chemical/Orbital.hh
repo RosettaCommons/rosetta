@@ -78,6 +78,9 @@ public:
 
 	Orbital(Orbital const & ) = default;
 
+	/// @brief Update the internal VDs based on the provide mapping
+	void remap_atom_vds( std::map< VD, VD > const & old_to_new );
+
 	void
 	print( std::ostream & out ) const;
 
@@ -112,6 +115,13 @@ private:
 	// ideal internal coordinates
 	orbitals::ICoorOrbitalData icoor_;
 	orbitals::ICoorOrbitalData new_icoor_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

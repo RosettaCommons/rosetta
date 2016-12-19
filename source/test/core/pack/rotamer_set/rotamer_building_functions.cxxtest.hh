@@ -43,7 +43,7 @@ public:
 	// Initialization
 	void setUp()
 	{
-		core_init();
+		core_init_with_additional_options("-extra_res_fa core/pack/rotamer_set/GOL.params");
 	}
 
 	// Destruction
@@ -64,19 +64,23 @@ public:
 		using namespace core::pose;
 		using namespace core::import_pose;
 
+		/*
 		// Load params file for glycerol to use as a generic test case.
 		vector1<string> params;
 		params.push_back("core/pack/rotamer_set/GOL.params");
+		*/
 
 		// Instantiate default chemical type sets.
-		ResidueTypeSet & res_type_set = ChemicalManager::get_instance()->nonconst_residue_type_set("fa_standard");
+		ResidueTypeSetCOP res_type_set = ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
+		/*
 		// Generate a non-standard ResidueTypeSet that includes parameters for glycerol.
 		res_type_set.read_files_for_custom_residue_types(params);
+		*/
 
 		// Load a pose with a single glycerol residue.
 		Pose glycerol;
-		pose_from_file(glycerol, res_type_set, "core/pack/rotamer_set/glycerol.pdb", core::import_pose::PDB_file);
+		pose_from_file(glycerol, *res_type_set, "core/pack/rotamer_set/glycerol.pdb", core::import_pose::PDB_file);
 
 		// Extract out the residue for rotamer testing.
 		Residue const & GOL = glycerol.residue(1);  // C3H8O3

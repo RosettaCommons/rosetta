@@ -487,7 +487,7 @@ LigandBaseProtocol::make_packer_task(
 		core::conformation::Residue const & this_rsd = pose.residue(i);
 		if ( !this_rsd.is_polymer() && ligand_protonation ) {
 			using namespace core::chemical;
-			ResidueTypeSetCOP rsd_type_set = this_rsd.residue_type_set();
+			ResidueTypeSetCOP rsd_type_set = pose.residue_type_set_for_pose( this_rsd.type().mode() );
 			ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_rsd.name3() ).get_all_possible_residue_types(); // a vector1
 			for ( core::Size j = 1; j <= allowed_types.size(); ++j ) {
 				if ( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list

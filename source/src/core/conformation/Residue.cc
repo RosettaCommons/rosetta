@@ -229,21 +229,22 @@ Residue::Residue( Residue const & src ) :
 	init_residue_from_other( src );
 }
 
-/// @brief Copy constructor that preserves everything EXCEPT flips ResidueType to its mirror counterpart.
-/// @details The flip_chirality option governs whether this residue keeps the old type or gets the mirror-image type.  All other data
-/// (including xyz coordinates) are preserved, so this ONLY switches the type, not the geometry.
-/// @author Vikram K. Mulligan.
-Residue::Residue( Residue const & src, bool const flip_chirality ):
+Residue::~Residue() = default;
+
+
+/// @brief Copy constructor that preserves everything EXCEPT the ResidueType
+/// This is *deliberately* private, as hot-swapping the ResidueType is not generally going to work.
+/// (In most instances, you should make a new Residue with the new ResidueType, and
+/// explicitly copy over the things you want to preserve.
+Residue::Residue( Residue const & src, core::chemical::ResidueTypeCOP new_restype, bool flip_chirality ):
 	utility::pointer::ReferenceCount(),
 	utility::pointer::enable_shared_from_this< Residue >(),
-	rsd_type_ptr_( flip_chirality ? src.residue_type_set()->get_mirrored_type( src.rsd_type_ptr_ ) : src.rsd_type_ptr_ ),
-	rsd_type_( flip_chirality ? * (src.residue_type_set()->get_mirrored_type( src.rsd_type_.get_self_ptr() ) ) : src.rsd_type_ ) /*I don't assume that src.rsd_type_ and src.rsd_type_ptr_ point to the same type, though they should.*/
+	rsd_type_ptr_( new_restype ),
+	rsd_type_( *new_restype )
 {
 	init_residue_from_other( src );
-	if ( type().is_achiral_backbone() ) set_mirrored_relative_to_type( !src.mirrored_relative_to_type() ); //For achiral residues, we need to record whether the geometry is mirrored relative to the params file.  (1H and 2H may be chemically indistinguishable, but Rosetta distinguishes them.)
+	if ( flip_chirality && type().is_achiral_backbone() ) set_mirrored_relative_to_type( !src.mirrored_relative_to_type() ); //For achiral residues, we need to record whether the geometry is mirrored relative to the params file.  (1H and 2H may be chemically indistinguishable, but Rosetta distinguishes them.)
 }
-
-Residue::~Residue() = default;
 
 /// @brief Function called by both copy constructors, to avoid code duplication.
 /// @details As private member variables are added, add them to this to copy them.
@@ -281,17 +282,18 @@ Residue::clone() const
 
 /// @brief Copy this residue( allocate actual memory for it ), keeping everything the same EXCEPT the type.
 /// @details Switches the ResidueType to the mirror type (D->L or L->D).  Preserves it for achiral residues.
+/// The passed ResidueTypeSet is the ResidueTypeSet you want the mirrored type to come from.
 /// @note This function is the best way to convert a D-residue to its L-counterpart, or an L-residue to its D-counterpart.
 /// It assumes that you've already mirrored all of the coordinates, and just allows you to generate a replacement residue
 /// of the mirror type that preserves all other Residue information (connections, seqpos, xyz coordinates of all atoms,
 /// variant types, etc.).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 ResidueOP
-Residue::clone_flipping_chirality() const
+Residue::clone_flipping_chirality( core::chemical::ResidueTypeSet const & residue_type_set ) const
 {
-	return ResidueOP( new Residue( *this, true /*flip the chirality*/ ) );
+	core::chemical::ResidueTypeCOP flipped_type( residue_type_set.get_mirrored_type( rsd_type_ptr_ ) );
+	return ResidueOP( new Residue( *this, flipped_type, true ) );
 }
-
 
 
 /// @author Labonte <JWLabonte@jhu.edu>
@@ -1985,10 +1987,7 @@ template < class Archive >
 void
 Residue::save( Archive & arc ) const
 {
-	// with the ResidueTypeCOP, find out if the ResidueType is held in one of the (global)
-	// ResidueTypeSets and if so, then Residue will serialize the name of the RTS and the
-	// name of the ResidueType -- otherwise, it will serialize the RT itself.
-	core::chemical::serialize_residue_type( arc, rsd_type_ptr_ );
+	arc( rsd_type_ptr_ );
 	// EXEMPT rsd_type_
 
 	arc( atoms_, orbitals_ );
@@ -2008,8 +2007,10 @@ Residue::load_and_construct(
 	cereal::construct< Residue > & construct
 )
 {
+	using namespace core::chemical;
+
 	ResidueTypeCOP restype;
-	core::chemical::deserialize_residue_type( arc, restype );
+	arc( restype );
 	construct( restype, true );
 	// EXEMPT rsd_type_ptr_ rsd_type_
 

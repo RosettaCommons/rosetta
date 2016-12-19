@@ -21,10 +21,16 @@
 // Package headers
 #include <core/chemical/PatchOperation.hh> // MSVC can't use fwd header
 #include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -116,6 +122,12 @@ private:
 	ResidueTypeSelector selector_;
 	/// @brief operations to done in this PatchCase
 	utility::vector1< PatchOperationOP > operations_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief create a PatchCase from input lines
@@ -124,7 +136,7 @@ private:
 PatchCaseOP
 case_from_lines(
 	utility::vector1< std::string > const & lines,
-	std::string const & res_type_set_name = "",
+	TypeSetMode res_type_set_mode = INVALID_t,
 	std::string const & patch_name = ""
 );
 
@@ -133,7 +145,7 @@ case_from_lines(
 class Patch : public utility::pointer::ReferenceCount {
 public:
 	Patch() {}
-	Patch( std::string res_type_set_name ) : res_type_set_name_(std::move(res_type_set_name)) {}
+	Patch( TypeSetMode res_type_set_mode ) : res_type_set_mode_(res_type_set_mode) {}
 
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~Patch() override;
@@ -228,8 +240,8 @@ public:
 
 	/// private data
 private:
-	/// name of the residuetypeset to which this patch belongs
-	std::string res_type_set_name_;
+	/// mode of the residuetypeset to which this patch belongs
+	TypeSetMode res_type_set_mode_;
 
 	/// name of the patch
 	std::string name_;
@@ -246,9 +258,20 @@ private:
 	/// @brief if set this patch will not change the name of the ResidueType and returns true for replaces()
 	bool replaces_residue_type_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_chemical_Patch )
+#endif // SERIALIZATION
+
 
 #endif

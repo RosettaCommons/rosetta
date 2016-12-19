@@ -378,7 +378,7 @@ make_base_pair_mutation(
 	using namespace conformation;
 	using namespace scoring::dna;
 
-	ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 	for ( int r=1; r<= 2; ++r ) {

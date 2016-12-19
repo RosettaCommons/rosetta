@@ -63,17 +63,19 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		// load params for ligand
-		protocols_init();
+		using namespace core::chemical;
+
+		protocols_init_with_additional_options("-extra_res_fa devel/denovo_design/D2I.params");
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
-		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
 		ResidueTypeSet & residue_set = ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD );
 		if ( !residue_set.has_name("D2I") ) {
 			params_files.push_back("protocols/simple_moves/D2I.params");
 		}
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
 
 		// initialize common filters/movers/scorefxns
 		scorefxn = core::scoring::get_score_function( true );

@@ -42,24 +42,20 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 //#include <core/chemical/sdf/MolFileIOData.hh>
-#include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 // Project headers
-#include <basic/database/sql_utils.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <utility/file/file_sys_util.hh>
-//#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/sql_database/types.hh>
-
 
 // option key includes
 
@@ -163,7 +159,7 @@ ChemicalManager::create_element_set( std::string const & tag ) const
 {
 	// read from file
 	std::string const filename( basic::database::full_name( "chemical/element_sets/" + tag + "/element_properties.txt" )); //there are only one type of elements!!!!!!
-	ElementSetOP new_set( new ElementSet() );
+	ElementSetOP new_set( new ElementSet( tag ) );
 	new_set->read_file( filename );
 	return new_set;
 }
@@ -203,7 +199,7 @@ ChemicalManager::create_orbital_type_set( std::string const & tag ) const
 {
 	// read from file
 	std::string const directory( basic::database::full_name( "chemical/orbital_type_sets/"+tag+"/" ) );
-	return orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( directory ) );
+	return orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( directory, tag ) );
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -245,7 +241,7 @@ ChemicalManager::gasteiger_atom_type_set( std::string const & tag /* = "default"
 		// read from file
 		std::string filename( basic::database::full_name( "chemical/gasteiger/"+tag+"/atom_type_data.txt" ));
 		ElementSetCAP elements( element_set(tag) );
-		gasteiger::GasteigerAtomTypeSetOP new_set( new gasteiger::GasteigerAtomTypeSet( elements ) );
+		gasteiger::GasteigerAtomTypeSetOP new_set( new gasteiger::GasteigerAtomTypeSet( elements, tag ) );
 		new_set->read_file( filename );
 		iter = gasteiger_atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
 		filename =  basic::database::full_name( "chemical/gasteiger/"+tag+"/bond_lengths.txt" );
@@ -258,7 +254,7 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 {
 	// read from file
 	std::string const filename( basic::database::full_name( "chemical/mm_atom_type_sets/"+tag+"/mm_atom_properties.txt" ));
-	MMAtomTypeSetOP new_set( new MMAtomTypeSet() );
+	MMAtomTypeSetOP new_set( new MMAtomTypeSet( tag ) );
 	new_set->read_file( filename );
 	return new_set;
 }
@@ -266,8 +262,8 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 
 /// @brief query residue_type_set by a type
 ResidueTypeSetCOP
-ChemicalManager::residue_type_set( TypeSetCategory type_set_category ) {
-	std::string standard_name( string_from_type_set_category( type_set_category ) );
+ChemicalManager::residue_type_set( TypeSetMode type_set_mode ) {
+	std::string standard_name( string_from_type_set_mode( type_set_mode ) );
 	return residue_type_set( standard_name );
 }
 
@@ -282,7 +278,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 	// no longer supporting legacy (uncorrected) rna bond params -- probably should deprecate this option entirely.
 	runtime_assert ( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
-	ResidueTypeSets::const_iterator iter;
+	GlobalResidueTypeSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
 #if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( restype_mutex_ );
@@ -293,13 +289,13 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 		// bind the relevant residue-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::shared_ptr< ResidueTypeSet > () > func =
+		boost::function< utility::pointer::shared_ptr< GlobalResidueTypeSet > () > func =
 			boost::bind( &ChemicalManager::create_residue_type_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED
 		iter = utility::thread::create_and_insert( func, restype_mutex_, tag, residue_type_sets_ );
 #else
-		ResidueTypeSetOP newset = func();
+		GlobalResidueTypeSetOP newset = func();
 		iter = residue_type_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
@@ -314,184 +310,8 @@ ChemicalManager::has_residue_type_set( std::string const & tag ) {
 	return( residue_type_sets_.find( tag )  != residue_type_sets_.end() );
 }
 
-ResidueTypeSetOP
+GlobalResidueTypeSetOP
 ChemicalManager::create_residue_type_set( std::string const & tag ) const {
-	// Look for additional residue .params files specified on the cmd line
-	std::vector< std::string > extra_params_files;
-	std::vector< std::string > extra_patch_files;
-	utility::vector1<core::chemical::ResidueTypeOP> extra_residues;
-
-	if ( tag == FA_STANDARD ) {
-
-		//this whole thing is desperately in need of some method extraction -- holy cow it does!
-		utility::options::FileVectorOption & fvec
-			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
-		for ( Size i = 1, e = fvec.size(); i <= e; ++i ) {
-			utility::file::FileName fname = fvec[i];
-			extra_params_files.push_back(fname.name());
-		}
-
-		utility::options::PathVectorOption & pvec
-			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_path];
-		// convert Pathname->string->char*, glob it, convert char*->string
-		for ( Size i=1, e= pvec.size(); i<=e; i++ ) {
-
-			utility::vector1<std::string> files;
-			std::string directory=pvec[i].name();
-
-			utility::file::list_dir(directory, files);
-			TR.Debug<< std::endl;
-			for ( size_t j=1; j<= files.size(); j++ ) {
-				if ( files[j].find("param")!=std::string::npos ) {
-					TR << files[j]<< ", ";
-					std::string path= directory+'/'+files[j];
-					extra_params_files.push_back(path);
-				}
-			}
-			TR.Debug<< std::endl;
-		}
-
-		utility::options::PathVectorOption & pvec_batch
-			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_batch_path];
-		for ( Size i=1, e= pvec_batch.size(); i<=e; i++ ) {
-			utility::vector1<std::string> subdirs;
-			std::string directory=pvec_batch[i].name();
-
-			utility::file::list_dir(directory, subdirs);
-			TR.Debug<< std::endl;
-			for ( size_t j=1; j<= subdirs.size(); ++j ) {
-				if ( subdirs[j] == "." || subdirs[j] == ".." ) {
-					continue;
-				}
-				utility::vector1<std::string> files;
-				utility::file::list_dir(directory+"/"+subdirs[j],files);
-				for ( size_t k=1; k<= files.size(); k++ ) {
-					if ( files[k].find("param")!=std::string::npos ) {
-						TR.Debug << files[k]<< ", ";
-						std::string path= directory+'/'+subdirs[j]+'/'+files[k];
-						extra_params_files.push_back(path);
-					}
-				}
-			}
-
-		}
-
-		utility::options::FileVectorOption & molfilevec
-			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mol];
-
-		// this function itself does not (directly) modify any member data of class ChemicalManager,
-		// but it is allowed to (indirectly) modify the singleton instance (which, to be fair,
-		// is this instance) through singleton accessor functions.  In particular,
-		// it will lead to the creation of the following *Sets for fa_standard.
-		core::chemical::AtomTypeSetCOP atom_types = ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		core::chemical::ElementSetCOP elements = ChemicalManager::get_instance()->element_set("default");
-		core::chemical::MMAtomTypeSetCOP mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
-		core::chemical::orbitals::OrbitalTypeSetCOP orbital_types = ChemicalManager::get_instance()->orbital_type_set("fa_standard");
-
-		sdf::MolFileIOReader molfile_reader;
-		for ( Size i=1, e = molfilevec.size(); i <= e; ++i ) {
-			utility::file::FileName filename = molfilevec[i];
-			utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( filename ) );
-			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
-			TR << "Reading " << rtvec.size() << " residue types from the " << data.size() << " models in " << filename << std::endl;
-			extra_residues.append( rtvec );
-		}
-
-
-
-		utility::options::FileVectorOption & mmCIFfilevec
-			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mmCIF];
-
-		//This function reads in the mmCIF file and constructs a residuetype based on data found in mmCIF.
-		//It uses the machinery found in MolFileIOReader for its construction
-		mmCIF::mmCIFParser mmCIF_parser;
-		for ( core::Size i=1, e = mmCIFfilevec.size(); i<= e; ++i ) {
-			utility::file::FileName filename = mmCIFfilevec[i];
-			utility::vector1< sdf::MolFileIOMoleculeOP> molecules( mmCIF_parser.parse( filename));
-			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );
-			extra_residues.append( rtvec);
-		}
-
-		if ( basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user() ) {
-			utility::sql_database::DatabaseMode::e database_mode(
-				utility::sql_database::database_mode_from_name(
-				basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode]));
-			std::string database_name(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database]);
-			std::string database_pq_schema(basic::options::option[basic::options::OptionKeys::in::file::extra_res_pq_schema]);
-
-
-			utility::sql_database::sessionOP db_session(
-				basic::database::get_db_session(database_mode, database_name, database_pq_schema));
-
-			ResidueDatabaseIO residue_database_interface;
-
-			if ( basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list].user() ) {
-				utility::file::FileName residue_list = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list];
-				utility::io::izstream residue_name_file(residue_list);
-				std::string residue_name;
-				while ( residue_name_file >> residue_name )
-						{
-					//residue_name_file >> residue_name;
-					TR <<residue_name <<std::endl;
-					ResidueTypeOP new_residue(
-						residue_database_interface.read_residuetype_from_database(
-						atom_types,
-						elements,
-						mm_atom_types,
-						orbital_types,
-						"fa_standard",
-						residue_name,
-						db_session));
-					extra_residues.push_back(new_residue);
-				}
-
-			} else {
-				utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
-				for ( Size index =1; index <= residue_names_in_database.size(); ++index ) {
-					ResidueTypeOP new_residue(
-						residue_database_interface.read_residuetype_from_database(
-						atom_types,
-						elements,
-						mm_atom_types,
-						orbital_types,
-						"fa_standard",
-						residue_names_in_database[index],
-						db_session));
-					extra_residues.push_back(new_residue);
-				}
-			}
-		}
-
-		// Patches
-		utility::options::FileVectorOption & pfvec
-			= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_fa ];
-		for ( Size i = 1, e = pfvec.size(); i <= e; ++i ) {
-			extra_patch_files.push_back( pfvec[i].name());
-		}
-
-	} else if ( tag == CENTROID ) {
-		utility::options::FileVectorOption & fvec
-			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_cen ];
-		for ( Size i = 1, e = fvec.size(); i <= e; ++i ) {
-			utility::file::FileName fname = fvec[i];
-			extra_params_files.push_back(fname.name());
-		}
-		// Patches
-		utility::options::FileVectorOption & pfvec
-			= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_cen ];
-		for ( Size i = 1, e = pfvec.size(); i <= e; ++i ) {
-			extra_patch_files.push_back( pfvec[i].name());
-		}
-	}
-
-	// generically specify extra res (not necessarily part of fa_standard) -- will get added to
-	//  any and every residue_type_set instantiated.
-	utility::options::FileVectorOption & fvec
-		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res ];
-	for ( Size i = 1, e = fvec.size(); i <= e; ++i ) {
-		utility::file::FileName fname = fvec[i];
-		extra_params_files.push_back(fname.name());
-	}
 
 	// read from file
 	TR.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
@@ -512,39 +332,12 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 
 
 	std::string const directory( temp_str );
-	ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory ) );
-	new_set->init( extra_params_files, extra_patch_files );
 
-	for ( core::Size index(1); index <= extra_residues.size(); ++index ) {
-		//TR << extra_residues[index]->name3() <<std::endl;
-		// should this be custom? if we want patches applied, then these residue types
-		// should be added before init() -- rhiju
-		new_set->add_custom_residue_type(extra_residues[index]);
-		extra_residues[index]->residue_type_set(ResidueTypeSetCAP(new_set));
-	}
-
+	// Note on thread safety: The GlobalResidueTypeSet constructor can (and will) call back into the ChemicalManager
+	// to initialize things like AtomTypeSets, etc. So long as the RTS/ATS/etc. are protected under different mutexes,
+	// there shouldn't be any issues with a deadlock.
+	GlobalResidueTypeSetOP new_set( new GlobalResidueTypeSet( tag, directory ) );
 	return new_set;
-}
-
-/// @details if the tag is not in the map, input it from a database file and add it
-/// to the map for future look-up.
-/// THIS FUNCTION IS DECIDEDLY NOT THREADSAFE!
-ResidueTypeSet &
-ChemicalManager::nonconst_residue_type_set( std::string const & tag )
-{
-	// trigger initialization if necessary:
-	residue_type_set( tag );
-
-	return *( residue_type_sets_.find( tag )->second );
-}
-
-ResidueTypeSetOP
-ChemicalManager::nonconst_residue_type_set_op( std::string const & tag )
-{
-	// trigger initialization if necessary:
-	residue_type_set( tag );
-
-	return residue_type_sets_.find( tag )->second;
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -598,21 +391,21 @@ std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 /// @brief tag name for querying COARSE_RNA chemical type set.
 std::string const COARSE_RNA( "coarse_rna" );
 
-TypeSetCategory
-type_set_category_from_string( std::string const & category ) {
-	if ( category == FA_STANDARD ) return FULL_ATOM_t;
-	if ( category == "full_atom" ) return FULL_ATOM_t;
-	if ( category == "default" ) return DEFAULT_t;
-	if ( category == CENTROID ) return CENTROID_t;
-	if ( category == CENTROID_ROT ) return CENTROID_ROT_t;
-	if ( category == HYBRID_FA_STANDARD_CENTROID ) return HYBRID_FA_STANDARD_CENTROID_t;
-	if ( category == COARSE_RNA ) return COARSE_RNA_t;
-	utility_exit_with_message("String '"+category+"' not recognized as a TypeSetCategory.");
+TypeSetMode
+type_set_mode_from_string( std::string const & mode ) {
+	if ( mode == FA_STANDARD ) return FULL_ATOM_t;
+	if ( mode == "full_atom" ) return FULL_ATOM_t;
+	if ( mode == "default" ) return DEFAULT_t;
+	if ( mode == CENTROID ) return CENTROID_t;
+	if ( mode == CENTROID_ROT ) return CENTROID_ROT_t;
+	if ( mode == HYBRID_FA_STANDARD_CENTROID ) return HYBRID_FA_STANDARD_CENTROID_t;
+	if ( mode == COARSE_RNA ) return COARSE_RNA_t;
+	utility_exit_with_message("String '"+mode+"' not recognized as a TypeSetMode.");
 }
 
 std::string
-string_from_type_set_category( TypeSetCategory category ) {
-	switch ( category ) {
+string_from_type_set_mode( TypeSetMode mode ) {
+	switch ( mode ) {
 	case FULL_ATOM_t :
 		return FA_STANDARD;
 	case DEFAULT_t :
@@ -628,9 +421,15 @@ string_from_type_set_category( TypeSetCategory category ) {
 	case INVALID_t :
 		return "INVALID_CATEGORY";
 	default :
-		TR.Error << "Value " << category << " is not a valid TypeSetCategory." << std::endl;
-		utility_exit_with_message("Can't convert TypeSetCategory to string.");
+		TR.Error << "Value " << mode << " is not a valid TypeSetMode." << std::endl;
+		utility_exit_with_message("Can't convert TypeSetMode to string.");
 	}
+}
+
+std::ostream &
+operator <<( std::ostream & out, TypeSetMode mode ) {
+	out << string_from_type_set_mode( mode );
+	return out;
 }
 
 } // namespace core

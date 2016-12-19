@@ -270,7 +270,7 @@ HotspotPlacementMover::apply(
 					restype != allowed_aas.end(); ++restype ) {
 
 				core::chemical::ResidueType allowed_rtype =  **restype;
-				core::chemical::ResidueType const & chiral_aa = protocols::simple_moves::chiral::get_chiral_residue_type(allowed_rtype, protocols::simple_moves::chiral::D_CHIRALITY);
+				core::chemical::ResidueType const & chiral_aa = protocols::simple_moves::chiral::get_chiral_residue_type(allowed_rtype, protocols::simple_moves::chiral::D_CHIRALITY, *rs);
 				TR << "chiral_aa.name(): "<< chiral_aa.name() << " chiral_aa.name3(): " << chiral_aa.name3()<< std::endl;
 				packer_task->nonconst_residue_task(resnum).allow_noncanonical_aa(chiral_aa.name3(),*rs);
 			}

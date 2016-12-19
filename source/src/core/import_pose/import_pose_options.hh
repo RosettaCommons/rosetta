@@ -21,6 +21,7 @@
 // Unit headers
 #include <core/import_pose/import_pose_options.fwd.hh>
 #include <core/io/StructFileReaderOptions.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -56,7 +57,8 @@ public:
 	bool pack_missing_sidechains() const;
 	bool read_fold_tree() const;
 	bool skip_set_reasonable_fold_tree() const;
-	std::string const & residue_type_set() const;
+	core::chemical::TypeSetMode residue_type_set_mode() const;
+	//std::string const & residue_type_set() const;
 	bool set_up_metal_bonds() const;
 	bool set_up_metal_constraints() const;
 	core::Real metal_bond_LJ_multiplier() const;
@@ -71,7 +73,8 @@ public:
 	void set_pack_missing_sidechains( bool pack_missing_sidechains );
 	void set_read_fold_tree( bool read_fold_tree );
 	void set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree );
-	void set_residue_type_set( std::string const & residue_type_set );
+	void set_residue_type_set_mode( core::chemical::TypeSetMode residue_type_set_mode );
+	//void set_residue_type_set( std::string const & residue_type_set );
 	void set_set_up_metal_bonds( bool invalue );
 	void set_metal_bond_LJ_multiplier(core::Real invalue );
 	void set_metal_bond_dist_constraint_multiplier(core::Real invalue );
@@ -99,7 +102,8 @@ private:
 	core::Real metal_bond_dist_constraint_multiplier_;
 	core::Real metal_bond_angle_constraint_multiplier_;
 
-	std::string residue_type_set_;
+	core::chemical::TypeSetMode residue_type_set_mode_;
+	// std::string residue_type_set_;
 
 };
 

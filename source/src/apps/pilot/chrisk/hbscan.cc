@@ -470,8 +470,8 @@ scan_hbond_jumps(
 	//if less than 4 atoms in res, add vrt res so final torsion exists
 	Size n_new_rsd( 1 );
 	if ( new_rsd.natoms() < 4 ) {
-		chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
-		conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
+		chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose( pose, "VRT", rsd.type().mode() ) );
+		conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 		pose.append_residue_by_jump( *vrt_rsd, pose.size() );
 		n_new_rsd += 1;
 	}
@@ -710,7 +710,7 @@ byres_analysis(
 	scorefxn->score( pose );
 	hbset.setup_for_residue_pair_energies( pose, false, false );
 
-	chemical::ResidueTypeSetCOP rsd_set( pose.residue( 1 ).residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose() );
 
 	//user defined residue type to scan with
 	std::string const restypes( option[ hbscan::restypes ] );

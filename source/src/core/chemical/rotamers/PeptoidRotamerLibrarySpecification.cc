@@ -22,6 +22,16 @@
 #include <basic/Tracer.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace chemical {
 namespace rotamers {
@@ -95,3 +105,29 @@ PeptoidRotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const 
 } //namespace rotamers
 } //namespace chemical
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::rotamers::PeptoidRotamerLibrarySpecification::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( CEREAL_NVP( peptoid_rotlib_path_ ) ); // std::string
+	arc( CEREAL_NVP( peptoid_rotlib_n_bins_per_rot_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::rotamers::PeptoidRotamerLibrarySpecification::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::rotamers::RotamerLibrarySpecification >( this ) );
+	arc( peptoid_rotlib_path_ ); // std::string
+	arc( peptoid_rotlib_n_bins_per_rot_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::rotamers::PeptoidRotamerLibrarySpecification );
+CEREAL_REGISTER_TYPE( core::chemical::rotamers::PeptoidRotamerLibrarySpecification )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_rotamers_PeptoidRotamerLibrarySpecification )
+#endif // SERIALIZATION

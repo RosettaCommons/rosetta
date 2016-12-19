@@ -11,6 +11,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -261,8 +262,7 @@ OopCreatorMover::apply(
 
 
 	//kdrew: create glycine residue
-	ResidueTypeSetCOP rsd_set( pose.residue(1).residue_type_set() );
-	ResidueOP gly( ResidueFactory::create_residue( rsd_set->name_map( "GLY" ) ) );
+	ResidueOP gly( ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "GLY" ) ) );
 
 	Size pep_begin( pose.conformation().chain_begin( 1 ) );
 	Size pep_end( pose.conformation().chain_end( 1 ) );

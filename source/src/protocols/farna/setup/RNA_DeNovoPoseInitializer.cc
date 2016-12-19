@@ -133,9 +133,7 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 	if ( pose.residue( pose.size() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.
-	core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type(1).residue_type_set();
-
-	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( core::chemical::aa_vrt ) );
+	core::chemical::ResidueTypeCOP rsd_type( core::pose::virtual_type_for_pose( pose ) );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points()[1] );
 

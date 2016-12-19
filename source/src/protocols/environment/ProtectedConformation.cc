@@ -358,7 +358,7 @@ ResidueOP ProtectedConformation::match_variants(
 	using namespace core::conformation;
 
 	Residue const & old_rsd = residue( seqpos );
-	ResidueTypeSetCOP rsd_set( in_rsd.residue_type_set() );
+	ResidueTypeSetCOP rsd_set( residue_type_set_for_conf( in_rsd.type().mode() ) );
 	ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
 
 	// add any variants in the old residue that aren't in the new residue
@@ -412,9 +412,9 @@ ProtectedConformation::replace_residue_sandbox(
 				<< residue( seqpos ).natoms() << " atoms) failed because the input residue ("
 				<< new_rsd->name3() << ", " << new_rsd->natoms()
 				<< " atoms) differed in the number of atoms from the current residue." << std::endl
-				<< "Residue to replace (typeset: " << residue( seqpos ).residue_type_set()->name() << "):" << std::endl
+				<< "Residue to replace (typeset: " << residue( seqpos ).type().mode() << "):" << std::endl
 				<< residue( seqpos ).type() << std::endl
-				<< "Residue replacing (typeset: " << new_rsd->residue_type_set()->name() << "):" << std::endl
+				<< "Residue replacing (typeset: " << new_rsd->type().mode() << "):" << std::endl
 				<< in_rsd.type() << std::endl;
 			if ( tr.Debug.visible() ) { tr.Debug << ss.str() << std::endl; }
 

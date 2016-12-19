@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -69,7 +70,7 @@ public:
 		virtualize_5prime_phosphates( pose );
 
 		Pose new_pose;
-		make_pose_from_sequence( new_pose, pose.sequence(), pose.residue_type(1).residue_type_set(), false /*auto_termin*/ );
+		make_pose_from_sequence( new_pose, pose.sequence(), pose.residue_type_set_for_pose(), false /*auto_termin*/ );
 
 		// following fold_tree fix up is necessary unfortunately -- carried out in protocols/stepwise/modeler/util.cc,
 		// copying code here to keep this test internal to core.

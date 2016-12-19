@@ -201,8 +201,7 @@ NodeConstraintAssemblyMover::apply(
 
 	core::pose::PoseOP template_pose;
 	if(option[in::file::native].user()) {
-		core::chemical::ResidueTypeSetCOP res_type_set =
-			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCOP res_type_set = pose.get_residue_type_set_for_conf( core::chemical::FULL_ATOM_t );
 		template_pose = core::import_pose::pose_from_pdb( *res_type_set, option[ in::file::native ]() );
 	}
 	else {

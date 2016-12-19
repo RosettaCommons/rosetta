@@ -143,13 +143,6 @@ void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps) {
 	}
 }
 
-void remove_virtual_residues(core::pose::Pose & pose) {
-	for ( core::Size i = 1; i <= pose.size(); ++i ) {
-		if ( pose.residue_type(i).name() == "VRT" ) {
-			pose.conformation().delete_residue_slow(i);
-		}
-	}
-}
 
 void swap_transform(Size jump_num, kinematics::RT const & xform, Pose & pose) {
 	debug_assert(jump_num <= pose.num_jump());
@@ -602,6 +595,17 @@ set_ss_from_phipsi(
 	}
 }
 
+/// @brief Return the appropritate ResidueType for the virtual residue for the
+/// "mode" (fullatom, centroid ...) the pose is in.
+core::chemical::ResidueTypeCOP
+virtual_type_for_pose(core::pose::Pose const & pose) {
+	core::chemical::ResidueTypeCOP type( get_restype_for_pose( pose, "VRT" ) );
+	if ( ! type ) {
+		utility_exit_with_message("Cannot find VRT residue.");
+	}
+	return type;
+}
+
 /// @details Adds a virtual residue to a pose as the root. Jump is to the
 /// residue closest to <xyz>. If the pose is already rooted on a VRT res,
 /// do nothing.
@@ -655,15 +659,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 			i_min = i;
 		}
 	}
-	bool fullatom = pose.is_fullatom();
-	core::chemical::ResidueTypeSetCOP const &residue_set(
-		core::chemical::ChemicalManager::get_instance()->residue_type_set
-		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-	);
-	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
-	if ( ! rsd_type ) {
-		utility_exit_with_message("Cannot find residue type VRT" );
-	}
+	core::chemical::ResidueTypeCOP rsd_type( virtual_type_for_pose(pose) );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 	// move to <xyz>
@@ -686,6 +682,14 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	TR.Debug << "addVirtualResAsRoot() setting new fold tree to " << newF << std::endl;
 	TR.Debug << "   i_min = " << i_min << "   d_min = " << d_min << std::endl;
 	pose.fold_tree( newF );
+}
+
+void remove_virtual_residues(core::pose::Pose & pose) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.residue_type(i).name() == "VRT" ) {
+			pose.conformation().delete_residue_slow(i);
+		}
+	}
 }
 
 /// @detail Get center of mass of a pose.
@@ -1933,6 +1937,27 @@ replace_pose_residue_copying_existing_coordinates(
 
 }
 
+core::chemical::ResidueTypeCOP
+get_restype_for_pose(core::pose::Pose const & pose, std::string const & name) {
+	core::chemical::TypeSetMode mode( pose.conformation().residue_typeset_mode() );
+	if ( mode == core::chemical::MIXED_t ) {
+		// Fall back to fullatom if the mode of the pose is perfectly balanced
+		mode = core::chemical::FULL_ATOM_t;
+	}
+	return get_restype_for_pose(pose, name, mode);
+}
+
+core::chemical::ResidueTypeCOP
+get_restype_for_pose(core::pose::Pose const & pose, std::string const & name, core::chemical::TypeSetMode mode) {
+	core::chemical::ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( mode ) );
+	debug_assert( residue_set );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->name_mapOP(name) );
+	if ( ! rsd_type ) {
+		TR.Error << "Can't find residue type '" << name << "' in type set of mode " << mode << std::endl;
+	}
+	return rsd_type;
+}
+
 
 core::conformation::ResidueOP
 remove_variant_type_from_residue(
@@ -1943,7 +1968,7 @@ remove_variant_type_from_residue(
 	if ( !old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
 	// the type of the desired variant residue
-	core::chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( old_rsd.type().mode() ) );
 	core::chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 	core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( new_rsd_type, old_rsd, pose.conformation() ) );
 	core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
@@ -1970,7 +1995,7 @@ add_variant_type_to_residue(
 	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( old_rsd.type().mode() ) );
 	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 	conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( new_rsd_type, old_rsd, pose.conformation() ) );
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
@@ -2001,7 +2026,7 @@ add_variant_type_to_pose_residue(
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( seqpos ).mode() ) );
 	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
@@ -2030,7 +2055,7 @@ remove_variant_type_from_pose_residue(
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( seqpos ).mode() ) );
 	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );

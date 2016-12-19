@@ -77,9 +77,6 @@ append_subpose_to_pose(
 /// Jumps are keyed by their jump id.
 void jumps_from_pose(core::pose::Pose const & pose, Jumps & jumps);
 
-/// @brief Removes all virtual residues from <pose>
-void remove_virtual_residues(core::pose::Pose & pose);
-
 /// @brief Updates the rigid-body transform of the specified jump in <pose>
 void swap_transform(Size jump_num, kinematics::RT const & xform, Pose & pose);
 
@@ -184,6 +181,11 @@ void setPoseExtraScore(
 	std::string const & value
 );
 
+/// @brief Return the appropritate ResidueType for the virtual residue for the i
+/// "mode" (fullatom, centroid ...) the pose is in.
+core::chemical::ResidueTypeCOP
+virtual_type_for_pose(core::pose::Pose const & pose);
+
 /// @brief Adds a VRT res to the end of the pose at the center of mass.
 /// Reroots the structure on this res.
 void addVirtualResAsRoot(core::pose::Pose & pose);
@@ -191,6 +193,9 @@ void addVirtualResAsRoot(core::pose::Pose & pose);
 /// @brief Adds a virtual residue to the end of the pose at the specified location.
 /// Roots the structure on this residue.
 void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::Pose& pose);
+
+/// @brief Removes all virtual residues from <pose>
+void remove_virtual_residues(core::pose::Pose & pose);
 
 /// @brief Get center of mass of a pose.
 numeric::xyzVector< core::Real >
@@ -420,6 +425,16 @@ replace_pose_residue_copying_existing_coordinates(
 	Size const seqpos,
 	core::chemical::ResidueType const & new_rsd_type
 );
+
+/// @brief Return the residue type in the correct
+/// "mode" (fullatom, centroid ...) the pose is in.
+core::chemical::ResidueTypeCOP
+get_restype_for_pose(core::pose::Pose const & pose, std::string const & name);
+
+/// @brief Return the residue type in the passed mode,
+/// respecting any modification that pose may make.
+core::chemical::ResidueTypeCOP
+get_restype_for_pose(core::pose::Pose const & pose, std::string const & name, core::chemical::TypeSetMode mode);
 
 /// @brief Remove variant from an existing residue.
 conformation::ResidueOP remove_variant_type_from_residue(

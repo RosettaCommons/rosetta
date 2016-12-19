@@ -391,7 +391,7 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 		Real sign1 = core::pose::rna::get_op2_op1_sign( pose,  res_num);
 
 		pose::Pose mini_pose; //Could move this part outside the for loop
-		make_pose_from_sequence( mini_pose, "aa", pose.residue_type(res_num).residue_type_set() );
+		make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose( pose.residue_type(res_num).mode() ) );
 		Real const sign2 = core::pose::rna::get_op2_op1_sign( mini_pose);
 
 		if ( sign1 * sign2 < 0 ) {
@@ -418,7 +418,7 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 	Real sign1 = core::pose::rna::get_op2_op1_sign( pose );
 
 	pose::Pose mini_pose;
-	make_pose_from_sequence( mini_pose, "aa", pose.residue_type(1).residue_type_set() );
+	make_pose_from_sequence( mini_pose, "aa", pose.residue_type_set_for_pose() );
 	Real sign2 = core::pose::rna::get_op2_op1_sign( mini_pose );
 
 	if ( sign1 * sign2 > 0 ) return;

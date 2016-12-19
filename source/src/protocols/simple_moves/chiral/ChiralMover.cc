@@ -54,9 +54,8 @@ namespace protocols {
 namespace simple_moves {
 namespace chiral {
 
-ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality chirality )
+ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality chirality, core::chemical::ResidueTypeSet const & residue_type_set )
 {
-	chemical::ResidueTypeSetCOP residue_type_set = rt.residue_type_set();
 	//kdrew: first letters of a residuetype name (before '_p') are the letter code for the aa and is what is stored in the map
 	//std::string base_name;
 	//std::string patch_name;
@@ -93,9 +92,9 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 
 	// Prepend or remove D depending on targeting.
 	if ( chirality == L_CHIRALITY && rt.is_d_aa() ) {
-		return residue_type_set->name_map( rt.name().substr( 1 ) );
+		return residue_type_set.name_map( rt.name().substr( 1 ) );
 	} else if ( chirality == D_CHIRALITY && rt.is_l_aa() ) {
-		return residue_type_set->name_map( "D"+rt.name() );
+		return residue_type_set.name_map( "D"+rt.name() );
 	}
 
 	// if all else fails, return original rt
@@ -138,7 +137,7 @@ void ChiralMover::apply( core::pose::Pose & pose )
 		TR << "pseudo_psi: " << pseudo_psi << std::endl;
 	}
 	//kdrew: get chiral residue type
-	ResidueType const & chiral_rtype = get_chiral_residue_type( rtype, chirality_ );
+	ResidueType const & chiral_rtype = get_chiral_residue_type( rtype, chirality_, *pose.residue_type_set_for_pose( rtype.mode() ) );
 	TR << "Flipped residue type: " << chiral_rtype.name()  << " " << chiral_rtype.aa() << std::endl;
 	if ( chiral_rtype.name() == rtype.name() ) {
 		TR << " not making chiral change" << std::endl;

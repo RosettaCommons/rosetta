@@ -48,14 +48,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-
-//#include <core/chemical/AtomTypeSet.hh>
-//#include <core/chemical/ElementSet.hh>
-//#include <core/chemical/IdealBondLengthSet.hh>
-//#include <core/chemical/MMAtomTypeSet.hh>
-//#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-//#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-//#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/GlobalResidueTypeSet.fwd.hh>
 
 #ifdef MULTI_THREADED
 
@@ -111,19 +104,19 @@ public:
 	orbital_type_set(std::string const & tag);
 
 	/// @brief query residue_type_set by a type
+	///
+	/// @note If you have access to a Pose/Conformation,
+	/// you probably don't want to use this function.
+	/// The Conformation can have custom ResidueTypeSets which
+	/// add additional ResidueTypes to the ResidueTypeSet.
+	/// Instead, use the residue_type_set_for_*() function on the pose.
+	/// Those will fall back to this function if there isn't a custom ResidueTypeSet.
 	ResidueTypeSetCOP
-	residue_type_set( TypeSetCategory type_set_type );
+	residue_type_set( TypeSetMode type_set_type );
 
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSetCOP
 	residue_type_set( std::string const & tag );
-
-	/// @brief query residue_type_set by a name tag
-	ResidueTypeSet &
-	nonconst_residue_type_set( std::string const & tag );
-
-	ResidueTypeSetOP
-	nonconst_residue_type_set_op( std::string const & tag );
 
 	/// @brief Check if residue_type_set is instantiated...
 	bool has_residue_type_set( std::string const & tag ); //can't be const due to mutex changing
@@ -135,7 +128,7 @@ private:
 	typedef std::map< std::string, orbitals::OrbitalTypeSetOP > OrbitalTypeSets;
 	typedef std::map< std::string, MMAtomTypeSetOP > MMAtomTypeSets;
 	typedef std::map< std::string, gasteiger::GasteigerAtomTypeSetOP > GasteigerAtomTypeSets;
-	typedef std::map< std::string, ResidueTypeSetOP > ResidueTypeSets;
+	typedef std::map< std::string, GlobalResidueTypeSetOP > GlobalResidueTypeSets;
 
 #ifdef MULTI_THREADED
 
@@ -172,7 +165,7 @@ private:
 
 	/// @brief Go and create a residue type set.  Should be called only after it's been
 	/// determined safe (and neccessary) to construct it.
-	ResidueTypeSetOP create_residue_type_set( std::string const & tag ) const;
+	GlobalResidueTypeSetOP create_residue_type_set( std::string const & tag ) const;
 
 	/// @brief Go and create an ideal bond length set.  Should be called only after it's been
 	/// determined safe (and neccessary) to construct it.
@@ -192,17 +185,20 @@ private: // data
 	/// @brief lookup map for querying gasteiger_atom_type_set by name tag
 	GasteigerAtomTypeSets gasteiger_atom_type_sets_;
 	/// @brief lookup map for querying residue_type_set by name tag
-	ResidueTypeSets residue_type_sets_;
+	GlobalResidueTypeSets residue_type_sets_;
 
 	/// @brief lookup map for the set of ideal bond lengths
 	IdealBondLengthSets ideal_bond_length_sets_;
 };
 
-TypeSetCategory
-type_set_category_from_string( std::string const & type );
+TypeSetMode
+type_set_mode_from_string( std::string const & mode );
 
 std::string
-string_from_type_set_category( TypeSetCategory type );
+string_from_type_set_mode( TypeSetMode mode );
+
+std::ostream &
+operator <<( std::ostream & out, TypeSetMode mode );
 
 } // namespace core
 } // namespace chemical

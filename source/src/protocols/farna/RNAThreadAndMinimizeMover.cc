@@ -248,7 +248,7 @@ void RNAThreadAndMinimizeMover::process_deletions( core::pose::Pose & pose ) {
 }
 
 void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size const insertion_begin, Size const seqpos ) {
-	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 	core::pose::Pose ref_pose = pose;
 
 	Size const width = 3;
@@ -459,7 +459,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 }
 
 void RNAThreadAndMinimizeMover::process_insertions( core::pose::Pose & pose ) {
-	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 
 	auto const insertions = utility::string_split( insertion_list_, ' ' );
 	for ( auto const & insertion : insertions ) {

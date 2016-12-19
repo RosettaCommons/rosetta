@@ -37,10 +37,10 @@ using std::map;
 class RmsUtilTest : public CxxTest::TestSuite {
 public:
 	void setUp() {
-		// AMW: no longer have to separately load D amino acids
-		core_init_with_additional_options( //Load the D-amino acids for this test.
-			"-no_optH "//-extra_res_fa d-caa/DALA.params d-caa/DASP.params d-caa/DGLU.params d-caa/DPHE.params d-caa/DHIS.params d-caa/DHIS_D.params d-caa/DILE.params d-caa/DLYS.params d-caa/DLEU.params d-caa/DMET.params d-caa/DASN.params d-caa/DPRO.params d-caa/DGLN.params d-caa/DARG.params d-caa/DSER.params d-caa/DTHR.params d-caa/DVAL.params d-caa/DTRP.params d-caa/DTYR.params"
+		core_init_with_additional_options(
+			"-no_optH -extra_res_fa core/scoring/1pqc.params"
 		);
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -49,6 +49,7 @@ public:
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("QC1") ) params_files.push_back("core/scoring/1pqc.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
 	}
 
 	void test_ligand_rms() {

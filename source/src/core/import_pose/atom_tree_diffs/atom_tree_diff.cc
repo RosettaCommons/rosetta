@@ -31,6 +31,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -508,19 +509,22 @@ bool pose_from_atom_tree_diff(
 					TR << "error reading sequence mutation data" << std::endl;
 				} else if ( resnum < 1 || resnum > pose.size() ) {
 					TR << "d'oh, pose doesn't have a residue " << resnum << std::endl;
-				} else if ( !pose.residue(resnum).residue_type_set()->has_name(resname) ) {
-					TR << "unrecognized residue type name '" << resname << "'" << std::endl;
 				} else if ( pose.residue_type(resnum).name() == resname ) {
 					// These will happen routinely when reading a reference pose,
 					// where the entire sequence is specified explicitly.
 					TR.Debug << "ignoring no-op mutation: MUTATE " << resnum << " " << resname << std::endl;
 				} else {
-					using namespace core::conformation;
-					ResidueOP newres = ResidueFactory::create_residue(
-						// if can't find residue name, name_map() calls exit()
-						pose.residue(resnum).residue_type_set()->name_map(resname),
-						pose.residue(resnum), pose.conformation());
-					pose.replace_residue(resnum, *newres, true /*orient backbone*/);
+					core::chemical::ResidueTypeCOP new_restype( core::pose::get_restype_for_pose( pose, resname, pose.residue_type(resnum).mode() ) );
+					if ( new_restype == nullptr ) {
+						TR << "unrecognized residue type name '" << resname << "'" << std::endl;
+					} else {
+						using namespace core::conformation;
+						ResidueOP newres = ResidueFactory::create_residue(
+							// if can't find residue name, name_map() calls exit()
+							*new_restype,
+							pose.residue(resnum), pose.conformation());
+						pose.replace_residue(resnum, *newres, true /*orient backbone*/);
+					}
 				}
 			} else if ( key == "FOLD_TREE" ) {
 				// This is typically present only when using embedded PDB format (see below).
@@ -559,7 +563,7 @@ bool pose_from_atom_tree_diff(
 				core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_records(pdb_data) );
 				sfr.filename() = "atom_tree_diff.pdb"; // I'm afraid to leave this empty...
 				pose.clear();
-				core::import_pose::build_pose( sfr.clone(), pose, *(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ) );
+				core::import_pose::build_pose( sfr.clone(), pose, *pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
 			}
 		} else { // it's an atom line...
 			if ( rsd_no < 1 || rsd_no > pose.size() ) {

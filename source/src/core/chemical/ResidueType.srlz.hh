@@ -36,18 +36,6 @@ void serialize_residue_type( Archive & arc, ResidueTypeCOP restype );
 template < class Archive >
 void deserialize_residue_type( Archive & arc, ResidueTypeCOP & restype );
 
-template< class Archive >
-void serialize_residue_type_vector( Archive & arc, ResidueTypeCOPs const & restype );
-
-template < class Archive >
-void deserialize_residue_type_vector( Archive & arc, ResidueTypeCOPs & restype );
-
-template< class Archive >
-void serialize_residue_type_list( Archive & arc, std::list< ResidueTypeCOP > const & restype );
-
-template < class Archive >
-void deserialize_residue_type_list( Archive & arc, std::list< ResidueTypeCOP > & restype );
-
 }
 }
 

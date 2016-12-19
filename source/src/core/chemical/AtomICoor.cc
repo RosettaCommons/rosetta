@@ -34,13 +34,14 @@
 //#include <numeric/xyz.functions.hh>
 #include <numeric/NumericTraits.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-
 // C++ headers
 
+#ifdef    SERIALIZATION
+#include <core/chemical/ResidueGraphTypes.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
 
 namespace core {
 namespace chemical {
@@ -78,8 +79,8 @@ ICoorAtomID::ICoorAtomID(
 		vd_ = rsd_type.atom_vertex(atomno_);
 	} else if ( name.substr(0,4) == "CONN" ) {
 		type_ = CONNECT;
-		debug_assert( is_int( name.substr(4) ) );
-		atomno_ = int_of( name.substr(4) );
+		debug_assert( ObjexxFCL::is_int( name.substr(4) ) );
+		atomno_ = ObjexxFCL::int_of( name.substr(4) );
 		vd_ = ResidueType::null_vertex;
 		debug_assert( atomno_ > 0 && atomno_ <= rsd_type.n_possible_residue_connections() );
 		if ( atomno_ > rsd_type.n_possible_residue_connections() ) { // using > is not a great check but it is better than !=
@@ -118,6 +119,12 @@ ICoorAtomID::ICoorAtomID(
 
 ICoorAtomID::ICoorAtomID( ICoorAtomID const & ) = default;
 
+void
+ICoorAtomID::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
+	if ( old_to_new.count( vd_ ) == 1 ) {
+		vd_ = old_to_new.at( vd_ );
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 Vector const &
@@ -341,6 +348,16 @@ AtomICoor::AtomICoor(
 	}
 }
 
+void
+AtomICoor::remap_atom_vds( std::map< VD, VD > const & old_to_new ) {
+	if ( old_to_new.count( built_vd_) == 1 ) {
+		built_vd_ = old_to_new.at( built_vd_ );
+	}
+	stub_atom1_.remap_atom_vds(old_to_new);
+	stub_atom2_.remap_atom_vds(old_to_new);
+	stub_atom3_.remap_atom_vds(old_to_new);
+}
+
 
 Vector
 AtomICoor::build(
@@ -480,3 +497,52 @@ void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, Residue
 
 } // chemical
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::ICoorAtomID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( type_ ) ); // enum core::chemical::ICoorAtomID::Type
+	arc( CEREAL_NVP( atomno_ ) ); // Size
+	SERIALIZE_VD( arc, vd_, "vd_" ); // VD;
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::ICoorAtomID::load( Archive & arc ) {
+	arc( type_ ); // enum core::chemical::ICoorAtomID::Type
+	arc( atomno_ ); // Size
+	DESERIALIZE_VD( arc, vd_ ); // VD;
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::ICoorAtomID );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::AtomICoor::save( Archive & arc ) const {
+	SERIALIZE_VD( arc, built_vd_, "built_vd_" ); // VD;
+	arc( CEREAL_NVP( phi_ ) ); // Real
+	arc( CEREAL_NVP( theta_ ) ); // Real
+	arc( CEREAL_NVP( d_ ) ); // Real
+	arc( CEREAL_NVP( stub_atom1_ ) ); // class core::chemical::ICoorAtomID
+	arc( CEREAL_NVP( stub_atom2_ ) ); // class core::chemical::ICoorAtomID
+	arc( CEREAL_NVP( stub_atom3_ ) ); // class core::chemical::ICoorAtomID
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::AtomICoor::load( Archive & arc ) {
+	DESERIALIZE_VD( arc, built_vd_ ); // VD;
+	arc( phi_ ); // Real
+	arc( theta_ ); // Real
+	arc( d_ ); // Real
+	arc( stub_atom1_ ); // class core::chemical::ICoorAtomID
+	arc( stub_atom2_ ); // class core::chemical::ICoorAtomID
+	arc( stub_atom3_ ); // class core::chemical::ICoorAtomID
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AtomICoor );
+#endif // SERIALIZATION

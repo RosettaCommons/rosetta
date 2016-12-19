@@ -31,6 +31,7 @@
 
 #include <iostream>
 
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
 #include <utility/vector1.hh>
@@ -40,6 +41,13 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 using namespace basic::options;
 
@@ -52,8 +60,12 @@ static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 ////////////////////////////////////////////////////////////////////////////////
 
 AtomTypeSet::AtomTypeSet( std::string const & directory ):
-	directory_( directory)
+	mode_( INVALID_t ),
+	directory_( directory )
 {
+
+	read_meta_file( directory+"/meta.txt" );
+
 	read_file( directory + "/atom_properties.txt" );
 
 	utility::io::izstream data( ( directory+"/extras.txt" ).c_str() );
@@ -74,10 +86,15 @@ AtomTypeSet::AtomTypeSet( std::string const & directory ):
 }
 
 AtomTypeSet::AtomTypeSet(
-	std::string const & name,
-	utility::sql_database::sessionOP db_session) {
+		std::string const & name,
+		utility::sql_database::sessionOP db_session):
+	mode_( INVALID_t )
+{
 
 	directory_ = basic::database::full_name( "chemical/atom_type_sets/" + name);
+
+	// TODO: There probably should be a loading of the mode here, though where that would be set
+	// in the database is a good question.
 
 	{ // add atom type to atom type set
 		std::string stmt_string =
@@ -248,6 +265,28 @@ AtomTypeSet::read_file( std::string const & filename )
 
 }
 
+/// @brief Read in meta information from the given file
+void
+AtomTypeSet::read_meta_file( std::string const & filename ) {
+
+	utility::io::izstream data( filename.c_str() );
+	if ( !data.good() ) {
+		return; // Be silent if the directory doesn't have a meta file.
+	}
+
+	std::string line, tag;
+	while ( getline( data, line ) ) {
+		// Skip empty lines and comments.
+		if ( line.size() < 1 || line[0] == '#' ) continue;
+		std::stringstream l( line );
+		l >> tag;
+		if ( tag == "TYPE_SET_MODE" || tag == "TYPE_SET_CATEGORY") {
+			l >> tag;
+			mode_ = type_set_mode_from_string( tag );
+		}
+	}
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Private helper function for filling in default values in the fxn add_parameters_from_file
@@ -578,3 +617,37 @@ AtomTypeSet::clone_atom_types_from_commandline()
 
 } // chemical
 } // core
+
+#ifdef SERIALIZATION
+
+template < class Archive >
+void core::chemical::serialize_atom_type_set( Archive & arc, core::chemical::AtomTypeSetCOP ptr )
+{
+	if ( ! ptr ) {
+		bool ptr_is_nonnull( false );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+	} else {
+		bool ptr_is_nonnull( true );
+		arc( CEREAL_NVP( ptr_is_nonnull ) );
+		std::string typeset_name( ptr->name() ); // Assumes that the name can be used to extract it from the ChemicalManager
+		arc( CEREAL_NVP( typeset_name ) );
+	}
+}
+INSTANTIATE_FOR_OUTPUT_ARCHIVES( void, core::chemical::serialize_atom_type_set, core::chemical::AtomTypeSetCOP );
+
+template < class Archive >
+void core::chemical::deserialize_atom_type_set( Archive & arc, core::chemical::AtomTypeSetCOP & ptr )
+{
+	bool ptr_is_nonnull( true ); arc( ptr_is_nonnull );
+	if ( ptr_is_nonnull ) {
+		std::string typeset_name;
+		arc( typeset_name );
+		ptr = core::chemical::ChemicalManager::get_instance()->atom_type_set( typeset_name );
+	} else {
+		ptr = nullptr;
+	}
+}
+INSTANTIATE_FOR_INPUT_ARCHIVES( void, core::chemical::deserialize_atom_type_set, core::chemical::AtomTypeSetCOP & );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_chemical_AtomTypeSet )
+#endif // SERIALIZATION

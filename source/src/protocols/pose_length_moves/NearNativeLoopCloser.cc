@@ -163,8 +163,8 @@ void PossibleLoop::extendRegion(bool towardCTerm, Size resStart, Size numberAddR
 	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
-	bool fullatom = poseOP->is_fullatom();
-	core::chemical::ResidueTypeSetCOP rs(core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
+	debug_assert( poseOP != nullptr );
+	core::chemical::ResidueTypeSetCOP rs( poseOP->residue_type_set_for_pose() );
 	kinematics::FoldTree ft;
 	if ( towardCTerm == true ) {
 		ft = poseOP->fold_tree();
@@ -1005,8 +1005,8 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, Size resStart, char ne
 	core::conformation::ResidueOP new_rsd( nullptr );
 	string build_aa_type_one_letter =option[OptionKeys::remodel::generic_aa];
 	string build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_type_one_letter[0]));
-	bool fullatom = poseOP->is_fullatom();
-	core::chemical::ResidueTypeSetCOP rs(core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
+	debug_assert( poseOP != nullptr );
+	core::chemical::ResidueTypeSetCOP rs( poseOP->residue_type_set_for_pose() );
 	kinematics::FoldTree ft;
 	if ( towardCTerm == true ) {
 		ft = poseOP->fold_tree();

@@ -23,6 +23,7 @@
 //project headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace jd2 {
@@ -42,6 +43,10 @@ public:
 
 	/// @brief return the input source
 	JobInputterInputSource::Enum input_source() const override;
+
+private:
+	utility::vector1< std::string > params_files_;
+
 };
 
 }

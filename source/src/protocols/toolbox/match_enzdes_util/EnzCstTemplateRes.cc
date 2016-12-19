@@ -707,13 +707,13 @@ protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::save( Archive & arc ) 
 	arc( CEREAL_NVP( at3_type_ ) ); // std::string
 	arc( CEREAL_NVP( allowed_res_types_ ) ); // utility::vector1<std::string>
 
-	core::chemical::serialize_residue_type_vector( arc, allowed_res_types_pointers_ );
+	arc( CEREAL_NVP( allowed_res_types_pointers_ ) );
 
 	//arc( CEREAL_NVP( atom_inds_for_restype_ ) ); // RestypeToTemplateAtomsMap
 	arc( atom_inds_for_restype_.size() );
 	for( RestypeToTemplateAtomsMap::const_iterator iter = atom_inds_for_restype_.begin();
 			 iter != atom_inds_for_restype_.end(); ++iter ) {
-		core::chemical::serialize_residue_type( arc, iter->first );
+		arc( iter->first );
 		arc( iter->second );
 	}
 
@@ -742,12 +742,12 @@ protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::load( Archive & arc ) 
 	arc( at3_type_ ); // std::string
 	arc( allowed_res_types_ ); // utility::vector1<std::string>
 
-	core::chemical::deserialize_residue_type_vector( arc, allowed_res_types_pointers_ );
+	arc( allowed_res_types_pointers_ );
 
 	core::Size nrestypes( 0 ); arc( nrestypes );
 	for ( core::Size ii = 1; ii <= nrestypes; ++ii ) {
 		core::chemical::ResidueTypeCOP restype;
-		core::chemical::deserialize_residue_type( arc, restype );
+		arc( restype );
 		utility::vector1< utility::vector1< core::Size > > atominds;
 		arc( atominds );
 		atom_inds_for_restype_[ restype ] = atominds;

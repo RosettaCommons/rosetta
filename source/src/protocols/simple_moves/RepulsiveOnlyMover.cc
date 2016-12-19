@@ -76,7 +76,7 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 		//TR << "RepulsiveOnly protocols::moves::Mover has been called" << std::endl;
 		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ) {
 			if ( mutate_to_glycine_ ) {
-				core::chemical::ResidueType const & gly( pose.residue(replonly_rsd[i]).residue_type_set()->name_map("GLY") );
+				core::chemical::ResidueType const & gly( *core::pose::get_restype_for_pose( pose, "GLY", pose.residue_type(replonly_rsd[i]).mode() ) );
 				core::pose::replace_pose_residue_copying_existing_coordinates( pose, replonly_rsd[i], gly );
 				TR << replonly_rsd[i] << " has been changed as GLY" << std::endl;
 			}

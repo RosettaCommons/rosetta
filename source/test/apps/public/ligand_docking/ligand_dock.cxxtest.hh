@@ -56,7 +56,11 @@ public:
 			+" -docking:ligand:start_from  -1.731  32.589  -5.039"
 			+" -docking:ligand:minimize_ligand"
 			+" -docking:ligand:harmonic_torsions 10"
+			+" -extra_res_fa apps/public/ligand_docking/ZNx.params"
+				+" apps/public/ligand_docking/7cpa.params"
+				+" apps/public/ligand_docking/1aq1.params"
 		);
+		/*
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
@@ -67,6 +71,7 @@ public:
 		if ( !residue_set.has_name("CP1") ) params_files.push_back("apps/public/ligand_docking/7cpa.params");
 		if ( !residue_set.has_name("AQ1") ) params_files.push_back("apps/public/ligand_docking/1aq1.params");
 		residue_set.read_files_for_custom_residue_types(params_files);
+		*/
 	}
 
 	void tearDown() {}
