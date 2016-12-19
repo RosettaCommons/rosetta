@@ -27,8 +27,8 @@
 // Utility Headers
 
 // Unit Headers
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/moves/Mover.fwd.hh>
-
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
@@ -41,7 +41,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
+
 #include <basic/Tracer.hh>
+
+#include <fstream>
 
 // Tracer
 static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );
@@ -63,6 +66,9 @@ bool print_information( std::string const &component_name, std::stringstream &ou
 /// @details Calls the single string version.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void print_information( utility::vector1 < std::string > const &component_names );
+
+/// @brief Saves the XSD to the given file.
+void save_schema(  std::string const & filename );
 
 // FUNCTION DECLARATIONS
 void*
@@ -206,6 +212,22 @@ print_information(
 	TR.flush();
 }
 
+/// @brief Saves the XSD to the given file.
+void save_schema(  std::string const & filename ) {
+	std::string schema;
+	try {
+		protocols::rosetta_scripts::RosettaScriptsParser parser;
+		schema = parser.xsd_for_rosetta_scripts();
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		TR.Error << "An error was encountered while attempting to generate the XSD schema - it will not be saved.\n";
+		TR.Error << e.msg() << "\n";
+		return;
+	}
+
+	std::ofstream ofs( filename );
+	ofs << schema << std::endl;
+}
+
 /// @details dock_design_scripting provides an xml-based scripting capability
 /// to run rosetta movers and filters defined in a text file provided by the
 /// user. A full documentation of dock_design_scripting is available at:
@@ -222,35 +244,35 @@ main( int argc, char * argv [] )
 
 		if ( option[ parser::info ].user() ) { // If the -parser::info option is used, just print information about the requested component(s) and exit.
 			print_information( option[ parser::info ]() );
-		} else {
-			if ( !option[ parser::protocol ].user() ) { // Just print a template script and exit if no input script is provided.
+		} else if ( option[ parser::output_schema ].user() ) {
+			save_schema( option[ parser::output_schema ] );
+		} else if ( ! option[ parser::protocol ].user() ) { // Just print a template script and exit if no input script is provided.
 				print_template_script();
-			} else { // If an input script has been provided, then we're not printing a template script and exiting.
-				bool const view( option[ parser::view ] );
-				protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
-				//That means that this can only be used with parser=true
-				option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
-				if ( !option[ jd2::ntrials ].user() ) {
-					// when using rosetta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
-					// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
-					option[ jd2::ntrials ].value( 1 );
-				}
+		} else { // If an input script has been provided, then we're not printing a template script and exiting.
+			bool const view( option[ parser::view ] );
+			protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
+			//That means that this can only be used with parser=true
+			option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
+			if ( !option[ jd2::ntrials ].user() ) {
+				// when using rosetta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
+				// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
+				option[ jd2::ntrials ].value( 1 );
+			}
 
-				if ( view ) {
-					protocols::viewer::viewer_main( my_main );
-				} else {
+			if ( view ) {
+				protocols::viewer::viewer_main( my_main );
+			} else {
 #ifdef BOINC
-					protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
+				protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
 #else
 #ifdef USEMPI
-					protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
+				protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
 #else
-					protocols::jd2::JobDistributor::get_instance()->go( mover );
+				protocols::jd2::JobDistributor::get_instance()->go( mover );
 #endif
 #endif
-				}
-			} //If -parser::protocol flag
-		} //If no -parser::info flag
+			}
+		}
 	} catch( utility::excn::EXCN_Base& excn ) {
 		basic::Error()
 			<< "ERROR: Exception caught by rosetta_scripts application:"
