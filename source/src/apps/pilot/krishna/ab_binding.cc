@@ -87,8 +87,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//#include <apps/pilot/krishna/metrics.cc>
-
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.krishna.abbinding" );
 
 using namespace core;

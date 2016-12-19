@@ -27,7 +27,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/pockets/PocketConstraint.cc>
+#include <protocols/pockets/PocketConstraint.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>

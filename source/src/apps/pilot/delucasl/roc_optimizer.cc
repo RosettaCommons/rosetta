@@ -47,7 +47,7 @@
 
 //protocol headers
 #include <protocols/ligand_docking/StartFrom.hh>
-#include <protocols/qsar/scoring_grid/GridManager.cc>
+#include <protocols/qsar/scoring_grid/GridManager.hh>
 
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option_macros.hh>

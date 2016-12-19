@@ -1,0 +1,22 @@
+
+cd %(workdir)s
+
+touch cc_includes.txt
+
+cd %(bin)s/../
+
+# Find includes of cc files in headers and cc files, and sort for run-to-run consistency
+egrep '#include.[^>]*[.]cc[ >]' src -R --include '*.hh' --include '*.cc' | sort > %(workdir)s/cc_includes.txt
+
+cd %(workdir)s
+
+# Label by date so they get represented as changes in the diff.
+sed -i "s/^/[`date`] /" cc_includes.txt
+
+if [ -s cc_includes.txt ]; then
+   echo ">>> Illegal use of .cc file in an include statement detected!"
+   exit -1;
+fi
+
+# File is empty - we're fine.
+exit 0

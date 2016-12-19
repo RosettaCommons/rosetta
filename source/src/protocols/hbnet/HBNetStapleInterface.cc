@@ -23,7 +23,6 @@
 #include <basic/database/open.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/pack/rotamer_set/rotamer_building_functions.hh>
-//#include <core/pack/rotamer_set/rotamer_building_functions.cc>
 
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>

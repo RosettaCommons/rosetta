@@ -22,11 +22,11 @@
 
 // Package Headers
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh> 
+#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 // Project Headers
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/relax/relax_main.cc> 
+#include <protocols/relax/relax_main.hh>
 #include <protocols/relax/util.hh>
 
 // Project Headers
@@ -49,7 +49,7 @@ using namespace protocols::jd2;
 /// @brief Membrane Relax Mover: Create a Membrane Pose and Apply Relax Protocol
 class MembraneRelaxMover : public Mover {
 
-public: 
+public:
 
 	MembraneRelaxMover() :
 		Mover() {}
@@ -61,26 +61,26 @@ public:
 	void apply( Pose & pose ) {
 
 		using namespace protocols::membrane;
-		using namespace protocols::moves; 
-		using namespace protocols::relax; 
+		using namespace protocols::moves;
+		using namespace protocols::relax;
 
 		// Create a membrane pose
-		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
-		add_memb->apply( pose ); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() );
+		add_memb->apply( pose );
 
 		// Initialze the posiiton of a membrane protein
-		MembranePositionFromTopologyMoverOP init_position( new MembranePositionFromTopologyMover() ); 
-		init_position->apply( pose ); 
+		MembranePositionFromTopologyMoverOP init_position( new MembranePositionFromTopologyMover() );
+		init_position->apply( pose );
 
 		// Setup Relax Base Protocol
 		protocols::moves::MoverOP protocol = generate_relax_from_cmd();
 		protocols::jd2::set_native_in_mover( *protocol );
-		protocol->apply(pose); 
+		protocol->apply(pose);
 
 	}
 };
 
-typedef utility::pointer::shared_ptr< MembraneRelaxMover > MembraneRelaxMoverOP; 
+typedef utility::pointer::shared_ptr< MembraneRelaxMover > MembraneRelaxMoverOP;
 
 /// @brief Main method
 int
@@ -94,7 +94,7 @@ main( int argc, char * argv [] )
 
 		protocols::relax::ClassicRelax::register_options();
 		protocols::jd2::register_options();
-	
+
 		option.add_relevant( OptionKeys::in::file::fullatom );
     	option.add_relevant( OptionKeys::in::file::movemap );
 		option.add_relevant( OptionKeys::relax::fast );
@@ -105,7 +105,7 @@ main( int argc, char * argv [] )
 		MembraneRelaxMoverOP mprlx( new MembraneRelaxMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mprlx );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -37,7 +37,7 @@
 #include <utility/io/ozstream.hh>
 
 #include <protocols/idealize/idealize.hh>
-#include <protocols/stepwise/StepWiseUtil.cc>
+#include <protocols/stepwise/StepWiseUtil.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>

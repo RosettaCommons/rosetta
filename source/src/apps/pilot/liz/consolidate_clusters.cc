@@ -15,7 +15,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
-#include <numeric/util.cc>
+#include <numeric/util.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

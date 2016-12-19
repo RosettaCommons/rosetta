@@ -37,7 +37,6 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/VariantType_mappings.cc>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>

@@ -40,7 +40,7 @@
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunctionFactory.cc>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/hbonds/HBondSet.hh>

@@ -95,7 +95,7 @@
 //protocols
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/evaluation/RmsdEvaluator.cc>
+#include <protocols/evaluation/RmsdEvaluator.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
