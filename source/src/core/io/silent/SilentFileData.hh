@@ -456,13 +456,13 @@ public:
 
 	/// @brief const_iterator class for SilentFileData container.
 	class const_iterator {
+	public:
 		typedef SilentStructOP  value_type;
 		typedef SilentStructOP* pointer;
 		typedef SilentStructOP& reference;
 		typedef std::ptrdiff_t  difference_type;
 		typedef std::bidirectional_iterator_tag iterator_category;
 
-	public:
 		/// @brief empty constructor
 		const_iterator() {}
 
