@@ -386,6 +386,7 @@ sources = {
 		"GaussianChainQuadrupleFunc",
 		"GaussianChainSingleFunc",
 		"GaussianChainTripleFunc",
+		"GaussianChainGeneralFunc",
 		"GaussianFunc",
 		"HarmonicFunc",
 		"IdentityFunc",

@@ -17,6 +17,7 @@
 #include <core/scoring/func/GaussianChainDoubleFunc.hh>
 #include <core/scoring/func/GaussianChainTripleFunc.hh>
 #include <core/scoring/func/GaussianChainQuadrupleFunc.hh>
+#include <core/scoring/func/GaussianChainGeneralFunc.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
@@ -154,12 +155,14 @@ GaussianChainFunc::initialize_func(){
 			func_ = FuncOP( new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] ) );
 		} else if ( other_distances_.size() == 3 ) {
 			func_ = FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] ) );
+		} else {
+			func_ = FuncOP( new GaussianChainGeneralFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
 		}
 	}
 
 	if ( func_ == 0 ) {
-		// for more than four joints, treat as one effective long gaussian chain.
-		// not a bad approximation actually.
+		// at an early stage, was treating as one effective long gaussian chain,
+		// but note that GaussianChainGeneralFunc (see above) replaces this.
 		Real gaussian_variance_total  = gaussian_variance_;
 		for ( Size n = 1; n <= other_distances_.size(); n++ ) {
 			// Note that the radius of gyration is sqrt( 3 ) * gaussian_variance.

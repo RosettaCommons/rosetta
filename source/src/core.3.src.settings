@@ -452,6 +452,7 @@ sources = {
 		"GaussianChainDoubleFunc",
 		"GaussianChainTripleFunc",
 		"GaussianChainQuadrupleFunc",
+		"GaussianChainGeneralFunc",
 		"HarmonicFunc",
 		"IdentityFunc",
 		"KarplusFunc",

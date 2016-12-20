@@ -91,7 +91,7 @@ GaussianChainTripleFunc::initialize_parameters(){
 void
 GaussianChainTripleFunc::recompute_parameters(){
 	// this is a 'prefactor' in the probability.
-	loop_fixed_cost_total_ = loop_fixed_cost_ + log( 16 * pi );
+	loop_fixed_cost_total_ = loop_fixed_cost_ + kB_T_ * log( 16 * pi );
 	// further normalization factor is put into func itself.
 }
 
