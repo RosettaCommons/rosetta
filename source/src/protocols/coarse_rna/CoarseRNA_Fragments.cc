@@ -14,6 +14,7 @@
 
 
 #include <protocols/coarse_rna/CoarseRNA_Fragments.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/toolbox/AtomID_Mapper.hh>
 #include <protocols/farna/util.hh>
@@ -144,6 +145,7 @@ CoarseRNA_Fragments::insert_fragment(
 	Size const & insert_res,
 	Size const & source_res,
 	Size const & frag_size,
+	protocols::farna::fragments::RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 
@@ -287,11 +289,13 @@ CoarseRNA_Fragments::apply_random_fragment(
 	core::Size const position,
 	core::Size const size,
 	core::Size const type,
+	protocols::farna::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion, // AMW: don't implement this for coarse RNA yet; a lot of work to no end
+	//utility::vector1< farna::fragments::SYN_ANTI_RESTRICTION > const & /*restriction*/,
 	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 	Size const source_res = pick_random_fragment( pose, position, size, type );
 	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
-	insert_fragment( pose, position, source_res, size, atom_level_domain_map );
+	insert_fragment( pose, position, source_res, size, homology_exclusion, atom_level_domain_map );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

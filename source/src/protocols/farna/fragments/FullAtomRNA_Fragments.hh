@@ -14,6 +14,7 @@
 
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.fwd.hh>
 #include <protocols/farna/fragments/RNA_Fragments.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -28,6 +29,7 @@
 // C++ Headers
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 
 #include <utility/vector1.hh>
@@ -51,71 +53,12 @@ namespace protocols {
 namespace farna {
 namespace fragments {
 
-enum SYN_ANTI_RESTRICTION {
-	SYN,
-	ANTI,
-	ANY
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-class TorsionSet {
-public:
-	TorsionSet & operator =( TorsionSet const & src );
-	TorsionSet( core::Size const size );
-
-	//make this private?
-	FArray2D <core::Real>   torsions;  // dimensions: (NUM_RNA_TORSIONS, SRange(0, size) );
-	FArray1D <std::string> torsion_source_name;  // dimensions: ( SRange(0, size) );
-	FArray1D <char>   secstruct;
-
-	FArray3D <core::Real>   non_main_chain_sugar_coords;
-	bool  non_main_chain_sugar_coords_defined;
-
-	inline
-	core::Size get_size() const { return size_; }
-
-private:
-	core::Size size_;
-
-};
-
-
 class FullAtomRNA_Fragments; // defined below.
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-class FragmentLibrary : public utility::pointer::ReferenceCount  {
-public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~FragmentLibrary();
 
-	core::Real get_fragment_torsion(
-		core::Size const num_torsion,
-		Size const which_frag,
-		core::Size const offset );
-
-	TorsionSet const & get_fragment_torsion_set( core::Size const which_frag ) const;
-
-	void  add_torsion( TorsionSet const & torsion_set );
-
-	void  add_torsion(
-		FullAtomRNA_Fragments const & vall,
-		core::Size const position,
-		core::Size const size
-	);
-
-	core::Size get_align_depth() const;
-
-private:
-	std::vector< TorsionSet > align_torsions_;
-
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
-typedef std::pair< std::string, std::string > SequenceSecStructPair;
-typedef std::map< SequenceSecStructPair, FragmentLibraryOP >  FragmentLibraryPointerMap;
+typedef std::tuple< std::string, std::string, RNA_FragmentHomologyExclusionCOP, utility::vector1< SYN_ANTI_RESTRICTION > > FragmentLibraryPointerKey;
+typedef std::map< FragmentLibraryPointerKey, FragmentLibraryOP >  FragmentLibraryPointerMap;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 class FullAtomRNA_Fragments : public RNA_Fragments {
@@ -133,6 +76,7 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	virtual bool
@@ -155,10 +99,11 @@ public:
 
 	FragmentLibraryOP
 	get_fragment_library_pointer(
-															 std::string const & RNA_string,
-															 std::string const & RNA_secstruct_string,
-															 Size const type /* = MATCH_YR */,
-															 utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >() ) const;
+		std::string const & RNA_string,
+		std::string const & RNA_secstruct_string,
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+		utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >(),
+		Size const type = MATCH_YR ) const;
 
 	void
 	insert_fragment(
@@ -176,8 +121,9 @@ private:
 		TorsionSet & torsion_set,
 		std::string const & RNA_string,
 		std::string const & RNA_secstruct_string,
-		core::Size const type = MATCH_YR,
-		utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >() ) const;
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+		utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >(),
+		core::Size const type = MATCH_YR ) const;
 
 	void
 	pick_random_fragment(
@@ -185,9 +131,10 @@ private:
 		core::pose::Pose & pose,
 		core::Size const position,
 		core::Size const size,
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		core::Size const type = MATCH_YR ) const;
 
-	void pick_fragment_library( SequenceSecStructPair const & key ) const;
+	void pick_fragment_library( FragmentLibraryPointerKey const & key ) const;
 
 private:
 

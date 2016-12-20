@@ -14,6 +14,7 @@
 
 
 #include <protocols/farna/RNA_FragmentMonteCarlo.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.hh>
 #include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/farna/movers/RNA_FragmentMover.hh>
 #include <protocols/farna/fragments/RNA_Fragments.hh>

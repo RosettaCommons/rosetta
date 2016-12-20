@@ -7,55 +7,42 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file swa_monte_carlo.cc
-/// @author Rhiju Das (rhiju@stanford.edu)
 
-// libRosetta headers
-#include <core/types.hh>
+// Rosetta Headers
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.hh>
+#include <protocols/farna/fragments/FragmentLibrary.hh>
+#include <protocols/farna/fragments/TorsionSet.hh>
+
+#include <core/pose/Pose.hh>
+
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <devel/init.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/fragments/FragmentLibrary.hh>
-#include <protocols/farna/fragments/TorsionSet.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/viewer/viewers.hh>
 
-//////////////////////////////////////////////////
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <core/types.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/option_macros.hh>
-
-#include <basic/Tracer.hh>
-#include <utility/file/FileName.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <set>
 
 
-// C++ headers
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <list>
+namespace protocols {
+namespace farna {
+namespace fragments {
 
 using namespace core;
-using namespace protocols;
 using namespace basic::options;
-using namespace basic::options::OptionKeys;
-using utility::vector1;
-
-static basic::Tracer TR( "apps.pilot.rhiju.homolog_finder_farna" );
-
+	
 utility::vector1< std::pair< Size, std::string > >
 split_segments_longer_than_6mers(
 	utility::vector1< std::pair< Size, std::string > > const & secstruct_segments
@@ -76,7 +63,7 @@ split_segments_longer_than_6mers(
 	
 	return new_segments;
 }
-
+	
 void
 obtain_secstruct_segments(
 	utility::vector1< std::pair< Size, std::string > > & secstruct_segments, 
@@ -87,7 +74,7 @@ obtain_secstruct_segments(
 	std::string temp = "";
 	Size pos = 0;
 	for ( Size ii = 1; ii <= secstruct.size(); ++ii ) {
-		TR << ii << " " << temp << std::endl;
+		//TR << ii << " " << temp << std::endl;
 		if ( secstruct[ ii-1 ] == 'H' ) {
 			accumulate_next = false;
 			if ( pos != 0 )	secstruct_segments.emplace_back( pos, temp );
@@ -103,7 +90,7 @@ obtain_secstruct_segments(
 		}
 	}
 }
-
+	
 std::string
 figure_out_secstruct( pose::Pose & pose ){
 	using namespace core::scoring;
@@ -118,20 +105,16 @@ figure_out_secstruct( pose::Pose & pose ){
 	FArray1D < bool > edge_is_base_pairing( 3, false );
 	char secstruct1( 'X' );
 	for ( Size i=1; i <= pose.size() ; ++i ) {
-		TR << i << std::endl;
+		//TR << i << std::endl;
 		protocols::farna::get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
 		secstruct += secstruct1;
 	}
 	
-	TR << "SECSTRUCT: " << secstruct << std::endl;
+	//TR << "SECSTRUCT: " << secstruct << std::endl;
 	return secstruct;
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-homolog_finder()
-{
+	
+utility::vector1< core::Size > analyze_for_homology( std::string const & in_file, RNA_Fragments const & fragments ) {
 	using namespace core::pose;
 	using namespace core::pose::copydofs;
 	using namespace core::scoring;
@@ -142,47 +125,40 @@ homolog_finder()
 	using namespace protocols::stepwise::setup;
 	using namespace protocols::toolbox;
 	using namespace utility::file;
-
+	
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-
-	// Following could go to a FullModelSetup class.
-	// read starting pose(s) from disk
-	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
-	PoseOP pose_op = get_pdb_and_cleanup( input_files[1], rsd_set );
+	
+	PoseOP pose_op = get_pdb_and_cleanup( in_file, rsd_set );
 	Pose & pose_input = *pose_op;
-
-	// set up Fragments
-	RNA_FragmentMonteCarloOptions options;
-	options.initialize_from_command_line();
-	FullAtomRNA_Fragments fragments( options.all_rna_fragments_file() );
-
-	// Get the secstruct
+	
 	std::string const secstruct = figure_out_secstruct( pose_input );
 	
 	utility::vector1< std::pair< Size, std::string > > secstruct_segments; // position, secstruct
 	obtain_secstruct_segments( secstruct_segments, secstruct );
 	secstruct_segments = split_segments_longer_than_6mers( secstruct_segments );
 	
+	utility::vector1< Size > foo;
 	for ( auto const & elem : secstruct_segments ) {
 		// search for all fragments that might match sequence
 		Size const position = elem.first;
 		std::string const & secstruct = elem.second;
-		TR << position << " " << secstruct << std::endl;
+		//TR << position << " " << secstruct << std::endl;
 		Size const frag_length( secstruct.size());
 		std::string const sequence = pose_input.sequence().substr( position - 1, frag_length ); // uucg loop
 		Size type( MATCH_EXACT );
 		
+		// This seems curious. Of course, we could maybe pass `this`, and speed
+		// up our searches. Maybe.
 		FragmentLibrary const & library = *( fragments.get_fragment_library_pointer( sequence, secstruct, nullptr, utility::vector1< SYN_ANTI_RESTRICTION >(), type ) );
-		TR << "Found library for " << sequence << " with number of matches: " << library.get_align_depth() << std::endl;
+		//TR << "Found library for " << sequence << " with number of matches: " << library.get_align_depth() << std::endl;
 		
 		// Now try all the fragments one-by-one in a "scratch pose"
 		// make the scratch pose.
 		Pose pose;
 		make_pose_from_sequence( pose, sequence, ResidueTypeSetCOP( rsd_set ), false );
 		cleanup( pose );
-		protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 		
 		// get ready to compute rmsd's.
 		Real rmsd( 0.0 );
@@ -191,51 +167,47 @@ homolog_finder()
 		std::map< AtomID, AtomID > atom_id_map;
 		setup_atom_id_map_match_atom_names( atom_id_map, res_map, pose, pose_input );
 		
-		utility::vector1< Size > foo;
 		// Let's do the loop
 		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
 		for ( Size n = 1; n <= library.get_align_depth(); n++ ) {
 			TorsionSet torsion_set = library.get_fragment_torsion_set( n );
 			fragments.insert_fragment( pose, 1, torsion_set, atom_level_domain_map );
 			rmsd = superimpose_pose( pose, pose_input, atom_id_map );
-			TR << rmsd << std::endl;
-			if ( rmsd < 1.0 ) {
-				foo.push_back( torsion_set.get_index_in_vall() );
+			//TR << rmsd << std::endl;
+			if ( rmsd < option[ OptionKeys::rna::farna::fragment_homology_rmsd ]() ) {
+				// For e.g. a 4-mer overlap, this just excludes the first one.
+				//foo.push_back( torsion_set.get_index_in_vall() );
+				
+				for ( Size ii = 1; ii <= secstruct.size(); ++ii ) {
+					foo.push_back( torsion_set.get_index_in_vall() + ii - 1 );
+				}
 			}
 		}
-		for ( auto const elem : foo ) { 
-			std::cout << "elem: " << elem << std::endl;
+	}
+	return foo;
+}
+
+RNA_FragmentHomologyExclusion::RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments ) {
+	
+	
+	// AMW: Insert any vall lines explicitly specified from the command line
+ 	fragment_lines_.insert(
+		option[ OptionKeys::rna::farna::exclude_fragments ]().begin(),
+		option[ OptionKeys::rna::farna::exclude_fragments ]().end() );
+	
+	if ( option[ OptionKeys::rna::farna::exclude_native_fragments ].value() ) {
+		auto homologous_lines = analyze_for_homology( option[ OptionKeys::in::file::native ].value(), all_rna_fragments );
+		fragment_lines_.insert( homologous_lines.begin(), homologous_lines.end() );
+	}
+	if ( option[ OptionKeys::rna::farna::exclude_fragment_files ].user() ) {
+		// Add vall lines homologous to the loops from these poses
+		for ( auto const & file : option[ OptionKeys::rna::farna::exclude_fragment_files ]() ) {
+			auto homologous_lines = analyze_for_homology( file, all_rna_fragments );
+			fragment_lines_.insert( homologous_lines.begin(), homologous_lines.end() );
 		}
 	}
-
-	std::string const outfile = option[ out::file::o ]();
-	//	if ( outfile.size() > 0 ) pose.dump_pdb( outfile );
 }
 
-///////////////////////////////////////////////////////////////
-void*
-my_main( void* )
-{
-	clock_t const my_main_time_start( clock() );
-	homolog_finder();
-	protocols::viewer::clear_conformation_viewers();
-	std::cout << "Total time to run " << static_cast<core::Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-	exit( 0 );
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-int
-main( int argc, char * argv [] )
-{
-	try {
-
-		utility::vector1< core::Size > blank_size_vector;
-		devel::init(argc, argv);
-		protocols::viewer::viewer_main( my_main );
-
-	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-	}
+}
 }

@@ -21,10 +21,7 @@ namespace protocols {
 namespace farna {
 namespace fragments {
 
-class TorsionSet;
-class FragmentLibrary;
-
-typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+class FullAtomRNA_Fragments;
 
 } //fragments
 } //farna

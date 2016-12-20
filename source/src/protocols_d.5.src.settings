@@ -30,8 +30,11 @@ sources = {
         "RNA_BasePairHandler",
     ],
     "protocols/farna/fragments": [
+        "FragmentLibrary",
         "FullAtomRNA_Fragments",
+		"RNA_FragmentHomologyExclusion",
         "RNA_Fragments",
+		"TorsionSet",
     ],
     "protocols/farna/libraries": [
         "BasePairStepLibrary",

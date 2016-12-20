@@ -33,6 +33,7 @@ RNA_Fragments::apply_random_fragment(
 	core::Size const /*position*/,
 	core::Size const /*size*/,
 	core::Size const /*type = MATCH_YR*/,
+	RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
 	toolbox::AtomLevelDomainMapCOP  /*atom_level_domain_map*/ ) const {
 	std::cout << "Should not be in here! " << std::endl;
 }

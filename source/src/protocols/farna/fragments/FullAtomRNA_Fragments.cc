@@ -15,6 +15,11 @@
 
 // Rosetta Headers
 #include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.hh>
+#include <protocols/farna/fragments/FragmentLibrary.hh>
+#include <protocols/farna/fragments/TorsionSet.hh>
+
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/farna/secstruct/RNA_SecStructLegacyInfo.hh>
 #include <protocols/farna/util.hh> // for compare_RNA_char, compare_RNA_secstruct
@@ -23,17 +28,21 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/StaticIndexRange.hh>
 
 #include <ObjexxFCL/format.hh>
+
+#include <basic/datacache/BasicDataCache.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
@@ -51,6 +60,8 @@
 
 #include <utility/vector1.hh>
 #include <utility/options/BooleanVectorOption.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <numeric/random/random.fwd.hh>
 
 //Auto using namespaces
@@ -63,121 +74,33 @@ namespace protocols {
 namespace farna {
 namespace fragments {
 
-/// @details Auto-generated virtual destructor
-FragmentLibrary::~FragmentLibrary() {}
-
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.fragments.FullAtomRNA_Fragments" );
 
 using core::Size;
 using core::Real;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-TorsionSet::TorsionSet( Size const size ){
-	torsions.dimension( core::chemical::rna::NUM_RNA_TORSIONS, SRange(0, size) );
-	torsion_source_name.dimension( SRange(0, size), std::string( 4, ' ' )  );
-	secstruct.dimension( SRange(0, size), 'L' );
-	non_main_chain_sugar_coords_defined = false;
-	size_ = size;
-}
-
-//////////////////////////////////////////////////////////////////////
-TorsionSet &
-TorsionSet::operator =(
-	TorsionSet const & src
-){
-	size_ = src.size_;
-
-	for ( Size offset = 0; offset < size_; offset++ ) {
-		for ( Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ) {
-			torsions( j, offset) = src.torsions( j, offset);
-		}
-		torsion_source_name( offset ) = src.torsion_source_name( offset );
-		secstruct( offset ) = src.secstruct( offset );
+bool satisfies_restriction( Real const torsion, SYN_ANTI_RESTRICTION const restriction ) {
+	// Uses restrictive DSSR definition of syn and anti:
+	// chi in [165, -45(315)] for anti conformation
+	// chi in [45, 95] for syn conformation
+	// AMW: not actually DSSR; rather, we ask for chi_north_anti/syn from RNA_FittedTorsionInfo
+	// and within 20 degrees like stepwise does it for syn_chi_res etc.
+	// AMW: Be a little more generous -- say 30, and even consider making
+	// this a parameter that can be relaxed by repeated searches.
+	// This means that some residues will be neither  -- and thus only accepted by
+	// ANY.
+	static core::chemical::rna::RNA_FittedTorsionInfo rna_info;
+	
+	if ( restriction == ANY ) return true;
+	else if ( restriction == SYN ) {
+		return std::abs( rna_info.chi_north_syn() - torsion ) < 30;
+	} else { // restriction == ANTI 
+		return std::abs( rna_info.chi_north_anti() - torsion ) < 30;
 	}
-
-	non_main_chain_sugar_coords_defined = src.non_main_chain_sugar_coords_defined;
-
-	if ( non_main_chain_sugar_coords_defined ) {
-		non_main_chain_sugar_coords.dimension( SRange(0,size_), 3, 3 );
-		for ( Size offset = 0; offset < size_; offset++ ) {
-			for ( Size j = 1; j <= 3; j++ ) {
-				for ( Size k = 1; k <= 3; k++ ) {
-					non_main_chain_sugar_coords( offset, j, k ) =
-						src.non_main_chain_sugar_coords( offset, j, k );
-				}
-			}
-		}
-	}
-
-	return *this;
+	
+	return false;
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-Real FragmentLibrary::get_fragment_torsion( Size const num_torsion,  Size const which_frag, Size const offset ){
-	return align_torsions_[ which_frag - 1 ].torsions( num_torsion, offset) ;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-TorsionSet const &
-FragmentLibrary::get_fragment_torsion_set( Size const which_frag ) const
-{
-	return align_torsions_[ which_frag - 1 ];
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-void  FragmentLibrary::add_torsion( TorsionSet const & torsion_set ){
-	align_torsions_.push_back( torsion_set );
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-void  FragmentLibrary::add_torsion(
-	FullAtomRNA_Fragments const & vall,
-	Size const position,
-	Size const size
-)
-{
-	TorsionSet torsion_set( size );
-
-	for ( Size offset = 0; offset < size; offset++ ) {
-		for ( Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ) {
-			torsion_set.torsions( j, offset) = vall.torsions( j, position+offset);
-		}
-		torsion_set.torsion_source_name( offset ) = vall.name( position+offset );
-		torsion_set.secstruct( offset ) = vall.secstruct( position+offset );
-
-		//Defined non-ideal geometry of sugar ring -- to keep it closed.
-		if ( vall.non_main_chain_sugar_coords_defined() ) {
-			torsion_set.non_main_chain_sugar_coords_defined = true;
-			torsion_set.non_main_chain_sugar_coords.dimension( SRange(0,size), 3, 3 );
-			for ( Size j = 1; j <= 3; j++ ) {
-				for ( Size k = 1; k <= 3; k++ ) {
-					torsion_set.non_main_chain_sugar_coords( offset, j, k ) =
-						vall.non_main_chain_sugar_coords( position+offset, j, k );
-				}
-			}
-		} else {
-			torsion_set.non_main_chain_sugar_coords_defined = false;
-		}
-
-	}
-
-	align_torsions_.push_back( torsion_set );
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-Size FragmentLibrary::get_align_depth() const {
-	return align_torsions_.size();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-
+	
 FullAtomRNA_Fragments::FullAtomRNA_Fragments( std::string const & filename):
 	RNA_Fragments()
 {
@@ -186,13 +109,21 @@ FullAtomRNA_Fragments::FullAtomRNA_Fragments( std::string const & filename):
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key ) const
+FullAtomRNA_Fragments::pick_fragment_library( FragmentLibraryPointerKey const & key ) const
 {
 	FragmentLibraryOP fragment_library_p( new FragmentLibrary );
 
-	std::string const RNA_string = key.first;
-	std::string const RNA_secstruct_string = key.second;
-
+	std::string const RNA_string = std::get< 0 >( key );
+	std::string const RNA_secstruct_string = std::get< 1 >( key );
+	RNA_FragmentHomologyExclusionCOP const exclusion = std::get< 2 >( key );
+	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = std::get< 3 >( key );
+	
+	Size const BASE_CHI_TORSION_INDEX = 7;
+	
+	std::set< Size > exclude_fragments;
+	if ( exclusion ) exclude_fragments = exclusion->get_fragment_lines();
+	// Otherwise, empty set.
+	
 	Size const size = RNA_string.length();
 
 	runtime_assert( RNA_string.length() == RNA_secstruct_string.length() );
@@ -201,17 +132,26 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 	std::string vall_current_sequence ( RNA_string );
 	std::string vall_current_secstruct( RNA_secstruct_string );
 
+	bool used_restriction = true;
 	for ( Size i = 1; i <= vall_size_ - size + 1; i++ ) {
 
 		bool match( true );
-
+		
+		// Does it hit homologs?
+		if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
+			TR.Trace << "Excluding due to hitting a homolog for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
+			match = false;
+			continue;
+		}
+		
 		for ( Size offset = 0; offset < size; offset++ ) {
 			vall_current_sequence [offset] = vall_sequence_ ( i + offset );
 			vall_current_secstruct[offset] = vall_secstruct_( i + offset );
 
 			if ( /*vall_is_chainbreak_( i + offset ) ||*/
 					!compare_RNA_char( vall_current_sequence[offset], RNA_string[ offset ] ) ||
-					!compare_RNA_secstruct( vall_current_secstruct[offset], RNA_secstruct_string[ offset ] ) ) {
+					!compare_RNA_secstruct( vall_current_secstruct[offset], RNA_secstruct_string[ offset ] ) ||
+					! ( restriction.size() == 0 || satisfies_restriction( vall_torsions_( BASE_CHI_TORSION_INDEX, i + offset ), restriction[offset+1] ) ) ) {
 				match = false;
 				break;
 			}
@@ -220,16 +160,23 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 		if ( match ) {
 			fragment_library_p->add_torsion( *this, i, size );
 		}
-
 	}
 
 
 	if ( fragment_library_p->get_align_depth() == 0  ) {
+		used_restriction = false;
 		// Problem -- need to repick with less stringent requirements?
 		for ( Size i = 1; i <= vall_size_ - size + 1; i++ ) {
 
 			bool match( true );
 
+			// Does it hit homologs?
+			if ( exclude_fragments.find( i ) != exclude_fragments.end() ) {
+				TR.Trace << "Excluding due to hitting a homologue for " << RNA_string << " " << RNA_secstruct_string << " at " << i << std::endl;
+				match = false;
+				continue;
+			}
+			
 			for ( Size offset = 0; offset < size; offset++ ) {
 				vall_current_sequence [offset] = vall_sequence_ ( i + offset );
 
@@ -239,17 +186,35 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 				}
 			}
 
+			
 			if ( match ) {
 				fragment_library_p->add_torsion( *this, i, size );
 			}
-
 		}
 	}
 
 
 	TR << "Picked Fragment Library for sequence " << RNA_string << " " <<
-		" and sec. struct " << RNA_secstruct_string << " ... found " <<
-		fragment_library_p->get_align_depth() << " potential fragments" << std::endl;
+	" and sec. struct " << RNA_secstruct_string;
+ 
+	std::stringstream restriction_ss;
+	bool restriction_nontrivial = false;
+	for ( auto const r : restriction ) {
+		if ( r == SYN ) {
+			restriction_ss << "S";
+			restriction_nontrivial = true;
+		} else if ( r == ANTI ) {
+			restriction_ss << "A";
+			restriction_nontrivial = true;
+		}
+		else if ( r == ANY ) restriction_ss << "X";
+	}
+	
+	if ( restriction.size() != 0 && used_restriction && restriction_nontrivial ) {
+		TR << " and syn/anti restriction " << restriction_ss.str();
+	}
+	
+	TR << " ... found " << fragment_library_p->get_align_depth() << " potential fragments" << std::endl;
 
 	fragment_library_pointer_map[ key ] = fragment_library_p;
 
@@ -262,14 +227,16 @@ FragmentLibraryOP
 FullAtomRNA_Fragments::get_fragment_library_pointer(
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
-	Size const type /* = MATCH_YR */,
-	utility::vector1< SYN_ANTI_RESTRICTION > const &  /* restriction */ ) const
+	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction,
+	Size const type /* = MATCH_YR */) const
 {
 	using namespace core::pose::full_model_info;
 
 	std::string const RNA_string_local = convert_based_on_match_type( RNA_string, type );
 
-	SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
+	// AMW TODO: create a good RNA_FragmentHomologyExclusionCOP here!
+	FragmentLibraryPointerKey const key( std::make_tuple( RNA_string_local, RNA_secstruct_string, homology_exclusion, restriction ) );
 
 	if ( ! fragment_library_pointer_map.count( key ) ) {
 		pick_fragment_library( key );
@@ -285,11 +252,12 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	TorsionSet & torsion_set,
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
-	Size const type /* = MATCH_YR */,
-	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction /* = blank */
-) const
+	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
+	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction, /* = blank */
+	Size const type /* = MATCH_YR */) const
 {
-	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, type, restriction );
+	// AMW: pass RNA_FragmentHomologyExclusionCOP here. get it from RNA_FragmentMonteCarlo initialization
+	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, homology_exclusion, restriction, type );
 
 	Size const num_frags = fragment_library_pointer->get_align_depth();
 
@@ -300,9 +268,7 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	}
 
 	Size const which_frag = static_cast <Size> ( numeric::random::uniform() * num_frags) + 1;
-
 	torsion_set = fragment_library_pointer->get_fragment_torsion_set( which_frag );
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -313,6 +279,7 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	core::pose::Pose & pose,
 	Size const position,
 	Size const size,
+	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 	Size const type /* = MATCH_YR */) const
 {
 	using namespace core::pose::full_model_info;
@@ -352,8 +319,7 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	std::string const & RNA_secstruct( secstruct::get_rna_secstruct_legacy( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
-	pick_random_fragment( torsion_set, RNA_string, RNA_secstruct_string, type, restriction );
-
+	pick_random_fragment( torsion_set, RNA_string, RNA_secstruct_string, homology_exclusion, restriction, type );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -364,10 +330,11 @@ FullAtomRNA_Fragments::apply_random_fragment(
 	Size const position,
 	Size const size,
 	Size const type,
+	RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 	toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
-	TorsionSet torsion_set( size );
-	pick_random_fragment( torsion_set, pose, position, size, type );
+	TorsionSet torsion_set( size, position );
+	pick_random_fragment( torsion_set, pose, position, size, homology_exclusion, type );
 	insert_fragment( pose, position, torsion_set, atom_level_domain_map );
 }
 
@@ -476,7 +443,7 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 	if ( vall_in.fail() ) {
 		utility_exit_with_message(  "Bad vall torsions file? " + filename );
 	}
-
+	
 	std::string line;//, tag;
 
 	char dummy_char;
@@ -576,8 +543,6 @@ FullAtomRNA_Fragments::read_vall_torsions( std::string const & filename ){
 		}
 		vall_name_( n ) = vall_name[ n ];
 	}
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

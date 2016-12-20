@@ -67,7 +67,8 @@ RNA_FragmentMover::RNA_FragmentMover(
 	atom_level_domain_map_( atom_level_domain_map ),
 	num_insertable_residues_( 0 ),
 	insert_map_frag_size_( 0 ),
-	frag_size_( 0 )
+	frag_size_( 0 ),
+	homology_exclusion_( RNA_FragmentHomologyExclusionCOP( new RNA_FragmentHomologyExclusion( rna_fragments ) ) )
 {
 	Mover::type("RNA_FragmentMover");
 }
@@ -210,7 +211,7 @@ RNA_FragmentMover::random_fragment_insertion(
 
 	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
-	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, atom_level_domain_map_ );
+	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, homology_exclusion_, atom_level_domain_map_ );
 
 	return position;
 }

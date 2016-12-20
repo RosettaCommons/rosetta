@@ -1301,6 +1301,23 @@ read_topology_file(
 			if ( !is_l_aa && !is_d_aa ) rsd->add_property( "ACHIRAL_BACKBONE" ); //Automatically set up achirality, too.
 			debug_assert( !( rsd->is_l_aa() && rsd->is_achiral_backbone() ) && !( rsd->is_d_aa() && rsd->is_achiral_backbone() ) ); //Double-check that a residue isn't both chiral and achiral.
 		}
+		
+		// RNA cannot have an achiral backbone at the sugar. MUST be L or D.
+		if ( rsd->is_RNA() && !rsd->is_d_rna() && !rsd->is_l_rna() ) {
+			bool is_d_na = false;
+			bool is_l_na = false;
+			//for ( auto const & xyz_elem : rsd_xyz ) {
+			//	std::cout << "|" << xyz_elem.first << "|" << std::endl;
+			//}
+			detect_ld_chirality_from_polymer_residue( rsd_xyz, rsd->name3(), is_d_na, is_l_na );
+			if ( is_l_na ) rsd->add_property( "L_RNA" );
+			if ( is_d_na ) rsd->add_property( "D_RNA" );
+			if ( !is_l_na && !is_d_na ) {
+				std::stringstream ss;
+				ss << "Warning: residue " << rsd->name() << " is RNA but is not specified as L_RNA or D_RNA in its params file!"; 
+				utility_exit_with_message( ss.str() );
+			}
+		}
 
 		// now also need to store the information about the geometry at the links...
 

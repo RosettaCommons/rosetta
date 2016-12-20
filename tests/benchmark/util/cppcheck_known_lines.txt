@@ -113,6 +113,9 @@
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::calc_rms_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::rms_all_rpked_' is not initialized in the constructor.
 [protocols/enzdes/EnzFilters.hh:228]: (warning) Member variable 'RepackWithoutLigandFilter::use_cstids_' is not initialized in the constructor.
+[protocols/farna/fragments/TorsionSet.cc:34]: (warning) Member variable 'TorsionSet::secstruct' is not assigned a value in 'TorsionSet::operator='.
+[protocols/farna/fragments/TorsionSet.cc:34]: (warning) Member variable 'TorsionSet::torsions' is not assigned a value in 'TorsionSet::operator='.
+[protocols/farna/fragments/TorsionSet.cc:34]: (warning) Member variable 'TorsionSet::torsion_source_name' is not assigned a value in 'TorsionSet::operator='.
 [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:63]: (warning) Member variable 'NatbiasHelicesSheetPotential::hh_scores_' is not initialized in the constructor.
 [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:63]: (warning) Member variable 'NatbiasHelicesSheetPotential::hs_scores_' is not initialized in the constructor.
 [protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.cc:66]: (warning) Member variable 'NatbiasHelixPairPotential::hh_scores_' is not initialized in the constructor.

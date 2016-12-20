@@ -7,32 +7,36 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/RNA_Fragments/RNA_Fragments.fwd.hh
-/// @brief  RNA_Fragments forward declarations header
-/// @author Rhiju Das
+/// @file
+/// @brief
+/// @author  watkins
 
-#ifndef INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
-#define INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
+#ifndef INCLUDED_protocols_farna_RNA_FragmentHomologyExclusion_HH
+#define INCLUDED_protocols_farna_RNA_FragmentHomologyExclusion_HH
 
-#include <utility/pointer/owning_ptr.hh>
+#include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
+#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
+#include <core/types.hh>
+#include <set>
 
 namespace protocols {
 namespace farna {
 namespace fragments {
 
-enum SYN_ANTI_RESTRICTION {
-	SYN,
-	ANTI,
-	ANY
-};
+class RNA_FragmentHomologyExclusion {
+public:
+	RNA_FragmentHomologyExclusion( RNA_Fragments const & all_rna_fragments );
 	
-class RNA_Fragments;
+	std::set< core::Size > const & get_fragment_lines() const { return fragment_lines_; }
+					
+private:
+	std::set< core::Size > fragment_lines_;
 
-typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;
-typedef utility::pointer::shared_ptr< RNA_Fragments const > RNA_FragmentsCOP;
+};
 
-} //fragments
-} //farna
-} //protocols
+}
+}
+}
 
 #endif
+

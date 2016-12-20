@@ -10,6 +10,8 @@
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 
 #include <protocols/farna/fragments/RNA_Fragments.hh>
+#include <protocols/farna/fragments/TorsionSet.fwd.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
@@ -74,6 +76,7 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
+		protocols::farna::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const override;
 
 	bool
@@ -81,12 +84,23 @@ public:
 
 private:
 
+	virtual void
+	insert_fragment(
+		core::pose::Pose & ,//pose,
+		Size const ,//position,
+		farna::fragments::TorsionSet const & ,//torsion_set,
+		toolbox::AtomLevelDomainMapCOP /*atom_level_domain_map*/ ) const override {
+		/// STUBBED OUT!
+	}
+
+	virtual
 	void
 	insert_fragment(
 		core::pose::Pose & pose,
 		Size const & insert_res,
 		Size const & source_res,
 		Size const & frag_size,
+		protocols::farna::fragments::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	void

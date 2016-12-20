@@ -131,8 +131,10 @@ public:
 
 	core::kinematics::Jump
 	get_random_base_pair_jump(
-		char const aa1,
-		char const aa2,
+		core::chemical::ResidueType const & rt1,
+		core::chemical::ResidueType const & rt2,
+		//char const aa1,
+		//char const aa2,
 		core::chemical::rna::BaseEdge const edge1,
 		core::chemical::rna::BaseEdge const edge2,
 		core::chemical::rna::BaseDoubletOrientation const orientation,

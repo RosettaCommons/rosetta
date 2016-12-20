@@ -959,6 +959,14 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	}
 
 	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+	
+	/*
+	using namespace core::pose::full_model_info;
+	// Set up FullModelInfo (so we can use FullModel
+	FullModelParametersOP full_model_parameters( new FullModelParameters );
+	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters ) );
+	set_full_model_info( *pose_, full_model_info );
+	*/
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1141,13 +1149,14 @@ RNA_DeNovoSetup::update_working_obligate_pairs_with_stems(
 }
 
 ///////////////////////////////////////////////////////////////////
-vector1< std::pair< Size, Size > >
-RNA_DeNovoSetup::flatten( vector1< vector1< std::pair< Size, Size > > > const & vec) const
+template< class T >
+vector1< T >
+RNA_DeNovoSetup::flatten( vector1< vector1< T > > const & vec) const
 {
-	vector1< std::pair< Size, Size > > new_vec;
-	for ( Size n = 1; n <= vec.size(); n++ ) {
-		for ( Size m = 1; m <= vec[ n ].size(); m++ ) {
-			new_vec.push_back( vec[ n ][ m ] );
+	vector1< T > new_vec;
+	for ( auto const & vec_inner : vec ) {
+		for ( auto const & elem : vec_inner ) {
+			new_vec.push_back( elem );
 		}
 	}
 	return new_vec;

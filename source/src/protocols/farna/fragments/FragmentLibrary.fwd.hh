@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/RNA_Fragments/RNA_Fragments.fwd.hh
-/// @brief  RNA_Fragments forward declarations header
-/// @author Rhiju Das
+/// @file   
+/// @brief  
+/// @author watkins
 
-#ifndef INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
-#define INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
+#ifndef INCLUDED_protocols_farna_FragmentLibrary_FWD_HH
+#define INCLUDED_protocols_farna_FragmentLibrary_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -20,19 +20,14 @@ namespace protocols {
 namespace farna {
 namespace fragments {
 
-enum SYN_ANTI_RESTRICTION {
-	SYN,
-	ANTI,
-	ANY
-};
-	
-class RNA_Fragments;
+class FragmentLibrary;
+typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+typedef utility::pointer::shared_ptr< const FragmentLibrary > FragmentLibraryCOP;
 
-typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;
-typedef utility::pointer::shared_ptr< RNA_Fragments const > RNA_FragmentsCOP;
 
 } //fragments
 } //farna
 } //protocols
 
 #endif
+

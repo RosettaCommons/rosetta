@@ -161,8 +161,8 @@ RNA_JumpMover::add_new_RNA_jump(
 	std::string atom_name1, atom_name2;
 	runtime_assert( rna_jump_library_ != 0 );
 	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
-		pose.residue(jump_pos1).name1(),
-		pose.residue(jump_pos2).name1(),
+		pose.residue_type(jump_pos1),
+		pose.residue_type(jump_pos2),
 		e1, e2, o,
 		atom_name1, atom_name2,
 		success,

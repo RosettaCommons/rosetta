@@ -475,6 +475,19 @@ detect_ld_chirality_from_polymer_residue(
 	// Positive angles are D
 	core::Real characteristic_angle = 0;
 
+	// if RNA, handle separately then return
+	// check if it has C2' and O2' or F2'... close enough.
+	if ( xyz.find( "C2'" ) != xyz.end() && ( xyz.find( "O2'" ) != xyz.end() || xyz.find( "F2'" ) != xyz.end() ) ) {
+		//TR << "Detected an RNA residue; figuring out its angle." << std::endl;
+		// We can't use H1' for angles, or first_base_atom (we don't know)
+		std::string o2prime_atom = "O2'";
+		if ( xyz.find( "F2'" ) != xyz.end() ) o2prime_atom = "F2'";
+		characteristic_angle = numeric::dihedral_degrees( xyz.at( "C1'" ), xyz.at( "C3'" ), xyz.at( o2prime_atom ), xyz.at( "C2'" ) );
+
+		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		return;
+	} 
+
 	// Explicitly exclude peptoids and PNAs.
 	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
 		// There are four atoms bonded to CA.

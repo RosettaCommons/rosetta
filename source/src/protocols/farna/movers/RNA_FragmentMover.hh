@@ -17,6 +17,8 @@
 
 // Unit headers
 #include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
+#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -86,6 +88,8 @@ private:
 	Size num_insertable_residues_;
 	Size insert_map_frag_size_;
 	Size frag_size_;
+
+	fragments::RNA_FragmentHomologyExclusionCOP homology_exclusion_ = nullptr;
 
 }; // class RNA_FragmentMover
 

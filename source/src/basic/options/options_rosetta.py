@@ -6897,6 +6897,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'rna_protein_docking', 'Boolean', desc= "Do RNA/protein docking?",default='true' ),
 			 Option( 'output_score_frequency', 'Integer', desc= "output running score with this frequency [0 means no running output]", default='0' ),
 			 Option( 'output_score_file', 'String', desc= "output running score to this file", default='' ),
+			 Option( 'exclude_fragments', 'IntegerVector', desc= "Exclude these fragments from vall", default=[] ),
+			 Option( 'fragment_homology_rmsd', 'Real', desc= "Distance in RMSD below which a fragment is considered homologous to the native", default='1.0' ),
+			 Option( 'exclude_native_fragments', 'Boolean', desc= "Exclude fragments from -in:file:native", default='false' ),
+			 Option( 'exclude_fragment_files', 'StringVector', desc= "Files from which to exclude fragments", default=[] ),
 
 		   Option_Group('db',
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),

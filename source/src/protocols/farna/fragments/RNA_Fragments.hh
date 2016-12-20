@@ -15,6 +15,9 @@
 #define INCLUDED_protocols_rna_RNA_Fragments_HH
 
 #include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
+#include <protocols/farna/fragments/FragmentLibrary.fwd.hh>
+#include <protocols/farna/fragments/TorsionSet.fwd.hh>
+#include <protocols/farna/fragments/RNA_FragmentHomologyExclusion.fwd.hh>
 #include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -25,7 +28,6 @@
 #ifdef WIN32
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
 #endif
-
 
 namespace protocols {
 namespace farna {
@@ -48,8 +50,28 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
+		RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
+	virtual FragmentLibraryOP
+	get_fragment_library_pointer(
+		std::string const & /*RNA_string*/,
+		std::string const & /*RNA_secstruct_string*/,
+		RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
+		utility::vector1< SYN_ANTI_RESTRICTION > const & /*restriction*/ /*= utility::vector1< SYN_ANTI_RESTRICTION >()*/,
+		Size const /*type*/ /* = MATCH_YR */) const {
+		/// STUBBED OUT!
+		return nullptr;
+	}
+	
+	virtual void
+	insert_fragment(
+		core::pose::Pose & ,//pose,
+		Size const ,//position,
+		TorsionSet const & ,//torsion_set,
+		toolbox::AtomLevelDomainMapCOP /*atom_level_domain_map*/ ) const {
+		/// STUBBED OUT!
+	}
 
 	virtual bool
 	is_fullatom();

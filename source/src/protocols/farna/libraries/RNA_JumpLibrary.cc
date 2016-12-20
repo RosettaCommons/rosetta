@@ -20,6 +20,7 @@
 #include <utility/exit.hh>
 
 #include <numeric/random/random.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -179,11 +180,21 @@ RNA_JumpLibrary::check_forward_backward(
 }
 
 
+char name1_from_rt( core::chemical::ResidueType const & rt ) {
+	if ( rt.name1() == 't' ) return 'u';
+	if ( rt.name1() == 'a' || rt.na_analogue() == core::chemical::na_rad ) return 'a';
+	if ( rt.name1() == 'c' || rt.na_analogue() == core::chemical::na_rcy ) return 'c';
+	if ( rt.name1() == 'g' || rt.na_analogue() == core::chemical::na_rgu ) return 'g';
+	if ( rt.name1() == 'u' || rt.na_analogue() == core::chemical::na_ura ) return 'u';
+
+	return rt.name1();
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 core::kinematics::Jump
 RNA_JumpLibrary::get_random_base_pair_jump(
-	char const aa1_in,
-	char const aa2_in,
+	core::chemical::ResidueType const & rt1,
+	core::chemical::ResidueType const & rt2,
 	BaseEdge const edge1,
 	BaseEdge const edge2,
 	BaseDoubletOrientation const orientation,
@@ -197,9 +208,8 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	if ( rna_pairing_template_map_.empty() ) read_jumps_from_file();
 
 	// key for looking up the template geometry:
-	char aa1( aa1_in ), aa2( aa2_in );
-	if ( aa1_in == 't' ) aa1 = 'u';
-	if ( aa2_in == 't' ) aa2 = 'u';
+	char const aa1 = name1_from_rt( rt1 );
+	char const aa2 = name1_from_rt( rt2 );
 
 	BasePairType key( aa1, aa2, edge1, edge2, orientation );
 	Size ntemplates = 0;
