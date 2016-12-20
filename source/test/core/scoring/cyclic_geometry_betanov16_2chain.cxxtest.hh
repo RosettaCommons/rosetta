@@ -6,8 +6,8 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file test/core/scoring/cyclic_geometry_betanov15_2chain.cxxtest.hh
-/// @brief Unit tests for cyclic peptide pose scoring with 2 chains in the peptide and the beta_nov15 score function.
+/// @file test/core/scoring/cyclic_geometry_betanov16_2chain.cxxtest.hh
+/// @brief Unit tests for cyclic peptide pose scoring with 2 chains in the peptide and the beta_nov16 score function.
 /// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -48,14 +48,14 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometry_betanov15_Tests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometry_betanov16_Tests.cxxtest");
 
-class CyclicGeometry_betanov15_TwoChainTests : public CxxTest::TestSuite {
+class CyclicGeometry_betanov16_TwoChainTests : public CxxTest::TestSuite {
 
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta_nov15 -score:weights beta_nov15.wts" );
+		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0 -beta_nov16 -score:weights beta_nov16.wts" );
 
 		// Pull in the two-chain cyclic peptide pose (12 + 12 = 24 residues)
 		core::pose::PoseOP initial_pose_2chain( new core::pose::Pose );
@@ -178,14 +178,79 @@ public:
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the lk_ball_wtd scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_intra_rep_xover4 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_lk_ball_wtd() {
+	void test_cyclic_permutation_fa_intra_rep_xover4() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_intra_rep_xover4, 1.0 );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
-		TR << "Testing lk_ball_wtd score term." << std::endl;
+		TR << "Testing fa_intra_rep_xover4 score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+
+	/// @brief Tests cyclic permutation scoring with the fa_intra_atr_xover4 scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_fa_intra_atr_xover4() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_intra_atr_xover4, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing fa_intra_atr_xover4 score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+
+	/// @brief Tests cyclic permutation scoring with the lk_ball scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_lk_ball() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+	
+	/// @brief Tests cyclic permutation scoring with the lk_ball_iso scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_lk_ball_iso() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_iso, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_iso score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+
+	/// @brief Tests cyclic permutation scoring with the lk_ball_bridge scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_lk_ball_bridge() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_bridge, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_bridge score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+
+	/// @brief Tests cyclic permutation scoring with the lk_ball_bridge_uncpl scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_lk_ball_bridge_uncpl() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_bridge_uncpl, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_bridge_uncpl score term." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
@@ -198,6 +263,18 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
 		TR << "Testing fa_elec score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+	
+	/// @brief Tests cyclic permutation scoring with the fa_intra_elec scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_fa_intra_elec() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_intra_elec, 1.0 );
+		TR << "Testing fa_intra_elec score term." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
@@ -242,13 +319,37 @@ public:
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the fa_dun scorefunction.
+	/// @brief Tests cyclic permutation scoring with the fa_dun_rot scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_fa_dun() {
+	void test_cyclic_permutation_fa_dun_rot() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
-		TR << "Testing fa_dun score term." << std::endl;
+		scorefxn->set_weight( core::scoring::fa_dun_rot, 1.0 );
+		TR << "Testing fa_dun_rot score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+	
+	/// @brief Tests cyclic permutation scoring with the fa_dun_dev scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_fa_dun_dev() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_dun_dev, 1.0 );
+		TR << "Testing fa_dun_dev score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
+		return;
+	}
+	
+	/// @brief Tests cyclic permutation scoring with the fa_dun_semi scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_fa_dun_semi() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_dun_semi, 1.0 );
+		TR << "Testing fa_dun_semi score term." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
@@ -302,25 +403,25 @@ public:
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the yhh_planarity scorefunction.
+	/// @brief Tests cyclic permutation scoring with the hxl_tors scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_yhh_planarity() {
+	void test_cyclic_permutation_hxl_tors() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->set_weight( core::scoring::yhh_planarity, 1.0 );
-		TR << "Testing yhh_planarity score term." << std::endl;
+		scorefxn->set_weight( core::scoring::hxl_tors, 1.0 );
+		TR << "Testing hxl_tors score term." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the full beta_nov15 scorefunction.
+	/// @brief Tests cyclic permutation scoring with the full beta_nov16 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_beta_nov15() {
+	void test_cyclic_permutation_beta_nov16() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->add_weights_from_file("beta_nov15.wts");
-		TR << "Testing full beta_nov15 score function." << std::endl;
+		scorefxn->add_weights_from_file("beta_nov16.wts");
+		TR << "Testing full beta_nov16 score function." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;

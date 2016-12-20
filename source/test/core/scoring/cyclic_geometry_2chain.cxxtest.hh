@@ -38,6 +38,8 @@
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 
+#include <test/core/scoring/cyclic_geometry_headers.hh>
+
 using namespace std;
 
 using core::Size;
@@ -74,6 +76,7 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose_2chain, core::chemical::CUTPOINT_UPPER, 24 );
 		initial_pose_2chain->conformation().declare_chemical_bond(1, "N", 24, "C");
 		initial_pose_2chain->conformation().declare_chemical_bond(13, "N", 12, "C");
+		
 		remove_disulfides(initial_pose_2chain);
 		form_disulfides(initial_pose_2chain);
 		for ( core::Size ir=1, irmax=initial_pose_2chain->size(); ir<=irmax; ++ir ) {
@@ -96,52 +99,10 @@ public:
 			mirror_poses_2chain_[i+1]->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(24);
 
 		}
-		/*initial_pose_2chain->dump_pdb("vtemp00.pdb"); //DELETE ME
-		poses_2chain_[1]->dump_pdb("vtemp01.pdb"); //DELETE ME
-		poses_2chain_[2]->dump_pdb("vtemp02.pdb"); //DELETE ME
-		poses_2chain_[3]->dump_pdb("vtemp03.pdb"); //DELETE ME
-		poses_2chain_[4]->dump_pdb("vtemp04.pdb"); //DELETE ME
-		poses_2chain_[5]->dump_pdb("vtemp05.pdb"); //DELETE ME
-		poses_2chain_[6]->dump_pdb("vtemp06.pdb"); //DELETE ME
-		poses_2chain_[7]->dump_pdb("vtemp07.pdb"); //DELETE ME
-		poses_2chain_[8]->dump_pdb("vtemp08.pdb"); //DELETE ME
-		poses_2chain_[9]->dump_pdb("vtemp09.pdb"); //DELETE ME
-		poses_2chain_[10]->dump_pdb("vtemp10.pdb"); //DELETE ME
-		poses_2chain_[11]->dump_pdb("vtemp11.pdb"); //DELETE ME
-		poses_2chain_[12]->dump_pdb("vtemp12.pdb"); //DELETE ME
-		poses_2chain_[13]->dump_pdb("vtemp13.pdb"); //DELETE ME
-		poses_2chain_[14]->dump_pdb("vtemp14.pdb"); //DELETE ME
-		poses_2chain_[15]->dump_pdb("vtemp15.pdb"); //DELETE ME
-		poses_2chain_[16]->dump_pdb("vtemp16.pdb"); //DELETE ME
-		poses_2chain_[17]->dump_pdb("vtemp17.pdb"); //DELETE ME
-		poses_2chain_[18]->dump_pdb("vtemp18.pdb"); //DELETE ME
-		poses_2chain_[19]->dump_pdb("vtemp19.pdb"); //DELETE ME
-		poses_2chain_[20]->dump_pdb("vtemp20.pdb"); //DELETE ME
-		poses_2chain_[21]->dump_pdb("vtemp21.pdb"); //DELETE ME
-		poses_2chain_[22]->dump_pdb("vtemp22.pdb"); //DELETE ME
-		poses_2chain_[23]->dump_pdb("vtemp23.pdb"); //DELETE ME
-		poses_2chain_[24]->dump_pdb("vtemp24.pdb"); //DELETE ME*/
+
 	}
 
 	void tearDown() {
-	}
-
-	/// @brief Test that the same score is returned for all cyclic permutations.
-	///
-	void cyclic_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
-		//Score all of the poses and confirm that they're all equal to the first
-		for ( core::Size i=1; i<=24; ++i ) {
-			(*sfxn)(*poses_2chain_[i]);
-			if ( i>1 ) {
-				TR << "\tTesting 2-chain scoring with circular permutation of " << i - 1 << " residues." << std::endl;
-				TS_ASSERT_DELTA(poses_2chain_[1]->energies().total_energy(), poses_2chain_[i]->energies().total_energy(), std::abs( std::max(poses_2chain_[1]->energies().total_energy(), poses_2chain_[i]->energies().total_energy())/10000.0 ) );
-			}
-			//Check mirrored geometry, too:
-			TR << "\tTesting 2-chain scoring with circular permutation of " << i - 1 << " residues and mirroring." << std::endl;
-			(*sfxn)(*mirror_poses_2chain_[i]);
-			TS_ASSERT_DELTA(poses_2chain_[1]->energies().total_energy(), mirror_poses_2chain_[i]->energies().total_energy(), std::abs( std::max(poses_2chain_[1]->energies().total_energy(), mirror_poses_2chain_[i]->energies().total_energy())/10000.0 ) );
-			TR.flush();
-		}
 	}
 
 	/// @brief Tests cyclic permutation scoring with the cart_bonded scorefunction.
@@ -151,7 +112,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
 		TR << "Testing cart_bonded score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -162,7 +124,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 		TR << "Testing fa_atr score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -173,7 +136,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
 		TR << "Testing fa_rep score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -184,7 +148,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -195,7 +160,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_sol score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -206,7 +172,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
 		TR << "Testing fa_elec score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -217,7 +184,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::pro_close, 1.0 );
 		TR << "Testing pro_close score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -228,7 +196,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::dslf_fa13, 1.0 );
 		TR << "Testing dslf_fa13 score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -242,7 +211,8 @@ public:
 		scorefxn->set_weight( core::scoring::hbond_sc, 1.0 );
 		scorefxn->set_weight( core::scoring::hbond_bb_sc, 1.0 );
 		TR << "Testing hbonds score terms." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -253,7 +223,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
 		TR << "Testing fa_dun score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -264,7 +235,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::omega, 1.0 );
 		TR << "Testing omega score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -275,7 +247,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama, 1.0 );
 		TR << "Testing rama score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -286,7 +259,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -297,7 +271,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::p_aa_pp, 1.0 );
 		TR << "Testing p_aa_pp score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -308,7 +283,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::yhh_planarity, 1.0 );
 		TR << "Testing yhh_planarity score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -319,7 +295,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("talaris2014.wts");
 		TR << "Testing full talaris2014 score function." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 
@@ -329,7 +306,8 @@ public:
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		TR << "Testing full default score function." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_2chain_, mirror_poses_2chain_);
 		return;
 	}
 

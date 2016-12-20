@@ -81,7 +81,7 @@ public:
 			core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( *rsd_type,
 				core::chemical::ResidueProperties::get_variant_from_string( "N_METHYLATION" ) ).get_self_ptr() );
 			core::pose::replace_pose_residue_copying_existing_coordinates( *pose, sampled_pos, *new_rsd_type );
-			pose->dump_pdb("vtemp_genkic_ramaprepro.pdb"); //DELETE ME
+			//pose->dump_pdb("vtemp_genkic_ramaprepro.pdb"); //DELETE ME
 		}
 
 		if ( flip_chirality ) {

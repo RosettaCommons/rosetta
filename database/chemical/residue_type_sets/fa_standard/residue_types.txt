@@ -351,6 +351,10 @@ residue_types/water/TP3.params
 residue_types/water/TP5.params
 residue_types/water/HOH.params
 
+## Types needed to model cyclosporin
+residue_types/cyclosporin/BMT.params
+residue_types/cyclosporin/LMA.params
+
 ## L-NCAA Types
 residue_types/l-ncaa/V01.params
 residue_types/l-ncaa/V02.params

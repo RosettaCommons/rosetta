@@ -48,14 +48,14 @@ HydroxylTorsionPotential::HydroxylTorsionPotential()
 std::string
 HydroxylTorsionPotential::get_restag( core::chemical::ResidueType const & restype ) const
 {
-	using namespace core::chemical;
+  using namespace core::chemical;
 
-	if ( core::chemical::is_canonical_D_aa(restype.aa()) ) {
+  if ( core::chemical::is_canonical_D_aa(restype.aa()) ) {
 		std::string rsdname = restype.name();
 		if ( rsdname.substr(0, rsdname.find(chemical::PATCH_LINKER)) == "DHIS_D" ) rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
 		return rsdname;
-	} else if ( !restype.is_protein() && !restype.is_NA() ) {
+  } else if ( !restype.is_protein() && !restype.is_NA() ) {
 		return restype.name3();
 	} else {
 		std::string rsdname = restype.name();
@@ -116,7 +116,9 @@ HydroxylTorsionPotential::eval_residue_energy(
 	conformation::Residue const & rsd
 ) const
 {
-	Real score( 0.0 );
+  Real score( 0.0 );
+  
+  bool const is_d( rsd.type().is_d_aa() );
 
 	std::string restag = get_restag( rsd.type() );
 
@@ -143,6 +145,8 @@ HydroxylTorsionPotential::eval_residue_energy(
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+				
+			if( is_d ) tors *= -1.0;
 
 			score += p.k * ( std::cos( p.n*tors - p.delta ) + 1 );
 			/*
@@ -163,7 +167,9 @@ HydroxylTorsionPotential::eval_residue_derivative(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-	std::string restag = get_restag( rsd.type() );
+  std::string restag = get_restag( rsd.type() );
+ 
+  bool const is_d( rsd.type().is_d_aa() );
 
 	Size const natm( rsd.natoms() );
 
@@ -187,7 +193,9 @@ HydroxylTorsionPotential::eval_residue_derivative(
 
 			Real tors = numeric::dihedral_radians(
 				rsd.xyz( p.atm[1] ), rsd.xyz( p.atm[2] ), rsd.xyz( p.atm[3] ), rsd.xyz( p.atm[4] ) );
+			if(is_d) tors *= -1.0;
 			Real dE_dtors = -p.k * p.n *( std::sin( p.n*tors - p.delta ) );
+			if(is_d) dE_dtors *= -1.0;
 
 			Vector const &xyz1( rsd.xyz( p.atm[1] ) );
 			Vector const &xyz2( rsd.xyz( p.atm[2] ) );

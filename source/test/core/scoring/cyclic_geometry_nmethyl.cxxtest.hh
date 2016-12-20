@@ -6,8 +6,8 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file test/core/scoring/cyclic_geometry.cxxtest.hh
-/// @brief Unit tests for cyclic peptide pose scoring.
+/// @file test/core/scoring/cyclic_geometry_nmethyl.cxxtest.hh
+/// @brief Unit tests for cyclic peptide pose scoring, with N-methylation.
 /// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -38,6 +38,9 @@
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 
+//Protocols headers
+#include <protocols/simple_moves/MutateResidue.hh>
+
 #include <test/core/scoring/cyclic_geometry_headers.hh>
 
 using namespace std;
@@ -48,9 +51,9 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests_nmethyl.cxxtest");
 
-class CyclicGeometryTests : public CxxTest::TestSuite {
+class CyclicGeometryTests_nmethyl : public CxxTest::TestSuite {
 
 public:
 
@@ -71,6 +74,11 @@ public:
 		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
+		
+		// Add N-methylation:
+		protocols::simple_moves::MutateResidueOP mutres3( new protocols::simple_moves::MutateResidue( 3, "TRP:N_Methylation" ) );
+		mutres3->set_update_polymer_dependent( true );
+		mutres3->apply(*initial_pose);
 
 		poses_.push_back(initial_pose);
 		mirror_poses_.push_back( mirror_pose_with_disulfides( poses_[1] ) );

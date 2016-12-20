@@ -38,6 +38,8 @@
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 
+#include <test/core/scoring/cyclic_geometry_headers.hh>
+
 using namespace std;
 
 using core::Size;
@@ -54,7 +56,7 @@ public:
 
 	void setUp() {
 		core_init_with_additional_options( "-beta_nov15 -score:weights beta_nov15.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
-
+		
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );
@@ -71,44 +73,14 @@ public:
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
 
 		poses_.push_back(initial_pose);
-		mirror_poses_.push_back( mirror_pose( poses_[1] ) );
+		mirror_poses_.push_back( mirror_pose_with_disulfides( poses_[1] ) );
 		for ( core::Size i=1; i<=8; ++i ) {
 			poses_.push_back( permute( poses_[i] ) );
-			mirror_poses_.push_back( mirror_pose( poses_[i+1] ) );
+			mirror_poses_.push_back( mirror_pose_with_disulfides( poses_[i+1] ) );
 		}
 	}
 
 	void tearDown() {
-	}
-
-	/// @brief Test that the same score is returned for all cyclic permutations.
-	///
-	void cyclic_pose_test( core::scoring::ScoreFunctionOP sfxn ) {
-		//Score all of the poses and confirm that they're all equal to the first
-		for ( core::Size i=1; i<=9; ++i ) {
-			(*sfxn)(*poses_[i]);
-			if ( i>1 ) {
-				TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues." << std::endl;
-				TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), poses_[i]->energies().total_energy())/10000.0 ) );
-			}
-			//Check mirrored geometry, too:
-			TR << "\tTesting scoring with circular permutation of " << i - 1 << " residues and mirroring." << std::endl;
-			(*sfxn)(*mirror_poses_[i]);
-			TS_ASSERT_DELTA(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy(), std::abs( std::max(poses_[1]->energies().total_energy(), mirror_poses_[i]->energies().total_energy())/10000.0 ) );
-			TR.flush();
-		}
-
-		//Delete the following:
-		//poses_[1]->dump_scored_pdb("vcyclic1.pdb", *sfxn);
-		//poses_[2]->dump_scored_pdb("vcyclic2.pdb", *sfxn);
-		//poses_[3]->dump_scored_pdb("vcyclic3.pdb", *sfxn);
-		//poses_[4]->dump_scored_pdb("vcyclic4.pdb", *sfxn);
-		//poses_[5]->dump_scored_pdb("vcyclic5.pdb", *sfxn);
-		//poses_[6]->dump_scored_pdb("vcyclic6.pdb", *sfxn);
-		//poses_[7]->dump_scored_pdb("vcyclic7.pdb", *sfxn);
-		//poses_[8]->dump_scored_pdb("vcyclic8.pdb", *sfxn);
-		//poses_[9]->dump_scored_pdb("vcyclic9.pdb", *sfxn);
-
 	}
 
 	/// @brief Tests cyclic permutation scoring with the cart_bonded scorefunction.
@@ -118,7 +90,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::cart_bonded, 1.0 );
 		TR << "Testing cart_bonded score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -129,7 +102,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_atr, 1.0 );
 		TR << "Testing fa_atr score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -140,7 +114,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
 		TR << "Testing fa_rep score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -151,7 +126,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_intra_rep, 1.0 );
 		TR << "Testing fa_intra_rep score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -162,7 +138,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_sol score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -174,7 +151,8 @@ public:
 		scorefxn->set_weight( core::scoring::fa_intra_sol_xover4, 1.0 );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing fa_intra_sol_xover4 score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -186,7 +164,8 @@ public:
 		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
 		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
 		TR << "Testing lk_ball_wtd score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -196,8 +175,8 @@ public:
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
-		TR << "Testing fa_elec score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -208,7 +187,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::pro_close, 1.0 );
 		TR << "Testing pro_close score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -219,7 +199,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::dslf_fa13, 1.0 );
 		TR << "Testing dslf_fa13 score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -233,7 +214,8 @@ public:
 		scorefxn->set_weight( core::scoring::hbond_sc, 1.0 );
 		scorefxn->set_weight( core::scoring::hbond_bb_sc, 1.0 );
 		TR << "Testing hbonds score terms." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -244,7 +226,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_dun, 1.0 );
 		TR << "Testing fa_dun score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -255,7 +238,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::omega, 1.0 );
 		TR << "Testing omega score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -266,7 +250,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama, 1.0 );
 		TR << "Testing rama score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -277,7 +262,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::rama_prepro, 1.0 );
 		TR << "Testing rama_prepro score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -288,7 +274,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::p_aa_pp, 1.0 );
 		TR << "Testing p_aa_pp score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -299,7 +286,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::yhh_planarity, 1.0 );
 		TR << "Testing yhh_planarity score term." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -310,7 +298,8 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->add_weights_from_file("beta_nov15.wts");
 		TR << "Testing full beta_nov15 score function." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 
@@ -320,7 +309,8 @@ public:
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
 		TR << "Testing full default score function." << std::endl;
-		cyclic_pose_test(scorefxn);
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
 	}
 

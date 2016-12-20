@@ -6,8 +6,8 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-/// @file test/core/scoring/cyclic_geometry.cxxtest.hh
-/// @brief Unit tests for cyclic peptide pose scoring.
+/// @file test/core/scoring/cyclic_geometry_nmethyl_betanov15.cxxtest.hh
+/// @brief Unit tests for cyclic peptide pose scoring, with the beta_nov15 score function and N-methylation.
 /// @detials Cyclic permutations should score identically.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
@@ -38,6 +38,9 @@
 #include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 
+//Protocols headers
+#include <protocols/simple_moves/MutateResidue.hh>
+
 #include <test/core/scoring/cyclic_geometry_headers.hh>
 
 using namespace std;
@@ -48,15 +51,15 @@ using core::pose::Pose;
 using core::chemical::AA;
 
 
-static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometryTests.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.CyclicGeometry_nmethyl_betanov15_Tests.cxxtest");
 
-class CyclicGeometryTests : public CxxTest::TestSuite {
+class CyclicGeometry_nmethyl_betanov15_Tests : public CxxTest::TestSuite {
 
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
-
+		core_init_with_additional_options( "-beta_nov15 -score:weights beta_nov15.wts -symmetric_gly_tables true -write_all_connect_info -connect_info_cutoff 0.0" );
+		
 		// Pull in the cyclic peptide pose (9 residues):
 		core::pose::PoseOP initial_pose( new core::pose::Pose );
 		core::import_pose::pose_from_file( *initial_pose, "core/scoring/cyclic_peptide.pdb" , core::import_pose::PDB_file );
@@ -66,11 +69,16 @@ public:
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 1 );
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 1 );
 		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::UPPER_TERMINUS_VARIANT, 9 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 9 );
-		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 9 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_LOWER, 1 );
+		core::pose::remove_variant_type_from_pose_residue( *initial_pose, core::chemical::CUTPOINT_UPPER, 1 );
 		initial_pose->conformation().declare_chemical_bond(1, "N", 9, "C");
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(1);
 		initial_pose->conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(9);
+		
+		// Add N-methylation:
+		protocols::simple_moves::MutateResidueOP mutres3( new protocols::simple_moves::MutateResidue( 3, "TRP:N_Methylation" ) );
+		mutres3->set_update_polymer_dependent( true );
+		mutres3->apply(*initial_pose);
 
 		poses_.push_back(initial_pose);
 		mirror_poses_.push_back( mirror_pose_with_disulfides( poses_[1] ) );
@@ -83,7 +91,7 @@ public:
 	void tearDown() {
 	}
 
-	/// @brief Tests cyclic permutation scoring with the cart_bonded score term.
+	/// @brief Tests cyclic permutation scoring with the cart_bonded scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_cart_bonded() {
 		//Set up the scorefunction
@@ -143,13 +151,38 @@ public:
 		return;
 	}
 
+	/// @brief Tests cyclic permutation scoring with the fa_intra_sol_xover4 scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_fa_intra_sol_xover4() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::fa_intra_sol_xover4, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing fa_intra_sol_xover4 score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
+		return;
+	}
+
+	/// @brief Tests cyclic permutation scoring with the lk_ball_wtd scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_cyclic_permutation_lk_ball_wtd() {
+		//Set up the scorefunction
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
+		scorefxn->set_weight( core::scoring::lk_ball_wtd, 1.0 );
+		scorefxn->set_weight( core::scoring::fa_sol, 1.0 );
+		TR << "Testing lk_ball_wtd score term." << std::endl;
+		CyclicGeometryTestHelper helper;
+		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
+		return;
+	}
+
 	/// @brief Tests cyclic permutation scoring with the fa_elec scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void test_cyclic_permutation_fa_elec() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::fa_elec, 1.0 );
-		TR << "Testing fa_elec score term." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
@@ -266,13 +299,13 @@ public:
 		return;
 	}
 
-	/// @brief Tests cyclic permutation scoring with the full talaris2014 scorefunction.
+	/// @brief Tests cyclic permutation scoring with the full beta_nov15 scorefunction.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void test_cyclic_permutation_talaris2014() {
+	void test_cyclic_permutation_beta_nov15() {
 		//Set up the scorefunction
 		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
-		scorefxn->add_weights_from_file("talaris2014.wts");
-		TR << "Testing full talaris2014 score function." << std::endl;
+		scorefxn->add_weights_from_file("beta_nov15.wts");
+		TR << "Testing full beta_nov15 score function." << std::endl;
 		CyclicGeometryTestHelper helper;
 		helper.cyclic_pose_test(scorefxn, poses_, mirror_poses_);
 		return;
@@ -292,5 +325,6 @@ public:
 private:
 	utility::vector1 < core::pose::PoseOP > poses_;
 	utility::vector1 < core::pose::PoseOP > mirror_poses_;
+
 
 };
