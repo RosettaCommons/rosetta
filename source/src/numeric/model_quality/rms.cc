@@ -680,6 +680,7 @@ rmsfitca2(
 	}
 	det = det3(m_moment); // will get handedness  of frame from determinant
 
+
 	if ( std::abs(det) <= 1.0E-24 ) {
 		//     //  std::cerr << "Warning:degenerate cross moments: det=" << det << std::endl;
 		//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
@@ -729,8 +730,21 @@ rmsfitca2(
 	//                 // ev(3) is now the smallest eigen value.  the other two are not
 	//                 //  sorted.  this is prefered order for rotation matrix
 
-
 	rsym_rotation(m_moment,rr_moment,ev,R);
+
+	if ( std::abs(det3(R)) <= 1.0E-3 /* should be 1.0! so zero is bad. */  ) {
+		// std::cerr << "Warning:degenerate cross moments: det=" << det3(R) << std::endl;
+		// might think about rerunning with jitter on first point -- this seems to happen
+		// when poses have exact rotational symmetry (e.g., perfectly flat & 4-fold symmtric base tetrad)
+		for ( i = 1; i <= npoints; ++i ) {
+			if ( realign ) { //Undo the offset:
+				xx(3,i) += offset_val;
+				yy(3,i) -= offset_val;
+			}
+		}
+		esq = 0.0;
+		return;
+	}
 
 	//$$$             for ( i = 1; i <= npoints; ++i ) {
 	//$$$               for ( j = 1; j <= 3; ++j ) {

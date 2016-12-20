@@ -51,6 +51,12 @@ namespace protocols {
 namespace farna {
 namespace fragments {
 
+enum SYN_ANTI_RESTRICTION {
+	SYN,
+	ANTI,
+	ANY
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 class TorsionSet {
@@ -151,7 +157,8 @@ public:
 	get_fragment_library_pointer(
 															 std::string const & RNA_string,
 															 std::string const & RNA_secstruct_string,
-															 Size const type /* = MATCH_YR */) const;
+															 Size const type /* = MATCH_YR */,
+															 utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >() ) const;
 
 	void
 	insert_fragment(
@@ -169,7 +176,8 @@ private:
 		TorsionSet & torsion_set,
 		std::string const & RNA_string,
 		std::string const & RNA_secstruct_string,
-		core::Size const type = MATCH_YR ) const;
+		core::Size const type = MATCH_YR,
+		utility::vector1< SYN_ANTI_RESTRICTION > const & restriction = utility::vector1< SYN_ANTI_RESTRICTION >() ) const;
 
 	void
 	pick_random_fragment(

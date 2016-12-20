@@ -35,6 +35,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -188,6 +189,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 		stepwise::setup::get_extra_cutpoints_from_names( sequence.size(), cutpoint_open_in_full_model, non_standard_residue_map );
 		full_model_parameters = FullModelParametersOP( new FullModelParameters( sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) );
 		full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
+		full_model_parameters->set_conventional_chains( vector1< Size >( sequence.size(), 'A' ) );
 	}
 	std::string const sequence = full_model_parameters->full_sequence();
 
@@ -225,7 +227,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	vector1< Size > remove_pair =
 		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_pair ].resnum_and_chain() );
 	vector1< Size > remove_obligate_pair =
-		full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_obligate_pair ].resnum_and_chain() );
+	full_model_parameters->conventional_to_full( option[ OptionKeys::rna::farna::remove_obligate_pair ].resnum_and_chain() );
 
 	////////////////////
 	// Step 3
@@ -878,6 +880,30 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line()
 	options_->set_extra_minimize_res( working_res_map( extra_minimize_res, working_res ) );
 	options_->set_extra_minimize_chi_res( working_res_map( extra_minimize_chi_res, working_res ) );
 
+	////////////////////
+	// Step 19
+	////////////////////
+	using namespace core::pose::full_model_info;
+	// could also set up other stuff inside full_model_parameters -- see protocols/stepise/FullModelInfoSetupFromCommandLine.cc
+	// a better route, however, would be to *deprecate* this setup code, and instead use that stepwise code + build_full_model to
+	// handle FARFAR setup. -- rhiju & amwatkins, dec. 2016.
+	full_model_parameters->set_parameter_as_res_list( CUTPOINT_OPEN, cutpoint_open_in_full_model );
+	full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,
+		full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
+	full_model_parameters->set_parameter_as_res_list( RNA_ANTI_CHI,
+		full_model_parameters->conventional_to_full( option[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
+	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_ABOVE, block_stack_above_res );
+	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_BELOW, block_stack_below_res );
+	full_model_parameters->set_parameter_as_res_list( EXTRA_MINIMIZE, extra_minimize_res );
+
+	vector1< Size > dummy_domain_map( sequence.size(), 0 );
+	full_model_parameters->set_parameter( INPUT_DOMAIN, dummy_domain_map /* domain_map */ );
+	full_model_parameters->set_parameter( FIXED_DOMAIN, dummy_domain_map /*stepwise::setup::figure_out_fixed_domain_map( domain_map, extra_minimize_res ) */  );
+
+	// Set up FullModelInfo (so we can use info stored there like SYN_CHI_RES)
+	FullModelInfoOP full_model_info( new FullModelInfo( full_model_parameters ) );
+	full_model_info->set_res_list( working_res );
+	set_full_model_info( *pose_, full_model_info );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -933,7 +959,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	}
 
 	rna_params_ = RNA_DeNovoParametersOP( new RNA_DeNovoParameters( options_->rna_params_file() ) );
-
 }
 
 ///////////////////////////////////////////////////////////////
@@ -960,8 +985,8 @@ RNA_DeNovoSetup::setup_refine_pose_list() {
 		ConstraintSetOP cst_set( pose_->constraint_set()->clone() ); // assume constraints have been set up already
 		for ( Size i = 1; i <= refine_pose_list_.size(); ++i ) refine_pose_list_[ i ]->constraint_set( cst_set );
 	}
-
 }
+
 vector1<pose::PoseOP>
 RNA_DeNovoSetup::get_refine_pose_list( std::string const & input_silent_file,
 	std::pair< utility::vector1< int >, utility::vector1< char > > const & output_res_and_chain,

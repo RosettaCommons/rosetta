@@ -1243,11 +1243,6 @@ fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 		// check for floating_base
 		if ( at_strand_end && at_strand_beginning ) fix_up_residue_type_variants_at_floating_base( pose,  n );
 
-		// internal -- can run some checks
-		if ( !at_strand_end && !at_strand_beginning ) {
-			runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_ABOVE ) );
-			runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_BELOW ) );
-		}
 		update_block_stack_variants( pose, n );
 	}
 

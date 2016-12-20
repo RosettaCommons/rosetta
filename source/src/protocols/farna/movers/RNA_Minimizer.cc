@@ -40,6 +40,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <basic/options/option.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -136,6 +137,9 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	update_atom_level_domain_map_with_extra_minimize_res( pose );
 	setup_movemap( mm, pose );
 
+	// AMW: new feature, syn/anti chi res for FARFAR.
+	core::pose::rna::add_syn_anti_chi_constraints( pose );
+	
 	scoring::constraints::ConstraintSetOP pose_constraints_without_coordinate_tethers = pose.constraint_set()->clone();
 	if ( options_->minimizer_use_coordinate_constraints() ) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();

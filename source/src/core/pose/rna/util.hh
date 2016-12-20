@@ -23,6 +23,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/rna/BasePair.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
@@ -208,6 +209,20 @@ remove_and_store_bracketed(
 	std::string & working_sequence_clean,
 	std::map< Size, std::string > & special_res );
 
+void
+add_chi_constraints( pose::Pose & pose,
+	core::scoring::func::FuncOP chi_potential_restraint,
+	utility::vector1< Size > const & rna_chi_res );
+	
+void
+add_syn_chi_constraints( core::pose::Pose & pose );
+	
+void
+add_anti_chi_constraints( core::pose::Pose & pose );
+
+void
+add_syn_anti_chi_constraints( core::pose::Pose & pose );
+	
 } //ns rna
 } //ns pose
 } //ns core

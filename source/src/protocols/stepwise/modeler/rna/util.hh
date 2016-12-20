@@ -308,9 +308,6 @@ figure_out_moving_rna_chain_breaks( core::pose::Pose const & pose,
 void
 virtualize_free_rna_moieties( core::pose::Pose & pose );
 
-void
-add_syn_anti_chi_constraints( core::pose::Pose & pose );
-
 bool
 just_modeling_RNA( std::string const & sequence );
 

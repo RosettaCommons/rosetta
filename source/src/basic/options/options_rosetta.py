@@ -6818,6 +6818,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
     Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
     Option( 'data_file', 'String', desc="RDAT or legacy-format file with RNA chemical mapping data",default='' ),
     Option( 'cut_at_rna_chainbreak', 'Boolean', desc="If O3' to P distance is > 2.5 Angstroms, assume cutpoint.",default='false' ),
+		Option( 'evaluate_base_pairs', 'Boolean', desc="In final scoring, compute number of Watson-Crick, non-Watson-Crick pairs; compare to native if available." ),
 
 		Option_Group( 'farna',
 		   Option( 'cycles', 'Integer', desc= "Default number of Monte Carlo cycles",default='0' ), # now default is set based on the number of moving residues

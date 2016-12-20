@@ -236,7 +236,7 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 	core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	kinematics::MoveMap mm_save = mm;
 	setup_vary_bond_geometry( pose, mm ); // careful -- must only do once, or constraints will keep getting added...
-	rna::add_syn_anti_chi_constraints( pose );
+	core::pose::rna::add_syn_anti_chi_constraints( pose );
 
 	// AMW: I'm very much NOT sold on a particular temperature here. It's a shame we can't
 	// do proper ST. Importantly, I think it's easy to get too hot here.

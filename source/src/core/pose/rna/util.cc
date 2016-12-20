@@ -34,6 +34,10 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Info.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/util.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
@@ -1395,6 +1399,72 @@ remove_and_store_bracketed( std::string const & working_sequence, std::string & 
 
 		i = working_sequence_clean.find( '[' );
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+add_chi_constraints( pose::Pose & pose,
+	core::scoring::func::FuncOP chi_potential_restraint,
+	utility::vector1< Size > const & rna_chi_res )
+{
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::constraints;
+	using namespace core::pose::full_model_info;
+	
+	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+	for ( Size const n : rna_chi_res ) {
+		//TR << "Thinking about " << n << std::endl;
+		if ( ! res_list.has_value( n ) ) continue;
+		
+		//TR << "Trying " << n << std::endl;
+		
+		Size const j = res_list.index( n );
+		runtime_assert( pose.residue_type( j ).is_RNA() );
+		
+		AtomID id1,id2,id3,id4;
+		pose.conformation().get_torsion_angle_atom_ids( TorsionID( j, core::id::CHI, 1 ), id1, id2, id3, id4 );
+		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( id1, id2, id3, id4, chi_potential_restraint, rna_torsion ) ) );
+	}
+}
+	
+////////////////////////////////////////////////////////////////////////////////////////
+void
+add_syn_chi_constraints( core::pose::Pose & pose ) {
+	using namespace core::scoring::func;
+	using namespace core::pose::full_model_info;
+	//TR << "Maybe going to add syn chi constraints" << std::endl;
+	if ( !full_model_info_defined( pose ) ) return;
+	//TR << "Definitely going to add syn chi constraints" << std::endl;
+	// define func
+	utility::vector1< Real > energies( 36, 20.0 ); // spaced at 5, 10, ... 355 degrees. Set penalty to be +20.0
+	// zero out function at permissible vals. (syn should be -120.0 to 0.0 --> 240.0 to 360.0)
+	for ( Size q = 24; q <= 36; q++ ) energies[ q ] = 0.0;
+	FuncOP chi_potential_syn_restraint( new CircularSplineFunc( 1.0, energies, true /*convert_to_degrees*/ ) );
+	add_chi_constraints( pose, chi_potential_syn_restraint, const_full_model_info( pose ).rna_syn_chi_res() );
+}
+	
+////////////////////////////////////////////////////////////////////////////////////////
+void
+add_anti_chi_constraints( core::pose::Pose & pose ) {
+	using namespace core::scoring::func;
+	using namespace core::pose::full_model_info;
+	if ( !full_model_info_defined( pose ) ) return;
+	// define func
+	utility::vector1< Real > energies( 36, 20.0 ); // spaced at 5, 10, ... 355 degrees. Set penalty to be +20.0
+	// zero out function at permissible vals. (anti should be 0.0 to 120.0)
+	for ( Size q = 1; q <= 12; q++ ) energies[ q ] = 0.0;
+	FuncOP chi_potential_anti_restraint( new CircularSplineFunc( 1.0, energies, true /*convert_to_degrees*/ ) );
+	add_chi_constraints( pose, chi_potential_anti_restraint, const_full_model_info( pose ).rna_anti_chi_res() );
+}
+	
+////////////////////////////////////////////////////////////////////////////////////////
+void
+add_syn_anti_chi_constraints( core::pose::Pose & pose ) {
+	using namespace core::pose::full_model_info;
+	if ( !full_model_info_defined( pose ) ) return;
+	add_syn_chi_constraints( pose );
+	add_anti_chi_constraints( pose );
 }
 
 } //ns rna

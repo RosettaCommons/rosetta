@@ -41,6 +41,7 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/sequence/Sequence.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>

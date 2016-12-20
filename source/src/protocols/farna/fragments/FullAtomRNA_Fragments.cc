@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -254,14 +255,18 @@ FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key 
 
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 FragmentLibraryOP
 FullAtomRNA_Fragments::get_fragment_library_pointer(
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
-	Size const type /* = MATCH_YR */) const
+	Size const type /* = MATCH_YR */,
+	utility::vector1< SYN_ANTI_RESTRICTION > const &  /* restriction */ ) const
 {
+	using namespace core::pose::full_model_info;
+
 	std::string const RNA_string_local = convert_based_on_match_type( RNA_string, type );
 
 	SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
@@ -280,9 +285,11 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	TorsionSet & torsion_set,
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
-	Size const type /* = MATCH_YR */) const
+	Size const type /* = MATCH_YR */,
+	utility::vector1< SYN_ANTI_RESTRICTION > const & restriction /* = blank */
+) const
 {
-	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, type );
+	FragmentLibraryOP fragment_library_pointer = get_fragment_library_pointer( RNA_string, RNA_secstruct_string, type, restriction );
 
 	Size const num_frags = fragment_library_pointer->get_align_depth();
 
@@ -308,11 +315,12 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	Size const size,
 	Size const type /* = MATCH_YR */) const
 {
+	using namespace core::pose::full_model_info;
 
 	std::string const & RNA_sequence( pose.sequence() );
 	//std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
-	// For every non-acgu character in the single letter sequence, we need to 
+	// For every non-acgu character in the single letter sequence, we need to
 	// instead put in the na_analogue.
 	std::string RNA_string = RNA_sequence.substr( position - 1, size );
 	for ( Size ii = 0; ii < RNA_string.size(); ++ii ) {
@@ -326,12 +334,25 @@ FullAtomRNA_Fragments::pick_random_fragment(
 			RNA_string[ ii ] = 'u';
 		}
 	}
-	
+
+	// For the residues of interest, say which have to be syn or have to be anti
+	utility::vector1< SYN_ANTI_RESTRICTION > restriction( size, ANY );
+	if ( full_model_info_defined( pose ) ) {
+		utility::vector1< Size > const & res_list( const_full_model_info( pose ).res_list() );
+		for ( Size ii = 1; ii <= size; ++ii ) {
+			if ( const_full_model_info( pose ).rna_syn_chi_res().has_value( res_list[ position + ii - 1] ) ) {
+				restriction[ ii ] = SYN;
+			} else if ( const_full_model_info( pose ).rna_anti_chi_res().has_value( res_list[ position + ii - 1 ] ) ) {
+				restriction[ ii ] = ANTI;
+			}
+		}
+	}
+
 	//Desired "secondary structure".
 	std::string const & RNA_secstruct( secstruct::get_rna_secstruct_legacy( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
-	pick_random_fragment( torsion_set, RNA_string, RNA_secstruct_string, type );
+	pick_random_fragment( torsion_set, RNA_string, RNA_secstruct_string, type, restriction );
 
 }
 
