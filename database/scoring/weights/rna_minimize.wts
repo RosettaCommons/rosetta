@@ -22,7 +22,7 @@ suiteness_bonus   1.0
 linear_chainbreak 5.0 # strong enough to force chainbreak closure
 RNA_TORSION_POTENTIAL      RNA11_based_new # Fang's latest, derived from Richardson RNA11 set.
 RNA_SYN_G_POTENTIAL_BONUS  -1.5            # RNA11 penalized syn-G too much.
-RNA_SUITENESS_BONUS        test/uucg_hack1 # Example of torsion corrections.
+RNA_SUITENESS_BONUS        test/1z_6n_2[_refit_bonus # Example of torsion corrections.
 
 FREE_SUITE_BONUS        -2.0
 FREE_SUGAR_BONUS        -2.0
