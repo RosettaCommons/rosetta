@@ -1,0 +1,152 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="tala" weights="talaris2014.wts" >
+			<Reweight scoretype="fa_dun" weight="0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+	
+		<PeptideStubMover name="build1" reset="true">
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="DALA" />
+			<Append resname="DALA" />
+			<Append resname="DALA" />
+			<Append resname="DALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+		</PeptideStubMover>
+		
+		<SetTorsion name="tors">
+			<Torsion torsion_name="omega" residue="1" angle="180.0" />
+			<Torsion torsion_name="omega" residue="2" angle="180.0" />
+			<Torsion torsion_name="omega" residue="3" angle="180.0" />
+			<Torsion torsion_name="omega" residue="4" angle="180.0" />
+			<Torsion torsion_name="omega" residue="5" angle="180.0" />
+			<Torsion torsion_name="omega" residue="6" angle="180.0" />
+			<Torsion torsion_name="omega" residue="7" angle="180.0" />
+			<Torsion torsion_name="omega" residue="8" angle="180.0" />
+			<Torsion torsion_name="omega" residue="9" angle="180.0" />
+			<Torsion torsion_name="omega" residue="10" angle="180.0" />
+			<Torsion torsion_name="omega" residue="11" angle="180.0" />
+			<Torsion torsion_name="omega" residue="12" angle="180.0" />
+			<Torsion torsion_name="omega" residue="13" angle="180.0" />
+			<Torsion torsion_name="omega" residue="14" angle="180.0" />
+			<Torsion torsion_name="omega" residue="15" angle="180.0" />
+			<Torsion torsion_name="omega" residue="16" angle="180.0" />
+			<Torsion torsion_name="omega" residue="17" angle="180.0" />
+			<Torsion torsion_name="omega" residue="18" angle="180.0" />
+			<Torsion torsion_name="omega" residue="19" angle="180.0" />
+			<Torsion torsion_name="phi" residue="3" angle="-61.0" />
+			<Torsion torsion_name="psi" residue="3" angle="-41.0" />
+		</SetTorsion>
+	
+		<DeclareBond name="endbond" atom1="C" res1="20" atom2="N" res2="1" />
+		
+		<GeneralizedKIC name="genkic1" closure_attempts="2000" stop_when_n_solutions_found="1" selector="lowest_energy_selector" selector_scorefunction="tala" >
+			<AddResidue res_index="4" />
+			<AddResidue res_index="5" />
+			<AddResidue res_index="6" />
+			<AddResidue res_index="7" />
+			<AddResidue res_index="8" />
+			<AddResidue res_index="9" />
+			<AddResidue res_index="10" />
+			<AddResidue res_index="11" />
+			<AddResidue res_index="12" />
+			<AddResidue res_index="13" />
+			<AddResidue res_index="14" />
+			<AddResidue res_index="15" />
+			<AddResidue res_index="16" />
+			<AddResidue res_index="17" />
+			<AddResidue res_index="18" />
+			<AddResidue res_index="19" />
+			<AddResidue res_index="20" />
+			<AddResidue res_index="1" />
+			<AddResidue res_index="2" />
+			<SetPivots res1="4" atom1="CA" res2="11" atom2="CA" res3="2" atom3="CA" />
+			<CloseBond atom1="C" res1="20" atom2="N" res2="1" bondlength="1.32" angle1="114" angle2="123" torsion="180" />
+			<AddPerturber effect="randomize_backbone_by_rama_prepro">
+				<AddResidue index="4" />
+				<AddResidue index="5" />
+				<AddResidue index="6" />
+				<AddResidue index="7" />
+				<AddResidue index="8" />
+				<AddResidue index="9" />
+				<AddResidue index="10" />
+				<AddResidue index="11" />
+				<AddResidue index="12" />
+				<AddResidue index="13" />
+				<AddResidue index="14" />
+				<AddResidue index="15" />
+				<AddResidue index="16" />
+				<AddResidue index="17" />
+				<AddResidue index="18" />
+				<AddResidue index="19" />
+				<AddResidue index="20" />
+				<AddResidue index="1" />
+				<AddResidue index="2" />
+			</AddPerturber>
+			<AddPerturber effect="copy_backbone_dihedrals">
+				<AddResidue index="3" />
+				<AddResidue index="6" />
+				<AddResidue index="18" />
+			</AddPerturber>
+			<AddPerturber effect="copy_backbone_dihedrals">
+				<AddResidue index="7" />
+				<AddResidue index="19" />
+			</AddPerturber>
+			<AddPerturber effect="copy_backbone_dihedrals">
+				<AddResidue index="8" />
+				<AddResidue index="20" />
+			</AddPerturber>
+			<AddPerturber effect="copy_backbone_dihedrals">
+				<AddResidue index="9" />
+				<AddResidue index="1" />
+			</AddPerturber>
+			<AddPerturber effect="mirror_backbone_dihedrals">
+				<AddResidue index="3" />
+				<AddResidue index="12" />
+			</AddPerturber>
+			<AddPerturber effect="mirror_backbone_dihedrals">
+				<AddResidue index="7" />
+				<AddResidue index="13" />
+			</AddPerturber>
+			<AddPerturber effect="mirror_backbone_dihedrals">
+				<AddResidue index="8" />
+				<AddResidue index="14" />
+			</AddPerturber>
+			<AddPerturber effect="mirror_backbone_dihedrals">
+				<AddResidue index="9" />
+				<AddResidue index="15" />
+			</AddPerturber>
+			<AddFilter type="loop_bump_check" />
+		</GeneralizedKIC>
+	
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="build1" />
+		<Add mover="tors" />
+		<Add mover="endbond" />
+		<Add mover="genkic1" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="tala" />
+
+</ROSETTASCRIPTS>

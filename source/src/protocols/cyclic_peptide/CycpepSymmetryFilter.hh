@@ -85,7 +85,7 @@ public:
 
 	/// @brief Set the cutoff, in degrees, that two mainchain dihedral values must lie within in order for two residues to
 	/// be considered to have the "same" value for that mainchain degree of freedom.
-	void set_angle_threshhold( core::Real const &setting );
+	void set_angle_threshold( core::Real const &setting );
 
 	/// @brief Gets the repeats in the symmetry that we're looking for
 	/// (e.g. 2 for c2 or c2/m symmetry, 3 for c3, etc.).
@@ -97,7 +97,7 @@ public:
 
 	/// @brief The cutoff, in degrees, that two mainchain dihedral values must lie within in order for two residues to
 	/// be considered to have the "same" value for that mainchain degree of freedom.
-	inline core::Real const &angle_threshhold() const { return angle_threshhold_; }
+	inline core::Real const &angle_threshold() const { return angle_threshold_; }
 
 	/// @brief Gets the residue selector.
 	///
@@ -149,7 +149,7 @@ private:
 	/// @brief The cutoff, in degrees, that two mainchain dihedral values must lie within in order for two residues to
 	/// be considered to have the "same" value for that mainchain degree of freedom.
 	/// @details Defaults to 10 degrees.
-	core::Real angle_threshhold_;
+	core::Real angle_threshold_;
 
 };
 

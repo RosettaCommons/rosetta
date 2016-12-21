@@ -1,0 +1,412 @@
+ATOM      1  N   ALA A   1      10.828 -10.524 -10.214  1.00  0.00           N  
+ATOM      2  CA  ALA A   1       9.505 -10.936 -10.668  1.00  0.00           C  
+ATOM      3  C   ALA A   1       8.443  -9.922 -10.261  1.00  0.00           C  
+ATOM      4  O   ALA A   1       7.428  -9.766 -10.941  1.00  0.00           O  
+ATOM      5  CB  ALA A   1       9.161 -12.312 -10.119  1.00  0.00           C  
+ATOM      6  H   ALA A   1      11.291 -11.063  -9.496  1.00  0.00           H  
+ATOM      7  HA  ALA A   1       9.521 -10.984 -11.757  1.00  0.00           H  
+ATOM      8 1HB  ALA A   1       8.170 -12.605 -10.467  1.00  0.00           H  
+ATOM      9 2HB  ALA A   1       9.897 -13.037 -10.466  1.00  0.00           H  
+ATOM     10 3HB  ALA A   1       9.168 -12.281  -9.030  1.00  0.00           H  
+ATOM     11  N   ALA A   2       8.683  -9.235  -9.150  1.00  0.00           N  
+ATOM     12  CA  ALA A   2       7.760  -8.217  -8.664  1.00  0.00           C  
+ATOM     13  C   ALA A   2       8.475  -7.200  -7.784  1.00  0.00           C  
+ATOM     14  O   ALA A   2       9.469  -7.519  -7.132  1.00  0.00           O  
+ATOM     15  CB  ALA A   2       6.612  -8.862  -7.902  1.00  0.00           C  
+ATOM     16  H   ALA A   2       9.526  -9.424  -8.627  1.00  0.00           H  
+ATOM     17  HA  ALA A   2       7.356  -7.686  -9.527  1.00  0.00           H  
+ATOM     18 1HB  ALA A   2       5.931  -8.088  -7.546  1.00  0.00           H  
+ATOM     19 2HB  ALA A   2       6.074  -9.543  -8.561  1.00  0.00           H  
+ATOM     20 3HB  ALA A   2       7.006  -9.416  -7.052  1.00  0.00           H  
+ATOM     21  N   ALA A   3       7.963  -5.974  -7.770  1.00  0.00           N  
+ATOM     22  CA  ALA A   3       8.577  -4.896  -7.003  1.00  0.00           C  
+ATOM     23  C   ALA A   3       8.224  -5.001  -5.525  1.00  0.00           C  
+ATOM     24  O   ALA A   3       7.429  -4.215  -5.010  1.00  0.00           O  
+ATOM     25  CB  ALA A   3       8.149  -3.543  -7.555  1.00  0.00           C  
+ATOM     26  H   ALA A   3       7.127  -5.783  -8.303  1.00  0.00           H  
+ATOM     27  HA  ALA A   3       9.659  -4.989  -7.096  1.00  0.00           H  
+ATOM     28 1HB  ALA A   3       8.616  -2.749  -6.972  1.00  0.00           H  
+ATOM     29 2HB  ALA A   3       8.460  -3.460  -8.596  1.00  0.00           H  
+ATOM     30 3HB  ALA A   3       7.066  -3.451  -7.491  1.00  0.00           H  
+ATOM     31  N   ALA A   4       8.820  -5.976  -4.848  1.00  0.00           N  
+ATOM     32  CA  ALA A   4       8.596  -6.164  -3.419  1.00  0.00           C  
+ATOM     33  C   ALA A   4       9.611  -5.381  -2.595  1.00  0.00           C  
+ATOM     34  O   ALA A   4      10.802  -5.692  -2.600  1.00  0.00           O  
+ATOM     35  CB  ALA A   4       8.654  -7.642  -3.064  1.00  0.00           C  
+ATOM     36  H   ALA A   4       9.444  -6.603  -5.334  1.00  0.00           H  
+ATOM     37  HA  ALA A   4       7.604  -5.781  -3.178  1.00  0.00           H  
+ATOM     38 1HB  ALA A   4       8.485  -7.766  -1.994  1.00  0.00           H  
+ATOM     39 2HB  ALA A   4       7.884  -8.180  -3.617  1.00  0.00           H  
+ATOM     40 3HB  ALA A   4       9.633  -8.041  -3.325  1.00  0.00           H  
+ATOM     41  N   ALA A   5       9.132  -4.364  -1.887  1.00  0.00           N  
+ATOM     42  CA  ALA A   5       9.995  -3.541  -1.048  1.00  0.00           C  
+ATOM     43  C   ALA A   5       9.595  -3.640   0.418  1.00  0.00           C  
+ATOM     44  O   ALA A   5       9.128  -2.668   1.011  1.00  0.00           O  
+ATOM     45  CB  ALA A   5       9.957  -2.091  -1.510  1.00  0.00           C  
+ATOM     46  H   ALA A   5       8.145  -4.155  -1.931  1.00  0.00           H  
+ATOM     47  HA  ALA A   5      11.015  -3.914  -1.142  1.00  0.00           H  
+ATOM     48 1HB  ALA A   5      10.606  -1.490  -0.874  1.00  0.00           H  
+ATOM     49 2HB  ALA A   5      10.301  -2.029  -2.542  1.00  0.00           H  
+ATOM     50 3HB  ALA A   5       8.937  -1.716  -1.445  1.00  0.00           H  
+ATOM     51  N   ALA A   6       9.780  -4.821   0.998  1.00  0.00           N  
+ATOM     52  CA  ALA A   6       9.330  -5.085   2.360  1.00  0.00           C  
+ATOM     53  C   ALA A   6      10.298  -4.505   3.382  1.00  0.00           C  
+ATOM     54  O   ALA A   6      11.071  -5.234   4.003  1.00  0.00           O  
+ATOM     55  CB  ALA A   6       9.161  -6.581   2.581  1.00  0.00           C  
+ATOM     56  H   ALA A   6      10.245  -5.555   0.483  1.00  0.00           H  
+ATOM     57  HA  ALA A   6       8.366  -4.596   2.498  1.00  0.00           H  
+ATOM     58 1HB  ALA A   6       8.824  -6.762   3.602  1.00  0.00           H  
+ATOM     59 2HB  ALA A   6       8.422  -6.971   1.881  1.00  0.00           H  
+ATOM     60 3HB  ALA A   6      10.114  -7.082   2.419  1.00  0.00           H  
+ATOM     61  N   ALA A   7      10.252  -3.188   3.553  1.00  0.00           N  
+ATOM     62  CA  ALA A   7      11.122  -2.507   4.504  1.00  0.00           C  
+ATOM     63  C   ALA A   7      10.589  -2.633   5.926  1.00  0.00           C  
+ATOM     64  O   ALA A   7       9.577  -3.292   6.163  1.00  0.00           O  
+ATOM     65  CB  ALA A   7      11.278  -1.042   4.126  1.00  0.00           C  
+ATOM     66  H   ALA A   7       9.597  -2.644   3.010  1.00  0.00           H  
+ATOM     67  HA  ALA A   7      12.101  -2.987   4.471  1.00  0.00           H  
+ATOM     68 1HB  ALA A   7      11.930  -0.547   4.845  1.00  0.00           H  
+ATOM     69 2HB  ALA A   7      11.714  -0.968   3.130  1.00  0.00           H  
+ATOM     70 3HB  ALA A   7      10.302  -0.560   4.131  1.00  0.00           H  
+ATOM     71  N   ALA A   8      11.278  -1.998   6.869  1.00  0.00           N  
+ATOM     72  CA  ALA A   8      10.849  -2.000   8.262  1.00  0.00           C  
+ATOM     73  C   ALA A   8      10.835  -3.413   8.832  1.00  0.00           C  
+ATOM     74  O   ALA A   8      10.007  -3.741   9.682  1.00  0.00           O  
+ATOM     75  CB  ALA A   8       9.474  -1.362   8.395  1.00  0.00           C  
+ATOM     76  H   ALA A   8      12.119  -1.502   6.613  1.00  0.00           H  
+ATOM     77  HA  ALA A   8      11.567  -1.415   8.838  1.00  0.00           H  
+ATOM     78 1HB  ALA A   8       9.168  -1.371   9.441  1.00  0.00           H  
+ATOM     79 2HB  ALA A   8       9.514  -0.333   8.037  1.00  0.00           H  
+ATOM     80 3HB  ALA A   8       8.754  -1.924   7.802  1.00  0.00           H  
+ATOM     81  N   DAL A   9      11.756  -4.246   8.359  1.00  0.00           N  
+ATOM     82  CA  DAL A   9      11.886  -5.608   8.861  1.00  0.00           C  
+ATOM     83  C   DAL A   9      10.890  -6.542   8.184  1.00  0.00           C  
+ATOM     84  O   DAL A   9      10.723  -7.690   8.595  1.00  0.00           O  
+ATOM     85  CB  DAL A   9      13.307  -6.114   8.658  1.00  0.00           C  
+ATOM     86  H   DAL A   9      12.382  -3.926   7.634  1.00  0.00           H  
+ATOM     87  HA  DAL A   9      11.663  -5.599   9.928  1.00  0.00           H  
+ATOM     88 1HB  DAL A   9      13.388  -7.133   9.037  1.00  0.00           H  
+ATOM     89 2HB  DAL A   9      14.002  -5.470   9.196  1.00  0.00           H  
+ATOM     90 3HB  DAL A   9      13.549  -6.102   7.597  1.00  0.00           H  
+ATOM     91  N   DAL A  10      10.231  -6.042   7.144  1.00  0.00           N  
+ATOM     92  CA  DAL A  10       9.321  -6.858   6.350  1.00  0.00           C  
+ATOM     93  C   DAL A  10      10.019  -8.104   5.819  1.00  0.00           C  
+ATOM     94  O   DAL A  10       9.495  -9.213   5.924  1.00  0.00           O  
+ATOM     95  CB  DAL A  10       8.101  -7.246   7.173  1.00  0.00           C  
+ATOM     96  H   DAL A  10      10.364  -5.072   6.898  1.00  0.00           H  
+ATOM     97  HA  DAL A  10       8.995  -6.267   5.494  1.00  0.00           H  
+ATOM     98 1HB  DAL A  10       7.431  -7.855   6.567  1.00  0.00           H  
+ATOM     99 2HB  DAL A  10       7.579  -6.345   7.497  1.00  0.00           H  
+ATOM    100 3HB  DAL A  10       8.418  -7.815   8.046  1.00  0.00           H  
+ATOM    101  N   DAL A  11      11.203  -7.914   5.247  1.00  0.00           N  
+ATOM    102  CA  DAL A  11      12.042  -9.032   4.832  1.00  0.00           C  
+ATOM    103  C   DAL A  11      12.603  -8.810   3.434  1.00  0.00           C  
+ATOM    104  O   DAL A  11      13.052  -9.751   2.778  1.00  0.00           O  
+ATOM    105  CB  DAL A  11      13.172  -9.244   5.829  1.00  0.00           C  
+ATOM    106  H   DAL A  11      11.531  -6.970   5.097  1.00  0.00           H  
+ATOM    107  HA  DAL A  11      11.422  -9.928   4.805  1.00  0.00           H  
+ATOM    108 1HB  DAL A  11      13.790 -10.083   5.505  1.00  0.00           H  
+ATOM    109 2HB  DAL A  11      12.755  -9.460   6.812  1.00  0.00           H  
+ATOM    110 3HB  DAL A  11      13.783  -8.345   5.883  1.00  0.00           H  
+ATOM    111  N   DAL A  12      12.575  -7.561   2.982  1.00  0.00           N  
+ATOM    112  CA  DAL A  12      13.182  -7.194   1.708  1.00  0.00           C  
+ATOM    113  C   DAL A  12      12.295  -7.598   0.538  1.00  0.00           C  
+ATOM    114  O   DAL A  12      11.517  -6.791   0.028  1.00  0.00           O  
+ATOM    115  CB  DAL A  12      13.463  -5.699   1.667  1.00  0.00           C  
+ATOM    116  H   DAL A  12      12.122  -6.848   3.535  1.00  0.00           H  
+ATOM    117  HA  DAL A  12      14.125  -7.733   1.614  1.00  0.00           H  
+ATOM    118 1HB  DAL A  12      13.916  -5.440   0.710  1.00  0.00           H  
+ATOM    119 2HB  DAL A  12      14.145  -5.434   2.475  1.00  0.00           H  
+ATOM    120 3HB  DAL A  12      12.530  -5.150   1.786  1.00  0.00           H  
+ATOM    121  N   DAL A  13      12.416  -8.852   0.116  1.00  0.00           N  
+ATOM    122  CA  DAL A  13      11.683  -9.345  -1.044  1.00  0.00           C  
+ATOM    123  C   DAL A  13      12.542  -9.296  -2.300  1.00  0.00           C  
+ATOM    124  O   DAL A  13      13.747  -9.544  -2.250  1.00  0.00           O  
+ATOM    125  CB  DAL A  13      11.189 -10.762  -0.796  1.00  0.00           C  
+ATOM    126  H   DAL A  13      13.032  -9.481   0.612  1.00  0.00           H  
+ATOM    127  HA  DAL A  13      10.823  -8.694  -1.202  1.00  0.00           H  
+ATOM    128 1HB  DAL A  13      10.643 -11.116  -1.671  1.00  0.00           H  
+ATOM    129 2HB  DAL A  13      10.528 -10.771   0.071  1.00  0.00           H  
+ATOM    130 3HB  DAL A  13      12.039 -11.416  -0.610  1.00  0.00           H  
+ATOM    131  N   DAL A  14      12.138  -8.467  -3.257  1.00  0.00           N  
+ATOM    132  CA  DAL A  14      12.870  -8.326  -4.510  1.00  0.00           C  
+ATOM    133  C   DAL A  14      12.700  -9.559  -5.388  1.00  0.00           C  
+ATOM    134  O   DAL A  14      11.636 -10.177  -5.409  1.00  0.00           O  
+ATOM    135  CB  DAL A  14      12.413  -7.080  -5.253  1.00  0.00           C  
+ATOM    136  H   DAL A  14      11.639  -7.671  -2.886  1.00  0.00           H  
+ATOM    137  HA  DAL A  14      13.929  -8.228  -4.274  1.00  0.00           H  
+ATOM    138 1HB  DAL A  14      12.968  -6.989  -6.187  1.00  0.00           H  
+ATOM    139 2HB  DAL A  14      12.594  -6.200  -4.636  1.00  0.00           H  
+ATOM    140 3HB  DAL A  14      11.348  -7.156  -5.471  1.00  0.00           H  
+ATOM    141  N   DAL A  15      13.756  -9.913  -6.113  1.00  0.00           N  
+ATOM    142  CA  DAL A  15      13.727 -11.074  -6.994  1.00  0.00           C  
+ATOM    143  C   DAL A  15      13.689 -10.654  -8.458  1.00  0.00           C  
+ATOM    144  O   DAL A  15      14.353 -11.254  -9.303  1.00  0.00           O  
+ATOM    145  CB  DAL A  15      14.929 -11.969  -6.732  1.00  0.00           C  
+ATOM    146  H   DAL A  15      14.601  -9.363  -6.052  1.00  0.00           H  
+ATOM    147  HA  DAL A  15      12.816 -11.635  -6.784  1.00  0.00           H  
+ATOM    148 1HB  DAL A  15      14.893 -12.831  -7.398  1.00  0.00           H  
+ATOM    149 2HB  DAL A  15      14.910 -12.309  -5.696  1.00  0.00           H  
+ATOM    150 3HB  DAL A  15      15.845 -11.409  -6.914  1.00  0.00           H  
+ATOM    151  N   DAL A  16      12.908  -9.620  -8.752  1.00  0.00           N  
+ATOM    152  CA  DAL A  16      12.792  -9.109 -10.112  1.00  0.00           C  
+ATOM    153  C   DAL A  16      11.440  -9.459 -10.719  1.00  0.00           C  
+ATOM    154  O   DAL A  16      10.961  -8.778 -11.626  1.00  0.00           O  
+ATOM    155  CB  DAL A  16      13.007  -7.602 -10.132  1.00  0.00           C  
+ATOM    156  H   DAL A  16      12.380  -9.176  -8.013  1.00  0.00           H  
+ATOM    157  HA  DAL A  16      13.564  -9.583 -10.719  1.00  0.00           H  
+ATOM    158 1HB  DAL A  16      12.918  -7.235 -11.155  1.00  0.00           H  
+ATOM    159 2HB  DAL A  16      14.001  -7.371  -9.750  1.00  0.00           H  
+ATOM    160 3HB  DAL A  16      12.257  -7.120  -9.508  1.00  0.00           H  
+TER                                                                             
+CONECT    1    2
+CONECT    1    6
+CONECT    1  153
+CONECT    2    3
+CONECT    2    5
+CONECT    2    7
+CONECT    3    4
+CONECT    3   11
+CONECT    5    8
+CONECT    5    9
+CONECT    5   10
+CONECT   11   12
+CONECT   11   16
+CONECT   12   13
+CONECT   12   15
+CONECT   12   17
+CONECT   13   14
+CONECT   13   21
+CONECT   15   18
+CONECT   15   19
+CONECT   15   20
+CONECT   21   22
+CONECT   21   26
+CONECT   22   23
+CONECT   22   25
+CONECT   22   27
+CONECT   23   24
+CONECT   23   31
+CONECT   25   28
+CONECT   25   29
+CONECT   25   30
+CONECT   31   32
+CONECT   31   36
+CONECT   32   33
+CONECT   32   35
+CONECT   32   37
+CONECT   33   34
+CONECT   33   41
+CONECT   35   38
+CONECT   35   39
+CONECT   35   40
+CONECT   41   42
+CONECT   41   46
+CONECT   42   43
+CONECT   42   45
+CONECT   42   47
+CONECT   43   44
+CONECT   43   51
+CONECT   45   48
+CONECT   45   49
+CONECT   45   50
+CONECT   51   52
+CONECT   51   56
+CONECT   52   53
+CONECT   52   55
+CONECT   52   57
+CONECT   53   54
+CONECT   53   61
+CONECT   55   58
+CONECT   55   59
+CONECT   55   60
+CONECT   61   62
+CONECT   61   66
+CONECT   62   63
+CONECT   62   65
+CONECT   62   67
+CONECT   63   64
+CONECT   63   71
+CONECT   65   68
+CONECT   65   69
+CONECT   65   70
+CONECT   71   72
+CONECT   71   76
+CONECT   72   73
+CONECT   72   75
+CONECT   72   77
+CONECT   73   74
+CONECT   73   81
+CONECT   75   78
+CONECT   75   79
+CONECT   75   80
+CONECT   81   82
+CONECT   81   86
+CONECT   82   83
+CONECT   82   85
+CONECT   82   87
+CONECT   83   84
+CONECT   83   91
+CONECT   85   88
+CONECT   85   89
+CONECT   85   90
+CONECT   91   92
+CONECT   91   96
+CONECT   92   93
+CONECT   92   95
+CONECT   92   97
+CONECT   93   94
+CONECT   93  101
+CONECT   95   98
+CONECT   95   99
+CONECT   95  100
+CONECT  101  102
+CONECT  101  106
+CONECT  102  103
+CONECT  102  105
+CONECT  102  107
+CONECT  103  104
+CONECT  103  111
+CONECT  105  108
+CONECT  105  109
+CONECT  105  110
+CONECT  111  112
+CONECT  111  116
+CONECT  112  113
+CONECT  112  115
+CONECT  112  117
+CONECT  113  114
+CONECT  113  121
+CONECT  115  118
+CONECT  115  119
+CONECT  115  120
+CONECT  121  122
+CONECT  121  126
+CONECT  122  123
+CONECT  122  125
+CONECT  122  127
+CONECT  123  124
+CONECT  123  131
+CONECT  125  128
+CONECT  125  129
+CONECT  125  130
+CONECT  131  132
+CONECT  131  136
+CONECT  132  133
+CONECT  132  135
+CONECT  132  137
+CONECT  133  134
+CONECT  133  141
+CONECT  135  138
+CONECT  135  139
+CONECT  135  140
+CONECT  141  142
+CONECT  141  146
+CONECT  142  143
+CONECT  142  145
+CONECT  142  147
+CONECT  143  144
+CONECT  143  151
+CONECT  145  148
+CONECT  145  149
+CONECT  145  150
+CONECT  151  152
+CONECT  151  156
+CONECT  152  153
+CONECT  152  155
+CONECT  152  157
+CONECT  153  154
+CONECT  155  158
+CONECT  155  159
+CONECT  155  160
+END
+SS: LLLLLLLLLLLLLLLL
+SCORE_INFO:
+TOTAL_SCORE: 2.06295
+WTS:  fa_atr: 1 fa_rep: 0.55 fa_sol: 0.9375 fa_intra_rep: 0.005 fa_elec: 0.875 pro_close: 1.25 hbond_sr_bb: 1.17 hbond_lr_bb: 1.17 hbond_bb_sc: 1.17 hbond_sc: 1.1 dslf_fa13: 1.25 rama: 0.25 omega: 0.625 fa_dun: 0.7 p_aa_pp: 0.4 yhh_planarity: 0.625 ref: 1
+TOTAL_WTD:  fa_atr:   -29.325 fa_rep:     6.235 fa_sol:    16.118 fa_intra_rep:     0.033 fa_elec:    -0.955 pro_close:     0.000 hbond_sr_bb:    -2.646 hbond_lr_bb:    -4.041 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     2.420 omega:     1.034 fa_dun:     0.000 p_aa_pp:     0.810 yhh_planarity:     0.000 ref:    12.380
+RSD_WTD: 1  fa_atr:    -1.104 fa_rep:     0.683 fa_sol:     0.609 fa_intra_rep:     0.001 fa_elec:     0.130 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:    -0.339 omega:     0.009 fa_dun:     0.000 p_aa_pp:    -0.142 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 2  fa_atr:    -1.772 fa_rep:     0.343 fa_sol:     1.115 fa_intra_rep:     0.001 fa_elec:    -0.059 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:    -0.018 omega:     0.026 fa_dun:     0.000 p_aa_pp:    -0.328 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 3  fa_atr:    -0.653 fa_rep:     0.013 fa_sol:     0.317 fa_intra_rep:     0.003 fa_elec:    -0.011 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.176 omega:     0.016 fa_dun:     0.000 p_aa_pp:    -0.354 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 4  fa_atr:    -2.705 fa_rep:     0.516 fa_sol:     1.428 fa_intra_rep:     0.001 fa_elec:    -0.279 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.202 omega:     0.001 fa_dun:     0.000 p_aa_pp:     0.212 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 5  fa_atr:    -1.254 fa_rep:     0.144 fa_sol:     0.754 fa_intra_rep:     0.003 fa_elec:    -0.264 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.563 omega:     0.193 fa_dun:     0.000 p_aa_pp:    -0.135 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 6  fa_atr:    -3.866 fa_rep:     0.383 fa_sol:     1.984 fa_intra_rep:     0.003 fa_elec:    -0.584 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.180 omega:     0.000 fa_dun:     0.000 p_aa_pp:    -0.332 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 7  fa_atr:    -1.978 fa_rep:     0.624 fa_sol:     1.283 fa_intra_rep:     0.001 fa_elec:    -0.141 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.292 omega:     0.029 fa_dun:     0.000 p_aa_pp:     0.230 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 8  fa_atr:    -0.931 fa_rep:     0.414 fa_sol:     0.532 fa_intra_rep:     0.003 fa_elec:     0.162 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.185 omega:     0.041 fa_dun:     0.000 p_aa_pp:     0.314 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 9  fa_atr:    -1.647 fa_rep:     0.526 fa_sol:     0.838 fa_intra_rep:     0.001 fa_elec:     0.176 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:    -0.295 omega:     0.122 fa_dun:     0.000 p_aa_pp:    -0.058 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 10  fa_atr:    -2.252 fa_rep:     0.629 fa_sol:     1.150 fa_intra_rep:     0.003 fa_elec:     0.028 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.134 omega:     0.300 fa_dun:     0.000 p_aa_pp:     0.170 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 11  fa_atr:    -2.044 fa_rep:     0.275 fa_sol:     1.080 fa_intra_rep:     0.001 fa_elec:     0.052 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.599 omega:     0.173 fa_dun:     0.000 p_aa_pp:     0.275 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 12  fa_atr:    -3.050 fa_rep:     0.495 fa_sol:     1.717 fa_intra_rep:     0.003 fa_elec:    -0.107 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.204 omega:     0.082 fa_dun:     0.000 p_aa_pp:     0.110 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 13  fa_atr:    -1.426 fa_rep:     0.085 fa_sol:     0.763 fa_intra_rep:     0.001 fa_elec:    -0.120 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.249 omega:     0.000 fa_dun:     0.000 p_aa_pp:     0.324 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 14  fa_atr:    -2.279 fa_rep:     0.184 fa_sol:     1.222 fa_intra_rep:     0.001 fa_elec:    -0.156 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:    -0.415 omega:     0.000 fa_dun:     0.000 p_aa_pp:    -0.151 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 15  fa_atr:    -0.701 fa_rep:     0.108 fa_sol:     0.411 fa_intra_rep:     0.003 fa_elec:     0.061 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.469 omega:     0.003 fa_dun:     0.000 p_aa_pp:     0.281 yhh_planarity:     0.000 ref:     0.774
+RSD_WTD: 16  fa_atr:    -1.662 fa_rep:     0.814 fa_sol:     0.917 fa_intra_rep:     0.003 fa_elec:     0.157 pro_close:     0.000 hbond_sr_bb:     0.000 hbond_lr_bb:     0.000 hbond_bb_sc:     0.000 hbond_sc:     0.000 dslf_fa13:     0.000 rama:     0.232 omega:     0.039 fa_dun:     0.000 p_aa_pp:     0.394 yhh_planarity:     0.000 ref:     0.774
+ScoreFunction::show():
+weights: (fa_atr 1) (fa_rep 0.55) (fa_sol 0.9375) (fa_intra_rep 0.005) (fa_elec 0.875) (pro_close 1.25) (hbond_sr_bb 1.17) (hbond_lr_bb 1.17) (hbond_bb_sc 1.17) (hbond_sc 1.1) (dslf_fa13 1.25) (rama 0.25) (omega 0.625) (fa_dun 0.7) (p_aa_pp 0.4) (yhh_planarity 0.625) (ref 1)
+energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
+analytic_etable_evaluation: 1
+EnergyMethodOptions::show: method_weights: ref 0.773742 0.443793 -1.63002 -1.96094 0.61937 0.173326 0.388298 1.0806 -0.358574 0.761128 0.249477 -1.19118 -0.250485 -1.51717 -0.32436 0.165383 0.20134 0.979644 1.23413 0.162496
+EnergyMethodOptions::show: method_weights: free_res
+EnergyMethodOptions::show: unfolded_energies_type: UNFOLDED_SCORE12
+EnergyMethodOptions::show: split_unfolded_label_type: SPLIT_UNFOLDED_MM
+EnergyMethodOptions::show: split_unfolded_value_type: SPLIT_UNFOLDED_BOLTZ
+EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
+EnergyMethodOptions::show: exclude_protein_protein_fa_elec: false
+EnergyMethodOptions::show: exclude_monomer_fa_elec: false
+EnergyMethodOptions::show: elec_max_dis: 5.5
+EnergyMethodOptions::show: elec_min_dis: 1.6
+EnergyMethodOptions::show: elec_die: 10
+EnergyMethodOptions::show: elec_no_dis_dep_die: false
+EnergyMethodOptions::show: elec_sigmoidal_die: false
+EnergyMethodOptions::show: elec_sigmoidal_D: 78
+EnergyMethodOptions::show: elec_sigmoidal_D0: 2
+EnergyMethodOptions::show: elec_sigmoidal_S: 0.36
+EnergyMethodOptions::show: smooth_fa_elec: true
+EnergyMethodOptions::show: grpelec_fade_type: false
+EnergyMethodOptions::show: grpelec_fade_param1: 1
+EnergyMethodOptions::show: grpelec_fade_param2: 1
+EnergyMethodOptions::show: grpelec_fade_hbond: 0
+EnergyMethodOptions::show: grp_cpfxn: 1
+EnergyMethodOptions::show: elec_group_file: /scoring/score_functions/elec_group_def.dat
+EnergyMethodOptions::show: grpelec_context_dependent: 0
+EnergyMethodOptions::show: use_polarization: true
+EnergyMethodOptions::show: use_gen_kirkwood: true
+EnergyMethodOptions::show: exclude_DNA_DNA: true
+EnergyMethodOptions::show: exclude_intra_res_protein: true
+EnergyMethodOptions::show: put_intra_into_total: false
+EnergyMethodOptions::show: geom_sol_interres_path_distance_cutoff: false
+EnergyMethodOptions::show: geom_sol_intrares_path_distance_cutoff: true
+EnergyMethodOptions::show: envsmooth_zero_negatives: false
+EnergyMethodOptions::show: cst_max_seq_sep: 18446744073709551615
+EnergyMethodOptions::show: pb_bound_tag: bound
+EnergyMethodOptions::show: pb_unbound_tag: unbound
+EnergyMethodOptions::show: bond_angle_central_atoms_to_score:
+EnergyMethodOptions::show: bond_angle_residue_type_param_set: none
+HBondOptions::show: exclude_DNA_DNA: true
+HBondOptions::show: exclude_intra_res_protein_: true
+HBondOptions::show: exclude_intra_res_RNA_: false
+HBondOptions::show: put_intra_into_total_: false
+HBondOptions::show: exclude_self_hbonds: true
+HBondOptions::show: use_hb_env_dep: true
+HBondOptions::show: use_hb_env_dep_DNA: true
+HBondOptions::show: smooth_hb_env_dep: true
+HBondOptions::show: bb_donor_acceptor_check: true
+HBondOptions::show: decompose_bb_hb_into_pair_energies: false
+HBondOptions::show: params_database_tag_: sp2_elec_params
+HBondOptions::show: use_sp2_chi_penalty_: true
+HBondOptions::show: sp2_BAH180_rise_: 0.75
+HBondOptions::show: sp2_outer_width_: 0.357
+HBondOptions::show: measure_sp3acc_BAH_from_hvy_: true
+HBondOptions::show: fade_energy_: 1
+HBondOptions::show: Mbhbond: false 
+HbondOptions::show: mphbond: false
+HBondOptions::show: hbond_energy_shift: 0
+RNA_EnergyMethodOptions::show: syn_G_potential_bonus: 0
+RNA_EnergyMethodOptions::show: torsion_potential: ps_04282011
+RNA_EnergyMethodOptions::show: suiteness_bonus: Richardson
+FreeDOF_Options::show: free_suite_bonus: -1
+FreeDOF_Options::show: free_2HOprime_bonus: -0.5
+FreeDOF_Options::show: free_sugar_bonus: -1
+FreeDOF_Options::show: pack_phosphate_penalty: 0.25
+FreeDOF_Options::show: free_side_chain_bonus: -0.5
+

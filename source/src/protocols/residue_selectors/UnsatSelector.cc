@@ -163,14 +163,14 @@ void UnsatSelector::parse_my_tag(
 // ---------- SETTERS AND GETTERS ---------------
 
 
-/// @brief Set the threshhold for considering something to be a
+/// @brief Set the threshold for considering something to be a
 /// hydrogen bond.
 void UnsatSelector::set_hbond_energy_cutoff(core::Real const &input_value)
 {
 	hbond_energy_cutoff_ = input_value;
 }
 
-/// @brief Get the threshhold for considering something to be a
+/// @brief Get the threshold for considering something to be a
 /// hydrogen bond.
 core::Real const & UnsatSelector::hbond_energy_cutoff() const
 {

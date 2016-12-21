@@ -184,7 +184,7 @@ OversaturatedHbondAcceptorFilter::max_allowed_oversaturated() const {
 	return max_allowed_oversaturated_;
 }
 
-/// @brief Set the threshhold for considering something to be a
+/// @brief Set the threshold for considering something to be a
 /// hydrogen bond.
 void
 OversaturatedHbondAcceptorFilter::set_hbond_energy_cutoff(
@@ -193,7 +193,7 @@ OversaturatedHbondAcceptorFilter::set_hbond_energy_cutoff(
 	hbond_energy_cutoff_ = input_value;
 }
 
-/// @brief Get the threshhold for considering something to be a
+/// @brief Get the threshold for considering something to be a
 /// hydrogen bond.
 core::Real const &
 OversaturatedHbondAcceptorFilter::hbond_energy_cutoff() const {

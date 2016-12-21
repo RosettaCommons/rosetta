@@ -102,11 +102,11 @@ public:
 	/// hydrogen bond acceptor.
 	core::Size max_allowed_oversaturated() const;
 
-	/// @brief Set the threshhold for considering something to be a
+	/// @brief Set the threshold for considering something to be a
 	/// hydrogen bond.
 	void set_hbond_energy_cutoff( core::Real const &input_value );
 
-	/// @brief Get the threshhold for considering something to be a
+	/// @brief Get the threshold for considering something to be a
 	/// hydrogen bond.
 	core::Real const & hbond_energy_cutoff() const;
 

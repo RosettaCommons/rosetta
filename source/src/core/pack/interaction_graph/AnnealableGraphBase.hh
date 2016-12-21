@@ -100,7 +100,7 @@ public:
 	/// @details Must be implemented by derived classes.
 	virtual core::PackerEnergy get_energy_current_state_assignment() = 0;
 
-	/// @brief Set an error threshhold.
+	/// @brief Set an error threshold.
 	/// @details Must be implemented by derived classes.
 	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) = 0;
 };

@@ -109,8 +109,8 @@ public:
 	///
 	virtual core::PackerEnergy get_energy_current_state_assignment();
 
-	/// @brief Set error thresshold.
-	/// @param[in] deltaE Error thresshold value to set.
+	/// @brief Set error threshold.
+	/// @param[in] deltaE Error threshold value to set.
 	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE );
 
 	/// @brief Container accessor

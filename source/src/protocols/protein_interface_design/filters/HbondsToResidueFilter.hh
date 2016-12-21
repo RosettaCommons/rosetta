@@ -100,7 +100,7 @@ public :
 	///
 	inline core::Size partners() const { return partners_; }
 
-	/// @brief Set the threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	/// @brief Set the threshold for the hbond score term at which two residues are counted as being hydrogen bonded.
 	///
 	inline void set_energy_cutoff( core::Real const val) {
 		runtime_assert_string_msg( val<=0, "Error in HbondsToResidueFilter::set_energy_cutoff(): The energy cutoff must be less than or equal to zero." );
@@ -108,7 +108,7 @@ public :
 		return;
 	}
 
-	/// @brief Get the threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	/// @brief Get the threshold for the hbond score term at which two residues are counted as being hydrogen bonded.
 	///
 	inline core::Real energy_cutoff() const { return energy_cutoff_; }
 
@@ -200,7 +200,7 @@ private:
 	///
 	Size partners_;
 
-	/// @brief The threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	/// @brief The threshold for the hbond score term at which two residues are counted as being hydrogen bonded.
 	///
 	Real energy_cutoff_;
 

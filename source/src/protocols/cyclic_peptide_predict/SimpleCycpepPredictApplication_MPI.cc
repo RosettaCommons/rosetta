@@ -78,6 +78,7 @@ namespace cyclic_peptide_predict {
 SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI() :
 	MPI_rank_(0),
 	MPI_n_procs_(0),
+	slave_job_count_(0),
 	scorefxn_(),
 	hierarchy_level_(0),
 	total_hierarchy_levels_(0),
@@ -127,6 +128,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 ) :
 	MPI_rank_( MPI_rank ),
 	MPI_n_procs_( MPI_n_procs ),
+	slave_job_count_( 0 ),
 	scorefxn_(), //Cloned below.
 	hierarchy_level_( 0 ),
 	total_hierarchy_levels_( total_hierarchy_levels ),
@@ -175,6 +177,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 ) :
 	MPI_rank_( src.MPI_rank_ ),
 	MPI_n_procs_( src.MPI_n_procs_ ),
+	slave_job_count_( src.slave_job_count_ ),
 	scorefxn_(), //Cloned below
 	hierarchy_level_( 0 ),
 	total_hierarchy_levels_( src.total_hierarchy_levels_ ),
@@ -1189,7 +1192,7 @@ SimpleCycpepPredictApplication_MPI::emperor_write_summaries_to_tracer(
 		}
 	}
 
-	if(native_ && summary_list.size() > 0 && denominator > 1e-12) {
+	if(native_ && summary_list.size() > 0 && denominator > 1e-14) {
 		core::Real const PNear( numerator/denominator );
 		TR_summary << "\nPNear:\t" << PNear << "\n";
 		TR_summary << "-kB*T*ln(PNear):\t" << -1.0*kbt()*std::log( PNear ) << "\n";
@@ -1506,6 +1509,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 		predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
 		predict_app->set_suppress_checkpoints( true );
 		predict_app->set_my_rank( MPI_rank_ );
+		predict_app->set_already_completed_job_count( slave_job_count_ );
 		predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
 		if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
 		if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
@@ -1514,6 +1518,7 @@ SimpleCycpepPredictApplication_MPI::slave_carry_out_njobs(
 		predict_app->set_abba_bins_binfile_contents( abba_bins_);
 
 		predict_app->run();
+		slave_job_count_ += njobs_from_above;
 	} catch ( utility::excn::EXCN_Base &excn ) {
 		TR.Error << "Exception in SimpleCycpepPredictApplication caught:" << std::endl;
 		excn.show( TR.Error );

@@ -662,6 +662,7 @@ testinputfiles = [
 	"cyclic_peptide/asymm.pdb",
 	"cyclic_peptide/c2_symm.pdb",
 	"cyclic_peptide/c2m_symm.pdb",
+	"cyclic_peptide/c4m_bad.pdb",
 	"cyclic_peptide/dVdPN_A.pdb",
 	"cyclic_peptide/mixed_disulf_test.pdb",
 	"cyclic_peptide/oversaturated_bb_bb_bb.pdb",

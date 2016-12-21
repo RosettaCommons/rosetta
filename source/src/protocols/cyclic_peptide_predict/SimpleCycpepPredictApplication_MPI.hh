@@ -343,6 +343,10 @@ private:
 	///
 	int MPI_n_procs_;
 	
+	/// @brief The number of jobs that have been assigned to this process and completed, if it is a slave process.
+	/// @details Must be mutable since it's incremented as jobs are assigned.
+	mutable core::Size slave_job_count_;
+	
 	/// @brief The default scorefunction to use.
 	/// @details The high-hbond version is constructed from this one. 
 	/// If necessary, the aa_composition score term will be turned on

@@ -104,6 +104,10 @@ public:
 	/// @details Used for output of job summaries.
 	void set_my_rank( int const rank_in );
 
+	/// @brief Set the number of jobs that this process has already completed.
+	///
+	void set_already_completed_job_count( core::Size const count_in );
+
 	/// @brief Allows external code to override the number of structures that this should generate (otherwise
 	/// set by options system.
 	void set_nstruct( core::Size const nstruct_in );
@@ -226,7 +230,8 @@ private:
 	set_up_termini_mover (
 		protocols::cyclic_peptide::DeclareBondOP termini,
 		core::pose::PoseCOP pose,
-		bool const native=false
+		bool const native=false,
+		core::Size const last_res=0
 	) const;
 
 	/// @brief Takes a vector of residue names, chooses a random number for cyclic offset, and
@@ -243,6 +248,14 @@ private:
 	void
 	import_and_set_up_native (
 		std::string const &native_file,
+		core::pose::PoseOP native_pose,
+		core::Size const expected_residue_count
+	) const;
+
+	/// @brief Sets up a terminial peptide bond and does some checks.
+	///
+	void
+	set_up_native (
 		core::pose::PoseOP native_pose,
 		core::Size const expected_residue_count
 	) const;
@@ -338,6 +351,7 @@ private:
 
 	/// @brief Align pose to native_pose, and return the RMSD between the two poses.
 	/// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
+	/// Only uses alpha-amino acids for the alignment, currently.
 	core::Real
 	align_and_calculate_rmsd(
 		core::pose::PoseOP pose,
@@ -472,6 +486,10 @@ private:
 	/// @brief If this is called by MPI code, this can store the rank of the current process.  Zero otherwise.
 	///
 	int my_rank_;
+
+	/// @brief The number of jobs that this slave process has already completed.  Only used in MPI mode; zero otherwise.
+	///
+	core::Size already_completed_job_count_;
 
 	/// @brief The default ScoreFunction to use.  The high h-bond version is constructed from this.
 	///
@@ -747,7 +765,11 @@ private:
 
 	/// @brief List of positions linked by 1,3,5-tris(bromomethyl)benzene.
 	/// @details This is a vector of lists of three residues.
-	utility::vector1< utility::vector1 < core::Size >  > tbmb_positions_;
+	mutable utility::vector1< utility::vector1 < core::Size >  > tbmb_positions_;
+
+	/// @brief Should all cysteine residues be linked with 1,3,5-tris(bromomethyl)benzene?
+	/// @details False by default.
+	bool link_all_cys_with_tbmb_;
 
 	/// @brief If true, filters are applied based on distance between TBMB cysteines and on constraints to discard
 	/// GenKIC solutions that can't be crosslinked easily.
@@ -761,6 +783,22 @@ private:
 	/// @brief Multiplier to make the TBMB constraints energy filter more permissive.
 	/// @details Default 1.0.
 	core::Real tbmb_constraints_energy_filter_multiplier_;
+
+	/// @brief If this option is used, then only backbones that are cN (or cN/m, if mirror symmetry is required) symmetric will be accepted.
+	/// For example, if set to 2, then only c2-symmetric backbones will be accepted.
+	core::Size required_symmetry_repeats_;
+
+	/// @brief If this option is used, then only backbones with mirror symmetry are accepted.  Must be used with the
+	/// -cyclic_peptide:require_symmetry_repeats flag.
+	bool required_symmetry_mirroring_;
+
+	/// @brief The cutoff, in degrees, to use when comparing mainchain torsion values to determine whether symmetry
+	/// repeats are truely symmetric.  Defaults to 10 degrees.
+	core::Real required_symmetry_angle_threshold_;
+
+	/// @brief The random perturbation, in degrees, to be applied when copying mainchain torsion values to produce symmetric conformations.
+	/// @details Defaults to 0.0 (no perturbation).
+	core::Real required_symmetry_perturbation_;
 
 };
 

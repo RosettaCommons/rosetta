@@ -43,12 +43,16 @@ public:
 		asymm_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/asymm.pdb", false, core::import_pose::PDB_file);
 		c2_symm_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/c2_symm.pdb", false, core::import_pose::PDB_file);
 		c2m_symm_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/c2m_symm.pdb", false, core::import_pose::PDB_file);
+		c4m_bad_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/c4m_bad.pdb", false, core::import_pose::PDB_file);
 
 		protocols::cyclic_peptide::DeclareBond bond;
 		bond.set( 8, "C", 1, "N", false );
 		bond.apply( *asymm_peptide_ );
 		bond.apply( *c2_symm_peptide_ );
 		bond.apply( *c2m_symm_peptide_ );
+		protocols::cyclic_peptide::DeclareBond bond2;
+		bond2.set( 12, "C", 1, "N", false );
+		bond2.apply( *c4m_bad_peptide_ );
 
 	}
 
@@ -65,17 +69,19 @@ public:
 		bool const asymm( filter.apply(*asymm_peptide_) );
 		bool const c2( filter.apply(*c2_symm_peptide_) );
 		bool const c2m( filter.apply(*c2m_symm_peptide_) );
+		bool const c4mbad( filter.apply(*c4m_bad_peptide_) );
 
-		TR << "c2_symmetry_test:\n\tAsymm\tc2\tc2m";
-		TR << "\nExpect:\tFAIL\tPASS\tFAIL";
-		TR << "\nActual:\t" << (asymm ? "PASS" : "FAIL") << "\t" << (c2 ? "PASS" : "FAIL") << "\t" << (c2m ? "PASS" : "FAIL") << std::endl;
+		TR << "c2_symmetry_test:\n\tAsymm\tc2\tc2m\tc4m_bad";
+		TR << "\nExpect:\tFAIL\tPASS\tFAIL\tFAIL";
+		TR << "\nActual:\t" << (asymm ? "PASS" : "FAIL") << "\t" << (c2 ? "PASS" : "FAIL") << "\t" << (c2m ? "PASS" : "FAIL") << "\t" << (c4mbad ? "PASS" : "FAIL") << std::endl;
 
 		TS_ASSERT( !asymm );
 		TS_ASSERT( c2 );
 		TS_ASSERT( !c2m );
+		TS_ASSERT( !c4mbad );
 	}
 
-	/// @brief Confirms that the filter picks out the c2m-symmetric peptide.
+	/// @brief Confirms that the filter picks out the c2/m-symmetric peptide.
 	void test_c2m_symm(){
 		protocols::cyclic_peptide::CycpepSymmetryFilter filter;
 		filter.set_mirror_symm(true);
@@ -84,14 +90,38 @@ public:
 		bool const asymm( filter.apply(*asymm_peptide_) );
 		bool const c2( filter.apply(*c2_symm_peptide_) );
 		bool const c2m( filter.apply(*c2m_symm_peptide_) );
+		bool const c4mbad( filter.apply(*c4m_bad_peptide_) );
 
-		TR << "c2m_symmetry_test:\n\tAsymm\tc2\tc2m";
-		TR << "\nExpect:\tFAIL\tFAIL\tPASS";
-		TR << "\nActual:\t" << (asymm ? "PASS" : "FAIL") << "\t" << (c2 ? "PASS" : "FAIL") << "\t" << (c2m ? "PASS" : "FAIL") << std::endl;
+		TR << "c2m_symmetry_test:\n\tAsymm\tc2\tc2m\tc4m_bad";
+		TR << "\nExpect:\tFAIL\tFAIL\tPASS\tFAIL";
+		TR << "\nActual:\t" << (asymm ? "PASS" : "FAIL") << "\t" << (c2 ? "PASS" : "FAIL") << "\t" << (c2m ? "PASS" : "FAIL") << "\t" << (c4mbad ? "PASS" : "FAIL") << std::endl;
 
 		TS_ASSERT( !asymm );
 		TS_ASSERT( !c2 );
 		TS_ASSERT( c2m );
+		TS_ASSERT( !c4mbad );
+	}
+
+	/// @brief Confirms that the filter does not pick out the c4/m-symmetric peptide that isn't actually c4/m-symmetric.
+	void test_c4m_symm(){
+		protocols::cyclic_peptide::CycpepSymmetryFilter filter;
+		filter.set_mirror_symm(false);
+		filter.set_symm_repeats(4);
+		filter.set_angle_threshold( 25.0 );
+
+		bool const asymm( filter.apply(*asymm_peptide_) );
+		bool const c2( filter.apply(*c2_symm_peptide_) );
+		bool const c2m( filter.apply(*c2m_symm_peptide_) );
+		bool const c4mbad( filter.apply(*c4m_bad_peptide_) );
+
+		TR << "c2_symmetry_test:\n\tAsymm\tc2\tc2m\tc4m_bad";
+		TR << "\nExpect:\tFAIL\tFAIL\tFAIL\tFAIL";
+		TR << "\nActual:\t" << (asymm ? "PASS" : "FAIL") << "\t" << (c2 ? "PASS" : "FAIL") << "\t" << (c2m ? "PASS" : "FAIL") << "\t" << (c4mbad ? "PASS" : "FAIL") << std::endl;
+
+		TS_ASSERT( !asymm );
+		TS_ASSERT( !c2 );
+		TS_ASSERT( !c2m );
+		TS_ASSERT( !c4mbad );
 	}
 
 private:
@@ -99,5 +129,6 @@ private:
 	core::pose::PoseOP asymm_peptide_;
 	core::pose::PoseOP c2_symm_peptide_;
 	core::pose::PoseOP c2m_symm_peptide_;
+	core::pose::PoseOP c4m_bad_peptide_;
 
 };

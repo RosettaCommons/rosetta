@@ -79,6 +79,9 @@ enum perturber_effect {
 	perturb_dihedral_bbg,
 	perturb_backbone_by_bins,
 
+	copy_backbone_dihedrals,
+	mirror_backbone_dihedrals,
+
 	sample_cis_peptide_bond,
 
 	unknown_effect, //Keep this second-to-last.
@@ -108,12 +111,12 @@ public:
 
 	/// @brief Returns the enum type for the effect of a pertuber based on a perturber name.
 	///        Returns unknown_effect if can't find a match for the name.
-	perturber_effect get_perturber_effect_from_name( std::string const &name ) const;
+	static perturber_effect get_perturber_effect_from_name( std::string const &name );
 
 
 	/// @brief Returns the name of a perturber given the enum type.
 	///        Returns "unknown_effect" if no such effect exists.
-	std::string get_perturber_effect_name( core::Size &effect ) const;
+	static std::string get_perturber_effect_name( core::Size &effect );
 
 
 	/// @brief Sets the effect of this perturber.
@@ -298,7 +301,8 @@ private:
 	/// return the index in the loop.
 	core::Size get_loop_index (
 		core::Size const original_pose_index,
-		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		bool const fail_if_not_found=true
 	) const;
 
 	/// @brief Given a list of lists of AtomIDs, where residue indices are based on
@@ -472,6 +476,28 @@ private:
 		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
 		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 	) const;
+
+	/// @brief Applies a copy_backbone_dihedrals perturbation to the list of torsions.
+	/// @details
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	/// @param[in] mirror - If true, then backbone dihedrals are copied with inversion (multiplied by -1).  If false, then they copied faithfully.
+	void apply_copy_backbone_dihedrals(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+		utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
+		bool const mirror
+	) const;
+
 
 	/// @brief Applies a sample_cis_peptide_bond perturbation to the list of torsions.
 	/// @details This checks whether each residue specified is an alpha- or beta-amino acid.  If it is, it samples the cis version of the omega angle (if omega is in the chain of atoms).

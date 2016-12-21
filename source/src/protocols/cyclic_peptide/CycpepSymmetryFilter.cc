@@ -46,7 +46,7 @@ CycpepSymmetryFilter::CycpepSymmetryFilter():
 	symm_repeats_(2),
 	mirror_symm_(false),
 	selector_(),
-	angle_threshhold_(10.0)
+	angle_threshold_(10.0)
 	//TODO -- initialize variables here.
 {
 
@@ -68,7 +68,7 @@ CycpepSymmetryFilter::parse_my_tag(
 	if ( selector != nullptr ) { set_selector(selector); }
 	set_symm_repeats( tag->getOption<core::Size>("symmetry_repeats", symm_repeats() ) );
 	set_mirror_symm( tag->getOption<bool>("mirror_symmetry", mirror_symm()) );
-	set_angle_threshhold( tag->getOption<core::Real>("angle_threshhold", angle_threshhold() ) );
+	set_angle_threshold( tag->getOption<core::Real>("angle_threshold", angle_threshold() ) );
 }
 
 /// @brief Sets the repeats in the symmetry that we're looking for
@@ -94,11 +94,11 @@ CycpepSymmetryFilter::set_selector(
 /// @brief Set the cutoff, in degrees, that two mainchain dihedral values must lie within in order for two residues to
 /// be considered to have the "same" value for that mainchain degree of freedom.
 void
-CycpepSymmetryFilter::set_angle_threshhold(
+CycpepSymmetryFilter::set_angle_threshold(
 	core::Real const &setting
 ) {
-	runtime_assert_string_msg( setting > 0.0, "Error in protocols::cyclic_peptide::CycpepSymmetryFilter::set_angle_threshhold(): A value greater than 0 is required." );
-	angle_threshhold_ = setting;
+	runtime_assert_string_msg( setting > 0.0, "Error in protocols::cyclic_peptide::CycpepSymmetryFilter::set_angle_threshold(): A value greater than 0 is required." );
+	angle_threshold_ = setting;
 }
 
 
@@ -131,8 +131,8 @@ CycpepSymmetryFilter::apply( core::pose::Pose const &pose ) const
 			<< symm_repeats() << ( mirror_symm() ? "/m " : " ") << "symmetry to a " << (selector() ? "selection" : "pose" )
 			<< " with " << reslist.size() << " residues.  The number of residues is not an integer multiple of the symmetry repeats.  Pose MUST be asymmetric.  Returning FALSE."
 			<< std::endl;
+		return false;
 	}
-
 
 	bool symm(true);
 
@@ -190,7 +190,7 @@ void CycpepSymmetryFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 	attlist
 		+ XMLSchemaAttribute( "symmetry_repeats", xsct_non_negative_integer, "The number of repeats in this type of symmetry.  For example, for c3 symmetry, one would provide \"3\" as input.  Defaults to 2 (for c2 symmetry)." )
 		+ XMLSchemaAttribute( "mirror_symmetry", xsct_rosetta_bool, "Is this a type of cyclic symmetry with mirror operations, such as c2/m, c4/m, or c6/m symmetry?  If true, symmetry_repeats must be a multiple of 2.  Defaults to false (for c2 symmetry -- i.e. not c2/m symmetry)." )
-		+ XMLSchemaAttribute( "angle_threshhold", xsct_rosetta_bool, "The cutoff, in degrees, for the difference between two dihedral angles before they are considered \"different\" angles.  This is used when comparing mainchain torsion values of differet residues.  Defaults to 10.0 degrees." )
+		+ XMLSchemaAttribute( "angle_threshold", xsct_real, "The cutoff, in degrees, for the difference between two dihedral angles before they are considered \"different\" angles.  This is used when comparing mainchain torsion values of differet residues.  Defaults to 10.0 degrees." )
 		;
 
 	core::select::residue_selector::attributes_for_parse_residue_selector_default_option_name( attlist, "An optional residue selector set to select the cyclic peptide.  If not provided, the whole pose is used." );
@@ -282,7 +282,7 @@ CycpepSymmetryFilter::mainchain_torsions_differ(
 		core::Real diff( std::abs(val1-val2) );
 		if ( diff > 180.0 ) diff -= 180.0;
 
-		if ( diff > angle_threshhold() ) return true;
+		if ( diff > angle_threshold() ) return true;
 	}
 
 	return false;

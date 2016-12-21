@@ -43,6 +43,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/random/random.hh>
+#include <numeric/angle.functions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/conversions.hh>
@@ -125,7 +126,7 @@ std::string GeneralizedKICperturber::get_name() const{
 
 /// @brief Returns the enum type for the effect of a pertuber based on a perturber name.
 ///        Returns unknown_effect if can't find a match for the name.
-perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::string const &name ) const
+perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::string const &name )
 {
 	for ( core::Size i=1; i<end_of_effect_list; ++i ) {
 		if ( get_perturber_effect_name( i ) == name ) return static_cast<perturber_effect>(i);
@@ -136,7 +137,7 @@ perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::s
 
 /// @brief Returns the name of a perturber given the enum type.
 ///        Returns "unknown_effect" if no such effect exists.
-std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effect ) const
+std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effect )
 {
 	std::string returnstring = "";
 
@@ -176,6 +177,12 @@ std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effe
 		break;
 	case perturb_backbone_by_bins :
 		returnstring = "perturb_backbone_by_bins";
+		break;
+	case copy_backbone_dihedrals :
+		returnstring = "copy_backbone_dihedrals";
+		break;
+	case mirror_backbone_dihedrals :
+		returnstring = "mirror_backbone_dihedrals";
 		break;
 	case sample_cis_peptide_bond :
 		returnstring = "sample_cis_peptide_bond";
@@ -294,6 +301,12 @@ void GeneralizedKICperturber::apply(
 	case perturb_backbone_by_bins :
 		apply_perturb_backbone_by_bins( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions );
 		break;
+	case copy_backbone_dihedrals :
+		apply_copy_backbone_dihedrals( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions, false );
+		break;
+	case mirror_backbone_dihedrals :
+		apply_copy_backbone_dihedrals( original_pose, loop_pose, residues_, atomlist, residue_map, tail_residue_map, torsions, true );
+		break;
 	case sample_cis_peptide_bond :
 		apply_sample_cis_peptide_bond(loop_pose, atomlist, residues_, residue_map, tail_residue_map, torsions);
 		break;
@@ -310,15 +323,20 @@ void GeneralizedKICperturber::apply(
 
 /// @brief Given an index in the original pose and a mapping from loop to pose,
 /// return the index in the loop.
+/// @details If fail_if_not_found is true (the default), throws an exception if the index isn't found.  If
+/// false, returns zero instead.
 core::Size GeneralizedKICperturber::get_loop_index (
 	core::Size const original_pose_index,
-	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+	bool const fail_if_not_found /*=true*/
 ) const {
 	for ( core::Size i=1, imax=residue_map.size(); i<=imax; ++i ) {
 		if ( residue_map[i].second == original_pose_index ) return residue_map[i].first;
 	}
 
-	utility_exit_with_message("Residue does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
+	if ( fail_if_not_found ) {
+		utility_exit_with_message("Residue does not exist in loop.  Exiting from GeneralizedKICperturber::get_loop_index with error status.");
+	}
 
 	return 0;
 }
@@ -357,7 +375,7 @@ void GeneralizedKICperturber::reindex_AtomIDs (
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Applies a set_dihedral perturbation to a list of torsions.
-/// @details  Can also be used to randomize dihedral values.
+/// @details  Can also be used to randomize dihedral values.d
 /// @param[in] dihedrallist - List of sets of atoms defining dihedrals, indexed based on the loop_pose.
 /// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
 /// @param[in] inputvalues_real -- Vector of input values (one value or one for each dihedral to be set).
@@ -1249,6 +1267,132 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 	return;
 }
 
+/// @brief Applies a copy_backbone_dihedrals perturbation to the list of torsions.
+/// @details
+/// @param[in] original_pose - The input pose.
+/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+/// @param[in] residues - A vector of the indices of residues affected by this perturber.
+/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
+/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+/// @param[in] mirror - If true, then backbone dihedrals are copied with inversion (multiplied by -1).  If false, then they copied faithfully.
+void
+GeneralizedKICperturber::apply_copy_backbone_dihedrals(
+	core::pose::Pose const &original_pose,
+	core::pose::Pose const &loop_pose,
+	utility::vector1 <core::Size> const &residues,
+	utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+	utility::vector1 < std::pair < core::Size, core::Size > > const &/*tail_residue_map*/, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+	utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
+	bool const mirror
+) const {
+
+	core::Real const mirror_mult( mirror ? -1.0 : 1.0 ); //Multiplier for mirroring
+
+	core::Size const rescount( residues.size() ); //Number of residues that have been defined for this perturber
+	runtime_assert_string_msg( rescount > 1, "Error in GeneralizedKICperturber::apply_copy_backbone_dihedrals(): The \"copy_backbone_dihedrals\" perturber requires the user to specify at least two residues.  The first is the residue from which dihedral values will be copied, and the second (third, fourth, etc.) will have its dihedral values set by the values from the first." );
+
+	utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list; //List of dihedrals to set.
+	utility::vector1 < core::Real > inputvalues_real; //List of dihedral values to set.
+	core::Size const copy_from_index( get_loop_index( residues[1], residue_map, false ) ); //Will be zero if the copy-from residue isn't in the loop.
+	core::Size const ntors(
+		copy_from_index == 0 ? original_pose.residue(residues[1]).mainchain_torsions().size() : loop_pose.residue(copy_from_index).mainchain_torsions().size()
+	);
+	bool going_forward(true), going_forward_set(false);
+
+	//Check connectivity of copy-from residue; ensure that it's connected normally by backbone bonds to its neighbours:
+	core::Size other_res1, other_res2;
+	if ( copy_from_index != 0 ) {
+		runtime_assert_string_msg(
+			loop_pose.residue(copy_from_index).has_lower_connect() && loop_pose.residue(copy_from_index).has_upper_connect(),
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): The residue from which dihedral values are being copied is missing a backbone connection."
+		);
+		other_res1 = loop_pose.residue(copy_from_index).connected_residue_at_resconn( loop_pose.residue_type(copy_from_index).lower_connect_id() );
+		other_res2 = loop_pose.residue(copy_from_index).connected_residue_at_resconn( loop_pose.residue_type(copy_from_index).upper_connect_id() );
+		runtime_assert_string_msg(
+			( other_res1 == copy_from_index + 1 && other_res2 == copy_from_index - 1 ) ||
+			( other_res1 == copy_from_index - 1 && other_res2 == copy_from_index + 1 ),
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): The residue from which dihedral values are being copied is not normally connected through mainchain connections to neighbouring residues in the loop to be closed."
+		);
+	} else { //If the copy-from index is not in the loop to be closed.
+		runtime_assert_string_msg(
+			original_pose.residue(residues[1]).has_lower_connect() && original_pose.residue(residues[1]).has_upper_connect(),
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): The residue from which dihedral values are being copied is missing a backbone connection in the original pose."
+		);
+		other_res1 = original_pose.residue(residues[1]).connected_residue_at_resconn( original_pose.residue_type(residues[1]).lower_connect_id() );
+		other_res2 = original_pose.residue(residues[1]).connected_residue_at_resconn( original_pose.residue_type(residues[1]).upper_connect_id() );
+		runtime_assert_string_msg(
+			other_res1 != 0 && other_res2 != 0,
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): The residue from which dihedral values are being copied in the original pose is not normally connected through mainchain connections to neighbouring residues."
+		);
+	}
+
+	for ( core::Size i=2; i<=rescount; ++i ) {
+		core::Size const copy_to_index( get_loop_index( residues[i], residue_map ) );
+		//Check connectivity of copy-to residue; ensure that it's connected normally by backbone bonds to its neighbours.
+		runtime_assert_string_msg(
+			loop_pose.residue(copy_to_index).has_lower_connect() && loop_pose.residue(copy_to_index).has_upper_connect(),
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): A residue to which dihedral values are being copied is missing a backbone connection."
+		);
+		core::Size const other_res3( loop_pose.residue(copy_to_index).connected_residue_at_resconn( loop_pose.residue_type(copy_to_index).lower_connect_id() ) );
+		core::Size const other_res4( loop_pose.residue(copy_to_index).connected_residue_at_resconn( loop_pose.residue_type(copy_to_index).upper_connect_id() ) );
+		core::Size const other_atom_4( loop_pose.residue(other_res4).connect_atom( loop_pose.residue(copy_to_index) ) );
+		runtime_assert_string_msg(
+			( other_res3 == copy_to_index + 1 && other_res4 == copy_to_index - 1 ) ||
+			( other_res3 == copy_to_index - 1 && other_res4 == copy_to_index + 1 ),
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): The residue to which dihedral values are being copied is not normally connected through mainchain connections to neighbouring residues in the loop to be closed."
+		);
+		runtime_assert_string_msg(
+			other_atom_4 > 0,
+			"Error in GeneralizedKICperturber:apply_copy_backbone_dihedrals(): Could not get index of connecting atom!"
+		);
+		runtime_assert_string_msg(
+			loop_pose.residue(copy_to_index).mainchain_torsions().size() == ntors,
+			"Error in GeneralizedKICperturber::apply_copy_backbone_dihedrals(): The residues passed to the \"copy_backbone_dihedrals\" perturber have different numbers of mainchain torsions."
+		);
+
+		for ( core::Size j=1; j<=ntors; ++j ) {
+			utility::vector1 < core::id::AtomID > idvect;
+			idvect.reserve(2);
+			idvect.push_back( core::id::AtomID(j, copy_to_index) );
+			if ( j < ntors ) {
+				idvect.push_back( core::id::AtomID(j+1, copy_to_index) );
+			} else {
+				idvect.push_back( core::id::AtomID( other_atom_4, other_res4 ) );
+			}
+			dihedral_list.push_back( idvect );
+
+			if ( copy_from_index != 0 ) {
+				core::id::AtomID const reference_id1(j, copy_from_index);
+				for ( core::Size ia=1, iamax=atomlist.size(); ia<=iamax; ++ia ) {
+					if ( !going_forward_set && atomlist[ia].first.rsd() == copy_from_index ) {
+						going_forward_set=true;
+						if ( ia == iamax ) { going_forward=false; }
+						else {
+							if ( atomlist[ia+1].first.rsd() == atomlist[ia].first.rsd() && atomlist[ia+1].first.atomno() < atomlist[ia].first.atomno() ) { going_forward=false; }
+							else { going_forward=true; }
+						}
+					}
+					if ( going_forward_set ) {
+						if ( going_forward && atomlist[ia].first == reference_id1 ) {
+							inputvalues_real.push_back( numeric::nonnegative_principal_angle_degrees( mirror_mult * torsions[ia] ) );
+						} else if ( !going_forward && ia < iamax && atomlist[ia + 1].first == reference_id1 ) {
+							inputvalues_real.push_back( numeric::nonnegative_principal_angle_degrees( mirror_mult * torsions[ia] ) );
+						}
+					}
+				}
+			} else { // if copy_from_index == 0, meaning that we're taking torsions from a residue in the original pose instead.
+				inputvalues_real.push_back( numeric::nonnegative_principal_angle_degrees( mirror_mult * original_pose.residue(residues[1]).mainchain_torsions()[j] ) );
+			}
+		}
+	}
+
+	apply_set_dihedral ( dihedral_list, atomlist, inputvalues_real, torsions, 0); //Recycle this function.
+}
+
+
 /// @brief Applies a sample_cis_peptide_bond perturbation to the list of torsions.
 /// @details This checks whether each residue specified is an alpha- or beta-amino acid.  If it is, it samples the cis version of the omega angle (if omega is in the chain of atoms).
 /// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
@@ -1325,22 +1469,10 @@ GeneralizedKICperturber::define_valid_perturber_name_enumeration( utility::tag::
 	XMLSchemaRestriction genkic_perturber_name;
 	genkic_perturber_name.name( "genkic_perturber_name" );
 	genkic_perturber_name.base_type( xs_string );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "no_effect" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "set_dihedral" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "set_bondangle" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "set_bondlength" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "set_backbone_bin" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_dihedral" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_alpha_backbone_by_rama" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_backbone_by_rama_prepro" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "randomize_backbone_by_bins" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_dihedral" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_dihedral_bbg" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "perturb_backbone_by_bins" );
-	genkic_perturber_name.add_restriction( xsr_enumeration, "sample_cis_peptide_bond" );
-	// genkic_perturber_name.add_restriction( xsr_enumeration, "unknown_effect" );
+	for ( core::Size i=2; i<static_cast<core::Size>(end_of_effect_list); ++i ) {
+		genkic_perturber_name.add_restriction( xsr_enumeration, get_perturber_effect_name( i ) );
+	}
 	xsd.add_top_level_element( genkic_perturber_name );
-
 }
 
 } //namespace perturber

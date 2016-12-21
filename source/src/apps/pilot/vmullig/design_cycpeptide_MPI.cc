@@ -188,8 +188,8 @@ OPT_KEY( Boolean, v_randseq ) //Should I start with a random sequence?  False by
 OPT_KEY( IntegerVector, v_ignoreresidue ) //Should I ignore certain residues when making mutations?
 OPT_KEY( IntegerVector, v_ignoreresidue_in_rms) //Should certain residues be excluded from the RMS calculation?
 OPT_KEY( Boolean, v_CB_in_rms ) //Should beta carbons be used in the RMS calculation?  True by default.
-OPT_KEY( Boolean, v_removelowrms ) //Should I remove negative states with a backbone RMS less than a certain threshhold from the positive state?  True by default.
-OPT_KEY( Real, v_removelowrms_threshhold) //RMS threshhold for removing negative states, 0.05 by default.
+OPT_KEY( Boolean, v_removelowrms ) //Should I remove negative states with a backbone RMS less than a certain threshold from the positive state?  True by default.
+OPT_KEY( Real, v_removelowrms_threshold) //RMS threshold for removing negative states, 0.05 by default.
 OPT_KEY( Real, v_lambda) //The bredth of the Gaussian, in Angstroms, that's used to weight states as "positive" for scoring.
 OPT_KEY( Boolean, v_use_cartesian_min) //If true, each structure is subjected to a final round of Cartesian minimization.  Default false.
 OPT_KEY( Boolean, v_cyclic) //Is this a cyclic peptide?
@@ -237,7 +237,7 @@ void register_options() {
 	NEW_OPT( v_ignoreresidue_in_rms, "Residues to be ignored when carrying out the RMSD calculation.  Default empty list.", empty_vector);
 	NEW_OPT( v_CB_in_rms, "If true, beta carbons are used in calculating RMS values.  True by default.", true);
 	NEW_OPT( v_removelowrms, "", true);
-	NEW_OPT( v_removelowrms_threshhold, "", 0.1);
+	NEW_OPT( v_removelowrms_threshold, "", 0.1);
 	NEW_OPT( v_lambda, "", 1.5);
 	NEW_OPT( v_use_cartesian_min, "If true, each structure is subjected to a final round of Cartesian minimization.  Default false.", false);
 	NEW_OPT( v_cyclic, "If true, the N- and C-termini are connected by a peptide bond.  Default false.", false);
@@ -2442,9 +2442,9 @@ int main(int argc, char *argv[]) {
 
 				core::Real rmsval=get_distance_measure(importpose, positive_master, extra_rms_atoms);
 				//printf("Proc %i: rms=%.2f\n", procnum, rmsval); fflush(stdout); //DELETE ME -- for debugging
-				if(option[v_removelowrms]() && (rmsval < option[v_removelowrms_threshhold]()) ) {
+				if(option[v_removelowrms]() && (rmsval < option[v_removelowrms_threshold]()) ) {
 					if (procnum==0) {
-						printf("\tNegative state %lu has a backbone RMSD of %.2f from the positive design state, which is less than the removal threshhold of %.2f.  Ignoring and moving on.\n", ifile, rmsval, option[v_removelowrms_threshhold]());
+						printf("\tNegative state %lu has a backbone RMSD of %.2f from the positive design state, which is less than the removal threshold of %.2f.  Ignoring and moving on.\n", ifile, rmsval, option[v_removelowrms_threshold]());
 					} else {
 						printf("\tProc %i also discarded negative state %lu.\n", procnum, ifile); fflush(stdout);
 					}

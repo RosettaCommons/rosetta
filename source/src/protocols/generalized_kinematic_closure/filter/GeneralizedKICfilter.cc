@@ -77,7 +77,7 @@ GeneralizedKICfilter::GeneralizedKICfilter():
 	bin_transition_calculator_(),
 	bin_(""),
 	resnum_(0),
-	rama_threshhold_(0.3),
+	rama_threshold_(0.3),
 	attach_boinc_ghost_observer_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
@@ -94,7 +94,7 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 	bin_transition_calculator_( ), //CLONE this, below
 	bin_( src.bin_ ),
 	resnum_( src.resnum_ ),
-	rama_threshhold_( src.rama_threshhold_ ),
+	rama_threshold_( src.rama_threshold_ ),
 	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
@@ -516,7 +516,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 }
 
 /// @brief Applies the atom_pair_distance filter, checking that the distance between two atoms is less than
-/// a given threshhold (or greater than a given threshhold if the user so specifies with the "greater_than"
+/// a given threshold (or greater than a given threshold if the user so specifies with the "greater_than"
 /// option).
 /// @details Returns "true" for pass and "false" for fail.  The user can set the following options:
 /// "distance" (real-valued, mandatory)
@@ -673,7 +673,7 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 } //apply_backbone_bin
 
 /// @brief Calculates Ramachandran energy for an alpha-amino acid based on its phi/psi values.
-/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+/// @details Returns "true" for pass (below threshold) and "false" for fail.
 /// @param[in] original_pose -- The full, initial pose.
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
@@ -739,7 +739,7 @@ GeneralizedKICfilter::apply_alpha_aa_rama_check (
 } //apply_alpha_aa_rama_check
 
 /// @brief Calculates RamaPrePro energy for a residue based on its mainchain torsion values.
-/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+/// @details Returns "true" for pass (below threshold) and "false" for fail.
 /// @param[in] original_pose -- The full, initial pose.
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).

@@ -64,6 +64,7 @@
 #include <protocols/aa_composition/AddCompositionConstraintMover.hh>
 #include <protocols/aa_composition/ClearCompositionConstraintsMover.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter.hh>
+#include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/denovo_design/movers/FastDesign.hh>
@@ -173,6 +174,11 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier  );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats             );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring           );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_perturbation        );
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_batchsize_by_level               );
@@ -198,6 +204,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	bool const allow_file_read
 ) :
 	my_rank_(0),
+	already_completed_job_count_(0),
 	scorefxn_(),
 	suppress_checkpoints_(false),
 	silent_out_(false),
@@ -264,9 +271,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	use_rama_prepro_for_sampling_(true),
 	n_methyl_positions_(),
 	tbmb_positions_(),
+	link_all_cys_with_tbmb_(false),
 	use_tbmb_filters_(true),
 	tbmb_sidechain_distance_filter_multiplier_(1.0),
-	tbmb_constraints_energy_filter_multiplier_(1.0)
+	tbmb_constraints_energy_filter_multiplier_(1.0),
+	required_symmetry_repeats_(1),
+	required_symmetry_mirroring_(false),
+	required_symmetry_angle_threshold_(10.0),
+	required_symmetry_perturbation_(0.0)
 	//TODO -- initialize variables here.
 {
 	initialize_from_options();
@@ -282,6 +294,7 @@ SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() = default;
 ///
 SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPredictApplication const &src ) :
 	my_rank_(src.my_rank_),
+	already_completed_job_count_( src.already_completed_job_count_ ),
 	scorefxn_(), //Cloned below
 	suppress_checkpoints_(src.suppress_checkpoints_),
 	silent_out_(src.silent_out_),
@@ -348,9 +361,14 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
 	n_methyl_positions_(src.n_methyl_positions_),
 	tbmb_positions_(src.tbmb_positions_),
+	link_all_cys_with_tbmb_(src.link_all_cys_with_tbmb_),
 	use_tbmb_filters_(src.use_tbmb_filters_),
 	tbmb_sidechain_distance_filter_multiplier_(src.tbmb_sidechain_distance_filter_multiplier_),
-	tbmb_constraints_energy_filter_multiplier_(src.tbmb_constraints_energy_filter_multiplier_)
+	tbmb_constraints_energy_filter_multiplier_(src.tbmb_constraints_energy_filter_multiplier_),
+	required_symmetry_repeats_(src.required_symmetry_repeats_),
+	required_symmetry_mirroring_(src.required_symmetry_mirroring_),
+	required_symmetry_angle_threshold_(src.required_symmetry_angle_threshold_),
+	required_symmetry_perturbation_(src.required_symmetry_perturbation_)
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -372,7 +390,6 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	runtime_assert_string_msg( !(option[basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts]() == 0 && option[basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count]() == 0), "Error in simple_cycpep_predict app: both the \"-cyclic_peptide:genkic_closure_attempts\" and \"-cyclic_peptide:genkic_min_solution_count\" flags were set to zero.  This would result in GenKIC looping infinitely." );
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::min_genkic_hbonds]() >= 0.0, "Error in simple_cycpep_predict app: the minimum number of hbonds during GenKIC steps (\"-cyclic_peptide:min_genkic_hbonds\" flag) can be zero, but cannot be negative." );
 	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::min_final_hbonds]() >= 0.0, "Error in simple_cycpep_predict app: the minimum number of hbonds after relaxation steps (\"-cyclic_peptide:min_final_hbonds\" flag) can be zero, but cannot be negative." );
-	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds]() > 0, "Error in simple_cycpep_predict app: the number of FastRelax rounds (\"-cyclic_peptide:fast_relax_rounds\" flag) must be greater than zero." );
 	runtime_assert_string_msg( !( option[out::file::silent].user() && option[out::file::o].user() ), "Error in simple_cycpep_predict app: either silent file output (\"-out:file:silent\" flag) or PDB output (\"-out:file:o\") output may be used, but not both." );
 
 	//Copy options to private member variables:
@@ -542,6 +559,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	//Store the TBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions].user() ) {
+		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-TBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
 		core::Size const ntbmbres(option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions]().size());
 		runtime_assert_string_msg( ntbmbres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues to link with 1,3,5-tris(bromomethyl)benzene." );
 		runtime_assert_string_msg( ntbmbres % 3 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of three.  Groups of three residues will be linked with 1,3,5-tris(bromomethyl)benzene." );
@@ -559,6 +577,19 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	use_tbmb_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters]();
 	tbmb_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier]();
 	tbmb_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::TBMB_constraints_energy_filter_multiplier]();
+	link_all_cys_with_tbmb_ = option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]();
+
+	//Options for symmetric sampling:
+	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:require_symmetry_repeats\" flag must be provided with a positive value." );
+	runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold]() > 0.0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:require_symmetry_angle_threshold\" flag must be provided with a positive value." );
+	if ( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring]() ) {
+		runtime_assert_string_msg( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats].user() && option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 1 && option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() % 2 == 0,
+			"Error in simple_cycpep_predict application: If the \"-cyclic_peptide:require_symmetry_mirroring\" option is used, then the \"-cyclic_peptide:require_symmetry_repeats\" option must be provided, must be set greater than 1, and must be set to a value divisible by 2." );
+	}
+	required_symmetry_repeats_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]();
+	required_symmetry_mirroring_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring]();
+	required_symmetry_angle_threshold_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold]();
+	required_symmetry_perturbation_ = option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_perturbation]();
 
 	return;
 } //initialize_from_options()
@@ -583,7 +614,9 @@ SimpleCycpepPredictApplication::set_native(
 ) {
 	runtime_assert(native); //Can't be NULL.
 	native_exists_=true;
-	native_pose_ = native;
+	core::pose::PoseOP native_pose_copy( native->clone() );
+	set_up_native( native_pose_copy, 0);
+	native_pose_ = native_pose_copy;
 }
 
 /// @brief Allows external code to provide a sequence, so that the SimpleCycpepPredictApplication doesn't have to read
@@ -637,6 +670,15 @@ SimpleCycpepPredictApplication::set_my_rank(
 	int const rank_in
 ) {
 	my_rank_ = rank_in;
+}
+
+/// @brief Set the number of jobs that this process has already completed.
+///
+void
+SimpleCycpepPredictApplication::set_already_completed_job_count(
+	core::Size const count_in
+) {
+	already_completed_job_count_ = count_in;
 }
 
 /// @brief Allows external code to override the number of structures that this should generate (otherwise
@@ -823,6 +865,25 @@ SimpleCycpepPredictApplication::run() const {
 	read_sequence( sequence_file_, resnames );
 	sequence_length_ = resnames.size(); //Store the number of residues in the sequence, excluding crosslinkers.
 
+	//Check that, if we're enforcing symmetry, the sequence length is an integer multiple of the number of symmetry repeats:
+	if ( required_symmetry_repeats_ > 1 ) {
+		runtime_assert_string_msg(
+			sequence_length_ % required_symmetry_repeats_ == 0,
+			"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): Symmetry has been specified by the user, but the number of residues in the peptide is not an integral multiple of the number of symmetry repeats."
+		);
+	}
+
+	//Check that, if the link_all_cys_with_TBMB flag is used, the sequence has exactly three cysteine residues:
+	if ( link_all_cys_with_tbmb_ ) {
+		debug_assert( tbmb_positions_.size() == 0 ); //Should be true
+		utility::vector1 < core::Size > cys_positions;
+		for ( core::Size i=1; i<=sequence_length(); ++i ) {
+			if ( !resnames[i].compare("CYS") || !resnames[i].compare("DCYS") ) cys_positions.push_back(i);
+		}
+		runtime_assert_string_msg( cys_positions.size() == 3, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): The \"-cyclic_peptide:link_all_cys_with_TBMB\" flag was used, but the sequence does not contain exactly three CYS/DCYS residues." );
+		tbmb_positions_.push_back( cys_positions );
+	}
+
 	//Get the native sequence that we will compare to.
 	core::pose::PoseOP native_pose;
 	if ( native_exists_ ) {
@@ -989,7 +1050,7 @@ SimpleCycpepPredictApplication::run() const {
 			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
 			char tag[512];
 			if ( my_rank_ > 0 ) {
-				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat) );
+				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat+already_completed_job_count_) );
 			} else {
 				sprintf(tag, "result_%04lu", static_cast<unsigned long>(irepeat) );
 			}
@@ -1308,22 +1369,25 @@ void
 SimpleCycpepPredictApplication::set_up_termini_mover (
 	protocols::cyclic_peptide::DeclareBondOP termini,
 	core::pose::PoseCOP pose,
-	bool const native
+	bool const native,
+	core::Size const last_res /*=0*/
 ) const {
 	core::Size const nres(sequence_length());
 
+	core::Size const cterm( last_res == 0 ? nres : last_res );
+
 	runtime_assert_string_msg(pose->residue(1).has_lower_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: residue 1 does not have a LOWER_CONNECT.");
-	runtime_assert_string_msg(pose->residue(nres).has_upper_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: the final residue does not have an UPPER_CONNECT.");
+	runtime_assert_string_msg(pose->residue(cterm).has_upper_connect(), "Error in simple_cycpep_predict app set_up_termini_mover() function: the final residue does not have an UPPER_CONNECT.");
 	std::string firstatom( pose->residue(1).atom_name( pose->residue(1).lower_connect_atom() ) );
-	std::string lastatom( pose->residue(nres).atom_name( pose->residue(nres).upper_connect_atom() ) );
+	std::string lastatom( pose->residue(cterm).atom_name( pose->residue(cterm).upper_connect_atom() ) );
 
 	if ( native ) {
-		TR << "Setting up terminal bond for the native pose between residue 1, atom " << firstatom << " and residue " << nres << ", atom " << lastatom << "." << std::endl;
+		TR << "Setting up terminal bond for the native pose between residue 1, atom " << firstatom << " and residue " << cterm << ", atom " << lastatom << "." << std::endl;
 	} else {
-		TR << "Setting up terminal bond between residue 1, atom " << firstatom << " and residue " << nres << ", atom " << lastatom << "." << std::endl;
+		TR << "Setting up terminal bond between residue 1, atom " << firstatom << " and residue " << cterm << ", atom " << lastatom << "." << std::endl;
 	}
 
-	termini->set( nres, lastatom, 1, firstatom, false, false, 0, 0, false  );
+	termini->set( cterm, lastatom, 1, firstatom, false, false, 0, 0, false  );
 
 	return;
 }
@@ -1374,18 +1438,43 @@ SimpleCycpepPredictApplication::import_and_set_up_native (
 ) const {
 	core::import_pose::pose_from_file(*native_pose, native_file, core::import_pose::PDB_file);
 	TR << "Improrting native structure from " << native_file << "." << std::endl;
-	runtime_assert_string_msg( native_pose->size() == expected_residue_count, "Error in simple_cycpep_predict app!  The imported native pose has a different number of residues than the sequence provided." );
+
+	set_up_native( native_pose, expected_residue_count );
+
+	return;
+}
+
+/// @brief Sets up a terminial peptide bond and does some checks.
+///
+void
+SimpleCycpepPredictApplication::set_up_native (
+	core::pose::PoseOP native_pose,
+	core::Size const expected_residue_count
+) const {
+	// Count residues and find the last residue.
+	core::Size last_res(0), res_count(0);
+	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
+		if ( native_pose->residue_type(ir).is_alpha_aa() || native_pose->residue_type(ir).is_beta_aa() || native_pose->residue_type(ir).is_gamma_aa() ) {
+			++res_count;
+			last_res = ir;
+		}
+	}
+
+	if ( expected_residue_count != 0 ) {
+		runtime_assert_string_msg(
+			res_count == expected_residue_count,
+			"Error in simple_cycpep_predict app!  The imported native pose has a different number of residues than the sequence provided."
+		);
+	}
 
 	TR << "Stripping termini from native structure." << std::endl;
 	core::pose::remove_lower_terminus_type_from_pose_residue(*native_pose, 1);
-	core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, expected_residue_count);
+	core::pose::remove_upper_terminus_type_from_pose_residue(*native_pose, last_res);
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
 	protocols::cyclic_peptide::DeclareBondOP termini( new protocols::cyclic_peptide::DeclareBond );
-	set_up_termini_mover( termini, native_pose, true );
+	set_up_termini_mover( termini, native_pose, true, last_res );
 	termini->apply(*native_pose);
-
-	return;
 }
 
 
@@ -1487,7 +1576,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 					if ( pose->residue(i).backbone_aa() != core::chemical::aa_unk ) {
 						rama.random_phipsi_from_rama(pose->residue(i).backbone_aa(), phi, psi);
 					} else {
-						rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi); //TODO -- use backbone_aa
+						rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi);
 					}
 				}
 
@@ -1569,9 +1658,14 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Number of residues in the pose:
 	core::Size const nres( sequence_length() );
 	runtime_assert( nres >= 4 ); //Already checked at sequence load time, so should be true, but let's make sure.
+	core::Size const res_per_symm_repeat(
+		required_symmetry_repeats_ > 1 ? nres / required_symmetry_repeats_ : nres
+	);
 
-	//Randomly pick one of the middle residues to be the anchor residue:
-	core::Size const anchor_res( numeric::random::rg().random_range(2, nres-1) );
+	//Randomly pick one of the middle residues to be the anchor residue (or one of the middle residues of the asymmetric unit if this peptide has symmetry):
+	core::Size const anchor_res(
+		required_symmetry_repeats_ > 1 ? numeric::random::rg().random_range(2, res_per_symm_repeat) : numeric::random::rg().random_range(2, nres-1)
+	);
 	core::Size const first_loop_res( anchor_res + 1 );
 	core::Size const last_loop_res( anchor_res - 1 );
 
@@ -1591,7 +1685,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
 
 	//Filter for total hydrogen bonds:
-	pp->add_mover_filter_pair( nullptr, "Total_Hbonds", total_hbond );
+	if ( min_genkic_hbonds_ > 0.0 ) pp->add_mover_filter_pair( nullptr, "Total_Hbonds", total_hbond );
 
 	//Filter out poses with oversaturated hydrogen bond acceptors.
 	if ( filter_oversaturated_hbond_acceptors_ ) {
@@ -1599,6 +1693,20 @@ SimpleCycpepPredictApplication::genkic_close(
 		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_mover_filter_pair( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
+	}
+
+	//If we're filtering by symmetry, do so here:
+	if ( required_symmetry_repeats_ > 1 ) {
+		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter1( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+		symmfilter1->set_symm_repeats( required_symmetry_repeats_ );
+		symmfilter1->set_mirror_symm( required_symmetry_mirroring_ );
+		symmfilter1->set_angle_threshold( required_symmetry_angle_threshold_ );
+		core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+		std::stringstream pep_indices("");
+		pep_indices << "1-" << sequence_length();
+		iselector->set_index( pep_indices.str() );
+		symmfilter1->set_selector( iselector );
+		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_1", symmfilter1);
 	}
 
 	//If we're considering TBMB, add it here.
@@ -1741,6 +1849,20 @@ SimpleCycpepPredictApplication::genkic_close(
 		pp->add_mover_filter_pair( nullptr, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
 	}
 
+	//If we're filtering by symmetry, do so again here:
+	if ( required_symmetry_repeats_ > 1 ) {
+		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter1( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+		symmfilter1->set_symm_repeats( required_symmetry_repeats_ );
+		symmfilter1->set_mirror_symm( required_symmetry_mirroring_ );
+		symmfilter1->set_angle_threshold( required_symmetry_angle_threshold_ );
+		core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+		std::stringstream pep_indices("");
+		pep_indices << "1-" << sequence_length();
+		iselector->set_index( pep_indices.str() );
+		symmfilter1->set_selector( iselector );
+		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_2", symmfilter1);
+	}
+
 	//Create the mover and set options:
 	GeneralizedKICOP genkic( new GeneralizedKIC );
 	genkic->set_selector_type( lowest_energy_selector );
@@ -1807,7 +1929,7 @@ SimpleCycpepPredictApplication::genkic_close(
 					genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
 					genkic->add_atomset_to_perturber_atomset_list(phivect);
 					genkic->add_atomset_to_perturber_atomset_list(psivect);
-					if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
+					//if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
 					genkic->add_value_to_perturber_value_list( user_set_dihedral_perturbation_ );
 				}
 			} else { //If this position is not set, randomize it.
@@ -1825,6 +1947,29 @@ SimpleCycpepPredictApplication::genkic_close(
 						if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
 							genkic->set_perturber_custom_rama_table( default_rama_table_type() );
 						}
+					}
+				}
+				if ( required_symmetry_repeats_ > 1 && i > res_per_symm_repeat ) { //This is a symmetry repeat
+					core::Size res_to_copy( i % res_per_symm_repeat );
+					if ( res_to_copy == 0 ) { res_to_copy = res_per_symm_repeat; }
+					if ( required_symmetry_mirroring_ && ( (i-1) / res_per_symm_repeat ) % 2 == 1 ) {
+						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::mirror_backbone_dihedrals );
+					} else {
+						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::copy_backbone_dihedrals );
+					}
+					genkic->add_residue_to_perturber_residue_list( res_to_copy );
+					genkic->add_residue_to_perturber_residue_list( i );
+					if ( required_symmetry_perturbation_ != 0.0 ) {
+						genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::perturb_dihedral );
+						core::id::NamedAtomID Natom( "N", i );
+						core::id::NamedAtomID CAatom( "CA", i );
+						core::id::NamedAtomID Catom( "C", i );
+						utility::vector1< core::id::NamedAtomID > phivect; phivect.push_back( Natom ); phivect.push_back( CAatom );
+						utility::vector1< core::id::NamedAtomID > psivect; psivect.push_back( CAatom ); psivect.push_back( Catom );
+						genkic->add_atomset_to_perturber_atomset_list(phivect);
+						genkic->add_atomset_to_perturber_atomset_list(psivect);
+						//if ( nextres != anchor_res ) genkic->add_atomset_to_perturber_atomset_list(omegavect);
+						genkic->add_value_to_perturber_value_list( required_symmetry_perturbation_ );
 					}
 				}
 			}
@@ -2127,23 +2272,35 @@ SimpleCycpepPredictApplication::depermute (
 
 /// @brief Align pose to native_pose, and return the RMSD between the two poses.
 /// @details Assumes that the pose has already been de-permuted (i.e. the native and the pose line up).
+/// Only uses alpha-amino acids for the alignment, currently.
 core::Real
 SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	core::pose::PoseOP pose,
 	core::pose::PoseCOP native_pose
 ) const {
 	core::Size const nres( sequence_length() );
-	debug_assert( native_pose->size() == nres ); //Should be true.
+	core::Size res_counter(0); //Residue indices might not match between native pose and pose, due to linkers.
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
 	core::pose::initialize_atomid_map(amap, *pose, core::id::BOGUS_ATOM_ID);
-	for ( core::Size ir=1; ir<=nres; ++ir ) {
+	for ( core::Size ir=1, irmax=native_pose->total_residue(); ir<=irmax; ++ir ) {
+		if ( !native_pose->residue_type(ir).is_alpha_aa() ) continue;
+		++res_counter;
+		runtime_assert_string_msg( res_counter <= nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has more residues than the input sequence." );
 		for ( core::Size ia=1, iamax=native_pose->residue(ir).type().first_sidechain_atom(); ia<iamax; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
-			if ( native_pose->residue(ir).type().atom_is_hydrogen(ia) ) continue;
-			amap[ core::id::AtomID(ia,ir) ] = core::id::AtomID(ia,ir);
+			if ( native_pose->residue_type(ir).atom_is_hydrogen(ia) ) continue;
+			//TR << "ir=" << ir << " ia=" << ia << " res_counter=" << res_counter << " native=" << native_pose->residue_type(ir).atom_name(ia) << " pred=" << pose->residue_type(res_counter).atom_name(ia) << std::endl; TR.flush(); //DELETE ME.
+			runtime_assert_string_msg(
+				!native_pose->residue_type(ir).atom_name(ia).compare( pose->residue_type(res_counter).atom_name(ia) ),
+				"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): Residue types or atom indices don't match between native and prediction."
+			);
+			amap[ core::id::AtomID(ia,res_counter) ] = core::id::AtomID(ia,ir);
 			//TR << "Adding ia=" << ia << " ir=" << ir << " to map." << std::endl; //DELETE ME
 		}
 	}
+
+	runtime_assert_string_msg( res_counter == nres, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
+
 	return core::scoring::superimpose_pose( *pose, *native_pose, amap ); //Superimpose the pose and return the RMSD.
 }
 

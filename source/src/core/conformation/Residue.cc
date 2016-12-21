@@ -930,7 +930,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 				rsd_type_.icoor(i).depends_on_polymer_lower() ||
 				rsd_type_.icoor(i).depends_on_polymer_upper() ||
 				(rsd_type_.is_lower_terminus() && rsd_type_.icoor(i).stub_atom1().atomno() == 1)
-				/*Force rebuild of mainchain hydrogens that don't depend on polymer lower or upper and aren't N-terminal amide protons.  Logic below ensures that hydrogen positions are preserved if they don't deviate by more than a threshhold from ideal. VKM 21 Aug 2015.*/
+				/*Force rebuild of mainchain hydrogens that don't depend on polymer lower or upper and aren't N-terminal amide protons.  Logic below ensures that hydrogen positions are preserved if they don't deviate by more than a threshold from ideal. VKM 21 Aug 2015.*/
 				)
 				) {
 			atoms()[i].xyz( src.atom( src.atom_index( rsd_type_.atom_name(i) ) ).xyz() );
@@ -943,7 +943,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	if ( any_missing ) fill_missing_atoms( missing, conformation );
 
 	//Check mainchain hydrogens, which are currently in idealized positions distinct from the input position.
-	//If they deviate from less than a threshhold value from the input position, preserve the input position;
+	//If they deviate from less than a threshold value from the input position, preserve the input position;
 	//otherwise, keep the idealized position.
 	if ( rsd_type_.is_polymer() ) {
 		core::Real const thresh_sq( static_cast<core::Real>( pow(static_cast<core::Real>(option[OptionKeys::packing::mainchain_h_rebuild_threshold]()),2.0) ) );

@@ -11,7 +11,7 @@
 /// @brief Tom's Denovo design protocol
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
-/// @author Vikram K. Mulligan (vmullig@uw.edu -- added threshhold option)
+/// @author Vikram K. Mulligan (vmullig@uw.edu -- added threshold option)
 
 // Unit headers
 #include <devel/denovo_design/filters/SSShapeComplementarityFilter.hh>
